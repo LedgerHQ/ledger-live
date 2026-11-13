@@ -21,18 +21,36 @@ const DOCKER_DIR = path.resolve(__dirname, "..", "src", "docker");
  * confirmed) as zebra's mining target, so the account under test receives
  * every coinbase reward directly (no separate funding transaction step;
  * `should_allow_unshielded_coinbase_spends` makes it immediately spendable).
+ *
+ * `nu7ActivationHeight` schedules NU7 at that height; left undefined, NU7
+ * stays unscheduled, which is zebra's Regtest default.
  */
-function writeZebraConfig(minerAddress: string): void {
-  const template = readFileSync(`${DOCKER_DIR}/zebra.toml.template`, "utf8");
+export function writeZebraConfig(
+  minerAddress: string,
+  nu7ActivationHeight?: number,
+  dockerDir: string = DOCKER_DIR,
+): void {
+  const template = readFileSync(`${dockerDir}/zebra.toml.template`, "utf8");
   const regtestMinerAddress = toRegtestAddress(minerAddress);
+  const nu7Line = nu7ActivationHeight === undefined ? "" : `NU7 = ${nu7ActivationHeight}`;
   writeFileSync(
-    `${DOCKER_DIR}/zebra.toml`,
-    template.replace("{{MINER_ADDRESS}}", regtestMinerAddress),
+    `${dockerDir}/zebra.toml`,
+    template
+      .replace("{{MINER_ADDRESS}}", regtestMinerAddress)
+      .replace("{{NU7_ACTIVATION}}", nu7Line),
   );
 }
 
-export const spawnRegtestNode = async (minerAddress: string): Promise<void> => {
-  writeZebraConfig(minerAddress);
+export type RegtestNodeOptions = {
+  /** Height at which zebra schedules NU7. Unscheduled when omitted. */
+  nu7ActivationHeight?: number;
+};
+
+export const spawnRegtestNode = async (
+  minerAddress: string,
+  options: RegtestNodeOptions = {},
+): Promise<void> => {
+  writeZebraConfig(minerAddress, options.nu7ActivationHeight);
 
   console.log("Starting zebra + zaino regtest stack...");
   await compose.upAll({

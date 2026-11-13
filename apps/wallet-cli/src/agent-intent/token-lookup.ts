@@ -6,7 +6,7 @@ import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
 import { chainConfigFrom } from "@ledgerhq/coin-solana/utils";
 import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { z } from "zod";
 import { toV0, type AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { calApiConfig } from "../shared/cal-config";
@@ -127,19 +127,14 @@ export async function findTokensByTicker(
   return [...candidates.values()];
 }
 
-export async function findAccountTokens(account: AccountDescriptorV1): Promise<TokenCandidate[]> {
-  const descriptor = toV0(account);
-  const balances = await new WalletAdapter().getAccountBalances(descriptor);
-  const tokens = await Promise.all(
-    balances
-      .filter(
-        ({ assetId, balance }) => assetId !== descriptor.currencyId && new BigNumber(balance).gt(0),
-      )
-      .map(({ assetId }) => getCryptoAssetsStore().findTokenById(assetId)),
-  );
-  return tokens.flatMap(token =>
-    token && !token.delisted
-      ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }]
+export async function findAccountTokens(
+  account: AccountDescriptorV1,
+): Promise<{ tokens: TokenCandidate[]; skippedTokenIds: string[] }> {
+  const { balances, skippedTokenIds } = await new WalletAdapter().getAccountBalances(toV0(account));
+  const tokens = balances.flatMap(b =>
+    b.kind === "token" && !b.token.delisted && new BigNumber(b.balance).gt(0)
+      ? [{ ticker: b.token.ticker, name: b.token.name, address: b.token.contractAddress }]
       : [],
   );
+  return { tokens, skippedTokenIds };
 }

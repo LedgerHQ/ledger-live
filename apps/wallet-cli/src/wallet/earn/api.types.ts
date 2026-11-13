@@ -20,6 +20,7 @@
  */
 
 import { z } from "zod";
+import { AddressSchema } from "@domain/entity-account-descriptor";
 
 // ---------------------------------------------------------------------------
 // GET /v0/grow?dashboard_supported=true
@@ -187,7 +188,7 @@ export type SolanaValidatorWithApy = SolanaValidator & { apy?: number };
 
 export const StakesRequestEntrySchema = z.object({
   network: z.string(),
-  address: z.string(),
+  address: AddressSchema,
   fresh: z.boolean().optional(),
 });
 export type StakesRequestEntry = z.infer<typeof StakesRequestEntrySchema>;

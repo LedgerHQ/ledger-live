@@ -188,11 +188,12 @@ const Body = ({
       setAccount(account);
       setParentAccount(parentAccount);
 
-      updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({
-        ...prev,
-        ...getTransactionProperties(account, parentAccount, token),
-      }));
+      void updateTransactionAccount(account, parentAccount).then(() =>
+        updateTransaction(prev => ({
+          ...prev,
+          ...getTransactionProperties(account, parentAccount, token),
+        })),
+      );
     },
     [token, updateTransaction, updateTransactionAccount, setParentAccount, setAccount],
   );

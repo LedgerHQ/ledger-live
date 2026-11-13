@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getGasTracker } from "@ledgerhq/coin-evm/network";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";

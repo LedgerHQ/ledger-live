@@ -9,16 +9,6 @@ import type { Account } from "@ledgerhq/types-live";
 
 export const XRP = getCryptoCurrencyById("ripple");
 
-export const XRP_LOCAL_RPC = "http://127.0.0.1:5005";
-
-/**
- * The XRPL family seed for the genesis "masterpassphrase" account, which
- * holds the full 100B XRP supply at the start of a `--standalone --start`
- * network. Decodes to address `rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh`.
- */
-export const GENESIS_SEED = "snoPBrXtMeMyMHUVTgbuqAfg1SUTb";
-export const GENESIS_ADDRESS = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
-
 /** Fixed recipient address used across all scenarios. */
 export const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 

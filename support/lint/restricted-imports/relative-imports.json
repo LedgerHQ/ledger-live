@@ -3,6 +3,15 @@
     "eslint/no-restricted-imports": [
       "error",
       {
+        "paths": [
+          {
+            "name": "bignumber.js",
+            "importNames": [
+              "BigNumber"
+            ],
+            "message": "Import the default export: import BigNumber from \"bignumber.js\" (bignumber.js 11 types)."
+          }
+        ],
         "patterns": [
           {
             "group": [

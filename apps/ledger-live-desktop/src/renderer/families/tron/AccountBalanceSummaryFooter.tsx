@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";

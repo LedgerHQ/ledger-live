@@ -77,7 +77,6 @@ describe("fetchRemoteFlags", () => {
     // contain digits or ≥2 consecutive uppercase letters. These flags fail the
     // round-trip and were silently dropped by the previous camelCase-based decoder.
     mockGetAll.mockReturnValue({
-      feature_llm_account_list_ui: value(JSON.stringify({ enabled: true })),
       feature_web_3_hub: value(JSON.stringify({ enabled: true })),
       feature_ptx_swap_receive_trc_20_without_trx: value(JSON.stringify({ enabled: true })),
     });
@@ -86,7 +85,6 @@ describe("fetchRemoteFlags", () => {
     const result = await fetchRemoteFlags();
 
     expect(result).toEqual({
-      llmAccountListUI: { enabled: true },
       web3hub: { enabled: true },
       ptxSwapReceiveTRC20WithoutTrx: { enabled: true },
     });

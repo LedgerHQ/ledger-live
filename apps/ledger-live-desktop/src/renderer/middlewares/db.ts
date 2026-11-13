@@ -39,6 +39,8 @@ import { isPayAction, persistPayCard } from "./payPersistence";
 import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
 
@@ -172,7 +174,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (
     (dismissAccountAnalyticsIntroduction.match(action) ||
-      resetAccountAnalyticsIntroduction.match(action)) &&
+      resetAccountAnalyticsIntroduction.match(action) ||
+      recordAccountAnalyticsIntroductionEligibility.match(action) ||
+      overrideAccountAnalyticsIntroductionEligibility.match(action)) &&
     oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
   ) {
     setKey(
@@ -187,14 +191,14 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
       setKey("app", "settings", settingsStoreSelector(newState));
     }
-  }
 
-  if (oldState.wallet && walletStateExportShouldDiffer(oldState, newState)) {
-    setKey("app", "wallet", exportWalletState(newState));
-  }
+    if (oldState.wallet && walletStateExportShouldDiffer(oldState, newState)) {
+      setKey("app", "wallet", exportWalletState(newState));
+    }
 
-  if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
-    setKey("app", "accounts", accountsExportSelector(newState));
+    if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
+      setKey("app", "accounts", accountsExportSelector(newState));
+    }
   }
 
   if (oldState.identities !== newState.identities) {

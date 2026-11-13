@@ -4,7 +4,7 @@ import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { AmountDisplaySize, FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";

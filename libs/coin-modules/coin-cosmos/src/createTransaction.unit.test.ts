@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import createTransactionDefault, { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {

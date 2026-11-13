@@ -1,4 +1,6 @@
+import { getAddressFromPublicKey } from "@stacks/transactions";
 import { c32addressDecode } from "c32check";
+import { getConfiguredStacksNetwork } from "./network";
 
 type ValidateAddressResult =
   | {
@@ -21,3 +23,7 @@ export const validateAddress = (input: string): ValidateAddressResult => {
     return { isValid: false, error: e };
   }
 };
+
+/** The address of a hex public key on the configured network, as the sync derives it. */
+export const addressFromPublicKey = (publicKey: string): string =>
+  getAddressFromPublicKey(publicKey, getConfiguredStacksNetwork());

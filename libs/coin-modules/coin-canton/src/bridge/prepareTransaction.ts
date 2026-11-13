@@ -1,22 +1,26 @@
-import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { estimateFees } from "../common-logic";
-import coinConfig from "../config";
+import type { CantonContext } from "../config";
+import { estimateFees } from "../logic/estimateFees";
 import { getCalTokensCached } from "../network/gateway";
 import { Transaction } from "../types";
+import { getCurrencyContext } from "./context";
 import { updateTransaction } from "./updateTransaction";
 
 type CantonTokenAccount = TokenAccount & {
   cantonResources: { instrumentAdmin: string };
 };
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
+export const prepareTransaction = async (
+  context: CantonContext,
+  account: Account,
+  transaction: Transaction,
+): Promise<Transaction> => {
   const amount = transaction.amount || BigNumber(0);
   const fee = BigNumber(
-    (await estimateFees(account.currency, BigInt(amount.toFixed()))).toString(),
+    (
+      await estimateFees(getCurrencyContext(context, account.currency), BigInt(amount.toFixed()))
+    ).toString(),
   );
 
   let tokenId = transaction.tokenId;
@@ -27,7 +31,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
     );
     if (subAccount) {
-      const calTokens = await getCalTokensCached(account.currency);
+      const calTokens = await getCalTokensCached(account.currency.id);
       tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
       instrumentAdmin = subAccount.token.contractAddress;
     }
@@ -35,7 +39,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   // Default to native instrument if no tokenId set
   if (!tokenId) {
-    tokenId = coinConfig.getCoinConfig(account.currency.id).nativeInstrumentId;
+    tokenId = (await context.config(account.currency.id)).nativeInstrumentId;
   }
 
   return updateTransaction(transaction, {

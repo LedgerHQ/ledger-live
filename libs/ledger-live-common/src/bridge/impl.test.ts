@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { AccountNotSupported } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CurrencyNotSupported } from "../errors";
 import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";

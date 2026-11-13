@@ -29,7 +29,7 @@ const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
   POLYGON_DAI_TOKEN_ID,
 );
 
-// Reuse the shared Q2 Wallet 4.0 flags (assetDiscoverability enabled).
+// Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {
@@ -75,8 +75,8 @@ const openStablecoinAssetDetail = async (assetName: string, ticker: string) => {
     await app.portfolio.checkStablecoinListPageVisible();
   }
 
-  await app.portfolio.checkAggregatedAssetRowVisible(assetName, app.portfolio.stablecoinListId);
-  await app.portfolio.openAssetDetailW40(assetName, app.portfolio.stablecoinListId);
+  await app.portfolio.checkAggregatedAssetRowVisible(assetName, { inStablecoinList: true });
+  await app.portfolio.openAssetDetailW40(assetName, { inStablecoinList: true });
   await app.assetDetail.expectAssetDetailPageForTicker(ticker);
 };
 
@@ -105,18 +105,12 @@ describe("Asset aggregation", () => {
   $TmsLink("B2CQA-5520");
   it(`[${Currency.POL_DAI.testLabel}] - Aggregated assets show one row per asset and list holding addresses`, async () => {
     await app.portfolio.openStablecoinsListW40();
-    await app.portfolio.checkAggregatedAssetRowVisible(
-      DAI_ASSET_NAME,
-      app.portfolio.stablecoinListId,
-    );
+    await app.portfolio.checkAggregatedAssetRowVisible(DAI_ASSET_NAME, { inStablecoinList: true });
     const aggregatedAssetRowCount = await app.portfolio.getAggregatedAssetRowCount(DAI_ASSET_NAME);
     expect(aggregatedAssetRowCount).toBe(1);
-    await app.portfolio.checkAssetCountervalueVisible(
-      DAI_ASSET_NAME,
-      app.portfolio.stablecoinListId,
-    );
+    await app.portfolio.checkAssetCountervalueVisible(DAI_ASSET_NAME, { inStablecoinList: true });
 
-    await app.portfolio.openAssetDetailW40(DAI_ASSET_NAME, app.portfolio.stablecoinListId);
+    await app.portfolio.openAssetDetailW40(DAI_ASSET_NAME, { inStablecoinList: true });
     await app.assetDetail.expectAssetDetailPageForTicker(DAI_TICKER);
     await app.assetDetail.expectHoldingAddressDetails([
       {

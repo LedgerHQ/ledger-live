@@ -11,4 +11,4 @@ What an account can be asked for, and how its reads went.
 - `accountDataReceived` and `isAccountDataReceived(kind)`: the answer an entity slice matches to store its data, with the `queryKey` it answers.
 - `AccountDataSourceIdSchema`: the branded id of a source.
 
-See [the account data layer](../../../docs/account-data-layer.md) for the read flow and how to add an entity.
+See [the account data layer](../../../docs/account-models/data-layer.md) for the read flow and how to add an entity.

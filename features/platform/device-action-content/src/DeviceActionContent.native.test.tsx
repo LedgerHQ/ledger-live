@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { ThemeContext } from "styled-components/native";
-import * as animationModule from "./getDeviceActionAnimation.native";
-import { DeviceActionContent } from "./DeviceActionContent.native";
+import * as animationModule from "./getDeviceActionAnimation";
+import { DeviceActionContent } from "./DeviceActionContent";
 
 jest.mock("react-native-config", () => ({
   __esModule: true,
@@ -19,9 +19,9 @@ jest.mock("@shared/lottie/native", () => {
   };
 });
 
-jest.mock("./getDeviceActionAnimation.native", () => {
-  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation.native")>(
-    "./getDeviceActionAnimation.native",
+jest.mock("./getDeviceActionAnimation", () => {
+  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation")>(
+    "./getDeviceActionAnimation",
   );
   return {
     ...actual,

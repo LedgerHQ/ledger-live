@@ -1,113 +1,98 @@
-import CommonPage from "@e2e/page/common.page";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink, normalizeText, isIos } from "@e2e/helpers/commonHelpers";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-export default class SwapPage extends CommonPage {
-  baseLink = "swap";
-  confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
-  swapSuccessTitleId = "swap-success-title";
-  deviceActionLoading = "device-action-loading";
-  operationRow = {
-    rowBaseId: "swap-operation-row-",
-    rowRegexp: new RegExp("swap-operation-row-.*"),
-    baseFromAccount: "swap-history-fromAccount-",
-    baseToAccount: "swap-history-toAccount-",
-    baseFromAmount: "swap-history-fromAmount-",
-    baseToAmount: "swap-history-toAmount-",
-  };
-  historyButton = "navigation-header-swap-history";
-  topBarSwapHistoryButton = "topbar-swap-history";
-  exportOperationsButton = "enabled-export-swap-operations-link";
-  swapHistoryFeedbackLink = "swap-history-feedback-link";
+const EXPORTED_HISTORY_PATH = path.resolve(
+  __dirname,
+  "../../artifacts/ledgerwallet-swap-history.csv",
+);
 
-  operationRows = () => getElementById(this.operationRow.rowRegexp);
-  getSpecificOperation = (swapId: string) =>
-    getElementById(`${this.operationRow.rowBaseId}${swapId}`);
+export default class SwapPage {
+  private readonly baseLink = "swap";
 
-  specificOperationAccountFromId = (swapId: string) =>
-    `${this.operationRow.baseFromAccount}${swapId}`;
-  specificOperationAccountToId = (swapId: string) => `${this.operationRow.baseToAccount}${swapId}`;
-  specificOperationAmountFromId = (swapId: string) =>
-    `${this.operationRow.baseFromAmount}${swapId}`;
-  specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
+  private readonly proceedButton = byId("proceed-button");
+  private readonly deviceActionError = byId("error-description-deviceAction");
+  private readonly swapSuccessTitle = byId("swap-success-title");
+  private readonly closeButton = byId("NavigationHeaderCloseButton");
+  private readonly historyButton = byId("navigation-header-swap-history");
+  private readonly topBarSwapHistoryButton = byId("topbar-swap-history");
+  private readonly exportOperationsButton = byId("enabled-export-swap-operations-link");
+  private readonly swapHistoryFeedbackLink = byId("swap-history-feedback-link");
+  private readonly anyOperationRow = byId(/swap-operation-row-.*/);
+  private readonly operationRow = (swapId: string) => byId(`swap-operation-row-${swapId}`);
+  private readonly operationFromAccount = (swapId: string) =>
+    byId(`swap-history-fromAccount-${swapId}`);
+  private readonly operationToAccount = (swapId: string) =>
+    byId(`swap-history-toAccount-${swapId}`);
+  private readonly operationFromAmount = (swapId: string) =>
+    byId(`swap-history-fromAmount-${swapId}`);
+  private readonly operationToAmount = (swapId: string) => byId(`swap-history-toAmount-${swapId}`);
 
   @Step("Open swap via deeplink {{{0}}}")
   async openViaDeeplink(params?: string) {
     const deeplinkPath = params ? `${this.baseLink}?${params}` : this.baseLink;
     await openDeeplink(deeplinkPath);
-    // checkVisibility: false — an ambiguous token can open an account-picker drawer
+    // Exists, not visible: an ambiguous token can open an account-picker drawer
     // that covers the webview first; callers already check visibility themselves.
-    await waitForElementById(app.common.walletApiWebview, undefined, { checkVisibility: false });
+    await app.common.waitForWalletApiWebview();
   }
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
+    await app.common.expectWalletApiWebview();
   }
 
   @Step("Go to swap history")
   async goToSwapHistory() {
-    if (await IsIdVisible(this.topBarSwapHistoryButton, TIMEOUT.small)) {
-      await tapById(this.topBarSwapHistoryButton);
+    if (await this.topBarSwapHistoryButton.isVisible(TIMEOUT.small)) {
+      await this.topBarSwapHistoryButton.tap();
     } else {
-      await tapById(this.historyButton);
+      await this.historyButton.tap();
     }
   }
 
   @Step("Check swap operation row details {{{0}}}")
   async checkSwapOperation(swapId: string, swap: SwapType) {
-    await detoxExpect(this.operationRows()).toBeVisible();
-    await detoxExpect(this.getSpecificOperation(swapId)).toBeVisible();
-    jestExpect(await getTextOfElement(this.specificOperationAccountFromId(swapId))).toEqual(
-      swap.accountToDebit.accountName,
+    await this.anyOperationRow.expectVisible();
+    await this.operationRow(swapId).expectVisible();
+    await this.operationFromAccount(swapId).waitVisible();
+    await this.operationFromAccount(swapId).expectText(swap.accountToDebit.accountName);
+    await this.operationToAccount(swapId).expectText(swap.accountToCredit.accountName);
+    await this.operationFromAmount(swapId).expectText(
+      `${swap.amount} ${swap.accountToDebit.currency.ticker}`,
+      { normaliseWhitespace: true },
     );
-    jestExpect(await getTextOfElement(this.specificOperationAccountToId(swapId))).toEqual(
-      swap.accountToCredit.accountName,
-    );
-    const amountText = await getTextOfElement(this.specificOperationAmountFromId(swapId));
-    jestExpect(normalizeText(amountText)).toEqual(
-      normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
-    );
-    await detoxExpect(getElementById(this.specificOperationAmountToId(swapId))).toBeVisible();
+    await this.operationToAmount(swapId).expectVisible();
   }
 
   @Step("Open selected operation by swapId: {{{0}}}")
   async openSelectedOperation(swapId: string) {
-    await tapByElement(this.getSpecificOperation(swapId));
+    await this.operationRow(swapId).tap();
   }
 
   @Step("Click on export operations")
   async clickExportOperations() {
-    await tapById(this.exportOperationsButton);
-    const filePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
-    const fileExists = await FileUtils.waitForFileToExist(filePath);
+    await this.exportOperationsButton.tap();
+    const fileExists = await FileUtils.waitForFileToExist(EXPORTED_HISTORY_PATH);
     jestExpect(fileExists).toBeTruthy();
   }
 
   @Step("Check swap history feedback form URL {{{0}}}")
   async checkSwapHistoryFeedbackFormUrl(expectedUrl: string) {
-    await detoxExpect(getElementById(this.swapHistoryFeedbackLink)).toBeVisible();
-    const { value, label } = await getAttributesOfElement(this.swapHistoryFeedbackLink);
-    // iOS: accessibilityValue: value; Android: accessibilityLabel: label
-    if (isIos()) {
-      jestExpect(value).toContain(expectedUrl);
-    } else {
-      jestExpect(label).toContain(expectedUrl);
-    }
+    await this.swapHistoryFeedbackLink.expectVisible();
+    await this.swapHistoryFeedbackLink.expectAccessibilityValue(expectedUrl, { containing: true });
   }
 
   @Step("Check contents of exported operations file {{{2}}}")
   async checkExportedFileContents(swap: SwapType, provider: SwapProvider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
-    const fileContents = await fs.readFile(targetFilePath, "utf-8");
+    const fileContents = await fs.readFile(EXPORTED_HISTORY_PATH, "utf-8");
 
     jestExpect(fileContents).toContain(provider.name);
     jestExpect(fileContents).toContain(id);
@@ -141,28 +126,16 @@ export default class SwapPage extends CommonPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, TIMEOUT.xxxlarge, {
-      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
-    });
-    await tapById(app.common.proceedButtonId);
+    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.deviceActionError);
+    await this.proceedButton.tap();
   }
 
   @Step("Wait for swap success and close")
   async waitForSuccessAndClose() {
-    await waitForElementById(this.swapSuccessTitleId, TIMEOUT.xxxlarge, {
-      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
-    });
-    let tapped = false;
-    await retryUntilTimeout(async () => {
-      if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, TIMEOUT.xxxsmall))) {
-        return; // already dismissed by a previous tap — nothing left to do
-      }
-      tapped = true;
-      await app.common.closePage();
-      if (await IsIdVisible(this.swapSuccessTitleId, TIMEOUT.xxsmall)) {
-        throw new Error("swap-success-title still visible after close tap");
-      }
-    }, TIMEOUT.xxlarge);
+    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.deviceActionError);
+    await this.closeButton.waitFullyVisible();
+    await this.closeButton.tap();
+    await this.swapSuccessTitle.waitNotVisible();
   }
 
   @Step("Selected provider: {{{0}}}")

@@ -1,5 +1,5 @@
 import type { TransactionStatus } from "../../../../coin-modules/transaction-types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export type StatusWithTxOutputs = TransactionStatus & {
   txOutputs?: ReadonlyArray<{ isChange: boolean; value: BigNumber }>;

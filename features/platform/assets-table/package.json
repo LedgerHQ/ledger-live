@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-assets-table",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Desktop assets table (name, price, balance, value, trend) shared by Portfolio, Crypto addresses and Account Detail",
   "main": "src/index.ts",
@@ -27,6 +27,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@shared/i18n": "workspace:*",
+    "@shared/trend": "workspace:*",
     "bignumber.js": "catalog:"
   },
   "peerDependencies": {

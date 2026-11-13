@@ -1,4 +1,4 @@
-import { Subscription } from "rxjs";
+import type { Unsubscribable } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
@@ -465,7 +465,12 @@ export class DefaultConnectDeviceStateMachine<
     TConnectionError
   >["matchDiscoveredDevices"];
 
-  private subscriptions: Array<Subscription> = [];
+  private readonly observer: ConnectDeviceStateMachineInput<
+    ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >["observer"];
+
+  private subscriptions: Array<Unsubscribable> = [];
 
   constructor(
     input: ConnectDeviceStateMachineInput<
@@ -473,6 +478,7 @@ export class DefaultConnectDeviceStateMachine<
       TConnectionError
     >,
   ) {
+    this.observer = input.observer;
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.knownDevices = input.knownDevices;
     this.matchDiscoveredDevices = input.matchDiscoveredDevices;
@@ -504,14 +510,23 @@ export class DefaultConnectDeviceStateMachine<
     const errorsSubscription = this.deviceDiscoveryService.errors.subscribe(error => {
       this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveryError, error });
     });
+    // Without an error observer, XState rethrows the error outside the use case.
+    const actorErrorsSubscription = this.actor.subscribe({
+      error: error => this.observer.error(error),
+    });
+    this.subscriptions.push(
+      discoveredDevicesSubscription,
+      errorsSubscription,
+      actorErrorsSubscription,
+    );
     this.actor.start();
-    this.subscriptions.push(discoveredDevicesSubscription, errorsSubscription);
   }
 
   stop(): void {
     const snapshot = this.actor.getSnapshot();
 
-    if (snapshot.context.isDiscovering) {
+    // A failure while computing the initial state leaves a snapshot without context.
+    if (snapshot.context?.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();

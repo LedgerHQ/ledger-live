@@ -35,13 +35,13 @@ import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
-import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
+import type { ReceiveVerifyHintState } from "@features/flow-receive/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
-  PayRequestVerifyHintState &
+  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;

@@ -55,3 +55,25 @@ describe("AnalyticsBalanceDisplay", () => {
     });
   });
 });
+
+describe("AnalyticsBalanceDisplay with a scoped balance", () => {
+  it("shows the scoped amount even when the Portfolio balance is unavailable", () => {
+    render(
+      <AnalyticsBalanceDisplay balance={{ amount: 42, isLoading: false, isAvailable: true }} />,
+      {
+        overrideInitialState: withBalance({ isBalanceAvailable: false }),
+      },
+    );
+    expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
+  });
+
+  it("shows the skeleton while the scoped balance is unavailable", () => {
+    render(
+      <AnalyticsBalanceDisplay balance={{ amount: 0, isLoading: true, isAvailable: false }} />,
+      {
+        overrideInitialState: withBalance({ isBalanceAvailable: true, displayedBalance: 5000 }),
+      },
+    );
+    expect(screen.getByTestId("analytics-balance-skeleton")).toBeVisible();
+  });
+});

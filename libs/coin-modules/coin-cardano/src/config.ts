@@ -7,6 +7,8 @@ export type CardanoConfig = {
   maxFeesWarning: number;
   maxFeesError: number;
   testnet: boolean;
+  api: { url: string };
+  epochParams: { url: string };
 };
 
 export type CardanoCoinConfig = CurrencyConfig & CardanoConfig;
@@ -32,6 +34,8 @@ export const cardanoDefaults = {
     maxFeesWarning: 5e6,
     maxFeesError: 10e6,
     testnet: false,
+    api: { url: "https://cardano.coin.ledger.com/api" },
+    epochParams: { url: "https://ada.api.live.ledger.com/api/rest/params" },
   },
   cardano_testnet: {
     status: {
@@ -46,5 +50,7 @@ export const cardanoDefaults = {
     maxFeesWarning: 5e6,
     maxFeesError: 10e6,
     testnet: true,
+    api: { url: "https://ledger-preprod.cardanoscan.io/api" },
+    epochParams: { url: "https://ada-testnet.api.live.ledger-test.com/api/rest/params" },
   },
 } satisfies Record<string, CardanoCoinConfig>;

@@ -32,11 +32,6 @@ describe("exitActions", () => {
       [NavigatorName.Base, NavigatorName.MyWallet, ScreenName.MyWallet],
       { device: stax, firmwareUpdate: false },
     ],
-    [
-      "legacyFallback",
-      [NavigatorName.BaseOnboarding, NavigatorName.Onboarding, ScreenName.OnboardingUseCase],
-      { deviceModelId: DeviceModelId.stax },
-    ],
   ] as const)("%s opens %j", (reason, path, params) => {
     const { opened } = leave(reason);
 
@@ -66,6 +61,17 @@ describe("exitActions", () => {
 
     expect(opened).toBeNull();
     expect(popped).toEqual(StackActions.pop(1));
+  });
+
+  it("should close the device flow and onboarding together", () => {
+    const { opened, popped } = leave("completed", { isGenuine: true }, [
+      NavigatorName.Base,
+      NavigatorName.BaseOnboarding,
+      NavigatorName.DeviceOnboarding,
+    ]);
+
+    expect(opened).toBeNull();
+    expect(popped).toEqual(StackActions.pop(2));
   });
 
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
@@ -200,7 +206,7 @@ describe("exitActions", () => {
 function leave(
   reason: DeviceOnboardingExitReason,
   overrides: Partial<ExitDeps> = {},
-  rootRoutes: string[] = [NavigatorName.BaseOnboarding],
+  rootRoutes: string[] = [NavigatorName.BaseOnboarding, NavigatorName.DeviceOnboarding],
 ) {
   const dispatch = jest.fn();
   const outer = {
@@ -211,7 +217,8 @@ function leave(
     goBack: jest.fn(),
     getParent: () => undefined,
   };
-  const inner = {
+  const flow = {
+    getState: () => ({ routes: [{ name: ScreenName.DeviceOnboardingFunnel }] }),
     reset: jest.fn(),
     navigate: jest.fn(),
     goBack: jest.fn(),
@@ -220,7 +227,7 @@ function leave(
 
   exitActions[reason]({
     dispatch: dispatch as unknown as ExitDeps["dispatch"],
-    navigation: inner as unknown as ExitDeps["navigation"],
+    navigation: flow as unknown as ExitDeps["navigation"],
     device: stax,
     wasReadOnlyAtEntry: false,
     isGenuine: false,
@@ -230,17 +237,16 @@ function leave(
     ...overrides,
   });
 
-  expect(inner.reset).not.toHaveBeenCalled();
   const reset = outer.reset.mock.calls[0]?.[0] as { index: number; routes: Route[] } | undefined;
 
   return {
     dispatched: dispatch.mock.calls.map(([action]) => action),
     reset: reset ?? null,
     opened: reset ? lastRoute(reset.routes) : null,
-    navigated: (inner.navigate.mock.calls[0]?.[0]
-      ? { name: inner.navigate.mock.calls[0][0], params: inner.navigate.mock.calls[0][1] }
+    navigated: (flow.navigate.mock.calls[0]?.[0]
+      ? { name: flow.navigate.mock.calls[0][0], params: flow.navigate.mock.calls[0][1] }
       : null) as { name: string; params: unknown } | null,
-    wentBack: inner.goBack.mock.calls.length > 0,
+    wentBack: flow.goBack.mock.calls.length > 0,
     popped: outer.dispatch.mock.calls[0]?.[0] ?? null,
   };
 }

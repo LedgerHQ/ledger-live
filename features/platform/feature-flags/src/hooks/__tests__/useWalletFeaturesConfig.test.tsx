@@ -37,7 +37,6 @@ const makeConfig = (
   isEnabled: value,
   shouldUseLazyOnboarding: value,
   shouldDisplayBrazePlacement: value,
-  shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
   shouldDisplayEarnSimulator: value,
   ...overrides,
@@ -46,7 +45,6 @@ const makeConfig = (
 const makeParams = (value: boolean): Wallet40Params => ({
   lazyOnboarding: value,
   brazePlacement: value,
-  assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
 });

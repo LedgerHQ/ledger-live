@@ -8,7 +8,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { computeAlgoMaxSpendable } from "./bridgeLogic";
 import {
   getAccount,

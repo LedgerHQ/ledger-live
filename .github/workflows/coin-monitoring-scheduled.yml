@@ -4,11 +4,11 @@ permissions:
   contents: read
 on:
   schedule:
-    - cron: "0 15 * * *" # every working day at 3pm
+    - cron: "0 15 * * *" # every day at 3pm
 
 jobs:
   run-monitoring:
-    runs-on: [ledger-live-4xlarge]
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     permissions:
       id-token: write
       contents: read

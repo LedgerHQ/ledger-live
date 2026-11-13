@@ -3,7 +3,7 @@
 // a WalletBridge is implemented on renderer side.
 // this is an abstraction on top of underlying blockchains api (libcore / ethereumjs / ripple js / ...)
 // that would directly be called from UI needs.
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency, Unit } from "./currency";
 import type { DeviceModelId } from "@ledgerhq/types-devices";

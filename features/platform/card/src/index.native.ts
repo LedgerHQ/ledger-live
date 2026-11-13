@@ -1,2 +1,2 @@
-export * from "./session/cardSession.native";
+export * from "./session/cardSession";
 export * from "./session/types";

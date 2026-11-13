@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { hexToU8a } from "@polkadot/util";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { PolkadotContext } from "../config";
 import { signExtrinsic } from "../logic";

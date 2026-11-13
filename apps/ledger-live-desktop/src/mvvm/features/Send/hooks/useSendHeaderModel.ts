@@ -27,6 +27,7 @@ import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { track, trackPage } from "@shared/analytics";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
@@ -117,6 +118,7 @@ export function useSendHeaderModel({
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
+  const isDeviceBlocked = useDeviceBlocked();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
@@ -296,6 +298,7 @@ export function useSendHeaderModel({
   ]);
 
   const handleClose = useCallback(() => {
+    if (isDeviceBlocked) return;
     track("button_clicked", {
       button: "close",
       page: getSendFlowTrackingPage(currentStep, isSelectingContactAddress),
@@ -303,7 +306,14 @@ export function useSendHeaderModel({
       ...trackingProperties,
     });
     close();
-  }, [close, currentStep, isSelectingContactAddress, recipientType, trackingProperties]);
+  }, [
+    close,
+    currentStep,
+    isDeviceBlocked,
+    isSelectingContactAddress,
+    recipientType,
+    trackingProperties,
+  ]);
 
   const recipientHeader = useMemo(
     () =>

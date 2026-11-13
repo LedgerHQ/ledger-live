@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "LLD/hooks/redux";
+import { countervalueChangeFromDayPercent } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/actions/portfolio";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTimeRange } from "~/renderer/actions/settings";
@@ -45,6 +48,14 @@ export default function AccountBalanceSummary({
       account,
       range,
     });
+  const currencyId = getAccountCurrency(account).id;
+  const { byLedgerId: marketDayChange } = useMarketDayChange();
+  const dayChangePercentPoints = marketDayChange.get(currencyId);
+  const displayedCountervalueChange =
+    range === "day" && dayChangePercentPoints != null
+      ? (countervalueChangeFromDayPercent(history.at(-1)?.countervalue, dayChangePercentPoints) ??
+        countervalueChange)
+      : countervalueChange;
   const discreetMode = useSelector(discreetModeSelector);
   const dayFormatter = useDateFormatter(dayFormat);
   const hourFormatter = useDateFormatter(hourFormat);
@@ -111,7 +122,7 @@ export default function AccountBalanceSummary({
         <AccountBalanceSummaryHeader
           account={account}
           counterValue={counterValue}
-          countervalueChange={countervalueChange}
+          countervalueChange={displayedCountervalueChange}
           cryptoChange={cryptoChange}
           last={history[history.length - 1]}
           isAvailable={countervalueAvailable}

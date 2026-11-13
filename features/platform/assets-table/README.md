@@ -13,8 +13,9 @@ is read from `@features/platform-market-countervalues`.
 
 - `useAssetsTable(items, options)` builds the Lumen data table. `showPriceColumn` and
   `showTrendColumnTooltip` match the previous desktop options.
-- `useAllCurrencyTrends(items, range, marketDayChangeByCurrencyId)` maps each currency id to its
-  trend percentage.
+- `useAllCurrencyTrends(items, range, marketDayChangeByCurrencyId, marketDayTrend)` maps each
+  currency id to its trend percentage. `marketDayTrend` defaults to `"flat-holding"`. `"market"`
+  uses the day percentage from `marketDayChangeByCurrencyId` directly.
 - `AssetTableItem` is the row. `sanitizeAssetNameForTestId` builds the row test id.
 - `AssetsTablePortsProvider` supplies formatting, balance cells, name truncation, discreet mode and portfolio reads.
 - `@features/platform-assets-table/test-id` exports only `sanitizeAssetNameForTestId`, for Playwright.

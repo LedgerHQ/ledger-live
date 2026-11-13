@@ -1,4 +1,4 @@
-import { getDeviceActionAnimation } from "./getDeviceActionAnimation.native";
+import { getDeviceActionAnimation } from "./getDeviceActionAnimation";
 
 import NanoSPPinDark from "./animations/native/nanoSP/dark/pin.json";
 import NanoSPPinLight from "./animations/native/nanoSP/light/pin.json";

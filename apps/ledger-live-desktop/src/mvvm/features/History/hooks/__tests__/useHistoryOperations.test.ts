@@ -279,6 +279,26 @@ describe("useHistoryOperations", () => {
     expect(items.every(item => item.account.id === usdc.id)).toBe(true);
   });
 
+  it("when accountIds references a root account, excludes the operations of its token sub-accounts", () => {
+    const ethRoot = genAccount("eth-root-scope", {
+      currency: ETH_ACCOUNT.currency,
+      subAccountsCount: 0,
+      operationsSize: 2,
+    });
+    const usdc = genTokenAccount(0, ethRoot, usdcToken);
+    const matic = genTokenAccount(1, ethRoot, maticEth);
+    const ethTree = { ...ethRoot, subAccounts: [usdc, matic] };
+
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: { accounts: [ethTree], settings: INITIAL_STATE },
+      initialRoute: `/history?accountIds=${encodeURIComponent(ethRoot.id)}`,
+    });
+
+    const items = result.current;
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every(item => item.account.id === ethRoot.id)).toBe(true);
+  });
+
   it("scopes to a contact's addresses, keeping IN (senders) and OUT (recipients) that touch them", () => {
     const account = createEthAccountWithContactTransfers();
 

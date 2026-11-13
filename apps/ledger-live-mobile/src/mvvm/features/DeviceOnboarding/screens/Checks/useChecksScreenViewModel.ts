@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { useCallback, useState } from "react";
+import { Linking, Platform } from "react-native";
+import { track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { useTranslation } from "~/context/Locale";
+import { useLocale, useTranslation } from "~/context/Locale";
+import { urls } from "~/utils/urls";
+import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
 import type {
   ChecksScreenProps,
   ChecksScreenState,
@@ -17,8 +20,8 @@ import {
 
 type AllowSheetProps = Readonly<{
   deviceModelId: Device["modelId"];
-  deviceName?: string;
-  title: string;
+  deviceName: string;
+  isOpen: boolean;
   onClose?: () => void;
 }>;
 
@@ -32,6 +35,7 @@ type FirmwareUpdateDrawerProps = Readonly<{
 
 type UnsupportedUpdateDrawerProps = Readonly<{
   isOpen: boolean;
+  mounted: boolean;
   onClose: () => void;
   isUsbRequired: boolean;
   productName: string;
@@ -46,15 +50,24 @@ type ErrorDrawerProps = Readonly<{
   onRetry: () => void;
   onCancel: () => void;
   onClose: () => void;
+  onContactSupport: () => void;
+  onGoToSettings: () => void;
 }>;
 
 type NotGenuineDrawerProps = Readonly<{
   isOpen: boolean;
   productName: string;
   onClose: () => void;
+  onContactSupport: () => void;
 }>;
 
 export type ChecksIllustration = "loading" | "scan" | "success";
+
+type SecondaryAction = Readonly<{
+  label: string;
+  testID: string;
+  onPress: () => void;
+}>;
 
 export type ChecksViewProps = Readonly<{
   illustration?: ChecksIllustration;
@@ -64,6 +77,7 @@ export type ChecksViewProps = Readonly<{
   primaryTestID?: string;
   primaryLoading?: boolean;
   onPrimary?: () => void;
+  secondary?: SecondaryAction;
   onQuit?: () => void;
   closeLabel: string;
   allowSheet?: AllowSheetProps;
@@ -73,7 +87,7 @@ export type ChecksViewProps = Readonly<{
   notGenuineDrawer: NotGenuineDrawerProps;
 }>;
 
-type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
+type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow">;
 
 type LayoutProps = Omit<
   ChecksViewProps,
@@ -86,13 +100,35 @@ type LayoutProps = Omit<
   | "notGenuineDrawer"
 >;
 
+const recoverableErrorPage = "Error: unknown error";
+
+const providerErrorPage = "Error: Device OS version not recognized";
+const providerSettingsPage = "Error: Ledger Stax OS version not recognized";
+
+function trackRecoverableButton(button: string, page = recoverableErrorPage) {
+  track("button_clicked", { button, page });
+}
+
+function openUrl(url: string) {
+  const pending = Linking.openURL(url);
+  if (pending) pending.catch(() => undefined);
+}
+
+function contactSupportWebviewUrl(locale: string): string {
+  if (locale in urls.contactSupportWebview) {
+    return urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview];
+  }
+  return urls.contactSupportWebview.en;
+}
+
 function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorKind | null {
   if (!error || error.kind === "notGenuine") return null;
   return error.kind;
 }
 
-function checksLayout(state: ChecksScreenState): ChecksLayout {
-  if (state === "awaitingAllow" || state === "updating") return "checking";
+function checksLayout(state: ChecksScreenState, hasUpdate: boolean): ChecksLayout {
+  if (state === "awaitingAllow") return "checking";
+  if (state === "updating" && !hasUpdate) return "checking";
   return state;
 }
 
@@ -102,23 +138,6 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
     deviceInfo: { version },
     apps: [],
   } as unknown as DeviceModelInfo;
-}
-
-function headerQuit(
-  state: ChecksScreenState,
-  firmwareOfferClosed: boolean,
-  onQuit: ChecksScreenProps["onQuit"],
-) {
-  if (state === "updating" && !firmwareOfferClosed) return undefined;
-  return onQuit;
-}
-
-function firmwareOfferVisible(
-  hasUpdate: boolean,
-  unsupportedOpen: boolean,
-  firmwareOfferClosed: boolean,
-) {
-  return hasUpdate && !unsupportedOpen && !firmwareOfferClosed;
 }
 
 function firmwareEligibility(device: Device, current: string) {
@@ -132,6 +151,101 @@ function firmwareEligibility(device: Device, current: string) {
   };
 }
 
+function dismissRecoverableError(
+  suspendSheets: boolean,
+  recoverableKind: RecoverableErrorKind | null,
+  onCloseSheet: () => void,
+) {
+  if (suspendSheets || !recoverableKind) return;
+  onCloseSheet();
+}
+
+function dismissNotGenuine(
+  suspendSheets: boolean,
+  isNotGenuine: boolean,
+  onQuit: ChecksScreenProps["onQuit"],
+) {
+  if (suspendSheets || !isNotGenuine) return;
+  onQuit?.();
+}
+
+type Translate = ReturnType<typeof useTranslation>["t"];
+
+function checksLayouts(
+  translate: Translate,
+  firmwareUpToDate: boolean,
+  onContinue: ChecksScreenProps["onContinue"],
+  onStart: () => void,
+  onInstall: () => void,
+  onSkip: () => void,
+): Record<ChecksLayout, LayoutProps> {
+  return {
+    synchronizing: {
+      illustration: "loading",
+      title: translate("deviceOnboarding.checks.synchronizing.title"),
+    },
+    idle: {
+      illustration: "scan",
+      title: translate("deviceOnboarding.checks.idle.title"),
+      description: translate("deviceOnboarding.checks.idle.description"),
+      primaryLabel: translate("deviceOnboarding.checks.idle.cta"),
+      primaryTestID: checksTestIds.start,
+      onPrimary: onStart,
+    },
+    checking: {
+      illustration: "scan",
+      title: translate("deviceOnboarding.checks.checking.title"),
+      description: translate("deviceOnboarding.checks.checking.description"),
+      primaryLabel: translate("deviceOnboarding.checks.checking.cta"),
+      primaryLoading: true,
+    },
+    updating: {
+      illustration: "scan",
+      title: translate("deviceOnboarding.checks.updating.title"),
+      description: translate("deviceOnboarding.checks.updating.description"),
+      primaryLabel: translate("deviceOnboarding.checks.updating.installCta"),
+      primaryTestID: checksTestIds.installUpdate,
+      onPrimary: onInstall,
+      secondary: {
+        label: translate("deviceOnboarding.checks.updating.skipCta"),
+        testID: checksTestIds.skipUpdate,
+        onPress: onSkip,
+      },
+    },
+    succeeded: {
+      illustration: "success",
+      title: translate(
+        firmwareUpToDate
+          ? "deviceOnboarding.checks.succeeded.title"
+          : "deviceOnboarding.checks.succeeded.genuineTitle",
+      ),
+      primaryLabel: translate("deviceOnboarding.checks.succeeded.cta"),
+      primaryTestID: checksTestIds.continue,
+      ...(onContinue ? { onPrimary: onContinue } : { primaryLoading: true }),
+    },
+  };
+}
+
+function sheetOpen(active: boolean, suspendSheets: boolean) {
+  return active && !suspendSheets;
+}
+
+function allowSheetFor(
+  device: Device,
+  state: ChecksScreenState,
+  allowClosed: boolean,
+  suspendSheets: boolean,
+  close: () => void,
+): AllowSheetProps | undefined {
+  if (state !== "awaitingAllow" || allowClosed) return undefined;
+  return {
+    deviceModelId: device.modelId,
+    deviceName: device.deviceName ?? "",
+    isOpen: !suspendSheets,
+    onClose: suspendSheets ? undefined : close,
+  };
+}
+
 export function useChecksScreenViewModel({
   device,
   state,
@@ -141,149 +255,119 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
-  onCloseNotGenuine,
-  onCloseFirmwareOffer,
   onContinue,
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
+  suspendSheets = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
-  const layout = checksLayout(state);
+  const { locale } = useLocale();
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const { openSupport, openExperimentalSettings } = useInitializerActions({
+    id: device.deviceId,
+    name: device.deviceName ?? "",
+    modelId: device.modelId,
+    productName,
+    wired: device.wired,
+  });
   const recoverableKind = recoverableKindOf(error);
   const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
   if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
     setRetainedRecoverableKind(recoverableKind);
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
+  const retry = useCallback(() => {
+    trackRecoverableButton("Try again");
+    onRetry();
+  }, [onRetry]);
+  const cancel = useCallback(() => {
+    trackRecoverableButton(
+      "Cancel",
+      errorDrawerKind === "provider" ? providerErrorPage : recoverableErrorPage,
+    );
+    onQuit?.();
+  }, [errorDrawerKind, onQuit]);
+  const onContactSupport = useCallback(() => {
+    trackRecoverableButton("Contact Ledger Support");
+    openSupport();
+  }, [openSupport]);
+  const onContactNotGenuineSupport = useCallback(() => {
+    track("button_clicked", { button: "Contacting support about non genuine device" });
+    openUrl(contactSupportWebviewUrl(locale));
+  }, [locale]);
+  const onGoToSettings = useCallback(() => {
+    trackRecoverableButton("Go to settings", providerSettingsPage);
+    openExperimentalSettings();
+  }, [openExperimentalSettings]);
+  const layout = checksLayout(state, update !== null);
   const [allowClosed, setAllowClosed] = useState(false);
-  const [closedFirmwareOfferKey, setClosedFirmwareOfferKey] = useState<string | null>(null);
-  const closedFirmwareOfferKeyRef = useRef<string | null>(null);
-  if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
-  const updateKey = update ? `${update.current}|${update.available}` : "";
+  if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
+  const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
-  const declinedFor = useRef<string | null>(null);
-  const suppressOfferCloseFor = useRef<string | null>(null);
-  const firmwareOfferOpen = state === "updating" && update !== null;
-  const firmwareOfferClosed = closedFirmwareOfferKey === updateKey && updateKey !== "";
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+
+  const updateKey = update ? `${update.current}|${update.available}` : "";
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const offered = state === "updating" && update !== null;
+  const offerDismissed = dismissedOfferKey === updateKey;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
+  const offerOpen = offered && !offerDismissed && !isUnsupportedUpdateOpen && !suspendSheets;
 
-  useEffect(() => {
-    if (suppressOfferCloseFor.current === updateKey) return;
-    suppressOfferCloseFor.current = null;
-  }, [updateKey]);
-
-  const layouts: Record<ChecksLayout, LayoutProps> = {
-    synchronizing: {
-      illustration: "loading",
-      title: t("deviceOnboarding.checks.synchronizing.title"),
-    },
-    idle: {
-      illustration: "scan",
-      title: t("deviceOnboarding.checks.idle.title"),
-      description: t("deviceOnboarding.checks.idle.description"),
-      primaryLabel: t("deviceOnboarding.checks.idle.cta"),
-      primaryTestID: checksTestIds.start,
-      onPrimary: onStart,
-    },
-    checking: {
-      illustration: "scan",
-      title: t("deviceOnboarding.checks.checking.title"),
-      description: t("deviceOnboarding.checks.checking.description"),
-      primaryLabel: t("deviceOnboarding.checks.checking.cta"),
-      primaryLoading: true,
-    },
-    succeeded: {
-      illustration: "success",
-      title: t(
-        firmwareUpToDate
-          ? "deviceOnboarding.checks.succeeded.title"
-          : "deviceOnboarding.checks.succeeded.genuineTitle",
-      ),
-      primaryLabel: t("deviceOnboarding.checks.succeeded.cta"),
-      primaryTestID: checksTestIds.continue,
-      ...(onContinue ? { onPrimary: onContinue } : { primaryLoading: true }),
-    },
+  const acceptUpdate = () => {
+    if (!eligibility) return;
+    if (eligibility.canUpdate) onAcceptUpdate();
+    else setUnsupportedFor(updateKey);
   };
+  const reopenFirmwareOffer = () => setDismissedOfferKey(null);
 
   return {
-    ...layouts[layout],
+    ...checksLayouts(
+      t,
+      firmwareUpToDate,
+      onContinue,
+      onStart,
+      reopenFirmwareOffer,
+      onDeclineUpdate,
+    )[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: headerQuit(state, firmwareOfferClosed, onQuit),
-    allowSheet:
-      state === "awaitingAllow" && !allowClosed
-        ? {
-            deviceModelId: device.modelId,
-            deviceName: device.deviceName ?? undefined,
-            title: t("earlySecurityCheck.allowManagerDrawer.title"),
-            onClose: () => {
-              setAllowClosed(true);
-              onQuit?.();
-            },
-          }
-        : undefined,
+    onQuit: offered && !offerDismissed ? undefined : onQuit,
+    allowSheet: allowSheetFor(device, state, allowClosed, suspendSheets, () => {
+      setAllowClosed(true);
+      onQuit?.();
+    }),
     firmwareUpdate: {
-      isOpen: firmwareOfferVisible(update !== null, isUnsupportedUpdateOpen, firmwareOfferClosed),
+      isOpen: offerOpen,
       firmwareVersion: update?.available ?? "",
       productName,
-      onUpdate: () => {
-        if (!update || !eligibility) return;
-        if (eligibility.canUpdate) {
-          suppressOfferCloseFor.current = updateKey;
-          onAcceptUpdate();
-          return;
-        }
-        suppressOfferCloseFor.current = updateKey;
-        setUnsupportedFor(updateKey);
-      },
+      onUpdate: acceptUpdate,
       onClose: () => {
-        if (!firmwareOfferOpen) return;
-        if (suppressOfferCloseFor.current === updateKey) return;
-        if (onCloseFirmwareOffer) {
-          if (closedFirmwareOfferKeyRef.current === updateKey) return;
-          closedFirmwareOfferKeyRef.current = updateKey;
-          setClosedFirmwareOfferKey(updateKey);
-          onCloseFirmwareOffer();
-          return;
-        }
-        if (declinedFor.current === updateKey) return;
-        declinedFor.current = updateKey;
-        onDeclineUpdate();
+        if (offerOpen) setDismissedOfferKey(updateKey);
       },
     },
     unsupportedUpdate: {
-      isOpen: isUnsupportedUpdateOpen,
+      isOpen: sheetOpen(isUnsupportedUpdateOpen, suspendSheets),
+      mounted: isUnsupportedUpdateOpen,
       isUsbRequired: eligibility?.isUsbRequired ?? false,
       productName,
       onClose: () => {
-        suppressOfferCloseFor.current = null;
-        setUnsupportedFor(null);
+        if (!suspendSheets) setUnsupportedFor(null);
       },
     },
     errorDrawer: {
-      isOpen: recoverableKind !== null,
+      isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
       kind: errorDrawerKind,
       productName,
-      onRetry,
-      onCancel: () => onQuit?.(),
-      onClose: () => {
-        if (!recoverableKind) return;
-        onCloseSheet();
-      },
+      onRetry: retry,
+      onCancel: cancel,
+      onClose: () => dismissRecoverableError(suspendSheets, recoverableKind, onCloseSheet),
+      onContactSupport,
+      onGoToSettings,
     },
     notGenuineDrawer: {
-      isOpen: error?.kind === "notGenuine",
+      isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
       productName,
-      onClose: () => {
-        if (error?.kind !== "notGenuine") return;
-        if (onCloseNotGenuine) {
-          onCloseNotGenuine();
-          return;
-        }
-        onQuit?.();
-      },
+      onClose: () => dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onQuit),
+      onContactSupport: onContactNotGenuineSupport,
     },
   };
 }

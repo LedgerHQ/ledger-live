@@ -1,5 +1,29 @@
 # @domain/entity-currency-crypto
 
+## 0.19.0
+
+### Minor Changes
+
+- [#24564](https://github.com/LedgerHQ/ledger-live/pull/24564) [`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc) Thanks [@semeano](https://github.com/semeano)! - add the alpen evm currency, the mainnet of alpen_testnet
+
+- [#24583](https://github.com/LedgerHQ/ledger-live/pull/24583) [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop exporting `ExplorerViewSchema` and `CRYPTO_CURRENCY_ALIASES`, both internal to the package
+
+- [#24110](https://github.com/LedgerHQ/ledger-live/pull/24110) [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4) Thanks [@qperrot](https://github.com/qperrot)! - Remove Fantom, whose network migrated to Sonic
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#24564](https://github.com/LedgerHQ/ledger-live/pull/24564) [`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc) Thanks [@semeano](https://github.com/semeano)! - add the alpen evm currency, the mainnet of alpen_testnet
+
+- [#24583](https://github.com/LedgerHQ/ledger-live/pull/24583) [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop exporting `ExplorerViewSchema` and `CRYPTO_CURRENCY_ALIASES`, both internal to the package
+
+- [#24110](https://github.com/LedgerHQ/ledger-live/pull/24110) [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4) Thanks [@qperrot](https://github.com/qperrot)! - Remove Fantom, whose network migrated to Sonic
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
 ## 0.18.0
 
 ### Minor Changes
@@ -241,17 +265,5 @@
 ### Minor Changes
 
 - [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
-
-## 0.8.0
-
-### Minor Changes
-
-- [#20048](https://github.com/LedgerHQ/ledger-live/pull/20048) [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c) Thanks [@ysitbon](https://github.com/ysitbon)! - Re-export CryptoCurrencyId / CryptoCurrencyIdSchema from @domain/entity-currency-crypto and TokenCurrencyId / TokenCurrencyIdSchema from @domain/entity-currency-token
-
-## 0.8.0-next.0
-
-### Minor Changes
-
-- [#20048](https://github.com/LedgerHQ/ledger-live/pull/20048) [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c) Thanks [@ysitbon](https://github.com/ysitbon)! - Re-export CryptoCurrencyId / CryptoCurrencyIdSchema from @domain/entity-currency-crypto and TokenCurrencyId / TokenCurrencyIdSchema from @domain/entity-currency-token
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

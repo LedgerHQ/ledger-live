@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
 import { PsbtV2 } from "@ledgerhq/psbtv2";
 

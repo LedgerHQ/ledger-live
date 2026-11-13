@@ -5,7 +5,7 @@ import {
   type CryptoCurrency,
 } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { SuiCoinConfig } from "../config";
 import suiConfig from "../config";
 import { getAddress as signerGetAddress } from "../signer";

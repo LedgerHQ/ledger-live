@@ -7,6 +7,12 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { swapSetup } from "@e2e/bridge/server";
+import { TIMEOUT } from "@e2e/utils/timeouts";
+import {
+  getExpectedSeparators,
+  buildFormattedAmountPattern,
+} from "@ledgerhq/live-e2e-shared/data/numberFormat";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransactionStatus.drawer";
 
@@ -131,9 +137,10 @@ export function runSwapWithDifferentSeedTest(
 export function runSwapLandingPageTest(
   fromAccount: Account,
   toAccount: Account,
-  tmsLinks: string[],
+  tmsLinks: { landingPage: string[]; formatting: string[] },
   tags: string[],
 ) {
+  setTeamOwner(Team.SWAP);
   describe("Swap - landing page", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -153,8 +160,7 @@ export function runSwapLandingPageTest(
       });
     });
 
-    setTeamOwner(Team.SWAP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tmsLinks.landingPage.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
@@ -174,6 +180,27 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.expectSwapLiveAppForm();
       await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
       await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
+    });
+
+    tmsLinks.formatting.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it("Swap amounts are formatted correctly for language: Français", async () => {
+      await app.mainNavigation.openPortfolioViaDeeplink();
+      await app.mainNavigation.navigateToSettings();
+      await app.settings.navigateToGeneralSettings();
+      await app.settingsGeneral.navigateToLanguageSelect();
+      await app.settingsGeneral.selectLanguage("Français");
+      await swapSetup();
+      await app.swap.openViaDeeplink();
+      await app.swapLiveApp.expectSwapLiveApp();
+
+      const separators = getExpectedSeparators("fr");
+      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount, false);
+      await app.swapLiveApp.clickSwapMax(buildFormattedAmountPattern(separators), TIMEOUT.large);
+      await app.swapLiveApp.tapGetQuotesButton();
+      await app.swapLiveApp.waitForQuotes();
+      await app.swapLiveApp.checkAmountsFormatting(separators);
     });
   });
 }
@@ -476,37 +503,6 @@ export function runSwapWithSendMaxTest(
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.waitForSuccessAndContinue();
-    });
-  });
-}
-
-export function runSwapSwitchSendAndReceiveCurrenciesTest(
-  swap: SwapType,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  describe("Swap - switch currencies", () => {
-    beforeAll(async () => {
-      await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunctionSwap({
-        userdata: "speculos-tests-app",
-        speculosApp: AppInfos.EXCHANGE,
-      });
-    });
-
-    setTeamOwner(Team.SWAP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`, async () => {
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        swap.amount,
-        false,
-      );
-      await app.swapLiveApp.switchYouSendAndYouReceive();
-      await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "0");
     });
   });
 }

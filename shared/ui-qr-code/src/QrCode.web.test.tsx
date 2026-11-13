@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { QrCode } from "./QrCode.web";
+import { QrCode } from "./QrCode";
 
 describe("QrCode (web)", () => {
   it("should render the container", () => {

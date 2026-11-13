@@ -23,7 +23,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   broadcast,
   isInvalidRecipient,
@@ -141,6 +141,7 @@ const mockValidator = (v: {
   selfBonded: new BigNumber(v.selfBonded),
   isElected: true,
   isOversubscribed: false,
+  isBlocked: false,
 });
 
 const mockPreloadData: PolkadotPreloadData = {

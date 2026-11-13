@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { craftTransaction } from "../logic";
 import type { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount } from "../types/bridge.fixture";

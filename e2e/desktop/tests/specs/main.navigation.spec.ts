@@ -9,15 +9,20 @@ test.describe("Main navigation", () => {
   });
 
   test(
-    "Main navigation entries redirect to the expected sections",
+    "Top and main navigation entries open the expected sections",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
-        description: "B2CQA-4384, B2CQA-1837",
+        description: "B2CQA-4386, B2CQA-4384, B2CQA-1837",
       },
     },
     async ({ app }) => {
+      await app.mainNavigation.openNotificationCenter();
+      await app.mainNavigation.clickActivityIndicator();
+      await app.mainNavigation.openMyLedger();
+      await app.mainNavigation.openSettings();
+
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.mainNavigation.validateTargetFromMainNavigation("home");
       await app.mainNavigation.openDeeplink("ledgerwallet://discover");
@@ -33,23 +38,6 @@ test.describe("Main navigation", () => {
       await app.mainNavigation.openTargetFromMainNavigation("refer a friend");
       await app.mainNavigation.validateTargetFromMainNavigation("refer a friend");
       await app.mainNavigation.openTargetFromMainNavigation("card");
-    },
-  );
-
-  test(
-    "Top navigation actions open the expected sections",
-    {
-      tag: [...DEVICE_TAGS],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-4386",
-      },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openNotificationCenter();
-      await app.mainNavigation.clickActivityIndicator();
-      await app.mainNavigation.openMyLedger();
-      await app.mainNavigation.openSettings();
     },
   );
 });

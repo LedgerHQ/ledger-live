@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, SpotNumber } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { VerifyAddressSheet } from "./VerifyAddressSheet.native";
+import { VerifyAddressSheet } from "./VerifyAddressSheet";
 import type { VerifyAddressSuccessViewProps } from "../../types";
 
 export function VerifyAddressSuccessView({

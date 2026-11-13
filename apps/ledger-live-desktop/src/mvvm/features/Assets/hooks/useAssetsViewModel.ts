@@ -2,10 +2,8 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import {
-  useAssetsData,
-  useMarketDayChangeByCurrencyId,
-} from "@features/platform-aggregated-assets";
+import { useAssetsData } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { AssetsViewModelResult } from "../types";
 import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
@@ -29,7 +27,7 @@ import {
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
@@ -103,7 +101,7 @@ export function useAssetsViewModel(): AssetsViewModelResult {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(toMarketId(parseMarketRef(rawId)))}`
           : `/asset/${item.currency.id}`,
       );
     },
@@ -149,18 +147,8 @@ export function useAssetsViewModel(): AssetsViewModelResult {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const heldCurrencyIds = useMemo(
-    () => nonPlaceholderCurrencies.map(currency => currency.id),
-    [nonPlaceholderCurrencies],
-  );
-  const marketDayChange = useMarketDayChangeByCurrencyId({
-    currencyIds: heldCurrencyIds,
-    product: "lld",
-    version: __APP_VERSION__,
-    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
-    skipPollingIfUnfocused: true,
-  });
-  const trends = useAllCurrencyTrends(allItems, "day", marketDayChange);
+  const { byLedgerId: marketDayChange } = useMarketDayChange();
+  const trends = useAllCurrencyTrends(allItems, "day", marketDayChange, "market");
 
   const cryptosWithTrend = useMemo(
     () =>

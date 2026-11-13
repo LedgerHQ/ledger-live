@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Globe, ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";

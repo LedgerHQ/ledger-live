@@ -44,6 +44,16 @@ describe("utils", () => {
       const result = convertNumberDecimals(feeInWei, 6);
       expect(result).toEqual(new BigNumber("1500000")); // 1.5 USDC in 6 decimals
     });
+
+    it("should truncate toward zero", () => {
+      expect(convertNumberDecimals(new BigNumber("1999999999999"), 6)).toEqual(new BigNumber(1));
+      expect(convertNumberDecimals(new BigNumber("-1999999999999"), 6)).toEqual(new BigNumber(-1));
+    });
+
+    it("should scale up when target decimals exceed 18 by more than DECIMAL_PLACES", () => {
+      const BigNumber20 = BigNumber.clone({ DECIMAL_PLACES: 20 });
+      expect(convertNumberDecimals(new BigNumber20(1), 40).toFixed()).toBe(`1${"0".repeat(22)}`);
+    });
   });
 
   describe("isSameTokenAsFee", () => {

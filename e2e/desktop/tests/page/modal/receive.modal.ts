@@ -68,7 +68,7 @@ export class ReceiveModal extends Modal {
   }
 
   @step("Verify receive menu visibility")
-  async expectRecieveMenu() {
+  async expectReceiveMenu() {
     await expect(this.receiveMenu).toBeVisible();
   }
 

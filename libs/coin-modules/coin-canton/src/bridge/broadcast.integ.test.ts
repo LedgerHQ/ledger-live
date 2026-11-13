@@ -1,11 +1,8 @@
-import { createMockCantonAccount, setupMockCoinConfig } from "../test/fixtures";
+import { cantonDefaults } from "../config";
+import { createMockCantonAccount, createMockContext } from "../test/fixtures";
 import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
-  beforeAll(() => {
-    setupMockCoinConfig();
-  });
-
   it("throws when submitting with an invalid party id", async () => {
     const account = createMockCantonAccount();
     const signedTx = JSON.stringify({
@@ -14,7 +11,7 @@ describe("Broadcast", () => {
     });
 
     await expect(
-      broadcast({
+      broadcast(createMockContext(cantonDefaults.canton_network_devnet), {
         account,
         signedOperation: {
           signature: signedTx,

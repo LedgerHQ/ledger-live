@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
@@ -11,7 +10,7 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  const config = getTestnetIntegConfig();
+  const config = aleoDefaults.aleo_testnet;
 
   beforeAll(() => {
     setupCalStore();

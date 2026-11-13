@@ -17,6 +17,7 @@ export type WalletSyncNavigatorStackParamList = {
     | undefined
     | {
         device?: Device;
+        seededOffer?: boolean;
       };
   [ScreenName.WalletSyncActivated]: undefined;
 

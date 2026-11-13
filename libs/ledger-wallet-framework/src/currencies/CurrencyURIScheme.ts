@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCurrenciesResolver } from "./resolver";
 import type { CryptoCurrency } from "../types";
 // see https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
@@ -51,7 +51,7 @@ export function encodeURIScheme(data: Data): string {
 
   if (amount) {
     const { magnitude } = currency.units[0];
-    query.amount = amount.div(new BigNumber(10).pow(magnitude)).toNumber();
+    query.amount = amount.shiftedBy(-magnitude).toNumber();
   }
 
   const queryStr = stringifyQuery(query);

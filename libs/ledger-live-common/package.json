@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.6.0",
+  "version": "38.7.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -287,6 +287,7 @@
     "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-account-operation": "workspace:^",
+    "@domain/entity-account-receive": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
@@ -465,7 +466,6 @@
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
@@ -495,7 +495,6 @@
     "redux-actions": "2.6.5",
     "rimraf": "catalog:",
     "timemachine": "0.3.2",
-    "ts-node": "10.9.2",
     "typescript": "catalog:",
     "undici": "catalog:",
     "uuid": "catalog:",

@@ -1,21 +1,23 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import IconService, { SignedTransaction, Wallet } from "icon-sdk-js";
 import { broadcast } from "./broadcast";
 import { MAINNET_NID, RPC_VERSION } from "./constants";
-import { setCoinConfig } from "./config";
+import { iconDefaults, setCoinConfig } from "./config";
 const { IconBuilder, IconConverter, IconAmount } = IconService;
 
 describe("broadcast (integration)", () => {
   beforeAll(() => {
-    setCoinConfig(
-      () =>
-        ({
-          status: { type: "active", features: [] },
-          infra: {
-            node_endpoint: "https://icon.coin.ledger.com/api/v3",
-          },
-        }) as any,
-    );
+    setCoinConfig(() => ({
+      ...iconDefaults.icon,
+      infra: {
+        indexer: "https://icon.coin.ledger.com/api/v1",
+        indexer_testnet: "https://tracker.berlin.icon.community/api/v1",
+        node_endpoint: "https://icon.coin.ledger.com/api/v3",
+        node_testnet_endpoint: "https://berlin.net.solidwallet.io/api/v3",
+        debug_endpoint: "https://icon.coin.ledger.com/api/v3d",
+        debug_testnet_endpoint: "https://berlin.net.solidwallet.io/api/v3d",
+      },
+    }));
   });
 
   it("rejects a valid signed tx when the sender cannot pay fees or value", async () => {

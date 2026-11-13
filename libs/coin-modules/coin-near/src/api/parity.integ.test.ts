@@ -1,6 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
-import { setCoinConfig } from "../config";
+import BigNumber from "bignumber.js";
+import { nearDefaults, setCoinConfig } from "../config";
 import getEstimatedFees from "../getFeesForTransaction";
 import { getAccount } from "../network";
 import { getActionCosts } from "../network/protocolConfig";
@@ -17,21 +17,7 @@ import { createApi } from "./index";
  * data, the api from the protocol config. This suite pins the two together so a change to either
  * side cannot silently drift, which is the main risk of running both paths side by side.
  */
-const NODE = "https://near.coin.ledger.com/node";
-
-const infra = {
-  API_NEAR_PRIVATE_NODE: NODE,
-  API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-  API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-  API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
-};
-
-const config = () => ({
-  status: { type: "active" as const },
-  name: "NEAR",
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-  infra,
-});
+const config = () => nearDefaults.near;
 
 const ACCOUNT = "nearkat.near";
 const NAMED_RECIPIENT = "recipient.near";
@@ -162,7 +148,6 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       receiptCreationExecution: new BigNumber(0),
       minGasPurchasePrice: new BigNumber(0),
       accountCreationCharge: new BigNumber(0),
-      validators: [],
     });
 
     const fromApi = await api.estimateFees(context, sendIntent(NAMED_RECIPIENT));

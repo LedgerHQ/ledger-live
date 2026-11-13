@@ -1,5 +1,5 @@
 import type { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 /**
  * convert a value in a given unit to a normalized value

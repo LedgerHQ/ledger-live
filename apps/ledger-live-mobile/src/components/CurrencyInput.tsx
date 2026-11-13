@@ -3,7 +3,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions, StyleProp, ViewStyle, TextInputProps } from "react-native";
 import { connect } from "react-redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/currencies/index";
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";

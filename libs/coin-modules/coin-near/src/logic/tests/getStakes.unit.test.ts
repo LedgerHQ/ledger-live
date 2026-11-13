@@ -1,5 +1,5 @@
 import { mockNearContext } from "../../test/context";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getStakingPositions } from "../../network";
 import type { NearStakingPosition } from "../../network/sdk.types";
 import { getYoctoThreshold } from "../../logic";

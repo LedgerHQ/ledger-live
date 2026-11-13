@@ -1,4 +1,3 @@
-import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,
   encodeAccountId,
@@ -8,7 +7,7 @@ import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig, { type CantonCoinConfig, type CantonContext } from "../config";
+import type { CantonCoinConfig, CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
@@ -253,22 +252,6 @@ export const createMockInstrumentBalances = (
   );
 };
 
-export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> = {}): void => {
-  coinConfig.setCoinConfig(
-    () =>
-      ({
-        gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
-        useGateway: true,
-        networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
-        nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
-        status: {
-          type: "active",
-        },
-        ...overrides,
-      }) as unknown as ReturnType<Parameters<typeof coinConfig.setCoinConfig>[0]>,
-  );
-};
-
 export const createMockCoinConfigValue = createFactory({
   gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
   useGateway: true,
@@ -280,16 +263,11 @@ export const createMockCoinConfigValue = createFactory({
   unit: { name: "cc", code: "CC", magnitude: 38 },
 });
 
-export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
-  const configValue = createMockCoinConfigValue();
-  return jest.fn(() => configValue);
-};
-
 /** A mock {@link CantonContext} resolving to {@link createMockCoinConfigValue}. */
 export const createMockContext = (
   config: CantonCoinConfig = createMockCoinConfigValue(),
 ): CantonContext => ({
-  config: async () => config,
+  config: () => Promise.resolve(config),
   logger: () => {},
 });
 

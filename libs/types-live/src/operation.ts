@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { TransactionCommonRaw } from "./transaction";
 import { NFTStandard } from "./nft";
 
@@ -40,6 +40,8 @@ export type OperationType =
   // ALGORAND
   | "OPT_IN"
   | "OPT_OUT"
+  // XRP
+  | "OPT_EDIT"
   // CELO
   | "LOCK"
   | "UNLOCK"

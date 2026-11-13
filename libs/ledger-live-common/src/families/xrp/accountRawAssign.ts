@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenAccount, TokenAccountRaw } from "@ledgerhq/types-live";
 import type { XrpTokenAccount, XrpTokenAccountRaw } from "./types";
 

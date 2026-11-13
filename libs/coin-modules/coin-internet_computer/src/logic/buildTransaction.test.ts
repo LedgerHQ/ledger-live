@@ -1,6 +1,6 @@
 import { Cbor, Expiry, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ICP_FEES, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import { getCanisterIdlFunc, ledgerIdlFactory } from "../network/candid";
 import { Transaction } from "../types";

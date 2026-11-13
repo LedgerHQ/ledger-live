@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import type { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";

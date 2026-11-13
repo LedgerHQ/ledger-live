@@ -1,5 +1,7 @@
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { PayloadStepError } from "@ledgerhq/live-common/wallet-api/Exchange/SwapError";
+import { track } from "@shared/analytics";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -10,6 +12,11 @@ import {
   beginDepositRequest,
   cancelDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const mockExecuteSwap = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({
@@ -71,11 +78,11 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
 function renderExecution() {
   const onDone = jest.fn();
   const onRefused = jest.fn();
-  const onNotEnoughBalance = jest.fn();
+  const onReturnToForm = jest.fn();
   const { result } = renderHook(() =>
-    usePerpsDepositExecution(params, { onDone, onRefused, onNotEnoughBalance }),
+    usePerpsDepositExecution(params, { onDone, onRefused, onReturnToForm }),
   );
-  return { result, onDone, onRefused, onNotEnoughBalance };
+  return { result, onDone, onRefused, onReturnToForm };
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
@@ -130,7 +137,7 @@ async function startSwap() {
     usePerpsDepositExecution(params, {
       onDone,
       onRefused: jest.fn(),
-      onNotEnoughBalance: jest.fn(),
+      onReturnToForm: jest.fn(),
     }),
   );
   await act(async () => {
@@ -230,7 +237,7 @@ describe("usePerpsDepositExecution", () => {
       usePerpsDepositExecution(params, {
         onDone: jest.fn(),
         onRefused: jest.fn(),
-        onNotEnoughBalance: jest.fn(),
+        onReturnToForm: jest.fn(),
       }),
     );
     await act(async () => {
@@ -274,7 +281,7 @@ describe("usePerpsDepositExecution", () => {
       () =>
         usePerpsDepositExecution(
           { ...params, depositAccount: tokenAccount },
-          { onDone: jest.fn(), onRefused: jest.fn(), onNotEnoughBalance: jest.fn() },
+          { onDone: jest.fn(), onRefused: jest.fn(), onReturnToForm: jest.fn() },
         ),
       {
         overrideInitialState: state => ({
@@ -407,6 +414,8 @@ describe("usePerpsDepositExecution", () => {
     expect(result.current.deviceStep).toEqual({
       kind: "error",
       error: new Error("signature failed"),
+      isGeneric: false,
+      returnsToForm: false,
     });
     expect(onDone).not.toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
@@ -451,26 +460,60 @@ describe("usePerpsDepositExecution", () => {
   ])(
     "sends the holder back to the form on retry after a shortfall %s",
     async (_case, shortfall) => {
-      const { result, onNotEnoughBalance } = await signWith({ transactionSignError: shortfall });
-      expect(result.current.deviceStep).toEqual({ kind: "error", error: shortfall });
+      const { result, onReturnToForm } = await signWith({ transactionSignError: shortfall });
+      expect(result.current.deviceStep).toEqual({
+        kind: "error",
+        error: shortfall,
+        isGeneric: false,
+        returnsToForm: true,
+      });
       mockExecuteSwap.mockClear();
 
       act(() => result.current.retry());
 
-      expect(onNotEnoughBalance).toHaveBeenCalledTimes(1);
+      expect(onReturnToForm).toHaveBeenCalledTimes(1);
       expect(mockExecuteSwap).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalledWith("swap error message", expect.anything());
     },
   );
 
   it("re-runs the deposit on retry after any other failure", async () => {
-    const { result, onNotEnoughBalance } = await signWith({
+    const { result, onReturnToForm } = await signWith({
       transactionSignError: new Error("signature failed"),
     });
     mockExecuteSwap.mockClear();
 
     await act(async () => result.current.retry());
 
-    expect(onNotEnoughBalance).not.toHaveBeenCalled();
+    expect(onReturnToForm).not.toHaveBeenCalled();
     expect(mockExecuteSwap).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides a payload failure behind the generic error, reports it, and returns to the form", async () => {
+    const payloadFailure = new PayloadStepError(new Error("500"));
+    mockExecuteSwap.mockRejectedValueOnce(payloadFailure);
+    const { result, onReturnToForm } = renderExecution();
+
+    await act(async () => result.current.executeDeposit());
+
+    expect(result.current.deviceStep).toEqual({
+      kind: "error",
+      error: payloadFailure,
+      isGeneric: true,
+      returnsToForm: true,
+    });
+    expect(track).toHaveBeenCalledWith("swap error message", {
+      message: "deposit_sign_failed",
+      page: "perps_deposit_sign",
+      flow: "perps",
+      sourceCurrency: "ETH",
+      targetCurrency: "ETH",
+    });
+    mockExecuteSwap.mockClear();
+
+    act(() => result.current.retry());
+
+    expect(onReturnToForm).toHaveBeenCalledTimes(1);
+    expect(mockExecuteSwap).not.toHaveBeenCalled();
   });
 });

@@ -8,7 +8,7 @@ import React, {
   type ReactNode,
 } from "react";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";

@@ -88,9 +88,13 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
   };
 }
 
-function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+function checksModel(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   if (model.status !== "checks") throw new Error(model.status);
-  return model.checks;
+  return model;
+}
+
+function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  return checksModel(model).checks;
 }
 
 describe("useDeviceOnboardingFunnelViewModel", () => {
@@ -205,7 +209,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(goBack).not.toHaveBeenCalled();
   });
 
-  it("should block Android back without quitting while the update is offered", () => {
+  it("should quit the machine when Android back leaves the firmware offer", () => {
     useSession.mockReturnValue(session({ state: "checks.firmwareUpdateOffered" }));
     renderHook(() => useDeviceOnboardingFunnelViewModel());
     const preventDefault = jest.fn();
@@ -213,15 +217,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
 
     back();
-    back();
 
-    expect(preventDefault).toHaveBeenCalledTimes(2);
-    expect(send).not.toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(goBack).not.toHaveBeenCalled();
 
     recorded.host?.onLeave?.();
     back();
-    expect(preventDefault).toHaveBeenCalledTimes(2);
+    expect(preventDefault).toHaveBeenCalledTimes(1);
   });
 
   it("should close the firmware handover when Android back happens while it opens", () => {
@@ -354,6 +357,124 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should keep the screen under the unlock sheet when the device locks", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("updating");
+    expect(checksModel(result.current).unlockSheet).toBeNull();
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.state).toBe("updating");
+    expect(locked.checks.update).toEqual({ current: "1.0.0", available: "1.1.0" });
+    expect(locked.checks.suspendSheets).toBe(true);
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+
+    useSession.mockReturnValue(session({ state: "readingState", context: firmware }));
+    rerender(undefined as never);
+
+    const reading = checksModel(result.current);
+    expect(reading.checks.state).toBe("updating");
+    expect(reading.checks.suspendSheets).toBe(true);
+    expect(reading.unlockSheet).toBeNull();
+
+    useSession.mockReturnValue(session({ state: "checks.checksSucceeded", context: firmware }));
+    rerender(undefined as never);
+
+    expect(checksOf(result.current).state).toBe("succeeded");
+    expect(checksModel(result.current).unlockSheet).toBeNull();
+  });
+
+  it("should drop the locked screen when the connection is lost", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+    useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
+    rerender(undefined as never);
+
+    expect(result.current.status).toBe("failed");
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: null }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.state).toBe("synchronizing");
+    expect(locked.checks.update).toBeNull();
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+  });
+
+  it("should show the reconnected device when it locks before its session is ready", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+    useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
+    rerender(undefined as never);
+
+    const reconnected = {
+      deviceId: "other-device",
+      deviceName: "Nano X",
+      modelId: DeviceModelId.nanoX,
+      wired: false,
+    };
+    useSession.mockReturnValue(session({ state: "deviceLocked", liveDevice: reconnected }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.device.deviceId).toBe("other-device");
+    expect(locked.checks.state).toBe("synchronizing");
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.nanoX,
+      deviceName: "Nano X",
+    });
+  });
+
+  it("should keep the locked screen's close when the device locks during a check", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked" }));
+    rerender(undefined as never);
+
+    checksOf(result.current).onQuit?.();
+
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("should hide the firmware offer while the device is locked", () => {
     useSession.mockReturnValue(
       session({
@@ -371,6 +492,11 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(checks.state).toBe("synchronizing");
     expect(checks.update).toBeNull();
+    expect(checks.suspendSheets).toBe(true);
+    expect(checksModel(result.current).unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
   });
 
   it("should quit the machine when closing while the device is locked", () => {
@@ -639,12 +765,93 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
     const screen = result.current;
-    if (screen.status !== "karaoke") throw new Error(screen.status);
+    if (screen.status !== "unseededIntroKaraoke") throw new Error(screen.status);
 
-    act(() => screen.onClose());
+    act(() => screen.unseededIntroKaraoke.onClose());
 
     expect(send).not.toHaveBeenCalled();
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should send one CONTINUE when the karaoke finishes", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const screen = result.current;
+    if (screen.status !== "unseededIntroKaraoke") throw new Error(screen.status);
+
+    act(() => screen.unseededIntroKaraoke.onFinish());
+
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
+  });
+
+  it("should keep the intro under the unlock sheet when the device locks", () => {
+    const unseededContext = {
+      onboardedOnEntry: false,
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(session({ state: "awaitingStart", context: unseededContext }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: unseededContext }));
+    rerender(undefined as never);
+
+    const locked = result.current;
+    if (locked.status !== "unseededIntroKaraoke") throw new Error(locked.status);
+    expect(locked.unseededIntroKaraoke.suspendSheets).toBe(true);
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+    act(() => locked.unseededIntroKaraoke.onFinish());
+    expect(send).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(session({ state: "readingState", context: unseededContext }));
+    rerender(undefined as never);
+
+    expect(result.current.status).toBe("unseededIntroKaraoke");
+
+    useSession.mockReturnValue(session({ state: "awaitingStart", context: unseededContext }));
+    rerender(undefined as never);
+
+    const unlocked = result.current;
+    if (unlocked.status !== "unseededIntroKaraoke") throw new Error(unlocked.status);
+    expect(unlocked.unlockSheet).toBeNull();
+    act(() => unlocked.unseededIntroKaraoke.onFinish());
+    expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
+  });
+
+  it("should suspend the intro sheets while the quit confirmation is open", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const screen = result.current;
+    if (screen.status !== "unseededIntroKaraoke") throw new Error(screen.status);
+    expect(screen.unseededIntroKaraoke.suspendSheets).toBe(false);
+
+    act(() => screen.unseededIntroKaraoke.onClose());
+
+    const confirming = result.current;
+    if (confirming.status !== "unseededIntroKaraoke") throw new Error(confirming.status);
+    expect(confirming.quitConfirmation?.isOpen).toBe(true);
+    expect(confirming.unseededIntroKaraoke.suspendSheets).toBe(true);
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("should keep the checks screen when a seeded device is waiting to start", () => {
@@ -661,7 +868,205 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     expect(checksOf(result.current).state).toBe("idle");
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+  });
+
+  it("should ask before the header close leaves a seeded device's checks", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          onboardedOnEntry: true,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should ask before Android back leaves a seeded device's checks", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          onboardedOnEntry: true,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should release the error sheet while Android back asks to leave a seeded device", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.genuineFailed",
+        context: {
+          onboardedOnEntry: true,
+          genuineFailureKind: "GENUINE_CHECK_REFUSED",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+    expect(checksOf(result.current).suspendSheets).toBeFalsy();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(checksOf(result.current).suspendSheets).toBe(true);
+    expect(send).not.toHaveBeenCalled();
+
+    act(() => result.current.quitConfirmation?.onContinue());
+
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+    expect(checksOf(result.current).suspendSheets).toBeFalsy();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should ask before leaving when an unseeded device's not genuine sheet is closed", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.notGenuineSupport",
+        context: {
+          onboardedOnEntry: false,
+          genuineFailureKind: "DEVICE_NOT_GENUINE",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(checksOf(result.current).suspendSheets).toBe(true);
+  });
+
+  it("should leave without asking once a seeded device's genuine check has a verdict", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.notGenuineSupport",
+        context: {
+          onboardedOnEntry: true,
+          isGenuine: false,
+          verdictMatchesSession: true,
+          genuineFailureKind: "DEVICE_NOT_GENUINE",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
     expect(result.current.quitConfirmation).toBeNull();
+
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should still ask when a seeded device's verdict belongs to an older session", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          onboardedOnEntry: true,
+          isGenuine: true,
+          verdictMatchesSession: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should name the genuine and OS check when a seeded device asks before leaving", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: true,
+          currentSetupStep: null,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.quitConfirmation?.stepName).toBe("Genuine & OS check");
+  });
+
+  it("should drop an open confirmation when a seeded device's genuine check completes", () => {
+    const context = { onboardedOnEntry: true, verdictMatchesSession: null, checksPaused: false };
+    useSession.mockReturnValue(
+      session({
+        state: "checks.genuineCheck",
+        context: context as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          ...context,
+          isGenuine: true,
+          verdictMatchesSession: true,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    rerender(undefined as never);
+
+    expect(result.current.quitConfirmation).toBeNull();
+    expect(checksOf(result.current).suspendSheets).toBeFalsy();
+  });
+
+  it("should send one QUIT when a seeded device confirms leaving", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          onboardedOnEntry: true,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => checksOf(result.current).onQuit?.());
+    act(() => {
+      result.current.quitConfirmation?.onLeave();
+      result.current.quitConfirmation?.onLeave();
+    });
+
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
   it("should ask before Android back leaves an unseeded setup", () => {
@@ -683,6 +1088,43 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should hide the quit confirmation while an unseeded device is locked", () => {
+    const context = {
+      onboardedOnEntry: false,
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck", context }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context }));
+    rerender(undefined as never);
+
+    const locked = result.current;
+    if (locked.status !== "checks") throw new Error(locked.status);
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+    expect(locked.quitConfirmation?.isOpen).toBe(false);
+    act(() => locked.quitConfirmation?.onContinue());
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+    expect(send).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(session({ state: "readingState", context }));
+    rerender(undefined as never);
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck", context }));
+    rerender(undefined as never);
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
   });
 
@@ -716,9 +1158,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
     const screen = result.current;
-    if (screen.status !== "karaoke") throw new Error(screen.status);
+    if (screen.status !== "unseededIntroKaraoke") throw new Error(screen.status);
 
-    act(() => screen.onClose());
+    act(() => screen.unseededIntroKaraoke.onClose());
     act(() => result.current.quitConfirmation?.onContinue());
 
     expect(send).not.toHaveBeenCalled();
@@ -737,9 +1179,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
     const screen = result.current;
-    if (screen.status !== "karaoke") throw new Error(screen.status);
+    if (screen.status !== "unseededIntroKaraoke") throw new Error(screen.status);
 
-    act(() => screen.onClose());
+    act(() => screen.unseededIntroKaraoke.onClose());
     act(() => {
       result.current.quitConfirmation?.onLeave();
       result.current.quitConfirmation?.onLeave();
@@ -764,45 +1206,5 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(checksOf(result.current).state).toBe("succeeded");
     expect(result.current.status).not.toBe("connecting");
-  });
-
-  it("should close a not genuine sheet with CLOSE on an unseeded device", () => {
-    useSession.mockReturnValue(
-      session({
-        state: "checks.notGenuineSupport",
-        context: {
-          onboardedOnEntry: false,
-          genuineFailureKind: "DEVICE_NOT_GENUINE",
-          checksPaused: false,
-        } as DeviceOnboardingSession["context"],
-      }),
-    );
-
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-
-    checksOf(result.current).onCloseNotGenuine?.();
-
-    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
-  });
-
-  it("should close a firmware offer with CLOSE on an unseeded device", () => {
-    useSession.mockReturnValue(
-      session({
-        state: "checks.firmwareUpdateOffered",
-        context: {
-          onboardedOnEntry: false,
-          firmwareVersion: "1.0.0",
-          availableFirmwareVersion: "1.1.0",
-          checksPaused: false,
-        } as DeviceOnboardingSession["context"],
-      }),
-    );
-
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-
-    checksOf(result.current).onCloseFirmwareOffer?.();
-
-    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
-    expect(send).not.toHaveBeenCalledWith({ type: "USER_DECLINE" });
   });
 });

@@ -44,6 +44,11 @@ allprojects {
                     project.logger.lifecycle "Repository ${repo.url} replaced by $REPOSITORY_URL."
                     remove repo
                 }
+                // React Native 0.81 adds this snapshots repository for nightlies; we use releases only.
+                if (repo.url.host == 'central.sonatype.com') {
+                    project.logger.lifecycle "Repository ${repo.url} excluded from resolution."
+                    repo.content { excludeGroupByRegex '.*' }
+                }
             }
         }
         maven {
@@ -60,7 +65,6 @@ allprojects {
             force 'androidx.core:core:1.13.1'
 
             dependencySubstitution {
-                substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
                 substitute module("com.github.CanHub:Android-Image-Cropper") using module("com.vanniktech:android-image-cropper:4.6.0")
             }
             force "androidx.core:core:$rootProject.ext.androidXCore"

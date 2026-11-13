@@ -1,4 +1,4 @@
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { SuiSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
@@ -6,16 +6,9 @@ import buildSignOperation from "./signOperation";
 describe("signOperation", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: "https://sui.coin.ledger.com/graphql",
-        grpcUrl: "https://sui.coin.ledger.com",
-      },
+      ...suiDefaults.sui,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

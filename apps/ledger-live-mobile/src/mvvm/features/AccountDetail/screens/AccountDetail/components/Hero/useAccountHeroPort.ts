@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { track } from "@shared/analytics";
 import { ACCOUNT_DETAIL_EVENTS, quickActionClickedProps } from "@features/flow-account-detail";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";

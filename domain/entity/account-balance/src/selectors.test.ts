@@ -5,7 +5,7 @@ import { selectAccountAssetBalance, selectAccountBalances } from "./selectors";
 
 const accountUUID = computeAccountUUID(mockAddressAccountDescriptor());
 const missingAccountUUID = computeAccountUUID(
-  mockAddressAccountDescriptor({ address: "0x0000000000000000000000000000000000000001" }),
+  mockAddressAccountDescriptor({ key: "0x0000000000000000000000000000000000000001" }),
 );
 const eth = mockAccountAssetBalance();
 const usdt = mockAccountAssetBalance({

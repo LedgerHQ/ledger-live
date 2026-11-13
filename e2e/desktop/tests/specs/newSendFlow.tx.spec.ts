@@ -55,7 +55,7 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
     xrayTicket: "B2CQA-2814",
   },
   {
-    transaction: new Transaction(Account.BTC_LEGACY_1, Account.BTC_LEGACY_2, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.BTC_LEGACY_1, Account.BTC_LEGACY_2, "0.00002", Fee.MEDIUM),
     xrayTicket: "B2CQA-2722",
   },
   {

@@ -1,0 +1,11 @@
+# Flings the Performance list to its end, where the last startup events are (iOS; Android uses adb).
+appId: com.ledger.live
+---
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: 50%, 85%
+          end: 50%, 15%
+          duration: 100
+- waitForAnimationToEnd

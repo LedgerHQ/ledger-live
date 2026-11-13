@@ -16,7 +16,7 @@ import {
   ExchangeType,
   SwapResult,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { padHexString } from "@ledgerhq/hw-app-eth";

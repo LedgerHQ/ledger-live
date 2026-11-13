@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
   useTronSuperRepresentatives,

@@ -1,42 +1,39 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
-  hasConfirmedAccountHistory,
-  type AccountAnalyticsIntroductionProps,
-} from "@features/flow-account-detail-analytics-notice";
-import {
-  dismissAccountAnalyticsIntroduction,
-  selectAccountAnalyticsIntroductionDismissed,
-} from "@features/flow-account-detail-analytics-notice/state";
-import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
+  ACCOUNT_DETAIL_BUTTONS,
+  ACCOUNT_DETAIL_EVENTS,
+  accountButtonClickedProps,
+} from "@features/flow-account-detail";
+import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail-analytics-notice";
+import { dismissAccountAnalyticsIntroduction } from "@features/flow-account-detail-analytics-notice/state";
+import { track } from "@shared/analytics";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { confirmationsNbForCurrencySelector } from "~/reducers/settings";
+import { useDispatch } from "~/context/hooks";
+import { getAccountTrackingFacts } from "../../../../utils/accountTracking";
+import { useAnalyticsIntroductionStatus } from "./useAnalyticsIntroductionStatus";
 
 export function useAnalyticsIntroductionViewModel(
   account: Account,
 ): AccountAnalyticsIntroductionProps {
   const dispatch = useDispatch();
   const navigation = useNavigation<BaseNavigation>();
-  const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);
-  const confirmationsNb = useSelector(state =>
-    confirmationsNbForCurrencySelector(state, { currency: account.currency }),
-  );
-  const hasConfirmedHistory = useMemo(
-    () =>
-      hasConfirmedAccountHistory(account, operation =>
-        isConfirmedOperation(operation, account, confirmationsNb),
-      ),
-    [account, confirmationsNb],
-  );
+  const status = useAnalyticsIntroductionStatus(account);
 
   const onDismiss = useCallback(() => {
     dispatch(dismissAccountAnalyticsIntroduction());
   }, [dispatch]);
 
   const onOpenAnalytics = useCallback(() => {
+    track(
+      ACCOUNT_DETAIL_EVENTS.buttonClicked,
+      accountButtonClickedProps(
+        getAccountTrackingFacts(account),
+        ACCOUNT_DETAIL_BUTTONS.analyticsBanner,
+      ),
+    );
     navigation.navigate(NavigatorName.Analytics, {
       screen: ScreenName.Analytics,
       params: {
@@ -48,7 +45,7 @@ export function useAnalyticsIntroductionViewModel(
         },
       },
     });
-  }, [navigation, account.id, account.currency.id]);
+  }, [navigation, account]);
 
-  return { hasConfirmedHistory, hasDismissed, onDismiss, onOpenAnalytics };
+  return { ...status, onDismiss, onOpenAnalytics };
 }

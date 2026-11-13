@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   NotEnoughBalance,

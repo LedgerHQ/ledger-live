@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
 import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import { PolkadotAccount, PolkadotResources } from "../types";
@@ -9,6 +9,7 @@ import {
   getFeesSafetyBuffer,
   isController,
   isFirstBond,
+  isNominationKeepable,
   isStash,
   MAX_UNLOCKINGS,
 } from "./utils";
@@ -179,5 +180,31 @@ describe("calculateAmount", () => {
     const amount = calculateAmount({ config, account, transaction });
 
     expect(amount).toEqual(new BigNumber(10_000_000_000 - 1_000_000 - 5_000_000_000));
+  });
+});
+
+describe("isNominationKeepable", () => {
+  const nomination = { address: "addr", value: new BigNumber(1) };
+
+  it("keeps a registered nomination with a status", () => {
+    expect(isNominationKeepable({ ...nomination, status: "active", isRegistered: true })).toEqual(
+      true,
+    );
+  });
+
+  it("keeps a nomination with a status saved before registration was tracked", () => {
+    expect(isNominationKeepable({ ...nomination, status: "waiting" })).toEqual(true);
+  });
+
+  it("drops a nomination without a status", () => {
+    expect(isNominationKeepable({ ...nomination, status: null, isRegistered: true })).toEqual(
+      false,
+    );
+  });
+
+  it("drops an unregistered nomination even when it still has a status", () => {
+    expect(isNominationKeepable({ ...nomination, status: "active", isRegistered: false })).toEqual(
+      false,
+    );
   });
 });

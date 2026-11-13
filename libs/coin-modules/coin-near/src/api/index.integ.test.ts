@@ -3,6 +3,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
+import { nearDefaults } from "../config";
 import { combine } from "../logic/combine";
 import { getActionCosts } from "../network/protocolConfig";
 import { createMockNearContext } from "../test/context";
@@ -15,20 +16,9 @@ import { createApi } from "./index";
  * (a real access-key nonce and block hash) but the signed payload is thrown away, and the signature
  * is a dummy, so it could not be accepted anyway.
  */
-const NODE = "https://near.coin.ledger.com/node";
-const INDEXER = "https://near-indexer.coin.ledger.com";
-
-const config = {
-  status: { type: "active" as const },
-  name: "NEAR",
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-  infra: {
-    API_NEAR_PRIVATE_NODE: NODE,
-    API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-    API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-    API_NEARBLOCKS_INDEXER: INDEXER,
-  },
-};
+const config = nearDefaults.near;
+const NODE = config.infra.API_NEAR_PRIVATE_NODE;
+const INDEXER = config.infra.API_NEARBLOCKS_INDEXER;
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
 const DELEGATOR = "c351fce3fadaff7902f04aefcc5f519c87923a734ba5c0867f690d226a33c0a1";

@@ -3,7 +3,7 @@ import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
@@ -84,6 +84,14 @@ describe("createFullSyncSource", () => {
       "ethereum",
       "ethereum/erc20/usd_tether__erc20_",
     ]);
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads where the synced account receives", async () => {
+    const synced = { ...account, freshAddress: "0x0000000000000000000000000000000000000002" };
+    await expect(source(account, synced).read?.receive?.(target, undefined)).resolves.toMatchObject(
+      { address: "0x0000000000000000000000000000000000000002" },
+    );
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 

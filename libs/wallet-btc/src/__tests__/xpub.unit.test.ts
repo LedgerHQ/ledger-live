@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Xpub from "../xpub";
 import { Output } from "../storage/types";
 import { DerivationModes } from "../types";

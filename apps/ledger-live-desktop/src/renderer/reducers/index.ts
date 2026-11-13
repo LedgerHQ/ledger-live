@@ -33,6 +33,7 @@ import { predictionsSlice, type PredictionsState } from "@domain/entity-predicti
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-account-receive";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -56,10 +57,7 @@ import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
-import {
-  payRequestVerifyHintSlice,
-  type PayRequestVerifyHintState,
-} from "@features/flow-pay-request/state";
+import { receiveVerifyHintSlice, type ReceiveVerifyHintState } from "@features/flow-receive/state";
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
@@ -134,6 +132,7 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  accountReceives: AccountReceivesState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
@@ -142,7 +141,7 @@ export type State = LLDRTKApiState & {
   payCardBalance: PayCardBalanceState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
-  payRequestVerifyHint: PayRequestVerifyHintState;
+  receiveVerifyHint: ReceiveVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -188,6 +187,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountReceives: accountReceivesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
@@ -196,7 +196,7 @@ const appReducer = combineReducers({
   payCardBalance: payCardBalanceSlice.reducer,
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
-  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  receiveVerifyHint: receiveVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

@@ -1,5 +1,5 @@
 import { ReplacementTransactionUnderpriced } from "../../../errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 import type {
   Transaction as BtcTransaction,

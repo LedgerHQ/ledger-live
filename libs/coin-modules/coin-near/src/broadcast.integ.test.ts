@@ -1,18 +1,10 @@
 import * as nearAPI from "near-api-js";
 import { broadcast } from "./broadcast";
-import { setCoinConfig } from "./config";
+import { nearDefaults, setCoinConfig } from "./config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setCoinConfig(
-      () =>
-        ({
-          status: { type: "active" as const },
-          infra: {
-            API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
-          },
-        }) as any,
-    );
+    setCoinConfig(() => nearDefaults.near);
   });
 
   it("throws on unknown signer", async () => {
@@ -20,7 +12,7 @@ describe("Broadcast", () => {
     const publicKey = keyPair.getPublicKey();
     const implicitAccountId = Buffer.from(publicKey.data).toString("hex");
     const provider = new nearAPI.JsonRpcProvider({
-      url: "https://near.coin.ledger.com/node",
+      url: nearDefaults.near.infra.API_NEAR_PRIVATE_NODE,
     });
     const { hash } = (await provider.viewBlock({ finality: "final" })).header;
     const blockHashBytes = nearAPI.baseDecode(hash);

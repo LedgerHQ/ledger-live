@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";

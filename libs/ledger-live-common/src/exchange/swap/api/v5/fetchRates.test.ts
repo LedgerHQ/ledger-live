@@ -1,6 +1,6 @@
 import { throwRateError } from "./fetchRates"; // Make sure the path is correct
 import { ExchangeRate } from "../../types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 describe("throwRateError", () => {
   describe("SwapExchangeRateAmountTooHigh Error", () => {

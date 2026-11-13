@@ -1,7 +1,6 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "@e2e/bridge/server";
 
-import type { PartialFeatures, Features } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 const FF_LWM_WALLET_40_Q1 = {
   lwmWallet40: {
@@ -11,7 +10,6 @@ const FF_LWM_WALLET_40_Q1 = {
       brazePlacement: true,
       earnUpselling: false,
       earnSimulator: false,
-      assetDiscoverability: false,
     },
   },
 } satisfies PartialFeatures;
@@ -24,10 +22,15 @@ export const FF_LWM_WALLET_40_Q2 = {
       brazePlacement: true,
       earnUpselling: true,
       earnSimulator: true,
-      assetDiscoverability: true,
     },
   },
 } satisfies PartialFeatures;
+
+const FF_ACCOUNT_DETAIL = {
+  accountDetail: { enabled: true },
+} satisfies PartialFeatures;
+
+export const isAccountDetailEnabled = () => globalThis.mergedFeatureFlags?.accountDetail?.enabled;
 
 export const FF_PASSWORD_REVAMP = {
   lwmPasswordRevamp: { enabled: true },
@@ -129,6 +132,7 @@ export const getMergedFeatureFlags = ({
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
     "wallet40-q1": FF_LWM_WALLET_40_Q1,
+    "account-detail": FF_ACCOUNT_DETAIL,
   };
 
   const defaultFlags: PartialFeatures = {
@@ -140,6 +144,7 @@ export const getMergedFeatureFlags = ({
     releaseTour: { enabled: false },
     brazePushNotifications: { enabled: false },
     ratingsPrompt: { enabled: false },
+    accountDetail: { enabled: false },
     // Mirrors the production flag; the stg swap manifest is added because e2e loads it unless PRODUCTION=true.
     llmWalletApiDeviceIntentSign: {
       enabled: true,
@@ -184,15 +189,4 @@ export const getMergedFeatureFlags = ({
     ...jsonOverrideFlags,
     ...testFlags,
   };
-};
-
-const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
-  const flags = await getFlags();
-  const parsed = parseExtraFeatureFlags<PartialFeatures>(flags);
-  return parsed.lwmWallet40;
-};
-
-export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetDiscoverability);
 };

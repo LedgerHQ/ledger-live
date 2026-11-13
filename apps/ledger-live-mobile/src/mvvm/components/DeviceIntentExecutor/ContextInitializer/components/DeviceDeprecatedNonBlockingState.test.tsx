@@ -58,12 +58,12 @@ const screenSequenceCases: {
   {
     name: "warning + clearSigning",
     screenSequence: ["warning", "clearSigning"],
-    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Live™ will end/,
+    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Wallet™ will end/,
   },
   {
     name: "warning only",
     screenSequence: ["warning"],
-    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Live™ will end/,
+    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Wallet™ will end/,
   },
   {
     name: "clearSigning only",

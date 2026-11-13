@@ -14,7 +14,7 @@ import {
 import { createSmallestUnitFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
 import { DEFAULT_LINE_CHART_HEIGHT } from "LLD/components/LineChart/constants";
 import {
-  buildLineChartBottomPaddedYAxisConfig,
+  buildLineChartPaddedYAxisConfig,
   buildLineChartXAxisConfig,
 } from "LLD/components/LineChart/utils/lineChartAxisConfig";
 import {
@@ -103,7 +103,7 @@ export function useChartSectionViewModel({
     [timestamps, formatDate, selectedRange],
   );
 
-  const yAxis = useMemo(() => buildLineChartBottomPaddedYAxisConfig(), []);
+  const yAxis = useMemo(() => buildLineChartPaddedYAxisConfig(), []);
 
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {

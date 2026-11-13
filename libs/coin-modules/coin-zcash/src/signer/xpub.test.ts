@@ -1,5 +1,6 @@
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { sha256 } from "@noble/hashes/sha2";
+import bs58 from "bs58";
 import { accountPubkeyFromXpub, composeXpub } from "./xpub";
 
 // ─── Reference test vector ──────────────────────────────────────────────
@@ -203,15 +204,9 @@ function withChecksum(bytes: Buffer): Buffer {
 }
 
 function base58Encode(input: Buffer): string {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const bs58 = require("bs58");
   return bs58.encode(input);
 }
 
 function base58Decode(input: string): Buffer {
-  // Avoid importing bs58 in tests so the assertions stay independent of the
-  // exact library composeXpub uses internally.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const bs58 = require("bs58");
   return Buffer.from(bs58.decode(input));
 }

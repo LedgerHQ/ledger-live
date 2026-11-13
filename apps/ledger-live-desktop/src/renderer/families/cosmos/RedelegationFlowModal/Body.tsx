@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export type ApiResponseSubmitTransaction = {
   txId: string;
@@ -13,6 +13,8 @@ export type ApiResponseBlockDagInfo = {
   pastMedianTime: string;
   virtualParentHashes: string[];
   pruningPointHash: string;
+  /** Virtual selected parent: the tip of the selected chain. */
+  sink: string;
   virtualDaaScore: string;
 };
 

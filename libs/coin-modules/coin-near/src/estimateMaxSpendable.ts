@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getFeesForTransaction";
 import { getMaxAmount } from "./logic";

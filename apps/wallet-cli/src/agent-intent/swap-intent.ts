@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { SwapIntent } from "@ledgerhq/agent-intent-sdk";
 import type { SwapAsset } from "./token-lookup";
 

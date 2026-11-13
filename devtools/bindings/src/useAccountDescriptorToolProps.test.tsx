@@ -41,7 +41,7 @@ describe("useAccountDescriptorToolProps", () => {
         type: "address",
         network: "ethereum",
         path: ethereum.path,
-        key: ethereum.address,
+        key: ethereum.key,
       },
       {
         accountUUID: computeAccountUUID(bitcoin),
@@ -50,7 +50,7 @@ describe("useAccountDescriptorToolProps", () => {
         type: "utxo",
         network: "bitcoin",
         path: bitcoin.path,
-        key: bitcoin.xpub,
+        key: bitcoin.key,
       },
     ]);
   });

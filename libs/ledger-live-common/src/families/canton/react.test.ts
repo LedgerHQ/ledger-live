@@ -7,11 +7,8 @@ jest.mock("../../bridge", () => ({
   getCurrencyBridge: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-canton/config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: () => ({ nativeInstrumentId: "Amulet" }),
-  },
+jest.mock("../../config", () => ({
+  getCurrencyConfiguration: () => ({ nativeInstrumentId: "Amulet" }),
 }));
 
 import { renderHook, act } from "@testing-library/react";

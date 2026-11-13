@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import {
   useSendAmount,
@@ -21,6 +21,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type UseAmountInputControllerParams = Readonly<{
   account: AccountLike;
@@ -165,7 +166,10 @@ export function useAmountInputController({
         return;
       }
 
-      const nextAmount = calculateCryptoAmount(processed.value) ?? new BigNumber(0);
+      const nextAmount = sendFeatures.roundAmount(
+        accountCurrency,
+        calculateCryptoAmount(processed.value) ?? new BigNumber(0),
+      );
       lastFiatAmountRef.current = processed.value;
       lastTransactionAmountRef.current = nextAmount;
       debouncedUpdateTransaction({
@@ -173,7 +177,7 @@ export function useAmountInputController({
         useAllAmount: false,
       });
     },
-    [calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
+    [accountCurrency, calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
   );
 
   const handleCryptoInput = useCallback(

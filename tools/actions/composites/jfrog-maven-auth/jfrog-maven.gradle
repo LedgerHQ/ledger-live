@@ -1,0 +1,84 @@
+// Gradle init script installed on CI by tools/actions/composites/jfrog-maven-auth.
+// Points each public Maven repository at its JFrog remote, so builds do not hit Maven Central's
+// rate limit from shared runner IPs. Local (file:) repositories, such as Detox's and React
+// Native's, are left alone.
+//
+// Each host maps to its own remote rather than to a virtual: the Maven virtuals contain
+// repositories the CI token cannot read, so a missing file comes back as 403 instead of 404.
+// Gradle needs the 404 to fall back from a missing .module file to the POM.
+
+def artifactoryUrl = System.getenv('JFROG_MAVEN_URL')
+def token = System.getenv('JFROG_TOKEN')
+if (!artifactoryUrl || !token) {
+    logger.warn('jfrog-maven: JFROG_MAVEN_URL or JFROG_TOKEN is not set, keeping the public Maven repositories')
+    return
+}
+if (!artifactoryUrl.endsWith('/')) {
+    artifactoryUrl += '/'
+}
+
+def centralRemote = 'ossproxy-maven-proxy-central'
+def remoteByHost = [
+    'repo.maven.apache.org': centralRemote,
+    'repo1.maven.org'      : centralRemote,
+    'dl.google.com'        : 'ossproxy-maven-proxy-google-android',
+    'maven.google.com'     : 'ossproxy-maven-proxy-google-android',
+    'plugins.gradle.org'   : 'ossproxy-maven-proxy-gradleplugins',
+    'jcenter.bintray.com'  : 'ossproxy-maven-proxy-jcenter',
+]
+def artifactoryHost = new URI(artifactoryUrl).host
+
+def authenticate = { MavenArtifactRepository repo ->
+    repo.credentials(HttpHeaderCredentials) {
+        name = 'Authorization'
+        value = "Bearer ${token}"
+    }
+    repo.authentication {
+        header(HttpHeaderAuthentication)
+    }
+}
+
+// Rewrites in place rather than replacing, so each repository keeps its position and content filters.
+def mirror = { RepositoryHandler repositories ->
+    def portalFronted = false
+    repositories.withType(MavenArtifactRepository).all { repo ->
+        def host = repo.url?.host
+        def remote = remoteByHost[host]
+        if (!remote) {
+            if (repo.url?.scheme in ['http', 'https'] && host != artifactoryHost) {
+                logger.lifecycle("jfrog-maven: ${repo.url} is not mirrored")
+            }
+            return
+        }
+        logger.info("jfrog-maven: ${repo.url} -> ${artifactoryUrl}${remote}/")
+        repo.url = "${artifactoryUrl}${remote}/"
+        authenticate(repo)
+        // The Plugin Portal redirects plugin dependencies (e.g. gson) to Maven Central, so
+        // Central's remote goes in front of it.
+        if (host == 'plugins.gradle.org' && !portalFronted) {
+            portalFronted = true
+            def front = repositories.maven {
+                name = 'JFrogMavenCentral'
+                url = "${artifactoryUrl}${centralRemote}/"
+            }
+            authenticate(front)
+            repositories.remove(front)
+            repositories.addFirst(front)
+        }
+    }
+}
+
+beforeSettings { settings ->
+    logger.lifecycle("jfrog-maven: resolving through ${artifactoryUrl} remotes for ${settings.rootDir}")
+    // With no plugin repositories declared, Gradle falls back to the Plugin Portal without
+    // going through the handler. Declaring it makes the fallback visible to the rewrite.
+    settings.pluginManagement.repositories.gradlePluginPortal()
+    mirror(settings.pluginManagement.repositories)
+    mirror(settings.buildscript.repositories)
+    mirror(settings.dependencyResolutionManagement.repositories)
+}
+
+beforeProject { project ->
+    mirror(project.buildscript.repositories)
+    mirror(project.repositories)
+}

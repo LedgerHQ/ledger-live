@@ -271,7 +271,19 @@ describe("A4Client", () => {
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
-          params: expect.objectContaining({ blocks: '[0,"latest"]', size: 50 }),
+          params: expect.objectContaining({ blocks: "[0,latest]", size: 50 }),
+        }),
+      );
+    });
+
+    it("serializes the pending bound without quotes", async () => {
+      mockNetwork.mockResolvedValueOnce({ data: { items: [] }, status: 200, headers: {} });
+
+      await client.listOperations("account-1", { blocks: [1234567, "pending"] });
+
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ blocks: "[1234567,pending]" }),
         }),
       );
     });

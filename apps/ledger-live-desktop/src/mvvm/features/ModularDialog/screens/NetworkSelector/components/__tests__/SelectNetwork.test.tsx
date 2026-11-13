@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { NetworkSelectorContent } from "../NetworkSelectorContent/index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";

@@ -5,7 +5,7 @@
 import "../../../__tests__/test-helpers/rateLookup";
 import React from "react";
 import { renderHook } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockEthCryptoCurrency } from "../../__mocks__/currencies.mock";
 import { groupCurrenciesByAsset } from "../../utils";

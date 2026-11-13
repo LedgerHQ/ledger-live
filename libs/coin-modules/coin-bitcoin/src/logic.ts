@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "@ledgerhq/wallet-btc/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType } from "@ledgerhq/types-live";

@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   SuiAccount,
   Transaction as SuiTransaction,

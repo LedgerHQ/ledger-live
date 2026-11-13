@@ -1,5 +1,5 @@
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import * as getFeesModule from "./getFeesForTransaction";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";

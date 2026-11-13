@@ -3,7 +3,7 @@ import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Button } from "@ledgerhq/react-ui";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";

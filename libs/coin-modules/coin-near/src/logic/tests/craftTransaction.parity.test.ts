@@ -4,7 +4,7 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildTransaction } from "../../buildTransaction";
 import { getAccessKey } from "../../network";
 import type { Transaction } from "../../types";

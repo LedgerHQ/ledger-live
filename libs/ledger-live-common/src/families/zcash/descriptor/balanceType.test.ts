@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { zcashBalanceTypeConfig } from "./balanceType";

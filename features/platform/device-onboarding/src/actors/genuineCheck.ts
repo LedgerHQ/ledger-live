@@ -17,6 +17,7 @@ export type GenuineCheckEvent = Extract<
   OnboardingEvent,
   {
     type:
+      | "LOCKED"
       | "ALLOW_SECURE_CONNECTION_REQUESTED"
       | "SECURE_CONNECTION_ALLOWED"
       | "GENUINE_CHECK_PASSED"
@@ -51,6 +52,7 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
     let awaitingApproval = false;
+    let reportedLock = false;
 
     const runner = createDeviceActionRunner<
       GenuineCheckDAOutput,
@@ -66,7 +68,13 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
           }),
         }),
       ({ requiredUserInteraction }) => {
-        if (stopped) return;
+        if (stopped || reportedLock) return;
+
+        if (requiredUserInteraction === UserInteractionRequired.UnlockDevice) {
+          reportedLock = true;
+          sendBack({ type: "LOCKED" });
+          return;
+        }
 
         // Tell the machine only when the prompt shows or goes away, not on each update.
         const prompting = requiredUserInteraction === UserInteractionRequired.AllowSecureConnection;

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
@@ -76,6 +76,7 @@ export function useCryptoDataTable({
           ),
         header: t("cryptoAddresses.table.columns.name"),
         cell: NameCell,
+        meta: { className: "w-[30%]" },
       },
       {
         id: "address",
@@ -111,7 +112,7 @@ export function useCryptoDataTable({
         header: "",
         enableSorting: false,
         cell: ActionCell,
-        meta: { align: "end" },
+        meta: { align: "end", className: "w-64" },
       },
     ],
     [t, walletState, lookupParentAccount, getSortCountervalue],

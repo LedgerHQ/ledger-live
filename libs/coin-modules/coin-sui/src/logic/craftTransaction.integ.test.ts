@@ -1,6 +1,7 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
+import { toShortStructTag } from "../utils";
 import { craftTransaction } from "./craftTransaction";
 
 const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
@@ -10,16 +11,9 @@ const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716
 describe.skip("craftTransaction", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: "https://fullnode.mainnet.sui.io:443",
-      },
+      ...suiDefaults.sui,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 
@@ -38,7 +32,7 @@ describe.skip("craftTransaction", () => {
     expect(result).toEqual({ unsigned: expect.any(Uint8Array) });
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(
+    expect(resultCoinTypes?.map(toShortStructTag)).toEqual(
       expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
     );
   }, 15000);
@@ -86,7 +80,7 @@ describe.skip("craftTransaction", () => {
     expect(result.objects?.every(o => o instanceof Uint8Array)).toBe(true);
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(
+    expect(resultCoinTypes?.map(toShortStructTag)).toEqual(
       expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
     );
   }, 15000);

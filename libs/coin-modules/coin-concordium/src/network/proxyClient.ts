@@ -307,7 +307,7 @@ export async function getTransactionCost(
 
 /**
  * Submit a signed transfer transaction to the network
- * PUT /v0/submitTransfer/
+ * PUT /v0/submitTransfer
  *
  * @param config - The Concordium coin configuration
  * @param currencyId - The Concordium currency ID
@@ -322,7 +322,7 @@ export async function submitTransfer(
   return withClient(config, currencyId, async client => {
     const request: LiveNetworkRequest<SubmitTransferData> = {
       method: "PUT",
-      url: "/v0/submitTransfer/",
+      url: "/v0/submitTransfer",
       data,
     };
     return client.request<{ submissionId: string }, SubmitTransferData>(request);
@@ -331,7 +331,7 @@ export async function submitTransfer(
 
 /**
  * Submit a credential deployment transaction to the network
- * PUT /v0/submitCredential/
+ * PUT /v0/submitCredential
  *
  * @param config - The Concordium coin configuration
  * @param currencyId - The Concordium currency ID
@@ -346,7 +346,7 @@ export async function submitCredential(
   return withClient(config, currencyId, async client => {
     const request: LiveNetworkRequest<SubmitCredentialData> = {
       method: "PUT",
-      url: "/v0/submitCredential/",
+      url: "/v0/submitCredential",
       data: data,
     };
 

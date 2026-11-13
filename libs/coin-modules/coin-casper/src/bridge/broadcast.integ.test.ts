@@ -5,27 +5,21 @@ import {
   PublicKey,
   Transaction as CasperDeployTransaction,
 } from "casper-js-sdk";
-import {
-  casperMainnetConfig,
-  casperMainnetResolvedConfig,
-} from "../__tests__/fixtures/config.fixture";
 import { getCasperNodeRpcClient } from "../network/api";
-import { setCoinConfig } from "../config";
+import { casperDefaults, setCoinConfig } from "../config";
 import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
 import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setCoinConfig(casperMainnetConfig);
+    setCoinConfig(() => casperDefaults.casper);
   });
 
   it("throws on insufficient funds", async () => {
     const privateKey = PrivateKey.generate(KeyAlgorithm.SECP256K1);
     const senderHex = privateKey.publicKey.toHex();
 
-    const casperNetwork = await CasperNetwork.create(
-      getCasperNodeRpcClient(casperMainnetResolvedConfig),
-    );
+    const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient(casperDefaults.casper));
     const deploy: CasperDeployTransaction = casperNetwork.createTransferTransaction(
       PublicKey.fromHex(senderHex),
       PublicKey.fromHex(senderHex),

@@ -4,7 +4,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, Switch, TouchableWithoutFeedback, View } from "react-native";

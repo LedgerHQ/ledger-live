@@ -1,13 +1,15 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { Secp256k1KeyIdentity } from "@icp-sdk/core/identity/secp256k1";
 import { concatBytes } from "@noble/hashes/utils";
-import { BigNumber } from "bignumber.js";
-import { ICP_FEES, ICP_NETWORK_URL } from "../consts";
+import BigNumber from "bignumber.js";
+import { internet_computerDefaults, nodeUrl } from "../config";
+import { ICP_FEES } from "../consts";
 import { createUnsignedSendTransaction } from "../logic/buildTransaction";
 import { deriveAddressFromPubkey, pubkeyToDer } from "../logic/crypto";
 import { buildBroadcast } from "./broadcast";
 
-const broadcast = buildBroadcast(() => ICP_NETWORK_URL);
+const NODE_URL = nodeUrl(internet_computerDefaults.internet_computer);
+const broadcast = buildBroadcast(() => NODE_URL);
 
 describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {

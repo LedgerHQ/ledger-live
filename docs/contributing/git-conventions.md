@@ -96,6 +96,7 @@ Rules:
 - `description` is imperative, lowercase and has no trailing period.
 - Keep the subject line at or below 72 characters.
 - Keep each body and footer line at or below 100 characters.
+- A line with an issue reference (`#123`) starts the footer, so put a blank line before it.
 - Do not use gitmoji.
 - Keep commits small, isolated and meaningful.
 - Never mix refactor, fix and feature work in a single commit.
@@ -104,6 +105,10 @@ Rules:
 Use `pnpm commit` to create a valid commit message, using tab-completion for type.
 
 Use `pnpm commitlint --from <target-branch>` to check every commit on the branch.
+
+### When the commit hook cannot run
+
+The commit-msg hook ([hk.pkl](../../hk.pkl)) runs `pnpm commitlint`. In a fresh worktree it fails when mise cannot trust the worktree's `mise.toml` (for example inside an agent sandbox) or when `node_modules` is not installed. Fix the cause: trust the config or install dependencies. If that is not possible, say so, check the message with another checkout's `node_modules/.bin/commitlint` run from this worktree, and mention the skipped hook in the pull request.
 
 ## Pull request titles
 

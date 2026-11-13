@@ -10,24 +10,21 @@ import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { TransactionStatus, Transaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { LegacySignerCanton } from "@ledgerhq/live-signer-canton";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import cantonBridgeMock from "./bridge/mock";
 import { Resolver } from "../../hw/getAddress/types";
-import { getCurrencyConfiguration } from "../../config";
 
 const createSigner: CreateSigner<CantonSigner> = (transport: Transport) => {
   return new LegacySignerCanton(transport);
 };
 
-const getCurrencyConfig = (currencyId?: string) => {
-  if (!currencyId) {
-    throw new Error("currency not defined");
-  }
-  return getCurrencyConfiguration<CantonCoinConfig>(currencyId);
-};
-
+// One bridge serves every Canton network: each call resolves `context.config(currency.id)`.
 const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")
   ? cantonBridgeMock
-  : createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+  : createBridges(
+      executeWithSigner(createSigner),
+      buildContext<CantonCoinConfig>("canton_network"),
+    );
 
 const resolver: Resolver = createResolver(createSigner, cantonResolver);
 

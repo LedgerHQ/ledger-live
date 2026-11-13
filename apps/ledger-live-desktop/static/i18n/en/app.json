@@ -187,6 +187,7 @@
       "FEES": "Fees",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
+      "OPT_EDIT": "Token updated",
       "CLOSE_ACCOUNT": "Close account",
       "BOND": "Bond",
       "UNBOND": "Unbond",
@@ -340,7 +341,15 @@
     "home": "Home",
     "refer": "Refer a friend",
     "catalog": "Discover",
-    "recover": "[L] Recover"
+    "recover": "[L] Recover",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "stars": {
     "tooltip": "Star account"
@@ -1950,13 +1959,13 @@
       "continue": "Proceed at your own risk"
     },
     "info": {
-      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder": "Do not remind me again"
     },
     "error": {
       "title": "{{device}}™ does not support this feature",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update": "Discover your Upgrade Program",
     "learnMore": "Learn more",
@@ -2128,6 +2137,14 @@
       "link": "Learn more about Stellar assets",
       "seeTokens": "Show assets ({{tokenCount}})",
       "hideTokens": "Hide assets ({{tokenCount}})"
+    },
+    "xrp": {
+      "title": "Tokens",
+      "cta": "Add token",
+      "placeholder": "You can add tokens to your {{currencyName}} account.",
+      "link": "Learn more about XRP Ledger tokens",
+      "seeTokens": "Show tokens ({{tokenCount}})",
+      "hideTokens": "Hide tokens ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -2756,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress": {
+    "addressDisplayed": {
+      "title": "Address securely displayed",
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
@@ -2983,7 +3007,13 @@
     "processingTransaction": "Your transaction is being processed",
     "sign": {
       "title": "Continue on your Ledger {{wording}}",
-      "description": "Follow the instructions displayed on your Secure Touchscreen."
+      "description": "Follow the instructions displayed on your Secure Touchscreen.",
+      "cancelled": {
+        "title": "Transaction canceled",
+        "description": "You rejected the transaction. Your funds won't be affected.",
+        "close": "Close",
+        "retry": "Try again"
+      }
     },
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
@@ -4288,6 +4318,72 @@
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
       }
+    }
+  },
+  "xrp": {
+    "addToken": {
+      "title": "Add token",
+      "steps": {
+        "token": {
+          "title": "Token",
+          "selectLabel": "Choose a token",
+          "allAdded": "You've already added all available tokens to this account.",
+          "loadError": "The token list couldn't load.",
+          "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
+        },
+        "settings": {
+          "title": "Settings",
+          "limit": "Trust limit",
+          "max": "Max",
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+        },
+        "review": {
+          "title": "Review",
+          "token": "Token",
+          "issuer": "Issuer"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} token successfully added",
+            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "tokenSettings": {
+      "title": "Token settings",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
+      "steps": {
+        "confirmation": {
+          "success": {
+            "title": "{{token}} trust limit updated",
+            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+          }
+        }
+      }
+    },
+    "tokenAccount": {
+      "editSettings": "Edit settings",
+      "trustLimit": "Trust limit",
+      "trustLimitTooltip": "The most of this token your account accepts to hold."
+    },
+    "rippling": {
+      "label": "Rippling",
+      "on": "On",
+      "off": "Off",
+      "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
+    },
+    "receive": {
+      "addToken": "Add token",
+      "addTokenFirst": "To receive an XRP Ledger token, add it to your account first.",
+      "tokenNotHeld": "Your account no longer holds {{token}}. Add it again before receiving it."
     }
   },
   "stellar": {
@@ -6911,6 +7007,7 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
+      "changeTrust": "recipient",
       "tokenAssociate": "recipient",
       "nominate": "validator",
       "stake": "validator",
@@ -8038,6 +8135,48 @@
     },
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
+    },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet"
+    },
+    "XrpAmountPrecisionExceeded": {
+      "title": "The amount has too many digits",
+      "description": "XRP Ledger tokens accept at most 16 significant digits."
+    },
+    "XrpTrustLimitZero": {
+      "title": "The limit must be above 0",
+      "description": "To stop holding this token, remove it instead."
+    },
+    "XrpTokenFrozen": {
+      "title": "You can't send this token",
+      "description": "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized": {
+      "title": "You can't send this token",
+      "description": "Its issuer hasn't approved your account to hold it."
+    },
+    "XrpTokenCannotReceive": {
+      "title": "This recipient can't receive this token",
+      "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
+    },
+    "XrpTokenAmountNotDeliverable": {
+      "title": "This amount can't be delivered",
+      "description": "The recipient's limit or the issuer's transfer fee doesn't allow it. Try a smaller amount."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "The issuer refused this request",
+      "description": "The issuer doesn't accept new holders for this token, or the token doesn't exist."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "This transaction would fail",
+      "description": "The XRP Ledger rejected it with {{code}}."
+    },
+    "XrpUnsupportedIntent": {
+      "title": "This transaction is not supported"
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be locked on your account while this token is added.",
+      "description": "You'll get it back when you remove the token."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
@@ -9669,6 +9808,32 @@
     "cta": "Open Perps"
   },
   "predictions": {
+    "binding": {
+      "preparing": "Preparing the signature",
+      "title": "Confirm account ownership on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "settingUp": {
+        "title": "Setting up your trading account"
+      },
+      "setUp": {
+        "created": "Trading account created",
+        "found": "Trading account found",
+        "description": "Your trading account is ready to use.",
+        "continue": "Continue"
+      },
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "setupFailed": {
+        "title": "Your trading account couldn't be set up",
+        "failed-deploy": "MoonPay couldn't deploy your trading wallet.",
+        "failed-permission": "MoonPay couldn't set up your trading wallet's permissions.",
+        "timeout": "The setup is taking too long.",
+        "unavailable": "MoonPay couldn't be reached.",
+        "unknown": "Something went wrong while setting it up."
+      }
+    },
     "onboarding": {
       "intro": {
         "title": "Trade on future events",
@@ -11303,9 +11468,33 @@
     "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount": "No account",
     "review": "Review",
+    "learnMore": "Learn More",
     "formErrors": {
+      "offline": "Internet connection problem.",
       "amountExceedsBalance": "Insufficient balance",
+      "feeAccountEmpty": "You need more {{ticker}} for the network fees.",
+      "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
+      "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
+      "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
+      "feeEstimationFailed": "We were unable to calculate fees at this time. Your crypto accounts could be out of sync. Restart Ledger Wallet app and try again.",
+      "accountNotReady": "This account isn't ready to send yet. Open it in your accounts, then try again.",
+      "seiEvmUnlinked": "SEI EVM accounts must be linked before swapping",
+      "aleoPrivateBalance": "Swaps are only available for public {{ticker}}. Your funds are currently private and can't be swapped.",
+      "tezosUnrevealed": "Your Tezos account isn't activated yet. Please send a small amount of XTZ before swapping.",
+      "dotMinimumBalance": "Keep {{minValue}} DOT minimum balance after the swap.",
+      "xlmMinimumBalance": "Keep {{minValue}} XLM minimum balance after the swap.",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    },
+    "details": {
+      "notEnoughFees": {
+        "title": "Not enough {{ticker}}",
+        "description": "Your account {{account}} doesn't have enough balance to cover the network fees."
+      },
+      "amountTooLow": {
+        "title": "Minimum required for {{ticker}}",
+        "description": "A minimum value of {{amount}} {{ticker}} is required for quotes"
+      },
+      "buy": "Buy {{ticker}}"
     }
   },
   "actionMenuDialog": {
@@ -11334,6 +11523,10 @@
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",
+    "genericError": {
+      "title": "Something went wrong",
+      "description": "Please try again later or select a different asset."
+    },
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
   },
   "perpsTransactionSigned": {
@@ -11344,7 +11537,9 @@
   "perpsTransactionStatus": {
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
-    "currencies": "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle": "Withdraw",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
   },
   "accountAnalytics": {
     "assets": "Asset filter",
@@ -11352,6 +11547,7 @@
     "allAssets": "All assets",
     "allAccounts": "All accounts",
     "error": "Unable to load analytics. Please try again.",
-    "unavailable": "Data is not available for this selection."
+    "unavailable": "Data is not available for this selection.",
+    "noResults": "No results"
   }
 }

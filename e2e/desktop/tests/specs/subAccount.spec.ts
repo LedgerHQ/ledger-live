@@ -175,9 +175,11 @@ for (const token of subAccountReceive) {
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
-        await app.account.clickAddToken();
+        await app.account.clickAddToken(
+          token.account.parentAccount?.currency ?? token.account.currency,
+        );
         if (token.shouldSelectReceiveCryptoOption) {
-          await app.receive.expectRecieveMenu();
+          await app.receive.expectReceiveMenu();
           await app.receive.clickReceive();
         }
         if (token.shouldSelectTokenOnReceiveFlow) {
@@ -351,7 +353,7 @@ for (const transaction of transactionsAddressInvalid) {
         if (accountToDebit instanceof TokenAccount) {
           await app.account.navigateToTokenInAccount(accountToDebit);
         }
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         for (const { recipient, expectedErrorMessage } of recipients) {
           await app.newSendFlow.clearRecipient();
@@ -409,7 +411,7 @@ for (const transaction of transactionsAddressValid) {
           getParentAccountName(transaction.transaction.accountToDebit),
         );
         await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         await app.newSendFlow.typeAddress(Addresses.SOL_GIGA_2_ATA_ADDRESS);
         await app.newSendFlow.expectAddressMatched(Addresses.SOL_GIGA_2_ATA_ADDRESS);
@@ -448,7 +450,7 @@ const tokenTransactionInvalid: Array<{
   },
   {
     tx: new Transaction(
-      TokenAccount.SOL_GIGA_3,
+      TokenAccount.SOL_GIGA_4,
       TokenAccount.SOL_GIGA_1,
       "0.5",
       undefined,
@@ -498,7 +500,7 @@ for (const transaction of tokenTransactionInvalid) {
           getParentAccountName(transaction.tx.accountToDebit),
         );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.tx.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         const recipientAddress = transaction.tx.accountToCredit.address;
         if (!recipientAddress) {

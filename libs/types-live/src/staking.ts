@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "./account";
 import type { OperationExtra, OperationExtraRaw } from "./operation";
 

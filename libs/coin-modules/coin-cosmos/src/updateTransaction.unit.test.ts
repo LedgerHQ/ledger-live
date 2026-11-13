@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import updateTransactionDefault, { updateTransaction } from "./updateTransaction";
 import type { Transaction } from "./types";
 

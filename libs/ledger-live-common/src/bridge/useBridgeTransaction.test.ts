@@ -3,9 +3,11 @@
  */
 import "../__tests__/test-helpers/dom-polyfill";
 import React from "react";
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { renderHook, waitFor, act } from "@testing-library/react";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
+import type { Transaction } from "../coin-modules/transaction-types";
 import { genAccount } from "../mock/account";
 import { getAccountBridge } from ".";
 import useBridgeTransaction, {
@@ -43,6 +45,37 @@ jest.mock("../families/bitcoin/bridge/api", () => ({
 
 const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
+
+const flushPendingPromises = () => new Promise(resolve => setTimeout(resolve, 0));
+
+const createDeferred = <T>() => {
+  let resolve!: (value: T) => void;
+  let reject!: (error: Error) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
+};
+
+const renderHookWithTransaction = async <T extends Transaction>(
+  bridge: AccountBridge<T>,
+  account: Account,
+  transaction: T,
+) => {
+  let result: ReturnType<
+    typeof renderHook<ReturnType<typeof useBridgeTransaction<T>>, void>
+  >["result"];
+  await act(async () => {
+    ({ result } = renderHook(
+      () => useBridgeTransaction<T>(bridge, () => ({ account, transaction })),
+      {
+        wrapper: suspenseWrapper,
+      },
+    ));
+  });
+  return result!;
+};
 
 describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {
@@ -113,6 +146,77 @@ describe("useBridgeTransaction", () => {
       await waitFor(() => expect(errors.length).toBe(1), { timeout: 10000 });
       expect(errors[0]).toMatchObject(new Error("isInvalidRecipient_mock_criticalcrash"));
     } finally {
+      setGlobalOnBridgeError(before);
+    }
+  }, 30000);
+
+  test("keeps a transaction update made while the first prepare is still pending", async () => {
+    const mainAccount = genAccount("mocked-account-1", { currency: BTC });
+    const bridge = await getAccountBridge(mainAccount);
+    const initialTransaction = bridge.createTransaction(mainAccount);
+    const updatedTransaction = { ...initialTransaction, amount: new BigNumber(1000) };
+    const initialPrepare = createDeferred<typeof initialTransaction>();
+    const prepareSpy = jest
+      .spyOn(bridge, "prepareTransaction")
+      .mockImplementationOnce(() => initialPrepare.promise);
+    const statusSpy = jest.spyOn(bridge, "getTransactionStatus");
+    try {
+      const result = await renderHookWithTransaction(bridge, mainAccount, initialTransaction);
+      expect(prepareSpy).toHaveBeenCalledWith(mainAccount, initialTransaction);
+
+      await act(async () => {
+        result.current.updateTransaction(() => updatedTransaction);
+        initialPrepare.resolve(initialTransaction);
+        await flushPendingPromises();
+        expect(statusSpy).toHaveBeenCalledWith(mainAccount, initialTransaction);
+      });
+
+      await waitFor(
+        () => {
+          expect(result.current.bridgePending).toBe(false);
+          expect(result.current.transaction?.amount).toEqual(updatedTransaction.amount);
+        },
+        { timeout: 10000 },
+      );
+    } finally {
+      prepareSpy.mockRestore();
+      statusSpy.mockRestore();
+    }
+  }, 30000);
+
+  test("ignores a prepare error of a transaction that was replaced meanwhile", async () => {
+    const before = getGlobalOnBridgeError();
+    const errors: Error[] = [];
+    setGlobalOnBridgeError(error => errors.push(error));
+    const mainAccount = genAccount("mocked-account-1", { currency: BTC });
+    const bridge = await getAccountBridge(mainAccount);
+    const initialTransaction = bridge.createTransaction(mainAccount);
+    const updatedTransaction = { ...initialTransaction, amount: new BigNumber(1000) };
+    const initialPrepare = createDeferred<typeof initialTransaction>();
+    const prepareSpy = jest
+      .spyOn(bridge, "prepareTransaction")
+      .mockImplementationOnce(() => initialPrepare.promise);
+    try {
+      const result = await renderHookWithTransaction(bridge, mainAccount, initialTransaction);
+      expect(prepareSpy).toHaveBeenCalledWith(mainAccount, initialTransaction);
+
+      await act(async () => {
+        result.current.updateTransaction(() => updatedTransaction);
+        initialPrepare.reject(new Error("stale prepare failure"));
+        await flushPendingPromises();
+      });
+
+      await waitFor(
+        () => {
+          expect(result.current.bridgePending).toBe(false);
+          expect(result.current.transaction?.amount).toEqual(updatedTransaction.amount);
+        },
+        { timeout: 10000 },
+      );
+      expect(result.current.bridgeError).toBeFalsy();
+      expect(errors).toEqual([]);
+    } finally {
+      prepareSpy.mockRestore();
       setGlobalOnBridgeError(before);
     }
   }, 30000);

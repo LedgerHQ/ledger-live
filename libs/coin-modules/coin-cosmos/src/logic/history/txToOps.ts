@@ -1,5 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getMainMessage } from "../../helpers";
 import { parseAmountStringToNumber } from "../../logic";
 import { CosmosDelegationInfo, CosmosOperation, CosmosOperationExtra, CosmosTx } from "../../types";

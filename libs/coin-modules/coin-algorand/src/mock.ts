@@ -1,6 +1,6 @@
 import { genAddress, genHex } from "@ledgerhq/ledger-wallet-framework/mocks/helpers";
 import { Account, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
 import type { AlgorandAccount, AlgorandOperation } from "./types";
 

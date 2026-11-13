@@ -1,29 +1,31 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId, byText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card" | "paytab";
 
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---
-  wallet40Tab = (tabName: Wallet40TabName) => getElementsById(`w40-tab-${tabName}`);
+  private readonly wallet40Tab = (tabName: Wallet40TabName) => byId(`w40-tab-${tabName}`);
 
   // --- Wallet 4.0 top bar buttons ---
-  topBarDiscoverId = "topbar-discover";
-  topBarMyWalletId = "topbar-mywallet";
-  topBarTransactionHistoryId = "topbar-transaction-history";
-  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
+  private readonly topBarDiscover = byId("topbar-discover");
+  private readonly topBarMyWallet = byId("topbar-mywallet");
+  private readonly topBarTransactionHistory = byId("topbar-transaction-history");
+  private readonly myWalletHeaderSettingsButton = byId("my-wallet-header-settings-button");
 
   // --- Legacy bottom tabs ---
-  legacyTransferButtonId = "transfer-button";
-  legacyMyLedgerTabId = "TabBarManager";
+  private readonly legacyTransferButton = byId("transfer-button");
+  private readonly legacyMyLedgerTab = byId("TabBarManager");
 
-  // --- Destination page verification IDs ---
-  portfolioScreenId = "portfolio-screen";
-  earnScreenId = "earn-screen";
-  cardLandingTitleId = "card-landing-title";
-  discoverHeaderTitle = "Discover";
-  notificationsHeaderTitle = "Notifications";
+  // --- Destination page verification ---
+  private readonly portfolioScreen = byId("portfolio-screen");
+  private readonly earnScreen = byId("earn-screen");
+  private readonly cardLandingTitle = byId("card-landing-title");
+  // The Discover and Notifications headers have no testID.
+  private readonly discoverHeaderTitle = byText("Discover");
+  private readonly notificationsHeaderTitle = byText("Notifications");
 
   // =====================
   // Wait helpers
@@ -31,7 +33,7 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready(timeout = TIMEOUT.xxlarge) {
-    await waitForElementById(this.topBarDiscoverId, timeout);
+    await this.topBarDiscover.waitVisible(timeout);
   }
 
   // =====================
@@ -40,7 +42,7 @@ export default class MainNavigationPage {
 
   @Step("Tap W40 tab {{{0}}}")
   async tapWallet40Tab(tabName: Wallet40TabName) {
-    await tapByElement(this.wallet40Tab(tabName));
+    await this.wallet40Tab(tabName).tap();
   }
 
   // =====================
@@ -49,7 +51,7 @@ export default class MainNavigationPage {
 
   @Step("Tap My Wallet avatar in top bar")
   async tapTopBarMyWallet() {
-    await tapById(this.topBarMyWalletId);
+    await this.topBarMyWallet.tap();
   }
 
   // The top bar belongs to the navigation chrome, the arrival check to My Wallet — so this composes
@@ -62,18 +64,18 @@ export default class MainNavigationPage {
 
   @Step("Tap Discover in top bar")
   async tapTopBarDiscover() {
-    await tapById(this.topBarDiscoverId);
+    await this.topBarDiscover.tap();
   }
 
   @Step("Tap Transaction History in top bar")
   async tapTopBarTransactionHistory() {
-    await tapById(this.topBarTransactionHistoryId);
+    await this.topBarTransactionHistory.tap();
   }
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
-    await tapById(this.topBarMyWalletId);
-    await tapById(this.myWalletHeaderSettingsButtonId);
+    await this.topBarMyWallet.tap();
+    await this.myWalletHeaderSettingsButton.tap();
   }
 
   // =====================
@@ -82,23 +84,23 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 bottom tabs to be visible")
   async expectWallet40BottomTabsVisible() {
-    await detoxExpect(this.wallet40Tab("home")).toBeVisible();
-    await detoxExpect(this.wallet40Tab("swap")).toBeVisible();
-    await detoxExpect(this.wallet40Tab("earn")).toBeVisible();
-    await detoxExpect(this.wallet40Tab("card")).toBeVisible();
+    await this.wallet40Tab("home").expectVisible();
+    await this.wallet40Tab("swap").expectVisible();
+    await this.wallet40Tab("earn").expectVisible();
+    await this.wallet40Tab("card").expectVisible();
   }
 
   @Step("Expect Wallet 4.0 top bar to be visible")
   async expectWallet40TopBarVisible() {
-    await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
-    await detoxExpect(getElementById(this.topBarDiscoverId)).toBeVisible();
-    await detoxExpect(getElementById(this.topBarTransactionHistoryId)).toBeVisible();
+    await this.topBarMyWallet.expectVisible();
+    await this.topBarDiscover.expectVisible();
+    await this.topBarTransactionHistory.expectVisible();
   }
 
   @Step("Expect legacy bottom tabs NOT visible")
   async expectLegacyTabsNotVisible() {
-    await detoxExpect(getElementById(this.legacyTransferButtonId)).not.toBeVisible();
-    await detoxExpect(getElementById(this.legacyMyLedgerTabId)).not.toBeVisible();
+    await this.legacyTransferButton.expectNotVisible();
+    await this.legacyMyLedgerTab.expectNotVisible();
   }
 
   // =====================
@@ -113,26 +115,29 @@ export default class MainNavigationPage {
 
   @Step("Expect Portfolio page visible")
   async expectPortfolioPageVisible() {
-    await waitForElementById(this.portfolioScreenId);
+    await this.portfolioScreen.waitVisible();
+    await this.portfolioScreen.expectVisible();
   }
 
   @Step("Expect Earn page visible")
   async expectEarnPageVisible() {
-    await waitForElementById(this.earnScreenId);
+    await this.earnScreen.waitVisible();
+    await this.earnScreen.expectVisible();
   }
 
   @Step("Expect Card page visible")
   async expectCardPageVisible() {
-    await waitForElementById(this.cardLandingTitleId);
+    await this.cardLandingTitle.waitVisible();
+    await this.cardLandingTitle.expectVisible();
   }
 
   @Step("Expect Discover page visible")
   async expectDiscoverPageVisible() {
-    await detoxExpect(getElementByText(this.discoverHeaderTitle, 0)).toBeVisible();
+    await this.discoverHeaderTitle.expectVisible();
   }
 
   @Step("Expect Notifications page visible")
   async expectNotificationsPageVisible() {
-    await detoxExpect(getElementByText(this.notificationsHeaderTitle, 0)).toBeVisible();
+    await this.notificationsHeaderTitle.expectVisible();
   }
 }

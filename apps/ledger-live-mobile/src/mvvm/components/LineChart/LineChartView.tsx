@@ -33,12 +33,15 @@ export function LineChartView<TRange extends string>({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  plotContent,
 }: Props<TRange>) {
   const segmentedControl = (
     <SegmentedControl
       selectedValue={selectedRange}
       onSelectedChange={handleSelectedChange}
       accessibilityLabel={accessibilityLabel}
+      tabLayout="fit"
+      lx={rangeSelectorStyle}
     >
       {ranges.map(({ value, label }) => (
         <SegmentedControlButton key={value} value={value} lx={rangeButtonStyle}>
@@ -50,32 +53,38 @@ export function LineChartView<TRange extends string>({
 
   return (
     <Box lx={containerStyle} testID={testID}>
-      <LumenLineChart
-        series={chartSeries}
-        loading={isLoading}
-        emptyLabel={emptyLabel}
-        height={height}
-        showArea={showArea}
-        enableScrubbing={enableScrubber}
-        onScrubberPositionChange={onScrubberPositionChange}
-        showXAxis={showXAxis}
-        showYAxis={showYAxis}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      >
-        <LineChartPoints points={points} formatValue={formatValue} />
-        {enableScrubber && (
-          <LineChartScrubber
-            series={chartSeries}
-            formatValue={formatValue}
-            tooltipTitle={tooltipTitle}
-            showTooltip={showScrubberTooltip}
-            showBeacons={showScrubberBeacons}
-            pointTooltips={pointTooltips}
-            pointTooltipsOnly={pointTooltipsOnly}
-          />
-        )}
-      </LumenLineChart>
+      {plotContent ? (
+        <Box lx={plotContentStyle} style={{ minHeight: height }}>
+          {plotContent}
+        </Box>
+      ) : (
+        <LumenLineChart
+          series={chartSeries}
+          loading={isLoading}
+          emptyLabel={emptyLabel}
+          height={height}
+          showArea={showArea}
+          enableScrubbing={enableScrubber}
+          onScrubberPositionChange={onScrubberPositionChange}
+          showXAxis={showXAxis}
+          showYAxis={showYAxis}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        >
+          <LineChartPoints points={points} formatValue={formatValue} />
+          {enableScrubber && (
+            <LineChartScrubber
+              series={chartSeries}
+              formatValue={formatValue}
+              tooltipTitle={tooltipTitle}
+              showTooltip={showScrubberTooltip}
+              showBeacons={showScrubberBeacons}
+              pointTooltips={pointTooltips}
+              pointTooltipsOnly={pointTooltipsOnly}
+            />
+          )}
+        </LumenLineChart>
+      )}
 
       {rangeSelectorTrailing ? (
         <Box lx={rangeSelectorRowStyle}>
@@ -93,6 +102,10 @@ const containerStyle: LumenViewStyle = {
   gap: "s24",
 };
 
+const plotContentStyle: LumenViewStyle = {
+  justifyContent: "center",
+};
+
 const rangeSelectorRowStyle: LumenViewStyle = {
   flexDirection: "row",
   alignItems: "center",
@@ -104,6 +117,12 @@ const rangeSelectorControlStyle: LumenViewStyle = {
   minWidth: "s0",
 };
 
+// "fit" places the pill from each button's measured layout; "fixed" can miss the initial index.
+const rangeSelectorStyle: LumenViewStyle = {
+  alignSelf: "stretch",
+};
+
 const rangeButtonStyle: LumenViewStyle = {
+  flex: 1,
   paddingHorizontal: "s8",
 };

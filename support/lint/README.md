@@ -49,6 +49,10 @@ The `no-restricted-imports` entries that several configs share live in `restrict
 which the presets and the `.mts` configs import and which writes the JSON fragments in
 `restricted-imports/` that the JSON configs extend.
 
+`plugins.mts` (`@support/lint/plugins`) exports `SUFFIX_IMPORTS_PLUGIN`, the absolute path of the
+`suffix-imports` JS plugin. `base` puts it in `jsPlugins`; a config that does not extend a preset,
+such as an app config, imports it by package name, as it imports `@support/lint/restricted-imports`.
+
 ## Conformance
 
 `lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root
@@ -69,8 +73,8 @@ rspack, `preferNativePlatform` in Re.Pack. A suffix in the specifier itself is r
 cross-platform contamination from tsc, and rots on a rename. See [tsconfig.md](../../docs/tsconfig.md).
 
 `base` registers the rule off. `devtools`, `features-flow`, `features-platform` and `shared`
-turn it on. It checks `import`, `export`, dynamic `import()`, type-level `import()`, `require()`
-and the `jest.mock` family, and reports three shapes.
+turn it on, and so do the desktop and mobile app configs. It checks `import`, `export`, dynamic
+`import()`, type-level `import()`, `require()` and the `jest.mock` family, and reports three shapes.
 
 **A trailing `.web` or `.native`, before an optional JS or TS extension.** Autofixable:
 `oxlint --fix` strips the suffix and keeps the extension.

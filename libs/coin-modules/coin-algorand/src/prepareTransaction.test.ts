@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as estimateMaxSpendableModule from "./estimateMaxSpendable";
 import * as getFeesModule from "./getFeesForTransaction";
 import { prepareTransaction } from "./prepareTransaction";

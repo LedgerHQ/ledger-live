@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent } from "@ledgerhq/lumen-ui-react";
-import { TrackScreen } from "@shared/analytics-react";
+import { Track, TrackScreen } from "@shared/analytics-react";
+import { ANALYTICS_OPT_IN_SCREEN_PAGES } from "LLD/features/AnalyticsOptInScreenV2/types";
 import type { AnalyticsConsentDialogPhase } from "../types";
 import { AnalyticsConsentDialogCopyBlock } from "../components/AnalyticsConsentDialogCopyBlock";
 import { AnalyticsConsentDialogFooterActions } from "../components/AnalyticsConsentDialogFooterActions";
@@ -62,6 +63,12 @@ export function AnalyticsConsentDialogView({
       >
         <div aria-hidden className={sheetTopGlowClassName} />
         <div className="flex min-h-0 flex-1 flex-col">
+          <Track
+            onMount
+            mandatory
+            event={ANALYTICS_OPT_IN_SCREEN_PAGES.main}
+            page={ANALYTICS_OPT_IN_SCREEN_PAGES.main}
+          />
           <TrackScreen
             key={phase}
             category="AnalyticsConsentDialog"

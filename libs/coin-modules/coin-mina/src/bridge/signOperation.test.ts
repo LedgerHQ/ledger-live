@@ -1,6 +1,6 @@
 import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { MINA_CANCEL_RETURN_CODE } from "../consts";
 import { reEncodeRawSignature } from "../logic/utils";

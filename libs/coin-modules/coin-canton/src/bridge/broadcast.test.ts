@@ -1,11 +1,12 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
-import { broadcast as broadcastLogic } from "../common-logic";
+import { broadcast as broadcastLogic } from "../logic/broadcast";
+import { createMockContext } from "../test/fixtures";
 import { broadcast } from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("../common-logic");
+jest.mock("../logic/broadcast");
 
 const mockCurrency = {
   id: "canton_network",
@@ -21,7 +22,7 @@ describe("broadcast", () => {
   });
 
   it("should broadcast", () => {
-    broadcast({
+    broadcast(createMockContext(), {
       account: {
         currency: mockCurrency,
       },
@@ -34,7 +35,7 @@ describe("broadcast", () => {
   });
 
   it("should patch operation with hash", () => {
-    broadcast({
+    broadcast(createMockContext(), {
       account: {
         currency: mockCurrency,
       },

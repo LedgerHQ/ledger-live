@@ -1,6 +1,6 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { StakingPosition, StakingPositionRaw, TezosAccount, TezosAccountRaw } from "./types";
 
 function safeISOString(d: Date, uid: string): string | undefined {

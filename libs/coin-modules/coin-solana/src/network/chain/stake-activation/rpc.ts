@@ -1,5 +1,5 @@
 import { SYSVAR_STAKE_HISTORY_PUBKEY } from "@solana/web3.js";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import { ChainAPI } from "..";
 import { isHistoryEntry } from "../../../utils";

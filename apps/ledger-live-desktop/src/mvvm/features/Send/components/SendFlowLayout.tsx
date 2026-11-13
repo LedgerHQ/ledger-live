@@ -14,6 +14,7 @@ import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight, useAnimatedHeightCapped } from "@shared/ui-animated-height";
 import { track } from "@shared/analytics";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
@@ -47,10 +48,11 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const currentStepConfig = wizard.currentStepConfig;
   const StepComponent = wizard.currentStepRenderer;
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const isDeviceBlocked = useDeviceBlocked();
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) {
+      if (!open && !isDeviceBlocked) {
         track("button_clicked", {
           button: "close",
           page: getSendFlowTrackingPage(wizard.currentStep, isSelectingContactAddress),
@@ -61,6 +63,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
       }
     },
     [
+      isDeviceBlocked,
       isSelectingContactAddress,
       onClose,
       recipientType,

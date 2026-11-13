@@ -7,6 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useNavigation } from "@react-navigation/native";
+import { useActivationDeviceIntentStep } from "./useActivationDeviceIntentStep";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
@@ -15,8 +16,13 @@ type NavigationProps = BaseComposite<
 function View() {
   const [showDrawer, setShowDrawer] = React.useState(false);
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const deviceIntentStep = useActivationDeviceIntentStep();
 
   const onCreateKey = () => {
+    if (deviceIntentStep.isEnabled) {
+      deviceIntentStep.start();
+      return;
+    }
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
@@ -43,6 +49,7 @@ function View() {
         isOpen={showDrawer}
         handleClose={onCloseDrawer}
       />
+      {deviceIntentStep.element}
     </SafeAreaView>
   );
 }

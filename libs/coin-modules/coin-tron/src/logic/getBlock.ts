@@ -15,7 +15,12 @@ import {
 import { encode58Check } from "../network/format";
 import { hasUnresolvedTokenReference, inferAssetInfo } from "../network/trongrid/trongrid-adapters";
 import type { BlockTransactionAPI, TransactionInfoByBlockNumAPI } from "../network/types";
-import { abiDecodeTrc20Transfer, decodeTrc20TransferLog } from "../network/utils";
+import {
+  abiDecodeTrc20Approve,
+  decodeTrc20ApprovalLog,
+  abiDecodeTrc20Transfer,
+  decodeTrc20TransferLog,
+} from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 type BlockTxInfo = TrongridTxInfo;
@@ -98,19 +103,112 @@ function toBlockTransaction(
 
   const fee = txDetail?.fee ?? tx.ret?.[0]?.fee ?? 0;
 
-  // A contract deployment can mint TRC20 from its constructor. Those transfers are nowhere in
-  // `raw_data` — `new_contract` holds no address and no call data — so they are read from the
-  // receipt's events instead, which is the same evidence `listOperations` resolves them from.
-  const mintOperations =
-    txInfo.type === "CreateSmartContract" ? toConstructorMintOperations(txDetail) : [];
-
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
     feesPayer: txInfo.from,
-    operations: mintOperations.length > 0 ? mintOperations : toBlockOperations(txInfo),
+    operations: toTransactionOperations(
+      txInfo,
+      tx.raw_data.contract[0]?.parameter.value.data,
+      txDetail,
+    ),
   };
+}
+
+function toTransactionOperations(
+  txInfo: BlockTxInfo,
+  callData: string | undefined,
+  txDetail: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation[] {
+  switch (txInfo.type) {
+    case "CreateSmartContract": {
+      // A contract deployment can mint TRC20 from its constructor. Those transfers are nowhere in
+      // `raw_data` — `new_contract` holds no address and no call data — so they are read from the
+      // receipt's events instead, which is the same evidence `listOperations` resolves them from.
+      const mintOperations = toTransferLogOperations(txDetail);
+      return mintOperations.length > 0 ? mintOperations : toBlockOperations(txInfo);
+    }
+    case "TriggerSmartContract":
+      return toSmartContractCallOperations(txInfo, callData, txDetail);
+    default:
+      return toBlockOperations(txInfo);
+  }
+}
+
+/**
+ * A smart contract call moves TRC20 tokens whenever the token contract emits a `Transfer` event,
+ * whatever function was called: a direct `transfer`, but also `transferFrom`, swaps, router or
+ * contract payouts and airdrops, none of which carry the parties in their call data. So the
+ * transfers are read from the receipt's events, like `listOperations` does — and only from there,
+ * since a direct `transfer` call emits its own `Transfer` event too.
+ *
+ * A reverted call emits no event, and without a receipt there is no event to read: both keep the
+ * transfer decoded from the call data of a direct `transfer`, so a failed transaction still shows
+ * what was attempted.
+ *
+ * An `approve` call adds an `APPROVE` operation on the token it was sent to, see
+ * {@link toApproveOperation}.
+ */
+function toSmartContractCallOperations(
+  txInfo: BlockTxInfo,
+  callData: string | undefined,
+  txDetail: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation[] {
+  const transfers =
+    txDetail && !txInfo.hasFailed
+      ? toTransferLogOperations(txDetail)
+      : toBlockOperations(txInfo).filter(op => op.type === "transfer");
+  const approval = toApproveOperation(txInfo, callData, txInfo.hasFailed ? undefined : txDetail);
+  const operations = approval ? [...transfers, approval] : transfers;
+
+  return operations.length > 0
+    ? operations
+    : [{ type: "other", operationType: "NONE", contractType: txInfo.type }];
+}
+
+/**
+ * The `APPROVE` operation of an `approve(spender, amount)` call: the owner (the transaction's
+ * sender and fees payer) lets `spender` move up to `amount` of the token the call was sent to.
+ *
+ * TRC721 `approve(address,uint256)` has the same selector, so the call data alone cannot tell a
+ * TRC20 approval from an NFT one. When the call succeeded and its receipt is known, the operation
+ * is only reported if the called contract emitted a TRC20 `Approval` event, as `listOperations`
+ * only reports approvals from TRC20 events. A reverted call emits no event, and without a receipt
+ * there is no event to read: both fall back to the call data, like the transfers do.
+ *
+ * @param successfulReceipt the receipt of the call, only when the call succeeded
+ */
+function toApproveOperation(
+  txInfo: BlockTxInfo,
+  callData: string | undefined,
+  successfulReceipt: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation | null {
+  if (!callData || !txInfo.tokenAddress) return null;
+  const approve = abiDecodeTrc20Approve(callData);
+  if (!approve) return null;
+  if (successfulReceipt && !hasTrc20ApprovalFrom(successfulReceipt, txInfo.tokenAddress)) {
+    return null;
+  }
+
+  return {
+    type: "other",
+    operationType: "APPROVE",
+    contractType: txInfo.type,
+    asset: { type: "trc20", assetReference: txInfo.tokenAddress },
+    spender: encode58Check(approve.spender),
+  };
+}
+
+/** Whether the receipt holds a TRC20 `Approval` event emitted by the given token contract. */
+function hasTrc20ApprovalFrom(
+  receipt: TransactionInfoByBlockNumAPI,
+  tokenAddress: string,
+): boolean {
+  return (receipt.log ?? []).some(log => {
+    const approval = decodeTrc20ApprovalLog(log);
+    return !!approval && encode58Check(approval.contractAddress) === tokenAddress;
+  });
 }
 
 function formatBlockTransaction(
@@ -180,13 +278,13 @@ function formatBlockTransaction(
 }
 
 /**
- * Every `Transfer` event a TRC20 deployment emits from its constructor, as the debit/credit pair a
- * plain transfer produces. All of them are reported, not just the first: a mint that
- * `listOperations` returns to one of the parties must show up here too, whatever else the same
- * deployment moved. A deployment emitting no decodable transfer yields nothing, and the
- * transaction stays a plain contract-creation operation.
+ * Every `Transfer` event of a transaction's receipt, as the debit/credit pair a plain transfer
+ * produces. All of them are reported, not just the first: a transfer that `listOperations` returns
+ * to one of the parties must show up here too, whatever else the same transaction moved. The token
+ * is the contract that emitted the event, so every pair names its token. Zero-amount events move
+ * nothing and are skipped.
  */
-function toConstructorMintOperations(
+function toTransferLogOperations(
   txDetail: TransactionInfoByBlockNumAPI | undefined,
 ): BlockOperation[] {
   return (txDetail?.log ?? [])

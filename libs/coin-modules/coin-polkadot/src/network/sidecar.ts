@@ -3,7 +3,7 @@ import { hexToBn } from "@polkadot/util";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type PolkadotCoinConfig } from "../config";
 import {
   DEFAULT_CHAIN_CONSTANTS_CACHE_TTL_MS,
@@ -417,16 +417,22 @@ export const isControllerAddress = async (
  *
  * @async
  * @param {string[]} - address to verify
+ * @param {string[]} - addresses already nominated, still accepted when blocked
  *
  * @returns {string[]} - addresses that are not validators
  */
 export const verifyValidatorAddresses = async (
   config: PolkadotCoinConfig,
   validators: string[],
+  currentNominations: string[] = [],
 ): Promise<string[]> => {
   const existingValidators = await fetchValidators(config, "all", validators);
-  const existingIds = existingValidators.map(v => v.accountId);
-  return validators.filter(v => !existingIds.includes(v));
+  const nominableIds = new Set(
+    existingValidators
+      .filter(v => !v.isBlocked || currentNominations.includes(v.accountId))
+      .map(v => v.accountId),
+  );
+  return validators.filter(v => !nominableIds.has(v));
 };
 
 /**
@@ -567,6 +573,7 @@ const getNominations = async (
       address: nomination.address,
       value: new BigNumber(nomination.value || 0),
       status: nomination.status,
+      isRegistered: nomination.isRegistered,
     }));
   } catch (error) {
     logger("polkadot", `failed to fetch nominations ${addr}`, {
@@ -721,6 +728,7 @@ export const getValidators = async (
     selfBonded: new BigNumber(v.own),
     isElected: v.isElected,
     isOversubscribed: v.isOversubscribed,
+    isBlocked: v.isBlocked,
   }));
 };
 

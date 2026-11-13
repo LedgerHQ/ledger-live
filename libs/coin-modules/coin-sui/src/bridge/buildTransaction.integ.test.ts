@@ -1,6 +1,7 @@
-import { BigNumber } from "bignumber.js";
-import coinConfig from "../config";
+import BigNumber from "bignumber.js";
+import coinConfig, { suiDefaults } from "../config";
 import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
+import { toShortStructTag } from "../utils";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
 import { buildTransaction } from "./buildTransaction";
@@ -9,16 +10,9 @@ import { buildTransaction } from "./buildTransaction";
 describe.skip("buildTransaction", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: "https://fullnode.mainnet.sui.io:443",
-      },
+      ...suiDefaults.sui,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 
@@ -76,7 +70,7 @@ describe.skip("buildTransaction", () => {
 
     // Decode and extract coinType
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(
+    expect(resultCoinTypes?.map(toShortStructTag)).toEqual(
       expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
     );
   });

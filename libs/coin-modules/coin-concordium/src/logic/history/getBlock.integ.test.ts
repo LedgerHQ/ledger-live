@@ -1,10 +1,10 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { lastBlock } from "./lastBlock";
 
 const CURRENCY = "concordium_testnet";
-const config = createFixtureConfig();
+const config = concordiumDefaults.concordium_testnet;
 
 describe("getBlock", () => {
   it("returns block info matching getBlockInfo and a well-formed transactions array", async () => {

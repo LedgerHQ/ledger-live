@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { IntDecoding, parseJSON } from "algosdk";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AlgorandCoinConfig } from "../config";
 import type {
   AlgoAssetTransferInfo,

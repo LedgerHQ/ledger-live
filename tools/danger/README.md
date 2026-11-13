@@ -45,7 +45,7 @@ In future we may also use it to give PR authors extra information on failing che
 
 1. **package** – `danger` is installed as a dev-dependency of `@tools/danger`
 2. **workflow** – [danger.yml](../../.github/workflows/danger.yml) defines how it is run in GitHub
-3. **config** –  [dangerfile.ts](./dangerfile.ts) is the entry point targeted by the workflow
+3. **config** –  [dangerfile.mjs](./dangerfile.mjs) is the entry point targeted by the workflow. Danger imports an `.mjs` dangerfile as is, so Node loads the `.ts` modules with its native type stripping instead of Danger transpiling them with the `typescript` package
 
 The workflow needs almost no git history – commits come from the PR API via `danger.git.commits` – so the
 checkout is limited to 2 commits (the PR merge commit and its base, for the lockfile diff).
@@ -61,7 +61,7 @@ If you are making changes to your pull request, or to the dangerfile you can get
 
 ```bash
 cd tools/danger
-pnpm danger pr https://github.com/LedgerHQ/ledger-live/pull/19915 --dangerfile dangerfile.ts
+pnpm danger pr https://github.com/LedgerHQ/ledger-live/pull/19915 --dangerfile dangerfile.mjs
 ```
 
 1. See feedback in the Terminal before pushing your changes

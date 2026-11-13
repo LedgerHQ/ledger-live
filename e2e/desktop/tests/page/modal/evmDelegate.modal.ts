@@ -41,7 +41,9 @@ export class EvmDelegateModal extends Modal {
   @step("Expect Sei account activation warning with Continue disabled")
   async expectSeiActivationWarning() {
     await expect(this.seiActivationWarning).toBeVisible();
-    await expect(this.rewardsInfoContinueButton).toBeDisabled();
+    await this.softExpect(async soft => {
+      await soft(this.rewardsInfoContinueButton).toBeDisabled();
+    });
   }
 
   @step("Expect validator list to be visible")

@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 
 /**

@@ -1,8 +1,6 @@
 self-hosted-runner:
   labels:
-    - ledger-live-4xlarge
     - ledger-live-linux-8CPU-32RAM
-    - ledger-live-linux-e2e-8CPU-32RAM
     - ledger-live-windows-e2e-32CPU-128RAM
     - ledger-wallet-1cpu-aws-public
     - ledger-wallet-16cpu-aws-public
@@ -16,6 +14,7 @@ self-hosted-runner:
     - ledger-wallet-4cpu-aws-public-docker-cached
     - ledger-wallet-8cpu-aws-public-cached
     - ledger-wallet-16cpu-aws-public-cached
+    - ledger-wallet-8cpu-github-public-cached
     - performance-pool
     - general-pool
     - qaa
@@ -24,3 +23,9 @@ self-hosted-runner:
     .github/workflows/*.yml: ~
     tools/actions/**/*.yml: ~
     tools/actions/composites/**/*.yml: ~
+paths:
+  # No actionlint release knows the concurrency `queue` key yet (rhysd/actionlint#654): remove this
+  # once the version pinned in mise.toml does.
+  .github/workflows/test-mobile-startup-perf.yml:
+    ignore:
+      - 'unexpected key "queue" for "concurrency" section'

@@ -1,8 +1,8 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
+import { fetchNearblocks } from "./nearblocks";
 import { NearTransaction, NearV3Response } from "./sdk.types";
 
 /**
@@ -14,8 +14,6 @@ export const fetchTransactionsPage = async (
   address: string,
   options: { cursor?: string; limit?: number } = {},
 ): Promise<{ transactions: NearTransaction[]; next?: string }> => {
-  const currencyConfig = config;
-
   const params = new URLSearchParams();
   if (options.limit !== undefined) {
     params.set("limit", String(options.limit));
@@ -25,16 +23,15 @@ export const fetchTransactionsPage = async (
   }
   const query = params.toString();
 
-  const response = await liveNetwork<NearV3Response<NearTransaction[]>>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/accounts/${address}/txns${
-      query ? `?${query}` : ""
-    }`,
-  });
+  const body = await fetchNearblocks<NearV3Response<NearTransaction[]>>(
+    config,
+    `/v3/accounts/${address}/txns${query ? `?${query}` : ""}`,
+  );
 
-  const next = response.data.meta?.next_page;
+  const next = body.meta?.next_page;
 
   return {
-    transactions: response.data.data ?? [],
+    transactions: body.data ?? [],
     ...(next !== undefined && { next }),
   };
 };

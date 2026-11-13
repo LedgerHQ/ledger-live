@@ -1,4 +1,6 @@
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
+import type { PredictionsBindingAnswer } from "../binding";
+import { PredictionsBindingSignerMismatch } from "../errors";
 import { handlers, type PredictionsUiHooks } from "../server";
 
 type RpcErrorAnswer = { error: { code: number; data?: unknown } };
@@ -11,6 +13,8 @@ function setup() {
     "app.close": jest.fn(),
     "intro.isSeen": jest.fn(() => false),
     "intro.markSeen": jest.fn(),
+    "binding.sign": jest.fn<Promise<PredictionsBindingAnswer>, [string]>(),
+    "binding.reportSetup": jest.fn(),
   };
   const predictionsHandlers = handlers({ uiHooks });
   const answers: string[] = [];
@@ -28,14 +32,14 @@ function setup() {
     methodIds: Object.keys(predictionsHandlers),
   });
 
-  const onboard = async (params: unknown): Promise<RpcErrorAnswer> => {
-    transport.onMessage?.(
-      JSON.stringify({ jsonrpc: "2.0", id: "1", method: "custom.predictions.onboard", params }),
-    );
+  const call = async (method: string, params: unknown): Promise<RpcErrorAnswer> => {
+    transport.onMessage?.(JSON.stringify({ jsonrpc: "2.0", id: "1", method, params }));
     await new Promise(setImmediate);
     return JSON.parse(answers[0]) as RpcErrorAnswer;
   };
-  return { uiHooks, onboard };
+  const onboard = (params: unknown) => call("custom.predictions.onboard", params);
+  const bindAccount = (params: unknown) => call("custom.predictions.bindAccount", params);
+  return { uiHooks, onboard, bindAccount };
 }
 
 describe("custom.predictions.onboard through the Wallet API server", () => {
@@ -55,5 +59,28 @@ describe("custom.predictions.onboard through the Wallet API server", () => {
 
     expect(answer.error.data).toMatchObject({ data: { name: "UnsupportedOnboardingVersion" } });
     expect(uiHooks["sheet.open"]).not.toHaveBeenCalled();
+  });
+});
+
+describe("custom.predictions.bindAccount through the Wallet API server", () => {
+  it("answers invalid params with INVALID_PARAMS, without showing the prompt", async () => {
+    const { uiHooks, bindAccount } = setup();
+
+    const answer = await bindAccount({ accountId: "" });
+
+    expect(answer.error.code).toBe(-32602);
+    expect(uiHooks["binding.sign"]).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    Object.assign(new Error("User refused"), { name: "UserRefusedOnDevice" }),
+    new PredictionsBindingSignerMismatch("Signed by someone else"),
+  ])("keeps the name of a failed binding in the answer (%s)", async error => {
+    const { uiHooks, bindAccount } = setup();
+    jest.mocked(uiHooks["binding.sign"]).mockRejectedValueOnce(error);
+
+    const answer = await bindAccount({ accountId: "wallet-account-id" });
+
+    expect(answer.error.data).toMatchObject({ data: { name: error.name } });
   });
 });

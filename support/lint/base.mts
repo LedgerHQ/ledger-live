@@ -1,5 +1,6 @@
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "oxlint";
+import { SUFFIX_IMPORTS_PLUGIN } from "./plugins.mts";
+import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline
 // is written once and a layer preset only records where it differs. A layer that does not differ
@@ -10,12 +11,12 @@ import { defineConfig } from "oxlint";
 // break. Every layer that lints today had already reached that conclusion on its own; collecting
 // the decisions here is what lets a previously-unlinted layer switch lint on without going red.
 //
-// `jsPlugins` is resolved from this file's own URL, so a consumer at any depth inherits a working
-// absolute path and never names the plugin itself.
+// `jsPlugins` is an absolute path resolved in `plugins.mts`, so a consumer at any depth inherits a
+// working path and never names the plugin itself.
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [fileURLToPath(new URL("./src/suffix-imports.js", import.meta.url))],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
     // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is
@@ -23,6 +24,7 @@ export default defineConfig({
     "eslint/no-console": ["error", { allow: ["warn", "error"] }],
     "eslint/no-empty-pattern": "warn",
     "eslint/no-unused-vars": "warn",
+    "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "typescript/no-deprecated": "error",
