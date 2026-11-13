@@ -17,7 +17,8 @@
  * (confirmed: config accepted, zero blocks ever produced after 90s+ of
  * waiting with it set to `true`).
  */
-import { ZEBRA_RPC_URL } from "./regtestNode";
+import { getChainTip } from "@ledgerhq/zcash-utils";
+import { ZAINO_GRPC_URL, ZEBRA_RPC_URL } from "./regtestNode";
 
 let nextRequestId = 0;
 
@@ -161,4 +162,24 @@ export async function waitForBlockHeight(target: number, timeoutMs = 120_000): P
     await sleep(1_000);
     height = await getBlockCount();
   }
+}
+
+/**
+ * Waits until zaino reports zebra's current tip. The builder targets the block
+ * after zaino's tip, so a craft made while zaino still lags behind blocks just
+ * mined on zebra gets a stale target and an expiry the node rejects as already
+ * passed.
+ */
+export async function waitForZainoTip(timeoutMs = 120_000): Promise<number> {
+  const expected = await getBlockCount();
+  const start = Date.now();
+  let zainoTip = await getChainTip(ZAINO_GRPC_URL);
+  while (zainoTip !== expected) {
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(`zaino stopped at ${zainoTip}, zebra's tip is ${expected}`);
+    }
+    await sleep(1_000);
+    zainoTip = await getChainTip(ZAINO_GRPC_URL);
+  }
+  return expected;
 }
