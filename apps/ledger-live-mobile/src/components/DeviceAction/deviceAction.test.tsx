@@ -59,7 +59,7 @@ describe("DeviceAction - Deprecation", () => {
 
     expect(
       screen.getByText(
-        "As of 12/31/2023, Ethereum support on Ledger Nano S™ via Ledger Live™ will end",
+        "As of 12/31/2023, Ethereum support on Ledger Nano S™ via Ledger Wallet™ will end",
       ),
     ).toBeVisible();
     expect(screen.getByText("Continue")).toBeVisible();
@@ -115,7 +115,7 @@ describe("DeviceAction - Deprecation", () => {
 
     expect(
       screen.getByText(
-        "As of 12/31/2023, Ethereum support on Ledger Nano S™ via Ledger Live™ will end",
+        "As of 12/31/2023, Ethereum support on Ledger Nano S™ via Ledger Wallet™ will end",
       ),
     ).toBeVisible();
     expect(screen.getByText("Continue")).toBeVisible();
