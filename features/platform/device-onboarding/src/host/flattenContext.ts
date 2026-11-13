@@ -3,10 +3,7 @@ import type { deviceOnboardingMachine } from "../machine";
 import { firmwareSettled } from "../internals/firmwareCheckState";
 import type { DeviceOnboardingContext, OnboardingStep, RecoveryKeyStatus } from "../types";
 
-/**
- * @deprecated Read `toolContext` (the whole context as plain data) instead. Kept while app code
- * still reads these flat names.
- */
+/** What the deprecated `flattenDeviceOnboardingContext` returns. */
 export type WatchedOnboardingContext = {
   deviceModelId: DeviceOnboardingContext["deviceModelId"];
   offerSync: boolean;

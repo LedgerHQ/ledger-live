@@ -28,7 +28,7 @@ describe("device setup", () => {
   it("stays on the Recovery Key backup while the device still reports itself ready", async () => {
     const { actor } = await enterSetup();
 
-    await follow(actor, [
+    follow(actor, [
       OnboardingStep.ChooseName,
       OnboardingStep.Pin,
       OnboardingStep.SetupChoice,
@@ -215,7 +215,7 @@ describe("device setup", () => {
   it("follows a new seed on a touchscreen straight to done", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
-    await follow(actor, [
+    follow(actor, [
       OnboardingStep.ChooseName,
       OnboardingStep.Pin,
       OnboardingStep.SetupChoice,
@@ -234,7 +234,7 @@ describe("device setup", () => {
   it("skips naming on a nano and still reaches done", async () => {
     const { actor } = await enterSetup({ deviceModelId: DeviceModelId.NANO_X });
 
-    await follow(actor, [OnboardingStep.Pin, OnboardingStep.SetupChoice, OnboardingStep.NewDevice]);
+    follow(actor, [OnboardingStep.Pin, OnboardingStep.SetupChoice, OnboardingStep.NewDevice]);
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
@@ -244,7 +244,7 @@ describe("device setup", () => {
   it("advances the word index while restoring a recovery phrase", async () => {
     const { actor } = await enterSetup();
 
-    await follow(actor, [
+    follow(actor, [
       OnboardingStep.Pin,
       OnboardingStep.SetupChoice,
       OnboardingStep.SetupChoiceRestore,
@@ -264,7 +264,7 @@ describe("device setup", () => {
   it("follows a Recover restore to done", async () => {
     const { actor } = await enterSetup();
 
-    await follow(actor, [
+    follow(actor, [
       OnboardingStep.Pin,
       OnboardingStep.SetupChoice,
       OnboardingStep.SetupChoiceRestore,
@@ -279,7 +279,7 @@ describe("device setup", () => {
   it("follows a Recovery Key restore to done", async () => {
     const { actor } = await enterSetup();
 
-    await follow(actor, [
+    follow(actor, [
       OnboardingStep.Pin,
       OnboardingStep.SetupChoice,
       OnboardingStep.SetupChoiceRestore,
