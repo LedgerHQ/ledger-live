@@ -50,6 +50,16 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+export type CoinModuleAccountStatus = {
+  used: boolean;
+  /** Only on chains with onboarding (Canton, Concordium). */
+  isOnboarded?: boolean;
+};
+
+export type CoinModuleAccountStatusApi = {
+  getAccountStatus(key: string, signal?: AbortSignal): Promise<CoinModuleAccountStatus>;
+};
+
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
@@ -64,5 +74,6 @@ export type CoinModuleHost = {
   paginatesOperations?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the operations read. */
   getOperationsApi?(currencyId: string): Promise<CoinModuleOperationsApi | undefined>;
+  getAccountStatusApi?(currencyId: string): Promise<CoinModuleAccountStatusApi | undefined>;
   blacklistedTokenIds?(): readonly string[];
 };

@@ -31,6 +31,7 @@ import {
   mapJettonTxToOps,
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
+import { yieldsSubAccount } from "./logic/accountActivity";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
 
 const jettonTxMessageHashesMap = new Map<string, string>();
@@ -194,7 +195,7 @@ async function getSubAccounts(
   for (const op of newOps) {
     const { accountId: tokenAccountId } = decodeOperationId(op.id);
     const { token } = await decodeTokenAccountId(tokenAccountId);
-    if (!token || blacklistedTokenIds.includes(token.id)) continue;
+    if (!yieldsSubAccount(token, blacklistedTokenIds)) continue;
     if (!opsPerToken.has(token)) opsPerToken.set(token, []);
     opsPerToken.get(token)?.push(op);
   }

@@ -1,4 +1,3 @@
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   decodeAccountId,
   encodeTokenAccountId,
@@ -7,10 +6,11 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { Address } from "@ton/core";
 import BigNumber from "bignumber.js";
+import { jettonTransferOf, transactionTransfers } from "../../logic/accountActivity";
 import { forwardFees } from "../../logic/forwardFees";
 import { decodeForwardPayload } from "../../logic/forwardPayload";
 import { TonOperation } from "../../types";
-import { addressesAreEqual, isAddressValid } from "../../utils";
+import { isAddressValid } from "../../utils";
 import { fetchJettonTransactions, fetchTransactions } from "./api";
 import {
   TonAddressBook,
@@ -86,31 +86,11 @@ export function mapTxToOps(
   return (tx: TonTransaction): TonOperation[] => {
     const ops: TonOperation[] = [];
 
-    const accountAddr = Address.parse(tx.account).toString({ urlSafe: true, bounceable: false });
-
-    if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
-
-    const isReceiving =
-      tx.in_msg &&
-      tx.in_msg.source &&
-      tx.in_msg.source !== "" &&
-      tx.in_msg.value &&
-      tx.in_msg.value !== "0" &&
-      tx.account === tx.in_msg.destination;
-
-    // A single TON transaction can emit several outgoing messages (e.g. wallet v4/v5
-    // batch sends, or a main transfer alongside a small secondary message). Collect
-    // every value-bearing message originating from this account and aggregate them
-    // into one OUT operation rather than assuming a single output.
-    const outMsgsFromAccount = tx.out_msgs.filter(
-      msg =>
-        msg.source &&
-        msg.source !== "" &&
-        msg.value &&
-        msg.value !== "0" &&
-        tx.account === msg.source,
-    );
-
+    const {
+      accountAddress: accountAddr,
+      isReceiving,
+      outMessages: outMsgsFromAccount,
+    } = transactionTransfers(addr, tx);
     const isSending = outMsgsFromAccount.length > 0;
 
     const date = new Date(tx.now * 1000); // now is defined in seconds
@@ -228,30 +208,12 @@ export function mapJettonTxToOps(
   jettonTxMessageHashesMap?: Map<string, string>,
 ): (tx: TonJettonTransfer) => Promise<TonOperation[]> {
   return async (tx: TonJettonTransfer): Promise<TonOperation[]> => {
-    const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
-    if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
-
-    const jettonMasterAddr = Address.parse(tx.jetton_master).toString({
-      urlSafe: true,
-      bounceable: true,
-    });
-    const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      jettonMasterAddr.toLowerCase(),
-      decodeAccountId(accountId).currencyId,
-    );
-    if (!tokenCurrency) return [];
+    const transfer = await jettonTransferOf(addr, tx, decodeAccountId(accountId).currencyId);
+    if (!transfer) return [];
+    const { token: tokenCurrency, isReceiving, isSending } = transfer;
     const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
 
     const ops: TonOperation[] = [];
-    const isReceiving = addressesAreEqual(
-      accountAddr,
-      Address.parse(tx.destination).toString({ urlSafe: true, bounceable: false }),
-    );
-    const isSending = addressesAreEqual(
-      accountAddr,
-      Address.parse(tx.source).toString({ urlSafe: true, bounceable: false }),
-    );
-    if (!isSending && !isReceiving) throw Error("[ton] unexpected addresses");
 
     const date = new Date(tx.transaction_now * 1000); // now is defined in seconds
     const hash = tx.transaction_hash;
@@ -268,7 +230,7 @@ export function mapJettonTxToOps(
         hasFailed: false,
         accountId: tokenAccountId,
         senders: getFriendlyAddress(addressBook, tx.source),
-        recipients: [accountAddr],
+        recipients: [addr],
         date,
         extra: {
           lt: tx.transaction_lt,
@@ -296,7 +258,7 @@ export function mapJettonTxToOps(
         blockHash: null,
         hasFailed: false,
         accountId: tokenAccountId,
-        senders: [accountAddr],
+        senders: [addr],
         recipients: getFriendlyAddress(addressBook, tx.destination),
         date,
         extra: {

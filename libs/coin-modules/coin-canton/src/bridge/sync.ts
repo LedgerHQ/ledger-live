@@ -1,4 +1,3 @@
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   encodeAccountId,
   encodeTokenAccountId,
@@ -6,26 +5,25 @@ import {
 import { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
-import { isCantonAccountEmpty } from "../helpers";
-import { getInstrumentBalances } from "./instrumentBalances";
-import { isInstrument, type NativeInstrument } from "../logic/asset";
 import { resumeOffset } from "../logic/listOperations";
 import { determineOperationType } from "../logic/operationType";
+import {
+  isPartyUsed,
+  isTokenEnabled,
+  isValidOperation,
+  readPartyBalances,
+  type ValidOperationInfo,
+} from "../logic/partyState";
 import type { AssetView } from "../types/gateway";
 import {
-  getCalTokensCached,
   getEnabledInstrumentsCached,
   getKey,
   getLedgerEnd,
-  getNativeInstrument,
   getOperations,
   getPartyById,
-  getPendingTransferProposals,
-  SEPARATOR,
   type OperationInfo,
   type TransferProposal,
 } from "../network/gateway";
@@ -34,29 +32,6 @@ import { CantonAccount, CantonResources, CantonSigner, type ReplayTransaction } 
 import { buildSubAccounts, mergeOperations } from "./buildSubAccounts";
 import { getCurrencyContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
-
-type ValidOperationInfo = OperationInfo & {
-  asset: { type: "native" | "token"; instrumentId: string; instrumentAdmin: string };
-  transfers: Array<{
-    value: string;
-    details?: { operationType?: string; metadata?: { reason?: string } };
-  }>;
-  senders: string[];
-  recipients: string[];
-};
-
-function isValidOperation(txInfo: OperationInfo): txInfo is ValidOperationInfo {
-  return (
-    txInfo.asset !== undefined &&
-    (txInfo.asset.type === "native" || txInfo.asset.type === "token") &&
-    typeof txInfo.asset.instrumentId === "string" &&
-    typeof txInfo.asset.instrumentAdmin === "string" &&
-    txInfo.transfers !== undefined &&
-    txInfo.transfers.length > 0 &&
-    txInfo.senders !== undefined &&
-    txInfo.recipients !== undefined
-  );
-}
 
 /**
  * Bumped whenever stored operations go stale, so that every account syncs again from scratch:
@@ -336,38 +311,12 @@ const withoutReplayed = (
   return { ...subAccount, operations, operationsCount: operations.length };
 };
 
-/** Whether the token gets a sub-account: listed in the CAL with an admin, and enabled. */
-const isTokenEnabled = (
-  token: TokenCurrency,
-  calTokens: Map<string, string>,
-  enabledInstruments: ReadonlySet<string>,
-): boolean => {
-  const instrumentId = calTokens.get(token.id);
-  const adminId = token.contractAddress;
-  return !!instrumentId && !!adminId && enabledInstruments.has(getKey(instrumentId, adminId));
-};
-
 export function filterDisabledTokenAccounts(
   subAccounts: TokenAccount[],
   calTokens: Map<string, string>,
   enabledInstruments: ReadonlySet<string>,
 ): TokenAccount[] {
   return subAccounts.filter(({ token }) => isTokenEnabled(token, calTokens, enabledInstruments));
-}
-
-// So a node info outage doesn't fail every sync of an account an earlier sync classified.
-async function getNativeInstrumentOrSaved(
-  context: CantonContext,
-  config: CantonCoinConfig,
-  savedAdmin: string | undefined,
-): Promise<NativeInstrument> {
-  try {
-    return await getNativeInstrument(config);
-  } catch (error) {
-    if (!savedAdmin) throw error;
-    context.logger("canton/sync", "DSO party read failed, using the saved one", { error });
-    return { instrumentId: config.nativeInstrumentId, instrumentAdmin: savedAdmin };
-  }
 }
 
 export function makeGetAccountShape(
@@ -418,116 +367,21 @@ export function makeGetAccountShape(
     });
 
     const { nativeInstrumentId } = config;
-    // Without a party there is nothing to classify, so a fresh account scans without it.
-    const nativeInstrument = xpubOrAddress
-      ? await getNativeInstrumentOrSaved(
-          context,
-          config,
-          initialAccount?.cantonResources?.nativeInstrumentAdmin,
-        )
-      : undefined;
-    const balances = nativeInstrument
-      ? await getInstrumentBalances(
-          getCurrencyContext(context, currency),
-          xpubOrAddress,
-          nativeInstrument,
-        )
-      : [];
-    const pendingTransferProposals = xpubOrAddress
-      ? await getPendingTransferProposals(config, xpubOrAddress)
-      : [];
-
-    // Aggregate all balances by instrument (unlocked + locked)
-    const aggregatedBalances = new Map<
-      string,
-      {
-        unlockedBalance: bigint;
-        lockedBalance: bigint;
-        utxoCount: number;
-        token: TokenCurrency | null;
-        adminId: string;
-      }
-    >();
-
-    const proposalInstrumentKeys = new Set(
-      pendingTransferProposals.map(proposal =>
-        getKey(proposal.instrument_id, proposal.instrument_admin),
-      ),
+    const savedNativeInstrumentAdmin = initialAccount?.cantonResources?.nativeInstrumentAdmin;
+    const {
+      nativeInstrument,
+      totalBalance,
+      spendableBalance,
+      instrumentUtxoCounts,
+      pendingTransferProposals,
+      calTokens,
+      tokenBalances,
+    } = await readPartyBalances(
+      getCurrencyContext(context, currency),
+      currency.id,
+      xpubOrAddress,
+      savedNativeInstrumentAdmin ? { savedNativeInstrumentAdmin } : {},
     );
-    for (const key of proposalInstrumentKeys) {
-      if (aggregatedBalances.has(key)) continue;
-
-      const [instrumentId, adminId] = key.split(SEPARATOR);
-      balances.push({
-        value: 0n,
-        locked: 0n,
-        utxoCount: 0,
-        instrumentId,
-        adminId,
-        asset: { type: "token", assetReference: instrumentId },
-      });
-    }
-
-    const calTokens = await getCalTokensCached(currency.id);
-    const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
-    // Keyed by admin too: any party can issue an instrument under a CAL token's id.
-    const tokensByKey = new Map<string, TokenCurrency>();
-    for (const [tokenId, instrumentId] of calTokens.entries()) {
-      if (!heldInstrumentIds.has(instrumentId)) continue;
-      const token = await getCryptoAssetsStore().findTokenById(tokenId);
-      if (token?.contractAddress) {
-        tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
-      }
-    }
-
-    for await (const balance of balances) {
-      const isNative =
-        !!nativeInstrument && isInstrument(nativeInstrument, balance.instrumentId, balance.adminId);
-      // Use just instrumentId for native (no admin), composite key for tokens
-      const balanceKey = isNative
-        ? nativeInstrumentId
-        : getKey(balance.instrumentId, balance.adminId);
-      const token: TokenCurrency | null = isNative ? null : (tokensByKey.get(balanceKey) ?? null);
-
-      const existing = aggregatedBalances.get(balanceKey);
-      if (existing) {
-        if (balance.locked) {
-          existing.lockedBalance += balance.value;
-        } else {
-          existing.unlockedBalance += balance.value;
-        }
-        existing.utxoCount += balance.utxoCount;
-      } else {
-        aggregatedBalances.set(balanceKey, {
-          unlockedBalance: balance.locked ? 0n : balance.value,
-          lockedBalance: balance.locked ? balance.value : 0n,
-          utxoCount: balance.utxoCount,
-          token,
-          adminId: balance.adminId,
-        });
-      }
-    }
-
-    const nativeBalance = aggregatedBalances.get(nativeInstrumentId);
-    const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
-    const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
-    const totalBalance = unlockedAmount.plus(lockedAmount);
-    const reserveMin = new BigNumber(config.minReserve || 0);
-    const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
-
-    const instrumentUtxoCounts: Record<string, number> = {};
-    for (const [key, data] of aggregatedBalances) {
-      instrumentUtxoCounts[key] = data.utxoCount;
-    }
-
-    const tokenBalances = Array.from(aggregatedBalances.entries())
-      .filter(([, data]) => data.token !== null)
-      .map(([, { unlockedBalance, lockedBalance, token, adminId }]) => ({
-        totalBalance: unlockedBalance + lockedBalance,
-        spendableBalance: unlockedBalance,
-        token: token!,
-        adminId,
-      }));
 
     // One snapshot, so that the rebuild check and the sub-accounts agree on the enabled tokens.
     const enabledInstruments =
@@ -663,11 +517,11 @@ export function makeGetAccountShape(
       enabledInstruments,
     );
 
-    const used = !isCantonAccountEmpty({
-      operationsCount: mainAccountOperations.length,
-      balance: totalBalance,
-      subAccounts: filteredSubAccounts,
-      cantonResources,
+    const used = isPartyUsed({
+      nativeOperationsCount: mainAccountOperations.length,
+      totalBalance,
+      tokensCount: filteredSubAccounts.length,
+      pendingTransferProposals,
     });
 
     const creationDate =
