@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -381,8 +382,8 @@ function resolveEntries({
       // An absent or non-numeric balance would otherwise reach BigNumber and
       // produce a NaN sub-account, which renders as a broken amount rather than
       // as an error.
-      const balance = new BigNumber(entry.tokenAccountState?.balance?.value);
-      if (!balance.isFinite()) {
+      const balance = parseFiniteBigNumber(entry.tokenAccountState?.balance?.value);
+      if (!balance) {
         log(
           "concordium-sync",
           `PLT ${tokenId} has an unusable balance, keeping the previous sub-account`,

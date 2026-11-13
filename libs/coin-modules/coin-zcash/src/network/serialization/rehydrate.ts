@@ -14,7 +14,7 @@
  * optional field; conditional spreads are used to omit missing keys entirely.
  */
 
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   DecryptedOutput,
   DecryptedOutputRaw,
@@ -28,7 +28,7 @@ export function rehydrateOutput(raw: DecryptedOutputRaw): DecryptedOutput {
   return {
     memo: raw.memo,
     transfer_type: raw.transfer_type,
-    amount: new BigNumber(raw.amount),
+    amount: fromRawBigNumber(raw.amount),
     // pass-through, no BigNumber conversion needed
     ...(raw.nullifier !== undefined && { nullifier: raw.nullifier }),
     ...(raw.rho !== undefined && { rho: raw.rho }),
@@ -47,12 +47,12 @@ export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTrans
     blockHeight: raw.blockHeight,
     blockHash: raw.blockHash,
     timestamp: raw.timestamp,
-    fee: new BigNumber(raw.fee),
+    fee: fromRawBigNumber(raw.fee),
     // Absent on accounts persisted before the scanner reported the transparent
     // bundle. Kept absent rather than read as zero, which would be a claim
     // about the transaction rather than about what we know of it.
     ...(raw.transparentOut !== undefined && {
-      transparentOut: new BigNumber(raw.transparentOut),
+      transparentOut: fromRawBigNumber(raw.transparentOut),
     }),
     ...(raw.hasTransparentInputs !== undefined && {
       hasTransparentInputs: raw.hasTransparentInputs,

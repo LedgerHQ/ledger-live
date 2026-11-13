@@ -126,3 +126,23 @@ describe("celoFeeAssets.getOptions", () => {
     expect(hydratingOption.balance).toBeUndefined();
   });
 });
+
+describe("celoFeeAssets customFeeInputValueTransform", () => {
+  const mainAccount = createMainAccount({ subAccounts: [createUsdtSubAccount()] });
+  const transform = celoFeeAssets.getOptions({ mainAccount, transaction: {} })[1]
+    .customFeeInputValueTransform;
+
+  it("round-trips valid values", () => {
+    const canonical = transform?.toCanonicalValue("1.5");
+    expect(canonical).not.toBe("1.5");
+    expect(transform?.fromCanonicalValue(canonical ?? "")).toBe("1.5");
+  });
+
+  it.each(["", " ", ".", "1.2.3", "1e", "abc", "1,5"])(
+    "returns the partial input %p unchanged without throwing",
+    value => {
+      expect(transform?.toCanonicalValue(value)).toBe(value);
+      expect(transform?.fromCanonicalValue(value)).toBe(value);
+    },
+  );
+});

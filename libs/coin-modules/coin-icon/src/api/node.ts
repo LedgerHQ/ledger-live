@@ -1,3 +1,4 @@
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -116,7 +117,8 @@ export const getDelegation = async (
   const res = await iconService.call(delegationTx).execute();
   return {
     delegations: res.delegations,
-    totalDelegated: new BigNumber(res.totalDelegated),
-    votingPower: new BigNumber(res.votingPower),
+    totalDelegated:
+      parseFiniteBigNumber(res.totalDelegated, { allowHex: true }) ?? new BigNumber(0),
+    votingPower: parseFiniteBigNumber(res.votingPower, { allowHex: true }) ?? new BigNumber(0),
   };
 };

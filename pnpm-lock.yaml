@@ -17476,6 +17476,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 11.0.1
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.3.0(axios@1.20.0(debug@4.4.3))

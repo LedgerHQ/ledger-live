@@ -13,7 +13,7 @@ export function classifyRentOrderError(error: unknown): RentOrderRejection | nul
     return null;
   }
   const amount = payAssetBaseUnits(error.payCoinAmt);
-  if (!amount.isFinite() || !amount.isGreaterThan(0)) return null;
+  if (!amount || !amount.isGreaterThan(0)) return null;
   return {
     reason: "priceAboveApproved",
     offered: { asset: tronifyPayAsset(), amount: BigInt(amount.toFixed()) },

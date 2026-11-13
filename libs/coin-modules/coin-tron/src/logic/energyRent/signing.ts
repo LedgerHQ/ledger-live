@@ -48,7 +48,7 @@ export function rentPayment(order: EnergyRentOrder): { asset: SponsoredFeeAsset;
   const amount = payAssetBaseUnits(order.payCoinAmt);
   if (
     String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code ||
-    !amount.isFinite() ||
+    !amount ||
     !amount.isGreaterThan(0)
   ) {
     throw new TronifyApiError(

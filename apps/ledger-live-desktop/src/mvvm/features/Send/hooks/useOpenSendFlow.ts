@@ -5,6 +5,7 @@ import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { openModal } from "~/renderer/actions/modals";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
@@ -41,7 +42,7 @@ type WorkflowParams = {
 };
 
 const toLegacyAmount = (amount?: string | BigNumber) =>
-  typeof amount === "string" ? new BigNumber(amount) : amount;
+  typeof amount === "string" ? parseFiniteBigNumber(amount) : amount;
 
 export function useOpenSendFlow() {
   const dispatch = useDispatch();

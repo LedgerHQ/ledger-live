@@ -4,12 +4,12 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "../bignumber";
 import mapValues from "lodash/mapValues";
 
 export const fromTransactionCommonRaw = (raw: TransactionCommonRaw): TransactionCommon => {
   const common: TransactionCommon = {
-    amount: new BigNumber(raw.amount),
+    amount: fromRawBigNumber(raw.amount),
     recipient: raw.recipient,
   };
 
@@ -92,9 +92,9 @@ export const fromTransactionStatusRawCommon = (
 ): TransactionStatusCommon => ({
   errors: mapValues(ts.errors, fromErrorRaw),
   warnings: mapValues(ts.warnings, fromErrorRaw),
-  estimatedFees: new BigNumber(ts.estimatedFees),
-  amount: new BigNumber(ts.amount),
-  totalSpent: new BigNumber(ts.totalSpent),
+  estimatedFees: fromRawBigNumber(ts.estimatedFees),
+  amount: fromRawBigNumber(ts.amount),
+  totalSpent: fromRawBigNumber(ts.totalSpent),
   recipientIsReadOnly: ts.recipientIsReadOnly,
   feeCurrencyAccountId: ts.feeCurrencyAccountId,
 });

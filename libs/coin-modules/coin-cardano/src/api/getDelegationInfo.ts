@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import type { CardanoCoinConfig } from "../config";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import { CardanoDelegation } from "../types";
 import { APIDelegation } from "./api-types";
@@ -31,7 +32,7 @@ export async function getDelegationInfo(
       dRepHex: res.dRepInfo?.hex,
       ticker: res.poolInfo?.ticker,
       name: res.poolInfo?.name,
-      rewards: new BigNumber(res.rewardsAvailable),
+      rewards: parseFiniteBigNumber(res.rewardsAvailable) ?? new BigNumber(0),
     }
   );
 }

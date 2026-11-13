@@ -35,11 +35,11 @@ const quoteParams: PerpsWithdrawQuoteParams = {
   counterValueCurrency: "USD",
 };
 
-const renderSummary = () =>
+const renderSummary = (amount = quoteParams.amount) =>
   renderHook(() =>
     usePerpsWithdrawSummary({
       initialQuote: quote,
-      quoteParams,
+      quoteParams: { ...quoteParams, amount },
       receiverName: "Ethereum 1",
       locale: "en",
       formatApproximate: value => `~${value}`,
@@ -69,5 +69,9 @@ describe("usePerpsWithdrawSummary", () => {
 
     mockQuoteState.mockReturnValue({ quote, isRefreshing: false, error: new Error("no quote") });
     expect(renderSummary().canWithdraw).toBe(false);
+  });
+
+  it.each(["", "abc"])("reads an unreadable amount %p as 0 instead of throwing", amount => {
+    expect(values(renderSummary(amount).swapDetails)[0]).toBe("0 USDC");
   });
 });

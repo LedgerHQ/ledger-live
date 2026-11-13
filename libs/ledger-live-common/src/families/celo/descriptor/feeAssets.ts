@@ -1,5 +1,6 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   FeeAssetOption,
   FeeAssetsConfig,
@@ -40,10 +41,8 @@ function getFeeCurrencyUnwrapped(transaction: unknown): string | null {
 }
 
 function transformFiniteValue(value: string, transform: (value: BigNumber) => BigNumber): string {
-  if (value.trim() === "") return value;
-
-  const parsed = new BigNumber(value);
-  if (!parsed.isFinite()) return value;
+  const parsed = parseFiniteBigNumber(value);
+  if (!parsed) return value;
 
   const transformed = transform(parsed);
   if (!transformed.isFinite()) return value;

@@ -123,6 +123,21 @@ describe("fetchPerpsDepositQuote", () => {
     });
   });
 
+  it.each([undefined, null, "", "abc"])(
+    "drops a quote whose receive amount is %p instead of throwing",
+    async receiveAmount => {
+      respondWith({
+        quotes: [
+          { ...quote, quoteDetails: { ...quote.quoteDetails, receiveAmount } } as unknown as Quote,
+        ],
+      });
+
+      const result = await fetchPerpsDepositQuote(params);
+
+      expect(result.quote).toBeUndefined();
+    },
+  );
+
   it("returns the global errors when no quote comes back", async () => {
     const errors = [
       { code: QuotesErrorCodes.NO_QUOTES },

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import {
   assignFromAccountRaw as assignNearResourcesFromAccountRaw,
@@ -62,9 +63,9 @@ function fromStakingPositionRaw(raw: StakingPositionRaw): StakingPositionOnAccou
   const { amount, amountDeposited, amountRewarded, ...rest } = raw;
   return {
     ...rest,
-    amount: new BigNumber(amount),
-    ...(amountDeposited !== undefined && { amountDeposited: new BigNumber(amountDeposited) }),
-    ...(amountRewarded !== undefined && { amountRewarded: new BigNumber(amountRewarded) }),
+    amount: fromRawBigNumber(amount),
+    ...(amountDeposited !== undefined && { amountDeposited: fromRawBigNumber(amountDeposited) }),
+    ...(amountRewarded !== undefined && { amountRewarded: fromRawBigNumber(amountRewarded) }),
   };
 }
 

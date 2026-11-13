@@ -284,6 +284,14 @@ describe("coin errors in the deposit resolver", () => {
       expect(resolve(account("stellar", "1"), { quoteResult })?.code).toBe("amountTooHigh");
     });
 
+    it("skips the minimum check when the fee is unreadable instead of throwing", () => {
+      const quoteResult = { quote: quoteWithFee("abc"), errors: [] };
+      expect(
+        resolve(account("stellar", "100"), { sentAmountAtomic: new BigNumber(100), quoteResult })
+          ?.code,
+      ).not.toBe("xlmMinimumBalance");
+    });
+
     it("comes before the amount limits", () => {
       expect(
         resolve(account("stellar", "107"), {

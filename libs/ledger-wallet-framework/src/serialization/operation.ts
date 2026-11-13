@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber, parseFiniteBigNumber } from "../bignumber";
 import {
   AccountBridge,
   Operation,
@@ -198,14 +198,14 @@ export const fromOperationRaw = (
     blockHash,
     blockHeight,
     date: new Date(date),
-    value: new BigNumber(value),
-    fee: new BigNumber(fee),
+    value: fromRawBigNumber(value),
+    fee: fromRawBigNumber(fee),
     extra,
   };
 
   if (transactionSequenceNumber !== undefined) {
-    const transactionSequenceNumberBN = new BigNumber(transactionSequenceNumber);
-    if (!transactionSequenceNumberBN.isNaN()) {
+    const transactionSequenceNumberBN = parseFiniteBigNumber(transactionSequenceNumber);
+    if (transactionSequenceNumberBN) {
       res.transactionSequenceNumber = transactionSequenceNumberBN;
     }
   }
@@ -263,9 +263,9 @@ export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount, finalAmount, ...rest } = raw;
   return {
     ...rest,
-    fromAmount: new BigNumber(fromAmount),
-    toAmount: new BigNumber(toAmount),
-    ...(finalAmount !== undefined && { finalAmount: new BigNumber(finalAmount) }),
+    fromAmount: fromRawBigNumber(fromAmount),
+    toAmount: fromRawBigNumber(toAmount),
+    ...(finalAmount !== undefined && { finalAmount: fromRawBigNumber(finalAmount) }),
   };
 }
 export function toSwapOperationRaw(so: SwapOperation): SwapOperationRaw {

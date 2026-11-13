@@ -55,6 +55,25 @@ describe("computeFeeEstimate — EVM path", () => {
     expect(result.approvalNetworkFee).toBeUndefined();
   });
 
+  it.each(["", "abc"])("falls back to the default gas limit when the quote has %p", gasLimit => {
+    const result = computeFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "ethereum", value: 0.005, gasLimit } }),
+      makeEvmContext(),
+    );
+
+    // 400_000 * 25 gwei = 1e16 wei
+    expect(result.estimatedNetworkFee?.amount).toBe("10000000000000000");
+  });
+
+  it("reads a hex gas limit", () => {
+    const result = computeFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "ethereum", value: 0.005, gasLimit: "0x3d090" } }),
+      makeEvmContext(),
+    );
+
+    expect(result.estimatedNetworkFee?.amount).toBe("6250000000000000");
+  });
+
   it("emits both fields when a token approval is required", () => {
     const result = computeFeeEstimate(
       makeRawQuote({ tokenAllowanceData: { isApproved: false } }),

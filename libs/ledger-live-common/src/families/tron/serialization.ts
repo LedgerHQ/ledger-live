@@ -1,5 +1,5 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   type TronAccount,
   type TronAccountRaw,
@@ -124,63 +124,69 @@ export const fromTronResourcesRaw = ({
     frozen: {
       bandwidth: frozenBandwidth
         ? {
-            amount: new BigNumber(frozenBandwidth.amount),
+            amount: fromRawBigNumber(frozenBandwidth.amount),
           }
         : undefined,
       energy: frozenEnergy
         ? {
-            amount: new BigNumber(frozenEnergy.amount),
+            amount: fromRawBigNumber(frozenEnergy.amount),
           }
         : undefined,
     },
     delegatedFrozen: {
       bandwidth: delegatedFrozenBandwidth
         ? {
-            amount: new BigNumber(delegatedFrozenBandwidth.amount),
+            amount: fromRawBigNumber(delegatedFrozenBandwidth.amount),
           }
         : undefined,
       energy: delegatedFrozenEnergy
         ? {
-            amount: new BigNumber(delegatedFrozenEnergy.amount),
+            amount: fromRawBigNumber(delegatedFrozenEnergy.amount),
           }
         : undefined,
     },
     unFrozen: {
       bandwidth: unFrozenBandwidth
         ? unFrozenBandwidth.map(entry => {
-            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
+            return {
+              amount: fromRawBigNumber(entry.amount),
+              expireTime: new Date(entry.expireTime),
+            };
           })
         : undefined,
       energy: unFrozenEnergy
         ? unFrozenEnergy.map(entry => {
-            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
+            return {
+              amount: fromRawBigNumber(entry.amount),
+              expireTime: new Date(entry.expireTime),
+            };
           })
         : undefined,
     },
     legacyFrozen: {
       bandwidth: legacyFrozenBandwidth
         ? {
-            amount: new BigNumber(legacyFrozenBandwidth.amount),
+            amount: fromRawBigNumber(legacyFrozenBandwidth.amount),
             expiredAt: new Date(legacyFrozenBandwidth.expiredAt),
           }
         : undefined,
       energy: legacyFrozenEnergy
         ? {
-            amount: new BigNumber(legacyFrozenEnergy.amount),
+            amount: fromRawBigNumber(legacyFrozenEnergy.amount),
             expiredAt: new Date(legacyFrozenEnergy.expiredAt),
           }
         : undefined,
     },
     votes,
     tronPower,
-    energy: new BigNumber(energy),
+    energy: fromRawBigNumber(energy),
     bandwidth: {
-      freeUsed: new BigNumber(bandwidth.freeUsed),
-      freeLimit: new BigNumber(bandwidth.freeLimit),
-      gainedUsed: new BigNumber(bandwidth.gainedUsed),
-      gainedLimit: new BigNumber(bandwidth.gainedLimit),
+      freeUsed: fromRawBigNumber(bandwidth.freeUsed),
+      freeLimit: fromRawBigNumber(bandwidth.freeLimit),
+      gainedUsed: fromRawBigNumber(bandwidth.gainedUsed),
+      gainedLimit: fromRawBigNumber(bandwidth.gainedLimit),
     },
-    unwithdrawnReward: new BigNumber(unwithdrawnReward),
+    unwithdrawnReward: fromRawBigNumber(unwithdrawnReward),
     lastWithdrawnRewardDate: lastWithdrawnRewardDate
       ? new Date(lastWithdrawnRewardDate)
       : undefined,
@@ -218,10 +224,10 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
 
   return {
     ...rest,
-    ...(frozenAmount !== undefined ? { frozenAmount: new BigNumber(frozenAmount) } : {}),
-    ...(unfreezeAmount !== undefined ? { unfreezeAmount: new BigNumber(unfreezeAmount) } : {}),
+    ...(frozenAmount !== undefined ? { frozenAmount: fromRawBigNumber(frozenAmount) } : {}),
+    ...(unfreezeAmount !== undefined ? { unfreezeAmount: fromRawBigNumber(unfreezeAmount) } : {}),
     ...(unDelegatedAmount !== undefined
-      ? { unDelegatedAmount: new BigNumber(unDelegatedAmount) }
+      ? { unDelegatedAmount: fromRawBigNumber(unDelegatedAmount) }
       : {}),
   } satisfies TrongridExtraTxInfo;
 }

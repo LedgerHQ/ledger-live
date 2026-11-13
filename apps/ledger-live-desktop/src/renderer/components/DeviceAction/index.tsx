@@ -1,5 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
@@ -530,13 +531,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           transaction,
           exchange,
           provider,
-          rate = 1,
+          rate,
           amountExpectedTo = 0,
         } = request as {
           transaction: Transaction;
           exchange: ExchangeSwap;
           provider: string;
-          rate: number;
+          rate?: number | null;
           amountExpectedTo: number;
         };
         const { estimatedFees } = hookState;
@@ -547,7 +548,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           transaction,
           exchangeRate: {
             provider,
-            rate: new BigNumber(rate),
+            rate: parseFiniteBigNumber(rate) ?? new BigNumber(1),
           } as ExchangeRate,
           exchange,
           swapDefaultTrack,

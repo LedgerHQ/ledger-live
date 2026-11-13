@@ -1,5 +1,5 @@
 import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   isAlgorandOperationExtra,
   isAlgorandOperationExtraRaw,
@@ -21,7 +21,7 @@ function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
 function fromResourcesRaw(r: AlgorandResourcesRaw): AlgorandResources {
   const { rewards, nbAssets } = r;
   return {
-    rewards: new BigNumber(rewards),
+    rewards: fromRawBigNumber(rewards),
     nbAssets,
   };
 }
@@ -49,7 +49,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
   }
 
   if (extraRaw.rewards) {
-    extra.rewards = new BigNumber(extraRaw.rewards);
+    extra.rewards = fromRawBigNumber(extraRaw.rewards);
   }
 
   if (extraRaw.memo) {

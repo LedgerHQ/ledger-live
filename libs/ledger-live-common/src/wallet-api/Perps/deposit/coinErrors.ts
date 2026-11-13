@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { isAleoAccount } from "@ledgerhq/coin-aleo/logic/utils";
 import { EXISTENTIAL_DEPOSIT } from "@ledgerhq/coin-polkadot/utils";
 import type { DepositFormError } from "./formError";
@@ -110,12 +111,10 @@ export function getMinimumBalanceError(
   getSpendableBalance: SpendableBalanceReader,
 ): DepositFormError | null {
   const rule = getMinimumBalanceRule(depositAccount);
-  const fee = quote?.estimatedNetworkFee;
+  const fee = parseFiniteBigNumber(quote?.estimatedNetworkFee?.amount);
   if (!rule || !fee || !sentAmountAtomic || depositAccount.type !== "Account") return null;
 
-  const remaining = getSpendableBalance(depositAccount)
-    .minus(sentAmountAtomic)
-    .minus(new BigNumber(fee.amount));
+  const remaining = getSpendableBalance(depositAccount).minus(sentAmountAtomic).minus(fee);
   if (!remaining.lt(rule.minimumAtomic)) return null;
 
   const magnitude = depositAccount.currency.units[0].magnitude;

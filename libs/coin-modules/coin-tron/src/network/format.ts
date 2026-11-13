@@ -1,4 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import bs58check from "bs58check";
 import get from "lodash/get";
@@ -102,13 +103,13 @@ export const formatTrongridTxResponse = async (
     const getValue = (): BigNumber => {
       switch (type) {
         case "WithdrawBalanceContract":
-          return new BigNumber(withdraw_amount || 0);
+          return parseFiniteBigNumber(withdraw_amount) ?? new BigNumber(0);
 
         case "ExchangeTransactionContract":
-          return new BigNumber(quant || 0);
+          return parseFiniteBigNumber(quant) ?? new BigNumber(0);
 
         default:
-          return amount ? new BigNumber(amount) : new BigNumber(0);
+          return parseFiniteBigNumber(amount) ?? new BigNumber(0);
       }
     };
 
@@ -134,8 +135,8 @@ export const formatTrongridTxResponse = async (
       tokenAddress: isTrc20 ? encode58Check(contract_address) : undefined,
       from,
       to,
-      value: !value.isNaN() ? value : new BigNumber(0),
-      fee: new BigNumber(fee || 0),
+      value,
+      fee: parseFiniteBigNumber(fee) ?? new BigNumber(0),
       blockHeight,
       hasFailed,
       feesPayer: from,
@@ -160,17 +161,17 @@ export const formatTrongridTxResponse = async (
         case "FreezeBalanceContract":
         case "FreezeBalanceV2Contract":
           return {
-            frozenAmount: new BigNumber(frozen_balance!),
+            frozenAmount: parseFiniteBigNumber(frozen_balance) ?? new BigNumber(0),
           };
 
         case "UnfreezeBalanceV2Contract":
           return {
-            unfreezeAmount: new BigNumber(unfreeze_balance!),
+            unfreezeAmount: parseFiniteBigNumber(unfreeze_balance) ?? new BigNumber(0),
           };
 
         case "UnDelegateResourceContract":
           return {
-            unDelegatedAmount: new BigNumber(balance!),
+            unDelegatedAmount: parseFiniteBigNumber(balance) ?? new BigNumber(0),
             receiverAddress: encode58Check(receiver_address!),
           };
 

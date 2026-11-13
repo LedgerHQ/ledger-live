@@ -52,10 +52,11 @@ import {
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import {
+  parseSwapFeeParams,
+  parseSwapHistoryAmounts,
   transformToBigNumbers,
-  useGetSwapTrackingProperties,
-  useRedirectToSwapHistory,
-} from "../utils/index";
+} from "@ledgerhq/live-common/wallet-api/Exchange/swapParams";
+import { useGetSwapTrackingProperties, useRedirectToSwapHistory } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
@@ -185,7 +186,7 @@ const SwapWebView = ({
       }: {
         params: {
           fromAccountId: string;
-          fromAmount: string;
+          fromAmount?: string;
           feeStrategy: string;
           openDrawer: boolean;
           customFeeConfig: object;
@@ -203,6 +204,7 @@ const SwapWebView = ({
         gasLimit?: string;
         hasDrawer: boolean;
       }> => {
+        const { fromAmount, gasLimit } = parseSwapFeeParams(params);
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
@@ -242,12 +244,12 @@ const SwapWebView = ({
           subAccountId,
           recipient: params.recipient || bridge.getEstimationRecipient(mainAccount),
           amount: convertToAtomicUnit({
-            amount: new BigNumber(params.fromAmount),
+            amount: fromAmount,
             account: fromAccount,
           }),
           data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
           feesStrategy: params.feeStrategy || "medium",
-          customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
+          customGasLimit: gasLimit,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -409,6 +411,11 @@ const SwapWebView = ({
         ) {
           return Promise.reject("Cannot save swap missing params");
         }
+        const { fromAmount, toAmount, finalAmount } = parseSwapHistoryAmounts({
+          fromAmount: swap.fromAmount,
+          toAmount: swap.toAmount,
+          finalAmount: swap.finalAmount,
+        });
         const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
         const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
         if (!fromId || !toId) return Promise.reject("Accounts not found");
@@ -428,14 +435,14 @@ const SwapWebView = ({
           receiverAccountId: toId,
           tokenId: toId,
           fromAmount: convertToAtomicUnit({
-            amount: new BigNumber(swap.fromAmount),
+            amount: fromAmount,
             account: fromAccount,
           })!,
           toAmount: convertToAtomicUnit({
-            amount: new BigNumber(swap.toAmount),
+            amount: toAmount,
             account: toAccount,
           })!,
-          finalAmount: swap.finalAmount ? new BigNumber(swap.finalAmount) : undefined,
+          finalAmount,
         };
 
         dispatch(

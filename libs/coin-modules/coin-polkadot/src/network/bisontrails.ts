@@ -4,6 +4,7 @@ import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeAddress } from "@polkadot/util-crypto";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "../common";
 import { type PolkadotCoinConfig } from "../config";
@@ -50,10 +51,14 @@ const getAccountOperationUrl = (
     startAt: String(startAt),
   })}`;
 
+const toBigNumber = (value: unknown): BigNumber => parseFiniteBigNumber(value) ?? new BigNumber(0);
+
 const getWithdrawUnbondedAmount = (extrinsic: any) => {
   return (
     extrinsic?.staking?.eventStaking.reduce((acc: any, curr: any) => {
-      return curr.method === "Withdrawn" ? new BigNumber(acc).plus(curr.value) : new BigNumber(0);
+      return curr.method === "Withdrawn"
+        ? new BigNumber(acc).plus(toBigNumber(curr.value))
+        : new BigNumber(0);
     }, new BigNumber(0)) || new BigNumber(0)
   );
 };
@@ -121,25 +126,20 @@ const getExtra = (type: OperationType, extrinsic: ExplorerExtrinsic): PolkadotOp
     palletMethod: `${extrinsic.section}.${extrinsic.method}` as PalletMethod,
     index: extrinsic.index,
   };
+  const amount = parseFiniteBigNumber(extrinsic.amount);
 
   switch (type) {
     case "IN":
     case "OUT":
-      if (extrinsic.amount || extrinsic.amount === 0) {
-        extra.transferAmount = new BigNumber(extrinsic.amount);
-      }
+      if (amount) extra.transferAmount = amount;
       break;
 
     case "BOND":
-      if (extrinsic.amount || extrinsic.amount === 0) {
-        extra.bondedAmount = new BigNumber(extrinsic.amount);
-      }
+      if (amount) extra.bondedAmount = amount;
       break;
 
     case "UNBOND":
-      if (extrinsic.amount || extrinsic.amount === 0) {
-        extra.unbondedAmount = new BigNumber(extrinsic.amount);
-      }
+      if (amount) extra.unbondedAmount = amount;
       break;
 
     case "WITHDRAW_UNBONDED":
@@ -172,21 +172,21 @@ const getExtra = (type: OperationType, extrinsic: ExplorerExtrinsic): PolkadotOp
  */
 const getValue = (extrinsic: any, type: OperationType): BigNumber => {
   if (!extrinsic.isSuccess) {
-    return type === "IN" ? new BigNumber(0) : new BigNumber(extrinsic.partialFee || 0);
+    return type === "IN" ? new BigNumber(0) : toBigNumber(extrinsic.partialFee);
   }
 
   switch (type) {
     case "OUT":
       return extrinsic.signer !== extrinsic.affectedAddress1
-        ? new BigNumber(extrinsic.amount).plus(extrinsic.partialFee)
-        : new BigNumber(extrinsic.partialFee);
+        ? toBigNumber(extrinsic.amount).plus(toBigNumber(extrinsic.partialFee))
+        : toBigNumber(extrinsic.partialFee);
 
     case "IN":
     case "SLASH":
-      return new BigNumber(extrinsic.amount);
+      return toBigNumber(extrinsic.amount);
 
     default:
-      return new BigNumber(extrinsic.partialFee);
+      return toBigNumber(extrinsic.partialFee);
   }
 };
 
@@ -221,7 +221,7 @@ const extrinsicToOperation = (
   return {
     id: encodeOperationId(accountId, extrinsic.hash, type),
     accountId,
-    fee: new BigNumber(extrinsic.partialFee || 0),
+    fee: toBigNumber(extrinsic.partialFee),
     value: getValue(extrinsic, type),
     type,
     hash: extrinsic.hash,
@@ -234,7 +234,7 @@ const extrinsicToOperation = (
       .filter(addr => addr !== undefined)
       .filter(isValidAddress),
     transactionSequenceNumber:
-      extrinsic.signer === addr ? new BigNumber(extrinsic.nonce) : undefined,
+      extrinsic.signer === addr ? parseFiniteBigNumber(extrinsic.nonce) : undefined,
     hasFailed: !extrinsic.isSuccess,
   };
 };
@@ -254,7 +254,7 @@ const rewardToOperation = (accountId: string, reward: any): PolkadotOperation =>
     id: encodeOperationId(accountId, `${hash}+${reward.index}`, type),
     accountId,
     fee: new BigNumber(0),
-    value: new BigNumber(reward.value),
+    value: toBigNumber(reward.value),
     type,
     hash,
     blockHeight: reward.blockNumber,
@@ -281,7 +281,7 @@ const slashToOperation = (accountId: string, slash: any): PolkadotOperation => {
     id: encodeOperationId(accountId, `${hash}+${slash.index}`, type),
     accountId,
     fee: new BigNumber(0),
-    value: new BigNumber(slash.value),
+    value: toBigNumber(slash.value),
     type,
     hash: hash,
     blockHeight: slash.blockNumber,

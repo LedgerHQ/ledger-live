@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation, i18n } from "~/context/Locale";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as XrpTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useTheme } from "@react-navigation/native";
@@ -48,9 +49,12 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
   }, []);
 
   function onChangeTag(str: string): void {
-    const tagNumeric = BigNumber(str.replace(/[^0-9]/g, ""));
+    const tagNumeric = parseFiniteBigNumber(str.replace(/[^0-9]/g, ""));
     const newTag =
-      tagNumeric.isInteger() && tagNumeric.isPositive() && tagNumeric.lt(uint32maxPlus1)
+      tagNumeric &&
+      tagNumeric.isInteger() &&
+      tagNumeric.isPositive() &&
+      tagNumeric.lt(uint32maxPlus1)
         ? tagNumeric
         : undefined;
     setTag(newTag);

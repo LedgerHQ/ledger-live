@@ -111,6 +111,15 @@ describe("reassignOperationType", () => {
     expect(op!.type).toBe("TOP_UP_NEURON");
   });
 
+  it.each(["", "not-a-number"])(
+    "labels a transfer to a known neuron with memo %p a top-up",
+    memo => {
+      const [op] = reassignOperationType([transfer({ extra: { memo } })], [NEURON_ADDRESS]);
+
+      expect(op?.type).toBe("TOP_UP_NEURON");
+    },
+  );
+
   it.each(["IN", "STAKE_NEURON", "NONE"])("never touches a %s operation", type => {
     const [op] = reassignOperationType([transfer({ type })], [NEURON_ADDRESS], CONTROLLER);
 

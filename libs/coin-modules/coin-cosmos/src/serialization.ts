@@ -11,7 +11,7 @@ import {
   assignStakingResourcesFromAccountRaw,
   assignStakingResourcesToAccountRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   CosmosOperationExtra,
   CosmosOperationExtraRaw,
@@ -31,27 +31,27 @@ type LegacyCosmosAccount = CosmosAccount & {
 function parseLegacyCosmosResourcesRaw(r: CosmosResourcesRaw): StakingResources {
   return {
     delegations: r.delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
-      amount: new BigNumber(amount),
+      amount: fromRawBigNumber(amount),
       status,
-      pendingRewards: new BigNumber(pendingRewards),
+      pendingRewards: fromRawBigNumber(pendingRewards),
       validatorAddress,
     })),
     redelegations: r.redelegations.map(
       ({ amount, completionDate, validatorSrcAddress, validatorDstAddress }) => ({
-        amount: new BigNumber(amount),
+        amount: fromRawBigNumber(amount),
         completionDate: new Date(completionDate),
         validatorSrcAddress,
         validatorDstAddress,
       }),
     ),
     unbondings: r.unbondings.map(({ amount, completionDate, validatorAddress }) => ({
-      amount: new BigNumber(amount),
+      amount: fromRawBigNumber(amount),
       completionDate: new Date(completionDate),
       validatorAddress,
     })),
-    delegatedBalance: new BigNumber(r.delegatedBalance),
-    pendingRewardsBalance: new BigNumber(r.pendingRewardsBalance),
-    unbondingBalance: new BigNumber(r.unbondingBalance),
+    delegatedBalance: fromRawBigNumber(r.delegatedBalance),
+    pendingRewardsBalance: fromRawBigNumber(r.pendingRewardsBalance),
+    unbondingBalance: fromRawBigNumber(r.unbondingBalance),
   };
 }
 
@@ -107,14 +107,14 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   if (extraRaw.validator) {
     extra.validator = {
       address: extraRaw.validator.address,
-      amount: new BigNumber(extraRaw.validator.amount),
+      amount: fromRawBigNumber(extraRaw.validator.amount),
     };
   }
 
   if (extraRaw.validators && extraRaw.validators.length > 0) {
     extra.validators = extraRaw.validators.map(validator => ({
       address: validator.address,
-      amount: new BigNumber(validator.amount),
+      amount: fromRawBigNumber(validator.amount),
     }));
   }
 

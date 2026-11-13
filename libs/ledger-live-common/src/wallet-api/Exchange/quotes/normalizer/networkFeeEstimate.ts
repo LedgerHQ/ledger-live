@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type {
   QuoteApprovalNetworkFee,
@@ -64,7 +65,9 @@ export function computeFeeEstimate(quote: RawQuote, context: NetworkFeeContext):
   // Gasless RFQ quotes carry no base swap gas; only the approval portion remains.
   const baseGasLimit = gasLess
     ? new BigNumber(0)
-    : new BigNumber(quote.networkFees.gasLimit ?? context.defaultGasLimit ?? 0);
+    : (parseFiniteBigNumber(quote.networkFees.gasLimit, { allowHex: true }) ??
+      parseFiniteBigNumber(context.defaultGasLimit, { allowHex: true }) ??
+      new BigNumber(0));
   const approvalGasLimit = needsApproval ? new BigNumber(APPROVAL_GAS_LIMIT) : new BigNumber(0);
 
   let baseFeeAtomic: BigNumber;

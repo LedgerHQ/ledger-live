@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type { Quote, QuoteEstimatedNetworkFee } from "../types";
 
@@ -15,16 +16,15 @@ function feeAmountAsDisplayValue(
   if (!fee || feeCurrencyMagnitude === undefined) {
     return new BigNumber(0);
   }
-  return new BigNumber(fee.amount).shiftedBy(-feeCurrencyMagnitude);
+  return parseFiniteBigNumber(fee.amount)?.shiftedBy(-feeCurrencyMagnitude) ?? new BigNumber(0);
 }
 
 export function buildNetCounterValue(quote: Quote, context: NetCounterValueContext): BigNumber {
   // `??` not `||`: a 0 spot price means "price unknown" and must stay 0, not
   // collapse to 1 and sort on the raw receiveAmount.
   const receiveSpotPrice = context.spotPrices[context.receiveCurrencyId] ?? 1;
-  const receiveCounterValue = new BigNumber(quote.quoteDetails.receiveAmount).times(
-    receiveSpotPrice,
-  );
+  const receiveAmount = parseFiniteBigNumber(quote.quoteDetails.receiveAmount) ?? new BigNumber(0);
+  const receiveCounterValue = receiveAmount.times(receiveSpotPrice);
 
   const estimatedFee = feeAmountAsDisplayValue(
     quote.quoteDetails.estimatedNetworkFee,

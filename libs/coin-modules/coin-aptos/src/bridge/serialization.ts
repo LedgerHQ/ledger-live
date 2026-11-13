@@ -1,5 +1,5 @@
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { AptosAccount, AptosAccountRaw, AptosResources, AptosResourcesRaw } from "../types";
 
 export function toAptosResourcesRaw(r: AptosResources): AptosResourcesRaw {
@@ -22,14 +22,14 @@ export function toAptosResourcesRaw(r: AptosResources): AptosResourcesRaw {
 export function fromAptosResourcesRaw(r: AptosResourcesRaw): AptosResources {
   const { activeBalance, pendingInactiveBalance, inactiveBalance, stakingPositions = [] } = r;
   return {
-    activeBalance: new BigNumber(activeBalance),
-    pendingInactiveBalance: new BigNumber(pendingInactiveBalance),
-    inactiveBalance: new BigNumber(inactiveBalance),
+    activeBalance: fromRawBigNumber(activeBalance),
+    pendingInactiveBalance: fromRawBigNumber(pendingInactiveBalance),
+    inactiveBalance: fromRawBigNumber(inactiveBalance),
     stakingPositions: stakingPositions.map(
       ({ active, pendingInactive, inactive, validatorId }) => ({
-        active: new BigNumber(active),
-        pendingInactive: new BigNumber(pendingInactive),
-        inactive: new BigNumber(inactive),
+        active: fromRawBigNumber(active),
+        pendingInactive: fromRawBigNumber(pendingInactive),
+        inactive: fromRawBigNumber(inactive),
         validatorId,
       }),
     ),

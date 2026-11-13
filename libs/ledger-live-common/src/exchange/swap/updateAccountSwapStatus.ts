@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
 import type {
@@ -113,9 +113,9 @@ const maybeGetUpdatedSwapHistory = async (
 
         if (newStatus) {
           const statusChanged = newStatus.status !== swap.status;
-          const hasValidFinalAmount = newStatus.finalAmount != null && newStatus.finalAmount !== "";
+          const finalAmount = parseFiniteBigNumber(newStatus.finalAmount);
           const finalAmountChanged =
-            hasValidFinalAmount && newStatus.finalAmount !== swap.finalAmount?.toString();
+            !!finalAmount && newStatus.finalAmount !== swap.finalAmount?.toString();
 
           const anchorsOperation = !swap.operationId && Boolean(newStatus.txHash);
 
@@ -125,9 +125,7 @@ const maybeGetUpdatedSwapHistory = async (
               ...swap,
               status: newStatus.status,
               ...(anchorsOperation && { operationId: newStatus.txHash }),
-              ...(hasValidFinalAmount && {
-                finalAmount: new BigNumber(newStatus.finalAmount!),
-              }),
+              ...(finalAmount && { finalAmount }),
             };
           }
         }

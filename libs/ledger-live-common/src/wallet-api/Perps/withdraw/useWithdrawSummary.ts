@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { PerpsWithdrawQuoteParams, WithdrawQuote } from "./quote";
 import { getPerpsWithdrawSummary } from "./summary";
 import { usePerpsWithdrawSummaryQuote } from "./useWithdrawSummaryQuote";
@@ -45,7 +46,7 @@ export function usePerpsWithdrawSummary({
 
   return useMemo(() => {
     const summary = getPerpsWithdrawSummary({
-      amount: new BigNumber(amount),
+      amount: parseFiniteBigNumber(amount) ?? new BigNumber(0),
       quote,
       sourceAccount,
       destinationAccount,

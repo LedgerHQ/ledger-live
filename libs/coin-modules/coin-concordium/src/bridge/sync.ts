@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Operation } from "@ledgerhq/types-live";
@@ -41,10 +42,8 @@ const fillConcordiumResources = (
   ...incoming,
 });
 
-const valueToBigNumber = (value?: string | number): BigNumber => {
-  const result = new BigNumber(value ?? 0);
-  return result.isNaN() ? new BigNumber(0) : result;
-};
+const valueToBigNumber = (value?: string | number): BigNumber =>
+  parseFiniteBigNumber(value) ?? new BigNumber(0);
 
 /**
  * Reads the account balance once and reports the PLT list alongside it.

@@ -199,6 +199,22 @@ describe("useSwapCustomHandlers", () => {
 
       expect(mockResetWebview).toHaveBeenCalledTimes(1);
     });
+
+    it("still opens the pending screen, without toAmount, when amountExpectedTo is missing", () => {
+      mockGetParent.mockReturnValue(undefined);
+
+      render();
+
+      capturedOnCompleteResult(
+        { ...MOCK_EXCHANGE_PARAMS, amountExpectedTo: undefined },
+        "hash-xyz",
+      );
+
+      const params = mockNavigate.mock.calls[0]?.[1]?.params;
+      expect(params?.swapOperation).toMatchObject({ swapId: "swap-123", operationId: "hash-xyz" });
+      expect(params?.swapOperation).not.toHaveProperty("toAmount");
+      expect(mockResetWebview).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("navigateToSwapCustomError (via onCompleteError)", () => {

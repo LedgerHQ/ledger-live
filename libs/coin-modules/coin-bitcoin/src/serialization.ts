@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   BitcoinResourcesRaw,
   BitcoinResources,
@@ -60,7 +61,7 @@ export function fromBitcoinOutputRaw([
     outputIndex,
     blockHeight: blockHeight || undefined,
     address: address || undefined,
-    value: new BigNumber(value),
+    value: fromRawBigNumber(value),
     rbf: !!rbf,
     isChange: !!isChange,
   };

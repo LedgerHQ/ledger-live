@@ -70,6 +70,38 @@ describe("account serialization — sequence", () => {
   });
 });
 
+describe("account serialization — missing amounts", () => {
+  it("revives missing balances and operation amounts as 0 instead of throwing", async () => {
+    const account = genAccount("missing-amounts-acc", { currency: ethereum, operationsSize: 1 });
+    account.subAccounts = [];
+    const raw = toAccountRaw(account);
+    const corrupted = {
+      ...raw,
+      balance: undefined,
+      spendableBalance: null,
+      operations: raw.operations.map(op => ({ ...op, value: undefined, fee: "" })),
+    } as unknown as AccountRaw;
+
+    const back = await fromAccountRaw(corrupted);
+    expect(back.balance.toString()).toBe("0");
+    expect(back.spendableBalance.toString()).toBe("0");
+    expect(back.operations[0].value.toString()).toBe("0");
+    expect(back.operations[0].fee.toString()).toBe("0");
+  });
+
+  it("keeps a persisted NaN balance as NaN", async () => {
+    const account = genAccount("nan-balance-acc", { currency: ethereum });
+    account.subAccounts = [];
+    const back = await fromAccountRaw({
+      ...toAccountRaw(account),
+      balance: "NaN",
+      spendableBalance: "",
+    });
+    expect(back.balance.isNaN()).toBe(true);
+    expect(back.spendableBalance.isNaN()).toBe(true);
+  });
+});
+
 describe("account serialization — sub-account operation indexing", () => {
   const token: TokenCurrency = {
     id: "ethereum/erc20/usd_tether__erc20_",

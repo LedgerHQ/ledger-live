@@ -1,4 +1,5 @@
 import type { Quote, QuotePermit2Message } from "../quotes/types";
+import { ExchangeError } from "../error";
 import { planSwapFlow } from "./planSwapFlow";
 import type { PlanSwapFlowInput } from "./types";
 
@@ -119,6 +120,9 @@ const BASE_INPUT: Omit<PlanSwapFlowInput, "quote"> = {
   gasLimitMultiplier: 1.2,
 };
 
+// Quotes come from JSON, so fields may hold anything at runtime
+const fromApi = (payload: object): Quote => JSON.parse(JSON.stringify(payload));
+
 function plan(quote: Quote) {
   return planSwapFlow({ quote, ...BASE_INPUT });
 }
@@ -145,6 +149,16 @@ describe("planSwapFlow", () => {
         expect(result.provider).toBe("uniswap");
       }
     });
+
+    it.each([undefined, null, "", "abc"])(
+      "rejects a DEX quote whose sendAmount is %p as wrong swap params",
+      sendAmount => {
+        const quote = makeQuote({ provider: "uniswap" });
+        expect(() =>
+          plan(fromApi({ ...quote, quoteDetails: { ...quote.quoteDetails, sendAmount } })),
+        ).toThrow(ExchangeError);
+      },
+    );
 
     it("skips with `dex-approval-blob-missing` when DEX requires approval but ships no blob", () => {
       const result = plan(
@@ -526,6 +540,28 @@ describe("planSwapFlow", () => {
         ...USDT_INPUT,
       });
       expect(result.kind).not.toBe("skip");
+    });
+
+    it("does not flag the revoke case when the allowance is unreadable", () => {
+      const quote = usdtQuote("okx");
+      const tokenAllowance = { ...quote.quoteDetails.tokenAllowance, approvedAmount: "abc" };
+      const result = planSwapFlow({
+        quote: fromApi({ ...quote, quoteDetails: { ...quote.quoteDetails, tokenAllowance } }),
+        ...BASE_INPUT,
+        ...USDT_INPUT,
+      });
+      expect(result.kind).not.toBe("skip");
+    });
+
+    it("rejects, rather than flags the revoke case, when the send amount is unreadable", () => {
+      const quote = usdtQuote("okx");
+      expect(() =>
+        planSwapFlow({
+          quote: fromApi({ ...quote, quoteDetails: { ...quote.quoteDetails, sendAmount: "abc" } }),
+          ...BASE_INPUT,
+          ...USDT_INPUT,
+        }),
+      ).toThrow(ExchangeError);
     });
 
     it("does not flag the revoke case when the caller did not pre-resolve the currency", () => {

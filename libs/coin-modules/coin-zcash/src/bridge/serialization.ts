@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import wallet from "@ledgerhq/wallet-btc/index";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
@@ -52,7 +52,7 @@ export function fromBitcoinOutputRaw([
     outputIndex,
     blockHeight: blockHeight || undefined,
     address: address || undefined,
-    value: new BigNumber(value),
+    value: fromRawBigNumber(value),
     rbf: !!rbf,
     isChange: !!isChange,
   };
@@ -138,10 +138,10 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
 
 export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
   return {
-    saplingBalance: new BigNumber(info.saplingBalance),
-    orchardBalance: new BigNumber(info.orchardBalance),
+    saplingBalance: fromRawBigNumber(info.saplingBalance),
+    orchardBalance: fromRawBigNumber(info.orchardBalance),
     // Guard accounts persisted before Ironwood support was added.
-    ironwoodBalance: new BigNumber(info.ironwoodBalance ?? "0"),
+    ironwoodBalance: fromRawBigNumber(info.ironwoodBalance),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     shieldedAddress: info.shieldedAddress ?? null,
@@ -154,11 +154,11 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     lastSyncError: info.lastSyncError ?? null,
     transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
-      fee: new BigNumber(fee),
+      fee: fromRawBigNumber(fee),
       // Read back only what was written: an account persisted before the
       // scanner reported the transparent bundle states nothing about it, and
       // zero would state something.
-      ...(transparentOut !== undefined && { transparentOut: new BigNumber(transparentOut) }),
+      ...(transparentOut !== undefined && { transparentOut: fromRawBigNumber(transparentOut) }),
       decryptedData: {
         orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
         sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),

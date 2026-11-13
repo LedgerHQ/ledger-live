@@ -1,5 +1,5 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   type PolkadotResourcesRaw,
   type PolkadotResources,
@@ -40,16 +40,16 @@ function fromPolkadotResourcesRaw(r: PolkadotResourcesRaw): PolkadotResources {
     controller,
     stash,
     nonce,
-    lockedBalance: new BigNumber(r.lockedBalance),
-    unlockedBalance: new BigNumber(r.unlockedBalance),
-    unlockingBalance: new BigNumber(r.unlockingBalance),
+    lockedBalance: fromRawBigNumber(r.lockedBalance),
+    unlockedBalance: fromRawBigNumber(r.unlockedBalance),
+    unlockingBalance: fromRawBigNumber(r.unlockingBalance),
     unlockings: r.unlockings?.map(u => ({
-      amount: new BigNumber(u.amount),
+      amount: fromRawBigNumber(u.amount),
       completionDate: new Date(u.completionDate),
     })),
     nominations: r.nominations?.map(n => ({
       address: n.address,
-      value: new BigNumber(n.value),
+      value: fromRawBigNumber(n.value),
       status: n.status,
       isRegistered: n.isRegistered,
     })),
@@ -84,19 +84,19 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   };
 
   if (extraRaw.transferAmount) {
-    extra.transferAmount = new BigNumber(extraRaw.transferAmount);
+    extra.transferAmount = fromRawBigNumber(extraRaw.transferAmount);
   }
 
   if (extraRaw.bondedAmount) {
-    extra.bondedAmount = new BigNumber(extraRaw.bondedAmount);
+    extra.bondedAmount = fromRawBigNumber(extraRaw.bondedAmount);
   }
 
   if (extraRaw.unbondedAmount) {
-    extra.unbondedAmount = new BigNumber(extraRaw.unbondedAmount);
+    extra.unbondedAmount = fromRawBigNumber(extraRaw.unbondedAmount);
   }
 
   if (extraRaw.withdrawUnbondedAmount) {
-    extra.withdrawUnbondedAmount = new BigNumber(extraRaw.withdrawUnbondedAmount);
+    extra.withdrawUnbondedAmount = fromRawBigNumber(extraRaw.withdrawUnbondedAmount);
   }
 
   return extra;

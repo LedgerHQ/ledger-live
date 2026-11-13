@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import { TronWeb, providers, utils } from "tronweb";
@@ -271,13 +272,13 @@ export type AccountInfo = {
   account_resource?: {
     delegated_frozenV2_balance_for_energy?: number;
     frozen_balance_for_energy?: {
-      frozen_balance: number;
+      frozen_balance?: number;
       expire_time: number;
     };
   };
   delegated_frozenV2_balance_for_bandwidth?: number;
   frozen?: {
-    frozen_balance: number;
+    frozen_balance?: number;
     expire_time: number;
   }[];
   frozenV2?: {
@@ -287,7 +288,7 @@ export type AccountInfo = {
   latest_withdraw_time?: number;
   unfrozenV2?: {
     type?: "ENERGY" | string;
-    unfreeze_amount: number;
+    unfreeze_amount?: number;
     unfreeze_expire_time: number;
   }[];
   votes?: {
@@ -313,13 +314,13 @@ export function getTronResources(
   const legacyFrozen = {
     bandwidth: legacyFrozenBandwidth
       ? {
-          amount: new BigNumber(legacyFrozenBandwidth.frozen_balance),
+          amount: parseFiniteBigNumber(legacyFrozenBandwidth.frozen_balance) ?? new BigNumber(0),
           expiredAt: new Date(legacyFrozenBandwidth.expire_time),
         }
       : undefined,
     energy: legacyFrozenEnergy
       ? {
-          amount: new BigNumber(legacyFrozenEnergy.frozen_balance),
+          amount: parseFiniteBigNumber(legacyFrozenEnergy.frozen_balance) ?? new BigNumber(0),
           expiredAt: new Date(legacyFrozenEnergy.expire_time),
         }
       : undefined,
@@ -343,7 +344,7 @@ export function getTronResources(
 
   const unFrozenBalances: {
     type?: string;
-    unfreeze_amount: number;
+    unfreeze_amount?: number;
     unfreeze_expire_time: number;
   }[] = get(acc, "unfrozenV2", []);
 
@@ -352,12 +353,12 @@ export function getTronResources(
         (accum, cur) => {
           if (cur && cur.type === "ENERGY") {
             accum.energy.push({
-              amount: new BigNumber(cur.unfreeze_amount),
+              amount: parseFiniteBigNumber(cur.unfreeze_amount) ?? new BigNumber(0),
               expireTime: new Date(cur.unfreeze_expire_time),
             });
           } else if (cur) {
             accum.bandwidth.push({
-              amount: new BigNumber(cur.unfreeze_amount),
+              amount: parseFiniteBigNumber(cur.unfreeze_amount) ?? new BigNumber(0),
               expireTime: new Date(cur.unfreeze_expire_time),
             });
           }

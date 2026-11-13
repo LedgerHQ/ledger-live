@@ -204,6 +204,17 @@ describe("decodeURIScheme", () => {
     });
   });
 
+  it("ignores non-numeric amount, value, gas and gasPrice", () => {
+    expect(decodeURIScheme(`bitcoin:${BTC_ADDRESS}?amount=abc`)).toEqual({
+      currency: bitcoin,
+      address: BTC_ADDRESS,
+    });
+    expect(decodeURIScheme(`ethereum:${ETH_ADDRESS}?value=abc&gas=x&gasPrice=1_0`)).toEqual({
+      currency: ethereum,
+      address: ETH_ADDRESS,
+    });
+  });
+
   it("returns only the address for an unknown or missing scheme", () => {
     expect(decodeURIScheme(`dogecoin:${BTC_ADDRESS}?amount=1`)).toEqual({ address: BTC_ADDRESS });
     expect(decodeURIScheme(`${BTC_ADDRESS}?amount=1`)).toEqual({ address: BTC_ADDRESS });

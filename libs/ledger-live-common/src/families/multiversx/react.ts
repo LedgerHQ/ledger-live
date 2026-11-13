@@ -53,8 +53,9 @@ export function useSearchValidators(validators: MultiversXProvider[], search: st
 
     // Sort by total active stake (highest first).
     const items = [...validators]
-      .sort((a, b) =>
-        new BigNumber(b.totalActiveStake).comparedTo(new BigNumber(a.totalActiveStake)),
+      .sort(
+        (a, b) =>
+          new BigNumber(b.totalActiveStake).comparedTo(new BigNumber(a.totalActiveStake)) ?? 0,
       )
       .map(disable);
 

@@ -367,6 +367,36 @@ describe("formatTrongridTxResponse", () => {
     expect(result?.value).toEqual(new BigNumber(5_000_000));
   });
 
+  it("falls back to a zero value when the amount is not a finite number", async () => {
+    const tx = baseTransactionTronApi({
+      type: "TransferContract",
+      parameter: {
+        type_url: "",
+        value: { owner_address: ownerHex, to_address: toHex, amount: Number.NaN },
+      },
+    });
+    const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+    expect(result?.value).toEqual(new BigNumber(0));
+  });
+
+  it.each([Number.NaN, Infinity, undefined])(
+    "falls back to a zero fee when the fee is %p",
+    async fee => {
+      const tx = baseTransactionTronApi(
+        {
+          type: "TransferContract",
+          parameter: {
+            type_url: "",
+            value: { owner_address: ownerHex, to_address: toHex, amount: 1 },
+          },
+        },
+        { ret: [{ contractRet: "SUCCESS", fee }] },
+      );
+      const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+      expect(result?.fee).toEqual(new BigNumber(0));
+    },
+  );
+
   it("should map quant for ExchangeTransactionContract", async () => {
     const tx = baseTransactionTronApi({
       type: "ExchangeTransactionContract",
@@ -380,6 +410,22 @@ describe("formatTrongridTxResponse", () => {
     });
     const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
     expect(result?.value).toEqual(new BigNumber(777));
+  });
+
+  it.each([
+    ["FreezeBalanceV2Contract", "frozenAmount"],
+    ["UnfreezeBalanceV2Contract", "unfreezeAmount"],
+    ["UnDelegateResourceContract", "unDelegatedAmount"],
+  ] as const)("defaults %s %s to 0 when TronGrid omits the amount", async (type, field) => {
+    const tx = baseTransactionTronApi({
+      type,
+      parameter: {
+        type_url: "",
+        value: { owner_address: ownerHex, receiver_address: toHex },
+      },
+    });
+    const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+    expect(result?.extra).toMatchObject({ [field]: new BigNumber(0) });
   });
 
   it("should attach vote extra info using getValidatorName", async () => {

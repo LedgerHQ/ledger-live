@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   AccountRaw,
   Account,
@@ -50,8 +51,10 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
 
 export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResources {
   return {
-    transparentBalance: new BigNumber(rawResources.transparentBalance),
-    privateBalance: rawResources.privateBalance ? new BigNumber(rawResources.privateBalance) : null,
+    transparentBalance: fromRawBigNumber(rawResources.transparentBalance),
+    privateBalance: rawResources.privateBalance
+      ? fromRawBigNumber(rawResources.privateBalance)
+      : null,
     provableApi: rawResources.provableApi ? JSON.parse(rawResources.provableApi) : null,
     lastPrivateSyncDate: rawResources.lastPrivateSyncDate
       ? new Date(rawResources.lastPrivateSyncDate)
@@ -60,9 +63,9 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
       ? JSON.parse(rawResources.unspentPrivateRecords)
       : null,
     ...(typeof rawResources.bondedBalance === "string" && {
-      bondedBalance: new BigNumber(rawResources.bondedBalance),
+      bondedBalance: fromRawBigNumber(rawResources.bondedBalance),
       bondedValidator: rawResources.bondedValidator ?? null,
-      unbondingBalance: new BigNumber(rawResources.unbondingBalance ?? 0),
+      unbondingBalance: fromRawBigNumber(rawResources.unbondingBalance),
       unbondingHeight: rawResources.unbondingHeight ?? null,
     }),
     ...(typeof rawResources.hasMigratedPublicTokens === "boolean" && {
@@ -114,9 +117,9 @@ export function assignFromTokenAccountRaw(
 ): void {
   const aleoTokenAccount = tokenAccount as AleoTokenAccount;
   const aleoTokenAccountRaw = tokenAccountRaw as AleoTokenAccountRaw;
-  aleoTokenAccount.transparentBalance = new BigNumber(aleoTokenAccountRaw.transparentBalance ?? 0);
+  aleoTokenAccount.transparentBalance = fromRawBigNumber(aleoTokenAccountRaw.transparentBalance);
   aleoTokenAccount.privateBalance = aleoTokenAccountRaw.privateBalance
-    ? new BigNumber(aleoTokenAccountRaw.privateBalance)
+    ? fromRawBigNumber(aleoTokenAccountRaw.privateBalance)
     : null;
   aleoTokenAccount.unspentPrivateRecords = aleoTokenAccountRaw.unspentPrivateRecords
     ? JSON.parse(aleoTokenAccountRaw.unspentPrivateRecords)
@@ -152,7 +155,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
     ...(extraRaw.programId !== undefined && { programId: extraRaw.programId }),
     ...(extraRaw.validator !== undefined && { validator: extraRaw.validator }),
     ...(extraRaw.stakedAmount !== undefined && {
-      stakedAmount: new BigNumber(extraRaw.stakedAmount),
+      stakedAmount: fromRawBigNumber(extraRaw.stakedAmount),
     }),
   };
 

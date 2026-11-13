@@ -21,6 +21,7 @@ import {
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
@@ -1632,7 +1633,7 @@ export function selectPrivateRecordsForAmount({
   const rankedRecords = unspentRecords
     .map(record => ({ record, value: new BigNumber(record.microcredits) }))
     .filter(({ value }) => value.isGreaterThan(0))
-    .sort((a, b) => b.value.comparedTo(a.value));
+    .sort((a, b) => b.value.comparedTo(a.value) ?? 0);
 
   if (rankedRecords.length === 0) {
     return [];
@@ -1773,9 +1774,9 @@ export function findTransferArguments(plaintexts: (string | null)[]): {
 /** `latest/totalSupply` is untrusted JSON: a bare scalar, in **credits**. */
 export function parseTotalSupply(value: unknown): BigNumber | null {
   if (typeof value !== "number" && typeof value !== "string") return null;
-  const parsed = new BigNumber(value);
+  const parsed = parseFiniteBigNumber(value);
 
-  return parsed.isFinite() && parsed.isGreaterThan(0) ? parsed : null;
+  return parsed?.isGreaterThan(0) ? parsed : null;
 }
 
 /**

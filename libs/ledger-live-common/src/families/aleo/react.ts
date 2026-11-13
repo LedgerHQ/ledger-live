@@ -105,7 +105,7 @@ export function useAleoQuickAmountSelector({
     if (!isAleoAccount(account)) return [];
     return getUnspentPrivateRecords(account)
       .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits) ?? 0);
   }, [account]);
 
   const strategyConfig = useMemo(

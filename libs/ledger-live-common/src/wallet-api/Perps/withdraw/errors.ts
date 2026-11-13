@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { z } from "zod";
 import { DecimalSchema } from "./schemas";
 
@@ -81,8 +82,7 @@ export function toWithdrawError({
     code === "FROM_CURRENCY_MINIMUM_AMOUNT_ERROR" ||
     (code === "amount_off_limits" &&
       minAmount.success &&
-      requestedAmount !== undefined &&
-      new BigNumber(requestedAmount).lt(minAmount.data));
+      (parseFiniteBigNumber(requestedAmount)?.lt(minAmount.data) ?? false));
 
   if (isBelowMinimum) {
     return new WithdrawMinimumAmountError(message, {

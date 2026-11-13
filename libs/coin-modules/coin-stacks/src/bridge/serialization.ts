@@ -1,5 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   StacksAccount,
   StacksAccountRaw,
@@ -23,9 +23,9 @@ export function fromStakingPositionRaw(raw: StakingPositionRaw): StakingPosition
   const { amount, amountDeposited, amountRewarded, stateUpdatedAt, createdAt, ...rest } = raw;
   return {
     ...rest,
-    amount: new BigNumber(amount),
-    ...(amountDeposited !== undefined && { amountDeposited: new BigNumber(amountDeposited) }),
-    ...(amountRewarded !== undefined && { amountRewarded: new BigNumber(amountRewarded) }),
+    amount: fromRawBigNumber(amount),
+    ...(amountDeposited !== undefined && { amountDeposited: fromRawBigNumber(amountDeposited) }),
+    ...(amountRewarded !== undefined && { amountRewarded: fromRawBigNumber(amountRewarded) }),
     ...(stateUpdatedAt !== undefined && { stateUpdatedAt: new Date(stateUpdatedAt) }),
     ...(createdAt !== undefined && { createdAt: new Date(createdAt) }),
   };
