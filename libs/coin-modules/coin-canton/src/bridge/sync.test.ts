@@ -157,6 +157,8 @@ describe("makeGetAccountShape", () => {
     index: 0,
     initialAccount: undefined,
   };
+  const sync = () =>
+    makeGetAccountShape(fakeSignerContext, fakeContext)(defaultInfo, { paginationConfig: {} });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -655,6 +657,140 @@ describe("makeGetAccountShape", () => {
           }),
         }),
       ],
+    });
+  });
+
+  describe("token attribution by instrument admin", () => {
+    const instrumentId = "USDCx";
+    const calAdmin = "decentralized-usdc-interchain-rep::1220aaaa";
+    const otherAdmin = "impostor::1220bbbb";
+    const usdcx = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/usdcx",
+      contractAddress: calAdmin,
+      parentCurrencyId: "canton_network",
+      tokenType: "cip56",
+      name: "USDCx",
+      ticker: "USDCx",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "USDCx", code: "USDCx", magnitude: 10 }],
+    };
+    const tokenBalance = (adminId: string, value: string, id = instrumentId): CantonBalance => ({
+      value: BigInt(value),
+      locked: 0n,
+      asset: { type: "token", assetReference: id },
+      utxoCount: 1,
+      instrumentId: id,
+      adminId,
+    });
+    const proposalFrom = (adminId: string) => ({
+      contract_id: `offer-from-${adminId}`,
+      sender: "sender-party",
+      receiver: "test-party-id",
+      amount: "1",
+      instrument_id: instrumentId,
+      instrument_admin: adminId,
+      memo: "",
+      expires_at_micros: 4_102_444_800_000_000,
+      update_id: `update-from-${adminId}`,
+    });
+
+    beforeEach(() => {
+      mockedGetCalTokensCached.mockResolvedValue(new Map([[usdcx.id, instrumentId]]));
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        id === usdcx.id ? usdcx : undefined,
+      );
+      mockedGetEnabledInstrumentsCached.mockResolvedValue(
+        new Set([`${instrumentId}____${calAdmin}`]),
+      );
+      mockedGetOperations.mockResolvedValue({ operations: [] });
+    });
+
+    it("keeps only the CAL admin's balance and operations under the token", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+        tokenBalance(calAdmin, "500"),
+        { ...tokenBalance(calAdmin, "200"), locked: 200n },
+      ]);
+      mockedGetOperations.mockResolvedValue({
+        operations: [
+          createMockOperationView({ txHash: "own-tx", instrumentId, instrumentAdmin: calAdmin }),
+          createMockOperationView({
+            txHash: "foreign-tx",
+            instrumentId,
+            instrumentAdmin: otherAdmin,
+          }),
+        ],
+      });
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          balance: BigNumber(700),
+          spendableBalance: BigNumber(500),
+          operations: [expect.objectContaining({ hash: "own-tx" })],
+        }),
+      ]);
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 1,
+        [`${instrumentId}____${calAdmin}`]: 2,
+        [`${instrumentId}____${otherAdmin}`]: 1,
+      });
+    });
+
+    it("creates no token sub-account from another admin's balance", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("creates no token sub-account from another admin's proposal", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetPendingTransferProposals.mockResolvedValue([proposalFrom(otherAdmin)]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("keeps another admin's proposal off the token sub-account", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+      mockedGetPendingTransferProposals.mockResolvedValue([
+        proposalFrom(otherAdmin),
+        proposalFrom(calAdmin),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          cantonResources: { pendingTransferProposals: [proposalFrom(calAdmin)] },
+        }),
+      ]);
+    });
+
+    it("reads the native balance by its instrument id whatever row comes first", async () => {
+      mockedGetBalance.mockResolvedValue([
+        tokenBalance("unlisted-admin::1220cccc", "900", "UnlistedToken"),
+        createMockNativeBalance("1000"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.balance).toEqual(BigNumber(1000));
     });
   });
 });
