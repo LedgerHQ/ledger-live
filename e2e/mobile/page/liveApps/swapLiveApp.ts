@@ -74,10 +74,10 @@ export default class SwapLiveAppPage {
     `${this.baseProviderCssSelector(
       provider,
     )}[data-testid$="-fixed"], ${this.baseProviderCssSelector(provider)}[data-testid$="-float"]`;
-  private readonly incompatibilityBannerPartnerSelector = (provider: string) =>
-    `${this.baseProviderCssSelector(provider)} [data-testid="${
-      this.incompatibilityBannerPartnerId
-    }"]`;
+  private readonly incompatibilityBannerPartner = (provider: string) =>
+    webByCss(
+      `${this.baseProviderCssSelector(provider)} [data-testid="${this.incompatibilityBannerPartnerId}"]`,
+    );
   /** A part of the provider's quote card, by the end of its testid, e.g. `-amount-label`. */
   private readonly quoteCardPartCss = (provider: string, suffix: string) =>
     `${this.baseProviderCssSelector(provider)}[data-testid$="${suffix}"]`;
@@ -470,12 +470,9 @@ export default class SwapLiveAppPage {
 
   @Step("Check Ledger Nano S not supported banner for {{{0}}}")
   async checkLnsNotSupportedBanner(provider: string) {
-    await retryUntilTimeout(async () => {
-      const bannerText = await this.mainContainer.getChildTexts(
-        this.incompatibilityBannerPartnerSelector(provider),
-      );
-      jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
-    }, TIMEOUT.large);
+    const banner = this.incompatibilityBannerPartner(provider);
+    await banner.waitTextMatching(this.lnsUnsupportedBannerPattern, TIMEOUT.large);
+    await banner.expectTextMatching(this.lnsUnsupportedBannerPattern);
   }
 
   @Step("Select specific provider {{{0}}}")
