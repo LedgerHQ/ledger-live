@@ -68,11 +68,10 @@ const MIN_X_AXIS_TICKS_1D = 8;
 const HOVER_RANGE_WITH_TIME_AND_DATE: ReadonlySet<string> = new Set(["1w", "1m", "6m"]);
 
 /**
- * Padding added to the y-axis domain. The bottom one (a ratio of the value range) lifts
- * the lowest point so its "below" label clears the chart edge. The top one leaves room
- * for the max label inside the drawing area, so the scrubber overlay covers it whole.
+ * Room left in the y-axis domain below the min and above the max, so their labels stay
+ * inside the drawing area and the scrubber overlay covers them whole.
  */
-const Y_AXIS_PADDING_BOTTOM_RATIO = 0.12;
+const Y_AXIS_PADDING_BOTTOM_PX = 32;
 const Y_AXIS_PADDING_TOP_PX = 24;
 
 /**
@@ -431,11 +430,11 @@ export function useBalanceGraphViewModel({
     () => ({
       domain: ({ min, max }) => {
         const valueRange = max - min || Math.abs(max) || 1;
-        const bottomPadding = valueRange * Y_AXIS_PADDING_BOTTOM_RATIO;
         const valuePerPx =
-          (valueRange + bottomPadding) / (ASSET_DETAIL_CHART_HEIGHT - Y_AXIS_PADDING_TOP_PX);
+          valueRange /
+          (ASSET_DETAIL_CHART_HEIGHT - Y_AXIS_PADDING_TOP_PX - Y_AXIS_PADDING_BOTTOM_PX);
         return {
-          min: min - bottomPadding,
+          min: min - Y_AXIS_PADDING_BOTTOM_PX * valuePerPx,
           max: max + Y_AXIS_PADDING_TOP_PX * valuePerPx,
         };
       },

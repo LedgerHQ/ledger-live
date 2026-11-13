@@ -543,7 +543,7 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.xAxis.ticks).toEqual([0, 1, 2, 3]);
     });
 
-    it("pads the y-axis domain below the min and 24px above the max for its label", () => {
+    it("pads the y-axis domain 32px below the min and 24px above the max for their labels", () => {
       const { result } = renderVM();
 
       const domain = result.current.yAxis.domain;
@@ -552,7 +552,7 @@ describe("useBalanceGraphViewModel", () => {
       const padded = domain({ min: 0, max: 100 });
       const valuePerPx = (padded.max - padded.min) / 208;
 
-      expect(padded.min).toBeCloseTo(-12);
+      expect((0 - padded.min) / valuePerPx).toBeCloseTo(32);
       expect((padded.max - 100) / valuePerPx).toBeCloseTo(24);
     });
   });
