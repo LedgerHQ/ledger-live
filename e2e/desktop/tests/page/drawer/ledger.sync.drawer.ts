@@ -23,6 +23,7 @@ export class LedgerSyncDrawer extends Drawer {
   private readonly activateSuccessTitle = this.page.getByTestId(
     "walletsync-activate-success-title",
   );
+  private readonly deviceIntentDialog = this.page.getByTestId("device-intent-executor-dialog");
 
   private async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
@@ -45,6 +46,17 @@ export class LedgerSyncDrawer extends Drawer {
   async clickConnectDevice() {
     await this.connectDeviceButton.waitFor({ state: "visible" });
     await this.connectDeviceButton.click();
+  }
+
+  @step("Expect the device step to run in the device intent dialog")
+  async expectDeviceIntentVisible() {
+    await expect(this.deviceIntentDialog).toBeVisible();
+    await expect(this.content).toBeHidden();
+  }
+
+  @step("Expect the device intent dialog to be closed")
+  async expectDeviceIntentFinished() {
+    await expect(this.deviceIntentDialog).toBeHidden({ timeout: TIMEOUT.large });
   }
 
   @step("Expect activation success screen")
