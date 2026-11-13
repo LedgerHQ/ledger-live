@@ -3,7 +3,14 @@ const assert = require("node:assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { extractKeys, findMissingKeys, flatten, hasKey, consumersOf } = require("./validate");
+const {
+  extractKeys,
+  failureMessages,
+  findMissingKeys,
+  flatten,
+  hasKey,
+  consumersOf,
+} = require("./validate");
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-keys-"));
 
@@ -442,5 +449,32 @@ describe("consumersOf", () => {
     assert.deepStrictEqual([...consumers.get(dirOf("leaf"))], ["Mobile"]);
     assert.deepStrictEqual([...consumers.get(dirOf("alone"))], []);
     assert.ok(!consumers.has(path.join(dirOf(".."), "libs", "bridge")));
+  });
+});
+
+describe("failureMessages", () => {
+  const unverifiableSite = { file: "features/x/view.tsx", line: 3 };
+  const missingMobileKey = {
+    file: "features/flow/pay-balance/src/view.tsx",
+    line: 7,
+    key: "payTab.actions.pay",
+    absentFrom: ["Mobile"],
+  };
+
+  it("fails on an unverifiable site alone", () => {
+    const failures = failureMessages({ missing: [], unverifiable: [unverifiableSite] });
+
+    assert.ok(failures.some(line => line.includes("Unverifiable i18n key sites (1")));
+  });
+
+  it("fails on a missing key that used to be allowlisted", () => {
+    const failures = failureMessages({ missing: [missingMobileKey], unverifiable: [] });
+
+    assert.ok(failures.some(line => line.includes('"payTab.actions.pay"  missing in Mobile')));
+    assert.ok(failures.some(line => line.includes("src/locales/en/common.json")));
+  });
+
+  it("passes when no key is missing or unverifiable", () => {
+    assert.deepStrictEqual(failureMessages({ missing: [], unverifiable: [] }), []);
   });
 });
