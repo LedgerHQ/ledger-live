@@ -16,6 +16,7 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
+import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
 
 export class WalletAdapter {
   private static readonly coinFrameworkFamilies = new Set(["evm"]);
@@ -92,8 +93,8 @@ export class WalletAdapter {
    * Return the current receive address for the account.
    * Always uses bridge sync to ensure the freshest unused address.
    */
-  async getFreshAddress(descriptor: AccountDescriptor): Promise<string> {
-    return (await this.getBridge()).getFreshAddress(descriptor);
+  async getFreshAddress(descriptor: AccountDescriptor): Promise<Address> {
+    return AddressSchema.parse(await (await this.getBridge()).getFreshAddress(descriptor));
   }
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {

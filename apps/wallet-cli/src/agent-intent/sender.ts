@@ -1,5 +1,6 @@
 import { resolveAccountDescriptorV1 } from "../commands/inputs";
-import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { addressOfV1, type AccountDescriptorV1 } from "../shared/accountDescriptor";
+import type { Address } from "@domain/entity-account-descriptor";
 import { parseEvmAddress } from "./evm";
 
 const MAINNET_ACCOUNT = {
@@ -26,16 +27,17 @@ export async function resolveSenderAccount(label: string): Promise<SenderAccount
 }
 
 /** Only a mainnet address account on the intent's network can propose it. */
-export function senderFromAccount(
+export async function senderFromAccount(
   { label, descriptor }: SenderAccount,
   intentType: "send" | "swap",
   network: keyof typeof MAINNET_ACCOUNT,
-): string {
+): Promise<Address> {
   if (descriptor.network !== network || descriptor.type !== "address") {
     throw new Error(
       `Account "${label}" is on ${descriptor.network}; this Agent Intent ${intentType} needs ` +
         `${MAINNET_ACCOUNT[network]}.`,
     );
   }
-  return network === "ethereum" ? parseEvmAddress(descriptor.key, "account") : descriptor.key;
+  const address = await addressOfV1(descriptor);
+  return network === "ethereum" ? parseEvmAddress(address, "account") : address;
 }

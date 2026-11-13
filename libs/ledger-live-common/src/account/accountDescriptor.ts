@@ -2,6 +2,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import {
   currencyIdFromNetwork,
   AccountDescriptorSchema,
+  AddressSchema,
+  type Address,
   networkFromCurrencyId,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
@@ -94,15 +96,15 @@ export class UnsupportedAddressFromKeyError extends Error {
 }
 
 /** The address an account is read at: its key, or the address its family computes from its public key. */
-export async function addressFromKey(currencyId: string, key: string): Promise<string> {
+export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
   const family = resolveFamily(getCryptoCurrencyById(currencyId));
-  if (!PUBLIC_KEY_FAMILIES.has(family)) return key;
+  if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
   assertPublicKey(key, currencyId);
   const derive = await loadAddressFromKeyForFamily(family);
   if (!derive) {
     throw new UnsupportedAddressFromKeyError(`${currencyId} computes no address from its key`);
   }
-  return derive(key);
+  return AddressSchema.parse(derive(key));
 }
 
 /** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
