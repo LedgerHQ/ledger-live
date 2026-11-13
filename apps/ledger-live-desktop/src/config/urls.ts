@@ -20,6 +20,7 @@ const errors: Record<string, string> = {
   TronStakingDisable: "https://support.ledger.com/article/9949980566173-zd",
   OperatingSystemOutdated: "https://support.ledger.com/article/8083692639901-zd",
   AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  XrpSendToIssuer: "https://support.ledger.com/article/115005177349-zd",
 };
 
 export const urls = {

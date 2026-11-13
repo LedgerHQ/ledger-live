@@ -26,3 +26,16 @@ export function getIssuerFeeForToken(token: TokenCurrency): Promise<string> {
     assetOwner: token.contractAddress,
   });
 }
+
+/**
+ * The issuer's fee of a token send, in the token's base units, or `null` when there is none: the
+ * payment's SendMax above the amount, read from the status, never recomputed from the rate.
+ * Token sends only: on an XRP send, `totalSpent − amount` is the network fee.
+ */
+export function getIssuerFeeAmount(status: {
+  amount: BigNumber;
+  totalSpent: BigNumber;
+}): BigNumber | null {
+  const fee = status.totalSpent.minus(status.amount);
+  return fee.gt(0) ? fee : null;
+}
