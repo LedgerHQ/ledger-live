@@ -59,6 +59,28 @@ export {
   connectNewDeviceUseCase,
   type ConnectNewDeviceUseCaseInput,
 } from "./connectNewDevice/connectNewDeviceUseCase";
+export {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  DeviceListItemStatuses,
+} from "./connectKnownOrNewDevice/types";
+export type {
+  ConnectKnownOrNewDeviceDelays,
+  ConnectKnownOrNewDeviceFindMatchingDevice,
+  ConnectKnownOrNewDeviceGetConnectivity,
+  ConnectKnownOrNewDeviceKnownDevice,
+  ConnectKnownOrNewDeviceOnConnected,
+  ConnectKnownOrNewDeviceUIState,
+  ConnectKnownOrNewDeviceUIStateType,
+  DeviceConnectivity,
+  DeviceListItem,
+  DeviceListItemStatus,
+  SelectableDeviceListItem,
+} from "./connectKnownOrNewDevice/types";
+export {
+  connectKnownOrNewDeviceUseCase,
+  type ConnectKnownOrNewDeviceUseCaseInput,
+  type ConnectKnownOrNewDeviceUseCaseOutput,
+} from "./connectKnownOrNewDevice/connectKnownOrNewDeviceUseCase";
 export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
