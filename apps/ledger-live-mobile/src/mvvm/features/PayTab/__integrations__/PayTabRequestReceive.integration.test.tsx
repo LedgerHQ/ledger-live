@@ -39,6 +39,7 @@ jest.mock("@features/flow-pay-card", () => ({
 type CapturedExecutor = {
   intent: { input: { expectedAddress: string } };
   onIntentJobStateChanged: (jobState: VerifyAddressIntentJobState) => void;
+  onIntentJobComplete: () => void;
   onUserCancel: () => void;
 };
 
@@ -325,6 +326,7 @@ describe("PayTab RequestReceive integration", () => {
         type: "verified",
         address: payTabEthAccount.freshAddress,
       });
+      capturedExecutor!.onIntentJobComplete();
     });
 
     expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();

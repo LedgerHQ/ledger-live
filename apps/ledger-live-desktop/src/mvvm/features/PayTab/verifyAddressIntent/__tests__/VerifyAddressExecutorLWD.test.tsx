@@ -5,11 +5,16 @@ import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecu
 import { VerifyAddressExecutorLWD } from "../VerifyAddressExecutorLWD";
 
 let onJobStateChanged: (state: { type: string }) => void;
+let onJobComplete: () => void;
 
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutor: (props: { onIntentJobStateChanged: typeof onJobStateChanged }) => {
+  DeviceIntentExecutor: (props: {
+    onIntentJobStateChanged: typeof onJobStateChanged;
+    onIntentJobComplete: typeof onJobComplete;
+  }) => {
     onJobStateChanged = props.onIntentJobStateChanged;
+    onJobComplete = props.onIntentJobComplete;
     return <div data-testid="device-intent-executor" />;
   },
 }));
@@ -28,13 +33,14 @@ describe("VerifyAddressExecutorLWD", () => {
     buildInit.mockResolvedValue({} as never);
   });
 
-  it("should call onReady then onExit(verified) once the address is confirmed", async () => {
+  it("should call onReady then onExit(verified) once the confirmed address job completes", async () => {
     const { onReady, onExit } = renderExecutor();
 
     await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
     expect(onReady).toHaveBeenCalledTimes(1);
 
     act(() => onJobStateChanged({ type: "verified" }));
+    act(() => onJobComplete());
 
     expect(onExit).toHaveBeenCalledWith("verified");
   });

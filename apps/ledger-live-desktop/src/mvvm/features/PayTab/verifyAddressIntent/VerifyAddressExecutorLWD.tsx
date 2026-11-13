@@ -1,7 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
-import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
+import { createIntent } from "@features/platform-device-intent";
+import {
+  useDeviceIntentSession,
+  type DeviceIntentSessionEvent,
+  type DeviceIntentSessionOutcomes,
+} from "@features/platform-device-intent-session";
 import type {
   VerifyAddressIntentInput,
   VerifyAddressIntentJobState,
@@ -10,13 +15,10 @@ import { trackEvent } from "@features/platform-pay-analytics";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
-  type InitializationInput,
 } from "LLD/components/DeviceIntentExecutor";
 import type { PayVerifyOutcome, PayVerifySelection } from "../hooks/usePayTabVerifyAddress";
 import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
 import { verifyAddressIntentLWDDefinition } from "./intentLWDDefinition";
-
-const CONNECTION_PARAMS: DeviceConnectionParams = { acceptedDeviceModelIds: [] };
 
 const JOB_TRACK_EVENT: Partial<Record<VerifyAddressIntentJobState["type"], string>> = {
   verified: "request_verification_complete",
@@ -31,8 +33,6 @@ type Props = Readonly<{
   onExit: (outcome: PayVerifyOutcome) => void;
 }>;
 
-const noop = () => {};
-
 function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): PayVerifyOutcome {
   switch (state?.type) {
     case "mismatch":
@@ -46,81 +46,36 @@ function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): P
   }
 }
 
+const OUTCOMES: DeviceIntentSessionOutcomes<VerifyAddressIntentJobState, PayVerifyOutcome> = {
+  fromJobState: jobState => (jobState.type === "verified" ? "verified" : undefined),
+  fromUserCancel: outcomeFromLastState,
+  setupFailed: "initFailed",
+};
+
 export function VerifyAddressExecutorLWD({
   selection,
   onReady,
   onExit,
 }: Props): React.ReactElement | null {
   const { account, parentAccount } = selection;
-  const [initInput, setInitInput] = useState<InitializationInput | null>(null);
-  const lastJobStateRef = useRef<VerifyAddressIntentJobState | undefined>(undefined);
-  const exitedRef = useRef(false);
 
   const mainAccount = useMemo(
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
 
-  const exit = useCallback(
-    (outcome: PayVerifyOutcome) => {
-      if (exitedRef.current) return;
-      exitedRef.current = true;
-      onExit(outcome);
-    },
-    [onExit],
+  const buildSetupInput = useCallback(
+    () =>
+      buildDeviceInitializationInput({
+        appRequest: {
+          account: mainAccount,
+          currency: mainAccount.currency,
+          tokenCurrency: account.type === "TokenAccount" ? account.token : undefined,
+        },
+        flow: FlowName.receive,
+      }),
+    [mainAccount, account],
   );
-
-  useEffect(() => {
-    let cancelled = false;
-    buildDeviceInitializationInput({
-      appRequest: {
-        account: mainAccount,
-        currency: mainAccount.currency,
-        tokenCurrency: account.type === "TokenAccount" ? account.token : undefined,
-      },
-      flow: FlowName.receive,
-    })
-      .then(input => {
-        if (cancelled) return;
-        setInitInput(input);
-        onReady();
-      })
-      .catch(() => {
-        if (!cancelled) exit("initFailed");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [mainAccount, account, onReady, exit]);
-
-  const onJobStateChanged = useCallback(
-    (jobState: VerifyAddressIntentJobState) => {
-      if (exitedRef.current) return;
-      lastJobStateRef.current = jobState;
-      const event = JOB_TRACK_EVENT[jobState.type];
-      if (event) {
-        trackEvent(event, {
-          page: "Request Address Verification",
-          flow: "request",
-          asset: account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
-          network: mainAccount.currency.id,
-        });
-      }
-      if (jobState.type === "verified") exit("verified");
-    },
-    [account, exit, mainAccount.currency.id],
-  );
-
-  const onUserCancel = useCallback(() => {
-    if (exitedRef.current) return;
-    trackEvent("request_verification_dismiss", {
-      page: "Request Address Verification",
-      flow: "request",
-      asset: account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
-      network: mainAccount.currency.id,
-    });
-    exit(outcomeFromLastState(lastJobStateRef.current));
-  }, [account, exit, mainAccount.currency.id]);
 
   const intent = useMemo(
     () =>
@@ -128,22 +83,39 @@ export function VerifyAddressExecutorLWD({
     [mainAccount],
   );
 
-  if (!initInput) return null;
+  const onTrack = useCallback(
+    (event: DeviceIntentSessionEvent<VerifyAddressIntentJobState>) => {
+      const trackedEvent =
+        event.type === "userCancelled"
+          ? "request_verification_dismiss"
+          : JOB_TRACK_EVENT[event.jobState.type];
+      if (!trackedEvent) return;
+      trackEvent(trackedEvent, {
+        page: "Request Address Verification",
+        flow: "request",
+        asset: account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
+        network: mainAccount.currency.id,
+      });
+    },
+    [account, mainAccount.currency.id],
+  );
+
+  const session = useDeviceIntentSession({
+    buildSetupInput,
+    intent,
+    intentComponentExtraProps: undefined,
+    outcomes: OUTCOMES,
+    onTrack,
+    onReady,
+    onExit,
+  });
+
+  if (!session) return null;
 
   return (
     <DeviceIntentExecutor<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
-      enabled
       sourceFlow="receive"
-      deviceConnectionParams={CONNECTION_PARAMS}
-      deviceInitializationInput={initInput}
-      intent={intent}
-      intentComponentExtraProps={undefined}
-      onExecutorStateChanged={noop}
-      onIntentJobStateChanged={onJobStateChanged}
-      onIntentJobComplete={noop}
-      onIntentJobError={noop}
-      cancelIntentRequestId={undefined}
-      onUserCancel={onUserCancel}
+      {...session}
     />
   );
 }

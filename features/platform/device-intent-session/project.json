@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-device-intent-session",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

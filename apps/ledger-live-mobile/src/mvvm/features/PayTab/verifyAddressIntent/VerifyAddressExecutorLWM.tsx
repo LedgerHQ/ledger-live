@@ -1,9 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { trackEvent } from "@features/platform-pay-analytics";
-import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
+import { createIntent } from "@features/platform-device-intent";
+import {
+  useDeviceIntentSession,
+  type DeviceIntentSessionEvent,
+  type DeviceIntentSessionOutcomes,
+} from "@features/platform-device-intent-session";
 import type {
   VerifyAddressIntentInput,
   VerifyAddressIntentJobState,
@@ -11,13 +16,10 @@ import type {
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
-  type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import type { PayVerifyOutcome } from "../hooks/usePayTabVerifyAddress";
 import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
 import { verifyAddressIntentLWMDefinition } from "./intentLWMDefinition";
-
-const CONNECTION_PARAMS: DeviceConnectionParams = { acceptedDeviceModelIds: [] };
 
 const JOB_TRACK_EVENT: Partial<Record<VerifyAddressIntentJobState["type"], string>> = {
   verified: "request_verification_complete",
@@ -34,8 +36,6 @@ export type VerifyAddressExecutorLWMProps = Readonly<{
   onExit: (outcome: PayVerifyOutcome) => void;
 }>;
 
-const noop = () => undefined;
-
 function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): PayVerifyOutcome {
   switch (state?.type) {
     case "mismatch":
@@ -49,6 +49,12 @@ function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): P
   }
 }
 
+const OUTCOMES: DeviceIntentSessionOutcomes<VerifyAddressIntentJobState, PayVerifyOutcome> = {
+  fromJobState: jobState => (jobState.type === "verified" ? "verified" : undefined),
+  fromUserCancel: outcomeFromLastState,
+  setupFailed: "initFailed",
+};
+
 export function VerifyAddressExecutorLWM({
   mainAccount,
   tokenCurrency,
@@ -56,70 +62,18 @@ export function VerifyAddressExecutorLWM({
   onReady,
   onExit,
 }: VerifyAddressExecutorLWMProps): React.ReactElement | null {
-  const [initInput, setInitInput] = useState<InitializationInput | null>(null);
-  const lastJobStateRef = useRef<VerifyAddressIntentJobState | undefined>(undefined);
-  const exitedRef = useRef(false);
-
-  const exit = useCallback(
-    (outcome: PayVerifyOutcome) => {
-      if (exitedRef.current) return;
-      exitedRef.current = true;
-      onExit(outcome);
-    },
-    [onExit],
+  const buildSetupInput = useCallback(
+    () =>
+      buildDeviceInitializationInput({
+        appRequest: {
+          account: mainAccount,
+          currency: mainAccount.currency,
+          tokenCurrency,
+        },
+        flow: FlowName.receive,
+      }),
+    [mainAccount, tokenCurrency],
   );
-
-  useEffect(() => {
-    let cancelled = false;
-    buildDeviceInitializationInput({
-      appRequest: {
-        account: mainAccount,
-        currency: mainAccount.currency,
-        tokenCurrency,
-      },
-      flow: FlowName.receive,
-    })
-      .then(input => {
-        if (cancelled) return;
-        setInitInput(input);
-        onReady();
-      })
-      .catch(() => {
-        if (!cancelled) exit("initFailed");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [mainAccount, tokenCurrency, onReady, exit]);
-
-  const onJobStateChanged = useCallback(
-    (jobState: VerifyAddressIntentJobState) => {
-      if (exitedRef.current) return;
-      lastJobStateRef.current = jobState;
-      const event = JOB_TRACK_EVENT[jobState.type];
-      if (event) {
-        trackEvent(event, {
-          page,
-          flow: "request",
-          asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
-          network: mainAccount.currency.id,
-        });
-      }
-      if (jobState.type === "verified") exit("verified");
-    },
-    [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency],
-  );
-
-  const onUserCancel = useCallback(() => {
-    if (exitedRef.current) return;
-    trackEvent("request_verification_dismiss", {
-      page,
-      flow: "request",
-      asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
-      network: mainAccount.currency.id,
-    });
-    exit(outcomeFromLastState(lastJobStateRef.current));
-  }, [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency]);
 
   const intent = useMemo(
     () =>
@@ -127,20 +81,39 @@ export function VerifyAddressExecutorLWM({
     [mainAccount],
   );
 
-  if (!initInput) return null;
+  const onTrack = useCallback(
+    (event: DeviceIntentSessionEvent<VerifyAddressIntentJobState>) => {
+      const trackedEvent =
+        event.type === "userCancelled"
+          ? "request_verification_dismiss"
+          : JOB_TRACK_EVENT[event.jobState.type];
+      if (!trackedEvent) return;
+      trackEvent(trackedEvent, {
+        page,
+        flow: "request",
+        asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
+        network: mainAccount.currency.id,
+      });
+    },
+    [mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency],
+  );
+
+  const session = useDeviceIntentSession({
+    buildSetupInput,
+    intent,
+    intentComponentExtraProps: undefined,
+    outcomes: OUTCOMES,
+    onTrack,
+    onReady,
+    onExit,
+  });
+
+  if (!session) return null;
 
   return (
     <DeviceIntentExecutor<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
-      enabled
       sourceFlow="receive"
-      deviceConnectionParams={CONNECTION_PARAMS}
-      deviceInitializationInput={initInput}
-      intent={intent}
-      intentComponentExtraProps={undefined}
-      onExecutorStateChanged={noop}
-      onIntentJobStateChanged={onJobStateChanged}
-      cancelIntentRequestId={undefined}
-      onUserCancel={onUserCancel}
+      {...session}
     />
   );
 }
