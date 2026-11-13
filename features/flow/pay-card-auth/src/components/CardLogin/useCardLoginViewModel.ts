@@ -29,11 +29,11 @@ const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
 
-const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
+const INTRO_ROWS = [
   { icon: "CoinsAddPlus", key: "cashback" },
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
-];
+] as const satisfies readonly { icon: CardLoginIntroRowIcon; key: string }[];
 
 const PRESSABLE_LOGIN_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "idle",
