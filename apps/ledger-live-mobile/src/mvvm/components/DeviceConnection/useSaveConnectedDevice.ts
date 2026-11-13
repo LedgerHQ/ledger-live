@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { buildMockServerCompatDeviceId, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { type SaveDeviceOptions, type SavedDevice, useSaveDevice } from "./useSaveDevice";
+import { type SavedDevice, useSaveDevice } from "./useSaveDevice";
 
 function mapConnectedDeviceToSavedDevice(connectedDevice: ConnectedDevice): SavedDevice {
   const deviceModelId = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
@@ -27,10 +27,8 @@ function mapConnectedDeviceToSavedDevice(connectedDevice: ConnectedDevice): Save
 }
 
 /** Returns a callback that saves the device of a DMK connection with `useSaveDevice`. */
-export function useSaveConnectedDevice(
-  options?: SaveDeviceOptions,
-): (connectedDevice: ConnectedDevice) => void {
-  const saveDevice = useSaveDevice(options);
+export function useSaveConnectedDevice(): (connectedDevice: ConnectedDevice) => void {
+  const saveDevice = useSaveDevice();
 
   return useCallback(
     (connectedDevice: ConnectedDevice) =>

@@ -60,7 +60,7 @@ export function useConnectNewDeviceViewModel({
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
-  const saveConnectedDevice = useSaveConnectedDevice({ isNewDevice: true });
+  const saveConnectedDevice = useSaveConnectedDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,

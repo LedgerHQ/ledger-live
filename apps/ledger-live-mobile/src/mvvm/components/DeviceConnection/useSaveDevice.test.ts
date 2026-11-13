@@ -45,6 +45,32 @@ describe("useSaveDevice", () => {
     expect(store.getState().ble.knownDevices).toEqual([]);
   });
 
+  it("should not add a device of another transport to the BLE known devices, even when it is not wired", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveDevice());
+
+    // WHEN
+    act(() =>
+      result.current({
+        lastConnectedDevice: {
+          deviceId: "httpdebug|ws://127.0.0.1:8435",
+          deviceName: "Debug proxy",
+          modelId: DeviceModelId.nanoX,
+          wired: false,
+        },
+        knownDevice: {
+          id: "httpdebug|ws://127.0.0.1:8435",
+          name: "Debug proxy",
+          deviceModelId: DeviceModelId.nanoX,
+          transport: "httpdebug",
+        },
+      }),
+    );
+
+    // THEN
+    expect(store.getState().ble.knownDevices).toEqual([]);
+  });
+
   it("should update a BLE device that is already in the BLE known devices", () => {
     // GIVEN
     const { result, store } = renderHook(() => useSaveDevice(), {
