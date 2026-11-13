@@ -14,6 +14,7 @@ import {
   completeJob,
   createDeviceCallbacks,
   createLedgerSyncJob,
+  createResultOrder,
   deliverLateResult,
   failJob,
   handleCallError,
@@ -137,6 +138,40 @@ describe("deliverLateResult", () => {
 
     expect(() => deliverLateResult(onResult, "late result")).not.toThrow();
     expect(onResult).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("createResultOrder", () => {
+  it("should keep a late ticket when no newer one was delivered", () => {
+    const order = createResultOrder();
+    const older = order.take();
+    order.take();
+
+    expect(order.isStale(older)).toBe(false);
+  });
+
+  it("should mark a ticket stale once a newer one was delivered", () => {
+    const order = createResultOrder();
+    const older = order.take();
+    const newer = order.take();
+
+    order.markDelivered(newer);
+
+    expect(order.isStale(older)).toBe(true);
+    expect(order.isStale(newer)).toBe(false);
+  });
+
+  it("should not move back when an older ticket is delivered after a newer one", () => {
+    const order = createResultOrder();
+    const older = order.take();
+    const newer = order.take();
+    const newest = order.take();
+
+    order.markDelivered(newer);
+    order.markDelivered(older);
+
+    expect(order.isStale(older)).toBe(true);
+    expect(order.isStale(newest)).toBe(false);
   });
 });
 
@@ -353,6 +388,40 @@ describe("createLedgerSyncJob", () => {
       expect(onResult).toHaveBeenCalledTimes(1);
       expect(job.states).toEqual([PENDING]);
       expect(onStoppedNotification).not.toHaveBeenCalled();
+    });
+
+    it("should ignore the late result of a disconnected job once the job that replaced it delivered", async () => {
+      const disconnectedDevice = createDeferred<string>();
+      const onDisconnectedResult = jest.fn();
+      const disconnected = startJob(() => disconnectedDevice.promise, onDisconnectedResult);
+      disconnected.subscription.unsubscribe();
+
+      const onReplacementResult = jest.fn();
+      const replacement = startJob(() => Promise.resolve("newer result"), onReplacementResult);
+      await replacement.waitFor("completed");
+      disconnectedDevice.resolve("older result");
+      await flushPromises();
+
+      expect(onReplacementResult).toHaveBeenCalledWith("newer result");
+      expect(onDisconnectedResult).not.toHaveBeenCalled();
+    });
+
+    it("should keep the late result of a disconnected job when the job that replaced it has not delivered", async () => {
+      const disconnectedDevice = createDeferred<string>();
+      const onDisconnectedResult = jest.fn();
+      const disconnected = startJob(() => disconnectedDevice.promise, onDisconnectedResult);
+      disconnected.subscription.unsubscribe();
+
+      const replacementDevice = createDeferred<string>();
+      const onReplacementResult = jest.fn();
+      const replacement = startJob(() => replacementDevice.promise, onReplacementResult);
+      disconnectedDevice.resolve("older result");
+      await flushPromises();
+      replacementDevice.resolve("newer result");
+      await replacement.waitFor("completed");
+
+      expect(onDisconnectedResult).toHaveBeenCalledWith("older result");
+      expect(onReplacementResult).toHaveBeenCalledWith("newer result");
     });
   });
 });

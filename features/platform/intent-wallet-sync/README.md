@@ -65,7 +65,9 @@ disconnects right after the user approved. The result of the latest run then sti
 `onResult`, with no job state, so the app stores it. The app's `onResult` must tolerate this late
 call: it stores the result and skips any navigation from a screen that is gone. An error after the
 unsubscribe, a throw from that late `onResult`, and the result of a run that a Retry replaced are
-ignored.
+ignored. After a disconnection, the executor's Retry starts a new job: a late result of the
+disconnected job is dropped once the new job delivered its own, so it never overwrites a newer
+trustchain.
 
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
