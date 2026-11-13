@@ -7,7 +7,11 @@ import type { XrpTokenAccount } from "../types";
 import BigNumber from "bignumber.js";
 import type { Account, SyncConfig } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
-import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";
+import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
+import {
+  buildOptimisticOperation,
+  transactionToIntent,
+} from "../../../bridge/generic-coin-framework/utils";
 import xrpBridgeApi, {
   buildIntentData,
   buildTokenAccountShapes,
@@ -80,6 +84,10 @@ function makeTrustSet(assetReference: string) {
     fees: new BigNumber(12),
     assetOwner: ISSUER,
   };
+}
+
+function makeOptOut(assetReference: string) {
+  return { ...makeTrustSet(assetReference), mode: "optOut" as const, amount: new BigNumber(0) };
 }
 
 beforeAll(() => {
@@ -293,6 +301,10 @@ describe("xrpBridgeApi", () => {
     expect(xrpBridgeApi(ripple).tokenOptParentRow).toBe(true);
   });
 
+  it("drops a token missing from the balance", () => {
+    expect(xrpBridgeApi(ripple).dropsMissingTokens).toBe(true);
+  });
+
   it("keeps opt-ins as fee rows while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
@@ -360,8 +372,43 @@ describe("describeOptimisticOperation", () => {
     ).toBe("OPT_IN");
   });
 
+  it("records an opt-out as OPT_OUT with a 0 value and the token in its transaction", () => {
+    const operation = buildOptimisticOperation(
+      account,
+      makeOptOut("USD"),
+      undefined,
+      describeOptimisticOperation,
+    );
+
+    expect(operation).toMatchObject({ type: "OPT_OUT", accountId: "xrpAccount" });
+    expect(operation.value.toFixed()).toBe("0");
+    expect(operation.subOperations).toBeUndefined();
+    expect(operation.transactionRaw).toMatchObject({ assetReference: "USD", assetOwner: ISSUER });
+  });
+
   it("keeps the generic description of a send", () => {
     expect(describeOptimisticOperation("send", account, makeTrustSet("USD"))).toBeUndefined();
+  });
+});
+
+describe("opt-out intent", () => {
+  it.each([
+    ["USD", "IOU"],
+    [MPT_ID, "MPT"],
+  ])("sends the optOut intent for the token %s (%s), with no recipient or amount", reference => {
+    const account = { freshAddress: "rSender", subAccounts: [] } as unknown as Account;
+    const transaction = makeOptOut(reference) as GenericTransaction;
+
+    const intent = transactionToIntent(account, transaction, undefined, undefined, buildIntentData);
+
+    expect(intent).toMatchObject({
+      type: "optOut",
+      sender: "rSender",
+      recipient: "",
+      amount: 0n,
+      asset: { type: "token", assetReference: reference, assetOwner: ISSUER },
+      data: { type: "none" },
+    });
   });
 });
 

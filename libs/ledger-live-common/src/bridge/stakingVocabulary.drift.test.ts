@@ -28,6 +28,7 @@ import {
 const GENERIC_NON_STAKING = new Set([
   "send",
   "changeTrust",
+  "optOut",
   "tokenAssociate",
   "send-legacy",
   "send-eip1559",

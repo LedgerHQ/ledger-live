@@ -142,6 +142,8 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
     buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
+    // The balance lists every trust line and MPToken, at 0 too: a missing token is no longer held
+    dropsMissingTokens: true,
     exactAssetMatch: true,
     tokenOptParentRow: enabledStandards.length > 0,
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
