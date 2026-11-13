@@ -15,9 +15,10 @@ export function KeepProtectionSheet({
 }: KeepProtectionSheetProps): React.JSX.Element {
   const { t } = useTranslation();
 
-  const biometricsType = biometricsKind
-    ? t(biometricsTypeKey(biometricsKind), { defaultValue: biometricsKind })
-    : "";
+  const biometricsTypeLabelKey = biometricsKind ? biometricsTypeKey(biometricsKind) : undefined;
+  const biometricsType = biometricsTypeLabelKey
+    ? t(biometricsTypeLabelKey)
+    : (biometricsKind ?? "");
 
   return (
     <QueuedBottomSheet
