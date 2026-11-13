@@ -24,7 +24,8 @@ async function startWith(swapApiBase: string | undefined) {
   return { exitCode, swapApiBase: stdout.trim(), stderr };
 }
 
-describe("SWAP_API_BASE at startup", () => {
+// Concurrent: each test only waits on its own process.
+describe.concurrent("SWAP_API_BASE at startup", () => {
   it("points live-common's Swap API at SWAP_API_BASE and says so on stderr", async () => {
     const started = await startWith(STAGING_SWAP_API);
 
