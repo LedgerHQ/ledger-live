@@ -137,7 +137,7 @@ export function runSwapWithDifferentSeedTest(
 export function runSwapLandingPageTest(
   fromAccount: Account,
   toAccount: Account,
-  tmsLinks: string[],
+  tmsLinks: { landingPage: string[]; formatting: string[] },
   tags: string[],
 ) {
   describe("Swap - landing page", () => {
@@ -160,7 +160,7 @@ export function runSwapLandingPageTest(
     });
 
     setTeamOwner(Team.SWAP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tmsLinks.landingPage.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
@@ -183,7 +183,7 @@ export function runSwapLandingPageTest(
     });
 
     setTeamOwner(Team.SWAP);
-    $TmsLink("B2CQA-4014");
+    tmsLinks.formatting.forEach(tmsLink => $TmsLink(tmsLink));
     tags.filter(tag => tag !== "@LNS").forEach(tag => $Tag(tag));
     it("Swap amounts are formatted correctly for language: Français", async () => {
       await app.mainNavigation.openPortfolioViaDeeplink();
