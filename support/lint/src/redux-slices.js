@@ -231,16 +231,37 @@ function bound(param) {
  *   first to a selector
  */
 function isStateParam(param, body) {
-  const id = bound(param);
-  if (id?.type !== "Identifier") return false;
-  const annotation = id.typeAnnotation?.typeAnnotation;
+  let id = bound(param);
+  if (id?.type === "AssignmentPattern") id = id.left;
+  const annotation = id?.typeAnnotation?.typeAnnotation;
   if (
     annotation?.type === "TSTypeReference" &&
     STATE_TYPE.test(calleeName(annotation.typeName) ?? annotation.typeName?.right?.name ?? "")
   ) {
     return true;
   }
-  return usesOf(body, id.name).calls.size > 0;
+  return id?.type === "Identifier" && usesOf(body, id.name).calls.size > 0;
+}
+
+/**
+ * @param {any} param
+ * @param {string} name
+ * @returns {boolean} whether the default value of `param` reads `name`
+ */
+function defaultReads(param, name) {
+  const id = bound(param);
+  if (id?.type !== "AssignmentPattern") return false;
+  const { keys, calls, other } = usesOf(id.right, name);
+  return other || keys.size > 0 || calls.size > 0;
+}
+
+/**
+ * @param {any} property a Property of an ObjectPattern
+ * @returns {boolean} whether its key is a fixed name: `a`, `"a"` or `["a"]`
+ */
+function hasStaticKey(property) {
+  if (!property.computed) return true;
+  return typeof property.key?.value === "string";
 }
 
 /**
@@ -258,9 +279,10 @@ function readsOneSlice(fn) {
 
   if (id.type === "ObjectPattern") {
     if (id.properties.some(property => property.type !== "Property")) return false;
-    return id.properties.length === 1;
+    return id.properties.length === 1 && hasStaticKey(id.properties[0]);
   }
   if (id.type !== "Identifier") return false;
+  if (rest.some(param => defaultReads(param, id.name))) return false;
 
   const { keys, calls, other } = usesOf(fn.body, id.name);
   if (other) return false;
