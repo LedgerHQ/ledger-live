@@ -10,7 +10,7 @@ import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
-import { createStartupLogReader } from "./startup-log.ts";
+import { createStartupLineWriters, createStartupLogReader } from "./startup-log.ts";
 import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
 import type { Userdata } from "./types.ts";
 
@@ -89,11 +89,11 @@ const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
 let screenReadSinceLaunch = false;
-// Becomes "screen" for the rest of a scenario once a build not yet read from the log in it writes
-// no startup lines (a build before #24576): both builds are then read on the screen, so every pair
-// stays even.
+// Becomes "screen" for the rest of a scenario once a build not known to write startup lines in it
+// writes none (a build before #24576): both builds are then read on the screen, so every pair stays
+// even.
 let read = READ;
-const readFromLog = new Set<Side>();
+const lineWriters = createStartupLineWriters();
 
 async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<Sample> {
   const record: Sample = {
@@ -179,8 +179,8 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
 }
 
 /**
- * The startup from the device log, or from the Debug screen when the line never came. With
- * `checkScreen` the screen is read too, to check it shows the same time.
+ * The startup from the device log, or from the Debug screen when its lines never came or could not
+ * be read. With `checkScreen` the screen is read too, to check it shows the same time.
  */
 async function readStartup({
   meta,
@@ -190,7 +190,7 @@ async function readStartup({
   debugFile,
 }: {
   meta: SampleMeta;
-  /** The launch's sample: marked when it wrote no startup lines, before the screen read can fail. */
+  /** The launch's sample: marked when its lines are missing or unreadable, before the screen read. */
   record: Sample;
   pid: number;
   checkScreen: boolean;
@@ -202,25 +202,25 @@ async function readStartup({
     return readPerformance(meta.device, { quick: measured, debugFile });
   };
   if (read === "screen") return { ...(await readScreen()), readFrom: "screen" };
-  const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(
-    (error: unknown) => {
-      log(`  unreadable startup lines in the device log: ${errorMessage(error)}`);
-      return null;
-    },
-  );
+  const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(errorMessage);
+  const switches = lineWriters.switchesToScreen(meta.side, fromLog);
+  if (typeof fromLog === "string") {
+    log(`  unreadable startup lines in the device log, reading the screen: ${fromLog}`);
+    record.unreadableLogLines = fromLog.slice(0, 300);
+    return { ...(await readScreen()), readFrom: "screen-fallback" };
+  }
   if (!fromLog) {
     log(
       `  no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
     );
     record.noLogLines = true;
-    if (!readFromLog.has(meta.side)) {
+    if (switches) {
       log(`  build ${meta.side} does not log its startup: both builds are read on the screen`);
       read = "screen";
       record.switchedToScreen = true;
     }
     return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
-  readFromLog.add(meta.side);
   if (fromLog.appStartupTime <= 0) throw new Error(`App startup time ${fromLog.appStartupTime} ms`);
   if (!checkScreen) return { ...fromLog, readFrom: "log" };
   // A measured launch (--read both) fails on it; a warm-up or a check keeps its log value.
@@ -302,7 +302,7 @@ async function measureScenario(scenario: string): Promise<void> {
   });
   log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
   read = READ;
-  readFromLog.clear();
+  lineWriters.clear();
   for (const phase of [0, 1]) {
     // A measured launch never follows one on the same device; a warm-up after a check can.
     const { placement, order } = layout(phase);

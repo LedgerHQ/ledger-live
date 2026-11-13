@@ -297,10 +297,22 @@ describe("summarise", () => {
     });
     const row = debugRow(summarise(samples, GATE));
     assert.deepEqual(row.reads.fallbacks, { A: 0, B: 6 });
+    assert.deepEqual(row.reads.unreadable, { A: 0, B: 0 });
     assert.equal(row.reads.unevenPairs, 6);
     assert.equal(row.pairs, 0);
     assert.match(row.verdict, /^Not enough pairs/);
     assert.equal(failedRows([row]), true);
+  });
+
+  it("counts the fallbacks whose device log lines came unreadable", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log", afterScreenRead: true },
+      b: { readFrom: "screen-fallback", unreadableLogLines: "2 startup event lines before ..." },
+    });
+    const { reads } = debugRow(summarise(samples, GATE));
+    assert.deepEqual(reads.fallbacks, { A: 0, B: 6 });
+    assert.deepEqual(reads.unreadable, { A: 0, B: 6 });
   });
 
   it("fails every preset and measure when the Debug screen and the device log disagree", () => {

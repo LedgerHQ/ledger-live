@@ -49,8 +49,17 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
   }
   const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
   if (fallbacks) {
+    const unreadable = reads.unreadable.A + reads.unreadable.B;
+    const missing = {
+      A: reads.fallbacks.A - reads.unreadable.A,
+      B: reads.fallbacks.B - reads.unreadable.B,
+    };
+    const causes = [
+      fallbacks > unreadable ? `missing (A: ${missing.A}, B: ${missing.B})` : "",
+      unreadable ? `unreadable (A: ${reads.unreadable.A}, B: ${reads.unreadable.B})` : "",
+    ];
     notes.push(
-      `**${where}: ${fallbacks} of the ${reads.fromLog + fallbacks} launches read from the Debug screen, their device log lines missing (A: ${reads.fallbacks.A}, B: ${reads.fallbacks.B}).**`,
+      `**${where}: ${fallbacks} of the ${reads.fromLog + fallbacks} launches read from the Debug screen, their device log lines ${causes.filter(Boolean).join(" or ")}.**`,
     );
   }
   if (reads.unevenPairs) {
@@ -110,7 +119,7 @@ export function toMarkdown(
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time, which the app also writes to the device log as soon as the startup is over: the measurement reads it there, and on the screen when the line is missing. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time, which the app also writes to the device log as soon as the startup is over: the measurement reads it there, and on the screen when its lines are missing or unreadable. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
     "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms).",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
