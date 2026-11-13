@@ -28841,37 +28841,37 @@ packages:
     engines: {node: '>= 8.0.0'}
 
   '@ledgerhq/agent-intent-sdk@0.2.0':
-    resolution: {integrity: sha512-4ojWhRwkFdByn3xydgFwnmct98PPWCxRcTSl7GQBwHov2ZNO4nlVo4g2Rl9DMDJFIGPL6K6xubCPK6A30roVVw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/agent-intent-sdk/-/@ledgerhq/agent-intent-sdk-0.2.0.tgz}
+    resolution: {integrity: sha512-4ojWhRwkFdByn3xydgFwnmct98PPWCxRcTSl7GQBwHov2ZNO4nlVo4g2Rl9DMDJFIGPL6K6xubCPK6A30roVVw==}
     engines: {node: '>=24.0.0'}
 
   '@ledgerhq/auth@0.2.0':
-    resolution: {integrity: sha512-pssQw/bF03oHiTtANtI4VMA/dScNTR3NlR5bvPidG+LI96EQluz1eAlBiiaN5O3IZWWlye5hBo0l3J9DUIazKA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/auth/-/@ledgerhq/auth-0.2.0.tgz}
+    resolution: {integrity: sha512-pssQw/bF03oHiTtANtI4VMA/dScNTR3NlR5bvPidG+LI96EQluz1eAlBiiaN5O3IZWWlye5hBo0l3J9DUIazKA==}
 
   '@ledgerhq/coin-evm@16.5.1':
-    resolution: {integrity: sha512-eEG09XMrkJ3lJjFxDkjcxurtM8/wl7D6g2qP7WQ6phNqO3khNsfPVfGTGyVZFGVkWbZ1m/Syfypfmn8b9JVs5A==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-evm/-/@ledgerhq/coin-evm-16.5.1.tgz}
+    resolution: {integrity: sha512-eEG09XMrkJ3lJjFxDkjcxurtM8/wl7D6g2qP7WQ6phNqO3khNsfPVfGTGyVZFGVkWbZ1m/Syfypfmn8b9JVs5A==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-hypercore@4.0.3':
-    resolution: {integrity: sha512-4CxnmMQ2EPZiAE/l53CCU8E2i/Orol322Uy9FA7DFDTv82i3zKbAZShh1cdaju0EVDztytvD7Yq69216EBMmJw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-hypercore/-/@ledgerhq/coin-hypercore-4.0.3.tgz}
+    resolution: {integrity: sha512-4CxnmMQ2EPZiAE/l53CCU8E2i/Orol322Uy9FA7DFDTv82i3zKbAZShh1cdaju0EVDztytvD7Yq69216EBMmJw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-module-framework@11.0.1':
-    resolution: {integrity: sha512-4yGzZioLhkCiEBqUDYj8DgYxqNZx8qw79Q9rUOP+pLwEY4yJmMZr8+xQJQ7GF8UVc5nUlpxszeOUrs7UvhnphQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-module-framework/-/@ledgerhq/coin-module-framework-11.0.1.tgz}
+    resolution: {integrity: sha512-4yGzZioLhkCiEBqUDYj8DgYxqNZx8qw79Q9rUOP+pLwEY4yJmMZr8+xQJQ7GF8UVc5nUlpxszeOUrs7UvhnphQ==}
 
   '@ledgerhq/coin-stellar@12.1.2':
-    resolution: {integrity: sha512-akOiP7s4fB8juQLcazx0xW7iDYRrK+MzFKzd2cU7GWs0GWJwH3auYBBSkgVLIujTynuFTzx/SjuNPX3xOyDrXQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-stellar/-/@ledgerhq/coin-stellar-12.1.2.tgz}
+    resolution: {integrity: sha512-akOiP7s4fB8juQLcazx0xW7iDYRrK+MzFKzd2cU7GWs0GWJwH3auYBBSkgVLIujTynuFTzx/SjuNPX3xOyDrXQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-tezos@14.2.0':
-    resolution: {integrity: sha512-Y9Ve1vJP3Q4w1EMjqxPwz7t0Q/TNoHxzLlTiQ5gGrmXu06mvFejlcRnY2EfJ4dndgYY737TW3/A1eKlA0ERpXA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-tezos/-/@ledgerhq/coin-tezos-14.2.0.tgz}
+    resolution: {integrity: sha512-Y9Ve1vJP3Q4w1EMjqxPwz7t0Q/TNoHxzLlTiQ5gGrmXu06mvFejlcRnY2EfJ4dndgYY737TW3/A1eKlA0ERpXA==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-xrp@13.7.0':
-    resolution: {integrity: sha512-Twd/jDEHjaf+PbtHDz2W82r3c4SPWx9I51iYBXB97XMmNkg46f7JOtFej2nqgOLWwJ+DjKDyv5/Fukes99XZcg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/coin-xrp/-/@ledgerhq/coin-xrp-13.7.0.tgz}
+    resolution: {integrity: sha512-Twd/jDEHjaf+PbtHDz2W82r3c4SPWx9I51iYBXB97XMmNkg46f7JOtFej2nqgOLWwJ+DjKDyv5/Fukes99XZcg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -28881,7 +28881,7 @@ packages:
       '@ledgerhq/device-management-kit': ^1.11.0
 
   '@ledgerhq/crypto-icons@2.0.7':
-    resolution: {integrity: sha512-MK3uiQbSskNfLTJZWf2/AfI0AdeMFmp+qVBqN6R1Hs5K6V5eWqFlaaLeFt/xiW7UYCfmAfG65Nlz9R/oZYqe7w==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/crypto-icons/-/@ledgerhq/crypto-icons-2.0.7.tgz}
+    resolution: {integrity: sha512-MK3uiQbSskNfLTJZWf2/AfI0AdeMFmp+qVBqN6R1Hs5K6V5eWqFlaaLeFt/xiW7UYCfmAfG65Nlz9R/oZYqe7w==}
     peerDependencies:
       '@ledgerhq/lumen-design-core': '>=0.1.28'
       '@ledgerhq/lumen-ui-react': '>=0.1.58'
@@ -29030,7 +29030,7 @@ packages:
       rxjs: 7.8.2
 
   '@ledgerhq/devices@8.19.0':
-    resolution: {integrity: sha512-tj5vHCXUXNd+4yePFd0+rwi39TaLDgBKxH0g5v+S0oDWk0UmaPolOVmQpy4Gt+DFTIG6Kx9AKEBaKYsreaVQKQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/devices/-/@ledgerhq/devices-8.19.0.tgz}
+    resolution: {integrity: sha512-tj5vHCXUXNd+4yePFd0+rwi39TaLDgBKxH0g5v+S0oDWk0UmaPolOVmQpy4Gt+DFTIG6Kx9AKEBaKYsreaVQKQ==}
 
   '@ledgerhq/dmk-ledger-wallet@0.9.0':
     resolution: {integrity: sha512-Z4QCM1jjDfAfX0Pu5e/ULHZRQhG2E7eYwAGnOxEAJUnmbHNxhV1VGtboiizTkqjmaNy0gRsg5PJJ5DK5R0x6nQ==}
@@ -29038,7 +29038,7 @@ packages:
       '@ledgerhq/device-management-kit': ^1.11.1
 
   '@ledgerhq/domain-service@1.10.0':
-    resolution: {integrity: sha512-PckRNB8a1JXsvPtUsKh6Ajk/TC0zooR+3Kvyfuo6EjAsCesfh732kKDPQKZ5JUjeALoJ1NaDaCdakRdrSGxOMA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/domain-service/-/@ledgerhq/domain-service-1.10.0.tgz}
+    resolution: {integrity: sha512-PckRNB8a1JXsvPtUsKh6Ajk/TC0zooR+3Kvyfuo6EjAsCesfh732kKDPQKZ5JUjeALoJ1NaDaCdakRdrSGxOMA==}
     peerDependencies:
       react: 19.1.4
 
@@ -29047,42 +29047,42 @@ packages:
     deprecated: This package is no longer maintained and will not receive updates. Published versions remain available.
 
   '@ledgerhq/evm-tools@2.1.0':
-    resolution: {integrity: sha512-zJ7toplbczr3D69861Z6/9+ODsOetB8gu1gcFbhqMpVIcI53Uh5wbellaWWA8K3pdMaCDl/fz29QqiDa76+afA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/evm-tools/-/@ledgerhq/evm-tools-2.1.0.tgz}
+    resolution: {integrity: sha512-zJ7toplbczr3D69861Z6/9+ODsOetB8gu1gcFbhqMpVIcI53Uh5wbellaWWA8K3pdMaCDl/fz29QqiDa76+afA==}
 
   '@ledgerhq/hw-ledger-key-ring-protocol@1.1.0':
-    resolution: {integrity: sha512-u9ZDxrAxsLNK0gMDc1kUVbpJYabiEOtgppxLUPNt5Gw3/gfGK6u0k2cXJQAafoInok9wwTHNJpqsj5m4GsM2Fg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/hw-ledger-key-ring-protocol/-/@ledgerhq/hw-ledger-key-ring-protocol-1.1.0.tgz}
+    resolution: {integrity: sha512-u9ZDxrAxsLNK0gMDc1kUVbpJYabiEOtgppxLUPNt5Gw3/gfGK6u0k2cXJQAafoInok9wwTHNJpqsj5m4GsM2Fg==}
 
   '@ledgerhq/hw-transport-mocker@6.36.0':
-    resolution: {integrity: sha512-6it3BgpTCYE/T5fMyKvCmgm8xP08N1KchtUmd9urTTj4NwRZh4hG95o7rOGrXj3Nim8d9qo0Rwh5Br1YITEsPg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/hw-transport-mocker/-/@ledgerhq/hw-transport-mocker-6.36.0.tgz}
+    resolution: {integrity: sha512-6it3BgpTCYE/T5fMyKvCmgm8xP08N1KchtUmd9urTTj4NwRZh4hG95o7rOGrXj3Nim8d9qo0Rwh5Br1YITEsPg==}
 
   '@ledgerhq/hw-transport@6.37.0':
-    resolution: {integrity: sha512-J5es/iRPEl24dT4XU9w2EQu5Z0fwkoQbLY2a0T7Pm3wq9aLiYkD02ALj1R+yqMUZgI8LQb+77GvPj557n0i0NQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/hw-transport/-/@ledgerhq/hw-transport-6.37.0.tgz}
+    resolution: {integrity: sha512-J5es/iRPEl24dT4XU9w2EQu5Z0fwkoQbLY2a0T7Pm3wq9aLiYkD02ALj1R+yqMUZgI8LQb+77GvPj557n0i0NQ==}
 
   '@ledgerhq/ledger-key-ring-protocol@1.2.0':
-    resolution: {integrity: sha512-NS7BU/NY+HigLryslZpmw1zMtCJZWAT5uyQiptsbeSkNSphZ1I4ZtQsPILdz5ALuWeJDSaoajJws66HN6mh1Eg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/ledger-key-ring-protocol/-/@ledgerhq/ledger-key-ring-protocol-1.2.0.tgz}
+    resolution: {integrity: sha512-NS7BU/NY+HigLryslZpmw1zMtCJZWAT5uyQiptsbeSkNSphZ1I4ZtQsPILdz5ALuWeJDSaoajJws66HN6mh1Eg==}
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
   '@ledgerhq/live-config@3.10.0':
-    resolution: {integrity: sha512-W3WJ48yoYbWbCk54ROCyE0Pg/bNSuGOPZv49UgrSiGzhLHpiUYk+YZS5WWVV98yxjj8d4/YNNQDvum95nYDOGA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/live-config/-/@ledgerhq/live-config-3.10.0.tgz}
+    resolution: {integrity: sha512-W3WJ48yoYbWbCk54ROCyE0Pg/bNSuGOPZv49UgrSiGzhLHpiUYk+YZS5WWVV98yxjj8d4/YNNQDvum95nYDOGA==}
 
   '@ledgerhq/live-currency-format@0.17.0':
-    resolution: {integrity: sha512-C4HfeeDgl9qgY83q+mUKX/v/YMKH/ttBWhMMhe5u5RIHejWSNTwYCzOgvEDXv9WC45bvDV8zhTpzBNKAKEHvIw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/live-currency-format/-/@ledgerhq/live-currency-format-0.17.0.tgz}
+    resolution: {integrity: sha512-C4HfeeDgl9qgY83q+mUKX/v/YMKH/ttBWhMMhe5u5RIHejWSNTwYCzOgvEDXv9WC45bvDV8zhTpzBNKAKEHvIw==}
 
   '@ledgerhq/live-env@4.2.0':
-    resolution: {integrity: sha512-KM3k5A6m1N9DhNZajafpkc9dKUF65gHWrWNDzZQNyylk0p/qwRzEGiFxdugk4wkwjwAVCbnKOHwuCAXv6BUULA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/live-env/-/@ledgerhq/live-env-4.2.0.tgz}
+    resolution: {integrity: sha512-KM3k5A6m1N9DhNZajafpkc9dKUF65gHWrWNDzZQNyylk0p/qwRzEGiFxdugk4wkwjwAVCbnKOHwuCAXv6BUULA==}
 
   '@ledgerhq/live-network@3.3.0':
-    resolution: {integrity: sha512-fDYl/CIxmQxRL/NLzOTY7y/HYYhT2YTQvXzWndcJI3OfTyJY5Eo4SSkqnBMOOWD2ftz/xdqDgDBHOeeL5gKY1w==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/live-network/-/@ledgerhq/live-network-3.3.0.tgz}
+    resolution: {integrity: sha512-fDYl/CIxmQxRL/NLzOTY7y/HYYhT2YTQvXzWndcJI3OfTyJY5Eo4SSkqnBMOOWD2ftz/xdqDgDBHOeeL5gKY1w==}
     peerDependencies:
       axios: 1.20.0
 
   '@ledgerhq/live-promise@0.5.0':
-    resolution: {integrity: sha512-pMzAf3ZIInxFKS6y8iL9niV+8eNJDmm9uGc5x+zOUHP0ard1sdxtHiLSZxy9iSJ+uc5XmuHYB2+LngsYJQIRRw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/live-promise/-/@ledgerhq/live-promise-0.5.0.tgz}
+    resolution: {integrity: sha512-pMzAf3ZIInxFKS6y8iL9niV+8eNJDmm9uGc5x+zOUHP0ard1sdxtHiLSZxy9iSJ+uc5XmuHYB2+LngsYJQIRRw==}
 
   '@ledgerhq/logs@6.20.0':
-    resolution: {integrity: sha512-Pp+s24tGEGR3ANA+qQM50vlAUH/SmAaxkpCw0pmYYUa/fcGggko+7c1+RvgpjA6PhB3XPKTmu9vQdVrROJXjuw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/logs/-/@ledgerhq/logs-6.20.0.tgz}
+    resolution: {integrity: sha512-Pp+s24tGEGR3ANA+qQM50vlAUH/SmAaxkpCw0pmYYUa/fcGggko+7c1+RvgpjA6PhB3XPKTmu9vQdVrROJXjuw==}
 
   '@ledgerhq/lumen-design-core@0.1.34':
     resolution: {integrity: sha512-9a5/0u9YMX/X62yxrgTthoPDdd5eKrF5QKYaDyLrn4LTJF/8kdU7hXB7W9F+aW+d0rDJyrSpWIa+JcKfrrvLbw==}
@@ -29144,7 +29144,7 @@ packages:
       react: 19.1.4
 
   '@ledgerhq/psbtv2@0.7.0':
-    resolution: {integrity: sha512-0FpaqLqC8BKgyssAUj2RDNudJsvS/xk1iGix5kZbtNgVcGzyZ3udfeiKXtvCW1fpG6wuD3frkDe2l9YaDuSulQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/psbtv2/-/@ledgerhq/psbtv2-0.7.0.tgz}
+    resolution: {integrity: sha512-0FpaqLqC8BKgyssAUj2RDNudJsvS/xk1iGix5kZbtNgVcGzyZ3udfeiKXtvCW1fpG6wuD3frkDe2l9YaDuSulQ==}
 
   '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448':
     resolution: {integrity: sha512-TqKmLH2kHeJn8ZgrLjjz3fhV4q8FeUnTkJ3VPLk5TUxdEy4pDHGzlIET4pe+GwdYEunFpXDGaifJlI7xR0Vjrg==}
@@ -29167,56 +29167,56 @@ packages:
       '@ledgerhq/device-management-kit': ^1.11.0
 
   '@ledgerhq/wallet-api-client-react@1.4.37':
-    resolution: {integrity: sha512-SxfuqbsSaCrcfKhphMph0IOFPqdofla6xV+MmkUFB5EjIDtxiKyytL/gC6OdKRpQVqCvKigFz2FnC8RbNH/5AA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/wallet-api-client-react/-/@ledgerhq/wallet-api-client-react-1.4.37.tgz}
+    resolution: {integrity: sha512-SxfuqbsSaCrcfKhphMph0IOFPqdofla6xV+MmkUFB5EjIDtxiKyytL/gC6OdKRpQVqCvKigFz2FnC8RbNH/5AA==}
     peerDependencies:
       react: 19.1.4
 
   '@ledgerhq/wallet-api-client@1.17.1':
-    resolution: {integrity: sha512-3ulBZ8yRHfU8n7WXiu9w5YbVNSOYznBDfjaRRBOaC/ZiEAWHkkr7P7dy8YzZhMZWoOnbv3vcpKZuaF0oSWzv5w==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/wallet-api-client/-/@ledgerhq/wallet-api-client-1.17.1.tgz}
+    resolution: {integrity: sha512-3ulBZ8yRHfU8n7WXiu9w5YbVNSOYznBDfjaRRBOaC/ZiEAWHkkr7P7dy8YzZhMZWoOnbv3vcpKZuaF0oSWzv5w==}
 
   '@ledgerhq/wallet-api-core@2.3.0':
-    resolution: {integrity: sha512-ECdfuhrv9N3dVEJ0M5zlz6chQqZjVjBflOOOWUti3sXEvU8un0FZgXGt4noFE4wVpf/uNtmzNL3IX67OJx6wcQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/wallet-api-core/-/@ledgerhq/wallet-api-core-2.3.0.tgz}
+    resolution: {integrity: sha512-ECdfuhrv9N3dVEJ0M5zlz6chQqZjVjBflOOOWUti3sXEvU8un0FZgXGt4noFE4wVpf/uNtmzNL3IX67OJx6wcQ==}
 
   '@ledgerhq/wallet-api-server@3.6.1':
-    resolution: {integrity: sha512-rMYfl6HUkuj7DjVGM8fcsWKZaq7+qQ1bjtiyG6lgs+7cLzj1K4a1BhzFu+qbn5Tsl55aKou/HUgeZHFChZWxFQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/wallet-api-server/-/@ledgerhq/wallet-api-server-3.6.1.tgz}
+    resolution: {integrity: sha512-rMYfl6HUkuj7DjVGM8fcsWKZaq7+qQ1bjtiyG6lgs+7cLzj1K4a1BhzFu+qbn5Tsl55aKou/HUgeZHFChZWxFQ==}
 
   '@ledgerhq/wallet-api-simulator@2.4.2':
-    resolution: {integrity: sha512-NuGYEKP8NbKpg4V/YrDTx6V3U39YPfH+1xLirqsMEo53XW8dTnTc781hEHmCSEQ5Dw+V/1T2vWCs8qVHbaVBJQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/wallet-api-simulator/-/@ledgerhq/wallet-api-simulator-2.4.2.tgz}
+    resolution: {integrity: sha512-NuGYEKP8NbKpg4V/YrDTx6V3U39YPfH+1xLirqsMEo53XW8dTnTc781hEHmCSEQ5Dw+V/1T2vWCs8qVHbaVBJQ==}
 
   '@ledgerhq/zcash-utils-darwin-arm64@2.9.0':
-    resolution: {integrity: sha512-AQXezJ2/u1VSAQwrl+qoMFnSJKcHVAIz6biA9WZWJuCgkGCBi1XYnQsna0LYeLZI9J5yiX3B+WXuhSdLENZN3w==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-darwin-arm64/-/@ledgerhq/zcash-utils-darwin-arm64-2.9.0.tgz}
+    resolution: {integrity: sha512-AQXezJ2/u1VSAQwrl+qoMFnSJKcHVAIz6biA9WZWJuCgkGCBi1XYnQsna0LYeLZI9J5yiX3B+WXuhSdLENZN3w==}
     cpu: [arm64]
     os: [darwin]
 
   '@ledgerhq/zcash-utils-darwin-x64@2.9.0':
-    resolution: {integrity: sha512-bfdhCyriS/ZeNKEW5REMhy2oMye+p3lbZU0hXUZnJuZgCDe6wVRl2RR2TLMGrhJCrDdzYqKfmI4YH2pl7UV0Lw==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-darwin-x64/-/@ledgerhq/zcash-utils-darwin-x64-2.9.0.tgz}
+    resolution: {integrity: sha512-bfdhCyriS/ZeNKEW5REMhy2oMye+p3lbZU0hXUZnJuZgCDe6wVRl2RR2TLMGrhJCrDdzYqKfmI4YH2pl7UV0Lw==}
     cpu: [x64]
     os: [darwin]
 
   '@ledgerhq/zcash-utils-linux-arm64-gnu@2.9.0':
-    resolution: {integrity: sha512-nDKg0OeD4qntRN6RFUJqEBZRkmygQiECUpiIxGdyAKSiv0sYENVSVlWPmJTWal8rT0Q8Hp0xpwHTnycdHBxtUQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-linux-arm64-gnu/-/@ledgerhq/zcash-utils-linux-arm64-gnu-2.9.0.tgz}
+    resolution: {integrity: sha512-nDKg0OeD4qntRN6RFUJqEBZRkmygQiECUpiIxGdyAKSiv0sYENVSVlWPmJTWal8rT0Q8Hp0xpwHTnycdHBxtUQ==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
   '@ledgerhq/zcash-utils-linux-x64-gnu@2.9.0':
-    resolution: {integrity: sha512-hF7y+dGKPxxFAcdPIYUbwFScY2PEeWTUeo60+++c0M9auWLiMztX1eo2h4kUAUgpo7UA3t7wpAM+CQtd1cGmoQ==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-linux-x64-gnu/-/@ledgerhq/zcash-utils-linux-x64-gnu-2.9.0.tgz}
+    resolution: {integrity: sha512-hF7y+dGKPxxFAcdPIYUbwFScY2PEeWTUeo60+++c0M9auWLiMztX1eo2h4kUAUgpo7UA3t7wpAM+CQtd1cGmoQ==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
   '@ledgerhq/zcash-utils-win32-arm64-msvc@2.9.0':
-    resolution: {integrity: sha512-u4Bjx7uumOeNZxz3q2XPYiqZBCpkh0zuu4UB5UcluVwbd2VQ9p3c+uR7+oCULrA3ktGjF4FU4QkTYmcbBJLw5g==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-win32-arm64-msvc/-/@ledgerhq/zcash-utils-win32-arm64-msvc-2.9.0.tgz}
+    resolution: {integrity: sha512-u4Bjx7uumOeNZxz3q2XPYiqZBCpkh0zuu4UB5UcluVwbd2VQ9p3c+uR7+oCULrA3ktGjF4FU4QkTYmcbBJLw5g==}
     cpu: [arm64]
     os: [win32]
 
   '@ledgerhq/zcash-utils-win32-x64-msvc@2.9.0':
-    resolution: {integrity: sha512-v7PS2WfiDPFyFnsBrYr148uLyjdg6OuJgGzqJhQri0ec+RsoqhyrlvbjJqA6SJ27OYkOj2zG+XRdPzqzM/QNxg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils-win32-x64-msvc/-/@ledgerhq/zcash-utils-win32-x64-msvc-2.9.0.tgz}
+    resolution: {integrity: sha512-v7PS2WfiDPFyFnsBrYr148uLyjdg6OuJgGzqJhQri0ec+RsoqhyrlvbjJqA6SJ27OYkOj2zG+XRdPzqzM/QNxg==}
     cpu: [x64]
     os: [win32]
 
   '@ledgerhq/zcash-utils@2.9.0':
-    resolution: {integrity: sha512-oj7/q8d6JKHsop49ovjSvqOTIBL8DaIz+JW4gOB5uvPV86/F/8tmmmsvnD4nzKzTEz+iACJ1PuQZuEfP/YlxbA==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils/-/@ledgerhq/zcash-utils-2.9.0.tgz}
+    resolution: {integrity: sha512-oj7/q8d6JKHsop49ovjSvqOTIBL8DaIz+JW4gOB5uvPV86/F/8tmmmsvnD4nzKzTEz+iACJ1PuQZuEfP/YlxbA==}
 
   '@lezer/common@1.5.1':
     resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
