@@ -9749,7 +9749,8 @@
     "allAssets": "All assets",
     "allAccounts": "All accounts",
     "error": "Unable to load analytics. Please try again.",
-    "unavailable": "Data is not available for this selection."
+    "unavailable": "Data is not available for this selection.",
+    "noResults": "No results"
   },
   "analytics": {
     "title": "Analytics",
