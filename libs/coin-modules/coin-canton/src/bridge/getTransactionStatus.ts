@@ -10,11 +10,10 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isRecipientValid } from "../common-logic/utils";
-import coinConfig from "../config";
+import type { CantonContext } from "../config";
 import { CANTON_UNSET_RECIPIENT } from "../constants";
+import { isRecipientValid } from "../logic/utils";
 import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -28,18 +27,16 @@ import { TopologyChangeError } from "../types/errors";
 export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
 export const TO_MANY_UTXOS_WARNING_COUNT = 10;
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  CantonAccount,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
+export const getTransactionStatus = async (
+  context: CantonContext,
+  account: CantonAccount,
+  transaction: Transaction,
+): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(
-    coinConfig.getCoinConfig(account.currency.id).minReserve || 0,
-  );
+  const reserveAmount = new BigNumber((await context.config(account.currency.id)).minReserve || 0);
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 
@@ -117,7 +114,7 @@ export const getTransactionStatus: AccountBridge<
     warnings.tooManyUtxos = utxoWarning;
   }
 
-  const topologyError = await validateTopology(account);
+  const topologyError = await validateTopology(context, account);
   if (topologyError) {
     errors.topologyChange = topologyError;
   }
@@ -165,7 +162,10 @@ function validateUtxoCount(account: CantonAccount, transaction: Transaction): Er
   return null;
 }
 
-export async function validateTopology(account: CantonAccount): Promise<Error | null> {
+export async function validateTopology(
+  context: CantonContext,
+  account: CantonAccount,
+): Promise<Error | null> {
   const publicKey = account.cantonResources?.publicKey;
   if (!publicKey) {
     return null;
@@ -173,7 +173,7 @@ export async function validateTopology(account: CantonAccount): Promise<Error | 
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      account.currency,
+      await context.config(account.currency.id),
       publicKey,
     );
 

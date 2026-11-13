@@ -1,5 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import coinConfig from "../../config";
+import type { CantonContext } from "../config";
 
 const magnitude: bigint = 10n ** 38n;
 
@@ -17,10 +16,8 @@ const cantonCoinTiers: FeeTier[] = [
   { limit: null, rateNumerator: 1n, rateDenominator: 100_000n }, // 0.001%
 ];
 
-const feeValue = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency.id).fee;
-
-export async function estimateFees(currency: CryptoCurrency, amount: bigint): Promise<bigint> {
-  const forcedValue = feeValue(currency);
+export async function estimateFees(context: CantonContext, amount: bigint): Promise<bigint> {
+  const { fee: forcedValue } = await context.config();
   if (forcedValue !== undefined) {
     return Promise.resolve(BigInt(forcedValue) * magnitude);
   } else {

@@ -3,8 +3,6 @@ import { act, cleanup, render, screen, waitFor } from "tests/testSetup";
 import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
 import cantonHandlers, {
-  CANTON_DEVNET_GATEWAY,
-  CANTON_DEVNET_NODE_ID,
   CANTON_DEVNET_ONBOARDING_PREPARE_RE,
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
@@ -15,7 +13,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { Account } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
-import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import CantonOnboard from "../CantonOnboard";
 import { createMockAccount } from "../../__tests__/testUtils";
@@ -111,17 +108,6 @@ describe("CantonOnboard (MAD) Integration", () => {
   beforeAll(async () => {
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
-
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-      networkType: "devnet",
-      gatewayUrl: CANTON_DEVNET_GATEWAY,
-      nodeId: CANTON_DEVNET_NODE_ID,
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-    }));
 
     await getCurrencyBridge(getCryptoCurrencyById("canton_network_devnet"));
   });
