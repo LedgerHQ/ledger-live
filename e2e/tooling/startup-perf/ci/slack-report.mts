@@ -211,7 +211,7 @@ export function outcomeOf(report: RunReport): Outcome {
 
 /** When a preset's run fails, as in the README's preset table. */
 function gateOf(preset: string, thresholdMs: string): string {
-  if (preset === "aa-noise") return "fails only on too few pairs";
+  if (preset === "aa-noise") return "fails on too few pairs";
   if (preset === "known-regression") {
     return `fails when B is not slower by more than ${thresholdMs} ms`;
   }

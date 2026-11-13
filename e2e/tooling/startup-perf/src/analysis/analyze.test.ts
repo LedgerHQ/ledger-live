@@ -11,6 +11,7 @@ import {
   type Row,
 } from "./analyze.ts";
 import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
+import type { Sample } from "../types.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -34,6 +35,24 @@ describe("pairUp", () => {
     assert.deepEqual(
       pairUp(samples, s => s.appStartupTime),
       [{ platform: "android", scenario: "accounts", phase: 0, A: 1000, B: 1100 }],
+    );
+  });
+
+  it("drops a round where only one launch followed a read of the Debug screen", () => {
+    const samples = [
+      launch({ side: "A", round: 0, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "B", round: 0, appStartupTime: 1000 }),
+      launch({ side: "A", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "B", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "A", round: 2, afterScreenRead: false, appStartupTime: 1000 }),
+      launch({ side: "B", round: 2, appStartupTime: 1000 }),
+    ];
+    assert.deepEqual(
+      pairUp(samples, s => s.appStartupTime).map(p => [p.A, p.B]),
+      [
+        [1300, 1300],
+        [1000, 1000],
+      ],
     );
   });
 });
@@ -267,5 +286,139 @@ describe("summarise", () => {
       summarise(comparison({ deltaMs: 0 }), { preset: "aa-noise", thresholdMs: 100 }),
     );
     assert.equal(row.verdict, "OK: resolves about ±0 ms");
+  });
+
+  it("counts the fallbacks of each build and leaves out the pairs they make uneven", () => {
+    // B's log line never comes, so each A launch follows a read of the screen.
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log", afterScreenRead: true },
+      b: { readFrom: "screen-fallback" },
+    });
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.reads.fallbacks, { A: 0, B: 6 });
+    assert.deepEqual(row.reads.unreadable, { A: 0, B: 0 });
+    assert.equal(row.reads.unevenPairs, 6);
+    assert.equal(row.pairs, 0);
+    assert.match(row.verdict, /^Not enough pairs/);
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("counts the fallbacks whose device log lines came unreadable", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log", afterScreenRead: true },
+      b: { readFrom: "screen-fallback", unreadableLogLines: "2 startup event lines before ..." },
+    });
+    const { reads } = debugRow(summarise(samples, GATE));
+    assert.deepEqual(reads.fallbacks, { A: 0, B: 6 });
+    assert.deepEqual(reads.unreadable, { A: 0, B: 6 });
+  });
+
+  it("fails every preset and measure when the Debug screen and the device log disagree", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log", screenAppStartupTime: 1000 } });
+    const differs = samples.find(s => s.side === "A");
+    if (!differs) throw new Error("no A launch");
+    differs.screenAppStartupTime = 1040;
+    for (const preset of ["custom", "aa-noise", "known-regression"]) {
+      const rows = summarise(samples, { preset, thresholdMs: 100 });
+      assert.deepEqual(
+        rows.map(r => r.verdict),
+        Array(2).fill(
+          "FAIL: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways",
+        ),
+      );
+      assert.equal(failedRows(rows), true);
+    }
+  });
+
+  describe("builds whose missing lines switched both builds to the screen", () => {
+    const missed = (side: "A" | "B", overrides: Partial<Sample>) =>
+      launch({
+        side,
+        readFrom: "screen-fallback",
+        noLogLines: true,
+        appStartupTime: 1000,
+        ...overrides,
+      });
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    const readsWith = (...launches: Sample[]) =>
+      debugRow(summarise([...launches, ...samples], GATE)).reads;
+
+    it("names the build whose warm-up switched", () => {
+      const switchedWarmup = missed("B", { round: -1, warmup: true, switchedToScreen: true });
+      assert.deepEqual(readsWith(switchedWarmup).noLogLine, ["B"]);
+    });
+
+    it("names the build whose first measured launch switched, without counting it as a fallback", () => {
+      const switchedOnRoundZero = missed("A", { round: 0, switchedToScreen: true });
+      const reads = readsWith(switchedOnRoundZero);
+      assert.deepEqual(reads.noLogLine, ["A"]);
+      assert.deepEqual(reads.fallbacks, { A: 0, B: 0 });
+    });
+
+    it("does not name a build already read from the log that falls back once", () => {
+      const warmupFallback = missed("A", { phase: 1, round: -1, warmup: true });
+      const roundFallback = missed("A", { round: 3 });
+      assert.deepEqual(readsWith(warmupFallback).noLogLine, []);
+      assert.deepEqual(readsWith(roundFallback).noLogLine, []);
+    });
+  });
+
+  it("names a build that switched both builds to the screen even when its screen read failed", () => {
+    const failedWarmup = launch({
+      side: "A",
+      round: -1,
+      warmup: true,
+      ok: false,
+      noLogLines: true,
+      switchedToScreen: true,
+      appStartupTime: Number.NaN,
+    });
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    assert.deepEqual(debugRow(summarise([failedWarmup, ...samples], GATE)).reads.noLogLine, ["A"]);
+  });
+
+  it("counts the check after the rounds as a screen check, not as a launch or a failure", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const check = (overrides: Partial<Sample>) =>
+      launch({
+        side: "A",
+        round: 6,
+        check: true,
+        readFrom: "log",
+        appStartupTime: 9000,
+        ...overrides,
+      });
+    const without = debugRow(summarise(samples, GATE));
+    const row = debugRow(
+      summarise([...samples, check({ screenAppStartupTime: 9000 }), check({ ok: false })], GATE),
+    );
+    assert.equal(row.launches, without.launches);
+    assert.equal(row.reads.fromLog, without.reads.fromLog);
+    assert.equal(row.failed, 0);
+    assert.equal(row.reads.screenChecks, 1);
+  });
+
+  it("names a build read from the log that no launch checked on the screen", () => {
+    const check = (side: "A" | "B", overrides: Partial<Sample>) =>
+      launch({ side, round: 6, check: true, readFrom: "log", appStartupTime: 1000, ...overrides });
+    const checked = (side: "A" | "B") => check(side, { screenAppStartupTime: 1000 });
+    const checkWithUnreadableScreenA = check("A", { screenCheckError: "App started not logged" });
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const reads = (...checks: Sample[]) => debugRow(summarise([...checks, ...samples], GATE)).reads;
+
+    const oneChecked = reads(checkWithUnreadableScreenA, checked("B"));
+    assert.equal(oneChecked.screenChecks, 1);
+    assert.deepEqual(oneChecked.uncheckedBuilds, ["A"]);
+    assert.deepEqual(reads(checked("A"), checked("B")).uncheckedBuilds, []);
   });
 });

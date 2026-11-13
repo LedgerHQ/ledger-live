@@ -228,6 +228,17 @@ export function createAndroid({ appId }: { appId: string }): Platform {
       const pid = Number(stdout.trim());
       return failed || !Number.isInteger(pid) || pid <= 0 ? null : pid;
     },
+    async jsLog(device, pid, text) {
+      const { stdout } = await run(
+        "adb",
+        ["-s", device, "logcat", "-d", "-v", "raw", `--pid=${pid}`, "-s", "ReactNativeJS"],
+        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
+      );
+      return stdout
+        .split("\n")
+        .filter(line => line.includes(text))
+        .join("\n");
+    },
     scrollDown: device => swipeUp(device, { fling: false }),
     scrollToEnd: device => swipeUp(device, { fling: true }),
     async diagnostics(device, file) {

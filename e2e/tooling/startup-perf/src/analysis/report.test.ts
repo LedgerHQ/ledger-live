@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { summarise } from "./analyze.ts";
-import { comparison, startsDifferWithFallback } from "./fake-samples.ts";
+import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
 import { toMarkdown } from "./report.ts";
 
 describe("toMarkdown", () => {
@@ -42,6 +42,142 @@ describe("toMarkdown", () => {
     assert.match(
       markdown,
       /1 launch\(es\) of build B counted from another start than the process start .* are kept in the row from the first JS import/,
+    );
+  });
+
+  it("says when no launch read from the log was checked against the screen", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: no launch was read both from the device log and on the Debug screen, so the device log was not checked against it\.\*\*/,
+    );
+  });
+
+  it("names the build whose device log no launch checked on the screen", () => {
+    const checkedB = launch({
+      side: "B",
+      round: 6,
+      check: true,
+      readFrom: "log",
+      screenAppStartupTime: 1000,
+      appStartupTime: 1000,
+    });
+    const samples = [
+      checkedB,
+      ...comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } }),
+    ];
+    const markdown = toMarkdown(summarise(samples, options), options);
+    assert.match(markdown, /on the 1 launches read both ways/);
+    assert.match(
+      markdown,
+      /\*\*android accounts: no launch of build A was read both from the device log and on the Debug screen, so its device log was not checked against it\.\*\*/,
+    );
+  });
+
+  it("tells device log lines that never came from lines that could not be read", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const [missing, unreadable] = samples.filter(s => s.side === "B");
+    if (!missing || !unreadable) throw new Error("no B launches");
+    missing.readFrom = "screen-fallback";
+    unreadable.readFrom = "screen-fallback";
+    unreadable.unreadableLogLines = "2 startup event lines before ...";
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /2 of the 12 launches read from the Debug screen, their device log lines missing \(A: 0, B: 1\) or unreadable \(A: 0, B: 1\)\.\*\*/,
+    );
+    missing.unreadableLogLines = "2 startup event lines before ...";
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /their device log lines unreadable \(A: 0, B: 2\)\.\*\*/,
+    );
+  });
+
+  it("says which launches were read from the screen, and whether the screen matched the log", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log" },
+      b: { readFrom: "log", screenAppStartupTime: 1000 },
+    });
+    const fellBack = samples.find(s => s.side === "A");
+    if (!fellBack) throw new Error("no A launch");
+    fellBack.readFrom = "screen-fallback";
+    const agreed = toMarkdown(summarise(samples, options), options);
+    assert.match(
+      agreed,
+      /\*\*android accounts: 1 of the 12 launches read from the Debug screen, their device log lines missing \(A: 1, B: 0\)\.\*\*/,
+    );
+    assert.match(
+      agreed,
+      /showed the device log's App startup time on the 6 launches read both ways/,
+    );
+
+    const differs = samples.find(s => s.side === "B");
+    if (!differs) throw new Error("no B launch");
+    differs.screenAppStartupTime = 1040;
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways\.\*\*/,
+    );
+  });
+
+  it("says when a build without the log line had both builds read on the screen", () => {
+    const samples = [
+      launch({
+        side: "A",
+        round: -1,
+        warmup: true,
+        readFrom: "screen-fallback",
+        noLogLines: true,
+        switchedToScreen: true,
+        appStartupTime: 900,
+      }),
+      ...comparison({ deltaMs: 0, a: { readFrom: "screen" }, b: { readFrom: "screen" } }),
+    ];
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: build A wrote no startup lines to the device log \(built before #24576\?\), so from then on both builds were read from the Debug screen\.\*\*/,
+    );
+  });
+
+  it("says when every launch fell back to the screen", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen-fallback" },
+      b: { readFrom: "screen-fallback" },
+    });
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: 12 of the 12 launches read from the Debug screen/,
+    );
+  });
+
+  it("says how many pairs were left out for an uneven read of the screen", () => {
+    const samples = comparison({ deltaMs: 0 });
+    const afterRead = samples.find(s => s.side === "A");
+    if (!afterRead) throw new Error("no A launch");
+    afterRead.afterScreenRead = true;
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: 1 pair\(s\) left out, as only one of their launches followed a read of the Debug screen/,
+    );
+  });
+
+  it("adds no read note when the screen was asked for", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    assert.doesNotMatch(
+      toMarkdown(summarise(samples, options), options),
+      /read from the Debug screen|read both ways/,
+    );
+  });
+
+  it("adds no read note to launches measured before the log line", () => {
+    assert.doesNotMatch(
+      toMarkdown(summarise(comparison({ deltaMs: 0 }), options), options),
+      /read from the Debug screen|read both ways/,
     );
   });
 

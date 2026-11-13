@@ -8,6 +8,8 @@ import type { Maestro, Platform } from "../types.ts";
 const DRIVER_EXIT_POLLS = 30;
 const DRIVER_EXIT_POLL_MS = 500;
 const LOG_SHOW_TIMEOUT_MS = 120_000;
+// A startup-log query takes under 1 s: this only bounds a hung `log show`.
+const STARTUP_LOG_QUERY_TIMEOUT_MS = 30_000;
 
 const SCROLL_FLOW = path.join(FLOWS_DIR, "scroll-performance.yaml");
 const SCROLL_TO_END_FLOW = path.join(FLOWS_DIR, "scroll-performance-to-end.yaml");
@@ -81,6 +83,18 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       const pid = pids.get(device);
       if (!pid) return null;
       return (await run("kill", ["-0", String(pid)], { allowFail: true })).failed ? null : pid;
+    },
+    async jsLog(device, pid, text) {
+      const predicate = `processID == ${pid} AND eventMessage CONTAINS ${JSON.stringify(text)}`;
+      const { stdout } = await run(
+        "xcrun",
+        ["simctl", "spawn", device, "log", "show", "--last", "2m", "--style", "compact"].concat([
+          "--predicate",
+          predicate,
+        ]),
+        { allowFail: true, timeoutMs: STARTUP_LOG_QUERY_TIMEOUT_MS },
+      );
+      return stdout;
     },
     async blockingDialog() {
       return null;
