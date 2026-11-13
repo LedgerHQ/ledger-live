@@ -326,7 +326,7 @@ describe("useRecipientScreenView", () => {
     );
   });
 
-  it("validates the clipboard recipient through the bridge while the screen is focused", () => {
+  it("keeps the clipboard recipient check on while the empty search screen is focused", () => {
     renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
@@ -337,12 +337,13 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(mockedUseClipboardRecipient).toHaveBeenLastCalledWith(
-      expect.objectContaining({ isBridgeValidationEnabled: true }),
+      expect.objectContaining({ enabled: true }),
     );
   });
 
-  it("stops clipboard bridge validation while a later step covers the screen", () => {
+  it("turns the clipboard recipient check off while a later step covers the screen", () => {
     mockedUseIsFocused.mockReturnValue(false);
+    mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: "0x1234567890abcdef" });
 
     renderHook(() =>
       useRecipientScreenView({
@@ -354,10 +355,7 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(mockedUseClipboardRecipient).toHaveBeenLastCalledWith(
-      expect.objectContaining({ isBridgeValidationEnabled: false }),
-    );
-    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
-      expect.not.objectContaining({ isBridgeValidationEnabled: false }),
+      expect.objectContaining({ enabled: false }),
     );
   });
 

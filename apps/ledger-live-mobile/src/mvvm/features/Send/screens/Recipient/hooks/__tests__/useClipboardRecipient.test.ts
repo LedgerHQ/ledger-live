@@ -105,32 +105,29 @@ describe("useClipboardRecipient", () => {
     expect(mockedReadClipboard).not.toHaveBeenCalled();
   });
 
-  it("validates the clipboard content through the bridge by default", () => {
+  it("stops validating a clipboard address it already read once disabled", async () => {
     mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
+    const { rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) =>
+        useClipboardRecipient({
+          enabled,
+          currency,
+          account,
+          currentAccountId: "account_1",
+          recipientSupportsDomain: true,
+        }),
+      { initialProps: { enabled: true } },
+    );
+    await waitFor(() => {
+      expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+        expect.objectContaining({ searchValue: "0x1234567890abcdef" }),
+      );
+    });
 
-    renderClipboardRecipient();
+    rerender({ enabled: false });
 
     expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
-      expect.objectContaining({ isBridgeValidationEnabled: true }),
-    );
-  });
-
-  it("forwards a paused bridge validation to the address validation", () => {
-    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
-
-    renderHook(() =>
-      useClipboardRecipient({
-        enabled: true,
-        currency,
-        account,
-        currentAccountId: "account_1",
-        recipientSupportsDomain: true,
-        isBridgeValidationEnabled: false,
-      }),
-    );
-
-    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
-      expect.objectContaining({ isBridgeValidationEnabled: false }),
+      expect.objectContaining({ searchValue: "" }),
     );
   });
 });

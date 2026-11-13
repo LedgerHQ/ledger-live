@@ -30,7 +30,6 @@ type UseClipboardRecipientProps = Readonly<{
   transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain: boolean;
-  isBridgeValidationEnabled?: boolean;
 }>;
 
 type UseClipboardRecipientResult = Readonly<{
@@ -58,7 +57,6 @@ export function useClipboardRecipient({
   transaction,
   currentAccountId,
   recipientSupportsDomain,
-  isBridgeValidationEnabled = true,
 }: UseClipboardRecipientProps): UseClipboardRecipientResult {
   const [clipboardValue, setClipboardValue] = useState("");
 
@@ -97,7 +95,6 @@ export function useClipboardRecipient({
     // One-shot clipboard read: skip the typing debounce so the banner appears as
     // soon as the bridge confirms the format, without the 300ms typing delay.
     debounceMs: 0,
-    isBridgeValidationEnabled,
   });
 
   const { isAddressComplete } = useRecipientSearchState({

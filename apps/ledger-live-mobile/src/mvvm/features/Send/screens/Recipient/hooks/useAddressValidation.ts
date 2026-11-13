@@ -48,8 +48,6 @@ type UseAddressValidationProps = Readonly<{
   canSearchContactsByName?: boolean;
   /** Debounce before bridge validation. Pass 0 for one-shot values (e.g. clipboard). */
   debounceMs?: number;
-  /** Off while a later step covers the screen, so a new amount does not revalidate it there. */
-  isBridgeValidationEnabled?: boolean;
 }>;
 
 type UseAddressValidationResult = {
@@ -68,7 +66,6 @@ export function useAddressValidation({
   recipientSupportsDomain = false,
   canSearchContactsByName = false,
   debounceMs,
-  isBridgeValidationEnabled = true,
 }: UseAddressValidationProps): UseAddressValidationResult {
   const [validationState, setValidationState] = useState<{
     status: AddressValidationStatus;
@@ -144,7 +141,6 @@ export function useAddressValidation({
     parentAccount: parentAccount ?? null,
     transaction: transactionForBridgeValidation,
     enabled: Boolean(
-      isBridgeValidationEnabled &&
       addressForBridgeValidation &&
       account &&
       (matchedContact || !recipientSupportsDomain || ensResolution || !domainIsLoading),

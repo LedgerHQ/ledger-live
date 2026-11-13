@@ -151,14 +151,13 @@ export function useRecipientScreenView({
   }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
   const { clipboardAddress } = useClipboardRecipient({
-    enabled: showInitialState,
+    enabled: showInitialState && isScreenFocused,
     currency,
     account,
     parentAccount,
     transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
-    isBridgeValidationEnabled: isScreenFocused,
   });
 
   const recipientResolution = useMemo(
