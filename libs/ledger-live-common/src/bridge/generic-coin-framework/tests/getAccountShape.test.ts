@@ -6,6 +6,7 @@ import { genericGetAccountShape } from "../getAccountShape";
 import { extractBalances } from "../utils";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
@@ -878,6 +879,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        { accountAddress: `${currency.id}_addr_revive`, unsetMeansPaidByOthers: false },
       );
     });
 
@@ -2859,6 +2861,118 @@ describe("genericGetAccountShape", () => {
             fee: new BigNumber(1),
           },
         ],
+      });
+    });
+
+    test("Case 1b: native transfer whose fees a paymaster paid", async () => {
+      setupSpecTest();
+      listOperationsMock.mockResolvedValue({
+        items: [
+          toCoreOp({
+            type: "OUT",
+            senders: ["address1"],
+            recipients: ["address2"],
+            value: 2,
+            fee: 1,
+            feesPayer: "paymaster",
+          }),
+        ],
+        next: undefined,
+      });
+      mockNoSubAccounts();
+      mockNoInferSubOps();
+
+      const result = await runGetShape("address1");
+      expect(result).toMatchObject({
+        operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+      });
+    });
+
+    describe("when coin-evm names every fee payer", () => {
+      const paymasterSend = toCoreOp({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2,
+        fee: 1,
+      });
+
+      const syncEvmWithConfig = async (
+        config: Record<string, unknown>,
+        operation: ReturnType<typeof toCoreOp> = paymasterSend,
+      ) => {
+        LiveConfig.setConfig({
+          [`config_currency_${currency.id}`]: { type: "object", default: config },
+        } as never);
+        setupSpecTest();
+        listOperationsMock.mockResolvedValue({ items: [operation], next: undefined });
+        mockNoSubAccounts();
+        mockNoInferSubOps();
+        return genericGetAccountShape(network, currency.id)(
+          { address: "address1", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+      };
+
+      afterEach(() => LiveConfig.setConfig({} as never));
+
+      test("should not charge the fee of a transaction with no payer on a fee-collector network", async () => {
+        const result = await syncEvmWithConfig({ feeCollectorContracts: ["0x8001"] });
+
+        expect(result).toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should keep as a send a sponsored transfer whose amount equals the fee", async () => {
+        const sponsoredSendOfTheFee = toCoreOp({
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value: 1,
+          fee: 1,
+        });
+
+        const result = await syncEvmWithConfig(
+          { feeCollectorContracts: ["0x8001"] },
+          sponsoredSendOfTheFee,
+        );
+
+        expect(result).toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should charge the fee of a transaction with no payer on a network without fee collector", async () => {
+        const result = await syncEvmWithConfig({});
+
+        expect(result).toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(3), fee: new BigNumber(1) }],
+        });
+      });
+    });
+
+    test("Case 1c: send whose amount equals the fee a paymaster paid", async () => {
+      setupSpecTest();
+      listOperationsMock.mockResolvedValue({
+        items: [
+          toCoreOp({
+            type: "OUT",
+            senders: ["address1"],
+            recipients: ["address2"],
+            value: 1,
+            fee: 1,
+            feesPayer: "paymaster",
+          }),
+        ],
+        next: undefined,
+      });
+      mockNoSubAccounts();
+      mockNoInferSubOps();
+
+      const result = await runGetShape("address1");
+      expect(result).toMatchObject({
+        operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
       });
     });
 

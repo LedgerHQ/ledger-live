@@ -635,7 +635,7 @@ export function cleanedOperation(operation: OperationCommon): OperationCommon {
  */
 const FAMILY_EXTRA_DETAILS_KEY = "familyExtra";
 
-function asRecord(value: unknown): Record<string, unknown> | undefined {
+export function asRecord(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
@@ -817,13 +817,39 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   return extra;
 }
 
+/** Compare two addresses for equality, ignoring case. */
+export function isSameAddress(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/** How to read an operation's `feesPayer` to tell whether the synced account paid its fee. */
+export type FeesPayerRule = {
+  accountAddress: string;
+  /**
+   * The coin module names the payer of every fee its account paid, so an unset `feesPayer` means
+   * another account paid (ADR-016), as coin-evm does on a ZKsync paymaster transaction.
+   */
+  unsetMeansPaidByOthers: boolean;
+};
+
+export function isFeePaidByAccount(
+  feesPayer: string | undefined,
+  rule: FeesPayerRule | undefined,
+): boolean {
+  if (rule === undefined) return true;
+  if (feesPayer === undefined) return !rule.unsetMeansPaidByOthers;
+  return isSameAddress(feesPayer, rule.accountAddress);
+}
+
 function computeOperationValue(
   op: CoreOperation,
   opType: OperationType,
   bnFees: BigNumber,
   hasFailed: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): BigNumber {
-  if (hasFailed) return bnFees;
+  const paidFees = isFeePaidByAccount(op.tx.feesPayer, feesPayerRule) ? bnFees : new BigNumber(0);
+  if (hasFailed) return paidFees;
   if (
     op.asset.type === "native" &&
     [
@@ -836,7 +862,7 @@ function computeOperationValue(
       "UPDATE_ACCOUNT",
     ].includes(opType)
   ) {
-    return new BigNumber(op.value.toString()).plus(bnFees);
+    return new BigNumber(op.value.toString()).plus(paidFees);
   }
   return new BigNumber(op.value.toString());
 }
@@ -845,13 +871,14 @@ export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation,
   reviveFamilyExtra?: (extraRaw: OperationExtraRaw) => OperationExtra,
+  feesPayerRule?: FeesPayerRule,
 ): Operation {
   const opType = op.type as OperationType;
   const extra = buildOperationExtra(op);
 
   const bnFees = new BigNumber(op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  const value = computeOperationValue(op, opType, bnFees, hasFailed);
+  const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
   // Landed flat beside the framework's own keys and revived through the family's
   // `fromOperationExtraRaw` — the same pair `accountRawAssign.ts` composes — so a family reads one
