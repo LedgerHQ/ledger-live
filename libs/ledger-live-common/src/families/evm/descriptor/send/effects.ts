@@ -34,12 +34,16 @@ function hasDistinctGasOptions(gasOptions: unknown): boolean {
  * Syncs EVM fee presets (`gasOptions`) onto the current transaction by reading them from
  * `bridge.prepareTransaction` and returning an opaque patch for the flow runner.
  * Skips the patch when the new presets are missing or not distinct so we never
- * downgrade an already valid set.
+ * downgrade an already valid set. A transaction that already holds a valid set is not prepared
+ * again: the estimation reuses the presets it carries, so it could only return the same set.
  * See: https://ledgerhq.atlassian.net/browse/LIVE-31764
  */
 export const syncGasOptionsEffect: FlowEffect = {
   id: "syncGasOptions",
   run: async ({ account, parentAccount, transaction, bridge }) => {
+    const alreadySynced =
+      "gasOptions" in transaction && hasDistinctGasOptions(transaction.gasOptions);
+    if (alreadySynced) return null;
     const mainAccount = getMainAccount(account, parentAccount ?? undefined);
     const prepared = await bridge.prepareTransaction(mainAccount, transaction);
     const gasOptions = "gasOptions" in prepared ? prepared.gasOptions : undefined;

@@ -5,8 +5,14 @@ type FlowEffectContextArg = Parameters<typeof syncGasOptionsEffect.run>[0];
 
 function buildContext(
   preparedPatch: Record<string, unknown>,
+  transactionPatch: Record<string, unknown> = {},
 ): FlowEffectContextArg & { prepareTransaction: jest.Mock } {
-  const transaction = { family: "evm", recipient: "0x0", amount: new BigNumber(0) };
+  const transaction = {
+    family: "evm",
+    recipient: "0x0",
+    amount: new BigNumber(0),
+    ...transactionPatch,
+  };
   const prepared = { ...transaction, ...preparedPatch };
   const prepareTransaction = jest.fn().mockResolvedValue(prepared);
   return {
@@ -78,5 +84,34 @@ describe("syncGasOptionsEffect", () => {
   it("returns null when gasOptions is not an object", async () => {
     const ctx = buildContext({ gasOptions: "not-an-object" });
     expect(await syncGasOptionsEffect.run(ctx)).toBeNull();
+  });
+
+  it("does not prepare the transaction again once it holds distinct gasOptions", async () => {
+    const gasOptions = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(24) },
+      fast: { maxFeePerGas: new BigNumber(30) },
+    };
+    const ctx = buildContext({ gasOptions }, { gasOptions });
+
+    expect(await syncGasOptionsEffect.run(ctx)).toBeNull();
+    expect(ctx.prepareTransaction).not.toHaveBeenCalled();
+  });
+
+  it("prepares the transaction again while its gasOptions are not distinct", async () => {
+    const flat = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(20) },
+      fast: { maxFeePerGas: new BigNumber(20) },
+    };
+    const fresh = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(24) },
+      fast: { maxFeePerGas: new BigNumber(30) },
+    };
+    const ctx = buildContext({ gasOptions: fresh }, { gasOptions: flat });
+
+    expect(await syncGasOptionsEffect.run(ctx)).toEqual({ gasOptions: fresh });
+    expect(ctx.prepareTransaction).toHaveBeenCalledTimes(1);
   });
 });
