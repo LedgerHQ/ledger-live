@@ -2,14 +2,17 @@ import invariant from "invariant";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byIdAndText, byText } from "@e2e/helpers/elements/native";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import AccountDetailPage from "./accountDetail.page";
 
 const ACCOUNT_GRAPH_PREFIX = "account-graph-";
 const ACCOUNT_NAME_PREFIX = "account-row-name-";
 const OPERATION_ROW_REGEXP = /operation-row-.*/;
 
 export default class AccountPage {
+  private readonly accountDetail = new AccountDetailPage();
   private readonly baseLink = "account";
 
   private readonly accountListTitle = byId("accounts-list-title");
@@ -50,6 +53,10 @@ export default class AccountPage {
 
   @Step("Wait for account screen and verify account name {{{0}}}")
   async waitAndVerifyAccountName(accountName: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.waitAndVerifyAccountName(accountName);
+      return;
+    }
     await this.accountScreenScrollView.waitVisible();
     await this.accountTitle(accountName).expectVisible();
   }
@@ -63,11 +70,18 @@ export default class AccountPage {
 
   @Step("Go back from account detail")
   async goBackFromAccountDetail() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.goBack();
+      return;
+    }
     await this.headerBackButton.tap();
   }
 
   @Step("Check if account detail is visible")
   async isAccountDetailVisible(timeout = TIMEOUT.xxsmall) {
+    if (isAccountDetailEnabled()) {
+      return await this.accountDetail.isVisible(timeout);
+    }
     return await this.accountScreenScrollView.isVisible(timeout);
   }
 
@@ -98,36 +112,64 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.openSettings();
+      return;
+    }
     await this.accountSettingsButton.tap(); // Issue with RN75 : QAA-370
   }
 
   @Step("Open account advanced logs")
   async openAccountAdvancedLogs() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.openAdvancedLogs();
+      return;
+    }
     await this.accountAdvancedLogRow.tap();
   }
 
   @Step("Select account deletion")
   async selectAccountDelete() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.selectDelete();
+      return;
+    }
     await this.accountDeleteRow.tap();
   }
 
   @Step("Confirm account deletion")
   async confirmAccountDelete() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.confirmDelete();
+      return;
+    }
     await this.accountDeleteConfirm.tap();
   }
 
   @Step("Select account edit name")
   async selectAccountRename() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.selectRename();
+      return;
+    }
     await this.accountRenameRow.tap();
   }
 
   @Step("Enter new account name and submit {{{0}}}")
   async enterNewAccountName(name: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.enterNewName(name);
+      return;
+    }
     await this.accountRenameTextInput.replaceText(name);
   }
 
   @Step("Expect operation history to be visible {{{0}}}")
   async expectOperationHistoryVisible(accountId: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.expectOperationHistoryVisible();
+      return;
+    }
     await this.anyOperationRow.scrollTo(this.accountScreenScrollView, { pixels: 250 });
     await this.operationHistorySection(accountId).expectExist();
     await this.anyOperationRow.expectVisible();
@@ -135,18 +177,29 @@ export default class AccountPage {
 
   @Step("Scroll to operation history")
   async scrollToTransactions() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.scrollToTransactions();
+      return;
+    }
     await this.accountScreenScrollView.waitVisible();
     await this.anyOperationRow.scrollTo(this.accountScreenScrollView, { pixels: 300 });
   }
 
   @Step("Expect account balance to be visible {{{0}}}")
   async expectAccountBalanceVisible(accountId: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.expectBalanceVisible();
+      return;
+    }
     await this.accountGraph(accountId).expectVisible();
     await this.accountBalance(accountId).expectVisible();
   }
 
   @Step("Get visible account address label {{{0}}}")
   async getVisibleAccountAddressLabel(accountId: string) {
+    if (isAccountDetailEnabled()) {
+      return await this.accountDetail.getVisibleAddressLabel();
+    }
     await this.accountAddress(accountId).scrollTo(this.accountScreenScrollView);
     await this.accountAddress(accountId).expectVisible();
     return await this.accountAddress(accountId).getLabel();
@@ -154,6 +207,10 @@ export default class AccountPage {
 
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.expectReceiveAndTransferActionsVisible();
+      return;
+    }
     await this.receiveButton.scrollTo(this.accountScreenScrollView);
     await this.receiveButton.expectVisible();
     await this.sendButton.expectVisible();
@@ -163,7 +220,9 @@ export default class AccountPage {
   async expectAddressIndex(indexNumber: number) {
     await this.openAccountSettings();
     await this.openAccountAdvancedLogs();
-    const advancedLogsText = await this.accountAdvancedLogs.getText();
+    const advancedLogsText = isAccountDetailEnabled()
+      ? await this.accountDetail.getAdvancedLogs()
+      : await this.accountAdvancedLogs.getText();
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     jestExpect(advancedLogsJson).toHaveProperty("index", indexNumber);
   }
@@ -247,6 +306,10 @@ export default class AccountPage {
 
   @Step("Scroll to history and click on last operation {{{0}}}")
   async scrollToHistoryAndClickOnLastOperation(operationType: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.scrollToHistoryAndClickOnLastOperation(operationType);
+      return;
+    }
     await this.scrollToTransactions();
     await this.operationRowWithType(operationType).tap();
   }

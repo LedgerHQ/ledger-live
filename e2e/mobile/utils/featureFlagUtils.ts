@@ -26,6 +26,12 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies PartialFeatures;
 
+const FF_ACCOUNT_DETAIL = {
+  accountDetail: { enabled: true },
+} satisfies PartialFeatures;
+
+export const isAccountDetailEnabled = () => globalThis.mergedFeatureFlags?.accountDetail?.enabled;
+
 export const FF_PASSWORD_REVAMP = {
   lwmPasswordRevamp: { enabled: true },
 } satisfies PartialFeatures;
@@ -126,6 +132,7 @@ export const getMergedFeatureFlags = ({
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
     "wallet40-q1": FF_LWM_WALLET_40_Q1,
+    "account-detail": FF_ACCOUNT_DETAIL,
   };
 
   const defaultFlags: PartialFeatures = {
