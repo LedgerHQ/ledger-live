@@ -55,7 +55,10 @@ stateDiagram-v2
 - If startup receives exactly one known device and no existing session, the
   machine selects that device immediately and waits for it to be discovered
   instead of first rendering the discovery list.
-- `Discovering` starts the discovery service and renders all known devices as
+- The discovery service is the source of truth for the discovery state: the
+  machine reads `isRunning` and `ignoredTransportIds` from it.
+- `Discovering` starts the discovery service, if it is not running, with the
+  transports that its last start ignored. It renders all known devices as
   available or unavailable depending on the latest matched discoveries.
 - DMK discovery emissions are filtered before reaching the state machine:
   discovered devices must match a known device by transport and by the
@@ -69,9 +72,9 @@ stateDiagram-v2
   the 30 second waiting timeout expires. On timeout, the machine stays in
   `WaitingForSelectedDevice` when there is no more than one known device;
   otherwise it returns to `Discovering` and renders the known-device list again.
-- Discovery errors stop discovery. Ignoring a discovery error records its
-  `transportId` in `skipTransportIds`, then restarts discovery with that
-  transport ignored. Retry is only exposed for retryable discovery errors; a
+- Discovery errors stop discovery. Ignoring a discovery error restarts
+  discovery without the transports that the discovery service ignored and
+  without the error `transportId`. Retry is only exposed for retryable discovery errors; a
   successful retry restarts discovery, while a failed retry emits the returned
   discovery error.
 - Connection errors expose retry/ignore actions without losing the selected

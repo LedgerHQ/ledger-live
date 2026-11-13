@@ -142,35 +142,28 @@ const createConnectNewDeviceStateMachine = <
       hideDeviceNotFound: assign({
         showDeviceNotFound: () => false,
       }),
-      ignoreDiscoveryError: assign({
-        skipTransportIds: ({ context }) => {
-          const transportId = context.discoveryError!.transportId;
-          if (!transportId || context.skipTransportIds.includes(transportId)) {
-            return context.skipTransportIds;
-          }
-          return [...context.skipTransportIds, transportId];
-        },
-      }),
-      startDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (!context.isDiscovering) {
-            context.deviceDiscoveryService.start({
-              ignoreTransportIdentifiers: context.skipTransportIds,
-            });
-          }
-
-          return true;
-        },
-      }),
-      stopDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (context.isDiscovering) {
-            context.deviceDiscoveryService.stop();
-          }
-
-          return false;
-        },
-      }),
+      ignoreDiscoveryError: ({ context }) => {
+        const { ignoredTransportIds } = context.deviceDiscoveryService;
+        const transportId = context.discoveryError!.transportId;
+        context.deviceDiscoveryService.start({
+          ignoreTransportIdentifiers:
+            !transportId || ignoredTransportIds.includes(transportId)
+              ? ignoredTransportIds
+              : [...ignoredTransportIds, transportId],
+        });
+      },
+      startDiscovery: ({ context }) => {
+        if (!context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.start({
+            ignoreTransportIdentifiers: context.deviceDiscoveryService.ignoredTransportIds,
+          });
+        }
+      },
+      stopDiscovery: ({ context }) => {
+        if (context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.stop();
+        }
+      },
       emitDiscovering: ({ context, self }) => {
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.Discovering,
@@ -180,7 +173,7 @@ const createConnectNewDeviceStateMachine = <
           ),
           scanningTransports: getScanningTransports(
             context.deviceDiscoveryService.transportIds,
-            context.skipTransportIds,
+            context.deviceDiscoveryService.ignoredTransportIds,
           ),
           showDeviceNotFound: context.showDeviceNotFound,
         });
@@ -263,11 +256,9 @@ const createConnectNewDeviceStateMachine = <
       listedDevices: [],
       selectedDevice: null,
       sessionId: null,
-      isDiscovering: false,
       showDeviceNotFound: false,
       discoveryError: null,
       connectionError: null,
-      skipTransportIds: [],
     }),
     states: {
       Discovering: {
@@ -514,7 +505,7 @@ export class DefaultConnectNewDeviceStateMachine<
       return;
     }
 
-    if (snapshot.context.isDiscovering) {
+    if (this.deviceDiscoveryService.isRunning) {
       this.deviceDiscoveryService.stop();
     }
 

@@ -2,7 +2,6 @@ import type {
   ConnectedDevice,
   DeviceManagementKit,
   DiscoveredDevice,
-  TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
 import type { Observer } from "rxjs";
 
@@ -71,10 +70,8 @@ export type ConnectDeviceStateMachineContext<
   matchedDevices: Array<MatchedDevice>;
   selectedKnownDevice: KnownDevice | null;
   selectedMatchedDevice: MatchedDevice | null;
-  isDiscovering: boolean;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;
-  skipTransportIds: Array<TransportIdentifier>;
 };
 
 export enum ConnectDeviceStateMachineEventTypes {

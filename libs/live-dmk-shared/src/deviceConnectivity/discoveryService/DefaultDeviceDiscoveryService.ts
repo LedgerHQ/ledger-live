@@ -23,6 +23,7 @@ export class DefaultDeviceDiscoveryService<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
 > implements DeviceDiscoveryService<DefaultDeviceDiscoveryServiceError<TDiscoveryError>> {
   private subscription: Subscription | null = null;
+  private ignoredTransportIdSet = new Set<TransportIdentifier>();
   private readonly discoveredDevicesSubject = new BehaviorSubject<DiscoveredDevice[]>([]);
   private readonly errorsSubject = new Subject<
     DefaultDeviceDiscoveryServiceError<TDiscoveryError>
@@ -40,8 +41,16 @@ export class DefaultDeviceDiscoveryService<
     >,
   ) {}
 
+  get isRunning(): boolean {
+    return this.subscription !== null;
+  }
+
   get transportIds(): Array<TransportIdentifier> {
     return [...this.discoverySources.keys()];
+  }
+
+  get ignoredTransportIds(): Array<TransportIdentifier> {
+    return [...this.ignoredTransportIdSet];
   }
 
   start({ ignoreTransportIdentifiers = [] }: DeviceDiscoveryStartArgs = {}): void {
@@ -49,12 +58,14 @@ export class DefaultDeviceDiscoveryService<
       return;
     }
 
-    const ignoredTransportIds = new Set(ignoreTransportIdentifiers);
+    this.ignoredTransportIdSet = new Set(ignoreTransportIdentifiers);
     const devicesByTransport = new Map<TransportIdentifier, DiscoveredDevice[]>();
     const subscription = new Subscription();
+    this.subscription = subscription;
 
     this.discoverySources.forEach(source => {
-      if (ignoredTransportIds.has(source.transportId)) {
+      const stoppedDuringStart = subscription.closed;
+      if (stoppedDuringStart || this.ignoredTransportIdSet.has(source.transportId)) {
         return;
       }
 
@@ -88,8 +99,9 @@ export class DefaultDeviceDiscoveryService<
       );
     });
 
-    this.subscription = subscription;
-    this.emitDiscoveredDevices(devicesByTransport);
+    if (!subscription.closed) {
+      this.emitDiscoveredDevices(devicesByTransport);
+    }
   }
 
   stop(): void {
