@@ -102,6 +102,7 @@ export default class BorrowPage {
   @Step("Expect borrow native screen visible")
   async expectBorrowScreenVisible() {
     await this.borrowScreen.waitVisible();
+    await this.borrowScreen.expectVisible();
     await app.common.waitForWalletApiWebview();
     await waitForWebviewContent();
   }
@@ -117,6 +118,8 @@ export default class BorrowPage {
   async expectIntroModal() {
     await this.introModal.waitVisible();
     await this.introModalTitle.waitVisible();
+    await this.introModal.expectExist();
+    await this.introModalTitle.expectExist();
   }
 
   @Step("Click Simulate my loan on the intro modal")
@@ -130,6 +133,8 @@ export default class BorrowPage {
     await waitForWebviewUrl("/loan/simulate-loan");
     await this.simulateLoanScreen.waitVisible();
     await this.loanAmountInput.waitVisible();
+    await this.simulateLoanScreen.expectExist();
+    await this.loanAmountInput.expectExist();
   }
 
   /** The amount input is read-only; the value is driven by the keypad. */
@@ -145,6 +150,7 @@ export default class BorrowPage {
   @Step("Expect the required collateral")
   async expectCollateral(symbol: string) {
     await this.collateralButton(symbol).waitVisible();
+    await this.collateralButton(symbol).expectExist();
   }
 
   /** The LTV row carries no test id, so it is read off the rendered simulate-loan text. */
@@ -168,6 +174,7 @@ export default class BorrowPage {
   async expectExecutionScreen() {
     await waitForWebviewUrl("/loan/loan-execution");
     await this.loanExecutionScreen.waitVisible();
+    await this.loanExecutionScreen.expectExist();
   }
 
   /**
@@ -217,11 +224,14 @@ export default class BorrowPage {
   async expectLoansDashboard() {
     await this.yourLoansTitle.waitVisible();
     await this.loansDashboard.waitVisible();
+    await this.yourLoansTitle.expectExist();
+    await this.loansDashboard.expectExist();
   }
 
   @Step("Expect at least one loan row on the dashboard")
   async expectLoanDashboardRow() {
     await this.loanDashboardRow.waitVisible();
+    await this.loanDashboardRow.expectExist();
   }
 
   /** With a loan already open the live app skips the introduction and lists the position. */
@@ -230,6 +240,9 @@ export default class BorrowPage {
     await this.loansDashboard.waitVisible(DASHBOARD_READY_TIMEOUT_MS);
     await this.yourLoansTitle.waitVisible();
     await this.loanDashboardRow.waitVisible();
+    await this.loansDashboard.expectExist();
+    await this.yourLoansTitle.expectExist();
+    await this.loanDashboardRow.expectExist();
   }
 
   /** Anchored on the Repay CTA: `borrow-loan-overview-screen` is web-only in the live app. */
@@ -279,6 +292,8 @@ export default class BorrowPage {
   async expectRepaySuccess() {
     await this.repayCompletionCard.waitVisible();
     await this.viewMyLoanButton.waitVisible();
+    await this.repayCompletionCard.expectExist();
+    await this.viewMyLoanButton.expectExist();
   }
 
   /** A loan with no debt left routes straight to withdraw instead of the loan overview. */
@@ -325,6 +340,8 @@ export default class BorrowPage {
   async expectWithdrawSuccess() {
     await this.withdrawCompletionCard.waitVisible();
     await this.backToMyLoansButton.waitVisible();
+    await this.withdrawCompletionCard.expectExist();
+    await this.backToMyLoansButton.expectExist();
   }
 
   @Step("Click Back to my loans")
@@ -410,8 +427,8 @@ export default class BorrowPage {
 
   private async isStepAlreadyDoneOnceRendered(doneId: string, ctaId: string): Promise<boolean> {
     return retryUntilTimeout(async () => {
-      if (await isWebElementPresent(doneId)) return true;
-      if (await isWebElementPresent(ctaId)) return false;
+      if (await webById(doneId).isVisible(TIMEOUT.xxxsmall)) return true;
+      if (await webById(ctaId).isVisible(TIMEOUT.xxxsmall)) return false;
       throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
     }, STEP_STATE_TIMEOUT_MS);
   }
