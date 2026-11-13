@@ -5,8 +5,14 @@ type FlowEffectContextArg = Parameters<typeof syncGasOptionsEffect.run>[0];
 
 function buildContext(
   preparedPatch: Record<string, unknown>,
+  transactionPatch: Record<string, unknown> = {},
 ): FlowEffectContextArg & { prepareTransaction: jest.Mock } {
-  const transaction = { family: "evm", recipient: "0x0", amount: new BigNumber(0) };
+  const transaction = {
+    family: "evm",
+    recipient: "0x0",
+    amount: new BigNumber(0),
+    ...transactionPatch,
+  };
   const prepared = { ...transaction, ...preparedPatch };
   const prepareTransaction = jest.fn().mockResolvedValue(prepared);
   return {
@@ -86,10 +92,9 @@ describe("syncGasOptionsEffect", () => {
       medium: { maxFeePerGas: new BigNumber(24) },
       fast: { maxFeePerGas: new BigNumber(30) },
     };
-    const ctx = buildContext({ gasOptions });
-    const synced = { ...ctx, transaction: { ...ctx.transaction, gasOptions } };
+    const ctx = buildContext({ gasOptions }, { gasOptions });
 
-    expect(await syncGasOptionsEffect.run(synced)).toBeNull();
+    expect(await syncGasOptionsEffect.run(ctx)).toBeNull();
     expect(ctx.prepareTransaction).not.toHaveBeenCalled();
   });
 
@@ -104,10 +109,9 @@ describe("syncGasOptionsEffect", () => {
       medium: { maxFeePerGas: new BigNumber(24) },
       fast: { maxFeePerGas: new BigNumber(30) },
     };
-    const ctx = buildContext({ gasOptions: fresh });
-    const flatTransaction = { ...ctx, transaction: { ...ctx.transaction, gasOptions: flat } };
+    const ctx = buildContext({ gasOptions: fresh }, { gasOptions: flat });
 
-    expect(await syncGasOptionsEffect.run(flatTransaction)).toEqual({ gasOptions: fresh });
+    expect(await syncGasOptionsEffect.run(ctx)).toEqual({ gasOptions: fresh });
     expect(ctx.prepareTransaction).toHaveBeenCalledTimes(1);
   });
 });
