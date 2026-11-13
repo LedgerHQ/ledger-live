@@ -86,7 +86,10 @@ function StepConfirmation({
     };
 
     const ticker = getTicker(account as AccountLike);
-    const shouldRenderAsBroadcastError = signed && !isInvalidTransactionError(normalizedError);
+    const shouldRenderAsBroadcastError =
+      signed &&
+      !isInvalidTransactionError(normalizedError) &&
+      normalizedError.name !== "SolanaTxBlockhashExpired";
 
     return (
       <Container shouldSpace={shouldRenderAsBroadcastError}>

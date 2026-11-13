@@ -5,10 +5,12 @@ import {
   SystemProgram,
   VersionedTransaction,
 } from "@solana/web3.js";
+import { SolanaTxBlockhashExpired } from "../../errors";
 import { broadcast } from "../broadcast";
 import { createTestChainApi, rpcHandler, server } from "./helpers/msw-rpc.mock";
 
 const api = createTestChainApi();
+const RECENT_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => server.resetHandlers());
@@ -18,7 +20,7 @@ function buildSignedTxBase64(): string {
   const payer = Keypair.generate();
   const message = MessageV0.compile({
     payerKey: payer.publicKey,
-    recentBlockhash: "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3",
+    recentBlockhash: RECENT_BLOCKHASH,
     instructions: [
       SystemProgram.transfer({
         fromPubkey: payer.publicKey,
@@ -43,7 +45,40 @@ const simulateOk = () => ({
   },
 });
 
+const simulateBlockhashNotFound = () => ({
+  context: { slot: 0 },
+  value: {
+    err: "BlockhashNotFound",
+    logs: [],
+    accounts: null,
+    unitsConsumed: 0,
+    returnData: null,
+  },
+});
+
 describe("broadcast (MSW integration)", () => {
+  it("simulates twice, then asks the node whether the blockhash is still valid at processed commitment", async () => {
+    let capturedParams: unknown[] = [];
+    let simulations = 0;
+
+    server.use(
+      rpcHandler({
+        simulateTransaction: () => {
+          simulations += 1;
+          return simulateBlockhashNotFound();
+        },
+        isBlockhashValid: params => {
+          capturedParams = params;
+          return { context: { slot: 0 }, value: false };
+        },
+      }),
+    );
+
+    await expect(broadcast(api, buildSignedTxBase64())).rejects.toThrow(SolanaTxBlockhashExpired);
+    expect(simulations).toBe(2);
+    expect(capturedParams).toEqual([RECENT_BLOCKHASH, { commitment: "processed" }]);
+  });
+
   it("should send the base64-decoded transaction to the sendTransaction RPC method", async () => {
     let capturedTxParam: unknown;
     const txBase64 = buildSignedTxBase64();

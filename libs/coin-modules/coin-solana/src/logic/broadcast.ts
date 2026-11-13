@@ -8,7 +8,7 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 import type { ChainAPI } from "../network";
-import { SolanaTxConfirmationTimeout } from "../errors";
+import { SolanaTxBlockhashExpired, SolanaTxConfirmationTimeout } from "../errors";
 
 type BroadcastOptions = {
   recentBlockhash?: BlockhashWithExpiryBlockHeight;
@@ -18,7 +18,7 @@ type BroadcastOptions = {
 const SPL_TOKEN_INSUFFICIENT_FUNDS = 1;
 const SPL_TOKEN_ACCOUNT_FROZEN = 17;
 
-function getTransactionErrorKey(err: TransactionError): string | undefined {
+function getTransactionErrorKey(err: TransactionError | null): string | undefined {
   if (typeof err === "string") return err;
   if (err && typeof err === "object") return Object.keys(err)[0];
   return undefined;
@@ -56,6 +56,27 @@ function classifySimulationError(err: TransactionError): Error {
   }
 }
 
+// Time for a node behind its peers to catch up with the blockhash it could not find.
+const LAGGING_NODE_RETRY_DELAY_MS = 500;
+
+function simulate(api: ChainAPI, signedTx: VersionedTransaction) {
+  return api.simulateTransaction(signedTx, {
+    sigVerify: true,
+    replaceRecentBlockhash: false,
+    commitment: "confirmed",
+  });
+}
+
+// Checked at `processed`, the node's latest view, so a blockhash not yet confirmed is not called expired.
+async function isBlockhashExpired(api: ChainAPI, blockhash: string): Promise<boolean> {
+  try {
+    return !(await api.isBlockhashValid(blockhash, "processed"));
+  } catch (error) {
+    log("solana", "blockhash validity check failed", { error });
+    return false;
+  }
+}
+
 /**
  *
  * @param api - The Solana API client
@@ -71,11 +92,20 @@ export async function broadcast(
   const buffer = Buffer.from(tx, "base64");
   const signedTx = VersionedTransaction.deserialize(buffer);
 
-  const { value } = await api.simulateTransaction(signedTx, {
-    sigVerify: true,
-    replaceRecentBlockhash: false,
-    commitment: "confirmed",
-  });
+  let { value } = await simulate(api, signedTx);
+
+  if (getTransactionErrorKey(value.err) === "BlockhashNotFound") {
+    // This node may lag behind the one that served the blockhash: give it a moment.
+    log("solana", "blockhash not found, simulating again", { logs: value.logs });
+    await new Promise(resolve => setTimeout(resolve, LAGGING_NODE_RETRY_DELAY_MS));
+    ({ value } = await simulate(api, signedTx));
+    if (
+      getTransactionErrorKey(value.err) === "BlockhashNotFound" &&
+      (await isBlockhashExpired(api, signedTx.message.recentBlockhash))
+    ) {
+      throw new SolanaTxBlockhashExpired();
+    }
+  }
 
   if (value.err !== null) {
     log("solana", "transaction simulation failed", { err: value.err, logs: value.logs });
