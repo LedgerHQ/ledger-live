@@ -198,7 +198,7 @@ on:
         type: number
         default: 0
       check_pod_lockfile:
-        description: "Validate the iOS Pod lockfile when the native build comes from cache"
+        description: "Deprecated and ignored: the Pod lockfile is validated whenever the iOS native build comes from cache, since only a native build validates it otherwise"
         required: false
         type: boolean
         default: false
@@ -385,7 +385,6 @@ jobs:
           team: ${{ inputs.team || 'all' }}
           max_shards: ${{ inputs.max_shards || 0 }}
           tests_type: ${{ inputs.tests_type }}
-          check_pod_lockfile: ${{ inputs.check_pod_lockfile }}
           production_firebase: ${{ inputs.production_firebase }}
           feature_flags_json: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           js_bundle_hash_ios: ${{ inputs.js_bundle_hash_ios }}
@@ -515,7 +514,8 @@ jobs:
       contents: read
     runs-on: [macOS, ARM64]
     needs: [determine-builds]
-    if: ${{ !cancelled() && !failure() && inputs.check_pod_lockfile && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_native_exists == 'true' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).pod_lockfile_validated != 'true' }}
+    # The native build runs `pod install --deployment`, which validates the lockfile, so check it only when that build is skipped
+    if: ${{ !cancelled() && !failure() && inputs.tests_type != 'Android Only' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).test_files_for_sharding != '' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_native_exists == 'true' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).pod_lockfile_validated != 'true' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:

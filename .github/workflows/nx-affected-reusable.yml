@@ -31,11 +31,6 @@ on:
         type: number
         required: false
         default: 0
-      mobile_e2e_check_pod_lockfile:
-        description: "check_pod_lockfile passed to test-mobile-e2e-reusable.yml"
-        type: boolean
-        required: false
-        default: false
     secrets:
       AWS_ACCOUNT_ID_PROD:
         required: false
@@ -204,7 +199,6 @@ jobs:
           speculos_device: ${{ inputs.mobile_e2e_speculos_device }}
           smoke_tests: ${{ inputs.mobile_e2e_smoke_tests }}
           max_shards: ${{ inputs.mobile_e2e_max_shards }}
-          check_pod_lockfile: ${{ inputs.mobile_e2e_check_pod_lockfile }}
           js_bundle_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
           js_bundle_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
           native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}

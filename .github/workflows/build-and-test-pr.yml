@@ -38,7 +38,6 @@ jobs:
       mobile_e2e_speculos_device: nanoX
       mobile_e2e_smoke_tests: true
       mobile_e2e_max_shards: 1
-      mobile_e2e_check_pod_lockfile: true
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -164,7 +163,6 @@ jobs:
       macos_runner_label: performance-pool
       android_runner_label: ledger-wallet-8cpu-github-public-cached
       max_shards: 1
-      check_pod_lockfile: true
       js_bundle_hash_ios: ${{ needs.determine-affected.outputs.mobile_js_hash_ios }}
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
       native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
