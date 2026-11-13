@@ -8,6 +8,7 @@ import {
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
   verifyLedgerSyncEnvironment,
+  withLedgerSyncDie,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import {
@@ -16,6 +17,7 @@ import {
   secondEthAccount,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 import type { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 const APP_INSTANCE_NAME = "LWM";
 const defaultAccountName = `${Currency.ETH.name} 1`;
@@ -58,10 +60,13 @@ function ledgerSyncSuite(
 }
 
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
-async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
+async function initPreSeeded(
+  seedCommands: LedgerSyncCliCommand[] = [],
+  featureFlags: PartialFeatures = LEDGER_SYNC_FEATURE_FLAGS,
+) {
   await app.init({
     speculosApp: AppInfos.LS,
-    featureFlags: LEDGER_SYNC_FEATURE_FLAGS,
+    featureFlags,
     cliCommands: [
       ...app.ledgerSync.initializeEmptyTrustchain(),
       ...seedCommands,
@@ -72,8 +77,11 @@ async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
 }
 
 /** Boots the app with no trustchain, so the settings row leads to the activation flow. */
-async function initUnactivated(speculosApp?: SpeculosAppType) {
-  await app.init({ speculosApp, featureFlags: LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS });
+async function initUnactivated(
+  speculosApp?: SpeculosAppType,
+  featureFlags: PartialFeatures = LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS,
+) {
+  await app.init({ speculosApp, featureFlags });
   await app.mainNavigation.waitForWallet40Ready();
 }
 
@@ -198,14 +206,22 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
   );
 }
 
-export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteInstanceTest(
+  tmsLinks: string[],
+  tags: string[],
+  { onDie = false }: { onDie?: boolean } = {},
+) {
   ledgerSyncSuite(
     {
-      suite: "delete instance",
+      suite: onDie ? "delete instance on DIE" : "delete instance",
       test: "[WXP][Ledger Sync] Delete instance",
       tmsLinks,
       tags,
-      init: () => initPreSeeded([app.ledgerSync.addTrustchainMember(APP_INSTANCE_NAME)]),
+      init: () =>
+        initPreSeeded(
+          [app.ledgerSync.addTrustchainMember(APP_INSTANCE_NAME)],
+          withLedgerSyncDie(LEDGER_SYNC_FEATURE_FLAGS, onDie),
+        ),
     },
     async () => {
       // The app was seeded with the member added last, so the CLI is the other instance — the
@@ -216,10 +232,15 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
       await app.ledgerSync.openManageInstances();
       await app.ledgerSync.expectInstanceVisible(cliMemberPubKey);
 
-      // Removing an instance navigates to device selection first, unlike desktop where the row's
-      // Remove button goes straight to the device.
       await app.ledgerSync.removeInstance(cliMemberPubKey);
-      await app.common.selectKnownDevice();
+      if (onDie) {
+        // DIE connects to the known Speculos itself, in a sheet over the instances list.
+        await app.ledgerSync.expectRemoveInstanceDeviceStep();
+      } else {
+        // The process screen asks for a device first, unlike desktop where the row's Remove button
+        // goes straight to the device.
+        await app.common.selectKnownDevice();
+      }
       await app.ledgerSync.removeMemberFromLedgerSyncOnSpeculos();
       await app.ledgerSync.expectMemberRemoval(CLI_MEMBER_NAME);
 
@@ -290,32 +311,93 @@ export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncActivationBackupTest(
+  tmsLinks: string[],
+  tags: string[],
+  { onDie = false }: { onDie?: boolean } = {},
+) {
   ledgerSyncSuite(
     {
-      suite: "activation flow backup activated",
+      suite: onDie ? "activation flow backup activated on DIE" : "activation flow backup activated",
       test: "[WXP][Ledger Sync] Activation Flow - Backup Activated",
       tmsLinks,
       tags,
-      // The app creates this trustchain, not the CLI, so the teardown has no handle on it to
-      // delete — the generated seed is what makes it unreachable. The hook still releases Speculos.
-      init: () => initUnactivated(AppInfos.LS),
+      // The app creates this trustchain on a fresh seed, so this is the first activation. The
+      // teardown has no handle on it: the DIE variant deletes it through the app, the legacy one
+      // relies on the generated seed making it unreachable. The hook still releases Speculos.
+      init: () =>
+        initUnactivated(
+          AppInfos.LS,
+          withLedgerSyncDie(LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS, onDie),
+        ),
     },
     async () => {
       await openActivationFlowFromSettings();
 
       await app.ledgerSync.tapTurnOnSync();
       // `lwmLedgerSyncOptimisation` inserts the choose-sync-method step between the CTA and the
-      // device selection.
+      // device step.
       await app.ledgerSync.tapUseMyLedgerDevice();
-      await app.common.selectKnownDevice();
+      if (onDie) {
+        // DIE connects to the known Speculos itself, in a sheet over the entry screen.
+        await app.ledgerSync.expectActivationDeviceStep();
+      } else {
+        await app.common.selectKnownDevice();
+      }
       await app.ledgerSync.activateLedgerSyncOnSpeculos();
-      await app.ledgerSync.expectLedgerSyncSuccessPage();
-      await app.ledgerSync.closeActivationSuccessPage();
+      await expectActivationSucceeded();
 
-      // A backup exists now, so the settings row leads to the management screen.
-      await openLedgerSyncSettings();
-      await app.ledgerSync.expectLedgerSyncManagementVisible();
+      if (onDie) await deleteAppCreatedBackup();
     },
   );
+}
+
+/** Flag on only: the rejected state and its Retry are DIE screens. */
+export function runLedgerSyncActivationRejectRetryTest(tmsLinks: string[], tags: string[]) {
+  ledgerSyncSuite(
+    {
+      suite: "activation flow rejected on device then retried on DIE",
+      test: "[WXP][Ledger Sync] Activation Flow - Backup Activated",
+      tmsLinks,
+      tags,
+      init: () =>
+        initUnactivated(AppInfos.LS, withLedgerSyncDie(LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS, true)),
+    },
+    async () => {
+      await openActivationFlowFromSettings();
+
+      await app.ledgerSync.tapTurnOnSync();
+      await app.ledgerSync.tapUseMyLedgerDevice();
+      await app.ledgerSync.expectActivationDeviceStep();
+      await app.ledgerSync.rejectLedgerSyncOnSpeculos();
+      await app.ledgerSync.expectActivationRejectedOnDevice();
+
+      // Retry replays the device step in the same sheet.
+      await app.ledgerSync.retryActivation();
+      await app.ledgerSync.expectActivationDeviceStep();
+      await app.ledgerSync.activateLedgerSyncOnSpeculos();
+      await expectActivationSucceeded();
+
+      await deleteAppCreatedBackup();
+    },
+  );
+}
+
+async function expectActivationSucceeded() {
+  await app.ledgerSync.expectLedgerSyncSuccessPage();
+  await app.ledgerSync.closeActivationSuccessPage();
+
+  // A backup exists now, so the settings row leads to the management screen.
+  await openLedgerSyncSettings();
+  await app.ledgerSync.expectLedgerSyncManagementVisible();
+}
+
+/**
+ * The app created this trustchain, not the CLI, so the suite teardown has no handle on it: the app
+ * deletes it instead. Expects the Ledger Sync management screen to be open.
+ */
+async function deleteAppCreatedBackup() {
+  await app.ledgerSync.openDeleteSync();
+  await app.ledgerSync.confirmDeleteSync();
+  await app.ledgerSync.expectBackupDeletion();
 }

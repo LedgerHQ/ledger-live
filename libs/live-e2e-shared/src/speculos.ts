@@ -1042,6 +1042,20 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
+/** Refuses the Ledger Sync approval on Speculos (the screen `activateLedgerSync` approves). */
+export const rejectLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  const dontConnect = "Don't connect";
+  await waitFor(DeviceLabels.CONNECT_TO);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(dontConnect);
+  } else {
+    await pressUntilTextFound(dontConnect);
+    await buttons.both();
+  }
+});
+
 export async function waitUntilScreenLeavesIdle(
   maxAttempts = SCREEN_WAIT_MAX_ATTEMPTS,
 ): Promise<void> {
