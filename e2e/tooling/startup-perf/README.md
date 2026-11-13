@@ -108,14 +108,16 @@ in run 42829119387).
   show the same time: a mismatch fails the run. On iOS a screen read slows the next launch by
   ~280 ms, on either simulator (run 42356679784: the first launch of round 0 by 261–301 ms, the
   second not), so the last warm-up before the rounds reads only the log, and each build is checked
-  once per scenario. A launch whose lines have not come 20 s after the settle time is read on the
-  screen, and the report counts those per build. A build whose warm-up writes no lines does not log
-  its startup (built before #24576): both builds are then read on the screen for the rest of the
-  scenario, so pairs stay even, and the report says so. `--read both` (the workflow's `read` input)
-  reads every launch both ways, `--read screen` the screen only. Screen reads of measured launches
-  use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps
-  cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
-  no testIDs on any supported ref.
+  once per scenario; the report names a build whose check could not read the screen. A launch whose
+  lines have not come 20 s after the settle time is read on the screen, and the report counts those
+  per build. A build whose warm-up writes no lines does not log its startup (built before #24576):
+  both builds are then read on the screen for the rest of the scenario, so pairs stay even, and the
+  report says so, even when that warm-up's screen read fails. Until a release with #24576 is in
+  production, `prod-vs-release` and `prod-vs-develop` (the nightly) are read on the screen this way.
+  `--read both` (the workflow's `read` input) reads every launch both ways, `--read screen` the
+  screen only. Screen reads of measured launches use `read-performance-quick.yaml`; warm-ups and
+  retries use the full flow, whose optional taps cost ~7 s when no prompt shows. The flows select
+  by text: the Debug and Performance screens have no testIDs on any supported ref.
 - **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
   log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
   of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches

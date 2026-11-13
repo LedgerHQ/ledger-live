@@ -53,6 +53,27 @@ describe("toMarkdown", () => {
     );
   });
 
+  it("names the build whose device log no launch checked on the screen", () => {
+    const checkedB = launch({
+      side: "B",
+      round: -1,
+      warmup: true,
+      readFrom: "log",
+      screenAppStartupTime: 1000,
+      appStartupTime: 1000,
+    });
+    const samples = [
+      checkedB,
+      ...comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } }),
+    ];
+    const markdown = toMarkdown(summarise(samples, options), options);
+    assert.match(markdown, /on the 1 launches read both ways/);
+    assert.match(
+      markdown,
+      /\*\*android accounts: build A could not be read on the Debug screen, so its device log was not checked against it\.\*\*/,
+    );
+  });
+
   it("says which launches were read from the screen, and whether the screen matched the log", () => {
     const samples = comparison({
       deltaMs: 0,
@@ -88,6 +109,7 @@ describe("toMarkdown", () => {
         round: -1,
         warmup: true,
         readFrom: "screen-fallback",
+        noLogLines: true,
         appStartupTime: 900,
       }),
       ...comparison({ deltaMs: 0, a: { readFrom: "screen" }, b: { readFrom: "screen" } }),

@@ -44,6 +44,11 @@ export interface Sample extends SampleMeta {
    * or the screen because the line never came.
    */
   readFrom?: "log" | "screen" | "screen-fallback";
+  /**
+   * The launch wrote no startup lines to the device log. Set before the screen read that follows,
+   * so a warm-up that switches its scenario to the screen says so even when that read fails.
+   */
+  noLogLines?: boolean;
   /** What the Debug screen showed, when it was read as well as the log: the two must match. */
   screenAppStartupTime?: number;
   /** Maestro read the Debug screen since the previous launch, which slows this one on iOS. */
