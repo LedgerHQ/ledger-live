@@ -23,6 +23,7 @@ export default defineConfig({
     SharedArrayBuffer: "readonly",
     __APP_VERSION__: "readonly",
     __GIT_REVISION__: "readonly",
+    __PRODUCTION__: "readonly",
     __PRERELEASE__: "readonly",
     __CHANNEL__: "readonly",
     __static: "readonly",
