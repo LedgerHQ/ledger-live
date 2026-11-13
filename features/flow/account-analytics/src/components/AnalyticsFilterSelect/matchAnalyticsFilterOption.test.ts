@@ -1,38 +1,53 @@
+import { renderHook } from "@testing-library/react";
+import { analyticsCatalog } from "../../analytics.mock";
+import { useAnalyticsFiltersViewModel } from "../AnalyticsFilters/useAnalyticsFiltersViewModel";
 import { matchAnalyticsFilterOption } from "./matchAnalyticsFilterOption";
 
-const algorand = {
-  value: "algorand",
-  label: "Algorand",
-  meta: { iconId: "algorand", ticker: "ALGO", networkName: "Algorand" },
-};
-const usdcOnPolygon = {
-  value: "usdc-polygon",
-  label: "USD Coin",
-  meta: { iconId: "polygon/erc20/usdc", ticker: "USDC", networkName: "Polygon" },
-};
-const allAssets = { value: "", label: "All assets" };
+jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+
+function renderAssetOptions() {
+  const { result } = renderHook(() =>
+    useAnalyticsFiltersViewModel({
+      assets: analyticsCatalog.assets,
+      accounts: analyticsCatalog.accounts,
+      selection: { assetId: null, accountId: null, metric: "balance" },
+      labels: {
+        assets: "Asset filter",
+        accounts: "Account filter",
+        allAssets: "All assets",
+        allAccounts: "All accounts",
+      },
+      selectAsset: jest.fn(),
+      selectAccount: jest.fn(),
+    }),
+  );
+  return result.current.asset.items;
+}
+
+function search(query: string): string[] {
+  return renderAssetOptions()
+    .filter(option => matchAnalyticsFilterOption(option, query))
+    .map(option => option.label);
+}
 
 describe("matchAnalyticsFilterOption", () => {
-  it("should match every option when the query is blank", () => {
-    expect(matchAnalyticsFilterOption(algorand, "   ")).toBe(true);
-    expect(matchAnalyticsFilterOption(allAssets, "")).toBe(true);
+  it("should keep every asset option when the query is blank", () => {
+    expect(search("   ")).toEqual(["All assets", "Ethereum", "USD Coin", "Bitcoin"]);
   });
 
-  it("should match the label whatever the case", () => {
-    expect(matchAnalyticsFilterOption(algorand, "alGO")).toBe(true);
+  it("should find an asset by its name whatever the case", () => {
+    expect(search("bitCOIN")).toEqual(["Bitcoin"]);
   });
 
-  it("should match the ticker and the network name", () => {
-    expect(matchAnalyticsFilterOption(usdcOnPolygon, "usdc")).toBe(true);
-    expect(matchAnalyticsFilterOption(usdcOnPolygon, "poly")).toBe(true);
+  it("should find an asset by its ticker", () => {
+    expect(search("usdc")).toEqual(["USD Coin"]);
   });
 
   it("should ignore the spaces around the query", () => {
-    expect(matchAnalyticsFilterOption(algorand, " algo ")).toBe(true);
+    expect(search(" eth ")).toEqual(["Ethereum"]);
   });
 
-  it("should reject an option that matches nothing", () => {
-    expect(matchAnalyticsFilterOption(algorand, "bitcoin")).toBe(false);
-    expect(matchAnalyticsFilterOption(allAssets, "bitcoin")).toBe(false);
+  it("should keep no option when nothing matches", () => {
+    expect(search("tron")).toEqual([]);
   });
 });
