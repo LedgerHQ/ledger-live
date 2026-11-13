@@ -34,12 +34,21 @@ describe("xrp transaction raw conversion", () => {
     });
   });
 
+  it.each([false, true])("keeps noRipple %s", noRipple => {
+    const transaction = makeTransaction({ mode: "changeTrust", noRipple });
+
+    const revived = fromTransactionRaw(JSON.parse(JSON.stringify(toTransactionRaw(transaction))));
+
+    expect(revived.noRipple).toBe(noRipple);
+  });
+
   it("adds no token field to a native send", () => {
     const raw = toTransactionRaw(makeTransaction({}));
 
     expect(raw).not.toHaveProperty("mode");
     expect(raw).not.toHaveProperty("assetReference");
     expect(raw).not.toHaveProperty("assetOwner");
+    expect(raw).not.toHaveProperty("noRipple");
   });
 });
 

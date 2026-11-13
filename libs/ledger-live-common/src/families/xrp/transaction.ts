@@ -11,11 +11,12 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
-function pickTokenFields({ mode, assetReference, assetOwner }: Transaction | TransactionRaw) {
+function pickTokenFields(transaction: Transaction | TransactionRaw) {
   return {
-    ...(mode && { mode }),
-    ...(assetReference && { assetReference }),
-    ...(assetOwner && { assetOwner }),
+    ...(transaction.mode && { mode: transaction.mode }),
+    ...(transaction.assetReference && { assetReference: transaction.assetReference }),
+    ...(transaction.assetOwner && { assetOwner: transaction.assetOwner }),
+    ...(typeof transaction.noRipple === "boolean" && { noRipple: transaction.noRipple }),
   };
 }
 

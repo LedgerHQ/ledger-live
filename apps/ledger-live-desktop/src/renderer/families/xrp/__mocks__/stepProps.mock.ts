@@ -26,7 +26,6 @@ export function makeStepProps(overrides: Partial<StepProps> = {}): StepProps {
     bridgePending: false,
     action: "add",
     onChangeToken: jest.fn(),
-    maxLimit: null,
     isRippling: false,
     onChangeRippling: jest.fn(),
     tokenAccount: undefined,

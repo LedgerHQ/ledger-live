@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import getDeviceTransactionConfig, { toDeviceCurrency } from "./deviceTransactionConfig";
-import { getMaxTrustLimitForToken } from "./logicPublic";
+import { MAX_TRUST_LIMIT_VALUE } from "./logicPublic";
 import type { Transaction, TransactionStatus } from "./types";
 
 const ISSUER = "rQhWct2fv4Vc4KRjRgMrxa8xPN9Zx9iLKV";
@@ -37,12 +37,13 @@ function makeTokenAccount(tokenType: string, tokenIdentifier: string, code: stri
   } as unknown as TokenAccount;
 }
 
-function makeChangeTrustInput(assetReference: string, limit: BigNumber) {
+function makeChangeTrustInput(assetReference: string, limit: BigNumber, noRipple?: boolean) {
   return {
     account: { type: "Account" } as never,
     parentAccount: null,
     transaction: {
       assetReference,
+      noRipple,
       family: "xrp",
       mode: "changeTrust",
       assetOwner: ISSUER,
@@ -172,12 +173,13 @@ describe("getDeviceTransactionConfig for an IOU send", () => {
 });
 
 describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
-  it("lists Limit Amount with the code first, Issuer and Fees", async () => {
+  it("lists Flags, Limit Amount with the code first, Issuer and Fees", async () => {
     const fields = await getDeviceTransactionConfig(
       makeChangeTrustInput("USD", toIouAmount("1000")),
     );
 
     expect(fields).toEqual([
+      { type: "text", label: "Flags", value: "Set No Ripple" },
       { type: "text", label: "Limit Amount", value: "USD 1000" },
       { type: "address", label: "Issuer", address: ISSUER },
       { type: "fees", label: "Fees" },
@@ -190,11 +192,23 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
     );
 
     expect(fields).toEqual([
+      { type: "text", label: "Flags", value: "Set No Ripple" },
       { type: "text", label: "Limit Amount", value: "1234.5" },
       { type: "text", label: "Currency", value: "RLUSD" },
       { type: "address", label: "Issuer", address: ISSUER },
       { type: "fees", label: "Fees" },
     ]);
+  });
+
+  it.each([
+    [true, "Set No Ripple"],
+    [false, "Clear No Ripple"],
+  ])("shows noRipple %s as the Flags %s", async (noRipple, flags) => {
+    const fields = await getDeviceTransactionConfig(
+      makeChangeTrustInput("USD", toIouAmount("1000"), noRipple),
+    );
+
+    expect(fields[0]).toEqual({ type: "text", label: "Flags", value: flags });
   });
 
   it("lists only Fees for an MPT opt-in, which sets no limit", async () => {
@@ -207,10 +221,10 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
 
   it("shows the maximum limit as 96 digits, without grouping", async () => {
     const fields = await getDeviceTransactionConfig(
-      makeChangeTrustInput(RLUSD_CODE, getMaxTrustLimitForToken()),
+      makeChangeTrustInput(RLUSD_CODE, MAX_TRUST_LIMIT_VALUE),
     );
 
-    expect(fields[0]).toMatchObject({
+    expect(fields[1]).toMatchObject({
       label: "Limit Amount",
       value: expect.stringMatching(/^\d{96}$/),
     });

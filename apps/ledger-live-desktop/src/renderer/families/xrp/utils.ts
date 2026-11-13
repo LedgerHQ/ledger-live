@@ -1,6 +1,9 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import { IOU_DIGITS } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { XrpTokenAccount, XrpTokenResources } from "@ledgerhq/live-common/families/xrp/types";
+import type BigNumber from "bignumber.js";
+import type { Unit } from "@domain/entity-currency-unit";
 
 export const hasTokenStandardEnabled = (account: Account): boolean => {
   return getXrpEnabledTokenStandards(account.currency.id).length > 0;
@@ -13,6 +16,29 @@ export const getXrpResources = (
 
   return (account as XrpTokenAccount).xrpResources;
 };
+
+// "9.999999999999998e95": every significant digit of the value
+function toScientificNotation(value: BigNumber, locale: string): string {
+  const [mantissa, exponent] = value.toExponential().split("e");
+
+  const numberParts = new Intl.NumberFormat(locale).formatToParts(1.1);
+  const decimalSeparator = numberParts.find(part => part.type === "decimal")?.value ?? ".";
+
+  return `${mantissa.replace(".", decimalSeparator)}e${exponent.replace("+", "")}`;
+}
+
+/**
+ * A trust limit, in the token's base units, that is too long for the plain notation:
+ * "1.5e20 USD" above 16 integer digits. Null for a shorter limit.
+ */
+export function formatLongTrustLimit(limit: BigNumber, unit: Unit, locale: string): string | null {
+  const value = limit.shiftedBy(-unit.magnitude);
+
+  // Past the significant digits of an IOU, every integer digit is a 0
+  if (typeof value.e !== "number" || value.e < IOU_DIGITS) return null;
+
+  return `${toScientificNotation(value, locale)} ${unit.code}`;
+}
 
 // An IOU fee steps in billionths: 7 decimals of a percentage
 const MAX_FEE_PERCENT_DECIMALS = 7;

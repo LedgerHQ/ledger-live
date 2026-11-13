@@ -5,9 +5,12 @@ import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 
 export * from "@ledgerhq/coin-xrp/logic-public";
 
-/** The trust limit an IOU opt-in prefills, in the token's base units: the protocol maximum */
-export function getMaxTrustLimitForToken(): BigNumber {
-  return new BigNumber(MAX_TRUST_LIMIT.toString());
+/** The protocol maximum of a trust limit, in the token's base units */
+export const MAX_TRUST_LIMIT_VALUE = new BigNumber(MAX_TRUST_LIMIT.toString());
+
+/** Whether a trust limit, in the token's base units, is the protocol maximum */
+export function isMaxTrustLimitValue(limit: BigNumber): boolean {
+  return limit.eq(MAX_TRUST_LIMIT_VALUE);
 }
 
 /** The issuer's fee on each transfer between holders, as a percentage: "0.5" for 0.5% */

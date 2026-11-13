@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-reac
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isMaxTrustLimitValue } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { setTrackingSource } from "@shared/analytics";
@@ -21,7 +22,7 @@ import Text from "~/renderer/components/Text";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { formatIssuerFee } from "../../utils";
+import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
 import type { StepProps } from "../types";
 
 function Row({ label, children }: Readonly<{ label: React.ReactNode; children: React.ReactNode }>) {
@@ -128,6 +129,10 @@ export default function StepReview({
 
   const locale = useSelector(localeSelector);
   const issuerFee = useGetIssuerFeeQuery(token);
+  const unit = token.units[0];
+  const limitText = isMaxTrustLimitValue(transaction.amount)
+    ? t("xrp.addToken.steps.settings.maximum")
+    : formatLongTrustLimit(transaction.amount, unit, locale);
 
   const errors = Object.values(status.errors);
   const warnings = Object.values(status.warnings);
@@ -181,15 +186,28 @@ export default function StepReview({
       )}
       {token.tokenType === "iou" ? (
         <>
-          <Row label={<Trans i18nKey="xrp.addToken.steps.settings.limit" />}>
-            <FormattedVal
-              val={transaction.amount}
-              unit={token.units[0]}
-              showCode
-              alwaysShowValue
-              color="neutral.c100"
-              fontSize={4}
-            />
+          <Row
+            label={
+              <LabelWithInfo
+                label={t("xrp.addToken.steps.settings.limit")}
+                info={<Trans i18nKey="xrp.tokenAccount.trustLimitTooltip" />}
+              />
+            }
+          >
+            {limitText ? (
+              <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
+                {limitText}
+              </Text>
+            ) : (
+              <FormattedVal
+                val={transaction.amount}
+                unit={unit}
+                showCode
+                alwaysShowValue
+                color="neutral.c100"
+                fontSize={4}
+              />
+            )}
           </Row>
           <Row label={<Trans i18nKey="xrp.rippling.label" />}>
             <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">

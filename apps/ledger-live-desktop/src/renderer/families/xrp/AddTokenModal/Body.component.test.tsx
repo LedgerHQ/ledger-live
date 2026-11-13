@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Operation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { act, render, screen } from "tests/testSetup";
 import logger from "~/renderer/logger";
 import Body, { type Data } from "./Body";
@@ -11,10 +11,6 @@ import type { StepId, StepProps } from "./types";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../__mocks__/currency.mock";
 
-jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/families/xrp/logicPublic"),
-  getMaxTrustLimitForToken: jest.fn(),
-}));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   const bridge = {
     createTransaction: () => ({ family: "xrp" }),
@@ -62,7 +58,6 @@ jest.mock("~/renderer/components/Stepper", () => ({
   },
 }));
 
-const mockGetMaxTrustLimit = jest.mocked(getMaxTrustLimitForToken);
 const stepper = () => mockStepper.mock.lastCall![0];
 const pick = (token: TokenCurrency) => act(() => stepper().onChangeToken(token));
 
@@ -89,16 +84,14 @@ describe("xrp AddTokenModal Body", () => {
   });
 
   it("puts the picked token and its Max in the transaction", async () => {
-    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
     renderBody();
 
     await pick(rlusd);
 
-    expect(stepper().maxLimit?.toNumber()).toBe(5000);
     expect(stepper().transaction).toMatchObject({
       assetReference: rlusd.tokenIdentifier,
       assetOwner: rlusd.contractAddress,
-      amount: new BigNumber(5000),
+      amount: MAX_TRUST_LIMIT_VALUE,
     });
   });
 
@@ -107,12 +100,10 @@ describe("xrp AddTokenModal Body", () => {
 
     await pick(xrpMptToken);
 
-    expect(mockGetMaxTrustLimit).not.toHaveBeenCalled();
     expect(stepper().transaction?.amount).toEqual(new BigNumber(0));
   });
 
   it("applies a preselected token on open", async () => {
-    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
     renderBody({ token: rlusd });
 
     await act(async () => {});
@@ -121,15 +112,29 @@ describe("xrp AddTokenModal Body", () => {
     expect(stepper().transaction?.assetReference).toBe(rlusd.tokenIdentifier);
   });
 
-  it("keeps the current limit of an edited token and shows its Max", async () => {
-    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
+  it("keeps the current limit of an edited token", async () => {
     renderBody({ tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
 
     await act(async () => {});
 
     expect(stepper().action).toBe("edit");
-    expect(stepper().maxLimit?.toNumber()).toBe(5000);
     expect(stepper().transaction?.amount).toEqual(new BigNumber(1000));
+  });
+
+  it("puts the rippling switch in the transaction", () => {
+    renderBody();
+
+    expect(stepper().isRippling).toBe(false);
+
+    act(() => stepper().onChangeRippling(true));
+
+    expect(stepper().transaction?.noRipple).toBe(false);
+    expect(stepper().isRippling).toBe(true);
+
+    act(() => stepper().onChangeRippling(false));
+
+    expect(stepper().transaction?.noRipple).toBe(true);
+    expect(stepper().isRippling).toBe(false);
   });
 
   it("goes back to the first step on retry", () => {
