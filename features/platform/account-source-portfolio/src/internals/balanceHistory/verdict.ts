@@ -2,6 +2,7 @@ import type {
   AccountBalanceHistory,
   BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
+import type { BalanceHistoryPoint } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { Fiat } from "../fiat";
 import { toAssetHistories } from "./map";
@@ -25,7 +26,7 @@ export function verdictOf(
   fiat?: Fiat,
 ): Verdict {
   if (truncated) return { status: "failed", detail: "The history read stopped before its end" };
-  const points = [];
+  const points: BalanceHistoryPoint[] = [];
   for (const group of groups) {
     if ("error" in group) return { status: "failed", detail: "The service failed its group" };
     if (!group.items.every(isOwnedBy(group))) {

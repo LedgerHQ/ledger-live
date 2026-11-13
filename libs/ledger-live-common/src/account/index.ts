@@ -18,7 +18,7 @@ export { accountPersistedStateChanged, accountsPersistedStateChanged } from "./p
 export * from "./serialization";
 export * from "./support";
 export {
-  RecentAddressesStore,
+  type RecentAddressesStore,
   getRecentAddressesStore,
   setupRecentAddressesStore,
 } from "./recentAddresses";

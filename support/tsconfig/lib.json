@@ -5,7 +5,8 @@
     "declarationMap": true,
     "outDir": "${configDir}/lib",
     "rootDir": "${configDir}/src",
-    "lib": ["ES2022", "DOM"]
+    "lib": ["ES2022", "DOM"],
+    "jsx": "react-jsx"
   },
   "include": ["${configDir}/src/**/*"]
 }
