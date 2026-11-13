@@ -1,18 +1,16 @@
 import React from "react";
-import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@features/platform-feature-flags";
 import OpenOrInstallTrustChainApp from "../DeviceActions/openOrInstall";
-import { RemoveMemberIntentStep } from "../../deviceIntents/removeMemberIntent/RemoveMemberIntentStep";
+import { LedgerSyncDeviceStepError } from "../../deviceIntents/LedgerSyncDeviceStepError";
 
 type Props = {
   goNext: (device: Device) => void;
-  instance: TrustchainMember | null;
 };
 
-export default function DeviceActionInstanceStep({ goNext, instance }: Readonly<Props>) {
+export default function DeviceActionInstanceStep({ goNext }: Readonly<Props>) {
   const ledgerSyncDie = useFeature("lwdLedgerSyncDie");
 
-  if (ledgerSyncDie?.enabled) return <RemoveMemberIntentStep member={instance} />;
+  if (ledgerSyncDie?.enabled) return <LedgerSyncDeviceStepError />;
 
   return <OpenOrInstallTrustChainApp goNext={goNext} />;
 }

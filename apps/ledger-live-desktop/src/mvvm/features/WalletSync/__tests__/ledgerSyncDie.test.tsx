@@ -14,6 +14,8 @@ import {
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
+import { useDispatch } from "LLD/hooks/redux";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import { LedgerSyncDeviceIntentExecutorLWD } from "../deviceIntents/LedgerSyncDeviceIntentExecutorLWD";
 import { buildDeviceConnection } from "../deviceIntents/__tests__/ledgerSyncIntentTestKit";
@@ -21,14 +23,16 @@ import { addMemberIntentLWDDefinition } from "../deviceIntents/addMemberIntent/i
 import { removeMemberIntentLWDDefinition } from "../deviceIntents/removeMemberIntent/intentLWDDefinition";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useFlows } from "../hooks/useFlows";
-import WalletSyncActivation from "../screens/Activation";
-import WalletSyncManageInstances from "../screens/ManageInstances";
 import WalletSyncDrawer from "../components/Drawer";
 import OpenOrInstallTrustChainApp from "../screens/DeviceActions/openOrInstall";
 import { INSTANCES, lldWalletSyncFeatureFlag } from "./shared";
 
 jest.mock("../deviceIntents/LedgerSyncDeviceIntentExecutorLWD", () => ({
-  LedgerSyncDeviceIntentExecutorLWD: jest.fn(() => null),
+  LedgerSyncDeviceIntentExecutorLWD: jest.fn(() =>
+    jest.requireActual<typeof import("react")>("react").createElement("div", {
+      "data-testid": "device-intent-dialog",
+    }),
+  ),
 }));
 
 jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
@@ -44,6 +48,7 @@ jest.mock("../hooks/useGetMembers", () => ({
 const mockCreateSessionSdk = jest.fn();
 
 type AnyLedgerSyncIntent = Intent<LedgerSyncJobState, unknown, undefined, unknown>;
+type WalletSyncState = typeof initialStateWalletSync;
 
 const MEMBER_CREDENTIALS = { pubkey: "currentInstance", privatekey: "privatekey" };
 const TRUSTCHAIN: Trustchain = {
@@ -53,11 +58,8 @@ const TRUSTCHAIN: Trustchain = {
 };
 const NEW_TRUSTCHAIN: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
 const MEMBER_TO_REMOVE = INSTANCES[1];
-
-const dieFlagOn = withFlagOverrides({
-  ...lldWalletSyncFeatureFlag,
-  lwdLedgerSyncDie: { enabled: true },
-});
+// The side panel keeps its content mounted for its exit animation.
+const PANEL_EXIT = { timeout: 3000 };
 
 function mountedIntents(): AnyLedgerSyncIntent[] {
   return jest
@@ -87,79 +89,110 @@ function failed(reason: LedgerSyncFailureReason): LedgerSyncJobState {
   return { type: "failed", reason, error: new Error(`Ledger Sync ${reason}`) };
 }
 
-function renderActivation(
-  sourcePage: AnalyticsPage = AnalyticsPage.LedgerSyncSettings,
-  walletSync: Partial<typeof initialStateWalletSync> = {},
-) {
-  return render(<WalletSyncActivation sourcePage={sourcePage} />, {
-    initialState: {
-      ...dieFlagOn,
-      walletSync: {
-        ...initialStateWalletSync,
-        flow: Flow.Activation,
-        step: Step.DeviceAction,
-        ...walletSync,
-      },
-      trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
-    },
-  });
+function deviceIntentDialog() {
+  return screen.queryByTestId("device-intent-dialog");
 }
 
-function renderInstanceRemoval() {
-  return render(<WalletSyncManageInstances />, {
-    initialState: {
-      ...dieFlagOn,
-      walletSync: {
-        ...initialStateWalletSync,
-        flow: Flow.ManageInstances,
-        step: Step.SynchronizedInstances,
-        instances: INSTANCES,
-      },
-      trustchain: { trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS },
-    },
-  });
+function sidePanel() {
+  return screen.queryByTestId("drawer-content");
 }
 
-function OnboardingEntry() {
-  const { goToWelcomeScreenWalletSync } = useFlows();
-  return (
-    <>
-      <button onClick={() => goToWelcomeScreenWalletSync(true)}>open</button>
-      <WalletSyncActivation sourcePage={AnalyticsPage.Onboarding} />
-    </>
-  );
+async function expectDeviceStepWithoutPanel() {
+  expect(await screen.findByTestId("device-intent-dialog")).toBeInTheDocument();
+  await waitFor(() => expect(sidePanel()).not.toBeInTheDocument(), PANEL_EXIT);
 }
 
-async function startRemoval() {
-  const view = renderInstanceRemoval();
-  await view.user.click((await screen.findAllByText("Remove"))[1]);
-  await waitFor(() => expect(LedgerSyncDeviceIntentExecutorLWD).toHaveBeenCalled());
-  return view;
+function expectPanelWithoutDeviceStep() {
+  expect(sidePanel()).toBeInTheDocument();
+  expect(deviceIntentDialog()).not.toBeInTheDocument();
 }
 
-// The drawer portals into #modals, which must exist when it first renders.
-function renderDrawerAtDeviceStep(dieEnabled: boolean) {
-  const modals = document.createElement("div");
-  modals.id = "modals";
-  document.body.appendChild(modals);
+type RenderDrawerOptions = {
+  dieEnabled?: boolean;
+  currentPage?: AnalyticsPage;
+  walletSync?: Partial<WalletSyncState>;
+  trustchain?: Trustchain | null;
+  children?: React.ReactNode;
+};
+
+function renderDrawer({
+  dieEnabled = true,
+  currentPage = AnalyticsPage.LedgerSyncSettings,
+  walletSync = {},
+  trustchain = null,
+  children,
+}: RenderDrawerOptions = {}) {
   return render(
-    <WalletSyncDrawer currentPage={AnalyticsPage.LedgerSyncSettings} onClose={jest.fn()} />,
+    <>
+      {children}
+      <WalletSyncDrawer currentPage={currentPage} onClose={jest.fn()} />
+    </>,
     {
       initialState: {
         ...withFlagOverrides({
           ...lldWalletSyncFeatureFlag,
           lwdLedgerSyncDie: { enabled: dieEnabled },
         }),
-        walletSync: { ...initialStateWalletSync, isDrawerOpen: true, step: Step.DeviceAction },
-        trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
+        walletSync: {
+          ...initialStateWalletSync,
+          isDrawerOpen: true,
+          flow: Flow.Activation,
+          step: Step.DeviceAction,
+          ...walletSync,
+        },
+        trustchain: { trustchain, memberCredentials: MEMBER_CREDENTIALS },
       },
     },
   );
 }
 
+/** Activation from Settings: the panel is open on the first step, then the device step starts. */
+async function startActivationFromSettings() {
+  const view = renderDrawer({ walletSync: { step: Step.CreateOrSynchronize } });
+  expectPanelWithoutDeviceStep();
+  act(() => {
+    view.store.dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+  });
+  await expectDeviceStepWithoutPanel();
+  return view;
+}
+
+async function startRemoval() {
+  const view = renderDrawer({
+    walletSync: {
+      flow: Flow.ManageInstances,
+      step: Step.SynchronizedInstances,
+      instances: INSTANCES,
+    },
+    trustchain: TRUSTCHAIN,
+  });
+  expectPanelWithoutDeviceStep();
+  await view.user.click((await screen.findAllByText("Remove"))[1]);
+  await expectDeviceStepWithoutPanel();
+  return view;
+}
+
+function OnboardingEntry() {
+  const dispatch = useDispatch();
+  const { goToWelcomeScreenWalletSync } = useFlows();
+  const open = () => {
+    goToWelcomeScreenWalletSync(true);
+    dispatch(setDrawerVisibility(true));
+  };
+  return <button onClick={open}>open</button>;
+}
+
 describe("Ledger Sync device steps on DIE", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // The side panel portals into #modals, which must exist when it first renders.
+    const modals = document.createElement("div");
+    modals.id = "modals";
+    document.body.appendChild(modals);
+  });
+
+  afterEach(() => {
+    document.getElementById("modals")?.remove();
   });
 
   describe("activation", () => {
@@ -167,9 +200,9 @@ describe("Ledger Sync device steps on DIE", () => {
       [TrustchainResultType.created, Step.ActivationFinal, true],
       [TrustchainResultType.restored, Step.SynchronizationFinal, false],
     ])(
-      "should store the trustchain and go to the final step after a %s trustchain",
-      (type, nextStep, hasTrustchainBeenCreated) => {
-        const { store } = renderActivation();
+      "should store the trustchain and bring the panel back on the final step after a %s trustchain",
+      async (type, nextStep, hasTrustchainBeenCreated) => {
+        const { store } = await startActivationFromSettings();
 
         expect(OpenOrInstallTrustChainApp).not.toHaveBeenCalled();
         const intent = lastIntent();
@@ -191,7 +224,9 @@ describe("Ledger Sync device steps on DIE", () => {
           step: Step.ActivationLoading,
           nextStep,
           hasTrustchainBeenCreated,
+          isDrawerOpen: true,
         });
+        expectPanelWithoutDeviceStep();
       },
     );
 
@@ -199,36 +234,60 @@ describe("Ledger Sync device steps on DIE", () => {
       ["already-secured-same-seed", Step.AlreadySecuredSameSeed],
       ["already-secured-other-seed", Step.AlreadySecuredOtherSeed],
       ["no-trustchain", Step.UnbackedError],
-    ] as const)("should route the %s failure to its step", (reason, step) => {
-      const { store } = renderActivation();
+    ] as const)(
+      "should bring the panel back on the step of the %s failure",
+      async (reason, step) => {
+        const { store } = await startActivationFromSettings();
 
-      emit(failed(reason));
+        emit(failed(reason));
 
-      expect(store.getState().walletSync).toMatchObject({ flow: Flow.Synchronize, step });
-    });
+        expect(store.getState().walletSync).toMatchObject({ flow: Flow.Synchronize, step });
+        expectPanelWithoutDeviceStep();
+      },
+    );
 
     it.each(["unknown", "not-allowed"] as const)(
-      "should show the %s failure and start a new run on retry",
+      "should bring the panel back with the %s failure and hide it again for the retry",
       async reason => {
-        const { store, user } = renderActivation();
+        const { store, user } = await startActivationFromSettings();
         const firstIntent = lastIntent();
 
         emit(failed(reason));
 
         expect(store.getState().walletSync.step).toBe(Step.DeviceAction);
-        await user.click(await screen.findByRole("button", { name: /retry/i }));
+        const retry = await screen.findByRole("button", { name: /retry/i });
+        expectPanelWithoutDeviceStep();
 
-        await waitFor(() => expect(lastIntent().uuid).not.toBe(firstIntent.uuid));
+        await user.click(retry);
+
+        await expectDeviceStepWithoutPanel();
+        expect(lastIntent().uuid).not.toBe(firstIntent.uuid);
         expect(lastIntent().label).toBe(addMemberIntentLWDDefinition.label);
       },
     );
 
-    it("should keep the run open after a device rejection and finish it after the retry", () => {
-      const { store } = renderActivation();
+    it("should start a new run when the device step is visited again after a failure", async () => {
+      const { store } = await startActivationFromSettings();
+      emit(failed("unknown"));
+      await screen.findByRole("button", { name: /retry/i });
+
+      act(() => {
+        store.dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+      });
+      act(() => {
+        store.dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+      });
+
+      await expectDeviceStepWithoutPanel();
+    });
+
+    it("should keep the run open after a device rejection and finish it after the retry", async () => {
+      const { store } = await startActivationFromSettings();
       const intent = lastIntent();
 
       emit({ type: "device-rejected", error: new Error("UserRefusedOnDevice"), retry: jest.fn() });
       expect(store.getState().walletSync.step).toBe(Step.DeviceAction);
+      expect(deviceIntentDialog()).toBeInTheDocument();
 
       emit({ type: "pending" });
       deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
@@ -238,43 +297,49 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(store.getState().walletSync.step).toBe(Step.ActivationLoading);
     });
 
-    it("should go back to the first step when the user leaves the executor", () => {
-      const { store } = renderActivation();
+    it("should bring the panel back on the first step when the user leaves the executor", async () => {
+      const { store } = await startActivationFromSettings();
 
       act(() => lastMountedProps().onUserCancel());
 
-      expect(store.getState().walletSync.step).toBe(Step.CreateOrSynchronize);
+      expect(store.getState().walletSync).toMatchObject({
+        step: Step.CreateOrSynchronize,
+        isDrawerOpen: true,
+      });
+      expectPanelWithoutDeviceStep();
     });
 
-    it("should restore the known trustchain instead of creating one", () => {
-      render(<WalletSyncActivation sourcePage={AnalyticsPage.LedgerSyncSettings} />, {
-        initialState: {
-          ...dieFlagOn,
-          walletSync: { ...initialStateWalletSync, step: Step.DeviceAction },
-          trustchain: { trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS },
-        },
-      });
+    it("should keep the drawer on Escape while the device step runs", async () => {
+      const { store, user } = await startActivationFromSettings();
 
+      await user.keyboard("{Escape}");
+
+      expect(store.getState().walletSync.isDrawerOpen).toBe(true);
+      expect(deviceIntentDialog()).toBeInTheDocument();
+    });
+
+    it("should restore the known trustchain instead of creating one", async () => {
+      renderDrawer({ trustchain: TRUSTCHAIN });
+
+      await expectDeviceStepWithoutPanel();
       expect(lastIntent().input).toMatchObject({ currentTrustchain: TRUSTCHAIN });
     });
   });
 
   describe("onboarding", () => {
-    it("should reach the DIE step from a new device onboarding and close the drawer once done", async () => {
-      const { store, user } = render(<OnboardingEntry />, {
-        initialState: {
-          ...dieFlagOn,
-          walletSync: { ...initialStateWalletSync, isDrawerOpen: true },
-          trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
-        },
+    it("should run the DIE step without the panel from a new device onboarding and close the drawer once done", async () => {
+      const { store, user } = renderDrawer({
+        currentPage: AnalyticsPage.Onboarding,
+        walletSync: { step: Step.CreateOrSynchronize, isDrawerOpen: false },
+        children: <OnboardingEntry />,
       });
-
       await user.click(screen.getByRole("button", { name: "open" }));
 
       expect(store.getState().walletSync).toMatchObject({
         step: Step.DeviceAction,
         onboardingNewDevice: true,
       });
+      await expectDeviceStepWithoutPanel();
       expect(lastIntent().label).toBe(addMemberIntentLWDDefinition.label);
 
       deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
@@ -283,10 +348,12 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
       expect(store.getState().walletSync.isDrawerOpen).toBe(false);
       expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+      expect(deviceIntentDialog()).not.toBeInTheDocument();
     });
 
-    it("should complete the onboarding with the connected device outside a new device onboarding", () => {
-      const { store } = renderActivation(AnalyticsPage.Onboarding, { isDrawerOpen: true });
+    it("should complete the onboarding with the connected device outside a new device onboarding", async () => {
+      const { store } = renderDrawer({ currentPage: AnalyticsPage.Onboarding });
+      await expectDeviceStepWithoutPanel();
 
       act(() =>
         lastMountedProps().onExecutorStateChanged?.({
@@ -311,7 +378,7 @@ describe("Ledger Sync device steps on DIE", () => {
   });
 
   describe("instance removal", () => {
-    it("should store the rotated trustchain and show the deletion success", async () => {
+    it("should store the rotated trustchain and bring the panel back on the deletion success", async () => {
       const { store } = await startRemoval();
 
       expect(OpenOrInstallTrustChainApp).not.toHaveBeenCalled();
@@ -328,65 +395,53 @@ describe("Ledger Sync device steps on DIE", () => {
 
       expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
       expect(store.getState().walletSync.step).toBe(Step.InstanceSuccesfullyDeleted);
+      expectPanelWithoutDeviceStep();
+      expect(await screen.findByText(new RegExp(MEMBER_TO_REMOVE.name))).toBeInTheDocument();
     });
 
-    it("should route a not-allowed failure to the unsecured ledger step", async () => {
+    it("should bring the panel back on the unsecured ledger step after a not-allowed failure", async () => {
       const { store } = await startRemoval();
 
       emit(failed("not-allowed"));
 
       expect(store.getState().walletSync.step).toBe(Step.UnsecuredLedger);
+      expectPanelWithoutDeviceStep();
     });
 
-    it("should show any other failure and start a new run on retry", async () => {
+    it("should bring the panel back with any other failure and hide it again for the retry", async () => {
       const { store, user } = await startRemoval();
       const firstIntent = lastIntent();
 
       emit(failed("unknown"));
 
       expect(store.getState().walletSync.step).toBe(Step.DeviceActionInstance);
-      await user.click(await screen.findByRole("button", { name: /retry/i }));
+      const retry = await screen.findByRole("button", { name: /retry/i });
+      expectPanelWithoutDeviceStep();
 
-      await waitFor(() => expect(lastIntent().uuid).not.toBe(firstIntent.uuid));
-      expect(lastIntent().label).toBe(removeMemberIntentLWDDefinition.label);
+      await user.click(retry);
+
+      await expectDeviceStepWithoutPanel();
+      expect(lastIntent().uuid).not.toBe(firstIntent.uuid);
+      expect(lastIntent().input).toMatchObject({ member: MEMBER_TO_REMOVE });
     });
 
-    it("should go back to the instance list when the user leaves the executor", async () => {
+    it("should bring the panel back on the instance list when the user leaves the executor", async () => {
       const { store } = await startRemoval();
 
       act(() => lastMountedProps().onUserCancel());
 
       expect(store.getState().walletSync.step).toBe(Step.SynchronizedInstances);
+      expectPanelWithoutDeviceStep();
     });
   });
 
-  describe("drawer", () => {
-    afterEach(() => {
-      document.getElementById("modals")?.remove();
-    });
+  describe("flag off", () => {
+    it("should keep the legacy device step in the panel and close the drawer on Escape", async () => {
+      const { store, user } = renderDrawer({ dieEnabled: false });
 
-    it("should leave Escape to the executor dialog while it is open", async () => {
-      const { store, user } = renderDrawerAtDeviceStep(true);
-      await waitFor(() => expect(LedgerSyncDeviceIntentExecutorLWD).toHaveBeenCalled());
-
-      await user.keyboard("{Escape}");
-
-      expect(store.getState().walletSync.isDrawerOpen).toBe(true);
-    });
-
-    it("should close the drawer on Escape once a failure replaced the executor dialog", async () => {
-      const { store, user } = renderDrawerAtDeviceStep(true);
-      await waitFor(() => expect(LedgerSyncDeviceIntentExecutorLWD).toHaveBeenCalled());
-      emit(failed("unknown"));
-      await screen.findByRole("button", { name: /retry/i });
-
-      await user.keyboard("{Escape}");
-
-      expect(store.getState().walletSync.isDrawerOpen).toBe(false);
-    });
-
-    it("should close the drawer on Escape at the legacy device step", async () => {
-      const { store, user } = renderDrawerAtDeviceStep(false);
+      expect(sidePanel()).toBeInTheDocument();
+      expect(OpenOrInstallTrustChainApp).toHaveBeenCalled();
+      expect(LedgerSyncDeviceIntentExecutorLWD).not.toHaveBeenCalled();
 
       await user.keyboard("{Escape}");
 

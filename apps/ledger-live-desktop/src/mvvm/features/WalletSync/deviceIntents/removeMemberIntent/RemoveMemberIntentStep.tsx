@@ -1,17 +1,17 @@
 import React from "react";
-import { Spinner } from "@ledgerhq/lumen-ui-react";
 import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { LedgerSyncIntentStep } from "../LedgerSyncIntentStep";
+import { LedgerSyncIntentRun } from "../LedgerSyncIntentRun";
 import { useRemoveMemberIntentStep } from "./useRemoveMemberIntentStep";
 
 type RemoveMemberIntentStepProps = Readonly<{
   member: TrustchainMember | null;
+  onError: (error: Error) => void;
 }>;
 
-export function RemoveMemberIntentStep({ member }: RemoveMemberIntentStepProps) {
-  const { createRunIntent, ...step } = useRemoveMemberIntentStep(member);
+export function RemoveMemberIntentStep({ member, onError }: RemoveMemberIntentStepProps) {
+  const { createRunIntent, ...run } = useRemoveMemberIntentStep(member, onError);
 
-  if (!createRunIntent) return <Spinner size={32} />;
+  if (!createRunIntent) return null;
 
-  return <LedgerSyncIntentStep createRunIntent={createRunIntent} {...step} />;
+  return <LedgerSyncIntentRun createRunIntent={createRunIntent} {...run} />;
 }

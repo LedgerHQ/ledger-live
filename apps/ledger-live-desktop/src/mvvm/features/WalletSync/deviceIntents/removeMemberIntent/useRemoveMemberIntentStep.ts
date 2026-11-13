@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { createIntent } from "@features/platform-device-intent";
 import type {
   RemoveMemberIntent,
@@ -20,13 +20,14 @@ import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
  * Removes another instance from the trustchain on DIE, then leaves the device step the way the
  * legacy `DeleteInstanceWithTrustChain` step does.
  */
-export function useRemoveMemberIntentStep(member: TrustchainMember | null) {
+export function useRemoveMemberIntentStep(
+  member: TrustchainMember | null,
+  onError: (error: Error) => void,
+) {
   const dispatch = useDispatch();
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const [run, setRun] = useState(0);
-  const [error, setError] = useState<Error | null>(null);
 
   const onUserCancel = useCallback(
     () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances })),
@@ -49,10 +50,10 @@ export function useRemoveMemberIntentStep(member: TrustchainMember | null) {
       } else if (jobState.type === "failed" && jobState.reason === "not-allowed") {
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
       } else if (jobState.type === "failed") {
-        setError(jobState.error);
+        onError(jobState.error);
       }
     },
-    [dispatch],
+    [dispatch, onError],
   );
 
   const createRunIntent =
@@ -65,10 +66,5 @@ export function useRemoveMemberIntentStep(member: TrustchainMember | null) {
           )
       : null;
 
-  const onRetry = useCallback(() => {
-    setError(null);
-    setRun(previousRun => previousRun + 1);
-  }, []);
-
-  return { run, error, createRunIntent, onUserCancel, onRetry };
+  return { createRunIntent, onUserCancel };
 }

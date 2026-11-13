@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import type {
   AddMemberIntent,
@@ -25,14 +25,12 @@ import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
  * Adds this instance to the trustchain of the device seed on DIE, then leaves the device step
  * the way the legacy `CreateOrSynchronizeTrustChain` step does.
  */
-export function useAddMemberIntentStep(sourcePage?: AnalyticsPage) {
+export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (error: Error) => void) {
   const dispatch = useDispatch();
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
   const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
-  const [run, setRun] = useState(0);
-  const [error, setError] = useState<Error | null>(null);
   const deviceRef = useRef<Device | null>(null);
   const resultRef = useRef<TrustchainResult | null>(null);
 
@@ -62,10 +60,10 @@ export function useAddMemberIntentStep(sourcePage?: AnalyticsPage) {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
           break;
         default:
-          setError(jobState.error);
+          onError(jobState.error);
       }
     },
-    [dispatch, onTrustchainJoined],
+    [dispatch, onError, onTrustchainJoined],
   );
 
   const createRunIntent = memberCredentials
@@ -88,10 +86,5 @@ export function useAddMemberIntentStep(sourcePage?: AnalyticsPage) {
     [dispatch],
   );
 
-  const onRetry = useCallback(() => {
-    setError(null);
-    setRun(previousRun => previousRun + 1);
-  }, []);
-
-  return { run, error, createRunIntent, onExecutorStateChanged, onUserCancel, onRetry };
+  return { createRunIntent, onExecutorStateChanged, onUserCancel };
 }

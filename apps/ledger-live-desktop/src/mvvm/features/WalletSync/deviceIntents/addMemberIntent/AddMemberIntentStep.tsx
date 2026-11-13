@@ -1,17 +1,17 @@
 import React from "react";
-import { Spinner } from "@ledgerhq/lumen-ui-react";
 import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { LedgerSyncIntentStep } from "../LedgerSyncIntentStep";
+import { LedgerSyncIntentRun } from "../LedgerSyncIntentRun";
 import { useAddMemberIntentStep } from "./useAddMemberIntentStep";
 
 type AddMemberIntentStepProps = Readonly<{
-  sourcePage?: AnalyticsPage;
+  sourcePage: AnalyticsPage;
+  onError: (error: Error) => void;
 }>;
 
-export function AddMemberIntentStep({ sourcePage }: AddMemberIntentStepProps) {
-  const { createRunIntent, ...step } = useAddMemberIntentStep(sourcePage);
+export function AddMemberIntentStep({ sourcePage, onError }: AddMemberIntentStepProps) {
+  const { createRunIntent, ...run } = useAddMemberIntentStep(sourcePage, onError);
 
-  if (!createRunIntent) return <Spinner size={32} />;
+  if (!createRunIntent) return null;
 
-  return <LedgerSyncIntentStep createRunIntent={createRunIntent} {...step} />;
+  return <LedgerSyncIntentRun createRunIntent={createRunIntent} {...run} />;
 }
