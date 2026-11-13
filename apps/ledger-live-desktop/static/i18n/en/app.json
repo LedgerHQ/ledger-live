@@ -2383,6 +2383,12 @@
         "progressWarning": "Do not quit My Ledger during update.",
         "progress": "Updating all..."
       },
+      "developerFilter": {
+        "title": "Developer",
+        "all": "All",
+        "ledger": "Ledger",
+        "community": "Community app"
+      },
       "item": {
         "version": "Version {{version}}",
         "installing": "Installing...",

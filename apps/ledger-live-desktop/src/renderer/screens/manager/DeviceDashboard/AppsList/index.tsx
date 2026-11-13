@@ -15,6 +15,7 @@ import Text from "~/renderer/components/Text";
 import TabBar from "~/renderer/components/TabBar";
 import Item from "./Item";
 import Filter from "./Filter";
+import DeveloperFilter from "./DeveloperFilter";
 import Sort from "./Sort";
 import UninstallAllButton from "./UninstallAllButton";
 import debounce from "lodash/debounce";
@@ -22,6 +23,8 @@ import InstallSuccessBanner from "./InstallSuccessBanner";
 import SearchBox from "../../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
+import type { AppDeveloperFilter } from "@ledgerhq/live-common/apps/developer";
+import { useFeature } from "@features/platform-feature-flags";
 import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getEnv } from "@shared/env";
@@ -84,6 +87,8 @@ const AppsList = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState("");
   const [appFilter, setFilter] = useState<AppType>("all");
+  const [developer, setDeveloper] = useState<AppDeveloperFilter>("all");
+  const { enabled: isDeveloperInfoEnabled } = useFeature("myLedgerDisplayAppDeveloperName") || {};
   const [sort, setSort] = useState<SortOptions>({
     type: "marketcap",
     order: "desc",
@@ -125,6 +130,7 @@ const AppsList = ({
   const { update, device, catalog } = useAppsSections(state, {
     query,
     appFilter,
+    developer: isDeveloperInfoEnabled ? developer : "all",
     sort,
   });
 
@@ -216,6 +222,14 @@ const AppsList = ({
               </Box>
               {!isDeviceTab ? (
                 <>
+                  {isDeveloperInfoEnabled ? (
+                    <Box mr={3}>
+                      <DeveloperFilter
+                        onDeveloperChange={debounce(setDeveloper, 100)}
+                        developer={developer}
+                      />
+                    </Box>
+                  ) : null}
                   <Filter onFilterChange={debounce(setFilter, 100)} filter={appFilter} />
                   <Box ml={3}>
                     <Sort onSortChange={debounce(setSort, 100)} sort={sort} />
