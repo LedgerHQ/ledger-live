@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "~/context/Locale";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -39,6 +40,11 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const [maxSpendable, setMaxSpendable] = useState(new BigNumber(0));
   const [amount, setAmount] = useState(new BigNumber(transaction.amount || 0));
+
+  // TEMP egld-debug
+  useEffect(() => {
+    log("egld-debug", "PickAmount amount state", { key: route.key, amount: amount.toString() });
+  }, [amount, route.key]);
 
   /*
    * Fetch the maximum assets' spendable amount estimation, and assign it to it's state.
@@ -125,12 +131,18 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const onContinue = useCallback(() => {
+    // TEMP egld-debug
+    log("egld-debug", "PickAmount continue", {
+      key: route.key,
+      amount: amount.toString(),
+      inTx: { amount: String(transaction?.amount), recipient: transaction?.recipient },
+    });
     navigation.navigate(ScreenName.MultiversXDelegationValidator, {
       account,
       validators,
       transaction: bridge.updateTransaction(transaction, { amount }),
     });
-  }, [account, validators, bridge, amount, navigation, transaction]);
+  }, [account, validators, bridge, amount, navigation, transaction, route.key]);
 
   /*
    * Track all callback reference updates and run the effect conditionally.
