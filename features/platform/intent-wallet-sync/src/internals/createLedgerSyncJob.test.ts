@@ -14,6 +14,7 @@ import {
   completeJob,
   createDeviceCallbacks,
   createLedgerSyncJob,
+  deliverLateResult,
   failJob,
   handleCallError,
   tryCreateSessionSdk,
@@ -116,6 +117,26 @@ describe("completeJob", () => {
     expect(subscriber.error).toHaveBeenCalledWith(hostError);
     expect(subscriber.next).not.toHaveBeenCalled();
     expect(subscriber.complete).not.toHaveBeenCalled();
+  });
+});
+
+describe("deliverLateResult", () => {
+  it("should call onResult once with the result", () => {
+    const onResult = jest.fn();
+
+    deliverLateResult(onResult, "late result");
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith("late result");
+  });
+
+  it("should not throw when onResult throws", () => {
+    const onResult = jest.fn(() => {
+      throw new Error("host failed");
+    });
+
+    expect(() => deliverLateResult(onResult, "late result")).not.toThrow();
+    expect(onResult).toHaveBeenCalledTimes(1);
   });
 });
 
