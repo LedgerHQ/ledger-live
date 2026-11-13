@@ -3,6 +3,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -417,13 +418,7 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tron (TRX + TRC10 + TRC20)",
 
   setup: async () => {
-    sandbox = await startSandbox(
-      { family: "tron", network: "tron" },
-      {
-        node: { implementation: "java-tron", version: "4.7.2" },
-        indexer: { implementation: "trongrid-stub" },
-      },
-    );
+    sandbox = await startSandbox({ family: "tron", network: "tron" }, sandboxVersions("tron"));
     // The indexer serves the TronGrid API and forwards the rest to the node: one URL for everything
     const rpc = sandbox.endpoints.indexer;
     if (rpc === undefined) throw new Error("the sandbox instance has no indexer endpoint");
