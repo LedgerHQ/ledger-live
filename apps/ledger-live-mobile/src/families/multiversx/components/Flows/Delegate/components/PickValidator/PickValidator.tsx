@@ -1,4 +1,5 @@
 import { TrackScreen } from "@shared/analytics-react";
+import { log } from "@ledgerhq/logs";
 import React, { useCallback, useState } from "react";
 import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -41,6 +42,11 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const onSelect = useCallback(
     (validator: onSelectType["validator"]) => {
+      // TEMP egld-debug
+      log("egld-debug", "PickValidator select", {
+        contract: validator?.contract,
+        inTx: { amount: String(transaction?.amount), recipient: transaction?.recipient },
+      });
       if (validator && transaction) {
         navigation.navigate(ScreenName.MultiversXDelegationValidator, {
           account,

@@ -16,6 +16,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
@@ -151,6 +152,14 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   const trackTransactionUpdate = useCallback(() => {
     const returnedTransaction = route.params.transaction;
 
+    // TEMP egld-debug
+    log("egld-debug", "Summary trackTransactionUpdate", {
+      key: route.key,
+      paramsTx: {
+        amount: String(returnedTransaction?.amount),
+        recipient: returnedTransaction?.recipient,
+      },
+    });
     if (returnedTransaction) {
       updateTransaction(() => returnedTransaction as MultiversXTransaction);
     }
@@ -196,6 +205,33 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   useEffect(trackTransactionUpdate, [trackTransactionUpdate]);
+
+  // TEMP egld-debug
+  useEffect(() => {
+    log("egld-debug", "Summary mount", {
+      key: route.key,
+      paramsTx: {
+        amount: String(route.params.transaction?.amount),
+        recipient: route.params.transaction?.recipient,
+      },
+      stack: navigation.getState().routes.map(r => `${r.name}:${r.key}`),
+    });
+    return () => log("egld-debug", "Summary unmount", { key: route.key });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // TEMP egld-debug
+  useEffect(() => {
+    log("egld-debug", "Summary hook tx", {
+      key: route.key,
+      hookTx: { amount: String(transaction?.amount), recipient: transaction?.recipient },
+      paramsTx: {
+        amount: String(route.params.transaction?.amount),
+        recipient: route.params.transaction?.recipient,
+      },
+      validators: validators.length,
+    });
+  }, [transaction, route.key, route.params.transaction, validators.length]);
 
   /*
    * Return the rendered component.
