@@ -110,7 +110,10 @@ export function runNewSendFlowContactsTest(
     it(`[${label}] - Send - via contact`, async () => {
       const { sendViaContact } = contacts;
 
-      await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
+      await app.send.navigateToSendScreen(
+        transaction.accountToDebit.accountName,
+        transaction.accountToDebit.currency.id,
+      );
       await app.newSend.typeRecipientNewFlow(sendViaContact.name);
       await app.newSend.selectContactFromSearchResults(sendViaContact.id);
       await app.newSend.selectContactAddress(SEND_VIA_CONTACT_MAIN_ADDRESS_ID);
@@ -132,7 +135,10 @@ export function runNewSendFlowContactsTest(
       const retrievalAddress = retrieval.addresses[0]?.address;
       invariant(retrievalAddress, "Retrieval contact address is not set");
 
-      await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
+      await app.send.navigateToSendScreen(
+        transaction.accountToDebit.accountName,
+        transaction.accountToDebit.currency.id,
+      );
 
       await app.newSend.typeRecipientNewFlow(retrievalAddress);
       await app.newSend.expectMatchedContactCard(retrieval.name);

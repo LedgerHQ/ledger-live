@@ -23,6 +23,9 @@ export default class AccountDetailPage {
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
   private readonly transferDrawer = byId("transfer-drawer");
   private readonly transferDrawerAction = (action: string) => byId(`transfer-action-${action}`);
+  private readonly sendAssetPicker = byId("transfer-asset-picker-list");
+  private readonly sendAssetPickerRow = (currencyId: string) =>
+    byId(`transfer-asset-picker-${currencyId}`);
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
   private readonly operationRowWithType = (operationType: string) =>
@@ -75,10 +78,14 @@ export default class AccountDetailPage {
     await this.transferDrawerAction("receive").tap();
   }
 
-  @Step("Tap on send")
-  async tapSend() {
+  @Step("Tap on send {{{0}}}")
+  async tapSend(currencyId?: string) {
     await this.openTransferDrawer();
     await this.transferDrawerAction("send").tap();
+    // An account holding several assets asks which one to send first.
+    if (currencyId && (await this.sendAssetPicker.isVisible(TIMEOUT.small))) {
+      await this.sendAssetPickerRow(currencyId).tap();
+    }
   }
 
   private async openTransferDrawer() {
