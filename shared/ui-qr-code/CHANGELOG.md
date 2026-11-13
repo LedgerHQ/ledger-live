@@ -1,5 +1,11 @@
 # @shared/qr-code
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24681](https://github.com/LedgerHQ/ledger-live/pull/24681) [`ddb122e`](https://github.com/LedgerHQ/ledger-live/commit/ddb122ebdebc96b839bc56665175c2c882a12de2) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` or `.native` suffix.
+
 ## 0.5.0
 
 ### Minor Changes

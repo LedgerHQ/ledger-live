@@ -1,5 +1,11 @@
 # @features/flow-pay-deposit
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24631](https://github.com/LedgerHQ/ledger-live/pull/24631) [`ec49c1a`](https://github.com/LedgerHQ/ledger-live/commit/ec49c1aedabd57b76987f1bd265800fd916772bc) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the deposit options tests through the platform-resolved entry instead of suffixed paths.
+
 ## 0.6.1
 
 ### Patch Changes

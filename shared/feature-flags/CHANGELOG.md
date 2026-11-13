@@ -1,5 +1,23 @@
 # @shared/feature-flags
 
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#24706](https://github.com/LedgerHQ/ledger-live/pull/24706) [`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Remove the `llmAccountListUI` feature flag: the accounts list is always on, and its legacy fallbacks are deleted.
+
+- [#24725](https://github.com/LedgerHQ/ledger-live/pull/24725) [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the agentIntent flag and the Agent Intent entry points package: flag reading, analytics attributes and the Manage your agents card
+
+- [#24687](https://github.com/LedgerHQ/ledger-live/pull/24687) [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7) Thanks [@semeano](https://github.com/semeano)! - Register the alpen EVM currency behind the currencyAlpen feature flag, disabled by default
+
+- [#24693](https://github.com/LedgerHQ/ledger-live/pull/24693) [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b) Thanks [@rbobillot](https://github.com/rbobillot)! - Add the earnApiGravitee flag, off by default, so the earn live app can route its API calls through the prd Gravitee gateway
+
+- [#24711](https://github.com/LedgerHQ/ledger-live/pull/24711) [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927) Thanks [@LL782](https://github.com/LL782)! - Remove the `llmMmkvMigration` flag, the storage rollback state and the storage performance overlay. The AsyncStorage to MMKV migration still runs from the Portfolio screen
+
+- [#24593](https://github.com/LedgerHQ/ledger-live/pull/24593) [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a) Thanks [@deepyjr](https://github.com/deepyjr)! - Gate the Account Detail Analytics banner with the `accountDetail` `analyticsBanner` param, send it to analytics and keep the banner until it is closed
+
+- [#24756](https://github.com/LedgerHQ/ledger-live/pull/24756) [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): apply the die for the new send flow in lwd
+
 ## 0.30.0
 
 ### Minor Changes

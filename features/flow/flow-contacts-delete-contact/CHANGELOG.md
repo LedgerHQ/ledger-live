@@ -1,5 +1,12 @@
 # @features/flow-contacts-delete-contact
 
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3)]:
+  - @features/platform-contacts@0.13.0-next.0
+
 ## 0.5.1
 
 ### Patch Changes

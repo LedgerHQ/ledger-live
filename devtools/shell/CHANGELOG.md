@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#24604](https://github.com/LedgerHQ/ledger-live/pull/24604) [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a Receive DevTools tool to toggle the newReceiveFlow feature flag and its excluded families
+
+### Patch Changes
+
+- Updated dependencies [[`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf), [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2), [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806), [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9)]:
+  - @devtools/registry@0.9.0-next.0
+
 ## 0.14.0
 
 ### Minor Changes

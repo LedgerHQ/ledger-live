@@ -1,5 +1,20 @@
 # @features/platform-intent-wallet-sync
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24592](https://github.com/LedgerHQ/ledger-live/pull/24592) [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync intents DevTool, which runs the add member and remove member intents on the Device Intent Executor of each app and logs every job state, with the app renderers, executor wrappers and session SDK it needs
+
+- [#24665](https://github.com/LedgerHQ/ledger-live/pull/24665) [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193) Thanks [@ysitbon](https://github.com/ysitbon)! - Build every Ledger Sync session SDK with the setup of the app's cached SDK, the one the wallet sync loop uses, through a shared `sessionWithDevice` adapter, so a member added on the device is known to the sync loop even when the flag environment arrives after the app started; the intents DevTool lists members with the app SDK again
+
+- [#24690](https://github.com/LedgerHQ/ledger-live/pull/24690) [`44fc466`](https://github.com/LedgerHQ/ledger-live/commit/44fc466224cb5f03d68cda98d3cc23e652b38251) Thanks [@ysitbon](https://github.com/ysitbon)! - Run the Ledger Sync activation and instance removal device steps on the Device Intent Executor behind the `lwmLedgerSyncDie` flag, with an optional `onInitialResponse` input on the add member intent
+
+### Patch Changes
+
+- Updated dependencies [[`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899)]:
+  - @features/platform-device-intent@5.5.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

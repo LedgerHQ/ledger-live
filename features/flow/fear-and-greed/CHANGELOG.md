@@ -1,5 +1,11 @@
 # @features/flow-fear-and-greed
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24616](https://github.com/LedgerHQ/ledger-live/pull/24616) [`0413ec3`](https://github.com/LedgerHQ/ledger-live/commit/0413ec3d26b430e0e39a49c3f19cbead2317f855) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the web view by its platform-neutral specifier and drop the package's platform suffix waiver.
+
 ## 0.5.2
 
 ### Patch Changes

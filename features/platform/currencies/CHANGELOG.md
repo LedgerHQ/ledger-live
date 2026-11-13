@@ -1,5 +1,16 @@
 # @features/platform-currencies
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#24687](https://github.com/LedgerHQ/ledger-live/pull/24687) [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7) Thanks [@semeano](https://github.com/semeano)! - Register the alpen EVM currency behind the currencyAlpen feature flag, disabled by default
+
+### Patch Changes
+
+- Updated dependencies [[`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99)]:
+  - @features/platform-feature-flags@0.13.0-next.0
+
 ## 0.13.0
 
 ### Minor Changes

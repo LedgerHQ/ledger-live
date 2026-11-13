@@ -1,5 +1,17 @@
 # @features/flow-pay-card-auth
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24660](https://github.com/LedgerHQ/ledger-live/pull/24660) [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` / `.native` suffix and let module resolution pick the twin.
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36)]:
+  - @shared/ui-info-state@0.8.0-next.0
+  - @features/platform-card@0.10.0-next.0
+
 ## 0.12.0
 
 ### Minor Changes

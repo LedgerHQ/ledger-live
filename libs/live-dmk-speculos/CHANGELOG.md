@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24724](https://github.com/LedgerHQ/ledger-live/pull/24724) [`88c94ff`](https://github.com/LedgerHQ/ledger-live/commit/88c94ffe78402e1789ee70aa8cf1d0cbfeef1aef) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Print DMK errors from the CLI as their tag and cause instead of "[object Object]", retry Speculos 503s and timeouts from the fetch-based DMK network client, and retry E2E CLI commands that lose their DMK session without matching status codes inside UUIDs
+
 ## 0.12.0
 
 ### Minor Changes

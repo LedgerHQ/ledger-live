@@ -1,5 +1,57 @@
 # @devtools/bindings
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#24604](https://github.com/LedgerHQ/ledger-live/pull/24604) [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a Receive DevTools tool to toggle the newReceiveFlow feature flag and its excluded families
+
+- [#24745](https://github.com/LedgerHQ/ledger-live/pull/24745) [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Account descriptor: one `key` field for both types; Canton, Concordium, Internet Computer, TON, Aptos and Stacks accounts are keyed on their public key, their address computed through the coin module loaders; a legacy account left out is mirrored again once it converts
+
+- [#24667](https://github.com/LedgerHQ/ledger-live/pull/24667) [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7) Thanks [@deepyjr](https://github.com/deepyjr)! - Show and force in the account-detail DevTools tool whether the install is eligible for the Analytics banner
+
+- [#24798](https://github.com/LedgerHQ/ledger-live/pull/24798) [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the receive verify hint state from `@features/flow-pay-request/state` to `@features/flow-receive/state`
+
+- [#24691](https://github.com/LedgerHQ/ledger-live/pull/24691) [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-receive DevTools tool, reading the `receive` kind per account, and the `receive` kind to the mock source
+
+- [#24592](https://github.com/LedgerHQ/ledger-live/pull/24592) [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync intents DevTool, which runs the add member and remove member intents on the Device Intent Executor of each app and logs every job state, with the app renderers, executor wrappers and session SDK it needs
+
+- [#24473](https://github.com/LedgerHQ/ledger-live/pull/24473) [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions DevTool on desktop and mobile to inspect and reset what the Predictions onboarding stored, and preview the trading wallet setup. `@domain/entity-predictions` gets `resetPredictionsIntroSeen`
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99), [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5), [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc), [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf), [`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163), [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b), [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7), [`d5d2516`](https://github.com/LedgerHQ/ledger-live/commit/d5d2516e82d0ee1984fcff0357cc0406eca91c48), [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7), [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c), [`e2afea1`](https://github.com/LedgerHQ/ledger-live/commit/e2afea14298ebf9fa64c61b9cc4d5eca740decc1), [`4ce1aca`](https://github.com/LedgerHQ/ledger-live/commit/4ce1acad62b9bb4b186a6fba14fce381b699d2c2), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36), [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2), [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b), [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806), [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`44fc466`](https://github.com/LedgerHQ/ledger-live/commit/44fc466224cb5f03d68cda98d3cc23e652b38251), [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a), [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31), [`83d314d`](https://github.com/LedgerHQ/ledger-live/commit/83d314dcad271f5c7bdc2cf04eea1a37d94f3b5a), [`797f57b`](https://github.com/LedgerHQ/ledger-live/commit/797f57b5789439d03259a434cfab6dcaddb84126), [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9), [`4a749db`](https://github.com/LedgerHQ/ledger-live/commit/4a749db93ffbb57b2296315869df761a6a2ed6ec), [`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899), [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03), [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c), [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @shared/feature-flags@0.31.0-next.0
+  - @features/platform-feature-flags@0.13.0-next.0
+  - @features/platform-device-onboarding@0.6.0-next.0
+  - @devtools/registry@0.9.0-next.0
+  - @domain/api-account-data@0.6.0-next.0
+  - @domain/entity-account-descriptor@0.6.0-next.0
+  - @features/platform-account-source-portfolio@0.1.0-next.0
+  - @domain/entity-account@0.4.0-next.0
+  - @domain/entity-account-receive@0.1.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+  - @domain/entity-account-operation@0.3.0-next.0
+  - @domain/entity-client-identity@0.6.0-next.0
+  - @features/flow-account-detail-analytics-notice@0.4.0-next.0
+  - @features/flow-receive@0.2.0-next.0
+  - @features/platform-card@0.10.0-next.0
+  - @devtools/intent-wallet-sync@0.2.0-next.0
+  - @features/platform-intent-wallet-sync@0.3.0-next.0
+  - @shared/env@0.14.0-next.0
+  - @features/flow-pay-card-auth@0.13.0-next.0
+  - @features/flow-pay-feature-tour@0.10.0-next.0
+  - @domain/api-account-portfolio@0.3.0-next.0
+  - @domain/entity-predictions@0.4.0-next.0
+  - @features/flow-predictions@0.3.0-next.0
+  - @features/platform-device-intent@5.5.0-next.0
+  - @domain/entity-account-balance-history@0.3.0-next.0
+  - @domain/entity-account-balance@0.3.1-next.0
+  - @domain/entity-account-name@0.4.1-next.0
+  - @features/platform-predictions@0.4.1-next.0
+  - @features/flow-pay-card-wallets@0.6.4
+  - @features/flow-pay-card-widget@0.7.0
+
 ## 0.15.0
 
 ### Minor Changes

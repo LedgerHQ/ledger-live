@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.19.19-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-aleo@2.10.1-next.0
+
 ## 0.19.18
 
 ### Patch Changes

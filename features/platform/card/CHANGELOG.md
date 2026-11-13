@@ -1,5 +1,11 @@
 # @features/platform-card
 
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#24662](https://github.com/LedgerHQ/ledger-live/pull/24662) [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform modules without their `.web` / `.native` suffix and run the tests in web and native Jest projects
+
 ## 0.9.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @shared/lottie
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24680](https://github.com/LedgerHQ/ledger-live/pull/24680) [`f03b96e`](https://github.com/LedgerHQ/ledger-live/commit/f03b96ed3d72e7404eebe2b8b12e42833cf55a1b) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the Lottie player through the platform-resolved module instead of suffixed paths.
+
 ## 0.1.0
 
 ### Minor Changes

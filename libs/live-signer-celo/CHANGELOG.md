@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-celo
 
+## 1.2.15-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2)]:
+  - @ledgerhq/coin-celo@4.1.0-next.0
+  - @ledgerhq/hw-app-eth@7.13.1-next.0
+  - @ledgerhq/hw-app-celo@7.3.3-next.0
+
 ## 1.2.14
 
 ### Patch Changes

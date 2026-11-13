@@ -1,5 +1,17 @@
 # @features/flow-contacts
 
+## 0.18.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc)]:
+  - @features/platform-contacts@0.13.0-next.0
+  - @features/flow-contacts-detail@0.5.0-next.0
+  - @features/flow-contacts-add-contact@0.10.2-next.0
+  - @features/flow-contacts-delete-contact@0.5.2-next.0
+  - @features/flow-contacts-list@0.12.2-next.0
+  - @features/flow-contacts-introduction@1.6.0
+
 ## 0.18.0
 
 ### Minor Changes

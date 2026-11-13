@@ -1,5 +1,12 @@
 # @domain/entity-account-alias
 
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a)]:
+  - @domain/entity-account@0.4.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

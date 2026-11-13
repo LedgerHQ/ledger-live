@@ -1,5 +1,18 @@
 # @ledgerhq/coin-canton
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#24232](https://github.com/LedgerHQ/ledger-live/pull/24232) [`5c70ad0`](https://github.com/LedgerHQ/ledger-live/commit/5c70ad082840b169ae8a22d196fcc765b779575b) Thanks [@amaslakov](https://github.com/amaslakov)! - Pass the CoinModuleApi context to the Canton logic and the resolved config to its network layer, move `common-logic` to a flat `logic` folder, and return 0 from `getNextSequence`. `createBridges` now takes a `Context` instead of seeding a module-level coin config, and the bridge logs through `context.logger`.
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @ledgerhq/hw-app-canton@0.16.0
+
 ## 1.7.0
 
 ### Minor Changes

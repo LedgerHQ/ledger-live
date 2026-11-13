@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.132.0-next.0
+
+### Minor Changes
+
+- [#24706](https://github.com/LedgerHQ/ledger-live/pull/24706) [`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Remove the `llmAccountListUI` feature flag: the accounts list is always on, and its legacy fallbacks are deleted.
+
+- [#24711](https://github.com/LedgerHQ/ledger-live/pull/24711) [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927) Thanks [@LL782](https://github.com/LL782)! - Remove the `llmMmkvMigration` flag, the storage rollback state and the storage performance overlay. The AsyncStorage to MMKV migration still runs from the Portfolio screen
+
+- [#24519](https://github.com/LedgerHQ/ledger-live/pull/24519) [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - List perps withdrawals in the swap history, anchored to their payout transaction, and show their payout and Hyperliquid fees on the swap status screen. Keep unknown fields in the perps withdraw payload so the SwapKit submit gets it back unmodified
+
+- [#24735](https://github.com/LedgerHQ/ledger-live/pull/24735) [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Add the `OPT_EDIT` operation type and `BridgeApi.tokenOptParentRow`. XRP tokens: opt-in and opt-out history rows keep their type, a pending edit is an `OPT_EDIT`, IOU device review fields, IOU amounts from fiat or the 25/50/75 % buttons rounded to 16 significant digits, error texts, send errors on the LWD amount step, and LWD Token settings messages for a limit of 0 and a limit below the balance
+
 ## 6.131.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @features/flow-contacts-edit-address
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24651](https://github.com/LedgerHQ/ledger-live/pull/24651) [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the contact address ENS notice visible while an edited ENS name is revalidated, so the modal no longer blinks on each keystroke.
+
+### Patch Changes
+
+- Updated dependencies [[`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3)]:
+  - @features/platform-contacts@0.13.0-next.0
+
 ## 0.7.1
 
 ### Patch Changes

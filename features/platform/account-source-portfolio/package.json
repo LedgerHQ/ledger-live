@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-source-portfolio",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "The Portfolio service as an account data source for the balances, balance histories and operations of EVM, Bitcoin, Cardano, Tron, Tezos, Sui, Stellar and Canton accounts, reconciling its registrations with the local accounts",
   "main": "src/index.ts",

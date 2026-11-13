@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#24827](https://github.com/LedgerHQ/ledger-live/pull/24827) [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match devices with one findMatchingDevice for connectDevice and the known devices, a BLE match by id before a match by name
+
+- [#24833](https://github.com/LedgerHQ/ledger-live/pull/24833) [`c0ec0d4`](https://github.com/LedgerHQ/ledger-live/commit/c0ec0d42b96eb3f7885d594403161435a702c973) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the connectNewDevice mobile dependencies and let a parent render ConnectNewDeviceView
+
+### Patch Changes
+
+- Updated dependencies [[`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021), [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697)]:
+  - @ledgerhq/live-dmk-shared@0.40.0-next.0
+  - @shared/env@0.14.0-next.0
+
 ## 0.34.0
 
 ### Minor Changes

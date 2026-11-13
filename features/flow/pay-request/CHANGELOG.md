@@ -1,5 +1,18 @@
 # @features/flow-pay-request
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#24798](https://github.com/LedgerHQ/ledger-live/pull/24798) [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the receive verify hint state from `@features/flow-pay-request/state` to `@features/flow-receive/state`
+
+- [#24791](https://github.com/LedgerHQ/ledger-live/pull/24791) [`1ec8aa8`](https://github.com/LedgerHQ/ledger-live/commit/1ec8aa83633767ab20807fea41b76025fd000222) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform modules without their `.web` or `.native` suffix
+
+### Patch Changes
+
+- Updated dependencies [[`ddb122e`](https://github.com/LedgerHQ/ledger-live/commit/ddb122ebdebc96b839bc56665175c2c882a12de2)]:
+  - @shared/ui-qr-code@0.6.0-next.0
+
 ## 0.10.0
 
 ### Minor Changes

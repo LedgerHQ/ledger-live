@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-concordium@1.8.1-next.0
+
 ## 0.9.6
 
 ### Patch Changes

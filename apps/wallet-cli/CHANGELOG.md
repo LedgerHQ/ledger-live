@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-cli
 
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#24776](https://github.com/LedgerHQ/ledger-live/pull/24776) [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953) Thanks [@gre-ledger](https://github.com/gre-ledger)! - `addressFromKey` returns a branded `Address`; wallet-cli requires it wherever an address is expected, so a descriptor key can no longer be used as one
+
 ## 3.4.0
 
 ### Minor Changes

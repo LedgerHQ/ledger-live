@@ -1,5 +1,15 @@
 # @features/flow-account-detail-analytics-notice
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24667](https://github.com/LedgerHQ/ledger-live/pull/24667) [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7) Thanks [@deepyjr](https://github.com/deepyjr)! - Show and force in the account-detail DevTools tool whether the install is eligible for the Analytics banner
+
+- [#24593](https://github.com/LedgerHQ/ledger-live/pull/24593) [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a) Thanks [@deepyjr](https://github.com/deepyjr)! - Gate the Account Detail Analytics banner with the `accountDetail` `analyticsBanner` param, send it to analytics and keep the banner until it is closed
+
+- [#24597](https://github.com/LedgerHQ/ledger-live/pull/24597) [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Account Detail Analytics banner only to installations that had completed onboarding with a device before the rollout, through a one-time persisted eligibility snapshot
+
 ## 0.3.0
 
 ### Minor Changes

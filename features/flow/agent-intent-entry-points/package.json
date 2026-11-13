@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-agent-intent-entry-points",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Agent Intent entry points: flag reading, analytics attributes and the Manage your agents card",
   "main": "src/index.ts",

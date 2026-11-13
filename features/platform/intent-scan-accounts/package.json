@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-intent-scan-accounts",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Cross-platform Device Intent that scans accounts on the open device session",
   "main": "src/index.ts",

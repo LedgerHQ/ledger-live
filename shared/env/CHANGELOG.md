@@ -1,5 +1,11 @@
 # @shared/env
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#24711](https://github.com/LedgerHQ/ledger-live/pull/24711) [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927) Thanks [@LL782](https://github.com/LL782)! - Remove the `llmMmkvMigration` flag, the storage rollback state and the storage performance overlay. The AsyncStorage to MMKV migration still runs from the Portfolio screen
+
 ## 0.13.0
 
 ### Minor Changes

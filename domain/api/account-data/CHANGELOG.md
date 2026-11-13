@@ -1,5 +1,21 @@
 # @domain/api-account-data
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24606](https://github.com/LedgerHQ/ledger-live/pull/24606) [`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Cancel a router read with an abort `signal`; the source sees `target.signal`, aborted once every coalesced read for that account has
+
+- [#24611](https://github.com/LedgerHQ/ledger-live/pull/24611) [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `router.sourcesFor(descriptor)`: the ranked sources serving the descriptor's purpose, for other source capabilities to route on
+
+- [#24745](https://github.com/LedgerHQ/ledger-live/pull/24745) [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Account descriptor: one `key` field for both types; Canton, Concordium, Internet Computer, TON, Aptos and Stacks accounts are keyed on their public key, their address computed through the coin module loaders; a legacy account left out is mirrored again once it converts
+
+### Patch Changes
+
+- Updated dependencies [[`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163)]:
+  - @domain/entity-account-descriptor@0.6.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

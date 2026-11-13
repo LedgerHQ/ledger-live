@@ -1,5 +1,19 @@
 # @ledgerhq/coin-near
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#24804](https://github.com/LedgerHQ/ledger-live/pull/24804) [`4fbc858`](https://github.com/LedgerHQ/ledger-live/commit/4fbc8581a7a81d629e850a37063c147507a29235) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Do not retry nearblocks requests refused with HTTP 429
+
+- [#24736](https://github.com/LedgerHQ/ledger-live/pull/24736) [`a40069c`](https://github.com/LedgerHQ/ledger-live/commit/a40069cca2db75a7cd2fcc11beed61977f53c655) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Stop preloading the NEAR validator list, so a refused validator fetch no longer fails NEAR account syncs; the staking screens and the stake banner load it when shown. Cache the validator list for 6 hours and read the gas price from the node first.
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+
 ## 1.6.0
 
 ### Minor Changes

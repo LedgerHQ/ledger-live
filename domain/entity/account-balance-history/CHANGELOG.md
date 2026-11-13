@@ -1,5 +1,18 @@
 # @domain/entity-account-balance-history
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24747](https://github.com/LedgerHQ/ledger-live/pull/24747) [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value each balance history point in the fiat a query asks for, at its date, with the `countervalue` query
+
+### Patch Changes
+
+- Updated dependencies [[`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163)]:
+  - @domain/entity-account-descriptor@0.6.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+  - @domain/entity-account-balance@0.3.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

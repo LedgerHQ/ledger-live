@@ -1,5 +1,12 @@
 # @features/flow-analytics-consent
 
+## 0.2.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99)]:
+  - @features/platform-feature-flags@0.13.0-next.0
+
 ## 0.2.13
 
 ### Patch Changes

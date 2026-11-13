@@ -1,5 +1,22 @@
 # @features/flow-contacts-detail
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24652](https://github.com/LedgerHQ/ledger-live/pull/24652) [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc) Thanks [@deepyjr](https://github.com/deepyjr)! - Truncate long contact address action labels on one line with an ellipsis and show the full label on hover, so translations such as Russian no longer overflow the buttons.
+
+### Patch Changes
+
+- Updated dependencies [[`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b), [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`ddb122e`](https://github.com/LedgerHQ/ledger-live/commit/ddb122ebdebc96b839bc56665175c2c882a12de2)]:
+  - @shared/clipboard@0.2.0-next.0
+  - @features/platform-contacts@0.13.0-next.0
+  - @features/flow-contacts-edit-address@0.8.0-next.0
+  - @shared/ui-qr-code@0.6.0-next.0
+  - @features/flow-contacts-delete-address@0.4.2-next.0
+  - @features/flow-contacts-delete-contact@0.5.2-next.0
+  - @features/flow-contacts-edit-contact@0.9.2-next.0
+
 ## 0.4.0
 
 ### Minor Changes

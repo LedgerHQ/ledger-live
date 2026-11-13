@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-receive",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "DevTools page for the receive kind: read it per account, see its address and how the device confirms it",
   "main": "src/index.ts",

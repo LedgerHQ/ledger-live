@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 12.3.0-next.0
+
+### Minor Changes
+
+- [#24542](https://github.com/LedgerHQ/ledger-live/pull/24542) [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252) Thanks [@may01](https://github.com/may01)! - Use the new Bitcoin protocol for the Hashi and Hashi Test apps derived from the Bitcoin app
+
 ## 12.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-device-os-update",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Device OS update entity: resolved OS updates and backup presence",
   "main": "src/index.ts",

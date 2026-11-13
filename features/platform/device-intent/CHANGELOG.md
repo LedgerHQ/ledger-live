@@ -1,5 +1,11 @@
 # @features/platform-device-intent
 
+## 5.5.0-next.0
+
+### Minor Changes
+
+- [#24768](https://github.com/LedgerHQ/ledger-live/pull/24768) [`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add `acceptedDeviceModelIdsExcluding` to refuse device models a flow cannot run on
+
 ## 5.4.0
 
 ### Minor Changes

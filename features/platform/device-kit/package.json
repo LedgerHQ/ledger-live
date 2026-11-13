@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-device-kit",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Device Management Kit integration shared by the device features",
   "main": "src/index.ts",

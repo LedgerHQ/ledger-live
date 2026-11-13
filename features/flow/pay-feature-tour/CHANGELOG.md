@@ -1,5 +1,16 @@
 # @features/flow-pay-feature-tour
 
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#24645](https://github.com/LedgerHQ/ledger-live/pull/24645) [`83d314d`](https://github.com/LedgerHQ/ledger-live/commit/83d314dcad271f5c7bdc2cf04eea1a37d94f3b5a) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the feature tour view and pay tab flag by their platform-neutral specifiers in tests and drop the package's platform suffix waiver.
+
+### Patch Changes
+
+- Updated dependencies [[`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99)]:
+  - @features/platform-feature-flags@0.13.0-next.0
+
 ## 0.9.0
 
 ### Minor Changes

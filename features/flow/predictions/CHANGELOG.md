@@ -1,5 +1,17 @@
 # @features/flow-predictions
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24473](https://github.com/LedgerHQ/ledger-live/pull/24473) [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions DevTool on desktop and mobile to inspect and reset what the Predictions onboarding stored, and preview the trading wallet setup. `@domain/entity-predictions` gets `resetPredictionsIntroSeen`
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378)]:
+  - @shared/ui-info-state@0.8.0-next.0
+  - @features/platform-predictions@0.4.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@devtools/predictions",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "DevTools panel to inspect and reset the Predictions onboarding and preview its trading wallet setup",
   "main": "src/index.ts",

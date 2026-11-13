@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.47.0-next.0
+
+### Minor Changes
+
+- [#24805](https://github.com/LedgerHQ/ledger-live/pull/24805) [`67678ff`](https://github.com/LedgerHQ/ledger-live/commit/67678ffe12a079fefc5d65489da11e59267284ad) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add an `account-detail` feature flag preset to run the e2e on demand with the accountDetail flag on, the account page object follows the flag
+
+- [#24483](https://github.com/LedgerHQ/ledger-live/pull/24483) [`c5b9753`](https://github.com/LedgerHQ/ledger-live/commit/c5b9753c0f384cfe385cf8add602226401da960f) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Wait for a Speculinho slot when it is at capacity instead of failing the test, send the origin of each acquire, and release a desktop Speculos that never became ready
+
 ## 0.46.0
 
 ### Minor Changes
