@@ -30,9 +30,10 @@ export function EnableProtectionSheet({
   const { t } = useTranslation();
 
   const isBiometrics = variant === "biometrics";
-  const biometricsType = biometricsKind
-    ? t(biometricsTypeKey(biometricsKind), { defaultValue: biometricsKind })
-    : "";
+  const biometricsTypeLabelKey = biometricsKind ? biometricsTypeKey(biometricsKind) : undefined;
+  const biometricsType = biometricsTypeLabelKey
+    ? t(biometricsTypeLabelKey)
+    : (biometricsKind ?? "");
 
   const title = isBiometrics
     ? t("appLock.enableProtection.biometrics.title", { biometricsType })

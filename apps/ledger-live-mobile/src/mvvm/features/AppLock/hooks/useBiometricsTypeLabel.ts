@@ -4,5 +4,7 @@ import { useTranslation } from "~/context/Locale";
 export function useBiometricsTypeLabel(kind: BiometricsKind | undefined): string {
   const { t } = useTranslation();
 
-  return kind ? t(biometricsTypeKey(kind), { defaultValue: kind }) : "";
+  const labelKey = kind ? biometricsTypeKey(kind) : undefined;
+
+  return labelKey ? t(labelKey) : (kind ?? "");
 }
