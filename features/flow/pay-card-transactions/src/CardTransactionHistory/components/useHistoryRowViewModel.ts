@@ -10,6 +10,7 @@ import {
   formatMerchantName,
   formatSignedAmount,
 } from "../../CardTransactions/components/ListItem/formatCardTransactionItem";
+import { statusLabelKey } from "../../copy/cardTransactionLabelKeys";
 import type { HistoryRowViewProps } from "./types";
 
 const UNSUCCESSFUL_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
@@ -33,7 +34,7 @@ export function useHistoryRowViewModel(
   return useMemo(() => {
     const timeLabel = formatCardTransactionTime(transaction.dateTime);
     const isUnsuccessful = UNSUCCESSFUL_STATUSES.has(transaction.status);
-    const statusLabel = t(`payTab.cardTransactions.detail.statusValues.${transaction.status}`);
+    const statusLabel = t(statusLabelKey(transaction.status));
     const fundingSources = transaction.fundingSources;
     const fundingAll = formatFundingSources(fundingSources, formatters?.amount);
     const hasMultipleFundingSources = (fundingSources?.length ?? 0) > 1;

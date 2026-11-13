@@ -1,26 +1,25 @@
 import React, { type ReactNode } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
+import type { StatusMessageState } from "../types";
 
 const SPOT_TEXT_OVERLAP_STYLE = { marginTop: -56 } as const;
 
 export type StatusMessageProps = Readonly<{
   spot: ReactNode;
-  titleKey: string;
-  descriptionKey: string;
+  state: StatusMessageState;
   testId: string;
-  action?: Readonly<{ labelKey: string; testId: string; onClick: () => void }>;
-  disclaimerKey?: string;
+  action?: Readonly<{ testId: string; onClick: () => void }>;
+  hasDisclaimer?: boolean;
   overlapSpot?: boolean;
 }>;
 
 export function StatusMessage({
   spot,
-  titleKey,
-  descriptionKey,
+  state,
   testId,
   action,
-  disclaimerKey,
+  hasDisclaimer = false,
   overlapSpot = false,
 }: StatusMessageProps) {
   const { t } = useTranslation();
@@ -32,16 +31,20 @@ export function StatusMessage({
         className="relative flex flex-col items-center gap-4 text-center"
         style={overlapSpot ? SPOT_TEXT_OVERLAP_STYLE : undefined}
       >
-        <span className="heading-4-semi-bold text-base">{t(titleKey)}</span>
-        <span className="body-2 text-muted">{t(descriptionKey)}</span>
+        <span className="heading-4-semi-bold text-base">
+          {t(`payTab.cardTransactions.history.${state}.title`)}
+        </span>
+        <span className="body-2 text-muted">
+          {t(`payTab.cardTransactions.history.${state}.description`)}
+        </span>
       </div>
       {action ? (
         <Button appearance="base" onClick={action.onClick} data-testid={action.testId}>
-          {t(action.labelKey)}
+          {t("payTab.cardTransactions.history.goToPay")}
         </Button>
       ) : null}
-      {disclaimerKey ? (
-        <span className="body-3 text-center text-muted">{t(disclaimerKey)}</span>
+      {hasDisclaimer ? (
+        <span className="body-3 text-center text-muted">{t("payTab.disclaimer")}</span>
       ) : null}
     </div>
   );

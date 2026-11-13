@@ -1,26 +1,25 @@
 import React, { type ReactNode } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
+import type { StatusMessageState } from "../types";
 
 const SPOT_TEXT_OVERLAP = -56;
 
 export type StatusMessageProps = Readonly<{
   spot: ReactNode;
-  titleKey: string;
-  descriptionKey: string;
+  state: StatusMessageState;
   testId: string;
-  action?: Readonly<{ labelKey: string; testId: string; onClick: () => void }>;
-  disclaimerKey?: string;
+  action?: Readonly<{ testId: string; onClick: () => void }>;
+  hasDisclaimer?: boolean;
   overlapSpot?: boolean;
 }>;
 
 export function StatusMessage({
   spot,
-  titleKey,
-  descriptionKey,
+  state,
   testId,
   action,
-  disclaimerKey,
+  hasDisclaimer = false,
   overlapSpot = false,
 }: StatusMessageProps) {
   const { t } = useTranslation();
@@ -42,20 +41,20 @@ export function StatusMessage({
         style={overlapSpot ? { marginTop: SPOT_TEXT_OVERLAP } : undefined}
       >
         <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {t(titleKey)}
+          {t(`payTab.cardTransactions.history.${state}.title`)}
         </Text>
         <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-          {t(descriptionKey)}
+          {t(`payTab.cardTransactions.history.${state}.description`)}
         </Text>
       </Box>
       {action ? (
         <Button appearance="base" onPress={action.onClick} testID={action.testId}>
-          {t(action.labelKey)}
+          {t("payTab.cardTransactions.history.goToPay")}
         </Button>
       ) : null}
-      {disclaimerKey ? (
+      {hasDisclaimer ? (
         <Text typography="body3" lx={{ color: "muted", textAlign: "center" }}>
-          {t(disclaimerKey)}
+          {t("payTab.disclaimer")}
         </Text>
       ) : null}
     </Box>
