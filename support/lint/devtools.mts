@@ -11,6 +11,7 @@ export default defineConfig({
     "suffix-imports/no-platform-suffix": "error",
     // Devtools talk to the developer through the console; that is the product, not a slip.
     "eslint/no-console": "off",
+    "redux-slices/selectors-in-slice": "off",
   },
   overrides: [
     {

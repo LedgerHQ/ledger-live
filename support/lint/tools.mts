@@ -11,5 +11,6 @@ export default defineConfig({
   rules: {
     // These are build and release scripts. The console is their output, not a slip.
     "eslint/no-console": "off",
+    "redux-slices/selectors-in-slice": "off",
   },
 });
