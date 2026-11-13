@@ -373,13 +373,28 @@ describe("buildSignRawOperation", () => {
       expect(mockSignTransaction.mock.calls[0][2]).toBeUndefined();
     });
 
-    it("sends no descriptor when several coin types are moved", async () => {
+    it("loads the descriptor of the one CAL token when an unlisted coin type is also moved", async () => {
+      coinTypes = ["0xabc::other::OTHER", HBTC_SHORT];
+      findTokenByAddressInCurrency.mockImplementation(async (address: string) =>
+        address === toLongStructTag(HBTC_SHORT) ? HBTC_TOKEN : undefined,
+      );
+
+      await run(await hashiDepositTransaction().toJSON());
+
+      expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
+      expect(mockSignTransaction.mock.calls[0][2]).toMatchObject({
+        tokenId: HBTC_TOKEN.id,
+        tokenAddress: HBTC_SHORT,
+      });
+    });
+
+    it("sends no descriptor when several moved coin types are in the CAL", async () => {
       coinTypes = [HBTC_SHORT, "0xabc::other::OTHER"];
       findTokenByAddressInCurrency.mockResolvedValue(HBTC_TOKEN);
 
       await run(await hashiDepositTransaction().toJSON());
 
-      expect(findTokenByAddressInCurrency).not.toHaveBeenCalled();
+      expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
       expect(mockSignTransaction.mock.calls[0][2]).toBeUndefined();
     });
   });

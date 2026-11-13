@@ -49,26 +49,33 @@ function prepareSender(tx: SuiTransaction, account: SuiAccount, broadcast: boole
 }
 
 /**
- * Clear signing can load one token descriptor per signature, so a transaction moving exactly one
- * non-SUI coin type that the crypto-assets list knows gets a resolution; otherwise none, and the
- * device decides.
+ * Clear signing can load one token descriptor per signature, so a transaction gets a resolution when
+ * exactly one of the non-SUI coin types it moves is in the crypto-assets list; otherwise none, and
+ * the device decides.
  */
 async function resolveToken(
   account: SuiAccount,
   coinTypes: string[],
   deviceModelId: DeviceModelId | undefined,
 ): Promise<Resolution | undefined> {
-  if (coinTypes.length !== 1) return undefined;
-  const [coinType] = coinTypes;
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-    toLongStructTag(coinType),
-    account.currency.id,
-  );
-  if (!token) return undefined;
+  const store = getCryptoAssetsStore();
+  const known = (
+    await Promise.all(
+      coinTypes.map(async coinType => {
+        const token = await store.findTokenByAddressInCurrency(
+          toLongStructTag(coinType),
+          account.currency.id,
+        );
+        return token ? [{ coinType, tokenId: token.id }] : [];
+      }),
+    )
+  ).flat();
+  if (known.length !== 1) return undefined;
+  const [{ coinType, tokenId }] = known;
   return {
     deviceModelId,
     certificateSignatureKind: undefined,
-    tokenId: token.id,
+    tokenId,
     tokenAddress: coinType,
   };
 }
