@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { byId, byIdAndText } from "@e2e/helpers/elements/native";
+import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const OPERATION_ROW_ID = "operations-list-item";
@@ -22,7 +22,7 @@ export default class AccountDetailPage {
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
   private readonly operationRowWithType = (operationType: string) =>
-    byIdAndText({ id: OPERATION_ROW_ID, text: operationType });
+    byIdWithDescendantText({ id: OPERATION_ROW_ID, text: operationType });
 
   @Step("Wait for account detail screen and verify account name {{{0}}}")
   async waitAndVerifyAccountName(accountName: string) {
@@ -51,9 +51,8 @@ export default class AccountDetailPage {
     return await this.navBarAddress.getLabel();
   }
 
-  @Step("Expect account receive and transfer actions")
-  async expectReceiveAndTransferActionsVisible() {
-    await this.heroAction("receive").expectVisible();
+  @Step("Expect account transfer action to be visible")
+  async expectTransferActionVisible() {
     await this.heroAction("transfer").expectVisible();
   }
 

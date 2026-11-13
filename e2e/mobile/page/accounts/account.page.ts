@@ -208,7 +208,7 @@ export default class AccountPage {
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.expectReceiveAndTransferActionsVisible();
+      await this.accountDetail.expectTransferActionVisible();
       return;
     }
     await this.receiveButton.scrollTo(this.accountScreenScrollView);
