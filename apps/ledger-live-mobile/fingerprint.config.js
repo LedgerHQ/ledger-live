@@ -63,10 +63,11 @@ const patchedStart = lockfileLines.indexOf("patchedDependencies:");
 const patchedEnd = lockfileLines.findIndex(
   (line, i) => i > patchedStart && line !== "" && !line.startsWith(" "),
 );
-const appliedPatches =
-  patchedStart === -1
-    ? ""
-    : lockfileLines.slice(patchedStart, patchedEnd === -1 ? undefined : patchedEnd).join("\n");
+const patchedLines =
+  patchedEnd === -1
+    ? lockfileLines.slice(patchedStart)
+    : lockfileLines.slice(patchedStart, patchedEnd);
+const appliedPatches = patchedStart === -1 ? "" : patchedLines.join("\n");
 
 // The Android test APK is built against node_modules/detox, which is not autolinked.
 const detoxVersion = require(require.resolve("detox/package.json", { paths: [__dirname] })).version;
