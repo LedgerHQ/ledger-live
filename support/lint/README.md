@@ -29,9 +29,9 @@ rule that several packages of a layer need belongs in that layer's preset.
 | --- | --- | --- |
 | `base` | `domain/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on, with waivers; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
-| `features-platform` | `features/platform/` | Platform-suffix rule on, with waivers |
-| `shared` | `shared/` | Platform-suffix rule on, with waivers |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
+| `features-platform` | `features/platform/` | Platform-suffix rule on |
+| `shared` | `shared/` | Platform-suffix rule on |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
@@ -118,7 +118,7 @@ import { Lottie } from "@shared/lottie/web"; // ✓
 Third-party entry points (`styled-components/native`, `@react-navigation/native`) and `@support/*`
 subpaths (`@support/jest-devtools/native`) are never reported.
 
-Each preset waives its layer's remaining violators through `platformSuffixWaivers` in
-`src/suffix-imports.js`, which states the waiver policy.
+The rule has no waiver: every preset that turns it on reports it as an error in every package of
+its layer.
 
 Run the rule's tests with `nx run @support/lint:test`.
