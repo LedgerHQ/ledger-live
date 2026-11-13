@@ -1098,7 +1098,15 @@ describe("a nano firmware update held back until setup", () => {
 
   async function enterHeldBackSetup(
     script: Partial<OnboardingDmkScript> = {},
-    { deviceModelId = DeviceModelId.NANO_X, seVersion = "2.3.0" } = {},
+    {
+      deviceModelId = DeviceModelId.NANO_X,
+      seVersion = "2.3.0",
+      leaveOnboarding,
+    }: {
+      deviceModelId?: DeviceModelId;
+      seVersion?: string;
+      leaveOnboarding?: (reason: string, context: DeviceOnboardingContext) => void;
+    } = {},
   ) {
     return start(
       {
@@ -1107,7 +1115,7 @@ describe("a nano firmware update held back until setup", () => {
         firmwareCheck: [updateAvailable],
         ...script,
       },
-      { deviceModelId },
+      { deviceModelId, leaveOnboarding },
     );
   }
 
@@ -1234,17 +1242,97 @@ describe("a nano firmware update held back until setup", () => {
     expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
   });
 
-  it("keeps the held-back update across a session change during setup", async () => {
-    const { actor } = await enterHeldBackSetup();
+  it("re-attests a session that changed during setup, then offers the held-back update", async () => {
+    const { actor, fake } = await enterHeldBackSetup({
+      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable],
+    });
 
     actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
     await settle();
-    expect(actor.getSnapshot().context.firmware).toBeNull();
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expect(actor.getSnapshot().matches({ checks: "firmwareUpdateOffered" })).toBe(true);
+    expect(actor.getSnapshot().context.updateAfterSetup).toBe(true);
+  });
+
+  it("does not offer the update twice once the re-attested session answered it", async () => {
+    const { actor } = await enterHeldBackSetup({
+      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable],
+    });
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "USER_DECLINE" });
+    await settle();
+    await leaveSuccessScreen(actor);
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("re-attests the device when the session changes during the post-setup firmware check", async () => {
+    const { actor, fake } = await enterHeldBackSetup({
+      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable, upToDate],
+    });
+    actor.send(readyAndSeeded);
+    await settle();
+    expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
+
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expect(actor.getSnapshot().context.sessionId).toBe("session-2");
+    expect(actor.getSnapshot().matches("postSetupFirmware")).toBe(false);
+  });
+
+  it("marks the device seeded before checking its firmware after setup", async () => {
+    const { actor } = await enterHeldBackSetup();
 
     actor.send(readyAndSeeded);
     await settle();
 
-    expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
+    expect(actor.getSnapshot().context).toMatchObject({
+      isOnboarded: true,
+      onboardedOnEntry: false,
+    });
+  });
+
+  it("leaves as a seeded device when it cannot be read after the post-setup update", async () => {
+    const leaveOnboarding = jest.fn();
+    const { actor } = await enterHeldBackSetup(
+      {
+        osVersion: [
+          os({ ...unseeded, seVersion: "2.3.0" }),
+          { throws: new Error("transport failed") },
+        ],
+      },
+      { leaveOnboarding },
+    );
+    actor.send(readyAndSeeded);
+    await settle();
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
+    await settleRetries();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+    expect(leaveOnboarding).toHaveBeenCalledWith(
+      "legacyFallback",
+      expect.objectContaining({ isOnboarded: true }),
+    );
   });
 
   it("re-attests the device after the update, then ends the setup without offering it again", async () => {

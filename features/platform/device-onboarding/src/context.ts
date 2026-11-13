@@ -131,6 +131,14 @@ export const contextActions = {
   rememberFirmwareDeclined: update({ firmware: { kind: "declined" } }),
   rememberFirmwareSkipped: update({ firmware: { kind: "skipped" } }),
   deferUpdate: update({ firmware: { kind: "deferred" }, updateAfterSetup: true }),
+  // The ready step reports the seed, but only DEVICE_STATE_READ set `isOnboarded` so far.
+  rememberOnboarded: update(({ event }) => {
+    if (event.type !== "STEP_CHANGED") {
+      return {};
+    }
+
+    return { isOnboarded: event.state.isOnboarded };
+  }),
   // Cleared as the update starts: the device comes back seeded and must not be offered it again.
   forgetUpdateAfterSetup: update({ updateAfterSetup: false }),
   rememberAvailableUpdate: update(({ event }) => {

@@ -116,6 +116,7 @@ export const deviceOnboardingMachine = setup({
         deviceModelId: context.deviceModelId,
         isOnboarded: context.isOnboarded,
       }),
+    sessionAttested: ({ context }) => currentVerdict(context)?.isGenuine === true,
     // A firmware check already run on the seeded device, after a reconnection, answered it.
     updateDeferred: ({ context }) =>
       context.updateAfterSetup &&
@@ -379,9 +380,16 @@ export const deviceOnboardingMachine = setup({
             actions: ["rememberSetupStep", "forgetSetupProgress"],
           },
           {
-            guard: and(["deviceIsReady", "updateDeferred"]),
+            guard: and(["deviceIsReady", "updateDeferred", "sessionAttested"]),
             target: "#deviceOnboarding.postSetupFirmware",
-            actions: "rememberSetupStep",
+            actions: ["rememberSetupStep", "rememberOnboarded"],
+          },
+          // The session changed during setup: its genuine check runs first, then the seeded checks
+          // offer the update.
+          {
+            guard: and(["deviceIsReady", "updateDeferred"]),
+            target: "#deviceOnboarding.readingState",
+            actions: ["rememberSetupStep", "rememberOnboarded"],
           },
           {
             guard: "deviceIsReady",
@@ -420,6 +428,10 @@ export const deviceOnboardingMachine = setup({
     // The update an unseeded Nano held back until it was seeded.
     postSetupFirmware: {
       initial: "firmwareCheck",
+      // A check on the old session would answer for the new one: attest the new one first.
+      on: {
+        SESSION_CHANGED: { target: "#deviceOnboarding.readingState", actions: "startNewSession" },
+      },
       states: {
         firmwareCheck: {
           invoke: {
