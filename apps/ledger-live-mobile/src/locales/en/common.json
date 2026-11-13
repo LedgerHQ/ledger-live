@@ -2657,6 +2657,10 @@
         "title": "Device genuine and up-to-date",
         "genuineTitle": "Device genuine",
         "cta": "Continue"
+      },
+      "network": {
+        "title": "Network error",
+        "description": "Check your internet connection. Contact Ledger Support if the problem continues."
       }
     },
     "quitConfirmation": {

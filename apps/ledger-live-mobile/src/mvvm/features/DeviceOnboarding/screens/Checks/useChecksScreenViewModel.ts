@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { Platform } from "react-native";
+import { useCallback, useState } from "react";
+import { Linking, Platform } from "react-native";
+import { track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { useTranslation } from "~/context/Locale";
+import { useLocale, useTranslation } from "~/context/Locale";
+import { urls } from "~/utils/urls";
+import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
 import type {
   ChecksScreenProps,
   ChecksScreenState,
@@ -17,8 +20,7 @@ import {
 
 type AllowSheetProps = Readonly<{
   deviceModelId: Device["modelId"];
-  deviceName?: string;
-  title: string;
+  deviceName: string;
   isOpen: boolean;
   onClose?: () => void;
 }>;
@@ -48,12 +50,15 @@ type ErrorDrawerProps = Readonly<{
   onRetry: () => void;
   onCancel: () => void;
   onClose: () => void;
+  onContactSupport: () => void;
+  onGoToSettings: () => void;
 }>;
 
 type NotGenuineDrawerProps = Readonly<{
   isOpen: boolean;
   productName: string;
   onClose: () => void;
+  onContactSupport: () => void;
 }>;
 
 export type ChecksIllustration = "loading" | "scan" | "success";
@@ -94,6 +99,27 @@ type LayoutProps = Omit<
   | "errorDrawer"
   | "notGenuineDrawer"
 >;
+
+const recoverableErrorPage = "Error: unknown error";
+
+const providerErrorPage = "Error: Device OS version not recognized";
+const providerSettingsPage = "Error: Ledger Stax OS version not recognized";
+
+function trackRecoverableButton(button: string, page = recoverableErrorPage) {
+  track("button_clicked", { button, page });
+}
+
+function openUrl(url: string) {
+  const pending = Linking.openURL(url);
+  if (pending) pending.catch(() => undefined);
+}
+
+function contactSupportWebviewUrl(locale: string): string {
+  if (locale in urls.contactSupportWebview) {
+    return urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview];
+  }
+  return urls.contactSupportWebview.en;
+}
 
 function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorKind | null {
   if (!error || error.kind === "notGenuine") return null;
@@ -137,14 +163,9 @@ function dismissRecoverableError(
 function dismissNotGenuine(
   suspendSheets: boolean,
   isNotGenuine: boolean,
-  onCloseNotGenuine: ChecksScreenProps["onCloseNotGenuine"],
   onQuit: ChecksScreenProps["onQuit"],
 ) {
   if (suspendSheets || !isNotGenuine) return;
-  if (onCloseNotGenuine) {
-    onCloseNotGenuine();
-    return;
-  }
   onQuit?.();
 }
 
@@ -214,14 +235,12 @@ function allowSheetFor(
   state: ChecksScreenState,
   allowClosed: boolean,
   suspendSheets: boolean,
-  title: string,
   close: () => void,
 ): AllowSheetProps | undefined {
   if (state !== "awaitingAllow" || allowClosed) return undefined;
   return {
     deviceModelId: device.modelId,
-    deviceName: device.deviceName ?? undefined,
-    title,
+    deviceName: device.deviceName ?? "",
     isOpen: !suspendSheets,
     onClose: suspendSheets ? undefined : close,
   };
@@ -236,7 +255,6 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
-  onCloseNotGenuine,
   onContinue,
   onQuit,
   onAcceptUpdate,
@@ -244,15 +262,47 @@ export function useChecksScreenViewModel({
   suspendSheets = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
-  const layout = checksLayout(state, update !== null);
+  const { locale } = useLocale();
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const { openSupport, openExperimentalSettings } = useInitializerActions({
+    id: device.deviceId,
+    name: device.deviceName ?? "",
+    modelId: device.modelId,
+    productName,
+    wired: device.wired,
+  });
   const recoverableKind = recoverableKindOf(error);
   const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
   if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
     setRetainedRecoverableKind(recoverableKind);
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
+  const retry = useCallback(() => {
+    trackRecoverableButton("Try again");
+    onRetry();
+  }, [onRetry]);
+  const cancel = useCallback(() => {
+    trackRecoverableButton(
+      "Cancel",
+      errorDrawerKind === "provider" ? providerErrorPage : recoverableErrorPage,
+    );
+    onQuit?.();
+  }, [errorDrawerKind, onQuit]);
+  const onContactSupport = useCallback(() => {
+    trackRecoverableButton("Contact Ledger Support");
+    openSupport();
+  }, [openSupport]);
+  const onContactNotGenuineSupport = useCallback(() => {
+    track("button_clicked", { button: "Contacting support about non genuine device" });
+    openUrl(contactSupportWebviewUrl(locale));
+  }, [locale]);
+  const onGoToSettings = useCallback(() => {
+    trackRecoverableButton("Go to settings", providerSettingsPage);
+    openExperimentalSettings();
+  }, [openExperimentalSettings]);
+  const layout = checksLayout(state, update !== null);
   const [allowClosed, setAllowClosed] = useState(false);
-  if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
+  if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
 
@@ -262,7 +312,6 @@ export function useChecksScreenViewModel({
   const offerDismissed = dismissedOfferKey === updateKey;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
   const offerOpen = offered && !offerDismissed && !isUnsupportedUpdateOpen && !suspendSheets;
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
   const acceptUpdate = () => {
     if (!eligibility) return;
@@ -282,17 +331,10 @@ export function useChecksScreenViewModel({
     )[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
     onQuit: offered && !offerDismissed ? undefined : onQuit,
-    allowSheet: allowSheetFor(
-      device,
-      state,
-      allowClosed,
-      suspendSheets,
-      t("earlySecurityCheck.allowManagerDrawer.title"),
-      () => {
-        setAllowClosed(true);
-        onQuit?.();
-      },
-    ),
+    allowSheet: allowSheetFor(device, state, allowClosed, suspendSheets, () => {
+      setAllowClosed(true);
+      onQuit?.();
+    }),
     firmwareUpdate: {
       isOpen: offerOpen,
       firmwareVersion: update?.available ?? "",
@@ -315,15 +357,17 @@ export function useChecksScreenViewModel({
       isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
       kind: errorDrawerKind,
       productName,
-      onRetry,
-      onCancel: () => onQuit?.(),
+      onRetry: retry,
+      onCancel: cancel,
       onClose: () => dismissRecoverableError(suspendSheets, recoverableKind, onCloseSheet),
+      onContactSupport,
+      onGoToSettings,
     },
     notGenuineDrawer: {
       isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
       productName,
-      onClose: () =>
-        dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onCloseNotGenuine, onQuit),
+      onClose: () => dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onQuit),
+      onContactSupport: onContactNotGenuineSupport,
     },
   };
 }

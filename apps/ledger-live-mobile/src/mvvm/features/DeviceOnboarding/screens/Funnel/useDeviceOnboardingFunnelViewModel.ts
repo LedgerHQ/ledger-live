@@ -17,6 +17,7 @@ import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
@@ -70,7 +71,7 @@ type LeaveActions = {
   allowLeave: boolean;
   state: string | null;
   status: string;
-  unseeded: boolean;
+  confirmsQuit: boolean;
   leaveFirmwareReconnect: () => void;
   closeFirmwareHandover: () => void;
   requestQuit: () => void;
@@ -89,7 +90,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   }
   if (actions.status === "running" && actions.state) {
     if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
-    else if (actions.unseeded) actions.requestQuit();
+    else if (actions.confirmsQuit) actions.requestQuit();
     else actions.quitMachine();
     return;
   }
@@ -98,7 +99,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
 
 function quitOrLeaveSession(actions: LeaveActions) {
   if (actions.status === "running" && actions.state) {
-    if (actions.unseeded) {
+    if (actions.confirmsQuit) {
       actions.requestQuit();
       return;
     }
@@ -122,6 +123,8 @@ type ScreenActions = {
   screenState: ChecksScreenProps["state"] | null;
   phase: ReturnType<typeof phaseOf>;
   unseeded: boolean;
+  confirmsQuit: boolean;
+  suspendSheets: boolean;
   quitConfirmation: QuitConfirmationModel | null;
   copy: ScreenCopy;
   retry: () => void;
@@ -235,15 +238,19 @@ function nextHeldState(
     : { state: machineState, afterLock: false };
 }
 
+function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
+  return context?.verdictMatchesSession === true;
+}
+
 function quitConfirmationWhileUnlocked(
-  unseeded: boolean,
+  confirmsQuit: boolean,
   open: boolean,
   holdingLockedScreen: boolean,
   stepName: string,
   onContinue: () => void,
   onLeave: () => void,
 ): QuitConfirmationModel | null {
-  if (!unseeded) return null;
+  if (!confirmsQuit) return null;
   return {
     isOpen: open && !holdingLockedScreen,
     stepName,
@@ -252,7 +259,7 @@ function quitConfirmationWhileUnlocked(
   };
 }
 
-function underUnlockSheet(
+function withUnlockSheet(
   built: DeviceOnboardingFunnelModel,
   holdingLockedScreen: boolean,
   locked: boolean,
@@ -262,17 +269,11 @@ function underUnlockSheet(
   const unlockSheet = locked
     ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
     : null;
-  if (built.status === "checks") {
-    return { ...built, checks: { ...built.checks, suspendSheets: true }, unlockSheet };
-  }
+  if (built.status === "checks") return { ...built, unlockSheet };
   if (built.status === "unseededIntroKaraoke") {
     return {
       ...built,
-      unseededIntroKaraoke: {
-        ...built.unseededIntroKaraoke,
-        suspendSheets: true,
-        onFinish: () => false,
-      },
+      unseededIntroKaraoke: { ...built.unseededIntroKaraoke, onFinish: () => false },
       unlockSheet,
     };
   }
@@ -290,7 +291,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       status: "unseededIntroKaraoke",
       unseededIntroKaraoke: {
         deviceModelId: device.modelId,
-        suspendSheets: actions.quitConfirmation?.isOpen === true,
+        suspendSheets: actions.suspendSheets,
         onFinish: () => actions.send({ type: "CONTINUE" }),
         onClose: actions.requestQuit,
       },
@@ -305,6 +306,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     unlockSheet: null,
     checks: {
       device,
+      suspendSheets: actions.suspendSheets,
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -315,7 +317,6 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       onStart: () => actions.send({ type: startEvent }),
       onRetry: () => actions.send({ type: "RETRY" }),
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
-      onCloseNotGenuine: actions.unseeded ? () => actions.send({ type: "CLOSE" }) : undefined,
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => actions.send({ type: "USER_DECLINE" }),
       onContinue:
@@ -416,14 +417,18 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "QUIT" });
   }, [send]);
 
-  const unseeded = onboarding.context?.onboardedOnEntry === false;
+  const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
+  const unseeded = onboardedOnEntry === false;
+  const confirmsQuit =
+    unseeded || (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
+  if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
 
   const quitOrLeave = useCallback(() => {
     quitOrLeaveSession({
       allowLeave: allowLeave.current,
       state: onboarding.state,
       status: onboarding.status,
-      unseeded,
+      confirmsQuit,
       leaveFirmwareReconnect,
       closeFirmwareHandover,
       requestQuit,
@@ -438,7 +443,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onboarding.status,
     quitMachine,
     requestQuit,
-    unseeded,
+    confirmsQuit,
   ]);
 
   const retry = useCallback(() => {
@@ -457,7 +462,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           allowLeave: allowLeave.current,
           state: onboarding.state,
           status: onboarding.status,
-          unseeded,
+          confirmsQuit,
           leaveFirmwareReconnect,
           closeFirmwareHandover,
           requestQuit,
@@ -474,7 +479,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onboarding.status,
       quitMachine,
       requestQuit,
-      unseeded,
+      confirmsQuit,
     ],
   );
 
@@ -482,7 +487,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const locked = machineState === "deviceLocked";
   const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
   const shownState = holdingLockedScreen ? (heldState?.state ?? machineState) : machineState;
-  const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const phase = phaseOf(shownState, onboardedOnEntry);
   const screenState = checksScreenForPhase(
     phase,
@@ -493,14 +497,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
   const quitConfirmation = quitConfirmationWhileUnlocked(
-    unseeded,
+    confirmsQuit,
     quitConfirmationOpen,
     holdingLockedScreen,
-    lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
+    onboardedOnEntry === true
+      ? t("deviceOnboarding.quitConfirmation.steps.checks")
+      : lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
     continueSetup,
     leaveWithoutSaving,
   );
-  const leaveFromHeader = unseeded ? requestQuit : quitMachine;
+  const leaveFromHeader = confirmsQuit ? requestQuit : quitMachine;
 
   const screen = {
     state: shownState,
@@ -509,6 +515,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     screenState,
     phase,
     unseeded,
+    confirmsQuit,
+    suspendSheets: holdingLockedScreen || quitConfirmation?.isOpen === true,
     quitConfirmation,
     copy: {
       failedTitle: t("deviceOnboarding.connection.failed"),
@@ -538,7 +546,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return underUnlockSheet(built, holdingLockedScreen, locked, device);
+  return withUnlockSheet(built, holdingLockedScreen, locked, device);
 }
 
 function readString(value: unknown): string | null {

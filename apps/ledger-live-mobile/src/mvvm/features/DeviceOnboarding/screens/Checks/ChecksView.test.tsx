@@ -1,7 +1,11 @@
 import React from "react";
-import { Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { render, screen, within } from "@tests/test-renderer";
+import { NavigatorName, ScreenName } from "~/const";
+
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type {
   ChecksScreenProps,
@@ -9,6 +13,21 @@ import type {
   GenuineErrorKind,
 } from "LLM/features/DeviceOnboarding/types";
 import { ChecksScreen } from "./index";
+
+const mockNavigate = jest.fn();
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ navigate: mockNavigate }),
+}));
+
+const errorSheetIds: Record<GenuineErrorKind, string> = {
+  declined: checksTestIds.declinedSheet,
+  network: checksTestIds.networkSheet,
+  unknown: checksTestIds.unknownSheet,
+  provider: checksTestIds.providerSheet,
+  notGenuine: checksTestIds.notGenuineSheet,
+};
 
 jest.mock("~/components/QueuedDrawer", () => {
   const { Pressable, Text, View } = jest.requireActual("react-native");
@@ -171,7 +190,7 @@ describe("ChecksView", () => {
     expect(
       screen.getByText("Let's confirm that your Ledger device is genuine and up-to-date."),
     ).toBeVisible();
-    expect(screen.queryByText("Tap on “Allow” to start Ledger Genuine Check")).toBeNull();
+    expect(screen.queryByText("Continue on your Ledger Stax")).toBeNull();
 
     await user.press(screen.getByRole("button", { name: "Check my device" }));
 
@@ -202,7 +221,10 @@ describe("ChecksView", () => {
     const { user, onCloseSheet, onQuit, onStart } = renderChecks("awaitingAllow");
 
     expect(screen.getByText("Check your device")).toBeVisible();
-    expect(screen.getByText("Tap on “Allow” to start Ledger Genuine Check")).toBeVisible();
+    expect(screen.getByText("Continue on your Ledger Stax")).toBeVisible();
+    expect(
+      screen.getByText(/Follow the instructions displayed on your Secure.Screen/),
+    ).toBeVisible();
     expect(screen.getByText("Lily's Stax")).toBeVisible();
     expect(screen.queryByTestId(`${checksTestIds.allowSheet}-dismiss`)).toBeNull();
 
@@ -211,6 +233,32 @@ describe("ChecksView", () => {
     expect(onCloseSheet).not.toHaveBeenCalled();
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
+  });
+
+  it("should hide the allow sheet when it is closed and leaving is not confirmed", async () => {
+    const { user, onQuit } = renderChecks("awaitingAllow");
+
+    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId(checksTestIds.allowSheet)).toBeNull();
+  });
+
+  it("should bring the allow sheet back when a confirmation suspends it", async () => {
+    const { user, rerender } = renderChecks("awaitingAllow");
+
+    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
+    rerender({ suspendSheets: true });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+
+    rerender({ suspendSheets: false });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: true,
+    });
   });
 
   it("should keep continue waiting while the success screen cannot be left yet", () => {
@@ -487,14 +535,44 @@ describe("ChecksView", () => {
     expect(onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it.each<{ kind: GenuineErrorKind; title: string; showsSettings: boolean }>([
-    { kind: "declined", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "network", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "unknown", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "provider", title: "Initiate Ledger Genuine Check again", showsSettings: true },
+  it.each<{
+    kind: GenuineErrorKind;
+    title: string;
+    showsSettings: boolean;
+    cancelLabel: string;
+    sheetId: string;
+  }>([
+    {
+      kind: "declined",
+      title: "Operation rejected on Ledger device",
+      showsSettings: false,
+      cancelLabel: "Close",
+      sheetId: checksTestIds.declinedSheet,
+    },
+    {
+      kind: "network",
+      title: "Network error",
+      showsSettings: false,
+      cancelLabel: "Close",
+      sheetId: checksTestIds.networkSheet,
+    },
+    {
+      kind: "unknown",
+      title: "Ledger Genuine Check error",
+      showsSettings: false,
+      cancelLabel: "Cancel set up",
+      sheetId: checksTestIds.unknownSheet,
+    },
+    {
+      kind: "provider",
+      title: "Initiate Ledger Genuine Check again",
+      showsSettings: true,
+      cancelLabel: "Cancel set up",
+      sheetId: checksTestIds.providerSheet,
+    },
   ])(
     "should leave onboarding when cancelling the $kind drawer",
-    async ({ kind, title, showsSettings }) => {
+    async ({ kind, title, showsSettings, cancelLabel, sheetId }) => {
       const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
         error: { kind },
       });
@@ -506,26 +584,204 @@ describe("ChecksView", () => {
       expect(screen.getByText(title)).toBeVisible();
       expect(screen.queryByText("Go to settings") !== null).toBe(showsSettings);
 
-      await user.press(screen.getByText("Cancel set up"));
+      await user.press(
+        within(screen.getByTestId(sheetId)).getByRole("button", { name: cancelLabel }),
+      );
 
       expect(onQuit).toHaveBeenCalledTimes(1);
       expect(onCloseSheet).not.toHaveBeenCalled();
     },
   );
 
-  it("should retry the genuine check from the error drawer", async () => {
+  it("should open experimental settings from the provider sheet", async () => {
+    mockNavigate.mockClear();
+    jest.mocked(track).mockClear();
+    jest.mocked(TrackScreen).mockClear();
+    const { user } = renderChecks("checking", { error: { kind: "provider" } });
+
+    expect(screen.getByText("Initiate Ledger Genuine Check again")).toBeVisible();
+    expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Error: Device OS version not recognized",
+        type: "drawer",
+        refreshSource: false,
+      }),
+      undefined,
+    );
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.providerSheet)).getByRole("button", {
+        name: "Go to settings",
+      }),
+    );
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Go to settings",
+      page: "Error: Ledger Stax OS version not recognized",
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.Settings,
+      params: { screen: ScreenName.ExperimentalSettings },
+    });
+  });
+
+  it("should track the cancel of the provider sheet on its own page", async () => {
+    jest.mocked(track).mockClear();
+    const { user } = renderChecks("checking", { error: { kind: "provider" } });
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.providerSheet)).getByRole("button", {
+        name: "Cancel set up",
+      }),
+    );
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Cancel",
+      page: "Error: Device OS version not recognized",
+    });
+  });
+
+  it("should retry the genuine check from the unknown sheet", async () => {
+    const { user, onRetry, onQuit } = renderChecks("checking", { error: { kind: "unknown" } });
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
+        name: "Try again",
+      }),
+    );
+
+    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it.each<GenuineErrorKind>(["declined", "network", "unknown", "provider"])(
+    "should tell the machine the %s sheet was closed without a button",
+    async kind => {
+      const { user, onCloseSheet, onQuit } = renderChecks("checking", { error: { kind } });
+
+      await user.press(screen.getByTestId(`${errorSheetIds[kind]}-dismiss`));
+
+      expect(onCloseSheet).toHaveBeenCalledTimes(1);
+      expect(onQuit).not.toHaveBeenCalled();
+    },
+  );
+
+  it("should not offer a retry on the network sheet", () => {
+    renderChecks("checking", { error: { kind: "network" } });
+
+    expect(
+      within(screen.getByTestId(checksTestIds.networkSheet)).queryByRole("button", {
+        name: "Retry",
+      }),
+    ).toBeNull();
+  });
+
+  it("should track the declined sheet the way the genuine check drawer did", async () => {
+    jest.mocked(track).mockClear();
+    jest.mocked(TrackScreen).mockClear();
+    const { user, onRetry } = renderChecks("checking", { error: { kind: "declined" } });
+
+    expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Error: unknown error",
+        type: "drawer",
+        refreshSource: false,
+      }),
+      undefined,
+    );
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).getByRole("button", {
+        name: "Retry",
+      }),
+    );
+    await user.press(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).getByRole("button", {
+        name: "Close",
+      }),
+    );
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Try again",
+      page: "Error: unknown error",
+    });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Cancel",
+      page: "Error: unknown error",
+    });
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("should track network support separately from a non genuine device", async () => {
+    jest.mocked(track).mockClear();
+    const { user } = renderChecks("checking", { error: { kind: "network" } });
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.networkSheet)).getByRole("button", {
+        name: "Contact Ledger support",
+      }),
+    );
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Contact Ledger Support",
+      page: "Error: unknown error",
+    });
+    expect(track).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "Contacting support about non genuine device" }),
+    );
+  });
+
+  it("should track support from the non genuine sheet on its own", async () => {
+    jest.mocked(track).mockClear();
+    jest.mocked(TrackScreen).mockClear();
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+    const { user } = renderChecks("checking", { error: { kind: "notGenuine" } });
+
+    expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: "Device not genuine",
+        type: "drawer",
+        refreshSource: false,
+      }),
+      undefined,
+    );
+
+    await user.press(
+      within(screen.getByTestId(checksTestIds.notGenuineSheet)).getByRole("button", {
+        name: "Contact Ledger Support",
+      }),
+    );
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Contacting support about non genuine device",
+    });
+    expect(Linking.openURL).toHaveBeenCalledWith(
+      "https://support.ledger.com/article/4423020306705-zd",
+    );
+  });
+
+  it("should retry the genuine check from the declined sheet", async () => {
     const { user, onRetry, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
-      error: { kind: "network" },
+      error: { kind: "declined" },
     });
     onRetry.mockImplementation(() => {
       rerender({ error: null });
     });
 
-    await user.press(screen.getByText("Try again"));
+    await user.press(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).getByRole("button", {
+        name: "Retry",
+      }),
+    );
 
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onCloseSheet).not.toHaveBeenCalled();
-    expect(screen.queryByText("Try again")).toBeNull();
+    expect(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).queryByRole("button", {
+        name: "Retry",
+      }),
+    ).toBeNull();
     expect(onQuit).not.toHaveBeenCalled();
   });
 
@@ -538,23 +794,9 @@ describe("ChecksView", () => {
     expect(screen.getByText("This Ledger Stax failed the Ledger Genuine Check")).toBeVisible();
     expect(screen.queryByText("Go to settings")).toBeNull();
 
-    await user.press(screen.getByTestId("modal-close-button"));
+    await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-dismiss`));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(onCloseSheet).not.toHaveBeenCalled();
-  });
-
-  it("should stay on the check when the non genuine close is separate", async () => {
-    const onCloseNotGenuine = jest.fn();
-    const { user, onQuit, onCloseSheet } = renderChecks("checking", {
-      error: { kind: "notGenuine" },
-      onCloseNotGenuine,
-    });
-
-    await user.press(screen.getByTestId("modal-close-button"));
-
-    expect(onCloseNotGenuine).toHaveBeenCalledTimes(1);
-    expect(onQuit).not.toHaveBeenCalled();
     expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });
