@@ -4,17 +4,32 @@ import {
   apiMethodKeys,
   instrumentApi,
   isNotSupportedStub,
+  type ApiMethodKey,
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
   emitCoinModuleCall,
   hasCoinModuleCallObservers,
   type CoinModuleCallEvent,
+  type DEFAULT_METHOD_TIERS,
 } from "@features/platform-coin-observability";
 import {
   classifyTransactionError,
   sanitizeErrorMessage,
   toError,
 } from "@ledgerhq/transaction-observability";
+
+/**
+ * Compile-time guard: the default transmission tiers must name exactly the methods of the
+ * contract. A framework bump that adds a method to `CoinModuleApi` breaks this alias until the
+ * method gets a tier in `DEFAULT_METHOD_TIERS`; a method removed from the contract does too, until
+ * its stale entry goes.
+ */
+type AssertNever<T extends never> = T;
+type ClassifiedMethod = keyof typeof DEFAULT_METHOD_TIERS;
+export type DefaultMethodTiersMatchTheContract = [
+  AssertNever<Exclude<ApiMethodKey, ClassifiedMethod>>,
+  AssertNever<Exclude<ClassifiedMethod, ApiMethodKey>>,
+];
 
 const now = (): number => globalThis.performance?.now() ?? Date.now();
 

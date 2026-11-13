@@ -45,17 +45,14 @@ describe("shouldTransmitCoinModuleCall", () => {
     );
   });
 
-  it.each([
-    "craftTransaction",
-    "craftRawTransaction",
-    "craftTransactionData",
-    "combine",
-    "broadcast",
-  ])("always transmits a transaction-path call (%s)", method => {
-    expect(shouldTransmitCoinModuleCall(event(method, "success"), { random: never })).toBe(true);
-  });
+  it.each(["craftTransaction", "craftRawTransaction", "combine", "broadcast"])(
+    "always transmits a transaction-tier call (%s)",
+    method => {
+      expect(shouldTransmitCoinModuleCall(event(method, "success"), { random: never })).toBe(true);
+    },
+  );
 
-  it.each(["estimateFees", "validateIntent"])(
+  it.each(["craftTransactionData", "estimateFees", "validateIntent"])(
     "samples a preparation call (%s) with its own rate",
     method => {
       const sampled = (random: () => number, preparationSampleRate: number) =>
@@ -80,6 +77,13 @@ describe("shouldTransmitCoinModuleCall", () => {
     );
   });
 
+  it("transmits nothing of an off method, failures included", () => {
+    const methodTiers = { getBalance: "off" } as const;
+    expect(shouldTransmitCoinModuleCall(event("getBalance", "failure"), { methodTiers })).toBe(
+      false,
+    );
+  });
+
   it("samples not-supported calls like successes", () => {
     expect(
       shouldTransmitCoinModuleCall(event("getStakes", "not_supported"), { random: never }),
@@ -101,9 +105,19 @@ describe("sampleRateFor", () => {
 
   it("gives each tier its rate", () => {
     expect(sampleRateFor("broadcast", rates)).toBe(1);
-    expect(sampleRateFor("craftTransactionData", rates)).toBe(1);
+    expect(sampleRateFor("craftTransactionData", rates)).toBe(0.1);
     expect(sampleRateFor("estimateFees", rates)).toBe(0.1);
     expect(sampleRateFor("getBalance", rates)).toBe(0.05);
+  });
+
+  it("follows the flag's methodTiers over the defaults", () => {
+    const methodTiers = { craftTransactionData: "off", getBalance: "transaction" } as const;
+    expect(sampleRateFor("craftTransactionData", { ...rates, methodTiers })).toBe(0);
+    expect(sampleRateFor("getBalance", { ...rates, methodTiers })).toBe(1);
+  });
+
+  it("puts an unknown method in the sync tier", () => {
+    expect(sampleRateFor("someFutureMethod", rates)).toBe(0.05);
   });
 });
 
@@ -117,12 +131,21 @@ describe("sampling attributes", () => {
 
   it("sends a sampled success with its tier's rate", () => {
     const transmit = createCoinModuleCallTransmitter(() => config, { random: () => 0.01 });
-    expect(transmit(event("getBalance", "success"))).toEqual({ sampleRate: 0.05, inSample: true });
+    expect(transmit(event("getBalance", "success"))).toEqual({
+      tier: "sync",
+      sampleRate: 0.05,
+      inSample: true,
+    });
     expect(transmit(event("estimateFees", "success"))).toEqual({
+      tier: "preparation",
       sampleRate: 0.1,
       inSample: true,
     });
-    expect(transmit(event("broadcast", "success"))).toEqual({ sampleRate: 1, inSample: true });
+    expect(transmit(event("broadcast", "success"))).toEqual({
+      tier: "transaction",
+      sampleRate: 1,
+      inSample: true,
+    });
   });
 
   it("marks a failure from a session outside the sample", () => {
@@ -130,8 +153,16 @@ describe("sampling attributes", () => {
       random: () => 0.5,
       clock: () => 0,
     });
-    expect(transmit(failure("getBalance"))).toEqual({ sampleRate: 0.05, inSample: false });
-    expect(transmit(failure("broadcast"))).toEqual({ sampleRate: 1, inSample: true });
+    expect(transmit(failure("getBalance"))).toEqual({
+      tier: "sync",
+      sampleRate: 0.05,
+      inSample: false,
+    });
+    expect(transmit(failure("broadcast"))).toEqual({
+      tier: "transaction",
+      sampleRate: 1,
+      inSample: true,
+    });
   });
 
   it("returns null for a dropped call", () => {
@@ -254,6 +285,35 @@ describe("createCoinModuleCallTransmitter", () => {
     });
     expect(transmit({ ...failure("getBalance"), status: "success" })).toBe(false);
     expect(transmit(failure("getBalance"))).toBe(true);
+  });
+
+  it("sends nothing of an off method, failures included", () => {
+    const transmit = transmitter(
+      () => ({ ...config, methodTiers: { craftTransactionData: "off" } }),
+      { random: () => 0, clock: () => 0 },
+    );
+    expect(transmit({ ...failure("craftTransactionData"), status: "success" })).toBe(false);
+    expect(transmit(failure("craftTransactionData"))).toBe(false);
+  });
+
+  it("applies a reclassification by the flag at once", () => {
+    let methodTiers: Record<string, "transaction" | "preparation"> = {};
+    const transmit = transmitter(() => ({ ...config, preparationSampleRate: 0.1, methodTiers }), {
+      random: () => 0.5,
+    });
+    const success = { ...failure("craftTransactionData"), status: "success" as const };
+
+    expect(transmit(success)).toBe(false);
+    methodTiers = { craftTransactionData: "transaction" };
+    expect(transmit(success)).toBe(true);
+  });
+
+  it("drops a method moved to the sync tier when the sync path is excluded", () => {
+    const transmit = transmitter(
+      () => ({ ...config, includeSyncPath: false, methodTiers: { broadcast: "sync" } }),
+      { random: () => 0, clock: () => 0 },
+    );
+    expect(transmit(failure("broadcast"))).toBe(false);
   });
 
   it("reads the config on every event, so a flag change applies at once", () => {
