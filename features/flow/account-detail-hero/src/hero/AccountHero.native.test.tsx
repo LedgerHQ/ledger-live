@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { I18nWrapper } from "../__tests__/i18nWrapper";
-import { AccountHero } from "./AccountHero.native";
+import { AccountHero } from "./AccountHero";
 import type { AccountHeroAvailability, AccountHeroPort } from "./types";
 
 const TEST_ID = "hero";
