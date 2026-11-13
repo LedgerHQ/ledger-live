@@ -14,6 +14,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "../bridge";
 import {
   accountToWalletAPIAccount,
+  currencyToWalletAPICurrency,
   getWalletAPITransactionSignFlowInfos,
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
@@ -471,5 +472,24 @@ describe("accountToWalletAPIAccount", () => {
       ready: false,
       reason: "unrevealed",
     });
+  });
+});
+
+describe("currencyToWalletAPICurrency", () => {
+  it.each([[["stocks"]], [[]]])("returns token categories %j", categories => {
+    expect(currencyToWalletAPICurrency(mockTokenCurrency({ categories }))).toHaveProperty(
+      "categories",
+      categories,
+    );
+  });
+
+  it("omits categories on a token without categories", () => {
+    expect(currencyToWalletAPICurrency(mockTokenCurrency())).not.toHaveProperty("categories");
+  });
+
+  it("omits categories on a crypto currency", () => {
+    expect(currencyToWalletAPICurrency(getCryptoCurrencyById("ethereum"))).not.toHaveProperty(
+      "categories",
+    );
   });
 });

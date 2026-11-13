@@ -16,6 +16,7 @@ export const ApiTokenResponseSchema = z.object({
   /** Only present for Cardano native assets, used to reconstruct the full assetId. */
   token_identifier: z.string().optional(),
   live_signature: z.string().optional(),
+  categories: z.array(z.string()).optional(),
 });
 
 /** Schema for the CAL `/v1/tokens` response: an array of tokens. */

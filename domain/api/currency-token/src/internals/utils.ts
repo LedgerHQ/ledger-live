@@ -35,6 +35,7 @@ export function transformApiTokenToTokenCurrency(
     delisted: token.delisted,
     ...(token.token_identifier !== undefined ? { tokenIdentifier: token.token_identifier } : {}),
     ...(token.live_signature !== undefined ? { ledgerSignature: token.live_signature } : {}),
+    ...(token.categories !== undefined ? { categories: token.categories } : {}),
   });
 }
 
@@ -50,17 +51,5 @@ export function validateAndTransformSingleTokenResponse(
   if (!apiToken) {
     return undefined;
   }
-  return convertApiToken({
-    id: apiToken.id,
-    contractAddress: apiToken.contract_address,
-    name: apiToken.name,
-    ticker: apiToken.ticker,
-    units: apiToken.units,
-    standard: apiToken.standard,
-    delisted: apiToken.delisted,
-    ...(apiToken.token_identifier !== undefined
-      ? { tokenIdentifier: apiToken.token_identifier }
-      : {}),
-    ...(apiToken.live_signature !== undefined ? { ledgerSignature: apiToken.live_signature } : {}),
-  });
+  return transformApiTokenToTokenCurrency(apiToken);
 }

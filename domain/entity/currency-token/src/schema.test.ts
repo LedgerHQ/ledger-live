@@ -41,12 +41,19 @@ describe("TokenCurrencySchema", () => {
       disableCountervalue: true,
       ledgerSignature: "3045022100abc",
       tokenIdentifier: "USDC-c76f1f",
+      categories: ["stocks"],
     });
     const result = TokenCurrencySchema.parse(token);
     expect(result.delisted).toBe(true);
     expect(result.disableCountervalue).toBe(true);
     expect(result.ledgerSignature).toBe("3045022100abc");
     expect(result.tokenIdentifier).toBe("USDC-c76f1f");
+    expect(result.categories).toEqual(["stocks"]);
+  });
+
+  it("keeps an empty categories array", () => {
+    const result = TokenCurrencySchema.parse(mockTokenCurrency({ categories: [] }));
+    expect(result.categories).toEqual([]);
   });
 
   it("optional fields default to undefined", () => {
@@ -55,6 +62,7 @@ describe("TokenCurrencySchema", () => {
     expect(result.disableCountervalue).toBeUndefined();
     expect(result.ledgerSignature).toBeUndefined();
     expect(result.tokenIdentifier).toBeUndefined();
+    expect(result.categories).toBeUndefined();
   });
 
   it("parentCurrencyId is a string FK, not an embedded object", () => {

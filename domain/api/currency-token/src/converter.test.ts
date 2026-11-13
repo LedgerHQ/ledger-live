@@ -60,6 +60,22 @@ describe("convertApiToken", () => {
     });
   });
 
+  describe("categories handling", () => {
+    it.each([[["stocks"]], [[]]])("keeps categories %j", categories => {
+      const result = convertApiToken(buildApiTokenData({ categories }));
+
+      expect(result?.categories).toEqual(categories);
+    });
+
+    it.each([undefined, null])("omits categories when the value is %p", categories => {
+      const result = convertApiToken(
+        buildApiTokenData({ categories: categories as string[] | undefined }),
+      );
+
+      expect(result).not.toHaveProperty("categories");
+    });
+  });
+
   describe("disableCountervalue handling", () => {
     it("should set disableCountervalue for testnet currencies", () => {
       const result = convertApiToken(
