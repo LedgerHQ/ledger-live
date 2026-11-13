@@ -23,7 +23,6 @@ export type AgentIntentMockOverrides = {
   cloudSync?: Partial<Record<(typeof CLOUD_SYNC_KEYS)[number], AnyFn>>;
   tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
   swapQuote?: Partial<Record<(typeof SWAP_QUOTE_KEYS)[number], AnyFn>>;
-  confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
   // Replaces the Linux Secret Service probe; defaults to one that always passes.
   keychainProbe?: () => unknown;
   detach?: Partial<Record<(typeof DETACH_KEYS)[number], AnyFn>>;
@@ -72,8 +71,6 @@ const TOKEN_LOOKUP_KEYS = [
 ] as const;
 
 const SWAP_QUOTE_KEYS = ["fetchAgentSwapQuote"] as const;
-
-const CONFIRM_PROMPT_KEYS = ["canAskToConfirm", "askToConfirm"] as const;
 
 const DETACH_KEYS = ["spawnDetached", "readFirstLogJsonLine"] as const;
 
@@ -131,10 +128,6 @@ const swapQuoteMock = await createGatedModuleMock(
   require.resolve("../../../agent-intent/swap-quote"),
   SWAP_QUOTE_KEYS,
 );
-const confirmPromptMock = await createGatedModuleMock(
-  require.resolve("../../../agent-intent/confirm-prompt"),
-  CONFIRM_PROMPT_KEYS,
-);
 const detachMock = await createGatedModuleMock(
   require.resolve("../../../agent-intent/detach"),
   DETACH_KEYS,
@@ -151,7 +144,6 @@ export function activateAgentIntentMocks(overrides: AgentIntentMockOverrides): v
   cloudSyncMock.activate(overrides.cloudSync ?? {});
   tokenLookupMock.activate(overrides.tokenLookup ?? {});
   swapQuoteMock.activate(overrides.swapQuote ?? {});
-  confirmPromptMock.activate(overrides.confirmPrompt ?? {});
   detachMock.activate(overrides.detach ?? {});
   // Not a module mock: the probe is a seam, so the real OS keychain is never queried.
   _setTestKeychainProbe(overrides.keychainProbe ?? (() => []));
@@ -169,7 +161,6 @@ export function deactivateAgentIntentMocks(): void {
     cloudSyncMock,
     tokenLookupMock,
     swapQuoteMock,
-    confirmPromptMock,
     detachMock,
   ]) {
     gated.deactivate();

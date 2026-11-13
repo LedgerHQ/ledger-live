@@ -15,6 +15,8 @@ binary.
 | `symlinks` | Links a directory as a junction on Windows, which needs no symlink rights (`linkDirectory`), and whether this host can create file symlinks (`canSymlinkFiles`: not on Windows without admin rights or Developer Mode) |
 | `constants`, `cal-fixtures`, `eth-sync-routes` | Fixed addresses, descriptors, token info and sync routes |
 | `auth-routes`, `swap-quote-routes` | Keycloak + LKRP auth routes, and swap API routes recording each quote's `authorization` header |
+| `agent-intent-service` | The Agent Intent service and its sign-in as routes, answering each endpoint what the test scripted and recording requests and verified sign-ins (`FakeAgentIntentService`), an intent as the service returns it (`intentRecord`), and a state dir with an enrolled profile whose agent key sits in an `InMemoryKeychain` (`makeEnrolledProfile`) |
+| `fake-confirm-prompt` | Yes/no prompt fake for `_setTestConfirmPrompt` that records each question |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
 | `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
