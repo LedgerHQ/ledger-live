@@ -27,6 +27,7 @@
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-account-receive": "workspace:*",
+    "@domain/entity-account-status": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@noble/hashes": "catalog:"

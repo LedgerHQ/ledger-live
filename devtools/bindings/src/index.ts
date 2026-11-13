@@ -17,6 +17,7 @@ export { useDeviceOnboardingToolProps } from "./useDeviceOnboardingToolProps";
 export type { UseDeviceOnboardingToolPropsInput } from "./useDeviceOnboardingToolProps";
 export { useAccountBalanceToolProps } from "./useAccountBalanceToolProps";
 export { useAccountReceiveToolProps } from "./useAccountReceiveToolProps";
+export { useAccountStatusToolProps } from "./useAccountStatusToolProps";
 export { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 export { useAccountBalanceHistoryToolProps } from "./useAccountBalanceHistoryToolProps";
 export { useAccountDescriptorToolProps } from "./useAccountDescriptorToolProps";
