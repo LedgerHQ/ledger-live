@@ -23,6 +23,7 @@ export type {
   DeviceDiscoverySourceEvent,
 } from "./deviceConnectivity/discoveryService/sources/DeviceDiscoverySource";
 export * from "./deviceConnectivity/discoveryService/sources/listenToTransportDevices";
+export { connectedDevices$ } from "./deviceConnectivity/connectedDevices";
 export * from "./transport/SpeculosTransportSession";
 export { ConnectDeviceUIStateTypes } from "./connectDevice/types";
 export type {
