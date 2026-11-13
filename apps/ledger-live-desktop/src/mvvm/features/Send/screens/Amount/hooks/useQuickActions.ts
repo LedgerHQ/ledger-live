@@ -101,7 +101,7 @@ export function useQuickActions({
       };
     });
 
-    const canSendMax = sendFeatures.canSendMax(accountCurrency);
+    const canSendMax = sendFeatures.canSendMax(amountCurrency);
     const isMaxActive = transaction.useAllAmount ?? false;
     actions.push({
       id: "max",
@@ -126,7 +126,6 @@ export function useQuickActions({
     transaction.amount,
     transaction.useAllAmount,
     tolerance,
-    accountCurrency,
     amountCurrency,
   ]);
 

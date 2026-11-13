@@ -1,27 +1,17 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type BigNumber from "bignumber.js";
-import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
-import type {
-  Transaction,
-  XrpTokenAccount,
-  XrpTokenResources,
-} from "@ledgerhq/live-common/families/xrp/types";
+import { heldXrpTokenIds } from "@ledgerhq/live-common/families/xrp/tokenHolding";
+import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 
-function getXrpResources(account: AccountLike): XrpTokenResources | undefined {
-  if (account.type !== "TokenAccount") return undefined;
-
-  return (account as XrpTokenAccount).xrpResources;
-}
-
-// A removed token keeps its token account, for its history, but loses its resources
 export function findHeldTokenAccount(account: Account, token: TokenCurrency) {
-  return (account.subAccounts ?? []).find(subAccount => {
-    return subAccount.token.id === token.id && !!getXrpResources(subAccount);
-  });
+  if (!heldXrpTokenIds(account).has(token.id)) return undefined;
+
+  return account.subAccounts?.find(subAccount => subAccount.token.id === token.id);
 }
 
 export function navigateToAddToken(

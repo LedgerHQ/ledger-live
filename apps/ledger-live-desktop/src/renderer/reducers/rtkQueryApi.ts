@@ -2,6 +2,7 @@ import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
+import { xrpApi } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import {
   calService,
   cardService,
@@ -51,6 +52,7 @@ const APIs = {
   [aleoApi.reducerPath]: aleoApi,
   [marketApi.reducerPath]: marketApi,
   [hederaApi.reducerPath]: hederaApi,
+  [xrpApi.reducerPath]: xrpApi,
 };
 
 /*

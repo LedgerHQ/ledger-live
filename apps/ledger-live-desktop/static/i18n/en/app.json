@@ -4320,7 +4320,7 @@
         "token": {
           "title": "Token",
           "selectLabel": "Choose a token",
-          "allAdded": "You've already added all available tokens to this account.",
+          "empty": "No token is available to add to this account.",
           "loadError": "The token list couldn't load.",
           "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
         },
@@ -4333,7 +4333,11 @@
         "review": {
           "title": "Review",
           "token": "Token",
-          "issuer": "Issuer"
+          "issuer": "Issuer",
+          "issuerFee": "Issuer fee",
+          "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
+          "issuerFeeUnavailable": "Not available",
+          "receive": "Receive"
         },
         "connectDevice": {
           "title": "Device"
@@ -8170,6 +8174,30 @@
     "XrpReserveIncrease": {
       "title": "{{amount}} will be locked on your account while this token is added.",
       "description": "You'll get it back when you remove the token."
+    },
+    "XrpAccountNotActivated": {
+      "title": "Your account isn't activated yet",
+      "description": "Receive at least {{amount}} to activate it and add this token. This covers the account activation and the XRP locked for the token."
+    },
+    "XrpTrustLimitTooHigh": {
+      "title": "The limit is above the maximum",
+      "description": "Use Max to set the highest limit."
+    },
+    "XrpTrustSetUnchanged": {
+      "title": "These settings are already in place",
+      "description": "Change the limit or rippling to update this token."
+    },
+    "XrpRecipientNotActivated": {
+      "title": "This account isn't activated and can't receive tokens."
+    },
+    "XrpRecipientTokenNotAdded": {
+      "title": "This recipient can't receive this token yet. Ask them to add it first."
+    },
+    "XrpRecipientLimitTooLow": {
+      "title": "This recipient can only receive up to {{maxAmount}} of this token."
+    },
+    "XrpSendToIssuer": {
+      "title": "You're sending this token to its issuer. These tokens will be destroyed and won't be credited to anyone."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"

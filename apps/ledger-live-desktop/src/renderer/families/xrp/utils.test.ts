@@ -1,4 +1,4 @@
-import { getXrpResources } from "./utils";
+import { formatIssuerFee, getXrpResources } from "./utils";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
@@ -17,5 +17,16 @@ describe("getXrpResources", () => {
   it("has none for the XRP account or no account", () => {
     expect(getXrpResources(XRP_ACCOUNT)).toBeUndefined();
     expect(getXrpResources(undefined)).toBeUndefined();
+  });
+});
+
+describe("formatIssuerFee", () => {
+  it.each([
+    ["0", "en-US", "0%"],
+    ["0.5", "en-US", "0.5%"],
+    ["0.5", "fr-FR", "0,5\u00a0%"],
+    ["0.0000001", "en-US", "0.0000001%"],
+  ])("formats %s in %s as %s", (fee, locale, formatted) => {
+    expect(formatIssuerFee(fee, locale)).toBe(formatted);
   });
 });
