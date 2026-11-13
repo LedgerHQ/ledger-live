@@ -46,6 +46,10 @@ The Add mode shows the `ConnectNewDevice` views with the UI state of the embedde
 
 Discovery, connection and unknown errors show in a bottom sheet over the list, with the shared error components in [`../DeviceConnection/`](../DeviceConnection/). Closing a discovery or connection error goes back to the list. Closing the unknown error starts the component again, with a new state machine.
 
+## Try it
+
+Settings > Debug > Features > Device Intent Executor > Connect Known Or New Device renders the component with an `isPaused` switch and logs each callback call. With the mock server, it lists the BLE and USB mock devices.
+
 ## Links
 
 - [ADR: Connect Known Or New Device component](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7721091204)
