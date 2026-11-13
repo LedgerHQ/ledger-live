@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
@@ -10,8 +11,9 @@ import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
   XRP_MPT_TOKEN_ACCOUNT,
+  makeXrpTokenAccount,
 } from "./__mocks__/account.mock";
-import { xrpIouToken } from "./__mocks__/currency.mock";
+import { xrpIouToken, xrpRlusdToken } from "./__mocks__/currency.mock";
 
 jest.mock("@ledgerhq/live-common/families/xrp/config", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
@@ -86,5 +88,21 @@ describe("xrp AccountBalanceSummaryFooter", () => {
     renderFooter(iouAccount);
 
     expect(screen.queryByTestId("xrp-edit-token-settings")).toBeNull();
+  });
+
+  it("shows Maximum for the protocol maximum", () => {
+    jest.mocked(useAccountUnit).mockReturnValue(xrpRlusdToken.units[0]);
+
+    renderFooter(makeXrpTokenAccount({ limit: MAX_TRUST_LIMIT }));
+
+    expect(screen.getByText("Maximum")).toBeVisible();
+  });
+
+  it("shows a limit above 16 integer digits in scientific notation", () => {
+    jest.mocked(useAccountUnit).mockReturnValue(xrpRlusdToken.units[0]);
+
+    renderFooter(makeXrpTokenAccount({ limit: MAX_TRUST_LIMIT.shiftedBy(-1) }));
+
+    expect(screen.getByText(/^9\.999999999999999e94 /)).toBeVisible();
   });
 });

@@ -8,7 +8,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
-import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Track } from "@shared/analytics-react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -102,20 +102,21 @@ function toAssetFields(token: TokenCurrency) {
   return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
 }
 
-function getMaxLimit(token: TokenCurrency | undefined): BigNumber | null {
-  return token?.tokenType === "iou" ? getMaxTrustLimitForToken() : null;
-}
-
 export function makeChangeTrustTransaction(
   bridge: AccountBridge<Transaction>,
   account: Account,
   tokenAccount: TokenAccount | undefined,
 ): Transaction {
-  const currentLimit = getXrpResources(tokenAccount)?.limit;
+  const xrpResources = getXrpResources(tokenAccount);
 
+  // An edit resends the line's rippling state: a TrustSet without it blocks rippling
   return bridge.updateTransaction(bridge.createTransaction(account), {
     mode: "changeTrust",
-    ...(tokenAccount && { ...toAssetFields(tokenAccount.token), amount: currentLimit }),
+    ...(tokenAccount && {
+      ...toAssetFields(tokenAccount.token),
+      amount: xrpResources?.limit,
+      noRipple: !xrpResources?.isRippling,
+    }),
   });
 }
 
@@ -129,7 +130,6 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
   const [token, setToken] = useState<TokenCurrency | undefined>(
     tokenAccount?.token ?? params.token,
   );
-  const [isRippling, setIsRippling] = useState(getXrpResources(tokenAccount)?.isRippling ?? false);
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | undefined>();
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -158,7 +158,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
           assetReference: undefined,
           assetOwner: undefined,
           ...toAssetFields(picked),
-          amount: getMaxLimit(picked) ?? new BigNumber(0),
+          amount: picked.tokenType === "iou" ? MAX_TRUST_LIMIT : new BigNumber(0),
         });
       });
     },
@@ -179,6 +179,15 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
 
     if (params.token) applyToken(params.token);
   }, [tokenAccount, params.token, applyToken]);
+
+  const isRippling = transaction?.noRipple === false;
+
+  const onChangeRippling = useCallback(
+    (isChecked: boolean) => {
+      updateTransaction(tx => bridge.updateTransaction(tx, { noRipple: !isChecked }));
+    },
+    [bridge, updateTransaction],
+  );
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -227,10 +236,9 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     action,
     token,
     onChangeToken,
-    maxLimit: getMaxLimit(token),
     isRippling,
     tokenAccount,
-    onChangeRippling: setIsRippling,
+    onChangeRippling,
     onRetry: handleRetry,
     onUpdateTransaction: updateTransaction,
     onTransactionError: handleTransactionError,

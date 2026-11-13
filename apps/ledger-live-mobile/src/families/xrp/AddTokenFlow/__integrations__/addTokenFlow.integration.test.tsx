@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { updateAccount } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -48,10 +48,6 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => {
-  return { getMaxTrustLimitForToken: jest.fn() };
-});
-
 const mockAccountBridge = makeMockAccountBridge();
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
@@ -65,8 +61,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
     getCurrencyBridge: () => resolvedCurrencyBridge,
   };
 });
-
-const MAX_LIMIT = new BigNumber("1000000000");
 
 const OuterStack = createNativeStackNavigator();
 
@@ -154,7 +148,6 @@ describe("XRP AddTokenFlow (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
-    jest.mocked(getMaxTrustLimitForToken).mockReturnValue(MAX_LIMIT);
     mockStatus({});
   });
 
@@ -176,7 +169,8 @@ describe("XRP AddTokenFlow (integration)", () => {
     ).toBeVisible();
     expect(getSignedTransaction()).toMatchObject({
       mode: "changeTrust",
-      amount: MAX_LIMIT,
+      amount: MAX_TRUST_LIMIT,
+      noRipple: true,
       assetReference: xrpIouToken.tokenIdentifier,
       assetOwner: xrpIouToken.contractAddress,
     });
@@ -202,7 +196,7 @@ describe("XRP AddTokenFlow (integration)", () => {
     expect(await screen.findByText(/The maximum permitted trust limit is/)).toBeVisible();
   });
 
-  it("switches Rippling on with its warning, without changing the transaction", async () => {
+  it("signs an IOU opt-in with Rippling on, after its warning", async () => {
     const { user } = renderSettings(xrpIouToken);
 
     expect(await screen.findByTestId("xrp-rippling-switch")).toBeVisible();
@@ -219,7 +213,7 @@ describe("XRP AddTokenFlow (integration)", () => {
     await signFromReview(user);
     await screen.findByText(`${xrpIouToken.name} added`, {}, { timeout: 15000 });
 
-    expect(getSignedTransaction()).not.toHaveProperty("noRipple");
+    expect(getSignedTransaction()).toMatchObject({ noRipple: false });
   });
 
   it("shows no trust limit for an MPT", async () => {
@@ -227,7 +221,6 @@ describe("XRP AddTokenFlow (integration)", () => {
 
     expect(await screen.findByText("Multi purpose token")).toBeVisible();
     expect(screen.queryByText("Trust limit")).toBeNull();
-    expect(getMaxTrustLimitForToken).not.toHaveBeenCalled();
   });
 
   it("blocks a limit of 0 with its own message", async () => {

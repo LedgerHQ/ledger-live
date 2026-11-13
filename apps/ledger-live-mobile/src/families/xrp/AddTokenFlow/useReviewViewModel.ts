@@ -43,6 +43,7 @@ export function useReviewViewModel({ navigation, route }: Props) {
       account,
       token,
       settings?.limit ?? new BigNumber(0),
+      !settings?.isRippling,
     ),
   }));
 
