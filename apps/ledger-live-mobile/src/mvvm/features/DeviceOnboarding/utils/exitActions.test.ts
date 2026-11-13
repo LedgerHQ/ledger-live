@@ -36,6 +36,13 @@ const stax: Device = {
   wired: false,
 };
 
+const nanoS: Device = {
+  deviceId: "nano-s-id",
+  deviceName: "Nano S",
+  modelId: DeviceModelId.nanoS,
+  wired: true,
+};
+
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
@@ -223,6 +230,43 @@ describe("exitActions", () => {
     expect(wentBack).toBe(false);
     expect(dispatched).toEqual([]);
     expect(rootNavigated).toBe(NavigatorName.BaseOnboarding);
+  });
+
+  it("should open the nano pairing step when a seeded nano s cannot be checked here", () => {
+    const { wentBack, reset } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+    });
+
+    expect(wentBack).toBe(false);
+    expect(reset).toEqual({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.BaseOnboarding,
+          state: {
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.Onboarding,
+                state: {
+                  routes: [
+                    {
+                      name: ScreenName.OnboardingPairNew,
+                      params: {
+                        deviceModelId: DeviceModelId.nanoS,
+                        fromAccessExistingWallet: true,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    });
   });
 
   it("should finish a seeded fallback only after a current genuine verdict", () => {
