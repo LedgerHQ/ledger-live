@@ -84,6 +84,9 @@ export default class AccountDetailPage {
     await this.transferDrawerAction("send").tap();
     // An account holding several assets asks which one to send first.
     if (currencyId && (await this.sendAssetPicker.isVisible(TIMEOUT.small))) {
+      await this.sendAssetPicker.waitFullyVisible();
+      // The rows are sorted by value: the asset can sit below the visible ones.
+      await this.sendAssetPickerRow(currencyId).revealForTap(this.sendAssetPicker);
       await this.sendAssetPickerRow(currencyId).tap();
     }
   }
