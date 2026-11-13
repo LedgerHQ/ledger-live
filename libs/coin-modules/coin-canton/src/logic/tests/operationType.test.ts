@@ -1,4 +1,4 @@
-import { determineOperationType } from "./operationType";
+import { determineOperationType } from "../operationType";
 
 describe("determineOperationType", () => {
   const mockSenders = ["party123"];

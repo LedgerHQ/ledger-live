@@ -2,7 +2,7 @@ import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import * as accountBalance from "../logic/getBalance";
+import * as instrumentBalances from "./instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
@@ -22,7 +22,7 @@ jest.mock("../network/gateway", () => ({
 }));
 jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("../logic/getBalance");
+jest.mock("./instrumentBalances");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
@@ -33,7 +33,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   })),
 }));
 
-const mockedGetBalance = accountBalance.getBalance as jest.Mock;
+const mockedGetBalance = instrumentBalances.getInstrumentBalances as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
