@@ -53,6 +53,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
 
   function onResult(newTrustchain: Trustchain, member: TrustchainMember) {
     dispatch(setTrustchain(newTrustchain));
+    if (!step.isMounted()) return;
     step.finish();
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncManageInstancesSuccess,

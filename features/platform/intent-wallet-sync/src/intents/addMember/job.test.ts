@@ -280,7 +280,7 @@ describe("addMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
   });
 
-  it("should emit nothing after unsubscribe", async () => {
+  it("should emit no state but still report the result after unsubscribe", async () => {
     const deviceAnswer = createDeferred<TrustchainResult>();
     const getOrCreateTrustchain = jest.fn<
       ReturnType<GetOrCreateTrustchain>,
@@ -303,6 +303,7 @@ describe("addMemberIntentJob", () => {
 
     expect(witness.onResult).toHaveBeenCalledWith(RESULT);
     expect(cancelled.states).toEqual([PENDING]);
-    expect(cancelled.onResult).not.toHaveBeenCalled();
+    expect(cancelled.onResult).toHaveBeenCalledTimes(1);
+    expect(cancelled.onResult).toHaveBeenCalledWith(RESULT);
   });
 });

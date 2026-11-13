@@ -381,6 +381,15 @@ function awaitConfirmationForever(
   return new Promise(() => {});
 }
 
+// A device call the test settles once the user closed the step.
+function deviceAnswer<T>() {
+  let settle: (value: T) => void = () => {};
+  const promise = new Promise<T>(resolve => {
+    settle = resolve;
+  });
+  return { promise, settle };
+}
+
 function namedError(ErrorClass: new (message?: string) => Error): Error {
   return new ErrorClass("from the SDK");
 }
@@ -604,6 +613,24 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
     });
 
+    it("should store a result that arrives after the step closed, without navigating", async () => {
+      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
+      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+
+      const { store } = await activateFromSettings();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+
+      await act(async () => {
+        answer.settle({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      });
+
+      await waitFor(() => expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN));
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncLoading/)).toBeNull();
+    });
+
     it("should navigate to the activation screen when the flag is off", async () => {
       await activateFromSettings(initialState({ ledgerSyncDie: false }));
 
@@ -661,6 +688,26 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
         MEMBER,
         expect.any(Object),
       );
+    });
+
+    it("should store a rotated trustchain that arrives after the step closed, without navigating", async () => {
+      const answer = deviceAnswer<Trustchain>();
+      mockRemoveMember.mockReturnValue(answer.promise);
+
+      const { store } = await removeInstance();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+
+      await act(async () => {
+        answer.settle(ROTATED_TRUSTCHAIN);
+      });
+
+      await waitFor(() =>
+        expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TRUSTCHAIN),
+      );
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncManageInstancesSuccess/)).toBeNull();
     });
 
     it("should stay on the entry screen when the error of a run that could not start is closed", async () => {

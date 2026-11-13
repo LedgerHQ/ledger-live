@@ -175,7 +175,7 @@ describe("removeMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
   });
 
-  it("should emit nothing after unsubscribe", async () => {
+  it("should emit no state but still report the result after unsubscribe", async () => {
     const deviceAnswer = createDeferred<Trustchain>();
     const removeMember = deviceCall(() => deviceAnswer.promise);
     const cancelled = startJob(removeMember);
@@ -190,6 +190,7 @@ describe("removeMemberIntentJob", () => {
 
     expect(witness.onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
     expect(cancelled.states).toEqual([PENDING, AWAITING]);
-    expect(cancelled.onResult).not.toHaveBeenCalled();
+    expect(cancelled.onResult).toHaveBeenCalledTimes(1);
+    expect(cancelled.onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
   });
 });

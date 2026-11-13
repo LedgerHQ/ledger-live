@@ -53,6 +53,18 @@ export function completeJob<Result>(
   subscriber.complete();
 }
 
+// The device part is done, so the app must still store the result once nobody watches the job.
+export function deliverLateResult<Result>(
+  onResult: (result: Result) => void,
+  result: Result,
+): void {
+  try {
+    onResult(result);
+  } catch {
+    // The subscriber is closed: there is nobody left to report the throw to.
+  }
+}
+
 export function tryCreateSessionSdk(
   createSessionSdk: CreateSessionSdk,
   connection: DeviceConnectionResult,
@@ -121,7 +133,8 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
 
       const run = () => {
         const token = ++runToken;
-        const isCurrentRun = () => !subscriber.closed && token === runToken;
+        const isLatestRun = () => token === runToken;
+        const isCurrentRun = () => !subscriber.closed && isLatestRun();
         const retry = () => {
           if (isCurrentRun()) run();
         };
@@ -131,7 +144,9 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
         (async () =>
           call({ sdk, deviceId: deviceConnectionResult.compatDeviceId, input, callbacks }))().then(
           result => {
-            if (isCurrentRun()) completeJob(subscriber, onResult, result);
+            if (!isLatestRun()) return;
+            if (subscriber.closed) deliverLateResult(onResult, result);
+            else completeJob(subscriber, onResult, result);
           },
           (error: unknown) => {
             if (isCurrentRun()) handleCallError(subscriber, error, retry);
@@ -140,9 +155,5 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
       };
 
       run();
-
-      return () => {
-        runToken += 1;
-      };
     });
 }

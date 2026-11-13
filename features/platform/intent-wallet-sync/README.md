@@ -60,6 +60,13 @@ Errors are job states, except a device disconnection, which errors the observabl
 shows its Disconnected screen, and an exception thrown by `onResult`, which errors the observable so
 the job still ends.
 
+The SDK can finish its cloud part after the executor unsubscribed, for example when the device
+disconnects right after the user approved. The result of the latest run then still goes through
+`onResult`, with no job state, so the app stores it. The app's `onResult` must tolerate this late
+call: it stores the result and skips any navigation from a screen that is gone. An error after the
+unsubscribe, a throw from that late `onResult`, and the result of a run that a Retry replaced are
+ignored.
+
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
 
