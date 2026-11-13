@@ -54,9 +54,8 @@ Once a device is selected:
 ### Step 4: Notification
 
 - Updates Redux store properties:
-  - Sets last connected device
-  - Marks device as connected
-  - Updates known devices (for BLE)
+  - Saves the device with `useSaveDevice`: sets the last connected device, marks the
+    device as connected, and updates the known devices with their last use time
   - Disables read-only mode
 - Calls `onSelect` callback to notify the parent component.
 

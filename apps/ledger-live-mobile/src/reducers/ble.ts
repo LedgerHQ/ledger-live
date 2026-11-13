@@ -8,7 +8,7 @@ import type {
   BleRemoveKnownDevicePayload,
   BleRemoveKnownDevicesPayload,
   BleSaveDeviceNamePayload,
-  BleUpdateKnownDevicePayload,
+  BleUpsertKnownDevicePayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { BleActionTypes } from "../actions/types";
@@ -33,14 +33,14 @@ const handlers: ReducerMap<BleState, BlePayload> = {
       knownDevices: state.knownDevices.filter(d => d.id !== device.id).concat({ ...device }),
     };
   },
-  [BleActionTypes.BLE_UPDATE_DEVICE]: (state, action) => {
-    const newDevice = (action as Action<BleUpdateKnownDevicePayload>).payload;
+  [BleActionTypes.BLE_UPSERT_DEVICE]: (state, action) => {
+    const newDevice = (action as Action<BleUpsertKnownDevicePayload>).payload;
     const deviceToUpdate = findMatchingOldDevice(
       mapDeviceLikeToDeviceBaseInfo(newDevice),
       state.knownDevices.map(mapDeviceLikeToDeviceBaseInfo),
     );
     if (!deviceToUpdate) {
-      return state;
+      return { knownDevices: [...state.knownDevices, { ...newDevice }] };
     }
     return {
       knownDevices: state.knownDevices.map(d =>
