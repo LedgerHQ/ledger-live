@@ -5,8 +5,9 @@ Details behind the slice part of [`domain-data`](../SKILL.md).
 ## Register the slice in both apps
 
 An entity slice reaches the store through each app's root reducer. Add its state to the app
-`State` type and its reducer to `appReducer`, the `combineReducers` call, under the key its
-selectors' local root type names (`accountOperations` for `WithAccountOperations`).
+`State` type and its reducer to `appReducer`, the `combineReducers` call, under the slice `name`,
+the key `slice.selectors` reads. An app that mounts it under another key binds the selectors with
+`getSelectors` ([`slice-selectors`](../../slice-selectors/SKILL.md#another-mount-point)).
 
 | App | `State` type | `combineReducers` |
 | --- | --- | --- |

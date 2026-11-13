@@ -27,14 +27,13 @@ domain/entity/<name>/src/
 ├── schema.ts         # Zod schemas (required)
 ├── types.ts          # z.infer types and the state type
 ├── schema.mock.ts    # mock factories, parsed by the schema (required)
-├── slice.ts          # createSlice, initial state, default reducer
+├── slice.ts          # createSlice with its selectors, initial state, default reducer
 ├── slice.mock.ts     # mock slice state (required with a slice)
-├── selectors.ts
 └── index.ts          # export * only
 ```
 
-Every source file has its `*.test.ts`. Slice, selectors and their mocks are optional: an entity
-can be schema-only.
+Every source file has its `*.test.ts`. The slice and its mock are optional: an entity can be
+schema-only.
 
 **Schema first.** Write the Zod schema, then infer the type. Never hand-write a type the schema
 already describes, and never add Typia.
@@ -85,17 +84,9 @@ App registration and thunk lifecycles: [references/slice.md](references/slice.md
 from those mocks, for store preloading and selector tests. Mocks stay out of the barrel: expose
 them as `package.json#exports` subpaths (`"./schema.mock"`, `"./slice.mock"`).
 
-**Selectors** take a minimal local root type, never an app `State`:
-
-```ts
-type ContactsStateRoot = { contacts: ContactsState };
-
-export function selectContacts(state: ContactsStateRoot): Contact[] {
-  return state.contacts.contacts;
-}
-```
-
-Use `createSelector` only for a derived value that allocates (a filtered list, a mapped object).
+**Selectors** that read the slice go in `createSlice({ selectors })` and are exported with
+`export const { selectX } = xSlice.selectors`, never typed against an app `State`. Cross-slice and
+generic selectors, other mount points and memoization: [`slice-selectors`](../slice-selectors/SKILL.md).
 
 ## Api package
 
@@ -147,7 +138,8 @@ Endpoint options, `transformErrorResponse`, the one-base-per-backend rule and re
 - Schema: accepts a mock, rejects an invalid payload, covers each refinement.
 - Mock: returns schema-valid data and honors overrides.
 - Slice: `reducer(undefined, { type: "" })` returns the initial state; each reducer has a case.
-- Selectors: direct and derived values on a `slice.mock.ts` state.
+- Selectors: direct and derived values on a `slice.mock.ts` state, as in
+  [`slice-selectors`](../slice-selectors/SKILL.md#test).
 - Api: a local `configureStore` with the service api's reducer, middleware and `extraArgument`
   builder, the request faked with MSW (see [`testing`](../testing/SKILL.md)); cover success, a
   schema failure and a transport failure.
@@ -158,5 +150,6 @@ Endpoint options, `transformErrorResponse`, the one-base-per-backend rule and re
 - [ ] No handwritten type next to a schema; no Typia; nullable fields use `.nullable()`
 - [ ] Ids and constrained strings branded; primitives reused from `@shared/schema-primitives`
 - [ ] Slice has a complete initial state and a default-exported reducer; `slice.mock.ts` exists
+- [ ] One-slice selectors are nested in `createSlice({ selectors })`, per `slice-selectors`
 - [ ] No React and no app store import in `domain/entity`
 - [ ] Barrels hold `export *` only (plus `export { default } from "./slice"`)
