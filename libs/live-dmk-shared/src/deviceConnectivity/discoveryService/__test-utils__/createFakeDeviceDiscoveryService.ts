@@ -30,8 +30,8 @@ export const createFakeDeviceDiscoveryService = <
       return isRunning;
     },
     transportIds,
-    get scanningTransportIds() {
-      return transportIds.filter(transportId => !ignoredTransportIds.includes(transportId));
+    get ignoredTransportIds() {
+      return ignoredTransportIds;
     },
     discoveredDevices,
     errors,

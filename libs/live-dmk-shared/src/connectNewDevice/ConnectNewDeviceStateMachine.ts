@@ -11,7 +11,7 @@ import {
   type ConnectNewDeviceStateMachineEvent,
   type ConnectNewDeviceStateMachineInput,
 } from "./types";
-import { buildSelectableDevices, toDevice } from "./utils";
+import { buildSelectableDevices, getScanningTransports, toDevice } from "./utils";
 import {
   type BaseConnectionError,
   type BaseDiscoveryError,
@@ -19,7 +19,6 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
-import { getIgnoredTransportIds } from "../deviceConnectivity/discoveryService/getIgnoredTransportIds";
 
 type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
   | TDiscoveryError
@@ -144,17 +143,19 @@ const createConnectNewDeviceStateMachine = <
         showDeviceNotFound: () => false,
       }),
       ignoreDiscoveryError: ({ context }) => {
+        const { ignoredTransportIds } = context.deviceDiscoveryService;
+        const transportId = context.discoveryError!.transportId;
         context.deviceDiscoveryService.start({
-          ignoreTransportIdentifiers: getIgnoredTransportIds(
-            context.deviceDiscoveryService,
-            context.discoveryError!.transportId,
-          ),
+          ignoreTransportIdentifiers:
+            !transportId || ignoredTransportIds.includes(transportId)
+              ? ignoredTransportIds
+              : [...ignoredTransportIds, transportId],
         });
       },
       startDiscovery: ({ context }) => {
         if (!context.deviceDiscoveryService.isRunning) {
           context.deviceDiscoveryService.start({
-            ignoreTransportIdentifiers: getIgnoredTransportIds(context.deviceDiscoveryService),
+            ignoreTransportIdentifiers: context.deviceDiscoveryService.ignoredTransportIds,
           });
         }
       },
@@ -170,7 +171,10 @@ const createConnectNewDeviceStateMachine = <
             context.filterListedDevices?.(context.listedDevices) ?? context.listedDevices,
             self.send,
           ),
-          scanningTransports: context.deviceDiscoveryService.scanningTransportIds,
+          scanningTransports: getScanningTransports(
+            context.deviceDiscoveryService.transportIds,
+            context.deviceDiscoveryService.ignoredTransportIds,
+          ),
           showDeviceNotFound: context.showDeviceNotFound,
         });
       },

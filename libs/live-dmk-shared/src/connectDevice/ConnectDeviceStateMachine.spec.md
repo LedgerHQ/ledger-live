@@ -56,7 +56,7 @@ stateDiagram-v2
   machine selects that device immediately and waits for it to be discovered
   instead of first rendering the discovery list.
 - The discovery service is the source of truth for the discovery state: the
-  machine reads `isRunning` and `scanningTransportIds` from it.
+  machine reads `isRunning` and `ignoredTransportIds` from it.
 - `Discovering` starts the discovery service, if it is not running, with the
   transports that its last start ignored. It renders all known devices as
   available or unavailable depending on the latest matched discoveries.

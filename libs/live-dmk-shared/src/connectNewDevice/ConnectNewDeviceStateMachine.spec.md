@@ -41,10 +41,11 @@ stateDiagram-v2
 ## Notes
 
 - The discovery service is the source of truth for the discovery state: the
-  machine reads `isRunning` and `scanningTransportIds` from it.
+  machine reads `isRunning` and `ignoredTransportIds` from it.
 - `Discovering` starts the discovery service, if it is not running, with the
   transports that its last start ignored, and emits the device list.
-  `scanningTransports` is the discovery service `scanningTransportIds`.
+  `scanningTransports` is the discovery service `transportIds` without its
+  `ignoredTransportIds`.
 - The device list keeps the order in which the devices were first discovered,
   so that a device does not move under the user's finger. When discovery no
   longer reports a device, the device stays at its position with

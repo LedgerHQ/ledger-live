@@ -117,7 +117,7 @@ describe("DefaultDeviceDiscoveryService", () => {
     expect(service.isRunning).toBe(false);
   });
 
-  it("GIVEN discovery has not started, WHEN reading the scanning transport ids, THEN it should list every transport", () => {
+  it("GIVEN discovery has not started, WHEN reading the ignored transport ids, THEN it should be empty", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
@@ -129,10 +129,10 @@ describe("DefaultDeviceDiscoveryService", () => {
     );
 
     // THEN
-    expect(service.scanningTransportIds).toEqual(["transport-a", "transport-b"]);
+    expect(service.ignoredTransportIds).toEqual([]);
   });
 
-  it("GIVEN transports are ignored, WHEN discovery starts, THEN the scanning transport ids should not list them", () => {
+  it("GIVEN transports are ignored, WHEN discovery starts, THEN the ignored transport ids should list them", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
@@ -147,10 +147,10 @@ describe("DefaultDeviceDiscoveryService", () => {
     service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
 
     // THEN
-    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+    expect(service.ignoredTransportIds).toEqual(["transport-b"]);
   });
 
-  it("GIVEN transports were ignored, WHEN stopping discovery, THEN the scanning transport ids should still not list them", () => {
+  it("GIVEN transports were ignored, WHEN stopping discovery, THEN the ignored transport ids should still list them", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
@@ -166,10 +166,10 @@ describe("DefaultDeviceDiscoveryService", () => {
     service.stop();
 
     // THEN
-    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+    expect(service.ignoredTransportIds).toEqual(["transport-b"]);
   });
 
-  it("GIVEN transports were ignored, WHEN discovery starts again with other ignored transports, THEN the scanning transport ids should follow the last start", () => {
+  it("GIVEN transports were ignored, WHEN discovery starts again with other ignored transports, THEN the ignored transport ids should follow the last start", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
@@ -186,10 +186,10 @@ describe("DefaultDeviceDiscoveryService", () => {
     service.start({ ignoreTransportIdentifiers: [sourceA.transportId] });
 
     // THEN
-    expect(service.scanningTransportIds).toEqual(["transport-b"]);
+    expect(service.ignoredTransportIds).toEqual(["transport-a"]);
   });
 
-  it("GIVEN discovery is already started, WHEN starting again with other ignored transports, THEN the scanning transport ids should not change", () => {
+  it("GIVEN discovery is already started, WHEN starting again with other ignored transports, THEN the ignored transport ids should not change", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
@@ -205,7 +205,7 @@ describe("DefaultDeviceDiscoveryService", () => {
     service.start({ ignoreTransportIdentifiers: [sourceA.transportId] });
 
     // THEN
-    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+    expect(service.ignoredTransportIds).toEqual(["transport-b"]);
   });
 
   it("GIVEN all sources are started, WHEN they emit devices, THEN it should aggregate discovered devices", () => {

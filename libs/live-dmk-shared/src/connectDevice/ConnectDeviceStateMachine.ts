@@ -23,7 +23,6 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
-import { getIgnoredTransportIds } from "../deviceConnectivity/discoveryService/getIgnoredTransportIds";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 
@@ -152,17 +151,19 @@ const createConnectDeviceStateMachine = <
         selectedMatchedDevice: () => null,
       }),
       ignoreDiscoveryError: ({ context }) => {
+        const { ignoredTransportIds } = context.deviceDiscoveryService;
+        const transportId = context.discoveryError!.transportId;
         context.deviceDiscoveryService.start({
-          ignoreTransportIdentifiers: getIgnoredTransportIds(
-            context.deviceDiscoveryService,
-            context.discoveryError!.transportId,
-          ),
+          ignoreTransportIdentifiers:
+            !transportId || ignoredTransportIds.includes(transportId)
+              ? ignoredTransportIds
+              : [...ignoredTransportIds, transportId],
         });
       },
       startDiscovery: ({ context }) => {
         if (!context.deviceDiscoveryService.isRunning) {
           context.deviceDiscoveryService.start({
-            ignoreTransportIdentifiers: getIgnoredTransportIds(context.deviceDiscoveryService),
+            ignoreTransportIdentifiers: context.deviceDiscoveryService.ignoredTransportIds,
           });
         }
       },

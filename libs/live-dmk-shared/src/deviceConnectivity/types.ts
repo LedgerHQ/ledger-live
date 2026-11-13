@@ -77,11 +77,8 @@ export interface DeviceDiscoveryService<
   /** True between `start()` and `stop()`. */
   readonly isRunning: boolean;
   transportIds: Array<TransportIdentifier>;
-  /**
-   * `transportIds` without the transports that the last `start()` ignored. It stays the same after
-   * `stop()`, so that the next `start()` can ignore the same transports.
-   */
-  readonly scanningTransportIds: Array<TransportIdentifier>;
+  /** The transports that the last `start()` ignored. */
+  readonly ignoredTransportIds: Array<TransportIdentifier>;
   discoveredDevices: Observable<DiscoveredDevice[]>;
   errors: Observable<TDiscoveryError>;
 }

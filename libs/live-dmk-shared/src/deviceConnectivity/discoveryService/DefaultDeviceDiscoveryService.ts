@@ -23,7 +23,7 @@ export class DefaultDeviceDiscoveryService<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
 > implements DeviceDiscoveryService<DefaultDeviceDiscoveryServiceError<TDiscoveryError>> {
   private subscription: Subscription | null = null;
-  private ignoredTransportIds = new Set<TransportIdentifier>();
+  private ignoredTransportIdSet = new Set<TransportIdentifier>();
   private readonly discoveredDevicesSubject = new BehaviorSubject<DiscoveredDevice[]>([]);
   private readonly errorsSubject = new Subject<
     DefaultDeviceDiscoveryServiceError<TDiscoveryError>
@@ -49,8 +49,8 @@ export class DefaultDeviceDiscoveryService<
     return [...this.discoverySources.keys()];
   }
 
-  get scanningTransportIds(): Array<TransportIdentifier> {
-    return this.transportIds.filter(transportId => !this.ignoredTransportIds.has(transportId));
+  get ignoredTransportIds(): Array<TransportIdentifier> {
+    return [...this.ignoredTransportIdSet];
   }
 
   start({ ignoreTransportIdentifiers = [] }: DeviceDiscoveryStartArgs = {}): void {
@@ -58,12 +58,12 @@ export class DefaultDeviceDiscoveryService<
       return;
     }
 
-    this.ignoredTransportIds = new Set(ignoreTransportIdentifiers);
+    this.ignoredTransportIdSet = new Set(ignoreTransportIdentifiers);
     const devicesByTransport = new Map<TransportIdentifier, DiscoveredDevice[]>();
     const subscription = new Subscription();
 
     this.discoverySources.forEach(source => {
-      if (this.ignoredTransportIds.has(source.transportId)) {
+      if (this.ignoredTransportIdSet.has(source.transportId)) {
         return;
       }
 
