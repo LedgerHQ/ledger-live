@@ -40,7 +40,9 @@ function renderExecution() {
       accounts: { ...state.accounts, active: [fundedParent, receiverAccount] },
     }),
   });
-  const deps: PerpsDepositExecutionDeps = mockSharedExecution.mock.lastCall[2];
+  const lastCall = mockSharedExecution.mock.lastCall;
+  if (!lastCall) throw new Error("usePerpsDepositExecution did not call the shared hook");
+  const deps: PerpsDepositExecutionDeps = lastCall[2];
   return { ...view, deps };
 }
 
