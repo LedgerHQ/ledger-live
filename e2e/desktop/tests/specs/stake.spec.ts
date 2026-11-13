@@ -123,10 +123,10 @@ test.describe("Staking - Tezos", owner, () => {
   test.use(tezosStakeUse(account));
 
   test(
-    `[${account.account.currency.testLabel}] - Change validator is blocked while staked`,
+    `[${account.account.currency.testLabel}] - Change validator and stop delegation are blocked while staked`,
     {
       tag: tags,
-      annotation: { type: "TMS", description: "B2CQA-5919" },
+      annotation: { type: "TMS", description: "B2CQA-5919, B2CQA-5921" },
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -134,25 +134,7 @@ test.describe("Staking - Tezos", owner, () => {
       await app.tezosUnstakeRequired.openChangeValidator();
       await app.tezosUnstakeRequired.verifyVisible();
       await app.tezosUnstakeRequired.clickCloseButton();
-    },
-  );
-});
 
-test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
-
-  // Assertion-only (never signs).
-  test.use(tezosStakeUse(account));
-
-  test(
-    `[${account.account.currency.testLabel}] - Stop delegation is blocked while staked`,
-    {
-      tag: tags,
-      annotation: { type: "TMS", description: "B2CQA-5921" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openStopDelegation();
       await app.tezosUnstakeRequired.verifyVisible();
       await app.tezosUnstakeRequired.clickCloseButton();
