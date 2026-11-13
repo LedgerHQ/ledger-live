@@ -197,7 +197,7 @@ jobs:
         id: mobile-e2e-plan
         if: ${{ steps.mobile-e2e-aws.outcome == 'success' }}
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@study/determine-builds
         with:
           ref: ${{ github.ref_name }}
           event_name: workflow_call

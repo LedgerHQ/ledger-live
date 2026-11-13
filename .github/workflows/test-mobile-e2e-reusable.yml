@@ -374,7 +374,7 @@ jobs:
 
       - name: Plan the builds and shards
         id: plan
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@study/determine-builds
         with:
           ref: ${{ inputs.ref || github.ref_name }}
           event_name: ${{ inputs.ci_smoke && 'workflow_call' || github.event_name }}
