@@ -1,10 +1,7 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  withOperationCountervalues,
-  type OperationCountervaluesHost,
-} from "@domain/api-market-countervalues";
+import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
 import {
   accountsSlice,
   connectAccountsStore,
@@ -77,7 +74,7 @@ export function accountDataSources(
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
-  const countervalues: OperationCountervaluesHost = {
+  const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
     findCurrency: assetId =>
       findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
@@ -96,11 +93,11 @@ export function accountDataSources(
     blacklistedTokenIds,
   };
   return tapped([
-    withOperationCountervalues(
+    withCountervalues(
       createCoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
       countervalues,
     ),
-    withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+    withCountervalues(createFullSyncSource(fullSyncHost), countervalues),
   ]);
 }
 

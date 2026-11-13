@@ -1,7 +1,7 @@
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import { AccountOperationSchema, type AccountOperation } from "@domain/entity-account-operation";
 import { MockCursorError } from "../errors";
-import { mockCountervalueOf } from "./countervalues";
+import { accountMagnitudeOf, mockCountervalueOf } from "./countervalues";
 import { randomAmount, randomBytes, type Random } from "../random";
 import type { MockReader } from "../families/types";
 
@@ -144,9 +144,7 @@ export const operations: MockReader<"operations"> = (
   );
 
   const countervalueOf = query?.countervalue
-    ? mockCountervalueOf(query.countervalue, assetId =>
-        assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId),
-      )
+    ? mockCountervalueOf(query.countervalue, accountMagnitudeOf({ currency, family }))
     : undefined;
 
   const pending = newestFirst.length > 0 && random() < 0.1;

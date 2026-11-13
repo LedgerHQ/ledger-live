@@ -5,6 +5,7 @@ import {
   type BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
 import { cancelledWhenAll } from "../cancellation";
+import { fiatOf, type Fiat } from "../fiat";
 import {
   PortfolioReadCancelledError,
   describeError,
@@ -22,14 +23,15 @@ async function readOne(
   { id, portfolio }: ReadyPortfolio,
   { descriptor, signal }: AccountTarget,
   range: BalanceHistoryRange,
+  fiat: Fiat | undefined,
 ): Promise<{ verdict: Verdict; calls: number }> {
   const readiness = readinessOf(descriptor, portfolio);
   if (readiness.state !== "ready") {
     return { verdict: { status: "failed", detail: readiness.detail }, calls: 0 };
   }
   try {
-    const read = await readHistory(client, id, readiness.serverAccountId, range, signal);
-    return { verdict: verdictOf(descriptor, range, read), calls: read.calls };
+    const read = await readHistory(client, id, readiness.serverAccountId, range, fiat, signal);
+    return { verdict: verdictOf(descriptor, range, read, fiat), calls: read.calls };
   } catch (error) {
     return { verdict: { status: "failed", detail: describeError(error) }, calls: 1 };
   }
@@ -39,6 +41,7 @@ async function readBalanceHistories(
   deps: PortfolioDeps,
   targets: readonly AccountTarget[],
   range: BalanceHistoryRange,
+  fiat: Fiat | undefined,
 ): Promise<PromiseSettledResult<AccountBalanceHistory>[]> {
   const { signal, release } = cancelledWhenAll(targets.map(target => target.signal));
   try {
@@ -48,7 +51,7 @@ async function readBalanceHistories(
       signal,
     );
     const reads = await deps.store.track(() =>
-      Promise.all(targets.map(target => readOne(deps, ready, target, range))),
+      Promise.all(targets.map(target => readOne(deps, ready, target, range, fiat))),
     );
     if (signal?.aborted) throw new PortfolioReadCancelledError();
     const calls = reads.reduce((total, read) => total + read.calls, 0);
@@ -76,4 +79,9 @@ async function readBalanceHistories(
 export const balanceHistoryReader =
   (deps: PortfolioDeps): AccountDataBatchReader<"balanceHistory"> =>
   (targets, query) =>
-    readBalanceHistories(deps, targets, query?.range ?? DEFAULT_BALANCE_HISTORY_RANGE);
+    readBalanceHistories(
+      deps,
+      targets,
+      query?.range ?? DEFAULT_BALANCE_HISTORY_RANGE,
+      fiatOf(query),
+    );

@@ -2,6 +2,7 @@ import type { BalanceHistoryGroup } from "@domain/api-account-portfolio";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import type { PortfolioClient } from "../../client";
+import type { Fiat } from "../fiat";
 import { PortfolioReadCancelledError } from "../portfolio";
 
 const PAGE_SIZE = 100;
@@ -20,13 +21,20 @@ export async function readHistory(
   portfolioId: PortfolioId,
   account: string,
   range: BalanceHistoryRange,
+  fiat?: Fiat,
   signal?: AbortSignal,
 ): Promise<HistoryRead> {
   const readFrom = async (token: string | undefined, read: HistoryRead): Promise<HistoryRead> => {
     if (signal?.aborted) throw new PortfolioReadCancelledError();
     const page = await client.getBalanceHistory(
       portfolioId,
-      { account, range, size: PAGE_SIZE, token },
+      {
+        account,
+        range,
+        size: PAGE_SIZE,
+        token,
+        ...(fiat === undefined ? {} : { currency: fiat.currency }),
+      },
       signal,
     );
     const next = page.nextToken ?? undefined;

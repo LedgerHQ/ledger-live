@@ -1,12 +1,14 @@
 import type { AccountTarget } from "@domain/api-account-data";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import {
   ETH,
   depsOf,
   evm,
   fakeService,
   historyGroup,
+  point,
   reasonOf,
   serviceAccount,
   synced,
@@ -44,6 +46,44 @@ describe("balanceHistoryReader", () => {
       ok: true,
       summary: "Balance history (year) of 1 accounts in 1 calls: 1 served",
     });
+  });
+
+  it("values each point in the countervalue asked of the service", async () => {
+    const { read, client } = setup(
+      fakeService({
+        portfolio: synced([ETH]),
+        histories: [historyGroup(ETH, [point(ETH, { value: "10", currency_value: 2.5 })])],
+      }),
+    );
+
+    const [settled] = await read([targetOf(ETH)], {
+      range: "week",
+      countervalue: FiatCurrencyTickerSchema.parse("USD"),
+    });
+
+    expect(client.getBalanceHistory).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ currency: "USD" }),
+      undefined,
+    );
+    expect(settled).toMatchObject({
+      status: "fulfilled",
+      value: { series: [{ points: [{ balance: "10", countervalues: { USD: "250" } }] }] },
+    });
+  });
+
+  it("asks the service for no currency without a countervalue", async () => {
+    const { read, client } = setup(
+      fakeService({ portfolio: synced([ETH]), histories: [historyGroup(ETH)] }),
+    );
+
+    await read([targetOf(ETH)], { range: "week" });
+
+    expect(client.getBalanceHistory).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.not.objectContaining({ currency: expect.anything() }),
+      undefined,
+    );
   });
 
   it("reads the default range when the query names none", async () => {

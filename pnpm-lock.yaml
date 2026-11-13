@@ -6610,6 +6610,9 @@ importers:
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../entity/account-balance
+      '@domain/entity-account-balance-history':
+        specifier: workspace:*
+        version: link:../../entity/account-balance-history
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../entity/account-operation
@@ -7117,6 +7120,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../currency
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../currency-fiat
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)

@@ -23,6 +23,7 @@
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
