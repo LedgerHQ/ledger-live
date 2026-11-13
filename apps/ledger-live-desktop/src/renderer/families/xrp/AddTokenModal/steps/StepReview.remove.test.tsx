@@ -69,4 +69,10 @@ describe("StepReview of a removal", () => {
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
+
+  it("blocks Continue on an error-free removal, until opt-out can be signed", () => {
+    render(<StepReviewFooter {...makeStepProps({ action: "remove", status: removeStatus })} />);
+
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
 });
