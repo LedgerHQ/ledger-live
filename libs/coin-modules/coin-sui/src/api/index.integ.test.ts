@@ -6,6 +6,7 @@ import type {
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { SuiCoinConfig, SuiContext } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { TRANSACTIONS_LIMIT } from "../network/sdk";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import { createApi } from ".";
 
@@ -128,9 +129,8 @@ describe("Sui Api", () => {
         { minHeight: 0, order: "asc" },
       );
 
-      // assume it has not a lot of operations
-      // at time of writing, it has only 2 operations
-      expect(operations.length).toBeLessThan(10);
+      // The address stays far below one page of operations (10 on 2026-11-12), so this is the last page.
+      expect(operations.length).toBeLessThan(TRANSACTIONS_LIMIT);
       expect(operations.length).toBeGreaterThan(0);
 
       expect(cursor).toBeUndefined();

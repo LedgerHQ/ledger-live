@@ -57,4 +57,47 @@ describe("broadcast", () => {
     // THEN
     expect(result.hash).not.toEqual(operation.hash);
   });
+
+  it("sends the bare serialized signature of a raw signed operation, not the signed payload", async () => {
+    // GIVEN a raw operation: `signature` carries the serialized signed transaction for the caller
+    const unsigned = Buffer.from(new Uint8Array(64).fill(0x42)).toString("base64");
+
+    // WHEN
+    const result = await broadcast({
+      account: { currency: { id: "sui" } } as any,
+      signedOperation: {
+        signature: "SENDER_SIGNED_DATA_HEX",
+        operation: createFixtureOperation(),
+        rawData: { serializedSignature: "BARE_SIGNATURE", unsigned },
+      },
+    });
+
+    // THEN
+    expect(executeTransactionBlock).toHaveBeenCalledWith(expect.anything(), {
+      transactionBlock: unsigned,
+      signature: "BARE_SIGNATURE",
+    });
+    expect(result.hash).toBe("test-digest-hash");
+  });
+
+  it("falls back to the signature of an operation signed through signOperation", async () => {
+    // GIVEN no serializedSignature in rawData
+    const unsigned = new Uint8Array([1, 2, 3]);
+
+    // WHEN
+    await broadcast({
+      account: { currency: { id: "sui" } } as any,
+      signedOperation: {
+        signature: "SERIALIZED_SIGNATURE",
+        operation: createFixtureOperation(),
+        rawData: { unsigned },
+      },
+    });
+
+    // THEN
+    expect(executeTransactionBlock).toHaveBeenCalledWith(expect.anything(), {
+      transactionBlock: unsigned,
+      signature: "SERIALIZED_SIGNATURE",
+    });
+  });
 });

@@ -8702,6 +8702,22 @@
       "title": "Update your Sui app",
       "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
     },
+    "SuiRawTransactionInvalid": {
+      "title": "Unreadable Sui transaction",
+      "description": "The app sent a Sui transaction that Ledger Wallet can't read. Try again from the app, or contact its support."
+    },
+    "SuiRawTransactionSenderMismatch": {
+      "title": "Wrong Sui account",
+      "description": "This transaction was prepared for another Sui account. Select the account connected to the app and try again."
+    },
+    "SuiRawTransactionResolutionFailed": {
+      "title": "Sui transaction could not be prepared",
+      "description": "Check that the assets it uses still exist and that the account can pay the network fees, then try again from the app."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported": {
+      "title": "Sponsored Sui transaction",
+      "description": "This transaction's network fees are paid by a sponsor, so Ledger Wallet can only sign it. The app sends it to the network."
+    },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
       "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",

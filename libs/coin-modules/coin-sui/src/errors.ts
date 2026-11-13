@@ -81,3 +81,63 @@ export class SuiAddressBalanceAppUpdateRequired extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/*
+ * The raw transaction a dApp sent is neither a serialized `Transaction` JSON nor base64 BCS
+ * `TransactionData`, so there is nothing to sign.
+ */
+export class SuiRawTransactionInvalid extends Error {
+  override name = "SuiRawTransactionInvalid";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(
+      message ||
+        "The Sui transaction could not be read. It must be a serialized transaction in JSON or base64 form.",
+    );
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/*
+ * The raw transaction names a sender other than the account asked to sign it, which would make the
+ * signature invalid on chain.
+ */
+export class SuiRawTransactionSenderMismatch extends Error {
+  override name = "SuiRawTransactionSenderMismatch";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(
+      message || "The Sui transaction was prepared for another sender than the selected account.",
+    );
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/*
+ * The fields the dApp left unset (gas price, gas budget, gas payment, object versions) could not be
+ * resolved against the network, for instance because an object no longer exists or the dry run aborted.
+ * A failure to reach the node is not wrapped in this error: it keeps its own name.
+ */
+export class SuiRawTransactionResolutionFailed extends Error {
+  override name = "SuiRawTransactionResolutionFailed";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(
+      message ||
+        "The Sui transaction could not be prepared for signing. Check that its objects still exist and that the account can pay for gas.",
+    );
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/*
+ * A sponsored transaction needs the sponsor's signature in addition to the account's, which Ledger
+ * Live does not hold, so it can be signed but not executed from here.
+ */
+export class SuiSponsoredTransactionBroadcastUnsupported extends Error {
+  override name = "SuiSponsoredTransactionBroadcastUnsupported";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(
+      message ||
+        "This Sui transaction is paid for by a sponsor, so it can only be signed. Send the signature back to the application to execute it.",
+    );
+    if (fields) Object.assign(this, fields);
+  }
+}
