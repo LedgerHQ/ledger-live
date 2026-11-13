@@ -9,7 +9,7 @@ import {
   type WebHandle,
 } from "@e2e/helpers/elements/web";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const MODAL_DISMISS_TIMEOUT_MS = TIMEOUT.xlarge;
 const CONTINUE_READY_TIMEOUT_MS = TIMEOUT.xlarge;
@@ -372,16 +372,10 @@ export default class BorrowPage {
 
   /** One selector covers the step markers and the execution error, so a failed step surfaces at once. */
   private async awaitStepOutcome(doneIds: string[]) {
-    const outcome = getWebElementByCssSelector(
-      `${anyTestId(doneIds)}, ${this.executionErrorLocator}`,
-    );
+    const outcome = webByCss(`${anyTestId(doneIds)}, ${this.executionErrorLocator}`);
     let shown: string;
     try {
-      shown = await retryUntilTimeout(
-        () => outcome.runScript(el => el.dataset.testid),
-        EXECUTION_STEP_TIMEOUT_MS,
-        INTERVAL.long,
-      );
+      shown = await outcome.getIdentifier(EXECUTION_STEP_TIMEOUT_MS);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       throw new Error(

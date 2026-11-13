@@ -147,6 +147,16 @@ export class WebHandle implements ElementHandle {
     return scriptText(value);
   }
 
+  /** Waits for the element, then returns its `data-testid`, e.g. which one a combined selector matched. */
+  async getIdentifier(timeout = TIMEOUT.xxlarge): Promise<string> {
+    await this.waitVisible(timeout);
+    const id = await withHardTimeout(
+      this.raw.runScript((el: HTMLElement) => el.getAttribute("data-testid") ?? ""),
+      TIMEOUT.medium,
+    );
+    return scriptText(id);
+  }
+
   /** Waits for the element, reads its text, then compares it as the options say: equal by default. */
   async expectText(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualText = await this.getText();
