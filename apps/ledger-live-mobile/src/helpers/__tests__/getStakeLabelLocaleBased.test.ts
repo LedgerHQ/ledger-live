@@ -1,15 +1,15 @@
-import RNLocalize from "react-native-localize";
+import { getDeviceRegion } from "@shared/device-locale";
 import {
   getCountryLocale,
   getEarnOrYieldSuffix,
   getStakeLabelLocaleBased,
 } from "../getStakeLabelLocaleBased";
 
-jest.mock("react-native-localize", () => ({
-  getCountry: jest.fn(() => "US"),
+jest.mock("@shared/device-locale", () => ({
+  getDeviceRegion: jest.fn(() => "US"),
 }));
 
-const mockGetCountry = jest.mocked(RNLocalize.getCountry);
+const mockGetCountry = jest.mocked(getDeviceRegion);
 
 describe("getStakeLabelLocaleBased", () => {
   beforeEach(() => {
@@ -17,9 +17,14 @@ describe("getStakeLabelLocaleBased", () => {
   });
 
   describe("getCountryLocale", () => {
-    it("should delegate to RNLocalize.getCountry", () => {
+    it("should return the device region", () => {
       mockGetCountry.mockReturnValue("FR");
       expect(getCountryLocale()).toBe("FR");
+    });
+
+    it("should return an empty string when the device has no region", () => {
+      mockGetCountry.mockReturnValue(undefined);
+      expect(getCountryLocale()).toBe("");
     });
   });
 
