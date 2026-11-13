@@ -12,6 +12,7 @@ import { createLoadWatcher, describeLoad } from "./load.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
 import { createStartupLogReader } from "./startup-log.ts";
+import { createTracer } from "./trace.ts";
 import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
 import type { Userdata } from "./types.ts";
 
@@ -34,6 +35,7 @@ const { values: opts } = parseArgs({
     "idle-ms": { type: "string", default: "2000" },
     "settle-ms": { type: "string", default: "5000" },
     read: { type: "string", default: "log" },
+    trace: { type: "boolean", default: false },
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
     "out-dir": { type: "string", default: "startup-perf-results" },
@@ -58,6 +60,9 @@ const BRIDGE_PORT = Number(opts["bridge-port"]);
 const OUT_DIR = insideWorkingDir(opts["out-dir"]);
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
+const TRACES_DIR = path.join(OUT_DIR, "traces");
+// Android only: Perfetto runs on the emulators.
+const TRACE = opts.trace === true && PLATFORM === "android";
 const MAX_CONSECUTIVE_FAILURES = 4;
 // After the settle time: the line comes as soon as the startup is over.
 const LOG_READ_TIMEOUT_MS = 20_000;
@@ -87,6 +92,7 @@ const readPerformance = createPerformanceReader({ platform: P, maestro });
 const readStartupLog = createStartupLogReader(P);
 const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
 const watchLoad = createLoadWatcher(P);
+const tracer = TRACE ? createTracer(TRACES_DIR) : null;
 
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
@@ -107,6 +113,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
   maestro.calls = [];
   let readStart: number | null = null;
   let paused = false;
+  let traced = false;
   try {
     for (const device of DEVICES) await P.stop(device);
     const dialogs: string[] = [];
@@ -116,6 +123,15 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
       await sleep(DIALOG_RECOVERY_MS);
     }
     record.screen = await P.ensureScreenOn(meta.device);
+    if (tracer && !meta.warmup) {
+      traced = await tracer.start(meta.device, name).then(
+        () => true,
+        (error: unknown) => {
+          log(`  could not start the trace: ${errorMessage(error)}`);
+          return false;
+        },
+      );
+    }
     const load = await watchLoad(meta.device);
     await sleep(IDLE_MS);
     const pauseStart = Date.now();
@@ -166,6 +182,12 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     if (paused) await P.resume(other);
   }
   if (readStart !== null) record.readMs = Date.now() - readStart;
+  if (tracer && traced) {
+    record.trace = await tracer.collect(meta.device, name).catch((error: unknown) => {
+      log(`  could not pull the trace: ${errorMessage(error)}`);
+      return undefined;
+    });
+  }
   record.maestroCalls = maestro.calls;
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
@@ -246,6 +268,7 @@ function writeMeta(): Promise<void> {
         idleMs: IDLE_MS,
         settleMs: SETTLE_MS,
         read: READ,
+        trace: TRACE,
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
           accounts: opts["accounts-userdata"],
@@ -318,6 +341,8 @@ async function measureScenario(scenario: string): Promise<void> {
 async function main(): Promise<void> {
   validateOptions();
   await mkdir(DEBUG_DIR, { recursive: true });
+  if (TRACE) await mkdir(TRACES_DIR, { recursive: true });
+  if (opts.trace && !TRACE) log("--trace is Android only: no trace on this platform");
   await writeFile(SAMPLES_FILE, "");
   await writeMeta();
   for (const scenario of SCENARIOS) await measureScenario(scenario);

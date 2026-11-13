@@ -62,6 +62,8 @@ export interface Sample extends SampleMeta {
   /** The measured device, from before the idle time to the end of the settle time. Android only. */
   deviceLoad?: CpuLoad;
   readMs?: number;
+  /** The launch's Perfetto trace in traces/ (run.ts --trace, Android only). */
+  trace?: string;
   maestroCalls?: MaestroCall[];
 }
 

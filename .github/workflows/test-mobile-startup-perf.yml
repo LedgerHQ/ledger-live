@@ -52,10 +52,10 @@ on:
         type: string
         default: "100"
       read:
-        description: "Where each launch's startup is read: the device log (log), also the Debug screen to check they match (both, slower), or the Debug screen only (screen)"
+        description: "Where each launch's startup is read: the device log (log), also the Debug screen to check they match (both, slower), the Debug screen only (screen), or the device log with a Perfetto trace of each measured Android launch (log-trace)"
         required: true
         type: choice
-        options: [log, both, screen]
+        options: [log, both, screen, log-trace]
         default: log
       slack_notif:
         description: "Post the result to #live-repo-health on Slack, passed or failed (the nightly always does)"
@@ -459,12 +459,14 @@ jobs:
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
+          TRACE_ARGS=()
+          if [[ "$READ" == "log-trace" ]]; then READ=log; TRACE_ARGS=(--trace); fi
           node e2e/tooling/startup-perf/src/measure/run.ts \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" \
-            --read "$READ" \
+            --read "$READ" "${TRACE_ARGS[@]}" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
 
@@ -481,6 +483,18 @@ jobs:
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
             --json "$RESULTS_DIR/android/summary.json"
+
+      - name: Analyse the traces
+        if: ${{ always() && needs.plan.outputs.read == 'log-trace' }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/perfetto"
+          "$RUNNER_TEMP/perfetto/bin/pip" install --quiet perfetto==0.59.1
+          "$RUNNER_TEMP/perfetto/bin/python" e2e/tooling/startup-perf/devices/analyze-traces.py \
+            --samples "$RESULTS_DIR/android/samples.jsonl" \
+            --traces "$RESULTS_DIR/android/traces" \
+            --out "$RESULTS_DIR/android/traces-summary.jsonl"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
@@ -559,6 +573,7 @@ jobs:
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
+          if [[ "$READ" == "log-trace" ]]; then READ=log; fi
           node e2e/tooling/startup-perf/src/measure/run.ts \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
