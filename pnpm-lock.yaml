@@ -699,8 +699,8 @@ catalogs:
       specifier: 0.75.0
       version: 0.75.0
     oxlint:
-      specifier: 1.90.0
-      version: 1.90.0
+      specifier: 1.93.0
+      version: 1.93.0
     playwright:
       specifier: 1.63.0
       version: 1.63.0
@@ -908,7 +908,7 @@ importers:
         version: 0.1.34
       '@ledgerhq/lumen-lint-plugin':
         specifier: 'catalog:'
-        version: 0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.90.0)(tailwindcss@4.2.2)
+        version: 0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.93.0)(tailwindcss@4.2.2)
       '@nx/devkit':
         specifier: 'catalog:'
         version: 24.0.2(nx@24.0.2(@swc/core@1.15.11(@swc/helpers@0.5.23)))
@@ -959,7 +959,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -1062,7 +1062,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -1985,7 +1985,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       postcss:
         specifier: 8.5.6
         version: 8.5.6
@@ -3109,7 +3109,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react-native-launch-arguments:
         specifier: 4.0.2
         version: 4.0.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
@@ -3304,7 +3304,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       purify-ts:
         specifier: 2.1.0
         version: 2.1.0
@@ -3737,7 +3737,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3791,7 +3791,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3845,7 +3845,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3899,7 +3899,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3980,7 +3980,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4037,7 +4037,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4091,7 +4091,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4169,7 +4169,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4223,7 +4223,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4289,7 +4289,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4398,7 +4398,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4609,7 +4609,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4718,7 +4718,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4841,7 +4841,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4968,7 +4968,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5067,7 +5067,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5188,7 +5188,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5288,7 +5288,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5379,7 +5379,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5484,7 +5484,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5580,7 +5580,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5626,7 +5626,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -5701,7 +5701,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5804,7 +5804,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5859,7 +5859,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       tsx:
         specifier: 'catalog:'
         version: 4.20.6
@@ -5977,7 +5977,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6034,7 +6034,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6131,7 +6131,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6257,7 +6257,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6318,7 +6318,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6358,7 +6358,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6407,7 +6407,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6477,7 +6477,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6538,7 +6538,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6596,7 +6596,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6669,7 +6669,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6757,7 +6757,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6818,7 +6818,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6876,7 +6876,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6931,7 +6931,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6986,7 +6986,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7044,7 +7044,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7087,7 +7087,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7130,7 +7130,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7179,7 +7179,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7234,7 +7234,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7274,7 +7274,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7314,7 +7314,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7363,7 +7363,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7418,7 +7418,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7464,7 +7464,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7501,7 +7501,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7538,7 +7538,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7571,7 +7571,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7614,7 +7614,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7660,7 +7660,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7703,7 +7703,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7743,7 +7743,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7786,7 +7786,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7829,7 +7829,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7866,7 +7866,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7906,7 +7906,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7943,7 +7943,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7992,7 +7992,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8029,7 +8029,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8066,7 +8066,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8103,7 +8103,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8146,7 +8146,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8186,7 +8186,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8223,7 +8223,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8314,7 +8314,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       playwright:
         specifier: 'catalog:'
         version: 1.63.0
@@ -8486,7 +8486,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       tsconfig-paths:
         specifier: 4.2.0
         version: 4.2.0
@@ -8535,7 +8535,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       tsx:
         specifier: 'catalog:'
         version: 4.20.6
@@ -8556,7 +8556,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
 
   features/flow/account-analytics:
     dependencies:
@@ -8656,7 +8656,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8750,7 +8750,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8838,7 +8838,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8923,7 +8923,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9011,7 +9011,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9108,7 +9108,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9199,7 +9199,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9308,7 +9308,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9408,7 +9408,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9466,7 +9466,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9539,7 +9539,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9624,7 +9624,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9697,7 +9697,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9764,7 +9764,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9843,7 +9843,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9913,7 +9913,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10031,7 +10031,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10125,7 +10125,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10237,7 +10237,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10340,7 +10340,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10449,7 +10449,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10540,7 +10540,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10625,7 +10625,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10710,7 +10710,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10831,7 +10831,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -10925,7 +10925,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11013,7 +11013,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11098,7 +11098,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11192,7 +11192,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11274,7 +11274,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11328,7 +11328,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11406,7 +11406,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11518,7 +11518,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11612,7 +11612,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11718,7 +11718,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11845,7 +11845,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -11984,7 +11984,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12123,7 +12123,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12241,7 +12241,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12323,7 +12323,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12420,7 +12420,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12532,7 +12532,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12635,7 +12635,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12735,7 +12735,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12844,7 +12844,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12950,7 +12950,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13059,7 +13059,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13156,7 +13156,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13201,7 +13201,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13256,7 +13256,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13323,7 +13323,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13414,7 +13414,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13487,7 +13487,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13569,7 +13569,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13624,7 +13624,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13709,7 +13709,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13773,7 +13773,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13803,7 +13803,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13924,7 +13924,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13979,7 +13979,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14046,7 +14046,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14122,7 +14122,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14192,7 +14192,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14250,7 +14250,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14302,7 +14302,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14369,7 +14369,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14451,7 +14451,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14485,7 +14485,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14540,7 +14540,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14589,7 +14589,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14623,7 +14623,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14672,7 +14672,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14745,7 +14745,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14797,7 +14797,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14843,7 +14843,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14876,7 +14876,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14934,7 +14934,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -14989,7 +14989,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -15053,7 +15053,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -15123,7 +15123,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -15214,7 +15214,7 @@ importers:
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -15305,7 +15305,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -15393,7 +15393,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -15493,7 +15493,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -15632,7 +15632,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -15720,7 +15720,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       protobufjs-cli:
         specifier: 2.4.1
         version: 2.4.1(protobufjs@8.6.6)
@@ -15823,7 +15823,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -15908,7 +15908,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16023,7 +16023,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16120,7 +16120,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16226,7 +16226,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16323,7 +16323,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16423,7 +16423,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16502,7 +16502,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16590,7 +16590,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16705,7 +16705,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16799,7 +16799,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16881,7 +16881,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16984,7 +16984,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17063,7 +17063,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17172,7 +17172,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17284,7 +17284,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17387,7 +17387,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17490,7 +17490,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17584,7 +17584,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17657,7 +17657,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17754,7 +17754,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17851,7 +17851,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -17903,7 +17903,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17973,7 +17973,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18061,7 +18061,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -18143,7 +18143,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18216,7 +18216,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18289,7 +18289,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18368,7 +18368,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18429,7 +18429,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18511,7 +18511,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18584,7 +18584,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18651,7 +18651,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18721,7 +18721,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -18791,7 +18791,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18858,7 +18858,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -18934,7 +18934,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19013,7 +19013,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19089,7 +19089,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19162,7 +19162,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19232,7 +19232,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19302,7 +19302,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 5.0.10
         version: 5.0.10
@@ -19396,7 +19396,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19436,7 +19436,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19464,7 +19464,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19537,7 +19537,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19589,7 +19589,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -19634,7 +19634,7 @@ importers:
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19689,7 +19689,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19720,7 +19720,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19748,7 +19748,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19794,7 +19794,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20437,7 +20437,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -20522,7 +20522,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -20577,7 +20577,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -20695,7 +20695,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -20784,7 +20784,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20836,7 +20836,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20921,7 +20921,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20976,7 +20976,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       protobufjs-cli:
         specifier: 2.4.1
         version: 2.4.1(protobufjs@8.4.1)
@@ -21040,7 +21040,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21092,7 +21092,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21186,7 +21186,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -21262,7 +21262,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -21308,7 +21308,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21360,7 +21360,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21415,7 +21415,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -21470,7 +21470,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21522,7 +21522,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21577,7 +21577,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21632,7 +21632,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21681,7 +21681,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21739,7 +21739,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21797,7 +21797,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21846,7 +21846,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21898,7 +21898,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -21950,7 +21950,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21993,7 +21993,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22078,7 +22078,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -22178,7 +22178,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -22290,7 +22290,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -22366,7 +22366,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -22499,7 +22499,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -22536,7 +22536,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -22585,7 +22585,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -22640,7 +22640,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22701,7 +22701,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22753,7 +22753,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22808,7 +22808,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22872,7 +22872,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22939,7 +22939,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22994,7 +22994,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23049,7 +23049,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23110,7 +23110,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23201,7 +23201,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23259,7 +23259,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23311,7 +23311,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23357,7 +23357,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23442,7 +23442,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -23482,7 +23482,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -23507,7 +23507,7 @@ importers:
         version: typescript@7.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -23559,7 +23559,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -23592,7 +23592,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23641,7 +23641,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -23867,7 +23867,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       prop-types:
         specifier: 15.8.1
         version: 15.8.1
@@ -24009,7 +24009,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24051,7 +24051,7 @@ importers:
         version: typescript@7.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -24112,7 +24112,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -24236,7 +24236,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -24258,7 +24258,7 @@ importers:
     devDependencies:
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
 
   libs/wallet-pnl:
     dependencies:
@@ -24328,7 +24328,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24377,7 +24377,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24441,7 +24441,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24508,7 +24508,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24557,7 +24557,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24603,7 +24603,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24648,7 +24648,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24715,7 +24715,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24755,7 +24755,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24795,7 +24795,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24844,7 +24844,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24902,7 +24902,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24953,7 +24953,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24996,7 +24996,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25057,7 +25057,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25105,7 +25105,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
@@ -25162,7 +25162,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25207,7 +25207,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25247,7 +25247,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25286,7 +25286,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
@@ -25322,7 +25322,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25373,7 +25373,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25439,7 +25439,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25521,7 +25521,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25575,7 +25575,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25638,7 +25638,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25702,7 +25702,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25769,7 +25769,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25793,7 +25793,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
 
   support/jest:
     dependencies:
@@ -25845,7 +25845,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -25877,7 +25877,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-lint-plugin':
         specifier: 'catalog:'
-        version: 0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.90.0)(tailwindcss@4.2.2)
+        version: 0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.93.0)(tailwindcss@4.2.2)
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -25889,7 +25889,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -25916,7 +25916,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26019,7 +26019,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26043,7 +26043,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26061,7 +26061,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -26082,7 +26082,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -26103,7 +26103,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26124,7 +26124,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26145,7 +26145,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26200,7 +26200,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -26218,7 +26218,7 @@ importers:
         version: typescript@7.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       prettier:
         specifier: 2.8.8
         version: 2.8.8
@@ -30350,124 +30350,124 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/binding-android-arm-eabi@1.90.0':
-    resolution: {integrity: sha512-sgfalb1HuxYjiAa4wESZ626z1FGusqNcXYHyB5oIOEprS2sbPg0UYEfo83uF1GNG70DIfZxHkXuE6KFrlSdn8Q==}
+  '@oxlint/binding-android-arm-eabi@1.93.0':
+    resolution: {integrity: sha512-KKw70pbD5Pvq3G2lJ+WQ71XPMjCmg37rkSe2+mDqCRP3PoTSdDMuEi4UOnE8JBtyNM7bek61EC2s0Jt7S7u+Sg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [android]
 
-  '@oxlint/binding-android-arm64@1.90.0':
-    resolution: {integrity: sha512-RcKhz1ETMq+fazE9TKS2+5NIRGwigm/nW8egqF0LI+A8Yw2iW5r0E/C3XAPRiwIm/vcPiutIRIa6IQCIKhZsTQ==}
+  '@oxlint/binding-android-arm64@1.93.0':
+    resolution: {integrity: sha512-fvr1fTUZGelwRxKDt64pf28aL1WaWgviwz3X+E/FcRYvrlEahH0NECRz/c1SY+K+KWmZk5uAf6h1kQnyBkp/2A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [android]
 
-  '@oxlint/binding-darwin-arm64@1.90.0':
-    resolution: {integrity: sha512-PSrxMvP6mx+p1karZcUxLdy9lpaP+JWQPti4al9FgTaPhxE+pT/BjhGExloVVSWgZgIfOlLOjVyyq8BXlodhLQ==}
+  '@oxlint/binding-darwin-arm64@1.93.0':
+    resolution: {integrity: sha512-VdvSN9JRf4Es6ZzoAdvEeh8tgKdw8L4H82WmA8MMPVfPdZGCwE/nI27Z1HrRHYQhPxOh4kmnxQEioSUFrOvDaw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint/binding-darwin-x64@1.90.0':
-    resolution: {integrity: sha512-OLbU9qsrV2Q8QxT2OEzOPdO8zCCpyI8qB+hDI8yr6RsYELtkf0FAZhJdfjM/RnLHKzt44HWwAPnk92vBtKofvw==}
+  '@oxlint/binding-darwin-x64@1.93.0':
+    resolution: {integrity: sha512-QR1V890Ml0YGRG0F/iV0K9igG+pOhe+VWd+aZnxY849rRHZf3F2gEoQks5+GVHf105X9Mh/6HdShTP5juekG2g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint/binding-freebsd-x64@1.90.0':
-    resolution: {integrity: sha512-fBA4pWyVDARmNucQqpyFuPC49xYf1r+sX7dxPL5fNPQrSMLum39Sn56tZ9JPleWC7FzLPwSQ7plYYfirYBHF8A==}
+  '@oxlint/binding-freebsd-x64@1.93.0':
+    resolution: {integrity: sha512-jDfIbi30zZaKi+rTvig3sge+Xhi8pFFSgHxb0jzovc4qh8ETm/irKV9c7N/JsuwnYc5sbvf4IC8w1vQQ0IL+BA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [freebsd]
 
-  '@oxlint/binding-linux-arm-gnueabihf@1.90.0':
-    resolution: {integrity: sha512-zhxH78eP2nR6/pGdhBc7MIfjhhcgATeu8fkmkFJbuzfk6Cj0FzBxyEhL85yDqrCybjx+G2YDzZGsxIO9kvO4Iw==}
+  '@oxlint/binding-linux-arm-gnueabihf@1.93.0':
+    resolution: {integrity: sha512-qtxZ714ND/koFgVH00QgxlzZiIbRPmguaPhnHRU5DFFtrtEdOrSnZD4U/H2AzXrXkZ59eQbMBnJwbum5XohrIQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxlint/binding-linux-arm-musleabihf@1.90.0':
-    resolution: {integrity: sha512-MvYmpHyJqUJjEvkZbJHdwfdL45cGn8EVBkYmoXFiaYFW9suoD3dbJl5mBdpy0DVgdjlyddmldbRtk3cCgETadQ==}
+  '@oxlint/binding-linux-arm-musleabihf@1.93.0':
+    resolution: {integrity: sha512-5pJ9NjMvH7WMUqXB6bTTOSemBm39w2cod27Hu3+Yom/GhbTeNXlYcpDx1o4CgBP6fhp0YHG66TNdVaUm6sHjsA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxlint/binding-linux-arm64-gnu@1.90.0':
-    resolution: {integrity: sha512-L13Sy+Kg0nZhwTsToniqjUFPA2TuM6962qCZ5Wp5KeB517Tw7ApdLTTtlb+bF86fcZZa2EtvCVvAJxk4Dya/MQ==}
+  '@oxlint/binding-linux-arm64-gnu@1.93.0':
+    resolution: {integrity: sha512-pRf+7jtbt2fHE23SX7qBxRgnBZicUgsoCK1PVIjnOk+t3a6UBkpt/GrKI99WlxsKUxftz/5nv/kfKvScmYywkw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-arm64-musl@1.90.0':
-    resolution: {integrity: sha512-wFDdZWGpzIPFdJFjSLWnKB0TGzFriTKUIrl04iMqMyM9BBIJTuerfCHYa0WpDSjr5x3lcW/CHLyacSt886WpGg==}
+  '@oxlint/binding-linux-arm64-musl@1.93.0':
+    resolution: {integrity: sha512-zM8Fd/K8sqGvsBcJBZ3oVZ3ctGWbszA08IaGt5gFFF5RcunppAI/ZnAXbouABvnWeJ//S44KKlfPZnDDbeiphg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-linux-ppc64-gnu@1.90.0':
-    resolution: {integrity: sha512-FRywfn+MoKn8xpBSzgNwNVliSKRI2QXkxi/iF7o6FEQs8Bh8z2RpVTaFAcO3pchXjvB2eGNFIoLLQABIQ+u7VA==}
+  '@oxlint/binding-linux-ppc64-gnu@1.93.0':
+    resolution: {integrity: sha512-7qKCnvhZKDXJG2pdbLazd2hw4FxjJHbZOFrrbzyy5PdHfPLH9vnNUa1le01A8uItZuYKPBPncH+HCoEiFT4SgA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-riscv64-gnu@1.90.0':
-    resolution: {integrity: sha512-IS2PaUgpc/qeLADTyhUNmdx3x4ijs9pjJdPKBYHaT+mAE7k3FsjnHPTjhpsak1b++h6CIPhv6WX9Z+y7Pw0voQ==}
+  '@oxlint/binding-linux-riscv64-gnu@1.93.0':
+    resolution: {integrity: sha512-2pgulxC6G8V5wE750NJE/fRkf9aO6i6yoj10wyaR2EdiNtan4OemsOtsQ0ZTXGdY8Q3IoTmlND3GYvjJsvikYg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-riscv64-musl@1.90.0':
-    resolution: {integrity: sha512-s7JFKRkGS8O7i2ZVODfuO++NC7sH6HDqpMn8lYxw91w0SXJOxnAVjQ8utvmDwLMMT0jaSkuOKuUYJDGDtu4sHQ==}
+  '@oxlint/binding-linux-riscv64-musl@1.93.0':
+    resolution: {integrity: sha512-yWsn6Gg2PnGG5jlyDz5+pHGiMTMiy4adaa4WRMzDgzB8efaShk1JMmTHIBSVLQMh0tYXRs4CN5uJCO79r4Mi4g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-linux-s390x-gnu@1.90.0':
-    resolution: {integrity: sha512-b0GxrOQr5VONCkd7KLSqmP6b6nqZuTpuS8QPQHzltmqdXP5bY0Jl0CZ0QmlCTrS3ExaLYbioFYOARzNbYvcApQ==}
+  '@oxlint/binding-linux-s390x-gnu@1.93.0':
+    resolution: {integrity: sha512-WCn5plwp/ezS2RDPQKp0/EXEVRr9/dDexUdRKmsMFqzNM5xBSZ1wbsi3PuMk1VfkMRnI5BuazCsziCWMXRDOlw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-x64-gnu@1.90.0':
-    resolution: {integrity: sha512-iaJeShJtgUp8rZbt9YUdTAGOpmX5KogCLba17Jp1tWdJ3F4M3D2g2TKUyI1FMTHxKH9NNHuQcuC2kZRg6IV7yQ==}
+  '@oxlint/binding-linux-x64-gnu@1.93.0':
+    resolution: {integrity: sha512-F2CGjb9LAkzH+IYTZSzd1klQ1vk5z6Utjax64WeLByCkYXbVDbsun+Oy2hLfW2MDSKCvW+jwy/9ld0EPgdeu+A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-x64-musl@1.90.0':
-    resolution: {integrity: sha512-/aZoXnL5WBLCXuzfHqvEFXcm4iwYmr/cYByHDTXzLFzJdE5DC7bm6phpWqHv6BeqpVgY9IpBAxGDv2WEkl5JCg==}
+  '@oxlint/binding-linux-x64-musl@1.93.0':
+    resolution: {integrity: sha512-plf5DE2objcG8Tf7mXRuRa8tT8rzDkpjqXQtKoGsKHWkpgsialbON1+cCtoSEUTVbQUjXvuAm8vV9+3rR0yCBw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-openharmony-arm64@1.90.0':
-    resolution: {integrity: sha512-SMhk7ozwoxYDKfYqGZCQEfULOKDneF9uhaoIf2neoDLWvNtjY9yVeL7YHmE5L9WdKvMpWNwwZxhenxBu6AgfOg==}
+  '@oxlint/binding-openharmony-arm64@1.93.0':
+    resolution: {integrity: sha512-Kp2yJrKvoTe9FfKdO/xwLNUbs2bYTMKx0+aoQD1s0h/Tx0kSgtHSdGmrk8tTKdluosjFbo88qYRIaNIX43AfFw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
 
-  '@oxlint/binding-win32-arm64-msvc@1.90.0':
-    resolution: {integrity: sha512-KBvR3A9fO7fCi2vCP8ifWvlia7tGEQV9NaYh+IGwa/7Groy48Mt/UaYqMK9/zOtAWl20BUCf6RPqzJ32fRw33Q==}
+  '@oxlint/binding-win32-arm64-msvc@1.93.0':
+    resolution: {integrity: sha512-vigjcHCFsR6KjnWTEVfaCxcMYapEuaK9FZa1MpewwQ1S+Xud3v0okfkj1RySsD6RF1NRHIjSlQSalTnKIaj3nA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint/binding-win32-ia32-msvc@1.90.0':
-    resolution: {integrity: sha512-+x42rDHQGbTCuT3EzpWAzhP3NoVPE/cJsG4gnrakOSg0olV+GCdMpPU23Nvrl3zZMnXxFZdTtDv4D3SuaA5ZeQ==}
+  '@oxlint/binding-win32-ia32-msvc@1.93.0':
+    resolution: {integrity: sha512-0Ot3BEe/AAr2/uQhe55r8CmPlperYk2mQmxdutOru7oU0kir6IiEVHb1TG3GORRlfra97lPHVDLhgmihiKzLrg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ia32]
     os: [win32]
 
-  '@oxlint/binding-win32-x64-msvc@1.90.0':
-    resolution: {integrity: sha512-30JiaFEBUB9peEOcvVM8ggo88SoN/IdSr9DW505JdBji/R6dM66gKEiG65hw6qcaF2f4mO0cEJ+RwRZprmun9g==}
+  '@oxlint/binding-win32-x64-msvc@1.93.0':
+    resolution: {integrity: sha512-ZzzIIVs/Qkm8trUWYKF0OYub5ALlv50/3gsEZbKAvWgz+yNJX6uRmQ8ySPXU2Q0/Y9m4JCOjhpmC8XUYbPHX5Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -39975,8 +39975,8 @@ packages:
       vite-plus:
         optional: true
 
-  oxlint@1.90.0:
-    resolution: {integrity: sha512-RkTN9EmgIUpLuhNoLhO3OliMGJlvb3Dk7XVjBZnfoMCHrVpuz5ESd97klfiyYeV7XfA2lNLnDCPMkUI+Qw5How==}
+  oxlint@1.93.0:
+    resolution: {integrity: sha512-19JMsQFX+YvEbcUTFQxjTwhvs0Ibg0D6CFneSLgpwnACWcY/6LjhpGpkPodh0T5aIT1pjMTLlYaeBFzaVgugTA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -48096,14 +48096,14 @@ snapshots:
       tailwindcss: 4.2.2
       tslib: 2.6.2
 
-  '@ledgerhq/lumen-lint-plugin@0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.90.0)(tailwindcss@4.2.2)':
+  '@ledgerhq/lumen-lint-plugin@0.1.2(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.93.0)(tailwindcss@4.2.2)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.34
       '@shadcn/lint': 0.2.3(@typescript-eslint/parser@8.72.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-better-tailwindcss: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.90.0)(tailwindcss@4.2.2)
+      eslint-plugin-better-tailwindcss: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.93.0)(tailwindcss@4.2.2)
     optionalDependencies:
       eslint: 8.57.0
-      oxlint: 1.90.0
+      oxlint: 1.93.0
       tailwindcss: 4.2.2
     transitivePeerDependencies:
       - '@eslint/css'
@@ -49080,61 +49080,61 @@ snapshots:
   '@oxfmt/binding-win32-x64-msvc@0.75.0':
     optional: true
 
-  '@oxlint/binding-android-arm-eabi@1.90.0':
+  '@oxlint/binding-android-arm-eabi@1.93.0':
     optional: true
 
-  '@oxlint/binding-android-arm64@1.90.0':
+  '@oxlint/binding-android-arm64@1.93.0':
     optional: true
 
-  '@oxlint/binding-darwin-arm64@1.90.0':
+  '@oxlint/binding-darwin-arm64@1.93.0':
     optional: true
 
-  '@oxlint/binding-darwin-x64@1.90.0':
+  '@oxlint/binding-darwin-x64@1.93.0':
     optional: true
 
-  '@oxlint/binding-freebsd-x64@1.90.0':
+  '@oxlint/binding-freebsd-x64@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-arm-gnueabihf@1.90.0':
+  '@oxlint/binding-linux-arm-gnueabihf@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-arm-musleabihf@1.90.0':
+  '@oxlint/binding-linux-arm-musleabihf@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-arm64-gnu@1.90.0':
+  '@oxlint/binding-linux-arm64-gnu@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-arm64-musl@1.90.0':
+  '@oxlint/binding-linux-arm64-musl@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-ppc64-gnu@1.90.0':
+  '@oxlint/binding-linux-ppc64-gnu@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-riscv64-gnu@1.90.0':
+  '@oxlint/binding-linux-riscv64-gnu@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-riscv64-musl@1.90.0':
+  '@oxlint/binding-linux-riscv64-musl@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-s390x-gnu@1.90.0':
+  '@oxlint/binding-linux-s390x-gnu@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-x64-gnu@1.90.0':
+  '@oxlint/binding-linux-x64-gnu@1.93.0':
     optional: true
 
-  '@oxlint/binding-linux-x64-musl@1.90.0':
+  '@oxlint/binding-linux-x64-musl@1.93.0':
     optional: true
 
-  '@oxlint/binding-openharmony-arm64@1.90.0':
+  '@oxlint/binding-openharmony-arm64@1.93.0':
     optional: true
 
-  '@oxlint/binding-win32-arm64-msvc@1.90.0':
+  '@oxlint/binding-win32-arm64-msvc@1.93.0':
     optional: true
 
-  '@oxlint/binding-win32-ia32-msvc@1.90.0':
+  '@oxlint/binding-win32-ia32-msvc@1.93.0':
     optional: true
 
-  '@oxlint/binding-win32-x64-msvc@1.90.0':
+  '@oxlint/binding-win32-x64-msvc@1.93.0':
     optional: true
 
   '@parcel/watcher-android-arm64@2.6.0':
@@ -56579,7 +56579,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-better-tailwindcss@4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.90.0)(tailwindcss@4.2.2):
+  eslint-plugin-better-tailwindcss@4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.93.0)(tailwindcss@4.2.2):
     dependencies:
       '@eslint/css-tree': 4.1.1
       '@valibot/to-json-schema': 1.8.0(valibot@1.4.2(@typescript/typescript6@6.0.2))
@@ -56592,7 +56592,7 @@ snapshots:
       valibot: 1.4.2(@typescript/typescript6@6.0.2)
     optionalDependencies:
       eslint: 8.57.0
-      oxlint: 1.90.0
+      oxlint: 1.93.0
     transitivePeerDependencies:
       - '@eslint/css'
       - typescript
@@ -60834,27 +60834,27 @@ snapshots:
       '@oxfmt/binding-win32-ia32-msvc': 0.75.0
       '@oxfmt/binding-win32-x64-msvc': 0.75.0
 
-  oxlint@1.90.0:
+  oxlint@1.93.0:
     optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.90.0
-      '@oxlint/binding-android-arm64': 1.90.0
-      '@oxlint/binding-darwin-arm64': 1.90.0
-      '@oxlint/binding-darwin-x64': 1.90.0
-      '@oxlint/binding-freebsd-x64': 1.90.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.90.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.90.0
-      '@oxlint/binding-linux-arm64-gnu': 1.90.0
-      '@oxlint/binding-linux-arm64-musl': 1.90.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.90.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.90.0
-      '@oxlint/binding-linux-riscv64-musl': 1.90.0
-      '@oxlint/binding-linux-s390x-gnu': 1.90.0
-      '@oxlint/binding-linux-x64-gnu': 1.90.0
-      '@oxlint/binding-linux-x64-musl': 1.90.0
-      '@oxlint/binding-openharmony-arm64': 1.90.0
-      '@oxlint/binding-win32-arm64-msvc': 1.90.0
-      '@oxlint/binding-win32-ia32-msvc': 1.90.0
-      '@oxlint/binding-win32-x64-msvc': 1.90.0
+      '@oxlint/binding-android-arm-eabi': 1.93.0
+      '@oxlint/binding-android-arm64': 1.93.0
+      '@oxlint/binding-darwin-arm64': 1.93.0
+      '@oxlint/binding-darwin-x64': 1.93.0
+      '@oxlint/binding-freebsd-x64': 1.93.0
+      '@oxlint/binding-linux-arm-gnueabihf': 1.93.0
+      '@oxlint/binding-linux-arm-musleabihf': 1.93.0
+      '@oxlint/binding-linux-arm64-gnu': 1.93.0
+      '@oxlint/binding-linux-arm64-musl': 1.93.0
+      '@oxlint/binding-linux-ppc64-gnu': 1.93.0
+      '@oxlint/binding-linux-riscv64-gnu': 1.93.0
+      '@oxlint/binding-linux-riscv64-musl': 1.93.0
+      '@oxlint/binding-linux-s390x-gnu': 1.93.0
+      '@oxlint/binding-linux-x64-gnu': 1.93.0
+      '@oxlint/binding-linux-x64-musl': 1.93.0
+      '@oxlint/binding-openharmony-arm64': 1.93.0
+      '@oxlint/binding-win32-arm64-msvc': 1.93.0
+      '@oxlint/binding-win32-ia32-msvc': 1.93.0
+      '@oxlint/binding-win32-x64-msvc': 1.93.0
 
   p-cancelable@2.1.1: {}
 
