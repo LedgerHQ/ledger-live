@@ -6,12 +6,7 @@
   "keywords": [
     "Ledger"
   ],
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint src"
   },
   "dependencies": {
@@ -26,20 +21,8 @@
     "typescript": "catalog:"
   },
   "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "import": "./lib-es/index.js",
-      "require": "./lib/index.js",
-      "default": "./lib/index.js"
-    },
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib/*": "./lib/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "import": "./lib-es/*.js",
-      "require": "./lib/*.js",
-      "default": "./lib/*.js"
-    },
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
     "./package.json": "./package.json"
   }
 }

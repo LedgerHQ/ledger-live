@@ -11,218 +11,60 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
-  "main": "lib-es/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib-es/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "exchange/transactionStatus": [
-        "lib-es/exchange/swapTransactionStatus/transactionStatus"
-      ],
-      "exchange/transactionStatus/index": [
-        "lib-es/exchange/swapTransactionStatus/transactionStatus"
-      ],
-      "exchange/transactionStatus/fetchSwapStatus": [
-        "lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus"
-      ],
-      "exchange/transactionStatus/fromSwapOperation": [
-        "lib-es/exchange/swapTransactionStatus/history/fromSwapOperation"
-      ],
-      "exchange/transactionStatus/parseParams": [
-        "lib-es/exchange/swapTransactionStatus/params/parseParams"
-      ],
-      "exchange/transactionStatus/statusController": [
-        "lib-es/exchange/swapTransactionStatus/status/statusController"
-      ],
-      "exchange/transactionStatus/statusValues": [
-        "lib-es/exchange/swapTransactionStatus/status/statusValues"
-      ],
-      "exchange/transactionStatus/types": [
-        "lib-es/exchange/swapTransactionStatus/types"
-      ],
-      "exchange/swapTransactionStatus": [
-        "lib-es/exchange/swapTransactionStatus/index"
-      ],
-      "exchange/swapTransactionStatus/index": [
-        "lib-es/exchange/swapTransactionStatus/index"
-      ],
-      "exchange/swapTransactionStatus/transactionStatus": [
-        "lib-es/exchange/swapTransactionStatus/transactionStatus"
-      ],
-      "exchange/intents": [
-        "lib-es/exchange/intents/index"
-      ],
-      "exchange/intents/index": [
-        "lib-es/exchange/intents/index"
-      ],
-      "errors": [
-        "./src/errors.ts"
-      ],
-      "*": [
-        "lib-es/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "test-helpers/*": [
-        "lib-es/test-helpers/*"
-      ]
-    }
-  },
   "exports": {
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "default": "./lib-es/*.js"
-    },
-    "./exchange/transactionStatus": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
-    },
-    "./exchange/transactionStatus/index": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
-    },
-    "./exchange/transactionStatus/fetchSwapStatus": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/api/fetchSwapStatus.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus.js"
-    },
-    "./exchange/transactionStatus/fromSwapOperation": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/history/fromSwapOperation.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/history/fromSwapOperation.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/history/fromSwapOperation.js"
-    },
-    "./exchange/transactionStatus/parseParams": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/params/parseParams.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/params/parseParams.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/params/parseParams.js"
-    },
-    "./exchange/transactionStatus/statusController": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/status/statusController.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/status/statusController.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/status/statusController.js"
-    },
-    "./exchange/transactionStatus/statusValues": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/status/statusValues.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/status/statusValues.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/status/statusValues.js"
-    },
-    "./exchange/transactionStatus/types": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/types.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/types.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/types.js"
-    },
-    "./exchange/swapTransactionStatus": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/index.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/index.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/index.js"
-    },
-    "./exchange/swapTransactionStatus/index": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/index.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/index.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/index.js"
-    },
-    "./exchange/swapTransactionStatus/transactionStatus": {
-      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
-      "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
-      "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
-    },
-    "./exchange/intents": {
-      "@ledgerhq/source": "./src/exchange/intents/index.ts",
-      "types": "./lib-es/exchange/intents/index.d.ts",
-      "default": "./lib-es/exchange/intents/index.js"
-    },
-    "./exchange/intents/index": {
-      "@ledgerhq/source": "./src/exchange/intents/index.ts",
-      "types": "./lib-es/exchange/intents/index.d.ts",
-      "default": "./lib-es/exchange/intents/index.js"
-    },
-    ".": {
-      "default": "./lib-es/index.js"
-    },
-    "./genericAwarenessModal": {
-      "@ledgerhq/source": "./src/genericAwarenessModal/index.ts",
-      "default": "./lib-es/genericAwarenessModal/index.js"
-    },
-    "./currencies/*": {
-      "@ledgerhq/source": "./src/currencies/*.ts",
-      "default": "./lib-es/currencies/*.js"
-    },
-    "./device-action/*": {
-      "@ledgerhq/source": "./src/device-action/*.ts",
-      "default": "./lib-es/device-action/*.js"
-    },
-    "./intents/signTransactionIntent": {
-      "@ledgerhq/source": "./src/intents/signTransactionIntent.ts",
-      "types": "./lib-es/intents/signTransactionIntent.d.ts",
-      "default": "./lib-es/intents/signTransactionIntent.js"
-    },
-    "./intents/*": {
-      "@ledgerhq/source": "./src/intents/*/index.ts",
-      "types": "./lib-es/intents/*/index.d.ts",
-      "default": "./lib-es/intents/*/index.js"
-    },
-    "./hooks": {
-      "default": "./lib-es/hooks/index.js"
-    },
-    "./featureFlags": {
-      "@ledgerhq/source": "./src/featureFlags/*.ts",
-      "default": "./lib-es/featureFlags/*.js"
-    },
-    "./bridge/descriptor/registry": {
-      "@ledgerhq/source": "./src/bridge/descriptor/registry.ts",
-      "default": "./lib-es/bridge/descriptor/registry.js"
-    },
-    "./bridge/descriptor/types": {
-      "@ledgerhq/source": "./src/bridge/descriptor/types.ts",
-      "default": "./lib-es/bridge/descriptor/types.js"
-    },
-    "./bridge/descriptor/send/features": {
-      "@ledgerhq/source": "./src/bridge/descriptor/send/features.ts",
-      "default": "./lib-es/bridge/descriptor/send/features.js"
-    },
-    "./bridge/descriptor/send/memo": {
-      "@ledgerhq/source": "./src/bridge/descriptor/send/memo.ts",
-      "default": "./lib-es/bridge/descriptor/send/memo.js"
-    },
-    "./test-helpers/cryptoAssetsStore": {
-      "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
-      "types": "./lib-es/test-helpers/cryptoAssetsStore.d.ts",
-      "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
-    },
-    "./test-helpers/*": {
-      "@ledgerhq/source": "./src/test-helpers/*.ts",
-      "types": "./lib-es/test-helpers/*.d.ts",
-      "default": "./lib-es/test-helpers/*.js"
-    },
-    "./modularDrawer/__mocks__/*": {
-      "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
-      "types": "./lib-es/modularDrawer/__mocks__/*.d.ts",
-      "default": "./lib-es/modularDrawer/__mocks__/*.js"
-    },
+    "./__tests__/test-helpers/testUtils": "./src/__tests__/test-helpers/testUtils.tsx",
+    "./bridge/react/BridgeSync": "./src/bridge/react/BridgeSync.tsx",
+    "./flows/send/amount/SendAmountDisplayModeContext": "./src/flows/send/amount/SendAmountDisplayModeContext.tsx",
+    "./hoc/withRemountableWrapper": "./src/hoc/withRemountableWrapper.tsx",
+    "./modularDrawer/hooks/modules/useLeftApyModule": "./src/modularDrawer/hooks/modules/useLeftApyModule.tsx",
+    "./modularDrawer/hooks/modules/useLeftMarketTrendModule": "./src/modularDrawer/hooks/modules/useLeftMarketTrendModule.tsx",
+    "./modularDrawer/hooks/modules/useRightMarketTrendModule": "./src/modularDrawer/hooks/modules/useRightMarketTrendModule.tsx",
+    "./modularDrawer/hooks/useLeftAccounts": "./src/modularDrawer/hooks/useLeftAccounts.tsx",
+    "./modularDrawer/hooks/useLeftAccountsApy": "./src/modularDrawer/hooks/useLeftAccountsApy.tsx",
+    "./modularDrawer/hooks/useNetworkAccountCounts": "./src/modularDrawer/hooks/useNetworkAccountCounts.tsx",
+    "./modularDrawer/hooks/useRightBalanceAsset": "./src/modularDrawer/hooks/useRightBalanceAsset.tsx",
+    "./modularDrawer/hooks/useRightBalanceNetwork": "./src/modularDrawer/hooks/useRightBalanceNetwork.tsx",
+    "./modularDrawer/modules/__tests__/fixtures": "./src/modularDrawer/modules/__tests__/fixtures.tsx",
+    "./modularDrawer/utils/sortByBalance": "./src/modularDrawer/utils/sortByBalance.tsx",
+    "./notifications/ServiceStatusProvider/index": "./src/notifications/ServiceStatusProvider/index.tsx",
+    "./notifications/ToastProvider/index": "./src/notifications/ToastProvider/index.tsx",
+    "./os-update/components/OsUpdatesOrchestratorComponent": "./src/os-update/components/OsUpdatesOrchestratorComponent.tsx",
+    "./platform/providers/RampCatalogProvider/index": "./src/platform/providers/RampCatalogProvider/index.tsx",
+    "./platform/providers/RemoteLiveAppProvider/index": "./src/platform/providers/RemoteLiveAppProvider/index.tsx",
+    "./portfolio/portfolioReact": "./src/portfolio/portfolioReact.tsx",
+    "./postOnboarding/PostOnboardingProvider": "./src/postOnboarding/PostOnboardingProvider.tsx",
+    "./wallet-api/LocalLiveAppProvider/index": "./src/wallet-api/LocalLiveAppProvider/index.tsx",
+    "./*": "./src/*.ts",
+    "./*.js": "./src/*.ts",
+    "./exchange/transactionStatus": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
+    "./exchange/transactionStatus/index": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
+    "./exchange/transactionStatus/fetchSwapStatus": "./src/exchange/swapTransactionStatus/api/fetchSwapStatus.ts",
+    "./exchange/transactionStatus/fromSwapOperation": "./src/exchange/swapTransactionStatus/history/fromSwapOperation.ts",
+    "./exchange/transactionStatus/parseParams": "./src/exchange/swapTransactionStatus/params/parseParams.ts",
+    "./exchange/transactionStatus/statusController": "./src/exchange/swapTransactionStatus/status/statusController.ts",
+    "./exchange/transactionStatus/statusValues": "./src/exchange/swapTransactionStatus/status/statusValues.ts",
+    "./exchange/transactionStatus/types": "./src/exchange/swapTransactionStatus/types.ts",
+    "./exchange/swapTransactionStatus": "./src/exchange/swapTransactionStatus/index.ts",
+    "./exchange/swapTransactionStatus/index": "./src/exchange/swapTransactionStatus/index.ts",
+    "./exchange/swapTransactionStatus/transactionStatus": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
+    "./exchange/intents": "./src/exchange/intents/index.ts",
+    "./exchange/intents/index": "./src/exchange/intents/index.ts",
+    "./genericAwarenessModal": "./src/genericAwarenessModal/index.ts",
+    "./currencies/*": "./src/currencies/*.ts",
+    "./device-action/*": "./src/device-action/*.ts",
+    "./intents/signTransactionIntent": "./src/intents/signTransactionIntent.ts",
+    "./intents/*": "./src/intents/*/index.ts",
+    "./bridge/descriptor/registry": "./src/bridge/descriptor/registry.ts",
+    "./bridge/descriptor/types": "./src/bridge/descriptor/types.ts",
+    "./bridge/descriptor/send/features": "./src/bridge/descriptor/send/features.ts",
+    "./bridge/descriptor/send/memo": "./src/bridge/descriptor/send/memo.ts",
+    "./test-helpers/cryptoAssetsStore": "./src/test-helpers/cryptoAssetsStore.ts",
+    "./test-helpers/*": "./src/test-helpers/*.ts",
+    "./modularDrawer/__mocks__/*": "./src/modularDrawer/__mocks__/*.ts",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rimraf lib lib-es && tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "watch": "tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es --watch",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
@@ -243,10 +85,6 @@
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
-  "files": [
-    "lib-es",
-    "src"
-  ],
   "peerDependencies": {
     "react": ">=16",
     "react-dom": ">=16",
