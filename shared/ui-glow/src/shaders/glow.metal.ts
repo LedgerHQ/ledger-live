@@ -1,0 +1,190 @@
+/**
+ * The glow shader in Metal Shading Language: a port of shaders/glow.glsl.ts.
+ * Keep the two in sync: same constants, same math, same order of operations.
+ *
+ * Differences with the GLSL: [[position]] is top-left (no y flip), the uniforms
+ * are one struct (buffer 0) shared by both stages, and the lobe centers are
+ * [[flat]]. Entry points: glow_vertex (3 vertices, no vertex buffer) and glow_fragment.
+ */
+export const GLOW_METAL = /* metal */ `
+#include <metal_stdlib>
+using namespace metal;
+
+// Same layout as GlowUniforms in RCTGlowView.mm (96 bytes).
+struct Uniforms {
+  float2 res;
+  float time;
+  float dpr;
+  float fade;
+  float fadeTop;
+  float fadeBottom;
+  float pad;
+  float p[16];
+};
+
+#define P_INTENSITY   u.p[0]
+#define P_OPACITY     u.p[1]
+#define P_GRAIN       u.p[2]
+#define P_GRAIN_SIZE  u.p[3]
+#define P_CHROMA      u.p[4]
+#define P_SOFTNESS    u.p[5]
+#define P_WIDTH       u.p[6]
+#define P_REACH       u.p[7]
+#define P_DARK        u.p[8]
+#define P_SPREAD_X    u.p[9]
+#define P_BALANCE     u.p[10]
+#define P_CONTRAST    u.p[11]
+#define P_TOP_REACH   u.p[12] // reach multiplier of the top glow
+
+struct VertexOut {
+  float4 position [[position]];
+  float2 centerA [[flat]];
+  float2 centerB [[flat]];
+  float2 centerC [[flat]];
+  float2 centerD [[flat]];
+};
+
+static float3 mod289(float3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+static float2 mod289(float2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+static float3 permute(float3 x) { return mod289(((x * 34.0) + 1.0) * x); }
+
+static float snoise(float2 v) {
+  const float4 C = float4(0.211324865405187, 0.366025403784439,
+                         -0.577350269189626, 0.024390243902439);
+  float2 i  = floor(v + dot(v, C.yy));
+  float2 x0 = v - i + dot(i, C.xx);
+  float2 i1 = (x0.x > x0.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
+  float4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod289(i);
+  float3 p = permute(permute(i.y + float3(0.0, i1.y, 1.0)) + i.x + float3(0.0, i1.x, 1.0));
+  float3 m = max(0.5 - float3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), float3(0.0));
+  m = m * m; m = m * m;
+  float3 x = 2.0 * fract(p * C.www) - 1.0;
+  float3 h = abs(x) - 0.5;
+  float3 ox = floor(x + 0.5);
+  float3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  float3 g;
+  g.x  = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+// from / to = (x, y, side drift) for balance 0 and balance 1.
+static float2 lobeCenter(constant Uniforms &u, float seed, float3 from, float3 to) {
+  float3 l = mix(from, to, float3(P_BALANCE));
+  return float2(l.x + l.z * snoise(float2(seed, u.time * 0.019)), l.y);
+}
+
+vertex VertexOut glow_vertex(uint vid [[vertex_id]], constant Uniforms &u [[buffer(0)]]) {
+  const float2 positions[3] = { float2(-1.0, -1.0), float2(3.0, -1.0), float2(-1.0, 3.0) };
+  VertexOut out;
+  out.position = float4(positions[vid], 0.0, 1.0);
+  out.centerA = lobeCenter(u, 1.7,  float3(0.44, 0.03,  0.075), float3(0.40, 0.04,  0.072));
+  out.centerB = lobeCenter(u, 23.4, float3(0.20, 0.06,  0.09),  float3(0.24, 0.048, 0.078));
+  out.centerC = lobeCenter(u, 41.9, float3(0.74, 0.02,  0.065), float3(0.76, 0.048, 0.078));
+  out.centerD = lobeCenter(u, 57.2, float3(0.52, 0.125, 0.11),  float3(0.60, 0.04,  0.072));
+  return out;
+}
+
+constant float2x2 ROT = float2x2(float2(0.8, 0.6), float2(-0.6, 0.8));
+
+static float fbm(float2 p) {
+  float sum = 0.0;
+  float amp = 0.5;
+  for (int i = 0; i < 4; i++) {
+    sum += amp * snoise(p);
+    p = ROT * p * 2.07;
+    amp *= 0.5;
+  }
+  return sum;
+}
+
+static float hash21(float2 p) {
+  p = fract(p * float2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+static float filmGrain(float2 px, float t, float size) {
+  float n1 = snoise(px / (1.75 * size));
+  float n2 = snoise(px / (3.60 * size) + 31.0);
+  float n3 = snoise(px / (8.20 * size) + 73.0);
+  float fixedPart = n1 * 0.52 + n2 * 0.33 + n3 * 0.21;
+  float ph = t * 2.2;
+  float f = smoothstep(0.0, 1.0, fract(ph));
+  float a = snoise(px / (1.95 * size) + float2(floor(ph) * 17.0, 0.0));
+  float b = snoise(px / (1.95 * size) + float2((floor(ph) + 1.0) * 17.0, 0.0));
+  float g = fixedPart * 0.80 + mix(a, b, f) * 0.26;
+  return sign(g) * pow(abs(g), 0.78);
+}
+
+static float lobe(float2 p, float2 c, float2 rad, float k) {
+  float2 e = (p - c) / max(rad, float2(0.02));
+  return exp(-dot(e, e) * k);
+}
+
+// One glow growing from the edge where h = 0 (h: distance from that edge, 0..1).
+static float3 glowColor(constant Uniforms &u, VertexOut in, float2 uv, float h, float2 px, float t, float reachScale) {
+  float2 p = float2(0.5 + (uv.x - 0.5) * max(P_SPREAD_X, 0.2), h);
+  float2 warp = float2(
+    snoise(float2(p.x * 1.5, p.y * 1.05) + float2( t * 0.021, -t * 0.014)),
+    snoise(float2(p.x * 1.2, p.y * 0.85) + float2(-t * 0.017,  t * 0.023))
+  );
+  p.x += warp.x * 0.105 * smoothstep(0.0, 0.55, h) * P_SOFTNESS;
+  float W = max(P_WIDTH, 0.08);
+  float R = max(P_REACH * reachScale, 0.06);
+  float k = 1.55 / max(P_SOFTNESS, 0.35);
+  float b = P_BALANCE;
+  float gA = lobe(p, in.centerA, float2(mix(0.80, 0.72, b) * W, mix(1.00, 0.98, b) * R), k) * mix(0.74, 0.72, b);
+  float gB = lobe(p, in.centerB, float2(mix(0.58, 0.66, b) * W, mix(0.78, 0.88, b) * R), k) * mix(0.76, 0.70, b);
+  float gC = lobe(p, in.centerC, float2(mix(0.46, 0.66, b) * W, mix(0.50, 0.88, b) * R), k) * mix(0.85, 0.72, b);
+  float gD = lobe(p, in.centerD, float2(mix(0.86, 0.72, b) * W, mix(1.30, 1.02, b) * R), k) * mix(0.50, 0.68, b);
+  float3 colA = float3(0.430, 0.225, 0.870);
+  float3 colB = float3(0.860, 0.290, 0.640);
+  float3 colC = float3(1.000, 0.620, 0.310);
+  float3 colD = float3(0.290, 0.540, 0.960);
+  float4 w = float4(gA, gB, gC, gD);
+  w *= w;
+  float wSum = w.x + w.y + w.z + w.w;
+  float3 mixed = (colA * w.x + colB * w.y + colC * w.z + colD * w.w) / max(wSum, 1e-5);
+  float3 tint = mix(colA, mixed, float3(P_CHROMA));
+  float cl = fbm(float2(p.x * 1.35, p.y * 1.05) + warp * 0.40 + float2(t * 0.010, 0.0)) * 0.5 + 0.5;
+  float field = (gA + gB + gC + gD) * 0.78 * (0.80 + mix(0.38, 0.26, b) * cl);
+  float v = clamp(field * 0.90, 0.0, 1.6);
+  v = pow(v, 1.0 + 1.70 * P_DARK);
+  v = pow(v, 1.0 + 0.80 * P_CONTRAST) * (1.0 + 0.60 * P_CONTRAST);
+  v *= smoothstep(0.0, 0.045 + 0.10 * P_DARK, v);
+  float3 deep = tint * float3(0.80, 0.70, 1.00);
+  float3 lift = mix(tint, float3(0.84, 0.76, 1.00), float3(0.24));
+  tint = mix(tint, mix(deep, lift, float3(smoothstep(0.06, 0.80, v))), float3(P_CONTRAST));
+  float gr = filmGrain(px, t, max(P_GRAIN_SIZE, 0.3));
+  float mids = smoothstep(0.015, 0.22, v) * (1.0 - 0.70 * smoothstep(0.38, 1.0, v));
+  float dens = 0.085 + 0.915 * mids;
+  v *= 1.0 + gr * dens * P_GRAIN * 0.34;
+  float mottle = snoise(px / 88.0) * 0.6 + snoise(px / 34.0) * 0.4;
+  v = max(v * (1.0 + mottle * P_GRAIN * 0.055), 0.0);
+  float3 col = tint * v;
+  col += float3(0.90, 0.86, 1.00) * pow(max(v - 0.72, 0.0), 1.7) * 0.30;
+  col *= P_INTENSITY;
+  col = col / (1.0 + col * 0.42);
+  col += gr * dens * P_GRAIN * 0.030 * float3(1.0, 0.982, 0.955);
+  col *= P_OPACITY;
+  return col;
+}
+
+fragment float4 glow_fragment(VertexOut in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {
+  float2 fragCoord = in.position.xy;
+  float2 uv = fragCoord / u.res;
+  float2 px = fragCoord / max(u.dpr, 1.0);
+  float t = u.time;
+  float3 col = float3(0.0);
+  // A hidden glow costs nothing: its branch is skipped (uniform branch, same for every pixel).
+  if (u.fadeTop > 0.0) col += glowColor(u, in, uv, uv.y, px, t, P_TOP_REACH) * smoothstep(0.0, 1.0, u.fadeTop);
+  if (u.fadeBottom > 0.0) col += glowColor(u, in, uv, 1.0 - uv.y, px, t, 1.0) * smoothstep(0.0, 1.0, u.fadeBottom);
+  col += (hash21(fragCoord * 0.39) - 0.5) * 0.009;
+  col *= u.fade;
+  return float4(clamp(col, float3(0.0), float3(1.0)), 1.0);
+}
+`;
