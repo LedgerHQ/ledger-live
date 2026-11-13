@@ -521,7 +521,7 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}-xcode-26.4.1" >> $GITHUB_OUTPUT
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
@@ -633,7 +633,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@ci-test/xcode-26.4.1-develop
     permissions:
       id-token: write
       contents: read
@@ -707,7 +707,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [macOS, ARM64]
+    runs-on: ["test=true", "xcode-26.4.1"]
     needs: [determine-builds]
     if: ${{ inputs.check_pod_lockfile && needs.determine-builds.outputs.ios_native_exists == 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true' }}
     steps:
@@ -766,7 +766,7 @@ jobs:
       contents: read
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.build-ios.result) && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
+    runs-on: ["test=true", "xcode-26.4.1"]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
