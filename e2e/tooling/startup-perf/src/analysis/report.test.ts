@@ -135,7 +135,7 @@ describe("toMarkdown", () => {
     ];
     assert.match(
       toMarkdown(summarise(samples, options), options),
-      /\*\*android accounts: build A wrote no startup lines to the device log \(built before #24576\?\), so from then on both builds were read from the Debug screen\.\*\*/,
+      /\*\*android accounts: build A wrote no startup lines to the device log, so from then on both builds were read from the Debug screen\.\*\*/,
     );
   });
 

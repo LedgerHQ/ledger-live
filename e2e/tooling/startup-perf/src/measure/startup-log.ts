@@ -1,5 +1,6 @@
 // Reads a launch's startup from the device log: as soon as the startup is over, the app writes a
-// line per startup event, then the App startup time (writeStartupToDeviceLog.ts, from #24576 on):
+// line per startup event, then the App startup time (writeStartupToDeviceLog.ts from #24576 on, or
+// the lines ci/prepare-build.mts adds to the refs before it):
 //   [startup] App started (x2): 1650 ms
 //   [startup] App startup time: 1650 ms, 13 events
 import type { Side } from "../types.ts";
@@ -57,7 +58,7 @@ export function createStartupLogReader(P: Platform) {
 
 /**
  * The builds known to write startup lines in a scenario, readable or not. A read with no lines
- * switches the scenario to the Debug screen only when its build is not one of them (before #24576).
+ * switches the scenario to the Debug screen only when its build is not one of them.
  */
 export function createStartupLineWriters() {
   const writers = new Set<Side>();

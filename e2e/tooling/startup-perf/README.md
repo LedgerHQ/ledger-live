@@ -91,6 +91,9 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
 - adds a `JS start epoch <ms>` startup event, the wall clock of the JS start;
+- writes the startup to the device log as soon as it is over, as the `[startup]` lines of
+  `writeStartupToDeviceLog.ts` (#24576), first in the `try` as the app does, unless the app writes
+  them itself, whose line format it then checks;
 - for `known-regression`'s B, drops the trustchain's `saveAtStart` (LIVE-36190, above).
 
 It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
@@ -125,16 +128,14 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   time, or came unreadable (their event lines do not add up to the count the last line gives), is
   read on the screen, and the report counts those of measured launches per build and cause; one
   whose lines give a time of 0 or less fails, as the Debug screen would show the same. When a build
-  not known to write lines in a scenario writes none (built before #24576), warm-up or not, both
+  not known to write lines in a scenario writes none (its startup log broken), warm-up or not, both
   builds are read on the screen for the rest of the scenario, so pairs stay even, and the report
   says so, even when that launch's screen read fails; a build that has written lines in the
-  scenario, readable or not, falls back on that launch only.
-  Until a release with #24576 is in production, `prod-vs-release` and `prod-vs-develop` (the
-  nightly) are read on the screen this way. `--read both` (the workflow's `read` input) reads every
-  launch both ways, `--read screen` the screen only. Screen reads of measured launches use
-  `read-performance-quick.yaml`; warm-ups, checks and retries use the full flow, whose optional taps
-  cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
-  no testIDs on any supported ref.
+  scenario, readable or not, falls back on that launch only. `--read both` (the workflow's `read`
+  input) reads every launch both ways, `--read screen` the screen only. Screen reads of measured
+  launches use `read-performance-quick.yaml`; warm-ups, checks and retries use the full flow, whose
+  optional taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance
+  screens have no testIDs on any supported ref.
 - **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
   log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
   of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches
