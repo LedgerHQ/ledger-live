@@ -18,7 +18,7 @@ export default class SwapPage {
   private readonly baseLink = "swap";
 
   private readonly proceedButton = byId("proceed-button");
-  private readonly deviceActionError = byId(app.swapLiveApp.deviceActionErrorDescriptionId);
+  private readonly deviceActionError = byId("error-description-deviceAction");
   private readonly swapSuccessTitle = byId("swap-success-title");
   private readonly closeButton = byId("NavigationHeaderCloseButton");
   private readonly historyButton = byId("navigation-header-swap-history");

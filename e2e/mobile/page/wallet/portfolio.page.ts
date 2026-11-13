@@ -438,18 +438,14 @@ export default class PortfolioPage {
     await this.anyAssetItem().expectCount(expected);
   }
 
-  private async checkSectionAssetItemCount(sectionId: string, expected: number) {
-    await this.sectionAssetItems(sectionId).expectCount(expected);
-  }
-
   @Step("Check cryptos section asset item count {{{0}}}")
   async checkCryptosSectionAssetItemCount(expected: number) {
-    await this.checkSectionAssetItemCount(CRYPTOS_SECTION_ID, expected);
+    await this.sectionAssetItems(CRYPTOS_SECTION_ID).expectCount(expected);
   }
 
   @Step("Check stablecoins section asset item count {{{0}}}")
   async checkStablecoinsSectionAssetItemCount(expected: number) {
-    await this.checkSectionAssetItemCount(STABLECOINS_SECTION_ID, expected);
+    await this.sectionAssetItems(STABLECOINS_SECTION_ID).expectCount(expected);
   }
 
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
