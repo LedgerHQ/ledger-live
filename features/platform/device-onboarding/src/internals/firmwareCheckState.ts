@@ -1,4 +1,4 @@
-import type { FirmwareCheck } from "./types";
+import type { FirmwareCheck } from "../types";
 
 type SettledFirmware = Extract<
   FirmwareCheck,

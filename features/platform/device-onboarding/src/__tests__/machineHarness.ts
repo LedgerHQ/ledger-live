@@ -20,8 +20,8 @@ import {
   type FakeOnboardingDmk,
   type OnboardingDmkScript,
   type ScriptedCommand,
-} from "./fakeDmk";
-import { createOsVersionResponse, type OsVersionResponseOptions } from "./osVersionResponse";
+} from "../tests/fakeDmk";
+import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import {
   OnboardingStep,
   RecoveryKeyStatus,
@@ -31,7 +31,7 @@ import {
   type DeviceOnboardingState,
 } from "../types";
 
-// Shared by the machine.*.test.ts files. Not part of the `./testing` entry.
+// Shared by the machine.*.test.ts files.
 
 export const unseeded: OsVersionResponseOptions = {
   onboardingState: "welcome-screen-1",

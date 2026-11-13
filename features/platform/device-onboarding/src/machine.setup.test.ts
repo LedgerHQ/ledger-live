@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import { OnboardingStep, RecoveryKeyStatus, SeedPath } from "./types";
 import type { FakeOnboardingDmk } from "./tests/fakeDmk";
 import {
@@ -17,7 +17,7 @@ import {
   unseeded,
   wait,
   type OnboardingActor,
-} from "./tests/machineHarness";
+} from "./__tests__/machineHarness";
 import type { OsVersionResponseOptions } from "./tests/osVersionResponse";
 
 describe("device setup", () => {

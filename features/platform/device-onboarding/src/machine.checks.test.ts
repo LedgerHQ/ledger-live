@@ -1,6 +1,6 @@
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { settle } from "./tests/actorHarness";
-import { awaitsApproval, checkFailure, deviceDisconnected, deviceRefusal, exitOf, expectChecksPassed, genuine, launch, lockedDevice, notGenuine, os, passingChecks, refusedToggle, secureConnectionPrompt, seeded, start, stateOf, unseeded, upToDate, updateAvailable, wait } from "./tests/machineHarness";
+import { settle } from "./__tests__/actorHarness";
+import { awaitsApproval, checkFailure, deviceDisconnected, deviceRefusal, exitOf, expectChecksPassed, genuine, launch, lockedDevice, notGenuine, os, passingChecks, refusedToggle, secureConnectionPrompt, seeded, start, stateOf, unseeded, upToDate, updateAvailable, wait } from "./__tests__/machineHarness";
 
 describe("the on-device waiting screen", () => {
   it("runs the checks anyway when the device has already left the welcome step", async () => {

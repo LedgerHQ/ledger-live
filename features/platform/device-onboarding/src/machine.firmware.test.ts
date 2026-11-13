@@ -1,9 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import { type OnboardingDmkScript } from "./tests/fakeDmk";
 import { OnboardingStep, type DeviceOnboardingContext } from "./types";
-import { type OnboardingActor, availableUpdate, checkFailure, deviceDisconnected, deviceRefusal, exitOf, expectChecksPassed, genuine, handOverAfterReboot, handOverAndReturn, handoverScript, launch, leaveSuccessScreen, os, seeded, settleRetries, start, stateOf, stepChanged, unseeded, upToDate, updateAvailable, wait } from "./tests/machineHarness";
+import { type OnboardingActor, availableUpdate, checkFailure, deviceDisconnected, deviceRefusal, exitOf, expectChecksPassed, genuine, handOverAfterReboot, handOverAndReturn, handoverScript, launch, leaveSuccessScreen, os, seeded, settleRetries, start, stateOf, stepChanged, unseeded, upToDate, updateAvailable, wait } from "./__tests__/machineHarness";
 
 describe("the firmware check", () => {
   it("offers an available update", async () => {

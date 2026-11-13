@@ -1,5 +1,5 @@
 import { assign } from "xstate";
-import { isSetupStep } from "./types.internals";
+import { isSetupStep } from "../types.internals";
 import {
   isRecoveryKeyBackupInProgress,
   OnboardingStep,
@@ -11,7 +11,7 @@ import {
   type DeviceOnboardingOutput,
   type GenuineVerdict,
   type OnboardingEvent,
-} from "./types";
+} from "../types";
 
 export type ExitOutput = { reason: DeviceOnboardingExitReason };
 
