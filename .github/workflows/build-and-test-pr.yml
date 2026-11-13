@@ -29,10 +29,24 @@ jobs:
       id-token: write
     needs: determine-renovate-dirty
     if: ${{ !github.event.pull_request.head.repo.fork && needs.determine-renovate-dirty.outputs.dirty != 'true' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@study/determine-builds
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
+      # Plans the mobile e2e builds for build-test-mobile below: keep these in sync with its inputs.
+      mobile_e2e_plan: true
+      mobile_e2e_speculos_device: nanoX
+      mobile_e2e_smoke_tests: true
+      mobile_e2e_max_shards: 1
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   # LLD
   build-desktop:
@@ -119,7 +133,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@study/determine-builds
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -154,6 +168,7 @@ jobs:
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
       native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
       native_fingerprint_android: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_android }}
+      build_plan: ${{ needs.determine-affected.outputs.mobile_e2e_plan }}
 
   # Tests
   test-libraries:

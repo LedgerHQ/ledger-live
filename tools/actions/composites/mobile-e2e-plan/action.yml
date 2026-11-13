@@ -1,0 +1,360 @@
+name: "Mobile E2E plan"
+description: |
+  Decides what the mobile e2e workflow (test-mobile-e2e-reusable.yml) builds and runs: Speculos devices,
+  test filter, shard matrices and timeouts, the native/JS/AVD cache keys and whether each is already cached.
+  Writes everything to one `plan` output, a JSON object of strings, so a caller can compute it once and
+  hand it to the e2e workflow through its `build_plan` input.
+
+  Needs a checkout with apps/ledger-live-mobile, e2e/mobile, e2e/tooling/filter and pnpm-workspace.yaml,
+  Node on the PATH, and AWS credentials for the cache bucket in the environment (setup-caches, or
+  configure-nx-remote-cache-profile + configure-aws-credentials), NX_CACHE_KEY_PREFIX included.
+inputs:
+  ref:
+    description: "Branch the tests run for, used to size the shards (release and hotfix get more)"
+    required: true
+  event_name:
+    description: "Event the shards are sized for (schedule gets more)"
+    required: true
+  nightly_run:
+    description: "true for the scheduled nightly, which rotates the Speculos device per weekday"
+    required: false
+    default: "false"
+  speculos_device:
+    description: "Speculos device outside the nightly"
+    required: false
+    default: "nanoX"
+  test_filter:
+    description: "Spec filter, see e2e/tooling/filter/resolve.mjs"
+    required: false
+    default: ""
+  smoke_tests:
+    description: "Run the smoke specs only"
+    required: false
+    default: "false"
+  team:
+    description: "Team slug, or all"
+    required: false
+    default: "all"
+  max_shards:
+    description: "Maximum number of shards per platform, 0 for no limit. With 1, the timing caches are not read."
+    required: false
+    default: "0"
+  tests_type:
+    description: "iOS & Android, iOS Only or Android Only"
+    required: false
+    default: "iOS & Android"
+  production_firebase:
+    description: "Production Firebase builds, which use their own native cache keys"
+    required: false
+    default: "false"
+  feature_flags_json:
+    description: "Feature flag overrides, validated as JSON"
+    required: false
+    default: ""
+  js_bundle_hash_ios:
+    description: "Nx hash of live-mobile:e2e:bundle:ios, empty to build the bundle"
+    required: false
+    default: ""
+  js_bundle_hash_android:
+    description: "Nx hash of live-mobile:e2e:bundle:android, empty to build the bundle"
+    required: false
+    default: ""
+  native_fingerprint_ios:
+    description: "Expo fingerprint of the iOS native project, empty to key the native build on hashFiles"
+    required: false
+    default: ""
+  native_fingerprint_android:
+    description: "Expo fingerprint of the Android native project, empty to key the native build on hashFiles"
+    required: false
+    default: ""
+  cache_bucket:
+    description: "S3 bucket holding the Nx cache, the native builds and the timing data"
+    required: true
+  aws_region:
+    description: "Region of the cache bucket"
+    required: true
+  r2_access_key:
+    description: "R2 access key for the AVD snapshot lookup"
+    required: true
+  r2_secret_key:
+    description: "R2 secret key for the AVD snapshot lookup"
+    required: true
+  r2_endpoint:
+    description: "R2 endpoint for the AVD snapshot lookup"
+    required: true
+outputs:
+  plan:
+    description: "JSON object of strings, one key per former determine-builds output"
+    value: ${{ steps.plan.outputs.plan }}
+runs:
+  using: "composite"
+  steps:
+    # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>. Branches also look in develop/,
+    # read only: the hash covers every input, so the same hash is the same bundle, and a freshly rebased
+    # branch finds the one develop already built. Both platforms are looked up at the same time.
+    - name: Check if JS bundles exist in the Nx cache
+      id: check-js
+      shell: bash
+      env:
+        CACHE_BUCKET: ${{ inputs.cache_bucket }}
+        IOS_HASH: ${{ inputs.js_bundle_hash_ios }}
+        ANDROID_HASH: ${{ inputs.js_bundle_hash_android }}
+      run: |
+        report() {
+          local prefix
+          if [ -n "$2" ]; then
+            for prefix in "$NX_CACHE_KEY_PREFIX" develop; do
+              if aws s3api head-object --bucket "$CACHE_BUCKET" --key "${prefix}/$2" > /dev/null 2>&1; then
+                printf '%s=true\n%s_prefix=%s\n' "$1" "$1" "$prefix"
+                return
+              fi
+            done
+          fi
+          echo "$1=false"
+        }
+        report ios "$IOS_HASH" > "$RUNNER_TEMP/js-ios" &
+        report android "$ANDROID_HASH" > "$RUNNER_TEMP/js-android" &
+        wait
+        cat "$RUNNER_TEMP/js-ios" "$RUNNER_TEMP/js-android" | tee -a "$GITHUB_OUTPUT"
+
+    - name: Resolve per-platform Speculos device
+      id: devices
+      shell: bash
+      env:
+        NIGHTLY_RUN: ${{ inputs.nightly_run }}
+        SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device }}
+      run: |
+        # Per-platform, per-weekday mapping for scheduled nightly runs (QAA-1193), shared with the
+        # desktop rotation in test-ui-e2e-only-desktop.yml: the three platforms use three different
+        # devices each weekday, and all six devices run every week.
+        # nanoS and nanoSP have no Bluetooth, so they can't pair with an iPhone and stay off iOS.
+        # Wednesday alternates nanoGen5 / flex on Android by ISO week parity, the opposite of desktop.
+        # 10# keeps a zero-padded week such as "08" from being read as octal.
+        if [ $((10#$(date -u +%V) % 2)) -eq 0 ]; then ANDROID_WEDNESDAY_DEVICE=nanoGen5; else ANDROID_WEDNESDAY_DEVICE=flex; fi
+        declare -A IOS_WEEKDAY_DEVICE=(
+          [1]=stax        # Monday     - Stax
+          [2]=nanoGen5    # Tuesday    - NG5
+          [3]=nanoX       # Wednesday  - LNX (iOS broadcast)
+          [4]=nanoGen5    # Thursday   - NG5
+          [5]=flex        # Friday     - Flex
+        )
+        declare -A ANDROID_WEEKDAY_DEVICE=(
+          [1]=nanoX                       # Monday     - LNX
+          [2]=nanoS                       # Tuesday    - LNS
+          [3]=$ANDROID_WEDNESDAY_DEVICE   # Wednesday  - NG5 on even ISO weeks, Flex on odd ones
+          [4]=nanoSP                      # Thursday   - LNSP
+          [5]=stax                        # Friday     - Stax (Android broadcast)
+        )
+
+        if [ "$NIGHTLY_RUN" = "true" ]; then
+          DOW=$(date -u +%u)
+          echo "ios_device=${IOS_WEEKDAY_DEVICE[$DOW]:-stax}"           >> "$GITHUB_OUTPUT"
+          echo "android_device=${ANDROID_WEEKDAY_DEVICE[$DOW]:-nanoX}"  >> "$GITHUB_OUTPUT"
+        else
+          echo "ios_device=$SPECULOS_DEVICE_INPUT"     >> "$GITHUB_OUTPUT"
+          echo "android_device=$SPECULOS_DEVICE_INPUT" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Validate feature flags JSON input
+      if: ${{ inputs.feature_flags_json != '' }}
+      shell: bash
+      env:
+        RAW: ${{ inputs.feature_flags_json }}
+      run: |
+        node -e '
+          try {
+            JSON.parse(process.argv[1]);
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            console.error(`Invalid E2E_FEATURE_FLAGS_JSON: ${message}`);
+            process.exit(1);
+          }
+        ' "$RAW"
+
+    - name: Load AVD configuration
+      id: avd-config
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+      with:
+        config_only: "true"
+
+    - name: Determine cache keys
+      id: cache-keys
+      shell: bash
+      env:
+        REF_NAME: ${{ github.ref_name }}
+        IOS_FINGERPRINT: ${{ inputs.native_fingerprint_ios }}
+        ANDROID_FINGERPRINT: ${{ inputs.native_fingerprint_android }}
+        AVD_KEY: ${{ steps.avd-config.outputs.cache_key }}
+      run: |
+        PREFIX=""
+        if [ "$REF_NAME" = "develop" ]; then
+          PREFIX="develop/"
+        fi
+        IOS_NATIVE_HASH="${IOS_FINGERPRINT:+fp-$IOS_FINGERPRINT}"
+        ANDROID_NATIVE_HASH="${ANDROID_FINGERPRINT:+fp-$ANDROID_FINGERPRINT}"
+        {
+          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js') }}}-detox-native-ios-${{ inputs.production_firebase == 'true' && 'prod-3' || '4' }}"
+          echo "android_native_key=${PREFIX}longterm-${ANDROID_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js') }}}-detox-native-android-${{ inputs.production_firebase == 'true' && 'prod-2' || '3' }}"
+          HEAD_SHA=$(git rev-parse HEAD)
+          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios"
+          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android"
+          echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2"
+          echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2"
+          echo "avd_cache_key=${AVD_KEY}"
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated"
+        } | tee -a "$GITHUB_OUTPUT"
+
+    - name: Prepare test filter
+      id: test-filter
+      shell: bash
+      env:
+        TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+        SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
+        TEAM_INPUT: ${{ inputs.team || 'all' }}
+      run: |
+        node e2e/tooling/filter/resolve.mjs \
+          --input "$TEST_FILTER_INPUT" \
+          --smoke-tests "$SMOKE_TESTS_INPUT" \
+          --team "$TEAM_INPUT" \
+          --check-dir "e2e/mobile/specs" \
+          --runner detox \
+          --github-output >> "$GITHUB_OUTPUT"
+
+    # With a single shard there is nothing to balance, so the timing data is not downloaded.
+    - name: Generate shards matrix and test files
+      id: generate-shards
+      uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+      with:
+        test_directory: e2e/mobile
+        test_filter: ${{ steps.test-filter.outputs.runner_filter }}
+        event_name: ${{ inputs.event_name }}
+        ref: ${{ inputs.ref }}
+        ios_timing_cache_key: ${{ inputs.max_shards != '1' && steps.cache-keys.outputs.ios_timing_cache_key || '' }}
+        android_timing_cache_key: ${{ inputs.max_shards != '1' && steps.cache-keys.outputs.android_timing_cache_key || '' }}
+        aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+        cache_bucket: ${{ inputs.cache_bucket }}
+        aws_region: ${{ inputs.aws_region }}
+        max_shards: ${{ inputs.max_shards }}
+
+    - name: Check if iOS Native Build exists already
+      id: check-ios-native
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+      with:
+        path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+        key: ${{ steps.cache-keys.outputs.ios_native_key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ${{ inputs.cache_bucket }}
+        region: ${{ inputs.aws_region }}
+        use-fallback: false
+        lookup-only: true
+
+    # The iOS native build runs `pod install --deployment`, which fails on an out-of-date Podfile.lock. Only
+    # a cached native build skips that, so only then does the e2e workflow check the lockfile on its own.
+    - name: Check if pod lockfile has been validated
+      id: check-lockfile-status
+      if: ${{ inputs.tests_type != 'Android Only' && steps.check-ios-native.outputs.cache-hit == 'true' }}
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+      with:
+        key: ${{ steps.cache-keys.outputs.pod_check_key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ${{ inputs.cache_bucket }}
+        region: ${{ inputs.aws_region }}
+        use-fallback: false
+        lookup-only: true
+
+    - name: Check if Android Native Build exists already
+      id: check-android-native
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+      with:
+        path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+        key: ${{ steps.cache-keys.outputs.android_native_key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ${{ inputs.cache_bucket }}
+        region: ${{ inputs.aws_region }}
+        use-fallback: false
+        lookup-only: true
+
+    - name: Check if Android AVD cache exists
+      id: check-avd
+      if: ${{ inputs.tests_type != 'iOS Only' }}
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+      with:
+        key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+        accessKey: ${{ inputs.r2_access_key }}
+        secretKey: ${{ inputs.r2_secret_key }}
+        bucket: ledger-live-cache
+        endpoint: ${{ inputs.r2_endpoint }}
+        region: auto
+
+    # Same keys and string values as the determine-builds job outputs it replaces, so the e2e workflow
+    # reads either one the same way: fromJSON(plan).<key>.
+    - name: Write the plan
+      id: plan
+      shell: bash
+      env:
+        ios_device: ${{ steps.devices.outputs.ios_device }}
+        android_device: ${{ steps.devices.outputs.android_device }}
+        matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
+        matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
+        test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
+        test_filter: ${{ steps.test-filter.outputs.filter }}
+        ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
+        android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
+        ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+        ios_js_exists: ${{ steps.check-js.outputs.ios }}
+        ios_js_prefix: ${{ steps.check-js.outputs.ios_prefix }}
+        android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+        android_js_exists: ${{ steps.check-js.outputs.android }}
+        android_js_prefix: ${{ steps.check-js.outputs.android_prefix }}
+        ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
+        ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
+        android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
+        android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
+        android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
+        ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+        avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+        avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
+        pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
+        pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
+      run: |
+        node -e '
+          const keys = process.argv.slice(1);
+          const plan = Object.fromEntries(keys.map((key) => [key, process.env[key] ?? ""]));
+          console.log(JSON.stringify(plan, null, 2));
+          require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, `plan=${JSON.stringify(plan)}\n`);
+        ' ios_device android_device matrix_ios matrix_android test_files_for_sharding test_filter \
+          ios_timeout android_timeout ios_native_exists ios_js_exists ios_js_prefix android_native_exists \
+          android_js_exists android_js_prefix ios_native_key ios_js_key android_native_key android_js_key \
+          android_timing_cache_key ios_timing_cache_key avd_cache_key avd_exists pod_check_key \
+          pod_lockfile_validated
+
+    - name: Write the plan summary
+      shell: bash
+      env:
+        IOS_DEVICE: ${{ steps.devices.outputs.ios_device }}
+        ANDROID_DEVICE: ${{ steps.devices.outputs.android_device }}
+        FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+        TEAM_INPUT: ${{ inputs.team || 'all' }}
+        IOS_NATIVE: ${{ steps.check-ios-native.outputs.cache-hit == 'true' && 'cached' || 'build' }}
+        ANDROID_NATIVE: ${{ steps.check-android-native.outputs.cache-hit == 'true' && 'cached' || 'build' }}
+        IOS_JS: ${{ steps.check-js.outputs.ios == 'true' && 'cached' || 'build' }}
+        ANDROID_JS: ${{ steps.check-js.outputs.android == 'true' && 'cached' || 'build' }}
+      run: |
+        {
+          echo "## Mobile E2E plan"
+          echo ""
+          echo "- **iOS device:** $IOS_DEVICE"
+          echo "- **Android device:** $ANDROID_DEVICE"
+          echo "- **Team:** $TEAM_INPUT"
+          node e2e/tooling/filter/format-summary.mjs "${FILTER_PATTERN:-}" "- **Resolved filtered pattern:**"
+          echo "- **iOS:** native $IOS_NATIVE, JS $IOS_JS"
+          echo "- **Android:** native $ANDROID_NATIVE, JS $ANDROID_JS"
+        } >> "$GITHUB_STEP_SUMMARY"
