@@ -16,6 +16,7 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { Resolver } from "../../hw/getAddress/types";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { isDmkTransport } from "../../hw/dmkUtils";
+import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 let _polkadotLdmkFFEnabled: boolean = false;
 
@@ -37,4 +38,6 @@ const bridge: Bridge<Transaction, PolkadotAccount, TransactionStatus> = createBr
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 
-export { bridge, resolver };
+const deriveAccountDescriptor = createDeriveAccountDescriptor(resolver);
+
+export { bridge, resolver, deriveAccountDescriptor };
