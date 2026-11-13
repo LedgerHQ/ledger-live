@@ -186,6 +186,31 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     expect(crafted.details?.fee).toBe(estimation.value);
   });
 
+  it("crafts the request with exactly the selected inputs, and excludes the excluded ones", async () => {
+    const { utxos } = serve(c.explorerId, c.sender, [80_000_000, 30_000_000, 20_000_000]);
+    const selected = await craftTransaction(context, c.currencyId, {
+      ...intent,
+      amount: 10_000_000n,
+      data: { type: "string", utxoStrategy: { selectedUtxos: [`${utxos[2].txId}:2`] } },
+    } as TransactionIntent);
+    const selectedRequest = JSON.parse(selected.transaction) as SigningRequest;
+    expect(selectedRequest.inputs.map(input => [input.txid, input.vout])).toEqual([
+      [utxos[2].txId, 2],
+    ]);
+    expect(selected.details?.inputs).toHaveLength(1);
+
+    const excluded = await craftTransaction(context, c.currencyId, {
+      ...intent,
+      amount: 0n,
+      useAllAmount: true,
+      data: { type: "string", utxoStrategy: { excludedUtxos: [`${utxos[0].txId}:0`] } },
+    } as TransactionIntent);
+    const excludedRequest = JSON.parse(excluded.transaction) as SigningRequest;
+    expect(excludedRequest.inputs.map(input => input.txid).sort()).toEqual(
+      [utxos[1].txId, utxos[2].txId].sort(),
+    );
+  });
+
   it("combines the request with the transaction hw-app-btc built", async () => {
     serve(c.explorerId, c.sender, [80_000_000]);
     const crafted = await craftTransaction(context, c.currencyId, intent);

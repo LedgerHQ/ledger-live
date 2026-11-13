@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { DustLimit, FeeTooLow } from "../../errors";
+import { DustLimit, FeeTooLow, InvalidUtxoId, InvalidUtxoStrategy } from "../../errors";
 import { validateIntent } from "../validateIntent";
 import { FUNDED_P2WPKH, PRISTINE_P2PKH, PRISTINE_P2TR } from "./helpers/fixtures";
 import { testContext, useMswServer } from "./helpers/msw";
@@ -25,6 +25,9 @@ const intent = (overrides: Partial<TransactionIntent> = {}): TransactionIntent =
   asset: { type: "native" },
   ...overrides,
 });
+
+const withControl = (utxoStrategy: Record<string, unknown>) =>
+  intent({ data: { type: "string", utxoStrategy } } as Partial<TransactionIntent>);
 
 describe("validateIntent", () => {
   it("accepts a valid intent and reports the amounts", async () => {
@@ -333,6 +336,76 @@ describe("validateIntent", () => {
         },
       );
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+  });
+
+  describe("with a coin control", () => {
+    const HASH = "ab".repeat(32);
+
+    it("adds no error for a well formed one", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({
+          strategy: "optimize-size",
+          selectedUtxos: [`${HASH}:0`],
+          excludedUtxos: [`${HASH}:1`],
+        }),
+        BALANCES,
+      );
+      expect(result.errors).toEqual({});
+    });
+
+    it("reports a malformed UTXO id under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: ["not-an-id"] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an id both selected and excluded", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`], excludedUtxos: [`${HASH}:0`] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an id listed twice under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`, `${HASH}:0`] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an unknown strategy under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ strategy: "random" }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoStrategy);
+    });
+
+    it("reports NotEnoughBalance when the estimate says the selection does not cover the send", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`] }),
+        BALANCES,
+        { value: 200n, parameters: { sufficient: false } },
+      );
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(result.errors.coinControl).toBeUndefined();
     });
   });
 });

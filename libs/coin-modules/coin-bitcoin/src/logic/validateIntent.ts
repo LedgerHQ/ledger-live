@@ -15,7 +15,7 @@ import { DustLimit, FeeTooLow } from "../errors";
 import { amountParameter } from "./feeParameters";
 import { validateAddress } from "./validateAddress";
 import type { BitcoinIntent } from "./intent";
-import { opReturnScript } from "./intent";
+import { coinControlOf, opReturnScript } from "./intent";
 import { cryptoFor, paymentDustThreshold } from "./selectUtxos";
 
 type Validation = Pick<TransactionValidation, "errors" | "warnings">;
@@ -127,6 +127,21 @@ function validateOpReturn(currencyId: string, intent: BitcoinIntent): Validation
   }
 }
 
+/**
+ * The coin control (`intent.data.utxoStrategy`) must be well formed: UTXO ids "txid:vout", none
+ * both selected and excluded, a known strategy (reported under `coinControl`). Whether a selected
+ * output is spendable needs the network: `estimateFees` and `craftTransaction` report it.
+ */
+function validateCoinControl(intent: BitcoinIntent): Validation {
+  try {
+    coinControlOf(intent);
+    return NONE;
+  } catch (error) {
+    const coinControl = error instanceof Error ? error : new Error(String(error));
+    return { errors: { coinControl }, warnings: {} };
+  }
+}
+
 /** Warns when the fees are more than 10% of the amount. */
 function validateFeeRatio(
   customFees: FeeEstimation | undefined,
@@ -142,7 +157,7 @@ function validateFeeRatio(
 /**
  * Fee-agnostic validation of a transaction intent, from the intent and the balances passed in,
  * plus `customFees` when provided: recipient, amount (funds, dust), fees (relay minimum), OP_RETURN
- * data, and a warning when the fees are high. Makes no network call.
+ * data, coin control, and a warning when the fees are high. Makes no network call.
  */
 export async function validateIntent(
   context: BitcoinContext,
@@ -161,6 +176,7 @@ export async function validateIntent(
   const funds = validateAmount(currencyId, intent, amount, fees, nativeBalance, customFees);
   const fee = validateFees(fees, customFees?.parameters);
   const opReturn = validateOpReturn(currencyId, intent);
+  const coinControl = validateCoinControl(intent);
   const feeRatio = validateFeeRatio(customFees, amount, fees);
 
   return {
@@ -169,6 +185,7 @@ export async function validateIntent(
       ...funds.errors,
       ...fee.errors,
       ...opReturn.errors,
+      ...coinControl.errors,
       ...feeRatio.errors,
     },
     warnings: {
@@ -176,6 +193,7 @@ export async function validateIntent(
       ...funds.warnings,
       ...fee.warnings,
       ...opReturn.warnings,
+      ...coinControl.warnings,
       ...feeRatio.warnings,
     },
     estimatedFees: fees,
