@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-pay-card-widget",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

@@ -266,10 +266,6 @@ export default async function packageGenerator(tree: Tree, options: PackageGener
 
   writeJson(tree, `${projectRoot}/package.json`, packageJson(options, resolved, description));
   writeTsconfigs(tree, projectRoot, shape.tsconfig);
-  writeJson(tree, `${projectRoot}/project.json`, {
-    name: packageName,
-    targets: { build: { executor: "nx:noop" } },
-  });
 
   if (!options.skipFormat) await formatFiles(tree);
 

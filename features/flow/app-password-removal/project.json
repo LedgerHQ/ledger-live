@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-app-password-removal",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

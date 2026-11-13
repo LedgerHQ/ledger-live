@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-device-os-update",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

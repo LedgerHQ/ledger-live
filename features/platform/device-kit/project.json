@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-device-kit",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

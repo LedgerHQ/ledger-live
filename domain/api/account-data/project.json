@@ -1,8 +1,0 @@
-{
-  "name": "@domain/api-account-data",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}
