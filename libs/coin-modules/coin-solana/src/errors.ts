@@ -206,6 +206,14 @@ export class SolanaTxConfirmationTimeout extends Error {
   }
 }
 
+export class SolanaTxBlockhashExpired extends Error {
+  override name = "SolanaTxBlockhashExpired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaTxBlockhashExpired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class SolanaRecipientMemoIsRequired extends Error {
   override name = "SolanaRecipientMemoIsRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {

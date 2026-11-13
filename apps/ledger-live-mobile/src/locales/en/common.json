@@ -1441,6 +1441,10 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
+    "SolanaTxBlockhashExpired": {
+      "title": "Transaction has expired",
+      "description": "Solana transactions must be approved on your device within about 30 seconds. Please try again. Updating the Solana app on your device may remove this limit."
+    },
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
