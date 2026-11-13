@@ -477,8 +477,14 @@ export class DefaultConnectNewDeviceStateMachine<
     // Without an error observer, XState rethrows the error outside the use case.
     const actorErrorsSubscription = this.actor.subscribe({
       error: error => {
-        // A failed actor is no longer active, so stop() would skip this cleanup.
-        this.releaseResources();
+        try {
+          // A failed actor is no longer active, so stop() would skip this cleanup.
+          this.releaseResources();
+        } catch (cleanupError) {
+          log(LOG_TYPE, "failed to release the resources of a failed state machine", {
+            error: cleanupError,
+          });
+        }
         this.observer.error(error);
       },
     });
@@ -503,6 +509,10 @@ export class DefaultConnectNewDeviceStateMachine<
 
   private releaseResources(): void {
     const snapshot = this.actor.getSnapshot();
+    // A failure while computing the initial state leaves a snapshot without context.
+    if (!snapshot.context) {
+      return;
+    }
 
     if (snapshot.context.isDiscovering) {
       this.deviceDiscoveryService.stop();

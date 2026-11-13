@@ -246,4 +246,64 @@ describe("connectNewDeviceUseCase", () => {
 
     subscription.unsubscribe();
   });
+
+  it("should emit a terminal UnknownError UI state when discovery fails to start", () => {
+    // Arrange
+    const { deviceDiscoveryService, input, states } = setupTest();
+    const thrown = new Error("boom");
+    deviceDiscoveryService.start = () => {
+      throw thrown;
+    };
+    const errorHandler = jest.fn();
+    const completeHandler = jest.fn();
+
+    // Act
+    const subscription = connectNewDeviceUseCase(input).subscribe({
+      next: state => states.push(state),
+      error: errorHandler,
+      complete: completeHandler,
+    });
+
+    // Assert
+    expect(states).toEqual([{ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown }]);
+    expect(errorHandler).not.toHaveBeenCalled();
+    expect(completeHandler).toHaveBeenCalledTimes(1);
+    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit a terminal UnknownError UI state when discovery fails to stop after an action throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, states } = setupTest();
+    const thrown = new Error("boom");
+    input.getDiscoveredDeviceKey = () => {
+      throw thrown;
+    };
+    deviceDiscoveryService.stop = () => {
+      throw new Error("stop failed");
+    };
+    const errorHandler = jest.fn();
+    const completeHandler = jest.fn();
+    const subscription = connectNewDeviceUseCase(input).subscribe({
+      next: state => states.push(state),
+      error: errorHandler,
+      complete: completeHandler,
+    });
+
+    // Act
+    discoverDevices([nanoX]);
+
+    // Assert
+    expect(states.map(state => state.type)).toEqual([
+      ConnectNewDeviceUIStateTypes.Discovering,
+      ConnectNewDeviceUIStateTypes.UnknownError,
+    ]);
+    expect(states[1]).toEqual({ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown });
+    expect(errorHandler).not.toHaveBeenCalled();
+    expect(completeHandler).toHaveBeenCalledTimes(1);
+    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+
+    subscription.unsubscribe();
+  });
 });
