@@ -140,14 +140,15 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
   } as unknown as DeviceModelInfo;
 }
 
-function firmwareEligibility(device: Device, current: string) {
+function firmwareEligibility(device: Device, current: string, updateAfterSetup: boolean) {
   const info = deviceModelInfo(device, current);
   const newUxSupported = isNewFirmwareUpdateUxSupported(device, info);
   const bleSupported = isBleUpdateSupported(device, info);
 
   return {
     canUpdate: newUxSupported && (device.wired || bleSupported),
-    isUsbRequired: Platform.OS === "android" && newUxSupported && !bleSupported,
+    isUsbRequired:
+      Platform.OS === "android" && newUxSupported && !bleSupported && !updateAfterSetup,
   };
 }
 
@@ -260,6 +261,7 @@ export function useChecksScreenViewModel({
   onAcceptUpdate,
   onDeclineUpdate,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const { locale } = useLocale();
@@ -307,7 +309,7 @@ export function useChecksScreenViewModel({
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
 
   const updateKey = update ? `${update.current}|${update.available}` : "";
-  const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const eligibility = update ? firmwareEligibility(device, update.current, updateAfterSetup) : null;
   const offered = state === "updating" && update !== null;
   const offerDismissed = dismissedOfferKey === updateKey;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";

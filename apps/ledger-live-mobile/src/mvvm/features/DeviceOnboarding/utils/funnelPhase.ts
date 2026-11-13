@@ -30,7 +30,7 @@ export function phaseOf(
   if (machineState === null) return "connecting";
   if (machineState.startsWith("checks.")) return "checks";
   if (machineState.startsWith("deviceSetup.")) return "synchronizing";
-  if (machineState.startsWith("postSetupFirmware.")) return "synchronizing";
+  if (machineState.startsWith("postSetupFirmware.")) return "checks";
   if (onboardedOnEntry === true && seededSuccessExits.has(machineState)) return "checks";
   if (onboardedOnEntry === false && machineState === "done") return "checks";
   if (machineState in topLevel) return topLevel[machineState as keyof typeof topLevel];

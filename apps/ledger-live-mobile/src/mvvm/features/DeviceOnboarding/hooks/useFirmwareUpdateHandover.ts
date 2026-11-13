@@ -7,8 +7,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
-
-const delegatedState = "checks.firmwareUpdateDelegated";
+import { isFirmwareUpdateDelegated } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 
 // The OS update reboot changes the BLE address, the advertised name and the USB id.
 export function isRebootedDevice(before: Device, after: Device): boolean {
@@ -42,7 +41,7 @@ export function useFirmwareUpdateHandover({
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
   const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
-  const delegated = machineState === delegatedState;
+  const delegated = isFirmwareUpdateDelegated(machineState);
   const pushedRef = useRef(false);
   const awaitingReturnRef = useRef(false);
   const closedRef = useRef(false);

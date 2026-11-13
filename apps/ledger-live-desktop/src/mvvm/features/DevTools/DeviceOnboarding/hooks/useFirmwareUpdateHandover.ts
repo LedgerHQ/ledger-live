@@ -8,7 +8,15 @@ import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import UpdateFirmwareModal from "~/renderer/modals/UpdateFirmwareModal";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
 
-export const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
+// The second runs once an unseeded Nano is seeded: its firmware could not update before.
+const firmwareUpdateDelegatedStates = new Set([
+  "checks.firmwareUpdateDelegated",
+  "postSetupFirmware.firmwareUpdateDelegated",
+]);
+
+export function isFirmwareUpdateDelegated(machineState: string | null): boolean {
+  return machineState !== null && firmwareUpdateDelegatedStates.has(machineState);
+}
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
@@ -21,7 +29,7 @@ export function useFirmwareUpdateHandover({
   machineState,
   send,
 }: UseFirmwareUpdateHandoverInput) {
-  const delegated = machineState === firmwareUpdateDelegatedState;
+  const delegated = isFirmwareUpdateDelegated(machineState);
   const closedRef = useRef(false);
   const freshResultRef = useRef(false);
   const ownsDrawerRef = useRef(false);

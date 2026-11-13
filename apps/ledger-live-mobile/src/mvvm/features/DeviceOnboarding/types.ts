@@ -26,4 +26,9 @@ export type ChecksScreenProps = {
   /** Missing while the machine cannot be left, so the close button is hidden. */
   onQuit?: () => void;
   suspendSheets?: boolean;
+  /**
+   * The update an unseeded Nano held back until it was seeded. Asking for a USB cable would break
+   * the setup the user just finished, so Bluetooth that cannot update says it is not possible.
+   */
+  updateAfterSetup?: boolean;
 };

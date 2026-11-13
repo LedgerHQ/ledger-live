@@ -1,4 +1,7 @@
 import {
+  asChecksState,
+  isFirmwareUpdateDelegated,
+  isPostSetupFirmware,
   toChecksError,
   toChecksScreenState,
   toFirmwareUpdate,
@@ -78,6 +81,12 @@ describe("toChecksError", () => {
     expect(toChecksError("checks.firmwareCheckFailed", null)).toEqual({ kind: "unknown" });
   });
 
+  it("should report a failed firmware check after setup as retryable", () => {
+    expect(toChecksError("postSetupFirmware.firmwareCheckFailed", null)).toEqual({
+      kind: "unknown",
+    });
+  });
+
   it("should drop a remembered failure once the checks moved on", () => {
     expect(toChecksError("checks.checksIdle", "GENUINE_CHECK_REFUSED")).toBeNull();
     expect(toChecksError("checks.genuineCheck.running", "GENUINE_CHECK_REFUSED")).toBeNull();
@@ -91,5 +100,35 @@ describe("toFirmwareUpdate", () => {
 
   it("should keep the current version next to the available one", () => {
     expect(toFirmwareUpdate("1.0.0", "1.1.0")).toEqual({ current: "1.0.0", available: "1.1.0" });
+  });
+});
+
+describe("the firmware update held back until setup", () => {
+  it("should show each post-setup firmware state as its pre-setup one", () => {
+    expect(asChecksState("postSetupFirmware.firmwareCheck")).toBe("checks.firmwareCheck");
+    expect(asChecksState("checks.firmwareCheck")).toBe("checks.firmwareCheck");
+    expect(asChecksState("deviceSetup.pin")).toBe("deviceSetup.pin");
+    expect(asChecksState(null)).toBeNull();
+  });
+
+  it.each([
+    ["postSetupFirmware.firmwareCheck", "checking"],
+    ["postSetupFirmware.firmwareCheckFailed", "checking"],
+    ["postSetupFirmware.firmwareUpdateOffered", "updating"],
+    ["postSetupFirmware.firmwareUpdateDelegated", "checking"],
+  ])("should show %s as %s", (machineState, expected) => {
+    expect(toChecksScreenState(machineState, false, false)).toBe(expected);
+  });
+
+  it("should recognise the update handover before and after setup", () => {
+    expect(isFirmwareUpdateDelegated("checks.firmwareUpdateDelegated")).toBe(true);
+    expect(isFirmwareUpdateDelegated("postSetupFirmware.firmwareUpdateDelegated")).toBe(true);
+    expect(isFirmwareUpdateDelegated("postSetupFirmware.firmwareUpdateOffered")).toBe(false);
+  });
+
+  it("should tell the post-setup firmware states apart", () => {
+    expect(isPostSetupFirmware("postSetupFirmware.firmwareUpdateOffered")).toBe(true);
+    expect(isPostSetupFirmware("checks.firmwareUpdateOffered")).toBe(false);
+    expect(isPostSetupFirmware(null)).toBe(false);
   });
 });

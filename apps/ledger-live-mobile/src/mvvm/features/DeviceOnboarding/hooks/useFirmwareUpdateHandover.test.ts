@@ -97,6 +97,20 @@ describe("useFirmwareUpdateHandover", () => {
     );
   });
 
+  it("should open the update a seeded nano held back until setup", async () => {
+    const { rerender } = renderDelegated(jest.fn(), { isDeviceOnboarded: true });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: "postSetupFirmware.firmwareUpdateDelegated" });
+
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({ device, isDeviceOnboarded: true }),
+      ),
+    );
+  });
+
   it("opens the update on the current navigator when Base is not mounted", async () => {
     mockGetParent.mockImplementation(() => undefined);
     const send = jest.fn();
