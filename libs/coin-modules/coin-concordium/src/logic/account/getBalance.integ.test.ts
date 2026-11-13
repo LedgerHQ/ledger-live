@@ -1,8 +1,8 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { getBalance } from "./getBalance";
 
 describe("getBalance", () => {
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
 
   it("fetches native balance for account with funds", async () => {
     // Account with some balance on testnet

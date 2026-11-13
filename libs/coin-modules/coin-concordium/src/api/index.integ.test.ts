@@ -1,6 +1,6 @@
 import { withDefaults, type CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
-import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
-import { createFixtureContext } from "../test/fixtures";
+import { concordiumDefaults } from "../config";
+import type { ConcordiumCoinConfig, ConcordiumContext, ConcordiumMemo } from "../types";
 import { createApi } from ".";
 
 /**
@@ -12,7 +12,10 @@ import { createApi } from ".";
 describe("Concordium Api (testnet)", () => {
   let api: CoinModuleApi<ConcordiumCoinConfig, ConcordiumMemo>;
 
-  const context = createFixtureContext();
+  const context: ConcordiumContext = {
+    config: async () => concordiumDefaults.concordium_testnet,
+    logger: () => {},
+  };
 
   // Test account with some balance and transactions
   // https://testnet.ccdscan.io/

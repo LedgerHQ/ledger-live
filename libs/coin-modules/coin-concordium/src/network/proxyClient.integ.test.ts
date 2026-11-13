@@ -1,4 +1,4 @@
-import { createFixtureConfig } from "../test/fixtures";
+import { concordiumDefaults } from "../config";
 import {
   getConsensusInfo,
   getBlockInfoByHash,
@@ -13,7 +13,7 @@ import {
 
 describe("proxyClient", () => {
   const currencyId = "concordium_testnet";
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
   const PUBLIC_KEY = "aa".repeat(32);

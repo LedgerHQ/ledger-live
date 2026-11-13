@@ -1,7 +1,6 @@
-import type { CantonCoinConfig } from "../config";
+import { cantonDefaults, type CantonCoinConfig } from "../config";
 import { signTransaction } from "../bridge/sign";
 import { createMockSigner, generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
-import { createMockCoinConfigValue } from "../test/fixtures";
 import type { OnboardingPrepareResponse, Party } from "../types/gateway";
 import type { CantonSignature } from "../types/signer";
 import {
@@ -19,7 +18,7 @@ import {
   submitTapRequest,
 } from "./gateway";
 
-const mockConfig = createMockCoinConfigValue();
+const mockConfig = cantonDefaults.canton_network_devnet;
 
 /**
  * Party lookup can lag behind a successful onboarding submit on the gateway (CI / replication).

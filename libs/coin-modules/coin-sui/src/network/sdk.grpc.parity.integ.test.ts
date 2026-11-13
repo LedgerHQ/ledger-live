@@ -1,4 +1,4 @@
-import type { SuiCoinConfig, SuiTransport } from "../config";
+import { type SuiCoinConfig, type SuiTransport, suiDefaults } from "../config";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import {
   getAllBalancesCached,
@@ -29,14 +29,9 @@ const ACCOUNT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0
 
 /** Config is injected per call (ADR-019), so each assertion names the arm it exercises. */
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
+  ...suiDefaults.sui,
   status: { type: "active" },
-  node: {
-    graphqlUrl: "https://sui.coin.ledger.com/graphql",
-    grpcUrl: "https://sui.coin.ledger.com",
-  },
   features: { transport },
-  name: "Sui",
-  unit: { name: "Sui", code: "SUI", magnitude: 9 },
 });
 
 const graphqlConfig = configFor("graphql");

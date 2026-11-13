@@ -1,9 +1,9 @@
 import { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
-import { CantonCoinConfig } from "../config";
+import { cantonDefaults, type CantonCoinConfig } from "../config";
 import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
-const context = createMockContext();
+const context = createMockContext(cantonDefaults.canton_network_devnet);
 let api: CoinModuleApi<CantonCoinConfig>;
 
 describe.skip("devnet", () => {

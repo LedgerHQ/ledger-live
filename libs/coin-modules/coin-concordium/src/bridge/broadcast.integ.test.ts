@@ -1,9 +1,9 @@
-import { setupTestnetCoinConfig } from "../test/fixtures";
+import coinConfig, { concordiumDefaults } from "../config";
 import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setupTestnetCoinConfig();
+    coinConfig.setCoinConfig(() => concordiumDefaults.concordium_testnet);
   });
 
   it("throws when broadcasting a valid tx with an invalid signature", async () => {
@@ -21,7 +21,7 @@ describe("Broadcast", () => {
 
     await expect(
       broadcast({
-        account: { currency: { id: "concordium" } },
+        account: { currency: { id: "concordium_testnet" } },
         signedOperation: {
           signature: signedTx,
           operation: { id: "integ", hash: "", extra: {} },

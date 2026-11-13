@@ -1,18 +1,13 @@
-import type { SuiCoinConfig } from "../config";
+import { type SuiCoinConfig, suiDefaults } from "../config";
 import { withGrpcApi } from "./sdk.grpc";
 
 // Live proof that the hand-built gRPC-web transport reaches the chain: the SDK never sees a
 // `baseUrl`, so a broken transport injection surfaces here rather than in mocked unit tests.
 describe("gRPC-web transport (live mainnet)", () => {
   const config: SuiCoinConfig = {
+    ...suiDefaults.sui,
     status: { type: "active" },
-    node: {
-      graphqlUrl: "https://sui.coin.ledger.com/graphql",
-      grpcUrl: "https://sui.coin.ledger.com",
-    },
     features: { transport: "grpc" },
-    name: "Sui",
-    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   // Liveness is asserted through GetEpoch rather than the more obvious GetServiceInfo:

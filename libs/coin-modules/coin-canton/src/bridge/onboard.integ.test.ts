@@ -1,6 +1,7 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { firstValueFrom, toArray } from "rxjs";
-import type { CantonCoinConfig } from "../config";
+import { cantonDefaults } from "../config";
 import {
   isTopologyChangeRequiredCached,
   clearIsTopologyChangeRequiredCache,
@@ -23,19 +24,12 @@ import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } fr
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
-  const mockCurrency = createMockCantonCurrency();
-  const mockAccount = createMockCantonAccount();
-  const mockConfig: CantonCoinConfig = {
-    gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-    useGateway: true,
-    networkType: "devnet",
-    nativeInstrumentId: "Amulet",
-    status: {
-      type: "active",
-    },
-    name: "Canton Network (Devnet)",
-    unit: { name: "cc", code: "CC", magnitude: 38 },
+  const mockCurrency = {
+    ...createMockCantonCurrency(),
+    id: CryptoCurrencyIdSchema.parse("canton_network_devnet"),
   };
+  const mockAccount = createMockCantonAccount({ currency: mockCurrency });
+  const mockConfig = cantonDefaults.canton_network_devnet;
   const mockContext = createMockContext(mockConfig);
 
   let onboardedAccount: {
@@ -231,7 +225,10 @@ describe("onboard (devnet)", () => {
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
       const keyPair = generateMockKeyPair();
-      const mockAccount = createMockCantonAccount({ xpub: keyPair.publicKeyHex });
+      const mockAccount = createMockCantonAccount({
+        xpub: keyPair.publicKeyHex,
+        currency: mockCurrency,
+      });
       const mockSigner = createMockSigner(keyPair);
       const mockSignerContext = jest.fn().mockImplementation((_, callback) => {
         return callback(mockSigner);

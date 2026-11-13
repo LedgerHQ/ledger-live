@@ -1,4 +1,4 @@
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { getBalance } from "./getBalance";
 
 const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
@@ -7,16 +7,9 @@ const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e01
 describe.skip("getBalance", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: "https://graphql.testnet.sui.io/graphql",
-        grpcUrl: "https://fullnode.testnet.sui.io:443",
-      },
+      ...suiDefaults.sui_testnet,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui (Testnet)",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 
