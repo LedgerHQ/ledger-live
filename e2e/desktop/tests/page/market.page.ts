@@ -20,6 +20,10 @@ export class MarketPage extends AppPage {
   private readonly actionsMenu = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-actions-menu`).first();
   private readonly listData = this.page.getByTestId("market-list-data");
+  private readonly listRows = this.listData.locator(
+    '[data-testid^="market-"][data-testid$="-row"]',
+  );
+  private readonly favoritesEmptyState = this.page.getByTestId("market-favorites-empty");
   private readonly buySellMenuItem = this.page.getByRole("menuitem", {
     name: "Buy/Sell",
   });
@@ -115,6 +119,19 @@ export class MarketPage extends AppPage {
     await expect(this.starredCategoryTab).toHaveAttribute("aria-checked", "true");
   }
 
+  @step("Expect the starred market list to contain only $0")
+  async expectStarredListToContainOnly(tickers: string[]) {
+    await expect(this.listRows).toHaveCount(tickers.length);
+    for (const ticker of tickers) {
+      await expect(this.coinRow(ticker.toLowerCase())).toBeVisible();
+    }
+  }
+
+  @step("Expect the starred market list to be empty")
+  async expectStarredListEmpty() {
+    await expect(this.favoritesEmptyState).toBeVisible();
+  }
+
   @step("Select the All market category")
   async selectAllCategory() {
     await this.allCategoryTab.click();
@@ -125,11 +142,6 @@ export class MarketPage extends AppPage {
   async starCoin(ticker: string) {
     await this.openActionsMenu(ticker);
     await this.addToFavoritesMenuItem.click();
-  }
-
-  @step("Expect coin $0 to be visible")
-  async expectCoinToBeVisible(ticker: string) {
-    await expect(this.coinRow(ticker.toLowerCase())).toBeVisible();
   }
 
   @step("Expect coin $0 to not be visible")

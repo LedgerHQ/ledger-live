@@ -109,7 +109,7 @@ test.describe("Asset aggregation", () => {
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.validateMarketList();
         await app.market.selectStarredCategory();
-        await app.market.expectCoinToBeVisible(ticker);
+        await app.market.expectStarredListToContainOnly([ticker]);
 
         await app.market.clickCoinRow(ticker);
         await btcDetail.expectLoaded();
@@ -123,6 +123,7 @@ test.describe("Asset aggregation", () => {
         await app.market.selectAllCategory();
         await app.market.validateMarketList();
         await app.market.selectStarredCategory();
+        await app.market.expectStarredListEmpty();
         await app.market.expectCoinToNotBeVisible(ticker);
       },
     );
