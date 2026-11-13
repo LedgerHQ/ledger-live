@@ -136,7 +136,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.23",
     "tailwindcss": "catalog:"
   }
 }
