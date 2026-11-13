@@ -241,7 +241,9 @@ describe("ChecksView", () => {
     await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(screen.queryByTestId(checksTestIds.allowSheet)).toBeNull();
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
   });
 
   it("should bring the allow sheet back when a confirmation suspends it", async () => {

@@ -2690,6 +2690,34 @@
         "cta": "Continue"
       }
     },
+    "setup": {
+      "title": "Continue on your Ledger device",
+      "checks": {
+        "title": "Genuine & OS check",
+        "description": "Verifying your device",
+        "successDescription": "Your device is genuine and safe to use"
+      },
+      "naming": {
+        "title": "Device name",
+        "description": "Give your {{productName}} a unique name"
+      },
+      "pin": {
+        "title": "PIN creation",
+        "description": "It prevents unwanted access"
+      },
+      "setupChoice": {
+        "title": "Setup choice"
+      },
+      "security": {
+        "title": "Security setup",
+        "description": "Secret Recovery Phrase",
+        "recoveryKeyDescription": "Recovery Key"
+      },
+      "restore": {
+        "title": "Restore access",
+        "recoveryPhraseDescription": "Secret Recovery Phrase"
+      }
+    },
     "connection": {
       "connecting": "Connecting to your device",
       "failed": "Connection failed"
