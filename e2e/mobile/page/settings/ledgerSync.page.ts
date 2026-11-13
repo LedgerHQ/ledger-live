@@ -1,5 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
-import { activateLedgerSync, removeMemberLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
+import {
+  activateLedgerSync,
+  rejectLedgerSync,
+  removeMemberLedgerSync,
+} from "@ledgerhq/live-e2e-shared/speculos";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import * as ledgerSyncSetup from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import type { LedgerSyncContactGroupDescriptor } from "@ledgerhq/live-e2e-shared/contacts";
@@ -28,6 +32,8 @@ export default class LedgerSyncPage {
   private readonly activationButton = byId("walletsync-activation-button");
   private readonly activationSuccessCloseButton = byId("walletsync-activation-success-close");
   private readonly addMemberDeviceStep = byId("wallet-sync-add-member-continue-on-device");
+  private readonly addMemberRejected = byId("wallet-sync-add-member-rejected");
+  private readonly addMemberRetryButton = byId("wallet-sync-add-member-retry");
   private readonly removeMemberDeviceStep = byId("wallet-sync-remove-member-continue-on-device");
 
   /** Instance rows are keyed by the member public key, which is what the CLI holds. */
@@ -42,6 +48,11 @@ export default class LedgerSyncPage {
     await activateLedgerSync();
   }
 
+  @Step("Reject Ledger Sync on Speculos")
+  async rejectLedgerSyncOnSpeculos() {
+    await rejectLedgerSync();
+  }
+
   @Step("Remove a member from Ledger Sync on Speculos")
   async removeMemberFromLedgerSyncOnSpeculos() {
     await removeMemberLedgerSync();
@@ -51,6 +62,17 @@ export default class LedgerSyncPage {
   @Step("Expect the activation device step on DIE")
   async expectActivationDeviceStep() {
     await this.addMemberDeviceStep.waitVisible();
+  }
+
+  /** The Device Intent Executor sheet after the activation was refused on the device. */
+  @Step("Expect the activation rejected on device on DIE")
+  async expectActivationRejectedOnDevice() {
+    await this.addMemberRejected.waitVisible();
+  }
+
+  @Step("Retry the activation on DIE")
+  async retryActivation() {
+    await this.addMemberRetryButton.tap();
   }
 
   /** The Device Intent Executor sheet waiting for the removal to be approved on the device. */
