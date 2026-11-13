@@ -23,6 +23,7 @@ export type {
   DeviceDiscoverySourceEvent,
 } from "./deviceConnectivity/discoveryService/sources/DeviceDiscoverySource";
 export * from "./deviceConnectivity/discoveryService/sources/listenToTransportDevices";
+export { connectedDevices$ } from "./deviceConnectivity/connectedDevices";
 export * from "./transport/SpeculosTransportSession";
 export { ConnectDeviceUIStateTypes } from "./connectDevice/types";
 export type {
@@ -58,6 +59,28 @@ export {
   connectNewDeviceUseCase,
   type ConnectNewDeviceUseCaseInput,
 } from "./connectNewDevice/connectNewDeviceUseCase";
+export {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  DeviceListItemStatuses,
+} from "./connectKnownOrNewDevice/types";
+export type {
+  ConnectKnownOrNewDeviceDelays,
+  ConnectKnownOrNewDeviceFindMatchingDevice,
+  ConnectKnownOrNewDeviceGetConnectivity,
+  ConnectKnownOrNewDeviceKnownDevice,
+  ConnectKnownOrNewDeviceOnConnected,
+  ConnectKnownOrNewDeviceUIState,
+  ConnectKnownOrNewDeviceUIStateType,
+  DeviceConnectivity,
+  DeviceListItem,
+  DeviceListItemStatus,
+  SelectableDeviceListItem,
+} from "./connectKnownOrNewDevice/types";
+export {
+  connectKnownOrNewDeviceUseCase,
+  type ConnectKnownOrNewDeviceUseCaseInput,
+  type ConnectKnownOrNewDeviceUseCaseOutput,
+} from "./connectKnownOrNewDevice/connectKnownOrNewDeviceUseCase";
 export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
