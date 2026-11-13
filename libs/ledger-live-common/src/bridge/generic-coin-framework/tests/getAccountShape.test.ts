@@ -323,6 +323,21 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
+    it("drops a token that vanished from the fresh balance response with dropsMissingTokens", async () => {
+      const vanishedAsset = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        dropsMissingTokens: true,
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
     it.each([
       ["only by case", { type: "iou", assetReference: "usd", assetOwner: "issuerA" }],
       ["only by issuer", { type: "iou", assetReference: "USD", assetOwner: "issuerB" }],

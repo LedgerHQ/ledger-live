@@ -8200,6 +8200,26 @@
     "XrpSendToIssuer": {
       "title": "You're sending this token to its issuer. These tokens will be destroyed and won't be credited to anyone."
     },
+    "XrpOptOutBalanceNotZero": {
+      "title": "Your balance of this token must be 0",
+      "description": "Send all of it before you remove the token."
+    },
+    "XrpOptOutTokenInEscrow": {
+      "title": "Some of this token is in escrow",
+      "description": "Remove the token once the escrow is finished or canceled."
+    },
+    "XrpOptOutTokenFrozen": {
+      "title": "You can't remove {{assetCode}}",
+      "description": "Its issuer froze it on your account."
+    },
+    "XrpOptOutIncomplete": {
+      "title": "This token can't be removed",
+      "description": "The XRP Ledger would keep it on your account, with its locked XRP."
+    },
+    "XrpReserveRelease": {
+      "title": "{{amount}} locked for this token will be released.",
+      "description": "You can spend it once the token is removed."
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },
