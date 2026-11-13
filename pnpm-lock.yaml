@@ -2602,6 +2602,9 @@ importers:
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
+      '@shared/ui-karaoke':
+        specifier: workspace:*
+        version: link:../../shared/ui-karaoke
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../../shared/ui-queued-bottom-sheet

@@ -149,6 +149,25 @@ describe("useDeviceOnboardingActor", () => {
     expect(result.current.sendableEvents).toContainEqual({ event: { type: "QUIT" } });
   });
 
+  it("tells the caller whether the machine took the event", async () => {
+    const { result, start } = renderActor();
+    expect(result.current.send({ type: "QUIT" })).toBe(false);
+
+    await start();
+
+    let accepted = true;
+    act(() => {
+      accepted = result.current.send({ type: "USER_ACCEPT" });
+    });
+    expect(accepted).toBe(false);
+
+    act(() => {
+      accepted = result.current.send({ type: "QUIT" });
+    });
+    expect(accepted).toBe(true);
+    await act(() => settle());
+  });
+
   it("clears the snapshot and the exit when the run is reset", async () => {
     const { result, start } = renderActor();
     await start();

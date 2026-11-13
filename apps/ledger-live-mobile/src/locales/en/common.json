@@ -2622,6 +2622,16 @@
     }
   },
   "deviceOnboarding": {
+    "karaoke": {
+      "tapToContinue": "Tap to continue",
+      "intro": {
+        "takeControl": "You’re about to take control.",
+        "keysStayWithYou": "Your keys stay with you.",
+        "nothingMoves": "Nothing moves without your say.",
+        "setUp": "Let’s set it up.",
+        "cta": "Check your device"
+      }
+    },
     "checks": {
       "close": "Close",
       "synchronizing": {

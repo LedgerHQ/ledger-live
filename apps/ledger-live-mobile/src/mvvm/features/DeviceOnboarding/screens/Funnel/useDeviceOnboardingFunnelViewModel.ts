@@ -19,6 +19,7 @@ import {
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
+import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
@@ -43,7 +44,11 @@ export type UnlockSheetModel = Readonly<{
 }>;
 
 export type DeviceOnboardingFunnelModel = (
-  | { status: "karaoke"; onClose: () => void }
+  | {
+      status: "unseededIntroKaraoke";
+      unseededIntroKaraoke: UnseededIntroKaraokeScreenProps;
+      unlockSheet: UnlockSheetModel | null;
+    }
   | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
@@ -126,7 +131,9 @@ type ScreenActions = {
   leaveFromHeader: () => void;
   requestQuit: () => void;
   closeFirmwareHandover: () => void;
-  send: (event: { type: "RETRY" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE" }) => void;
+  send: (event: {
+    type: "RETRY" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE";
+  }) => boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
   firmwareUpToDate: boolean;
@@ -216,13 +223,13 @@ function nextHeldState(
   held: HeldState | null,
   machineState: string | null,
   holding: boolean,
-  showsChecks: boolean,
+  holdsScreen: boolean,
 ): HeldState | null {
   if (machineState === null) return null;
   if (holding) {
     return held?.afterLock ? held : { state: held?.state ?? machineState, afterLock: true };
   }
-  if (!showsChecks) return null;
+  if (!holdsScreen) return null;
   return held?.state === machineState && !held.afterLock
     ? held
     : { state: machineState, afterLock: false };
@@ -245,20 +252,31 @@ function quitConfirmationWhileUnlocked(
   };
 }
 
-function checksUnderUnlockSheet(
+function underUnlockSheet(
   built: DeviceOnboardingFunnelModel,
   holdingLockedScreen: boolean,
   locked: boolean,
+  device: ScreenActions["device"],
 ): DeviceOnboardingFunnelModel {
-  if (!holdingLockedScreen || built.status !== "checks") return built;
-  const { device } = built.checks;
-  return {
-    ...built,
-    checks: { ...built.checks, suspendSheets: true },
-    unlockSheet: locked
-      ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
-      : null,
-  };
+  if (!holdingLockedScreen || !device) return built;
+  const unlockSheet = locked
+    ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
+    : null;
+  if (built.status === "checks") {
+    return { ...built, checks: { ...built.checks, suspendSheets: true }, unlockSheet };
+  }
+  if (built.status === "unseededIntroKaraoke") {
+    return {
+      ...built,
+      unseededIntroKaraoke: {
+        ...built.unseededIntroKaraoke,
+        suspendSheets: true,
+        onFinish: () => false,
+      },
+      unlockSheet,
+    };
+  }
+  return built;
 }
 
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
@@ -269,8 +287,14 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   }
   if (actions.unseeded && actions.state === "awaitingStart") {
     return {
-      status: "karaoke",
-      onClose: actions.requestQuit,
+      status: "unseededIntroKaraoke",
+      unseededIntroKaraoke: {
+        deviceModelId: device.modelId,
+        suspendSheets: actions.quitConfirmation?.isOpen === true,
+        onFinish: () => actions.send({ type: "CONTINUE" }),
+        onClose: actions.requestQuit,
+      },
+      unlockSheet: null,
       quitConfirmation: actions.quitConfirmation,
     };
   }
@@ -510,11 +534,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     heldState,
     machineState,
     holdingLockedScreen,
-    built.status === "checks",
+    built.status === "checks" || built.status === "unseededIntroKaraoke",
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return checksUnderUnlockSheet(built, holdingLockedScreen, locked);
+  return underUnlockSheet(built, holdingLockedScreen, locked, device);
 }
 
 function readString(value: unknown): string | null {

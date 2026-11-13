@@ -24,7 +24,7 @@ import { DeviceOnboardingNavigator } from "../navigation/DeviceOnboardingNavigat
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
 import {
   checksTestIds,
-  karaokeTestIds,
+  unseededIntroKaraokeTestIds,
   quitConfirmationTestIds,
   syncOfferTestIds,
 } from "../testIds";
@@ -264,7 +264,7 @@ describe("device onboarding flow navigation", () => {
     showStax(device);
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
 
-    expect(await screen.findByTestId(karaokeTestIds.screen)).toBeVisible();
+    expect(await screen.findByTestId(unseededIntroKaraokeTestIds.screen)).toBeVisible();
   });
 
   it("should let portfolio Connect open the flow again after the user leaves the funnel", async () => {
@@ -274,7 +274,7 @@ describe("device onboarding flow navigation", () => {
     await openFlow(user);
     showStax(device);
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
-    await user.press(await screen.findByTestId(karaokeTestIds.close));
+    await user.press(await screen.findByTestId(unseededIntroKaraokeTestIds.close));
     await user.press(await screen.findByTestId(quitConfirmationTestIds.leave));
 
     expect(await screen.findByText("portfolio")).toBeVisible();

@@ -1,6 +1,7 @@
-export const karaokeTestIds = {
+export const unseededIntroKaraokeTestIds = {
   screen: "device-onboarding-karaoke",
   close: "device-onboarding-karaoke-close",
+  action: "device-onboarding-karaoke-action",
 } as const;
 
 export const quitConfirmationTestIds = {
