@@ -4,7 +4,8 @@ import { BottomSheetHeader, BottomSheetView, Box, Button } from "@ledgerhq/lumen
 import { LedgerLogo as LedgerIcon } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
-import { PerpsReviewSection, type PerpsReviewDetailItem } from "./PerpsReviewSection";
+import type { PerpsReviewDetailItem } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
+import { PerpsReviewSection } from "./PerpsReviewSection";
 
 type PerpsReviewSheetSection = Readonly<{
   titleKey: string;

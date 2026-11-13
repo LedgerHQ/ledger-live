@@ -2,12 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import { PerpsReviewDetailRow } from "./PerpsReviewDetailRow";
-
-export type PerpsReviewDetailItem = Readonly<{
-  labelKey: string;
-  value: string;
-  testID?: string;
-}>;
+import type { PerpsReviewDetailItem } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 
 type PerpsReviewSectionProps = Readonly<{
   titleKey: string;
