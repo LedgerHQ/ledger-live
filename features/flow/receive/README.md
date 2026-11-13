@@ -6,14 +6,14 @@
 Receive flow of Ledger Wallet, shared by Desktop and Mobile: the screen that shows an account's
 receive address, and the screen shown while the device displays that address for verification.
 
-The app keeps what is platform- or legacy-bound: picking the account, the device intent that
-verifies the address, clipboard, share sheet and navigation. It passes them in as props and
-callbacks.
+The app keeps what is platform- or legacy-bound: picking the account, the Device Intent Executor
+glue that verifies the address, clipboard, share sheet and navigation. It passes them in as props
+and callbacks.
 
 ## Layout
 
-The verify hint state and `screens/AddressDisplayed/` are in place; the other screens land in
-follow-up tickets. Target layout, per the
+The verify hint state, the device verification state and `screens/AddressDisplayed/` are in place;
+the other screens land in follow-up tickets. Target layout, per the
 [flow-package skill](../../../.agents/skills/flow-package/SKILL.md):
 
 ```text
@@ -22,6 +22,7 @@ src/
 │   ├── Address/            # receive address screen
 │   └── AddressDisplayed/   # "Address securely displayed", while the address is on the device
 ├── copy/                   # i18n keys to labels, under the receiveAddress namespace
+├── hooks/                  # device verification state and its tracking
 ├── logic/                  # pure functions, no React
 ├── state/                  # verify hint slice, registered and persisted by the apps
 ├── types.ts                # public contract
@@ -39,6 +40,15 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
   that cannot verify), and `resolveReceiveFamilyConfig` merges it and applies the
   `newReceiveFlow` excluded families.
 - `@features/flow-receive/types.mock`: `mockReceiveFamilyConfigInput`, for the families' tests.
+- Device verification, around the apps' verify-address intent glue:
+  - `canVerifyOnDevice(verification)`: whether **Verify** can be offered. Only an `address`
+    verification is shown by the device for the user to compare; no `verification` means the device
+    cannot confirm the address.
+  - `useVerifyAddressFlow({ onCloseFlow })`: `start(selection)` mounts the device verification,
+    `onExit(outcome)` unmounts it. `mismatch` closes the receive flow; any other outcome returns to
+    the address screen.
+  - `useVerifyAddressSession({ tracking, onExit })`: turns the intent job states into a
+    `VerifyAddressOutcome` and sends the `receive_verification_*` events.
 - `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
   seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
   and persist `hasSeenReceiveVerifyHint` in the `payCard` storage blob, restored with

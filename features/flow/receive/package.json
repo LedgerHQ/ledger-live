@@ -28,6 +28,7 @@
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@features/platform-intent-verify-address": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/analytics": "workspace:*",
     "@shared/feature-flags": "workspace:*",
