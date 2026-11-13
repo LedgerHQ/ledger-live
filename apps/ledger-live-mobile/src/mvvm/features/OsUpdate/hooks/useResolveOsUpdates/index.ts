@@ -38,7 +38,7 @@ async function resolveOsUpdates(
   }
 }
 
-async function hasStoredBackup(modelId: Device["modelId"] | undefined): Promise<boolean> {
+export async function hasStoredBackup(modelId: Device["modelId"] | undefined): Promise<boolean> {
   if (modelId === undefined) return false;
   try {
     return hasAnythingToRestore(
