@@ -1,11 +1,10 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { buildIterateResult, getAccountShape } from "./synchronisation";
 
@@ -27,7 +26,7 @@ describe("synchronisation", () => {
     }) as ShapeInfo;
 
   beforeAll(() => {
-    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+    hederaCoinConfig.setCoinConfig(() => hederaDefaults.hedera);
 
     // The production CAL API requires auth unavailable in dev/CI without credentials.
     // A stub store is sufficient: the sync-hash becomes a stable constant so the
