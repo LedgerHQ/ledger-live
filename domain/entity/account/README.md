@@ -14,7 +14,7 @@ The `accounts` slice is meant to become the source of truth of the account list.
 - `byLegacyId` — the reverse index `legacyId → AccountUUID`, kept by the same reducer.
 
 - `accountsSlice` — its reducer, `legacyAccountsSynced`, and its selectors.
-- its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
+- its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` / `selectAccountEntryByLegacyId` — the `AccountUUID` or the entry behind a legacy account id, from `byLegacyId`.
 - `mockAccountEntry` (`./schema.mock`) — a valid entry, with overrides.
 
 While the legacy store holds `accounts`, each app mounts the slice under another key and binds its selectors there with `accountsSlice.getSelectors`.
@@ -25,6 +25,7 @@ A compatibility layer for the migration, kept until the legacy `Account` is gone
 
 - `AccountId` / `TokenAccountId` / `AnyAccountId` — the legacy ids: a top-level id has no `+`, a token account id is `<parentAccountId>+<encodedTokenId>`.
 - `parseAnyAccountId` / `safeParseAnyAccountId`, `encodeTokenAccountId` / `getParentId`.
+- `findAccountEntryByLegacyId` — the entry behind a raw legacy id string, from the slice state; `undefined` when the string is not an `AccountId` or no entry has it.
 - `connectAccountsStore` — mirrors the legacy accounts into the slice whenever one is added, removed or reordered, whatever the action; an update of the accounts it already holds dispatches nothing. A legacy account never changes identity, so it is converted once, keyed by its legacy id. The app injects the conversion (`fromLegacyAccount` in live-common); an account it cannot convert is left out and reported to `onError`.
 
 What an account *has* — a name, a balance, a history, a star — lives in its own `@domain/entity-account-*` package.

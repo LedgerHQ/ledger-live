@@ -1,7 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
+import { LegacyAccountEntrySchema, initialAccountsState } from "../schema";
+import { mockAccountEntry } from "../schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "../slice";
 import { AccountIdSchema, TokenAccountIdSchema, type TokenAccountId } from "./schema";
 import {
   encodeTokenAccountId,
+  findAccountEntryByLegacyId,
   getParentId,
   parseAnyAccountId,
   safeParseAnyAccountId,
@@ -74,6 +78,27 @@ describe("safeParseAnyAccountId", () => {
     "returns undefined instead of throwing on %p",
     raw => {
       expect(safeParseAnyAccountId(raw)).toBeUndefined();
+    },
+  );
+});
+
+describe("findAccountEntryByLegacyId", () => {
+  const legacyId = AccountIdSchema.parse("js:2:ethereum:0xABC:ethm");
+  const entry = LegacyAccountEntrySchema.parse(mockAccountEntry({ legacyId }));
+  const state = accountsSlice.reducer(initialAccountsState, legacyAccountsSynced([entry]));
+
+  it("returns the entry behind a legacy account id", () => {
+    expect(findAccountEntryByLegacyId(state, "js:2:ethereum:0xABC:ethm")).toEqual(entry);
+  });
+
+  it("returns undefined when no entry has the legacy id", () => {
+    expect(findAccountEntryByLegacyId(state, "js:2:bitcoin:xpub123:native_segwit")).toBeUndefined();
+  });
+
+  it.each(["", "js:2:ethereum:0xABC:ethm+some-token"])(
+    "returns undefined when %p is not an AccountId",
+    raw => {
+      expect(findAccountEntryByLegacyId(state, raw)).toBeUndefined();
     },
   );
 });

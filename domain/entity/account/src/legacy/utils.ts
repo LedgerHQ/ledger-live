@@ -1,4 +1,7 @@
+import type { AccountEntry, AccountsState } from "../schema";
+import { accountsSlice } from "../slice";
 import {
+  AccountIdSchema,
   AnyAccountIdSchema,
   TokenAccountIdSchema,
   type AccountId,
@@ -31,4 +34,15 @@ export function encodeTokenAccountId(parentId: AccountId, encodedTokenId: string
  */
 export function getParentId(id: TokenAccountId): AccountId {
   return id.split("+")[0] as AccountId;
+}
+
+const { selectAccountEntryByLegacyId } = accountsSlice.getSelectors();
+
+/** The entry behind a raw legacy account id; `undefined` when it is not an `AccountId` or no entry has it. */
+export function findAccountEntryByLegacyId(
+  state: AccountsState,
+  rawLegacyId: string,
+): AccountEntry | undefined {
+  const legacyId = AccountIdSchema.safeParse(rawLegacyId);
+  return legacyId.success ? selectAccountEntryByLegacyId(state, legacyId.data) : undefined;
 }
