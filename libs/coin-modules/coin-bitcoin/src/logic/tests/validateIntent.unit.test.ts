@@ -27,7 +27,7 @@ const intent = (overrides: Partial<TransactionIntent> = {}): TransactionIntent =
 });
 
 const withControl = (utxoStrategy: Record<string, unknown>) =>
-  intent({ data: { type: "string", utxoStrategy } } as Partial<TransactionIntent>);
+  intent({ data: { type: "unknown", utxoStrategy } } as Partial<TransactionIntent>);
 
 describe("validateIntent", () => {
   it("accepts a valid intent and reports the amounts", async () => {

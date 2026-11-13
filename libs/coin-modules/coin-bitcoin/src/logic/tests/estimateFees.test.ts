@@ -62,7 +62,7 @@ const noRates = () =>
 
 const coinControl = (utxoStrategy: Record<string, unknown>, overrides = {}) =>
   intent({
-    data: { type: "string", utxoStrategy },
+    data: { type: "unknown", utxoStrategy },
     ...overrides,
   } as Partial<TransactionIntent>);
 
@@ -103,12 +103,39 @@ describe("estimateFees", () => {
       parameters: {
         feePerByte: 13n,
         relayFeePerByte: 1n,
+        incrementalRelayFeePerByte: 1n,
         vsize: vsize(1, true),
         inputCount: 1,
         change: 100_000n - 10_000n - vsize(1, true) * 13n,
         sufficient: true,
       },
     });
+  });
+
+  it("returns the network's incremental relay rate, in sat/vB", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]),
+      networkHandler("0.00001", undefined, "0.00003"),
+    );
+    const estimation = await estimateFees(testContext(), "bitcoin", intent());
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ relayFeePerByte: 1n, incrementalRelayFeePerByte: 3n }),
+    );
+  });
+
+  it("prices a replacement of a pending transaction on its own inputs", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("b", 50_000)], token: null }]),
+      pendingUtxosHandler(FUNDED_P2WPKH, { spent: [utxo("a", 100_000)] }),
+    );
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ selectedUtxos: [`${"a".repeat(64)}:0`] }),
+    );
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ inputCount: 1, sufficient: true }),
+    );
   });
 
   it("leaves an excluded output out and reports a selection that does not cover the send", async () => {

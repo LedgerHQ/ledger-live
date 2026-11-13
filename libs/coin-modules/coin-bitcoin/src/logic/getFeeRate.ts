@@ -11,6 +11,8 @@ export type FeeRate = {
   feePerByte: bigint;
   /** Minimum relay fee rate of the network, in sat/vB (never below 1). */
   relayFeePerByte: bigint;
+  /** Minimum rate increase of a replacement transaction, in sat/vB (never below 1). */
+  incrementalRelayFeePerByte: bigint;
 };
 
 /**
@@ -58,7 +60,7 @@ function explorerRates(fees: ExplorerFees, relayFee: string | null | undefined):
 }
 
 /** BTC/kB (decimal string) to sat/vB, rounded up, never below 1. */
-function relayFloor(relayFee: string | null | undefined): bigint {
+function btcPerKbToSatPerVb(relayFee: string | null | undefined): bigint {
   if (!relayFee) return 1n;
   const satPerVb = new BigNumber(relayFee).times(1e8).div(1000).integerValue(BigNumber.ROUND_CEIL);
   if (!satPerVb.isFinite() || satPerVb.lt(1)) return 1n;
@@ -91,13 +93,15 @@ export async function getFeeRate(
     custom || options.feePerByte !== undefined ? undefined : fetchFeeRates(config),
     fetchNetworkInfo(config),
   ]);
-  const relayFeePerByte = relayFloor(network.relay_fee);
+  const relayFeePerByte = btcPerKbToSatPerVb(network.relay_fee);
+  const incrementalRelayFeePerByte = btcPerKbToSatPerVb(network.incremental_fee);
 
   if (custom) {
     return {
       feePerByte:
         options.feePerByte === undefined ? relayFeePerByte : positiveRate(options.feePerByte),
       relayFeePerByte,
+      incrementalRelayFeePerByte,
     };
   }
 
@@ -117,5 +121,6 @@ export async function getFeeRate(
   return {
     feePerByte: feePerByte > relayFeePerByte ? feePerByte : relayFeePerByte,
     relayFeePerByte,
+    incrementalRelayFeePerByte,
   };
 }
