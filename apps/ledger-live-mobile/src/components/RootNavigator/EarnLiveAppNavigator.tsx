@@ -63,7 +63,8 @@ export const Earn = (props: NavigationProps) => {
       return;
     }
 
-    // Reset params so that it will retrigger actions if a new deeplink is used
+    // Reset params once the action is handled, so it runs once per deeplink. Clearing it only on
+    // cleanup let a re-render of this effect (e.g. an account update after a stake) run it again.
     const clearDeepLink = () =>
       navigation.setParams({
         action: undefined,
@@ -109,19 +110,18 @@ export const Earn = (props: NavigationProps) => {
           if (!walletId) {
             // eslint-disable-next-line no-console
             console.log("Wallet accountId required for 'stake-account' action.");
-            return;
+            break;
           }
 
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
-          if (account) {
-            const parent = isTokenAccount(account)
-              ? getParentAccount(account, accounts)
-              : undefined;
-            openStakingDrawerRef.current(account, parent);
-          } else {
+          if (!account) {
+            // Accounts are loaded before any screen renders, so a missing one does not exist.
             console.warn("no matching account found for given id.");
+            break;
           }
+          const parent = isTokenAccount(account) ? getParentAccount(account, accounts) : undefined;
+          openStakingDrawerRef.current(account, parent);
           break;
         }
         case "get-funds": {
@@ -163,8 +163,7 @@ export const Earn = (props: NavigationProps) => {
     }
 
     deeplinkRouting();
-
-    return () => clearDeepLink();
+    clearDeepLink();
   }, [
     paramAction,
     props.route.params,
