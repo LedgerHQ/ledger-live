@@ -11,11 +11,16 @@ import {
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import type { Trustchain, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type {
+  MemberCredentials,
+  Trustchain,
+  TrustchainMember,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { removeMemberIntentLWMDefinition } from "../../deviceIntents/removeMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
+import { useIsCurrentMemberCredentials } from "../../deviceIntents/useIsCurrentMemberCredentials";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -32,6 +37,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const createSessionSdk = useCreateSessionSdk();
+  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
 
   const removedMemberRef = useRef<TrustchainMember | null>(null);
 
@@ -49,13 +55,18 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
         createSessionSdk,
       };
       return createIntent(removeMemberIntentLWMDefinition, intentInput, {
-        onResult: newTrustchain => onResult(newTrustchain, member),
+        onResult: newTrustchain => onResult(newTrustchain, member, memberCredentials),
       });
     },
     onCompleted,
   });
 
-  function onResult(newTrustchain: Trustchain, member: TrustchainMember) {
+  function onResult(
+    newTrustchain: Trustchain,
+    member: TrustchainMember,
+    runCredentials: MemberCredentials,
+  ) {
+    if (!isCurrentMemberCredentials(runCredentials)) return;
     dispatch(setTrustchain(newTrustchain));
     removedMemberRef.current = member;
   }

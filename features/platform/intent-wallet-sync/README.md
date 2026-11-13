@@ -67,7 +67,8 @@ call: it stores the result and skips any navigation from a screen that is gone. 
 unsubscribe, a throw from that late `onResult`, and the result of a run that a Retry replaced are
 ignored. After a disconnection, the executor's Retry starts a new job: a late result of the
 disconnected job is dropped once the new job delivered its own, so it never overwrites a newer
-trustchain.
+trustchain. A Ledger Sync reset rotates the member credentials, so the apps also drop a late result whose
+run started with credentials that are no longer the store's.
 
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:

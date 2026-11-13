@@ -12,6 +12,7 @@ import {
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import {
   type GetOrCreateTrustchainCallbacks,
+  type MemberCredentials,
   type TrustchainResult,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -24,6 +25,7 @@ import { AnalyticsEvents } from "../../Analytics/enums";
 import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import { addMemberIntentLWMDefinition } from "../../deviceIntents/addMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
+import { useIsCurrentMemberCredentials } from "../../deviceIntents/useIsCurrentMemberCredentials";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -51,6 +53,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
   const createSessionSdk = useCreateSessionSdk();
+  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
 
   // Without a trustchain to join, only a new setup or a completed onboarding may create one.
   const checkTrustchainsExist: NonNullable<GetOrCreateTrustchainCallbacks["onInitialResponse"]> =
@@ -96,14 +99,20 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
         onInitialResponse: checkTrustchainsExist,
       };
       return createIntent(addMemberIntentLWMDefinition, intentInput, {
-        onResult: trustchainResult => onResult(trustchainResult, seededOffer === true),
+        onResult: trustchainResult =>
+          onResult(trustchainResult, seededOffer === true, memberCredentials),
       });
     },
     onDeviceRejected,
     onCompleted,
   });
 
-  function onResult(trustchainResult: TrustchainResult, seededOffer: boolean) {
+  function onResult(
+    trustchainResult: TrustchainResult,
+    seededOffer: boolean,
+    runCredentials: MemberCredentials,
+  ) {
+    if (!isCurrentMemberCredentials(runCredentials)) return;
     dispatch(setTrustchain(trustchainResult.trustchain));
     track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
     activatedRef.current = { trustchainResult, seededOffer };

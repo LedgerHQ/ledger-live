@@ -10,7 +10,7 @@ import {
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import type { TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { MemberCredentials, TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -19,6 +19,7 @@ import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { useOnTrustchainJoined } from "../../hooks/useOnTrustchainJoined";
 import { toLegacyDevice } from "../toLegacyDevice";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
+import { useIsCurrentMemberCredentials } from "../useIsCurrentMemberCredentials";
 import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -32,14 +33,16 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const trustchain = useSelector(trustchainSelector);
   const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
+  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
   const resultRef = useRef<TrustchainResult | null>(null);
 
   const onResult = useCallback(
-    (result: TrustchainResult) => {
+    (result: TrustchainResult, runCredentials: MemberCredentials) => {
+      if (!isCurrentMemberCredentials(runCredentials)) return;
       resultRef.current = result;
       dispatch(setTrustchain(result.trustchain));
     },
-    [dispatch],
+    [dispatch, isCurrentMemberCredentials],
   );
 
   const onJobStateChanged = useCallback(
@@ -71,7 +74,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
         createIntent<AddMemberJobState, AddMemberIntentInput, undefined, TrustchainResult>(
           addMemberIntentLWDDefinition,
           { memberCredentials, currentTrustchain: trustchain ?? undefined, createSessionSdk },
-          { onResult, onJobStateChanged },
+          { onResult: result => onResult(result, memberCredentials), onJobStateChanged },
         )
     : null;
 

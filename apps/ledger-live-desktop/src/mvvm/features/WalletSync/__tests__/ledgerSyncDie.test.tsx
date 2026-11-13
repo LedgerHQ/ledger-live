@@ -13,6 +13,7 @@ import {
   type TrustchainResult,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { useDispatch } from "LLD/hooks/redux";
@@ -266,6 +267,20 @@ describe("Ledger Sync device steps on DIE", () => {
       },
     );
 
+    it("should drop a result that arrives after Ledger Sync was reset", async () => {
+      const { store } = await startActivationFromSettings();
+      const intent = lastIntent();
+
+      act(() => {
+        store.dispatch(resetTrustchainStore());
+      });
+      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
+      emit({ type: "completed" }, intent);
+
+      expect(store.getState().trustchain.trustchain).toBeNull();
+      expect(store.getState().walletSync.step).not.toBe(Step.ActivationLoading);
+    });
+
     it("should start a new run when the device step is visited again after a failure", async () => {
       const { store } = await startActivationFromSettings();
       emit(failed("unknown"));
@@ -397,6 +412,20 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(store.getState().walletSync.step).toBe(Step.InstanceSuccesfullyDeleted);
       expectPanelWithoutDeviceStep();
       expect(await screen.findByText(new RegExp(MEMBER_TO_REMOVE.name))).toBeInTheDocument();
+    });
+
+    it("should drop a rotated trustchain that arrives after Ledger Sync was reset", async () => {
+      const { store } = await startRemoval();
+      const intent = lastIntent();
+
+      act(() => {
+        store.dispatch(resetTrustchainStore());
+      });
+      deliver(NEW_TRUSTCHAIN, intent);
+      emit({ type: "completed" }, intent);
+
+      expect(store.getState().trustchain.trustchain).toBeNull();
+      expect(store.getState().walletSync.step).not.toBe(Step.InstanceSuccesfullyDeleted);
     });
 
     it("should bring the panel back on the unsecured ledger step after a not-allowed failure", async () => {
