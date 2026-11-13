@@ -64,24 +64,26 @@ export interface Row extends Difference {
 /** Where the launches were read, and how often the Debug screen agreed with the device log. */
 export interface Reads {
   fromLog: number;
-  /** Builds whose warm-up wrote no log line, so that both were read on the screen (run.ts). */
+  /** Builds whose missing log lines switched both builds to the screen (run.ts). */
   noLogLine: Side[];
   /** Launches read on the screen because their log line never came. */
   fallbacks: Record<Side, number>;
   /** Pairs left out as only one of their launches followed a read of the screen. */
   unevenPairs: number;
-  /** Launches, warm-ups included, read from both. */
+  /** Launches read both ways, warm-ups and checks included. */
   screenChecks: number;
   screenMismatches: number;
   /** Builds read from the device log that no launch could check on the Debug screen. */
   uncheckedBuilds: Side[];
 }
 
+const isMeasured = (s: Sample) => !s.warmup && !s.check;
+
 /** The measured launches of a round, A and B. */
 function rounds(samples: Sample[]): Array<Record<Side, Sample>> {
   const byKey = new Map<string, Partial<Record<Side, Sample>>>();
   for (const s of samples) {
-    if (!s.ok || s.warmup) continue;
+    if (!s.ok || !isMeasured(s)) continue;
     const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
     byKey.set(key, { ...byKey.get(key), [s.side]: s });
   }
@@ -94,18 +96,19 @@ const uneven = ({ A, B }: Record<Side, Sample>) => !!A.afterScreenRead !== !!B.a
 
 function readsOf(group: Sample[]): Reads {
   const ok = group.filter(s => s.ok);
-  const measured = ok.filter(s => !s.warmup);
+  const measured = ok.filter(isMeasured);
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
+  // A launch that switched the scenario is reported as such, not as a fallback.
   const fallbacks = (side: Side) =>
-    measured.filter(s => s.side === side && s.readFrom === "screen-fallback").length;
-  // Failed warm-ups count: the scenario switched to the screen before their screen read failed.
-  const warmupWroteNoLines = (side: Side) =>
-    group.some(s => s.warmup && s.side === side && s.noLogLines);
+    measured.filter(s => s.side === side && s.readFrom === "screen-fallback" && !s.switchedToScreen)
+      .length;
+  // Failed launches count: the scenario switched to the screen before their screen read failed.
+  const switchedToScreen = (side: Side) => group.some(s => s.side === side && s.switchedToScreen);
   const readFromLog = (side: Side) => measured.some(s => s.side === side && s.readFrom === "log");
   const checkedSides = new Set(checked.map(s => s.side));
   return {
     fromLog: measured.filter(s => s.readFrom === "log").length,
-    noLogLine: (["A", "B"] as const).filter(warmupWroteNoLines),
+    noLogLine: (["A", "B"] as const).filter(switchedToScreen),
     fallbacks: { A: fallbacks("A"), B: fallbacks("B") },
     unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
@@ -231,7 +234,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
   }
   return [...groups.entries()].flatMap(([key, group]) => {
     const [platform, scenario] = key.split("|");
-    const measured = group.filter(s => !s.warmup);
+    const measured = group.filter(isMeasured);
     const read = measured.filter(s => s.ok);
     const baseOf = (side: Side) =>
       mostCommon(

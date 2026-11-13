@@ -49,15 +49,15 @@ describe("toMarkdown", () => {
     const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
     assert.match(
       toMarkdown(summarise(samples, options), options),
-      /\*\*android accounts: no warm-up could be read on the Debug screen, so the device log was not checked against it\.\*\*/,
+      /\*\*android accounts: no launch was read both from the device log and on the Debug screen, so the device log was not checked against it\.\*\*/,
     );
   });
 
   it("names the build whose device log no launch checked on the screen", () => {
     const checkedB = launch({
       side: "B",
-      round: -1,
-      warmup: true,
+      round: 6,
+      check: true,
       readFrom: "log",
       screenAppStartupTime: 1000,
       appStartupTime: 1000,
@@ -70,7 +70,7 @@ describe("toMarkdown", () => {
     assert.match(markdown, /on the 1 launches read both ways/);
     assert.match(
       markdown,
-      /\*\*android accounts: build A could not be read on the Debug screen, so its device log was not checked against it\.\*\*/,
+      /\*\*android accounts: no launch of build A was read both from the device log and on the Debug screen, so its device log was not checked against it\.\*\*/,
     );
   });
 
@@ -110,13 +110,14 @@ describe("toMarkdown", () => {
         warmup: true,
         readFrom: "screen-fallback",
         noLogLines: true,
+        switchedToScreen: true,
         appStartupTime: 900,
       }),
       ...comparison({ deltaMs: 0, a: { readFrom: "screen" }, b: { readFrom: "screen" } }),
     ];
     assert.match(
       toMarkdown(summarise(samples, options), options),
-      /\*\*android accounts: build A wrote no startup lines to the device log on its warm-up \(built before #24576\?\), so both builds were read from the Debug screen\.\*\*/,
+      /\*\*android accounts: build A wrote no startup lines to the device log \(built before #24576\?\), so from then on both builds were read from the Debug screen\.\*\*/,
     );
   });
 

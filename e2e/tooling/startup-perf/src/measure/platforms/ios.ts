@@ -90,7 +90,7 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
           "--predicate",
           predicate,
         ]),
-        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
+        { allowFail: true, timeoutMs: LOG_SHOW_TIMEOUT_MS },
       );
       return stdout;
     },

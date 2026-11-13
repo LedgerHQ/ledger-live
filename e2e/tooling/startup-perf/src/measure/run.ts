@@ -89,9 +89,11 @@ const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
 let screenReadSinceLaunch = false;
-// Becomes "screen" for the rest of a scenario once a build's warm-up wrote no startup lines (a
-// build before #24576): both builds are then read on the screen, so every pair stays even.
+// Becomes "screen" for the rest of a scenario once a build not yet read from the log in it writes
+// no startup lines (a build before #24576): both builds are then read on the screen, so every pair
+// stays even.
 let read = READ;
+const readFromLog = new Set<Side>();
 
 async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<Sample> {
   const record: Sample = {
@@ -164,7 +166,8 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
   const what = record.ok
     ? `${record.appStartupTime} ms`
     : `FAILED: ${record.error?.split("\n")[0]}`;
-  log(`${meta.warmup ? "warm-up " : ""}${name} on ${meta.device}: ${what}`);
+  const kind = meta.check ? "check " : meta.warmup ? "warm-up " : "";
+  log(`${kind}${name} on ${meta.device}: ${what}`);
   if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
       `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,
@@ -191,9 +194,10 @@ async function readStartup({
   checkScreen: boolean;
   debugFile: string;
 }): Promise<Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime">> {
+  const measured = !meta.warmup && !meta.check;
   const readScreen = () => {
     screenReadSinceLaunch = true;
-    return readPerformance(meta.device, { quick: !meta.warmup, debugFile });
+    return readPerformance(meta.device, { quick: measured, debugFile });
   };
   if (read === "screen") return { ...(await readScreen()), readFrom: "screen" };
   const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(
@@ -207,14 +211,23 @@ async function readStartup({
       `  no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
     );
     record.noLogLines = true;
-    if (meta.warmup) {
+    if (!readFromLog.has(meta.side)) {
       log(`  build ${meta.side} does not log its startup: both builds are read on the screen`);
       read = "screen";
+      record.switchedToScreen = true;
     }
     return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
+  readFromLog.add(meta.side);
   if (!checkScreen) return { ...fromLog, readFrom: "log" };
-  const onScreen = await readScreen();
+  // A measured launch (--read both) fails on it; a warm-up or a check keeps its log value.
+  const onScreen = await readScreen().catch((error: unknown) => {
+    if (measured) throw error;
+    log(`  could not check the device log on the Debug screen: ${errorMessage(error)}`);
+    record.screenCheckError = errorMessage(error).slice(0, 300);
+    return null;
+  });
+  if (!onScreen) return { ...fromLog, readFrom: "log" };
   if (onScreen.appStartupTime !== fromLog.appStartupTime) {
     log(
       `  the Debug screen shows ${onScreen.appStartupTime} ms, the log ${fromLog.appStartupTime} ms`,
@@ -249,7 +262,7 @@ function writeMeta(): Promise<void> {
   );
 }
 
-/** Phase 0 puts A on the first device, phase 1 on the second; the side that went last goes first. */
+/** Phase 0 puts A on the first device, phase 1 on the second; phase 1 starts with B. */
 function layout(phase: number): { placement: Record<Side, string>; order: Side[] } {
   return phase === 0
     ? { placement: { A: DEVICES[0], B: DEVICES[1] }, order: ["A", "B"] }
@@ -275,6 +288,8 @@ async function installAndInject({
     await P.stop(device);
     await inject({ device, userdata, side });
   });
+  // The injection is a launch: it takes the slowdown of a screen read before it.
+  screenReadSinceLaunch = false;
 }
 
 async function measureScenario(scenario: string): Promise<void> {
@@ -284,25 +299,38 @@ async function measureScenario(scenario: string): Promise<void> {
   });
   log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
   read = READ;
+  readFromLog.clear();
   for (const phase of [0, 1]) {
-    // Never the same device twice in a row, warm-ups included.
+    // A measured launch never follows one on the same device; a warm-up after a check can.
     const { placement, order } = layout(phase);
     for (const side of order) {
       const device = placement[side];
       await installAndInject({ scenario, side, device, userdata });
       for (let w = 0; w < WARMUPS; w++) {
-        // The last one reads only the log: on iOS a screen read would slow round 0.
-        const lastWarmup = side === order.at(-1) && w === WARMUPS - 1;
-        await sample(
-          { scenario, phase, round: -1 - w, side, device, warmup: true },
-          { checkScreen: !lastWarmup },
-        );
+        await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
     }
     for (let round = 0; round < PAIRS / 2; round++) {
       for (const side of order) {
         await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
       }
+    }
+    // After the rounds, so both builds' warm-ups match, and on iOS the slower launch that follows a
+    // screen read is the next injection. Each build is checked once per scenario.
+    if (read === "log") {
+      const [side] = order;
+      await sample(
+        {
+          scenario,
+          phase,
+          round: PAIRS / 2,
+          side,
+          device: placement[side],
+          warmup: false,
+          check: true,
+        },
+        { checkScreen: true },
+      );
     }
   }
 }

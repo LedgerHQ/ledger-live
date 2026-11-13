@@ -320,34 +320,51 @@ describe("summarise", () => {
     }
   });
 
-  it("names the builds whose warm-up wrote no log line", () => {
-    const warmup = (side: "A" | "B", readFrom: "log" | "screen-fallback") =>
+  describe("builds whose missing lines switched both builds to the screen", () => {
+    const missed = (side: "A" | "B", overrides: Partial<Sample>) =>
       launch({
         side,
-        round: -1,
-        warmup: true,
-        readFrom,
-        noLogLines: readFrom === "screen-fallback",
+        readFrom: "screen-fallback",
+        noLogLines: true,
         appStartupTime: 1000,
+        ...overrides,
       });
     const samples = comparison({
       deltaMs: 0,
       a: { readFrom: "screen" },
       b: { readFrom: "screen" },
     });
-    const reads = (...warmups: Sample[]) =>
-      debugRow(summarise([...warmups, ...samples], GATE)).reads.noLogLine;
-    assert.deepEqual(reads(warmup("A", "log"), warmup("B", "screen-fallback")), ["B"]);
-    assert.deepEqual(reads(warmup("A", "log"), warmup("B", "log")), []);
+    const readsWith = (...launches: Sample[]) =>
+      debugRow(summarise([...launches, ...samples], GATE)).reads;
+
+    it("names the build whose warm-up switched", () => {
+      const switchedWarmup = missed("B", { round: -1, warmup: true, switchedToScreen: true });
+      assert.deepEqual(readsWith(switchedWarmup).noLogLine, ["B"]);
+    });
+
+    it("names the build whose first measured launch switched, without counting it as a fallback", () => {
+      const switchedOnRoundZero = missed("A", { round: 0, switchedToScreen: true });
+      const reads = readsWith(switchedOnRoundZero);
+      assert.deepEqual(reads.noLogLine, ["A"]);
+      assert.deepEqual(reads.fallbacks, { A: 0, B: 0 });
+    });
+
+    it("does not name a build already read from the log that falls back once", () => {
+      const warmupFallback = missed("A", { phase: 1, round: -1, warmup: true });
+      const roundFallback = missed("A", { round: 3 });
+      assert.deepEqual(readsWith(warmupFallback).noLogLine, []);
+      assert.deepEqual(readsWith(roundFallback).noLogLine, []);
+    });
   });
 
-  it("names a build whose warm-up wrote no log line even when its screen read then failed", () => {
+  it("names a build that switched both builds to the screen even when its screen read failed", () => {
     const failedWarmup = launch({
       side: "A",
       round: -1,
       warmup: true,
       ok: false,
       noLogLines: true,
+      switchedToScreen: true,
       appStartupTime: Number.NaN,
     });
     const samples = comparison({
@@ -358,30 +375,38 @@ describe("summarise", () => {
     assert.deepEqual(debugRow(summarise([failedWarmup, ...samples], GATE)).reads.noLogLine, ["A"]);
   });
 
-  it("names a build read from the log that no launch checked on the screen", () => {
-    const checkedWarmup = (side: "A" | "B") =>
-      launch({
-        side,
-        round: -1,
-        warmup: true,
-        readFrom: "log",
-        screenAppStartupTime: 1000,
-        appStartupTime: 1000,
-      });
-    const failedWarmupA = launch({
-      side: "A",
-      round: -1,
-      warmup: true,
-      ok: false,
-      appStartupTime: Number.NaN,
-    });
+  it("counts the check after the rounds as a screen check, not as a launch or a failure", () => {
     const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
-    const reads = (...warmups: Sample[]) =>
-      debugRow(summarise([...warmups, ...samples], GATE)).reads;
+    const check = (overrides: Partial<Sample>) =>
+      launch({
+        side: "A",
+        round: 6,
+        check: true,
+        readFrom: "log",
+        appStartupTime: 9000,
+        ...overrides,
+      });
+    const without = debugRow(summarise(samples, GATE));
+    const row = debugRow(
+      summarise([...samples, check({ screenAppStartupTime: 9000 }), check({ ok: false })], GATE),
+    );
+    assert.equal(row.launches, without.launches);
+    assert.equal(row.reads.fromLog, without.reads.fromLog);
+    assert.equal(row.failed, 0);
+    assert.equal(row.reads.screenChecks, 1);
+  });
 
-    const oneChecked = reads(failedWarmupA, checkedWarmup("B"));
+  it("names a build read from the log that no launch checked on the screen", () => {
+    const check = (side: "A" | "B", overrides: Partial<Sample>) =>
+      launch({ side, round: 6, check: true, readFrom: "log", appStartupTime: 1000, ...overrides });
+    const checked = (side: "A" | "B") => check(side, { screenAppStartupTime: 1000 });
+    const checkWithUnreadableScreenA = check("A", { screenCheckError: "App started not logged" });
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const reads = (...checks: Sample[]) => debugRow(summarise([...checks, ...samples], GATE)).reads;
+
+    const oneChecked = reads(checkWithUnreadableScreenA, checked("B"));
     assert.equal(oneChecked.screenChecks, 1);
     assert.deepEqual(oneChecked.uncheckedBuilds, ["A"]);
-    assert.deepEqual(reads(checkedWarmup("A"), checkedWarmup("B")).uncheckedBuilds, []);
+    assert.deepEqual(reads(checked("A"), checked("B")).uncheckedBuilds, []);
   });
 });

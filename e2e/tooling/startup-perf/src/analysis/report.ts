@@ -44,7 +44,7 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
   const notes: string[] = [];
   if (reads.noLogLine.length) {
     notes.push(
-      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log on its warm-up (built before #24576?), so both builds were read from the Debug screen.**`,
+      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log (built before #24576?), so from then on both builds were read from the Debug screen.**`,
     );
   }
   const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
@@ -66,12 +66,12 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
     );
   } else if (reads.fromLog) {
     notes.push(
-      `**${where}: no warm-up could be read on the Debug screen, so the device log was not checked against it.**`,
+      `**${where}: no launch was read both from the device log and on the Debug screen, so the device log was not checked against it.**`,
     );
   }
   if (reads.screenChecks && reads.uncheckedBuilds.length) {
     notes.push(
-      `**${where}: build ${reads.uncheckedBuilds.join(" and ")} could not be read on the Debug screen, so its device log was not checked against it.**`,
+      `**${where}: no launch of build ${reads.uncheckedBuilds.join(" and ")} was read both from the device log and on the Debug screen, so its device log was not checked against it.**`,
     );
   }
   return notes;
