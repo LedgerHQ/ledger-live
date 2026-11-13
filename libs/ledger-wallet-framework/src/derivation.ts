@@ -1,5 +1,6 @@
 import { getCurrenciesResolver } from "./currencies/resolver";
 import { getEnv } from "@ledgerhq/live-env";
+import { getKeychainObservableRange } from "./scanRules";
 import type { CryptoCurrency } from "./types";
 import { DerivationMode } from "@ledgerhq/types-live";
 
@@ -292,7 +293,7 @@ export const getMandatoryEmptyAccountSkip = (
   derivationMode: DerivationMode,
   currency: CryptoCurrency,
 ): number => {
-  const keychainObservableRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") ?? 0;
+  const keychainObservableRange = getKeychainObservableRange();
   const mandatoryEmptyAccountSkip = modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
   const currencyEmptyAccountSkip = mandatoryEmptyAccountSkipByCurrency[currency.id] ?? 0;
   return Math.max(mandatoryEmptyAccountSkip, currencyEmptyAccountSkip, keychainObservableRange);

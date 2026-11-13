@@ -50,6 +50,8 @@
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-predictions": "workspace:*",
     "@features/flow-receive": "workspace:*",
+    "@features/platform-account-discovery": "workspace:*",
+    "@features/platform-account-discovery-intent": "workspace:*",
     "@features/platform-account-source-portfolio": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-device-intent": "workspace:*",

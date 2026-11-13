@@ -36,6 +36,7 @@ import {
   lastBlock,
   listOperations as listOperationsLogic,
 } from "../logic";
+import { getAccountStatus, type ConcordiumAccountStatus } from "../logic/account/getAccountStatus";
 import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
@@ -59,6 +60,11 @@ type ConcordiumApiContext = Context<ConcordiumCoinConfig>;
  *     `getNextValidSequence`.
  * The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
  */
+/** Proposed for `CoinModuleApi` in coin-modules ADR-079 (LedgerHQ/coin-modules#1292), on the account key (the public key here); declared here until the framework has it. */
+type AccountStatusCapability<C> = {
+  getAccountStatus: (context: C, key: string) => Promise<ConcordiumAccountStatus>;
+};
+
 export function createApi(currencyId: string) {
   return {
     broadcast: async (context, tx, _options?) => {
@@ -77,6 +83,8 @@ export function createApi(currencyId: string) {
       const config = await context.config();
       return estimateFees(config, transactionIntent, currencyId);
     },
+    getAccountStatus: async (context: ConcordiumApiContext, publicKey: string) =>
+      getAccountStatus(await context.config(), currencyId, publicKey),
     getBalance: async (context, address: string, options?: BalanceOptions): Promise<Balance[]> => {
       const config = await context.config();
       return rejectBalanceOptions(() => getBalance(config, address, currencyId), options);
@@ -103,7 +111,8 @@ export function createApi(currencyId: string) {
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>;
+  } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo> &
+    AccountStatusCapability<ConcordiumApiContext>;
 }
 
 /**

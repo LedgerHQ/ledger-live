@@ -15,7 +15,7 @@ The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces
 - `network_id`: the CAL network id (`bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`).
 
 - `type`: the account model. `utxo`: the key is an xpub, the path is hardened up to the account. `address`: the path is the full path of the account's address.
-- `key`: the public value the account is found and read from on its network. An xpub for `utxo`; for `address`, the address, or the public key (lowercase hex) when the address cannot give back what reading needs (Canton, Concordium, Internet Computer, TON, Aptos, Stacks), or the network account id (Hedera `0.0.x`).
+- `key`: the public value the account is found and read from on its network. An xpub for `utxo` (Cardano, Kaspa: hex public key then chain code); for `address`, the address, or the public key (lowercase hex) when the address cannot give back what reading needs (Canton, Concordium, Internet Computer, TON, Aptos, Stacks), or the network account id (Hedera `0.0.x`).
 
 A path is `m/` followed by indices below 2^31 without leading zeros; `'` and `H` are read as `h`.
 

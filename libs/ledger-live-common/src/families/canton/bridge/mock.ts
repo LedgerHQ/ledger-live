@@ -13,7 +13,7 @@ function createMockDataForAPI() {
   const signerContext = {};
 
   const apiGetter = makeLRUCache(
-    (): Promise<ReturnType<typeof createApi>> => Promise.resolve(createApi()),
+    (): Promise<ReturnType<typeof createApi>> => Promise.resolve(createApi("canton_network")),
     () => "",
     minutes(1000),
   );

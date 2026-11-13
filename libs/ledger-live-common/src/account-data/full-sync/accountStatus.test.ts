@@ -130,6 +130,17 @@ describe("toAccountStatus", () => {
     ).resolves.toEqual(ready);
   });
 
+  it("counts a Kaspa account as used once it has an operation, as its scan does, not on a balance alone", async () => {
+    const kaspa = (fields: Partial<Account>) =>
+      accountOf("kaspa", { ...emptyFields, used: true, operations: [], ...fields });
+    await expect(toAccountStatus(kaspa({ balance: new BigNumber(1) }))).resolves.toEqual({
+      used: false,
+      gate: null,
+    });
+    const [operation] = genAccount("kaspa-op", { operationsSize: 1 }).operations;
+    await expect(toAccountStatus(kaspa({ operations: [operation] }))).resolves.toEqual(ready);
+  });
+
   it.each(["hedera", "ripple", "stellar"])(
     "applies the default to a %s account",
     async currencyId => {

@@ -1,6 +1,8 @@
 import { AccountDataNotServedError } from "@domain/api-account-data";
 import type {
   CoinModuleBalanceApi,
+  CoinModuleAccountStatus,
+  CoinModuleAccountStatusApi,
   CoinModuleHost,
 } from "@features/platform-account-source-coin-module";
 import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -69,6 +71,36 @@ function pageSizeOf({ id, family }: CryptoCurrency): number | undefined {
   return resolveOperationHistoryBound(id, family).pageSize ?? familyPageSize;
 }
 
+type AccountStatusCapability = {
+  getAccountStatus(
+    context: Context<CurrencyConfig>,
+    key: string,
+    options?: { blacklistedTokenIds?: readonly string[] },
+  ): Promise<CoinModuleAccountStatus>;
+};
+
+const hasAccountStatus = (api: object): api is AccountStatusCapability =>
+  "getAccountStatus" in api && typeof api.getAccountStatus === "function";
+
+async function loadAccountStatusApi(
+  currencyId: string,
+  blacklistedTokenIds: CoinModuleHost["blacklistedTokenIds"],
+): Promise<CoinModuleAccountStatusApi | undefined> {
+  const currency = getCryptoCurrencyById(currencyId);
+  const createLocalApi = await loadLocalApiForFamily(currency.family);
+  const localApi: object | undefined = createLocalApi?.(currency.id);
+  if (!localApi || !hasAccountStatus(localApi)) return undefined;
+  const context = contextOf(currency.id);
+  // A blacklisted token makes no token account, so it never makes the account used (TON).
+  return {
+    // The read's signal rides on the context (coin-modules ADR-071), so a module stops its calls on abort.
+    getAccountStatus: (key, signal) =>
+      localApi.getAccountStatus(signal ? { ...context, signal } : context, key, {
+        blacklistedTokenIds: blacklistedTokenIds?.(),
+      }),
+  };
+}
+
 export type CoinModuleHostOptions = Pick<CoinModuleHost, "blacklistedTokenIds"> & {
   /** Off until the source lists pending operations: FullSync answers the operations meanwhile. */
   servesOperations?: boolean;
@@ -79,6 +111,8 @@ export function createCoinModuleHost({
   servesOperations = false,
   ...options
 }: CoinModuleHostOptions = {}): CoinModuleHost {
+  // Built once per currency: every accountStatus read asks it, most to fall through to FullSync.
+  const accountStatusApis = new Map<string, Promise<CoinModuleAccountStatusApi | undefined>>();
   return {
     ...options,
     isCurrencySupported(currencyId) {
@@ -118,6 +152,21 @@ export function createCoinModuleHost({
       } catch {
         return false;
       }
+    },
+    // `getAccountStatus` is a proposal (coin-modules ADR-079): read only from a module that has it.
+    getAccountStatusApi(currencyId) {
+      let api = accountStatusApis.get(currencyId);
+      if (!api) {
+        // A failed load is not kept, so the next read retries it.
+        api = loadAccountStatusApi(currencyId, options.blacklistedTokenIds).catch(
+          (error: unknown) => {
+            accountStatusApis.delete(currencyId);
+            throw error;
+          },
+        );
+        accountStatusApis.set(currencyId, api);
+      }
+      return api;
     },
     async getOperationsApi(currencyId) {
       const currency = getCryptoCurrencyById(currencyId);

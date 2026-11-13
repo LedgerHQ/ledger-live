@@ -31,7 +31,7 @@ export const UtxoAccountDescriptorSchema = z.object({
   version: z.literal("2"),
   type: z.literal("utxo"),
   network: NetworkIdSchema,
-  /** The account's xpub, with the network's standard version bytes. */
+  /** The account's xpub, with the network's standard version bytes; Cardano and Kaspa: hex public key then chain code. */
   key: AccountKeySchema.refine(v => !/^[xyztuv]prv/i.test(v), {
     message: "key must not be a private extended key (xprv/yprv/zprv/tprv/uprv/vprv)",
   }),

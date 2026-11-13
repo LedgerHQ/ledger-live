@@ -41,6 +41,7 @@ import {
 import { usePredictionsSetupHooks } from "@features/flow-predictions";
 import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
+import { useAccountDiscoveryTool } from "../../AccountDiscovery/useAccountDiscoveryTool";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
@@ -150,6 +151,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   );
   const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
   const intentWalletSync = useIntentWalletSyncTool();
+  const accountDiscovery = useAccountDiscoveryTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -164,6 +166,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
+      { id: "account-discovery", config: accountDiscovery.toolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
@@ -201,6 +204,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       receiveToolProps,
       predictionsToolProps,
       intentWalletSync.toolProps,
+      accountDiscovery.toolProps,
     ],
   );
 
@@ -216,5 +220,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     role: wireState.role,
     intentWalletSyncRun: intentWalletSync.run,
     onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
+    accountDiscoveryRun: accountDiscovery.run,
+    onAccountDiscoveryRunCancelled: accountDiscovery.onRunCancelled,
   };
 }

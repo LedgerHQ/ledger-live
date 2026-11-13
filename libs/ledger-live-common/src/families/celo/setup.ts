@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-celo/bridge";
+import { createBridges, isUpdateYourAppError } from "@ledgerhq/coin-celo/bridge";
 import CeloResolver from "@ledgerhq/coin-celo/hw-getAddress";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -25,4 +25,7 @@ const bridge: Bridge<Transaction, CeloAccount> = createBridges(
 
 const resolver: Resolver = createResolver(createSigner, CeloResolver);
 
-export { bridge, resolver };
+/** An app too old for a path ends the mode, as the Celo scan's resilient iterate does. */
+const endsScanOn = isUpdateYourAppError;
+
+export { bridge, resolver, endsScanOn };

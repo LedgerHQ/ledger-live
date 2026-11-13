@@ -282,3 +282,55 @@ describe("createCoinModuleHost", () => {
     expect(host.blacklistedTokenIds?.()).toEqual(["spam"]);
   });
 });
+
+const unused = { used: false };
+
+describe("getAccountStatusApi", () => {
+  it("asks the coin module's getAccountStatus with the currency context, the key and the blacklisted tokens", async () => {
+    const getAccountStatus = jest.fn(async () => ({ used: true }));
+    createLocalApi.mockReturnValue({ getBalance, getAccountStatus });
+    const host = createCoinModuleHost({ blacklistedTokenIds: () => ["ton/jetton/spam"] });
+    const api = await host.getAccountStatusApi?.("ethereum");
+    await expect(api?.getAccountStatus("0xabc")).resolves.toEqual({ used: true });
+    expect(getAccountStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ config: expect.any(Function) }),
+      "0xabc",
+      { blacklistedTokenIds: ["ton/jetton/spam"] },
+    );
+  });
+
+  it("puts the read's signal on the coin module context", async () => {
+    const getAccountStatus = jest.fn(async () => unused);
+    createLocalApi.mockReturnValue({ getBalance, getAccountStatus });
+    const api = await createCoinModuleHost().getAccountStatusApi?.("ethereum");
+    const { signal } = new AbortController();
+    await api?.getAccountStatus("0xabc", signal);
+    expect(getAccountStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ signal, config: expect.any(Function) }),
+      "0xabc",
+      { blacklistedTokenIds: undefined },
+    );
+  });
+
+  it("builds the coin module once per currency", async () => {
+    createLocalApi.mockReturnValue({ getBalance, getAccountStatus: async () => unused });
+    const host = createCoinModuleHost();
+    await host.getAccountStatusApi?.("ethereum");
+    await host.getAccountStatusApi?.("ethereum");
+    expect(createLocalApi).toHaveBeenCalledTimes(1);
+  });
+
+  it("loads the coin module again after a failed load", async () => {
+    createLocalApi.mockImplementationOnce(() => {
+      throw new Error("load failed");
+    });
+    createLocalApi.mockReturnValue({ getBalance, getAccountStatus: async () => unused });
+    const host = createCoinModuleHost();
+    await expect(host.getAccountStatusApi?.("ethereum")).rejects.toThrow("load failed");
+    await expect(host.getAccountStatusApi?.("ethereum")).resolves.toBeDefined();
+  });
+
+  it("has none for a coin module without getAccountStatus", async () => {
+    await expect(createCoinModuleHost().getAccountStatusApi?.("ethereum")).resolves.toBeUndefined();
+  });
+});

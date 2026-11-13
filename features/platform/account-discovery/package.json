@@ -1,0 +1,44 @@
+{
+  "name": "@features/platform-account-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account discovery as a stream of account descriptors: candidates derived on the device, then asked to the account data sources whether they exist",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-status": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@domain/entity-account-data": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

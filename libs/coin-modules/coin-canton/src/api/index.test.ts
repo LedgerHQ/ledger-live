@@ -3,7 +3,7 @@ import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
 describe("createApi", () => {
-  const api = createApi();
+  const api = createApi("canton_network");
 
   // The contract's shape is guaranteed by the type now that `notSupportedApi()` is spread in,
   // so what is worth asserting is the split: which methods Canton actually wires, and which

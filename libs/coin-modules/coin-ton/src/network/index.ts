@@ -3,6 +3,7 @@ import type { TonConfig } from "../config";
 import type {
   TonFee,
   TonHistoryWindow,
+  TonJettonTransfer,
   TonJettonTransfersList,
   TonJettonWallet,
   TonMasterchainBlock,
@@ -19,6 +20,7 @@ import type {
 } from "./types";
 
 const JETTON_WALLETS_PAGE_SIZE = 1000;
+const SYNC_PAGE_SIZE = 256;
 
 const endpoint = (config: TonConfig): string => config.infra.API_TON_ENDPOINT;
 
@@ -119,6 +121,33 @@ export async function fetchTransactions(
   window: TonHistoryWindow,
 ): Promise<TonTransactionsList> {
   return get<TonTransactionsList>(config, "/transactions", { account, ...windowQuery(window) });
+}
+
+/** A page of the history the TON sync reads, newest first, up to `endLt` included. */
+export async function fetchTransactionsUntilLt(
+  config: TonConfig,
+  account: string,
+  endLt?: string,
+): Promise<TonTransactionsList> {
+  return get<TonTransactionsList>(config, "/transactions", {
+    account,
+    limit: SYNC_PAGE_SIZE,
+    end_lt: endLt,
+  });
+}
+
+/** A page of the jetton transfers the TON sync reads, newest first, up to `endLt` included. */
+export async function fetchJettonTransfersUntilLt(
+  config: TonConfig,
+  address: string,
+  endLt?: string,
+): Promise<TonJettonTransfer[]> {
+  const { jetton_transfers } = await get<{ jetton_transfers: TonJettonTransfer[] }>(
+    config,
+    "/jetton/transfers",
+    { address, limit: SYNC_PAGE_SIZE, end_lt: endLt },
+  );
+  return jetton_transfers;
 }
 
 /** Transfers in which `owner` is either the sender or the recipient, sorted by `utime`. */

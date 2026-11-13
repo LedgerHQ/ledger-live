@@ -68,6 +68,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "canton",
     supportedCoins: ["canton_network", "canton_network_devnet", "canton_network_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/canton/setup"),
     loadAccountReceive: () => import("../families/canton/accountReceive").then(m => m.default),
     loadAccountStatus: () => import("../families/canton/accountStatus").then(m => m.default),
@@ -122,9 +123,12 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "concordium",
     supportedCoins: ["concordium", "concordium_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
     loadAccountStatus: () => import("../families/concordium/accountStatus").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/concordium/coinModuleApi").then(m => m.createLocalConcordiumApi),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),
@@ -316,6 +320,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["kaspa"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/kaspa/setup"),
+    loadAccountStatus: () => import("../families/kaspa/accountStatus").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-kaspa/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-kaspa/deviceTransactionConfig").then(m => m.default),

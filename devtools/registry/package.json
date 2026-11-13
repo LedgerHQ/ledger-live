@@ -21,6 +21,7 @@
     "@devtools/account-data": "workspace:*",
     "@devtools/account-descriptor": "workspace:*",
     "@devtools/account-detail": "workspace:*",
+    "@devtools/account-discovery": "workspace:*",
     "@devtools/account-name": "workspace:*",
     "@devtools/account-operation": "workspace:*",
     "@devtools/account-portfolio": "workspace:*",

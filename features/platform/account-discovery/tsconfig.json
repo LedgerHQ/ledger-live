@@ -1,0 +1,9 @@
+{
+  "extends": "@support/tsconfig/client",
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ]
+  }
+}
