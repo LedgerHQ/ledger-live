@@ -15,6 +15,7 @@ import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/s
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
+import { countervaluesApi } from "@shared/api-services";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { logFirstCountervaluesLoad } from "LLM/utils/logStartup/logFirstCountervaluesLoad";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
@@ -101,6 +102,19 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   const [currencyInitialized, setCurrencyInitialized] = useState(false);
 
   const init = useCallback(async () => {
+    // Experiment for QAA-1501, not for develop: the OFAC check WaitForAppReady waits on, sent before
+    // the countervalues sync rather than once WaitForAppReady renders.
+    try {
+      store.dispatch(
+        countervaluesApi.util.prefetch(
+          "checkOfacGeoBlock" as never,
+          undefined as never,
+          {},
+        ) as never,
+      );
+    } catch (error) {
+      console.warn("Could not send the OFAC check early", error);
+    }
     try {
       // Everything rendered once `ready` flips, including the providers above `WaitForAppReady`,
       // must resolve flags from the Firebase cache rather than from the compiled defaults.
