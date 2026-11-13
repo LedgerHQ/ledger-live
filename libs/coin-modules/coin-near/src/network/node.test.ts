@@ -1,3 +1,4 @@
+import { getNetworkState } from "@ledgerhq/live-network";
 import { http, HttpResponse } from "msw";
 import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
@@ -93,6 +94,17 @@ const mockNodeWithoutGasPrice = (): void => {
       }),
     ),
   );
+};
+
+const mockDepositsStatus = (status: number): { requests: () => number } => {
+  let requests = 0;
+  mockServer.use(
+    http.get(`${NEAR_BASE_URL_MOCKED}/v3/kitwallet/staking-deposits/:address`, () => {
+      requests += 1;
+      return HttpResponse.json({ message: "refused" }, { status });
+    }),
+  );
+  return { requests: () => requests };
 };
 
 const mockStats = (data: { gas_price: string | null } | null): void => {
@@ -287,15 +299,18 @@ describe("node api (indexer-backed calls)", () => {
       );
     });
 
-    it("rejects when both the node and the indexer fail", async () => {
+    it("rejects after one indexer request when the node fails and the indexer answers 429", async () => {
       mockNodeWithoutGasPrice();
+      let statsRequests = 0;
       mockServer.use(
-        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () =>
-          HttpResponse.json({ message: "Too Many Requests" }, { status: 429 }),
-        ),
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => {
+          statsRequests += 1;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
       );
 
       await expect(getGasPrice(mockNearConfig)).rejects.toThrow("Too Many Requests");
+      expect(statsRequests).toBe(1);
     });
   });
 
@@ -341,6 +356,34 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getStakingPositions", () => {
+    it("rejects after a single request when the listing answers 429, never an empty list", async () => {
+      const deposits = mockDepositsStatus(429);
+      mockRpc();
+
+      await expect(getStakingPositions(mockNearConfig, ADDRESS)).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(deposits.requests()).toBe(1);
+    });
+
+    it("rejects getAccount after a single request when the listing answers 429", async () => {
+      const deposits = mockDepositsStatus(429);
+      mockRpc();
+
+      await expect(getAccount(mockNearConfig, ADDRESS)).rejects.toMatchObject({ status: 429 });
+      expect(deposits.requests()).toBe(1);
+    });
+
+    it("still retries the listing on a 503", async () => {
+      const deposits = mockDepositsStatus(503);
+      mockRpc();
+
+      await expect(getStakingPositions(mockNearConfig, ADDRESS)).rejects.toMatchObject({
+        status: 503,
+      });
+      expect(deposits.requests()).toBe(getNetworkState().getCallsRetry + 1);
+    });
+
     it("discovers delegated validators through the v3 kitwallet endpoint", async () => {
       let requestedPath: string | undefined;
       mockServer.use(
@@ -788,6 +831,21 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getValidators", () => {
+    it("rejects after a single request when the indexer answers 429", async () => {
+      let requests = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
+          requests += 1;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
+      );
+
+      await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(requests).toBe(1);
+    });
+
     it("maps the flat snake_case v3 shape", async () => {
       let requestedUrl: URL | undefined;
       mockServer.use(
