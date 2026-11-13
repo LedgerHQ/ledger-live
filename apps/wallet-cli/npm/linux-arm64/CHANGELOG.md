@@ -1,5 +1,7 @@
 # @ledgerhq/wallet-cli-linux-arm64
 
+## 3.4.0
+
 ## 3.3.0
 
 ## 3.3.0-next.0

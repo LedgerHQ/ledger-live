@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-cli
 
+## 3.4.0
+
+### Minor Changes
+
+- [#24380](https://github.com/LedgerHQ/ledger-live/pull/24380) [`eeb7e7e`](https://github.com/LedgerHQ/ledger-live/commit/eeb7e7e7038ec432f8f6c0bb159ee869a916af8a) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent enroll --detach` works on Windows, and a lock left behind by a reboot no longer counts as held once another user's process reuses its pid
+
+- [#24387](https://github.com/LedgerHQ/ledger-live/pull/24387) [`abdcb44`](https://github.com/LedgerHQ/ledger-live/commit/abdcb441ad633fe6e7aca092bed6194302814a2d) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - On Windows, an agent key file is now refused with a clear error instead of one saying another user owns it.
+
+- [#24495](https://github.com/LedgerHQ/ledger-live/pull/24495) [`3467ad1`](https://github.com/LedgerHQ/ledger-live/commit/3467ad1ed7633b293ee4ad307c8db5562af2adf9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Connect Agent Intent enrollment and recovery relay WebSockets through standard proxy environment variables.
+
+- [#24602](https://github.com/LedgerHQ/ledger-live/pull/24602) [`245f178`](https://github.com/LedgerHQ/ledger-live/commit/245f17847ed941d08c18bfbc2fef35fc8c14299e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - wallet-cli warns on stderr when it skips a held token whose Crypto Assets List entry has no unit
+
+### Patch Changes
+
+- [#24745](https://github.com/LedgerHQ/ledger-live/pull/24745) [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Account descriptor: one `key` field for both types; Canton, Concordium, Internet Computer, TON, Aptos and Stacks accounts are keyed on their public key, their address computed through the coin module loaders; a legacy account left out is mirrored again once it converts
+
 ## 3.3.0
 
 ### Minor Changes
