@@ -261,6 +261,7 @@ struct GlowFade {
 
 - (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size
 {
+  view.paused = NO; // a still glow (reduce motion) draws once at the new size, then pauses again
 }
 
 - (void)drawInMTKView:(MTKView *)view
