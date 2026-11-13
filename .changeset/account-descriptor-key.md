@@ -2,10 +2,10 @@
 "@domain/entity-account-descriptor": minor
 "@domain/api-account-data": minor
 "@features/platform-account-source-coin-module": minor
-"@features/platform-account-source-portfolio": patch
-"@devtools/mock-accounts": patch
-"@devtools/bindings": patch
-"@domain/entity-account": patch
+"@features/platform-account-source-portfolio": minor
+"@devtools/mock-accounts": minor
+"@devtools/bindings": minor
+"@domain/entity-account": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/coin-ton": minor
 "@ledgerhq/coin-stacks": minor

@@ -3764,26 +3764,4 @@
 - Updated dependencies [[`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10)]:
   - @features/flow-pay-contact@0.5.0-next.3
 
-## 4.23.0-next.5
-
-### Patch Changes
-
-- Updated dependencies [[`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a)]:
-  - @features/flow-contacts-introduction@1.3.0-next.0
-  - @features/flow-contacts@0.13.0-next.2
-  - @features/flow-pay-contact@0.5.0-next.2
-
-## 4.23.0-next.4
-
-### Patch Changes
-
-- Updated dependencies [[`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994)]:
-  - @features/platform-card@0.7.0-next.1
-  - @features/flow-pay-card-auth@0.9.0-next.1
-  - @devtools/bindings@0.10.0-next.1
-  - @features/flow-pay-card@0.6.0-next.2
-  - @features/flow-pay-card-assets@0.3.0-next.2
-  - @features/flow-pay-card-details@0.6.0-next.2
-  - @features/flow-pay-card-transactions@0.4.0-next.2
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

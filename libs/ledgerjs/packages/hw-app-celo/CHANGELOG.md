@@ -156,18 +156,4 @@
 - Updated dependencies []:
   - @ledgerhq/hw-app-eth@7.8.17-next.0
 
-## 7.1.13
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.16
-
-## 7.1.13-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.16-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

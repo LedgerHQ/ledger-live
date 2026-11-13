@@ -160,20 +160,4 @@
   - @ledgerhq/ledger-wallet-framework@3.2.0
   - @ledgerhq/coin-internet_computer@1.29.3
 
-## 0.1.4-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/coin-internet_computer@1.29.3-next.0
-
-## 0.1.3
-
-### Patch Changes
-
-- Updated dependencies [[`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0)]:
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/coin-internet_computer@1.29.2
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

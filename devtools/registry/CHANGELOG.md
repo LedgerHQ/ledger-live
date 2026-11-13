@@ -309,20 +309,4 @@
   - @devtools/pay-card@0.5.0-next.0
   - @devtools/feature-flags@0.9.1-next.0
 
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
-  - @devtools/feature-flags@0.9.0
-  - @devtools/cloud-sync@0.1.1
-
-## 0.4.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
-  - @devtools/feature-flags@0.9.0-next.0
-  - @devtools/cloud-sync@0.1.1-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

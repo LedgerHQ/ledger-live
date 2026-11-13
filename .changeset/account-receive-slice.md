@@ -1,6 +1,6 @@
 ---
 "@domain/entity-account-receive": minor
-"@domain/entity-account-data": patch
+"@domain/entity-account-data": minor
 "@domain/entity-account-descriptor": minor
 "@domain/entity-account-operation": minor
 "@ledgerhq/live-common": minor
