@@ -207,6 +207,34 @@ describe("createWalletSyncWatchLoop", () => {
       expect(walletSyncSdk.push).not.toHaveBeenCalled();
     });
 
+    it.each([
+      ["a backup deletion", null],
+      ["a push", { value: "pushed" }],
+    ])("ends a pass when %s saves while the local update is in flight", async (_, saved) => {
+      let resolveLocal: () => void = () => {};
+      const localIncrementUpdate = jest.fn(
+        () => new Promise<void>(resolve => (resolveLocal = resolve)),
+      );
+      const walletsync = makeModule({
+        diffLocalToDistant: jest.fn(() => ({ hasChanges: true, nextState: { value: "next" } })),
+      });
+      const { walletSyncSdk, state, handle } = setup({
+        walletsync,
+        localIncrementUpdate,
+        watchConfig: { initialTimeout: 10 },
+      });
+
+      jest.advanceTimersByTime(10);
+      await flush();
+      state.distant = saved;
+      resolveLocal();
+      await flush();
+
+      expect(walletsync.diffLocalToDistant).not.toHaveBeenCalled();
+      expect(walletSyncSdk.push).not.toHaveBeenCalled();
+      handle.unsubscribe();
+    });
+
     it("stops polling after unsubscribe", async () => {
       const { walletSyncSdk, handle } = setup({
         watchConfig: { initialTimeout: 10, pollingInterval: 100 },
@@ -359,6 +387,28 @@ describe("createWalletSyncWatchLoop", () => {
       await flush();
       expect(onTrustchainRefreshNeeded).toHaveBeenCalledWith(trustchain);
       expect(onError).not.toHaveBeenCalled();
+      handle.unsubscribe();
+    });
+
+    it("skips the poll without reporting an error while another call holds the SDK", async () => {
+      const lockError = new Error("CloudSyncSDK locked (destroy)");
+      lockError.name = "CloudSyncSDKLocked";
+      const walletSyncSdk = makeSdk({
+        pull: jest.fn().mockRejectedValueOnce(lockError).mockResolvedValue(undefined),
+      });
+      const { onError, onTrustchainRefreshNeeded, handle } = setup({
+        walletSyncSdk,
+        watchConfig: { initialTimeout: 10, pollingInterval: 100 },
+      });
+
+      jest.advanceTimersByTime(10);
+      await flush();
+      expect(onError).not.toHaveBeenCalled();
+      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(100);
+      await flush();
+      expect(walletSyncSdk.pull).toHaveBeenCalledTimes(2);
       handle.unsubscribe();
     });
 

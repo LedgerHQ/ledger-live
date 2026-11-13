@@ -10,6 +10,11 @@ Wires together `@shared/cloud-sync` (network), `@shared/cloud-sync-module` (aggr
 - `createWalletSyncWatchLoop` — drives push/pull cycles using a `CloudSyncSDKInterface`
 - `makeSaveNewUpdate` / `makeLocalIncrementalUpdate` — helpers for processing incoming sync events and dispatching Redux actions
 - `trustchainLifecycle` / `liveSlug` — lifecycle hooks called on trustchain rotation
+- `createLedgerSyncMiddleware` — builds the store's Ledger Sync services on the first request, from the platform parts the app passes in
+- `getLkrpSdk` / `getCloudSyncSdk` / `getLkrpQrCode` / `getLedgerSyncStatus` — hand those services to hooks through `dispatch`: the two SDKs, the QR code pairings and the backend status
+- `startLedgerSyncWatch` / `stopLedgerSyncWatch` / `refreshLedgerSync` — run the watch loop in the middleware while the app is mounted, and ask it for an early sync
+- `ledgerSyncReducer` / `selectLedgerSyncVisualPending` / `selectLedgerSyncError` — what the loop shows of its runs, under `state.ledgerSync`
+- `useLedgerSyncWatch` / `useWalletSyncUserState` — run the watch loop while the app root is mounted, and read what it shows with the user's refresh
 
 ## Related documentation
 

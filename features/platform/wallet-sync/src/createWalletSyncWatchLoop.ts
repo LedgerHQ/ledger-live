@@ -22,7 +22,7 @@ export type CreateWalletSyncWatchLoopParams<
 > = {
   watchConfig?: WatchConfig;
   visualConfig?: VisualConfig;
-  walletsync: CloudSyncDataManager<LocalState, Update, Schema>;
+  walletsync: CloudSyncDataManager<LocalState, Update, Schema, DistantState>;
   walletSyncSdk: CloudSyncSDKInterface<DistantState>;
   trustchain: Trustchain;
   memberCredentials: MemberCredentials;
@@ -36,7 +36,13 @@ export type CreateWalletSyncWatchLoopParams<
   localIncrementUpdate: () => Promise<void>;
 };
 
-export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema extends ZodType>({
+export function createWalletSyncWatchLoop<
+  UserState,
+  LocalState,
+  Update,
+  Schema extends ZodType,
+  DistantState = z.infer<Schema>,
+>({
   watchConfig,
   visualConfig,
   walletsync,
@@ -51,7 +57,7 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
   localStateSelector,
   latestDistantStateSelector,
   localIncrementUpdate,
-}: CreateWalletSyncWatchLoopParams<UserState, LocalState, Update, Schema>): {
+}: CreateWalletSyncWatchLoopParams<UserState, LocalState, Update, Schema, DistantState>): {
   onUserRefreshIntent: () => void;
   unsubscribe: () => void;
 } {
@@ -68,22 +74,25 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
       if (onStartPolling) onStartPolling();
       await walletSyncSdk.pull(trustchain, memberCredentials);
       if (unsubscribed) return;
+      const pulled = latestDistantStateSelector(getState());
       await localIncrementUpdate();
       if (unsubscribed) return;
       const state = getState();
-      const diff = walletsync.diffLocalToDistant(
-        localStateSelector(state),
-        latestDistantStateSelector(state),
-      );
+      const latest = latestDistantStateSelector(state);
+      // A deletion or a push saved during the local update, which runs unlocked, ends the pass.
+      if (latest !== pulled) return;
+      const diff = walletsync.diffLocalToDistant(localStateSelector(state), latest);
       if (diff.hasChanges) {
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
     } catch (e) {
-      const eName = (e as { name?: string })?.name;
+      const eName = e instanceof Error ? e.name : undefined;
       if (eName === "TrustchainEjected" || eName === "TrustchainOutdated") {
         await onTrustchainRefreshNeeded(trustchain);
         return;
       }
+      // Another push, pull or destroy holds the SDK, such as a backup deletion: the next poll retries.
+      if (eName === "CloudSyncSDKLocked") return;
       if (unsubscribed) return;
       if (onError) onError(e);
       else console.error(e);

@@ -1,0 +1,175 @@
+import { selectWalletSyncState, walletSyncUpdate } from "@domain/entity-wallet-sync";
+import {
+  memberCredentialsSelector,
+  resetTrustchainStore,
+  setTrustchain,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  createSelector,
+  createSlice,
+  miniSerializeError,
+  type Dispatch,
+  type MiddlewareAPI,
+  type PayloadAction,
+  type SerializedError,
+} from "@reduxjs/toolkit";
+import { track } from "@shared/analytics";
+import type { MemberCredentials, Trustchain } from "@shared/cloud-sync";
+import { createWalletSyncWatchLoop } from "../createWalletSyncWatchLoop";
+import { makeLocalIncrementalUpdate } from "../incrementalUpdates";
+import type { LedgerSyncMiddlewareConfig, LedgerSyncState, LedgerSyncStateRoot } from "../types";
+import { saveWalletSyncUpdate, type createLedgerSyncServices } from "./services";
+
+const initialState: LedgerSyncState = { visualPending: false, walletSyncError: null };
+
+export const ledgerSyncSlice = createSlice({
+  name: "ledgerSync",
+  initialState,
+  reducers: {
+    setVisualPending(state, { payload }: PayloadAction<boolean>) {
+      state.visualPending = payload;
+    },
+    setWalletSyncError(state, { payload }: PayloadAction<SerializedError | null>) {
+      state.walletSyncError = payload;
+    },
+  },
+});
+
+const { setVisualPending, setWalletSyncError } = ledgerSyncSlice.actions;
+
+const MEMBERSHIP_REVOKED_ERRORS = new Set(["TrustchainNotAllowed", "TrustchainEjected"]);
+
+export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState, Update>(
+  { getState, dispatch }: MiddlewareAPI<Dispatch, S>,
+  { featureSelector, cloudSync }: LedgerSyncMiddlewareConfig<S, LocalState, Update>,
+  { lkrpSdk, cloudSyncSdk }: ReturnType<typeof createLedgerSyncServices>,
+) {
+  // The loop restarts when one of these changes, by reference.
+  const selectInputs = createSelector(
+    [
+      (state: S) => featureSelector(state).enabled === true,
+      (state: S) => featureSelector(state).watchConfig,
+      trustchainSelector,
+      memberCredentialsSelector,
+      cloudSync.walletsyncSelector,
+    ],
+    (enabled, watchConfig, trustchain, memberCredentials, walletsync) => ({
+      enabled,
+      watchConfig,
+      trustchain,
+      memberCredentials,
+      walletsync,
+    }),
+  );
+  let watching = false;
+  let current:
+    | {
+        inputs: ReturnType<typeof selectInputs>;
+        loop?: ReturnType<typeof createWalletSyncWatchLoop>;
+      }
+    | undefined;
+
+  function update() {
+    if (!watching) return;
+    const inputs = selectInputs(getState());
+    if (inputs === current?.inputs) return;
+    const replaced = current?.loop;
+    replaced?.unsubscribe();
+    const { enabled, watchConfig, trustchain, memberCredentials, walletsync } = inputs;
+    if (!enabled || !trustchain || !memberCredentials) {
+      current = { inputs };
+      dispatch(setVisualPending(false));
+      dispatch(setWalletSyncError(null));
+      return;
+    }
+    const run: NonNullable<typeof current> = { inputs };
+    // A loop stopped or replaced while it awaits still settles: only the current one writes.
+    const whileCurrent =
+      <Args extends unknown[]>(write: (...args: Args) => void) =>
+      (...args: Args) => {
+        if (current === run) write(...args);
+      };
+    run.loop = createWalletSyncWatchLoop({
+      walletsync,
+      walletSyncSdk: cloudSyncSdk,
+      watchConfig,
+      localIncrementUpdate: makeLocalIncrementalUpdate({
+        walletsync,
+        getState,
+        latestWalletStateSelector: selectWalletSyncState,
+        localStateSelector: cloudSync.localStateSelector,
+        saveUpdate: whileCurrent(saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState)),
+      }),
+      trustchain,
+      memberCredentials,
+      setVisualPending: whileCurrent(pending => dispatch(setVisualPending(pending))),
+      getState,
+      localStateSelector: cloudSync.localStateSelector,
+      latestDistantStateSelector: state => selectWalletSyncState(state).data,
+      onError: onLoopError,
+      onStartPolling: () => dispatch(setWalletSyncError(null)),
+      onTrustchainRefreshNeeded: refreshed => refreshTrustchain(refreshed, memberCredentials),
+    });
+    current = run;
+    // A replaced loop never ends its pass, so it never clears the sync it shows.
+    if (replaced) dispatch(setVisualPending(false));
+  }
+
+  function onLoopError(error: unknown) {
+    dispatch(setWalletSyncError(miniSerializeError(error)));
+    if (isMembershipRevoked(error)) resetLedgerSync();
+  }
+
+  async function refreshTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials) {
+    try {
+      const restored = await lkrpSdk.restoreTrustchain(trustchain, memberCredentials);
+      if (isCurrentSession(trustchain, memberCredentials)) dispatch(setTrustchain(restored));
+    } catch (error) {
+      if (isMembershipRevoked(error) && isCurrentSession(trustchain, memberCredentials)) {
+        resetLedgerSync();
+        track("ledgersync_deactivated");
+      }
+    }
+  }
+
+  /** A restore that settles after a stop, a reset or a new pairing changes nothing. */
+  function isCurrentSession(trustchain: Trustchain, memberCredentials: MemberCredentials) {
+    const state = getState();
+    return (
+      watching &&
+      trustchainSelector(state) === trustchain &&
+      memberCredentialsSelector(state) === memberCredentials
+    );
+  }
+
+  function resetLedgerSync() {
+    dispatch(resetTrustchainStore());
+    dispatch(walletSyncUpdate({ data: null, version: 0 }));
+  }
+
+  return {
+    start() {
+      if (watching) return;
+      watching = true;
+      current = undefined;
+      dispatch(setVisualPending(true));
+      update();
+    },
+    stop() {
+      watching = false;
+      current?.loop?.unsubscribe();
+      current = undefined;
+      dispatch(setVisualPending(false));
+    },
+    refresh() {
+      current?.loop?.onUserRefreshIntent();
+    },
+    /** Called after every action: restarts the loop when what it runs on has changed. */
+    update,
+  };
+}
+
+function isMembershipRevoked(error: unknown): boolean {
+  return error instanceof Error && MEMBERSHIP_REVOKED_ERRORS.has(error.name);
+}
