@@ -17,6 +17,15 @@ binary.
 | `auth-routes`, `swap-quote-routes` | Keycloak + LKRP auth routes, and swap API routes recording each quote's `authorization` header |
 | `agent-intent-service` | The Agent Intent service and its sign-in as routes, answering each endpoint what the test scripted and recording requests and verified sign-ins (`FakeAgentIntentService`), an intent as the service returns it (`intentRecord`), and a state dir with an enrolled profile whose agent key sits in an `InMemoryKeychain` (`makeEnrolledProfile`) |
 | `fake-confirm-prompt` | Yes/no prompt fake for `_setTestConfirmPrompt` that records each question |
+| `agent-intent-proposals` | What `send`/`swap` submitted, signature checked (`submittedIntents`), CAL token routes that record ticker searches (`FakeCal`), the Solana node's mint program (`solanaMintsRoute`), and Swap API quotes (`FakeSwapQuotes`, `quoteRow`) |
+| `agent-intent-cal-routes` | CAL routes that know USDC on Ethereum and Solana and no other token (`CAL_KNOWS_USDC`, `USDC_CONTRACT`, `USDC_MINT`, `USDC_ID`) |
+| `agent-intent-profile-records` | An Agent Intent profile as `session.yaml` stores it (`profileRecord`), and a state dir holding such records, valid or not, with no agent key (`makeProfilesDir`) |
+| `agent-sign-in` | Wraps `FakeAgentIntentService.routes` to record where each sign-in starts and refuse the token exchange, as for an agent key outside the Trustchain (`AgentSignIn`) |
+| `fake-relay` | The enrollment and recovery channel for `_setTestRelayChannelHost`: the SDK's real relay host on in-memory sockets, with the web app's side played by the SDK (`FakeRelay`) |
+| `fake-ledger-sync` | Ledger Sync as an agent sees it, for `_setTestAgentLedgerSyncSdk`: restores the Trustchain or fails, grants a permission (`grant`), and serves encrypted Cloud Sync accounts (`FakeLedgerSync`, `syncedDocument`) |
+| `fake-detach` | Listener starter for `_setTestSpawn`: writes scripted lines to the real log, records argv and env, exits or keeps running (`FakeListenerSpawner`) |
+| `cal-cache` | A fresh CAL token cache for each test, so tokens other files resolved don't leak in (`useFreshCalCache`) |
+| `sigint` | Runs a CLI run the test interrupts with Ctrl+C without firing other files' SIGINT listeners (`withOwnSigint`) |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
 | `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
@@ -55,10 +64,14 @@ the first option that works:
    e.g. `executeSwapCommand({ runFullSwapPipeline })`, `startAnalytics(createClient)`.
 2. **Test seam** — when the test can't pass the dependency in (e.g. code reached
    through `runCli`), an `@internal` `_setTest*` setter (`_setTestKeychain`,
-   `_setTestLkrpSdk`, `_setTestGenuineCheck`, `_setTestSpinner`,
-   `_setTestDmkTransport`, `_setTestDmk`), built with `createTestSeam`
+   `_setTestLkrpSdk`, `_setTestAgentLedgerSyncSdk`, `_setTestGenuineCheck`,
+   `_setTestSpinner`, `_setTestDmkTransport`, `_setTestDmk`,
+   `_setTestConfirmPrompt`, `_setTestRelayChannelHost`, `_setTestSpawn`,
+   `_setTestStartupTimeoutMs`, `_setTestPollSleep`), built with `createTestSeam`
    (`shared/test-seam.ts`). Set it in `beforeAll`/`beforeEach` and call
    `resetTestSeams()` in the matching `after*` hook, which restores every seam.
+   Files using `makeEnrolledProfile` reset only the seams they set instead:
+   `resetTestSeams()` would also remove the fixture's keychain.
 3. **Environment fake** — `MockServer` and `MockDeviceManagementKit` above.
 4. **`spyOn`** — on a module namespace, restored in `afterEach` or `finally`.
 5. **`createGatedModuleMock`** — when none of the above fits. It forwards to the
