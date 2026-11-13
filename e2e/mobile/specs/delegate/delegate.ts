@@ -95,6 +95,10 @@ export function runDelegateTest(
         fees = await app.stake.getDisplayedFees(currencyId);
       }
       await app.stake.expectProvider(currencyId, delegation.provider);
+      // TEMP egld-debug: fail on purpose so the failure handler attaches App Logs
+      if (delegation.account.currency.name === Currency.MULTIVERS_X.name) {
+        throw new Error("egld-debug: forced failure to attach App Logs");
+      }
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo({ delegation, amountWithCode, fees });
