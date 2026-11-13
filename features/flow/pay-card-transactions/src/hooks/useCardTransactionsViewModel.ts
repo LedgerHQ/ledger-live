@@ -5,6 +5,7 @@ import {
 } from "@domain/api-card-management";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
 import { useTranslation } from "@shared/i18n";
+import { categoryLabelKey } from "../copy/cardTransactionLabelKeys";
 import type { CardTransactionItem, CardTransactionsViewModel } from "../types";
 
 export function useCardTransactionsViewModel(): CardTransactionsViewModel {
@@ -25,7 +26,7 @@ export function useCardTransactionsViewModel(): CardTransactionsViewModel {
     () =>
       joinCardTransactionsPages(data?.pages).map(transaction => ({
         transaction,
-        categoryLabel: t(`payTab.cardTransactions.categories.${transaction.mccCategory}`),
+        categoryLabel: t(categoryLabelKey(transaction.mccCategory)),
       })),
     [data, t],
   );

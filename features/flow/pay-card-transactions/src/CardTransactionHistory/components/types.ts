@@ -1,5 +1,11 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
+import type { CardTransactionHistoryUiState } from "../cardTransactionHistoryUiState";
+
+export type StatusMessageState = Exclude<
+  CardTransactionHistoryUiState["kind"],
+  "loading" | "ready"
+>;
 
 export type HistorySection = Readonly<{ day?: Date; data: readonly CardTransactionItem[] }>;
 

@@ -10,15 +10,11 @@ import type { CardTransactionItem } from "../types";
 import type { HistorySection } from "./components/types";
 import type { CardTransactionHistoryViewProps } from "./types";
 
-const PROVIDER_DISCLAIMER_KEY = "payTab.disclaimer";
-
 function createPayCta(
   testId: string,
   onGoToPay?: () => void,
 ): StatusMessageProps["action"] | undefined {
-  return onGoToPay
-    ? { labelKey: "payTab.cardTransactions.history.goToPay", testId, onClick: onGoToPay }
-    : undefined;
+  return onGoToPay ? { testId, onClick: onGoToPay } : undefined;
 }
 
 export function CardTransactionHistoryView({
@@ -73,11 +69,10 @@ export function CardTransactionHistoryView({
               <Spot icon={CreditCard} size={72} />
             )
           }
-          titleKey="payTab.cardTransactions.history.signedOut.title"
-          descriptionKey="payTab.cardTransactions.history.signedOut.description"
+          state="signedOut"
           testId="card-history-signed-out-state"
           action={createPayCta("card-history-signed-out-state-cta", onGoToPay)}
-          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          hasDisclaimer
           overlapSpot={Boolean(cardVisual)}
         />
       );
@@ -91,11 +86,10 @@ export function CardTransactionHistoryView({
               <Spot icon={CreditCard} size={72} />
             )
           }
-          titleKey="payTab.cardTransactions.history.unclaimed.title"
-          descriptionKey="payTab.cardTransactions.history.unclaimed.description"
+          state="unclaimed"
           testId="card-history-unclaimed-state"
           action={createPayCta("card-history-unclaimed-state-cta", onGoToPay)}
-          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          hasDisclaimer
           overlapSpot={Boolean(cardVisual)}
         />
       );
@@ -111,8 +105,7 @@ export function CardTransactionHistoryView({
       return (
         <StatusMessage
           spot={<Spot appearance="muted" icon={InformationFill} size={72} />}
-          titleKey="payTab.cardTransactions.history.error.title"
-          descriptionKey="payTab.cardTransactions.history.error.description"
+          state="error"
           testId="card-history-error-state"
         />
       );
@@ -120,8 +113,7 @@ export function CardTransactionHistoryView({
       return (
         <StatusMessage
           spot={<Spot icon={CreditCard} size={72} />}
-          titleKey="payTab.cardTransactions.history.empty.title"
-          descriptionKey="payTab.cardTransactions.history.empty.description"
+          state="empty"
           testId="card-history-empty-state"
           action={createPayCta("card-history-empty-state-cta", onGoToPay)}
         />
