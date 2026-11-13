@@ -18,6 +18,7 @@ export default class AccountDetailPage {
   private readonly removeAccountRow = byId("account-settings-remove-account");
   private readonly removeConfirmButton = byId("account-settings-remove-confirm");
   private readonly editNameInput = byId("account-detail-edit-name-input");
+  private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
   private readonly transactions = byId("account-detail-transactions");
@@ -110,5 +111,7 @@ export default class AccountDetailPage {
   @Step("Enter new account name and submit {{{0}}}")
   async enterNewName(name: string) {
     await this.editNameInput.replaceText(name);
+    await this.editNameScreen.waitNotExist();
+    await this.navBarTitle.expectText(name);
   }
 }
