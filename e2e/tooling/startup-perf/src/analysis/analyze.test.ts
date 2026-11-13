@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { isInconclusiveVerdict } from "../../ci/step.mts";
 import {
   debugBase,
   failedRows,
@@ -102,6 +103,7 @@ describe("summarise", () => {
     const row = debugRow(summarise(comparison({ deltaMs: 200 }), GATE));
     assert.equal(row.hl?.estimate, 200);
     assert.equal(row.verdict, "FAIL: B is slower by more than 100 ms");
+    assert.equal(isInconclusiveVerdict(row.verdict), false);
   });
 
   it("takes the device bias out of B − A", () => {
@@ -128,12 +130,14 @@ describe("summarise", () => {
       row.verdict,
       "FAIL: B is slower by more than 100 ms (inconclusive: [40, 180] contains 100 ms)",
     );
+    assert.ok(isInconclusiveVerdict(row.verdict));
   });
 
   it("passes an estimate under the threshold even when the interval holds it", () => {
     const row = noisy([-100, 100, 0, 190, 50, 140]);
     assert.deepEqual(row.hl, { estimate: 70, low: 0, high: 140 });
     assert.equal(row.verdict, "PASS (inconclusive: [0, 140] contains 100 ms)");
+    assert.ok(isInconclusiveVerdict(row.verdict));
   });
 
   it("gives no verdict without pairs on both sides of the device swap", () => {
