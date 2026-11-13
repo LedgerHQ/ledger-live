@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import type { RequestReceiveVerifyHint } from "../../../types";
-import { useRequestReceiveView } from "../useRequestReceiveView.native";
+import { useRequestReceiveView } from "../useRequestReceiveView";
 
 function setup(overrides: { verifyHint?: RequestReceiveVerifyHint; copied?: boolean } = {}) {
   const onClose = jest.fn();

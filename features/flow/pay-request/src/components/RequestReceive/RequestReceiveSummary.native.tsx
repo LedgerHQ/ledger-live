@@ -3,7 +3,7 @@ import type { View } from "react-native";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { QrCode } from "@shared/ui-qr-code";
-import { RequestReceiveAddress } from "./RequestReceiveAddress.native";
+import { RequestReceiveAddress } from "./RequestReceiveAddress";
 import type { RequestReceiveIconProps, RequestReceiveProps } from "../../types";
 import type { AddressParts } from "../../utils/splitAddress";
 

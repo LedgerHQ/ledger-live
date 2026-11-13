@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import type { RequestReceiveVerifyHint } from "../../../types";
-import { useRequestReceiveView } from "../useRequestReceiveView.web";
+import { useRequestReceiveView } from "../useRequestReceiveView";
 
 function setup(
   overrides: { isOpen?: boolean; verifyHint?: RequestReceiveVerifyHint; copied?: boolean } = {},
