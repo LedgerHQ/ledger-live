@@ -140,6 +140,13 @@ const makeInit =
     return s;
   };
 
+// TEMP egld-debug
+const egldTx = (t: Transaction | null | undefined) =>
+  t ? { amount: String(t.amount), recipient: t.recipient } : null;
+const egldDebug = (t: Transaction | null | undefined, message: string, data?: unknown) => {
+  if (t?.family === "multiversx") log("egld-debug", message, data);
+};
+
 const reducer = <T extends Transaction = Transaction>(
   state: State<T>,
   action: Actions<T>,
@@ -195,13 +202,25 @@ const reducer = <T extends Transaction = Transaction>(
       return { ...state, transaction: action.transaction };
 
     case "updateTransaction": {
-      if (!state.transaction) return state;
+      if (!state.transaction) {
+        log("egld-debug", "reducer updateTransaction: no state.transaction");
+        return state;
+      }
       const transaction = action.updater(state.transaction);
+      egldDebug(state.transaction, "reducer updateTransaction", {
+        from: egldTx(state.transaction),
+        to: egldTx(transaction),
+        same: state.transaction === transaction,
+      });
       if (state.transaction === transaction) return state;
       return { ...state, transaction };
     }
 
     case "onStatus":
+      egldDebug(action.transaction, "reducer onStatus", {
+        from: egldTx(state.transaction),
+        to: egldTx(action.transaction),
+      });
       return {
         ...state,
         errorStatus: null,
@@ -215,9 +234,11 @@ const reducer = <T extends Transaction = Transaction>(
       return { ...state, errorStatus: action.error };
 
     case "onStartSync":
+      egldDebug(state.transaction, "reducer onStartSync");
       return { ...state, syncing: true, synced: false };
 
     case "onSync":
+      egldDebug(state.transaction, "reducer onSync");
       return { ...state, syncing: false, synced: true };
 
     // Updates account data (e.g. after a coin-specific side-sync) without
@@ -329,6 +350,12 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     let errorTimeout: NodeJS.Timeout | null;
     // If bridge is not pending, transaction change is due to
     // the last onStatus dispatch (prepareTransaction changed original transaction) and must be ignored
+    egldDebug(transaction, "prepare effect", {
+      tx: egldTx(transaction),
+      bridgePending,
+      synced,
+      hasMainAccount: !!mainAccount,
+    });
     if (!bridgePending && !synced) return;
 
     if (mainAccount && transaction) {
@@ -352,6 +379,11 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
         })
         .then(
           result => {
+            egldDebug(transaction, "prepare result", {
+              ignore,
+              hasResult: !!result,
+              prepared: egldTx(result?.preparedTransaction),
+            });
             if (ignore || !result) return;
             const { preparedTransaction, status } = result;
             errorDelay.current = INITIAL_ERROR_RETRY_DELAY; // reset delay
@@ -365,6 +397,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
             });
           },
           e => {
+            egldDebug(transaction, "prepare error", { ignore, error: String(e) });
             if (ignore) return;
             statusIsPending.current = false;
             dispatch({
