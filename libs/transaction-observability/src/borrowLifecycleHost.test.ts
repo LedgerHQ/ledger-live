@@ -280,6 +280,23 @@ describe("borrow lifecycle", () => {
     expect(urls.every(url => url.startsWith("https://earn.example.test"))).toBe(true);
   });
 
+  it("closes Earn's attempt on a doubly claimed manifest at Borrow teardown, on Earn's sink", () => {
+    setBorrowManifestIdReader(() => "lido");
+    const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
+
+    const close = startBorrowLifecycleMonitoring("desktop", "lido", true);
+    emitTransactionEvent(lidoIntent);
+    fetchSpy.mockClear();
+    close?.();
+
+    expect(calls()).toEqual([
+      {
+        url: "https://earn.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ failure_class: "abandoned" }),
+      },
+    ]);
+  });
+
   it("lets Borrow claim a doubly claimed manifest when Earn monitoring is off", () => {
     setEarnTxLifecycleFlagReader(() => false);
     setBorrowManifestIdReader(() => "lido");
