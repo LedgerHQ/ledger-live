@@ -1,17 +1,12 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import { getBlock } from "../network";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 
 const logger: Logger = (..._args: unknown[]) => {};
 
-const config: TronCoinConfig = {
-  status: { type: "active" },
-  name: "Tron",
-  unit: { name: "TRX", code: "TRX", magnitude: 6 },
-  explorer: { url: "https://tron.coin.ledger.com" },
-};
+const config = tronDefaults.tron as TronCoinConfig;
 
 describe("listOperations", () => {
   describe("Pagination", () => {

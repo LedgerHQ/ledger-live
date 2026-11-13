@@ -1,8 +1,10 @@
 import { Keypair } from "@solana/web3.js";
 import { getChainAPI } from "../../network";
+import { chainConfigFrom } from "../../utils";
 import { getStakes } from "../getStakes";
+import { solanaDefaults } from "../../config";
 
-const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
+const api = getChainAPI(chainConfigFrom(solanaDefaults.solana));
 
 const STAKER_ADDRESS = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
 const UNUSED_ADDRESS = Keypair.generate().publicKey.toBase58();

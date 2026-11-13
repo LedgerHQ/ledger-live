@@ -1,7 +1,9 @@
 import { getChainAPI } from "../../network";
+import { chainConfigFrom } from "../../utils";
 import { lastBlock } from "../lastBlock";
+import { solanaDefaults } from "../../config";
 
-const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
+const api = getChainAPI(chainConfigFrom(solanaDefaults.solana));
 
 describe("lastBlock (integration)", () => {
   it("returns last block info from mainnet", async () => {

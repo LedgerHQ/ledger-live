@@ -1,16 +1,10 @@
 import type { TransferBlockOperation } from "@ledgerhq/coin-module-framework/api/types";
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { getBlock } from "../getBlock";
 import { getBlockInfo } from "../getBlockInfo";
 
 const liveContext: BitcoinContext = {
-  config: async () => ({
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: "btc",
-  }),
+  config: async () => bitcoinDefaults.bitcoin,
   logger: () => {},
 };
 

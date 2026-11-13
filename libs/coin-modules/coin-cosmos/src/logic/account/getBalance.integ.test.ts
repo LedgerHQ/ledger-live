@@ -1,12 +1,14 @@
-import { makeTestApi, makeTestConfig, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getBalance } from "./getBalance";
 
 const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
 
 describe("getBalance (integ, Cosmos Hub)", () => {
   it("returns a native balance with the expected shape for a known funded address", async () => {
-    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
-    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const config = cosmosDefaults.cosmos;
+    coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+    const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
     const balances = await getBalance(config, api, ADDR);
 

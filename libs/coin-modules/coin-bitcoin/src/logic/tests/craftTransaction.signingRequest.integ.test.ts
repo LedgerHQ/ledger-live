@@ -1,23 +1,13 @@
 import network from "@ledgerhq/live-network";
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { craftTransaction } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
 import type { SigningRequest } from "../signingRequest";
-import { CURRENCY_FORMATS } from "./helpers/fixtures";
 
-const EXPLORER = "https://explorers.api.live.ledger.com";
-
-const context = (explorerId: string): BitcoinContext => ({
-  config: async currencyId => ({
-    ...CURRENCY_FORMATS[currencyId ?? ""],
-    status: { type: "active" },
-    name: explorerId,
-    unit: { name: explorerId, code: explorerId.toUpperCase(), magnitude: 8 },
-    explorer: { url: EXPLORER },
-    explorerId,
-  }),
+const context: BitcoinContext = {
+  config: async currencyId => bitcoinDefaults[currencyId as keyof typeof bitcoinDefaults],
   logger: () => {},
-});
+};
 
 /**
  * Whether `address` still holds a confirmed output worth spending, none of its outputs being spent
@@ -39,7 +29,8 @@ async function stillFunded(base: string, address: string): Promise<boolean> {
  * answers 500 for some transactions (e.g. stake transactions): those are skipped.
  */
 async function fundedDecredAddress(): Promise<string> {
-  const base = `${EXPLORER}/blockchain/v4/dcr`;
+  const { explorer, explorerId } = bitcoinDefaults.decred;
+  const base = `${explorer.url}/blockchain/v4/${explorerId}`;
   const { data: tip } = await network<{ height: number }>({ url: `${base}/block/current` });
   for (let height = tip.height; height > tip.height - 10; height--) {
     const { data: blocks } = await network<{ txs: string[] }[]>({ url: `${base}/block/${height}` });
@@ -74,17 +65,16 @@ describe("craftTransaction signing requests (mainnet)", () => {
   it.each([
     [
       "komodo",
-      "kmd",
       async () => "RNjJYvz6aCMaeZanXfCpXvoc2FKxEKMTj2",
       "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
     ],
-    ["decred", "dcr", fundedDecredAddress, "DshusByvZ2y4HuUaqkb7LrNTQTrqCjLnBW7"],
+    ["decred", fundedDecredAddress, "DshusByvZ2y4HuUaqkb7LrNTQTrqCjLnBW7"],
   ])(
     "crafts and prices a %s send-max from a funded address",
-    async (currencyId, explorerId, sender, recipient) => {
+    async (currencyId, sender, recipient) => {
       const intent = send(await sender(), recipient);
-      const estimation = await estimateFees(context(explorerId), currencyId, intent);
-      const crafted = await craftTransaction(context(explorerId), currencyId, intent);
+      const estimation = await estimateFees(context, currencyId, intent);
+      const crafted = await craftTransaction(context, currencyId, intent);
       const request = JSON.parse(crafted.transaction) as SigningRequest;
 
       expect(estimation.value).toBeGreaterThan(0n);

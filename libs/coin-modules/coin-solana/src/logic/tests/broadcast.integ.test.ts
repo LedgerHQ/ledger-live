@@ -1,18 +1,11 @@
 import { Keypair, Connection, SystemProgram, Transaction, clusterApiUrl } from "@solana/web3.js";
 import { createApi } from "../../api";
-import type { SolanaCoinConfig, SolanaContext } from "../../config";
+import { solanaDefaults } from "../../config";
+import type { SolanaContext } from "../../config";
 
-const config: SolanaCoinConfig = {
-  token2022Enabled: false,
-  legacyOCMSMaxVersion: "1.0.0",
-  rpcUrl: "https://solana.coin.ledger.com",
-  status: { type: "active" },
-  name: "Solana",
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
-};
 const api = createApi();
 const context: SolanaContext = {
-  config: async () => config,
+  config: async () => solanaDefaults.solana,
   logger: () => {},
 };
 
