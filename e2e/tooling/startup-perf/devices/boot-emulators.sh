@@ -69,8 +69,20 @@ wait_until_idle() {
   echo "::warning title=Emulator not idle::$serial load average still ${load:-unknown} after $((IDLE_TIMEOUT_S / 60)) min; measuring anyway"
 }
 
+# The runner's CPU and a fixed single-thread loop, to tell a slow runner apart from noise.
+runner_speed() {
+  lscpu | grep -E '^(Model name|CPU\(s\)|CPU max MHz|Hypervisor vendor):' || true
+  python3 -c 'import time
+start = time.perf_counter()
+total = 0
+for i in range(20_000_000):
+    total += i
+print(f"single-thread loop: {time.perf_counter() - start:.2f} s")'
+}
+
 tools/scripts/cleanup-android-emulators.sh || true
 mkdir -p "$log_dir"
+runner_speed | tee "$log_dir/runner-speed.txt"
 start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
 start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
 for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
