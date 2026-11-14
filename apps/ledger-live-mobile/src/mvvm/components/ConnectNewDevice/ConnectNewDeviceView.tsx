@@ -4,12 +4,12 @@ import { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import {
   ConnectionErrorState,
   DiscoveryErrorState,
+  ErrorBottomSheet,
   UnknownErrorState,
 } from "LLM/components/DeviceConnection";
 import { ConnectedView } from "./components/ConnectedView";
 import { ConnectingView } from "./components/ConnectingView";
 import { DiscoveringView } from "./components/DiscoveringView";
-import { ErrorBottomSheet } from "./components/ErrorBottomSheet";
 import type {
   ConnectNewDeviceErrorUIState,
   ConnectNewDeviceNonErrorUIState,
@@ -76,7 +76,11 @@ export function ConnectNewDeviceView({
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
       <NonErrorStateView state={nonErrorState} onDeviceNotFound={onDeviceNotFound} />
-      <ErrorBottomSheet isOpen={errorState !== null} onClose={onCloseErrorSheet}>
+      <ErrorBottomSheet
+        isOpen={errorState !== null}
+        onClose={onCloseErrorSheet}
+        testID="connect-new-device-error-sheet"
+      >
         {errorState && <ErrorStateView state={errorState} platform={platform} />}
       </ErrorBottomSheet>
     </Box>
