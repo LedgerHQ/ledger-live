@@ -64,7 +64,23 @@ export interface Sample extends SampleMeta {
   readMs?: number;
   /** The launch's Perfetto trace in traces/ (run.ts --trace, Android only). */
   trace?: string;
+  /** The measured emulator's busiest threads on the runner from the launch to the end of the settle. */
+  emulatorWaits?: HostWaits;
+  /** From those, each thread group's ms on a runner CPU and ms waiting for one during the startup. */
+  startupWaits?: Record<string, { runMs: number; waitMs: number }>;
   maestroCalls?: MaestroCall[];
+}
+
+/**
+ * Samples every `periodMs` of an emulator's busiest threads on the runner, grouped by name and the
+ * vCPU threads as "vCPU" (`threads` per group): [runner epoch ms, then per group its cumulative ms
+ * on a CPU and ms waiting for one].
+ */
+export interface HostWaits {
+  periodMs: number;
+  groups: string[];
+  threads: number[];
+  samples: number[][];
 }
 
 /** What used a machine's CPU during a launch: what sets a slow launch apart from the others. */

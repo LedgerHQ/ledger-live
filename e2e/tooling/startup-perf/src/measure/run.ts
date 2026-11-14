@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { createAndroid } from "./platforms/android.ts";
 import { errorMessage, insideWorkingDir, log, sleep } from "./exec.ts";
+import { createWaitSampler, startupWindow, waitsBetween } from "./host-waits.ts";
 import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createLoadWatcher, describeLoad } from "./load.ts";
@@ -13,7 +14,7 @@ import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
 import { createStartupLogReader } from "./startup-log.ts";
 import { createTracer } from "./trace.ts";
-import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
+import type { HostWaits, PlatformName, Sample, SampleMeta, Side } from "../types.ts";
 import type { Userdata } from "./types.ts";
 
 const { values: opts } = parseArgs({
@@ -93,6 +94,7 @@ const readStartupLog = createStartupLogReader(P);
 const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
 const watchLoad = createLoadWatcher(P);
 const tracer = TRACE ? createTracer(TRACES_DIR) : null;
+const waitSampler = TRACE ? createWaitSampler() : null;
 
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
@@ -114,6 +116,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
   let readStart: number | null = null;
   let paused = false;
   let traced = false;
+  let waits: { stop(): Promise<HostWaits | null> } | null = null;
   try {
     for (const device of DEVICES) await P.stop(device);
     const dialogs: string[] = [];
@@ -143,10 +146,15 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     record.otherPaused = paused;
     record.afterScreenRead = screenReadSinceLaunch;
     screenReadSinceLaunch = false;
+    if (waitSampler && !meta.warmup) waits = await waitSampler.start(meta.device).catch(() => null);
     await load.launching();
     const launch = await P.launch(meta.device);
     await sleep(SETTLE_MS);
     Object.assign(record, await load.settled());
+    if (waits) {
+      record.emulatorWaits = (await waits.stop()) ?? undefined;
+      waits = null;
+    }
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
     record.processStartAppClockAt = processStart?.appClockAt ?? null;
@@ -172,12 +180,19 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
       throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
     }
     Object.assign(record, launch, perf, { ok: true });
+    const startup = record.emulatorWaits ? startupWindow(record) : null;
+    if (record.emulatorWaits && startup) {
+      record.startupWaits =
+        waitsBetween(record.emulatorWaits, startup.from, startup.to) ?? undefined;
+      if (!record.startupWaits) log("  the startup fell outside the emulator's thread samples");
+    }
     consecutiveFailures.set(meta.device, 0);
   } catch (error) {
     record.error = errorMessage(error).slice(0, 1500);
     consecutiveFailures.set(meta.device, (consecutiveFailures.get(meta.device) ?? 0) + 1);
     await P.diagnostics(meta.device, path.join(DEBUG_DIR, `${name}.log`)).catch(() => {});
   } finally {
+    if (waits) await waits.stop();
     // A device left paused would hang every later adb command sent to it.
     if (paused) await P.resume(other);
   }
@@ -195,6 +210,12 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     : `FAILED: ${record.error?.split("\n")[0]}`;
   log(`${meta.warmup ? "warm-up " : ""}${name} on ${meta.device}: ${what}`);
   for (const line of describeLoad(record)) log(line);
+  if (record.startupWaits) {
+    const groups = Object.entries(record.startupWaits).map(
+      ([group, { runMs, waitMs }]) => `${group} ${runMs} ms on a CPU, ${waitMs} ms waiting`,
+    );
+    log(`  emulator threads on the runner during the startup: ${groups.join("; ")}`);
+  }
   if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
       `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,

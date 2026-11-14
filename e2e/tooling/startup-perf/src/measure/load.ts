@@ -92,6 +92,9 @@ export function busiest(
     .sort((a, b) => b[2] - a[2]);
 }
 
+/** A thread name with its numbers as #, so that numbered workers share a group (llvmpipe-#). */
+export const threadGroup = (name: string) => name.trim().replace(/(?<![A-Za-z\d])\d+/g, "#");
+
 /** CPU ms of a process's threads between two snapshots, summed by name: llvmpipe-0 as llvmpipe-#. */
 export function threadGroups(
   before: Map<number, ProcessTime>,
@@ -99,7 +102,7 @@ export function threadGroups(
 ): Array<[string, number]> {
   const groups = new Map<string, number>();
   for (const [, name, ms] of busiest(before, after)) {
-    const group = name.replace(/(?<![A-Za-z\d])\d+/g, "#");
+    const group = threadGroup(name);
     groups.set(group, (groups.get(group) ?? 0) + ms);
   }
   return [...groups].sort((a, b) => b[1] - a[1]).slice(0, TOP_THREADS);
@@ -177,7 +180,7 @@ export async function readHostSnapshot(): Promise<LoadSnapshot> {
 }
 
 /** The pid of each emulator's process on the runner, by serial, from its -port argument. */
-async function emulatorProcesses(): Promise<Map<string, number>> {
+export async function emulatorProcesses(): Promise<Map<string, number>> {
   const found = new Map<string, number>();
   if (process.platform !== "linux") return found;
   for (const pid of await numericEntries("/proc")) {
