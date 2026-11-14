@@ -27,6 +27,12 @@ const USDC = {
   decimals: 6,
   contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 };
+const USDT = {
+  id: "ethereum/erc20/usd_tether__erc20_",
+  ticker: "USDT",
+  decimals: 6,
+  contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+};
 const ALL_PROVIDERS = "oneinch,velora,okx,lifi";
 const ABOVE_QUOTE_WARNING =
   "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the " +
@@ -36,6 +42,7 @@ const service = new FakeAgentIntentService();
 const quotes = new FakeSwapQuotes();
 const cal = new FakeCal([
   { ...USDC, network: "ethereum", address: USDC.contract, name: "USD Coin" },
+  { ...USDT, network: "ethereum", address: USDT.contract, name: "Tether USD" },
 ]);
 const server = new MockServer([...service.routes, ...cal.routes, ...quotes.routes]);
 let fixture: EnrolledProfile;
@@ -83,17 +90,18 @@ const sellEth = (...args: string[]) => [
   "0.5",
   ...args,
 ];
-const sellUsdc = (...args: string[]) => [
+const sellToken = (token: { id: string }, ...args: string[]) => [
   "--sender",
   SENDER,
   "--from",
-  USDC.id,
+  token.id,
   "--to",
   ETH.id,
   "--amount",
   "100",
   ...args,
 ];
+const sellUsdc = (...args: string[]) => sellToken(USDC, ...args);
 
 /** Sign-ins with the agent key; `swap` also signs in to the Swap API with its own key. */
 const agentSignIns = () =>
@@ -373,23 +381,22 @@ describe("agent-intent swap (CLI)", () => {
   });
 
   it.each([
-    ["a Permit2 signature", quoteRow("oneinch", 0.03, { permit: true })],
-    ["an approval of another token", quoteRow("okx", 0.03, { approves: SENDER })],
+    ["a Permit2 signature", USDC, quoteRow("oneinch", 0.03, { permit: true })],
+    ["an approval of another token", USDC, quoteRow("okx", 0.03, { approves: SENDER })],
     [
       "an approval through a provider the frontend has no endpoint for",
+      USDC,
       quoteRow("paraswap", 0.03, { approves: USDC.contract }),
     ],
     [
-      "a USDT-style allowance reset",
-      quoteRow("okx", 0.03, {
-        approves: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        approvedAmount: "5",
-      }),
+      "a USDT allowance reset",
+      USDT,
+      quoteRow("okx", 0.03, { approves: USDT.contract, approvedAmount: "5" }),
     ],
-  ])("refuses a quote that needs %s the frontend can't send", async (_, row) => {
+  ])("refuses a quote that needs %s the frontend can't send", async (_, sold, row) => {
     quotes.answer(row);
 
-    const { json, exitCode } = await swapJson(...sellUsdc("--to-amount", "0.03"));
+    const { json, exitCode } = await swapJson(...sellToken(sold, "--to-amount", "0.03"));
 
     expect(exitCode).toBe(1);
     expect(json.error.message).toMatch(
