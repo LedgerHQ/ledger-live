@@ -15,9 +15,10 @@ IDLE_TIMEOUT_S=900
 IDLE_POLL_S=15
 
 # Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 4.
+# Experiment: lavapipe renders with 4 workers, on the runner CPUs left to it once the vCPUs are pinned.
 start_emulator() {
   local avd="$1" port="$2" log="$3"
-  nohup "$ANDROID_HOME/emulator/emulator" -avd "$avd" -port "$port" "${avd_options[@]}" \
+  LP_NUM_THREADS=4 nohup "$ANDROID_HOME/emulator/emulator" -avd "$avd" -port "$port" "${avd_options[@]}" \
     -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$log" 2>&1 &
 }
 
