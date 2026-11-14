@@ -42,6 +42,8 @@ interface Builds {
 }
 
 export interface Plan extends Builds {
+  /** Build A is a release tag's, which only changes on a release: the cache keeps it for later runs. */
+  cacheA: boolean;
   scenarios: string[];
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
   settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata">;
@@ -171,6 +173,7 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
+    cacheA: PROD_TAG.test(builds.labelA),
     scenarios: inputs.scenarios.split(","),
     settings: {
       preset: inputs.preset,
@@ -190,6 +193,7 @@ export function outputsOf(plan: Plan): string {
     ref_b: plan.shaB,
     label_a: plan.labelA,
     label_b: plan.labelB,
+    cache_a: String(plan.cacheA),
     preset: plan.settings.preset,
     platforms: plan.settings.platforms,
     pairs: plan.settings.pairs,
