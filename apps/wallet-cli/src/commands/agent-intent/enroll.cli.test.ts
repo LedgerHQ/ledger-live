@@ -49,6 +49,8 @@ import { withOwnSigint } from "../../testing/sigint";
 import { cliStateDirIn, pointStateHomeAt, stateHomeEnv } from "../../testing/state-home";
 
 const RELAY_CLOSED = "Enrollment relay closed before completion was acknowledged.";
+// Windows has no 0600 modes to check, and wallet-cli refuses to read agent key files there.
+const isPosix = process.platform !== "win32";
 const STAYS_PENDING =
   'Profile "bot" stays pending and cannot be resumed — start a fresh enrollment with a new ' +
   "--profile id.";
@@ -730,7 +732,7 @@ describe("agent-intent enroll (CLI)", () => {
       },
     );
 
-    it.each([
+    it.skipIf(!isPosix).each([
       [
         "no Secret Service",
         () => (os.down = true),
@@ -864,7 +866,7 @@ describe("agent-intent enroll (CLI)", () => {
       expect(os.keychain.entries.size).toBe(1);
     });
 
-    it("says to remove the key file by hand when it can't", async () => {
+    it.skipIf(!isPosix)("says to remove the key file by hand when it can't", async () => {
       os.down = true;
       failSessionWrite(() => chmodSync(dirname(keyFilePath()), 0o500));
 

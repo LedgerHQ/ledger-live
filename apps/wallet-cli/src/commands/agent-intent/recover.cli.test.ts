@@ -30,6 +30,8 @@ const ACCOUNT_ACCESS = {
   applicationPath: "m/0'/16'/0'",
 };
 const RELAY_CLOSED = "Enrollment relay closed before completion was acknowledged.";
+// wallet-cli refuses to read agent key files on Windows.
+const isPosix = process.platform !== "win32";
 
 const service = new FakeAgentIntentService();
 const signIn = new AgentSignIn(service);
@@ -177,10 +179,14 @@ describe("agent-intent recover (CLI)", () => {
 
   it.each([
     ["os-keychain", undefined],
-    [
-      "plaintext-file",
-      /Profile "bot" stores its agent key unencrypted in .*agent-intent-keys[/\\]bot\.key/,
-    ],
+    ...(isPosix
+      ? [
+          [
+            "plaintext-file",
+            /Profile "bot" stores its agent key unencrypted in .*agent-intent-keys[/\\]bot\.key/,
+          ] as const,
+        ]
+      : []),
   ] as const)(
     "reads a %s key and tells the human what to compare, never printing the key",
     async (keyStore, warning) => {
@@ -397,12 +403,12 @@ const NEWER_MARKER = {
 // loadProfileIdentity: every command that signs as the agent reads its key this way.
 describe("agent-intent recover (CLI): reading the agent key", () => {
   const other = createSoftwareAgentIdentity();
-  let restorePlatform: () => void;
+  let restorePlatform: (() => void) | undefined;
 
-  beforeEach(() => {
-    restorePlatform = overridePlatform("linux");
+  afterEach(() => {
+    restorePlatform?.();
+    restorePlatform = undefined;
   });
-  afterEach(() => restorePlatform());
 
   const keyFilePath = () =>
     join(cliStateDirIn(enrolled().env.XDG_STATE_HOME), "agent-intent-keys", "bot.key");
@@ -413,7 +419,9 @@ describe("agent-intent recover (CLI): reading the agent key", () => {
     writeFileSync(keyFilePath(), content, { mode: 0o600 });
   }
 
+  /** Only Linux probes the Secret Service, so this fakes the platform. */
   function noSecretService(): void {
+    restorePlatform = overridePlatform("linux");
     enrolled().keychain.openError = new Error(
       "Platform failure: DBus error: The name org.freedesktop.secrets was not provided",
     );
@@ -433,29 +441,36 @@ describe("agent-intent recover (CLI): reading the agent key", () => {
     return lines[0].error;
   }
 
-  it("asks to make the Secret Service reachable when no OS keychain is available", async () => {
-    noSecretService();
+  // Faking Linux on Windows would move the state dir away from the profile.
+  it.skipIf(!isPosix)(
+    "asks to make the Secret Service reachable when no OS keychain is available",
+    async () => {
+      noSecretService();
 
-    const error = await recoverError();
+      const error = await recoverError();
 
-    expect(error.code).toBe("keychain_unavailable");
-    expect(error.message).toMatch(
-      /Profile "bot" can't be read here.*Make the Secret Service reachable and re-run.*DBUS_SESSION_BUS_ADDRESS.*Only if a wallet-cli that predates --allow-plaintext-key enrolled it.*kernel keyring.*then that key is gone\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id.*--allow-plaintext-key/s,
-    );
-    expect(error.message).not.toContain("plaintext agent key file exists");
-  });
+      expect(error.code).toBe("keychain_unavailable");
+      expect(error.message).toMatch(
+        /Profile "bot" can't be read here.*Make the Secret Service reachable and re-run.*DBUS_SESSION_BUS_ADDRESS.*Only if a wallet-cli that predates --allow-plaintext-key enrolled it.*kernel keyring.*then that key is gone\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id.*--allow-plaintext-key/s,
+      );
+      expect(error.message).not.toContain("plaintext agent key file exists");
+    },
+  );
 
-  it("points at a plaintext key file, without reading it, when no OS keychain is available", async () => {
-    writeKeyFile(enrolled().agent.exportSecretKey());
-    noSecretService();
+  it.skipIf(!isPosix)(
+    "points at a plaintext key file, without reading it, when no OS keychain is available",
+    async () => {
+      writeKeyFile(enrolled().agent.exportSecretKey());
+      noSecretService();
 
-    const { code, message } = await recoverError();
+      const { code, message } = await recoverError();
 
-    expect(code).toBe("keychain_unavailable");
-    expect(message).toMatch(
-      /plaintext agent key file exists at .*agent-intent-keys[/\\]bot\.key.*set `keyStore: plaintext-file`/s,
-    );
-  });
+      expect(code).toBe("keychain_unavailable");
+      expect(message).toMatch(
+        /plaintext agent key file exists at .*agent-intent-keys[/\\]bot\.key.*set `keyStore: plaintext-file`/s,
+      );
+    },
+  );
 
   it.each([
     [
@@ -494,7 +509,7 @@ describe("agent-intent recover (CLI): reading the agent key", () => {
     expect((await recoverError()).message).toMatch(message);
   });
 
-  it.each([
+  it.skipIf(!isPosix).each([
     [
       "no key file",
       undefined,
