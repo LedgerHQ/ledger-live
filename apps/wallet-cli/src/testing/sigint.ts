@@ -3,7 +3,7 @@
  * run as Ctrl+C would, and no other file's listener (e.g. one that exits the process).
  */
 export async function withOwnSigint<T>(fn: () => Promise<T>): Promise<T> {
-  const otherListeners = process.listeners("SIGINT");
+  const otherListeners = process.rawListeners("SIGINT") as NodeJS.SignalsListener[];
   process.removeAllListeners("SIGINT");
   try {
     return await fn();
