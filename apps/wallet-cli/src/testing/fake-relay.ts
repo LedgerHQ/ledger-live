@@ -183,7 +183,8 @@ export class FakeRelay {
       this.dropConnection();
       throw new Error("The relay connection was lost.");
     }
-    const peers = from.side === "host" ? this.#users : this.#host ? [this.#host] : [];
+    const hostPeers = this.#host ? [this.#host] : [];
+    const peers = from.side === "host" ? this.#users : hostPeers;
     for (const peer of peers) {
       if (!peer.closed) setTimeout(() => peer.emit("message", data));
     }

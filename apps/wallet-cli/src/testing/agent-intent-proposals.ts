@@ -84,15 +84,12 @@ export class FakeCal {
     const address = query.get("contract_address")?.toLowerCase();
     const id = query.get("id");
     if (ticker) this.tickerSearches.push(`${network} ${ticker}`);
-    return this.tokens
-      .filter(token =>
-        ticker
-          ? token.network === network && token.ticker === ticker
-          : address
-            ? token.network === network && token.address.toLowerCase() === address
-            : token.id === id,
-      )
-      .map(calRow);
+    const matches = (token: CalToken) => {
+      if (ticker) return token.network === network && token.ticker === ticker;
+      if (address) return token.network === network && token.address.toLowerCase() === address;
+      return token.id === id;
+    };
+    return this.tokens.filter(matches).map(calRow);
   }
 }
 

@@ -25,7 +25,7 @@ export class AgentSignIn {
     this.routes = [
       exchange,
       ...service.routes.map(route =>
-        String(route.match).includes(KEYCLOAK_AUTH.replaceAll("/", "\\/"))
+        String(route.match).includes(KEYCLOAK_AUTH.replaceAll("/", String.raw`\/`))
           ? {
               ...route,
               onRequest: (request: Request) => {

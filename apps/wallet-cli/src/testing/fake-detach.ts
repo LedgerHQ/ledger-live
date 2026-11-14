@@ -21,7 +21,9 @@ export class FakeListener extends EventEmitter {
     return true;
   }
 
-  unref(): void {}
+  unref(): void {
+    // Nothing to release: no real process keeps the test alive.
+  }
 }
 
 /**

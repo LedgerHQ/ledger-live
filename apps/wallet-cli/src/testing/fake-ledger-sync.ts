@@ -51,7 +51,7 @@ export class FakeLedgerSync {
   readonly routes: Route[] = [
     {
       method: "GET",
-      match: new RegExp(`^${ACCOUNTS_DOCUMENT_PATH}\\?`),
+      match: new RegExp(String.raw`^${ACCOUNTS_DOCUMENT_PATH}\?`),
       response: null,
       onRequest: request => this.#answer(request),
     },
