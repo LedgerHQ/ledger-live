@@ -17,8 +17,11 @@ Writes one JSON line per launch and prints a table. Needs the perfetto package (
 """
 import argparse
 import json
+import os
 import pathlib
 import re
+import signal
+import subprocess
 import sys
 
 from perfetto.trace_processor import TraceProcessor
@@ -41,6 +44,21 @@ STATES = ("running", "runnable", "sleeping", "blocked")
 MS = 1_000_000
 SLICES = 12
 WAKERS = 5
+# A trace takes a few seconds; one that hung a CI job for an hour is left out after this.
+TRACE_TIMEOUT_S = 120
+
+
+class TraceTimeout(Exception):
+    pass
+
+
+def on_alarm(_signum, _frame):
+    # A trace still loading has no TraceProcessor to close yet: stop this script's trace_processor.
+    subprocess.run(["pkill", "-P", str(os.getpid()), "-f", "trace_processor"], check=False)
+    raise TraceTimeout(f"no result after {TRACE_TIMEOUT_S} s")
+
+
+signal.signal(signal.SIGALRM, on_alarm)
 
 
 def group_of(tid, pid, name):
@@ -283,14 +301,19 @@ def main():
         for sample in traced:
             name = f"{sample['scenario']}-p{sample['phase']}-r{sample['round']}-{sample['side']}"
             tp = None
+            signal.alarm(TRACE_TIMEOUT_S)
             try:
                 tp = TraceProcessor(trace=str(pathlib.Path(args.traces) / sample["trace"]))
                 result = launch_of(tp, sample)
-            except Exception as error:  # one unreadable trace leaves out its launch only
+            except Exception as error:  # one unreadable or stuck trace leaves out its launch only
                 result = {"error": str(error)[:300]}
             finally:
+                signal.alarm(0)
                 if tp is not None:
-                    tp.close()
+                    try:
+                        tp.close()
+                    except Exception:  # already stopped by on_alarm
+                        pass
             analysed += "error" not in result
             out.write(json.dumps({"name": name, "side": sample["side"], "phase": sample["phase"],
                                   "round": sample["round"], "device": sample["device"],

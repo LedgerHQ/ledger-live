@@ -487,6 +487,7 @@ jobs:
       - name: Analyse the traces
         if: ${{ always() && needs.plan.outputs.read == 'log-trace' }}
         continue-on-error: true
+        timeout-minutes: 20
         run: |
           set -euo pipefail
           python3 -m venv "$RUNNER_TEMP/perfetto"
