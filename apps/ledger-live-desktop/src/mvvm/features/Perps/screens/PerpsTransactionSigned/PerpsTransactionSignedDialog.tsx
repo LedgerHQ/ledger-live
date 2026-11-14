@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
-import {
-  usePerpsTransactionSignedViewModel,
-  type PerpsTransactionSignedData,
-} from "./usePerpsTransactionSignedViewModel";
+import { usePerpsTransactionSignedViewModel } from "./usePerpsTransactionSignedViewModel";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import { PerpsTransactionSignedView } from "./PerpsTransactionSignedView";
 
-let _opener: ((data: PerpsTransactionSignedData) => void) | null = null;
+let _opener: ((data: PerpsTransactionSignedParams) => void) | null = null;
 
 function registerPerpsTransactionSignedOpener(
-  fn: (data: PerpsTransactionSignedData) => void,
+  fn: (data: PerpsTransactionSignedParams) => void,
 ): () => void {
   _opener = fn;
   return () => {
@@ -17,14 +15,14 @@ function registerPerpsTransactionSignedOpener(
   };
 }
 
-export function openPerpsTransactionSigned(data: PerpsTransactionSignedData) {
+export function openPerpsTransactionSigned(data: PerpsTransactionSignedParams) {
   _opener?.(data);
 }
 
 function PerpsTransactionSignedBody({
   data,
   onClose,
-}: Readonly<{ data: PerpsTransactionSignedData; onClose: () => void }>) {
+}: Readonly<{ data: PerpsTransactionSignedParams; onClose: () => void }>) {
   const viewModel = usePerpsTransactionSignedViewModel(data, onClose);
   return <PerpsTransactionSignedView {...viewModel} />;
 }
@@ -32,7 +30,7 @@ function PerpsTransactionSignedBody({
 function PerpsTransactionSignedInnerDialog({
   data,
   onClose,
-}: Readonly<{ data: PerpsTransactionSignedData | null; onClose: () => void }>) {
+}: Readonly<{ data: PerpsTransactionSignedParams | null; onClose: () => void }>) {
   const isOpen = data !== null;
 
   const handleOpenChange = useCallback(
@@ -56,7 +54,7 @@ function PerpsTransactionSignedInnerDialog({
 }
 
 export default function PerpsTransactionSignedRoot() {
-  const [data, setData] = useState<PerpsTransactionSignedData | null>(null);
+  const [data, setData] = useState<PerpsTransactionSignedParams | null>(null);
   const close = useCallback(() => setData(null), []);
 
   useEffect(() => registerPerpsTransactionSignedOpener(setData), []);
