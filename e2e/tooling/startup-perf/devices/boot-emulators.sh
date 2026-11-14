@@ -15,10 +15,18 @@ IDLE_TIMEOUT_S=900
 IDLE_POLL_S=15
 
 # Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 4.
+# Experiment: lavapipe renders with 4 workers instead of one per runner CPU.
 start_emulator() {
   local avd="$1" port="$2" log="$3"
-  nohup "$ANDROID_HOME/emulator/emulator" -avd "$avd" -port "$port" "${avd_options[@]}" \
+  LP_NUM_THREADS=4 nohup "$ANDROID_HOME/emulator/emulator" -avd "$avd" -port "$port" "${avd_options[@]}" \
     -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$log" 2>&1 &
+}
+
+report_render_threads() {
+  local pid
+  for pid in $(pgrep -f qemu-system); do
+    echo "qemu $pid: $(grep -l '^llvmpipe' /proc/"$pid"/task/*/comm 2> /dev/null | wc -l) llvmpipe threads"
+  done
 }
 
 prepare() {
@@ -77,4 +85,5 @@ for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
 for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
 for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
+report_render_threads
 adb devices
