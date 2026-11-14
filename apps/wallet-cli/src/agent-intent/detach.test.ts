@@ -4,8 +4,11 @@ import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid } from "../shared/file-lock";
+import { FakeListenerSpawner } from "../testing/fake-detach";
 import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 import {
+  _setTestSpawn,
+  _setTestStartupTimeoutMs,
   enrollListenerPaths,
   readFirstLogJsonLine,
   readLogJsonLines,
@@ -284,5 +287,49 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     expect(child.exitCode).toBeNull();
     expect(child.signalCode).toBeNull();
     expect(() => process.kill(child.pid!, 0)).not.toThrow();
+  });
+});
+
+describe("_setTestSpawn + _setTestStartupTimeoutMs", () => {
+  afterEach(() => {
+    _setTestSpawn(null);
+    _setTestStartupTimeoutMs(null);
+  });
+
+  it("starts a fake listener whose lines land in the real log", async () => {
+    const spawner = new FakeListenerSpawner();
+    spawner.lines = ["a banner on stderr", { type: "enrollment-pending" }];
+    _setTestSpawn(spawner.spawn);
+    const { logPath } = enrollListenerPaths("my-agent");
+
+    const child = spawnDetached(["wallet-cli", "agent-intent", "enroll"], logPath);
+
+    expect(await readFirstLogJsonLine(child, logPath)).toEqual({ type: "enrollment-pending" });
+    expect(readLogLinesBeforeFirstJson(logPath)).toEqual(["a banner on stderr"]);
+    expect(spawner.started.map(started => started.command)).toEqual([
+      ["wallet-cli", "agent-intent", "enroll"],
+    ]);
+    expect(spawner.started[0].env?.WALLET_CLI_DETACHED_LISTENER).toBe("1");
+  });
+
+  it("reports a fake listener that exits without a line", async () => {
+    const spawner = new FakeListenerSpawner();
+    spawner.exitCode = 3;
+    _setTestSpawn(spawner.spawn);
+    const { logPath } = enrollListenerPaths("my-agent");
+
+    const child = spawnDetached(["wallet-cli"], logPath);
+
+    await expect(readFirstLogJsonLine(child, logPath)).rejects.toThrow(/exited with code 3/);
+  });
+
+  it("stops waiting for a silent listener at the test's startup timeout", async () => {
+    _setTestSpawn(new FakeListenerSpawner().spawn);
+    _setTestStartupTimeoutMs(0);
+    const { logPath } = enrollListenerPaths("my-agent");
+
+    const child = spawnDetached(["wallet-cli"], logPath);
+
+    expect(await readFirstLogJsonLine(child, logPath)).toBeUndefined();
   });
 });
