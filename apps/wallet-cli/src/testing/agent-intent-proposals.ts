@@ -95,7 +95,7 @@ export class FakeCal {
 
 const TOKEN_PROGRAM_OWNERS = {
   "spl-token": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  "spl-token-2022": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PxnBkcEnZF9pp7",
+  "spl-token-2022": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
 };
 
 /** The Solana node, answering `getAccountInfo` for each mint with the program that owns it. */

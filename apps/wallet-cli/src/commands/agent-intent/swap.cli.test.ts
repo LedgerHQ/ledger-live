@@ -204,10 +204,14 @@ describe("agent-intent swap (CLI)", () => {
 
   it("validates a dry run without the agent key, still saying the quote needs an approval", async () => {
     quotes.answer(quoteRow("okx", 0.03, { approves: USDC.contract }));
+    const storedKeys = new Map(fixture.keychain.entries);
+    fixture.keychain.entries.clear();
 
     const { stdout, stderr, exitCode } = await swap(
       ...sellUsdc("--to-amount", "0.03", "--dry-run"),
-    );
+    ).finally(() => {
+      for (const [key, value] of storedKeys) fixture.keychain.entries.set(key, value);
+    });
 
     expect(exitCode, stderr).toBe(0);
     expect(stdout).toContain("Dry run — intent validated, nothing was submitted.");
