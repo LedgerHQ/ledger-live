@@ -1,5 +1,5 @@
 /*
- * When the memo is greater than 32 characters
+ * When the memo is greater than 32 bytes
  */
 export class InvalidMemoMina extends Error {
   override name = "InvalidMemoMina";

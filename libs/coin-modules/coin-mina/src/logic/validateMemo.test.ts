@@ -22,4 +22,20 @@ describe("validateMemo", () => {
       expect(validateMemo(memo)).toBe(false);
     },
   );
+
+  // The limit is 32 UTF-8 bytes, which is what mina-signer enforces, not 32 characters
+  it.each(["é".repeat(MINA_MEMO_MAX_SIZE / 2), "€".repeat(10) + "ab"])(
+    "should return true when a multi-byte memo fits in the maximum byte size (case %s)",
+    (memo: string) => {
+      expect(validateMemo(memo)).toBe(true);
+    },
+  );
+
+  it.each(["é".repeat(MINA_MEMO_MAX_SIZE / 2 + 1), "€".repeat(11), "😀".repeat(9)])(
+    "should return false when a multi-byte memo is over the maximum byte size (case %s)",
+    (memo: string) => {
+      expect(memo.length).toBeLessThanOrEqual(MINA_MEMO_MAX_SIZE);
+      expect(validateMemo(memo)).toBe(false);
+    },
+  );
 });
