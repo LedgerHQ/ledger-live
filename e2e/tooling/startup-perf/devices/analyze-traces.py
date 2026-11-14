@@ -95,12 +95,18 @@ def counted_between(tracks, start, end):
 
 
 def steal_tracks(tp):
-    """Per CPU, the samples (ts, ns) of the guest's cumulative steal time."""
+    """Per CPU, the samples (ts, ns) of the guest's cumulative steal time; none when not recorded.
+
+    The emulator's traced_probes leaves steal_ns out of its /proc/stat samples, which trace_processor
+    reads as 0: a counter counted since boot that never left 0 was not recorded.
+    """
     tracks = {}
     for row in tp.query("""select counter.track_id as track, counter.ts as ts, counter.value as value
         from counter join counter_track on counter.track_id = counter_track.id
         where counter_track.name like '%steal%' order by counter.track_id, counter.ts"""):
         tracks.setdefault(row.track, []).append((row.ts, row.value))
+    if not any(value for samples in tracks.values() for _, value in samples):
+        return {}
     return tracks
 
 
