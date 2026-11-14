@@ -6025,7 +6025,23 @@
   },
   "connectKnownOrNewDevice": {
     "title": "Devices",
-    "add": "Add"
+    "add": "Add",
+    "addDevice": "Add a Ledger device",
+    "showAll": "Show all {{count}} devices",
+    "showLess": "Show less",
+    "status": {
+      "unavailable": "Not connected",
+      "available": "Available",
+      "connected": "Connected"
+    },
+    "menu": {
+      "accessibilityLabel": "{{deviceName}} options",
+      "disconnect": "Disconnect",
+      "remove": "Remove"
+    },
+    "waitingHint": {
+      "title": "Can't see your Ledger device?"
+    }
   },
   "osUpdates": {
     "backupBanner": {

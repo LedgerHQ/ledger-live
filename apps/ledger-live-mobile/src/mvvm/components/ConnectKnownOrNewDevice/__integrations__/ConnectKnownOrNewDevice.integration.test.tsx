@@ -147,7 +147,7 @@ describe("ConnectKnownOrNewDevice", () => {
       addNewDevice,
     });
 
-    await user.press(screen.getByText("Add"));
+    await user.press(screen.getByText("Add a Ledger device"));
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
       connectNewDeviceUIState: {

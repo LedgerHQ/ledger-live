@@ -15,6 +15,19 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 | `delays`                            | Optional. The delay of the waiting hint (`deviceNotFound`) and the delays of the Add mode (`connectNewDevice`), in ms. The component reads them on mount only.                      |
 | `children`                          | Optional. Shown under the list, for example the Explore row of My Wallet.                                                                                                            |
 
+## Device list
+
+Each row shows the packshot, the name and the status of the device: Not connected, Available or Connected. The order comes from the state machine.
+
+- Tapping a row connects the device. The rows have actions only in the list state: while the component waits for a device, connects or shows an error, they are for display only.
+- The ⋮ button opens a sheet with Disconnect for a connected device and Remove for a known Bluetooth device. A row with neither action has no ⋮ button.
+- The list shows 3 devices, then "Show all N devices". "Show less" collapses it again.
+- With no device, the list shows the "Add a Ledger device" row instead of the Add link.
+
+## Waiting and connecting
+
+Tapping a device that is not connected shows a sheet over the list: "power on and unlock" while the component waits for the device, then the connecting view. After a delay, the waiting sheet shows a hint that opens the Add mode. Closing the sheet goes back to the list.
+
 ## Discovery
 
 Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background. After each `onConnected`, discovery stays stopped until one of these values changes back: `isPaused` becomes `false`, or the screen is focused again, or the app comes back to the foreground.
