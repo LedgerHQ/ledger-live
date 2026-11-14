@@ -154,6 +154,16 @@ describe("planBuilds", () => {
     assert.equal(plan.labelB, `develop with LIVE-36190 re-added (${SHA(1).slice(0, 10)})`);
   });
 
+  it("caches build A only when it is a release tag's", () => {
+    const cacheA = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).cacheA;
+    assert.equal(cacheA({ preset: "prod-vs-develop", refA: "", refB: "" }), true);
+    assert.equal(cacheA({ preset: "known-regression", refA: "live-mobile@4.27.1" }), true);
+    assert.equal(cacheA({ refA: "develop", refB: "live-mobile@4.27.1" }), false);
+    assert.equal(cacheA({ preset: "aa-noise", refA: "" }), false);
+    assert.equal(cacheA({ refA: "live-mobile@4.28.0-nightly.1" }), false);
+  });
+
   for (const pairs of ["4", "7", "x", ""]) {
     it(`refuses ${JSON.stringify(pairs)} pairs`, () => {
       assert.throws(() => planBuilds({ ...INPUTS, pairs }, fakeLsRemote()), /even number ≥ 6/);
@@ -221,6 +231,7 @@ describe("outputsOf and summaryOf", () => {
         `ref_b=${SHA(1)}`,
         `label_a=live-mobile@4.27.0 (${SHA(6).slice(0, 10)})`,
         `label_b=develop (${SHA(1).slice(0, 10)})`,
+        "cache_a=true",
         "preset=custom",
         "platforms=Android & iOS",
         "pairs=20",

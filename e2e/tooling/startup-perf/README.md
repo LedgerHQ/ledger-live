@@ -97,6 +97,15 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
+Build A of a `live-mobile@X.Y.Z` tag only changes on a release, so the mobile E2E builds' S3 cache
+keeps it, with their role and `develop/` prefix on develop. Its key is commit A, a hash of the
+workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`, and a version to bump by hand
+when something else the build depends on changes. The `restore-builds` job puts a cached build A in
+the run's artifacts, once its download succeeded and its commit matches, and the build matrices
+leave out each side whose artifact it published; `save-builds` caches a build A the run made.
+Neither runs the measured ref's code, and the build jobs get no cache credentials. Both continue
+on error: a cache that cannot be read or written only means building A as before.
+
 ## A launch
 
 - **Inject once per install.** `inject.ts` launches with `wsPort`, sends the settings, accounts and

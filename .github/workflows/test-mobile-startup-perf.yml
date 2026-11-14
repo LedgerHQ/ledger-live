@@ -79,6 +79,7 @@ jobs:
       ref_b: ${{ steps.plan.outputs.ref_b }}
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
+      cache_a: ${{ steps.plan.outputs.cache_a }}
       preset: ${{ steps.plan.outputs.preset }}
       platforms: ${{ steps.plan.outputs.platforms }}
       pairs: ${{ steps.plan.outputs.pairs }}
@@ -111,17 +112,189 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
+  # Build A of a release tag, from the cache of an earlier run, so the build jobs leave it out. The
+  # cache is the mobile E2E builds' (S3, develop or branch role and key prefix). Restoring and saving
+  # are jobs of their own: the cache's credentials never share a job with the code being built.
+  restore-builds:
+    name: "Restore cached build A"
+    needs: [plan]
+    if: ${{ needs.plan.outputs.cache_a == 'true' }}
+    # Best-effort: without its outputs, the build jobs build every side.
+    continue-on-error: true
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-wallet-1cpu-aws-public-cached
+    outputs:
+      android_sides: ${{ steps.sides.outputs.android }}
+      ios_sides: ${{ steps.sides.outputs.ios }}
+      android_key: ${{ steps.keys.outputs.android }}
+      ios_key: ${{ steps.keys.outputs.ios }}
+    env:
+      SHA_A: ${{ needs.plan.outputs.ref_a }}
+    steps:
+      # The files of the key, and what the cache profile's script reads.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: |
+            /.github/workflows/test-mobile-startup-perf.yml
+            /e2e/tooling/startup-perf/ci/
+            /tools/nx/
+            /nx.workspace.json
+            /nx.s3.defaults.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      # The E2E builds' cache: develop's role on develop, the branch role elsewhere. Without it,
+      # build A is built as before: no step of the cache fails the run.
+      - name: Resolve the cache role
+        id: profile
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+
+      - uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        continue-on-error: true
+        with:
+          role-to-assume: ${{ steps.profile.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # As the E2E builds' keys: develop's prefix on develop, then what the build depends on besides
+      # commit A (the harness and this workflow), and a version to bump by hand.
+      - name: Cache keys
+        id: keys
+        env:
+          PREFIX: ${{ steps.profile.outputs.cache-profile == 'develop' && 'develop/' || '' }}
+          HARNESS: ${{ hashFiles('.github/workflows/test-mobile-startup-perf.yml', 'e2e/tooling/startup-perf/ci/*-build.mts', 'e2e/tooling/startup-perf/ci/step.mts') }}
+        run: |
+          for platform in android ios; do
+            echo "$platform=${PREFIX}startup-perf-$platform-$SHA_A-$HARNESS-1" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Look up Android build A
+        id: android-exists
+        if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.keys.outputs.android }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Download Android build A
+        id: android-download
+        if: ${{ steps.android-exists.outputs.cache-hit == 'true' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          key: ${{ steps.keys.outputs.android }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Look up iOS build A
+        id: ios-exists
+        if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.keys.outputs.ios }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Download iOS build A
+        id: ios-download
+        if: ${{ steps.ios-exists.outputs.cache-hit == 'true' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          key: ${{ steps.keys.outputs.ios }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # Only a whole build of commit A replaces building it: a download that failed partway may have
+      # left a matching sha.txt beside part of the app.
+      - name: Check the restored builds
+        id: restored
+        env:
+          DOWNLOADED_android: ${{ steps.android-download.outcome }}
+          DOWNLOADED_ios: ${{ steps.ios-download.outcome }}
+        run: |
+          for platform in android ios; do
+            dir="startup-perf-cache/$platform-a"
+            downloaded="DOWNLOADED_$platform"
+            if [[ "${!downloaded}" == success ]] && [[ "$(cat "$dir/sha.txt" 2>/dev/null)" == "$SHA_A" ]] && [[ -s "$dir/app.apk" || -s "$dir/app.zip" ]]; then
+              echo "$platform=true" >> "$GITHUB_OUTPUT"
+              echo "- $platform build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "$platform=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+      - name: Publish the restored Android build A
+        id: android-upload
+        if: ${{ steps.restored.outputs.android == 'true' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: startup-perf-android-a
+          path: startup-perf-cache/android-a/
+          retention-days: 7
+
+      - name: Publish the restored iOS build A
+        id: ios-upload
+        if: ${{ steps.restored.outputs.ios == 'true' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: startup-perf-ios-a
+          path: startup-perf-cache/ios-a/
+          retention-days: 7
+
+      # A side is restored once its artifact is published; otherwise its build job makes it.
+      - name: Sides left to build
+        id: sides
+        env:
+          SIDES: ${{ needs.plan.outputs.sides }}
+          ANDROID: ${{ steps.restored.outputs.android == 'true' && steps.android-upload.outcome == 'success' }}
+          IOS: ${{ steps.restored.outputs.ios == 'true' && steps.ios-upload.outcome == 'success' }}
+        run: |
+          left() {
+            node -e 'const [sides, restored] = process.argv.slice(1);
+              console.log(JSON.stringify(JSON.parse(sides).filter(s => restored !== "true" || s !== "a")));' "$SIDES" "$1"
+          }
+          echo "android=$(left "$ANDROID")" >> "$GITHUB_OUTPUT"
+          echo "ios=$(left "$IOS")" >> "$GITHUB_OUTPUT"
+
   build-android:
     name: "Android build ${{ matrix.side }}"
-    needs: [plan]
-    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
+    needs: [plan, restore-builds]
+    # Every side when there is no restore job (A is not a release tag's) or it failed.
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'iOS Only' && needs.restore-builds.outputs.android_sides != '[]' }}
     permissions:
       id-token: write
       contents: read
     strategy:
       fail-fast: true
       matrix:
-        side: ${{ fromJSON(needs.plan.outputs.sides) }}
+        side: ${{ fromJSON(needs.restore-builds.outputs.android_sides || needs.plan.outputs.sides) }}
     runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 120
     env:
@@ -214,15 +387,15 @@ jobs:
 
   build-ios:
     name: "iOS build ${{ matrix.side }}"
-    needs: [plan]
-    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
+    needs: [plan, restore-builds]
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'Android Only' && needs.restore-builds.outputs.ios_sides != '[]' }}
     permissions:
       id-token: write
       contents: read
     strategy:
       fail-fast: true
       matrix:
-        side: ${{ fromJSON(needs.plan.outputs.sides) }}
+        side: ${{ fromJSON(needs.restore-builds.outputs.ios_sides || needs.plan.outputs.sides) }}
     runs-on: ["general-pool", macOS, ARM64]
     timeout-minutes: 150
     env:
@@ -301,10 +474,93 @@ jobs:
           path: out/
           retention-days: 7
 
+  # Build A of a release tag, for the next runs (see restore-builds), from this run's artifacts.
+  save-builds:
+    name: "Cache build A"
+    needs: [plan, restore-builds, build-android, build-ios]
+    # Best-effort: a build that is not cached is built again by the next run.
+    continue-on-error: true
+    if: ${{ !cancelled() && needs.restore-builds.result == 'success' && (contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' || contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success') }}
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-wallet-1cpu-aws-public-cached
+    steps:
+      # What the cache profile's script reads.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: |
+            /tools/nx/
+            /nx.workspace.json
+            /nx.s3.defaults.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      # The E2E builds' cache: develop's role on develop, the branch role elsewhere. Without it,
+      # build A is built as before: no step of the cache fails the run.
+      - name: Resolve the cache role
+        id: profile
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+
+      - uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        continue-on-error: true
+        with:
+          role-to-assume: ${{ steps.profile.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Download Android build A
+        if: ${{ contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' }}
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: startup-perf-android-a
+          path: startup-perf-cache/android-a
+
+      - name: Cache Android build A
+        if: ${{ contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          key: ${{ needs.restore-builds.outputs.android_key }}
+          path: startup-perf-cache/android-a
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Download iOS build A
+        if: ${{ contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success' }}
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: startup-perf-ios-a
+          path: startup-perf-cache/ios-a
+
+      - name: Cache iOS build A
+        if: ${{ contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          key: ${{ needs.restore-builds.outputs.ios_key }}
+          path: startup-perf-cache/ios-a
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
-    needs: [plan, build-android]
-    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
+    needs: [plan, restore-builds, build-android]
+    # With build A restored, build-android is skipped when it has no side left to build.
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'iOS Only' && (needs.build-android.result == 'success' || needs.build-android.result == 'skipped' && needs.restore-builds.outputs.android_sides == '[]') }}
     strategy:
       fail-fast: false
       matrix:
@@ -487,8 +743,8 @@ jobs:
 
   measure-ios:
     name: "iOS startup (2 simulators)"
-    needs: [plan, build-ios]
-    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
+    needs: [plan, restore-builds, build-ios]
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'Android Only' && (needs.build-ios.result == 'success' || needs.build-ios.result == 'skipped' && needs.restore-builds.outputs.ios_sides == '[]') }}
     # One iOS measurement at a time on the performance pool, so two never measure side by side;
     # queue: max keeps every waiting run instead of only the latest.
     concurrency:
@@ -591,7 +847,7 @@ jobs:
 
   report-on-slack:
     name: "Slack report"
-    needs: [plan, build-android, build-ios, measure-android, measure-ios]
+    needs: [plan, restore-builds, build-android, build-ios, measure-android, measure-ios]
     # As for the mobile E2E runs: every run posts to their results channel, passed or failed, and
     # the nightly or a dispatch with slack_notif to #live-repo-health too. A run cancelled by hand
     # posts nothing; a job that times out ends cancelled but still gets posted.
@@ -628,9 +884,10 @@ jobs:
           LABEL_B: ${{ needs.plan.outputs.label_b }}
           SCENARIOS: ${{ needs.plan.outputs.scenarios }}
           PLAN: ${{ needs.plan.result }}
-          ANDROID_BUILD: ${{ needs.build-android.result }}
+          # A build job with no side left to build, all restored, counts as built.
+          ANDROID_BUILD: ${{ needs.build-android.result == 'skipped' && needs.restore-builds.outputs.android_sides == '[]' && 'success' || needs.build-android.result }}
           ANDROID_MEASURE: ${{ needs.measure-android.result }}
-          IOS_BUILD: ${{ needs.build-ios.result }}
+          IOS_BUILD: ${{ needs.build-ios.result == 'skipped' && needs.restore-builds.outputs.ios_sides == '[]' && 'success' || needs.build-ios.result }}
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 
