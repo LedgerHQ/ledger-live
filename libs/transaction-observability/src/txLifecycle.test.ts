@@ -6,15 +6,23 @@ import {
   type LogEvent,
 } from "./logEvent";
 import {
+  earnLifecycleProduct,
+  setTxLifecycleBaseUrl,
+  startDappTxLifecycle,
+} from "./earnLifecycleHost";
+import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
-  sendTxLifecycle,
-  setTxLifecycleBaseUrl,
-  startDappTxLifecycle,
-  toTxLifecyclePayload,
+  resolveTxLifecycleProduct,
+  sendTxLifecycle as sendForProduct,
   type TxLifecyclePayload,
+  type TxLifecycleProduct,
 } from "./txLifecycle";
+import { toTxLifecyclePayload } from "./txLifecycleProducts";
+
+const sendTxLifecycle = (payload: TxLifecyclePayload, manifestId?: string) =>
+  sendForProduct(earnLifecycleProduct, payload, manifestId);
 
 const common = {
   appVersion: "lld/2.0.0",
@@ -392,5 +400,113 @@ describe("sendTxLifecycle", () => {
       network: "ethereum",
       failure_class: "abandoned",
     });
+  });
+});
+
+describe("lifecycle products", () => {
+  let fetchSpy: jest.SpiedFunction<typeof fetch>;
+
+  const product = (
+    overrides: Partial<TxLifecycleProduct> & { id: string },
+  ): TxLifecycleProduct => ({
+    pathOf: () => undefined,
+    isEnabled: () => true,
+    baseUrl: () => `https://${overrides.id}.example.test`,
+    ...overrides,
+  });
+
+  const payload: TxLifecyclePayload = {
+    schema_version: 1,
+    event: "tx_intent",
+    path: "dapp",
+    platform: "desktop",
+    currency_family: "tezos",
+  };
+
+  beforeEach(() => {
+    clearPendingTxLifecycle("desktop");
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
+  });
+
+  afterEach(() => {
+    clearPendingTxLifecycle("desktop");
+    fetchSpy.mockRestore();
+  });
+
+  it("gives a manifest two products claim to the first one listed", () => {
+    const event = { status: "intent", stage: TransactionStage.Sign, ...common } as LogEvent;
+    const claims = product({ id: "a", pathOf: () => "dapp" });
+    const alsoClaims = product({ id: "b", pathOf: () => "dapp" });
+
+    expect(resolveTxLifecycleProduct([claims, product({ id: "b" })], event)?.product).toBe(claims);
+    expect(resolveTxLifecycleProduct([claims, alsoClaims], event)?.product).toBe(claims);
+    expect(resolveTxLifecycleProduct([alsoClaims, claims], event)?.product).toBe(alsoClaims);
+    expect(resolveTxLifecycleProduct([product({ id: "c" })], event)).toBeUndefined();
+  });
+
+  it("clears one product's attempts and keeps the other's", () => {
+    const a = product({ id: "a" });
+    const b = product({ id: "b" });
+    sendForProduct(a, payload, "app-a");
+    sendForProduct(b, payload, "app-b");
+    fetchSpy.mockClear();
+
+    clearPendingTxLifecycle("desktop", "a");
+    abandonPendingDappTxLifecycle("desktop", "app-a");
+    abandonPendingDappTxLifecycle("desktop", "app-b");
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://b.example.test/v1/tx/lifecycle");
+  });
+
+  it("moves the pending state for payloads the product does not report", () => {
+    const quiet = product({ id: "quiet", reports: () => false });
+    sendForProduct(quiet, payload, "app");
+    sendForProduct(quiet, { ...payload, event: "tx_terminal", outcome: "success" }, "app");
+    abandonPendingDappTxLifecycle("desktop", "app");
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("posts a superseded attempt to the sink of the product that opened it", () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
+    sendForProduct(product({ id: "b" }), { ...payload, currency_family: "solana" }, "app");
+
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://b.example.test/v1/tx/lifecycle",
+    ]);
+    expect(JSON.parse(fetchSpy.mock.calls[1][1]?.body as string)).toMatchObject({
+      failure_class: "abandoned",
+      currency_family: "tezos",
+    });
+  });
+
+  it("posts a terminal through the product that opened the attempt, not the latest claimant", () => {
+    const quiet = product({ id: "quiet", reports: () => false });
+    sendForProduct(product({ id: "a" }), payload, "app");
+    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "app");
+    sendForProduct(quiet, payload, "other");
+    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "other");
+
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+    ]);
+  });
+
+  it("only clears or abandons a dApp attempt the named product owns", () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
+    fetchSpy.mockClear();
+
+    clearPendingDappTxLifecycle("desktop", "app", "b");
+    abandonPendingDappTxLifecycle("desktop", "app", "b");
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    abandonPendingDappTxLifecycle("desktop", "app", "a");
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+    ]);
   });
 });

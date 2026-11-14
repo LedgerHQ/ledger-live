@@ -76,7 +76,10 @@ import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  installBorrowLifecycleHost,
+  installEarnLifecycleHost,
+} from "@ledgerhq/transaction-observability";
 import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
@@ -149,6 +152,15 @@ store.subscribe(
     resolveVersionedRedirects: getVersionedRedirects,
     readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
     apiBaseUrl: Config.EARN_API_BASE_URL,
+  }),
+);
+store.subscribe(
+  installBorrowLifecycleHost({
+    platform: "mobile",
+    readEnabled: () =>
+      selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
+    readManifestId: () => selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id,
+    apiBaseUrl: Config.BORROW_API_BASE_URL,
   }),
 );
 setCoinObservabilityConfigReader(() => {

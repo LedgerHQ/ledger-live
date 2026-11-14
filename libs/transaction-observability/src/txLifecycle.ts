@@ -1,6 +1,6 @@
 import { ErrorCategory } from "./errorCategory";
-import { TransactionPathway, type LogEvent } from "./logEvent";
-import { isEarnMonitoringApp } from "./stakingApps";
+import type { LogEvent } from "./logEvent";
+import { setTransactionObserver } from "./observer";
 
 export type TxLifecyclePlatform = "desktop" | "mobile";
 export type TxLifecyclePath = "native" | "dapp";
@@ -42,17 +42,41 @@ export type TxLifecyclePayload = TxLifecyclePayloadBase &
       }
   );
 
-const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
+/**
+ * Where a payload comes from: a transaction event the observer received, an attempt a new intent
+ * replaced before any terminal arrived, or an attempt the screen hosting it left behind.
+ */
+export type TxLifecycleSource = "event" | "superseded" | "teardown";
 
-declare const process: { env: Record<string, string | undefined> };
+/**
+ * A product the lifecycle is monitored for. The core tracks attempts and posts them; each
+ * product says which events are its own, which kill-switch it answers to and where it posts.
+ */
+export type TxLifecycleProduct = {
+  readonly id: string;
+  /** The path this product monitors the event on; undefined when the event is not its own. */
+  pathOf(event: LogEvent): TxLifecyclePath | undefined;
+  isEnabled(): boolean;
+  baseUrl(): string;
+  /** The payloads the host posts; the others only move the pending state. All when omitted. */
+  reports?(payload: TxLifecyclePayload, source: TxLifecycleSource): boolean;
+};
 
-// The desktop bundler rewrites `process.env`; its renderer has no global `process`.
-function readClientVersion(): string | undefined {
-  try {
-    return process.env.LEDGER_CLIENT_VERSION;
-  } catch {
-    return undefined;
+type TxLifecycleClaim = { product: TxLifecycleProduct; path: TxLifecyclePath };
+
+/**
+ * Exactly one product owns an event: the first in `products` that claims it. The list order is
+ * the priority, so a manifest two products claim goes to the earlier one instead of being lost.
+ */
+export function resolveTxLifecycleProduct(
+  products: readonly TxLifecycleProduct[],
+  event: LogEvent,
+): TxLifecycleClaim | undefined {
+  for (const product of products) {
+    const path = product.pathOf(event);
+    if (path) return { product, path };
   }
+  return undefined;
 }
 const CURRENCY_FAMILIES = new Set<TxLifecyclePayload["currency_family"]>([
   "solana",
@@ -81,24 +105,6 @@ function normalizeFamily(family: string): TxLifecyclePayload["currency_family"] 
   return CURRENCY_FAMILIES.has(candidate) ? candidate : "other";
 }
 
-function resolvePath(event: LogEvent): TxLifecyclePath | undefined {
-  if (event.manifestId) {
-    if (APP_OWNED_MANIFEST_IDS.has(event.manifestId) || !isEarnMonitoringApp(event.manifestId)) {
-      return undefined;
-    }
-    return "dapp";
-  }
-
-  if (
-    event.earnTransactionType &&
-    (event.pathway === TransactionPathway.Send || event.pathway === TransactionPathway.Unknown)
-  ) {
-    return "native";
-  }
-
-  return undefined;
-}
-
 function failureClass(event: Extract<LogEvent, { status: "failure" }>): TxLifecycleFailureClass {
   if (event.abandoned) return "abandoned";
 
@@ -121,13 +127,11 @@ function failureClass(event: Extract<LogEvent, { status: "failure" }>): TxLifecy
   }
 }
 
-export function toTxLifecyclePayload(
+export function buildTxLifecyclePayload(
   event: LogEvent,
   platform: TxLifecyclePlatform,
-): TxLifecyclePayload | null {
-  const path = resolvePath(event);
-  if (!path) return null;
-
+  path: TxLifecyclePath,
+): TxLifecyclePayload {
   const base = {
     schema_version: 1 as const,
     path,
@@ -157,7 +161,6 @@ export function toTxLifecyclePayload(
 }
 
 const TX_LIFECYCLE_PATH = "/v1/tx/lifecycle";
-const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
 
 function withoutTrailingSlashes(base: string): string {
   let end = base.length;
@@ -165,17 +168,21 @@ function withoutTrailingSlashes(base: string): string {
   return base.slice(0, end);
 }
 
-let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
-
 /**
  * Hosts resolve public configuration through their own build systems:
  * desktop uses a literal `process.env` replacement and mobile uses `react-native-config`.
  */
-export function setTxLifecycleBaseUrl(baseUrl: string | undefined): void {
-  earnApiBaseUrl = withoutTrailingSlashes(baseUrl || DEFAULT_EARN_API_BASE_URL);
+export function normalizeTxLifecycleBaseUrl(baseUrl: string | undefined, fallback: string): string {
+  return withoutTrailingSlashes(baseUrl || fallback);
 }
 
-const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();
+/**
+ * An attempt keeps the product that opened it, so a later config change cannot reroute it: its
+ * terminal and its abandon both go to that product.
+ */
+type PendingAttempt = { product: TxLifecycleProduct; base: TxLifecyclePayloadBase };
+
+const pendingLifecycle = new Map<string, PendingAttempt>();
 
 function lifecycleKey(
   payload: Pick<TxLifecyclePayloadBase, "path" | "platform">,
@@ -210,9 +217,14 @@ function sameLifecycleBase(left: TxLifecyclePayloadBase, right: TxLifecyclePaylo
   );
 }
 
-function postTxLifecycle(payload: TxLifecyclePayload): void {
+function postTxLifecycle(
+  product: TxLifecycleProduct,
+  payload: TxLifecyclePayload,
+  source: TxLifecycleSource,
+): void {
   try {
-    void fetch(`${earnApiBaseUrl}${TX_LIFECYCLE_PATH}`, {
+    if (product.reports && !product.reports(payload, source)) return;
+    void fetch(`${product.baseUrl()}${TX_LIFECYCLE_PATH}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -223,85 +235,109 @@ function postTxLifecycle(payload: TxLifecyclePayload): void {
   }
 }
 
-function abandonPendingLifecycle(key: string): void {
+function abandonPendingLifecycle(key: string, source: Exclude<TxLifecycleSource, "event">): void {
   const pending = pendingLifecycle.get(key);
   if (!pending) return;
 
   pendingLifecycle.delete(key);
-  postTxLifecycle({
-    ...pending,
-    event: "tx_terminal",
-    outcome: "failure",
-    failure_class: "abandoned",
-  });
+  postTxLifecycle(
+    pending.product,
+    {
+      ...pending.base,
+      event: "tx_terminal",
+      outcome: "failure",
+      failure_class: "abandoned",
+    },
+    source,
+  );
 }
 
-export function sendTxLifecycle(payload: TxLifecyclePayload, manifestId?: string): void {
+export function sendTxLifecycle(
+  product: TxLifecycleProduct,
+  payload: TxLifecyclePayload,
+  manifestId?: string,
+): void {
   const key = lifecycleKey(payload, manifestId);
   if (payload.event === "tx_intent") {
     const next = lifecycleBase(payload);
-    const pending = pendingLifecycle.get(key);
+    const pending = pendingLifecycle.get(key)?.base;
     const isDappPlaceholder = pending?.path === "dapp" && pending.currency_family === "other";
 
     // A dApp sign observable may resubscribe without representing another user attempt.
     if (pending?.path === "dapp" && sameLifecycleBase(pending, next)) return;
 
-    if (isDappPlaceholder) {
-      pendingLifecycle.set(key, next);
-    } else {
-      if (pending) abandonPendingLifecycle(key);
-      pendingLifecycle.set(key, next);
-    }
-  } else {
-    if (!pendingLifecycle.has(key)) return;
-    pendingLifecycle.delete(key);
-  }
-
-  postTxLifecycle(payload);
-}
-
-export function abandonPendingDappTxLifecycle(
-  platform: TxLifecyclePlatform,
-  manifestId: string,
-): void {
-  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId));
-}
-
-export function clearPendingDappTxLifecycle(
-  platform: TxLifecyclePlatform,
-  manifestId: string,
-): void {
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }, manifestId));
-}
-
-export function clearPendingTxLifecycle(platform: TxLifecyclePlatform): void {
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "native" }));
-  const dappPrefix = `${platform}:dapp:`;
-  for (const key of pendingLifecycle.keys()) {
-    if (key.startsWith(dappPrefix)) pendingLifecycle.delete(key);
-  }
-}
-
-export function startDappTxLifecycle(
-  platform: TxLifecyclePlatform,
-  manifestId: string | undefined,
-): void {
-  if (!manifestId || APP_OWNED_MANIFEST_IDS.has(manifestId) || !isEarnMonitoringApp(manifestId)) {
+    if (pending && !isDappPlaceholder) abandonPendingLifecycle(key, "superseded");
+    pendingLifecycle.set(key, { product, base: next });
+    postTxLifecycle(product, payload, "event");
     return;
   }
 
-  // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
-  // the placeholder intent reports the same string as the terminal that closes it.
-  const appVersion = readClientVersion();
-  sendTxLifecycle(
-    {
-      schema_version: 1,
-      event: "tx_intent",
-      path: "dapp",
-      platform,
-      currency_family: "other",
-      ...(appVersion ? { app_version: appVersion } : {}),
-    },
-    manifestId,
-  );
+  const pending = pendingLifecycle.get(key);
+  if (!pending) return;
+  pendingLifecycle.delete(key);
+  postTxLifecycle(pending.product, payload, "event");
+}
+
+function ownsPendingDapp(key: string, productId: string | undefined): boolean {
+  const pending = pendingLifecycle.get(key);
+  return !!pending && (productId === undefined || pending.product.id === productId);
+}
+
+/** Closes the pending dApp attempt, only when `productId` owns it if one is named. */
+export function abandonPendingDappTxLifecycle(
+  platform: TxLifecyclePlatform,
+  manifestId: string,
+  productId?: string,
+): void {
+  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  if (ownsPendingDapp(key, productId)) abandonPendingLifecycle(key, "teardown");
+}
+
+/** Drops the pending dApp attempt, only when `productId` owns it if one is named. */
+export function clearPendingDappTxLifecycle(
+  platform: TxLifecyclePlatform,
+  manifestId: string,
+  productId?: string,
+): void {
+  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  if (ownsPendingDapp(key, productId)) pendingLifecycle.delete(key);
+}
+
+/** Drops one product's pending attempts, or every product's when none is named. */
+export function clearPendingTxLifecycle(platform: TxLifecyclePlatform, productId?: string): void {
+  const prefix = `${platform}:`;
+  for (const [key, pending] of pendingLifecycle) {
+    if (key.startsWith(prefix) && (productId === undefined || pending.product.id === productId)) {
+      pendingLifecycle.delete(key);
+    }
+  }
+}
+
+/**
+ * Sends the consent-independent lifecycle events. Separate from the Segment observer each host
+ * registers: each product answers to its own kill-switch rather than to analytics consent.
+ */
+export function observeTxLifecycle(
+  platform: TxLifecyclePlatform,
+  products: readonly TxLifecycleProduct[],
+): () => void {
+  return setTransactionObserver(event => {
+    const enabled: TxLifecycleProduct[] = [];
+    for (const product of products) {
+      if (product.isEnabled()) enabled.push(product);
+      else clearPendingTxLifecycle(platform, product.id);
+    }
+
+    // Only enabled products compete for an event: a product switched off must not take a
+    // manifest away from one that is monitoring it.
+    const claim = resolveTxLifecycleProduct(enabled, event);
+    if (!claim) return;
+
+    // The manifest stays local: it correlates the attempt here and never reaches the wire.
+    sendTxLifecycle(
+      claim.product,
+      buildTxLifecyclePayload(event, platform, claim.path),
+      event.manifestId,
+    );
+  });
 }

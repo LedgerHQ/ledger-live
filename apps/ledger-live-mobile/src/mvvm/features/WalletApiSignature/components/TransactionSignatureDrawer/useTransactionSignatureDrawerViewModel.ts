@@ -7,6 +7,8 @@ import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { useSignAttemptObservability } from "@ledgerhq/live-common/hw/actions/signAttemptObservability";
+import { buildSignCommonEvent, TransactionPathway } from "@ledgerhq/transaction-observability";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
@@ -25,8 +27,16 @@ function normalizeError(error: unknown): Error {
 }
 
 export function useTransactionSignatureDrawerViewModel({ request, onClose }: Props) {
-  const { account, parentAccount, transaction, appName, dependencies, onSuccess, onError } =
-    request;
+  const {
+    account,
+    parentAccount,
+    transaction,
+    appName,
+    dependencies,
+    manifestId,
+    onSuccess,
+    onError,
+  } = request;
 
   const [deviceInitializationInput, setDeviceInitializationInput] =
     useState<InitializationInput | null>(null);
@@ -98,15 +108,45 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     [account, parentAccount, preparedTransaction, tokenCurrency],
   );
 
+  // The bridge reports the sign intent and its failures, but a dismissed drawer only
+  // unsubscribes, so the drop-off is reported here as the legacy sign device action does.
+  const { beginAttempt, abandonAttempt, noteSettled, notePromptShown } =
+    useSignAttemptObservability(
+      useCallback(
+        () =>
+          buildSignCommonEvent({
+            account,
+            mainAccount: getMainAccount(account, parentAccount ?? undefined),
+            pathway: TransactionPathway.WalletApiSignAndBroadcast,
+            manifestId,
+            transaction: preparedTransaction ?? transaction,
+          }),
+        [account, parentAccount, manifestId, preparedTransaction, transaction],
+      ),
+    );
+
   const onIntentJobStateChanged = useCallback(
     (jobState: SignTransactionIntentJobState) => {
-      if (jobState.type === "signed") {
-        isSigningCompletedRef.current = true;
-        onSuccess(jobState.signedOperation);
-        onClose();
+      switch (jobState.type) {
+        case "pending":
+          beginAttempt();
+          break;
+        case "device-signature-requested":
+          notePromptShown();
+          break;
+        case "cancelled":
+        case "error":
+          noteSettled();
+          break;
+        case "signed":
+          noteSettled();
+          isSigningCompletedRef.current = true;
+          onSuccess(jobState.signedOperation);
+          onClose();
+          break;
       }
     },
-    [onSuccess, onClose],
+    [beginAttempt, notePromptShown, noteSettled, onSuccess, onClose],
   );
 
   // Dismiss semantics mirror the Send flow's DIE integration (Send's useSignatureViewModel):
@@ -120,9 +160,10 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
 
   const onUserCancel = useCallback(() => {
     if (isSigningCompletedRef.current) return;
+    abandonAttempt();
     onError(new UserRefusedOnDevice());
     onClose();
-  }, [onError, onClose]);
+  }, [abandonAttempt, onError, onClose]);
 
   return {
     deviceInitializationInput,

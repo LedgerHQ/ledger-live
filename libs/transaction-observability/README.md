@@ -119,8 +119,58 @@ as a manifest allow-list.
 Desktop and mobile differ only in the flag slice they read and the version resolver they own, so
 the wiring lives here rather than twice in the hosts: `installEarnLifecycleHost` takes those
 readers and returns the store listener that drops pending attempts when the kill-switch goes off,
-`registerTxLifecycleObserver` installs the observer, and `startDappLifecycleMonitoring` is the
-body of each host's dApp effect.
+and `startDappLifecycleMonitoring` is the body of each host's dApp effect.
+
+### Lifecycle products
+
+The lifecycle core (`txLifecycle.ts`) names no product. It tracks pending attempts, keys them,
+and posts them. Each product is a `TxLifecycleProduct` that says which events are its own
+(`pathOf`), which kill-switch it answers to (`isEnabled`), where it posts (`baseUrl`) and,
+optionally, which payloads the host reports (`reports`). Earn's lives in `earnLifecycleHost.ts`
+and Borrow's in `borrowLifecycleHost.ts`, and neither imports the other.
+
+`txLifecycleProducts.ts` is the only module that lists both. `registerTxLifecycleObserver`
+installs one observer that hands each event to the single **enabled** product that claims it.
+When two enabled products claim a manifest, the one listed first wins (Earn before Borrow), so a
+misconfigured Borrow manifest id can never take events away from Earn, and a product whose
+kill-switch is off never competes for a manifest at all. A pending attempt remembers the product that opened it, so clearing, abandoning and
+picking the sink never re-resolve ownership. To add a product, write its descriptor in its own
+host module and add it to that list.
+
+### Borrow
+
+Borrow reuses the Earn wire contract (`tx_intent` / `tx_terminal`, schema version 1) behind its
+own kill-switch, `borrowTxLifecycleMonitoring`, and posts to its own sink (`BORROW_API_BASE_URL`,
+default `https://global.api.stg.ledger-test.com/borrow`, so dev builds without the variable stay
+out of production counters; every release env file sets the prod URL) at `/v1/tx/lifecycle`.
+
+The host deliberately reports **less** than it does for Earn. The contract has no field for the
+Borrow action (supply / borrow / repay / withdraw), and the host cannot derive it: a sign request
+only carries call data. The Borrow live app knows the action, so it owns `tx_intent` and the
+success/failure `tx_terminal`. The host tracks Borrow attempts (manifest `borrow`, or the id
+`ptxBorrowLiveApp` configures) only to emit what the app cannot see: a `failure/abandoned`
+terminal when the Borrow screen is torn down with an attempt still pending. A sign modal the user
+closes also rejects the app's Wallet API request, so the app reports it (as a cancel) and the
+host only closes its pending attempt. An attempt superseded by a new intent is likewise closed
+without a post. `TxLifecycleProduct.reports` receives the payload's source (`event`,
+`superseded`, `teardown`) for that decision.
+There is no placeholder intent for a plain webview open, so an idle Borrow session never counts.
+Mounting the Borrow screen drops any attempt left pending before it, so a teardown only reports
+attempts that screen started. `installBorrowLifecycleHost` wires the readers at boot and
+`startBorrowLifecycleMonitoring` is the body of each host's Borrow webview effect. Earn behaviour
+and its flag are unchanged.
+
+A kill-switch going off only drops the attempts of its own product. A dApp attempt is keyed by
+platform and manifest, not by product, so the products only touch each other's attempts on a
+manifest both claim, which Earn owns. There the Borrow screen drops Earn's pending attempt when it
+mounts, and closes it as `failure/abandoned` when it goes away. That abandon follows the attempt
+and posts to Earn's sink, never to Borrow's.
+
+One known gap: the host gets no event when signing completes, only the broadcast outcome. On
+desktop the sign modal lives outside the Borrow route, so a user who leaves Borrow after signing
+but before the broadcast returns gets a `failure/abandoned` terminal, and the broadcast success
+that follows is dropped as unpaired. The window is narrow and desktop only. Closing it needs a
+sign-completed event from the bridge seam, so the teardown can skip attempts already signed.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
 `@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
