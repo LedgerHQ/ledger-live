@@ -5,7 +5,9 @@ For the app's UI, JS and render threads and its other threads: the time running,
 (runnable), sleeping and blocked, between the start of the process and the readiness gate opening
 ("WaitForAppReady done"), between the gate and "App started", and from "Splash screen faded" to
 "App started"; plus how busy the emulator's CPUs were, the time the host took them away (steal,
-from /proc/stat every 100 ms) and its busiest processes. A build without the gate's events gets one
+from /proc/stat every 100 ms, when the emulator's Perfetto records it), its busiest processes, the
+app's UI thread and RenderThread slices (frames, layout passes, draws) and which threads woke the UI
+thread while it slept. A build without the gate's events gets one
 window, up to "App started". The app's startup events count from its start request, which the
 trace shows as the "Start proc" slice of system_server; the process fork is the fallback.
 
@@ -37,6 +39,8 @@ JS_START_BASE_MAX_MS = 50
 GROUPS = ("ui", "js", "render", "other")
 STATES = ("running", "runnable", "sleeping", "blocked")
 MS = 1_000_000
+SLICES = 12
+WAKERS = 5
 
 
 def group_of(tid, pid, name):
@@ -110,6 +114,49 @@ def steal_tracks(tp):
     return tracks
 
 
+def short_slice(name):
+    """A slice name with its numbers as #, so frames group: "Choreographer#doFrame #", "Drawing # # # #"."""
+    return re.sub(r"\s+", " ", re.sub(r"\d+(\.\d+)?", "#", name or "?")).strip()
+
+
+def app_slices(tp, upid, pid, start, end):
+    """The app's UI thread and RenderThread slices in [start, end], top two levels: name, count, ms."""
+    totals = {}
+    for row in tp.query(f"""
+        select thread.tid as tid, slice.depth as depth, slice.name as name, count(*) as n,
+          sum({overlap('slice', start, end)}) as ns
+        from slice join thread_track on slice.track_id = thread_track.id join thread using(utid)
+        where thread.upid = {upid} and (thread.tid = {pid} or thread.name = 'RenderThread')
+          and slice.depth <= 1 and {inside('slice', start, end)}
+        group by thread.tid, slice.depth, slice.name"""):
+        key = f"{'ui' if row.tid == pid else 'render'}{' >' if row.depth else ''} {short_slice(row.name)}"
+        n, ns = totals.get(key, (0, 0))
+        totals[key] = (n + row.n, ns + (row.ns or 0))
+    busiest = sorted(totals.items(), key=lambda item: -item[1][1])[:SLICES]
+    return [[key, n, round(ns / MS)] for key, (n, ns) in busiest]
+
+
+def ui_wakers(tp, upid, pid, start, end):
+    """While the UI thread slept in [start, end]: which threads woke it, how often, and the ms slept."""
+    rows = tp.query(f"""
+        select coalesce(waker_process.name, '?') as process, coalesce(waker.name, '?') as thread,
+          count(*) as n, sum({overlap('slept', start, end)}) as ns
+        from thread_state as slept join thread as ui on slept.utid = ui.utid
+          left join thread_state as woken on woken.utid = slept.utid and woken.ts = slept.ts + slept.dur
+          left join thread as waker on coalesce(woken.waker_utid, slept.waker_utid) = waker.utid
+          left join process as waker_process on waker.upid = waker_process.upid
+        where ui.upid = {upid} and ui.tid = {pid} and slept.state = 'S' and {inside('slept', start, end)}
+        group by 1, 2 order by ns desc limit {WAKERS}""")
+    return [[f"{row.process.split('/')[-1]}/{row.thread}", row.n, round((row.ns or 0) / MS)] for row in rows]
+
+
+def guarded(compute, *args):
+    try:
+        return compute(*args)
+    except Exception as error:  # a query this trace_processor cannot run leaves out its field only
+        return {"error": str(error)[:200]}
+
+
 def window(tp, upid, pid, start, end, trace_end, steal):
     truncated = end > trace_end
     end = min(end, trace_end)
@@ -143,6 +190,8 @@ def window(tp, upid, pid, start, end, trace_end, steal):
         "stealMs": counted_between(steal, start, end),
         "threads": {g: {s: round(v) for s, v in states[g].items()} for g in GROUPS},
         "top": top,
+        "slices": guarded(app_slices, tp, upid, pid, start, end),
+        "uiWokenBy": guarded(ui_wakers, tp, upid, pid, start, end),
     }
 
 
