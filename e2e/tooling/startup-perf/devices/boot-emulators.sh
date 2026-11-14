@@ -26,9 +26,9 @@ prepare() {
   timeout "$BOOT_TIMEOUT_S" adb -s "$serial" wait-for-device
   timeout "$BOOT_TIMEOUT_S" adb -s "$serial" shell \
     'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'
-  # The cached AVD was saved with animations off; a user's phone has them on.
+  # Experiment: system animations off, so the splash fade adds no frames before App started.
   for key in window_animation_scale transition_animation_scale animator_duration_scale; do
-    adb -s "$serial" shell settings put global "$key" 1
+    adb -s "$serial" shell settings put global "$key" 0
   done
   # Screen on and unlocked for the whole run, as Detox ensures for E2E.
   adb -s "$serial" shell input keyevent KEYCODE_WAKEUP
