@@ -33,6 +33,10 @@ const USDT = {
   decimals: 6,
   contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 };
+const SESSION_ACCOUNTS = [
+  { label: "ethereum-1", descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0` },
+  { label: "bitcoin-native-1", descriptor: `account:2:utxo:bitcoin:${BTC_XPUB}:m/84h/0h/0h` },
+];
 const ALL_PROVIDERS = "oneinch,velora,okx,lifi";
 const ABOVE_QUOTE_WARNING =
   "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the " +
@@ -51,12 +55,7 @@ let restoreCalCache: () => void;
 
 beforeAll(async () => {
   server.start();
-  fixture = await makeEnrolledProfile({
-    accounts: [
-      { label: "ethereum-1", descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0` },
-      { label: "bitcoin-native-1", descriptor: `account:2:utxo:bitcoin:${BTC_XPUB}:m/84h/0h/0h` },
-    ],
-  });
+  fixture = await makeEnrolledProfile({ accounts: SESSION_ACCOUNTS });
   env = { ...fixture.env, WALLET_CLI_MOCK_PORT: String(server.port) };
 });
 afterAll(() => {
@@ -204,14 +203,13 @@ describe("agent-intent swap (CLI)", () => {
 
   it("validates a dry run without the agent key, still saying the quote needs an approval", async () => {
     quotes.answer(quoteRow("okx", 0.03, { approves: USDC.contract }));
-    const storedKeys = new Map(fixture.keychain.entries);
-    fixture.keychain.entries.clear();
+    const keyless = await makeEnrolledProfile({ accounts: SESSION_ACCOUNTS });
+    keyless.keychain.entries.clear();
 
-    const { stdout, stderr, exitCode } = await swap(
-      ...sellUsdc("--to-amount", "0.03", "--dry-run"),
-    ).finally(() => {
-      for (const [key, value] of storedKeys) fixture.keychain.entries.set(key, value);
-    });
+    const { stdout, stderr, exitCode } = await runCli(
+      ["agent-intent", "swap", "--profile", "bot", ...sellUsdc("--to-amount", "0.03", "--dry-run")],
+      { ...keyless.env, WALLET_CLI_MOCK_PORT: String(server.port) },
+    ).finally(keyless.cleanup);
 
     expect(exitCode, stderr).toBe(0);
     expect(stdout).toContain("Dry run — intent validated, nothing was submitted.");
