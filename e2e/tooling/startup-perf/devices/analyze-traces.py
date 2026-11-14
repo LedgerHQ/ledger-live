@@ -3,10 +3,11 @@
 
 For the app's UI, JS and render threads and its other threads: the time running, waiting for a CPU
 (runnable), sleeping and blocked, between the start of the process and the readiness gate opening
-("WaitForAppReady done"), and between the gate and "App started"; plus how busy the emulator's CPUs
-were and its busiest processes. A build without the gate's events gets one window, up to "App
-started". The app's startup events count from its start request, which the trace shows as the
-"Start proc" slice of system_server; the process fork is the fallback.
+("WaitForAppReady done"), between the gate and "App started", and from "Splash screen faded" to
+"App started"; plus how busy the emulator's CPUs were, the time the host took them away (steal,
+from /proc/stat every 100 ms) and its busiest processes. A build without the gate's events gets one
+window, up to "App started". The app's startup events count from its start request, which the
+trace shows as the "Start proc" slice of system_server; the process fork is the fallback.
 
 Writes one JSON line per launch and prints a table. Needs the perfetto package (trace_processor).
 
@@ -29,6 +30,8 @@ GATE_CONDITIONS = {
 }
 GATE_TIMED_OUT = "WaitForAppReady timed out"
 APP_STARTED = "App started"
+# "App started" (the root view's first layout) can land well after the splash fade on lavapipe.
+SPLASH_FADED = "Splash screen faded"
 # Builds 4.26-4.27 count their events from the first JS import, which the trace cannot place.
 JS_START_BASE_MAX_MS = 50
 GROUPS = ("ui", "js", "render", "other")
@@ -72,7 +75,36 @@ def first(tp, sql):
     return rows[0] if rows else None
 
 
-def window(tp, upid, pid, start, end, trace_end):
+def value_at(samples, ts):
+    """A cumulative counter at `ts`, interpolated between its samples; None outside them."""
+    for (t0, v0), (t1, v1) in zip(samples, samples[1:]):
+        if t0 <= ts <= t1:
+            return v0 if t1 == t0 else v0 + (v1 - v0) * (ts - t0) / (t1 - t0)
+    return None
+
+
+def counted_between(tracks, start, end):
+    """Sum over CPUs of a cumulative counter's growth in [start, end], in ms; None without samples."""
+    total, counted = 0.0, False
+    for samples in tracks.values():
+        a, b = value_at(samples, start), value_at(samples, end)
+        if a is not None and b is not None:
+            total += b - a
+            counted = True
+    return round(total / MS) if counted else None
+
+
+def steal_tracks(tp):
+    """Per CPU, the samples (ts, ns) of the guest's cumulative steal time."""
+    tracks = {}
+    for row in tp.query("""select counter.track_id as track, counter.ts as ts, counter.value as value
+        from counter join counter_track on counter.track_id = counter_track.id
+        where counter_track.name like '%steal%' order by counter.track_id, counter.ts"""):
+        tracks.setdefault(row.track, []).append((row.ts, row.value))
+    return tracks
+
+
+def window(tp, upid, pid, start, end, trace_end, steal):
     truncated = end > trace_end
     end = min(end, trace_end)
     if end <= start:
@@ -102,6 +134,7 @@ def window(tp, upid, pid, start, end, trace_end):
         "wallMs": round(wall),
         "truncated": truncated,
         "cpuBusy": round(((busy.ns or 0) / MS) / (wall * cpus), 2),
+        "stealMs": counted_between(steal, start, end),
         "threads": {g: {s: round(v) for s, v in states[g].items()} for g in GROUPS},
         "top": top,
     }
@@ -147,16 +180,20 @@ def launch_of(tp, sample):
     if origin is None:
         return {"error": "the app process has no start in the trace"}
     trace_end = first(tp, "select end_ts from trace_bounds").end_ts
+    steal = steal_tracks(tp)
     gate, last_condition = gate_of(events)
     at = lambda ms: origin + int(ms * MS)  # noqa: E731
     result = {"origin": origin_source, "gateMs": gate, "lastCondition": last_condition, "appStartedMs": started}
     if gate is None:
-        result["toAppStarted"] = window(tp, process.upid, pid, origin, at(started), trace_end)
+        result["toAppStarted"] = window(tp, process.upid, pid, origin, at(started), trace_end, steal)
         return result
     if gate > started:
         return {"error": f"the gate opened at {gate} ms, after App started at {started} ms"}
-    result["beforeGate"] = window(tp, process.upid, pid, origin, at(gate), trace_end)
-    result["afterGate"] = window(tp, process.upid, pid, at(gate), at(started), trace_end)
+    result["beforeGate"] = window(tp, process.upid, pid, origin, at(gate), trace_end, steal)
+    result["afterGate"] = window(tp, process.upid, pid, at(gate), at(started), trace_end, steal)
+    splash = events.get(SPLASH_FADED)
+    if splash is not None and gate <= splash < started:
+        result["afterSplash"] = window(tp, process.upid, pid, at(splash), at(started), trace_end, steal)
     return result
 
 
@@ -170,7 +207,8 @@ def row_of(name, sample, result):
     return " | ".join(str(x) for x in [
         name, sample.get("appStartupTime"), result["gateMs"], result["lastCondition"], shown["wallMs"],
         f"{t['ui']['running']}/{t['ui']['runnable']}", f"{t['js']['running']}/{t['js']['runnable']}",
-        t["render"]["running"], t["other"]["running"], shown["cpuBusy"], "cut" if shown["truncated"] else "",
+        t["render"]["running"], t["other"]["running"], shown["cpuBusy"], shown["stealMs"],
+        "cut" if shown["truncated"] else "",
     ])
 
 
@@ -184,7 +222,7 @@ def main():
     traced = [s for s in samples if s.get("trace") and s.get("ok") and s.get("pid")]
     print(f"{len(traced)} traced launches of {len(samples)}")
     print("launch | startup | gate | last condition | after-gate wall | ui run/runnable | js run/runnable"
-          " | render run | other run | cpu busy | trace cut")
+          " | render run | other run | cpu busy | steal ms | trace cut")
     analysed = 0
     with open(args.out, "w") as out:
         for sample in traced:

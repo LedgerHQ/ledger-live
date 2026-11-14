@@ -1,5 +1,6 @@
 # Perfetto config of src/measure/trace.ts: thread scheduling on the measured emulator, with process
-# names and a few framework slices. trace.ts stops it after the read; duration_ms is only a cap.
+# names, a few framework slices and /proc/stat every 100 ms (the guest's steal time). trace.ts stops
+# it after the read; duration_ms is only a cap.
 buffers {
   size_kb: 65536
   fill_policy: DISCARD
@@ -20,6 +21,15 @@ data_sources {
       atrace_categories: "gfx"
       atrace_categories: "dalvik"
       buffer_size_kb: 8192
+    }
+  }
+}
+data_sources {
+  config {
+    name: "linux.sys_stats"
+    sys_stats_config {
+      stat_period_ms: 100
+      stat_counters: STAT_CPU_TIMES
     }
   }
 }
