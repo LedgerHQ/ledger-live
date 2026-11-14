@@ -92,7 +92,7 @@ export class FakeAgentIntentService {
   readonly routes: Route[] = [
     ...makeAuthRoutes({ onAuthenticateRequest: signed => this.signIns.push(verifySignIn(signed)) }),
     {
-      match: new RegExp(`^${INTENTS_PATH}(/|\\?|$)`),
+      match: new RegExp(String.raw`^${INTENTS_PATH}(/|\?|$)`),
       response: null,
       onRequest: request => this.#answer(request),
     },
