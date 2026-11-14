@@ -69,6 +69,32 @@ wait_until_idle() {
   echo "::warning title=Emulator not idle::$serial load average still ${load:-unknown} after $((IDLE_TIMEOUT_S / 60)) min; measuring anyway"
 }
 
+# Experiment: each emulator's vCPU threads (the threads that count guest time, /proc stat field 43)
+# on the first PERF_AVD_CORES runner CPUs, its other threads (lavapipe, render, qemu) on the rest.
+# Threads started later take the CPUs of the thread that starts them.
+pin_emulator_threads() {
+  local last=$(($(nproc) - 1)) vcpu_cpus="0-$((PERF_AVD_CORES - 1))" pid task tid guest vcpus others
+  local other_cpus="$PERF_AVD_CORES-$last"
+  if ((last < PERF_AVD_CORES)); then
+    echo "::warning title=Threads not pinned::$((last + 1)) runner CPUs for $PERF_AVD_CORES vCPUs"
+    return 0
+  fi
+  for pid in $(pgrep -f qemu-system); do
+    vcpus=0
+    others=0
+    for task in /proc/"$pid"/task/*; do
+      tid="${task##*/}"
+      guest=$(sed 's/.*) //' "$task/stat" 2> /dev/null | awk '{print $41}') || continue
+      if ((${guest:-0} > 0)); then
+        taskset -p -c "$vcpu_cpus" "$tid" > /dev/null && vcpus=$((vcpus + 1))
+      else
+        taskset -p -c "$other_cpus" "$tid" > /dev/null && others=$((others + 1))
+      fi
+    done
+    echo "qemu $pid: $vcpus vCPU threads on CPUs $vcpu_cpus, $others other threads on $other_cpus"
+  done
+}
+
 tools/scripts/cleanup-android-emulators.sh || true
 mkdir -p "$log_dir"
 start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
@@ -77,4 +103,5 @@ for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
 for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
 for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
+pin_emulator_threads
 adb devices
