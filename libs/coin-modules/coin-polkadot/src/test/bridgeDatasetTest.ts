@@ -7,7 +7,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";
 import {
   PolkadotUnauthorizedOperation,

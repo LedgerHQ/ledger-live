@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-account-status",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

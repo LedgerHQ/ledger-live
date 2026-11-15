@@ -1,6 +1,6 @@
 import type { TransferInstructionType } from "@ledgerhq/live-common/families/canton/react";
 import type { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   GroupedProposals,
   ProcessedProposal,

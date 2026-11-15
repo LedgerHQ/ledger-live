@@ -1,5 +1,6 @@
 import { buildAssetDistribution } from "../buildAssetDistribution";
 import type { AssetsDataLike, BuildAssetDistributionOpts } from "../types";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
@@ -60,7 +61,7 @@ describe("buildAssetDistribution", () => {
   const assetsData: AssetsDataLike = {
     cryptoAssets: {
       "urn:crypto:meta-currency:ethereum": {
-        id: "urn:crypto:meta-currency:ethereum",
+        id: AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:ethereum"),
         assetsIds: {
           ethereum: "ethereum",
           arbitrum: "arbitrum",
@@ -69,7 +70,7 @@ describe("buildAssetDistribution", () => {
         },
       },
       "urn:crypto:meta-currency:bitcoin": {
-        id: "urn:crypto:meta-currency:bitcoin",
+        id: AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:bitcoin"),
         assetsIds: { bitcoin: "bitcoin" },
       },
     },
@@ -134,7 +135,7 @@ describe("buildAssetDistribution", () => {
       cryptoAssets: {
         ...assetsData.cryptoAssets,
         "urn:crypto:meta-currency:ethereum": {
-          id: "urn:crypto:meta-currency:ethereum",
+          id: AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:ethereum"),
           assetsIds: { base: "base", optimism: "optimism" },
         },
       },
@@ -253,7 +254,7 @@ describe("buildAssetDistribution", () => {
     const arbAssetsData: AssetsDataLike = {
       cryptoAssets: {
         arbitrum: {
-          id: "arbitrum",
+          id: AggregatedAssetIdSchema.parse("arbitrum"),
           ticker: "ARB",
           assetsIds: {
             ethereum: "ethereum/erc20/arbitrum",
@@ -286,7 +287,7 @@ describe("buildAssetDistribution", () => {
     const tetherAssetsData: AssetsDataLike = {
       cryptoAssets: {
         "urn:crypto:meta-currency:tether": {
-          id: "urn:crypto:meta-currency:tether",
+          id: AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:tether"),
           assetsIds: {
             ethereum: "ethereum/erc20/usd_tether__erc20_",
             bsc: "bsc/bep20/binance-peg_bsc-usd",

@@ -30,6 +30,7 @@ per-package rule flags.
 | `script "<name>" passes a config to oxlint` | Drop the flag: `oxlint src`. |
 | `script "<name>" sets` (any script but `lint`) | Move the flag to the `lint` script. |
 | `script "lint" sets` | Set the rule in the layer's preset. Add the flag to the allowlist only for a rule one package alone needs, with the reason. |
+| `the <preset> lint preset loads <packages>` | Add `"@support/lint": "workspace:*"` to the package's `devDependencies` and run `pnpm install`. |
 
 ## `[jest]`
 

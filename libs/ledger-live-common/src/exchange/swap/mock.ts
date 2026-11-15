@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";

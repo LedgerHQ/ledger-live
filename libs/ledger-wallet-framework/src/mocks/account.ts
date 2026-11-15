@@ -1,5 +1,5 @@
 import Prando from "prando";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import { getCurrenciesResolver } from "../currencies/resolver";
 import { getOperationAmountNumber } from "../operation";

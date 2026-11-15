@@ -1,14 +1,26 @@
 import React from "react";
-import { InfoState } from "@shared/ui-info-state";
+import { getDeviceModel } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Trans } from "~/context/Locale";
+import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 
-export function DeviceDisconnectedContent() {
+type DeviceDisconnectedContentProps = Readonly<{
+  deviceModelId: DeviceModelId;
+  deviceName: string;
+}>;
+
+export function DeviceDisconnectedContent({
+  deviceModelId,
+  deviceName,
+}: DeviceDisconnectedContentProps) {
+  const { productName } = getDeviceModel(deviceModelId);
+
   return (
-    <InfoState
-      preset="error"
-      size="hug"
-      title={<Trans i18nKey="osUpdates.deviceDisconnected.title" />}
-      description={<Trans i18nKey="osUpdates.deviceDisconnected.description" />}
+    <DeviceActionContent
+      action="power-and-unlock"
+      deviceModelId={deviceModelId}
+      deviceName={deviceName}
+      title={<Trans i18nKey="osUpdates.deviceDisconnected.title" values={{ productName }} />}
       testID="os-update-device-disconnected"
     />
   );

@@ -210,7 +210,7 @@ describe("mockSource", () => {
       const own = await allOperationsOf(account);
       for (const op of own) {
         expect(op.type === "IN" ? op.recipients : op.senders).toEqual([
-          account.type === "address" ? account.address : "",
+          account.type === "address" ? account.key : "",
         ]);
       }
       operations.push(...own);
@@ -264,6 +264,34 @@ describe("mockSource", () => {
       walkedAccounts++;
     }
     expect(walkedAccounts).toBeGreaterThan(0);
+  });
+});
+
+const readReceive = (descriptor: AccountDescriptor) => {
+  const read = mockSource.read?.receive;
+  if (!read) throw new Error("no receive reader");
+  return read({ accountUUID: computeAccountUUID(descriptor), descriptor }, undefined);
+};
+
+describe("mockSource receive", () => {
+  it("answers the address of an address descriptor, the device showing it at its path", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    if (account.type !== "address") throw new Error("expected an address descriptor");
+    await expect(readReceive(account)).resolves.toEqual({
+      address: account.key,
+      verification: { type: "address", path: account.path, address: account.key },
+    });
+  });
+
+  it("answers the same bitcoin address for the same account, another for another account", async () => {
+    const [first, second] = mockDescriptors("bitcoin", 2, []);
+    const receive = await readReceive(first);
+    expect(receive).toMatchObject({
+      address: expect.stringMatching(/^1/),
+      verification: { path: `${first.path}/0/0` },
+    });
+    await expect(readReceive(first)).resolves.toEqual(receive);
+    await expect(readReceive(second)).resolves.not.toEqual(receive);
   });
 });
 
@@ -378,5 +406,44 @@ describe("mockSource countervalues", () => {
     const [account] = mockDescriptors("ethereum", 1, []);
     const { operations } = await readValued(account, FiatCurrencyTickerSchema.parse("XXX"));
     for (const op of operations) expect(op.countervalues).toBeUndefined();
+  });
+});
+
+const readValuedHistory = (descriptor: AccountDescriptor, countervalue: FiatCurrencyTicker) => {
+  const read = mockSource.read?.balanceHistory;
+  if (!read) throw new Error("no balance history reader");
+  const target = { accountUUID: computeAccountUUID(descriptor), descriptor };
+  return read(target, { range: "week", countervalue });
+};
+
+describe("mockSource balanceHistory countervalues", () => {
+  const usd = FiatCurrencyTickerSchema.parse("USD");
+  let nowSpy: jest.SpyInstance<number, []>;
+
+  beforeEach(() => {
+    nowSpy = jest.spyOn(Date, "now").mockReturnValue(Date.UTC(2026, 9, 20));
+  });
+  afterEach(() => nowSpy.mockRestore());
+
+  it("values each point's balance in the fiat asked, at its date", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const plain = await readBalanceHistory(account, "week");
+    const valued = await readValuedHistory(account, usd);
+    const stripped = valued.series.map(({ assetId, points }) => ({
+      assetId,
+      points: points.map(({ date, balance }) => ({ date, balance })),
+    }));
+    expect(stripped).toEqual(plain.series);
+    for (const point of valued.series.flatMap(series => series.points)) {
+      expect(point.countervalues?.[usd]).toMatch(/^\d+$/);
+    }
+  });
+
+  it("leaves the countervalues out for an unknown fiat", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const history = await readValuedHistory(account, FiatCurrencyTickerSchema.parse("XXX"));
+    for (const point of history.series.flatMap(series => series.points)) {
+      expect(point.countervalues).toBeUndefined();
+    }
   });
 });

@@ -111,7 +111,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
       listeners: {
         onExecutorStateChanged: state => {
           setExecutorState(state);
-          onExecutorStateChangedRef.current(state);
+          onExecutorStateChangedRef.current?.(state);
           if (state.type === "executingIntent") {
             setLatestJobState(undefined);
             lastIntentSnapshotRef.current = {

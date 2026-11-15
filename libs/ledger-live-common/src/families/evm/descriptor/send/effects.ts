@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getMainAccount } from "../../../../account/index";
 import type { FlowEffect } from "../../../../bridge/descriptor/types";
 

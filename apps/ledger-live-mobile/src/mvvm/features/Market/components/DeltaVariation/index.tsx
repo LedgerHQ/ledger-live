@@ -1,10 +1,13 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { getTrendSign, getTrendTone } from "@shared/trend";
 import React from "react";
 
 type Props = {
   value: number;
   percent?: boolean;
 };
+
+const DELTA_DECIMALS = 2;
 
 function DeltaVariation({ value, percent, ...props }: Props) {
   const delta = value;
@@ -15,9 +18,9 @@ function DeltaVariation({ value, percent, ...props }: Props) {
 
   const absDelta = Math.abs(delta);
 
-  const roundedDelta = parseFloat(delta.toFixed(2));
+  const tone = getTrendTone(delta, { decimals: DELTA_DECIMALS });
 
-  if (roundedDelta === 0) {
+  if (tone === "neutral") {
     return (
       <Text variant="large" color="neutral.c60" fontWeight="semiBold">
         &minus;
@@ -25,15 +28,14 @@ function DeltaVariation({ value, percent, ...props }: Props) {
     );
   }
 
-  const [color, ArrowIcon, sign] =
-    roundedDelta > 0.0
-      ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
-      : roundedDelta < 0.0
-        ? ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
-        : ["neutral.c70", null, "-"];
+  const [color, ArrowIcon] =
+    tone === "positive"
+      ? (["success.c50", IconsLegacy.ArrowEvolutionUpMedium] as const)
+      : (["error.c50", IconsLegacy.ArrowEvolutionDownMedium] as const);
+  const sign = getTrendSign(delta, { decimals: DELTA_DECIMALS });
   return (
     <Flex flexDirection="row" alignItems="center">
-      {percent && ArrowIcon ? <ArrowIcon size={20} color={color} /> : null}
+      {percent ? <ArrowIcon size={20} color={color} /> : null}
       <Text variant="body" ml={2} fontWeight="semiBold" color={color} {...props}>
         {percent ? `${absDelta.toFixed(2)}%` : `${sign}${absDelta}`}
       </Text>

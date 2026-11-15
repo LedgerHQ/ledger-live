@@ -4,7 +4,7 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ESDT_SYSTEM_SC_BECH32, METACHAIN_SHARD } from "../../constants";
 import { MultiversXRoundNotFinal } from "../../errors";
 import type { MultiversXNetworkApi } from "../../network/api";

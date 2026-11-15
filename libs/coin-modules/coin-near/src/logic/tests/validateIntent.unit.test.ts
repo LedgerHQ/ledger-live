@@ -4,7 +4,7 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fetchAccountDetails, getActionCosts, getStakingPositions } from "../../network";
 import { getYoctoThreshold } from "../../logic";
 import { validateIntent } from "../validateIntent";

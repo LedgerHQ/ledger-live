@@ -1,7 +1,7 @@
 import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ReplacementTransactionUnderpriced } from "../../../errors";
 import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { getMinFees } from "./getMinEditTransactionFees";
 import type {
   EditType,

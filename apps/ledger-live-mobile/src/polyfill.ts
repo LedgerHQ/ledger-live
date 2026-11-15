@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
-// Hermes has no Intl.PluralRules (i18next plurals need it). See https://github.com/facebook/hermes/blob/main/doc/IntlAPIs.md
+// Hermes has no Intl.PluralRules (i18next plurals need it) and no Intl.Locale, which the PluralRules
+// polyfill's locale matcher constructs. See https://github.com/facebook/hermes/blob/main/doc/IntlAPIs.md
+import "@formatjs/intl-locale/polyfill-force";
 import "@formatjs/intl-pluralrules/polyfill-force";
 
 // Dynamic language loading - only load the required language data

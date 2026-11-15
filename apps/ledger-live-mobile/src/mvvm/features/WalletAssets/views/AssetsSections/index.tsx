@@ -8,19 +8,17 @@ import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface AssetsSectionsProps {
   variant: WalletAssetsVariant;
-  shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayServicesEntryPoints: boolean;
 }
 
 export const AssetsSections: React.FC<AssetsSectionsProps> = ({
   variant,
-  shouldDisplayAssetDiscoverability,
   shouldDisplayServicesEntryPoints,
 }) => (
   <Box lx={{ gap: "s16" }}>
     <PortfolioCryptosSection variant={variant} />
     {shouldDisplayServicesEntryPoints && <PortfolioServicesSection />}
     <PortfolioStablecoinsSection variant={variant} />
-    {shouldDisplayAssetDiscoverability && <PortfolioStocksSection variant={variant} />}
+    <PortfolioStocksSection variant={variant} />
   </Box>
 );

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";

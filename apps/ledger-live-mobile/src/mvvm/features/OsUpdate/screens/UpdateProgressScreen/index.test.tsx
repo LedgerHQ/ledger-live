@@ -3,7 +3,7 @@ import { render, screen } from "@tests/test-renderer";
 import { UpdateProgressScreen } from ".";
 
 const UPDATING_DESCRIPTION =
-  "Your Ledger Stax will restart automatically multiple times and you will be asked to unlock it with your PIN during installation.";
+  "Your Ledger Stax will restart automatically and you will be asked to unlock it with your PIN during installation.\n\nStay on this screen until the update is complete.";
 
 describe("UpdateProgressScreen", () => {
   it("shows the update index, the updating description and the progress", () => {
@@ -34,6 +34,9 @@ describe("UpdateProgressScreen", () => {
     );
 
     expect(screen.getByText("Update 1/2")).toBeVisible();
+    expect(screen.getByTestId("os-update-why-updates-banner")).toHaveTextContent(
+      /Why 2 updates\?.*Your device needs an earlier version of Ledger OS/,
+    );
   });
 
   it.each([
@@ -51,6 +54,7 @@ describe("UpdateProgressScreen", () => {
 
     expect(screen.queryByText(/Update \d+\/\d+/)).toBeNull();
     expect(screen.getByText(UPDATING_DESCRIPTION)).toBeVisible();
+    expect(screen.queryByTestId("os-update-why-updates-banner")).toBeNull();
     expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue).toMatchObject({
       now: 30,
     });
@@ -66,10 +70,14 @@ describe("UpdateProgressScreen", () => {
       />,
     );
 
-    expect(screen.getByText("Reinstalling your settings...")).toBeVisible();
+    expect(screen.getByText("Reinstalling your apps and settings...")).toBeVisible();
     expect(
-      screen.getByText("Almost done. Your settings are being reinstalled on your Ledger Stax."),
+      screen.getByText(
+        "Almost done. Your language, lock screen picture and apps are being reinstalled on your Ledger Stax.",
+      ),
     ).toBeVisible();
+    expect(screen.getByText("Stay on this screen until the update is complete.")).toBeVisible();
     expect(screen.queryByText(/Update \d+\/\d+/)).toBeNull();
+    expect(screen.queryByTestId("os-update-why-updates-banner")).toBeNull();
   });
 });

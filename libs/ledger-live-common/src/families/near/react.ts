@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
 import { mapStakingPositions, getNearStakingPositions } from "@ledgerhq/coin-near/logic";
 import {

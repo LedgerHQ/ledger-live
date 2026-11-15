@@ -1,6 +1,6 @@
 import { getMainAccount, isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountBridge, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { TonAccount, Transaction } from "./types";
 import { buildTonTransaction, findSubAccountById, getTonEstimatedFees } from "./utils";

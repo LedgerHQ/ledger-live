@@ -1,11 +1,11 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { act, renderHook } from "tests/testSetup";
-import { useOpenAssetAndAccount } from "../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "../../../ModularDialog/hooks/useOpenAssetAndAccount";
 import { deriveRequestReceiveData } from "../deriveRequestReceiveData";
 import { usePayTabRequestReceive } from "../usePayTabRequestReceive";
 
-jest.mock("../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("../../../ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: jest.fn(),
 }));
 jest.mock("../deriveRequestReceiveData", () => ({ deriveRequestReceiveData: jest.fn() }));

@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { expect, Locator, Page, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
@@ -12,21 +12,14 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount, needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
-import {
-  expectAmountCloseTo,
-  expectFormattedAmount,
-  parseBalanceAmount,
-} from "tests/utils/amountUtils";
+import { expectFormattedAmount } from "tests/utils/amountUtils";
 import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import type { NumberSeparators } from "@ledgerhq/live-e2e-shared/data/numberFormat";
-import type { SoftExpectMatcher } from "tests/utils/softExpect";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = TIMEOUT.xxxxlarge;
 type SwapSurface = "full" | "embedded";
-
-type PercentageKey = "25%" | "50%" | "75%";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -35,7 +28,7 @@ export class SwapPage extends WebViewAppPage {
     __dirname,
     "../artifacts/ledgerwallet-swap-history.csv",
   );
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
   private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
   private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
   private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
@@ -63,23 +56,14 @@ export class SwapPage extends WebViewAppPage {
   private providerContainerInfoSelector = (provider: string, suffix: string) =>
     `${this.providerContainerSelector(provider)}[data-testid$="${suffix}"]`;
   private bestValueInfoIcon = "best-value-info-icon";
-  private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
-  private readonly fromAccountWrapper = "from-account-wrapper";
   private readonly fromAccountBalance = "from-account-balance";
-  private readonly percentageButtonTestId = (key: PercentageKey) =>
-    `from-account-percentage-${key}`;
-  private readonly openTooltipSelector =
-    '[data-slot="tooltip-content"]:not([data-state="closed"]) [role="tooltip"]';
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
   private swapBtn = "execute-button";
   private executeSwapBtn = "execute-swap-button-step-approval";
   private continueBtn = this.page.locator("#sign-summary-continue-button");
-  private insufficientFundsBuyButton = "insufficient-funds-buy-button";
-  private insufficientFundsWarning = "insufficient-funds-warning";
-  private executeButtonDisabled = "execute-button-disabled";
   // Swap Steps Approval components
   private readonly giveApprovalButton = "give-approval-button";
   private readonly signPermitButton = "sign-permit-button";
@@ -385,21 +369,6 @@ export class SwapPage extends WebViewAppPage {
       .allTextContents();
   }
 
-  @step("Check drawer error message ($0)")
-  async checkFeeErrorMessage(errorMessage: string | RegExp) {
-    const webview = await this.getWebView();
-
-    const insufficientFundsWarningElem = webview.getByTestId(this.insufficientFundsWarning);
-    const errorMessageSpan = insufficientFundsWarningElem.getByText(errorMessage);
-    await expect(errorMessageSpan).toBeVisible();
-    await this.softExpect(async soft => {
-      await soft(webview.getByTestId(this.insufficientFundsBuyButton)).toBeEnabled();
-      // Each quote card renders its own disabled CTA when the swap is
-      // blocked; assert on the first match instead of a unique element.
-      await soft(webview.getByTestId(this.executeButtonDisabled).first()).toBeDisabled();
-    });
-  }
-
   @step("Extract quotes and fees")
   async extractQuotesAndFees(quoteContainers: string[]) {
     const quotes = quoteContainers
@@ -493,12 +462,6 @@ export class SwapPage extends WebViewAppPage {
   async getAmountToReceive() {
     const webview = await this.getWebView();
     return await webview.getByTestId(this.toAccountAmountInput).textContent();
-  }
-
-  @step("Click switch button")
-  async switchYouSendAndYouReceive() {
-    const webview = await this.getWebView();
-    await webview.getByTestId(this.switchButton).click();
   }
 
   @step("Check currency to swap from contains $0")
@@ -698,9 +661,10 @@ export class SwapPage extends WebViewAppPage {
     );
   }
 
-  private async checkErrorMessageContains(testId: string, message: string | RegExp) {
+  @step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(message: string | RegExp) {
     const webview = await this.getWebView();
-    const error = webview.getByTestId(testId);
+    const error = webview.getByTestId(this.fromAccountError);
     await expect(error).toBeVisible();
     await this.softExpect(
       async soft => {
@@ -708,21 +672,6 @@ export class SwapPage extends WebViewAppPage {
       },
       { timeout: TIMEOUT.medium },
     );
-  }
-
-  @step("Verify swap error message match: $0 ($1)")
-  async verifySwapErrorMessageIsCorrect(
-    message: string | RegExp,
-    display: "banner" | "quotesPlaceholder",
-  ) {
-    const testId =
-      display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
-    await this.checkErrorMessageContains(testId, message);
-  }
-
-  @step("Verify swap cross account error message match: $0")
-  async verifySwapCrossAccountErrorMessageIsCorrect(message: string | RegExp) {
-    await this.checkErrorMessageContains(this.fromAccountError, message);
   }
 
   @step("verify quotes are displayed")
@@ -912,117 +861,6 @@ export class SwapPage extends WebViewAppPage {
   async clickSwapMax() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.swapMaxToggle).click();
-  }
-
-  @step("Get from-account balance")
-  async getFromAccountBalance() {
-    const webview = await this.getWebView();
-    const balance = webview.getByTestId(this.fromAccountBalance);
-    await expect(balance).toHaveText(/\d/);
-    return parseBalanceAmount(await balance.textContent());
-  }
-
-  @step("Hover from-account amount field to reveal quick-fill buttons")
-  async hoverAmountField() {
-    const webview = await this.getWebView();
-    const wrapper = webview.getByTestId(this.fromAccountWrapper);
-    const anyPercentageButton = webview.getByTestId(this.percentageButtonTestId("25%"));
-    // hover() on the wrapper can occasionally fail to stick the CSS :hover
-    // state (seen with Electron's out-of-process webview), leaving the
-    // group-hover-revealed row invisible; re-hovering until it's confirmed
-    // revealed is more reliable than waiting longer on a single attempt.
-    await expect(async () => {
-      await wrapper.hover();
-      await expect(anyPercentageButton).toBeVisible({ timeout: TIMEOUT.xsmall });
-    }).toPass({ timeout: TIMEOUT.large });
-  }
-
-  // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only
-  // drives styling (never a real disabled/aria-disabled attribute), so
-  // enabled state must be read from the `cursor-not-allowed` class.
-  private async softExpectEnabledByCursorClass(
-    soft: SoftExpectMatcher,
-    tag: Locator,
-    enabled: boolean,
-  ) {
-    const tagMatcher = soft(tag);
-    await (enabled ? tagMatcher.not : tagMatcher).toHaveClass(/cursor-not-allowed/);
-  }
-
-  // Hovers a trigger and asserts the tooltip text. Radix keeps a just-left
-  // trigger's tooltip open (data-state !== "closed") until the newly-hovered
-  // trigger's tooltip finishes its open delay, so "read whichever tooltip is
-  // open" returns the stale one when moving between the 25/50/75 buttons.
-  // Filtering the open tooltips on the expected text waits that transition out,
-  // and re-hovering covers a hover that did not stick (see hoverAmountField).
-  // openTooltipSelector scopes to the visually-hidden [role="tooltip"] node(s)
-  // that mirror the content, so the text comes back once.
-  private async checkTooltipText(hoverTrigger: () => Promise<void>, expected: string) {
-    const webview = await this.getWebView();
-    const expectedTooltip = webview.locator(this.openTooltipSelector).filter({ hasText: expected });
-    await this.softExpect(async soft => {
-      await soft(async () => {
-        await hoverTrigger();
-        await expect(expectedTooltip).not.toHaveCount(0, { timeout: TIMEOUT.small });
-      }).toPass({ timeout: TIMEOUT.large });
-    });
-  }
-
-  @step("Check Max button enabled: $0")
-  async checkMaxToggleEnabled(expected: boolean) {
-    const webview = await this.getWebView();
-    const maxToggle = webview.getByTestId(this.swapMaxToggle);
-    await expect(maxToggle).toBeVisible();
-    await this.softExpect(async soft => {
-      await this.softExpectEnabledByCursorClass(soft, maxToggle, expected);
-    });
-  }
-
-  @step("Check Max button tooltip text: $0")
-  async checkMaxTooltip(expected: string) {
-    const webview = await this.getWebView();
-    await this.checkTooltipText(() => webview.getByTestId(this.swapMaxToggle).hover(), expected);
-  }
-
-  @step("Check percentage button $0 tooltip text: $1")
-  async checkPercentageTooltip(key: PercentageKey, expected: string) {
-    const webview = await this.getWebView();
-    await this.checkTooltipText(async () => {
-      await this.hoverAmountField();
-      await webview.getByTestId(this.percentageButtonTestId(key)).hover();
-    }, expected);
-  }
-
-  @step("Click quick percentage button: $0")
-  async clickPercentage(key: PercentageKey) {
-    const webview = await this.getWebView();
-    await this.hoverAmountField();
-    await webview.getByTestId(this.percentageButtonTestId(key)).click();
-  }
-
-  @step("Check percentage buttons enabled: $0")
-  async checkPercentageButtonsEnabled(expected: boolean) {
-    await this.hoverAmountField();
-    const webview = await this.getWebView();
-    await this.softExpect(async soft => {
-      await Promise.all(
-        (["25%", "50%", "75%"] as const).map(key =>
-          this.softExpectEnabledByCursorClass(
-            soft,
-            webview.getByTestId(this.percentageButtonTestId(key)),
-            expected,
-          ),
-        ),
-      );
-    });
-  }
-
-  @step("Check percentage button $0 fills the correct amount")
-  async checkPercentageFillsBalance(key: PercentageKey, balance: number) {
-    await this.clickPercentage(key);
-    const amountToSend = Number(await this.getAmountToSend());
-    const expectedAmount = (balance * parseFloat(key)) / 100;
-    expectAmountCloseTo(amountToSend, expectedAmount);
   }
 
   @step("Expect reset allowance screen to be displayed")

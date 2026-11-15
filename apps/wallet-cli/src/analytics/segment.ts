@@ -5,6 +5,8 @@ import pkg from "../../package.json" with { type: "json" };
 
 export const WALLET_CLI_USER_ID = "f3c373cd-c661-46bb-8577-3bc2bce98b5b";
 const WALLET_CLI_WRITE_KEY = process.env.SEGMENT_WRITE_KEY || "70VZSoB5kr9tiTHJMqKwxUjvZEPbrnBO";
+// Segment's default closeAndFlush timeout is 75 s, spent retrying while its API is unreachable.
+export const ANALYTICS_FLUSH_TIMEOUT_MS = 2_500;
 
 const osType = os.type();
 const osVersion = os.release();
@@ -23,7 +25,13 @@ const extraProperties = () => ({
 /** The part of the Segment client wallet-cli uses. */
 type SegmentClient = Pick<Analytics, "identify" | "track" | "closeAndFlush">;
 
-const createSegmentClient = (writeKey: string): SegmentClient => new Analytics({ writeKey });
+export const createSegmentClient = (writeKey: string, host?: string): SegmentClient =>
+  new Analytics({
+    writeKey,
+    // The flush timeout does not abort an in-flight request; this caps every request, so slow mid-run batches get retried.
+    httpRequestTimeout: ANALYTICS_FLUSH_TIMEOUT_MS,
+    ...(host ? { host } : {}),
+  });
 
 let client: unknown | null = null;
 
@@ -53,7 +61,7 @@ export const startAnalytics = (createClient = createSegmentClient): void => {
           context: getContext(),
         }),
       closeAndFlush: async () => {
-        await segmentClient.closeAndFlush();
+        await segmentClient.closeAndFlush({ timeout: ANALYTICS_FLUSH_TIMEOUT_MS });
       },
     });
     segmentClient.identify({

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { SendDescriptor } from "../../../../bridge/descriptor/types";
 import { syncGasOptionsEffect } from "./effects";
 import { evmCustomFeeConfig, isBigNumber, isRecord } from "./fees";

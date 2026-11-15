@@ -40,30 +40,34 @@ type StoredAddresses = ReturnType<typeof makeAddr>[];
 /**
  * Builds a minimal walletAccount mock that simulates:
  *  - `getAccountAddresses(chain)` — returns pre-loaded stored addresses
- *  - `getNewAddress(chain, gap)` — returns address at `lastIndex + gap`
- *    (or index 0 when storage is empty, matching real Xpub behaviour)
+ *  - `GAP` — the gap limit (20 by default, like the real Xpub)
+ *  - `crypto.getAddress` — deterministic address per (chain, index)
  *  - `crypto.getPubkeyAt` — deterministic pubkey per (chain, index)
  *  - `crypto.toOutputScript` — P2WPKH script encoding (account, index)
  */
-function makeWalletAccount(receiveStored: StoredAddresses, changeStored: StoredAddresses) {
-  const getNewAddress = jest.fn().mockImplementation(async (account: number, gap: number) => {
-    const stored = account === 0 ? receiveStored : changeStored;
-    const lastIndex = stored.length > 0 ? Math.max(...stored.map(a => a.index)) : -1;
-    const index = lastIndex === -1 ? 0 : lastIndex + gap;
-    return makeAddr(account, index);
-  });
-
+function makeWalletAccount(
+  receiveStored: StoredAddresses,
+  changeStored: StoredAddresses,
+  gap = 20,
+) {
   return {
     params: { path: "m/84'/0'/0'", index: 0 },
     xpub: {
       xpub: "xpub_test",
+      derivationMode: "native_segwit",
+      GAP: gap,
       getAccountAddresses: jest
         .fn()
         .mockImplementation(async (account: number) =>
           account === 0 ? receiveStored : changeStored,
         ),
-      getNewAddress,
       crypto: {
+        getAddress: jest
+          .fn()
+          .mockImplementation(
+            async (_derivationMode: string, _xpub: string, account: number, index: number) =>
+              makeAddr(account, index).address,
+          ),
         getPubkeyAt: jest
           .fn()
           .mockImplementation((_xpub: string, account: number, index: number) =>
@@ -77,6 +81,11 @@ function makeWalletAccount(receiveStored: StoredAddresses, changeStored: StoredA
       },
     },
   };
+}
+
+/** Builds stored addresses 0..lastIndex on one chain. */
+function storedRange(account: number, lastIndex: number): StoredAddresses {
+  return Array.from({ length: lastIndex + 1 }, (_, index) => makeAddr(account, index));
 }
 
 // ---- Tests -----------------------------------------------------------------
@@ -147,27 +156,107 @@ describe("buildKnownAddressDerivationsMap", () => {
     });
   });
 
-  it("handles empty storage by including index-0 address for each chain", async () => {
+  it("handles empty storage by including the first GAP addresses of each chain", async () => {
     const walletAccount = makeWalletAccount([], []);
 
     const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
 
-    // Both gap=1 and gap=2 resolve to index 0 when there are no stored addresses
-    // (Xpub.getNewAddress returns index 0 when lastIndex === -1). The map
-    // deduplicates by script hash, yielding one entry per chain.
-    expect(map.has(scriptHashHex(0, 0))).toBe(true);
-    expect(map.has(scriptHashHex(1, 0))).toBe(true);
+    for (const account of [0, 1]) {
+      for (let index = 0; index < 20; index++) {
+        expect(map.has(scriptHashHex(account, index))).toBe(true);
+      }
+      expect(map.has(scriptHashHex(account, 20))).toBe(false);
+    }
   });
 
-  it("total map size equals stored + 4 fresh entries when all addresses are unique", async () => {
+  it("includes a fresh change address that is not the first unused one when no change is stored", async () => {
+    // A live app may pick a later fresh change address (1/1) on an account that never used its
+    // change chain. Without a derivation for it, the device counts the change as an external output.
+    const walletAccount = makeWalletAccount([makeAddr(0, 0)], []);
+
+    const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    expect(map.get(scriptHashHex(1, 1))).toEqual({
+      pubkey: makePubkey(1, 1),
+      path: [...pathStringToArray(ACCOUNT_PATH), 1, 1],
+    });
+  });
+
+  it("includes the GAP addresses after the highest stored index and none beyond", async () => {
+    const walletAccount = makeWalletAccount(storedRange(0, 2), storedRange(1, 4));
+
+    const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    for (let index = 5; index <= 24; index++) {
+      expect(map.has(scriptHashHex(1, index))).toBe(true);
+    }
+    expect(map.has(scriptHashHex(1, 25))).toBe(false);
+    expect(map.has(scriptHashHex(0, 22))).toBe(true);
+    expect(map.has(scriptHashHex(0, 23))).toBe(false);
+  });
+
+  it("includes the unused addresses below the highest stored index", async () => {
+    // A live app can pick an unused address below the highest used one (e.g. through
+    // bitcoin.getAddress) as change. Without a derivation, the device counts it as an external output.
+    const walletAccount = makeWalletAccount([], [makeAddr(1, 0), makeAddr(1, 7)], 3);
+
+    const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    for (let index = 0; index <= 10; index++) {
+      expect(map.get(scriptHashHex(1, index))).toEqual({
+        pubkey: makePubkey(1, index),
+        path: [...pathStringToArray(ACCOUNT_PATH), 1, index],
+      });
+    }
+    expect(map.has(scriptHashHex(1, 11))).toBe(false);
+  });
+
+  it("derives only the unused addresses, reusing the stored ones", async () => {
+    const walletAccount = makeWalletAccount([], [makeAddr(1, 0), makeAddr(1, 7)], 3);
+
+    await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    const changeCalls = walletAccount.xpub.crypto.getAddress.mock.calls.filter(
+      ([, , account]: [string, string, number, number]) => account === 1,
+    );
+    expect(
+      changeCalls
+        .map(([, , , index]: [string, string, number, number]) => index)
+        .sort((a: number, b: number) => a - b),
+    ).toEqual([1, 2, 3, 4, 5, 6, 8, 9, 10]);
+  });
+
+  it("follows the gap limit of the account", async () => {
+    const walletAccount = makeWalletAccount([], [], 5);
+
+    const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    expect(map.has(scriptHashHex(1, 4))).toBe(true);
+    expect(map.has(scriptHashHex(1, 5))).toBe(false);
+  });
+
+  it("total map size equals stored + GAP fresh entries per chain when all addresses are unique", async () => {
     const receiveStored = [makeAddr(0, 0), makeAddr(0, 1)]; // 2 stored receive
     const changeStored = [makeAddr(1, 0), makeAddr(1, 1)]; // 2 stored change
     const walletAccount = makeWalletAccount(receiveStored, changeStored);
 
     const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
 
-    // 2 receive stored + 2 fresh receive (idx 2, 3)
-    // + 2 change stored + 2 fresh change (idx 2, 3)
-    expect(map.size).toBe(8);
+    // per chain: 2 stored + 20 fresh (idx 2..21)
+    expect(map.size).toBe(44);
+  });
+
+  it("derives addresses only for the fresh window, reusing stored addresses", async () => {
+    const walletAccount = makeWalletAccount(storedRange(0, 2), storedRange(1, 1));
+
+    await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    expect(walletAccount.xpub.crypto.getAddress).toHaveBeenCalledTimes(40);
+    expect(walletAccount.xpub.crypto.getAddress).not.toHaveBeenCalledWith(
+      "native_segwit",
+      "xpub_test",
+      0,
+      2,
+    );
   });
 });

@@ -111,7 +111,7 @@ const buildTasks = args => [
             }
           : args.nightly
             ? {
-                // tools/rspack/utils.ts: .env.staging with the production FIREBASE_* keys.
+                // tools/rspack/utils.mts: .env.staging with the production FIREBASE_* keys.
                 NIGHTLY: "1",
                 DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
                 DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildTransaction } from "../buildTransaction";
 import { CardanoNotEnoughFunds } from "../errors";
 import type { CardanoAccount, CardanoResources, Transaction, TransactionStatus } from "../types";

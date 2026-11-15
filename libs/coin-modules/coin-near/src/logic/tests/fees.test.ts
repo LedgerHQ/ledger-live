@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { STAKING_FEE_OVERHEAD_GAS, STAKING_GAS } from "../../constants";
 import { computeFees, type NearFeeCosts } from "../fees";
 

@@ -41,6 +41,8 @@ const A4ConfigSchema = z.object({
 // https://explorers.api.live.ledger.com/a4/networks
 export const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
   "adi",
+  "alpen",
+  "alpen_testnet",
   "arbitrum",
   "arc",
   "avalanche_c_chain",
@@ -67,7 +69,6 @@ export const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
   "ethereum_classic",
   "ethereum_hoodi",
   "ethereum_sepolia",
-  "fantom",
   "hedera",
   "hedera_testnet",
   "hyperevm",

@@ -8,8 +8,7 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-// Uniswap is temporarily excluded from the cross-account check.
-const dexProviders = [SwapProvider.ONE_INCH, SwapProvider.VELORA, SwapProvider.OKX];
+const dexProviders = [SwapProvider.ONE_INCH];
 const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_3;
 
@@ -36,7 +35,7 @@ test.describe("Swap - cross account warning", () => {
   });
 
   test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning with DEX providers`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning with 1inch`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [

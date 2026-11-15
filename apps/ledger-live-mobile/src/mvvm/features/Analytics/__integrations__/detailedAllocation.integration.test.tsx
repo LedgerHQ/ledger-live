@@ -87,24 +87,24 @@ describe("DetailedAllocation Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  it("should render with multiple accounts and display all currencies", () => {
+  it("should render with multiple accounts and display all currencies", async () => {
     render(<DetailedAllocation />, {
       overrideInitialState: mockStateWithAccounts,
     });
 
-    expect(screen.getByText("3")).toBeVisible();
+    expect(await screen.findByText("3")).toBeVisible();
     expect(screen.getByText(/assets/i)).toBeVisible();
     expect(screen.getByText(/Bitcoin/i)).toBeVisible();
     expect(screen.getByText(/Ethereum/i)).toBeVisible();
     expect(screen.getByText(/Cardano/i)).toBeVisible();
   });
 
-  it("should render with single account", () => {
+  it("should render with single account", async () => {
     render(<DetailedAllocation />, {
       overrideInitialState: mockStateWithSingleAccount,
     });
 
-    expect(screen.getByText("1")).toBeVisible();
+    expect(await screen.findByText("1")).toBeVisible();
   });
 
   it("should handle empty accounts state", () => {
@@ -115,14 +115,12 @@ describe("DetailedAllocation Integration Tests", () => {
     expect(screen.getByText("0")).toBeVisible();
   });
 
-  it("should show percentage distribution for each asset", () => {
+  it("should show percentage distribution for each asset", async () => {
     render(<DetailedAllocation />, {
       overrideInitialState: mockStateWithAccounts,
     });
 
-    const percentagePattern = /\d+%/;
-    const percentages = screen.getAllByText(percentagePattern);
-    expect(percentages.length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/\d+%/)).length).toBeGreaterThan(0);
   });
 
   describe("blacklisted tokens", () => {
@@ -147,19 +145,20 @@ describe("DetailedAllocation Integration Tests", () => {
       jest.clearAllMocks();
     });
 
-    it("should display a token that is not blacklisted", () => {
+    it("should display a token that is not blacklisted", async () => {
       render(<DetailedAllocation />, {
         overrideInitialState: mockStateWithNonBlacklistedToken,
       });
 
-      expect(screen.getByText(usdcToken.name)).toBeVisible();
+      expect(await screen.findByText(usdcToken.name)).toBeVisible();
     });
 
-    it("should not display a blacklisted token in the distribution list", () => {
+    it("should not display a blacklisted token in the distribution list", async () => {
       render(<DetailedAllocation />, {
         overrideInitialState: mockStateWithBlacklistedToken,
       });
 
+      expect(await screen.findByText(/Ethereum/i)).toBeVisible();
       expect(screen.queryByText(usdcToken.name)).toBeNull();
     });
   });
@@ -169,17 +168,18 @@ describe("DetailedAllocation Integration Tests", () => {
       overrideInitialState: mockStateWithAccounts,
     });
 
-    await user.press(screen.getByText(/Bitcoin/i));
+    await user.press(await screen.findByText(/Bitcoin/i));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "View Account",
       page: "Detailed Allocation",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
       params: {
-        currency: mockBitcoinCurrency,
+        currencyId: mockBitcoinCurrency.id,
+        source: "detailed_allocation",
       },
     });
   });

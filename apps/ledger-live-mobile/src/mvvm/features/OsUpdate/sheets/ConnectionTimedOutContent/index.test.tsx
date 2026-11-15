@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { ConnectionTimedOutContent } from ".";
 
-function renderContent({ onRestart = jest.fn(), onSendReport = jest.fn() } = {}) {
-  return render(<ConnectionTimedOutContent onRestart={onRestart} onSendReport={onSendReport} />);
+function renderContent({ onRestart = jest.fn(), onCancel = jest.fn() } = {}) {
+  return render(<ConnectionTimedOutContent onRestart={onRestart} onCancel={onCancel} />);
 }
 
 describe("ConnectionTimedOutContent", () => {
@@ -15,19 +15,19 @@ describe("ConnectionTimedOutContent", () => {
     expect(screen.getByText("Restart the update.")).toBeVisible();
   });
 
-  it("restarts the update and sends a report independently", async () => {
+  it("restarts and cancels the update independently", async () => {
     const onRestart = jest.fn();
-    const onSendReport = jest.fn();
-    const { user } = renderContent({ onRestart, onSendReport });
+    const onCancel = jest.fn();
+    const { user } = renderContent({ onRestart, onCancel });
 
     await user.press(screen.getByText("Restart OS update"));
 
     expect(onRestart).toHaveBeenCalledTimes(1);
-    expect(onSendReport).not.toHaveBeenCalled();
+    expect(onCancel).not.toHaveBeenCalled();
 
-    await user.press(screen.getByText("Send report to Ledger"));
+    await user.press(screen.getByText("Cancel OS update"));
 
-    expect(onSendReport).toHaveBeenCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledTimes(1);
     expect(onRestart).toHaveBeenCalledTimes(1);
   });
 });

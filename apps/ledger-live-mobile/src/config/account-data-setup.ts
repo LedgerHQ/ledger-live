@@ -1,9 +1,6 @@
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  withOperationCountervalues,
-  type OperationCountervaluesHost,
-} from "@domain/api-market-countervalues";
+import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
 import {
   accountsSlice,
   connectAccountsStore,
@@ -18,6 +15,7 @@ import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { prepareCurrency } from "~/bridge/cache";
 import { accountsSelector } from "~/reducers/accounts";
@@ -32,7 +30,7 @@ export function accountDataSources(
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
-  const countervalues: OperationCountervaluesHost = {
+  const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
     findCurrency: assetId =>
       findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
@@ -51,11 +49,11 @@ export function accountDataSources(
     blacklistedTokenIds,
   };
   return [
-    withOperationCountervalues(
+    withCountervalues(
       createCoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
       countervalues,
     ),
-    withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+    withCountervalues(createFullSyncSource(fullSyncHost), countervalues),
   ];
 }
 
@@ -64,6 +62,15 @@ export function connectAccounts(store: AccountsReduxStore<State>) {
   return connectAccountsStore(store, {
     selectLegacyAccounts: accountsSelector,
     toDescriptor: fromLegacyAccount,
-    onError: error => console.warn("Account left out of the accounts slice", error),
+    onError: error => {
+      const message = "Account left out of the accounts slice";
+      console.warn(message, error);
+      // Not gated on `isDatadogEnabled`: importing `~/datadog` here is circular; a call before init is ignored.
+      DdRum.addError(
+        message,
+        ErrorSource.SOURCE,
+        error instanceof Error ? (error.stack ?? "") : "",
+      );
+    },
   });
 }

@@ -17,7 +17,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { JsonSafeRecord } from "../../bridge/generic-coin-framework/types";
 
 // Encapsulate for LLD et LLM

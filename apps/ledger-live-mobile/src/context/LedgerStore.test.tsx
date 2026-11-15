@@ -2,14 +2,18 @@ import React from "react";
 import { Text } from "react-native";
 import { act, render, screen } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
-import type { Store } from "redux";
+import { combineReducers, type Store } from "redux";
 import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-auth/state";
 import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
 import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
+import settingsReducer from "~/reducers/settings";
+import type { SettingsState } from "~/reducers/types";
 import LedgerStoreProvider from "./LedgerStore";
 
-const mockGetSettings = jest.fn(() => Promise.resolve(undefined));
+const mockGetSettings = jest.fn<Promise<Partial<SettingsState> | null | undefined>, []>(() =>
+  Promise.resolve(undefined),
+);
 const mockGetLiveConfigOverridesState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(null));
 
 jest.mock("../db", () => {
@@ -108,6 +112,23 @@ describe("LedgerStoreProvider", () => {
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
   });
+
+  it.each([null, undefined])(
+    "should become ready on a fresh install when stored settings are %p",
+    async storedSettings => {
+      mockGetSettings.mockResolvedValueOnce(storedSettings);
+      const store = configureStore({
+        reducer: combineReducers({ featureFlags: featureFlagsReducer, settings: settingsReducer }),
+      });
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(mockBootstrapCardSession).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    },
+  );
 
   it("should become ready and signed in when a stored card token resolves", async () => {
     let resolveSessionRead!: (token: string) => void;

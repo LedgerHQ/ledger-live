@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../../config";
 import { decode58Check } from "../../network/format";
 import { EnergyRentProviderNotConfigured } from "../../types/errors";

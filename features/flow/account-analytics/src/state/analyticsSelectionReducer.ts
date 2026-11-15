@@ -8,7 +8,7 @@ import {
   DEFAULT_ANALYTICS_SELECTION,
   resolveAnalyticsSelection,
   resolveInitialAnalyticsSelection,
-} from "../logic/resolveAnalyticsSelection";
+} from "../logic/selection/resolveAnalyticsSelection";
 
 export type AnalyticsSelectionState = Readonly<{
   selection: AnalyticsSelection;

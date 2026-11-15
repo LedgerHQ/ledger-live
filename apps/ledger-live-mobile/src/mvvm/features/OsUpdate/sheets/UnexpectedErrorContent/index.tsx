@@ -1,12 +1,11 @@
 import React from "react";
-import { ErrorContent } from "../ErrorContent";
+import { UnexpectedErrorContentView } from "./UnexpectedErrorContentView";
+import { useUnexpectedErrorContentViewModel } from "./useUnexpectedErrorContentViewModel";
 
-export function UnexpectedErrorContent({ onCancel }: Readonly<{ onCancel: () => void }>) {
+type UnexpectedErrorContentProps = Readonly<{ onCancel: () => void }>;
+
+export function UnexpectedErrorContent({ onCancel }: UnexpectedErrorContentProps) {
   return (
-    <ErrorContent
-      i18nKeyPrefix="osUpdates.unexpectedError"
-      testID="os-update-unexpected-error"
-      onCancel={onCancel}
-    />
+    <UnexpectedErrorContentView onCancel={onCancel} {...useUnexpectedErrorContentViewModel()} />
   );
 }

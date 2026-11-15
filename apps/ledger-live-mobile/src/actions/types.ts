@@ -97,7 +97,7 @@ export enum BleActionTypes {
   BLE_REMOVE_DEVICE = "BLE_REMOVE_DEVICE",
   BLE_REMOVE_DEVICES = "BLE_REMOVE_DEVICES",
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
-  BLE_UPDATE_DEVICE = "BLE_UPDATE_DEVICE",
+  BLE_UPSERT_DEVICE = "BLE_UPSERT_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -106,14 +106,14 @@ export enum BleActionTypes {
 export type BleRemoveKnownDevicePayload = string;
 export type BleRemoveKnownDevicesPayload = string[];
 export type BleAddKnownDevicePayload = DeviceLike;
-export type BleUpdateKnownDevicePayload = DeviceLike;
+export type BleUpsertKnownDevicePayload = DeviceLike;
 export type BleImportBlePayload = BleState;
 export type BleSaveDeviceNamePayload = { deviceId: string; name: string };
 export type BlePayload =
   | BleRemoveKnownDevicePayload
   | BleRemoveKnownDevicesPayload
   | BleAddKnownDevicePayload
-  | BleUpdateKnownDevicePayload
+  | BleUpsertKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
 
@@ -297,7 +297,7 @@ export enum SettingsActionTypes {
   SET_HAS_CLICKED_RECOVER = "SET_HAS_CLICKED_RECOVER",
 }
 
-export type SettingsImportPayload = Partial<SettingsState>;
+export type SettingsImportPayload = Partial<SettingsState> | null | undefined;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;
@@ -519,27 +519,15 @@ export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
-  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
   MARKET_SET_HIDE_TRANSACTIONS_ON_CHART = "MARKET_SET_HIDE_TRANSACTIONS_ON_CHART",
   MARKET_IMPORT = "MARKET_IMPORT",
 }
 
-export type MarketSetMarketFilterByStarredCurrenciesPayload =
-  MarketState["marketFilterByStarredCurrencies"];
-export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
-export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
 export type MarketSetHideTransactionsOnChartPayload = MarketState["hideTransactionsOnChart"];
 
 export type MarketImportPayload = Partial<MarketState>;
 
-export type MarketPayload =
-  | MarketSetMarketFilterByStarredCurrenciesPayload
-  | MarketSetMarketRequestParamsPayload
-  | MarketSetCurrentPagePayload
-  | MarketSetHideTransactionsOnChartPayload
-  | MarketImportPayload;
+export type MarketPayload = MarketSetHideTransactionsOnChartPayload | MarketImportPayload;
 
 // === LARGE MOVER ACTIONS ===
 export enum LargeMoverActionTypes {

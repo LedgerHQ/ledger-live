@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "axios": "catalog:",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "lodash": "catalog:",
     "msw": "catalog:",
     "rxjs": "catalog:"

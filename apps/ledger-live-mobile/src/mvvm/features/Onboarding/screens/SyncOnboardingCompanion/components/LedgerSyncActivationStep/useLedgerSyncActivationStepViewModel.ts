@@ -7,6 +7,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
+import { useActivationDeviceIntentStep } from "LLM/features/WalletSync/screens/Activation/useActivationDeviceIntentStep";
 import type { LedgerSyncActivationStepProps } from "./types";
 
 type NavigationProps = BaseComposite<
@@ -22,18 +23,31 @@ export const useLedgerSyncActivationStepViewModel = ({
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  // The marker routes the activation success back to the companion: drop it if none follows.
+  const clearLedgerSyncOnboardingMarker = useCallback(
+    () => dispatch(setFromLedgerSyncOnboarding(false)),
+    [dispatch],
+  );
+  const deviceIntentStep = useActivationDeviceIntentStep({
+    onCancel: clearLedgerSyncOnboardingMarker,
+  });
+  const { isEnabled: isDeviceIntentStepEnabled, start: startDeviceIntentStep } = deviceIntentStep;
 
   const handleSyncActivation = useCallback(() => {
     dispatch(setFromLedgerSyncOnboarding(true));
     dispatch(setOnboardingType(OnboardingType.setupNew));
 
+    if (isDeviceIntentStepEnabled) {
+      startDeviceIntentStep();
+      return;
+    }
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
       params: {
         device,
       },
     });
-  }, [device, dispatch, navigation]);
+  }, [device, dispatch, isDeviceIntentStepEnabled, navigation, startDeviceIntentStep]);
 
   const handleSyncContinue = useCallback(() => {
     track("button_clicked", {
@@ -94,6 +108,7 @@ export const useLedgerSyncActivationStepViewModel = ({
     handleDrawerClose,
     handleSyncOpenFromDrawer,
     handleSkip,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 };
 

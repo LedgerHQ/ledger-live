@@ -233,7 +233,7 @@ async function startOwnSpeculos(
   }
   const spec = specs[specKey];
   if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
-  const device = await startSpeculos(`borrow-${options.flow}`, spec);
+  const device = await startSpeculos(`borrow-${options.flow}`, spec, { suite: "borrow" });
   if (!device) throw new Error("Speculos not started");
   return device;
 }

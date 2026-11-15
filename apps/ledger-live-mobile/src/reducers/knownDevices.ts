@@ -2,12 +2,10 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  findMatchingDevice,
   mockserverIdentifier,
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
-  speculosIdentifier,
-  type DeviceBaseInfo,
-  findMatchingOldDevice,
 } from "@ledgerhq/live-dmk-mobile";
 import { dmkToLedgerDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { BleImportBlePayload, BleSaveDeviceNamePayload } from "~/actions/types";
@@ -31,14 +29,6 @@ export type PersistedKnownDevicesState = {
 export const INITIAL_STATE: KnownDevicesState = {
   knownDevices: [],
 };
-
-function mapKnownDeviceToDeviceBaseInfo(device: KnownDevice): DeviceBaseInfo {
-  return {
-    deviceId: device.id,
-    deviceName: device.name,
-    modelId: device.deviceModelId,
-  };
-}
 
 export function mapBleDeviceToKnownDevice(device: DeviceLike): KnownDevice {
   return {
@@ -121,7 +111,7 @@ export function mapPersistedKnownDeviceToKnownDevice(
   return null;
 }
 
-function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
+function upsertKnownDeviceById(state: KnownDevicesState, device: KnownDevice) {
   const existingDeviceIndex = state.knownDevices.findIndex(d => d.id === device.id);
 
   if (existingDeviceIndex === -1) {
@@ -132,62 +122,20 @@ function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
   state.knownDevices[existingDeviceIndex] = { ...device };
 }
 
-function findMatchingKnownDevice(
-  newDevice: KnownDevice,
-  knownDevices: KnownDevice[],
-): KnownDevice | null {
-  const oldDevicesForTransport = knownDevices.filter(
-    device => device.transport === newDevice.transport,
-  );
-
-  if (newDevice.transport === mockserverIdentifier && newDevice.id !== "") {
-    return (
-      oldDevicesForTransport.find(device => device.id === newDevice.id) ??
-      oldDevicesForTransport.find(
-        device => device.id === "" && device.deviceModelId === newDevice.deviceModelId,
-      ) ??
-      null
-    );
-  }
-
-  const transportReportsUnstableDeviceId =
-    newDevice.transport === rnHidTransportIdentifier ||
-    newDevice.transport === speculosIdentifier ||
-    newDevice.transport === mockserverIdentifier;
-
-  if (transportReportsUnstableDeviceId) {
-    return (
-      oldDevicesForTransport.find(device => device.deviceModelId === newDevice.deviceModelId) ??
-      null
-    );
-  }
-
-  const matchingOldDevice = findMatchingOldDevice(
-    mapKnownDeviceToDeviceBaseInfo(newDevice),
-    oldDevicesForTransport.map(mapKnownDeviceToDeviceBaseInfo),
-  );
-
-  return (
-    (matchingOldDevice &&
-      oldDevicesForTransport.find(device => device.id === matchingOldDevice.deviceId)) ??
-    null
-  );
-}
-
 const knownDevicesSlice = createSlice({
   name: "knownDevices",
   initialState: INITIAL_STATE,
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
     addKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
-      upsertKnownDevice(state, action.payload);
+      upsertKnownDeviceById(state, action.payload);
     },
-    updateKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+    upsertKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
       const newDevice = action.payload;
-      const deviceToUpdate = findMatchingKnownDevice(newDevice, state.knownDevices);
+      const deviceToUpdate = findMatchingDevice(newDevice, state.knownDevices);
 
       if (!deviceToUpdate) {
-        upsertKnownDevice(state, newDevice);
+        upsertKnownDeviceById(state, newDevice);
         return;
       }
 
@@ -227,7 +175,7 @@ const knownDevicesSlice = createSlice({
 export const {
   importKnownDevices,
   addKnownDevice,
-  updateKnownDevice,
+  upsertKnownDevice,
   removeKnownDevice,
   removeKnownDevices,
   saveKnownDeviceName,

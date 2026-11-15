@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
 import { findUtxo } from "./utils";
 

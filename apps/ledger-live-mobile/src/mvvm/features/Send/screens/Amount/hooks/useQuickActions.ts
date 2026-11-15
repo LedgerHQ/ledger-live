@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -63,11 +63,12 @@ export function useQuickActions({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const amountCurrency = useMemo(() => getAccountCurrency(account), [account]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
 
   const tolerance = useMemo(() => {
     const magnitude = Math.min(Math.max(accountUnit.magnitude, 0), TOLERANCE_MAGNITUDE_CAP);
-    return new BigNumber(1).dividedBy(new BigNumber(10).pow(magnitude));
+    return new BigNumber(1).shiftedBy(-magnitude);
   }, [accountUnit.magnitude]);
 
   const quickActions = useMemo(() => {
@@ -75,9 +76,10 @@ export function useQuickActions({
     const currentAmount = transaction.amount ?? new BigNumber(0);
 
     const actions: QuickActionConfig[] = QUICK_ACTIONS_CONFIG.map(config => {
-      const targetAmount = availableBalance
-        .multipliedBy(config.ratio)
-        .integerValue(BigNumber.ROUND_DOWN);
+      const targetAmount = sendFeatures.roundAmount(
+        amountCurrency,
+        availableBalance.multipliedBy(config.ratio).integerValue(BigNumber.ROUND_DOWN),
+      );
 
       const matchesTarget = areAmountsEqual(currentAmount, targetAmount, tolerance);
       const explicitlySelected =
@@ -127,6 +129,7 @@ export function useQuickActions({
     transaction.useAllAmount,
     tolerance,
     accountCurrency,
+    amountCurrency,
   ]);
 
   return quickActions;

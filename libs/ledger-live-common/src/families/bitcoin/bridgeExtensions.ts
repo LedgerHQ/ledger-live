@@ -8,7 +8,7 @@ import type {
   TransactionStatus as BitcoinTransactionStatus,
 } from "@ledgerhq/coin-bitcoin/types";
 import type { AccountBridgeExtensions, Account, AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { defaultClearAccount } from "../../bridge/defaultBridgeExtensions";
 import { clearAccount as bitcoinClearAccount } from "./clearAccount";
 import {

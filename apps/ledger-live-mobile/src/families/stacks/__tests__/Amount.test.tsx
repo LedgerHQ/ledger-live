@@ -35,7 +35,7 @@ jest.mock("@react-navigation/native", () => ({
 
 jest.mock("~/screens/SendFunds/AmountInput", () => {
   const { TextInput } = jest.requireActual("react-native");
-  const { BigNumber } = jest.requireActual("bignumber.js");
+  const BigNumber = jest.requireActual("bignumber.js").default;
   return ({ onChange, testID }: { onChange: (v: BigNumber) => void; testID: string }) => (
     <TextInput testID={testID} onChangeText={(v: string) => onChange(new BigNumber(v))} />
   );

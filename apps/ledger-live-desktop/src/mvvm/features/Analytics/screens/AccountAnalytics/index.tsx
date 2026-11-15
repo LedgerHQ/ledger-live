@@ -1,6 +1,6 @@
 import React from "react";
 import { TrackScreen } from "@shared/analytics-react";
-import { AccountAnalytics } from "@features/flow-account-analytics/web";
+import { AccountAnalytics } from "@features/flow-account-analytics";
 import PageHeader from "LLD/components/PageHeader";
 import { AllocationSection } from "../../components/Allocation/AllocationSection";
 import { AnalyticsBalanceRenderer } from "../../components/AnalyticsBalanceRenderer";

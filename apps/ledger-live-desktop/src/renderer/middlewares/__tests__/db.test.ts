@@ -10,11 +10,16 @@ import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
+import { walletStateExportShouldDiffer } from "~/renderer/reducers/wallet";
+import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
+  type AccountAnalyticsIntroductionState,
 } from "@features/flow-account-detail-analytics-notice/state";
 
 jest.mock("~/renderer/storage", () => ({
@@ -88,7 +93,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 const mockedSetKey = jest.mocked(setKey);
 
 type FakeState = {
-  accountAnalyticsIntroduction: { hasDismissed: boolean };
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: { loaded: boolean; starredMarketCoins: string[] };
   market: Record<string, unknown>;
   application: { isLocked: boolean };
@@ -110,7 +115,7 @@ type FakeState = {
   payCardFeatureTour: {
     hasSeenFeatureTour: boolean;
   };
-  payRequestVerifyHint: {
+  receiveVerifyHint: {
     hasSeenReceiveVerifyHint: boolean;
   };
   payCardLoginIntro: {
@@ -126,7 +131,7 @@ type FakeState = {
 };
 
 const baseState = (): FakeState => ({
-  accountAnalyticsIntroduction: { hasDismissed: false },
+  accountAnalyticsIntroduction: { hasDismissed: false, isEligible: null },
   settings: { loaded: true, starredMarketCoins: [] },
   market: { currentPage: 1 },
   application: { isLocked: false },
@@ -139,7 +144,7 @@ const baseState = (): FakeState => ({
   largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
-  payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+  receiveVerifyHint: { hasSeenReceiveVerifyHint: false },
   payCardLoginIntro: { hasSeenLoginIntro: false },
   payCardOnboardingWidget: {
     hasCompletedOnboarding: false,
@@ -295,7 +300,7 @@ describe("DBMiddleware - payCard branch", () => {
   const payCardState: FakeState = {
     ...baseState(),
     payCardFeatureTour: { hasSeenFeatureTour: true },
-    payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
     payCardOnboardingWidget: {
@@ -319,7 +324,7 @@ describe("DBMiddleware - payCard branch", () => {
 
   it.each([
     "payCardFeatureTour/markPayCardFeatureTourSeen",
-    "payRequestVerifyHint/markReceiveVerifyHintSeen",
+    "receiveVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
     "payCardLoginIntro/markPayCardLoginIntroSeen",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
@@ -472,13 +477,14 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: true,
+      isEligible: null,
     });
   });
 
   it("should avoid rewriting storage when dismissal is already consumed", () => {
     const state: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
 
     runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
@@ -489,7 +495,7 @@ describe("DBMiddleware - Analytics introduction", () => {
   it("should persist the reset so the introduction shows again after a restart", () => {
     const before: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
     const action = resetAccountAnalyticsIntroduction();
     const after: FakeState = {
@@ -504,6 +510,7 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: false,
+      isEligible: null,
     });
   });
 
@@ -511,6 +518,58 @@ describe("DBMiddleware - Analytics introduction", () => {
     const state = baseState();
 
     runMiddleware([state, state], resetAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should persist the eligibility snapshot when it is recorded", () => {
+    const before = baseState();
+    const action = recordAccountAnalyticsIntroductionEligibility(true);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: true,
+    });
+  });
+
+  it("should persist an eligibility forced from the DevTools", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
+    };
+    const action = overrideAccountAnalyticsIntroductionEligibility(false);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: false,
+    });
+  });
+
+  it("should avoid rewriting storage when the eligibility snapshot already exists", () => {
+    const state: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: false },
+    };
+
+    runMiddleware([state, state], recordAccountAnalyticsIntroductionEligibility(true));
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });
@@ -529,5 +588,54 @@ describe("DBMiddleware - Analytics introduction", () => {
     runMiddleware([before, after], action);
 
     expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
+
+const lockedState = (): FakeState => ({ ...baseState(), application: { isLocked: true } });
+
+describe("DBMiddleware - lock gate on encrypted records", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+    jest.mocked(walletStateExportShouldDiffer).mockReturnValue(true);
+    jest.mocked(accountsPersistedStateChanged).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    jest.mocked(walletStateExportShouldDiffer).mockReturnValue(false);
+    jest.mocked(accountsPersistedStateChanged).mockReturnValue(false);
+  });
+
+  it("does not write wallet or accounts while the app is locked", () => {
+    const before = lockedState();
+    const after: FakeState = { ...before, wallet: { changed: true }, accounts: [] };
+
+    runMiddleware([before, after], { type: "ACCOUNTS_UPDATE" });
+
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "wallet", expect.anything());
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "accounts", expect.anything());
+  });
+
+  it("writes wallet and accounts when the app is unlocked", () => {
+    const before = baseState();
+    const after: FakeState = { ...before, wallet: { changed: true } };
+
+    runMiddleware([before, after], { type: "ACCOUNTS_UPDATE" });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
+  });
+
+  it("writes wallet and accounts on the APPLICATION_SET_DATA action that unlocks the app", () => {
+    const before = lockedState();
+    const after: FakeState = {
+      ...before,
+      application: { isLocked: false },
+      wallet: { changed: true },
+    };
+
+    runMiddleware([before, after], { type: "APPLICATION_SET_DATA", payload: { isLocked: false } });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
   });
 });

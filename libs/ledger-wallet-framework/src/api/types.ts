@@ -139,7 +139,10 @@ export type BridgeApi = {
     address: string,
     accountInfo?: AccountInfo,
   ) => Promise<FamilyAccountShape | undefined> | FamilyAccountShape | undefined;
-  /** Family-specific token sub-account fields, keyed by the token's `contractAddress`. */
+  /**
+   * Family-specific token sub-account fields, keyed by the token's `contractAddress`, or by its `id`
+   * where one contract address has several tokens (an XRPL issuer). The `id` key wins.
+   */
   buildTokenAccountShapes?: (
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
@@ -256,6 +259,18 @@ export type BridgeApi = {
    * Ignored when the family declares `balanceOptions`, whose scan depends on the sync hash.
    */
   balanceListsEveryToken?: boolean;
+  /**
+   * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair: on XRPL
+   * `USD` and `usd` are two currencies, and so are `USD` from two issuers. Left unset, references
+   * match in any case, as Stacks needs.
+   */
+  exactAssetMatch?: boolean;
+  /**
+   * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid. Left
+   * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
+   */
+  tokenOptParentRow?: boolean;
   /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is

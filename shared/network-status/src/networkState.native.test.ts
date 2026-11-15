@@ -1,6 +1,6 @@
 import * as ExpoNetwork from "expo-network";
 import { act, renderHook } from "@testing-library/react-native";
-import { getNetworkState, subscribeToNetworkState, useNetworkState } from "./networkState.native";
+import { getNetworkState, subscribeToNetworkState, useNetworkState } from "./networkState";
 
 jest.mock("expo-network", () => ({
   getNetworkStateAsync: jest.fn(),

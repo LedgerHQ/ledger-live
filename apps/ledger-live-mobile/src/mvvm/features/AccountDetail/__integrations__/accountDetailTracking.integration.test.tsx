@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Text } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -99,7 +99,7 @@ const withAccount =
   (state: State): State => {
     const withFlag = withFlagOverrides({
       accountDetail: { enabled: true },
-      lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+      lwmWallet40: { enabled: true },
     })(state);
     return { ...withFlag, accounts: { ...withFlag.accounts, active: [account] } };
   };
@@ -147,7 +147,12 @@ describe("AccountDetail tracking: page", () => {
       {
         category: "Account",
         name: undefined,
-        props: { ...COMMON, operationsCount: ethAccount.operationsCount, hasTokens: true },
+        props: {
+          ...COMMON,
+          operationsCount: ethAccount.operationsCount,
+          hasTokens: true,
+          hasAnalyticsBanner: false,
+        },
       },
       expect.objectContaining({ updateRoutes: true }),
     );

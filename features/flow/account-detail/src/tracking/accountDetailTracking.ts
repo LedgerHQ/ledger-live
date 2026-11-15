@@ -28,6 +28,7 @@ export const ACCOUNT_DETAIL_BUTTONS = {
   validateRemoveFromPortfolio: "validate remove from portfolio",
   cancelRemoveFromPortfolio: "cancel remove from portfolio",
   pullToRefresh: "pull to refresh",
+  analyticsBanner: "Analytics banner",
 } as const;
 
 export type AccountDetailButton =
@@ -59,18 +60,21 @@ export type AccountPageViewFacts = AccountTrackingFacts &
     source: string;
     operationsCount: number;
     hasTokens: boolean;
+    hasAnalyticsBanner: boolean;
   }>;
 
 export const accountPageViewProps = ({
   source,
   operationsCount,
   hasTokens,
+  hasAnalyticsBanner,
   ...facts
 }: AccountPageViewFacts) => ({
   ...accountTrackingProps(facts),
   source,
   operationsCount,
   hasTokens,
+  hasAnalyticsBanner,
 });
 
 /** The settings are opened from the account page, so they only carry it as `source`. */

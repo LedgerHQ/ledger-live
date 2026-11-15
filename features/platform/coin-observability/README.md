@@ -19,11 +19,16 @@ host needs to consume the events lives here, with no legacy import.
   outside React, so a host registers its observers once at startup. A throwing observer never breaks
   the call it observes.
 - `createCoinModuleCallTransmitter`: the policy for a sink that leaves the process:
-  - transaction-path calls (`craftTransaction`, `craftRawTransaction`, `estimateFees`, `combine`,
-    `broadcast`, `validateIntent`) are always sent;
-  - read-path successes are sampled per app session: a session sends all of them or none;
+  - transaction-path calls (`craftTransaction`, `craftRawTransaction`, `craftTransactionData`,
+    `combine`, `broadcast`) are always sent;
+  - preparation successes (`estimateFees`, `validateIntent`, called on every edit of a
+    transaction) and read-path successes are sampled per app session, each tier with its own rate:
+    a session sends all of them or none;
   - failures are capped per method, currency and error name, per hour;
-  - `includeSyncPath: false` drops the read path entirely, failures included.
+  - `includeSyncPath: false` drops the read path entirely, failures included;
+  - each sent call carries its tier's `sampleRate` and whether the session is `inSample`. Failures
+    come from every session and successes only from the sample, so a failure rate is computed on
+    `inSample` calls only, and a success count is divided by `sampleRate` to estimate the volume.
 - `setCoinObservabilityConfigReader` / `toCoinObservabilityConfig`: the host injects its
   `coinObservability` flag. Until it does, transmission stays off.
 

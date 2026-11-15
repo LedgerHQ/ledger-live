@@ -63,7 +63,7 @@ const containsCall = node => {
   (function scan(n) {
     if (found) return;
     if (ts.isCallExpression(n) || ts.isNewExpression(n)) found = true;
-    else ts.forEachChild(n, scan);
+    else n.forEachChild(scan);
   })(node);
   return found;
 };
@@ -86,7 +86,7 @@ for (const file of files) {
       let hasCall = false;
       (function scan(n) {
         if (ts.isCallExpression(n)) hasCall = true;
-        ts.forEachChild(n, scan);
+        n.forEachChild(scan);
       })(node.initializer);
       if (hasCall && !optedOut(node)) {
         callBackedBindings.set(node.name.text, {
@@ -95,7 +95,7 @@ for (const file of files) {
         });
       }
     }
-    ts.forEachChild(node, collect);
+    node.forEachChild(collect);
   })(src);
 
   (function visit(node) {
@@ -137,7 +137,7 @@ for (const file of files) {
         }
       }
     }
-    ts.forEachChild(node, visit);
+    node.forEachChild(visit);
   })(src);
 }
 

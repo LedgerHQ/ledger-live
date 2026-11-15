@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, fireEvent, render as renderNative, screen } from "@testing-library/react-native";
 import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
-import { BankTransferIntroView } from "../BankTransferIntroView.native";
+import { BankTransferIntroView } from "../BankTransferIntroView";
 import type { BankTransferIntroViewProps } from "../../../types";
 
 jest.mock("@features/platform-pay-analytics", () =>

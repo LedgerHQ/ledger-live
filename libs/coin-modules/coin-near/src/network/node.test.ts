@@ -1,3 +1,4 @@
+import { getNetworkState } from "@ledgerhq/live-network";
 import { http, HttpResponse } from "msw";
 import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
@@ -81,6 +82,29 @@ const mockRpc = (views: Record<string, unknown> = {}): void => {
       return HttpResponse.json({ jsonrpc: "2.0", id: "id", result: {} });
     }),
   );
+};
+
+const mockNodeWithoutGasPrice = (): void => {
+  mockServer.use(
+    http.post(NEAR_BASE_URL_MOCKED, () =>
+      HttpResponse.json({
+        jsonrpc: "2.0",
+        id: "id",
+        error: { message: "node unavailable" },
+      }),
+    ),
+  );
+};
+
+const mockDepositsStatus = (status: number): { requests: () => number } => {
+  let requests = 0;
+  mockServer.use(
+    http.get(`${NEAR_BASE_URL_MOCKED}/v3/kitwallet/staking-deposits/:address`, () => {
+      requests += 1;
+      return HttpResponse.json({ message: "refused" }, { status });
+    }),
+  );
+  return { requests: () => requests };
 };
 
 const mockStats = (data: { gas_price: string | null } | null): void => {
@@ -230,8 +254,25 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getGasPrice", () => {
-    it("reads the gas price from the v3 stats envelope", async () => {
+    it("reads the gas price from the node without calling the indexer", async () => {
+      let statsRequests = 0;
+      mockRpc();
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => {
+          statsRequests += 1;
+          return HttpResponse.json({ data: { gas_price: "100000000" } });
+        }),
+      );
+
+      const gasPrice = await getGasPrice(mockNearConfig);
+
+      expect(gasPrice).toBe(RPC_GAS_PRICE);
+      expect(statsRequests).toBe(0);
+    });
+
+    it("reads the v3 stats envelope when the node cannot answer", async () => {
       let requestedPath: string | undefined;
+      mockNodeWithoutGasPrice();
       mockServer.use(
         http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, ({ request }) => {
           requestedPath = new URL(request.url).pathname;
@@ -245,59 +286,31 @@ describe("node api (indexer-backed calls)", () => {
       expect(gasPrice).toBe("100000000");
     });
 
-    it("falls back to the node RPC when the indexer gas price is null", async () => {
-      mockStats({ gas_price: null });
-      mockRpc();
+    it.each([
+      ["a null gas price", { gas_price: null }],
+      ["an empty gas price", { gas_price: "" }],
+      ["a null envelope data", null],
+    ])("rejects when the node fails and the indexer reports %s", async (_label, data) => {
+      mockNodeWithoutGasPrice();
+      mockStats(data);
 
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the envelope data is null", async () => {
-      mockStats(null);
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the indexer reports an empty gas price", async () => {
-      mockStats({ gas_price: "" });
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the indexer rate-limits with a 429", async () => {
-      mockServer.use(
-        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () =>
-          HttpResponse.json({ message: "Too Many Requests" }, { status: 429 }),
-        ),
+      await expect(getGasPrice(mockNearConfig)).rejects.toThrow(
+        "Near: no gas price from the node or the indexer",
       );
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
 
-    it("reports the node error when the fallback cannot read a gas price either", async () => {
-      mockStats(null);
+    it("rejects after one indexer request when the node fails and the indexer answers 429", async () => {
+      mockNodeWithoutGasPrice();
+      let statsRequests = 0;
       mockServer.use(
-        http.post(NEAR_BASE_URL_MOCKED, () =>
-          HttpResponse.json({
-            jsonrpc: "2.0",
-            id: "id",
-            error: { message: "node unavailable" },
-          }),
-        ),
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => {
+          statsRequests += 1;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
       );
 
-      await expect(getGasPrice(mockNearConfig)).rejects.toThrow("node unavailable");
+      await expect(getGasPrice(mockNearConfig)).rejects.toThrow("Too Many Requests");
+      expect(statsRequests).toBe(1);
     });
   });
 
@@ -343,6 +356,34 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getStakingPositions", () => {
+    it("rejects after a single request when the listing answers 429, never an empty list", async () => {
+      const deposits = mockDepositsStatus(429);
+      mockRpc();
+
+      await expect(getStakingPositions(mockNearConfig, ADDRESS)).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(deposits.requests()).toBe(1);
+    });
+
+    it("rejects getAccount after a single request when the listing answers 429", async () => {
+      const deposits = mockDepositsStatus(429);
+      mockRpc();
+
+      await expect(getAccount(mockNearConfig, ADDRESS)).rejects.toMatchObject({ status: 429 });
+      expect(deposits.requests()).toBe(1);
+    });
+
+    it("still retries the listing on a 503", async () => {
+      const deposits = mockDepositsStatus(503);
+      mockRpc();
+
+      await expect(getStakingPositions(mockNearConfig, ADDRESS)).rejects.toMatchObject({
+        status: 503,
+      });
+      expect(deposits.requests()).toBe(getNetworkState().getCallsRetry + 1);
+    });
+
     it("discovers delegated validators through the v3 kitwallet endpoint", async () => {
       let requestedPath: string | undefined;
       mockServer.use(
@@ -790,6 +831,21 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getValidators", () => {
+    it("rejects after a single request when the indexer answers 429", async () => {
+      let requests = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
+          requests += 1;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
+      );
+
+      await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(requests).toBe(1);
+    });
+
     it("maps the flat snake_case v3 shape", async () => {
       let requestedUrl: URL | undefined;
       mockServer.use(
@@ -1030,6 +1086,42 @@ describe("node api (indexer-backed calls)", () => {
 
       expect(requestedLimits).toEqual(["20"]);
       expect(validators).toHaveLength(20);
+    });
+
+    it("fetches again after a failure, which is not cached", async () => {
+      let requests = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
+          requests += 1;
+          if (requests === 1) {
+            return HttpResponse.json({ message: "Bad Request" }, { status: 400 });
+          }
+          return HttpResponse.json({ data: [validator()] });
+        }),
+      );
+
+      await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
+        "Bad Request",
+      );
+      const validators = await getValidators({ total: 20, config: mockNearConfig });
+
+      expect(requests).toBe(2);
+      expect(validators).toHaveLength(1);
+    });
+
+    it("serves two calls inside the TTL from a single fetch", async () => {
+      let requests = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
+          requests += 1;
+          return HttpResponse.json({ data: [validator()] });
+        }),
+      );
+
+      await getValidators({ total: 20, config: mockNearConfig });
+      await getValidators({ total: 20, config: mockNearConfig });
+
+      expect(requests).toBe(1);
     });
   });
 });

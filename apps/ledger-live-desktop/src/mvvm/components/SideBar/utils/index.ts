@@ -1,6 +1,7 @@
 export {
   SIDEBAR_VALUE_TO_PATH,
   SIDEBAR_VALUE_TO_TRACK_ENTRY,
+  SIDEBAR_VALUE_TO_TRACK_EXTRA_PROPS,
   ACCOUNTS_SIDEBAR_PATH,
 } from "./constants";
 export type { SideBarNavValue } from "./constants";

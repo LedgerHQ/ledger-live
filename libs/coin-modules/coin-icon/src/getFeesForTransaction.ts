@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getFees } from "./api/node";
 import { getStepPrice } from "./api/node";
 import { buildTransaction } from "./buildTransaction";

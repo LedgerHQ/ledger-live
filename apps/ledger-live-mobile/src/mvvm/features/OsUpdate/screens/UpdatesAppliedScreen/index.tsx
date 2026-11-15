@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { RestoreBackupStatus } from "@ledgerhq/live-dmk-shared";
 import { InfoState } from "@shared/ui-info-state";
-import { Trans } from "~/context/Locale";
+import { Trans, useTranslation } from "~/context/Locale";
 import { useOsUpdateTracking } from "../../analytics/TrackingProvider";
 import { OsUpdateButton } from "../../analytics/types";
 
@@ -33,6 +33,7 @@ function getRestoreBannerKey(restoreStatus: RestoreBackupStatus | undefined) {
 
 export function UpdatesAppliedScreen(props: UpdatesAppliedScreenProps) {
   const { productName, restoreStatus, onClose } = props;
+  const { t } = useTranslation();
   const { trackClick } = useOsUpdateTracking();
   const onPressFinish = useCallback(() => {
     trackClick(OsUpdateButton.FINISH);
@@ -51,14 +52,14 @@ export function UpdatesAppliedScreen(props: UpdatesAppliedScreenProps) {
           />
         }
         description={
-          props.isRestoreOnly ? undefined : (
+          props.isRestoreOnly ? (
+            <Trans i18nKey="osUpdates.restored.description" />
+          ) : (
             <Trans i18nKey="osUpdates.applied.version" values={{ version: props.osVersion }} />
           )
         }
         banner={
-          bannerKey
-            ? { description: <Trans i18nKey={bannerKey} />, testID: "os-update-restore-banner" }
-            : undefined
+          bannerKey ? { description: t(bannerKey), testID: "os-update-restore-banner" } : undefined
         }
         primaryCta={{ label: <Trans i18nKey="osUpdates.actions.finish" />, onPress: onPressFinish }}
         testID="os-update-applied-screen"

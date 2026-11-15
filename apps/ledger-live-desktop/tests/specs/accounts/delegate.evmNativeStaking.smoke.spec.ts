@@ -19,7 +19,6 @@ const SEI_OPERATIONS_ACTIONS = new Set([
 const SEI_EVM_CHAIN_ID = 1329;
 const SEI_ADDRESS_PRECOMPILE = "0x0000000000000000000000000000000000001004";
 const MOCKED_SEI_LINKED_ADDRESS = "sei1mockassociatedaddress0000000000000000000";
-let seiAccountAssociated = true;
 const MOCKED_NATIVE_BALANCE_HEX = "0x8ac7230489e80000";
 const MOCKED_GAS_LIMIT_HEX = "0x186a0";
 const MOCKED_GAS_PRICE_HEX = "0x3b9aca00";
@@ -137,15 +136,7 @@ function handleSeiEvmRpcCall(request: JsonRpcRequest): JsonRpcResponse {
           ? String((params[0] as { to?: unknown }).to).toLowerCase()
           : "";
       if (to === SEI_ADDRESS_PRECOMPILE.toLowerCase()) {
-        // Associated → return the linked Cosmos address (isSeiAccountUnassociated → false);
-        // unassociated → revert, which it treats as "not linked yet" (→ true).
-        return seiAccountAssociated
-          ? respond(encodeStringResult(MOCKED_SEI_LINKED_ADDRESS))
-          : {
-              id: id ?? null,
-              jsonrpc: "2.0",
-              error: { code: 3, message: "execution reverted: address not associated" },
-            };
+        return respond(encodeStringResult(MOCKED_SEI_LINKED_ADDRESS));
       }
       return respond(getMockedSeiDelegationResult(params));
     }
@@ -346,8 +337,6 @@ let delegate: EvmDelegateModal;
 let accountsPage: AccountsPage;
 
 test.beforeEach(async ({ page }) => {
-  seiAccountAssociated = true;
-
   const layout = new Layout(page);
   await layout.goToAccounts();
   modalPage = new Modal(page);
@@ -380,25 +369,6 @@ test("EVM Native Staking - Delegate happy path (sei_evm) @smoke", async ({ page 
     const filledMaxAmount = await delegate.getCryptoAmount();
     expect(filledMaxAmount).toEqual(availableMaxAmount);
     await expect.soft(modalPage.container).toHaveScreenshot(`evm-staking-max-amount-page.png`);
-  });
-});
-
-test("EVM Native Staking - Unassociated Sei account shows warning (sei_evm) @smoke", async ({
-  page,
-}) => {
-  seiAccountAssociated = false;
-
-  await accountsPage.navigateToAccountByName("SEI Network (EVM) 1");
-  delegate = new EvmDelegateModal(page);
-  await delegate.startFromEmptyState();
-
-  await test.step("association warning is shown and continue is disabled", async () => {
-    await expect(
-      page.getByText(
-        "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement.",
-      ),
-    ).toBeVisible();
-    await delegate.continueIsDisabled();
   });
 });
 

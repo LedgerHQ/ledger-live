@@ -12,23 +12,17 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
-  Account,
   AccountLike,
   BalanceHistory,
   PortfolioRange,
   AccountPortfolio,
   Portfolio,
   CurrencyPortfolio,
-  AssetsDistribution,
   ValueChange,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
 import { getFiatPriceVariationFromPercentChange } from "../market/utils/resolveRangePriceChange";
 import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
-import { defaultAssetsDistribution } from "./assetsDistribution";
-import type { AssetsDistributionOpts } from "./assetsDistribution";
 
 export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
@@ -391,118 +385,6 @@ export function getCurrentBalanceCountervalueChange(
 
   return { value, percentage: meaningfulPercentage(value, valueThen) ?? null };
 }
-
-export function getAssetsDistribution(
-  topAccounts: Account[],
-  cvState: CounterValuesCacheView,
-  cvCurrency: Currency,
-  opts?: AssetsDistributionOpts,
-): AssetsDistribution {
-  const {
-    minShowFirst,
-    maxShowFirst,
-    showFirstThreshold,
-    showEmptyAccounts,
-    hideEmptyTokenAccount,
-  } = {
-    ...defaultAssetsDistribution,
-    ...opts,
-  };
-  const idBalances: Record<string, number> = {};
-  const idCurrencies: Record<string, CryptoCurrency | TokenCurrency> = {};
-  const currenciesAccounts: Record<string, AccountLike[]> = {};
-  const accounts = flattenAccounts(topAccounts);
-
-  for (const account of accounts) {
-    const cur = getAccountCurrency(account);
-    const id = cur.id;
-
-    if (!currenciesAccounts[id]) {
-      currenciesAccounts[id] = [account];
-    } else {
-      currenciesAccounts[id].push(account);
-    }
-
-    if (account.type === "TokenAccount") {
-      if (!hideEmptyTokenAccount || account.balance.isGreaterThan(0)) {
-        idCurrencies[id] = cur;
-        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
-      }
-    } else if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
-      idCurrencies[id] = cur;
-      idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
-    }
-  }
-
-  const idCountervalues: Record<string, number | undefined> = {};
-  let sum = 0;
-
-  for (const [id, value] of Object.entries(idBalances)) {
-    const cv = calculate(cvState, {
-      value: Number(value),
-      from: idCurrencies[id],
-      to: cvCurrency,
-    });
-    if (cv) {
-      sum += cv;
-      idCountervalues[id] = cv;
-    }
-  }
-
-  const idCurrenciesKeys = Object.keys(idCurrencies);
-
-  if (idCurrenciesKeys.length === 0) {
-    return assetsDistributionNotAvailable;
-  }
-
-  const isAvailable = sum !== 0 || showEmptyAccounts;
-  const list = idCurrenciesKeys
-    .map(id => {
-      const currency = idCurrencies[id];
-      const amount = idBalances[id];
-      const countervalue = idCountervalues[id] ?? 0;
-      const currencyAccounts = currenciesAccounts[id];
-      const distributionWhenAvailable =
-        sum !== 0 ? countervalue / sum : 1 / idCurrenciesKeys.length;
-      return {
-        currency,
-        countervalue,
-        amount,
-        distribution: isAvailable ? distributionWhenAvailable : 0,
-        accounts: currencyAccounts,
-      };
-    })
-    .sort((a, b) => {
-      const diff = b.countervalue - a.countervalue;
-      return diff === 0 ? a.currency.name.localeCompare(b.currency.name) : diff;
-    });
-  let i;
-  let acc = 0;
-  const upperBound = Math.min(maxShowFirst, list.length);
-
-  for (i = 0; i < upperBound; i++) {
-    if (acc > showFirstThreshold) {
-      break;
-    }
-
-    acc += list[i].distribution;
-  }
-
-  const showFirst = Math.max(minShowFirst, i);
-  const data = {
-    isAvailable,
-    list,
-    showFirst,
-    sum,
-  };
-  return data;
-}
-const assetsDistributionNotAvailable: AssetsDistribution = {
-  isAvailable: false,
-  list: [],
-  showFirst: 0,
-  sum: 0,
-};
 
 export const orderAccountsByFiatValue = (
   accounts: AccountLike[],

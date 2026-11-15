@@ -353,4 +353,9 @@ describe("isAccountEmpty", () => {
       expect(isAccountEmpty(accountWithNonZero)).toBe(false);
     });
   });
+
+  it("treats an account without any token account like the generic rule", () => {
+    const account = { operationsCount: 0, balance: new BigNumber(0), subAccounts: [] };
+    expect(isAccountEmpty(account)).toBe(true);
+  });
 });

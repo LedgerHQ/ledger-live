@@ -1,4 +1,4 @@
-import { buildRendererEnv } from "./utils";
+import { buildRendererEnv } from "./utils.mts";
 
 describe("buildRendererEnv", () => {
   it.each([

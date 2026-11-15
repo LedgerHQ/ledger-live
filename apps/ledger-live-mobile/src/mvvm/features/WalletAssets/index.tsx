@@ -18,7 +18,6 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
 }) => {
   const {
     shouldAddBottomPadding,
-    shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayServicesEntryPoints,
     onBorrowPress,
@@ -36,7 +35,6 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     >
       <AssetsSections
         variant={variant}
-        shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         shouldDisplayServicesEntryPoints={
           variant !== "readOnly" && shouldDisplayServicesEntryPoints
         }

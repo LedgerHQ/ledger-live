@@ -1,12 +1,12 @@
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import * as accountBalance from "../common-logic/account/getBalance";
-import * as config from "../config";
+import type { CantonContext } from "../config";
+import * as accountBalance from "../logic/getBalance";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
-import { createMockCantonCurrency } from "../test/fixtures";
+import { createMockCantonCurrency, createMockCoinConfigValue } from "../test/fixtures";
 import { CantonAccount } from "../types";
 import * as onboard from "./onboard";
 import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
@@ -21,9 +21,8 @@ jest.mock("../network/gateway", () => ({
   getEnabledInstrumentsCached: jest.fn(),
 }));
 jest.mock("../signer");
-jest.mock("../config");
 jest.mock("./onboard");
-jest.mock("../common-logic/account/getBalance");
+jest.mock("../logic/getBalance");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
@@ -45,9 +44,13 @@ const mockedGetEnabledInstrumentsCached =
 const mockedResolver = resolver as jest.Mock;
 const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
-const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
 
 const sampleCurrency = createMockCantonCurrency();
+const sampleConfig = { nativeInstrumentId: "Amulet", minReserve: "0", useGateway: true };
+const fakeContext = {
+  config: async () => sampleConfig,
+  logger: () => {},
+} as unknown as CantonContext;
 
 type CantonBalance = {
   value: bigint;
@@ -167,12 +170,6 @@ describe("makeGetAccountShape", () => {
       partyId: "party123",
     });
 
-    mockedCoinConfig.mockReturnValue({
-      nativeInstrumentId: "Amulet",
-      minReserve: "0",
-      useGateway: true,
-    });
-
     mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
     mockedGetPendingTransferProposals.mockResolvedValue([]);
@@ -194,7 +191,7 @@ describe("makeGetAccountShape", () => {
         }),
       ],
     });
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -214,7 +211,7 @@ describe("makeGetAccountShape", () => {
       createMockNativeBalance("10", false),
     ]);
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -228,7 +225,7 @@ describe("makeGetAccountShape", () => {
   it("should handle empty balances correctly", async () => {
     mockedGetBalance.mockResolvedValue([]);
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -252,7 +249,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -281,7 +278,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -309,7 +306,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -337,7 +334,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -385,7 +382,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -447,7 +444,7 @@ describe("makeGetAccountShape", () => {
 
     // WHEN
     // we sync the account
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
 
     // THEN
@@ -481,7 +478,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithXpub.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -510,12 +507,12 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithXpub.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
 
     // Deviceless backfill: publicKey now resolves, so validateTopology can run.
     expect(mockedResolver).not.toHaveBeenCalled();
-    expect(mockedGetPartyById).toHaveBeenCalledWith(sampleCurrency, "test-party-id");
+    expect(mockedGetPartyById).toHaveBeenCalledWith(sampleConfig, "test-party-id");
     expect(shape.cantonResources?.publicKey).toBe("backfilled-public-key");
   });
 
@@ -537,7 +534,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithPublicKey.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -563,7 +560,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithBoth.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -642,7 +639,7 @@ describe("makeGetAccountShape", () => {
       operations: [],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
@@ -663,7 +660,7 @@ describe("makeGetAccountShape", () => {
 });
 
 describe("filterDisabledTokenAccounts", () => {
-  const currency = createMockCantonCurrency();
+  const mockConfig = createMockCoinConfigValue();
 
   const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
     type: "TokenAccount",
@@ -698,14 +695,14 @@ describe("filterDisabledTokenAccounts", () => {
 
   it("should return empty array when subAccounts is undefined", async () => {
     const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(currency, undefined, calTokens);
+    const result = await filterDisabledTokenAccounts(mockConfig, undefined, calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
   it("should return empty array when subAccounts is empty", async () => {
     const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(currency, [], calTokens);
+    const result = await filterDisabledTokenAccounts(mockConfig, [], calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
@@ -733,14 +730,14 @@ describe("filterDisabledTokenAccounts", () => {
     );
 
     const result = await filterDisabledTokenAccounts(
-      currency,
+      mockConfig,
       [enabledTokenAccount, disabledTokenAccount],
       calTokens,
     );
 
     expect(result).toHaveLength(1);
     expect(result[0]).toBe(enabledTokenAccount);
-    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(currency);
+    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(mockConfig);
   });
 
   it("should keep enabled token accounts", async () => {
@@ -764,7 +761,7 @@ describe("filterDisabledTokenAccounts", () => {
     );
 
     const result = await filterDisabledTokenAccounts(
-      currency,
+      mockConfig,
       [enabledTokenAccount1, enabledTokenAccount2],
       calTokens,
     );
@@ -797,7 +794,7 @@ describe("filterDisabledTokenAccounts", () => {
     );
 
     const result = await filterDisabledTokenAccounts(
-      currency,
+      mockConfig,
       [tokenAccountWithoutAddress, enabledTokenAccount],
       calTokens,
     );
@@ -824,7 +821,7 @@ describe("filterDisabledTokenAccounts", () => {
     mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
 
     const result = await filterDisabledTokenAccounts(
-      currency,
+      mockConfig,
       [tokenAccount1, tokenAccount2],
       calTokens,
     );

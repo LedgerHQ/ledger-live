@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "../../../generated/types";
 import { useReestimateOnRentDelivery } from "./useReestimateOnRentDelivery";
 

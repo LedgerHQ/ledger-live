@@ -3,7 +3,7 @@
  */
 import { renderHook, act } from "tests/testSetup";
 import { files } from "~/renderer/bridge";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";

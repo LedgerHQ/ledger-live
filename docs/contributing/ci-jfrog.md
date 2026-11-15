@@ -1,12 +1,12 @@
 ---
 name: ci-jfrog
-description: Read when adding or editing a GitHub workflow job that installs npm packages. Covers the jfrog-npm-auth action and which runners may be used.
+description: Read when adding or editing a GitHub workflow job that installs npm packages or runs Gradle, or when adding a Maven repository to an Android build. Covers the jfrog-npm-auth and jfrog-maven-auth actions and which runners may be used.
 ---
 
 # CI package consumption: JFrog
 
-Every CI job that resolves packages (`pnpm i`, `npx`, `pnpm dlx`) must pull them from our JFrog
-Artifactory npm registry, not public npm. See epic [LIVE-35942](https://ledgerhq.atlassian.net/browse/LIVE-35942).
+Every CI job that resolves packages (`pnpm i`, `npx`, `pnpm dlx`, Gradle) must pull them from our
+JFrog Artifactory, not public npm or Maven. See epic [LIVE-35942](https://ledgerhq.atlassian.net/browse/LIVE-35942).
 
 JFrog sits behind an IP allow list. Only our network-controlled runners can reach it, so
 **the runner and the JFrog login are one change**: a job moved to a network-controlled runner without
@@ -44,6 +44,34 @@ Rules:
 
 Reference: [`test-boundaries-reusable.yml`](../../.github/workflows/test-boundaries-reusable.yml).
 
+## Gradle (Android)
+
+[`jfrog-maven-auth`](../../tools/actions/composites/jfrog-maven-auth/action.yml) installs a Gradle
+init script that rewrites each public Maven repository, in every Gradle build, to its
+`ossproxy-maven-proxy-*` remote. Add it after `jfrog-npm-auth`, before Gradle runs:
+
+```yaml
+  - name: JFrog Maven auth
+    uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-maven-auth@develop
+    with:
+      url: ${{ vars.ARTIFACTORY_MAVEN_URL }}
+```
+
+**Adding a Maven repository** (in `android/build.gradle`, or with a new React Native dependency
+that declares one) needs JFrog set up first. Otherwise CI downloads from the public host, and the
+build log shows `jfrog-maven: <url> is not mirrored`.
+
+1. Check whether an existing remote already serves the artifacts. JitPack-style repositories often
+   duplicate Maven Central.
+2. Add an `ossproxy-maven-proxy-*` remote in tf-jfrog, in `jfrog-green/oss-proxy/repositories.yaml`.
+   After it is applied, re-apply `jfrog-green/global-github-oidc` so the CI token can read it.
+3. Map the host to the remote in `remoteByHost` in
+   [`jfrog-maven.gradle`](../../tools/actions/composites/jfrog-maven-auth/jfrog-maven.gradle).
+
+Map hosts to single remotes, not to the Maven virtuals. The virtuals contain repositories the CI token
+cannot read, so a missing file returns 403 instead of 404, and Gradle stops instead of falling back
+to the POM.
+
 ## Which runner
 
 | Job | Runner | Why |
@@ -70,3 +98,4 @@ Do not copy an internal job's runner and JFrog step onto its `*-external` twin.
 - [ ] Can it receive fork code? If so, keep it off our runners.
 - [ ] Runner is a `ledger-wallet-*` label (or an approved self-hosted pool).
 - [ ] `id-token: write` set; `jfrog-npm-auth` before the first install.
+- [ ] Runs Gradle? `jfrog-maven-auth` before the first Gradle command.

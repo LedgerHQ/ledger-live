@@ -13,7 +13,7 @@ import { getEnv } from "@shared/env";
 import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";

@@ -426,6 +426,61 @@ describe("validateIntent", () => {
       // A fully resource-covered transfer owes no TRX, so a zero TRX balance is not a gas error.
       expect(result.errors.gasLimit).toBeUndefined();
     });
+
+    // A rental delegates exactly the simulated energy, and its 0.8 TRX top-up only reaches
+    // `balances` once the account syncs.
+    describe("after a rented energy delivery", () => {
+      const BANDWIDTH_BURN = 350_000n;
+      const deliveredBreakdown = {
+        energyRequired: "31895",
+        energyAvailable: "31895",
+        bandwidthRequired: "350",
+        bandwidthAvailable: "250",
+        energyEstimated: true,
+      };
+
+      it("does not warn about energy when the delegated energy exactly covers the transfer", async () => {
+        mockEstimateFees.mockResolvedValue({ value: 0n, parameters: deliveredBreakdown });
+
+        const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
+          nativeBalance(0n),
+          trc20Balance(5_000_000n),
+        ]);
+
+        expect(result.warnings.amount).toBeUndefined();
+        expect(result.errors).toEqual({});
+      });
+
+      it("raises NotEnoughGas for a bandwidth burn the unsynced TRX balance cannot pay", async () => {
+        mockEstimateFees.mockResolvedValue({
+          value: BANDWIDTH_BURN,
+          parameters: deliveredBreakdown,
+        });
+
+        const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
+          nativeBalance(0n),
+          trc20Balance(5_000_000n),
+        ]);
+
+        expect(result.warnings.amount).toBeUndefined();
+        expect(result.errors.gasLimit).toBeInstanceOf(NotEnoughGas);
+      });
+
+      it("accepts the bandwidth burn once the top-up is in the TRX balance", async () => {
+        mockEstimateFees.mockResolvedValue({
+          value: BANDWIDTH_BURN,
+          parameters: deliveredBreakdown,
+        });
+
+        const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
+          nativeBalance(800_000n),
+          trc20Balance(5_000_000n),
+        ]);
+
+        expect(result.errors).toEqual({});
+        expect(result.estimatedFees).toBe(BANDWIDTH_BURN);
+      });
+    });
   });
 
   describe("fee warning", () => {

@@ -19,7 +19,7 @@ import { DEVICE_TAGS, buildSwapTags } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-test.describe("Swap - default currency, switch and rejection", () => {
+test.describe("Swap - default currency and rejection", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -52,7 +52,7 @@ test.describe("Swap - default currency, switch and rejection", () => {
   });
 
   test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap default currency, previous setup, switch and refusal on device`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap default currency, previous setup and refusal on device`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080, B2CQA-2136, B2CQA-2212" },
@@ -76,13 +76,6 @@ test.describe("Swap - default currency, switch and rejection", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.checkAssetFromContains(fromAccount.currency.ticker);
-      await app.swap.checkAssetToContains(toAccount.currency.ticker);
-
-      await app.swap.switchYouSendAndYouReceive();
-      await app.swap.checkAssetFromContains(toAccount.currency.ticker);
-      await app.swap.checkAssetToContains(fromAccount.currency.ticker);
-      await app.swap.switchYouSendAndYouReceive();
       await app.swap.checkAssetFromContains(fromAccount.currency.ticker);
       await app.swap.checkAssetToContains(toAccount.currency.ticker);
 

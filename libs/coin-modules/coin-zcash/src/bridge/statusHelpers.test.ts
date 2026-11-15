@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { hasBoundedTransparentShortfall, resolveTransparentUtxos } from "./statusHelpers";
 import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";

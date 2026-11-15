@@ -18,6 +18,7 @@ import BigNumber from "bignumber.js";
 import { Keypair } from "@solana/web3.js";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   STAKE_ACCOUNT,
@@ -567,7 +568,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     sandbox = await startSandbox(
       { family: "solana", network: "solana" },
-      { node: { implementation: "agave", version: "4.3.0" } },
+      sandboxVersions("solana"),
     );
     const rpc = sandbox.endpoints.node;
     if (rpc === undefined) throw new Error("the sandbox instance has no node endpoint");
@@ -582,7 +583,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
           unit: { name: "SOL", code: "SOL", magnitude: 9 },
           token2022Enabled: true,
           legacyOCMSMaxVersion: "1.8.0",
-          rpcUrls: { solana: rpc },
+          rpcUrl: rpc,
         },
       },
     });

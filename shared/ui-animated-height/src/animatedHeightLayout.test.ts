@@ -84,6 +84,26 @@ describe("animatedHeightLayout", () => {
     expect(measureStackedHeight(body)).toBe(156);
   });
 
+  it("should count an SVG in a column, like a loading spinner above its title", () => {
+    const loading = document.createElement("div");
+    loading.style.display = "flex";
+    loading.style.flexDirection = "column";
+    loading.style.rowGap = "16px";
+    loading.style.paddingTop = "24px";
+    loading.style.paddingBottom = "24px";
+
+    const spinner = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    spinner.getBoundingClientRect = () => ({ height: 32 }) as DOMRect;
+    const title = document.createElement("h3");
+    title.dataset.h = "28";
+    loading.append(spinner, title);
+    document.body.append(loading);
+
+    expect(measureStackedHeight(loading)).toBe(32 + 16 + 28 + 24 + 24);
+
+    loading.remove();
+  });
+
   it("should subtract dialog padding and ignore the status gradient", () => {
     const dialog = document.createElement("div");
     dialog.style.boxSizing = "border-box";

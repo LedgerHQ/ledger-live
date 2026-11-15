@@ -1,5 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { Address } from "@ton/core";
+import { WalletContractV4 } from "@ton/ton";
 import type { TonAddressBook } from "../network/types";
 
 export const JETTON_ASSET_TYPE = "jetton";
@@ -28,6 +29,12 @@ export const addressesAreEqual = (addr1: string, addr2: string) => {
 
 export const toOwnFriendly = (address: Address): string =>
   address.toString({ urlSafe: true, bounceable: false });
+
+/** The non-bounceable address of the v4R2 wallet of a hex public key on workchain 0. */
+export const addressFromPublicKey = (publicKey: string): string =>
+  toOwnFriendly(
+    WalletContractV4.create({ workchain: 0, publicKey: Buffer.from(publicKey, "hex") }).address,
+  );
 
 export function toFriendly(rawOrFriendly: string, addressBook: TonAddressBook): string {
   return (

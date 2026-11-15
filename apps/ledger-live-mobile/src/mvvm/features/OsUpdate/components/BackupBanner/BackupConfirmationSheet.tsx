@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { InfoState } from "@shared/ui-info-state";
 import { Trans } from "~/context/Locale";
 import { OsUpdateStateSheet } from "../../sheets/OsUpdateStateSheet";
@@ -47,7 +47,7 @@ export function BackupConfirmationSheet({
       {content ? (
         <InfoState
           preset="spot"
-          spotProps={{ icon: Warning }}
+          spotProps={{ icon: WarningFill, appearance: "warning" }}
           size="hug"
           title={<Trans i18nKey={content.title} />}
           description={<Trans i18nKey={content.description} />}

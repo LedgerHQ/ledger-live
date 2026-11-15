@@ -6,7 +6,7 @@ import {
   FeeRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit, OpReturnDataSizeLimit, TaprootNotActivated, FeeTooLow } from "./errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type {
   BitcoinAccount,

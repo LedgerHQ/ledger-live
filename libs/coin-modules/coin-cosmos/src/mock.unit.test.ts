@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
 import mock from "./mock";
 import preloadedData from "./preloadedData.mock";

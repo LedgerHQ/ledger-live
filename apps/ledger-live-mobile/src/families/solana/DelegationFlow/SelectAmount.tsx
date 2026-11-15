@@ -6,7 +6,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/staking";
 import type { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";

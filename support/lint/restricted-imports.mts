@@ -8,6 +8,14 @@ const USE_SHARED_CLIPBOARD = "Use copyToClipboard / readClipboard from @shared/c
 
 export const LODASH = "lodash";
 
+// Listed by every config: bignumber.js 11's CJS types expose the class only as the default export.
+export const BIGNUMBER_NAMED_IMPORT = {
+  name: "bignumber.js",
+  importNames: ["BigNumber"],
+  message:
+    'Import the default export: import BigNumber from "bignumber.js" (bignumber.js 11 types).',
+};
+
 export const EXPO_CLIPBOARD = {
   name: "expo-clipboard",
   message: `${USE_SHARED_CLIPBOARD} instead of expo-clipboard.`,
@@ -131,10 +139,11 @@ export const RELATIVE_IMPORTS = {
 // two that set the rule keeps the last one only, so a JSON config extends the one that holds its
 // whole list.
 export const JSON_FRAGMENTS = {
-  "lodash.json": { paths: [LODASH] },
-  "relative-imports.json": { patterns: [RELATIVE_IMPORTS] },
+  "bignumber.json": { paths: [BIGNUMBER_NAMED_IMPORT] },
+  "lodash.json": { paths: [LODASH, BIGNUMBER_NAMED_IMPORT] },
+  "relative-imports.json": { paths: [BIGNUMBER_NAMED_IMPORT], patterns: [RELATIVE_IMPORTS] },
   "wallet-cli.json": {
-    paths: [LODASH],
+    paths: [LODASH, BIGNUMBER_NAMED_IMPORT],
     patterns: [LIVE_COMMON_LIB, LIVE_COMMON_CURRENCY_ACCESSORS],
   },
 };

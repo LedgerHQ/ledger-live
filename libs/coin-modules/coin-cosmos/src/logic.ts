@@ -8,7 +8,7 @@ import {
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
 import type {
@@ -140,10 +140,7 @@ export const mapDelegationInfo = (
   }));
 };
 export const formatValue = (value: BigNumber, unit: Unit): number =>
-  value
-    .dividedBy(10 ** unit.magnitude)
-    .integerValue(BigNumber.ROUND_FLOOR)
-    .toNumber();
+  value.shiftedBy(-unit.magnitude).integerValue(BigNumber.ROUND_FLOOR).toNumber();
 export const searchFilter: CosmosSearchFilter =
   query =>
   ({ validator }) => {

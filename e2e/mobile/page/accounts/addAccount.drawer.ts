@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 import CommonPage from "@e2e/page/common.page";
 import { checkForErrorModals } from "@e2e/helpers/errorHelpers";
 import { TIMEOUT } from "@e2e/utils/timeouts";
@@ -12,13 +13,13 @@ const IMPORT_PROMPT_TIMEOUT = TIMEOUT.small;
 const ACCOUNT_DISCOVERY_TIMEOUT = 240_000;
 
 export default class AddAccountDrawer extends CommonPage {
-  baseLink = "add-account";
-  deselectAllButtonId = "add-accounts-deselect-all";
-  modalButtonId = "add-accounts-modal-add-button";
-  continueButtonId = "enabled-add-accounts-continue-button";
-  closeAddAccountButtonId = "button-close-add-account";
+  private readonly baseLink = "add-account";
 
-  accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
+  private readonly deselectAllButton = byId("add-accounts-deselect-all");
+  private readonly modalButton = byId("add-accounts-modal-add-button");
+  private readonly continueButton = byId("enabled-add-accounts-continue-button");
+  private readonly accountOfCurrency = (currencyId: string) =>
+    this.accountItem({ idPattern: `js:2:${currencyId}:.*` });
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
@@ -27,8 +28,7 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Click on 'Import with your Ledger' button")
   async importWithYourLedger() {
-    await waitForElementById(this.modalButtonId);
-    await tapById(this.modalButtonId);
+    await this.modalButton.tap();
   }
 
   /**
@@ -37,8 +37,8 @@ export default class AddAccountDrawer extends CommonPage {
    */
   @Step("Click on 'Import with your Ledger' button if asked")
   async importWithYourLedgerIfAsked() {
-    if (await IsIdVisible(this.modalButtonId, IMPORT_PROMPT_TIMEOUT)) {
-      await tapById(this.modalButtonId);
+    if (await this.modalButton.isVisible(IMPORT_PROMPT_TIMEOUT)) {
+      await this.modalButton.tap();
     }
   }
 
@@ -51,11 +51,11 @@ export default class AddAccountDrawer extends CommonPage {
     const poll = async (): Promise<void> => {
       if (Date.now() - startTime >= ACCOUNT_DISCOVERY_TIMEOUT) {
         throw new Error(
-          `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+          `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected the continue button to show.`,
         );
       }
       const visible = await withTimeout(
-        IsIdVisible(this.continueButtonId, TIMEOUT.medium),
+        this.continueButton.isVisible(TIMEOUT.medium),
         TIMEOUT.large,
         "waitAccountsDiscovery:continueButton",
       );
@@ -81,7 +81,7 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Get number of accounts displayed by the blockchain scan")
   async getNumberOfScannedAccounts(): Promise<number> {
     await this.waitAccountsDiscovery();
-    const scannedAccounts = await countElements(getElementsById(this.accountItemRegExp()));
+    const scannedAccounts = await this.accountItem().count();
     if (scannedAccounts === 0) {
       throw new Error("No account found on the blockchain scan screen");
     }
@@ -90,37 +90,35 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Finish account discovery")
   async finishAccountsDiscovery() {
-    await tapById(this.continueButtonId);
-    const dismissed = await waitForElementNotVisible(this.continueButtonId);
-    if (!dismissed) throw new Error(`${this.continueButtonId} still visible after tap`);
+    await this.continueButton.tap();
+    await this.continueButton.waitNotVisible();
   }
 
   @Step("Expect account discovered {{{0}}}")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
-    await detoxExpect(this.accountItem(this.accountIdAccountDrawer(currencyId))).toBeVisible();
-    const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
+    await this.accountOfCurrency(currencyId).expectVisible();
+    const accountId = (await this.accountItem({ index }).getIdentifier()).replace(
       this.accountItemId,
       "",
     );
-    await detoxExpect(this.accountItemName(accountId)).toHaveText(currencyName);
+    await this.accountItemName(accountId).expectText(currencyName);
     return accountId;
   }
 
   @Step("Close add account success screen")
   async tapCloseAddAccountCta() {
-    await waitForElementById(this.closeAddAccountButtonId);
-    await tapById(this.closeAddAccountButtonId);
+    await this.closeWithConfirmationButton.tap();
   }
 
   @Step("Add only discovered {{{0}}} account at index {{{2}}}")
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
     await this.waitAccountsDiscovery();
-    const accountCount = await countElementsById(this.accountItemRegExp());
+    const accountCount = await this.accountItem().count();
     // A lone discovered account arrives already selected, so tapping it would clear the selection
     // and disable Confirm. Only the multi-account case needs deselecting and then picking one.
     if (accountCount > 1) {
-      await tapById(this.deselectAllButtonId);
-      await tapById(this.accountItemRegExp(), index);
+      await this.deselectAllButton.tap();
+      await this.accountItem({ index }).tap();
     }
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
     await this.finishAccountsDiscovery();

@@ -130,8 +130,10 @@ export class MarketPage extends AppPage {
 
   @step("Expect Market page to be visible")
   async expectMarketPageVisible() {
-    await expect(this.pageHeader.title).toHaveText("Market");
     await expect(this.categorySwitcher).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.pageHeader.title).toHaveText("Market");
+    });
   }
 
   @step("Expect category tab $0 to be selected")

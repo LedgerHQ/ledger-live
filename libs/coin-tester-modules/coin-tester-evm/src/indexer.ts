@@ -130,7 +130,7 @@ const handleLog = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
  *   Most ERC20 contracts implement `name()` / `symbol()` returning a string. But on chains
  *   where the "token" is an EVM-level precompile (e.g. Arc's USDC at 0x36…0000), the
  *   precompile only handles balance/transfer selectors — calls to `name()` / `symbol()`
- *   return `0x` (empty bytes) through anvil's fork. Decoding `0x` as a string would crash
+ *   return `0x` (empty bytes) through the node. Decoding `0x` as a string would crash
  *   with BUFFER_OVERRUN. Switching to a different ABI doesn't help because the underlying
  *   response is truly empty, not malformed.
  */

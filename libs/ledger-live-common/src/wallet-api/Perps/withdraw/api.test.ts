@@ -39,7 +39,7 @@ describe("SwapKit withdraw API", () => {
     const nearPayload = WithdrawPayloadSchema.parse(nearWithdrawPayload);
     const mayanPayload = WithdrawPayloadSchema.parse(mayanWithdrawPayload);
 
-    it("submits the NEAR swap id, hyperCoreAction and signature", async () => {
+    it("submits the whole NEAR payload, including its @type, and the signature", async () => {
       respond(200, submitResponse);
 
       await submitWithdraw({ payload: nearPayload, signature });
@@ -48,27 +48,19 @@ describe("SwapKit withdraw API", () => {
         expect.objectContaining({
           method: "POST",
           url: `${BASE_URL}/swapkit_hyperliquid/submit`,
-          data: {
-            swapId: nearWithdrawPayload.swapId,
-            hyperCoreAction: nearWithdrawPayload.hyperCoreAction,
-            signature,
-          },
+          data: { ...nearWithdrawPayload, signature },
         }),
       );
     });
 
-    it("submits the Mayan swap id, typedData and signature", async () => {
+    it("submits the whole Mayan payload and the signature", async () => {
       respond(200, submitResponse);
 
       await submitWithdraw({ payload: mayanPayload, signature });
 
       expect(mockedNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: {
-            swapId: mayanWithdrawPayload.swapId,
-            typedData: mayanWithdrawPayload.typedData,
-            signature,
-          },
+          data: { ...mayanWithdrawPayload, signature },
         }),
       );
     });

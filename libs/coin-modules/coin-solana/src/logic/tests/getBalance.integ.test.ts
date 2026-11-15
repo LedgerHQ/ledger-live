@@ -1,6 +1,5 @@
 import { Keypair } from "@solana/web3.js";
 import { getChainAPI } from "../../network";
-import { endpointByCurrencyId } from "../../utils";
 import { getBalance } from "../getBalance";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { SolanaCoinConfig } from "../../config";
@@ -9,12 +8,12 @@ import { TEST_CONFIG } from "../../test/coinConfig";
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
-  rpcUrls: { solana: "https://solana.coin.ledger.com" },
+  rpcUrl: "https://solana.coin.ledger.com",
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
 };
-const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
+const api = getChainAPI({ endpoint: config.rpcUrl });
 
 const FUNDED_ADDRESS = "248UcgYhsiuWZRRWodL6dH8FqLZQxWkqexMWZjUmUPjL";
 const UNFUNDED_ADDRESS = Keypair.generate().publicKey.toBase58();

@@ -5,7 +5,7 @@ import type { Account, AccountLike, SignOperationEvent } from "@ledgerhq/types-l
 import { getCurrencyForAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { filter, tap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

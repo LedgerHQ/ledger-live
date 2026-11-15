@@ -1,8 +1,10 @@
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
 import type { PerpsWithdrawResult } from "../server";
 import { submitWithdraw } from "./api";
+import type { WithdrawTrack } from "./constants";
 import {
   WithdrawApiError,
   WithdrawSignerMismatchError,
@@ -27,6 +29,9 @@ export type PerpsWithdrawExecutionParams = Readonly<{
   result: Omit<PerpsWithdrawResult, "swapId">;
   /** Called once the device signed, while the withdraw is being submitted. */
   onSigned?: () => void;
+  /** The destination ticker, for analytics. */
+  targetCurrency: string;
+  track: WithdrawTrack;
 }>;
 
 /**
@@ -41,17 +46,27 @@ export async function executePerpsWithdraw({
   quote,
   result,
   onSigned,
+  targetCurrency,
+  track,
 }: PerpsWithdrawExecutionParams): Promise<PerpsWithdrawResult> {
   if (sourceAccount.type !== "Account") {
     throw new WithdrawUnsupportedRouteError("The withdraw source must be a main account");
   }
   if (!quote.payload) throw new WithdrawApiError("The withdraw quote has nothing to sign");
   const { payload } = quote;
+  const properties = {
+    page: "perps_withdraw_sign",
+    flow: "perps",
+    flowInitiatedFrom: "Perps",
+    sourceCurrency: getAccountCurrency(sourceAccount).ticker,
+    targetCurrency,
+  };
 
   const signature = await signWithdrawTypedData(
     device,
     sourceAccount,
     getWithdrawTypedData(payload),
+    { track, properties },
   );
 
   onSigned?.();
@@ -59,14 +74,17 @@ export async function executePerpsWithdraw({
   if (!markWithdrawRequestCommitted(requestId)) throw new UserRefusedOnDevice();
   let swapId: string;
   try {
+    track("Perps withdraw submitted", properties);
     ({ swapId } = await submitWithdraw({ payload, signature }));
   } catch (error) {
+    track("Perps withdraw submit failed", properties);
     const submitError = error instanceof Error ? error : new Error(String(error));
     rejectWithdrawRequest(requestId, submitError);
     throw submitError;
   }
 
   const withdrawResult = { ...result, swapId };
+  track("Perps withdraw completed", { ...properties, swapId });
   settleWithdrawRequest(requestId, withdrawResult);
   return withdrawResult;
 }

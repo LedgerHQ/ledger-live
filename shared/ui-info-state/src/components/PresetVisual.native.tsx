@@ -15,7 +15,13 @@ export function PresetVisual(props: InfoStateProps) {
     case "illustration":
       return <Box lx={illustrationSlotStyle}>{props.illustration}</Box>;
     case "spot":
-      return <Spot size={props.spotProps.size ?? SPOT_SIZE} icon={props.spotProps.icon} />;
+      return (
+        <Spot
+          appearance={props.spotProps.appearance}
+          size={props.spotProps.size ?? SPOT_SIZE}
+          icon={props.spotProps.icon}
+        />
+      );
     case "success":
       return <Spot appearance="success" icon={CheckmarkCircleFill} size={SPOT_SIZE} />;
     case "error":

@@ -2,7 +2,6 @@ name: "[CI] - Check PR Validity"
 
 on:
   pull_request:
-    # labeled/unlabeled: re-run when deps-size-approved is added or removed
     types: [opened, edited, synchronize, reopened, labeled, unlabeled]
     branches:
       - develop
@@ -51,6 +50,6 @@ jobs:
 
       - name: Run Danger
         working-directory: tools/danger
-        run: pnpm danger ci --dangerfile dangerfile.ts
+        run: pnpm danger ci --dangerfile dangerfile.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

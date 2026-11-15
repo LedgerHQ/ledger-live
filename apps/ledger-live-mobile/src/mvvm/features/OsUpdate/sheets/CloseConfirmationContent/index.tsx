@@ -1,5 +1,5 @@
 import React from "react";
-import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { InfoState } from "@shared/ui-info-state";
 import { Trans } from "~/context/Locale";
 
@@ -12,7 +12,7 @@ export function CloseConfirmationContent({ onContinue, onCancel }: CloseConfirma
   return (
     <InfoState
       preset="spot"
-      spotProps={{ icon: Warning }}
+      spotProps={{ icon: WarningFill, appearance: "warning" }}
       size="hug"
       title={<Trans i18nKey="osUpdates.closeConfirmation.title" />}
       description={<Trans i18nKey="osUpdates.closeConfirmation.description" />}

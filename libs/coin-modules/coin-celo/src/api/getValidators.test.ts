@@ -1,6 +1,6 @@
 jest.mock("../network/hubble", () => ({ getValidatorGroups: jest.fn() }));
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getValidatorGroups } from "../network/hubble";
 import { getValidators } from "./getValidators";
 

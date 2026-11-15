@@ -35,7 +35,7 @@ Edit what it wrote with the rules below rather than writing a config by hand.
 | --- | --- | --- |
 | TypeScript | `tsconfig.json` that `extends` a preset, plus `types`, `paths`, `references`, `include` / `exclude` / `files` when needed | any other compiler option, an `@support/tsconfig` dependency |
 | Jest | a one-line `jest.config.js` calling a preset factory, `"@support/jest": "workspace:*"` in `devDependencies` | a hand-written config, a config that edits the factory's result |
-| Lint | a `lint` script running plain `oxlint src` | an oxlint config, a `-c` flag, an `@support/lint` dependency |
+| Lint | a `lint` script running plain `oxlint src`, plus `"@support/lint": "workspace:*"` in `devDependencies` when the layer's preset loads an npm package other than `oxlint` (today `features/flow/`) | an oxlint config, a `-c` flag, an `@support/lint` dependency its preset does not need |
 | Format | a `format` script running plain `oxfmt src`, a `format:check` script running `oxfmt src --check` | an oxfmt config, a `-c` flag, an `@support/fmt` dependency |
 
 Each tool a script runs is in `devDependencies` as `"catalog:"`, so Nx hashes its version
@@ -51,8 +51,11 @@ script of every workspace package, hooks included. Its message gives the version
 outside `shared/`, `domain/` and `features/` any version passes.
 
 The tsconfig, lint and fmt presets resolve from the workspace root, so the package does not declare
-them. `@support/jest` is the one preset a consumer declares, because its presets carry code and peer
-dependencies, and the edge tells nx which tests a preset change affects.
+them. `@support/jest` is declared, because its presets carry code and peer dependencies, and the
+edge tells nx which tests a preset change affects. `@support/lint` is declared only by packages
+whose preset loads an npm package, such as `@ledgerhq/lumen-lint-plugin` in `features-flow`: without
+the edge, a bump of that package neither changes their `lint` hash nor marks them affected.
+`lint:tool-config` reads each preset's imports and reports a package that needs the declaration.
 
 ## Pick the tsconfig archetype
 

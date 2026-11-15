@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { PolkadotContext } from "../config";
 import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";

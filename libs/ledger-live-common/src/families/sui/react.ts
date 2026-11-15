@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   SuiAccount,
   SuiOperationExtra,

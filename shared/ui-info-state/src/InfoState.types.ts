@@ -14,6 +14,9 @@ export type InfoStateSpotProps = Readonly<{
 
   /** Defaults to 72. */
   size?: InfoStateSpotSize;
+
+  /** Colors the icon, over the neutral circle. Defaults to base. */
+  appearance?: "base" | "success" | "error" | "warning" | "muted";
 }>;
 
 /** Props for the InfoState layout. */

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useState, useMemo, useEffect } from "react";
 import {
   getCurrentMultiversXPreloadData,

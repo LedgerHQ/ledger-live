@@ -1,16 +1,19 @@
 export type CoinModuleCallTransmissionConfig = {
   /**
-   * `false` sends nothing for the sync-path (read) methods, failures included; only the
-   * transaction-path calls are left. Distinct from `syncPathSampleRate: 0`, which still sends
-   * the read failures.
+   * `false` sends nothing for the sync-path (read) methods, failures included; the transaction
+   * and preparation calls are left. Distinct from `syncPathSampleRate: 0`, which still sends the
+   * read failures.
    */
   includeSyncPath: boolean;
   syncPathSampleRate: number;
+  /** Share of app sessions that send their `estimateFees` and `validateIntent` successes. */
+  preparationSampleRate: number;
   /** Failures sent per method, currency and error name within an hour. */
   maxFailuresPerKey: number;
 };
 
 export const DEFAULT_SYNC_PATH_SAMPLE_RATE = 0.1;
+export const DEFAULT_PREPARATION_SAMPLE_RATE = 0.1;
 export const DEFAULT_MAX_FAILURES_PER_KEY = 5;
 
 /**
@@ -73,6 +76,7 @@ export function toCoinObservabilityConfig(
   return {
     includeSyncPath: flag.params?.includeSyncPath ?? true,
     syncPathSampleRate: flag.params?.syncPathSampleRate ?? DEFAULT_SYNC_PATH_SAMPLE_RATE,
+    preparationSampleRate: flag.params?.preparationSampleRate ?? DEFAULT_PREPARATION_SAMPLE_RATE,
     maxFailuresPerKey: flag.params?.maxFailuresPerKey ?? DEFAULT_MAX_FAILURES_PER_KEY,
   };
 }

@@ -1,7 +1,7 @@
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
-import type { VechainCurrencyConfig } from "../config";
+import { vechainDefaults, type VechainCurrencyConfig } from "../config";
 import { createApi } from "./index";
 import { createMockVechainContext } from "../test/context";
 
@@ -14,7 +14,7 @@ const KNOWN_ADDRESS = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
 
 describe("createApi (integration)", () => {
   let api: CoinModuleApi<VechainCurrencyConfig>;
-  const context = createMockVechainContext();
+  const context = createMockVechainContext(vechainDefaults.vechain);
 
   beforeAll(() => {
     api = withDefaults(createApi());

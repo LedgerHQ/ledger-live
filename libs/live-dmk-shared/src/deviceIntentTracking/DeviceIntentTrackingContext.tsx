@@ -16,6 +16,7 @@ export type SourceFlow =
   | "wallet_api"
   | "onboarding"
   | "contacts"
+  | "ledger_sync"
   | "debug";
 
 type ReservedDeviceIntentTrackingProperties = {

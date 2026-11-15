@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { STANDARD_FEE_OPTION_ID } from "./useSponsoredFeeSelection";
 import type { FeePaymentLabels, FeePaymentOption, SponsoredFeeAmounts } from "./types";

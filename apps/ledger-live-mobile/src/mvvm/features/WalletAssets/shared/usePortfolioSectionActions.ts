@@ -58,7 +58,6 @@ export function usePortfolioSectionActions(
       openFromAsset({
         currency: asset.currency,
         source: "portfolio",
-        isPlaceholder: asset.isPlaceholder,
         marketId: asset.marketId,
       });
     },

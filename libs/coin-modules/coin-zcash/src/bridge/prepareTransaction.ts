@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { ZcashContext } from "../config";
 import type { Transaction, ZcashAccount } from "../types/bridge";

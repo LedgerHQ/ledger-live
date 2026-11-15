@@ -21,6 +21,17 @@
 - `swap` — single-call swap using the newer `custom.exchange.swap` RPC
 - `getQuotes` / `getTransactionStatus` — communicate with the Ledger swap backend via the host
 - `throwExchangeErrorToLedgerLive` — surface exchange errors in the Ledger Live UI
+- `isTronifyEnergyDelivered` — whether rented TRON energy has reached the account (see below)
+
+## Tronify energy rental before a TRON swap
+
+A TRC-20 swap can rent its energy from Tronify instead of burning TRX. The fee estimate cannot tell the Live App when the energy has arrived. After the rental the estimate can remain above zero, because the transfer can burn TRX for bandwidth. Poll `isTronifyEnergyDelivered` instead:
+
+1. Pay the rent. Tronify broadcasts the payment itself, so the Live App never broadcasts it.
+2. Poll `isTronifyEnergyDelivered({ fromAccountId, energyNeeded })` until `delivered` is `true`.
+3. Call `completeSwap`.
+
+`delivered: true` means only that the account's available energy covers `energyNeeded`. It does not tie the energy to a rent order, and it does not mean the swap will pass validation. `completeSwap` still fails with `NotEnoughGas` when the account cannot pay a bandwidth burn. The Live App manifest must list `custom.exchange.tronify.isEnergyDelivered` in `permissions`.
 
 ## Usage context
 

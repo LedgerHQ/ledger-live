@@ -60,11 +60,7 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToCredit, false, selectSpecificToAccount);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
-    await waitForWebElementToMatchRegex(
-      app.swapLiveApp.toAmountInput,
-      floatNumberRegex,
-      QUOTES_FETCH_TIMEOUT,
-    );
+    await app.swapLiveApp.waitForAmountToReceive(floatNumberRegex, QUOTES_FETCH_TIMEOUT);
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }

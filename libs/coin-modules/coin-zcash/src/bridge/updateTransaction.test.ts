@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { updateTransaction } from "./updateTransaction";
 import type { Transaction } from "../types/bridge";
 import { TM_ADDRESS, UTEST_ORCHARD } from "../__tests__/fixtures/testnetAddresses";

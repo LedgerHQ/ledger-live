@@ -6,7 +6,7 @@ import {
   types as TyphonTypes,
   Transaction as TyphonTransaction,
 } from "@stricahq/typhonjs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";

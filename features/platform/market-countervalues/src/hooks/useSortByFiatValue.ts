@@ -1,5 +1,5 @@
 import type { Currency } from "@domain/entity-currency";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { useMemo } from "react";
 import { useCalculateCountervalueCallback } from "./countervaluesHooks";
 

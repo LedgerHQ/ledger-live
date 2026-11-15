@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { coerce, instance, number, string } from "superstruct";
 
 export const BigNumFromString = coerce(instance(BigNumber), string(), value => {

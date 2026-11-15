@@ -8,7 +8,7 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import { useAssetsData } from "@features/platform-aggregated-assets";
+import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "@ledgerhq/live-common/market/utils/timers";
 import { appVersion } from "LLM/utils/appVersion";
 import { useThrottledValues } from "@ledgerhq/live-common/hooks/useThrottledValues";
@@ -30,20 +30,6 @@ export interface AssetListItemViewModelResult {
 // ---------------------------------------------------------------------------
 
 const CV_THROTTLE_MS = 5_000;
-const EMPTY_MARKET_DAY_CHANGE: ReadonlyMap<string, number> = new Map();
-
-function toMarketDayChangeByCurrencyId(
-  markets: { [currencyId: string]: { priceChangePercentage24h?: number | null } } | undefined,
-): ReadonlyMap<string, number> {
-  if (!markets) return EMPTY_MARKET_DAY_CHANGE;
-  const map = new Map<string, number>();
-  for (const [currencyId, market] of Object.entries(markets)) {
-    if (market?.priceChangePercentage24h != null) {
-      map.set(currencyId, market.priceChangePercentage24h);
-    }
-  }
-  return map.size === 0 ? EMPTY_MARKET_DAY_CHANGE : map;
-}
 
 interface SharedState {
   cvState: ReturnType<typeof useCountervaluesState>;
@@ -182,16 +168,17 @@ export function usePrecomputedAssetListData(
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const range = "day" as const;
-  const { data: assetsData } = useAssetsData({
+  const heldCurrencyIds = useMemo(
+    () => assets.filter(asset => asset.accounts.length > 0).map(asset => asset.currency.id),
+    [assets],
+  );
+  const marketDayChangeByCurrencyId = useMarketDayChangeByCurrencyId({
+    currencyIds: heldCurrencyIds,
     product: "llm",
     version: appVersion,
     pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     skipPollingIfUnfocused: true,
   });
-  const marketDayChangeByCurrencyId = useMemo(
-    () => toMarketDayChangeByCurrencyId(assetsData?.markets),
-    [assetsData],
-  );
 
   const rawCvState = useCountervaluesState();
   const [cvState] = useThrottledValues([rawCvState], CV_THROTTLE_MS);

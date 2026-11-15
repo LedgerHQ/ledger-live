@@ -10,6 +10,8 @@ export default defineConfig({
     target: "node",
     distPath: { root: "lib" },
     minify: false,
+    // napi addon: resolved at runtime so Node picks the platform package
+    externals: ["@ledgerhq/zcash-utils"],
     // autoExternal defaults to externalizing all deps; bundle the @ledgerhq ones in.
     autoExternal: { dependencies: false },
   },

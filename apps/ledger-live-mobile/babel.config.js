@@ -26,7 +26,8 @@ module.exports = {
       "babel-plugin-transform-inline-environment-variables",
       // Exclude JEST_WORKER_ID and VITEST_WORKER_ID to avoid MMKV conflicts
       // MMKV checks for these variables to determine if it runs for tests.
-      { exclude: ["JEST_WORKER_ID", "VITEST_WORKER_ID"] },
+      // DETOX_APP_VERSION is set by rspack's DefinePlugin, which runs after Babel.
+      { exclude: ["JEST_WORKER_ID", "VITEST_WORKER_ID", "DETOX_APP_VERSION"] },
     ],
     // Fabric optimization are not supported by Detox and needs to be disabled.
     // Only inject collapsable={false} for builds running Detox tests.

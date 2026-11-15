@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { BitcoinCreateTransactionLike } from "@ledgerhq/live-signer-zcash";

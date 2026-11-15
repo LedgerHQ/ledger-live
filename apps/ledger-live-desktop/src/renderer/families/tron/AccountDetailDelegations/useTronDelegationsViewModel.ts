@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -23,6 +23,7 @@ import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { getAccountUrl } from "~/renderer/utils";
+import { useTronEarnAction } from "./useTronEarnAction";
 
 const STAKEKIT_PATH = "/platform/stakekit";
 const YIELD_ID = "tron-trx-native-staking";
@@ -113,7 +114,14 @@ const buildFooter = (
     tronPower,
     totalVotesUsed,
     discreet,
-  }: { showVotes: boolean; tronPower: number; totalVotesUsed: number; discreet: boolean },
+    canEarn,
+  }: {
+    showVotes: boolean;
+    tronPower: number;
+    totalVotesUsed: number;
+    discreet: boolean;
+    canEarn: boolean;
+  },
 ): AccountDelegationsProps["footer"] => {
   const percentVotesUsed = Math.floor(100 * (totalVotesUsed / tronPower)) / 100;
   if (!showVotes || percentVotesUsed >= 1) return undefined;
@@ -123,13 +131,14 @@ const buildFooter = (
     }),
     description: t("tron.voting.remainingVotes.description"),
     actionLabel: t("tron.voting.remainingVotes.button"),
-    actionDisabled: true,
+    actionDisabled: !canEarn,
   };
 };
 
 export const useTronDelegationsViewModel = (account: TronAccount): AccountDelegationsProps => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { canEarn, startEarning } = useTronEarnAction(account);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
   const unit = useAccountUnit(account);
@@ -215,7 +224,7 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
     formattedReward,
     formattedNextRewardDate,
   });
-  const footer = buildFooter(t, { showVotes, tronPower, totalVotesUsed, discreet });
+  const footer = buildFooter(t, { showVotes, tronPower, totalVotesUsed, discreet, canEarn });
 
   return {
     title: t("tron.voting.header"),
@@ -234,7 +243,7 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
       ),
       learnMoreLabel: t("tron.voting.emptyState.info"),
       actionLabel: t(tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"),
-      actionDisabled: true,
+      actionDisabled: !canEarn,
     },
     footer,
     discreet,
@@ -242,9 +251,9 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
     onOpenValidator,
     onSelectRowAction: () => undefined,
     onSelectHeaderAction,
-    onStartDelegating: () => undefined,
+    onStartDelegating: startEarning,
     onLearnMore: () => openURL(stakingUrl),
-    onSelectFooterAction: () => undefined,
+    onSelectFooterAction: startEarning,
     testID: "account-detail-tron-votes",
   };
 };

@@ -8,7 +8,7 @@ import {
   VERIFY_HINT_GOT_IT,
   VERIFY_HINT_MESSAGE,
 } from "../../../__tests__/i18nWrapper";
-import { RequestReceiveView } from "../RequestReceiveView.native";
+import { RequestReceiveView } from "../RequestReceiveView";
 import { createRequestReceiveViewProps } from "./fixtures";
 
 jest.mock("@shared/ui-qr-code", () => ({

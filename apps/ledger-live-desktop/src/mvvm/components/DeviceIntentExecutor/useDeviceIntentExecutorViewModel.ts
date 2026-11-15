@@ -42,7 +42,10 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
 type PreventableEvent = Pick<Event, "preventDefault">;
 
 export type DeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result = undefined> = {
-  wrappedProps: Props<JobState, Input, ExtraProps, Result>;
+  /** Always sets `onExecutorStateChanged`, which tracks the flow before calling the caller's. */
+  wrappedProps: Props<JobState, Input, ExtraProps, Result> & {
+    onExecutorStateChanged: (executorState: ExecutorState) => void;
+  };
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
   trackingContextValue: DeviceIntentTrackingContextValue;
@@ -129,7 +132,7 @@ export function useDeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Re
           extraProperties: analyticsProperties,
         });
       }
-      onExecutorStateChanged(state);
+      onExecutorStateChanged?.(state);
     },
     [enabled, onExecutorStateChanged, sourceFlow, analyticsProperties],
   );

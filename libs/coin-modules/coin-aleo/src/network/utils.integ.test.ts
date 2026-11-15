@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   testnetAddress,
   testnetInboundPrivateToPublicTx,
@@ -25,7 +24,7 @@ import {
   patchPublicOperations,
 } from "./utils";
 
-const config = getTestnetIntegConfig();
+const config = aleoDefaults.aleo_testnet;
 
 beforeAll(() => {
   aleoConfig.setCoinConfig(() => config);

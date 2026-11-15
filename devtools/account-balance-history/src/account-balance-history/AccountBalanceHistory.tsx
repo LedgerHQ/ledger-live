@@ -11,6 +11,9 @@ function AccountBalanceHistory({
   accounts,
   onRead,
   onReadAll,
+  fiat,
+  countervalue,
+  onCountervalueChange,
 }: AccountBalanceHistoryToolProps) {
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
@@ -31,6 +34,17 @@ function AccountBalanceHistory({
               </option>
             ))}
           </select>
+        </label>
+        <label
+          className="flex items-center gap-4 body-3 text-muted"
+          title="The app's countervalue: change it in Settings"
+        >
+          <input
+            type="checkbox"
+            checked={countervalue}
+            onChange={event => onCountervalueChange(event.target.checked)}
+          />
+          {fiat}
         </label>
         <button type="button" onClick={onReadAll} className="body-3-semi-bold text-base">
           Read all
@@ -101,16 +115,28 @@ function sparklinePoints(values: readonly number[]): string {
 }
 
 function SeriesRow({ series }: Readonly<{ series: AccountBalanceHistoryToolSeries }>) {
-  const { assetId, pointCount, firstDate, lastDate, firstBalance, lastBalance, values } = series;
+  const {
+    assetId,
+    pointCount,
+    firstDate,
+    lastDate,
+    firstBalance,
+    lastBalance,
+    values,
+    valuedCount,
+    lastCountervalue,
+    countervalues,
+  } = series;
+  const drawn = countervalues ?? values;
   return (
     <details className="body-3 font-mono">
       <summary className="cursor-pointer flex items-center gap-12">
         <span className="flex-1 min-w-0 break-all text-muted">{assetId}</span>
-        {values.length > 1 ? (
+        {drawn.length > 1 ? (
           <svg width={WIDTH} height={HEIGHT} className="text-base flex-shrink-0">
-            <title>{`${assetId} balance over the range`}</title>
+            <title>{`${assetId} ${countervalues ? "value" : "balance"} over the range`}</title>
             <polyline
-              points={sparklinePoints(values)}
+              points={sparklinePoints(drawn)}
               fill="none"
               stroke="currentColor"
               strokeWidth={1}
@@ -118,10 +144,14 @@ function SeriesRow({ series }: Readonly<{ series: AccountBalanceHistoryToolSerie
           </svg>
         ) : null}
         <span className="body-3-semi-bold text-base">{lastBalance ?? "no point"}</span>
+        {lastCountervalue ? (
+          <span className="body-3-semi-bold text-success">{lastCountervalue}</span>
+        ) : null}
       </summary>
       <div className="pl-16 text-muted break-all">
         <div>
           {pointCount} {pointCount === 1 ? "point" : "points"}
+          {valuedCount === undefined ? "" : `, ${valuedCount} valued`}
         </div>
         {firstDate ? (
           <div>

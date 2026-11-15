@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-tron",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
@@ -58,7 +58,6 @@
     "typescript": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2",
     "oxlint": "catalog:"
   },
   "exports": {

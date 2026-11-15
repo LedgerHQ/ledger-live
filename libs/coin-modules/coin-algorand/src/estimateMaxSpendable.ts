@@ -3,7 +3,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { computeAlgoMaxSpendable } from "./bridgeLogic";
 import { ALGORAND_DUMMY_ADDRESS } from "./constants";
 import createTransaction from "./createTransaction";

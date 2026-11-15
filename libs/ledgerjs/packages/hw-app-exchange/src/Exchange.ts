@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import invariant from "invariant";
 import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";

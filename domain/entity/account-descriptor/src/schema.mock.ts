@@ -16,7 +16,7 @@ export function mockUtxoAccountDescriptor(
     version: "2",
     type: "utxo",
     network: "bitcoin",
-    xpub: XPUB,
+    key: XPUB,
     path: "m/84h/0h/0h",
     ...overrides,
   });
@@ -30,7 +30,7 @@ export function mockAddressAccountDescriptor(
     version: "2",
     type: "address",
     network: "ethereum",
-    address: ETH_ADDR,
+    key: ETH_ADDR,
     path: "m/44h/60h/0h/0/0",
     ...overrides,
   });

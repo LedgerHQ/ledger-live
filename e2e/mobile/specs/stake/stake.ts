@@ -29,7 +29,7 @@ async function initStakingAccount(delegation: DelegateType) {
 }
 
 async function goToTezosAccount(delegation: DelegateType) {
-  await app.portfolio.goToAccounts(delegation.account.currency.name);
+  await app.portfolio.openCryptoAddresses();
   await app.common.goToAccountByName(delegation.account.accountName);
 }
 

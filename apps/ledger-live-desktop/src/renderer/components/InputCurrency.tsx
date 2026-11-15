@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect, useCallback, useRef, useImperativeHandle } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";

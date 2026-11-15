@@ -1,5 +1,10 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getInitialURL, isBitcoinSignPsbtOptionsAllowed, resolveInitialURL } from "./helpers";
+import {
+  getInitialURL,
+  isAppAllowedInPlaceOfAccountApp,
+  isBitcoinSignPsbtOptionsAllowed,
+  resolveInitialURL,
+} from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -664,5 +669,26 @@ describe("wallet-api helpers", () => {
         expected,
       );
     });
+  });
+
+  describe("isAppAllowedInPlaceOfAccountApp", () => {
+    it.each([
+      ["bitcoin", "Hashi", true],
+      ["bitcoin_testnet", "Hashi Test", true],
+      ["bitcoin", undefined, false],
+      ["bitcoin", "Bitcoin", false],
+      ["bitcoin", "Hashi Test", false],
+      ["bitcoin_testnet", "Hashi", false],
+      ["bitcoin", "hashi", false],
+      ["litecoin", "Hashi", false],
+      ["solana", "Other", false],
+    ])(
+      "%s with %s is allowed in place of the account's app: %s",
+      (currencyId, appName, expected) => {
+        expect(isAppAllowedInPlaceOfAccountApp(getCryptoCurrencyById(currencyId), appName)).toBe(
+          expected,
+        );
+      },
+    );
   });
 });

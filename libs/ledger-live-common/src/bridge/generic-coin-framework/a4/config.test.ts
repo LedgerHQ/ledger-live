@@ -170,6 +170,8 @@ describe("a4Config", () => {
         maxDcRoamRetries: 5,
         chains: {
           adi: { enabled: false, registerOnly: false },
+          alpen: { enabled: false, registerOnly: false },
+          alpen_testnet: { enabled: false, registerOnly: false },
           arbitrum: { enabled: false, registerOnly: false },
           arc: { enabled: false, registerOnly: false },
           avalanche_c_chain: { enabled: false, registerOnly: false },
@@ -196,7 +198,6 @@ describe("a4Config", () => {
           ethereum_classic: { enabled: false, registerOnly: false },
           ethereum_hoodi: { enabled: false, registerOnly: false },
           ethereum_sepolia: { enabled: false, registerOnly: false },
-          fantom: { enabled: false, registerOnly: false },
           hedera: { enabled: false, registerOnly: false },
           hedera_testnet: { enabled: false, registerOnly: false },
           hyperevm: { enabled: false, registerOnly: false },

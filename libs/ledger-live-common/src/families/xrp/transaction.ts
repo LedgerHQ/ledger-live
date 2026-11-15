@@ -8,17 +8,31 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
+function pickTokenFields({ mode, assetReference, assetOwner }: Transaction | TransactionRaw) {
+  return {
+    ...(mode && { mode }),
+    ...(assetReference && { assetReference }),
+    ...(assetOwner && { assetOwner }),
+  };
+}
+
+function getAmountUnit(account: Account, subAccountId: string | null | undefined) {
+  const sentAccount = account.subAccounts?.find(a => a.id === subAccountId) ?? account;
+
+  return getAccountCurrency(sentAccount).units[0];
+}
+
 export const formatTransaction = (
-  { amount, recipient, fees, tag, useAllAmount }: Transaction,
+  { amount, recipient, fees, tag, useAllAmount, subAccountId }: Transaction,
   account: Account,
 ): string => `
 SEND ${
   useAllAmount
     ? "MAX"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+    : formatCurrencyUnit(getAmountUnit(account, subAccountId), amount, {
         showCode: true,
         disableRounding: true,
       })
@@ -38,6 +52,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const { networkInfo } = tr;
   return {
     ...common,
+    ...pickTokenFields(tr),
     family: tr.family,
     tag: tr.tag,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
@@ -53,6 +68,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const { networkInfo } = t;
   return {
     ...common,
+    ...pickTokenFields(t),
     family: t.family,
     tag: t.tag,
     fees: t.fees ? t.fees.toString() : null,

@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react";
 import type { Features } from "@shared/feature-flags";
 import {
   DUST_FILTERING_FEATURE_FLAG_KEYS,
+  selectDustFilteringEnabled,
   useDustFilteringFeature,
   type DustFilteringFeatureConfig,
 } from "../useDustFilteringFeature";
@@ -79,4 +80,20 @@ describe("useDustFilteringFeature hook", () => {
       mobile: "lwmDustFiltering",
     });
   });
+
+  it.each(PLATFORMS)(
+    "should read only the %s dust filtering flag when the other platform is disabled",
+    platform => {
+      const otherPlatform = platform === "desktop" ? "mobile" : "desktop";
+      const resolved: Features = {
+        ...FEATURE_FLAGS_DEFAULTS,
+        [DUST_FILTERING_FEATURE_FLAG_KEYS[platform]]: { enabled: true },
+        [DUST_FILTERING_FEATURE_FLAG_KEYS[otherPlatform]]: { enabled: false },
+      };
+      const { store } = makeStoreWrapper({ resolved });
+
+      expect(selectDustFilteringEnabled(store.getState(), platform)).toBe(true);
+      expect(selectDustFilteringEnabled(store.getState(), otherPlatform)).toBe(false);
+    },
+  );
 });

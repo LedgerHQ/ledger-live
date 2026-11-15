@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
 import { DustLimit } from "../errors";
 

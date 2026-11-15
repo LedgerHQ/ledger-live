@@ -3,7 +3,7 @@ import { isStakingAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";

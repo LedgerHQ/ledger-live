@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { createTransaction } from "@ledgerhq/coin-aleo/bridge/createTransaction";
 import { TRANSACTION_TYPE } from "../constants";

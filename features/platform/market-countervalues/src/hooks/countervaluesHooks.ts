@@ -6,7 +6,7 @@ import {
 } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {

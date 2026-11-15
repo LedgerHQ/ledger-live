@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { EMPTY } from "rxjs";
 import type { Account, SignOperationArg0, TransactionCommon } from "@ledgerhq/types-live";
 import { setZcashShieldedEnabled } from "../zcashRouting";

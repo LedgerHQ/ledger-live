@@ -1,4 +1,5 @@
 import { isNotSupportedStub } from "@ledgerhq/coin-module-framework/api/index";
+import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
 describe("createApi", () => {
@@ -12,6 +13,7 @@ describe("createApi", () => {
     expect(isNotSupportedStub(api.combine)).toBe(false);
     expect(isNotSupportedStub(api.validateAddress)).toBe(false);
     expect(isNotSupportedStub(api.craftTransactionData)).toBe(false);
+    expect(isNotSupportedStub(api.getNextSequence)).toBe(false);
   });
 
   it("stubs the rest of the contract", () => {
@@ -23,6 +25,10 @@ describe("createApi", () => {
     expect(isNotSupportedStub(api.broadcast)).toBe(true);
     expect(isNotSupportedStub(api.getStakes)).toBe(true);
     expect(isNotSupportedStub(api.validateIntent)).toBe(true);
+  });
+
+  it("answers sequence 0 because Canton has no account nonce", async () => {
+    await expect(api.getNextSequence(createMockContext(), "addr")).resolves.toBe(0n);
   });
 
   // Absent account metadata is an answer, not a missing capability (ADR-045) — the same value

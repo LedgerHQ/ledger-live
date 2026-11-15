@@ -7,7 +7,6 @@ import type {
   Account,
   AccountLike,
   AccountPortfolio,
-  AssetsDistribution,
   CurrencyPortfolio,
   Portfolio,
 } from "@ledgerhq/types-live";
@@ -18,14 +17,12 @@ import {
   usePortfolio,
   usePortfolioThrottled,
   useCurrencyPortfolio,
-  useDistribution,
 } from "../portfolioReact";
 
 const mockCvState = {} as CounterValuesState;
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesState: () => mockCvState,
-  useCountervaluesCache: () => mockCvState,
 }));
 
 const mockThrottledValues = jest.fn();
@@ -36,7 +33,6 @@ jest.mock("../../hooks/useThrottledValues", () => ({
 const mockGetBalanceHistoryWithCountervalue = jest.fn();
 const mockGetPortfolio = jest.fn();
 const mockGetCurrencyPortfolio = jest.fn();
-const mockGetAssetsDistribution = jest.fn();
 const mockGetPortfolioCount = jest.fn();
 const mockFlattenAccounts = jest.fn((accounts: AccountLike[]) => accounts);
 const mockGetAccountCurrency = jest.fn();
@@ -46,7 +42,6 @@ jest.mock("../portfolio", () => ({
     mockGetBalanceHistoryWithCountervalue(...args),
   getPortfolio: (...args: unknown[]) => mockGetPortfolio(...args),
   getCurrencyPortfolio: (...args: unknown[]) => mockGetCurrencyPortfolio(...args),
-  getAssetsDistribution: (...args: unknown[]) => mockGetAssetsDistribution(...args),
   getPortfolioCount: (...args: unknown[]) => mockGetPortfolioCount(...args),
 }));
 
@@ -103,13 +98,6 @@ const emptyAccountPortfolio: AccountPortfolio = {
   countervalueSendSum: 0,
   cryptoChange: { value: 0, percentage: null },
   countervalueChange: { percentage: null, value: 0 },
-};
-
-const emptyDistribution: AssetsDistribution = {
-  isAvailable: false,
-  list: [],
-  showFirst: 0,
-  sum: 0,
 };
 
 describe("useBalanceHistoryWithCountervalue", () => {
@@ -237,55 +225,5 @@ describe("useCurrencyPortfolio", () => {
     );
 
     expect(mockGetCurrencyPortfolio).toHaveBeenCalledWith([], "day", mockCvState, usd);
-  });
-});
-
-describe("useDistribution", () => {
-  const accounts = [makeAccount("acc-1") as Account];
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetAssetsDistribution.mockReturnValue(emptyDistribution);
-  });
-
-  it("returns empty distribution when skip is true", () => {
-    const { result } = renderHook(() => useDistribution({ accounts, to: usd, skip: true }));
-
-    expect(mockGetAssetsDistribution).not.toHaveBeenCalled();
-    expect(result.current).toEqual({ isAvailable: false, list: [], showFirst: 0, sum: 0 });
-  });
-
-  it("calls getAssetsDistribution with countervalue state and opts", () => {
-    const distribution: AssetsDistribution = {
-      isAvailable: true,
-      list: [],
-      showFirst: 0,
-      sum: 1000,
-    };
-    mockGetAssetsDistribution.mockReturnValue(distribution);
-
-    const { result } = renderHook(() => useDistribution({ accounts, to: usd }));
-
-    expect(mockGetAssetsDistribution).toHaveBeenCalledWith(accounts, mockCvState, usd, {
-      minShowFirst: 6,
-      maxShowFirst: 6,
-      showFirstThreshold: 0.95,
-      showEmptyAccounts: false,
-      hideEmptyTokenAccount: false,
-    });
-    expect(result.current).toBe(distribution);
-  });
-
-  it("passes showEmptyAccounts and hideEmptyTokenAccount flags", () => {
-    renderHook(() =>
-      useDistribution({ accounts, to: usd, showEmptyAccounts: true, hideEmptyTokenAccount: true }),
-    );
-
-    expect(mockGetAssetsDistribution).toHaveBeenCalledWith(
-      accounts,
-      mockCvState,
-      usd,
-      expect.objectContaining({ showEmptyAccounts: true, hideEmptyTokenAccount: true }),
-    );
   });
 });

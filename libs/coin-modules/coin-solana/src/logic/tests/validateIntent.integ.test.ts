@@ -10,7 +10,6 @@ import { NotEnoughGas } from "../../errors";
 import { getChainAPI } from "../../network";
 import type { ChainAPI } from "../../network";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
-import { endpointByCurrencyId } from "../../utils";
 import { estimateFees } from "../estimateFees";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 import type { SolanaCoinConfig } from "../../config";
@@ -19,12 +18,12 @@ import { TEST_CONFIG } from "../../test/coinConfig";
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
-  rpcUrls: { solana: "https://solana.coin.ledger.com" },
+  rpcUrl: "https://solana.coin.ledger.com",
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
 };
-const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
+const api = getChainAPI({ endpoint: config.rpcUrl });
 
 const validateIntent = (
   intent: TransactionIntent<StringMemo | MemoNotSupported>,

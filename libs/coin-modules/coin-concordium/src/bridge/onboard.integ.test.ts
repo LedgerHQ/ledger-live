@@ -1,17 +1,10 @@
 import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
-import coinConfig from "../config";
+import coinConfig, { concordiumDefaults } from "../config";
 import { submitCredential } from "../network/proxyClient";
 import { ConcordiumWalletConnect } from "../network/walletConnect";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import {
-  CRED_ID,
-  createFixtureAccount,
-  createFixtureCurrency,
-  PUBLIC_KEY,
-  setupTestnetCoinConfig,
-  TESTNET_COIN_CONFIG,
-} from "../test/fixtures";
+import { CRED_ID, createFixtureAccount, createFixtureCurrency, PUBLIC_KEY } from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
   createFixtureIdAppResponse,
@@ -74,7 +67,7 @@ jest.mock("../network/proxyClient", () => ({
  */
 describe("onboard (testnet integration)", () => {
   beforeAll(() => {
-    setupTestnetCoinConfig();
+    coinConfig.setCoinConfig(() => concordiumDefaults.concordium_testnet);
   });
 
   beforeEach(() => {
@@ -277,9 +270,9 @@ describe("onboard (testnet integration)", () => {
     it("should use correct testnet configuration", () => {
       const config = coinConfig.getCoinConfig();
 
-      expect(config.networkType).toBe(TESTNET_COIN_CONFIG.networkType);
-      expect(config.proxyUrl).toBe(TESTNET_COIN_CONFIG.proxyUrl);
-      expect(config.minReserve).toBe(TESTNET_COIN_CONFIG.minReserve);
+      expect(config.networkType).toBe(concordiumDefaults.concordium_testnet.networkType);
+      expect(config.proxyUrl).toBe(concordiumDefaults.concordium_testnet.proxyUrl);
+      expect(config.minReserve).toBe(concordiumDefaults.concordium_testnet.minReserve);
     });
   });
 });

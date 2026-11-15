@@ -3,6 +3,7 @@ import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
 import commandsMain from "./commands-index";
+import { formatCliError } from "./formatCliError";
 
 let sigIntSent: number | undefined;
 process.on("SIGINT", () => {
@@ -93,12 +94,8 @@ process.on("SIGINT", () => {
       if (log !== undefined) console.log(log);
     },
     error: error => {
-      const message = typeof error?.message === "string" ? error.message : String(error);
-      const errorName = typeof error?.name === "string" ? error.name : "Error";
-      const e: Error =
-        error instanceof Error ? error : Object.assign(new Error(message), { name: errorName });
-      if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
-      else console.error(String((e && e.message) || e));
+      const verbose = process.env.VERBOSE || process.env.VERBOSE_FILE;
+      console.error(verbose ? error : formatCliError(error));
       process.exit(1);
     },
     complete: () => {

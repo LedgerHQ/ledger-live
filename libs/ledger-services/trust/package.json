@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-trust-service",
-  "version": "0.8.22",
+  "version": "0.8.23",
   "private": true,
   "description": "Ledger Trust service client",
   "keywords": [
@@ -77,7 +77,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "ts-node": "10.9.2",
     "rimraf": "catalog:"
   },
   "scripts": {

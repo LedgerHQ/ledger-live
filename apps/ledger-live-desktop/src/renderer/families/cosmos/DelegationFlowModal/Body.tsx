@@ -19,7 +19,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";

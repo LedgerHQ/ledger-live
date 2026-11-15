@@ -27,6 +27,8 @@ import {
   setMarketBannerRanking,
   type MarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
+import { withHeldDayChange } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
 
 /** Valid `pageSize` values are 1 / 5 / 20 / 50; 50 covers the favorites banner item cap. */
@@ -185,8 +187,15 @@ export function useMarketBannerViewModel(): MarketBannerItems {
     skip: isFavorites || (isTrending && !trendingFailed),
   });
   const favorites = useFavoritesBannerItems({ skip: !isFavorites });
+  const { byMarketId: heldDayChange } = useMarketDayChange();
 
-  if (isFavorites) return favorites;
-  if (isTrending) return trendingFailed ? performers : trending;
-  return performers;
+  let banner = performers;
+  if (isFavorites) banner = favorites;
+  else if (isTrending && !trendingFailed) banner = trending;
+
+  const items = useMemo(
+    () => withHeldDayChange(banner.items, heldDayChange),
+    [banner.items, heldDayChange],
+  );
+  return { ...banner, items };
 }

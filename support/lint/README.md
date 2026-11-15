@@ -29,9 +29,9 @@ rule that several packages of a layer need belongs in that layer's preset.
 | --- | --- | --- |
 | `base` | `domain/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on, with waivers; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
-| `features-platform` | `features/platform/` | Platform-suffix rule on, with waivers |
-| `shared` | `shared/` | Platform-suffix rule on, with waivers |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
+| `features-platform` | `features/platform/` | Platform-suffix rule on |
+| `shared` | `shared/` | Platform-suffix rule on |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
@@ -49,11 +49,18 @@ The `no-restricted-imports` entries that several configs share live in `restrict
 which the presets and the `.mts` configs import and which writes the JSON fragments in
 `restricted-imports/` that the JSON configs extend.
 
+`plugins.mts` (`@support/lint/plugins`) exports `SUFFIX_IMPORTS_PLUGIN`, the absolute path of the
+`suffix-imports` JS plugin. `base` puts it in `jsPlugins`; a config that does not extend a preset,
+such as an app config, imports it by package name, as it imports `@support/lint/restricted-imports`.
+
 ## Conformance
 
 `lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root
 included), a missing or edited layer config, a `-c` on an oxlint call, and a rule flag outside the
-allowlist or on another script than `lint`. Subtrees that keep their own config for now (the apps, the e2e
+allowlist or on another script than `lint`. It also requires `"@support/lint": "workspace:*"` in a
+package whose preset imports an npm package other than `oxlint`, directly or through a relative
+import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that package in
+`lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
 ## Rules
@@ -66,8 +73,8 @@ rspack, `preferNativePlatform` in Re.Pack. A suffix in the specifier itself is r
 cross-platform contamination from tsc, and rots on a rename. See [tsconfig.md](../../docs/tsconfig.md).
 
 `base` registers the rule off. `devtools`, `features-flow`, `features-platform` and `shared`
-turn it on. It checks `import`, `export`, dynamic `import()`, type-level `import()`, `require()`
-and the `jest.mock` family, and reports three shapes.
+turn it on, and so do the desktop and mobile app configs. It checks `import`, `export`, dynamic
+`import()`, type-level `import()`, `require()` and the `jest.mock` family, and reports three shapes.
 
 **A trailing `.web` or `.native`, before an optional JS or TS extension.** Autofixable:
 `oxlint --fix` strips the suffix and keeps the extension.
@@ -111,7 +118,7 @@ import { Lottie } from "@shared/lottie/web"; // ✓
 Third-party entry points (`styled-components/native`, `@react-navigation/native`) and `@support/*`
 subpaths (`@support/jest-devtools/native`) are never reported.
 
-Each preset waives its layer's remaining violators through `platformSuffixWaivers` in
-`src/suffix-imports.js`, which states the waiver policy.
+The rule has no waiver: every preset that turns it on reports it as an error in every package of
+its layer.
 
 Run the rule's tests with `nx run @support/lint:test`.

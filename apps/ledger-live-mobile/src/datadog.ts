@@ -257,12 +257,16 @@ const transmitCoinModuleCall = createCoinModuleCallTransmitter(readCoinObservabi
  * applied before the SDK, so a dropped event never crosses the native bridge.
  */
 export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
-  if (!isDatadogEnabled || !transmitCoinModuleCall(event)) return;
+  if (!isDatadogEnabled) return;
+  const sampling = transmitCoinModuleCall(event);
+  if (!sampling) return;
 
+  // The sampling attributes let a dashboard correct for sampling: see `CoinModuleCallSampling`.
+  const coinModule = { ...event, ...sampling };
   if (event.status === "failure") {
-    DdLogs.error("coin_module_call", { coinModule: event });
+    DdLogs.error("coin_module_call", { coinModule });
   } else {
-    DdLogs.info("coin_module_call", { coinModule: event });
+    DdLogs.info("coin_module_call", { coinModule });
   }
 }
 

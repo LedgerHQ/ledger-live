@@ -16,7 +16,7 @@ import {
   RestakeNotEnoughStakedBalanceLeft,
 } from "../errors";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   APTOS_MINIMUM_RESTAKE,

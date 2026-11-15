@@ -1,5 +1,5 @@
 import flow from "lodash/flow";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NetworkInfo } from "./types";
 import { getWalletAccount } from "./getWalletAccount";
 import { Account } from "@ledgerhq/types-live";

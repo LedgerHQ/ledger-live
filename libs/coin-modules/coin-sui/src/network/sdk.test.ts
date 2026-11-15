@@ -2,7 +2,7 @@ import assert from "assert";
 import { NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import type { SuiCoinConfig } from "../config";
 import { mist, ONE_SUI } from "../constants";
@@ -319,6 +319,16 @@ describe("SDK Functions", () => {
     expect(coinTypes).toContain(sdk.DEFAULT_COIN_TYPE);
   });
 
+  test("getAccountBalances bypasses the one-minute balance cache", async () => {
+    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const force = jest.spyOn(sdk.getAllBalancesCached, "force");
+
+    await sdk.getAccountBalances(config, address);
+
+    expect(force).toHaveBeenCalledWith(config, address);
+    force.mockRestore();
+  });
+
   test("getAccountBalances surfaces SIP-58 fundsInAddressBalance when present", async () => {
     const address = "0x44444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(config, address);
@@ -462,7 +472,7 @@ describe("SDK Functions", () => {
 
     const operation = sdk.transactionToOperation("mockAccountId", sender, graphqlTx);
     expect(operation.type).toBe("DELEGATE");
-    expect(operation.value.toString()).toBe("350039759296");
+    expect(operation.value.toString()).toBe("9759296");
     expect(operation.fee.toString()).toBe("9759296");
     expect(operation.senders).toEqual([sender]);
     // getOperationRecipients pushes every pure address input, then the isStaking branch pushes
@@ -470,6 +480,40 @@ describe("SDK Functions", () => {
     expect(operation.recipients).toEqual([validator, validator]);
     expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
     expect(sdk.getFeesPayer(graphqlTx)).toBe(sender);
+  });
+
+  describe("getStakingOperationValue", () => {
+    const fee = new BigNumber(9_759_296);
+    const stake = mockStakingTx(SENDER, mist(-1));
+
+    test("is the fee when the account pays the gas", () => {
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(stake, SENDER), fee)).toEqual(fee);
+    });
+
+    test("is zero when a sponsor pays the gas", () => {
+      const sponsor = "0x" + "ab".repeat(32);
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(stake, sponsor), fee)).toEqual(
+        new BigNumber(0),
+      );
+    });
+
+    test("subtracts the reward an unstake pays out", () => {
+      const unstake = mockUnstakingTx(SENDER, mist(1.2));
+      const sponsor = "0x" + "ab".repeat(32);
+      const reward = new BigNumber(mist(0.05));
+      expect(sdk.getStakingOperationValue(SENDER, unstake, fee)).toEqual(fee.minus(reward));
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(unstake, sponsor), fee)).toEqual(
+        reward.negated(),
+      );
+    });
+
+    test("subtracts the reward of every stake one transaction withdraws", () => {
+      const unstake = mockUnstakingTx(SENDER, mist(2.4));
+      const twoWithdrawals = { ...unstake, events: [...unstake.events, ...unstake.events] };
+      expect(sdk.getStakingOperationValue(SENDER, twoWithdrawals, fee)).toEqual(
+        fee.minus(mist(0.1)),
+      );
+    });
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -905,8 +949,8 @@ describe("Staking Operations", () => {
       expect(stakingExtra.coinType).toBe(sdk.DEFAULT_COIN_TYPE);
       expect(stakingExtra.validatorAddress).toBe(VALIDATOR);
       expect(stakingExtra.stakedAmount).toBe(String(ONE_SUI));
-      // Staking negates the (negative) balance change into a positive value.
-      expect(operation.value).toEqual(new BigNumber(mist(1)));
+      // The staked SUI stays in the account balance, so only the gas moves it.
+      expect(operation.value).toEqual(operation.fee);
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });
@@ -932,7 +976,9 @@ describe("Staking Operations", () => {
       expect(unstakingExtra.validatorAddress).toBe(VALIDATOR);
       // `principal_amount` from the unstaking event — see mockUnstakingTx.
       expect(unstakingExtra.stakedAmount).toBe(mist(1.2));
-      expect(operation.value).toEqual(new BigNumber(mist(-1)));
+      // The fee minus the `reward_amount` the unstake pays out.
+      expect(operation.value).toEqual(operation.fee.minus(mist(0.05)));
+      expect(operation.extra).toHaveProperty("principalExcluded", "true");
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });
@@ -1075,6 +1121,62 @@ describe("getStakingExtraByDigest on the gRPC transport", () => {
     mockStakingEvents.mockResolvedValueOnce([]);
     const out = await sdk.getStakingExtraByDigest(config, "0xmissing", "DELEGATE");
     expect(out).toBeNull();
+  });
+});
+
+describe("getUnstakedPrincipalByDigest on the gRPC transport", () => {
+  beforeEach(() => {
+    mockStakingEvents.mockReset();
+  });
+
+  it("sums the principal of every withdrawn stake", async () => {
+    const unstakeEvent = (principal: string) => ({
+      type: "0x3::validator::UnstakingRequestEvent",
+      parsedJson: { validator_address: "0xval", principal_amount: principal, reward_amount: "5" },
+    });
+    mockStakingEvents.mockResolvedValueOnce([
+      unstakeEvent(mist(1)),
+      { type: "0x2::coin::Other", parsedJson: { principal_amount: mist(9) } },
+      unstakeEvent(mist(2)),
+    ]);
+    const out = await sdk.getUnstakedPrincipalByDigest(config, "0xdigest");
+    expect(out).toEqual(BigNumber(mist(3)));
+    expect(mockStakingEvents).toHaveBeenCalledWith(mockGrpcClient, "0xdigest");
+  });
+
+  it("returns zero when the digest has no unstake event", async () => {
+    mockStakingEvents.mockResolvedValueOnce([]);
+    const out = await sdk.getUnstakedPrincipalByDigest(config, "0xmissing");
+    expect(out).toEqual(BigNumber(0));
+  });
+
+  it("returns zero when the transaction is not found", async () => {
+    mockStakingEvents.mockRejectedValueOnce(new Error("Transaction 0xmissing not found"));
+    const notFoundCode = Object.assign(new Error("pruned"), { code: "NOT_FOUND" });
+    mockStakingEvents.mockRejectedValueOnce(notFoundCode);
+    const numericNotFoundCode = Object.assign(new Error("pruned"), { code: 5 });
+    mockStakingEvents.mockRejectedValueOnce(numericNotFoundCode);
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
+  });
+
+  it("rethrows other errors", async () => {
+    mockStakingEvents.mockRejectedValueOnce(new Error("UNAVAILABLE"));
+    const unrelated = Object.assign(new Error("upstream service not found"), {
+      code: "UNAVAILABLE",
+    });
+    mockStakingEvents.mockRejectedValueOnce(unrelated);
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xdigest")).rejects.toThrow(
+      "UNAVAILABLE",
+    );
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xdigest")).rejects.toBe(unrelated);
   });
 });
 

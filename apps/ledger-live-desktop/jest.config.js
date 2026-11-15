@@ -111,6 +111,15 @@ const commonConfig = {
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
+    "^.+\\.mts$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+          parser: { syntax: "typescript" },
+        },
+      },
+    ],
     "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
@@ -164,7 +173,7 @@ module.exports = {
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
-      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts"],
+      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts", "**/scripts/*.test.ts"],
       setupFilesAfterEnv: [
         ...commonConfig.setupFilesAfterEnv,
         "@ledgerhq/test-quarantine/jest-retries",

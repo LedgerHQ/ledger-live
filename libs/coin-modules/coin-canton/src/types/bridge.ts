@@ -8,7 +8,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { TransferProposal } from "../network/gateway";
 import type {

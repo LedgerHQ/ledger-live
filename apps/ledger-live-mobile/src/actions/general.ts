@@ -8,7 +8,6 @@ import {
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
-import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   useAssetDistribution,
   type DistributionOpts,
@@ -28,23 +27,15 @@ import { extraSessionTrackingPairsSelector } from "~/reducers/countervaluesExtra
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
-  const { groupBy, ...displayOpts } = opts;
-  const isAssetMode = groupBy === "asset";
-
-  const legacy = useLegacyDistribution({ accounts, to, skip: isAssetMode, ...displayOpts });
   const asset = useAssetDistribution({
     accounts,
     to,
     product: "llm",
     version: appVersion,
-    skip: !isAssetMode,
-    ...displayOpts,
+    ...opts,
   });
 
-  if (isAssetMode) {
-    return { ...asset.distribution, isLoading: asset.isLoading };
-  }
-  return { ...legacy, isLoading: false };
+  return { ...asset.distribution, isLoading: asset.isLoading };
 }
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);

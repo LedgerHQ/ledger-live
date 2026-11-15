@@ -1,11 +1,11 @@
 import invariant from "invariant";
 import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { aleoDefaults } from "../config";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
 import { fromHex } from "../logic/utils";
 import { accessProvableApi } from "../network/utils";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
@@ -42,11 +42,11 @@ async function withPrivacyContext(context: AleoContext, viewKey: string): Promis
 describe("createApi", () => {
   const api = createApi("aleo_testnet");
   const context: AleoContext = {
-    config: async () => getTestnetIntegConfig(),
+    config: async () => aleoDefaults.aleo_testnet,
     logger: () => {},
   };
   const stakingContext: AleoContext = {
-    config: async () => getTestnetIntegConfig({ enableStaking: true }),
+    config: async () => ({ ...aleoDefaults.aleo_testnet, enableStaking: true }),
     logger: () => {},
   };
   let emptyAddress: string;

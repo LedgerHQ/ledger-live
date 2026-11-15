@@ -1,0 +1,9 @@
+{
+  "extends": "@support/tsconfig/node",
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "types": ["node"],
+    "customConditions": []
+  },
+  "include": ["./**/*.ts"]
+}

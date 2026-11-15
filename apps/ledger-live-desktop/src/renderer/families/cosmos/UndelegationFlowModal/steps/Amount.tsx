@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { isStakingAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";

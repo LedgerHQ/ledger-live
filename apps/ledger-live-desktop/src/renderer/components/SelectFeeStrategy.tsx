@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useTranslation, Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import TachometerHigh from "~/renderer/icons/TachometerHigh";

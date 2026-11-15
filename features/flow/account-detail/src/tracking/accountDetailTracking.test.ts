@@ -20,12 +20,19 @@ describe("account detail tracking", () => {
 
   it("describes the page view with where the user comes from and what the account holds", () => {
     expect(
-      accountPageViewProps({ ...facts, source: "Asset", operationsCount: 12, hasTokens: false }),
+      accountPageViewProps({
+        ...facts,
+        source: "Asset",
+        operationsCount: 12,
+        hasTokens: false,
+        hasAnalyticsBanner: true,
+      }),
     ).toEqual({
       network: "ethereum",
       source: "Asset",
       operationsCount: 12,
       hasTokens: false,
+      hasAnalyticsBanner: true,
     });
   });
 

@@ -28,7 +28,6 @@ const weeklyIntegrationTests = [
   "src/families/cosmos/lastBlock.integration.test.ts",
   "src/families/cosmos/datasets/cosmos.integration.test.ts",
   "src/families/cosmos/datasets/persistence.integration.test.ts",
-  "src/families/cosmos/datasets/stargaze.integration.test.ts",
   "src/families/cosmos/datasets/xion.integration.test.ts",
   "src/families/mina/bridge.integration.test.ts",
 ];
@@ -79,12 +78,6 @@ if (process.env.CI) {
 // process inheritance (the only reliable mechanism — setting it inside a worker or setupFiles
 // does not flush the C library's tzset cache reliably on macOS).
 process.env.TZ = "America/New_York";
-
-// Since jest 30.5 the `^buffer$` moduleNameMapper below also captures `node:buffer`, so
-// jest.buffer-shim.js cannot reach the builtin itself. Capture what it needs here, in
-// real Node, and pass it through the environment.
-const { constants, kStringMaxLength } = require("node:buffer");
-process.env.__NODE_BUFFER_EXTRAS = JSON.stringify({ constants, kStringMaxLength });
 
 const defaultConfig = {
   globals: {

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildTransaction, CosmosTransactionParams, txToMessages } from "./buildTransaction";
 import Babylon from "./chain/Babylon";
 import Cosmos from "./chain/Cosmos";

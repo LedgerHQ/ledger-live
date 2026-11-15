@@ -22,7 +22,7 @@ import type {
 import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
 import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";

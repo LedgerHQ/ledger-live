@@ -8,7 +8,7 @@ jest.mock("./apiPromise");
 describe("fetchValidators", () => {
   let provider: HttpProvider;
   beforeAll(async () => {
-    provider = new HttpProvider("https://polkadot-rpc.publicnode.com");
+    provider = new HttpProvider("https://polkadot-asset-hub-fullnodes.api.live.ledger.com");
     const api = await ApiPromise.create({ provider: provider as any, noInitWarn: true });
     (getApiPromise as jest.Mock).mockResolvedValue(api);
   });

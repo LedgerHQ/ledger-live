@@ -17,7 +17,6 @@ type Props = Readonly<{
   deviceModelId: DeviceModelId;
   deviceName: string;
   trackClick: (button: OsUpdateButton) => void;
-  exportLogs: () => void;
 }>;
 
 function getSheet({
@@ -25,7 +24,6 @@ function getSheet({
   deviceModelId,
   deviceName,
   trackClick,
-  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case CreateBackupStateType.LOADING:
@@ -61,28 +59,39 @@ function getSheet({
       };
     case CreateBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
       const onRetry = () => {
-        trackClick(OsUpdateButton.RETRY);
+        trackClick(OsUpdateButton.RETRY_SECURE_CONNECTION);
         state.retry();
       };
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_SECURE_CONNECTION);
         state.cancel();
       };
       return {
         hideHeader: true,
-        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+        content: (
+          <SecureConnectionRefusedContent
+            deviceModelId={deviceModelId}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case CreateBackupStateType.DEVICE_DISCONNECTED:
-      return { content: <DeviceDisconnectedContent /> };
+      return {
+        content: (
+          <DeviceDisconnectedContent deviceModelId={deviceModelId} deviceName={deviceName} />
+        ),
+      };
     case CreateBackupStateType.CONNECTION_TIMED_OUT:
-      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
+      return getConnectionTimedOutSheet({ retry: state.retry, cancel: state.cancel, trackClick });
     case CreateBackupStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <UnexpectedErrorContent onCancel={onCancel} />,
       };
     }

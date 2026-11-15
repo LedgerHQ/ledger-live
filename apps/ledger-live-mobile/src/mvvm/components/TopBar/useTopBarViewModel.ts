@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { hasUnreadOperationsSelector } from "~/reducers/history";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
@@ -17,7 +17,6 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const {
     hasAccounts,
@@ -91,7 +90,6 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   return {
-    shouldDisplayAssetDiscoverability,
     onSearchPress,
     onMyWalletPress,
     onDiscoverPress,

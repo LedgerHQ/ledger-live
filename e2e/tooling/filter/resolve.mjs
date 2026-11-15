@@ -6,7 +6,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { joinFilter, splitFilter } from "./escaping.mjs";
+import {
+  isLeafTitlePattern,
+  joinFilter,
+  splitFilter,
+  upgradeLegacyLeafPattern,
+} from "./escaping.mjs";
 import { isRuntimeGeneratedTag } from "./generatedTags.mjs";
 import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
 import { TEAM_SLUGS, createTeamExpander } from "./teamSpecs.mjs";
@@ -67,7 +72,7 @@ export function resolveBaseFilter(input, options = {}) {
       continue;
     }
 
-    resolvedParts.push(part);
+    resolvedParts.push(upgradeLegacyLeafPattern(part));
   }
 
   return {
@@ -165,6 +170,15 @@ function warnZeroMatches(checkDir, files, baseFilter, expandedTags, runner) {
     if (runtimeTags.length > 0) {
       console.warn(
         `::notice title=E2E filter not statically verifiable::${runtimeTags.join(", ")} ${runtimeTags.length === 1 ? "is" : "are"} generated at runtime (buildTags); matching specs can't be detected before the run`,
+      );
+      return;
+    }
+    // Rerun patterns from a failed-tests summary match whole test titles, which specs build
+    // from template strings, so the spec source rarely spells them out.
+    const rerunTitles = isDetox ? [] : splitFilter(baseFilter).filter(isLeafTitlePattern);
+    if (rerunTitles.length > 0) {
+      console.warn(
+        `::notice title=E2E filter not statically verifiable::${rerunTitles.length} test title pattern(s) can't be matched against the spec source; matching tests can't be detected before the run`,
       );
       return;
     }
@@ -279,8 +293,9 @@ export function resolveE2eSelection({
       if (!conjunct) continue;
       const pattern = conjunct.split(/\s+/).filter(Boolean).join("|");
       if (hasMatch(teamFiles, pattern)) continue;
-      // A runtime-generated tag is invisible in the source, so its absence proves nothing.
-      if (splitFilter(conjunct).some(tag => isRuntimeGeneratedTag(tag))) continue;
+      // A runtime-generated tag or test title is invisible in the source, so its absence proves nothing.
+      const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
+      if (splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
       console.warn(
         `::warning title=E2E team filter may select nothing::no ${selectedTeam} spec mentions "${conjunct}"; the run may select 0 tests`,
       );

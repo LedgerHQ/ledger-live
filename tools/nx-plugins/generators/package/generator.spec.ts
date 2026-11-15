@@ -172,6 +172,9 @@ describe.each(PAIRS)("a %s package on %s", (layer, platform) => {
       expect(devDependencies[tool]).toBe("catalog:");
     }
     expect(devDependencies["@support/jest"]).toBe("workspace:*");
+    expect(devDependencies["@support/lint"]).toBe(
+      layer === "feature-flow" ? "workspace:*" : undefined,
+    );
     for (const version of Object.values(devDependencies)) {
       expect(["catalog:", "workspace:*"]).toContain(version);
     }

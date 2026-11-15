@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation, i18n } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as XrpTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useTheme } from "@react-navigation/native";

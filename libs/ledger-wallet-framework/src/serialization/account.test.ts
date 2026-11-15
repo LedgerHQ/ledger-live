@@ -164,4 +164,24 @@ describe("account serialization — sub-account operation indexing", () => {
     expect(account.operations).toEqual([]);
     expect(account.pendingOperations).toEqual([]);
   });
+
+  it("hands each restored token account its own raw when an earlier token lookup fails", async () => {
+    const unknownSubAccountRaw = {
+      ...subAccountRaw,
+      id: "account-id+unknown",
+      tokenId: "unknown-token-id",
+    };
+    const assignFromTokenAccountRaw = jest.fn();
+
+    await fromAccountRaw(
+      { ...rawAccount, subAccounts: [unknownSubAccountRaw, subAccountRaw] },
+      { assignFromTokenAccountRaw },
+    );
+
+    expect(assignFromTokenAccountRaw).toHaveBeenCalledTimes(1);
+    expect(assignFromTokenAccountRaw).toHaveBeenCalledWith(
+      subAccountRaw,
+      expect.objectContaining({ id: subAccountRaw.id }),
+    );
+  });
 });

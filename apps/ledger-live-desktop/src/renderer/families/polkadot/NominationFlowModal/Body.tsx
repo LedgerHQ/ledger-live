@@ -23,6 +23,7 @@ import StepNomination, { StepNominationFooter } from "./steps/StepNomination";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { isNominationKeepable } from "@ledgerhq/live-common/families/polkadot/logic";
 import {
   PolkadotAccount,
   Transaction as PolkadotTransaction,
@@ -97,7 +98,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     );
     const t = bridge.createTransaction(account);
     const initialValidators = (account?.polkadotResources?.nominations || [])
-      .filter(nomination => !!nomination.status)
+      .filter(isNominationKeepable)
       .map(nomination => nomination.address);
     const transaction = bridge.updateTransaction(t, {
       mode: "nominate",

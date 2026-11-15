@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
 import { submitWithdraw } from "./api";
@@ -27,7 +28,19 @@ const mockedSign = jest.mocked(signWithdrawTypedData);
 const mockedSubmit = jest.mocked(submitWithdraw);
 
 const device: Device = { deviceId: "device-1", modelId: DeviceModelId.nanoX, wired: false };
-const sourceAccount = { id: "hypercore-account", type: "Account" } as Account;
+const sourceAccount = {
+  id: "hypercore-account",
+  type: "Account",
+  currency: getCryptoCurrencyById("hypercore"),
+} as Account;
+const track = jest.fn();
+const properties = {
+  page: "perps_withdraw_sign",
+  flow: "perps",
+  flowInitiatedFrom: "Perps",
+  sourceCurrency: "USDC",
+  targetCurrency: "ETH",
+};
 const payload = WithdrawPayloadSchema.parse(nearWithdrawPayload);
 const quote: WithdrawQuote = {
   amountTo: new BigNumber("0.045"),
@@ -47,6 +60,8 @@ describe("executePerpsWithdraw", () => {
       sourceAccount,
       quote,
       result,
+      targetCurrency: "ETH",
+      track,
       ...overrides,
     });
 
@@ -71,6 +86,14 @@ describe("executePerpsWithdraw", () => {
     expect(onSigned).toHaveBeenCalledTimes(1);
     expect(mockedSubmit).toHaveBeenCalledWith({ payload, signature: "0xsignature" });
     await expect(request).resolves.toEqual({ ...result, swapId: submitResponse.swapId });
+    expect(mockedSign).toHaveBeenCalledWith(device, sourceAccount, expect.anything(), {
+      track,
+      properties,
+    });
+    expect(track.mock.calls).toEqual([
+      ["Perps withdraw submitted", properties],
+      ["Perps withdraw completed", { ...properties, swapId: submitResponse.swapId }],
+    ]);
   });
 
   it("keeps the request pending when signing fails, so it can be retried", async () => {
@@ -98,6 +121,10 @@ describe("executePerpsWithdraw", () => {
 
     await expect(execute()).rejects.toBe(error);
     await expect(request).rejects.toBe(error);
+    expect(track.mock.calls).toEqual([
+      ["Perps withdraw submitted", properties],
+      ["Perps withdraw submit failed", properties],
+    ]);
   });
 
   it("signs nothing when the quote carries no payload", async () => {
