@@ -315,8 +315,8 @@ catalogs:
       specifier: 3.10.0
       version: 3.10.0
     '@ledgerhq/live-currency-format':
-      specifier: 0.17.0
-      version: 0.17.0
+      specifier: 0.17.1
+      version: 0.17.1
     '@ledgerhq/live-env':
       specifier: 4.2.0
       version: 4.2.0
@@ -992,7 +992,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
@@ -1495,7 +1495,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-desktop':
         specifier: workspace:^
         version: link:../../libs/live-dmk-desktop
@@ -2451,7 +2451,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-mobile':
         specifier: workspace:^
         version: link:../../libs/live-dmk-mobile
@@ -20207,7 +20207,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -20711,7 +20711,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.2.0
@@ -29289,8 +29289,8 @@ packages:
   '@ledgerhq/live-config@3.10.0':
     resolution: {integrity: sha512-W3WJ48yoYbWbCk54ROCyE0Pg/bNSuGOPZv49UgrSiGzhLHpiUYk+YZS5WWVV98yxjj8d4/YNNQDvum95nYDOGA==}
 
-  '@ledgerhq/live-currency-format@0.17.0':
-    resolution: {integrity: sha512-C4HfeeDgl9qgY83q+mUKX/v/YMKH/ttBWhMMhe5u5RIHejWSNTwYCzOgvEDXv9WC45bvDV8zhTpzBNKAKEHvIw==}
+  '@ledgerhq/live-currency-format@0.17.1':
+    resolution: {integrity: sha512-wBZw8zHY798lApQvpQsaHSWt9mbXQxS97jdEwXxdKOIBNQTQ7olg9IEZvvYH7HFV/ar+rHNSv3DROisJQRmR2A==}
 
   '@ledgerhq/live-env@4.2.0':
     resolution: {integrity: sha512-KM3k5A6m1N9DhNZajafpkc9dKUF65gHWrWNDzZQNyylk0p/qwRzEGiFxdugk4wkwjwAVCbnKOHwuCAXv6BUULA==}
@@ -48173,7 +48173,7 @@ snapshots:
     dependencies:
       lodash: 4.18.1
 
-  '@ledgerhq/live-currency-format@0.17.0':
+  '@ledgerhq/live-currency-format@0.17.1':
     dependencies:
       bignumber.js: 9.1.2
 
