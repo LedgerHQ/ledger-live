@@ -3,7 +3,7 @@ import { Direction, NativeElement } from "detox/detox";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
-import { isHardTimeout, waitHardTimeout, withHardTimeout } from "@e2e/helpers/elements/hardTimeout";
+import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;
@@ -27,7 +27,7 @@ const swipeDirectionFor = (direction: Direction): Direction => {
  * Builds the element to check on every call, at the match index its element handle uses.
  * A fresh element each time: Android's atIndex mutates the matcher it wraps.
  */
-export type ElementFactory = () => NativeElement;
+type ElementFactory = () => NativeElement;
 
 export class PageScroller {
   async performScroll(

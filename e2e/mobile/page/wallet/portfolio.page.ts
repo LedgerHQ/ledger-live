@@ -129,8 +129,7 @@ export default class PortfolioPage {
   @Step("Expect operation to contain counter value {{{0}}}")
   async expectOperationCounterValue(counterValue: string) {
     await app.mainNavigation.tapTopBarTransactionHistory();
-    const text = await app.operation.getOperationCounterValue();
-    jestExpect(text).toContain(counterValue);
+    await app.operation.expectOperationCounterValue(counterValue);
   }
 
   @Step("Open Portfolio via deeplink")

@@ -125,19 +125,15 @@ export default class CommonPage {
     await this.closeWithConfirmationButton.tap();
   }
 
-  @Step("Get the account name at index {{{0}}}")
-  async getAccountName(index = 0) {
-    if (await this.cryptoAddressesList.isVisible()) {
-      await this.accountItemNameAt().scrollTo(this.cryptoAddressesList);
-      return await this.accountItemNameAt(index).getText();
-    }
-    await app.assetDetail.scrollToAddressesHeader();
-    return await app.assetDetail.getAddressItemName(index);
-  }
-
   @Step("Expect the account name {{{0}}}")
   async expectAccountName(accountName: string, index = 0) {
-    jestExpect(await this.getAccountName(index)).toBe(accountName);
+    if (await this.cryptoAddressesList.isVisible()) {
+      await this.accountItemNameAt().scrollTo(this.cryptoAddressesList);
+      await this.accountItemNameAt(index).expectText(accountName, { normaliseWhitespace: true });
+      return;
+    }
+    await app.assetDetail.scrollToAddressesHeader();
+    await app.assetDetail.expectAddressItemName(accountName, index);
   }
 
   @Step("Go to the account with the name {{{0}}}")

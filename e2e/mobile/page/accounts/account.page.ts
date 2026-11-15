@@ -200,14 +200,20 @@ export default class AccountPage {
     await this.accountBalance(accountId).expectVisible();
   }
 
-  @Step("Get visible account address label {{{0}}}")
-  async getVisibleAccountAddressLabel(accountId: string) {
+  /** The label shortens the address, so only its start after `0x` and its last 4 characters show. */
+  @Step("Expect the address label of {{{0}}} to show {{{1}}}")
+  async expectAccountAddressLabel(accountId: string, address: string) {
+    const start = address.slice(2, 5);
+    const end = address.slice(-4);
     if (isAccountDetailEnabled()) {
-      return await this.accountDetail.getVisibleAddressLabel();
+      await this.accountDetail.expectAddressLabel(start, end);
+      return;
     }
-    await this.accountAddress(accountId).scrollTo(this.accountScreenScrollView);
-    await this.accountAddress(accountId).expectVisible();
-    return await this.accountAddress(accountId).getLabel();
+    const addressLabel = this.accountAddress(accountId);
+    await addressLabel.scrollTo(this.accountScreenScrollView);
+    await addressLabel.expectVisible();
+    await addressLabel.expectLabel(start, { containing: true, ignoreCase: true });
+    await addressLabel.expectLabel(end, { containing: true, ignoreCase: true });
   }
 
   @Step("Expect account receive and send actions")

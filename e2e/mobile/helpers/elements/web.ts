@@ -201,6 +201,11 @@ export class WebHandle implements ElementHandle {
     compareText(actualValue, text, options);
   }
 
+  /** Waits for the input, reads its `value`, then asserts it matches `pattern`. */
+  async expectValueMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getValue(timeout)).toMatch(pattern);
+  }
+
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */
   async expectExist(): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toExist());

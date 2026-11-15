@@ -220,11 +220,11 @@ export default class AssetDetailPage {
     await this.scrollToAddressesSection();
   }
 
-  @Step("Get address item name at index {{{0}}}")
-  async getAddressItemName(index = 0) {
+  @Step("Expect address item name {{{0}}} at index {{{1}}}")
+  async expectAddressItemName(name: string, index = 0) {
     const addressItemName = this.addressItemNameAt(index);
     await addressItemName.scrollTo(await this.scrollView());
-    return await addressItemName.getText();
+    await addressItemName.expectText(name, { normaliseWhitespace: true });
   }
 
   @Step("Add asset to favorites from Asset Detail")
