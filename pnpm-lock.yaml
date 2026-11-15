@@ -525,8 +525,8 @@ catalogs:
       specifier: 8.21.3
       version: 8.21.3
     '@tanstack/react-virtual':
-      specifier: 3.13.16
-      version: 3.13.16
+      specifier: 3.13.26
+      version: 3.13.26
     '@testing-library/dom':
       specifier: 10.4.1
       version: 10.4.1
@@ -1633,7 +1633,7 @@ importers:
         version: 8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-virtual':
         specifier: 'catalog:'
-        version: 3.13.16(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 3.13.26(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tippyjs/react':
         specifier: 4.2.6
         version: 4.2.6(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3523,7 +3523,7 @@ importers:
         version: 8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-virtual':
         specifier: 'catalog:'
-        version: 3.13.16(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 3.13.26(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@uiw/react-codemirror':
         specifier: ^4.25.4
         version: 4.25.4(@codemirror/view@6.39.5)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -33642,8 +33642,8 @@ packages:
       react: 19.1.4
       react-dom: 19.1.4
 
-  '@tanstack/react-virtual@3.13.16':
-    resolution: {integrity: sha512-y4xLKvLu6UZWiGdNcgk3yYlzCznYIV0m8dSyUzr3eAC0dHLos5V74qhUHxutYddFGgGU8sWLkp6H5c2RCrsrXw==}
+  '@tanstack/react-virtual@3.13.26':
+    resolution: {integrity: sha512-DosdgjOxCLahkn0o+ilmZYwEjo1glfMGuRT/j3PQ18yr5XqA8N/BCaL9IJ3B5TRl+nnzyK2IOFgAILwzN3a9xQ==}
     peerDependencies:
       react: 19.1.4
       react-dom: 19.1.4
@@ -33652,8 +33652,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tanstack/virtual-core@3.13.16':
-    resolution: {integrity: sha512-njazUC8mDkrxWmyZmn/3eXrDcP8Msb3chSr4q6a65RmwdSbMlMCdnOphv6/8mLO7O3Fuza5s4M4DclmvAO5w0w==}
+  '@tanstack/virtual-core@3.16.0':
+    resolution: {integrity: sha512-Er2N7q3WOiH6y2JLxsxNX+u2/sLqSsL0bxFgDjuiPiA7vKhZRm+IzcS17vRee3GNXr64UsesA5CAp9yTiIYw9A==}
 
   '@taquito/core@23.1.0':
     resolution: {integrity: sha512-7gTcQ2XtyGzXRPuph0mBRd2AfwOzagGrIZ6OPwlurl3RlOvUSInA0v8GOud7JwNVgLJJCz4L4EEfkdOZY9/LIg==}
@@ -53066,15 +53066,15 @@ snapshots:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
 
-  '@tanstack/react-virtual@3.13.16(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
+  '@tanstack/react-virtual@3.13.26(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
-      '@tanstack/virtual-core': 3.13.16
+      '@tanstack/virtual-core': 3.16.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tanstack/virtual-core@3.13.16': {}
+  '@tanstack/virtual-core@3.16.0': {}
 
   '@taquito/core@23.1.0':
     dependencies:
