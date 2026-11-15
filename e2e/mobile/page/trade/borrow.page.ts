@@ -160,12 +160,7 @@ export default class BorrowPage {
   @Step("Expect the loan to value")
   async expectLoanToValue(percentage: string) {
     await this.simulateLoanScreen.waitVisible();
-    const screenText = await this.body.getText();
-    if (!new RegExp(String.raw`Loan to Value[^\d]*${percentage}`).test(screenText)) {
-      throw new Error(
-        `Expected a loan to value of ${percentage} but the simulate-loan screen showed: ${screenText.replace(/\n+/g, " | ")}`,
-      );
-    }
+    await this.body.expectTextMatching(new RegExp(String.raw`Loan to Value[^\d]*${percentage}`));
   }
 
   @Step("Click Continue on the simulate-loan screen")

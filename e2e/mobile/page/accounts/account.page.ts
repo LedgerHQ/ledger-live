@@ -110,11 +110,6 @@ export default class AccountPage {
     await this.accountNameAt(index).expectText(accountName);
   }
 
-  @Step("Get the account name at index {{{0}}}")
-  async getAccountName(index = 0) {
-    return await this.accountNameAt(index).getText();
-  }
-
   @Step("Open account settings")
   async openAccountSettings() {
     if (isAccountDetailEnabled()) {
