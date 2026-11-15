@@ -178,7 +178,7 @@ export class WebHandle implements ElementHandle {
   async getIdentifier(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
     const id = await withHardTimeout(
-      this.raw.runScript((el: HTMLElement) => el.getAttribute("data-testid") ?? ""),
+      this.raw.runScript((el: HTMLElement) => el.dataset.testid ?? ""),
       TIMEOUT.medium,
     );
     return scriptText(id);
