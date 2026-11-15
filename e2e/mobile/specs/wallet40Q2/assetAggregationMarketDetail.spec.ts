@@ -155,7 +155,7 @@ describe("Asset aggregation", () => {
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
     await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await detoxExpect(getElementByText("POLYGON 1")).toBeVisible();
+    await app.account.expectAccountTitleVisible("POLYGON 1");
     const accountAddressLabel =
       await app.account.getVisibleAccountAddressLabel(POLYGON_DAI_ACCOUNT_ID);
     const polygonDaiAddress = getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID);

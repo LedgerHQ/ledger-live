@@ -1,5 +1,5 @@
 import { element, by, waitFor, log } from "detox";
-import { Direction, NativeElement, NativeMatcher } from "detox/detox";
+import { Direction, NativeElement } from "detox/detox";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
@@ -29,18 +29,10 @@ const swipeDirectionFor = (direction: Direction): Direction => {
  */
 export type ElementFactory = () => NativeElement;
 
-type ScrollTarget = NativeMatcher | ElementFactory;
-
-const toElement = (target: ScrollTarget): NativeElement =>
-  typeof target === "function" ? target() : element(target).atIndex(0);
-
-const describeTarget = (target: ScrollTarget): string =>
-  typeof target === "function" ? "the element handle" : JSON.stringify(target);
-
 export class PageScroller {
   async performScroll(
-    target: ScrollTarget,
-    scrollView?: string | RegExp | ScrollTarget,
+    target: ElementFactory,
+    scrollView?: ElementFactory,
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = TIMEOUT.xxxsmall,
@@ -75,7 +67,7 @@ export class PageScroller {
       }
     }
 
-    throw new Error(`Failed to find element after scrolling. Matcher: ${describeTarget(target)}`);
+    throw new Error("Failed to find the element after scrolling.");
   }
 
   /**
@@ -84,19 +76,19 @@ export class PageScroller {
    * (e.g. hidden behind a sticky footer) before interacting with it.
    */
   async scrollByPixels(
-    scrollViewId: string | RegExp | ScrollTarget | undefined,
+    scrollView: ElementFactory | undefined,
     pixels: number,
     direction: Direction = "down",
   ): Promise<void> {
-    const scrollContainer = await this.getScrollElement(scrollViewId);
+    const scrollContainer = await this.getScrollElement(scrollView);
     await this.scrollOnce(scrollContainer, direction, pixels);
     await this.waitForScrollToSettle();
   }
 
-  private async isVisible(target: ScrollTarget, timeout: number): Promise<boolean> {
+  private async isVisible(target: ElementFactory, timeout: number): Promise<boolean> {
     try {
       await withHardTimeout(
-        waitFor(toElement(target)).toBeVisible().withTimeout(timeout),
+        waitFor(target()).toBeVisible().withTimeout(timeout),
         waitHardTimeout(timeout),
       );
       return true;
@@ -107,22 +99,11 @@ export class PageScroller {
   }
 
   private async getScrollElement(
-    scrollView?: string | RegExp | ScrollTarget,
+    scrollView?: ElementFactory,
   ): Promise<Detox.IndexableNativeElement | NativeElement> {
     if (scrollView) {
-      // string | RegExp | NativeMatcher serve the elementHelpers.ts globals: keep only
-      // ElementFactory once that file is deleted.
-      const scrollTarget =
-        typeof scrollView === "string" || scrollView instanceof RegExp
-          ? by.id(scrollView)
-          : scrollView;
-      if (await this.isVisible(scrollTarget, TIMEOUT.xsmall)) {
-        return typeof scrollTarget === "function" ? scrollTarget() : element(scrollTarget);
-      } else {
-        const name =
-          scrollTarget === scrollView ? describeTarget(scrollTarget) : `with id ${scrollView}`;
-        throw new Error(`Scroll view ${name} not found or not visible.`);
-      }
+      if (await this.isVisible(scrollView, TIMEOUT.xsmall)) return scrollView();
+      throw new Error("Scroll view not found or not visible.");
     }
     const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
     return element(by.type(type)).atIndex(0);

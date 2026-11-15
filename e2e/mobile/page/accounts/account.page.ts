@@ -61,6 +61,11 @@ export default class AccountPage {
     await this.accountTitle(accountName).expectVisible();
   }
 
+  @Step("Expect the account title {{{0}}} to be visible")
+  async expectAccountTitleVisible(accountName: string) {
+    await this.accountTitle(accountName).expectVisible();
+  }
+
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
