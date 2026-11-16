@@ -59,6 +59,17 @@ describe("resolveRef", () => {
     assert.equal(resolveRef("develop", fakeLsRemote()), SHA(1));
     assert.equal(resolveRef("live-mobile@4.27.1", fakeLsRemote()), SHA(5));
   });
+  it("refuses a name that is both a branch and a tag: the branch could stand in for a release", () => {
+    const shadowed = fakeLsRemote([...REFS, [SHA(8), "refs/heads/live-mobile@4.27.1"]]);
+    assert.throws(
+      () => resolveRef("live-mobile@4.27.1", shadowed),
+      /'live-mobile@4\.27\.1' is both a branch and a tag/,
+    );
+    assert.throws(
+      () => planBuilds({ ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "" }, shadowed),
+      /is both a branch and a tag/,
+    );
+  });
   it("refuses a raw SHA, which could be a fork's commit", () => {
     assert.throws(
       () => resolveRef(SHA(1), fakeLsRemote()),
@@ -162,6 +173,30 @@ describe("planBuilds", () => {
     assert.equal(cacheA({ refA: "develop", refB: "live-mobile@4.27.1" }), false);
     assert.equal(cacheA({ preset: "aa-noise", refA: "" }), false);
     assert.equal(cacheA({ refA: "live-mobile@4.28.0-nightly.1" }), false);
+    const branchNamedLikeATag = fakeLsRemote([...REFS, [SHA(8), "refs/heads/live-mobile@4.30.0"]]);
+    assert.equal(
+      planBuilds({ ...INPUTS, refA: "live-mobile@4.30.0" }, branchNamedLikeATag).cacheA,
+      false,
+    );
+  });
+
+  it("saves build A only when B builds reviewed code: develop, release, main or A's own", () => {
+    const refs = fakeLsRemote([
+      ...REFS,
+      [SHA(8), "refs/heads/main"],
+      [SHA(8), "refs/heads/hotfix"],
+      [SHA(8), "refs/heads/feat/x"],
+    ]);
+    const saveA = (inputs: Partial<PlanInputs>) => planBuilds({ ...INPUTS, ...inputs }, refs).saveA;
+    assert.equal(saveA({ preset: "prod-vs-develop", refA: "", refB: "" }), true);
+    assert.equal(saveA({ preset: "prod-vs-release", refA: "", refB: "" }), true);
+    assert.equal(saveA({ refB: "main" }), true);
+    assert.equal(saveA({ preset: "aa-noise" }), true);
+    assert.equal(saveA({ preset: "known-regression" }), true);
+    assert.equal(saveA({ preset: "prod-vs-develop", refA: "", refB: "feat/x" }), false);
+    assert.equal(saveA({ preset: "prod-vs-release", refA: "", refB: "hotfix" }), false);
+    assert.equal(saveA({ refB: "live-mobile@4.27.1" }), false);
+    assert.equal(saveA({ refA: "develop", refB: "develop" }), false);
   });
 
   for (const pairs of ["4", "7", "x", ""]) {
@@ -232,6 +267,7 @@ describe("outputsOf and summaryOf", () => {
         `label_a=live-mobile@4.27.0 (${SHA(6).slice(0, 10)})`,
         `label_b=develop (${SHA(1).slice(0, 10)})`,
         "cache_a=true",
+        "save_a=true",
         "preset=custom",
         "platforms=Android & iOS",
         "pairs=20",
@@ -243,6 +279,15 @@ describe("outputsOf and summaryOf", () => {
     assert.match(
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
+    );
+    assert.doesNotMatch(summaryOf(plan, INPUTS, "4"), /not saved/);
+  });
+
+  it("says in the summary when build A is not saved to the cache", () => {
+    const inputs = { ...INPUTS, refB: "live-mobile@4.27.1" };
+    assert.match(
+      summaryOf(planBuilds(inputs, fakeLsRemote()), inputs, "4"),
+      /- Build A is not saved to the cache: B is not develop, release or main\n/,
     );
   });
 });

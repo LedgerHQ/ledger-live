@@ -71,6 +71,8 @@ another line is ❌; the run still fails on "Probably slower", as the gate is on
 Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
+A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
+take the branch.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
 Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
@@ -101,10 +103,12 @@ Build A of a `live-mobile@X.Y.Z` tag only changes on a release, so the mobile E2
 keeps it, with their role and `develop/` prefix on develop. Its key is commit A, a hash of the
 workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`, and a version to bump by hand
 when something else the build depends on changes. The `restore-builds` job puts a cached build A in
-the run's artifacts, once its download succeeded and its commit matches, and the build matrices
-leave out each side whose artifact it published; `save-builds` caches a build A the run made.
-Neither runs the measured ref's code, and the build jobs get no cache credentials. Both continue
-on error: a cache that cannot be read or written only means building A as before.
+the run's artifacts, once its download succeeded and its commit and binary match, and the build
+matrices leave out each side whose artifact it published. `save-builds` caches a build A the run
+made, only when B is develop, release or main (the branches only a pull request changes) or A
+itself: B's build job runs B's code, which could replace A's artifact before it is cached. Neither
+job runs the measured ref's code, and the build jobs get no cache credentials. Both continue on
+error and time out: a cache that cannot be read or written only means building A as before.
 
 ## A launch
 

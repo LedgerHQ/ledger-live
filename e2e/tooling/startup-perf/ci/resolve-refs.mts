@@ -39,11 +39,16 @@ interface Builds {
   labelA: string;
   labelB: string;
   warnings: string[];
+  /** Build A is a release tag's, which only changes on a release: the cache keeps it for later runs. */
+  cacheA: boolean;
+  /**
+   * And B builds only reviewed code: B's build job runs B's code, which could replace A's artifact
+   * before `save-builds` caches it.
+   */
+  saveA: boolean;
 }
 
 export interface Plan extends Builds {
-  /** Build A is a release tag's, which only changes on a release: the cache keeps it for later runs. */
-  cacheA: boolean;
   scenarios: string[];
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
   settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata">;
@@ -54,6 +59,11 @@ export type LsRemote = (options: string[], patterns: string[]) => string;
 
 const PROD_TAG = /^live-mobile@(\d+)\.(\d+)\.(\d+)$/;
 const TAGS_PREFIX = "refs/tags/";
+/**
+ * The branches only a merged pull request changes: `hotfix` only refuses force-pushes, and no rule
+ * covers tags.
+ */
+const REVIEWED_BRANCHES = new Set(["develop", "release", "main"]);
 
 const refsOf = (output: string) =>
   output
@@ -69,21 +79,46 @@ const refsOf = (output: string) =>
  * too and would run with this workflow's secrets.
  */
 export function resolveRef(ref: string, lsRemote: LsRemote): string {
+  return resolve(ref, lsRemote).sha;
+}
+
+interface Resolved {
+  sha: string;
+  isReleaseTag: boolean;
+  isReviewedBranch: boolean;
+}
+
+function resolve(ref: string, lsRemote: LsRemote): Resolved {
   const refs = refsOf(
     lsRemote([], [`refs/heads/${ref}`, `${TAGS_PREFIX}${ref}`, `${TAGS_PREFIX}${ref}^{}`]),
   );
-  const peeledTag = refs.find(r => r.name === `${TAGS_PREFIX}${ref}^{}`);
-  const branchOrTag = refs.find(
-    r => r.name === `refs/heads/${ref}` || r.name === `${TAGS_PREFIX}${ref}`,
-  );
-  const sha = (peeledTag ?? branchOrTag)?.sha;
+  const shaOf = (name: string) => refs.find(r => r.name === name)?.sha;
+  const branch = shaOf(`refs/heads/${ref}`);
+  const tag = shaOf(`${TAGS_PREFIX}${ref}^{}`) ?? shaOf(`${TAGS_PREFIX}${ref}`);
+  // The release tags are lightweight: a branch of the same name would stand in for one.
+  if (branch && tag) {
+    throw new StepFailure(
+      `'${ref}' is both a branch and a tag of this repository: rename the branch`,
+    );
+  }
+  const sha = branch ?? tag;
   if (!sha) {
     throw new StepFailure(
       `'${ref}' is not a branch or tag of this repository (to measure a commit, push a branch or tag at it)`,
     );
   }
-  return sha;
+  return {
+    sha,
+    isReleaseTag: Boolean(tag) && PROD_TAG.test(ref),
+    isReviewedBranch: Boolean(branch) && REVIEWED_BRANCHES.has(ref),
+  };
 }
+
+/** What the cache may do with build A, given A's ref and whether B builds only reviewed code. */
+const cachingOf = (a: Resolved, reviewedB: boolean) => ({
+  cacheA: a.isReleaseTag,
+  saveA: a.isReleaseTag && reviewedB,
+});
 
 const versionOf = (tag: string) => (PROD_TAG.exec(tag) ?? []).slice(1).map(Number);
 const byVersion = (a: string, b: string) => {
@@ -105,10 +140,17 @@ export function latestProdTag(lsRemote: LsRemote): string {
 /** The latest prod tag (or ref_a) against `refB`. */
 function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Builds {
   const refA = inputs.refA || latestProdTag(lsRemote);
-  const shaA = resolveRef(refA, lsRemote);
-  const shaB = resolveRef(refB, lsRemote);
-  const warnings = shaA === shaB ? [`${refA} and ${refB} are the same commit`] : [];
-  return { sides: ["a", "b"], shaA, shaB, labelA: refA, labelB: refB, warnings };
+  const [a, b] = [resolve(refA, lsRemote), resolve(refB, lsRemote)];
+  const warnings = a.sha === b.sha ? [`${refA} and ${refB} are the same commit`] : [];
+  return {
+    sides: ["a", "b"],
+    shaA: a.sha,
+    shaB: b.sha,
+    labelA: refA,
+    labelB: refB,
+    warnings,
+    ...cachingOf(a, b.isReviewedBranch),
+  };
 }
 
 function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -120,15 +162,27 @@ function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
 
 function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   if (!inputs.refA || !inputs.refB) throw new StepFailure("custom needs both ref_a and ref_b");
-  const shaA = resolveRef(inputs.refA, lsRemote);
-  const shaB = resolveRef(inputs.refB, lsRemote);
-  return { sides: ["a", "b"], shaA, shaB, labelA: inputs.refA, labelB: inputs.refB, warnings: [] };
+  const [a, b] = [resolve(inputs.refA, lsRemote), resolve(inputs.refB, lsRemote)];
+  return {
+    sides: ["a", "b"],
+    shaA: a.sha,
+    shaB: b.sha,
+    labelA: inputs.refA,
+    labelB: inputs.refB,
+    warnings: [],
+    ...cachingOf(a, b.isReviewedBranch),
+  };
 }
 
-/** One commit for both sides: ref_a, else the branch the workflow runs from. */
-function oneCommit(inputs: PlanInputs, lsRemote: LsRemote): { sha: string; label: string } {
-  if (!inputs.refA) return { sha: inputs.branchSha, label: inputs.branchName };
-  return { sha: resolveRef(inputs.refA, lsRemote), label: inputs.refA };
+/**
+ * One commit for both sides: ref_a, else the branch the workflow runs from. B builds A's code, with
+ * at most this workflow's own edit.
+ */
+function oneCommit(inputs: PlanInputs, lsRemote: LsRemote) {
+  const a: Resolved = inputs.refA
+    ? resolve(inputs.refA, lsRemote)
+    : { sha: inputs.branchSha, isReleaseTag: false, isReviewedBranch: false };
+  return { sha: a.sha, label: inputs.refA || inputs.branchName, ...cachingOf(a, true) };
 }
 
 function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -140,7 +194,7 @@ function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
     case "custom":
       return custom(inputs, lsRemote);
     case "aa-noise": {
-      const { sha, label } = oneCommit(inputs, lsRemote);
+      const { sha, label, ...caching } = oneCommit(inputs, lsRemote);
       return {
         sides: ["a"],
         shaA: sha,
@@ -148,13 +202,22 @@ function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
         labelA: label,
         labelB: "the same binary",
         warnings: [],
+        ...caching,
       };
     }
     case "known-regression": {
       // Build B re-adds LIVE-36190 to the same commit (prepare-build.mts).
-      const { sha, label } = oneCommit(inputs, lsRemote);
+      const { sha, label, ...caching } = oneCommit(inputs, lsRemote);
       const labelB = `${label} with LIVE-36190 re-added`;
-      return { sides: ["a", "b"], shaA: sha, shaB: sha, labelA: label, labelB, warnings: [] };
+      return {
+        sides: ["a", "b"],
+        shaA: sha,
+        shaB: sha,
+        labelA: label,
+        labelB,
+        warnings: [],
+        ...caching,
+      };
     }
     default:
       throw new StepFailure(`unknown preset ${inputs.preset}`);
@@ -173,7 +236,6 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
-    cacheA: PROD_TAG.test(builds.labelA),
     scenarios: inputs.scenarios.split(","),
     settings: {
       preset: inputs.preset,
@@ -194,6 +256,7 @@ export function outputsOf(plan: Plan): string {
     label_a: plan.labelA,
     label_b: plan.labelB,
     cache_a: String(plan.cacheA),
+    save_a: String(plan.saveA),
     preset: plan.settings.preset,
     platforms: plan.settings.platforms,
     pairs: plan.settings.pairs,
@@ -217,6 +280,9 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
     `- B: \`${plan.labelB}\` → \`${plan.shaB}\``,
     `- ${inputs.pairs} pairs per scenario`,
     `- Android: one job (runner) per scenario, two emulators with ${avdCores} cores each, cellular network like E2E`,
+    ...(plan.cacheA && !plan.saveA
+      ? ["- Build A is not saved to the cache: B is not develop, release or main"]
+      : []),
     "",
   ].join("\n");
 }

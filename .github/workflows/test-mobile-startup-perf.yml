@@ -80,6 +80,7 @@ jobs:
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
       cache_a: ${{ steps.plan.outputs.cache_a }}
+      save_a: ${{ steps.plan.outputs.save_a }}
       preset: ${{ steps.plan.outputs.preset }}
       platforms: ${{ steps.plan.outputs.platforms }}
       pairs: ${{ steps.plan.outputs.pairs }}
@@ -125,6 +126,8 @@ jobs:
       id-token: write
       contents: read
     runs-on: ledger-wallet-1cpu-aws-public-cached
+    # The build jobs wait for this one.
+    timeout-minutes: 45
     outputs:
       android_sides: ${{ steps.sides.outputs.android }}
       ios_sides: ${{ steps.sides.outputs.ios }}
@@ -181,6 +184,7 @@ jobs:
         id: android-exists
         if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
         continue-on-error: true
+        timeout-minutes: 3
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
         with:
           key: ${{ steps.keys.outputs.android }}
@@ -194,6 +198,7 @@ jobs:
         id: android-download
         if: ${{ steps.android-exists.outputs.cache-hit == 'true' }}
         continue-on-error: true
+        timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ steps.keys.outputs.android }}
@@ -207,6 +212,7 @@ jobs:
         id: ios-exists
         if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
         continue-on-error: true
+        timeout-minutes: 3
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
         with:
           key: ${{ steps.keys.outputs.ios }}
@@ -220,6 +226,7 @@ jobs:
         id: ios-download
         if: ${{ steps.ios-exists.outputs.cache-hit == 'true' }}
         continue-on-error: true
+        timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ steps.keys.outputs.ios }}
@@ -229,20 +236,20 @@ jobs:
           bucket: ll-nx-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      # Only a whole build of commit A replaces building it: a download that failed partway may have
-      # left a matching sha.txt beside part of the app.
+      # Only a whole build of commit A, with its platform's binary, replaces building it: a download
+      # that failed partway may have left a matching sha.txt beside part of the app.
       - name: Check the restored builds
         id: restored
         env:
           DOWNLOADED_android: ${{ steps.android-download.outcome }}
           DOWNLOADED_ios: ${{ steps.ios-download.outcome }}
         run: |
-          for platform in android ios; do
+          for entry in android:app.apk ios:app.zip; do
+            platform=${entry%%:*} binary=${entry#*:}
             dir="startup-perf-cache/$platform-a"
             downloaded="DOWNLOADED_$platform"
-            if [[ "${!downloaded}" == success ]] && [[ "$(cat "$dir/sha.txt" 2>/dev/null)" == "$SHA_A" ]] && [[ -s "$dir/app.apk" || -s "$dir/app.zip" ]]; then
+            if [[ "${!downloaded}" == success ]] && [[ "$(cat "$dir/sha.txt" 2>/dev/null)" == "$SHA_A" ]] && [[ -s "$dir/$binary" ]]; then
               echo "$platform=true" >> "$GITHUB_OUTPUT"
-              echo "- $platform build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"
             else
               echo "$platform=false" >> "$GITHUB_OUTPUT"
             fi
@@ -252,6 +259,7 @@ jobs:
         id: android-upload
         if: ${{ steps.restored.outputs.android == 'true' }}
         continue-on-error: true
+        timeout-minutes: 10
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-android-a
@@ -262,15 +270,19 @@ jobs:
         id: ios-upload
         if: ${{ steps.restored.outputs.ios == 'true' }}
         continue-on-error: true
+        timeout-minutes: 10
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-ios-a
           path: startup-perf-cache/ios-a/
           retention-days: 7
 
-      # A side is restored once its artifact is published; otherwise its build job makes it.
+      # A side is restored once its artifact is published; otherwise its build job makes it. Also
+      # after a step failed or timed out: without these outputs, A's build job would rebuild a
+      # restored A.
       - name: Sides left to build
         id: sides
+        if: ${{ always() }}
         env:
           SIDES: ${{ needs.plan.outputs.sides }}
           ANDROID: ${{ steps.restored.outputs.android == 'true' && steps.android-upload.outcome == 'success' }}
@@ -282,6 +294,8 @@ jobs:
           }
           echo "android=$(left "$ANDROID")" >> "$GITHUB_OUTPUT"
           echo "ios=$(left "$IOS")" >> "$GITHUB_OUTPUT"
+          if [[ "$ANDROID" == true ]]; then echo "- Android build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"; fi
+          if [[ "$IOS" == true ]]; then echo "- iOS build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"; fi
 
   build-android:
     name: "Android build ${{ matrix.side }}"
@@ -379,11 +393,13 @@ jobs:
           git rev-parse HEAD > out/sha.txt
           ls -la out
 
+      # A restore that failed partway may have published this name already.
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-android-${{ matrix.side }}
           path: out/
           retention-days: 7
+          overwrite: true
 
   build-ios:
     name: "iOS build ${{ matrix.side }}"
@@ -468,23 +484,28 @@ jobs:
           git rev-parse HEAD > out/sha.txt
           ls -la out
 
+      # A restore that failed partway may have published this name already.
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-ios-${{ matrix.side }}
           path: out/
           retention-days: 7
+          overwrite: true
 
-  # Build A of a release tag, for the next runs (see restore-builds), from this run's artifacts.
+  # Build A of a release tag, for the next runs (see restore-builds), from this run's artifacts. Only
+  # when B builds reviewed code (save_a, resolve-refs.mts): B's build job runs B's code, which could
+  # replace A's artifact.
   save-builds:
     name: "Cache build A"
     needs: [plan, restore-builds, build-android, build-ios]
     # Best-effort: a build that is not cached is built again by the next run.
     continue-on-error: true
-    if: ${{ !cancelled() && needs.restore-builds.result == 'success' && (contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' || contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success') }}
+    if: ${{ !cancelled() && needs.plan.outputs.save_a == 'true' && needs.restore-builds.result == 'success' && (contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' || contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success') }}
     permissions:
       id-token: write
       contents: read
     runs-on: ledger-wallet-1cpu-aws-public-cached
+    timeout-minutes: 45
     steps:
       # What the cache profile's script reads.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -517,15 +538,19 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download Android build A
+        id: android-artifact
         if: ${{ contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' }}
+        continue-on-error: true
+        timeout-minutes: 10
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: startup-perf-android-a
           path: startup-perf-cache/android-a
 
       - name: Cache Android build A
-        if: ${{ contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' }}
+        if: ${{ steps.android-artifact.outcome == 'success' }}
         continue-on-error: true
+        timeout-minutes: 15
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           key: ${{ needs.restore-builds.outputs.android_key }}
@@ -537,15 +562,19 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download iOS build A
+        id: ios-artifact
         if: ${{ contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success' }}
+        continue-on-error: true
+        timeout-minutes: 10
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: startup-perf-ios-a
           path: startup-perf-cache/ios-a
 
       - name: Cache iOS build A
-        if: ${{ contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success' }}
+        if: ${{ steps.ios-artifact.outcome == 'success' }}
         continue-on-error: true
+        timeout-minutes: 15
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           key: ${{ needs.restore-builds.outputs.ios_key }}
