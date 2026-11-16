@@ -297,6 +297,7 @@ libs/concordium-core/                                                    @ledger
 libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/flow/predictions/                                               @ledgerhq/ptx
+features/flow/stake-position/                                            @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
