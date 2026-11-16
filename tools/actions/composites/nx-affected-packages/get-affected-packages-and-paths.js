@@ -32,9 +32,6 @@ async function runPnpm(args, exec) {
   };
 }
 
-// Every leading segment run of each path: "libs/live-e2e-shared" gives "libs" and
-// "libs/live-e2e-shared", never "shared". Workflows match these with contains() on the
-// parsed array, which compares whole elements instead of substrings.
 function toPathPrefixes(paths) {
   const prefixes = new Set();
   for (const p of paths) {
