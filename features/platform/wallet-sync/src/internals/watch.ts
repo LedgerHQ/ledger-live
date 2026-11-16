@@ -34,6 +34,14 @@ export const ledgerSyncSlice = createSlice({
       state.walletSyncError = payload;
     },
   },
+  selectors: {
+    selectLedgerSyncVisualPending: state => state.visualPending,
+    /** The last error of the watch loop, rebuilt from the name and message the slice keeps. */
+    selectLedgerSyncError: createSelector(
+      [(state: LedgerSyncState) => state.walletSyncError],
+      error => error && Object.assign(new Error(error.message), { name: error.name ?? "Error" }),
+    ),
+  },
 });
 
 const { setVisualPending, setWalletSyncError } = ledgerSyncSlice.actions;
