@@ -110,7 +110,8 @@ export function addAccountToBuyLinks(
     );
     // Assigned only when something changed, and as a new array either way: a coin module is free to
     // hand back a module-level constant, which must not be rewritten under it.
-    if (links.some((link, index) => link !== holder.links![index])) holder.links = links;
+    if (links.some((link, index) => link !== (holder.links as unknown[])[index]))
+      holder.links = links;
   }
 
   return errors;
@@ -203,7 +204,7 @@ export function toTransferFeeFromUnknown(value: unknown): TransferFee | undefine
 }
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
-  const networksRemap = {
+  const networksRemap: Record<string, string> = {
     xrp: "ripple",
   };
   return findCryptoCurrencyById(networksRemap[network] ?? network);
@@ -912,7 +913,7 @@ export function adaptCoreOperationToLiveOperation(
 function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (!transaction.mode) return "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
 
-  const modeRemap = {
+  const modeRemap: Record<string, string> = {
     delegate: "stake",
     undelegate: "unstake",
   };

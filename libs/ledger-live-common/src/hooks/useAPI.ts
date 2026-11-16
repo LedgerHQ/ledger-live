@@ -21,8 +21,8 @@ type Props<T, P> = ApiOptions<T> & {
   queryProps?: P;
 };
 
-const apiCache = {};
-const pendingRequests = {};
+const apiCache: Record<string, { data: unknown; timestamp: number }> = {};
+const pendingRequests: Record<string, Promise<unknown>> = {};
 
 export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
   queryFn,
@@ -43,7 +43,8 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
     setData(undefined);
     setError(undefined);
 
-    const request = pendingRequests[cacheKey] ?? queryFn({ ...queryProps });
+    const request =
+      (pendingRequests[cacheKey] as Promise<T> | undefined) ?? queryFn({ ...queryProps });
     pendingRequests[cacheKey] = request;
     try {
       const res = await request;
@@ -67,8 +68,8 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
       const cachedItem = apiCache[cacheKey];
       if (cachedItem && new Date().getTime() - cachedItem.timestamp < staleTimeout) {
         // The cached item is still fresh, so we use it
-        setData(cachedItem.data);
-        onSuccess?.(cachedItem.data);
+        setData(cachedItem.data as T);
+        onSuccess?.(cachedItem.data as T);
         setIsLoading(false);
       } else {
         // The cached item is stale or doesn't exist, so we fetch fresh data

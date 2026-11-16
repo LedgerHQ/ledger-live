@@ -258,7 +258,7 @@ export function createDeviceSocket(
 
             const { data } = input;
 
-            const notify = index =>
+            const notify = (index: number) =>
               o.next({
                 type: "bulk-progress",
                 progress: index / data.length,
@@ -273,7 +273,7 @@ export function createDeviceSocket(
               // if the bulk payload includes trailing empty strings we end up
               // sending empty data to the device and causing a disconnect.
               const cleanData = data
-                .map(d => (d !== "" ? Buffer.from(d, "hex") : null))
+                .map((d: string) => (d !== "" ? Buffer.from(d, "hex") : null))
                 .filter(Boolean);
 
               // we also use a subscription to be able to cancel the bulk if the user unsubscribes
@@ -370,7 +370,7 @@ export function createDeviceSocket(
       }
     };
 
-    const onDisconnect = e => {
+    const onDisconnect = (e: { message?: string } | null | undefined) => {
       transport.off("disconnect", onDisconnect);
 
       tracer.trace(

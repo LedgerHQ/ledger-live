@@ -49,9 +49,8 @@ export type TransportModule = {
 };
 
 declare global {
-  interface GlobalThis {
-    __ledgerTransportModules?: TransportModule[];
-  }
+  // eslint-disable-next-line no-var
+  var __ledgerTransportModules: TransportModule[] | undefined;
 }
 
 /**

@@ -5,7 +5,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge, TokenAccount } from "@ledgerhq/types-live";
 import { getEvmDummyAddress } from "../constants";
 import { getMainAccount } from "../../../account";
 import {
@@ -27,7 +27,7 @@ import { validateAddress } from "../../../bridge/validateAddress";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
-const defaultGetFees = (_a, t: any) => {
+const defaultGetFees = (_a: Account, t: any) => {
   const gasLimit = getGasLimit(t);
   if (t.type === 2 && t.maxFeePerGas) {
     return t.maxFeePerGas.times(gasLimit);
@@ -48,7 +48,11 @@ const createTransaction = (): Transaction => ({
   subAccountId: null,
 });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   if (parentAccount) return Promise.resolve(account.balance);
   const mainAccount = getMainAccount(account, parentAccount);
   let estimatedFees = new BigNumber(1000000000000);
@@ -58,7 +62,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account, transaction) => {
+const getTransactionStatus = (account: Account, transaction: Transaction) => {
   const errors: {
     amount?: Error;
     recipient?: Error;
@@ -69,7 +73,7 @@ const getTransactionStatus = (account, transaction) => {
     gasLimit?: Error;
   } = {};
 
-  let tokenAccount = null;
+  let tokenAccount: TokenAccount | null | undefined = null;
   if (transaction.subAccountId) {
     tokenAccount = account.subAccounts?.find(ta => ta.id === transaction.subAccountId);
   }
@@ -119,7 +123,7 @@ const getTransactionStatus = (account, transaction) => {
   });
 };
 
-const prepareTransaction = async (_a, t) => {
+const prepareTransaction = async (_a: Account, t: Transaction) => {
   if (t.feesStrategy === "custom") {
     return t;
   }

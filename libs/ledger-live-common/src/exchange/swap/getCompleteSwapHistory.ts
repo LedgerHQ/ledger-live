@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation, SwapOperation, TokenAccount } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";
@@ -84,7 +84,7 @@ const getSwapOperationMap =
           toAccount = (accountWithMandatoryTokens(toAccount, [token]).subAccounts || []).find(
             a => getAccountCurrency(a).id === tokenId,
           );
-          toExists = (toParentAccount.subAccounts || []).includes(toAccount);
+          toExists = (toParentAccount.subAccounts || []).includes(toAccount as TokenAccount);
         }
       }
 
@@ -143,7 +143,7 @@ const getSwapOperationMap =
     }
   };
 
-function startOfDay(t) {
+function startOfDay(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 

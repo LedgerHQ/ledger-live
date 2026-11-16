@@ -29,7 +29,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
   })();
   if (
     featureSpecificVersion &&
-    !semver.satisfies(LiveConfig.instance.appVersion, featureSpecificVersion, {
+    !semver.satisfies(LiveConfig.instance.appVersion!, featureSpecificVersion, {
       includePrerelease: true,
     })
   ) {

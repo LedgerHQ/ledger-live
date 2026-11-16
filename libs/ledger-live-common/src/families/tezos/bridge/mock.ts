@@ -42,10 +42,14 @@ const estimateGasLimitAndStorage = () => {
   };
 };
 
-const defaultGetFees = (a, t: any) =>
+const defaultGetFees = (a: Account, t: any) =>
   (t.fees || new BigNumber(0)).times(t.gasLimit || new BigNumber(0));
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction ? defaultGetFees(mainAccount, transaction) : new BigNumber(10);
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
@@ -158,7 +162,7 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: Account, t: any) => {
   let networkInfo = t.networkInfo;
 
   if (!networkInfo) {

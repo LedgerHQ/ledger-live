@@ -21,13 +21,13 @@ const bleUpdateSupportedVersions: { [key in DeviceModelId]?: string } = {
 export function isUsbUpdateSupported(deviceInfo: DeviceInfo, modelId: DeviceModelId): boolean {
   return (
     Boolean(usbUpdateSupportedVersions[modelId]) &&
-    satisfies(coerce(deviceInfo.version), usbUpdateSupportedVersions[modelId])
+    satisfies(coerce(deviceInfo.version)!, usbUpdateSupportedVersions[modelId]!)
   );
 }
 
 export function isBleUpdateSupported(deviceInfo: DeviceInfo, modelId: DeviceModelId): boolean {
   return (
     Boolean(bleUpdateSupportedVersions[modelId]) &&
-    satisfies(coerce(deviceInfo.version), bleUpdateSupportedVersions[modelId])
+    satisfies(coerce(deviceInfo.version)!, bleUpdateSupportedVersions[modelId]!)
   );
 }

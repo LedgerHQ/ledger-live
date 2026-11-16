@@ -38,7 +38,7 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
     const appVersionCoerced = semver.coerce(appVersion);
     return !semver.gte(appVersionCoerced || "", minVersion, {
       includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
-    });
+    } as semver.RangeOptions);
   }
   return false;
 }

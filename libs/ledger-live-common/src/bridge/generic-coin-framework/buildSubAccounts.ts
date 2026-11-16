@@ -150,8 +150,9 @@ export async function buildSubAccounts({
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      const assetReference = balance.asset?.["assetReference"];
-      const assetOwner = balance.asset?.["assetOwner"];
+      const asset = balance.asset as { assetReference?: string; assetOwner?: string } | undefined;
+      const assetReference = asset?.["assetReference"];
+      const assetOwner = asset?.["assetOwner"];
       // assetReference compared case-insensitively unless `exactAssetMatch`: a chain's own
       // listOperations output and its balance/getAssetFromToken derivation aren't guaranteed to
       // agree on reference casing (observed on Stacks -- one path lowercases a composite

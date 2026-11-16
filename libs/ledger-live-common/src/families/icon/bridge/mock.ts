@@ -6,7 +6,7 @@ import {
   FeeTooHigh,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { ICON_DUMMY_ADDRESS } from "@ledgerhq/coin-icon/constants";
 import {
   getSerializedAddressParameters,
@@ -35,15 +35,19 @@ const createTransaction = (): Transaction => ({
   fees: null,
 });
 
-const prepareTransaction = async (a, t) => t;
+const prepareTransaction = async (a: Account, t: Transaction) => t;
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction?.fees || new BigNumber(5000);
   return Promise.resolve(BigNumber.max(0, mainAccount.spendableBalance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account, t) => {
+const getTransactionStatus = (account: Account, t: Transaction) => {
   const errors: any = {};
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;
