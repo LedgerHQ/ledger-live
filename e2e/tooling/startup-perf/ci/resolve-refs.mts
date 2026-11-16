@@ -114,6 +114,22 @@ function resolve(ref: string, lsRemote: LsRemote): Resolved {
   };
 }
 
+/**
+ * A ref the run may build. A run from develop, release or main gets that branch's identity (OIDC),
+ * which the build jobs hold for JFrog and the caches trust: it builds only those branches and the
+ * release tags, and another branch is measured from a run of its own.
+ */
+function resolveIn(inputs: PlanInputs, ref: string, lsRemote: LsRemote): Resolved {
+  const resolved = resolve(ref, lsRemote);
+  const run = inputs.branchName;
+  if (REVIEWED_BRANCHES.has(run) && !resolved.isReviewedBranch && !resolved.isReleaseTag) {
+    throw new StepFailure(
+      `a run from ${run} builds only develop, release, main and live-mobile@X.Y.Z tags, as its jobs get ${run}'s identity: to measure '${ref}', run the workflow from it`,
+    );
+  }
+  return resolved;
+}
+
 /** What the cache may do with build A, given A's ref and whether B builds only reviewed code. */
 const cachingOf = (a: Resolved, reviewedB: boolean) => ({
   cacheA: a.isReleaseTag,
@@ -140,7 +156,7 @@ export function latestProdTag(lsRemote: LsRemote): string {
 /** The latest prod tag (or ref_a) against `refB`. */
 function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Builds {
   const refA = inputs.refA || latestProdTag(lsRemote);
-  const [a, b] = [resolve(refA, lsRemote), resolve(refB, lsRemote)];
+  const [a, b] = [resolveIn(inputs, refA, lsRemote), resolveIn(inputs, refB, lsRemote)];
   const warnings = a.sha === b.sha ? [`${refA} and ${refB} are the same commit`] : [];
   return {
     sides: ["a", "b"],
@@ -162,7 +178,10 @@ function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
 
 function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   if (!inputs.refA || !inputs.refB) throw new StepFailure("custom needs both ref_a and ref_b");
-  const [a, b] = [resolve(inputs.refA, lsRemote), resolve(inputs.refB, lsRemote)];
+  const [a, b] = [
+    resolveIn(inputs, inputs.refA, lsRemote),
+    resolveIn(inputs, inputs.refB, lsRemote),
+  ];
   return {
     sides: ["a", "b"],
     shaA: a.sha,
@@ -180,7 +199,7 @@ function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
  */
 function oneCommit(inputs: PlanInputs, lsRemote: LsRemote) {
   const a: Resolved = inputs.refA
-    ? resolve(inputs.refA, lsRemote)
+    ? resolveIn(inputs, inputs.refA, lsRemote)
     : { sha: inputs.branchSha, isReleaseTag: false, isReviewedBranch: false };
   return { sha: a.sha, label: inputs.refA || inputs.branchName, ...cachingOf(a, true) };
 }

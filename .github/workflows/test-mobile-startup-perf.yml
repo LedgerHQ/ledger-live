@@ -21,7 +21,7 @@ on:
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop)"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop). From develop, release or main, only those or a live-mobile@X.Y.Z tag: to measure another branch, run from it"
         required: false
         type: string
       platforms:

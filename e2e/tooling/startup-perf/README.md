@@ -72,7 +72,9 @@ Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
-take the branch.
+take the branch. A run from develop, release or main builds only those branches and the
+`live-mobile@X.Y.Z` tags: its jobs get that branch's identity (OIDC), which the build jobs hold for
+JFrog and the caches trust. To measure another branch, run the workflow from it.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
 Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%

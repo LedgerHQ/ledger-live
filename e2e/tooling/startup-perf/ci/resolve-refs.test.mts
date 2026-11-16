@@ -180,6 +180,34 @@ describe("planBuilds", () => {
     );
   });
 
+  it("builds only develop, release, main and release tags in a run from one of them", () => {
+    const refs = fakeLsRemote([
+      ...REFS,
+      [SHA(8), "refs/heads/main"],
+      [SHA(8), "refs/heads/feat/x"],
+    ]);
+    const plan = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs);
+    assert.equal(plan({ preset: "prod-vs-develop", refA: "", refB: "" }).shaB, SHA(1));
+    assert.equal(plan({ preset: "prod-vs-release", refA: "", refB: "" }).shaB, SHA(2));
+    assert.equal(plan({ refA: "live-mobile@4.27.0", refB: "main" }).shaB, SHA(8));
+    assert.equal(plan({ preset: "aa-noise", refA: "" }).shaA, SHA(9));
+    for (const inputs of [
+      { preset: "prod-vs-develop", refA: "", refB: "feat/x" },
+      { refA: "feat/x", refB: "develop" },
+      { refA: "live-mobile@4.28.0-nightly.1" },
+      { preset: "known-regression", refA: "feat/x" },
+    ]) {
+      assert.throws(
+        () => plan(inputs),
+        /a run from develop builds only develop, release, main and live-mobile@X\.Y\.Z tags, as its jobs get develop's identity: to measure '[^']+', run the workflow from it/,
+      );
+    }
+    assert.throws(() => plan({ branchName: "release", refB: "feat/x" }), /a run from release/);
+    const fromTheBranch = planBuilds({ ...INPUTS, branchName: "feat/x", refB: "feat/x" }, refs);
+    assert.equal(fromTheBranch.shaB, SHA(8));
+  });
+
   it("saves build A only when B builds reviewed code: develop, release, main or A's own", () => {
     const refs = fakeLsRemote([
       ...REFS,
