@@ -15,6 +15,7 @@ import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/
 import { createAction as createCompleteExchangeAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
+import { getEnv } from "@shared/env";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type { Result as StartExchangeResult } from "@ledgerhq/live-common/hw/actions/startExchange";
 import type { Result as CompleteExchangeResult } from "@ledgerhq/live-common/hw/actions/completeExchange";
@@ -205,6 +206,9 @@ export function usePerpsDepositExecution(
 
       onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
+
+      // The provider never gets the funds, so the swap is not tracked.
+      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) return { operation, swapId: undefined };
 
       const swapId = exchangeParams.swapId;
       if (swapId) {

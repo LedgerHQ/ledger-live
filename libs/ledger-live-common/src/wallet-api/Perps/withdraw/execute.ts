@@ -1,4 +1,5 @@
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getEnv } from "@shared/env";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
@@ -72,6 +73,11 @@ export async function executePerpsWithdraw({
   onSigned?.();
   // The user may have left while the device was signing: then nothing is submitted.
   if (!markWithdrawRequestCommitted(requestId)) throw new UserRefusedOnDevice();
+  if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+    // The signed withdraw would move real funds, so it is never submitted.
+    settleWithdrawRequest(requestId, result);
+    return result;
+  }
   let swapId: string;
   try {
     track("Perps withdraw submitted", properties);

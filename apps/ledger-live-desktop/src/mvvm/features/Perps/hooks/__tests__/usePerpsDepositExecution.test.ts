@@ -2,6 +2,7 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { PayloadStepError } from "@ledgerhq/live-common/wallet-api/Exchange/SwapError";
 import { track } from "@shared/analytics";
+import { setEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -372,6 +373,17 @@ describe("usePerpsDepositExecution", () => {
     expect(mockGetUpdateAccountWithUpdaterParams).toHaveBeenCalledWith(
       expect.objectContaining({ magnitudeAwareRate: new BigNumber("0.95") }),
     );
+  });
+
+  it("does not record the swap when transaction broadcast is disabled", async () => {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+    try {
+      await signWith({ signedOperation: { operation } });
+
+      expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
+    } finally {
+      setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+    }
   });
 
   it("surfaces a failed signature instead of spinning", async () => {
