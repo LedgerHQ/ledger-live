@@ -30,6 +30,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "@typescript/native": "catalog:",
