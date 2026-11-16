@@ -1,4 +1,5 @@
 import { from } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -262,7 +263,11 @@ describe("Perps handlers", () => {
     });
 
     describe("signOnSession", () => {
-      const session = { dmk: {}, sessionId: "die-session", deviceModelId: "europa" };
+      const session = {
+        dmk: {},
+        sessionId: "die-session",
+        connectedDevice: { modelId: DeviceModelId.FLEX },
+      };
 
       beforeEach(() => {
         mockUiSigningExecute.mockImplementation(async ({ signOnSession, onSuccess, onError }) => {

@@ -4,6 +4,7 @@ import {
   type PerpsSignRequest,
   type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { context as drawerContext, setDrawer } from "~/renderer/drawers/Provider";
@@ -32,10 +33,19 @@ import {
   cancelWithdrawRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
-export function usePerpsHandlers(accounts: AccountLike[]) {
-  const uiSigningExecute = useCallback((request: PerpsSignRequest) => {
-    openPerpsSign(request);
-  }, []);
+export function usePerpsHandlers(
+  accounts: AccountLike[],
+  manifest?: Pick<LiveAppManifest, "id" | "name">,
+) {
+  const manifestId = manifest?.id;
+  const manifestName = manifest?.name;
+
+  const uiSigningExecute = useCallback(
+    (request: PerpsSignRequest) => {
+      openPerpsSign(request, manifestId !== undefined ? { manifestId, manifestName } : undefined);
+    },
+    [manifestId, manifestName],
+  );
 
   const uiDepositExecute = useCallback((params: PerpsDepositUiParams) => {
     const request = beginDepositRequest();

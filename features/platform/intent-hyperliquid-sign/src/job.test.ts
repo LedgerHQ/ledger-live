@@ -1,4 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { HYPERLIQUID_DEVICE_CONNECTION_PARAMS } from "./intentDefinition";
 import { hyperliquidSignIntentJob } from "./job";
 import type {
   HyperliquidSignature,
@@ -57,16 +58,30 @@ function startJob(signOnSession: SignHyperliquidActionsOnSession) {
   };
 }
 
-const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
+
+describe("HYPERLIQUID_DEVICE_CONNECTION_PARAMS", () => {
+  it("should exclude Nano S while accepting supported models", () => {
+    expect(HYPERLIQUID_DEVICE_CONNECTION_PARAMS.acceptedDeviceModelIds).not.toContain(
+      DeviceModelId.NANO_S,
+    );
+    expect(HYPERLIQUID_DEVICE_CONNECTION_PARAMS.acceptedDeviceModelIds).toContain(
+      DeviceModelId.FLEX,
+    );
+    expect(HYPERLIQUID_DEVICE_CONNECTION_PARAMS.acceptedDeviceModelIds).toContain(
+      DeviceModelId.STAX,
+    );
+  });
+});
 
 describe("hyperliquidSignIntentJob", () => {
-  it("emits signing synchronously with the connected device", () => {
+  it("should emit signing synchronously with the connected device", () => {
     const { states } = startJob(() => new Promise(() => {}));
 
     expect(states).toEqual([SIGNING]);
   });
 
-  it("hands the session to the injected signer", async () => {
+  it("should hand the session to the injected signer", async () => {
     const signOnSession = jest.fn().mockResolvedValue(SIGNATURES);
 
     startJob(signOnSession);
@@ -79,7 +94,7 @@ describe("hyperliquidSignIntentJob", () => {
     });
   });
 
-  it("reports the signatures once and completes", async () => {
+  it("should report the signatures once and complete", async () => {
     const { states, onResult, isCompleted } = startJob(() => Promise.resolve(SIGNATURES));
     await flushPromises();
 
@@ -89,7 +104,7 @@ describe("hyperliquidSignIntentJob", () => {
     expect(isCompleted()).toBe(true);
   });
 
-  it("reports a refusal on the device as refused and completes", async () => {
+  it("should report a refusal on the device as refused and complete", async () => {
     const refusal = new UserRefusedOnDevice();
     const { states, onResult, isCompleted } = startJob(() => Promise.reject(refusal));
     await flushPromises();
@@ -100,7 +115,7 @@ describe("hyperliquidSignIntentJob", () => {
     expect(isCompleted()).toBe(true);
   });
 
-  it("reports any other failure as failed and completes", async () => {
+  it("should report any other failure as failed and complete", async () => {
     const failure = new Error("certificate not found");
     const { states, onResult, isCompleted } = startJob(() => Promise.reject(failure));
     await flushPromises();
@@ -111,7 +126,7 @@ describe("hyperliquidSignIntentJob", () => {
     expect(isCompleted()).toBe(true);
   });
 
-  it("reports a signer that throws synchronously as failed", async () => {
+  it("should report a signer that throws synchronously as failed", async () => {
     const failure = new Error("boom");
     const { onResult, isCompleted } = startJob(() => {
       throw failure;
@@ -122,7 +137,7 @@ describe("hyperliquidSignIntentJob", () => {
     expect(isCompleted()).toBe(true);
   });
 
-  it("turns a DMK error object into an Error carrying its tag", async () => {
+  it("should turn a DMK error object into an Error carrying its tag", async () => {
     const dmkError = { _tag: "HyperliquidAppCommandError", errorCode: "6a80" };
     const { states, onResult } = startJob(() => Promise.reject(dmkError));
     await flushPromises();
@@ -136,20 +151,30 @@ describe("hyperliquidSignIntentJob", () => {
     expect(states[1]).toEqual({ type: "error", error });
   });
 
-  it("lets a disconnection escape to the executor without reporting a result", async () => {
-    const disconnection = { _tag: "DeviceDisconnectedWhileSendingError" };
-    const { states, onResult, getError, isCompleted } = startJob(() =>
-      Promise.reject(disconnection),
-    );
-    await flushPromises();
+  it.each([
+    ["a raw DMK disconnection", { _tag: "DeviceDisconnectedWhileSendingError" }],
+    [
+      "a DmkSignerHyperliquid wrapped disconnection",
+      new Error("DeviceDisconnectedWhileSendingError", {
+        cause: { _tag: "DeviceDisconnectedWhileSendingError", originalError: null },
+      }),
+    ],
+  ])(
+    "should let %s escape to the executor without reporting a result",
+    async (_, disconnection) => {
+      const { states, onResult, getError, isCompleted } = startJob(() =>
+        Promise.reject(disconnection),
+      );
+      await flushPromises();
 
-    expect(states).toEqual([SIGNING]);
-    expect(onResult).not.toHaveBeenCalled();
-    expect(getError()).toBe(disconnection);
-    expect(isCompleted()).toBe(false);
-  });
+      expect(states).toEqual([SIGNING]);
+      expect(onResult).not.toHaveBeenCalled();
+      expect(getError()).toBe(disconnection);
+      expect(isCompleted()).toBe(false);
+    },
+  );
 
-  it("reports nothing once unsubscribed", async () => {
+  it("should report nothing once unsubscribed", async () => {
     let resolveSignatures!: (signatures: HyperliquidSignature[]) => void;
     const { states, onResult, subscription } = startJob(
       () =>

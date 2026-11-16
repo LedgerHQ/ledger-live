@@ -1,12 +1,10 @@
 import React from "react";
-import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { getProductName } from "@ledgerhq/devices";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
-import type { HyperliquidSignIntentJobState } from "@features/platform-hyperliquid-sign-intent";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import type { HyperliquidSignIntentJobState } from "@features/platform-intent-hyperliquid-sign";
+import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor";
 import ModalLock from "~/components/ModalLock";
-import { useTranslation } from "~/context/Locale";
+import PreventNativeBack from "~/components/PreventNativeBack";
 
 type Props = Readonly<{
   jobState: HyperliquidSignIntentJobState | undefined;
@@ -14,36 +12,21 @@ type Props = Readonly<{
   onClose: () => void;
 }>;
 
-function SigningState({
-  deviceModelId,
-  deviceName,
-}: Readonly<{ deviceModelId: DeviceModelId; deviceName: string }>) {
-  const { t } = useTranslation();
-  const modelId = dmkToLedgerDeviceIdMap[deviceModelId];
-
-  return (
-    <>
-      <ModalLock />
-      <DeviceActionContent
-        action="continue"
-        deviceModelId={modelId}
-        deviceName={deviceName}
-        title={t("send.newSendFlow.sign.title", { wording: getProductName(modelId) })}
-        description={t("send.newSendFlow.sign.description")}
-        testID="perps-sign-intent-signing"
-      />
-    </>
-  );
-}
-
-/** The live app shows the outcome: the host closes the drawer as soon as the job completes. */
 export function HyperliquidSignIntentComponentLWM({ jobState }: Props) {
   if (!jobState) return null;
 
   switch (jobState.type) {
     case "signing":
       return (
-        <SigningState deviceModelId={jobState.deviceModelId} deviceName={jobState.deviceName} />
+        <>
+          <ModalLock />
+          <PreventNativeBack />
+          <ContinueOnDevice
+            deviceModelId={dmkToLedgerDeviceIdMap[jobState.deviceModelId]}
+            deviceName={jobState.deviceName}
+            testID="perps-sign-intent-signing"
+          />
+        </>
       );
     case "signed":
     case "refused":

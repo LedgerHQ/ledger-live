@@ -1,5 +1,6 @@
 import React from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
@@ -8,14 +9,12 @@ import {
 } from "@ledgerhq/live-common/wallet-api/converters";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import type { HyperliquidSignIntent } from "@features/platform-hyperliquid-sign-intent";
+import type { DeviceConnectionParams } from "@features/platform-device-intent";
+import type { HyperliquidSignIntent } from "@features/platform-intent-hyperliquid-sign";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { PerpsWebView } from "../components/PerpsWebView/PerpsWebView";
 import type { PerpsWebviewInputs } from "../screens/PerpsLiveApp/usePerpsLiveAppViewModel";
 
-// The webview and the Device Intent Executor cannot run in jest. Both are stood in for by
-// markers capturing their props, so this test covers the wiring from the live app's
-// `custom.perps.signActions` request to the drawer and back.
 let mockCustomHandlers: WalletAPICustomHandlers | undefined;
 jest.mock("~/components/Web3AppWebview", () => ({
   Web3AppWebview: (props: { customHandlers: WalletAPICustomHandlers }) => {
@@ -31,6 +30,7 @@ jest.mock("~/components/WebPlatformPlayer/CustomHandlers", () => ({
 type ExecutorProps = {
   sourceFlow: string;
   analyticsProperties?: Record<string, unknown>;
+  deviceConnectionParams: DeviceConnectionParams;
   deviceInitializationInput: unknown;
   intent: HyperliquidSignIntent;
   onIntentJobComplete: () => void;
@@ -111,7 +111,7 @@ describe("Perps sign drawer integration", () => {
     mockExecutorProps = undefined;
   });
 
-  it("opens the executor over the live app for the Hyperliquid app", async () => {
+  it("should open the executor over the live app for the Hyperliquid app with Nano S excluded", async () => {
     renderPerps();
 
     const request = requestSignature();
@@ -123,10 +123,13 @@ describe("Perps sign drawer integration", () => {
       manifestId: "perps-live-app",
       manifestName: "Perps",
     });
+    expect(mockExecutorProps?.deviceConnectionParams.acceptedDeviceModelIds).not.toContain(
+      DeviceModelId.NANO_S,
+    );
     expect(mockExecutorProps?.deviceInitializationInput).toEqual({ appName: "Hyperliquid" });
   });
 
-  it("answers the live app with the signatures and closes the drawer", async () => {
+  it("should answer the live app with the signatures and close the drawer", async () => {
     renderPerps();
     const request = requestSignature();
     await screen.findByTestId("device-intent-executor");
@@ -140,7 +143,7 @@ describe("Perps sign drawer integration", () => {
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
   });
 
-  it("answers the live app with the device refusal and closes, leaving the outcome screen to it", async () => {
+  it("should answer the live app with the device refusal and close, leaving the outcome screen to it", async () => {
     renderPerps();
     const request = requestSignature();
     await screen.findByTestId("device-intent-executor");
@@ -155,7 +158,7 @@ describe("Perps sign drawer integration", () => {
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
   });
 
-  it("answers the live app with a refusal when the user closes the drawer", async () => {
+  it("should answer the live app with a refusal when the user closes the drawer", async () => {
     renderPerps();
     const request = requestSignature();
     await screen.findByTestId("device-intent-executor");

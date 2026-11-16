@@ -8,7 +8,6 @@ import type {
 
 const USER_REFUSED_ERROR_NAME = "UserRefusedOnDevice";
 
-/** Matched by name: `instanceof` fails across duplicated `@ledgerhq/errors`. */
 function isUserRefusal(error: unknown): boolean {
   return (
     typeof error === "object" &&
@@ -24,23 +23,11 @@ function readDmkErrorTag(error: unknown): string | undefined {
   return typeof tag === "string" ? tag : undefined;
 }
 
-/** DMK device-action errors are plain `{ _tag }` objects, not `Error` instances. */
 function toError(error: unknown): Error {
   if (error instanceof Error) return error;
   return new Error(readDmkErrorTag(error) ?? String(error), { cause: error });
 }
 
-/**
- * Sign Hyperliquid actions on the session the executor opened.
- *
- * Outcomes, each reported once through `onResult` before the job completes:
- * - the device returns signatures → `signed`.
- * - the user refuses on the device → `refused`.
- * - any other failure → `failed`, rendered as `error`.
- *
- * A disconnection escapes as an observable error, so the executor shows its reconnect screen
- * and runs the job again once the device is back.
- */
 export const hyperliquidSignIntentJob: Job<
   HyperliquidSignIntentJobState,
   HyperliquidSignIntentInput,

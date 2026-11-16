@@ -73,18 +73,22 @@ describe("DmkSignerHyperliquid", () => {
       },
     );
 
-    it("should reject with a generic Error when the device action fails", async () => {
+    it("should reject with an Error carrying the DAError as cause when the device action fails", async () => {
       // GIVEN
+      const daError = { _tag: "DeviceDisconnectedWhileSendingError", originalError: null };
       mockSignActions.mockReturnValue({
         observable: of({
           status: DeviceActionStatus.Error,
-          error: { _tag: "SomeDAError", originalError: null },
+          error: daError,
         }),
       });
 
       // WHEN & THEN
-      await expect(signer.signActions(path, certificate, signedMetadata, actions)).rejects.toThrow(
-        "SomeDAError",
+      await expect(signer.signActions(path, certificate, signedMetadata, actions)).rejects.toEqual(
+        expect.objectContaining({
+          message: "DeviceDisconnectedWhileSendingError",
+          cause: daError,
+        }),
       );
     });
 
@@ -95,9 +99,11 @@ describe("DmkSignerHyperliquid", () => {
         expectedError: UserRefusedOnDevice,
       },
       {
-        description: "unknown errorCode → generic Error with _tag",
+        description: "unknown errorCode → generic Error with _tag and cause",
         error: { _tag: "UnknownError", originalError: { errorCode: "9999" } },
-        expectedError: new Error("UnknownError"),
+        expectedError: new Error("UnknownError", {
+          cause: { _tag: "UnknownError", originalError: { errorCode: "9999" } },
+        }),
       },
     ])(
       "should reject with the correct error when the device action fails ($description)",

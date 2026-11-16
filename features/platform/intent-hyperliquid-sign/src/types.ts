@@ -17,7 +17,6 @@ export type HyperliquidSignSession = Pick<
   "dmk" | "sessionId" | "connectedDevice"
 >;
 
-/** Host-injected signer. The Hyperliquid app is already open (DIE Phase 2). */
 export type SignHyperliquidActionsOnSession = (
   session: HyperliquidSignSession,
 ) => Promise<HyperliquidSignature[]>;

@@ -1,7 +1,7 @@
 import React from "react";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
-import type { HyperliquidSignIntentJobState } from "@features/platform-hyperliquid-sign-intent";
+import type { HyperliquidSignIntentJobState } from "@features/platform-intent-hyperliquid-sign";
 import { ContinueOnDevice } from "LLD/components/DeviceIntentExecutor";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 

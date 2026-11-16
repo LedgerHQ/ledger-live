@@ -1,6 +1,7 @@
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DmkSignerHyperliquid, type SignActionsOptions } from "@ledgerhq/live-signer-hyperliquid";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -78,16 +79,20 @@ const PerpsWithdrawParamsSchema = z.object({
 export type PerpsSignSession = {
   dmk: DeviceManagementKit;
   sessionId: string;
-  /** Ledger Wallet model id, not the DMK one: it selects the CAL certificate. */
   deviceModelId: DeviceModelId;
+};
+
+export type PerpsConnectedDeviceSession = {
+  dmk: DeviceManagementKit;
+  sessionId: string;
+  connectedDevice: Pick<ConnectedDevice, "modelId">;
 };
 
 export type PerpsSignRequest = {
   appName: string | undefined;
   appOptions?: AppOption;
   signFactory: (device: Device) => Promise<PerpsSignResult>;
-  /** Signs on a session where the caller already opened the Hyperliquid app. */
-  signOnSession: (session: PerpsSignSession) => Promise<PerpsSignResult>;
+  signOnSession: (session: PerpsConnectedDeviceSession) => Promise<PerpsSignResult>;
   onSuccess: (result: PerpsSignResult) => void;
   onError: (error: Error) => void;
   onCancel: () => void;
@@ -173,8 +178,21 @@ function createSignFactory(derivationPath: string, params: PerpsSignParams) {
 }
 
 function createSignOnSession(derivationPath: string, params: PerpsSignParams) {
-  return (session: PerpsSignSession): Promise<PerpsSignResult> =>
-    signActionsOnSession(session, derivationPath, params, { skipOpenApp: true });
+  return ({
+    dmk,
+    sessionId,
+    connectedDevice,
+  }: PerpsConnectedDeviceSession): Promise<PerpsSignResult> =>
+    signActionsOnSession(
+      {
+        dmk,
+        sessionId,
+        deviceModelId: dmkToLedgerDeviceIdMap[connectedDevice.modelId],
+      },
+      derivationPath,
+      params,
+      { skipOpenApp: true },
+    );
 }
 
 export const handlers = ({

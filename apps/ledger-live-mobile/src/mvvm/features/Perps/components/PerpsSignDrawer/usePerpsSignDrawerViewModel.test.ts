@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { PerpsSignRequest } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import type { HyperliquidSignIntentResult } from "@features/platform-hyperliquid-sign-intent";
+import type { HyperliquidSignIntentResult } from "@features/platform-intent-hyperliquid-sign";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { usePerpsSignDrawerViewModel } from "./usePerpsSignDrawerViewModel";
 
@@ -36,7 +36,14 @@ function makeRequest(overrides: Partial<PerpsSignRequest> = {}): PerpsSignReques
 
 async function renderViewModel(request = makeRequest()) {
   const onClose = jest.fn();
-  const view = renderHook(() => usePerpsSignDrawerViewModel({ request, onClose }));
+  const view = renderHook(() =>
+    usePerpsSignDrawerViewModel({
+      request,
+      manifestId: "perps-live-app",
+      manifestName: "Perps",
+      onClose,
+    }),
+  );
   await waitFor(() => expect(view.result.current.deviceInitializationInput).not.toBeNull());
 
   const finishJob = (result: HyperliquidSignIntentResult) =>
@@ -54,7 +61,7 @@ describe("usePerpsSignDrawerViewModel", () => {
     jest.mocked(buildDeviceInitializationInput).mockResolvedValue(INIT_INPUT);
   });
 
-  it("opens the Hyperliquid app with the live app's firmware options", async () => {
+  it("should open the Hyperliquid app with the live app's firmware options", async () => {
     const { result } = await renderViewModel();
 
     expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
@@ -65,9 +72,13 @@ describe("usePerpsSignDrawerViewModel", () => {
       },
     });
     expect(result.current.deviceInitializationInput).toBe(INIT_INPUT);
+    expect(result.current.analyticsProperties).toEqual({
+      manifestId: "perps-live-app",
+      manifestName: "Perps",
+    });
   });
 
-  it("signs on the executor's session with the Ledger device model", async () => {
+  it("should sign on the executor's session", async () => {
     const { result, request } = await renderViewModel();
     const session = {
       dmk: {} as never,
@@ -77,28 +88,25 @@ describe("usePerpsSignDrawerViewModel", () => {
 
     const signatures = await result.current.intent.input.signOnSession(session);
 
-    expect(request.signOnSession).toHaveBeenCalledWith({
-      dmk: session.dmk,
-      sessionId: "session-1",
-      deviceModelId: "europa",
-    });
+    expect(request.signOnSession).toHaveBeenCalledWith(session);
     expect(signatures).toEqual(SIGNATURES);
   });
 
-  it("answers with the signatures and closes once signed", async () => {
+  it("should answer with the signatures and close once signed", async () => {
     const { request, onClose, finishJob } = await renderViewModel();
 
     finishJob({ type: "signed", signatures: SIGNATURES });
 
     expect(request.onSuccess).toHaveBeenCalledWith({ signatures: SIGNATURES });
     expect(request.onError).not.toHaveBeenCalled();
+    expect(request.onCancel).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it.each([
     ["refusal", { type: "refused", error: new UserRefusedOnDevice() }],
     ["failure", { type: "failed", error: new Error("certificate not found") }],
-  ] as const)("answers with the %s and closes", async (_, outcome) => {
+  ] as const)("should answer with the %s and close", async (_, outcome) => {
     const { request, onClose, finishJob } = await renderViewModel();
 
     finishJob(outcome);
@@ -106,42 +114,52 @@ describe("usePerpsSignDrawerViewModel", () => {
     expect(request.onError).toHaveBeenCalledTimes(1);
     expect(request.onError).toHaveBeenCalledWith(outcome.error);
     expect(request.onSuccess).not.toHaveBeenCalled();
+    expect(request.onCancel).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("answers with a refusal when closed before a result", async () => {
+  it("should call onCancel and close when dismissed before a result", async () => {
     const { result, request, onClose } = await renderViewModel();
 
     act(() => result.current.onUserCancel());
 
-    expect(request.onError).toHaveBeenCalledWith(expect.any(UserRefusedOnDevice));
+    expect(request.onCancel).toHaveBeenCalledTimes(1);
+    expect(request.onError).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("answers with a refusal when unmounted before a result", async () => {
+  it("should call onCancel when unmounted before a result", async () => {
     const { unmount, request } = await renderViewModel();
 
     unmount();
 
-    expect(request.onError).toHaveBeenCalledWith(expect.any(UserRefusedOnDevice));
+    expect(request.onCancel).toHaveBeenCalledTimes(1);
   });
 
-  it("does not answer again when unmounted after signing", async () => {
+  it("should not answer again when unmounted after signing", async () => {
     const { unmount, request, finishJob } = await renderViewModel();
     finishJob({ type: "signed", signatures: SIGNATURES });
 
     unmount();
 
+    expect(request.onCancel).not.toHaveBeenCalled();
     expect(request.onError).not.toHaveBeenCalled();
   });
 
-  it("answers with the error and closes when the app requirements cannot be resolved", async () => {
+  it("should answer with the error and close when the app requirements cannot be resolved", async () => {
     const failure = new Error("network down");
     jest.mocked(buildDeviceInitializationInput).mockRejectedValue(failure);
     const request = makeRequest();
     const onClose = jest.fn();
 
-    renderHook(() => usePerpsSignDrawerViewModel({ request, onClose }));
+    renderHook(() =>
+      usePerpsSignDrawerViewModel({
+        request,
+        manifestId: "perps-live-app",
+        manifestName: "Perps",
+        onClose,
+      }),
+    );
 
     await waitFor(() => expect(request.onError).toHaveBeenCalledWith(failure));
     expect(onClose).toHaveBeenCalledTimes(1);
