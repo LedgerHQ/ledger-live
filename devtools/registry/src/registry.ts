@@ -21,6 +21,7 @@ export const tools = {
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
   "account-receive": platform.accountReceive,
+  "account-status": platform.accountStatus,
   "mock-accounts": platform.mockAccounts,
   "account-detail": walletXp.accountDetail,
   "coin-config": coinIntegration.coinConfig,
@@ -61,6 +62,7 @@ export type DevToolConfig =
   | { id: "app-config"; config: platform.AppConfigToolProps }
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "account-receive"; config: platform.AccountReceiveToolProps }
+  | { id: "account-status"; config: platform.AccountStatusToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
   | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
