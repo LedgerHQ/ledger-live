@@ -7,6 +7,7 @@ import {
   StakePositionAccountNotFound,
   StakePositionUnsupported,
   useStakePositionRequester,
+  type StakePositionResult,
 } from "@features/flow-stake-position";
 import { stakePositionSheetOf } from "../utils/stakePositionSheetOf";
 
@@ -25,7 +26,11 @@ export function useStakePositionHandlers(accounts: AccountLike[]): WalletAPICust
             if (account.type !== "Account" || !stakePositionSheetOf(account.currency.family)) {
               throw new StakePositionUnsupported();
             }
-            return requestStakePosition({ accountId: account.id, ...position });
+            const result: StakePositionResult = await requestStakePosition({
+              accountId: account.id,
+              ...position,
+            });
+            return result;
           },
         },
       }),

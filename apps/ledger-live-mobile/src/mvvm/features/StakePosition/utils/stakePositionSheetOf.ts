@@ -9,7 +9,5 @@ const sheetsByFamily: Partial<Record<string, ComponentType<StakePositionSheetPro
 export function stakePositionSheetOf(
   family: string,
 ): ComponentType<StakePositionSheetProps> | undefined {
-  return Object.prototype.hasOwnProperty.call(sheetsByFamily, family)
-    ? sheetsByFamily[family]
-    : undefined;
+  return Object.hasOwn(sheetsByFamily, family) ? sheetsByFamily[family] : undefined;
 }

@@ -7,7 +7,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import {
   getWalletApiIdFromAccountId,
@@ -62,28 +62,6 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ),
   };
 });
-
-// Preparing a Solana transaction calls the network's RPC: the bridge is faked at its edge.
-const mockBridge = {
-  createTransaction: jest.fn(() => ({ family: "solana", amount: new BigNumber(0), recipient: "" })),
-  updateTransaction: jest.fn((transaction: object, patch: object) => ({
-    ...transaction,
-    ...patch,
-  })),
-  prepareTransaction: jest.fn((_account: Account, transaction: object) =>
-    Promise.resolve(transaction),
-  ),
-  getTransactionStatus: jest.fn(),
-};
-// Like the real one, a single settled promise per family: `use()` suspends on a new promise.
-const mockBridgePromise = Object.assign(Promise.resolve(mockBridge), {
-  status: "fulfilled",
-  value: mockBridge,
-});
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/bridge/index"),
-  getAccountBridge: () => mockBridgePromise,
-}));
 
 // The deposit flow navigates to the Base stack, which this test does not mount.
 const mockOpenStakingDrawer = jest.fn();
@@ -172,14 +150,6 @@ const usdcAccount = genTokenAccount(0, ethAccount, usdcToken);
 const bitcoinAccount = genAccount("stake-position-bitcoin", {
   currency: getCryptoCurrencyById("bitcoin"),
   operationsSize: 0,
-});
-
-const okStatus = () => ({
-  errors: {},
-  warnings: {},
-  estimatedFees: new BigNumber(5000),
-  amount: new BigNumber(0),
-  totalSpent: new BigNumber(5000),
 });
 
 const mockSync = jest.fn();
@@ -282,6 +252,11 @@ function renderEarn(
 }
 
 const isSheetOpen = () => screen.queryByTestId(SHEET)?.props.accessibilityState?.expanded === true;
+/** The confirmation's button, once the bridge has prepared and checked its transaction. */
+async function findEnabledConfirmation(name: "Deactivate" | "Withdraw all") {
+  await waitFor(() => expect(screen.getByRole("button", { name })).toBeEnabled());
+  return screen.getByRole("button", { name });
+}
 const pressSheetControl = async (
   user: ReturnType<typeof render>["user"],
   control: "header-close" | "backdrop" | "back",
@@ -297,30 +272,30 @@ const isPending = async (answer: Promise<unknown>) => {
   return !isSettled;
 };
 
+const suiteSpies: Array<Pick<jest.SpyInstance, "mockRestore">> = [];
 function spyOnBackPressHandlers() {
   const handlers: Array<() => boolean | null | undefined> = [];
-  jest.spyOn(BackHandler, "addEventListener").mockImplementation((event, handler) => {
-    if (event === "hardwareBackPress") handlers.push(handler);
-    return {
-      remove: () => handlers.splice(handlers.indexOf(handler), 1),
-    } as unknown as ReturnType<typeof BackHandler.addEventListener>;
-  });
+  suiteSpies.push(
+    jest.spyOn(BackHandler, "addEventListener").mockImplementation((event, handler) => {
+      if (event === "hardwareBackPress") handlers.push(handler);
+      return {
+        remove: () => handlers.splice(handlers.indexOf(handler), 1),
+      } as unknown as ReturnType<typeof BackHandler.addEventListener>;
+    }),
+  );
   return handlers;
 }
 
 describe("StakePosition", () => {
-  // Loading the Solana bridge registers the coin config the validators list is fetched with.
+  // Loading the Solana bridge registers the coin config the validators list is fetched with, and
+  // settles the promise the confirmation reads with `use()`.
   beforeAll(async () => {
-    const { getAccountBridge } = jest.requireActual<
-      typeof import("@ledgerhq/live-common/bridge/index")
-    >("@ledgerhq/live-common/bridge/index");
     await getAccountBridge(solanaAccountWith([activePosition()]));
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
     syncState = {};
-    mockBridge.getTransactionStatus.mockImplementation(() => Promise.resolve(okStatus()));
     const { getSolanaValidators } = jest.requireActual("@ledgerhq/coin-solana/validators") as {
       getSolanaValidators: { reset: () => void };
     };
@@ -354,7 +329,7 @@ describe("StakePosition", () => {
     const id = result.current.request?.id;
     if (id !== undefined) abandonStakePosition(id);
     unmount();
-    jest.restoreAllMocks();
+    for (const spy of suiteSpies.splice(0)) spy.mockRestore();
   });
 
   describe("custom.stake.position.open", () => {
@@ -524,7 +499,7 @@ describe("StakePosition", () => {
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
 
       expect(screen.getByRole("header", { name: "Deactivate this position?" })).toBeVisible();
-      expect(await screen.findByRole("button", { name: "Deactivate" })).toBeEnabled();
+      await waitFor(() => expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled());
       expect(isSheetOpen()).toBe(true);
 
       await pressSheetControl(user, "back");
@@ -537,15 +512,23 @@ describe("StakePosition", () => {
       const account = solanaAccountWith([activePosition()]);
       const { openPosition, player, user } = renderEarn(account);
       openPosition();
-
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
 
-      await waitFor(() =>
-        expect(mockBridge.prepareTransaction).toHaveBeenLastCalledWith(
-          expect.objectContaining({ id: account.id }),
-          expect.objectContaining({ mode: "undelegate", recipient: STAKE_ACCOUNT, amount: SOL(2) }),
-        ),
-      );
+      await user.press(await findEnabledConfirmation("Deactivate"));
+
+      expect(mockFlowParams).toHaveBeenLastCalledWith({
+        screen: ScreenName.SolanaStakePositionSelectDevice,
+        params: expect.objectContaining({
+          accountId: account.id,
+          transaction: expect.objectContaining({
+            family: "solana",
+            mode: "undelegate",
+            recipient: STAKE_ACCOUNT,
+            amount: SOL(2),
+          }),
+          status: expect.objectContaining({ errors: {}, amount: SOL(2) }),
+        }),
+      });
       player.unmount();
     });
 
@@ -558,33 +541,49 @@ describe("StakePosition", () => {
       await user.press(screen.getByRole("button", { name: "Withdraw all" }));
 
       expect(screen.getByRole("header", { name: "Withdraw all your SOL?" })).toBeVisible();
-      await waitFor(() =>
-        expect(mockBridge.prepareTransaction).toHaveBeenLastCalledWith(
-          expect.anything(),
-          expect.objectContaining({ mode: "unstake", recipient: STAKE_ACCOUNT, amount: SOL(1.5) }),
-        ),
-      );
       expect(screen.getByText("1.5\u00a0SOL")).toBeVisible();
+      await user.press(await findEnabledConfirmation("Withdraw all"));
+      expect(mockFlowParams).toHaveBeenLastCalledWith({
+        screen: ScreenName.SolanaStakePositionSelectDevice,
+        params: expect.objectContaining({
+          action: "withdraw",
+          transaction: expect.objectContaining({
+            mode: "unstake",
+            recipient: STAKE_ACCOUNT,
+            amount: SOL(1.5),
+          }),
+          status: expect.objectContaining({ errors: {}, amount: SOL(1.5) }),
+        }),
+      });
       player.unmount();
     });
 
     it("should keep the confirmation disabled and show the error the bridge finds", async () => {
-      mockBridge.getTransactionStatus.mockImplementation(() =>
-        Promise.resolve({ ...okStatus(), errors: { fee: new NotEnoughBalance() } }),
-      );
-      const { openPosition, player, user } = renderEarn(solanaAccountWith([activePosition()]));
+      const account = solanaAccountWith([], [inactivePosition()]);
+      const { openPosition, player, user } = renderEarn({
+        ...account,
+        balance: SOL(0.5),
+        spendableBalance: SOL(0.5),
+      });
       openPosition();
 
-      await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
+      await user.press(screen.getByRole("button", { name: "Withdraw all" }));
 
       expect(await screen.findByText("Sorry, insufficient funds")).toBeVisible();
-      expect(screen.getByRole("button", { name: "Deactivate" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Withdraw all" })).toBeDisabled();
       player.unmount();
     });
 
     it("should keep the confirmation disabled while the bridge prepares the transaction", async () => {
-      mockBridge.getTransactionStatus.mockImplementation(() => new Promise(() => undefined));
-      const { openPosition, player, user } = renderEarn(solanaAccountWith([activePosition()]));
+      const account = solanaAccountWith([activePosition()]);
+      // The bridge of a mock account answers at once: its check is held as a slow network would.
+      const bridge = await getAccountBridge(account);
+      suiteSpies.push(
+        jest
+          .spyOn(bridge, "getTransactionStatus")
+          .mockImplementation(() => new Promise(() => undefined)),
+      );
+      const { openPosition, player, user } = renderEarn(account);
       openPosition();
 
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
@@ -599,7 +598,7 @@ describe("StakePosition", () => {
       const answer = openPosition();
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
 
-      await user.press(await screen.findByRole("button", { name: "Deactivate" }));
+      await user.press(await findEnabledConfirmation("Deactivate"));
 
       expect(mockFlowParams).toHaveBeenCalledWith({
         screen: ScreenName.SolanaStakePositionSelectDevice,
@@ -623,7 +622,7 @@ describe("StakePosition", () => {
       const { openPosition, player, user } = renderEarn(solanaAccountWith([activePosition()]));
       const answer = openPosition();
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
-      await user.press(await screen.findByRole("button", { name: "Deactivate" }));
+      await user.press(await findEnabledConfirmation("Deactivate"));
       const { requestId } = mockFlowParams.mock.lastCall[0].params;
 
       await user.press(screen.getByTestId("leave-device-flow"));
@@ -667,7 +666,7 @@ describe("StakePosition", () => {
       openPosition();
       act(() => jest.advanceTimersByTime(STAKE_POSITION_SYNC_WAIT_MS));
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
-      await user.press(await screen.findByRole("button", { name: "Deactivate" }));
+      await user.press(await findEnabledConfirmation("Deactivate"));
 
       await user.press(screen.getByTestId("leave-device-flow"));
 
@@ -787,17 +786,19 @@ describe("StakePosition", () => {
       );
       openPosition();
       await user.press(screen.getByRole("button", { name: "Deactivate to withdraw" }));
-      await waitFor(() => expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled());
+      await findEnabledConfirmation("Deactivate");
 
       await updatePositions([activePosition({ amount: SOL(3) })]);
 
-      await waitFor(() =>
-        expect(mockBridge.prepareTransaction).toHaveBeenLastCalledWith(
-          expect.anything(),
-          expect.objectContaining({ mode: "undelegate", amount: SOL(3) }),
-        ),
-      );
       expect(screen.getByText("3\u00a0SOL")).toBeVisible();
+      await user.press(await findEnabledConfirmation("Deactivate"));
+      expect(mockFlowParams).toHaveBeenLastCalledWith({
+        screen: ScreenName.SolanaStakePositionSelectDevice,
+        params: expect.objectContaining({
+          transaction: expect.objectContaining({ mode: "undelegate", amount: SOL(3) }),
+          status: expect.objectContaining({ amount: SOL(3) }),
+        }),
+      });
       player.unmount();
     });
 
