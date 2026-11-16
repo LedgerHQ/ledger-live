@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-network-validators",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -8,8 +8,11 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
+import { StakingTotalsSchema } from "@domain/entity-account-staking";
+import { useStakingTotals } from "../useStakingTotals";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
+jest.mock("../useStakingTotals");
 jest.mock("@ledgerhq/live-common/currencies/index");
 jest.mock("@ledgerhq/live-common/config/index", () => ({
   __esModule: true,
@@ -37,7 +40,6 @@ describe("AccountBalanceSummaryFooter", () => {
 
     const ACCOUNT = {
       type: "Account",
-      stakingResources: STAKING_RESOURCES,
       currency: {
         id: "babylon",
       } as unknown as CryptoCurrency,
@@ -45,6 +47,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
     beforeEach(() => {
       jest.clearAllMocks();
+      mockStakingTotals(DELEGATE_BALANCE, DELEGATE_UNBONDING_BALANCE);
     });
 
     it("should display delegated balance and unbound balance when disableDelegation flag is false and unbound balance is greater than 0", () => {
@@ -73,26 +76,26 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(cryptoFactory).toHaveBeenCalledWith("babylon");
     });
 
-    it.each([BigNumber(0), BigNumber(-1)])(
-      "should display delegated balance and not display unbound balance when disableDelegation flag is false and unbound balance is less or equal to 0 (here %s)",
-      unboundBalance => {
-        mockGetCurrencyConfiguration({ disableDelegation: false });
+    it("should display delegated balance and not display unbound balance when disableDelegation flag is false and nothing is unbonding", () => {
+      mockGetCurrencyConfiguration({ disableDelegation: false });
+      mockStakingTotals(DELEGATE_BALANCE, BigNumber(0));
+      mockFormatCurrencyUnit(DELEGATE_BALANCE, BigNumber(0));
 
-        const stakingResources = { ...STAKING_RESOURCES, unbondingBalance: unboundBalance };
-        const account = { ...ACCOUNT, stakingResources } as unknown as CosmosAccount;
+      render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
+      expect(screen.getByText("Delegated assets")).toBeInTheDocument();
+      expect(screen.getByText(DELEGATE_BALANCE_TEXT)).toBeInTheDocument();
+      expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
+      expect(screen.queryByText(DELEGATE_UNBONDING_BALANCE_TEXT)).not.toBeInTheDocument();
+    });
 
-        mockFormatCurrencyUnit(
-          stakingResources.delegatedBalance,
-          stakingResources.unbondingBalance,
-        );
+    it("should count a withdrawable position as undelegating", () => {
+      mockGetCurrencyConfiguration({ disableDelegation: false });
+      mockStakingTotals(DELEGATE_BALANCE, BigNumber(0), DELEGATE_UNBONDING_BALANCE);
+      mockFormatCurrencyUnit(DELEGATE_BALANCE, DELEGATE_UNBONDING_BALANCE);
 
-        render(<AccountBalanceSummaryFooter account={account} />);
-        expect(screen.getByText("Delegated assets")).toBeInTheDocument();
-        expect(screen.getByText(DELEGATE_BALANCE_TEXT)).toBeInTheDocument();
-        expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
-        expect(screen.queryByText(DELEGATE_UNBONDING_BALANCE_TEXT)).not.toBeInTheDocument();
-      },
-    );
+      render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
+      expect(screen.getByText(DELEGATE_UNBONDING_BALANCE_TEXT)).toBeVisible();
+    });
 
     it("should not display delegated balance and unbound balance when disableDelegation flag is true", () => {
       mockGetCurrencyConfiguration({ disableDelegation: true });
@@ -108,36 +111,24 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(screen.queryByText(DELEGATE_UNBONDING_BALANCE_TEXT)).not.toBeInTheDocument();
     });
 
-    it("should render without throwing when there are no staking resources yet", () => {
+    it("should show a dash for delegated and no undelegating while the staking is not read yet", () => {
       mockGetCurrencyConfiguration({ disableDelegation: false });
-      mockFormatCurrencyUnit(BigNumber(0), BigNumber(0));
+      jest.mocked(useStakingTotals).mockReturnValue(undefined);
+      mockFormatCurrencyUnit(BigNumber(0), BigNumber(-1));
 
-      const account = {
-        type: "Account",
-        stakingResources: {
-          delegatedBalance: BigNumber(0),
-          unbondingBalance: BigNumber(0),
-        },
-        currency: {
-          id: "babylon",
-        } as unknown as CryptoCurrency,
-      } as unknown as CosmosAccount;
-
-      expect(() => render(<AccountBalanceSummaryFooter account={account} />)).not.toThrow();
-      // no delegated resources → the undelegating section must not be shown
+      render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
+      expect(screen.getByText("–")).toBeInTheDocument();
       expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
     });
 
-    it("throws when the account has no staking resources", () => {
-      jest.spyOn(console, "error").mockImplementation(() => undefined);
-      const account = {
-        type: "Account",
-        currency: { id: "babylon" } as unknown as CryptoCurrency,
-      } as unknown as CosmosAccount;
-
-      expect(() => render(<AccountBalanceSummaryFooter account={account} />)).toThrow(
-        "cosmos staking account required",
+    it("should render nothing for a token account", () => {
+      const { container } = render(
+        <AccountBalanceSummaryFooter
+          account={{ type: "TokenAccount" } as unknown as CosmosAccount}
+        />,
       );
+      expect(container).toBeEmptyDOMElement();
+      expect(useStakingTotals).not.toHaveBeenCalled();
     });
 
     it("should render the undelegating tooltip without throwing for a testnet id that aliases to a mainnet chain (crypto_org_croeseid)", () => {
@@ -145,7 +136,6 @@ describe("AccountBalanceSummaryFooter", () => {
 
       const account = {
         type: "Account",
-        stakingResources: STAKING_RESOURCES,
         currency: {
           id: "crypto_org_croeseid",
         } as unknown as CryptoCurrency,
@@ -166,6 +156,18 @@ function mockGetCurrencyConfiguration(currencyConfig: { disableDelegation: boole
   jest
     .spyOn(config, "getCurrencyConfiguration")
     .mockReturnValue(currencyConfig as unknown as CurrencyConfig);
+}
+
+function mockStakingTotals(staked: BigNumber, unbonding: BigNumber, withdrawable = BigNumber(0)) {
+  jest.mocked(useStakingTotals).mockReturnValue(
+    StakingTotalsSchema.parse({
+      assetId: "babylon",
+      staked: staked.toFixed(),
+      unbonding: unbonding.toFixed(),
+      withdrawable: withdrawable.toFixed(),
+      rewards: "0",
+    }),
+  );
 }
 
 function mockFormatCurrencyUnit(delegatedBalance: BigNumber, unboundBalance: BigNumber) {

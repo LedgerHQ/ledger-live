@@ -15,7 +15,7 @@ import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { prepareCurrency } from "~/renderer/bridge/cache";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 import invariant from "invariant";
 
 type Props = {
@@ -32,9 +32,10 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
+  const { validators: networkValidators } = useCosmosNetworkValidators(account.currency);
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
     currencyId,
-    account.stakingResources.validators,
+    networkValidators,
     search,
   );
   const onSearch = useCallback(
@@ -50,11 +51,6 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       setShowAll(true);
     }
   }, [shouldDisplayAllValidators]);
-
-  useEffect(() => {
-    if (validators.length > 0 || account.type !== "Account" || search !== "") return;
-    prepareCurrency(account.currency).catch(() => {});
-  }, [account.type, account.currency, validators.length, search]);
 
   const chosenValidator = useMemo(() => {
     if (validators.length === 0) return [];

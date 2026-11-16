@@ -33,8 +33,11 @@ import { predictionsSlice, type PredictionsState } from "@domain/entity-predicti
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import networkValidators, { type NetworkValidatorsState } from "@domain/entity-network-validators";
 import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-account-receive";
 import { accountStatusSlice, type AccountStatusState } from "@domain/entity-account-status";
+import { accountTronSlice, type AccountTronState } from "@domain/entity-account-tron";
+import { accountStakingSlice, type AccountStakingState } from "@domain/entity-account-staking";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -45,6 +48,7 @@ import {
   type AccountBalanceHistoriesState,
 } from "@domain/entity-account-balance-history";
 import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
+import { swapHistorySlice, type SwapHistoryState } from "@domain/entity-swap-history";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
@@ -138,12 +142,16 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  networkValidators: NetworkValidatorsState;
   accountReceives: AccountReceivesState;
   accountStatus: AccountStatusState;
+  accountTron: AccountTronState;
+  accountStaking: AccountStakingState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
+  swapHistory: SwapHistoryState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
@@ -195,12 +203,16 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  networkValidators,
   accountReceives: accountReceivesSlice.reducer,
   accountStatus: accountStatusSlice.reducer,
+  accountTron: accountTronSlice.reducer,
+  accountStaking: accountStakingSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
+  swapHistory: swapHistorySlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,

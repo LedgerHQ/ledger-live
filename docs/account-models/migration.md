@@ -30,10 +30,10 @@ The Wallet API exposes accounts to live apps, so it moves to the entities as wel
 | `used` | `accountStatus`: `used` (ever used), `gate`; token activation in `assetStatus`; discovery reads `used` | entity merged |
 | `freshAddress`, `freshAddressPath` | `receive` | discovery |
 | `pendingOperations`, `sequence` | `send` capability, pending rows in `operations` | discovery |
-| `stakingResources`, staking parts of family resources | a staking kind, validators in a network entity | to explore |
-| reserved, frozen, locked parts of resources | a breakdown in `balance` | to explore |
-| other family resources | kinds declared by each family | to explore |
-| `swapHistory` | an app-owned swap entity, not a kind | to explore |
+| `stakingResources`, `stakingPositions`, staking parts of family resources | `staking`; validators in `network-validators`, read on demand | PoC; family resources not mapped yet |
+| reserved, frozen, locked parts of resources | `locked` on each `balance` row | PoC: Tron, Polkadot, Celo, Solana, Cardano |
+| other family resources | kinds declared by each family, `"<family>:<concept>"` | PoC: `"tron:resources"` in `@domain/entity-account-tron` |
+| `swapHistory` | `swap-history`, app-owned, not a kind; mirrors the Account until writes move | PoC |
 | `currency`, `feesCurrency`, `token` | derived from `network` and `assetId` | helpers |
 | `lastSyncDate`, `blockHeight`, `syncHash`, `creationDate`, `nfts` | dropped; read time is in the `accountData` status | to decide |
 | `seedIdentifier` | kept in the account entry, or dropped | to decide |

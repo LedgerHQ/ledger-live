@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
@@ -15,9 +14,10 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { type CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
-import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { useStakingTotals } from "./useStakingTotals";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -64,15 +64,17 @@ const usdcUnit: Unit = {
   magnitude: 6,
 };
 
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) =>
+  account.type === "Account" ? <CosmosBalanceSummaryFooter account={account} /> : null;
+
+const CosmosBalanceSummaryFooter = ({ account }: { account: CosmosAccount }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const [dydxUsdcRewards, setDydxUsdcRewards] = useState(new BigNumber(0));
 
+  const totals = useStakingTotals(account);
+
   useEffect(() => {
-    if (account.type !== "Account") {
-      return;
-    }
     if (account.currency.id !== "dydx") {
       return;
     }
@@ -85,8 +87,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   }, [account]);
 
   const unit = useAccountUnit(account);
-  if (account.type !== "Account") return null;
-  invariant(isStakingAccount(account), "cosmos staking account required");
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,
@@ -95,16 +95,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
   const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
-  const delegatedBalance = formatCurrencyUnit(
-    unit,
-    account.stakingResources.delegatedBalance,
-    formatConfig,
-  );
-  const unbondingBalance = formatCurrencyUnit(
-    unit,
-    account.stakingResources.unbondingBalance,
-    formatConfig,
-  );
+  const delegated = new BigNumber(totals?.staked ?? 0);
+  // Withdrawable stays in the undelegating figure until withdrawn, as the legacy unbondingBalance.
+  const unbonding = new BigNumber(totals?.unbonding ?? 0).plus(totals?.withdrawable ?? 0);
+  const delegatedBalance = totals ? formatCurrencyUnit(unit, delegated, formatConfig) : "–";
+  const unbondingBalance = formatCurrencyUnit(unit, unbonding, formatConfig);
   const dydxUsdcRewardsBalance = formatCurrencyUnit(usdcUnit, dydxUsdcRewards, formatConfig);
 
   const isDyDx = account.currency.id === "dydx";
@@ -159,7 +154,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </AmountValue>
         </BalanceDetail>
       )}
-      {!disableDelegation && account.stakingResources.unbondingBalance.gt(0) && (
+      {!disableDelegation && unbonding.gt(0) && (
         <BalanceDetail>
           <ToolTip
             content={

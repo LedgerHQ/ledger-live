@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
+import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { SwapHistoryEntry } from "@domain/entity-swap-history";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";
@@ -150,6 +152,9 @@ function startOfDay(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
+const isMapped = (swap: MappedSwapOperation | null | undefined): swap is MappedSwapOperation =>
+  Boolean(swap);
+
 const getCompleteSwapHistory = async (accounts: AccountLike[]): Promise<SwapHistorySection[]> => {
   const swaps: MappedSwapOperation[] = [];
 
@@ -160,16 +165,70 @@ const getCompleteSwapHistory = async (accounts: AccountLike[]): Promise<SwapHist
 
     if (swapHistory) {
       const mappedSwapHistory = await Promise.all(swapHistory.map(mapFn));
-
-      if (mappedSwapHistory) {
-        const filteredMappdSwapOperations = <MappedSwapOperation[]>(
-          mappedSwapHistory.filter(Boolean)
-        );
-        swaps.push(...filteredMappdSwapOperations);
-      }
+      swaps.push(...mappedSwapHistory.filter(isMapped));
     }
   }
 
+  return toSections(swaps);
+};
+
+/** The legacy account or token account of an account's asset. */
+const findLegacyAccount = (
+  accounts: AccountLike[],
+  parentId: string | undefined,
+  assetId: string | undefined,
+): AccountLike | undefined =>
+  parentId === undefined
+    ? undefined
+    : accounts.find(a =>
+        a.type === "Account"
+          ? a.id === parentId && a.currency.id === assetId
+          : a.parentId === parentId && a.token.id === assetId,
+      );
+
+/** The same sections, from the swap history entity; legacy accounts only join operations and render rows. */
+export const getSwapHistorySections = async (
+  entries: readonly SwapHistoryEntry[],
+  accounts: AccountLike[],
+  toLegacyAccountId: (accountUUID: AccountUUID) => string | undefined,
+): Promise<SwapHistorySection[]> => {
+  const legacyIdOf = (accountUUID: AccountUUID | undefined) =>
+    accountUUID === undefined ? undefined : toLegacyAccountId(accountUUID);
+  const swaps = await Promise.all(
+    entries.map(entry => {
+      const account = findLegacyAccount(accounts, legacyIdOf(entry.accountUUID), entry.assetId);
+      const receiverParentId = legacyIdOf(entry.toAccountUUID);
+      if (!account || receiverParentId === undefined) return null;
+      // The receiving token account when it exists, else the parent and the token it will hold.
+      const receiver = findLegacyAccount(accounts, receiverParentId, entry.toAssetId);
+      const receiverAccountId = receiver?.id ?? receiverParentId;
+      const tokenId = receiver ? undefined : entry.toAssetId;
+      const fromAccountId =
+        entry.fromAccountUUID &&
+        findLegacyAccount(accounts, legacyIdOf(entry.fromAccountUUID), entry.fromAssetId)?.id;
+      if (entry.fromAccountUUID && !fromAccountId) return null;
+      const swapOperation: SwapOperation = {
+        provider: entry.provider,
+        swapId: entry.swapId,
+        status: entry.status,
+        receiverAccountId,
+        tokenId,
+        operationId: entry.operationId ?? "",
+        fromAmount: new BigNumber(entry.fromAmount),
+        toAmount: new BigNumber(entry.toAmount),
+        ...(entry.finalAmount !== undefined && { finalAmount: new BigNumber(entry.finalAmount) }),
+        ...(fromAccountId && { fromAccountId }),
+        ...(entry.feesAmount !== undefined && { feesAmount: entry.feesAmount }),
+        ...(entry.payoutFeesAmount !== undefined && { payoutFeesAmount: entry.payoutFeesAmount }),
+        ...(entry.createdAt !== undefined && { createdAt: entry.createdAt }),
+      };
+      return getSwapOperationMap(account, accounts)(swapOperation);
+    }),
+  );
+  return toSections(swaps.filter(isMapped));
+};
+
+const toSections = (swaps: MappedSwapOperation[]): SwapHistorySection[] => {
   swaps.sort((a, b) => b.operation.date.valueOf() - a.operation.date.valueOf());
   if (!swaps.length) return [];
   const sections: SwapHistorySection[] = [];

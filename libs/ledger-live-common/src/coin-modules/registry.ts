@@ -140,6 +140,10 @@ export const loadAssetStatusForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadAssetStatus?.(),
 );
 
+export const loadBalanceLocksForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadBalanceLocks?.(),
+);
+
 export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadWalletApiAdapter?.(),
 );

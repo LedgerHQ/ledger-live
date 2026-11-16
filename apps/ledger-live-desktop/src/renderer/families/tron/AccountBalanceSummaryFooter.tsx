@@ -13,6 +13,11 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountData } from "@features/platform-account-data";
+import { useLegacyAccountDescriptor } from "~/renderer/hooks/useLegacyAccountDescriptor";
+import { selectAccountBalances } from "@domain/entity-account-balance";
+import { selectTronAvailableBandwidth, selectTronResources } from "@domain/entity-account-tron";
+import type { State } from "~/renderer/reducers";
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -56,8 +61,22 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const locale = useSelector(localeSelector);
 
   const unit = useMaybeAccountUnit(account);
+  const { accountUUID, descriptor } = useLegacyAccountDescriptor(account.id);
+  useAccountData("balance", descriptor);
+  useAccountData("tron:resources", descriptor);
+  const nativeBalance = useSelector((state: State) =>
+    accountUUID && account.type === "Account"
+      ? selectAccountBalances(state, accountUUID)?.find(row => row.assetId === account.currency.id)
+      : undefined,
+  );
+  const resources = useSelector((state: State) =>
+    accountUUID ? selectTronResources(state, accountUUID) : undefined,
+  );
+  const availableBandwidth = useSelector((state: State) =>
+    accountUUID ? selectTronAvailableBandwidth(state, accountUUID) : undefined,
+  );
+
   if (account.type !== "Account" || !unit) return null;
-  const { tronResources } = account;
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -65,37 +84,19 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     discreet,
     locale,
   };
-  const energy = tronResources.energy;
-  const frozenBandwidthAmount = tronResources.frozen.bandwidth?.amount;
-  const frozenEnergyAmount = tronResources.frozen.energy?.amount;
-  const delegatedFrozenBandwidthAmount = tronResources.delegatedFrozen.bandwidth?.amount;
-  const delegatedFrozenEnergyAmount = tronResources.delegatedFrozen.energy?.amount;
-  const unfrozenBandwidthAmount = tronResources.unFrozen.bandwidth
-    ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
-        return accum.plus(cur.amount);
-      }, new BigNumber(0))
-    : new BigNumber(0);
-  const unfrozenEnergyAmount = tronResources.unFrozen.energy
-    ? tronResources.unFrozen.energy.reduce((accum, cur) => {
-        return accum.plus(cur.amount);
-      }, new BigNumber(0))
-    : new BigNumber(0);
-
-  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = tronResources.bandwidth;
 
   const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
-  const frozenAmount = formatCurrencyUnit(
-    unit,
-    BigNumber(frozenBandwidthAmount || 0)
-      .plus(BigNumber(frozenEnergyAmount || 0))
-      .plus(BigNumber(delegatedFrozenBandwidthAmount || 0))
-      .plus(BigNumber(delegatedFrozenEnergyAmount || 0))
-      .plus(BigNumber(unfrozenBandwidthAmount))
-      .plus(BigNumber(unfrozenEnergyAmount)),
-    formatConfig,
-  );
-  const formatedEnergy = energy && energy.gt(0) ? energy : null;
-  const formatedBandwidth = freeLimit.plus(gainedLimit).minus(gainedUsed).minus(freeUsed);
+  const frozenAmount = nativeBalance
+    ? formatCurrencyUnit(
+        unit,
+        (nativeBalance.locked ?? []).reduce(
+          (sum, { amount }) => sum.plus(amount),
+          new BigNumber(0),
+        ),
+        formatConfig,
+      )
+    : "–";
+  const formatedEnergy = resources && BigInt(resources.energy) > 0n ? resources.energy : null;
   return (
     <Wrapper>
       <BalanceDetail>
@@ -130,7 +131,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </TitleWrapper>
         </ToolTip>
         <AmountValue>
-          <Discreet>{`${formatedBandwidth || "–"}`}</Discreet>
+          <Discreet>{availableBandwidth ?? "–"}</Discreet>
         </AmountValue>
       </BalanceDetail>
       <BalanceDetail>
@@ -143,7 +144,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </TitleWrapper>
         </ToolTip>
         <AmountValue>
-          <Discreet>{`${formatedEnergy || "–"}`}</Discreet>
+          <Discreet>{formatedEnergy ?? "–"}</Discreet>
         </AmountValue>
       </BalanceDetail>
     </Wrapper>

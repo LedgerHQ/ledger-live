@@ -77,7 +77,7 @@ import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./redu
 import { fetchTrustchain } from "./actions/trustchain";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
-import { connectAccounts } from "~/config/account-data-setup";
+import { connectAccounts, connectSwapHistory } from "~/config/account-data-setup";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
@@ -179,6 +179,7 @@ async function init() {
   setupListeners(store.dispatch);
   connectRecentAddressesStore(store, recentAddressesSelector);
   connectAccounts(store);
+  connectSwapHistory(store);
   setupCryptoAssetsStore(store);
   setupRateLookups();
   setSwapQuotesStore(store.dispatch);

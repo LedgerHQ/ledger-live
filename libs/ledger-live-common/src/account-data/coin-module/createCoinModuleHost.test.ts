@@ -11,6 +11,7 @@ jest.mock("../../config", () => ({ getCurrencyConfiguration: jest.fn() }));
 
 const getBalance = jest.fn();
 const listOperations = jest.fn();
+const getStakes = jest.fn();
 const getTokenFromAsset = jest.fn();
 const createLocalApi = jest.fn();
 const balanceOptions = { includeAssets: async () => true };
@@ -69,7 +70,7 @@ const operationsApiOf = async (currencyId: string) => {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  createLocalApi.mockReturnValue({ getBalance, listOperations });
+  createLocalApi.mockReturnValue({ getBalance, listOperations, getStakes });
   resetCoinModulesForTests();
   registerCoinModules(loaders);
 });
@@ -169,6 +170,33 @@ describe("createCoinModuleHost", () => {
 
       expect(api.getTokenId).toBeUndefined();
       expect(api.partitionsNativeBalance).toBeUndefined();
+    });
+  });
+
+  describe("getStakingApi", () => {
+    it("reads the stakes from the cursor with the currency's context", async () => {
+      getStakes.mockResolvedValueOnce({ items: [], next: "n" });
+
+      const api = await createCoinModuleHost().getStakingApi?.("ethereum");
+      await expect(api?.getStakes("0xabc", "c")).resolves.toEqual({ items: [], next: "n" });
+
+      expect(getStakes).toHaveBeenCalledWith(
+        expect.objectContaining({ config: expect.any(Function) }),
+        "0xabc",
+        { cursor: "c" },
+      );
+    });
+
+    it("serves a family keeping staking positions, unlike the balance", async () => {
+      await expect(createCoinModuleHost().getStakingApi?.("celo")).resolves.toBeDefined();
+    });
+
+    it("is undefined for a coin module without getStakes, or with a not-supported stub", async () => {
+      createLocalApi.mockReturnValueOnce({ getBalance });
+      await expect(createCoinModuleHost().getStakingApi?.("ethereum")).resolves.toBeUndefined();
+
+      createLocalApi.mockReturnValueOnce({ getBalance, getStakes: notSupported("getStakes") });
+      await expect(createCoinModuleHost().getStakingApi?.("ethereum")).resolves.toBeUndefined();
     });
   });
 

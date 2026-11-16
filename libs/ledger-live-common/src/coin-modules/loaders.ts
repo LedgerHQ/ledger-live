@@ -93,6 +93,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-cardano/account").then(m => m.default),
     loadMockBridge: () => import("../families/cardano/bridge/mock").then(m => m.default),
     loadBridgeApi: () => import("../families/cardano/bridge/api").then(m => m.default),
+    loadBalanceLocks: () => import("../families/cardano/balanceLocks").then(m => m.default),
   },
   {
     family: "casper",
@@ -118,6 +119,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-celo/deviceTransactionConfig").then(m => m.default),
     loadBridgeApi: () => import("../families/celo/bridge/api").then(m => m.default),
+    loadBalanceLocks: () => import("../families/celo/balanceLocks").then(m => m.default),
   },
   {
     family: "concordium",
@@ -377,6 +379,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("../families/polkadot/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () => import("../families/polkadot/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/polkadot/bridge/mock").then(m => m.default),
+    loadBalanceLocks: () => import("../families/polkadot/balanceLocks").then(m => m.default),
   },
   {
     family: "solana",
@@ -394,6 +397,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () => import("../families/solana/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/solana/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/solana/bridgeExtensions").then(m => m.default),
+    loadBalanceLocks: () => import("../families/solana/balanceLocks").then(m => m.default),
   },
   {
     family: "stacks",
@@ -479,6 +483,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () => import("../families/tron/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/tron/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
+    loadBalanceLocks: () => import("../families/tron/balanceLocks").then(m => m.default),
   },
   {
     family: "vechain",

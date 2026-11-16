@@ -59,5 +59,6 @@ export const mockSource: AccountDataSource = {
     receive: (target, query) => answer("receive", target, query),
     accountStatus: (target, query) => answer("accountStatus", target, query),
     assetStatus: (target, query) => answer("assetStatus", target, query),
+    staking: (target, query) => answer("staking", target, query),
   },
 };

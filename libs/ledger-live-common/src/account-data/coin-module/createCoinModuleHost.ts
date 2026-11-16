@@ -38,7 +38,7 @@ function configurationOf(currencyId: string): Promise<CurrencyConfig> {
   }
 }
 
-const contextOf = (currencyId: string): Context<CurrencyConfig> => ({
+export const contextOf = (currencyId: string): Context<CurrencyConfig> => ({
   config: (id?: string) => configurationOf(id ?? currencyId),
   logger: (type, message, data) =>
     log(String(type), message === undefined ? undefined : String(message), data),
@@ -49,7 +49,7 @@ async function loadBridgeApi(currency: CryptoCurrency): Promise<BridgeApi> {
   return typeof bridgeApi === "function" ? bridgeApi(currency) : (bridgeApi ?? {});
 }
 
-async function loadApis(currency: CryptoCurrency) {
+export async function loadApis(currency: CryptoCurrency) {
   const [createLocalApi, bridgeApi] = await Promise.all([
     loadLocalApiForFamily(currency.family),
     loadBridgeApi(currency),
@@ -107,6 +107,21 @@ export function createCoinModuleHost({
         getBalance: subject => api.getBalance(context, subject, bridgeApi.balanceOptions),
         getTokenId: tokenIdOf(bridgeApi),
         partitionsNativeBalance: bridgeApi.partitionsNativeBalance,
+      };
+    },
+    // Unlike `getApi`, served for a family with staking positions too: its stakes are what it keeps there.
+    async getStakingApi(currencyId) {
+      const currency = getCryptoCurrencyById(currencyId);
+      const { createLocalApi, bridgeApi } = await loadApis(currency);
+      const localApi = createLocalApi(currency.id);
+      if (localApi.getStakes === undefined || isNotSupportedStub(localApi.getStakes)) {
+        return undefined;
+      }
+      const api = withLogging(withDefaults(localApi));
+      const context = contextOf(currency.id);
+      return {
+        getStakes: (subject, cursor) => api.getStakes(context, subject, { cursor }),
+        getTokenId: tokenIdOf(bridgeApi),
       };
     },
     // Without a `limit`, a coin module may answer the whole history in one page. Decided in the code, not the

@@ -6,7 +6,10 @@ import { genAccount } from "../../mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import getCompleteSwapHistory from "./getCompleteSwapHistory";
+import { computeAccountUUID, type AccountUUID } from "@domain/entity-account-descriptor";
+import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { mockSwapHistoryEntry } from "@domain/entity-swap-history/schema.mock";
+import getCompleteSwapHistory, { getSwapHistorySections } from "./getCompleteSwapHistory";
 
 setCryptoAssetsStore({
   findTokenById: async () => undefined,
@@ -329,6 +332,78 @@ describe("getCompleteSwapHistory", () => {
 
     it("is left out when the source account is gone", async () => {
       expect(await getCompleteSwapHistory([makeReceiver(txHash)])).toEqual([]);
+    });
+  });
+
+  describe("getSwapHistorySections, from the swap history entity", () => {
+    const senderUUID = computeAccountUUID(mockAddressAccountDescriptor({ key: "0x01" }));
+    const receiverUUID = computeAccountUUID(mockAddressAccountDescriptor({ key: "0x02" }));
+    const sender = genAccount("entity-sender", { operationsSize: 1, currency: ethereum });
+    const senderToken = genTokenAccount(0, sender, makeTokenCurrency("mock:token:entity"));
+    const receiver = genAccount("entity-receiver", { operationsSize: 0, currency: ethereum });
+    const legacyIds: Partial<Record<AccountUUID, string>> = {
+      [senderUUID]: sender.id,
+      [receiverUUID]: receiver.id,
+    };
+    const toLegacyAccountId = (accountUUID: AccountUUID) => legacyIds[accountUUID];
+    const operation = sender.operations[0];
+    const entry = mockSwapHistoryEntry({
+      accountUUID: senderUUID,
+      assetId: "ethereum",
+      toAccountUUID: receiverUUID,
+      toAssetId: "ethereum",
+      operationId: operation.id,
+      fromAmount: "1",
+      toAmount: "2",
+      finalAmount: "0.5",
+      status: "finished",
+    });
+
+    it("joins an entry with the operation of the legacy account it is recorded on", async () => {
+      const [section] = await getSwapHistorySections(
+        [entry],
+        [sender, receiver],
+        toLegacyAccountId,
+      );
+
+      expect(section.data[0]).toMatchObject({
+        swapId: entry.swapId,
+        status: "finished",
+        fromAccount: { id: sender.id },
+        toAccount: { id: receiver.id },
+        operation: { id: operation.id },
+      });
+      expect(section.data[0].toAmount.toString()).toBe("2");
+      expect(section.data[0].finalAmount?.toString()).toBe("500000000000000000");
+    });
+
+    it("finds the token account of an entry recorded on a token", async () => {
+      const tokenOperation = senderToken.operations[0];
+      const tokenEntry = mockSwapHistoryEntry({
+        ...entry,
+        assetId: senderToken.token.id,
+        operationId: tokenOperation.id,
+      });
+
+      const [section] = await getSwapHistorySections(
+        [tokenEntry],
+        [sender, senderToken, receiver],
+        toLegacyAccountId,
+      );
+
+      expect(section.data[0].fromAccount.id).toBe(senderToken.id);
+      expect(section.data[0].fromParentAccount?.id).toBe(sender.id);
+    });
+
+    it("leaves out an entry whose account or receiver has no legacy account", async () => {
+      expect(await getSwapHistorySections([entry], [receiver], toLegacyAccountId)).toEqual([]);
+      expect(
+        await getSwapHistorySections(
+          [mockSwapHistoryEntry({ ...entry, toAccountUUID: undefined })],
+          [sender, receiver],
+          toLegacyAccountId,
+        ),
+      ).toEqual([]);
     });
   });
 });

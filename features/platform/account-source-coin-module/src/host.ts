@@ -1,4 +1,4 @@
-import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, Balance, Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
 
 type CoinModuleTokenResolver = {
   /** The id of the token an asset stands for; absent or `undefined` for an asset that is not a listed token. */
@@ -50,6 +50,12 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+/** What the source needs of one currency's coin module to read staking positions. */
+export type CoinModuleStakingApi = CoinModuleTokenResolver & {
+  /** One page of the stakes of an address; a falsy `next` ends the list. */
+  getStakes(subject: string, cursor?: string): Promise<Page<Stake>>;
+};
+
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
@@ -64,5 +70,7 @@ export type CoinModuleHost = {
   paginatesOperations?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the operations read. */
   getOperationsApi?(currencyId: string): Promise<CoinModuleOperationsApi | undefined>;
+  /** The coin module of the currency, loaded on first use; `undefined` when it does not implement `getStakes`. */
+  getStakingApi?(currencyId: string): Promise<CoinModuleStakingApi | undefined>;
   blacklistedTokenIds?(): readonly string[];
 };

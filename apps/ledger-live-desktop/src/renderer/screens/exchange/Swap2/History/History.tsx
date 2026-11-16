@@ -4,7 +4,10 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import OperationRow from "./OperationRow";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
-import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
+import { getSwapHistorySections } from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
+import { accountsSlice } from "@domain/entity-account";
+import { selectSwapHistoryEntries } from "@domain/entity-swap-history";
+import type { State } from "~/renderer/reducers";
 import updateAccountSwapStatus, {
   hasSwapsAwaitingPayoutHash,
 } from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
@@ -38,8 +41,12 @@ const ExportOperationsWrapper = styled(Box)`
   align-items: center;
   z-index: 10;
 `;
+const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+
 const History = () => {
   const accounts = useSelector(accountsSelector);
+  const swapHistoryEntries = useSelector(selectSwapHistoryEntries);
+  const accountEntries = useSelector(selectAccountEntries);
   const [exporting, setExporting] = useState(false);
   const [mappedSwapOperations, setMappedSwapOperations] = useState<
     SwapHistorySection[] | undefined | null
@@ -84,12 +91,22 @@ const History = () => {
     }
   }, [exporting, mappedSwapOperations, getDateTxt]);
   useEffect(() => {
+    let cancelled = false;
     (async function asyncGetCompleteSwapHistory() {
       if (!accounts) return;
-      const sections = await getCompleteSwapHistory(flattenAccounts(accounts));
-      setMappedSwapOperations(sections);
+      const legacyIds = new Map(accountEntries.map(entry => [entry.accountUUID, entry.legacyId]));
+      const sections = await getSwapHistorySections(
+        swapHistoryEntries,
+        flattenAccounts(accounts),
+        accountUUID => legacyIds.get(accountUUID),
+      );
+      // A newer run, or an unmount, wins over this one.
+      if (!cancelled) setMappedSwapOperations(sections);
     })();
-  }, [accounts]);
+    return () => {
+      cancelled = true;
+    };
+  }, [accounts, accountEntries, swapHistoryEntries]);
   useAutoOpenSwapDialog(autoOpenSwapId, mappedSwapOperations);
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;

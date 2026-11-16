@@ -16,6 +16,7 @@ import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 
@@ -41,10 +42,8 @@ function StepConfirmation({
 
   const voteAccAddress = transaction ? getValAddress(transaction) : "";
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    currencyId,
-    account.stakingResources.validators,
-  );
+  const { validators: networkValidators } = useCosmosNetworkValidators(account.currency);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, networkValidators);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {

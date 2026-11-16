@@ -84,7 +84,9 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="neutral.c70">
             <Trans i18nKey={`cosmos.delegation.commission`} />{" "}
-            {`${Math.round(validator.commission * 10000) / 100} %`}
+            {Number.isFinite(validator.commission)
+              ? `${Math.round(validator.commission * 10000) / 100} %`
+              : "–"}
           </Text>
         </Box>
       }

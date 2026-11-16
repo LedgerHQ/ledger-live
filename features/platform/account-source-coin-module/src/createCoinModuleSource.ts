@@ -8,6 +8,7 @@ import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-ac
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
+import { toAccountStaking } from "./internals/toAccountStaking";
 
 /** Serves an account whose currency has a coin module, reading the coin module itself, with no bridge in between. */
 export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource {
@@ -58,9 +59,18 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     });
   };
 
+  const readStaking: AccountDataReader<"staking"> = async ({ descriptor }) => {
+    const currencyId = currencyIdFromNetwork(descriptor.network);
+    const api = await host.getStakingApi?.(currencyId);
+    if (!api) {
+      throw new AccountDataNotServedError(`No staking read in the ${currencyId} coin module`);
+    }
+    return toAccountStaking(currencyId, await subjectOf(descriptor), api);
+  };
+
   return {
     id: AccountDataSourceIdSchema.parse("coin-module"),
     supports,
-    read: { balance: readBalance, operations: readOperations },
+    read: { balance: readBalance, operations: readOperations, staking: readStaking },
   };
 }

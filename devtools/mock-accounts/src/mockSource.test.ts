@@ -475,3 +475,30 @@ describe("mockSource status", () => {
     await expect(read(target, undefined)).rejects.toThrow(MockAssetStatusQueryError);
   });
 });
+
+const readStaking = (descriptor: AccountDescriptor) => {
+  const read = mockSource.read?.staking;
+  if (!read) throw new Error("no staking reader");
+  return read({ accountUUID: computeAccountUUID(descriptor), descriptor }, undefined);
+};
+
+describe("mockSource staking", () => {
+  it("answers no position for a family that does not stake", async () => {
+    for (const account of mockDescriptors("ethereum", 5, [])) {
+      await expect(readStaking(account)).resolves.toEqual({ positions: [] });
+    }
+  });
+
+  it("answers the same positions for the same account", async () => {
+    const [account] = mockDescriptors("cosmos", 1, []);
+    expect(await readStaking(account)).toEqual(await readStaking(account));
+  });
+
+  it("stakes the native coin of some accounts of a staking family", async () => {
+    const reads = await Promise.all(mockDescriptors("cosmos", 20, []).map(readStaking));
+    const positions = reads.flatMap(read => read.positions);
+    expect(reads.some(read => read.positions.length === 0)).toBe(true);
+    expect(positions.some(({ state }) => state === "active")).toBe(true);
+    expect(positions.every(({ assetId }) => assetId === "cosmos")).toBe(true);
+  });
+});

@@ -15,6 +15,8 @@ import { toAccountOperations } from "./operations";
 import { toAccountStatus } from "./accountStatus";
 import { toAssetStatus } from "./assetStatus";
 import { syncDetached } from "./syncDetached";
+import { toAccountStaking } from "./staking";
+import { readTronResources } from "../../families/tron/accountData";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -81,6 +83,8 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
       receive: target => sync(target).then(toAccountReceive),
       accountStatus: target => syncHeldOrDetached(target).then(toAccountStatus),
       assetStatus: (target, query) => toAssetStatus(target, query, sync),
+      staking: target => sync(target).then(toAccountStaking),
+      "tron:resources": target => readTronResources(target, sync),
     },
     sync,
   };

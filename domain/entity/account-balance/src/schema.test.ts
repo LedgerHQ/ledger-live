@@ -5,7 +5,7 @@ import {
   AccountBalancesStateSchema,
   initialAccountBalancesState,
 } from "./schema";
-import { mockAccountAssetBalance } from "./schema.mock";
+import { mockAccountAssetBalance, mockBalanceLock } from "./schema.mock";
 
 const row = {
   assetId: "ethereum",
@@ -71,6 +71,39 @@ describe("AccountAssetBalanceSchema", () => {
 
   it("should reject an empty balance", () => {
     expect(AccountAssetBalanceSchema.safeParse({ ...row, balance: "" }).success).toBe(false);
+  });
+
+  it("should accept a row without locked parts, as before", () => {
+    expect(AccountAssetBalanceSchema.parse(row)).not.toHaveProperty("locked");
+  });
+
+  it("should accept the locked parts of a balance", () => {
+    const locked = [
+      mockBalanceLock({ reason: "frozen", amount: "3" }),
+      mockBalanceLock({ reason: "unbonding", amount: "1" }),
+    ];
+    expect(mockAccountAssetBalance({ spendableBalance: "6", locked })).toMatchObject({ locked });
+  });
+
+  it.each(["reserve", "staked", "unbonding", "frozen", "pending", "other"])(
+    "should accept the %s lock reason",
+    reason => {
+      expect(mockBalanceLock({ reason })).toEqual({ reason, amount: "4" });
+    },
+  );
+
+  it("should reject an unknown lock reason", () => {
+    expect(
+      AccountAssetBalanceSchema.safeParse({ ...row, locked: [{ reason: "vesting", amount: "1" }] })
+        .success,
+    ).toBe(false);
+  });
+
+  it("should reject a negative locked amount", () => {
+    expect(
+      AccountAssetBalanceSchema.safeParse({ ...row, locked: [{ reason: "staked", amount: "-1" }] })
+        .success,
+    ).toBe(false);
   });
 
   it("should reject a row without a spendable balance", () => {

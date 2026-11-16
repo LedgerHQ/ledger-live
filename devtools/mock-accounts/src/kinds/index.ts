@@ -5,6 +5,7 @@ import { assetStatus } from "./assetStatus";
 import { balance } from "./balance";
 import { balanceHistory } from "./balanceHistory";
 import { operations } from "./operations";
+import { staking } from "./staking";
 
 /** The generic reader of each kind, for the families that do not answer it their own way. */
 export const kinds: MockReaders = {
@@ -14,4 +15,5 @@ export const kinds: MockReaders = {
   receive,
   accountStatus,
   assetStatus,
+  staking,
 };

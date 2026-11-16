@@ -17,6 +17,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
+import type { BalanceLock } from "@domain/entity-account-balance";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
@@ -191,6 +192,8 @@ export type CoinModuleLoader<
   loadAccountStatus?: () => Promise<(account: A) => AccountStatus>;
   /** Whether the account must activate a token of its network before holding it; no gate when absent. */
   loadAssetStatus?: () => Promise<(account: A, token: TokenCurrency) => AssetStatus>;
+  /** Why part of the native balance is not spendable (staked, frozen, reserve); no breakdown when absent. */
+  loadBalanceLocks?: () => Promise<(account: A) => BalanceLock[]>;
   /**
    * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would

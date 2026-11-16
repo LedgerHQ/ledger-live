@@ -22,7 +22,12 @@ import reducers, { State } from "~/renderer/reducers";
 import { apiServices, applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataSources, accountDataTaps } from "~/config/account-data-setup";
+import { networkValidatorsExtra } from "@domain/api-network-validators";
+import {
+  accountDataSources,
+  accountDataTaps,
+  networkValidatorsSources,
+} from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { loadAppConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
@@ -70,6 +75,7 @@ const customCreateStore = ({
                   (action): unknown => store.dispatch(action),
                 ),
               ),
+              ...networkValidatorsExtra(networkValidatorsSources()),
               ...apiServices.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
             },
           },

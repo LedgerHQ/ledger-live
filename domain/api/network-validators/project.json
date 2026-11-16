@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-network-validators",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

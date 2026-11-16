@@ -1,0 +1,85 @@
+import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  AccountStakingPositionSchema,
+  AccountStakingSchema,
+  AccountStakingStateSchema,
+  initialAccountStakingState,
+} from "./schema";
+import { mockAccountStaking, mockAccountStakingPosition } from "./schema.mock";
+import { mockAccountStakingState } from "./slice.mock";
+
+describe("AccountStakingPositionSchema", () => {
+  it("should accept an active delegation", () => {
+    expect(AccountStakingPositionSchema.parse(mockAccountStakingPosition())).toMatchObject({
+      state: "active",
+      amount: "1000000",
+      rewards: "1500",
+    });
+  });
+
+  it.each(["inactive", "activating", "active", "deactivating", "withdrawable"] as const)(
+    "should accept the %s state",
+    state => {
+      expect(mockAccountStakingPosition({ state })).toMatchObject({ state });
+    },
+  );
+
+  it("should accept a position with no validator nor actions", () => {
+    const position = mockAccountStakingPosition({ validatorId: undefined, actions: undefined });
+    expect(position.validatorId).toBeUndefined();
+    expect(position.actions).toBeUndefined();
+  });
+
+  it("should accept an unlock date with an offset", () => {
+    expect(mockAccountStakingPosition({ unlockAt: "2026-12-01T00:00:00+02:00" }).unlockAt).toBe(
+      "2026-12-01T00:00:00+02:00",
+    );
+  });
+
+  it.each([
+    { state: "bonded" },
+    { amount: "-1" },
+    { amount: "1.5" },
+    { rewards: "abc" },
+    { id: "" },
+    { unlockAt: "tomorrow" },
+    { actions: ["stake"] },
+  ])("should reject %o", override => {
+    expect(
+      AccountStakingPositionSchema.safeParse({ ...mockAccountStakingPosition(), ...override })
+        .success,
+    ).toBe(false);
+  });
+});
+
+describe("AccountStakingSchema", () => {
+  it("should accept an account that does not stake", () => {
+    expect(AccountStakingSchema.parse({ positions: [] })).toEqual({ positions: [] });
+  });
+
+  it("should reject a result without positions", () => {
+    expect(AccountStakingSchema.safeParse({}).success).toBe(false);
+  });
+
+  it("should honor overrides", () => {
+    expect(mockAccountStaking({ positions: [] })).toEqual({ positions: [] });
+  });
+});
+
+describe("AccountStakingStateSchema", () => {
+  it("should accept the initial state and the mock state", () => {
+    expect(AccountStakingStateSchema.parse(initialAccountStakingState)).toEqual({});
+    expect(AccountStakingStateSchema.parse(mockAccountStakingState())).toEqual(
+      mockAccountStakingState(),
+    );
+  });
+
+  it("should reject an entry without a revision", () => {
+    const accountUUID = computeAccountUUID(mockAddressAccountDescriptor());
+    expect(
+      AccountStakingStateSchema.safeParse({ [accountUUID]: { staking: mockAccountStaking() } })
+        .success,
+    ).toBe(false);
+  });
+});

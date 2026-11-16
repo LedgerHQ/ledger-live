@@ -1,13 +1,19 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
 import type { AccountDataSource } from "@domain/api-account-data";
+import type { NetworkValidatorsSource } from "@domain/api-network-validators";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
 import {
+  AccountIdSchema,
   accountsSlice,
   connectAccountsStore,
   type AccountsReduxStore,
 } from "@domain/entity-account";
-import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
+import { connectSwapHistoryStore, type SwapHistoryReduxStore } from "@domain/entity-swap-history";
+import {
+  createCoinModuleSource,
+  createCoinModuleValidatorsSource,
+} from "@features/platform-account-source-coin-module";
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
@@ -16,6 +22,8 @@ import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import { createCoinModuleValidatorsHost } from "@ledgerhq/live-common/network-validators/createCoinModuleValidatorsHost";
+import { createPreloadValidatorsSource } from "@ledgerhq/live-common/network-validators/createPreloadValidatorsSource";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";
@@ -23,7 +31,9 @@ import { accountsSelector, type AccountsState } from "~/renderer/reducers/accoun
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** What can observe the account data layer. `AccountDataRecorder` matches it structurally. */
 export type AccountDataObserver = {
@@ -101,6 +111,14 @@ export function accountDataSources(
   ]);
 }
 
+/** The app's network validators sources, in rank order: for each network, the first that serves it answers. */
+export function networkValidatorsSources(): readonly NetworkValidatorsSource[] {
+  return [
+    createCoinModuleValidatorsSource(createCoinModuleValidatorsHost()),
+    createPreloadValidatorsSource({ prepareCurrency }),
+  ];
+}
+
 /** Keeps `accountEntries` in step with the legacy accounts. */
 export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsState }>) {
   return connectAccountsStore(store, {
@@ -113,3 +131,16 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
 /** Account discovery on the Device Intent session, with the legacy scan rules: UI reaches account data only through this file. */
 export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
 export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";
+
+/** Mirrors the legacy accounts' swap history into `swapHistory`, for the accounts `accountEntries` lists. */
+export function connectSwapHistory(store: SwapHistoryReduxStore<State>) {
+  return connectSwapHistoryStore(store, {
+    selectLegacyAccounts: accountsSelector,
+    toAccountUUID: (state, legacyId) => {
+      const parsed = AccountIdSchema.safeParse(legacyId);
+      return parsed.success ? selectAccountUUIDByLegacyId(state, parsed.data) : undefined;
+    },
+    selectAccountIndex: state => state.accountEntries,
+    onError: error => logger.critical(error, "Swap left out of the swap history slice"),
+  });
+}

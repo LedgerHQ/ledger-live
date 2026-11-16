@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-swap-history",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

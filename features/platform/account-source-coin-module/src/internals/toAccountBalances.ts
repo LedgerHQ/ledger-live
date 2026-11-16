@@ -6,12 +6,19 @@ import {
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { CoinModuleBalanceApi } from "../host";
 
-const row = (assetId: string, value: bigint, locked = 0n): AccountAssetBalance =>
-  AccountAssetBalanceSchema.parse({
+function row(assetId: string, value: bigint, locked = 0n): AccountAssetBalance {
+  const balance = value > 0n ? value : 0n;
+  const lockedInBalance = locked < balance ? locked : balance;
+  return AccountAssetBalanceSchema.parse({
     assetId,
-    balance: (value > 0n ? value : 0n).toString(),
-    spendableBalance: (value > locked ? value - locked : 0n).toString(),
+    balance: balance.toString(),
+    spendableBalance: (balance - lockedInBalance).toString(),
+    // The framework does not tell why: a minimum balance, a rent or a deposit.
+    ...(lockedInBalance > 0n
+      ? { locked: [{ reason: "reserve", amount: lockedInBalance.toString() }] }
+      : {}),
   });
+}
 
 const isNative = ({ asset }: Balance) => asset.type === "native";
 

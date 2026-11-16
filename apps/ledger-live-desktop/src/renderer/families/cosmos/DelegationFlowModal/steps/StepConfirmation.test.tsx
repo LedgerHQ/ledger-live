@@ -22,6 +22,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 
+jest.mock("~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators", () => ({
+  useCosmosNetworkValidators: () => ({ validators: [], pending: false, error: undefined }),
+}));
+
 jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
   useLedgerFirstShuffledValidatorsCosmosFamily: () => [VALIDATOR_A],
 }));
@@ -32,7 +36,7 @@ const buildAccount = (): CosmosAccount =>
   ({
     type: "Account",
     currency: getCryptoCurrencyById("cosmos"),
-    stakingResources: { validators: [VALIDATOR_A] },
+    stakingResources: {},
   }) as unknown as CosmosAccount;
 
 const buildOperation = (): Operation =>

@@ -21,10 +21,13 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/api-network-validators": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
+    "@domain/entity-account-staking": "workspace:*",
+    "@domain/entity-network-validators": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {

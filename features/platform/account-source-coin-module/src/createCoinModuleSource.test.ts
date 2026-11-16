@@ -156,8 +156,18 @@ describe("createCoinModuleSource", () => {
 
       expect(getBalance).toHaveBeenCalledWith("0xabc");
       expect(data).toEqual([
-        { assetId: "ethereum", balance: "1000", spendableBalance: "600" },
-        { assetId: USDT, balance: "7", spendableBalance: "5" },
+        {
+          assetId: "ethereum",
+          balance: "1000",
+          spendableBalance: "600",
+          locked: [{ reason: "reserve", amount: "400" }],
+        },
+        {
+          assetId: USDT,
+          balance: "7",
+          spendableBalance: "5",
+          locked: [{ reason: "reserve", amount: "2" }],
+        },
       ]);
     });
 
@@ -171,6 +181,14 @@ describe("createCoinModuleSource", () => {
       expect(getApi).toHaveBeenCalledWith("bitcoin");
       expect(getBalance).toHaveBeenCalledWith(XPUB);
       expect(data).toEqual([{ assetId: "bitcoin", balance: "5000", spendableBalance: "5000" }]);
+    });
+
+    it("leaves locked out when the coin module locks nothing", async () => {
+      const { host } = hostOf({ "0xabc": [{ value: 5n, asset: { type: "native" }, locked: 0n }] });
+
+      const { data } = await readBalance(host, ethereum);
+
+      expect(data[0]).not.toHaveProperty("locked");
     });
 
     it("answers a zero native balance when the coin module reports none", async () => {
@@ -187,7 +205,9 @@ describe("createCoinModuleSource", () => {
       });
 
       await expect(readBalance(host, ethereum)).resolves.toMatchObject({
-        data: [{ balance: "10", spendableBalance: "0" }],
+        data: [
+          { balance: "10", spendableBalance: "0", locked: [{ reason: "reserve", amount: "10" }] },
+        ],
       });
     });
 
@@ -223,10 +243,20 @@ describe("createCoinModuleSource", () => {
       );
 
       expect(single.data).toEqual([
-        { assetId: "ethereum", balance: "100", spendableBalance: "90" },
+        {
+          assetId: "ethereum",
+          balance: "100",
+          spendableBalance: "90",
+          locked: [{ reason: "reserve", amount: "10" }],
+        },
       ]);
       expect(summed.data).toEqual([
-        { assetId: "ethereum", balance: "150", spendableBalance: "90" },
+        {
+          assetId: "ethereum",
+          balance: "150",
+          spendableBalance: "90",
+          locked: [{ reason: "reserve", amount: "60" }],
+        },
       ]);
     });
 

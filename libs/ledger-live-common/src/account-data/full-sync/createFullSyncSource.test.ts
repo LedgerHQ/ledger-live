@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
+import { AccountDataNotServedError, DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -110,6 +110,13 @@ describe("createFullSyncSource", () => {
     ).resolves.toEqual({ used: false, gate: null });
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
     expect(syncDetached).not.toHaveBeenCalled();
+  });
+
+  it("rejects the Tron resources of another network as not served, without syncing it", async () => {
+    await expect(
+      source(account, account).read?.["tron:resources"]?.(target, undefined),
+    ).rejects.toBeInstanceOf(AccountDataNotServedError);
+    expect(syncLegacyAccount).not.toHaveBeenCalled();
   });
 
   it("answers the native coin of the account without syncing it", async () => {
