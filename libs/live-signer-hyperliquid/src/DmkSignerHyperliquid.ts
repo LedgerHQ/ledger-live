@@ -40,23 +40,14 @@ export class DmkSignerHyperliquid {
 
   private _mapError<E extends DAError>(error: E): Error {
     if (
-      typeof error.originalError !== "object" ||
-      error.originalError === null ||
-      !("errorCode" in error.originalError)
-    ) {
-      return new Error(error._tag);
-    }
-    if (
       typeof error.originalError === "object" &&
       error.originalError !== null &&
       "errorCode" in error.originalError &&
-      typeof error.originalError.errorCode === "string" &&
       error.originalError.errorCode === "6985"
     ) {
       return new UserRefusedOnDevice();
-    } else {
-      return new Error(error._tag);
     }
+    return new Error(error._tag, { cause: error });
   }
 
   /**

@@ -37,7 +37,7 @@ export const PerpsWebView = ({
 }: PerpsWebProps) => {
   const accounts = useSelector(flattenAccountsSelector);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-  const customPerpsHandlers = usePerpsHandlers(accounts);
+  const customPerpsHandlers = usePerpsHandlers(accounts, manifest);
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customDeeplinkHandlers,

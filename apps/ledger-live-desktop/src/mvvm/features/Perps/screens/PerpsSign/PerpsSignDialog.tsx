@@ -2,21 +2,25 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import type { PerpsSignRequest } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useFeature } from "@features/platform-feature-flags";
+import { useOnNavigateAway } from "LLD/features/Perps/hooks/useOnNavigateAway";
 import { usePerpsSignViewModel, type PerpsSignData } from "./usePerpsSignViewModel";
 import { PerpsSignView } from "./PerpsSignView";
 import { PerpsSignExecutor } from "./PerpsSignExecutor";
+import type { PerpsSignManifest } from "./usePerpsSignExecutorViewModel";
 
-let _opener: ((request: PerpsSignRequest) => void) | null = null;
+let _opener: ((request: PerpsSignRequest, manifest?: PerpsSignManifest) => void) | null = null;
 
-function registerPerpsSignOpener(fn: (request: PerpsSignRequest) => void): () => void {
+function registerPerpsSignOpener(
+  fn: (request: PerpsSignRequest, manifest?: PerpsSignManifest) => void,
+): () => void {
   _opener = fn;
   return () => {
     _opener = null;
   };
 }
 
-export function openPerpsSign(request: PerpsSignRequest) {
-  _opener?.(request);
+export function openPerpsSign(request: PerpsSignRequest, manifest?: PerpsSignManifest) {
+  _opener?.(request, manifest);
 }
 
 function PerpsSignBody({ data, onClose }: Readonly<{ data: PerpsSignData; onClose: () => void }>) {
@@ -46,28 +50,48 @@ function PerpsSignInnerDialog({
   );
 }
 
-type PendingSignRequest = Readonly<{ id: number; request: PerpsSignRequest }>;
+type PendingSignRequest = Readonly<{
+  id: number;
+  request: PerpsSignRequest;
+  manifest?: PerpsSignManifest;
+}>;
 
 export default function PerpsSignRoot() {
   const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSign")?.enabled ?? false;
   const [pending, setPending] = useState<PendingSignRequest | null>(null);
   const lastIdRef = useRef(0);
-  const close = useCallback(() => setPending(null), []);
+  const clearPending = useCallback(
+    (id: number) => setPending(current => (current?.id === id ? null : current)),
+    [],
+  );
+  const closeAll = useCallback(() => setPending(null), []);
+
+  const pendingId = pending?.id;
+  const closeCurrent = useCallback(() => {
+    if (pendingId !== undefined) clearPending(pendingId);
+  }, [clearPending, pendingId]);
 
   useEffect(
     () =>
-      registerPerpsSignOpener(request => {
+      registerPerpsSignOpener((request, manifest) => {
         lastIdRef.current += 1;
-        setPending({ id: lastIdRef.current, request });
+        setPending({ id: lastIdRef.current, request, manifest });
       }),
     [],
   );
 
+  useOnNavigateAway(pending !== null, closeAll);
+
   if (deviceIntentSignEnabled) {
     return pending ? (
-      <PerpsSignExecutor key={pending.id} request={pending.request} onClose={close} />
+      <PerpsSignExecutor
+        key={pending.id}
+        request={pending.request}
+        manifest={pending.manifest}
+        onClose={closeCurrent}
+      />
     ) : null;
   }
 
-  return <PerpsSignInnerDialog data={pending?.request ?? null} onClose={close} />;
+  return <PerpsSignInnerDialog data={pending?.request ?? null} onClose={closeCurrent} />;
 }

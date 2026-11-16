@@ -1,7 +1,7 @@
 import React from "react";
 import { render, renderHook, screen } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { HyperliquidSignIntentJobState } from "@features/platform-hyperliquid-sign-intent";
+import type { HyperliquidSignIntentJobState } from "@features/platform-intent-hyperliquid-sign";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { HyperliquidSignIntentComponentLWD } from "../componentLWD";
 

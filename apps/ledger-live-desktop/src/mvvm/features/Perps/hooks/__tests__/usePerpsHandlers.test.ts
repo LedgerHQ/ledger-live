@@ -60,9 +60,9 @@ describe("usePerpsHandlers", () => {
     });
   });
 
-  it("should call openPerpsSign with data when signing.execute is called", () => {
+  it("should call openPerpsSign with request and manifest when signing.execute is called", () => {
     const accounts = [{ id: "acc-1" }] as never[];
-    renderHook(() => usePerpsHandlers(accounts));
+    renderHook(() => usePerpsHandlers(accounts, { id: "perps-live-app", name: "Perps" }));
 
     const signingExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["signing.execute"];
     const params = {
@@ -77,7 +77,10 @@ describe("usePerpsHandlers", () => {
 
     signingExecute(params);
 
-    expect(mockOpenPerpsSign).toHaveBeenCalledWith(params);
+    expect(mockOpenPerpsSign).toHaveBeenCalledWith(params, {
+      manifestId: "perps-live-app",
+      manifestName: "Perps",
+    });
   });
 
   it("should open the deposit dialog and resolve once the deposit settles", async () => {
