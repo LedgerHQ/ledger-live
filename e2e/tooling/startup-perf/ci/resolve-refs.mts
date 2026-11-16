@@ -290,21 +290,26 @@ const RELEASE_BOT = "live-github-bot[bot]";
  * on main, or the release bot's, committed and signed by GitHub, as every release tag is.
  */
 export async function checkReleaseTags(plan: Plan, get: GitHubGet): Promise<void> {
-  for (const { ref, sha } of plan.tagsToCheck) {
-    // One page of one file: a release's merge commit lists thousands.
-    const commit = (await get(`commits/${sha}?per_page=1`)) as {
-      author: { login: string } | null;
-      committer: { login: string } | null;
-      commit: { verification?: { verified: boolean } };
-    };
-    const byTheBot = commit.author?.login === RELEASE_BOT && commit.committer?.login === "web-flow";
-    if (byTheBot && commit.commit.verification?.verified) continue;
-    const { status } = (await get(`compare/${sha}...main?per_page=1`)) as { status: string };
-    if (status === "ahead" || status === "identical") continue;
-    throw new StepFailure(
-      `${ref} (${sha.slice(0, 10)}) is neither on main nor a signed commit of ${RELEASE_BOT}, as release tags are: a run from a reviewed branch does not build it`,
-    );
-  }
+  await Promise.all(plan.tagsToCheck.map(tag => checkReleaseTag(tag, get)));
+}
+
+async function checkReleaseTag(
+  { ref, sha }: { ref: string; sha: string },
+  get: GitHubGet,
+): Promise<void> {
+  // One page of one file: a release's merge commit lists thousands.
+  const commit = (await get(`commits/${sha}?per_page=1`)) as {
+    author: { login: string } | null;
+    committer: { login: string } | null;
+    commit: { verification?: { verified: boolean } };
+  };
+  const byTheBot = commit.author?.login === RELEASE_BOT && commit.committer?.login === "web-flow";
+  if (byTheBot && commit.commit.verification?.verified) return;
+  const { status } = (await get(`compare/${sha}...main?per_page=1`)) as { status: string };
+  if (status === "ahead" || status === "identical") return;
+  throw new StepFailure(
+    `${ref} (${sha.slice(0, 10)}) is neither on main nor a signed commit of ${RELEASE_BOT}, as release tags are: a run from a reviewed branch does not build it`,
+  );
 }
 
 export function outputsOf(plan: Plan): string {
