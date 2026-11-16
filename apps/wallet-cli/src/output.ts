@@ -20,6 +20,7 @@ import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error"
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
+import { failedRequestHint, findFailedRequest } from "./shared/failed-request";
 import {
   spinner,
   colors,
@@ -442,6 +443,8 @@ class HumanCommandOutput implements CommandOutput {
       const displayText = HumanCommandOutput._formatErrorForSpinner(err);
       this._activeSpin?.error(displayText);
       this._activeSpin = null;
+      const failedRequest = findFailedRequest(err);
+      if (failedRequest) writeStderr(failedRequestHint(failedRequest) + "\n");
       throw err;
     }
   }
@@ -1256,6 +1259,7 @@ class JsonCommandOutput implements CommandOutput {
     }
     const hasCustomName = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
     const httpStatus = hasCustomName && "httpStatus" in e ? e.httpStatus : undefined;
+    const failedRequest = findFailedRequest(e);
     return {
       ok: false,
       error: {
@@ -1264,6 +1268,9 @@ class JsonCommandOutput implements CommandOutput {
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
+        ...(failedRequest
+          ? { host: failedRequest.host, hint: failedRequestHint(failedRequest) }
+          : {}),
       },
     };
   }

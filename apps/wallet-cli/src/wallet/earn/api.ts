@@ -63,6 +63,21 @@ export class EarnApiError extends Error {
   }
 }
 
+export class EarnApiHttpError extends Error {
+  override name = "EarnApiHttpError";
+  readonly url: string;
+  readonly status: number;
+  constructor(message: string, url: string, status: number) {
+    super(message);
+    this.url = url;
+    this.status = status;
+  }
+}
+
+function httpFailureDetail(status: number, statusText: string, body: string): string {
+  return `${status} ${statusText}${body ? ` — ${body.slice(0, 500)}` : ""}`;
+}
+
 function buildUrl(path: string, query?: RequestOptions["query"]): string {
   const url = new URL(`${getEarnApiBaseUrl()}${path}`);
   if (query) {
@@ -115,10 +130,10 @@ async function earnRequestWithStatus(
   const method = options.method ?? "GET";
   const { status, statusText, ok, text } = await earnFetch(path, options);
   if (!ok) {
-    throw new Error(
-      `Earn API ${method} ${path} failed: ${status} ${statusText}${
-        text ? ` — ${text.slice(0, 500)}` : ""
-      }`,
+    throw new EarnApiHttpError(
+      `Earn API ${method} ${path} failed: ${httpFailureDetail(status, statusText, text)}`,
+      buildUrl(path),
+      status,
     );
   }
 
@@ -217,10 +232,10 @@ export async function getSolanaValidators(): Promise<SolanaValidatorWithApy[]> {
 
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(
-      `Solana validators GET failed: ${response.status} ${response.statusText}${
-        text ? ` — ${text.slice(0, 500)}` : ""
-      }`,
+    throw new EarnApiHttpError(
+      `Solana validators GET failed: ${httpFailureDetail(response.status, response.statusText, text)}`,
+      url,
+      response.status,
     );
   }
 

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { AddressSchema } from "@domain/entity-account-descriptor";
+import { findFailedRequest } from "../../shared/failed-request";
 import {
   EarnApiError,
   getCurrencyProviders,
@@ -430,5 +431,17 @@ describe("error handling", () => {
   it("throws a descriptive error when the validators list is unavailable", async () => {
     mockFetch({ message: "nope" }, 503);
     await expect(getSolanaValidators()).rejects.toThrow(/Solana validators GET failed: 503/);
+  });
+
+  it("names the Earn API host and status of a failed request", async () => {
+    mockFetch({ message: "Forbidden" }, 403);
+    const error = await getGrow().catch((e: unknown) => e);
+    expect(findFailedRequest(error)).toEqual({ host: "earn.api.live.ledger.com", status: 403 });
+  });
+
+  it("names the validators host and status of a failed request", async () => {
+    mockFetch({ message: "nope" }, 503);
+    const error = await getSolanaValidators().catch((e: unknown) => e);
+    expect(findFailedRequest(error)).toEqual({ host: "earn.api.live.ledger.com", status: 503 });
   });
 });
