@@ -9,7 +9,6 @@ import {
   type AssetStatus,
   type AssetStatusQuery,
 } from "@domain/entity-account-status";
-import { resolveFamily } from "../../bridge/zcashRouting";
 import { loadAssetStatusForFamily } from "../../coin-modules/registry";
 import { FullSyncAssetNotOnAccountError, FullSyncQueryRequiredError } from "./errors";
 
@@ -27,7 +26,7 @@ export async function toAssetStatus(
   const answer = (status: AssetStatus) => AccountAssetStatusSchema.parse({ assetId, status });
   if (assetId === currency.id) return answer(noGate);
   const [familyAssetStatus, token] = await Promise.all([
-    loadAssetStatusForFamily(resolveFamily(currency)),
+    loadAssetStatusForFamily(currency.family),
     getCryptoAssetsStore().findTokenById(assetId),
   ]);
   if (!token || token.parentCurrencyId !== currency.id) {
