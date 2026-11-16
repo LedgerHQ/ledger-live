@@ -233,14 +233,23 @@ function bound(param) {
 function isStateParam(param, body) {
   let id = bound(param);
   if (id?.type === "AssignmentPattern") id = id.left;
-  const annotation = id?.typeAnnotation?.typeAnnotation;
-  if (
-    annotation?.type === "TSTypeReference" &&
-    STATE_TYPE.test(calleeName(annotation.typeName) ?? annotation.typeName?.right?.name ?? "")
-  ) {
-    return true;
-  }
+  if (isStateType(id?.typeAnnotation?.typeAnnotation)) return true;
   return boundNames(id).some(name => usesOf(body, name).calls.size > 0);
+}
+
+/**
+ * @param {any} type
+ * @returns {boolean} whether a type annotation names a `*State` type, alone or in a union or
+ *   intersection
+ */
+function isStateType(type) {
+  if (type?.type === "TSUnionType" || type?.type === "TSIntersectionType") {
+    return type.types.some(isStateType);
+  }
+  return (
+    type?.type === "TSTypeReference" &&
+    STATE_TYPE.test(calleeName(type.typeName) ?? type.typeName?.right?.name ?? "")
+  );
 }
 
 /**

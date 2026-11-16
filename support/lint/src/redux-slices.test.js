@@ -175,7 +175,7 @@ export const selectNameThrough = (names: Map<string, string>, accounts: unknown,
   );
 });
 
-test("does not report a destructured or defaulted second state, or a state read in a default", () => {
+test("does not report a destructured, defaulted, union or intersection second state, or a state read in a default", () => {
   assert.deepEqual(
     reportedLines(`type Root = { items: string[]; settings: { index: number } };
 type OtherState = { total: number };
@@ -183,6 +183,10 @@ declare const fallback: OtherState;
 export const selectCombined = (state: Root, { total }: OtherState) => state.items.length + total;
 export const selectDefaulted = (state: Root, other: OtherState = fallback) =>
   state.items.length + other.total;
+export const selectOptional = (state: Root, other: OtherState | undefined) =>
+  state.items.length + (other?.total ?? 0);
+export const selectExtended = (state: Root, other: OtherState & { extra: number }) =>
+  state.items.length + other.total + other.extra;
 export const selectAt = (state: Root, index = state.settings.index) => state.items[index];
 export const selectNested = (state: Root, { index = state.settings.index } = {}) =>
   state.items[index];
