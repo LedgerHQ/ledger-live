@@ -15,6 +15,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { broadcastLogger } from "~/datadog/logs";
+import { isBroadcastDisabled } from "../utils/isBroadcastDisabled";
 
 export type {
   PerpsDepositDeviceStep,
@@ -48,5 +49,6 @@ export function usePerpsDepositExecution(
     updateAccount,
     broadcastLogger,
     track,
+    broadcastDisabled: isBroadcastDisabled(),
   });
 }

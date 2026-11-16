@@ -1,5 +1,4 @@
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getEnv } from "@shared/env";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
@@ -33,6 +32,8 @@ export type PerpsWithdrawExecutionParams = Readonly<{
   /** The destination ticker, for analytics. */
   targetCurrency: string;
   track: WithdrawTrack;
+  /** Signs but never submits, as the submit moves real funds. */
+  broadcastDisabled?: boolean;
 }>;
 
 /**
@@ -49,6 +50,7 @@ export async function executePerpsWithdraw({
   onSigned,
   targetCurrency,
   track,
+  broadcastDisabled = false,
 }: PerpsWithdrawExecutionParams): Promise<PerpsWithdrawResult> {
   if (sourceAccount.type !== "Account") {
     throw new WithdrawUnsupportedRouteError("The withdraw source must be a main account");
@@ -73,8 +75,7 @@ export async function executePerpsWithdraw({
   onSigned?.();
   // The user may have left while the device was signing: then nothing is submitted.
   if (!markWithdrawRequestCommitted(requestId)) throw new UserRefusedOnDevice();
-  if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-    // The signed withdraw would move real funds, so it is never submitted.
+  if (broadcastDisabled) {
     settleWithdrawRequest(requestId, result);
     return result;
   }

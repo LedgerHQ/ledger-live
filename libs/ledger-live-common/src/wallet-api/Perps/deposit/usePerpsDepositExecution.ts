@@ -17,7 +17,6 @@ import type {
   Result as CompleteExchangeResult,
 } from "../../../hw/actions/completeExchange";
 import type { createAction as createTransactionAction } from "../../../hw/actions/transaction";
-import { getEnv } from "@shared/env";
 import { useBroadcast, type LogEvent } from "../../../hooks/useBroadcast";
 import { executeSwap } from "../../Exchange/executeSwap";
 import { ExchangeType, type SwapUiRequest } from "../../Exchange/server";
@@ -96,6 +95,8 @@ export type PerpsDepositExecutionDeps = Readonly<{
   updateAccount: (accountId: string, updater: (account: Account) => Account) => void;
   broadcastLogger?: (event: LogEvent) => void;
   track: PerpsDepositTrack;
+  /** Skips tracking the swap, as the provider never gets the funds. */
+  broadcastDisabled?: boolean;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -120,6 +121,7 @@ export function usePerpsDepositExecution(
     updateAccount,
     broadcastLogger,
     track,
+    broadcastDisabled = false,
   }: PerpsDepositExecutionDeps,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
@@ -232,8 +234,7 @@ export function usePerpsDepositExecution(
       onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
 
-      // The provider never gets the funds, so the swap is not tracked.
-      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) return { operation, swapId: undefined };
+      if (broadcastDisabled) return { operation, swapId: undefined };
 
       const swapId = exchangeParams.swapId;
       if (swapId) {
@@ -253,6 +254,7 @@ export function usePerpsDepositExecution(
     },
     [
       broadcast,
+      broadcastDisabled,
       depositAccount,
       deviceActions.confirm,
       deviceActions.sign,

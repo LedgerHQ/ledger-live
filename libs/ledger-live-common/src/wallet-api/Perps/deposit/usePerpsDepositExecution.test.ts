@@ -4,7 +4,6 @@
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CompleteExchangeError } from "../../../exchange/error";
 import { PayloadStepError } from "../../Exchange/SwapError";
-import { setEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -90,11 +89,11 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
   });
 }
 
-function renderExecution() {
+function renderExecution(broadcastDisabled = false) {
   const onDone = jest.fn();
   const onRefused = jest.fn();
   const onReturnToForm = jest.fn();
-  const deps = depsWith();
+  const deps = { ...depsWith(), broadcastDisabled };
   const { result } = renderHook(() =>
     usePerpsDepositExecution(params, { onDone, onRefused, onReturnToForm }, deps),
   );
@@ -102,7 +101,7 @@ function renderExecution() {
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
-async function signWith(signResult: unknown) {
+async function signWith(signResult: unknown, broadcastDisabled = false) {
   mockExecuteSwap.mockImplementation(async deps => {
     await new Promise<void>((resolve, reject) => {
       deps.uiHooks["custom.exchange.swap"]({
@@ -113,7 +112,7 @@ async function signWith(signResult: unknown) {
     });
   });
 
-  const execution = renderExecution();
+  const execution = renderExecution(broadcastDisabled);
   act(() => {
     void execution.result.current.executeDeposit();
   });
@@ -383,14 +382,9 @@ describe("usePerpsDepositExecution", () => {
   });
 
   it("does not record the swap when transaction broadcast is disabled", async () => {
-    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-    try {
-      await signWith({ signedOperation: { operation } });
+    await signWith({ signedOperation: { operation } }, true);
 
-      expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
-    } finally {
-      setEnv("DISABLE_TRANSACTION_BROADCAST", false);
-    }
+    expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
   });
 
   it("settles the live app's deposit request with the swap and quoted amount", async () => {

@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { setEnv } from "@shared/env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -98,16 +97,11 @@ describe("executePerpsWithdraw", () => {
   });
 
   it("signs but submits nothing when transaction broadcast is disabled", async () => {
-    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
     mockedSign.mockResolvedValueOnce("0xsignature");
 
-    try {
-      await expect(execute()).resolves.toEqual(result);
-      expect(mockedSubmit).not.toHaveBeenCalled();
-      await expect(request).resolves.toEqual(result);
-    } finally {
-      setEnv("DISABLE_TRANSACTION_BROADCAST", false);
-    }
+    await expect(execute({ broadcastDisabled: true })).resolves.toEqual(result);
+    expect(mockedSubmit).not.toHaveBeenCalled();
+    await expect(request).resolves.toEqual(result);
   });
 
   it("keeps the request pending when signing fails, so it can be retried", async () => {
