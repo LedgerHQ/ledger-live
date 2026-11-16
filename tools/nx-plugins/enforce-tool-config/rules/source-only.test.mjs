@@ -205,6 +205,24 @@ test("no-source-condition: Jest and rspack configs setting @ledgerhq/source fail
   );
 });
 
+test("no-source-condition: split rspack configs under tools/rspack fail", () => {
+  const found = violations(
+    {
+      "apps/desktop/package.json": { ...PRIVATE_LIB, scripts: { build: "rspack" } },
+      "apps/desktop/tools/rspack/rspack.common.mts":
+        'export default { resolve: { conditionNames: ["@ledgerhq/source", "import"] } };\n',
+      "apps/desktop/tools/rspack/rspack.main.mts": "export default {};\n",
+      "apps/desktop/tools/rspack/helpers.mts":
+        'export const conditionNames: ["@ledgerhq/source"] = ["@ledgerhq/source"];\n',
+    },
+    { projectRoot: "apps/desktop" },
+  );
+  assert.deepEqual(
+    found.map(({ file, message }) => [file, message.startsWith(CHECKS["no-source-condition"])]),
+    [["apps/desktop/tools/rspack/rspack.common.mts", true]],
+  );
+});
+
 test("no-source-condition: configs that only mention the condition pass", () => {
   assert.deepEqual(
     violations({

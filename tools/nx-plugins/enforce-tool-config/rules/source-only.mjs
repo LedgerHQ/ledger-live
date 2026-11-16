@@ -28,8 +28,12 @@ const BUILD_OUTPUT = /^(?:\.\/)?lib(?:-es)?\//;
 const ENTRY_FIELDS = ["main", "module", "types", "typings", "typesVersions", "sideEffects"];
 
 // The configs that resolve export conditions: Jest (jest.config.*, jest.<variant>.config.*),
-// rspack and Re.Pack (rspack.config.*, repack.config.*).
-const BUNDLER_CONFIG = /^(?:jest(?:\.[\w-]+)?|rspack|repack)\.config\.[cm]?[jt]s$/;
+// rspack and Re.Pack (rspack.config.*, repack.config.*, and split configs such as the desktop
+// app's tools/rspack/rspack.<target>.mts).
+const BUNDLER_CONFIG = /^(?:jest(?:\.[\w-]+)?\.config|(?:rspack|repack)(?:\.[\w-]+)?)\.[cm]?[jt]s$/;
+
+// Where those configs live, relative to the project root.
+const CONFIG_DIRS = ["", "tools/rspack"];
 
 // `customExportConditions: [..., "@ledgerhq/source", ...]` or `conditionNames: [...]`.
 const SOURCE_CONDITION_OPTION = new RegExp(
@@ -181,31 +185,32 @@ function publishedDepsFindings(workspaceRoot, projectRoot, manifest, manifestFil
  * @returns {Finding[]}
  */
 function sourceConditionFindings(workspaceRoot, projectRoot) {
-  let entries;
-  try {
-    entries = fs.readdirSync(path.join(workspaceRoot, projectRoot));
-  } catch {
-    return [];
-  }
-  return entries
-    .filter(name => BUNDLER_CONFIG.test(name))
-    .sort()
-    .flatMap(name => {
-      const file = `${projectRoot}/${name}`;
-      const option = fs
-        .readFileSync(path.join(workspaceRoot, file), "utf8")
-        .match(SOURCE_CONDITION_OPTION)?.[1];
-      return option
-        ? [
-            finding(
-              "no-source-condition",
-              file,
-              `${option} lists it`,
-              "drop it; private libraries already export src, published ones are read built",
-            ),
-          ]
-        : [];
-    });
+  return CONFIG_DIRS.flatMap(dir => {
+    const directory = dir ? `${projectRoot}/${dir}` : projectRoot;
+    try {
+      return fs
+        .readdirSync(path.join(workspaceRoot, directory))
+        .filter(name => BUNDLER_CONFIG.test(name))
+        .sort()
+        .map(name => `${directory}/${name}`);
+    } catch {
+      return [];
+    }
+  }).flatMap(file => {
+    const option = fs
+      .readFileSync(path.join(workspaceRoot, file), "utf8")
+      .match(SOURCE_CONDITION_OPTION)?.[1];
+    return option
+      ? [
+          finding(
+            "no-source-condition",
+            file,
+            `${option} lists it`,
+            "drop it; private libraries already export src, published ones are read built",
+          ),
+        ]
+      : [];
+  });
 }
 
 /**
@@ -266,8 +271,10 @@ export default {
     "{projectRoot}/package.json",
     "{projectRoot}/project.json",
     "{projectRoot}/jest*.config.*",
-    "{projectRoot}/rspack.config.*",
-    "{projectRoot}/repack.config.*",
+    "{projectRoot}/rspack.*",
+    "{projectRoot}/repack.*",
+    "{projectRoot}/tools/rspack/rspack.*",
+    "{projectRoot}/tools/rspack/repack.*",
   ],
   check: context => check(context),
 };
