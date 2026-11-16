@@ -187,6 +187,7 @@
       "FEES" : "수수료",
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
+      "OPT_EDIT" : "토큰 업데이트 완료",
       "CLOSE_ACCOUNT" : "계정 닫기",
       "BOND" : "본딩",
       "UNBOND" : "언본딩",
@@ -340,7 +341,15 @@
     "home" : "홈",
     "refer" : "친구 추천",
     "catalog" : "탐색",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "에이전트"
+  },
+  "agentIntent" : {
+    "title" : "에이전트",
+    "manageAgents" : {
+      "title" : "내 에이전트 직접 관리하기",
+      "description" : "AI 에이전트에게 자산 관리를 맡겨 보세요."
+    }
   },
   "stars" : {
     "tooltip" : "계정 즐겨찾기"
@@ -1950,13 +1959,13 @@
       "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
     },
     "info" : {
-      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
-      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "추가 알림을 보내지 마세요."
     },
     "error" : {
       "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
-      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "업그레이드 프로그램 살펴보기",
     "learnMore" : "자세히 알아보기",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "전송",
     "totalSpent" : "입금할 총액",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "트랜잭션을 처리 중입니다",
     "sign" : {
       "title" : "Ledger {{wording}}에서 계속하기",
-      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요.",
+      "cancelled" : {
+        "title" : "트랜잭션 취소됨",
+        "description" : "트랜잭션을 거부했습니다. 자산에는 아무런 영향이 없습니다.",
+        "close" : "닫기",
+        "retry" : "다시 시도하세요"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "네트워크 수수료를 새로고침할 수 없습니다",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "토큰 설정",
+      "currentLimitZero" : "한도가 0입니다. 이 토큰을 받을 수 없습니다.",
+      "limitBelowBalance" : "보유 수량({{balance}})이 한도를 초과합니다. 보유 수량이 한도 아래로 내려가기 전까지는 이 토큰을 받을 수 없습니다.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "보상을 받을 검증인",
       "compoundReward" : "보상을 받을 검증인",
       "optIn" : "수령인",
+      "changeTrust" : "수신자",
       "tokenAssociate" : "수령인",
       "nominate" : "검증인",
       "stake" : "검증인",
@@ -8089,11 +8114,15 @@
       "description" : "토큰 홀딩을 중단하려면 삭제해 주세요."
     },
     "XrpTokenFrozen" : {
-      "title" : "이 수신자에게는 이 토큰을 보낼 수 없습니다.",
-      "description" : "발행자가 토큰을 동결했거나, 귀하의 계정에서 토큰 홀딩을 승인하지 않았습니다. 동결된 토큰이라도 발행자에게 다시 반환할 수는 있습니다."
+      "title" : "이 토큰을 보낼 수 없습니다.",
+      "description" : "발행자가 해당 토큰을 동결했습니다."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "이 토큰을 보낼 수 없습니다.",
+      "description" : "발행자가 사용자 계정의 토큰 홀딩을 승인하지 않았습니다."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "이 수신자는 {{assetCode}} 자산을 받을 수 없습니다.",
+      "title" : "해당 수신자는 이 토큰을 받을 수 없습니다.",
       "description" : "수신자가 먼저 이 토큰을 추가해야 하거나, 발행자가 해당 전송을 허용하지 않는 상태입니다."
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "계정 없음",
     "review" : "검토",
+    "learnMore" : "자세히 알아보기",
     "formErrors" : {
+      "offline" : "인터넷 연결에 문제가 있습니다.",
       "amountExceedsBalance" : "보유 수량 부족",
+      "feeAccountEmpty" : "네트워크 수수료로 지불할 {{ticker}} 잔액이 부족합니다.",
+      "notEnoughFees" : "필요한 네트워크 수수료는 {{fees}} {{ticker}}입니다.",
+      "amountTooLow" : "최소 {{amount}} {{ticker}} 이상을 입력한 후 다시 시도하세요.",
+      "amountTooHigh" : "{{amount}} {{ticker}} 이하를 입력하고 다시 시도하세요.",
+      "feeEstimationFailed" : "We were unable to calculate fees at this time. Your crypto accounts could be out of sync. Restart Ledger Wallet app and try again.",
+      "accountNotReady" : "아직 이 계정에서 송금할 수 없습니다. 계정 메뉴에서 해당 계정 화면을 열어 활성화한 후 다시 시도하세요.",
+      "seiEvmUnlinked" : "스왑 전 SEI EVM 계정을 연결해야 합니다",
+      "aleoPrivateBalance" : "공개(퍼블릭) {{ticker}} 자산만 스왑이 지원됩니다. 현재 보유 자산이 비공개(프라이빗) 상태이므로 스왑할 수 없습니다.",
+      "tezosUnrevealed" : "테조스 계정이 아직 활성화되지 않았습니다. 스왑을 진행하기 전에 소량의 XTZ를 전송해 주세요.",
+      "dotMinimumBalance" : "스왑 후 최소 유지 잔액은 {{minValue}} DOT입니다.",
+      "xlmMinimumBalance" : "스왑 후 최소 유지 잔액은 {{minValue}} XLM입니다.",
       "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요."
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} 잔액 부족",
+        "description" : "{{account}} 계정에 네트워크 수수료를 지불할 잔액이 부족합니다."
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} 최소 필요 수량",
+        "description" : "견적 확인에 필요한 최소 수량은 {{amount}}{{ticker}}입니다."
+      },
+      "buy" : "{{ticker}} 매수"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "입금 서명",
+    "genericError" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "나중에 다시 시도하거나 다른 자산을 선택하세요."
+    },
     "terms" : "이 트랜잭션에 서명함으로써 <termsLink>NEAR Intents의 SwapKit 이용약관(T&C)</termsLink>에 동의합니다."
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "트랜잭션 세부 사항",
     "title" : "증거금 입금",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "출금",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "무기한 선물로 돌아가기"
   },
   "accountAnalytics" : {
     "assets" : "자산 필터",
@@ -11451,6 +11510,7 @@
     "allAssets" : "모든 자산",
     "allAccounts" : "모든 계정",
     "error" : "분석을 불러올 수 없습니다. 다시 시도하세요.",
-    "unavailable" : "선택한 항목과 관련하여 조회 가능한 데이터가 없습니다."
+    "unavailable" : "선택한 항목과 관련하여 조회 가능한 데이터가 없습니다.",
+    "noResults" : "결과 없음"
   }
 }
