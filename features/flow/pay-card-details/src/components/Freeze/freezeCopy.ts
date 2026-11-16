@@ -14,13 +14,15 @@ const UNFREEZE = {
   errorTitle: "payTab.card.unfreezeConfirm.errorTitle",
 } as const;
 
+export type FreezeCopy = typeof FREEZE | typeof UNFREEZE;
+
 const COPY_BY_STATUS = {
   ACTIVE: FREEZE,
   BLOCKED: FREEZE,
   INACTIVE: FREEZE,
   FROZEN: UNFREEZE,
-} as const satisfies Record<PayCardStatus["status"], typeof FREEZE | typeof UNFREEZE>;
+} as const satisfies Record<PayCardStatus["status"], FreezeCopy>;
 
-export function freezeCopy(status: PayCardStatus["status"] | undefined) {
+export function freezeCopy(status: PayCardStatus["status"] | undefined): FreezeCopy {
   return status ? COPY_BY_STATUS[status] : FREEZE;
 }
