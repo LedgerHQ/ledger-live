@@ -152,7 +152,6 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
 
   return {
     getAssetFromToken,
-    adaptOperations,
     buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
@@ -163,6 +162,9 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     buildTokenAccountShapes: address => buildTokenAccountShapes(currency, address),
     // Turning a standard on or off resyncs from scratch, to build its token accounts' history
-    ...(enabledStandards.length > 0 && { syncVersion: enabledStandards.join(",") }),
+    ...(enabledStandards.length > 0 && {
+      syncVersion: enabledStandards.join(","),
+      adaptOperations,
+    }),
   };
 }

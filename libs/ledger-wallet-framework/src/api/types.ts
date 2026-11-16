@@ -277,7 +277,8 @@ export type BridgeApi = {
   exactAssetMatch?: boolean;
   /**
    * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
-   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid. Left
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid and sent
+   * to the token's `assetOwner`. Left
    * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
    */
   tokenOptParentRow?: boolean;

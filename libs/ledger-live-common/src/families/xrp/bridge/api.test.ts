@@ -292,12 +292,17 @@ describe("adaptOperations", () => {
 });
 
 describe("xrpBridgeApi", () => {
-  it("sets no syncVersion while no standard is enabled", () => {
+  it("sets no syncVersion and keeps every synced operation while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
     const bridgeApi = xrpBridgeApi(ripple);
 
     expect(bridgeApi).not.toHaveProperty("syncVersion");
+    expect(bridgeApi).not.toHaveProperty("adaptOperations");
+  });
+
+  it("leaves operations above the balance ledger to the next sync while a standard is enabled", () => {
+    expect(xrpBridgeApi(ripple).adaptOperations).toBe(adaptOperations);
   });
 
   it("puts the enabled standards in syncVersion", () => {

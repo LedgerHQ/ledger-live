@@ -195,7 +195,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
                   ? {
                       token: account.token.name,
                       tokenType,
-                      currency: mainAccount && mainAccount.currency.name,
+                      currency: mainAccount?.currency.name,
                     }
                   : {
                       ticker: account.currency.ticker,
