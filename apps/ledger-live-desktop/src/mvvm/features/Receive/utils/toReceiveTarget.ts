@@ -1,18 +1,26 @@
-import { findAccountEntryByLegacyId } from "@domain/entity-account";
-import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { State } from "~/renderer/reducers";
 import type { ReceiveTarget } from "../types";
 
-/** The account model's receive target of a legacy account; `undefined` until the account model holds it. */
+type AccountEntriesState = Pick<State, "accountEntries">;
+
+const { selectAccountUUIDByLegacyId, selectAccountEntry } = accountsSlice.getSelectors(
+  (state: AccountEntriesState) => state.accountEntries,
+);
+
+/**
+ * Where to receive `assetId`, from the legacy id of a main account (a token account gives its
+ * `parentId`); `undefined` until the account model holds the account.
+ */
 export function toReceiveTarget(
-  state: Pick<State, "accountEntries">,
-  account: AccountLike,
+  state: AccountEntriesState,
+  legacyAccountId: string,
+  assetId: CryptoOrTokenCurrencyId,
 ): ReceiveTarget | undefined {
-  const legacyId = account.type === "Account" ? account.id : account.parentId;
-  const entry = findAccountEntryByLegacyId(state.accountEntries, legacyId);
-  if (!entry) return undefined;
-  const assetId = CryptoOrTokenCurrencyIdSchema.parse(getAccountCurrency(account).id);
-  return { accountUUID: entry.accountUUID, descriptor: entry.descriptor, assetId };
+  const legacyId = AccountIdSchema.safeParse(legacyAccountId);
+  if (!legacyId.success) return undefined;
+  const accountUUID = selectAccountUUIDByLegacyId(state, legacyId.data);
+  const entry = accountUUID ? selectAccountEntry(state, accountUUID) : undefined;
+  return entry && { accountUUID: entry.accountUUID, descriptor: entry.descriptor, assetId };
 }

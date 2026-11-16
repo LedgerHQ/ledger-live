@@ -5,6 +5,7 @@ import {
   legacyAccountsSynced,
 } from "@domain/entity-account";
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -21,27 +22,33 @@ const ethEntry = LegacyAccountEntrySchema.parse(
 const state = {
   accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([ethEntry])),
 };
+const ETHEREUM = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
+const USDC = CryptoOrTokenCurrencyIdSchema.parse(usdcToken.id);
 
 describe("toReceiveTarget", () => {
-  it("should target the account with its currency when given a main account", () => {
-    expect(toReceiveTarget(state, ethAccount)).toEqual({
+  it("should target the account and the given asset", () => {
+    expect(toReceiveTarget(state, ethAccount.id, ETHEREUM)).toEqual({
       accountUUID: ethEntry.accountUUID,
       descriptor: ethEntry.descriptor,
-      assetId: "ethereum",
+      assetId: ETHEREUM,
     });
   });
 
-  it("should target the parent account with the token when given a token account", () => {
-    expect(toReceiveTarget(state, usdcAccount)).toEqual({
+  it("should target another asset of the same account", () => {
+    expect(toReceiveTarget(state, ethAccount.id, USDC)).toEqual({
       accountUUID: ethEntry.accountUUID,
       descriptor: ethEntry.descriptor,
-      assetId: usdcToken.id,
+      assetId: USDC,
     });
+  });
+
+  it("should return undefined for a token account id, which is not a main account id", () => {
+    expect(toReceiveTarget(state, usdcAccount.id, USDC)).toBeUndefined();
   });
 
   it("should return undefined when the account model does not hold the account", () => {
     const unknownAccount = genAccount("receive-unknown");
 
-    expect(toReceiveTarget(state, unknownAccount)).toBeUndefined();
+    expect(toReceiveTarget(state, unknownAccount.id, ETHEREUM)).toBeUndefined();
   });
 });
