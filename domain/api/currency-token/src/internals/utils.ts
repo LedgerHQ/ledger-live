@@ -35,7 +35,7 @@ export function transformApiTokenToTokenCurrency(
     delisted: token.delisted,
     ...(token.token_identifier !== undefined ? { tokenIdentifier: token.token_identifier } : {}),
     ...(token.live_signature !== undefined ? { ledgerSignature: token.live_signature } : {}),
-    ...(token.categories !== undefined ? { categories: token.categories } : {}),
+    ...(Array.isArray(token.categories) ? { categories: token.categories } : {}),
   });
 }
 
