@@ -13214,6 +13214,9 @@ importers:
 
   features/flow/receive:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor

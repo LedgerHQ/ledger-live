@@ -1,6 +1,3 @@
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
-import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
-
 export type ReceiveOptionsDialogProps = Readonly<{
   onClose: () => void;
   onGoToAccount: () => void;
@@ -12,9 +9,3 @@ export const RECEIVE_SOURCE_PAGE = {
   BANK: "Bank Page",
   SIDEBAR: "Sidebar",
 } as const;
-
-export type ReceiveTarget = Readonly<{
-  accountUUID: AccountUUID;
-  descriptor: AccountDescriptor;
-  assetId: CryptoOrTokenCurrencyId;
-}>;
