@@ -15,6 +15,10 @@ import { getBlockInfo } from "./getBlockInfo";
 
 const NATIVE_ASSET: AssetInfo = { type: "native" };
 
+type ExplorerAssetTransfer = NonNullable<
+  ExplorerInnerTransaction<ExplorerAmount>["asset-transfer-transaction"]
+>;
+
 /**
  * Get a block with all its transactions
  * @param context - The coin-module context (config + logger)
@@ -67,15 +71,7 @@ function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Blo
     const asset: AssetInfo = { type: "asa", assetReference: assetTransfer["asset-id"].toString() };
     const source = assetTransfer.sender ?? tx.sender;
     const closeTo = assetTransfer["close-to"];
-    const ledgerOpType =
-      assetTransfer.amount === 0 &&
-      !assetTransfer.sender &&
-      source === assetTransfer.receiver &&
-      !closeTo
-        ? "OPT_IN"
-        : closeTo && source === tx.sender
-          ? "OPT_OUT"
-          : undefined;
+    const ledgerOpType = getOptInOutType(tx.sender, source, assetTransfer);
     return [
       ...transfer(source, assetTransfer.receiver, asset, BigInt(assetTransfer.amount)),
       ...(closeTo
@@ -86,6 +82,26 @@ function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Blo
   }
 
   return [];
+}
+
+function getOptInOutType(
+  txSender: string,
+  source: string,
+  assetTransfer: ExplorerAssetTransfer,
+): "OPT_IN" | "OPT_OUT" | undefined {
+  const closeTo = assetTransfer["close-to"];
+  if (
+    assetTransfer.amount === 0 &&
+    !assetTransfer.sender &&
+    source === assetTransfer.receiver &&
+    !closeTo
+  ) {
+    return "OPT_IN";
+  }
+  if (closeTo && source === txSender) {
+    return "OPT_OUT";
+  }
+  return undefined;
 }
 
 function transfer(from: string, to: string, asset: AssetInfo, amount: bigint): BlockOperation[] {
