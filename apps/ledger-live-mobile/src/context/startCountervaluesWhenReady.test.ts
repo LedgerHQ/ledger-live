@@ -6,6 +6,11 @@ import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 
 const savedState = { status: {} };
 
+let mockAppAvailabilitySettled = true;
+jest.mock("@features/flow-app-availability", () => ({
+  selectAppAvailabilitySettled: () => mockAppAvailabilitySettled,
+}));
+
 function createStore() {
   const store = configureStore({ reducer: { featureFlags: featureFlagsReducer } });
   const subscriptions = { active: 0 };
@@ -45,6 +50,7 @@ function deferred() {
 describe("startCountervaluesWhenReady", () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    mockAppAvailabilitySettled = true;
   });
 
   afterEach(() => {
@@ -74,6 +80,22 @@ describe("startCountervaluesWhenReady", () => {
     expect(starts).toHaveLength(0);
 
     store.dispatch(setRemoteFlagsReady());
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(starts).toHaveLength(1);
+  });
+
+  it("waits for the OFAC check when the currencies and the remote flags are ready first", async () => {
+    mockAppAvailabilitySettled = false;
+    const { store, appStore, starts } = createStore();
+    store.dispatch(setRemoteFlagsReady());
+
+    void startCountervaluesWhenReady(appStore, savedState, Promise.resolve());
+    await jest.advanceTimersByTimeAsync(0);
+    expect(starts).toHaveLength(0);
+
+    mockAppAvailabilitySettled = true;
+    store.dispatch({ type: "ofac/checkSettled" });
     await jest.advanceTimersByTimeAsync(0);
 
     expect(starts).toHaveLength(1);
