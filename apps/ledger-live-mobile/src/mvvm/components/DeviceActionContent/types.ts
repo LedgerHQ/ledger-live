@@ -5,9 +5,6 @@ import type { DeviceActionAnimationTheme } from "@features/platform-device-actio
 /** Device-side action illustrated by the content animation. */
 export type DeviceActionContentAction = "continue" | "power-and-unlock";
 
-/** Lottie source returned by the device-action animation helper. */
-export type DeviceActionAnimationSource = unknown;
-
 /** Device models supported by DeviceActionContent animations. */
 export type SupportedDeviceActionModelId = Exclude<DeviceModelId, DeviceModelId.blue>;
 
