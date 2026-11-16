@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
+import useEnv from "@features/platform-env";
 import { useTokensData } from "@features/platform-currencies";
 import {
   enabledXrpTokenStandards,
@@ -23,8 +24,10 @@ export function filterTokenOptions(tokens: TokenCurrency[], account: Account): T
 }
 
 export function useTokenOptions(account: Account) {
+  const calRef = useEnv("CAL_REF") || undefined;
   const { data, isLoading, isError, loadNext, refetch } = useTokensData({
     networkFamily: CAL_NETWORK_FAMILY,
+    ref: calRef,
   });
   const tokens = data?.tokens;
 
