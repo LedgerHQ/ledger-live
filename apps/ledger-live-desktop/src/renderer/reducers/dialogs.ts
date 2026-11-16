@@ -30,6 +30,7 @@ export const DIALOG_IDS = [
   "GENERIC_AWARENESS_MODAL",
   "ACCOUNT_PUBLIC_KEY_UNAVAILABLE",
   "XRP_MANAGE_ASSETS",
+  "XRP_ADD_TOKEN",
 ] as const;
 export type DialogId = (typeof DIALOG_IDS)[number];
 

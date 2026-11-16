@@ -7,7 +7,7 @@ import type { XrpFamily } from "../types";
 import { AssetCard } from "./AssetCard";
 import { DeleteAsset } from "./DeleteAsset";
 import { EditAsset } from "./EditAsset";
-import { StepScreen } from "./StepScreen";
+import { StepScreen } from "../components/StepScreen";
 import { useManageAssetsDialogViewModel } from "./useManageAssetsDialogViewModel";
 
 function ManageAssetsDialogContent({ account }: Readonly<{ account: Account }>) {

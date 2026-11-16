@@ -18,13 +18,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { LabelWithInfo } from "../components/LabelWithInfo";
 import {
   formatIssuerFee,
   formatTrustLimit,
@@ -49,26 +49,6 @@ function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.R
         <DescriptionItemValue>{value}</DescriptionItemValue>
       </DescriptionItemTrailing>
     </DescriptionItem>
-  );
-}
-
-function LabelWithInfo({ label, info }: Readonly<{ label: string; info: string }>) {
-  return (
-    <span className="flex items-center gap-4">
-      {label}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            aria-label={label}
-            className="inline-flex cursor-help border-0 bg-transparent p-0"
-          >
-            <Information size={12} aria-hidden="true" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>{info}</TooltipContent>
-      </Tooltip>
-    </span>
   );
 }
 

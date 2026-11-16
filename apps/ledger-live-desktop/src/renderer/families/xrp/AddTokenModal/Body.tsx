@@ -112,7 +112,7 @@ export function getSteps(action: TokenAction, token: TokenCurrency | undefined):
   ];
 }
 
-function toAssetFields(token: TokenCurrency) {
+export function toAssetFields(token: TokenCurrency) {
   const asset = getAssetFromToken(token);
   if (!asset || !("assetReference" in asset)) return {};
 

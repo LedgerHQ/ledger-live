@@ -8,6 +8,7 @@ import { DeviceIntentExecutor } from "LLD/components/DeviceIntentExecutor";
 import { SignatureBroadcastPending } from "LLD/features/Send/screens/Signature/components/SignatureBroadcastPending";
 import { SignatureError } from "LLD/features/Send/screens/Signature/components/SignatureError";
 import type { SignatureExtraProps } from "LLD/features/Send/screens/Signature/intents/signTransactionIntent/types";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { StepScreen } from "../StepScreen";
 import type { SignatureStepsViewModel } from "./useSignatureSteps";
 
@@ -17,10 +18,19 @@ type Props = Readonly<{
   signature: SignatureStepsViewModel;
   successTitle: string;
   successDescription?: React.ReactNode;
+  successCtaLabel?: string;
+  errorTitle?: string;
   onClose: () => void;
 }>;
 
-export function SignatureSteps({ signature, successTitle, successDescription, onClose }: Props) {
+export function SignatureSteps({
+  signature,
+  successTitle,
+  successDescription,
+  successCtaLabel,
+  errorTitle,
+  onClose,
+}: Props) {
   const { t } = useTranslation();
 
   switch (signature.phase) {
@@ -68,16 +78,36 @@ export function SignatureSteps({ signature, successTitle, successDescription, on
             testID="xrp-manage-assets-success"
             title={successTitle}
             description={successDescription}
-            primaryCta={{ label: t("common.close"), onPress: onClose }}
+            primaryCta={{ label: successCtaLabel ?? t("common.close"), onPress: onClose }}
           />
         </StepScreen>
       );
     case "error":
       if (!signature.error) return null;
 
+      if (!errorTitle) {
+        return (
+          <StepScreen onClose={onClose}>
+            <SignatureError error={signature.error} onClose={onClose} onRetry={signature.onReset} />
+          </StepScreen>
+        );
+      }
+
       return (
         <StepScreen onClose={onClose}>
-          <SignatureError error={signature.error} onClose={onClose} onRetry={signature.onReset} />
+          <InfoState
+            preset="error"
+            size="hug"
+            testID="xrp-signature-error"
+            title={errorTitle}
+            description={<TranslatedError error={signature.error} field="title" />}
+            primaryCta={{
+              label: t("xrp.addTokenDialog.error.tryAgain"),
+              onPress: signature.onReset,
+              testID: "xrp-signature-error-retry",
+            }}
+            secondaryCta={{ label: t("common.close"), onPress: onClose }}
+          />
         </StepScreen>
       );
   }

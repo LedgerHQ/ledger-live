@@ -4407,6 +4407,24 @@
         }
       }
     },
+    "addTokenDialog": {
+      "title": "Review asset details",
+      "account": "Account",
+      "asset": "Asset",
+      "transferFeeValue": "{{fee}} per transaction",
+      "networkFee": "Network fee",
+      "lockedAmount": "Locked amount",
+      "lockedAmountTooltip": "The XRP Ledger locks this amount in your account while you hold this asset. You get it back when you remove the asset.",
+      "success": {
+        "title": "Asset added",
+        "description": "You can now make transactions with this asset.",
+        "cta": "Got it"
+      },
+      "error": {
+        "title": "Failed to add asset",
+        "tryAgain": "Try again"
+      }
+    },
     "manageToken": {
       "title": "Manage token",
       "settings": {

@@ -7,9 +7,10 @@ type Props = Readonly<{
   onBack?: () => void;
   onClose: () => void;
   children: React.ReactNode;
+  onScroll?: React.UIEventHandler<HTMLDivElement>;
 }>;
 
-export function StepScreen({ title, description, onBack, onClose, children }: Props) {
+export function StepScreen({ title, description, onBack, onClose, children, onScroll }: Props) {
   if (!title) {
     return (
       <>
@@ -28,7 +29,9 @@ export function StepScreen({ title, description, onBack, onClose, children }: Pr
         onBack={onBack}
         onClose={onClose}
       />
-      <DialogBody className="flex flex-col gap-24 pb-24">{children}</DialogBody>
+      <DialogBody className="flex flex-col gap-24 pb-24" onScroll={onScroll}>
+        {children}
+      </DialogBody>
     </>
   );
 }

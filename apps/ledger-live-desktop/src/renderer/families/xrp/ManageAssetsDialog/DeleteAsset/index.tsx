@@ -3,8 +3,8 @@ import { Trans, useTranslation } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { InfoState } from "@shared/ui-info-state";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { SignatureSteps } from "../Signature";
-import { StepScreen } from "../StepScreen";
+import { SignatureSteps } from "../../components/Signature";
+import { StepScreen } from "../../components/StepScreen";
 import { useDeleteAssetViewModel } from "./useDeleteAssetViewModel";
 
 type Props = Readonly<{

@@ -9,7 +9,7 @@ import type {
   XrpTokenAccount,
   XrpTokenResources,
 } from "@ledgerhq/live-common/families/xrp/types";
-import type BigNumber from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
 
@@ -33,6 +33,16 @@ export function getReleasedReserve(status: TransactionStatus): string | undefine
   if (warning?.name !== "XrpReserveRelease" || !("amount" in warning)) return undefined;
 
   return typeof warning.amount === "string" ? warning.amount : undefined;
+}
+
+export function getLockedReserve(status: TransactionStatus, unit: Unit): BigNumber {
+  const warning = status.warnings.reserve;
+  if (warning?.name !== "XrpReserveIncrease" || !("amount" in warning)) return new BigNumber(0);
+  if (typeof warning.amount !== "string") return new BigNumber(0);
+
+  const [value] = warning.amount.split(" ");
+
+  return new BigNumber(value).shiftedBy(unit.magnitude);
 }
 
 export const getXrpResources = (

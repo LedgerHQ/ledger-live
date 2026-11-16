@@ -24,7 +24,10 @@ describe("xrp add token entry points", () => {
 
     fireEvent.click(screen.getByText("Add token"));
 
-    expect(mockDispatch).toHaveBeenCalledWith(openAddToken);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: "dialogs/openDialog",
+      payload: "XRP_ADD_TOKEN",
+    });
   });
 
   it("opens the add token flow from the Add asset action", () => {

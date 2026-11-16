@@ -3,7 +3,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeOptOutTransaction } from "../../AddTokenModal/Body";
-import { useSignatureSteps } from "../Signature/useSignatureSteps";
+import { useSignatureSteps } from "../../components/Signature/useSignatureSteps";
 
 export function useDeleteAssetViewModel(account: Account, tokenAccount: TokenAccount) {
   const bridge = useAccountBridge<Transaction>(account, undefined);
