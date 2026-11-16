@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId, byText } from "@e2e/helpers/elements/native";
 
 export default class SendPage {
@@ -31,11 +32,11 @@ export default class SendPage {
   // The fee strategy rows have no testID.
   private readonly feeStrategy = (fee: string) => byText(fee);
 
-  @Step("Navigate to send screen {{{0}}}")
-  async navigateToSendScreen(accountName: string, currencyId?: string) {
+  @Step("Navigate to send screen {{{0.accountName}}}")
+  async navigateToSendScreen(accountToDebit: Account, accountName?: string) {
     await app.account.openViaDeeplink();
-    await app.account.goToAccountByName(accountName);
-    await app.account.tapSend(currencyId);
+    await app.account.goToAccountByName(accountName || accountToDebit.accountName);
+    await app.account.tapSend(accountToDebit.currency.id);
   }
 
   @Step("Open send via deeplink")
