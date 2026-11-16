@@ -2,9 +2,15 @@ import isEmpty from "lodash/isEmpty";
 import { bootstrap, store as storeBridge } from "~/renderer/bridge";
 
 type StoreObject = Record<string, unknown>;
+type Mutate = (state: StoreObject) => StoreObject;
+type Mutation = { mutate: Mutate; done: boolean };
 
+// Main persists mutations in the order they are sent: the cache replays the ones that have not
+// failed, in that order, over the last state main is known to hold.
+let persisted: StoreObject = bootstrap.store;
+let queue: Mutation[] = [];
 // Synchronous on purpose: the Recover funnel reads it on first render.
-let cache: StoreObject = bootstrap.store;
+let cache: StoreObject = persisted;
 
 const storeKey = (key: string, storeId: string) => `${storeId}-${key}`;
 
@@ -53,13 +59,40 @@ export function getStoreValue<T>(key: string, storeId: string): T | undefined {
   return isEmpty(value) ? undefined : (value as T);
 }
 
-export function setStoreValue<T>(key: string, value: T, storeId: string) {
-  const path = storePath(key, storeId);
-  if (path.length > 0) cache = writePath(cache, path, value);
-  storeBridge.set(storeKey(key, storeId), value);
+const replay = (mutations: Mutation[], state: StoreObject): StoreObject =>
+  mutations.reduce((next, { mutate }) => mutate(next), state);
+
+async function commit(mutate: Mutate, persist: () => Promise<void>): Promise<void> {
+  const next = mutate(cache);
+  const mutation: Mutation = { mutate, done: false };
+  queue.push(mutation);
+  cache = next;
+  try {
+    await persist();
+    mutation.done = true;
+  } catch (error) {
+    queue = queue.filter(other => other !== mutation);
+    cache = replay(queue, persisted);
+    throw error;
+  } finally {
+    const pending = queue.findIndex(other => !other.done);
+    const settled = pending === -1 ? queue.length : pending;
+    persisted = replay(queue.slice(0, settled), persisted);
+    queue = queue.slice(settled);
+  }
 }
 
-export function resetStore() {
-  cache = {};
-  storeBridge.clear();
+export async function setStoreValue<T>(key: string, value: T, storeId: string): Promise<void> {
+  const path = storePath(key, storeId);
+  await commit(
+    state => (path.length === 0 ? state : writePath(state, path, value)),
+    () => storeBridge.set(storeKey(key, storeId), value),
+  );
+}
+
+export async function resetStore(): Promise<void> {
+  await commit(
+    () => ({}),
+    () => storeBridge.clear(),
+  );
 }
