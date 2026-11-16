@@ -1620,11 +1620,11 @@
       "description": "To stop holding this token, remove it instead."
     },
     "XrpTokenFrozen": {
-      "title": "You can't send this token",
+      "title": "Token is frozen",
       "description": "Its issuer froze it."
     },
     "XrpTokenNotAuthorized": {
-      "title": "You can't send this token",
+      "title": "Your account isn't approved",
       "description": "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive": {
@@ -1671,7 +1671,7 @@
       "description": "Ask them to add it first."
     },
     "XrpRecipientLimitTooLow": {
-      "title": "This recipient's limit is too low",
+      "title": "Recipient limit is too low",
       "description": "They can only receive up to {{maxAmount}} of this token."
     },
     "XrpSendToIssuer": {
