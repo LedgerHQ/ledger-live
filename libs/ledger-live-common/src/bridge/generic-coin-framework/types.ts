@@ -96,7 +96,6 @@ export type GenericTransaction = TransactionCommon & {
   };
   tag?: number | null | undefined;
   nonce?: BigNumber | null | undefined;
-  memo?: string;
   memoType?: string | null;
   memoValue?: string | null;
   data?: Buffer;
