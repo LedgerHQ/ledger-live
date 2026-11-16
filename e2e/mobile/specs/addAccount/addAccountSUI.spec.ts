@@ -3,7 +3,6 @@ import { runAddAccountTest } from "@e2e/specs/addAccount/addAccount";
 
 runAddAccountTest(
   Currency.SUI,
-  // TODO: add the Xray B2CQA id of the Sui add-account test case once it exists
-  [],
+  ["B2CQA-6890"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
 );
