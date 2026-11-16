@@ -37,6 +37,7 @@ const LOG_TYPE = "ConnectKnownOrNewDevice";
 // Shown until the use case emits its first state.
 const INITIAL_STATE: ConnectKnownOrNewDeviceUIState = {
   type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+  isPaused: false,
   devices: [],
   addNewDevice: () => undefined,
 };
@@ -169,10 +170,10 @@ export function useConnectKnownOrNewDeviceViewModel({
       dmk,
       knownDevices$,
       removeKnownDevice: removeDevice,
-      onConnected: (result, options) => {
+      onConnected: result => {
         saveConnectedDevice(result.connectedDevice);
         dispatch(setReadOnlyMode(false));
-        latestRef.current.onConnected(result, options);
+        latestRef.current.onConnected(result);
       },
       isMockServerEnabled,
       getMockServerDevices: () => latestRef.current.mockServerDevices,

@@ -8,7 +8,7 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 
 | Prop                                | What it does                                                                                                                                                                         |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `onConnected(result, { isNewDevice })` | Called each time the user connects a device, also a device that was already connected. The device is already saved. `isNewDevice` is `true` when the device was not known before this connection. |
+| `onConnected(result)`               | Called each time the user connects a device, also a device that was already connected. The device is already saved.                                                                  |
 | `onAddModeChange(isAdding)`         | Called when the Add mode starts and stops. The caller hides the rest of its screen during the Add mode.                                                                             |
 | `isPaused`                          | Stops discovery while the caller uses the device.                                                                                                                                   |
 | `onDeviceNotFound()`                | Optional. Called by the "I don't see my device" button of the Add mode. This button shows only when the caller gives this prop. The component stays in the Add mode.                 |

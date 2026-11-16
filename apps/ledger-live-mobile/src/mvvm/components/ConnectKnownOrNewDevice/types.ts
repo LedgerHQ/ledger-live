@@ -19,11 +19,8 @@ export type ConnectKnownOrNewDeviceDelays = {
 };
 
 export type ConnectKnownOrNewDeviceProps = {
-  /**
-   * Called each time the user connects a device, also a device that was already connected.
-   * `isNewDevice` is `true` when the device was not known before this connection.
-   */
-  onConnected: (result: DeviceConnectionResult, options: { isNewDevice: boolean }) => void;
+  /** Called each time the user connects a device, also a device that was already connected. */
+  onConnected: (result: DeviceConnectionResult) => void;
   /** Called when the Add mode starts and stops. The caller hides the rest of its screen. */
   onAddModeChange: (isAdding: boolean) => void;
   /** Stops discovery while the caller uses the device. */

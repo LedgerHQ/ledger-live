@@ -52,6 +52,7 @@ const nanoXRow = {
 
 const discoveringState: ConnectKnownOrNewDeviceUIState = {
   type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+  isPaused: false,
   devices: [{ ...nanoXRow, connect: jest.fn() }],
   addNewDevice: jest.fn(),
 };
@@ -281,18 +282,16 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
   });
 
   describe("Save", () => {
-    it("GIVEN a running flow, WHEN the flow connects a device, THEN it should call onConnected with isNewDevice", () => {
+    it("GIVEN a running flow, WHEN the flow connects a device, THEN it should call onConnected with the connection result", () => {
       // GIVEN
       const { initialProps } = setup();
       const connectionResult = makeConnectionResult();
 
       // WHEN
-      act(() => lastInput().onConnected(connectionResult, { isNewDevice: true }));
+      act(() => lastInput().onConnected(connectionResult));
 
       // THEN
-      expect(initialProps.onConnected).toHaveBeenCalledWith(connectionResult, {
-        isNewDevice: true,
-      });
+      expect(initialProps.onConnected).toHaveBeenCalledWith(connectionResult);
     });
 
     it("GIVEN a running flow, WHEN the flow connects a device, THEN it should save the device as the last connected device and as a known device", () => {
@@ -300,7 +299,7 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       const { store } = setup();
 
       // WHEN
-      act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
+      act(() => lastInput().onConnected(makeConnectionResult()));
 
       // THEN
       const state = store.getState();
@@ -317,7 +316,7 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       const { store } = setup();
 
       // WHEN
-      act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
+      act(() => lastInput().onConnected(makeConnectionResult()));
 
       // THEN
       expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
@@ -333,7 +332,7 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       lastInput().knownDevices$.subscribe(devices => received.push(devices));
 
       // WHEN
-      act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
+      act(() => lastInput().onConnected(makeConnectionResult()));
 
       // THEN
       expect(received[0]).toEqual([knownNanoX]);

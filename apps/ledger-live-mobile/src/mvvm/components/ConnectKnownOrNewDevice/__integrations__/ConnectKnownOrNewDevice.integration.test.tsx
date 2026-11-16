@@ -114,6 +114,7 @@ describe("ConnectKnownOrNewDevice", () => {
     // WHEN
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
       devices: [{ ...nanoXRow, connect: jest.fn() }],
       addNewDevice: jest.fn(),
     });
@@ -130,17 +131,18 @@ describe("ConnectKnownOrNewDevice", () => {
     const { onConnected, user } = renderComponent();
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
       devices: [{ ...nanoXRow, connect }],
       addNewDevice: jest.fn(),
     });
 
     // WHEN
     await user.press(screen.getByText("My Nano X"));
-    act(() => useCaseInput().onConnected(connectionResult, { isNewDevice: false }));
+    act(() => useCaseInput().onConnected(connectionResult));
 
     // THEN
     expect(connect).toHaveBeenCalledTimes(1);
-    expect(onConnected).toHaveBeenCalledWith(connectionResult, { isNewDevice: false });
+    expect(onConnected).toHaveBeenCalledWith(connectionResult);
   });
 
   it("GIVEN no device, WHEN Add is pressed and then the Add mode is closed, THEN it should open the Add mode, show the pairing flow and close it", async () => {
@@ -150,6 +152,7 @@ describe("ConnectKnownOrNewDevice", () => {
     const { onAddModeChange, user } = renderComponent();
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
       devices: [],
       addNewDevice,
     });

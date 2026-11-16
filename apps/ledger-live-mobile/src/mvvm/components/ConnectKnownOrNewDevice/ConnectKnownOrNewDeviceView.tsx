@@ -67,7 +67,7 @@ export function ConnectKnownOrNewDeviceView({
     <>
       <DeviceSection
         devices={isDiscovering ? state.devices : devices}
-        onAddNewDevice={isDiscovering ? state.addNewDevice : undefined}
+        onAddNewDevice={isDiscovering && !state.isPaused ? state.addNewDevice : undefined}
       >
         {children}
       </DeviceSection>
