@@ -122,6 +122,22 @@ test("exports-to-src: exports and entry fields pointing at lib/ or lib-es/ fail"
   ]);
 });
 
+test("exports-to-src: an entry naming the output directory itself fails", () => {
+  const found = violations({
+    "libs/pkg/package.json": {
+      ...PRIVATE_LIB,
+      main: "lib",
+      module: "./lib-es",
+      exports: { ".": "./lib", "./library": "./src/library.ts" },
+    },
+  });
+  assert.deepEqual(problems(found), [
+    'exports["."] is "./lib": point it at src',
+    'main is "lib": point it at src',
+    'module is "./lib-es": point it at src',
+  ]);
+});
+
 test("exports-to-src: a @ledgerhq/source condition or an array target fails", () => {
   const found = violations({
     "libs/pkg/package.json": {

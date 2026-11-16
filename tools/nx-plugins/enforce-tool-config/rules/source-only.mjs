@@ -23,8 +23,9 @@ export const CHECKS = {
   "no-source-condition": `no Jest, rspack or Re.Pack config sets the ${SOURCE_CONDITION} condition`,
 };
 
-// A path into a build output, e.g. "./lib/index.js", "lib-es/index.d.ts" or "./lib/*".
-const BUILD_OUTPUT = /^(?:\.\/)?lib(?:-es)?\//;
+// A path into a build output, e.g. "./lib/index.js", "lib-es/index.d.ts", "./lib/*" or the
+// output directory itself ("lib", "./lib-es"), which resolves to its index.
+const BUILD_OUTPUT = /^(?:\.\/)?lib(?:-es)?(?:\/|$)/;
 
 const ENTRY_FIELDS = ["main", "module", "types", "typings", "typesVersions", "sideEffects"];
 
