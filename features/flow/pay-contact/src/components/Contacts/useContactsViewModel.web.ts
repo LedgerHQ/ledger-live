@@ -6,9 +6,9 @@ import {
   summarizeContactOperationsByContact,
   useContacts,
 } from "@features/platform-contacts";
-import type { ContactRowViewModel, ContactsTableLabels } from "../../types";
+import type { ContactsTableLabels } from "../../types";
 import type { ContactsProps } from "./Contacts";
-import type { ContactsViewProps } from "./ContactsView";
+import type { ContactRowViewModel, ContactsViewProps } from "./ContactsView";
 
 const noop = () => undefined;
 const EMPTY_OPERATIONS = [] as const;

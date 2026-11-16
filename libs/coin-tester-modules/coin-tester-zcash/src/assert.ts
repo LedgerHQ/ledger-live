@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
-import { findUtxo } from "./utils";
 
 /** Sum of the account's transparent (public pool) UTXOs. */
 export function transparentBalance(account: ZcashAccount): BigNumber {
@@ -48,18 +47,6 @@ export function assertCommonTxProperties(previous: ZcashAccount, current: ZcashA
   expect(latestOperation.type).toBe("OUT");
   expect(current.balance.toFixed()).toBe(previous.balance.minus(latestOperation.value).toFixed());
   return latestOperation;
-}
-
-export function assertUtxoSpent(
-  previous: ZcashAccount,
-  current: ZcashAccount,
-  hash: string,
-  outputIndex: number,
-) {
-  const wasThere = findUtxo(previous, hash, outputIndex);
-  const stillThere = findUtxo(current, hash, outputIndex);
-  expect(wasThere).toBeDefined();
-  expect(stillThere).toBeUndefined();
 }
 
 /** Asserts the transparent pool moved by exactly `delta` (signed, zatoshis) between two syncs. */

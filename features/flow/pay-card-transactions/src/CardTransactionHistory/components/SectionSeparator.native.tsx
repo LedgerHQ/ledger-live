@@ -2,7 +2,8 @@ import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { CardTransactionItem } from "../../types";
-import type { HistorySection } from "./types";
+
+export type HistorySection = Readonly<{ day?: Date; data: readonly CardTransactionItem[] }>;
 
 type SectionSeparatorProps = Readonly<{
   leadingItem?: CardTransactionItem;
