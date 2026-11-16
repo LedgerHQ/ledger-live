@@ -486,9 +486,17 @@ describe("lifecycle products", () => {
   it("posts a terminal through the product that opened the attempt, not the latest claimant", () => {
     const quiet = product({ id: "quiet", reports: () => false });
     sendForProduct(product({ id: "a" }), payload, "app");
-    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "app");
+    sendForProduct(
+      product({ id: "b" }),
+      { ...payload, event: "tx_terminal", outcome: "success" },
+      "app",
+    );
     sendForProduct(quiet, payload, "other");
-    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "other");
+    sendForProduct(
+      product({ id: "b" }),
+      { ...payload, event: "tx_terminal", outcome: "success" },
+      "other",
+    );
 
     expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
       "https://a.example.test/v1/tx/lifecycle",
