@@ -187,6 +187,7 @@
       "FEES" : "ค่าธรรมเนียม",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
+      "OPT_EDIT" : "Token updated",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
       "BOND" : "ผูกมัด",
       "UNBOND" : "ยกเลิกการผูกมัด",
@@ -340,7 +341,15 @@
     "home" : "หน้าหลัก",
     "refer" : "แนะนำเพื่อน",
     "catalog" : "ผู้ให้บริการ",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "Agents"
+  },
+  "agentIntent" : {
+    "title" : "Agents",
+    "manageAgents" : {
+      "title" : "Manage your agents",
+      "description" : "Let AI agents manage your assets."
+    }
   },
   "stars" : {
     "tooltip" : "ติดดาวบัญชี"
@@ -1950,13 +1959,13 @@
       "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
     },
     "info" : {
-      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
-      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "ไม่ต้องเตือนฉันอีก"
     },
     "error" : {
       "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
-      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "ส่ง",
     "totalSpent" : "ยอดรวมที่จะส่ง",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ",
     "sign" : {
       "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
-      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ",
+      "cancelled" : {
+        "title" : "Transaction canceled",
+        "description" : "You rejected the transaction. Your funds won't be affected.",
+        "close" : "Close",
+        "retry" : "Try again"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่าย",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "การตั้งค่าโทเคน",
+      "currentLimitZero" : "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance" : "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "ผู้ตรวจสอบที่จะรับ Reward",
       "compoundReward" : "ผู้ตรวจสอบที่จะได้รับรางวัล",
       "optIn" : "ผู้รับ",
+      "changeTrust" : "recipient",
       "tokenAssociate" : "ผู้รับ",
       "nominate" : "ผู้ตรวจสอบ",
       "stake" : "ผู้ตรวจสอบ",
@@ -8089,11 +8114,15 @@
       "description" : "หากต้องการหยุดถือครองโทเคนนี้ ให้ลบออกแทน"
     },
     "XrpTokenFrozen" : {
-      "title" : "คุณไม่สามารถส่งโทเคนนี้ไปยังผู้รับรายนี้ได้",
-      "description" : "ผู้ออกได้ทำการ Freeze หรือยังไม่ได้อนุมัติให้บัญชีของคุณถือครอง โทเคนที่โดน Freeze ยังสามารถส่งกลับไปยังผู้ออกได้"
+      "title" : "You can't send this token",
+      "description" : "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "You can't send this token",
+      "description" : "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "ผู้รับรายนี้ไม่สามารถรับ {{assetCode}} ได้",
+      "title" : "This recipient can't receive this token",
       "description" : "ผู้รับอาจจำเป็นต้องเพิ่มโทเคนนี้ก่อน หรือผู้ออกไม่อนุญาตให้โอนรายการนี้"
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "ไม่มีบัญชี",
     "review" : "ตรวจสอบ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "formErrors" : {
+      "offline" : "มีปัญหาการเชื่อมต่ออินเทอร์เน็ต",
       "amountExceedsBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "feeAccountEmpty" : "คุณต้องมี {{ticker}} เพิ่มเติมสำหรับค่าธรรมเนียมเครือข่าย",
+      "notEnoughFees" : "คุณต้องมี {{fees}} {{ticker}} เพื่อจ่ายค่าธรรมเนียมเครือข่าย",
+      "amountTooLow" : "ป้อนอย่างน้อย {{amount}} {{ticker}} แล้วลองอีกครั้ง",
+      "amountTooHigh" : "ป้อนไม่เกิน {{amount}} {{ticker}} หรือน้อยกว่านั้น แล้วลองอีกครั้ง",
+      "feeEstimationFailed" : "ระบบไม่สามารถคำนวณค่าธรรมเนียมได้ในตอนนี้ คุณอาจยังไม่ได้ซิงค์บัญชีคริปโตของคุณ โปรดรีสตาร์ทแอป Ledger Wallet แล้วลองอีกครั้ง",
+      "accountNotReady" : "ยังไม่สามารถโอนจากบัญชีนี้ได้ ให้ทำการเปิดบัญชีของคุณขึ้นมา แล้วลองอีกครั้ง",
+      "seiEvmUnlinked" : "ต้องเชื่อมต่อกับบัญชี SEI EVM ก่อนทำการสวอป",
+      "aleoPrivateBalance" : "สวอปได้เฉพาะ {{ticker}} สาธารณะเท่านั้น ปัจจุบันเงินของคุณอยู่ในบัญชีส่วนตัว และไม่สามารถสวอปได้",
+      "tezosUnrevealed" : "คุณยังไม่ได้เปิดใช้งานบัญชี Tezos ของคุณ โปรดส่ง XTZ จำนวนเล็กน้อยก่อนทำการสวอป",
+      "dotMinimumBalance" : "ต้องมีอย่างน้อย {{minValue}} DOT หลังจากการสวอป",
+      "xlmMinimumBalance" : "ต้องมีอย่างน้อย {{minValue}} XLM หลังจากการสวอป",
       "quoteUnavailable" : "ไม่สามารถรับโควตจาก {{provider}} ได้ โปรดลองใช้สินทรัพย์อื่นหรือกลับมาใหม่ในภายหลัง"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "มี {{ticker}} ไม่เพียงพอ",
+        "description" : "บัญชี {{account}} ของคุณมียอดคงเหลือไม่เพียงพอเพื่อจ่ายค่าธรรมเนียมเครือข่าย"
+      },
+      "amountTooLow" : {
+        "title" : "ขั้นต่ำที่ต้องมีสำหรับ {{ticker}}",
+        "description" : "สำหรับโควตนี้ ต้องมีขั้นต่ำ {{amount}} {{ticker}}"
+      },
+      "buy" : "ซื้อ {{ticker}}"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "การลงนามเพื่อฝากเงิน",
+    "genericError" : {
+      "title" : "เกิดข้อผิดพลาดบางอย่าง",
+      "description" : "โปรดลองอีกครั้งในภายหลัง หรือเลือกสินทรัพย์อื่น"
+    },
     "terms" : "เมื่อลงนามในธุรกรรมนี้ ฉันยอมรับ <termsLink>ข้อกำหนดและเงื่อนไขของ SwapKit by NEAR Intents</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "รายละเอียดธุรกรรม",
     "title" : "เติมเงินในสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals)",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "การถอน",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "กลับไปที่ Perps"
   },
   "accountAnalytics" : {
     "assets" : "ตัวกรองสินทรัพย์",
@@ -11451,6 +11510,7 @@
     "allAssets" : "สินทรัพย์ทั้งหมด",
     "allAccounts" : "บัญชีทั้งหมด",
     "error" : "ไม่สามารถโหลดข้อมูลวิเคราะห์ได้ โปรดลองอีกครั้ง",
-    "unavailable" : "ไม่มีข้อมูลสำหรับตัวเลือกนี้"
+    "unavailable" : "ไม่มีข้อมูลสำหรับตัวเลือกนี้",
+    "noResults" : "No results"
   }
 }
