@@ -70,6 +70,7 @@ describe("indexer", () => {
                 amount: 100,
                 "asset-id": 12345,
                 receiver: "RECIPIENT_ADDRESS",
+                sender: "CLAWBACK_SOURCE",
               },
             },
           ],
@@ -79,7 +80,9 @@ describe("indexer", () => {
       const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.transactions[0].type).toBe("axfer");
-      expect(result.transactions[0].details).not.toBeUndefined();
+      expect(result.transactions[0].details).toMatchObject({
+        assetSenderAddress: "CLAWBACK_SOURCE",
+      });
     });
 
     it("should include minRound in URL when provided", async () => {

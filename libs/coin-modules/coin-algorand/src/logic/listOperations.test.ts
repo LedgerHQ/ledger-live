@@ -87,6 +87,39 @@ describe("listOperations", () => {
     expect(items[0].asset).toEqual({ type: "native" });
   });
 
+  it("should include a payment close amount for its sender and close address", async () => {
+    const tx = {
+      id: "TX_CLOSE",
+      type: AlgoTransactionType.PAYMENT,
+      senderAddress: address,
+      fee: new BigNumber("1000"),
+      round: 1000006,
+      timestamp: "1700000600",
+      note: undefined,
+      senderRewards: new BigNumber("0"),
+      recipientRewards: new BigNumber("0"),
+      closeRewards: undefined,
+      details: {
+        amount: new BigNumber("100"),
+        recipientAddress: "RECIPIENT_ADDRESS",
+        closeToAddress: "CLOSE_ADDRESS",
+        closeAmount: new BigNumber("900"),
+      },
+    };
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({
+      items: [{ value: 1000n, tx: { feesPayer: address } }],
+    });
+
+    await expect(
+      listOperations(mockAlgorandContext, "CLOSE_ADDRESS", { order: "desc" }),
+    ).resolves.toMatchObject({ items: [{ type: "IN", value: 900n }] });
+  });
+
   it("should convert asset transfer to operation with asa type", async () => {
     const tx = {
       id: "TX_789",
@@ -116,6 +149,35 @@ describe("listOperations", () => {
     expect(items[0].asset).toEqual({ type: "asa", assetReference: "12345" });
   });
 
+  it("should use the clawback source as the ASA sender", async () => {
+    const tx = {
+      id: "TX_CLAWBACK",
+      type: AlgoTransactionType.ASSET_TRANSFER,
+      senderAddress: "ASSET_MANAGER",
+      fee: new BigNumber("1000"),
+      round: 1000006,
+      timestamp: "1700000600",
+      note: undefined,
+      senderRewards: new BigNumber("0"),
+      recipientRewards: new BigNumber("0"),
+      details: {
+        assetAmount: new BigNumber("100"),
+        assetRecipientAddress: "RECIPIENT_ADDRESS",
+        assetSenderAddress: address,
+        assetId: "12345",
+        assetCloseToAddress: undefined,
+        assetCloseAmount: undefined,
+      },
+    };
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({
+      items: [{ type: "OUT", value: 100n, senders: [address] }],
+    });
+  });
   it("should detect OPT_IN operation", async () => {
     const tx = {
       id: "TX_OPTIN",
@@ -170,6 +232,38 @@ describe("listOperations", () => {
     expect(items[0].type).toBe("OPT_OUT");
   });
 
+  it("should include the ASA close amount in the sender OPT_OUT value", async () => {
+    const tx = {
+      id: "TX_OPTOUT",
+      type: AlgoTransactionType.ASSET_TRANSFER,
+      senderAddress: address,
+      fee: new BigNumber("1000"),
+      round: 1000004,
+      timestamp: "1700000400",
+      note: undefined,
+      senderRewards: new BigNumber("0"),
+      recipientRewards: new BigNumber("0"),
+      details: {
+        assetAmount: new BigNumber("50"),
+        assetRecipientAddress: "RECIPIENT_ADDRESS",
+        assetSenderAddress: undefined,
+        assetId: "11111",
+        assetCloseToAddress: "CLOSE_ADDRESS",
+        assetCloseAmount: new BigNumber("100"),
+      },
+    };
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({
+      items: [{ type: "OPT_OUT", value: 150n }],
+    });
+    await expect(
+      listOperations(mockAlgorandContext, "CLOSE_ADDRESS", { order: "desc" }),
+    ).resolves.toMatchObject({ items: [{ type: "IN", value: 100n }] });
+  });
   it("should include memo when note is present", async () => {
     const tx = {
       id: "TX_MEMO",
@@ -202,7 +296,7 @@ describe("listOperations", () => {
     });
   });
 
-  it("should include rewards in details when present", async () => {
+  it("should create a separate reward operation for rewards credited to the observed account", async () => {
     const tx = {
       id: "TX_REWARDS",
       type: AlgoTransactionType.PAYMENT,
@@ -225,7 +319,16 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items[0].details).toEqual({ rewards: 800n });
+    expect(items).toHaveLength(2);
+    expect(items[0]).toMatchObject({ id: "TX_REWARDS", type: "OUT", value: 1000000n });
+    expect(items[1]).toMatchObject({
+      id: "TX_REWARDS-reward-ALGO_ADDRESS_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      type: "REWARD",
+      value: 500n,
+      senders: [],
+      recipients: [address],
+      tx: { fees: 0n },
+    });
   });
 
   it("should sort operations in descending order", async () => {

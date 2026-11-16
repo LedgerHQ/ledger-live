@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import * as network from "../network";
 import type {
   ExplorerAmount,
@@ -6,9 +7,13 @@ import type {
 } from "../network/types";
 import { mockAlgorandConfig, mockAlgorandContext } from "../test/context";
 import { getBlock } from "./getBlock";
+import { listOperations } from "./listOperations";
 
 jest.mock("../network");
 
+const mockGetAccountTransactions = network.getAccountTransactions as jest.MockedFunction<
+  typeof network.getAccountTransactions
+>;
 const mockGetBlock = network.getBlock as jest.MockedFunction<typeof network.getBlock>;
 const mockGetBlockHash = network.getBlockHash as jest.MockedFunction<typeof network.getBlockHash>;
 const mockGetBlockTransactions = network.getBlockTransactions as jest.MockedFunction<
@@ -155,9 +160,27 @@ describe("getBlock", () => {
       { type: "transfer", address: BOB, peer: ALICE, asset: USDC, amount: 250n },
       { type: "transfer", address: ALICE, peer: CAROL, asset: USDC, amount: -750n },
       { type: "transfer", address: CAROL, peer: ALICE, asset: USDC, amount: 750n },
+      { type: "other", address: ALICE, asset: USDC, ledgerOpType: "OPT_OUT" },
     ]);
   });
 
+  it("adds an OPT_IN operation to a zero self-transfer without a close address", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].operations).toContainEqual({
+      type: "other",
+      address: ALICE,
+      asset: USDC,
+      ledgerOpType: "OPT_IN",
+    });
+  });
   it("takes a clawback from the revoked account, not from the asset manager", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
@@ -302,9 +325,95 @@ describe("getBlock", () => {
       { type: "transfer", address: BOB, peer: ALICE, asset: USDC, amount: 0n },
       { type: "transfer", address: ALICE, peer: CAROL, asset: USDC, amount: 0n },
       { type: "transfer", address: CAROL, peer: ALICE, asset: USDC, amount: 0n },
+      { type: "other", address: ALICE, asset: USDC, ledgerOpType: "OPT_OUT" },
     ]);
   });
 
+  it("keeps signed list operation amounts consistent with block transfers by address and asset", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "PAY",
+        "payment-transaction": payment(100, BOB, { amount: 900, to: CAROL }),
+      }),
+      transaction({
+        id: "ASA",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({
+          amount: 250,
+          "close-amount": 750,
+          "close-to": CAROL,
+        }),
+      }),
+    ]);
+    mockGetAccountTransactions.mockResolvedValue({
+      nextToken: undefined,
+      transactions: [
+        {
+          id: "PAY",
+          type: "pay",
+          senderAddress: ALICE,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          closeRewards: undefined,
+          closeAmount: undefined,
+          fee: new BigNumber(1000),
+          timestamp: "1793724956",
+          round: HEIGHT,
+          note: "",
+          details: {
+            amount: new BigNumber(100),
+            closeAmount: new BigNumber(900),
+            closeToAddress: CAROL,
+            recipientAddress: BOB,
+          },
+        },
+        {
+          id: "ASA",
+          type: "axfer",
+          senderAddress: ALICE,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          closeRewards: undefined,
+          closeAmount: undefined,
+          fee: new BigNumber(1000),
+          timestamp: "1793724956",
+          round: HEIGHT,
+          note: "",
+          details: {
+            assetAmount: new BigNumber(250),
+            assetCloseAmount: new BigNumber(750),
+            assetCloseToAddress: CAROL,
+            assetId: "31566704",
+            assetRecipientAddress: BOB,
+            assetSenderAddress: undefined,
+          },
+        },
+      ],
+    });
+
+    const [block, { items }] = await Promise.all([
+      getBlock(mockAlgorandContext, HEIGHT),
+      listOperations(mockAlgorandContext, ALICE, { order: "asc" }),
+    ]);
+    const blockAmounts = block.transactions
+      .flatMap(blockTransaction => blockTransaction.operations)
+      .reduce((amounts, operation) => {
+        if (operation.type === "transfer" && operation.address === ALICE) {
+          const assetReference = operation.asset.assetReference ?? "native";
+          amounts.set(assetReference, (amounts.get(assetReference) ?? 0n) + operation.amount);
+        }
+        return amounts;
+      }, new Map<string, bigint>());
+    const listAmounts = items.reduce((amounts, operation) => {
+      const assetReference = operation.asset.assetReference ?? "native";
+      const signedValue =
+        operation.type === "IN" || operation.type === "REWARD" ? operation.value : -operation.value;
+      amounts.set(assetReference, (amounts.get(assetReference) ?? 0n) + signedValue);
+      return amounts;
+    }, new Map<string, bigint>());
+
+    expect(listAmounts).toEqual(blockAmounts);
+  });
   it("does not query the indexer for a round the node does not know", async () => {
     mockGetBlockHash.mockRejectedValue(new Error("failed to retrieve information from the ledger"));
 

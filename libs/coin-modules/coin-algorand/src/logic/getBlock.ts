@@ -67,11 +67,18 @@ function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Blo
     const asset: AssetInfo = { type: "asa", assetReference: assetTransfer["asset-id"].toString() };
     const source = assetTransfer.sender ?? tx.sender;
     const closeTo = assetTransfer["close-to"];
+    const ledgerOpType =
+      assetTransfer.amount === 0 && source === assetTransfer.receiver && !closeTo
+        ? "OPT_IN"
+        : closeTo && source === tx.sender
+          ? "OPT_OUT"
+          : undefined;
     return [
       ...transfer(source, assetTransfer.receiver, asset, BigInt(assetTransfer.amount)),
       ...(closeTo
         ? transfer(source, closeTo, asset, BigInt(assetTransfer["close-amount"] ?? 0))
         : []),
+      ...(ledgerOpType ? [{ type: "other" as const, address: source, asset, ledgerOpType }] : []),
     ];
   }
 
@@ -88,10 +95,11 @@ function transfer(from: string, to: string, asset: AssetInfo, amount: bigint): B
 // Participation rewards are credited to the accounts a transaction touches
 function toRewardOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): BlockOperation[] {
   const payment = tx["payment-transaction"];
+  const assetTransfer = tx["asset-transfer-transaction"];
   const rewards: [string | undefined, ExplorerAmount][] = [
     [tx.sender, tx["sender-rewards"]],
-    [payment?.receiver ?? tx["asset-transfer-transaction"]?.receiver, tx["receiver-rewards"]],
-    [payment?.["close-remainder-to"], tx["close-rewards"]],
+    [payment?.receiver ?? assetTransfer?.receiver, tx["receiver-rewards"]],
+    [payment?.["close-remainder-to"] ?? assetTransfer?.["close-to"], tx["close-rewards"]],
   ];
 
   return rewards
