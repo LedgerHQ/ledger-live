@@ -9,6 +9,8 @@ set -euo pipefail
 
 log_dir="${1:?log directory}"
 read -ra avd_options <<< "${AVD_OPTIONS:-}"
+avd_options=("${avd_options[@]/#lavapipe/swiftshader_indirect}")
+echo "emulator options: ${avd_options[*]}"
 BOOT_TIMEOUT_S=900
 CELLULAR_POLLS=30
 IDLE_TIMEOUT_S=900
@@ -37,6 +39,9 @@ prepare() {
   adb -s "$serial" shell settings put global stay_on_while_plugged_in 3
   adb -s "$serial" shell settings put system screen_off_timeout 2147483647
   echo "$serial booted, $(adb -s "$serial" shell nproc | tr -d '\r') CPUs"
+  adb -s "$serial" shell dumpsys SurfaceFlinger | grep -m1 'GLES:' || true
+  adb -s "$serial" shell wm size
+  adb -s "$serial" shell wm density
 }
 
 # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh).
