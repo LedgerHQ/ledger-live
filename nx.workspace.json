@@ -385,7 +385,7 @@
       ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "^build"],
       "cache": true,
       "inputs": [
         "default",

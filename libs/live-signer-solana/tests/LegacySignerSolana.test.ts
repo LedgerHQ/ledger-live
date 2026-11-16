@@ -2,6 +2,12 @@ import Solana from "@ledgerhq/hw-app-solana";
 import { LegacySignerSolana } from "../src/LegacySignerSolana";
 import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
 import * as loadPKIModule from "@ledgerhq/hw-bolos";
+
+// A plain copy of the module, so jest.spyOn can redefine loadPKI.
+jest.mock("@ledgerhq/hw-bolos", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/hw-bolos"),
+}));
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "../src/errors";
 import { DeviceModelId } from "@ledgerhq/devices";

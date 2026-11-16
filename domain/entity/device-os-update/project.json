@@ -1,8 +1,0 @@
-{
-  "name": "@domain/entity-device-os-update",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}
