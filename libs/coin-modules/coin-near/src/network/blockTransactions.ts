@@ -30,7 +30,7 @@ const fetchTransactionPages = async (
   config: NearConfig,
   blockHash: string,
   cursor: string | undefined,
-  seenCursors: ReadonlySet<string>,
+  seenCursors: Set<string>,
   collected: NearTransaction[],
 ): Promise<NearTransaction[]> => {
   const params = new URLSearchParams({ block: blockHash, limit: String(MAX_PAGE_SIZE) });
@@ -43,23 +43,19 @@ const fetchTransactionPages = async (
     `/v3/txns?${params.toString()}`,
   );
   const page = body.data ?? [];
-  const transactions = [...collected, ...page];
+  collected.push(...page);
   const nextCursor = body.meta?.next_page;
 
   if (!nextCursor) {
-    return transactions;
+    return collected;
   }
   if (page.length === 0 || seenCursors.has(nextCursor)) {
     throw new Error(`Near: the indexer cursor does not advance for block ${blockHash}`);
   }
 
-  return fetchTransactionPages(
-    config,
-    blockHash,
-    nextCursor,
-    new Set([...seenCursors, nextCursor]),
-    transactions,
-  );
+  seenCursors.add(nextCursor);
+
+  return fetchTransactionPages(config, blockHash, nextCursor, seenCursors, collected);
 };
 
 export const fetchBlockTransactions = (
