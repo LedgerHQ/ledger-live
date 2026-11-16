@@ -23,7 +23,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
-import type { StepProps } from "../types";
+import type { StepProps, TokenAction } from "../types";
 
 export function Row({
   label,
@@ -61,8 +61,13 @@ function LabelWithInfo(props: Readonly<{ label: string; info: React.ReactNode }>
   );
 }
 
-function NotActivatedBanner(
-  props: Readonly<{ error: Error; account: Account; onClose: () => void }>,
+function GetXrpBanner(
+  props: Readonly<{
+    title: React.ReactNode;
+    children?: React.ReactNode;
+    account: Account;
+    onClose: () => void;
+  }>,
 ) {
   const { account } = props;
   const dispatch = useDispatch();
@@ -89,8 +94,8 @@ function NotActivatedBanner(
   };
 
   return (
-    <Alert type="error" mb={4} title={<TranslatedError error={props.error} field="title" noLink />}>
-      <TranslatedError error={props.error} field="description" />
+    <Alert type="error" mb={4} title={props.title}>
+      {props.children}
       <Box horizontal mt={2} flow={4}>
         <TextButton onClick={onReceive}>
           <Trans i18nKey="xrp.addToken.steps.review.receive" />
@@ -103,6 +108,41 @@ function NotActivatedBanner(
       </Box>
     </Alert>
   );
+}
+
+function StatusErrorBanner(
+  props: Readonly<{ error: Error; action: TokenAction; account: Account; onClose: () => void }>,
+) {
+  const { error, account, onClose } = props;
+
+  if (error.name === "XrpAccountNotActivated") {
+    return (
+      <GetXrpBanner
+        title={<TranslatedError error={error} field="title" noLink />}
+        account={account}
+        onClose={onClose}
+      >
+        <TranslatedError error={error} field="description" />
+      </GetXrpBanner>
+    );
+  }
+
+  // Missing XRP on an edit only means the network fee, which the generic message covers
+  if (error.name === "NotEnoughSpendableBalance" && props.action === "add") {
+    const minimumAmount = "minimumAmount" in error ? error.minimumAmount : undefined;
+
+    return (
+      <GetXrpBanner
+        title={
+          <Trans i18nKey="xrp.addToken.steps.review.notEnoughReserve" values={{ minimumAmount }} />
+        }
+        account={account}
+        onClose={onClose}
+      />
+    );
+  }
+
+  return <ErrorBanner error={error} />;
 }
 
 function TextButton(props: Readonly<{ onClick: () => void; children: React.ReactNode }>) {
@@ -127,6 +167,7 @@ export default function StepReview({
   token,
   error,
   isRippling,
+  action,
 }: StepProps) {
   invariant(account && transaction && token, "xrp: account, transaction and token required");
 
@@ -144,18 +185,15 @@ export default function StepReview({
     <Box flow={1}>
       <TrackScreen category="XRP add token" name="Step Review" />
       {error ? <ErrorBanner error={error} /> : null}
-      {errors.map(statusError =>
-        statusError.name === "XrpAccountNotActivated" ? (
-          <NotActivatedBanner
-            key={statusError.name}
-            error={statusError}
-            account={getMainAccount(account, parentAccount)}
-            onClose={onClose}
-          />
-        ) : (
-          <ErrorBanner key={statusError.name} error={statusError} />
-        ),
-      )}
+      {errors.map(statusError => (
+        <StatusErrorBanner
+          key={statusError.name}
+          error={statusError}
+          action={action}
+          account={getMainAccount(account, parentAccount)}
+          onClose={onClose}
+        />
+      ))}
       {warnings.map(warning => (
         <ErrorBanner key={warning.name} error={warning} warning />
       ))}

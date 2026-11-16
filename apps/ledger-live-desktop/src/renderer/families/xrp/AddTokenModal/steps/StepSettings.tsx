@@ -22,11 +22,17 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
 
-// An unfunded account is told on the review step, with its Receive and Buy actions
+const LIMIT_ERRORS = new Set([
+  "XrpTrustLimitZero",
+  "XrpTrustLimitTooHigh",
+  "XrpAmountPrecisionExceeded",
+]);
+
+// Other amount errors, like missing XRP, show on the review step with its Receive and Buy actions
 function getLimitError(status: TransactionStatus): Error | undefined {
   const amountError = status.errors.amount;
 
-  return amountError?.name === "XrpAccountNotActivated" ? undefined : amountError;
+  return amountError && LIMIT_ERRORS.has(amountError.name) ? amountError : undefined;
 }
 
 export default function StepSettings({

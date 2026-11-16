@@ -110,16 +110,19 @@ describe("StepSettings", () => {
     expect(amount).toEqual(MAX_TRUST_LIMIT);
   });
 
-  it("shows an amount error while Max is on", () => {
+  it("leaves missing XRP to the review step", async () => {
     const error = new NotEnoughSpendableBalance("", { minimumAmount: "1.2 XRP" });
     const props = makeStepProps({
       transaction: { ...optIn, amount: MAX_TRUST_LIMIT },
       status: makeStatus({ amount: error }),
     });
+    const { user } = renderWithFooter(props);
 
-    render(<StepSettings {...props} />);
+    await user.click(screen.getByText("Continue"));
 
-    expect(screen.getByText("Balance cannot be below 1.2 XRP")).toBeVisible();
+    expect(screen.queryByText("Balance cannot be below 1.2 XRP")).not.toBeInTheDocument();
+    expect(props.transitionTo).toHaveBeenCalledTimes(1);
+    expect(props.transitionTo).toHaveBeenCalledWith("review");
   });
 
   it("leaves an unactivated account to the review step", async () => {

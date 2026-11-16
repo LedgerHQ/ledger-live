@@ -2,6 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { HttpResponse, http, server } from "tests/server";
+import { NotEnoughSpendableBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import {
   XrpAccountNotActivated,
@@ -158,6 +159,27 @@ describe("StepReview", () => {
 
     expect(screen.getByRole("button", { name: "Receive" })).toBeVisible();
     expect(screen.queryByRole("button", { name: BUY_LABEL })).not.toBeInTheDocument();
+  });
+
+  it("asks for the XRP an added token locks, with Receive", () => {
+    const error = new NotEnoughSpendableBalance("", { minimumAmount: "1.6 XRP" });
+
+    renderReview({ status: makeStatus({ amount: error }) });
+
+    expect(
+      screen.getByText("You need at least 1.6 XRP available to add this token."),
+    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "Receive" })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Continue/ })).toBeDisabled();
+  });
+
+  it("shows missing XRP on an edit without Receive", () => {
+    const error = new NotEnoughSpendableBalance("", { minimumAmount: "1.6 XRP" });
+
+    renderReview({ action: "edit", status: makeStatus({ amount: error }) });
+
+    expect(screen.getByText("Balance cannot be below 1.6 XRP")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Receive" })).not.toBeInTheDocument();
   });
 
   it("shows no Receive action for another error", () => {

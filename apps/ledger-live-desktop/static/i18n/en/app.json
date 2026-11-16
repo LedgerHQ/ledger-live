@@ -4345,6 +4345,7 @@
           "issuerFee": "Issuer fee",
           "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
           "issuerFeeUnavailable": "Not available",
+          "notEnoughReserve": "You need at least {{minimumAmount}} available to add this token.",
           "receive": "Receive"
         },
         "connectDevice": {
