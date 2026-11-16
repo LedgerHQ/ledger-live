@@ -1,5 +1,5 @@
 import { ApiPromise, HttpProvider } from "@polkadot/api";
-import { polkadotMainnetConfigValue } from "../../test/config.fixture";
+import { polkadotDefaults } from "../../config";
 import getApiPromise from "./apiPromise";
 import { fetchValidators } from "./validators";
 
@@ -8,13 +8,13 @@ jest.mock("./apiPromise");
 describe("fetchValidators", () => {
   let provider: HttpProvider;
   beforeAll(async () => {
-    provider = new HttpProvider("https://polkadot-asset-hub-fullnodes.api.live.ledger.com");
+    provider = new HttpProvider(polkadotDefaults.assethub_polkadot.node.url);
     const api = await ApiPromise.create({ provider: provider as any, noInitWarn: true });
     (getApiPromise as jest.Mock).mockResolvedValue(api);
   });
 
   it("should not exceed 40 RPC API calls to fetch all validators", async () => {
-    const result = await fetchValidators(polkadotMainnetConfigValue);
+    const result = await fetchValidators(polkadotDefaults.assethub_polkadot);
     expect(result.length).toBeGreaterThan(300);
     const requestCount = provider.stats.total.requests;
     expect(requestCount).toBeGreaterThan(0); // should have made at least one request

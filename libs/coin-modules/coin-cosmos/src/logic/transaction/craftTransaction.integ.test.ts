@@ -1,5 +1,6 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { makeTestApi, makeTestConfig, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { craftTransaction, CosmosCraftedTransaction } from "./craftTransaction";
 
 const SENDER = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -15,8 +16,9 @@ const sendIntent = {
 
 describe("craftTransaction (integ, Cosmos Hub)", () => {
   it("produces a non-empty, JSON-parseable crafted transaction for a minimal send intent", async () => {
-    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
-    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const config = cosmosDefaults.cosmos;
+    coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+    const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
     const crafted = await craftTransaction(config, api, "cosmos", sendIntent);
 

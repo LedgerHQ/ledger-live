@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
@@ -7,10 +7,7 @@ import { decodeTransaction } from "./utils";
 
 const mockLogger: Logger = (..._args: unknown[]) => {};
 
-const mockConfig = {
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-} as TronCoinConfig;
+const mockConfig = tronDefaults.tron as TronCoinConfig;
 
 describe("Testing craftTransaction function", () => {
   it("should create a valid transaction with minimum required fields", async () => {

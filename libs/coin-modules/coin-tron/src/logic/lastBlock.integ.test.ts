@@ -1,13 +1,10 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import { lastBlock } from "./lastBlock";
 
 const mockLogger: Logger = jest.fn();
 
-const mockConfig = {
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-} as TronCoinConfig;
+const mockConfig = tronDefaults.tron as TronCoinConfig;
 
 describe("lastBlock", () => {
   it("returns last block info", async () => {
