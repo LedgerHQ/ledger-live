@@ -112,6 +112,37 @@ describe("AccountDelegations (Web)", () => {
     expect(claim).toHaveAccessibleDescription("No rewards yet");
   });
 
+  it("explains a rounded cell with its exact value on hover", () => {
+    renderDelegations({
+      rows: [
+        row({
+          cells: {
+            delegated: { value: "<0.0001 SOL", sensitive: true, tooltip: "0.000013492 SOL" },
+          },
+        }),
+      ],
+    });
+
+    expect(screen.getByText("<0.0001 SOL")).toHaveAttribute("tabindex", "0");
+    expect(screen.getByText("0.000013492 SOL")).toBeInTheDocument();
+  });
+
+  it("does not reveal the exact value of a sensitive cell in discreet mode", () => {
+    renderDelegations({
+      discreet: true,
+      rows: [
+        row({
+          cells: {
+            delegated: { value: "<0.0001 SOL", sensitive: true, tooltip: "0.000013492 SOL" },
+          },
+        }),
+      ],
+    });
+
+    expect(screen.queryByText("0.000013492 SOL")).toBeNull();
+    expect(screen.queryByText("<0.0001 SOL")).toBeNull();
+  });
+
   it("lets keyboard users reach the explanation of a status", () => {
     const { container } = render(
       <StatusTag status={{ label: "Active", appearance: "success", tooltip: "Earning rewards" }} />,
