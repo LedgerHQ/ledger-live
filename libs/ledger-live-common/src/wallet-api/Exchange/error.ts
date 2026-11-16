@@ -102,6 +102,13 @@ export function createTronifyPriceAboveApproved(offeredBaseUnits: string): Excha
   };
 }
 
+export function createTronifyRentPending(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_RENT_PENDING",
+    message: "tronify energy rented for this account has not landed yet",
+  };
+}
+
 export function createTronifyOrderFailed(reason: string): ExchangeErrorData {
   return {
     code: "TRONIFY_ORDER_FAILED",

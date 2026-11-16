@@ -20,7 +20,10 @@ import {
   type SponsoredFeeAsset,
 } from "../../bridge/generic-coin-framework/sponsored";
 import type { GenericTransaction } from "../../bridge/generic-coin-framework/types";
-import { PENDING_RENT_EXPIRY_MARGIN_MS } from "../../flows/send/sponsored/pendingRents";
+import {
+  getPendingRent,
+  PENDING_RENT_EXPIRY_MARGIN_MS,
+} from "../../flows/send/sponsored/pendingRents";
 import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
@@ -31,6 +34,7 @@ import {
   createTronifyOrderFailed,
   createTronifyPriceAboveApproved,
   createTronifyQuoteFailed,
+  createTronifyRentPending,
   createTronifyUnavailable,
   createTronifyUnsupportedAccount,
   createTronifyUnsupportedTransfer,
@@ -83,7 +87,9 @@ function assertTronifyEnabled(getFeature: GetFeatureFn | undefined): void {
 }
 
 async function loadTronifySeam(payer: Account): Promise<SponsoredCoinApi> {
-  const seam = await getSponsoredCoinApi(payer.currency.id, SEAM_KIND);
+  const seam = await getSponsoredCoinApi(payer.currency.id, SEAM_KIND).catch(() => {
+    throw new ExchangeError(createTronifyUnavailable());
+  });
   if (!seam) throw new ExchangeError(createTronifyUnavailable());
   return seam;
 }
@@ -177,7 +183,8 @@ export async function getTronifyQuote(
 
 export type TronifyRentOrder = {
   orderId: string;
-  accountId: string;
+  /** The TRON account: energy and pending rents are per TRON account, not per token. */
+  mainAccountId: string;
   payerAddress: string;
   transaction: unknown;
   paymentTxId: string;
@@ -202,16 +209,19 @@ export function getTronifyRentOrder(orderId: string): TronifyRentOrder | undefin
 
 const latestRentRequestByAccount = new Map<string, object>();
 
-function startRentRequest(accountId: string): () => boolean {
+function startRentRequest(mainAccountId: string): () => boolean {
   const request = {};
-  latestRentRequestByAccount.set(accountId, request);
-  return () => latestRentRequestByAccount.get(accountId) === request;
+  latestRentRequestByAccount.set(mainAccountId, request);
+  return () => latestRentRequestByAccount.get(mainAccountId) === request;
 }
+
+const replacedRentOrder = () =>
+  new ExchangeError(createTronifyOrderFailed("a newer rent order replaced this one"));
 
 function keepRentOrder(order: TronifyRentOrder): void {
   pruneUnsignableRentOrders(Date.now());
   for (const [orderId, kept] of rentOrders) {
-    if (kept.accountId === order.accountId) rentOrders.delete(orderId);
+    if (kept.mainAccountId === order.mainAccountId) rentOrders.delete(orderId);
   }
   rentOrders.set(order.orderId, order);
 }
@@ -230,9 +240,19 @@ async function orderRentPayment(
   seam: SponsoredCoinApi,
   sender: TronSender,
   params: CreateTronifyRentRecordParams,
+  isLatestRentRequest: () => boolean,
 ) {
   const intent = await buildTransferIntent(sender, params);
+  // The Send flow offers Tronify on a USDT transfer short of energy only; the rent request alone
+  // would rent for any TRC-20 transfer, even one the account already has the energy for.
+  const options = await seam.listFeeOptions(intent);
+  if (!options.some(option => option.id === seam.feeOptionId)) {
+    throw new ExchangeError(
+      createTronifyUnsupportedTransfer("only a USDT transfer short of energy can rent"),
+    );
+  }
   const request = await seam.buildEnergyRentRequest(intent, BigInt(params.approvedFee));
+  if (!isLatestRentRequest()) throw replacedRentOrder();
   const order = await seam.craftEnergyRentTransaction(request);
   const signableUntilMs = order.paymentExpiresAt - PENDING_RENT_EXPIRY_MARGIN_MS;
   if (!Number.isFinite(signableUntilMs) || signableUntilMs <= Date.now()) {
@@ -243,6 +263,7 @@ async function orderRentPayment(
 }
 
 function toRentOrderError(seam: SponsoredCoinApi, error: unknown): ExchangeError {
+  if (error instanceof ExchangeError) return error;
   const rejection = seam.classifyRentOrderError(error);
   if (rejection?.reason === "insufficientBalance") {
     return new ExchangeError(createTronifyInsufficientBalance());
@@ -265,23 +286,24 @@ export async function createTronifyRentRecord(
   assertTronifyEnabled(getFeature);
 
   const sender = resolveTronSender(params.fromAccountId, accounts);
-  const isLatestRentRequest = startRentRequest(sender.tokenAccount.id);
+  // A rent the Send flow paid has not landed yet: a second one would pay for the same energy.
+  if (getPendingRent(sender.payer.id)) throw new ExchangeError(createTronifyRentPending());
+  const isLatestRentRequest = startRentRequest(sender.payer.id);
   const seam = await loadTronifySeam(sender.payer);
 
   const { request, order, toSign, paymentTxId, signableUntilMs } = await orderRentPayment(
     seam,
     sender,
     params,
+    isLatestRentRequest,
   ).catch(error => {
     throw toRentOrderError(seam, error);
   });
-  if (!isLatestRentRequest()) {
-    throw new ExchangeError(createTronifyOrderFailed("a newer rent order replaced this one"));
-  }
+  if (!isLatestRentRequest()) throw replacedRentOrder();
 
   keepRentOrder({
     orderId: order.orderId,
-    accountId: sender.tokenAccount.id,
+    mainAccountId: sender.payer.id,
     payerAddress: request.payerAddress,
     transaction: order.transaction,
     paymentTxId,

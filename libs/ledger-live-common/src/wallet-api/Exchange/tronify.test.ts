@@ -4,6 +4,10 @@ import { deserializeError, serializeError } from "@ledgerhq/wallet-api-core";
 import { buildGenericTransactionIntent } from "../../bridge/generic-coin-framework/buildIntent";
 import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
 import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
+import {
+  recordPendingRent,
+  resetPendingRentsForTests,
+} from "../../flows/send/sponsored/pendingRents";
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import {
@@ -360,6 +364,10 @@ describe("createTronifyRentRecord", () => {
   };
   const TRANSACTION = { txID: "ab12", raw_data_hex: "0a02beef" };
 
+  const TRONIFY_OPTION = { id: "tronify", feeAsset: { type: "trc20" } };
+  const STANDARD_OPTION = { id: "standard", feeAsset: { type: "native" } };
+
+  const listFeeOptions = jest.fn();
   const buildEnergyRentRequest = jest.fn();
   const craftEnergyRentTransaction = jest.fn();
   const classifyRentOrderError = jest.fn();
@@ -386,8 +394,11 @@ describe("createTronifyRentRecord", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    resetPendingRentsForTests();
     orderId = `order-${++orderSeq}`;
     mockGetSponsoredCoinApi.mockResolvedValue({
+      feeOptionId: TRONIFY_OPTION.id,
+      listFeeOptions,
       buildEnergyRentRequest,
       craftEnergyRentTransaction,
       classifyRentOrderError,
@@ -396,6 +407,7 @@ describe("createTronifyRentRecord", () => {
     mockGenericValidateAddress.mockReturnValue(validateAddress);
     validateAddress.mockResolvedValue(true);
     mockBuildIntent.mockResolvedValue(INTENT as never);
+    listFeeOptions.mockResolvedValue([TRONIFY_OPTION, STANDARD_OPTION]);
     buildEnergyRentRequest.mockResolvedValue(REQUEST);
     craftEnergyRentTransaction.mockImplementation(async () => ({
       orderId,
@@ -446,13 +458,108 @@ describe("createTronifyRentRecord", () => {
 
     expect(getTronifyRentOrder(result.orderId)).toEqual({
       orderId,
-      accountId: usdtAccount.id,
+      mainAccountId: tronAccount.id,
       payerAddress: TRON_ADDRESS,
       transaction: TRANSACTION,
       paymentTxId: result.paymentTxId,
       energyNeeded: 64_285n,
       signableUntilMs: paymentExpiresAt - 30_000,
     });
+  });
+
+  it("drops the order once its payment is within 30s of expiring", async () => {
+    jest.useFakeTimers({ now: 1_000_000 });
+    try {
+      craftEnergyRentTransaction.mockResolvedValue({
+        orderId,
+        transaction: TRANSACTION,
+        payCoinCode: "USDT",
+        payCoinAmt: "2.31",
+        paymentExpiresAt: 1_000_000 + 60_000,
+      });
+      await createRecord(rentParams());
+
+      jest.setSystemTime(1_000_000 + 29_999);
+      expect(getTronifyRentOrder(orderId)).toMatchObject({ orderId });
+      jest.setSystemTime(1_000_000 + 30_000);
+      expect(getTronifyRentOrder(orderId)).toBeUndefined();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("keeps one order per TRON account, whichever of its tokens sent", async () => {
+    const usdcAccount = tokenAccount(`${tronAccount.id}+usdc`, "trc20");
+    setWalletApiIdForAccountId(usdcAccount.id);
+    const first = await createTronifyRentRecord(
+      rentParams({ fromAccountId: walletId(usdcAccount) }),
+      {
+        accounts: [...accounts, usdcAccount],
+        getFeature: flagOn,
+      },
+    );
+    orderId = `order-${++orderSeq}`;
+    const second = await createRecord(rentParams());
+
+    expect(getTronifyRentOrder(first.orderId)).toBeUndefined();
+    expect(getTronifyRentOrder(second.orderId)).toMatchObject({ mainAccountId: tronAccount.id });
+  });
+
+  it("rejects a transfer the Send flow would not offer Tronify for", async () => {
+    listFeeOptions.mockResolvedValue([STANDARD_OPTION]);
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_UNSUPPORTED_TRANSFER",
+    });
+    expect(listFeeOptions).toHaveBeenCalledWith(INTENT);
+    expect(buildEnergyRentRequest).not.toHaveBeenCalled();
+    expectNoOrder();
+  });
+
+  it("rejects while a rent the Send flow paid has not landed", async () => {
+    recordPendingRent(
+      {
+        mainAccountId: tronAccount.id,
+        orderId: "send-order",
+        payerAddress: TRON_ADDRESS,
+        paymentTxId: "cd34",
+        receiverAddress: TRON_ADDRESS,
+        energyNeeded: 64_285n,
+      },
+      Date.now() + 60_000,
+    );
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_RENT_PENDING",
+    });
+    expect(mockGetSponsoredCoinApi).not.toHaveBeenCalled();
+    expectNoOrder();
+  });
+
+  it("rejects with an explicit code when the Tronify module fails to load", async () => {
+    mockGetSponsoredCoinApi.mockRejectedValue(new Error("ChunkLoadError"));
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      name: "ExchangeError",
+      cause: "TRONIFY_UNAVAILABLE",
+    });
+    expectNoOrder();
+  });
+
+  it("creates no order for a request a newer one replaced before ordering", async () => {
+    let resolveOlder: (request: unknown) => void = () => {};
+    buildEnergyRentRequest.mockImplementationOnce(
+      () => new Promise(resolve => (resolveOlder = resolve)),
+    );
+    const older = createRecord(rentParams());
+    await new Promise(setImmediate);
+    const newer = await createRecord(rentParams());
+
+    resolveOlder(REQUEST);
+
+    await expect(older).rejects.toMatchObject({ cause: "TRONIFY_ORDER_FAILED" });
+    expect(craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
+    expect(getTronifyRentOrder(newer.orderId)).toMatchObject({ orderId: newer.orderId });
   });
 
   it("keeps only the latest order of an account", async () => {
