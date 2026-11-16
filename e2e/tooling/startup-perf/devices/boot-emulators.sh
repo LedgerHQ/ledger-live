@@ -89,4 +89,11 @@ for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
 for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
 for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
+# Offline launches: only loopback and the host (10.0.2.2, the data-import bridge) stay reachable;
+# everything else is refused at once, so network calls fail fast instead of timing out.
+for serial in emulator-5554 emulator-5556; do
+  adb -s "$serial" shell "su 0 sh -c 'iptables -I OUTPUT 1 -o lo -j ACCEPT && iptables -I OUTPUT 2 -d 10.0.2.2 -j ACCEPT && iptables -I OUTPUT 3 -j REJECT && ip6tables -I OUTPUT 1 -o lo -j ACCEPT && ip6tables -I OUTPUT 2 -j REJECT'"
+  adb -s "$serial" shell "su 0 iptables -S OUTPUT" | head -4
+  adb -s "$serial" shell "ping -c 1 -W 2 1.1.1.1 > /dev/null 2>&1 && echo '$serial still online' || echo '$serial offline'"
+done
 adb devices
