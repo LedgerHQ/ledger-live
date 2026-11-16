@@ -36,9 +36,12 @@ const BUNDLER_CONFIG = /^(?:jest(?:\.[\w-]+)?\.config|(?:rspack|repack)(?:\.[\w-
 // Where those configs live, relative to the project root.
 const CONFIG_DIRS = ["", "tools/rspack"];
 
-// The opening of `customExportConditions: [...]` or `conditionNames: [...]`, matched on masked
-// source so commented-out code never matches.
-const CONDITION_OPTION = /\b(customExportConditions|conditionNames)\s*:\s*\[/g;
+const CONDITION_OPTIONS = new Set(["customExportConditions", "conditionNames"]);
+
+// The opening of an array-valued property, its key bare or quoted, matched on masked source so
+// commented-out code never matches. A quoted key is blank there, so its name is read back from the
+// source at the same offsets.
+const ARRAY_PROPERTY = /(?:\b([A-Za-z_$][\w$]*)|(["'])( *)\2)\s*:\s*\[/g;
 
 const QUOTES = new Set(['"', "'", "`"]);
 
@@ -51,7 +54,10 @@ const QUOTES = new Set(['"', "'", "`"]);
  */
 export function sourceConditionOption(source) {
   const masked = maskSource(source);
-  for (const match of masked.matchAll(CONDITION_OPTION)) {
+  for (const match of masked.matchAll(ARRAY_PROPERTY)) {
+    const option =
+      match[1] ?? source.slice(match.index + 1, match.index + 1 + (match[3]?.length ?? 0));
+    if (!CONDITION_OPTIONS.has(option)) continue;
     let depth = 1;
     let i = match.index + match[0].length;
     while (i < masked.length && depth > 0) {
@@ -60,7 +66,7 @@ export function sourceConditionOption(source) {
         // maskSource blanks a literal's contents but keeps its delimiters and offsets.
         const close = masked.indexOf(char, i + 1);
         if (close === -1) break;
-        if (source.slice(i + 1, close) === SOURCE_CONDITION) return match[1];
+        if (source.slice(i + 1, close) === SOURCE_CONDITION) return option;
         i = close + 1;
         continue;
       }

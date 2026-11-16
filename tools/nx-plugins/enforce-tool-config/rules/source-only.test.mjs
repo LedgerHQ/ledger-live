@@ -238,6 +238,23 @@ test("no-source-condition: a commented-out condition passes", () => {
   );
 });
 
+test("no-source-condition: quoted option keys are detected", () => {
+  assert.equal(
+    sourceConditionOption(
+      'export default { resolve: { "conditionNames": ["@ledgerhq/source"] } };',
+    ),
+    "conditionNames",
+  );
+  assert.equal(
+    sourceConditionOption("module.exports = { 'customExportConditions': ['@ledgerhq/source'] };"),
+    "customExportConditions",
+  );
+  assert.equal(
+    sourceConditionOption('module.exports = { "otherConditions": ["@ledgerhq/source"] };'),
+    undefined,
+  );
+});
+
 test("no-source-condition: configs that only mention the condition pass", () => {
   assert.deepEqual(
     violations({
