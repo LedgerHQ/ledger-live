@@ -357,7 +357,7 @@ export function runLedgerSyncActivationRejectRetryTest(tmsLinks: string[], tags:
   ledgerSyncSuite(
     {
       suite: "activation flow rejected on device then retried on DIE",
-      test: "[WXP][Ledger Sync] Activation Flow - Backup Activated",
+      test: "[WXP][Ledger Sync] Activation Flow - Refused on device, Retry, approved, Backup Activated",
       tmsLinks,
       tags,
       init: () =>

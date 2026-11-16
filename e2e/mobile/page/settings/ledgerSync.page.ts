@@ -62,12 +62,14 @@ export default class LedgerSyncPage {
   @Step("Expect the activation device step on DIE")
   async expectActivationDeviceStep() {
     await this.addMemberDeviceStep.waitVisible();
+    await this.addMemberDeviceStep.expectVisible();
   }
 
   /** The Device Intent Executor sheet after the activation was refused on the device. */
   @Step("Expect the activation rejected on device on DIE")
   async expectActivationRejectedOnDevice() {
     await this.addMemberRejected.waitVisible();
+    await this.addMemberRejected.expectVisible();
   }
 
   @Step("Retry the activation on DIE")
@@ -79,6 +81,7 @@ export default class LedgerSyncPage {
   @Step("Expect the instance removal device step on DIE")
   async expectRemoveInstanceDeviceStep() {
     await this.removeMemberDeviceStep.waitVisible();
+    await this.removeMemberDeviceStep.expectVisible();
   }
 
   /**
