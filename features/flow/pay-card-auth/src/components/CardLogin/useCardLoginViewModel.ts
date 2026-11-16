@@ -9,9 +9,8 @@ import { SIGNUP_PATH } from "../../state/hostedPaths";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
-import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
-import { selectIsSignedIn } from "../../state/selectors";
-import { setPendingLoginType, setSessionResolving } from "../../state/slice";
+import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSlice";
+import { selectIsSignedIn, setPendingLoginType, setSessionResolving } from "../../state/slice";
 import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "./analytics";
 import type {
   CardAuthErrorCopy,

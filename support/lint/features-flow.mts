@@ -35,7 +35,6 @@ const SLICE_SELECTORS_WAIVERS: string[] = [
   "features/flow/account-detail-analytics-notice",
   "features/flow/device-mock-server",
   "features/flow/pay-balance",
-  "features/flow/pay-card-auth",
   "features/flow/pay-card-widget",
   "features/flow/pay-feature-tour",
   "features/flow/receive",
