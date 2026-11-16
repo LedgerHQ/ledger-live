@@ -71,7 +71,7 @@ env:
   MAESTRO_VERSION: 2.10.0
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
-  PERF_AVD_CORES: "4"
+  PERF_AVD_CORES: "8"
 
 jobs:
   plan:
