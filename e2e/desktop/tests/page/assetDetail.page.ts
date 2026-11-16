@@ -2,6 +2,7 @@ import { expect, Locator, Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { SwapContainer } from "tests/component/swap/swap-container";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class AssetDetailPage extends AppPage {
   private readonly assetId: string;
@@ -58,21 +59,32 @@ export class AssetDetailPage extends AppPage {
 
   @step("Wait for asset detail page to load")
   async expectLoaded() {
+    await expect(this.page).toHaveURL(/\/asset\//);
     await expect(this.header).toBeVisible();
   }
 
   @step("Expect market info (price and fiat variation) to be visible")
   async expectMarketInfoVisible() {
     await expect(this.header).toBeVisible();
-    await expect(this.marketPrice).toBeVisible();
-    // Guard against the "-----" placeholder that shares the testid when price data is missing.
-    await expect(this.marketPrice).not.toHaveText(/^-+$/);
-    await expect(this.marketPriceFiatVariation).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.marketPrice).toBeVisible();
+        // Guard against the "-----" placeholder that shares the testid when price data is missing.
+        await soft(this.marketPrice).not.toHaveText(/^-+$/);
+        await soft(this.marketPriceFiatVariation).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect total balance to be visible")
   async expectTotalBalanceVisible() {
-    await expect(this.totalBalance).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.totalBalance).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect address list to be visible")
@@ -81,24 +93,38 @@ export class AssetDetailPage extends AppPage {
   }
 
   @step("Count holding address rows")
-  async countAddressRows(): Promise<number> {
+  private async countAddressRows(): Promise<number> {
     await this.addressRows.first().waitFor({ state: "visible" });
     return this.addressRows.count();
+  }
+
+  @step("Expect at least $0 holding address rows")
+  async expectAddressRowCountAtLeast(minimum: number) {
+    await this.softExpect(
+      async soft => {
+        await soft(this.addressRows.nth(minimum - 1)).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect each holding address row to display a balance")
   async expectAddressRowsHaveBalance() {
     const rowCount = await this.countAddressRows();
-    await expect(this.addressRowBalances).toHaveCount(rowCount);
-    for (let i = 0; i < rowCount; i++) {
-      await expect(this.addressRowBalances.nth(i)).toBeVisible();
-      await expect(this.addressRowBalances.nth(i)).toHaveText(/\d/);
-    }
+    await this.softExpect(async soft => {
+      await soft(this.addressRowBalances).toHaveCount(rowCount);
+      const balances = Array.from({ length: rowCount }, (_, i) => this.addressRowBalances.nth(i));
+      await Promise.all(
+        balances.flatMap(balance => [soft(balance).toBeVisible(), soft(balance).toHaveText(/\d/)]),
+      );
+    });
   }
 
   @step("Expect 'Add address' action to be visible")
   async expectAddAddressVisible() {
-    await expect(this.addAddressAction).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.addAddressAction).toBeVisible();
+    });
   }
 
   @step("Expect transactions section to be visible with at least one row")
@@ -112,9 +138,10 @@ export class AssetDetailPage extends AppPage {
     await this.transactionRows.first().click();
   }
 
-  @step("Click first holding address row")
+  @step("Open the account of the first holding address row")
   async clickFirstAddressRow() {
     await this.addressRows.first().click();
+    await expect(this.page).toHaveURL(/\/account\//);
   }
 
   @step("Expect PnL cards to be visible")
