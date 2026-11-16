@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { createIntent } from "@features/platform-device-intent";
 import {
-  isCurrentMemberCredentials,
+  acceptLedgerSyncResult,
   type RemoveMemberIntent,
   type RemoveMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
@@ -17,7 +17,7 @@ import type {
   Trustchain,
   TrustchainMember,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector, useStore } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { removeMemberIntentLWMDefinition } from "../../deviceIntents/removeMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
@@ -38,7 +38,6 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const createSessionSdk = useCreateSessionSdk();
-  const store = useStore();
 
   const removedMemberRef = useRef<TrustchainMember | null>(null);
 
@@ -68,8 +67,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
     member: TrustchainMember,
     runCredentials: MemberCredentials,
   ) {
-    if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
-    dispatch(setTrustchain(newTrustchain));
+    if (!dispatch(acceptLedgerSyncResult(setTrustchain(newTrustchain), runCredentials))) return;
     removedMemberRef.current = member;
   }
 

@@ -1,8 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createIntent, isDeviceDisconnectedError } from "@features/platform-device-intent";
 import {
-  isCurrentMemberCredentials,
+  acceptLedgerSyncResult,
   TrustchainMemberId,
   type AddMemberIntent,
   type AddMemberIntentInput,
@@ -13,7 +13,7 @@ import {
   type RemoveMemberIntent,
   type RemoveMemberIntentPlatformDefinition,
 } from "@features/platform-intent-wallet-sync";
-import type { UnknownAction } from "@reduxjs/toolkit";
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type {
   MemberCredentials,
   Trustchain,
@@ -118,7 +118,7 @@ function errorName(error: unknown): string | null {
 export function useIntentWalletSyncToolState(
   params: IntentWalletSyncToolStateParams,
 ): IntentWalletSyncToolState {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<TrustchainState, unknown, UnknownAction>>();
   const storedTrustchain = useSelector(selectTrustchain);
   const storedMemberCredentials = useSelector(selectMemberCredentials);
 
@@ -132,15 +132,11 @@ export function useIntentWalletSyncToolState(
     paramsRef.current = latest;
   });
 
-  const store = useStore<TrustchainState>();
   // A Ledger Sync reset since the run started rotates the credentials: its late result is dropped.
   const storeRunTrustchain = useCallback(
-    (next: Trustchain, runCredentials: MemberCredentials): boolean => {
-      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return false;
-      dispatch(paramsRef.current.setTrustchain(next));
-      return true;
-    },
-    [dispatch, store],
+    (next: Trustchain, runCredentials: MemberCredentials): boolean =>
+      dispatch(acceptLedgerSyncResult(paramsRef.current.setTrustchain(next), runCredentials)),
+    [dispatch],
   );
 
   const [run, setRun] = useState<IntentWalletSyncRun | null>(null);

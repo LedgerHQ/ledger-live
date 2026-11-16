@@ -3,7 +3,7 @@ export * from "./sessionWithDevice";
 export * from "./trustchainMemberId";
 export * from "./failure";
 export * from "./jobState";
-export * from "./isCurrentMemberCredentials";
+export * from "./acceptLedgerSyncResult";
 export * from "./ledgerSyncResultOrder";
 export * from "./intents/addMember/types";
 export * from "./intents/addMember/job";

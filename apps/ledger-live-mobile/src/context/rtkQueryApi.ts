@@ -88,8 +88,10 @@ export const llmRtkApiInitialStates = Object.fromEntries(
   ]),
 ) as LLMRTKApiState;
 
-export function applyLlmRTKApiMiddlewares<M extends Tuple<Middleware[]>>(middleware: M) {
-  return llmRTKApi
-    .reduce<Tuple<Middleware[]>>((middleware, api) => middleware.concat(api.middleware), middleware)
-    .concat(apiServices.middlewares);
+export function applyLlmRTKApiMiddlewares<M extends Middleware[]>(middleware: Tuple<M>) {
+  const apiMiddlewares: Middleware[] = [
+    ...llmRTKApi.map(api => api.middleware),
+    ...apiServices.middlewares,
+  ];
+  return middleware.concat(apiMiddlewares);
 }

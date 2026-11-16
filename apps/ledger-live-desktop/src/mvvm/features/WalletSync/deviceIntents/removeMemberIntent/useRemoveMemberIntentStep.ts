@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { createIntent } from "@features/platform-device-intent";
 import {
-  isCurrentMemberCredentials,
+  acceptLedgerSyncResult,
   type RemoveMemberIntent,
   type RemoveMemberJobState,
 } from "@features/platform-intent-wallet-sync";
@@ -15,7 +15,7 @@ import type {
   Trustchain,
   TrustchainMember,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
@@ -34,7 +34,6 @@ export function useRemoveMemberIntentStep(
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const store = useStore();
   const isStoredRef = useRef(false);
 
   const onUserCancel = useCallback(
@@ -48,11 +47,10 @@ export function useRemoveMemberIntentStep(
 
   const onResult = useCallback(
     (newTrustchain: Trustchain, runCredentials: MemberCredentials) => {
-      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
+      if (!dispatch(acceptLedgerSyncResult(setTrustchain(newTrustchain), runCredentials))) return;
       isStoredRef.current = true;
-      dispatch(setTrustchain(newTrustchain));
     },
-    [dispatch, store],
+    [dispatch],
   );
 
   const onJobStateChanged = useCallback(

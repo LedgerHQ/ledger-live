@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
 import {
-  isCurrentMemberCredentials,
+  acceptLedgerSyncResult,
   type AddMemberIntent,
   type AddMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
@@ -20,7 +20,7 @@ import {
   type TrustchainResult,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector, useStore } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
@@ -57,7 +57,6 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
   const createSessionSdk = useCreateSessionSdk();
-  const store = useStore();
 
   // Without a trustchain to join, only a new setup or a completed onboarding may create one.
   const checkTrustchainsExist: NonNullable<GetOrCreateTrustchainCallbacks["onInitialResponse"]> =
@@ -117,8 +116,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     seededOffer: boolean,
     runCredentials: MemberCredentials,
   ) {
-    if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
-    dispatch(setTrustchain(trustchainResult.trustchain));
+    const isAccepted = dispatch(
+      acceptLedgerSyncResult(setTrustchain(trustchainResult.trustchain), runCredentials),
+    );
+    if (!isAccepted) return;
     // A disconnected run and its Retry can both deliver: one activation, one event.
     if (activatedRef.current === null) {
       track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });

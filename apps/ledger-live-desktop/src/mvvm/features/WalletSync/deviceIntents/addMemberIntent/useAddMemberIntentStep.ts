@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import {
-  isCurrentMemberCredentials,
+  acceptLedgerSyncResult,
   type AddMemberIntent,
   type AddMemberIntentInput,
   type AddMemberJobState,
@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { MemberCredentials, TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
@@ -37,19 +37,20 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const trustchain = useSelector(trustchainSelector);
   const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
-  const store = useStore();
   const resultRef = useRef<TrustchainResult | null>(null);
 
   const onResult = useCallback(
     (result: TrustchainResult, runCredentials: MemberCredentials) => {
-      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
+      const isAccepted = dispatch(
+        acceptLedgerSyncResult(setTrustchain(result.trustchain), runCredentials),
+      );
+      if (!isAccepted) return;
       // A disconnected run and its Retry can both deliver: one activation, one event.
       const isFirstResult = resultRef.current === null;
       resultRef.current = result;
-      dispatch(setTrustchain(result.trustchain));
       if (isFirstResult) trackLedgerSyncActivated();
     },
-    [dispatch, store],
+    [dispatch],
   );
 
   const onJobStateChanged = useCallback(

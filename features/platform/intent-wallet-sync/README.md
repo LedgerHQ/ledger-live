@@ -72,9 +72,10 @@ one `createLedgerSyncResultOrder()` for its lifetime and passes it in every add 
 member input, since both write the same trustchain store.
 
 A Ledger Sync reset rotates the member credentials, so a late result whose run started with other
-credentials belongs to a Ledger Sync that is gone. The app's `onResult` drops it when
-`isCurrentMemberCredentials(store.getState(), runCredentials)` is false, reading the state when the
-result arrives.
+credentials belongs to a Ledger Sync that is gone. The app's `onResult` dispatches
+`acceptLedgerSyncResult(setTrustchain(trustchain), runCredentials)`: the thunk reads the state when
+the result arrives, dispatches the action only when the credentials are still the run's, and returns
+whether it did, so the app tracks and navigates only then.
 
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
