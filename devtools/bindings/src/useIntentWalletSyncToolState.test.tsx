@@ -22,6 +22,8 @@ import {
 } from "./useIntentWalletSyncToolState";
 
 const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
+// A Ledger Sync reset rotates the member credentials.
+const OTHER_CREDENTIALS: MemberCredentials = { pubkey: "other", privatekey: "other-key" };
 const TRUSTCHAIN: Trustchain = {
   rootId: "root-id",
   applicationPath: "m/0'/16'/0'",
@@ -209,6 +211,42 @@ describe("useIntentWalletSyncToolState", () => {
     await waitFor(() =>
       expect(params.sdk.getMembers).toHaveBeenLastCalledWith(ROTATED, MEMBER_CREDENTIALS),
     );
+  });
+
+  it("should drop an add member result that arrives after Ledger Sync was reset", () => {
+    const { result, store, params } = renderTool();
+    act(() => result.current.toolProps.onAddMember());
+    const run = result.current.run;
+
+    act(() => {
+      store.dispatch(setMemberCredentials(OTHER_CREDENTIALS));
+    });
+    act(() =>
+      run?.operation === "add-member"
+        ? run.intent.onResult?.({ type: TrustchainResultType.created, trustchain: ROTATED })
+        : undefined,
+    );
+    act(() => run?.intent.onJobComplete?.());
+
+    expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
+    expect(params.sdk.getMembers).not.toHaveBeenCalled();
+  });
+
+  it("should drop a remove member result that arrives after Ledger Sync was reset", async () => {
+    const { result, store, params } = renderTool();
+    act(() => result.current.toolProps.onRefreshMembers());
+    await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
+    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse("member-2")));
+    const run = result.current.run;
+
+    act(() => {
+      store.dispatch(setMemberCredentials(OTHER_CREDENTIALS));
+    });
+    act(() => (run?.operation === "remove-member" ? run.intent.onResult?.(ROTATED) : undefined));
+    act(() => run?.intent.onJobComplete?.());
+
+    expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
+    expect(params.sdk.getMembers).toHaveBeenCalledTimes(1);
   });
 
   it("should neither list nor remove this instance's own member", async () => {

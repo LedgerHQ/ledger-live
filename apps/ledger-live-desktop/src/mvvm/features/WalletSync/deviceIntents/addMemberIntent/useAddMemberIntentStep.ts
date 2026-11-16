@@ -43,9 +43,11 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const onResult = useCallback(
     (result: TrustchainResult, runCredentials: MemberCredentials) => {
       if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
+      // A disconnected run and its Retry can both deliver: one activation, one event.
+      const isFirstResult = resultRef.current === null;
       resultRef.current = result;
       dispatch(setTrustchain(result.trustchain));
-      trackLedgerSyncActivated();
+      if (isFirstResult) trackLedgerSyncActivated();
     },
     [dispatch, store],
   );

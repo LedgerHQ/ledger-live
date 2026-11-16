@@ -89,6 +89,9 @@ type FakeExecutorProps = Readonly<{
   onIntentJobStateChanged?: (jobState: LedgerSyncJobState) => void;
 }>;
 
+// The intent the fake executor last mounted, to deliver a result of another job invocation.
+const mockMountedIntent: { current: FakeExecutorProps["intent"] | null } = { current: null };
+
 // Runs the real job and renderer on a fake session, in place of the connection and the app setup.
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const ReactActual = jest.requireActual<typeof React>("react");
@@ -104,6 +107,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
     onIntentJobStateChanged,
   }: FakeExecutorProps) {
     const [jobState, setJobState] = ReactActual.useState<LedgerSyncJobState | undefined>();
+    mockMountedIntent.current = intent;
 
     ReactActual.useEffect(() => {
       const connectionResult = buildDeviceConnection("session-1");
@@ -632,6 +636,31 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       await waitFor(() => expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN));
       expect(screen.getByText("entry screen")).toBeVisible();
       expect(screen.queryByText(/reached WalletSyncLoading/)).toBeNull();
+    });
+
+    it("should store both results of a disconnected run and its retry but track one activation", async () => {
+      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
+      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+
+      const { store } = await activateFromSettings();
+      await screen.findByTestId("device-intent-sheet");
+      act(() =>
+        mockMountedIntent.current?.onResult?.({
+          type: TrustchainResultType.created,
+          trustchain: TRUSTCHAIN,
+        }),
+      );
+      await act(async () => {
+        answer.settle({ type: TrustchainResultType.restored, trustchain: ROTATED_TRUSTCHAIN });
+      });
+
+      expect(await screen.findByText(loadingScreen(false))).toBeVisible();
+      expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TRUSTCHAIN);
+      expect(
+        jest
+          .mocked(track)
+          .mock.calls.filter(([event]) => event === AnalyticsEvents.LedgerSyncActivated),
+      ).toHaveLength(1);
     });
 
     it("should drop a result that arrives after Ledger Sync was reset", async () => {

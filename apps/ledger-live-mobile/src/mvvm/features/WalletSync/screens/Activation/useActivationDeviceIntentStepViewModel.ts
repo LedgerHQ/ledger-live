@@ -119,7 +119,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   ) {
     if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
     dispatch(setTrustchain(trustchainResult.trustchain));
-    track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    // A disconnected run and its Retry can both deliver: one activation, one event.
+    if (activatedRef.current === null) {
+      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    }
     activatedRef.current = { trustchainResult, seededOffer };
   }
 

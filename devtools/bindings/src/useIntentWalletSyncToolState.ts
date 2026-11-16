@@ -1,7 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { createIntent, isDeviceDisconnectedError } from "@features/platform-device-intent";
 import {
+  isCurrentMemberCredentials,
   TrustchainMemberId,
   type AddMemberIntent,
   type AddMemberIntentInput,
@@ -131,9 +132,15 @@ export function useIntentWalletSyncToolState(
     paramsRef.current = latest;
   });
 
-  const onTrustchainChange = useCallback(
-    (next: Trustchain) => dispatch(paramsRef.current.setTrustchain(next)),
-    [dispatch],
+  const store = useStore<TrustchainState>();
+  // A Ledger Sync reset since the run started rotates the credentials: its late result is dropped.
+  const storeRunTrustchain = useCallback(
+    (next: Trustchain, runCredentials: MemberCredentials): boolean => {
+      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return false;
+      dispatch(paramsRef.current.setTrustchain(next));
+      return true;
+    },
+    [dispatch, store],
   );
 
   const [run, setRun] = useState<IntentWalletSyncRun | null>(null);
@@ -197,9 +204,9 @@ export function useIntentWalletSyncToolState(
     };
     const intent: AddMemberIntent = createIntent(addMemberIntentDefinition, input, {
       onResult: result => {
+        if (!storeRunTrustchain(result.trustchain, memberCredentials)) return;
         resultTrustchain = result.trustchain;
         completedDetail = `${result.type} ${result.trustchain.rootId}`;
-        onTrustchainChange(result.trustchain);
       },
       onJobStateChanged: state =>
         append("add-member", state.type, describeJobState(state, completedDetail)),
@@ -210,7 +217,7 @@ export function useIntentWalletSyncToolState(
       onJobError: endRunWithError("add-member"),
     });
     setRun({ operation: "add-member", intent });
-  }, [append, endRunWithError, loadMembers, onTrustchainChange]);
+  }, [append, endRunWithError, loadMembers, storeRunTrustchain]);
 
   const onRemoveMember = useCallback(
     (memberId: TrustchainMemberId) => {
@@ -233,8 +240,8 @@ export function useIntentWalletSyncToolState(
         { trustchain, memberCredentials, member, createSessionSdk, resultOrder },
         {
           onResult: result => {
+            if (!storeRunTrustchain(result, memberCredentials)) return;
             resultTrustchain = result;
-            onTrustchainChange(result);
           },
           onJobStateChanged: state =>
             append(
@@ -251,7 +258,7 @@ export function useIntentWalletSyncToolState(
       );
       setRun({ operation: "remove-member", intent });
     },
-    [append, endRunWithError, loadMembers, loadedMembers, onTrustchainChange],
+    [append, endRunWithError, loadMembers, loadedMembers, storeRunTrustchain],
   );
 
   const onRefreshMembers = useCallback(() => {

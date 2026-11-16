@@ -288,6 +288,19 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(activationEvents()).toEqual([["ledgersync_activated", { flow: "Ledger Sync" }]]);
     });
 
+    it("should store both results of a disconnected run and its retry but track one activation", async () => {
+      const { store } = await startActivationFromSettings();
+      const intent = lastIntent();
+
+      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
+      deliver({ type: TrustchainResultType.restored, trustchain: NEW_TRUSTCHAIN }, intent);
+      emit({ type: "completed" }, intent);
+
+      expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
+      expect(store.getState().walletSync.step).toBe(Step.ActivationLoading);
+      expect(activationEvents()).toHaveLength(1);
+    });
+
     it("should store and track a result that arrives after the device step was left", async () => {
       const { store } = await startActivationFromSettings();
       const intent = lastIntent();
