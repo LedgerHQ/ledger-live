@@ -1,33 +1,15 @@
-import type { PayCardTransaction } from "@domain/api-card-management";
+import type {
+  PAY_CARD_TRANSACTION_CATEGORIES,
+  PAY_CARD_TRANSACTION_STATUSES,
+} from "@domain/api-card-management";
 
-const STATUS_LABEL_KEYS = {
-  CONFIRMED: "payTab.cardTransactions.detail.statusValues.CONFIRMED",
-  PENDING: "payTab.cardTransactions.detail.statusValues.PENDING",
-  DECLINED: "payTab.cardTransactions.detail.statusValues.DECLINED",
-  REVERTED: "payTab.cardTransactions.detail.statusValues.REVERTED",
-} as const satisfies Record<
-  PayCardTransaction["status"],
-  `payTab.cardTransactions.detail.statusValues.${string}`
->;
+type CardTransactionStatus = (typeof PAY_CARD_TRANSACTION_STATUSES)[number];
+type CardTransactionCategory = (typeof PAY_CARD_TRANSACTION_CATEGORIES)[number];
 
-const CATEGORY_LABEL_KEYS = {
-  SUBSCRIPTIONS: "payTab.cardTransactions.categories.SUBSCRIPTIONS",
-  FOOD: "payTab.cardTransactions.categories.FOOD",
-  TRAVEL: "payTab.cardTransactions.categories.TRAVEL",
-  ENTERTAINMENT: "payTab.cardTransactions.categories.ENTERTAINMENT",
-  HEALTH: "payTab.cardTransactions.categories.HEALTH",
-  ATM: "payTab.cardTransactions.categories.ATM",
-  UTILITIES: "payTab.cardTransactions.categories.UTILITIES",
-  MISC: "payTab.cardTransactions.categories.MISC",
-} as const satisfies Record<
-  PayCardTransaction["mccCategory"],
-  `payTab.cardTransactions.categories.${string}`
->;
-
-export function statusLabelKey(status: keyof typeof STATUS_LABEL_KEYS) {
-  return STATUS_LABEL_KEYS[status];
+export function statusLabelKey(status: CardTransactionStatus) {
+  return `payTab.cardTransactions.detail.statusValues.${status}` as const;
 }
 
-export function categoryLabelKey(category: keyof typeof CATEGORY_LABEL_KEYS) {
-  return CATEGORY_LABEL_KEYS[category];
+export function categoryLabelKey(category: CardTransactionCategory) {
+  return `payTab.cardTransactions.categories.${category}` as const;
 }
