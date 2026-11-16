@@ -35,8 +35,7 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
   }, []);
 
   const onConnected = useCallback(
-    (result: DeviceConnectionResult, { isNewDevice }: { isNewDevice: boolean }) =>
-      log("onConnected", `${formatConnectionResult(result)}, isNewDevice ${isNewDevice}`),
+    (result: DeviceConnectionResult) => log("onConnected", formatConnectionResult(result)),
     [log],
   );
   const onAddModeChange = useCallback(
