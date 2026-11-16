@@ -1,9 +1,12 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { createAnimatedComponent, useAnimatedStyle } from "react-native-reanimated";
 import { getQrElementFrame, toRgbString, type QrElement } from "./animationTimeline";
+import { centerStyle, contentStyle, placeholderStyle } from "./styles";
 import { useCenterTime } from "./useCenterTime";
 import type { QrAnimation } from "./types";
+
+const AnimatedBox = createAnimatedComponent(Box);
 
 const CENTER: QrElement = { x: 0.5, y: 0.5, kind: "center" };
 // useCenterTime counts the pop from the last press: in its time, every press happens at 0.
@@ -33,13 +36,13 @@ export function AnimatedCenter({
   const loading = animation === "loading";
   const time = useCenterTime(animation, animated, pressCount);
 
-  const placeholderStyle = useAnimatedStyle(() => {
+  const placeholderFrameStyle = useAnimatedStyle(() => {
     if (!loading) return { opacity: 0 };
     const frame = getQrElementFrame(animation, time.get(), CENTER, PRESSED_AT);
     return { backgroundColor: toRgbString(frame.color), opacity: 1 };
   });
 
-  const contentStyle = useAnimatedStyle(() => {
+  const contentFrameStyle = useAnimatedStyle(() => {
     if (loading) return { opacity: 0, transform: [{ scale: 1 }] };
     const frame = getQrElementFrame(animation, time.get(), CENTER, PRESSED_AT);
     return { opacity: 1, transform: [{ scale: frame.scale }] };
@@ -49,15 +52,11 @@ export function AnimatedCenter({
   const box = { left: offset, top: offset, width: diameter, height: diameter };
 
   return (
-    <View pointerEvents="none" style={[styles.absolute, box]}>
-      <Animated.View style={[styles.fill, { borderRadius: diameter / 2 }, placeholderStyle]} />
-      <Animated.View style={[styles.fill, styles.centered, contentStyle]}>{children}</Animated.View>
-    </View>
+    <Box pointerEvents="none" lx={centerStyle} style={box}>
+      <AnimatedBox lx={placeholderStyle} style={placeholderFrameStyle} />
+      <AnimatedBox lx={contentStyle} style={contentFrameStyle}>
+        {children}
+      </AnimatedBox>
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  absolute: { position: "absolute" },
-  fill: { ...StyleSheet.absoluteFillObject },
-  centered: { alignItems: "center", justifyContent: "center" },
-});

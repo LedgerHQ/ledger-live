@@ -89,12 +89,10 @@ describe("AnimatedQrCode", () => {
 
   it("draws on white, whatever the screen behind", () => {
     renderQrCode();
+    const paper = screen.getByTestId(TEST_ID).props;
 
-    expect(flatStyle(screen.getByTestId(TEST_ID).props.style)).toMatchObject({
-      backgroundColor: "#FFFFFF",
-      width: 200,
-      height: 200,
-    });
+    expect(paper.lx).toMatchObject({ backgroundColor: "white" });
+    expect(paper.style).toMatchObject({ width: 200, height: 200 });
   });
 
   it("shows the center content", () => {

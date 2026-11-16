@@ -25578,6 +25578,9 @@ importers:
         specifier: 'catalog:'
         version: 1.5.4
     devDependencies:
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.72(814d8e778ef9b333cab55181a09bc1fb)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine

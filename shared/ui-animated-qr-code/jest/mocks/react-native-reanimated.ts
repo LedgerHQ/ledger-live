@@ -71,4 +71,5 @@ export function useAnimatedStyle<T>(updater: () => T): T {
   return updater();
 }
 
-export default { View: "Animated.View" };
+// Any animated component renders as the Animated.View host, its style readable in tests.
+export const createAnimatedComponent = () => "Animated.View";

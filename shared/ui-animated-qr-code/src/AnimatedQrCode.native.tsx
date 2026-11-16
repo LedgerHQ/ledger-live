@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo } from "react";
-import { Pressable, requireNativeComponent, StyleSheet, type ViewProps } from "react-native";
+import { Pressable } from "@ledgerhq/lumen-ui-rnative";
+import { requireNativeComponent, type ViewProps } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { AnimatedCenter } from "./AnimatedCenter";
 import { createQrMatrix } from "./qrMatrix";
+import { paperStyle } from "./styles";
 import { usePressCount } from "./usePressCount";
 import type { AnimatedQrCodeProps, QrAnimation } from "./types";
 
@@ -57,7 +59,8 @@ export function AnimatedQrCode({
   return (
     <Pressable
       testID={testID}
-      style={[styles.paper, sizeStyle]}
+      lx={paperStyle}
+      style={sizeStyle}
       accessible={pressable}
       accessibilityRole={pressable ? "button" : undefined}
       accessibilityLabel={accessibilityLabel}
@@ -85,8 +88,3 @@ export function AnimatedQrCode({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  // The ink is a fixed dark: a white paper keeps the code readable on a dark screen.
-  paper: { backgroundColor: "#FFFFFF" },
-});

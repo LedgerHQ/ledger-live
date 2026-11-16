@@ -20,11 +20,15 @@
     "qrcode": "catalog:"
   },
   "peerDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-reanimated": "catalog:"
   },
   "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
     "react-native": {
       "optional": true
     },
@@ -33,6 +37,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
