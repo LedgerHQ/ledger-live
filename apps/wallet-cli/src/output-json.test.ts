@@ -737,6 +737,22 @@ describe("JsonCommandOutput", () => {
       });
     });
 
+    it("names the host of a failed request and how to allow it in a sandbox", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+
+      expect(failWith(new Error("UnexpectedGetBalanceError", { cause: socketClosed }))).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          message: "UnexpectedGetBalanceError",
+          host: "explorers.api.live.ledger.com",
+          hint: "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+        },
+      });
+    });
+
     it.each([
       new Error("boom"),
       new TypeError("cannot read properties of undefined"),
