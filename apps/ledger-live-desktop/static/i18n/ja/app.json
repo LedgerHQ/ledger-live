@@ -187,6 +187,7 @@
       "FEES" : "手数料",
       "OPT_IN" : "オプトイン",
       "OPT_OUT" : "オプトアウト",
+      "OPT_EDIT" : "トークンが更新されました。",
       "CLOSE_ACCOUNT" : "アカウントを閉じる",
       "BOND" : "ボンド",
       "UNBOND" : "ボンド解除",
@@ -340,7 +341,15 @@
     "home" : "ホーム",
     "refer" : "ご友人紹介",
     "catalog" : "アプリ一覧",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "エージェント"
+  },
+  "agentIntent" : {
+    "title" : "エージェント",
+    "manageAgents" : {
+      "title" : "エージェントを管理",
+      "description" : "AIエージェントに資産の管理を任せましょう。"
+    }
   },
   "stars" : {
     "tooltip" : "お気に入りアカウント"
@@ -1950,13 +1959,13 @@
       "continue" : "以降の操作は自己責任となります"
     },
     "info" : {
-      "title" : "{{date}}をもって、Ledger Live™経由の{{device}}™での{{coinName}}サポートは終了いたします。",
-      "subtitle" : "Ledger Liveの全サービスプロバイダー、最適なサポートをご利用いただくために、最新のLedgerデバイスへのアップグレードをご検討ください",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "今後、このメッセージを表示しない"
     },
     "error" : {
       "title" : "{{device}}™はこの機能をサポートしていません",
-      "subtitle" : "Ledger Liveの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをおすすめいたします。"
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "お客様に最適なアップグレードプランをご確認ください",
     "learnMore" : "詳細はこちら",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "送付",
     "totalSpent" : "合計出金額",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "トランザクションを処理中です",
     "sign" : {
       "title" : "Ledger {{wording}}で続ける",
-      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。",
+      "cancelled" : {
+        "title" : "Transaction canceled",
+        "description" : "You rejected the transaction. Your funds won't be affected.",
+        "close" : "Close",
+        "retry" : "Try again"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "ネットワーク手数料を更新できません",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "トークン設定",
+      "currentLimitZero" : "制限は0です。このトークンを受け取ることはできません。",
+      "limitBelowBalance" : "お客様の残高（{{balance}}）がこの制限を超えています。残高がこの制限を下回るまで、このトークンを受け取ることはできません。",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "報酬を受け取るバリデーター",
       "compoundReward" : "報酬を受け取るバリデーター",
       "optIn" : "受取先",
+      "changeTrust" : "送付先",
       "tokenAssociate" : "送付先",
       "nominate" : "バリデーター",
       "stake" : "バリデーター",
@@ -8089,11 +8114,15 @@
       "description" : "このトークンの保有を停止するには、代わりに削除してください。"
     },
     "XrpTokenFrozen" : {
-      "title" : "このトークンをこの受取人に送信することはできません",
-      "description" : "発行元がそれを凍結したか、またはアカウントによる保有を承認していません。凍結されたトークンは、依然として発行元に戻る可能性があります。"
+      "title" : "このトークンを送信することはできません。",
+      "description" : "発行元が凍結しました。"
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "このトークンを送信することはできません。",
+      "description" : "発行元がアカウントによる保有を承認していません。"
     },
     "XrpTokenCannotReceive" : {
-      "title" : "この受取人は{{assetCode}}を受け取ることができません。",
+      "title" : "この受取人はこのトークンを受け取ることができません。",
       "description" : "受取人が最初にこのトークンを追加する必要があるか、または発行体がこの送金を許可していない可能性があります。"
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "アカウントがありません",
     "review" : "確認",
+    "learnMore" : "詳細はこちら",
     "formErrors" : {
+      "offline" : "インターネット接続に問題があります。",
       "amountExceedsBalance" : "残高不足",
+      "feeAccountEmpty" : "ネットワーク手数料には、さらに多くの{{ticker}}が必要です。",
+      "notEnoughFees" : "ネットワーク手数料として{{fees}} {{ticker}}が必要です。",
+      "amountTooLow" : "{{amount}} {{ticker}}以上を入力して、もう一度お試しください。",
+      "amountTooHigh" : "{{amount}} {{ticker}}以下を入力して、もう一度お試しください。",
+      "feeEstimationFailed" : "現在、手数料を計算できませんでした。暗号資産アカウントが同期されていない可能性があります。Ledger Walletアプリを再起動して、もう一度お試しください。",
+      "accountNotReady" : "このアカウントはまだ送金できる状態ではありません。アカウントで開き、もう一度お試しください。",
+      "seiEvmUnlinked" : "スワップを行う前に、SEI EVMアカウントを連携する必要があります",
+      "aleoPrivateBalance" : "スワップは公開{{ticker}}でのみご利用いただけます。現在、資金が非公開になっているため、スワップできません。",
+      "tezosUnrevealed" : "Tezosアカウントがまだアクティベートされていません。スワップの前に、少量の数量XTZを送付してください。",
+      "dotMinimumBalance" : "スワップ後、最低{{minValue}} DOTの残高を維持してください。",
+      "xlmMinimumBalance" : "スワップ後、最低{{minValue}} XLMの残高を維持してください。",
       "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}}が不足しています",
+        "description" : "アカウント{{account}}には、ネットワーク手数料をカバーするための十分な残高がありません。"
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}}に必要な最低額",
+        "description" : "見積もりには、最低{{amount}} {{ticker}}価値が必要です。"
+      },
+      "buy" : "{{ticker}}を購入する"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "入金の署名",
+    "genericError" : {
+      "title" : "問題が発生しました。",
+      "description" : "後ほどもう一度お試しいただくか、別の資産を選択してください。"
+    },
     "terms" : "このトランザクションに署名することで、私は<termsLink>SwapKit by NEAR Intentsの利用規約</termsLink>に同意します。"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "トランザクションの詳細",
     "title" : "無期限先物に資金を追加",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "出金",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "無期限先物に戻る"
   },
   "accountAnalytics" : {
     "assets" : "資産フィルター",
@@ -11451,6 +11510,7 @@
     "allAssets" : "全資産",
     "allAccounts" : "すべてのアカウント",
     "error" : "アナリティクスを読み込めません。もう一度お試しください。",
-    "unavailable" : "この選択に対するデータは利用できません。"
+    "unavailable" : "この選択に対するデータは利用できません。",
+    "noResults" : "No results"
   }
 }
