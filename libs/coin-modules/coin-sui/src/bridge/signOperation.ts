@@ -22,7 +22,7 @@ type BuiltTransaction = Awaited<ReturnType<typeof buildTransaction>>;
  * Kept at module scope rather than inlined in the observable: nested inside the subscriber, `main`,
  * and the signer context, the client callback sat six functions deep.
  */
-const signWithDevice = (
+export const signWithDevice = (
   account: SuiAccount,
   suiSigner: SuiSigner,
   { unsigned, objects, resolution }: BuiltTransaction,
@@ -47,7 +47,7 @@ const SUI_APP_UNKNOWN_ERROR = 0x0008;
  * input (`0x2::coin::redeem_funds`). Sui apps that predate that parser reject such transfers with
  * an opaque UNKNOWN_ERROR (0x8), which we translate into an actionable error.
  */
-function drawsFromAddressBalance(unsigned: Uint8Array): boolean {
+export function drawsFromAddressBalance(unsigned: Uint8Array): boolean {
   try {
     return SuiTransaction.from(unsigned)
       .getData()
@@ -60,7 +60,7 @@ function drawsFromAddressBalance(unsigned: Uint8Array): boolean {
 }
 
 /** The Sui app returned SW 0x0008 (surfaced by the transport as UNKNOWN_ERROR (0x8)). */
-function isSuiAppUnknownError(error: unknown): boolean {
+export function isSuiAppUnknownError(error: unknown): boolean {
   return (
     error instanceof Error &&
     error.name === "TransportStatusError" &&
