@@ -33,7 +33,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -55,7 +55,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -74,7 +74,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -92,7 +92,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'libs') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'libs') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -110,7 +110,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'features') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'features') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -128,7 +128,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'shared') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'shared') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -146,7 +146,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'domain') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -164,7 +164,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'devtools') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'devtools') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -182,7 +182,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'support') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'support') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -226,7 +226,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/mobile') || contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -242,7 +242,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/desktop') }}
+    if: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/desktop') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
