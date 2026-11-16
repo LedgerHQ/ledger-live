@@ -3,8 +3,9 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { getXrpEnabledTokenStandards } from "../config";
+import type { XrpTokenAccount } from "../types";
 import BigNumber from "bignumber.js";
-import type { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, SyncConfig } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
 import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";
 import xrpBridgeApi, {
@@ -282,7 +283,11 @@ describe("xrpBridgeApi", () => {
 
 describe("describeOptimisticOperation", () => {
   const usd = { tokenIdentifier: "USD", contractAddress: ISSUER } as TokenCurrency;
-  const usdAccount = { id: "usdAccount", token: usd } as TokenAccount;
+  const usdAccount = {
+    id: "usdAccount",
+    token: usd,
+    xrpResources: { isLocked: false, isRippling: false, limit: new BigNumber(1000) },
+  } as XrpTokenAccount;
   const account = {
     id: "xrpAccount",
     freshAddress: "rSender",
@@ -323,6 +328,17 @@ describe("describeOptimisticOperation", () => {
     const transaction = { ...makeTrustSet("USD"), assetOwner: "rOtherIssuer" };
 
     expect(describeOptimisticOperation("changeTrust", account, transaction)?.type).toBe("OPT_IN");
+  });
+
+  it("records a re-add of a removed token as OPT_IN", () => {
+    const removedAccount = {
+      ...account,
+      subAccounts: [{ id: "usdAccount", token: usd }],
+    } as Account;
+
+    expect(
+      describeOptimisticOperation("changeTrust", removedAccount, makeTrustSet("USD"))?.type,
+    ).toBe("OPT_IN");
   });
 
   it("keeps the generic description of a send", () => {

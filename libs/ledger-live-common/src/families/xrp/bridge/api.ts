@@ -12,6 +12,7 @@ import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
+import { heldXrpTokenIds } from "../tokenHolding";
 import type { XrpTokenResources } from "../types";
 
 export const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
@@ -119,9 +120,10 @@ export function describeOptimisticOperation(
   if (mode !== "changeTrust") return undefined;
 
   const { assetReference, assetOwner } = transaction;
-  const isHeld = account.subAccounts?.some(sub =>
-    isTokenOfAsset(sub.token, assetReference, assetOwner),
-  );
+  const heldTokenIds = heldXrpTokenIds(account);
+  const isHeld = (account.subAccounts ?? []).some(sub => {
+    return heldTokenIds.has(sub.token.id) && isTokenOfAsset(sub.token, assetReference, assetOwner);
+  });
 
   return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
 }

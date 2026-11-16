@@ -1102,7 +1102,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operation =>
         operation?.extra?.assetReference &&
         operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type),
+        !TOKEN_OPT_TYPES.has(operation.type),
     );
 
     const newInternalOperations: OperationCommon[] = [];

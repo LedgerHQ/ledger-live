@@ -132,3 +132,21 @@ describe("sendFeatures.roundAmount", () => {
     expect(sendFeatures.roundAmount(undefined, amount)).toBe(amount);
   });
 });
+
+describe("sendFeatures.canSendMax", () => {
+  it("offers Max on an XRP token, not on XRP itself", () => {
+    const xrpIou = { type: "TokenCurrency", tokenType: "iou", parentCurrencyId: "ripple" };
+    const xrpMpt = { type: "TokenCurrency", tokenType: "mpt", parentCurrencyId: "ripple" };
+
+    expect(sendFeatures.canSendMax(xrpIou as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(xrpMpt as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(getCryptoCurrencyById("ripple"))).toBe(false);
+  });
+
+  it("offers Max on a coin and its token when the family declares nothing", () => {
+    const erc20 = { type: "TokenCurrency", tokenType: "erc20", parentCurrencyId: "ethereum" };
+
+    expect(sendFeatures.canSendMax(erc20 as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(ethereum)).toBe(true);
+  });
+});
