@@ -43,7 +43,10 @@ import {
   ProtocolParams,
   StakeCredential,
 } from "./types";
-import coinConfig from "./config";
+import coinConfig, {
+  DEFAULT_KEYCHAIN_OBSERVABLE_RANGE,
+  getKeychainObservableRange,
+} from "./config";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
@@ -81,8 +84,14 @@ export const makeGetAccountShape =
       derivationMode,
     });
 
+    const config = coinConfig.getCoinConfig(currency.id);
     // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
-    const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
+    const baseSyncHash = await getSyncHash(currency.id, blacklistedTokenIds);
+    const keychainObservableRange = getKeychainObservableRange(config);
+    const syncHash =
+      keychainObservableRange === DEFAULT_KEYCHAIN_OBSERVABLE_RANGE
+        ? baseSyncHash
+        : `${baseSyncHash}:range=${keychainObservableRange}`;
     const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
 
     const requiredConfirmations = 90;
@@ -96,7 +105,6 @@ export const makeGetAccountShape =
         ? lastBlockHeight - requiredConfirmations
         : 0;
 
-    const config = coinConfig.getCoinConfig(currency.id);
     const {
       transactions: newTransactions,
       blockHeight,

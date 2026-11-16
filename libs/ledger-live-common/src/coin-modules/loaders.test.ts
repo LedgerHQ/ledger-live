@@ -82,6 +82,26 @@ describe("gonka registration", () => {
   });
 });
 
+describe("cardano_testnet registration", () => {
+  it("registers cardano_testnet as a supported cardano currency", () => {
+    const cardanoLoader = coinModuleLoaders.find(loader => loader.family === "cardano");
+
+    expect(cardanoLoader?.supportedCoins).toContain("cardano_testnet");
+  });
+
+  it("is a supported currency once all coins are registered", () => {
+    registerAllCoins();
+
+    expect(isCurrencySupported(getCryptoCurrencyById("cardano_testnet"))).toBe(true);
+  });
+
+  it("resolves to the cardano family", () => {
+    registerAllCoins();
+
+    expect(getCryptoCurrencyById("cardano_testnet").family).toBe("cardano");
+  });
+});
+
 describe("alpen_testnet registration", () => {
   it("registers alpen_testnet as a supported evm currency", () => {
     const evmLoader = coinModuleLoaders.find(loader => loader.family === "evm");

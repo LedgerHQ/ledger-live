@@ -16053,9 +16053,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.2.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.4.0(axios@1.20.0(debug@4.4.3))

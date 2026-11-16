@@ -110,6 +110,14 @@ export const getLocalStorageEnvs = (): {
   });
   return obj;
 };
+const parseInteger = (value: unknown): number | undefined => {
+  const parsed = typeof value === "number" ? value : Number.parseInt(String(value), 10);
+  return Number.isInteger(parsed) ? parsed : undefined;
+};
+export const getExperimentalKeychainObservableRange = (): number | undefined =>
+  parseInteger(
+    process.env.KEYCHAIN_OBSERVABLE_RANGE ?? getLocalStorageEnvs().KEYCHAIN_OBSERVABLE_RANGE,
+  );
 export const enabledExperimentalFeatures = (): string[] =>
   experimentalFeatures.map(e => e.name).filter(k => !isEnvDefault(k));
 export const isReadOnlyEnv = (key: string) => key in process.env;
