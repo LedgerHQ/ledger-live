@@ -17,7 +17,10 @@ import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { useOnTrustchainJoined } from "../../hooks/useOnTrustchainJoined";
+import {
+  trackLedgerSyncActivated,
+  useLeaveDeviceStepOnTrustchainJoined,
+} from "../../hooks/useOnTrustchainJoined";
 import { toLegacyDevice } from "../toLegacyDevice";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
 import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
@@ -32,7 +35,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
+  const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
   const store = useStore();
   const resultRef = useRef<TrustchainResult | null>(null);
@@ -42,6 +45,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
       if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
       resultRef.current = result;
       dispatch(setTrustchain(result.trustchain));
+      trackLedgerSyncActivated();
     },
     [dispatch, store],
   );
@@ -49,7 +53,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const onJobStateChanged = useCallback(
     (jobState: AddMemberJobState) => {
       if (jobState.type === "completed" && resultRef.current) {
-        onTrustchainJoined(resultRef.current, deviceRef.current);
+        leaveDeviceStep(resultRef.current, deviceRef.current);
         return;
       }
       if (jobState.type !== "failed") return;
@@ -67,7 +71,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
           onError(jobState.error);
       }
     },
-    [dispatch, onError, onTrustchainJoined],
+    [dispatch, onError, leaveDeviceStep],
   );
 
   const createRunIntent = memberCredentials

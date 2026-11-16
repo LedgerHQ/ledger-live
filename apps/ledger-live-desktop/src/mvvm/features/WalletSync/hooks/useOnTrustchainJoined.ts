@@ -13,11 +13,15 @@ import {
   walletSyncEntryFlowProperties,
 } from "./useLedgerSyncAnalytics";
 
+export function trackLedgerSyncActivated() {
+  track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
+}
+
 /**
- * Leaves the device step once this instance joined the trustchain: tracks the activation, then
- * ends the onboarding or moves the activation flow to its final step.
+ * Leaves the device step once this instance joined the trustchain: ends the onboarding or moves
+ * the activation flow to its final step.
  */
-export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
+export function useLeaveDeviceStepOnTrustchainJoined(sourcePage?: AnalyticsPage) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isOnboardingNewDevice = useSelector(walletSyncOnboardingNewDeviceSelector);
@@ -25,7 +29,6 @@ export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
 
   return useCallback(
     (trustchainResult: TrustchainResult, device: Device | null) => {
-      track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
       if (sourcePage === AnalyticsPage.Onboarding) {
         if (!isOnboardingNewDeviceInitial.current) {
           dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -48,5 +51,18 @@ export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
       }
     },
     [dispatch, navigate, sourcePage],
+  );
+}
+
+/** Tracks the activation, then leaves the device step. */
+export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
+  const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
+
+  return useCallback(
+    (trustchainResult: TrustchainResult, device: Device | null) => {
+      trackLedgerSyncActivated();
+      leaveDeviceStep(trustchainResult, device);
+    },
+    [leaveDeviceStep],
   );
 }

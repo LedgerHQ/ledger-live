@@ -14,6 +14,7 @@ import {
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { track } from "@shared/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { useDispatch } from "LLD/hooks/redux";
@@ -42,6 +43,11 @@ jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
 }));
 
 jest.mock("../screens/DeviceActions/openOrInstall", () => jest.fn(() => null));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("../hooks/useGetMembers", () => ({
   useGetMembers: () => ({ isMembersLoading: false, instances: INSTANCES, isError: false }),
@@ -89,6 +95,10 @@ function deliver(result: unknown, intent = lastIntent()) {
 
 function failed(reason: LedgerSyncFailureReason): LedgerSyncJobState {
   return { type: "failed", reason, error: new Error(`Ledger Sync ${reason}`) };
+}
+
+function activationEvents() {
+  return jest.mocked(track).mock.calls.filter(([event]) => event === "ledgersync_activated");
 }
 
 function deviceIntentDialog() {
@@ -269,6 +279,33 @@ describe("Ledger Sync device steps on DIE", () => {
       },
     );
 
+    it("should track one activation when the result arrives before completed", async () => {
+      await startActivationFromSettings();
+
+      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      emit({ type: "completed" });
+
+      expect(activationEvents()).toEqual([["ledgersync_activated", { flow: "Ledger Sync" }]]);
+    });
+
+    it("should store and track a result that arrives after the device step was left", async () => {
+      const { store } = await startActivationFromSettings();
+      const intent = lastIntent();
+
+      act(() => {
+        store.dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+      });
+      await waitFor(() => expect(deviceIntentDialog()).not.toBeInTheDocument());
+      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
+
+      expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
+      expect(store.getState().walletSync).toMatchObject({
+        flow: Flow.Activation,
+        step: Step.CreateOrSynchronize,
+      });
+      expect(activationEvents()).toHaveLength(1);
+    });
+
     it("should drop a result that arrives after Ledger Sync was reset", async () => {
       const { store } = await startActivationFromSettings();
       const intent = lastIntent();
@@ -281,6 +318,7 @@ describe("Ledger Sync device steps on DIE", () => {
 
       expect(store.getState().trustchain.trustchain).toBeNull();
       expect(store.getState().walletSync.step).not.toBe(Step.ActivationLoading);
+      expect(activationEvents()).toHaveLength(0);
     });
 
     it("should start a new run when the device step is visited again after a failure", async () => {
@@ -415,6 +453,24 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(store.getState().walletSync.step).toBe(Step.InstanceSuccesfullyDeleted);
       expectPanelWithoutDeviceStep();
       expect(await screen.findByText(new RegExp(MEMBER_TO_REMOVE.name))).toBeInTheDocument();
+    });
+
+    it("should store a rotated trustchain that arrives after the drawer was closed", async () => {
+      const { store } = await startRemoval();
+      const intent = lastIntent();
+
+      act(() => {
+        store.dispatch(setDrawerVisibility(false));
+      });
+      await waitFor(() => expect(deviceIntentDialog()).not.toBeInTheDocument());
+      deliver(NEW_TRUSTCHAIN, intent);
+
+      expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
+      expect(store.getState().walletSync).toMatchObject({
+        flow: Flow.ManageInstances,
+        step: Step.DeviceActionInstance,
+        isDrawerOpen: false,
+      });
     });
 
     it("should drop a rotated trustchain that arrives after Ledger Sync was reset", async () => {
