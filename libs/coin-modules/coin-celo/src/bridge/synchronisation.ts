@@ -36,7 +36,7 @@ import { CeloAccount, isCeloOperationExtra } from "../types/types";
 import { getTokenFromAsset } from "./getTokenFromAsset";
 
 const buildEvmContext = (currencyId: string): EvmContext => ({
-  config: async () => getCoinConfig(currencyId).info,
+  config: () => Promise.resolve().then(() => getCoinConfig(currencyId).info),
   logger: () => {},
 });
 
@@ -83,14 +83,23 @@ const resolveTypesFromContracts = (item: {
   return item.type;
 };
 
+/** Adapters send the nonce as a string or a number; the framework types it as a bigint. */
+const parseSequence = (sequence: unknown): BigNumber | undefined => {
+  if (BigNumber.isBigNumber(sequence)) return sequence;
+  if (typeof sequence === "bigint") return new BigNumber(sequence.toString());
+  if (typeof sequence === "string" || typeof sequence === "number") {
+    return new BigNumber(sequence);
+  }
+  return undefined;
+};
+
 /**
  * The explorer's nonce, which `shouldRetainPendingOperation` compares with the optimistic op's to
  * drop it once its tx is synced. A missing nonce stays unset rather than 0, which would claim one.
  */
 const toSequenceNumber = (sequence: unknown): BigNumber | undefined => {
-  if (sequence === undefined || sequence === null) return undefined;
-  const value = new BigNumber(String(sequence));
-  return value.isNaN() ? undefined : value;
+  const value = parseSequence(sequence);
+  return value?.isNaN() ? undefined : value;
 };
 
 /** eth_getTransactionByHash is a cheap read, so a higher fan-out is safe. */

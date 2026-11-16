@@ -206,6 +206,26 @@ describe("pending operation retention", () => {
     expect(shouldRetainPendingOperation(synced, pending(111))).toBe(false);
     expect(shouldRetainPendingOperation(synced, pending(112))).toBe(true);
   });
+
+  it.each([
+    ["a string", "111", new BigNumber(111)],
+    ["a number", 111, new BigNumber(111)],
+    ["a bigint", 111n, new BigNumber(111)],
+    ["an empty string", "", undefined],
+    ["missing", undefined, undefined],
+  ])("reads the explorer nonce when it is %s", async (_, sequence, expected) => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({
+        items: [{ ...nativeOperation, details: { ...nativeOperation.details, sequence } }],
+      }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+
+    expect(result.operations?.[0].transactionSequenceNumber).toEqual(expected);
+  });
 });
 
 describe("fee-currency enrichment", () => {

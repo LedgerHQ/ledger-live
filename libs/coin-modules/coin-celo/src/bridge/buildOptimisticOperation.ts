@@ -29,9 +29,10 @@ export const buildOptimisticOperation = (
 
   // A CIP-64 fee is charged in the fee currency, so it is not CELO spent.
   const isFeePaidInCelo = !isTokenTransaction && !transaction.feeCurrency;
+  const celoFee = isFeePaidInCelo ? fee : 0;
   const value =
     type === "OUT" || type === "LOCK"
-      ? new BigNumber(transaction.amount).plus(isFeePaidInCelo ? fee : 0)
+      ? new BigNumber(transaction.amount).plus(celoFee)
       : new BigNumber(transaction.amount);
 
   const operation: CeloOperation = {
