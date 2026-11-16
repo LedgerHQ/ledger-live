@@ -608,4 +608,152 @@ describe("getTransactionStatus", () => {
       expect(status.errors).not.toHaveProperty("amount");
     });
   });
+
+  describe("staking modes", () => {
+    const recipient = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
+    const account = {
+      ...accountFixture,
+      balance: BigNumber("10000000000000000"),
+      spendableBalance: BigNumber("10000000000000000"),
+      celoResources: {
+        ...accountFixture.celoResources,
+        lockedBalance: BigNumber(44444),
+      },
+    };
+    const accountWithVote = {
+      ...account,
+      celoResources: {
+        ...account.celoResources,
+        votes: [
+          {
+            activatable: true,
+            amount: BigNumber(109),
+            index: 0,
+            revokable: true,
+            type: "active" as const,
+            validatorGroup: recipient,
+          },
+        ],
+      },
+    };
+    const transaction = { ...transactionFixture, recipient, fees: BigNumber(2) };
+
+    beforeEach(() => {
+      mockReadContract.mockImplementation(defaultReadContract);
+    });
+
+    it("returns NotEnoughBalance for an unlock when the amount exceeds the non-voting locked balance", async () => {
+      const status = await getTransactionStatus(account, {
+        ...transaction,
+        mode: "unlock",
+        amount: BigNumber(200),
+      });
+
+      expect(status.errors["amount"].name).toEqual("NotEnoughBalance");
+      expect(status.warnings).toEqual({});
+    });
+
+    it("returns no error for an unlock when the amount is within the non-voting locked balance", async () => {
+      const status = await getTransactionStatus(account, {
+        ...transaction,
+        mode: "unlock",
+        amount: BigNumber(50),
+      });
+
+      expect(status.errors).toEqual({});
+      expect(status.warnings).toEqual({});
+      expect(status.amount).toEqual(BigNumber(50));
+      expect(status.totalSpent).toEqual(BigNumber(52));
+    });
+
+    it("returns AmountRequired for an unlock with a zero amount", async () => {
+      const status = await getTransactionStatus(account, {
+        ...transaction,
+        mode: "unlock",
+        amount: BigNumber(0),
+      });
+
+      expect(status.errors["amount"].name).toEqual("AmountRequired");
+    });
+
+    it("returns no error and the amount for a lock with a valid amount", async () => {
+      const status = await getTransactionStatus(account, {
+        ...transaction,
+        mode: "lock",
+        amount: BigNumber(5000),
+      });
+
+      expect(status.errors).toEqual({});
+      expect(status.amount).toEqual(BigNumber(5000));
+    });
+
+    it("returns AmountRequired for a lock with a zero amount", async () => {
+      const status = await getTransactionStatus(account, {
+        ...transaction,
+        mode: "lock",
+        amount: BigNumber(0),
+      });
+
+      expect(status.errors["amount"].name).toEqual("AmountRequired");
+    });
+
+    it("returns NotEnoughBalance for a revoke when the amount exceeds the vote amount", async () => {
+      const status = await getTransactionStatus(accountWithVote, {
+        ...transaction,
+        mode: "revoke",
+        index: 0,
+        amount: BigNumber(200),
+      });
+
+      expect(status.errors["amount"].name).toEqual("NotEnoughBalance");
+    });
+
+    it("returns no error for a revoke when the amount is within the vote amount", async () => {
+      const status = await getTransactionStatus(accountWithVote, {
+        ...transaction,
+        mode: "revoke",
+        index: 0,
+        amount: BigNumber(100),
+      });
+
+      expect(status.errors).toEqual({});
+      expect(status.amount).toEqual(BigNumber(100));
+    });
+
+    it("uses the voted amount when revoking with useAllAmount", async () => {
+      const status = await getTransactionStatus(accountWithVote, {
+        ...transaction,
+        mode: "revoke",
+        index: 0,
+        useAllAmount: true,
+        amount: BigNumber(0),
+      });
+
+      expect(status.amount).toEqual(BigNumber(109));
+      expect(status.errors).toEqual({});
+    });
+
+    it("matches the revoke vote regardless of the recipient address casing", async () => {
+      const lowercaseVoteAccount = {
+        ...accountWithVote,
+        celoResources: {
+          ...accountWithVote.celoResources,
+          votes: accountWithVote.celoResources.votes.map(vote => ({
+            ...vote,
+            validatorGroup: recipient.toLowerCase(),
+          })),
+        },
+      };
+
+      const status = await getTransactionStatus(lowercaseVoteAccount, {
+        ...transaction,
+        mode: "revoke",
+        index: 0,
+        useAllAmount: true,
+        amount: BigNumber(0),
+      });
+
+      expect(status.amount).toEqual(BigNumber(109));
+    });
+  });
 });
