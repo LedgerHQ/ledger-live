@@ -8,7 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import { Transaction } from "../types/common";

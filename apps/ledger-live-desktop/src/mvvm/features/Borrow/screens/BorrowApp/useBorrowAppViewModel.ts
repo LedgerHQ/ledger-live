@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
@@ -7,34 +7,14 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useSelector } from "LLD/hooks/redux";
+import { useLiveAppWebviewInputs } from "LLD/hooks/useLiveAppWebviewInputs";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
-import useTheme from "~/renderer/hooks/useTheme";
-import {
-  counterValueCurrencySelector,
-  developerModeSelector,
-  enablePlatformDevToolsSelector,
-  languageSelector,
-  localeSelector,
-} from "~/renderer/reducers/settings";
-import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
+import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
 import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 
 type BorrowLocationState = { returnTo?: string };
-
-export type BorrowWebviewInputs = {
-  devMode: string;
-  theme: string;
-  lang: string;
-  locale: string;
-  countryLocale: string;
-  currencyTicker: string;
-  OS: string;
-  platform: "LLD";
-  discreetMode: string;
-};
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_BORROW_MANIFEST_ID ||
@@ -51,15 +31,9 @@ export function useBorrowAppViewModel() {
 
   const { updateManifests } = useRemoteLiveAppContext();
 
-  const { theme } = useTheme();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const lang = useSelector(languageSelector);
-  const locale = useSelector(localeSelector);
-  const devMode = useSelector(developerModeSelector);
-  const discreetMode = useDiscreetMode();
-  const countryLocale = getParsedSystemDeviceLocale().region;
+  const inputs = useLiveAppWebviewInputs();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
 
   const navigate = useNavigate();
@@ -116,21 +90,6 @@ export function useBorrowAppViewModel() {
   const onStateChange = (state: WebviewState) => {
     setWebviewState(state);
   };
-
-  const inputs = useMemo<BorrowWebviewInputs>(
-    () => ({
-      devMode: devMode.toString(),
-      theme,
-      lang,
-      locale,
-      countryLocale,
-      currencyTicker: fiatCurrency.ticker,
-      OS: "web",
-      platform: "LLD",
-      discreetMode: discreetMode ? "true" : "false",
-    }),
-    [countryLocale, devMode, discreetMode, fiatCurrency.ticker, lang, locale, theme],
-  );
 
   return {
     manifest,

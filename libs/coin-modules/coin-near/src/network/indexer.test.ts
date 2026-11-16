@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
-import { getOperations } from "./indexer";
+import { fetchTransactionsPage, getOperations } from "./indexer";
 import { mockNearConfig } from "../test/context";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 import { NearTransaction } from "./sdk.types";
@@ -383,6 +383,28 @@ describe("getOperations", () => {
       expect(operation.blockHash).toBeUndefined();
       expect(operation.blockHeight).toBeUndefined();
       expect(operation.hasFailed).toBe(false);
+    });
+  });
+
+  describe("rate limiting", () => {
+    it("rejects after a single request when the indexer answers 429", async () => {
+      let requests = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/txns`, () => {
+          requests += 1;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
+      );
+
+      await expect(getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS)).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(requests).toBe(1);
+
+      await expect(fetchTransactionsPage(mockNearConfig, ADDRESS)).rejects.toMatchObject({
+        status: 429,
+      });
+      expect(requests).toBe(2);
     });
   });
 });

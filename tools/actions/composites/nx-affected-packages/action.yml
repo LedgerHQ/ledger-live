@@ -16,6 +16,9 @@ outputs:
   paths:
     description: "Newline-separated list of affected project root paths (deduplicated)"
     value: ${{ steps.nx-affected.outputs.paths }}
+  path_prefixes:
+    description: "JSON array of every leading segment run of the affected paths (apps, apps/ledger-live-desktop, ...). Match with contains(fromJSON(...), 'shared'), which compares whole elements."
+    value: ${{ steps.nx-affected.outputs.path_prefixes }}
 
 runs:
   using: "composite"
@@ -32,7 +35,7 @@ runs:
           const path = require('path');
           const scriptPath = path.join(process.env.ACTION_PATH, 'get-affected-packages-and-paths.js');
           const { getAffectedPackagesAndPaths } = require(scriptPath);
-          const { packages: packageNames, paths: pathsDeduped } = await getAffectedPackagesAndPaths({
+          const { packages: packageNames, paths: pathsDeduped, pathPrefixes } = await getAffectedPackagesAndPaths({
             base: process.env.BASE || '',
             head: process.env.HEAD || '',
             exec,
@@ -42,3 +45,4 @@ runs:
           const eol = '\nEOF\n';
           fs.appendFileSync(out, 'packages<<EOF\n' + packageNames.join('\n') + eol);
           fs.appendFileSync(out, 'paths<<EOF\n' + pathsDeduped.join('\n') + eol);
+          fs.appendFileSync(out, 'path_prefixes=' + JSON.stringify(pathPrefixes) + '\n');

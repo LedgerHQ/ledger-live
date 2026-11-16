@@ -8,7 +8,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
 
 jest.mock("@ledgerhq/live-common/bridge/index");

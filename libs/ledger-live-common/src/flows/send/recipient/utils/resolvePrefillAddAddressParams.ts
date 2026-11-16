@@ -1,14 +1,14 @@
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import { z } from "zod";
-
-const SendContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  type CryptoOrTokenCurrency,
+  type CryptoOrTokenCurrencyId,
+  CryptoOrTokenCurrencyIdSchema,
+} from "@domain/entity-currency";
 
 export type ResolvedPrefillAddAddressParams = Readonly<{
   address: string;
   currency: {
-    currencyId: z.infer<typeof SendContactCurrencyIdSchema>;
+    currencyId: CryptoOrTokenCurrencyId;
     assetDisplayName: string;
   };
   network: {
@@ -44,7 +44,7 @@ export function resolvePrefillAddAddressParams({
   currency,
 }: ResolvePrefillAddAddressParamsInput): ResolvedPrefillAddAddressParams | undefined {
   const trimmedAddress = address.trim();
-  const parsedCurrencyId = SendContactCurrencyIdSchema.safeParse(currency?.id);
+  const parsedCurrencyId = CryptoOrTokenCurrencyIdSchema.safeParse(currency?.id);
 
   if (!currency || trimmedAddress.length === 0 || !parsedCurrencyId.success) {
     return undefined;

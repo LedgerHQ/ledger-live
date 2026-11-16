@@ -99,11 +99,30 @@ describe("custom.stake.position.open", () => {
   });
 
   it.each([
+    ["an empty", ""],
+    ["a blank", "   "],
+  ])(
+    "should open a position without a validator when its validator address is %s string",
+    async (_case, validatorAddress) => {
+      const { openPosition, open } = setup();
+
+      const answer = await open({ ...PARAMS, validatorAddress });
+
+      expect(openPosition).toHaveBeenCalledWith({
+        ...PARAMS,
+        validatorAddress: "",
+        rewards: undefined,
+      });
+      expect(answer.error).toBeUndefined();
+    },
+  );
+
+  it.each([
     ["no account id", { positionId: PARAMS.positionId, validatorAddress: PARAMS.validatorAddress }],
     ["a blank account id", { ...PARAMS, accountId: "   " }],
     ["a position id over 128 characters", { ...PARAMS, positionId: "a".repeat(129) }],
     ["no validator address", { accountId: PARAMS.accountId, positionId: PARAMS.positionId }],
-    ["a blank validator address", { ...PARAMS, validatorAddress: " " }],
+    ["a validator address over 128 characters", { ...PARAMS, validatorAddress: "a".repeat(129) }],
     ["a numeric validator address", { ...PARAMS, validatorAddress: 42 }],
     ["null params", null],
     ["an array", []],

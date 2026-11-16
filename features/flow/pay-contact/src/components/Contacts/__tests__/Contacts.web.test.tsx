@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
-import { Contacts } from "../Contacts.web";
+import { Contacts } from "../Contacts";
 import {
   makeAddContactProps,
   makeContactsStore,

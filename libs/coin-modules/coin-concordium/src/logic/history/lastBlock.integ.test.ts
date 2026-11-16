@@ -1,8 +1,8 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { lastBlock } from "./lastBlock";
 
 describe("lastBlock", () => {
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
 
   it("returns last block info", async () => {
     const result = await lastBlock(config, "concordium_testnet");

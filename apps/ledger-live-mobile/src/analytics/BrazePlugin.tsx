@@ -21,6 +21,7 @@ export class BrazePlugin extends Plugin {
       const debouncedTraits = {
         ...traits,
         appTimeToInteractiveMilliseconds: undefined,
+        appTimeToInteractiveBase: undefined,
         stakingProvidersEnabled: undefined,
       };
       if (

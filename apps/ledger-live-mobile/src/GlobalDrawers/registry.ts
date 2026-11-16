@@ -7,7 +7,8 @@ import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 import { SwapTransactionStatusDrawerWrapper } from "LLM/features/SwapTransactionStatus";
 import { RegionRestrictedDrawer } from "LLM/features/Accounts/components/RegionRestrictedDrawer";
 import { AppProtectionPromptWrapper } from "LLM/features/AppLock/AppProtectionPrompt";
-import { PredictionsSheet } from "@features/flow-predictions";
+import { PredictionsSetupSheet, PredictionsSheet } from "@features/flow-predictions";
+import PredictionsBindingRoot from "LLM/features/Predictions/bindingIntent/PredictionsBindingRoot";
 
 /**
  * Registry of all global drawers in the application.
@@ -49,13 +50,13 @@ export const DRAWER_REGISTRY = {
   predictions: {
     component: PredictionsSheet,
   },
+  predictionsBinding: {
+    component: PredictionsBindingRoot,
+  },
+  predictionsSetup: {
+    component: PredictionsSetupSheet,
+  },
 } as const satisfies Record<string, DrawerRegistryEntry>;
-
-/**
- * Type-safe drawer keys derived from the registry.
- * Use this type when you need to reference a specific drawer.
- */
-export type DrawerKey = keyof typeof DRAWER_REGISTRY;
 
 /**
  * Array of all drawer entries for iteration.

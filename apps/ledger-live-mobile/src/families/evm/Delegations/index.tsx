@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
 import { PickingStrategy } from "@ledgerhq/wallet-btc/pickingstrategies/types";

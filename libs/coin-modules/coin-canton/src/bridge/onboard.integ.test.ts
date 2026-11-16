@@ -1,12 +1,17 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { firstValueFrom, toArray } from "rxjs";
-import coinConfig from "../config";
+import { cantonDefaults } from "../config";
 import {
   isTopologyChangeRequiredCached,
   clearIsTopologyChangeRequiredCache,
 } from "../network/gateway";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
-import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  createMockContext,
+} from "../test/fixtures";
 import {
   AuthorizeStatus,
   CantonAuthorizeProgress,
@@ -19,8 +24,13 @@ import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } fr
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
-  const mockCurrency = createMockCantonCurrency();
-  const mockAccount = createMockCantonAccount();
+  const mockCurrency = {
+    ...createMockCantonCurrency(),
+    id: CryptoCurrencyIdSchema.parse("canton_network_devnet"),
+  };
+  const mockAccount = createMockCantonAccount({ currency: mockCurrency });
+  const mockConfig = cantonDefaults.canton_network_devnet;
+  const mockContext = createMockContext(mockConfig);
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -28,20 +38,6 @@ describe("onboard (devnet)", () => {
     mockSignerContext: jest.Mock;
     onboardResult: CantonOnboardResult;
   } | null = null;
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
-  });
 
   const getOnboardedAccount = () => {
     if (!onboardedAccount) {
@@ -61,7 +57,7 @@ describe("onboard (devnet)", () => {
         return callback(mockSigner);
       });
 
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const onboardValues = await firstValueFrom(
         onboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );
@@ -86,7 +82,7 @@ describe("onboard (devnet)", () => {
       // We retry a few times with a small delay to account for this.
       let result: Awaited<ReturnType<typeof isAccountOnboarded>> = { isOnboarded: false };
       for (let i = 0; i < 10; i++) {
-        result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+        result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
         if (result.isOnboarded && result.partyId) {
           break;
         }
@@ -114,7 +110,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -125,7 +121,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -140,7 +136,7 @@ describe("onboard (devnet)", () => {
       const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => {
         return callback(mockSigner);
       });
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
 
       // WHEN
       const allValues = await firstValueFrom(
@@ -171,7 +167,7 @@ describe("onboard (devnet)", () => {
     it.skip("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
       const { mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
-      const secondOnboardObservable = buildOnboardAccount(mockSignerContext);
+      const secondOnboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
 
       // WHEN
       const secondOnboardValues = await firstValueFrom(
@@ -192,7 +188,7 @@ describe("onboard (devnet)", () => {
     it("should complete preapproval flow for onboarded account", async () => {
       // GIVEN
       const { mockSignerContext, onboardResult } = getOnboardedAccount();
-      const preapprovalObservable = buildAuthorizePreapproval(mockSignerContext);
+      const preapprovalObservable = buildAuthorizePreapproval(mockSignerContext, mockContext);
 
       // WHEN
       const preapprovalValues = await firstValueFrom(
@@ -229,13 +225,16 @@ describe("onboard (devnet)", () => {
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
       const keyPair = generateMockKeyPair();
-      const mockAccount = createMockCantonAccount({ xpub: keyPair.publicKeyHex });
+      const mockAccount = createMockCantonAccount({
+        xpub: keyPair.publicKeyHex,
+        currency: mockCurrency,
+      });
       const mockSigner = createMockSigner(keyPair);
       const mockSignerContext = jest.fn().mockImplementation((_, callback) => {
         return callback(mockSigner);
       });
 
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const onboardValues = await firstValueFrom(
         onboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );
@@ -252,24 +251,24 @@ describe("onboard (devnet)", () => {
 
       // Verify account is accessible on devnet node
       const isTopologyChangeRequiredOnDevnet = await isTopologyChangeRequiredCached(
-        mockCurrency,
+        mockConfig,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnDevnet).toBe(false);
 
       // WHEN: Switch to different node
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet-replicated");
-      clearIsTopologyChangeRequiredCache(mockCurrency, keyPair.publicKeyHex);
+      clearIsTopologyChangeRequiredCache(mockConfig, keyPair.publicKeyHex);
 
       // THEN: Verify topology change is required
       const isTopologyChangeRequiredOnReplicated = await isTopologyChangeRequiredCached(
-        mockCurrency,
+        mockConfig,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnReplicated).toBe(true);
 
       // AND: Verify re-onboarding proceeds through full onboarding flow
-      const reonboardObservable = buildOnboardAccount(mockSignerContext);
+      const reonboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const reonboardValues = await firstValueFrom(
         reonboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );

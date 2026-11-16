@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen, within } from "@testing-library/react-native";
 import { Box, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { BottomSheetBackgroundContext } from "@shared/ui-queued-bottom-sheet";
@@ -43,6 +43,17 @@ describe("InfoState", () => {
     expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner title");
   });
 
+  it("should display a banner that only has a description", () => {
+    render(
+      <InfoState
+        preset="success"
+        banner={{ description: "Banner description", testID: "info-banner" }}
+      />,
+    );
+
+    expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner description");
+  });
+
   it("should give the description a testID derived from the InfoState's testID", () => {
     render(<InfoState preset="error" description="State description" testID="info-state" />);
 
@@ -77,6 +88,20 @@ describe("InfoState", () => {
     // THEN
     expect(onPrimaryPress).toHaveBeenCalledTimes(1);
     expect(onSecondaryPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render the CTA's icon inside its button when the CTA has one", () => {
+    renderInfoStateWithIconOnPrimaryCtaOnly();
+
+    expect(within(screen.getByTestId("info-state-primary")).getByTestId("cta-icon")).toBeVisible();
+  });
+
+  it("should render only the label of a CTA that has no icon", () => {
+    renderInfoStateWithIconOnPrimaryCtaOnly();
+
+    const secondaryButton = screen.getByTestId("info-state-secondary");
+    expect(within(secondaryButton).getByText("Secondary action")).toBeVisible();
+    expect(within(secondaryButton).queryByTestId("cta-icon")).toBeNull();
   });
 
   it("GIVEN an InfoState with no optional props WHEN it is rendered THEN it does not display title, description, banner or actions", () => {
@@ -246,4 +271,27 @@ function renderInfoStateForPreset(preset: "illustration" | "spot" | "text") {
     default:
       return assertNever(preset);
   }
+}
+
+function CtaIcon() {
+  return <Box testID="cta-icon" />;
+}
+
+function renderInfoStateWithIconOnPrimaryCtaOnly() {
+  render(
+    <InfoState
+      preset="error"
+      primaryCta={{
+        label: "Learn more",
+        onPress: jest.fn(),
+        testID: "info-state-primary",
+        icon: CtaIcon,
+      }}
+      secondaryCta={{
+        label: "Secondary action",
+        onPress: jest.fn(),
+        testID: "info-state-secondary",
+      }}
+    />,
+  );
 }

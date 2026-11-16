@@ -11,3 +11,17 @@ libs/ledger-key-ring-protocol/src/__tests__/unit/types.test.ts:generic-api-key:6
 libs/coin-modules/coin-solana/src/logic/tests/listOperations.unit.test.ts:generic-api-key:822
 apps/ledger-live-mobile/src/state-manager/configureStore.test.ts:generic-api-key:62
 apps/ledger-live-desktop/src/state-manager/configureStore.test.ts:generic-api-key:26
+
+# Hex-encoded TRON TRC-20 contract addresses (public, 41-prefixed) in getBlock test fixtures — not secrets.
+libs/coin-modules/coin-tron/src/logic/getBlock.test.ts:generic-api-key:441
+libs/coin-modules/coin-tron/src/logic/getBlock.test.ts:generic-api-key:442
+
+# Public client keys built into the mobile app (Braze SDK keys) — not secrets.
+apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:102
+apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:103
+apps/ledger-live-mobile/.env.android.nightly:generic-api-key:5
+apps/ledger-live-mobile/.env.ios.nightly:generic-api-key:6
+apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:4
+apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:5
+apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:5
+apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:6

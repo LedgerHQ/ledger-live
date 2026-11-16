@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { reduce, filter, map, catchError } from "rxjs/operators";
 import flatMap from "lodash/flatMap";

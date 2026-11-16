@@ -1,4 +1,8 @@
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  currencyIdFromNetwork,
+  toNetworkId,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { familyOf } from "./families";
 import { seededRandom } from "./random";
@@ -15,11 +19,17 @@ export function mockDescriptors(
   count: number,
   existing: readonly AccountDescriptor[],
 ): AccountDescriptor[] {
-  const currency = getCryptoCurrencyById(currencyIdFromNetwork(network));
+  const networkId = toNetworkId(network);
+  const currency = getCryptoCurrencyById(currencyIdFromNetwork(networkId));
   const family = familyOf(currency);
   const first =
-    Math.max(-1, ...existing.filter(d => d.network === network).map(accountIndexOf)) + 1;
+    Math.max(-1, ...existing.filter(d => d.network === networkId).map(accountIndexOf)) + 1;
   return Array.from({ length: count }, (_, offset) =>
-    family.descriptor(currency, first + offset, seededRandom(`${network}:${first + offset}`)),
+    family.descriptor(
+      currency,
+      networkId,
+      first + offset,
+      seededRandom(`${networkId}:${first + offset}`),
+    ),
   );
 }

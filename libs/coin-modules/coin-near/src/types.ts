@@ -6,7 +6,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { NearStakingPosition } from "./network/sdk.types";
 
 export type { NearStakingPosition } from "./network/sdk.types";
@@ -45,7 +45,6 @@ export type NearPreloadedData = {
   receiptCreationExecution: BigNumber;
   minGasPurchasePrice: BigNumber;
   accountCreationCharge: BigNumber;
-  validators: NearValidatorItem[];
 };
 
 export type NearResources = {

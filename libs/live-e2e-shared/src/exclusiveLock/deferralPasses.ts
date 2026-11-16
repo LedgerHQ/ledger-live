@@ -1,27 +1,13 @@
 /** How many passes may move a test whose exclusive lock is busy on to the next pass. */
-const LOCK_DEFERRAL_PASSES_ENV = "E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES";
+export const LOCK_DEFERRAL_PASSES = 2;
 
 /** "1" on the passes that may defer; the pass after them waits for busy locks instead. */
 const EXCLUSIVE_LOCK_DEFER_ENV = "E2E_EXCLUSIVE_LOCK_DEFER";
-
-const DEFAULT_DEFERRAL_PASSES = 2;
 
 type Env = Readonly<Record<string, string | undefined>>;
 
 export const isExclusiveLockDeferralPass = (env: Env = process.env): boolean =>
   env[EXCLUSIVE_LOCK_DEFER_ENV] === "1";
-
-export function lockDeferralPasses(env: Env = process.env): number {
-  const configured = env[LOCK_DEFERRAL_PASSES_ENV]?.trim();
-  if (!configured) return DEFAULT_DEFERRAL_PASSES;
-  const passes = Number(configured);
-  if (!Number.isInteger(passes) || passes < 0) {
-    throw new Error(
-      `${LOCK_DEFERRAL_PASSES_ENV} must be a whole number of passes, 0 or more, not "${configured}"`,
-    );
-  }
-  return passes;
-}
 
 export type DeferralPass<Item> = {
   readonly number: number;
@@ -44,7 +30,7 @@ export type DeferralPassResult<Item> = {
  */
 export function runWithDeferralPasses<Item>(
   runPass: RunPass<Item>,
-  deferralPasses: number = lockDeferralPasses(),
+  deferralPasses: number = LOCK_DEFERRAL_PASSES,
 ): Promise<number> {
   return runPassesFrom(runPass, deferralPasses, 1, undefined);
 }

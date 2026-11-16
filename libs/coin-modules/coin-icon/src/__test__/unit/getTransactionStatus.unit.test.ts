@@ -8,7 +8,7 @@ import {
   AmountRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { IconDoMaxSendInstead } from "../../errors";
 import { getSendTransactionStatus, getTransactionStatus } from "../../getTransactionStatus";
 import * as logic from "../../logic";

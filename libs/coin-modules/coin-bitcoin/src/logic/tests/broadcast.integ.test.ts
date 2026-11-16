@@ -1,16 +1,10 @@
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { broadcast } from "../broadcast";
 import { SPENT_TX, buildSignedTxHex } from "./helpers/fixtures";
 
 // Nothing real is ever broadcast here: every transaction is one the node rejects.
 const liveContext: BitcoinContext = {
-  config: async () => ({
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: "btc",
-  }),
+  config: async () => bitcoinDefaults.bitcoin,
   logger: () => {},
 };
 

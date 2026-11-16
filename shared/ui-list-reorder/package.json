@@ -19,7 +19,6 @@
     "test:watch": "jest --watch"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",

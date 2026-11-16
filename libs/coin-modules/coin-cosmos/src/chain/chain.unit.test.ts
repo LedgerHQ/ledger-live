@@ -1,13 +1,10 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import cosmosCoinConfig, { cosmosConfig, type CosmosCoinConfig } from "../config";
+import cosmosCoinConfig, { cosmosDefaults, type CosmosCoinConfig } from "../config";
+import { cosmosDefaultsFor } from "../test/cosmosDefaults";
 import cryptoFactory from "./chain";
 
 describe("cryptoFactory test", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   it("should not return null with currencies in cosmos family", () => {
@@ -23,7 +20,6 @@ describe("cryptoFactory test", () => {
       "nyx",
       "persistence",
       "secret_network",
-      "stargaze",
       "stride",
       "mantra",
       "crypto_org",
@@ -64,18 +60,17 @@ describe("cryptoFactory test", () => {
     expect(chain.validatorPrefix).toBe("gonkavaloper");
     // The endpoint reaches the chain instance through config enrichment (chain/chain.ts).
     expect(chain.lcd).toBe("https://gonka.coin.ledger.com");
-    // Still 0 with the config entry in place — guards against a future entry
-    // re-introducing the family default.
-    expect(chain.minGasPrice).toBe(0);
+    // 1 ngonka per gas, the price of the chain's "cosmos" fee group.
+    expect(chain.minGasPrice).toBe(1);
     expect(chain.ledgerValidator).toBeUndefined();
   });
 
   it("should keep gonka's configuration free of staking and of a Ledger validator", () => {
-    const gonkaDefault = cosmosConfig.config_currency_gonka.default as Record<string, unknown>;
+    const gonkaDefault = cosmosDefaults.gonka;
     expect(gonkaDefault).toMatchObject({
       disableDelegation: true,
       // The declared feature set is transfers only: staking must not appear here either.
-      status: { features: [{ id: "blockchain_txs", type: "active" }] },
+      status: { features: [{ id: "blockchain_txs", status: "active" }] },
     });
     expect("ledgerValidator" in gonkaDefault).toBe(false);
 
@@ -86,7 +81,7 @@ describe("cryptoFactory test", () => {
   });
 
   it("should leave babylon's delegation enabled when no remote config disables it", () => {
-    const babylonDefault = cosmosConfig.config_currency_babylon.default as Record<string, unknown>;
+    const babylonDefault = cosmosDefaults.babylon;
     expect("disableDelegation" in babylonDefault).toBe(false);
   });
 

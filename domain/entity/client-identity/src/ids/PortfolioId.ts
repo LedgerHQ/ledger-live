@@ -27,6 +27,10 @@ export class PortfolioId {
     return this[PORTFOLIO_ID_SYMBOL];
   }
 
+  exportPortfolioIdForPortfolioService(): string {
+    return this[PORTFOLIO_ID_SYMBOL];
+  }
+
   equals(other: PortfolioId): boolean {
     return this[PORTFOLIO_ID_SYMBOL] === other[PORTFOLIO_ID_SYMBOL];
   }

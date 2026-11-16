@@ -16,6 +16,9 @@ jest.mock("../../../hw/deviceAccess");
 jest.mock("@ledgerhq/live-signer-evm");
 
 const mockSignEIP712Message = jest.fn();
+const track = jest.fn();
+const analytics = { track, properties: { flow: "perps" } };
+const signFailedEvent = ["Perps withdraw signing failed", { flow: "perps" }];
 const wallet = new ethers.Wallet(`0x${"11".repeat(32)}`);
 const account = { freshAddress: wallet.address, freshAddressPath: "44'/60'/0'/0/0" } as Account;
 const device: Device = { deviceId: "device-1", modelId: DeviceModelId.nanoX, wired: false };
@@ -86,9 +89,12 @@ describe("withdraw signing", () => {
     it("signs the full typed data on the Ethereum app with the withdrawing account", async () => {
       const signature = await signedBy(wallet);
 
-      await expect(signWithdrawTypedData(device, account, typedData)).resolves.toBe(signature);
+      await expect(signWithdrawTypedData(device, account, typedData, analytics)).resolves.toBe(
+        signature,
+      );
       expect(withDevice).toHaveBeenCalledWith("device-1", undefined);
       expect(mockSignEIP712Message).toHaveBeenCalledWith(account.freshAddressPath, typedData);
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("never falls back to blind-signing the hashes when full EIP-712 is unsupported", async () => {
@@ -97,7 +103,10 @@ describe("withdraw signing", () => {
       });
       mockSignEIP712Message.mockReturnValueOnce(throwError(() => unsupported));
 
-      await expect(signWithdrawTypedData(device, account, typedData)).rejects.toBe(unsupported);
+      await expect(signWithdrawTypedData(device, account, typedData, analytics)).rejects.toBe(
+        unsupported,
+      );
+      expect(track).toHaveBeenCalledWith(...signFailedEvent);
     });
 
     it("reports a rejection on the legacy transport as a refusal", async () => {
@@ -110,17 +119,28 @@ describe("withdraw signing", () => {
         ),
       );
 
-      await expect(signWithdrawTypedData(device, account, typedData)).rejects.toThrow(
+      await expect(signWithdrawTypedData(device, account, typedData, analytics)).rejects.toThrow(
         UserRefusedOnDevice,
       );
+      expect(track).not.toHaveBeenCalled();
+    });
+
+    it("does not report a rejection the DMK signer already mapped as a failure", async () => {
+      mockSignEIP712Message.mockReturnValueOnce(throwError(() => new UserRefusedOnDevice()));
+
+      await expect(signWithdrawTypedData(device, account, typedData, analytics)).rejects.toThrow(
+        UserRefusedOnDevice,
+      );
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("rejects a signature that does not recover to the withdrawing account", async () => {
       await signedBy(new ethers.Wallet(`0x${"22".repeat(32)}`));
 
-      await expect(signWithdrawTypedData(device, account, typedData)).rejects.toThrow(
+      await expect(signWithdrawTypedData(device, account, typedData, analytics)).rejects.toThrow(
         WithdrawSignerMismatchError,
       );
+      expect(track).toHaveBeenCalledWith(...signFailedEvent);
     });
   });
 });

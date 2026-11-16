@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";

@@ -1,6 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ONE_SUI } from "../constants";
 import type { SuiAccount, Transaction } from "../types";
 

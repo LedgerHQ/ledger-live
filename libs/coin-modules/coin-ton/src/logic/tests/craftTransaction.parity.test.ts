@@ -1,6 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { Address } from "@ton/core";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import {

@@ -134,16 +134,4 @@
 
 - [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
 
-## 6.25.3
-
-### Patch Changes
-
-- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Rename QRCodeDevices by DevicesWithTouchScreen
-
-## 6.25.3-next.0
-
-### Patch Changes
-
-- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Rename QRCodeDevices by DevicesWithTouchScreen
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

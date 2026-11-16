@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 

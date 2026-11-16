@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Account } from "@ledgerhq/types-live";

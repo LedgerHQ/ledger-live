@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -10,13 +10,14 @@ import {
   KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -61,6 +62,14 @@ function DelegationAmount({ navigation, route }: Props) {
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
   const [value, setValue] = useState(() => initialValue);
+  const {
+    transaction: preparedTransaction,
+    setTransaction: setPreparedTransaction,
+    bridgePending,
+  } = useBridgeTransaction(bridge, () => ({ account, transaction: tx }));
+  useEffect(() => {
+    setPreparedTransaction(bridge.updateTransaction(tx, { amount: value }));
+  }, [bridge, tx, value, setPreparedTransaction]);
   const initialMax = useMemo(() => route?.params?.max ?? BigNumber(0), [route]);
   const max = useMemo(
     () => initialMax.minus(value.minus(initialValue)),
@@ -98,8 +107,12 @@ function DelegationAmount({ navigation, route }: Props) {
   );
   // not enough available balance to pay fees for the delegate/undelegate/redelegate transaction
   const isNotEnoughBalance: boolean = useMemo(
-    () => getMaxEstimatedBalance(account as CosmosAccount, tx.fees || new BigNumber(0)).isZero(),
-    [account, tx.fees],
+    () =>
+      getMaxEstimatedBalance(
+        account as CosmosAccount,
+        (preparedTransaction as CosmosTransaction | null | undefined)?.fees || new BigNumber(0),
+      ).isZero(),
+    [account, preparedTransaction],
   );
   const isAmountOutOfRange: boolean = useMemo(
     () =>
@@ -258,7 +271,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 </View>
               )}
               <Button
-                disabled={isAmountOutOfRange || isNotEnoughBalance}
+                disabled={isAmountOutOfRange || isNotEnoughBalance || bridgePending}
                 event="Cosmos DelegationAmountContinueBtn"
                 onPress={onNext}
                 title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}

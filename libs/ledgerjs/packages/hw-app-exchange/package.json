@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -46,7 +46,6 @@
     "typescript": "catalog:",
     "bip32-path": "0.4.2",
     "jest": "catalog:",
-    "ts-node": "10.9.2",
     "rimraf": "catalog:",
     "oxlint": "catalog:",
     "oxfmt": "catalog:"

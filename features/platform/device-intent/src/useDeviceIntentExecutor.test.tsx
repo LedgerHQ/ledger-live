@@ -643,6 +643,30 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       expect(firstCancel).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("optional props", () => {
+    it("WHEN onExecutorStateChanged and cancelIntentRequestId are omitted THEN the executor still runs", () => {
+      const props: TestProps = {
+        deviceConnectionParams: { acceptedDeviceModelIds: [] },
+        deviceInitializationInput: defaultDeviceInitializationInput,
+        intent: makeIntent(),
+        intentComponentExtraProps: undefined,
+        enabled: true,
+        onUserCancel: jest.fn(),
+      };
+      const { result } = renderHook(() => useDeviceIntentExecutor(props));
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      inPhase(result.current, "deviceDisconnected");
+    });
+  });
 });
 
 // ---- Unit tests (mocked SM) ---- //

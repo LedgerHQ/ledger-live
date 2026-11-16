@@ -8,7 +8,10 @@ import {
   CardLeading,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { ContactAddressPickerProps, ContactAddressPickerRow } from "../../../../types";
+import type {
+  ContactAddressPickerProps,
+  ContactAddressPickerRow,
+} from "../../ContactAddressPicker.types";
 
 const ASSET_ICON_SIZE = 48;
 

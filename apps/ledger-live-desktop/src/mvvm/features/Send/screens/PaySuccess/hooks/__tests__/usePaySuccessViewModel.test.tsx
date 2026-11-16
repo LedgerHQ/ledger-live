@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

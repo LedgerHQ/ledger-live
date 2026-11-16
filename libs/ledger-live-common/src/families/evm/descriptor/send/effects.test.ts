@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { syncGasOptionsEffect } from "./effects";
 
 type FlowEffectContextArg = Parameters<typeof syncGasOptionsEffect.run>[0];

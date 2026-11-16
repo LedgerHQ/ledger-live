@@ -1,12 +1,15 @@
 import React from "react";
-import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react";
 import {
   ContactsI18nTestProvider,
   formatTestContactDisplayName,
 } from "@features/platform-contacts/testing";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { createContactsSearchViewModel } from "@features/flow-contacts-list";
-import { ContactsView } from "./ContactsView.web";
+import {
+  createContactsListViewModel,
+  createContactsSearchViewModel,
+} from "@features/flow-contacts-list";
+import { ContactsView } from "./ContactsView";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
@@ -15,6 +18,7 @@ describe("ContactsView", () => {
   it("should hide add contact actions when a search has no result", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+    const onSearchQueryChange = jest.fn();
 
     render(
       <ContactsView
@@ -25,21 +29,10 @@ describe("ContactsView", () => {
           formatTestContactDisplayName,
         )}
         searchQuery="unknown"
-        onSearchInputChange={jest.fn()}
-        onOpenMe={jest.fn()}
+        onSearchQueryChange={onSearchQueryChange}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}
         ledgerSyncStatus="ready"
-        featureIntroduction={{
-          isOpen: false,
-          onComplete: jest.fn(),
-          onClose: jest.fn(),
-        }}
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          onActivate: jest.fn(),
-          onDismiss: jest.fn(),
-        }}
       />,
     );
 
@@ -48,32 +41,26 @@ describe("ContactsView", () => {
     expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 
-  it("should show the Ledger Sync introduction while sync is unavailable", () => {
+  it("should forward search input changes as query strings", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+    const onSearchQueryChange = jest.fn();
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "", formatTestContactDisplayName)}
+        viewModel={createContactsListViewModel(me, contacts)}
         searchQuery=""
-        onSearchInputChange={jest.fn()}
-        onOpenMe={jest.fn()}
+        onSearchQueryChange={onSearchQueryChange}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}
-        ledgerSyncStatus="unavailable"
-        featureIntroduction={{
-          isOpen: false,
-          onComplete: jest.fn(),
-          onClose: jest.fn(),
-        }}
-        ledgerSyncIntroduction={{
-          isOpen: true,
-          onActivate: jest.fn(),
-          onDismiss: jest.fn(),
-        }}
+        ledgerSyncStatus="ready"
       />,
     );
 
-    expect(screen.getByText("contacts.ledgerSyncIntroduction.description")).toBeVisible();
+    fireEvent.change(screen.getByTestId("contacts-list-search"), {
+      target: { value: "a" },
+    });
+
+    expect(onSearchQueryChange).toHaveBeenCalledWith("a");
   });
 });

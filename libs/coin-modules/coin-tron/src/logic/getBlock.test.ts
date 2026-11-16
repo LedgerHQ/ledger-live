@@ -16,6 +16,27 @@ jest.mock("../network", () => ({
 
 const mockGetTransactionInfoByBlockNum = getTransactionInfoByBlockNum as jest.Mock;
 
+const slot = (hex: string) => hex.padStart(64, "0");
+const transferPair = (tokenHex: string, fromHex: string, toHex: string, amount: bigint) => {
+  const asset = { type: "trc20", assetReference: encode58Check(tokenHex) };
+  return [
+    {
+      type: "transfer",
+      address: encode58Check(fromHex),
+      peer: encode58Check(toHex),
+      asset,
+      amount: -amount,
+    },
+    {
+      type: "transfer",
+      address: encode58Check(toHex),
+      peer: encode58Check(fromHex),
+      asset,
+      amount,
+    },
+  ];
+};
+
 const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
@@ -409,6 +430,228 @@ describe("getBlock", () => {
       type: "other",
       operationType: "NONE",
       contractType: "TriggerSmartContract",
+    });
+  });
+
+  describe("TRC20 transfers of smart contract calls", () => {
+    const transferTopic = "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+    const callerHex = "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2";
+    const recipientHex = "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5";
+    const routerHex = "41aabbccdd11223344556677889900aabbccdd1122";
+    const tokenAHex = "411fd80baee7c53e92e69447ff8c48d6b3a008572f";
+    const tokenBHex = "41a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const addressTopic = (tronHex: string) => slot(tronHex.slice(2));
+    const transferLog = (tokenHex: string, fromHex: string, toHex: string, amount: number) => ({
+      address: tokenHex.slice(2),
+      topics: [transferTopic, addressTopic(fromHex), addressTopic(toHex)],
+      data: slot(amount.toString(16)),
+    });
+    const triggerSmartContractBlock = (
+      contractAddress: string,
+      data: string,
+      contractRet: string = "SUCCESS",
+    ) => ({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TriggerSmartContract",
+                parameter: {
+                  value: { owner_address: callerHex, contract_address: contractAddress, data },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet }],
+        },
+      ],
+    });
+    it("should read a direct transfer() from its Transfer event only, without double counting", async () => {
+      const transferData = "a9059cbb" + slot(recipientHex.slice(2)) + slot((1000000).toString(16));
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, transferData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", fee: 0, log: [transferLog(tokenAHex, callerHex, recipientHex, 1000000)] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual(
+        transferPair(tokenAHex, callerHex, recipientHex, 1000000n),
+      );
+    });
+
+    it("should map every Transfer event of a swap or transferFrom, whatever the call data", async () => {
+      // A router swap: the caller pays token A into the pool, the pool pays token B to a recipient.
+      // Neither party is in the call data, and the called contract is not the token.
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(routerHex, "38ed1739" + slot("01")),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          fee: 0,
+          log: [
+            transferLog(tokenAHex, callerHex, routerHex, 500),
+            { address: routerHex.slice(2), topics: ["1c411e9a" + "0".repeat(56)], data: "" },
+            transferLog(tokenBHex, routerHex, recipientHex, 700),
+          ],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        ...transferPair(tokenAHex, callerHex, routerHex, 500n),
+        ...transferPair(tokenBHex, routerHex, recipientHex, 700n),
+      ]);
+    });
+
+    it("should skip zero-amount Transfer events", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(routerHex, "12345678"),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", fee: 0, log: [transferLog(tokenAHex, callerHex, recipientHex, 0)] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        { type: "other", operationType: "NONE", contractType: "TriggerSmartContract" },
+      ]);
+    });
+
+    it("should map a successful call whose receipt has no Transfer event to a plain operation", async () => {
+      const transferData = "a9059cbb" + slot(recipientHex.slice(2)) + slot((1000000).toString(16));
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, transferData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([{ id: "tx1", fee: 0, log: [] }]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        { type: "other", operationType: "NONE", contractType: "TriggerSmartContract" },
+      ]);
+    });
+
+    it("should keep the call data transfer of a failed transfer() call", async () => {
+      const transferData = "a9059cbb" + slot(recipientHex.slice(2)) + slot((1000000).toString(16));
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, transferData, "REVERT"),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([{ id: "tx1", fee: 300, log: [] }]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].failed).toBe(true);
+      expect(result.transactions[0].operations).toEqual(
+        transferPair(tokenAHex, callerHex, recipientHex, 1000000n),
+      );
+    });
+
+    it("should map an approve() call to an APPROVE operation on the token", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + "f".repeat(64);
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          fee: 0,
+          log: [
+            {
+              address: tokenAHex.slice(2),
+              topics: [
+                "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+                addressTopic(callerHex),
+                addressTopic(routerHex),
+              ],
+              data: "f".repeat(64),
+            },
+          ],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].feesPayer).toBe(encode58Check(callerHex));
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "other",
+          operationType: "APPROVE",
+          contractType: "TriggerSmartContract",
+          asset: { type: "trc20", assetReference: encode58Check(tokenAHex) },
+          spender: encode58Check(routerHex),
+        },
+      ]);
+    });
+
+    it("should map a failed approve() call to an APPROVE operation too", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + slot("00");
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData, "OUT_OF_ENERGY"),
+      );
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].failed).toBe(true);
+      expect(result.transactions[0].operations).toEqual([
+        expect.objectContaining({ type: "other", operationType: "APPROVE" }),
+      ]);
+    });
+
+    // TRC721 `approve(address,uint256)` has the same selector as the TRC20 one: only the receipt
+    // tells them apart, since an NFT `Approval` indexes the token id as a fourth topic.
+    it("should not map an NFT approve() call to an APPROVE operation", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + slot("07");
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          fee: 0,
+          log: [
+            {
+              address: tokenAHex.slice(2),
+              topics: [
+                "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+                addressTopic(callerHex),
+                addressTopic(routerHex),
+                slot("07"),
+              ],
+              data: "",
+            },
+          ],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        { type: "other", operationType: "NONE", contractType: "TriggerSmartContract" },
+      ]);
+    });
+
+    it("should map an approve() call with no receipt from its call data", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + "f".repeat(64);
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        expect.objectContaining({ type: "other", operationType: "APPROVE" }),
+      ]);
     });
   });
 

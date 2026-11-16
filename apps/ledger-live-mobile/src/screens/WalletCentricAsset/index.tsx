@@ -161,13 +161,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
             currencyName: currency.ticker,
             count: cryptoAccounts.length,
           })}
-          seeMoreText={t("addAccounts.addNew")}
         />
-        <AccountsSection
-          accounts={accounts}
-          currencyId={currency.id}
-          currencyTicker={currency.ticker}
-        />
+        <AccountsSection accounts={accounts} currencyId={currency.id} />
       </SectionContainer>,
       <AssetMarketSection currency={currency} key="AssetMarketSection" />,
       cryptoAccountsEmpty ? null : (

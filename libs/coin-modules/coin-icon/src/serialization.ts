@@ -1,5 +1,5 @@
 import { AccountRaw, Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { IconResourcesRaw, IconResources, IconAccount, IconAccountRaw } from "./types";
 
 export function toIconResourcesRaw(resources: IconResources): IconResourcesRaw {

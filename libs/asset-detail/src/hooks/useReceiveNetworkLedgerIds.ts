@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { toSlug } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import type { ReceiveNetworkLedgerIdsInput } from "../types";
 
 type MetaHints = Pick<
@@ -21,7 +22,9 @@ export function resolveNetworkLedgerIds(
 ): string[] {
   if (!data) return [];
 
-  const exactMeta = metaCurrencyId ? data.cryptoAssets[metaCurrencyId] : undefined;
+  const exactMeta = metaCurrencyId
+    ? data.cryptoAssets[AggregatedAssetIdSchema.parse(metaCurrencyId)]
+    : undefined;
   if (exactMeta) return Object.values(exactMeta.assetsIds);
 
   let currencyMatch: string[] | undefined;

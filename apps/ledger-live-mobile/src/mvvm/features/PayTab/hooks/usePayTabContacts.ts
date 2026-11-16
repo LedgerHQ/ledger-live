@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import type { ContactsNativeProps } from "@features/flow-pay-contact";
+import type { ContactsNativeProps } from "@features/flow-pay-contact/native";
 import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { ScreenName } from "~/const";
 import type { PayTabNavigatorParamList } from "../types";

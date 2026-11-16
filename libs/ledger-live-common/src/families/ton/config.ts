@@ -1,22 +1,4 @@
-import { KNOWN_JETTONS } from "@ton-community/ton-ledger";
-import { CurrencyLiveConfigDefinition } from "../../config";
+import { tonDefaults } from "@ledgerhq/coin-ton/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-const tonConfig: CurrencyLiveConfigDefinition = {
-  config_currency_ton: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Gram",
-      unit: { name: "GRAM", code: "GRAM", magnitude: 9 },
-      infra: {
-        API_TON_ENDPOINT: "https://ton.coin.ledger.com/api/v3",
-        KNOWN_JETTONS,
-      },
-    },
-  },
-};
-
-export { tonConfig };
+export const tonConfig = currencyDefaultsToLiveConfig(tonDefaults);

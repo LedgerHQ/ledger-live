@@ -70,6 +70,31 @@ describe("account serialization — sequence", () => {
   });
 });
 
+describe("account serialization — sellOperationIds", () => {
+  it("round-trips sellOperationIds through to/fromAccountRaw", async () => {
+    const account = genAccount("sell-acc", { currency: ethereum });
+    account.subAccounts = [];
+    account.sellOperationIds = ["op-1", "op-2"];
+
+    const raw = toAccountRaw(account);
+    expect(raw.sellOperationIds).toEqual(["op-1", "op-2"]);
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sellOperationIds).toEqual(["op-1", "op-2"]);
+  });
+
+  it("leaves sellOperationIds undefined when absent", async () => {
+    const account = genAccount("no-sell-acc", { currency: ethereum });
+    account.subAccounts = [];
+
+    const raw = toAccountRaw(account);
+    expect(raw.sellOperationIds).toBeUndefined();
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sellOperationIds).toBeUndefined();
+  });
+});
+
 describe("account serialization — sub-account operation indexing", () => {
   const token: TokenCurrency = {
     id: "ethereum/erc20/usd_tether__erc20_",
@@ -163,5 +188,25 @@ describe("account serialization — sub-account operation indexing", () => {
 
     expect(account.operations).toEqual([]);
     expect(account.pendingOperations).toEqual([]);
+  });
+
+  it("hands each restored token account its own raw when an earlier token lookup fails", async () => {
+    const unknownSubAccountRaw = {
+      ...subAccountRaw,
+      id: "account-id+unknown",
+      tokenId: "unknown-token-id",
+    };
+    const assignFromTokenAccountRaw = jest.fn();
+
+    await fromAccountRaw(
+      { ...rawAccount, subAccounts: [unknownSubAccountRaw, subAccountRaw] },
+      { assignFromTokenAccountRaw },
+    );
+
+    expect(assignFromTokenAccountRaw).toHaveBeenCalledTimes(1);
+    expect(assignFromTokenAccountRaw).toHaveBeenCalledWith(
+      subAccountRaw,
+      expect.objectContaining({ id: subAccountRaw.id }),
+    );
   });
 });

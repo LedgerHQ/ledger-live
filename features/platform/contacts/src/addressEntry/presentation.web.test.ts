@@ -20,6 +20,7 @@ describe("resolveAddressInputPresentation", () => {
           value: "0x123",
           resolvedAddress: null,
           inputMethod: "manual",
+          keepsEnsDisclaimer: false,
         },
         labels,
       ),
@@ -27,6 +28,25 @@ describe("resolveAddressInputPresentation", () => {
       inputStatus: undefined,
       helperText: "Validating",
       showEnsDisclaimer: false,
+    });
+  });
+
+  it("should keep the ENS disclaimer while a previous ENS name is being revalidated", () => {
+    expect(
+      resolveAddressInputPresentation(
+        {
+          status: "validating",
+          value: "vitalik.et",
+          resolvedAddress: null,
+          inputMethod: "manual",
+          keepsEnsDisclaimer: true,
+        },
+        labels,
+      ),
+    ).toEqual({
+      inputStatus: undefined,
+      helperText: "Validating",
+      showEnsDisclaimer: true,
     });
   });
 

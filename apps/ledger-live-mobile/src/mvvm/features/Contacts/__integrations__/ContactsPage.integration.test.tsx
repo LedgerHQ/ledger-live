@@ -1,13 +1,12 @@
 import React from "react";
 import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { ContactsView } from "@features/flow-contacts";
 import {
-  ContactsView,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
   type ContactsListViewModel,
-} from "@features/flow-contacts";
-import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
+} from "@features/flow-contacts-list";
 import { render, screen } from "@tests/test-renderer";
 
 function renderContactsPage(
@@ -29,12 +28,6 @@ function renderContactsPage(
         onOpenContact={onOpenContact}
         onAddContact={onAddContact}
         ledgerSyncStatus={ledgerSyncStatus}
-        featureIntroduction={createClosedContactsFeatureIntroduction()}
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          onActivate: jest.fn(),
-          onDismiss: jest.fn(),
-        }}
       />
     </SafeAreaInsetsContext.Provider>,
   );

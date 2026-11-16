@@ -34,6 +34,56 @@ describe("buildOptimisticOperation", () => {
     expect(result.transactionSequenceNumber).toBeInstanceOf(BigNumber);
   });
 
+  it("values a stake at its fee and keeps the principal in extra", () => {
+    const account: SuiAccount = createFixtureAccount();
+    const transaction: Transaction = createFixtureTransaction({
+      mode: "delegate",
+      recipient: "0xvalidator",
+      amount: new BigNumber(2_000_000_000),
+    });
+
+    const result = buildOptimisticOperation(account, transaction, new BigNumber(10));
+
+    expect(result.type).toBe("DELEGATE");
+    expect(result.value).toEqual(new BigNumber(10));
+    expect(result.extra).toEqual({ validatorAddress: "0xvalidator", stakedAmount: "2000000000" });
+  });
+
+  it("values an unstake at its fee and takes principal and validator from the stake", () => {
+    const account: SuiAccount = createFixtureAccount({
+      suiResources: {
+        stakes: [
+          {
+            validatorAddress: "0xvalidator",
+            stakingPool: "0xpool",
+            stakes: [
+              {
+                stakedSuiId: "0xstake",
+                status: "Active",
+                estimatedReward: "5",
+                principal: "3000000000",
+                stakeActiveEpoch: "1",
+                stakeRequestEpoch: "0",
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const transaction: Transaction = createFixtureTransaction({
+      mode: "undelegate",
+      stakedSuiId: "0xstake",
+      useAllAmount: true,
+      amount: new BigNumber(0),
+    });
+
+    const result = buildOptimisticOperation(account, transaction, new BigNumber(10));
+
+    expect(result.type).toBe("UNDELEGATE");
+    expect(result.value).toEqual(new BigNumber(10));
+    expect(result.extra).toEqual({ validatorAddress: "0xvalidator", stakedAmount: "3000000000" });
+  });
+
   it("should calculate correct value for OUT type", () => {
     // GIVEN
     const account: SuiAccount = createFixtureAccount();

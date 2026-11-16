@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ContactName } from "./ContactName.web";
+import { ContactName } from "./ContactName";
 
 function setTextMetrics(element: HTMLElement, scrollWidth: number, clientWidth: number) {
   Object.defineProperty(element, "scrollWidth", { configurable: true, value: scrollWidth });

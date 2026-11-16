@@ -18,7 +18,6 @@ export function useAllocationData(): AllocationViewProps {
 
   const distribution = useDistribution({
     hideEmptyTokenAccount,
-    groupBy: "asset",
   });
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);

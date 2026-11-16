@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { mapOutputs, mapSpends, mapTransparentInputs } from "./mapping";
 import type { BitcoinOutput, Transaction, ZcashAccount } from "../types/bridge";
 import type { SpendableNote } from "../network/types";

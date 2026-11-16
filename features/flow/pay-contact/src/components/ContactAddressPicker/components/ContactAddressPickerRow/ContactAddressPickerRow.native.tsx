@@ -7,7 +7,10 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactAddressPickerProps, ContactAddressPickerRow } from "../../../../types";
+import type {
+  ContactAddressPickerProps,
+  ContactAddressPickerRow,
+} from "../../ContactAddressPicker.types";
 
 const ASSET_ICON_SIZE = 48;
 

@@ -43,10 +43,13 @@ pnpm coin:tester:<coin-tester-modules-name> start
 # pnpm coin:tester:bitcoin start
 ```
 
-## Troubleshooting
+### Versions of the coin-sandbox testers
 
-### EVM Coin tester
+The testers that run on [coin-sandbox](https://github.com/LedgerHQ/coin-sandbox) (EVM, Solana, Tron, Polkadot, Bitcoin, Cosmos, XRP) do not write the version of their node and indexer. The scenario reads it from one variable per network, `COIN_SANDBOX_<NETWORK>`, holding the flags of coin-sandbox's `up` (`src/versions.ts`):
 
-> The \"RPC\" variable is not set. Defaulting to a blank string.
+```sh
+export COIN_SANDBOX_ETHEREUM='--node geth@1.17.9 --indexer atlas@2.38.16'
+pnpm coin:tester:evm start -t "scenario Ethereum"
+```
 
-This error can safely be ignored. The RPC is passed as a variable env at runtime. Check [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/anvil.ts#L28) and [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/scenarios/ethereum.ts#L144)
+In CI the matrix of `.github/workflows/test-coin-tester.yml` (`COIN_SANDBOX_NETWORKS`) is the only place the versions are written: it exports these variables and pulls exactly those images with `deno task pull <network> <flags>`. Nothing is defaulted, a missing variable is an error that names it. Run `deno task chain networks` in coin-sandbox for the networks, and read `capabilities.json` there for the versions it accepts.

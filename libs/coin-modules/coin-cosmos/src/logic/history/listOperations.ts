@@ -1,5 +1,5 @@
 import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";

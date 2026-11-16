@@ -1,21 +1,12 @@
 import Client from "mina-signer";
-import { setCoinConfig } from "../../config";
+import { minaDefaults, setCoinConfig } from "../../config";
 import { signatureJsonToHex } from "../../test/fixtures";
 import { broadcastTransaction } from "./broadcast";
 import { TxType } from "../../types/common";
 
 describe("broadcastTransaction", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Mina",
-      unit: { name: "MINA", code: "MINA", magnitude: 9 },
-      infra: {
-        API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
-        API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/node/graphql",
-        API_VALIDATORS_BASE_URL: "https://mina.coin.ledger.com/node/validators",
-      },
-    }));
+    setCoinConfig(() => minaDefaults.mina);
   });
 
   it("throws when broadcasting a transaction with an invalid signature", async () => {

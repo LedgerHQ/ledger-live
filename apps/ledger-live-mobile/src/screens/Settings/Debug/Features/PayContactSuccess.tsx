@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ContactIdSchema, selectContacts } from "@domain/entity-contact";
 import { PaySuccess } from "@features/flow-pay-contact";
 import { useContactDisplayName, useContactsMeContact } from "@features/platform-contacts";

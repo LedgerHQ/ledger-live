@@ -3,7 +3,7 @@ import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
+import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts-list";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";

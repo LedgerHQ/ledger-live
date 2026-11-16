@@ -5,6 +5,7 @@ import {
   stopSpeculos,
   takeScreenshot,
   setExchangeDependencies,
+  describeSpeculosApps,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
@@ -112,7 +113,9 @@ export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
   let device;
   try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")], {
+      suite: "mobile-e2e",
+    });
   } catch (e: unknown) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;
@@ -161,10 +164,7 @@ export async function launchSpeculos(appName: string) {
     deviceId: device.id,
   });
 
-  let info = `App: ${device.appName || ""} (${device.appVersion || ""}) `;
-  if (device.dependencies?.length)
-    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
-
+  const info = describeSpeculosApps(device);
   allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replaceAll("\n", "<br>")}</p>`);
 
   return device;

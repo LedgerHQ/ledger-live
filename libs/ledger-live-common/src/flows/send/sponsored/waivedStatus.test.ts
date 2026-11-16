@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TransactionStatus } from "../../../generated/types";
 import { withoutWaivedStatus } from "./waivedStatus";
 

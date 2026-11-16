@@ -92,17 +92,29 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
 
 export const getPlatformTransactionSignFlowInfos = async (
   platformTx: PlatformTransaction,
+  account: AccountLike,
 ): Promise<{
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 }> => {
-  const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
+  // A live app names a live-app-sdk family, which can stand for several Ledger Wallet ones
+  // ("bitcoin" for Zcash too). The adapter is the one of the family that serves the account,
+  // whenever the transaction's family is that family's live-app-sdk name.
+  const servedFamily =
+    isTokenAccount(account) || !account.currency ? undefined : account.currency.family;
+  const servedFamilyPlatformName = servedFamily
+    ? (FAMILIES_MAPPING_LL_TO_PLATFORM[servedFamily] ?? servedFamily)
+    : undefined;
+  const liveFamily =
+    servedFamily && servedFamilyPlatformName === platformTx.family
+      ? servedFamily
+      : (FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family);
 
   const familyModule = await loadPlatformAdapterForFamily(liveFamily);
 
   if (familyModule) {
-    return familyModule.getPlatformTransactionSignFlowInfos(platformTx);
+    return familyModule.getPlatformTransactionSignFlowInfos(platformTx, account);
   }
 
   return {

@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TokenAccount } from "@ledgerhq/types-live";

@@ -1,5 +1,5 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   FeeAssetOption,
   FeeAssetsConfig,

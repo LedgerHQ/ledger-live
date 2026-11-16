@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createMockAccount } from "../__tests__/fixtures";
 import { Transaction } from "../types";
 import { getEstimatedFees } from "../logic/estimateFees";

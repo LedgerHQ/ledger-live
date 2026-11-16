@@ -1,6 +1,6 @@
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ApiResponseTransaction } from "../../types";
 import { getAllTransactions } from "./getAllTransactions";
 

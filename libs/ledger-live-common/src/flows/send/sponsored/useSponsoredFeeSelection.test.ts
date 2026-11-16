@@ -3,7 +3,7 @@
  */
 import { useCallback, useState } from "react";
 import { act, renderHook } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "../../../generated/types";
 import type { SponsoredFeeQuote } from "../../../bridge/generic-coin-framework/sponsored";

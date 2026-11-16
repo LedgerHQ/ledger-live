@@ -1,29 +1,13 @@
 import React from "react";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { render, screen, waitFor } from "tests/testSetup";
-import {
-  coinConfigOverridesSelector,
-  setCoinConfigOverride,
-} from "~/renderer/reducers/coinConfigOverrides";
-import type { ReduxStore } from "~/state-manager/configureStore";
+import { liveConfigOverridesSelector, setLiveConfigOverride } from "@shared/live-config-overrides";
 import { SettingsSectionBody } from "../../../../SettingsSection";
 import CoinConfigSettings from "..";
 
 const SOLANA_KEY = "config_currency_solana";
 const ETH_KEY = "config_currency_ethereum";
 const COUNTERVALUES_KEY = "config_countervalues_refreshRate";
-
-/**
- * Mirrors the production sync wired in init.tsx so LiveConfig observes Redux
- * changes during a test, and returns an `unsubscribe` so callers can prevent
- * subscriptions from leaking across tests.
- */
-const subscribeLiveConfigBridge = (store: ReduxStore) =>
-  store.subscribe(() => {
-    LiveConfig.setAllOverrides(store.getState().coinConfigOverrides.overrides);
-  });
-
-const activeUnsubscribes: Array<() => void> = [];
 
 const renderSettings = (initialOverrides: Record<string, unknown> = {}) => {
   // Sync LiveConfig BEFORE the first render so the initial `getValueByKey`
@@ -35,18 +19,15 @@ const renderSettings = (initialOverrides: Record<string, unknown> = {}) => {
     </SettingsSectionBody>,
     {
       initialState: {
-        coinConfigOverrides: { overrides: initialOverrides },
+        liveConfigOverrides: { overrides: initialOverrides },
       },
     },
   );
-  const unsubscribe = subscribeLiveConfigBridge(utils.store);
-  activeUnsubscribes.push(unsubscribe);
-  return { ...utils, unsubscribe };
+  return utils;
 };
 
 describe("CoinConfigSettings integration", () => {
   afterEach(() => {
-    while (activeUnsubscribes.length) activeUnsubscribes.pop()!();
     LiveConfig.setAllOverrides({});
   });
 
@@ -121,7 +102,7 @@ describe("CoinConfigSettings integration", () => {
     await user.click(screen.getByRole("button", { name: /^Override$/i }));
 
     await waitFor(() => {
-      expect(coinConfigOverridesSelector(store.getState())[SOLANA_KEY]).toEqual({
+      expect(liveConfigOverridesSelector(store.getState())[SOLANA_KEY]).toEqual({
         token2022Enabled: true,
       });
     });
@@ -141,7 +122,7 @@ describe("CoinConfigSettings integration", () => {
     await user.click(screen.getByRole("button", { name: /^Override$/i }));
 
     expect(await screen.findByText(/SyntaxError/i)).toBeVisible();
-    expect(coinConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
+    expect(liveConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
   });
 
   it("clicking Restore clears a single override and removes the tag", async () => {
@@ -156,7 +137,7 @@ describe("CoinConfigSettings integration", () => {
     await user.click(screen.getByRole("button", { name: /^Restore$/i }));
 
     await waitFor(() => {
-      expect(coinConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
+      expect(liveConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
     });
     expect(screen.queryByText(/overridden locally/i)).not.toBeInTheDocument();
   });
@@ -171,7 +152,7 @@ describe("CoinConfigSettings integration", () => {
     await user.click(screen.getByRole("button", { name: /Restore all coin configs/i }));
 
     await waitFor(() => {
-      expect(coinConfigOverridesSelector(store.getState())).toEqual({});
+      expect(liveConfigOverridesSelector(store.getState())).toEqual({});
     });
     expect(screen.queryByText(/overridden locally/i)).not.toBeInTheDocument();
   });
@@ -186,10 +167,10 @@ describe("CoinConfigSettings integration", () => {
       });
     });
 
-    it("dispatching setCoinConfigOverride flows through the bridge into LiveConfig", async () => {
+    it("dispatching setLiveConfigOverride flows through the bridge into LiveConfig", async () => {
       const { store } = renderSettings();
 
-      store.dispatch(setCoinConfigOverride({ key: ETH_KEY, value: { supportedTokens: [] } }));
+      store.dispatch(setLiveConfigOverride({ key: ETH_KEY, value: { supportedTokens: [] } }));
 
       await waitFor(() => {
         const resolved = LiveConfig.getValueByKey(ETH_KEY) as { supportedTokens: string[] };
@@ -210,7 +191,7 @@ describe("CoinConfigSettings integration", () => {
       await user.click(screen.getByRole("button", { name: /^Restore$/i }));
 
       await waitFor(() => {
-        expect(coinConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
+        expect(liveConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
       });
       const restored = LiveConfig.getValueByKey(SOLANA_KEY) as { token2022Enabled: boolean };
       expect(restored.token2022Enabled).toBe(true);

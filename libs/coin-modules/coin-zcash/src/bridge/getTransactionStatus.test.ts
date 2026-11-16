@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TM_ADDRESS, UTEST_ORCHARD } from "../__tests__/fixtures/testnetAddresses";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { buildGetTransactionStatus } from "./getTransactionStatus";

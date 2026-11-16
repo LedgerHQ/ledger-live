@@ -1,7 +1,11 @@
 import { createAccountDataRouter, type AccountDataSource } from "@domain/api-account-data";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  NetworkIdSchema,
+  computeAccountUUID,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   CoinModuleBalanceApi,
@@ -19,8 +23,8 @@ const utxo: AccountDescriptor = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
-  xpub: XPUB,
+  network: NetworkIdSchema.parse("bitcoin"),
+  key: XPUB,
   path: "m/84h/0h/0h",
 };
 
@@ -28,8 +32,8 @@ const address = (network: string, value: string): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "address",
-  network,
-  address: value,
+  network: NetworkIdSchema.parse(network),
+  key: value,
   path: "m/44h/60h/0h/0/0",
 });
 
@@ -285,6 +289,13 @@ describe("createCoinModuleSource", () => {
     expect(createCoinModuleSource(hostOf({}).host).readBatch).toBeUndefined();
   });
 
+  it("reads the address the host computes from the account key", async () => {
+    const { host, getBalance } = hostOf({});
+    await readBalance({ ...host, addressOf: async (_, key) => `address of ${key}` }, ethereum);
+
+    expect(getBalance).toHaveBeenCalledWith("address of 0xabc");
+  });
+
   it("fails only the account of a currency whose coin module does not load", async () => {
     const { host, getApi } = hostOf({ [XPUB]: [{ value: 3n, asset: { type: "native" } }] });
     const loadApi = getApi.getMockImplementation()!;
@@ -458,7 +469,9 @@ describe("createCoinModuleSource", () => {
         });
         return { host, listOperations };
       };
-      const filterUsdt = { query: { limit: 2, filterAsset: BalanceAssetIdSchema.parse(USDT) } };
+      const filterUsdt = {
+        query: { limit: 2, filterAsset: CryptoOrTokenCurrencyIdSchema.parse(USDT) },
+      };
 
       it("keeps the token's rows, pointing at their transaction's native operation", async () => {
         const { host } = tokenHostOf({
@@ -515,7 +528,7 @@ describe("createCoinModuleSource", () => {
         const router = createAccountDataRouter([createCoinModuleSource(host)]);
 
         const { data } = await router.read("operations", ethereum, {
-          query: { filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+          query: { filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum") },
         });
 
         expect(idsOf(data)).toEqual(["ethereum-0x1-IN"]);
@@ -532,7 +545,7 @@ describe("createCoinModuleSource", () => {
         const router = createAccountDataRouter([createCoinModuleSource(host)]);
 
         const { data } = await router.read("operations", ethereum, {
-          query: { limit: 1, filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+          query: { limit: 1, filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum") },
         });
 
         expect(listOperations).toHaveBeenCalledTimes(1);

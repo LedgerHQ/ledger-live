@@ -3,7 +3,7 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 7;
+export const BRIDGE_VERSION = 8;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -115,8 +115,8 @@ export type PowerBridge = {
 };
 
 export type StoreBridge = {
-  set(key: string, value: unknown): void;
-  clear(): void;
+  set(key: string, value: unknown): Promise<void>;
+  clear(): Promise<void>;
 };
 
 /** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */

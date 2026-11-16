@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  lockDeferralPasses,
   isExclusiveLockDeferralPass,
   runWithDeferralPasses,
   type DeferralPass,
@@ -19,20 +18,19 @@ const recordPasses = (deferredByPass: string[][], exitCodes: number[] = []) => {
   return { passes, runPass };
 };
 
-test("defers for two passes unless told otherwise", () => {
-  assert.equal(lockDeferralPasses({}), 2);
-  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: " " }), 2);
-  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: "5" }), 5);
-  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: "0" }), 0);
-});
+test("defers for two passes by default", async () => {
+  const { passes, runPass } = recordPasses([["a"], ["a"], ["a"]]);
 
-test("refuses a number of deferral passes that is not a whole number", () => {
-  for (const configured of ["-1", "1.5", "two"]) {
-    assert.throws(
-      () => lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: configured }),
-      /E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES must be a whole number/,
-    );
-  }
+  await runWithDeferralPasses(runPass);
+
+  assert.deepEqual(
+    passes.map(({ number, mayDefer }) => ({ number, mayDefer })),
+    [
+      { number: 1, mayDefer: true },
+      { number: 2, mayDefer: true },
+      { number: 3, mayDefer: false },
+    ],
+  );
 });
 
 test("reads a deferring pass from the environment the runner sets", () => {

@@ -1,6 +1,4 @@
-import { gql } from "@apollo/client";
-
-export const GetAccountTransactionsData = gql`
+export const GetAccountTransactionsData = `
   query GetAccountTransactionsData($address: String, $limit: Int, $offset: Int) {
     account_transactions(
       where: { account_address: { _eq: $address } }
@@ -14,7 +12,7 @@ export const GetAccountTransactionsData = gql`
   }
 `;
 
-export const GetAccountTransactionsDataGt = gql`
+export const GetAccountTransactionsDataGt = `
   query GetAccountTransactionsDataGt($address: String, $limit: Int, $gt: bigint, $offset: Int) {
     account_transactions(
       where: { account_address: { _eq: $address }, transaction_version: { _gt: $gt } }
@@ -28,7 +26,7 @@ export const GetAccountTransactionsDataGt = gql`
   }
 `;
 
-export const GetCurrentDelegatorBalancesData = gql`
+export const GetCurrentDelegatorBalancesData = `
   query GetCurrentDelegatorBalances {
     current_delegator_balances(distinct_on: pool_address) {
       current_pool_balance {

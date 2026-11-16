@@ -12,6 +12,12 @@ const SUBCOMMANDS: Subcommand[] = [
     // Speculos + live-common signing chain.
     run: async argv => (await import("./borrow.js")).runBorrowCommand(argv),
   },
+  {
+    name: "check-exclusive-lock",
+    describe:
+      "CI: lock across machines while R2 takes lock writes, on this machine only when it fails",
+    run: async () => (await import("./checkExclusiveLock.js")).runCheckExclusiveLockCommand(),
+  },
 ];
 
 function usage(): string {

@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import type { BorrowWebviewInputs } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
+import type { LiveAppWebviewInputs } from "LLM/hooks/useLiveAppWebviewInputs";
 import { BorrowWebView } from "../BorrowWebView";
 
 jest.mock("~/components/Web3AppWebview", () => ({
@@ -23,7 +23,7 @@ const mockManifest = {
   url: "https://borrow.example.com",
 } as unknown as LiveAppManifest;
 
-const defaultInputs: BorrowWebviewInputs = {
+const defaultInputs: LiveAppWebviewInputs = {
   devMode: "false",
   theme: "dark",
   lang: "en",
@@ -32,6 +32,7 @@ const defaultInputs: BorrowWebviewInputs = {
   currencyTicker: "USD",
   OS: "ios",
   platform: "LLM",
+  discreetMode: "false",
   safeAreaTop: "0",
   safeAreaBottom: "0",
   safeAreaLeft: "0",

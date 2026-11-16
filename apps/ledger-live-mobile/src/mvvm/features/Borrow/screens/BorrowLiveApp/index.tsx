@@ -6,7 +6,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { BorrowWebView } from "LLM/features/Borrow/components/BorrowWebView";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
-import type { BorrowWebviewInputs } from "./useBorrowLiveAppViewModel";
+import type { LiveAppWebviewInputs } from "LLM/hooks/useLiveAppWebviewInputs";
 
 type BorrowLiveAppViewProps = Readonly<{
   manifest: LiveAppManifest | undefined;
@@ -14,7 +14,7 @@ type BorrowLiveAppViewProps = Readonly<{
   isLoading: boolean;
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
-  webviewInputs: BorrowWebviewInputs;
+  webviewInputs: LiveAppWebviewInputs;
   customHandlers?: WalletAPICustomHandlers;
 }>;
 

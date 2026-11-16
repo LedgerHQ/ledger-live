@@ -1,16 +1,10 @@
 import React from "react";
 import { Avatar, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar } from "@features/platform-contacts";
-import type { ContactId } from "@domain/entity-contact";
 import { useTranslation } from "@shared/i18n";
+import type { PaySuccessRecipient } from "./PaySuccess.types";
 
 const AVATAR_SIZE = "xl";
-
-export type PaySuccessRecipient = Readonly<{
-  id: ContactId;
-  name: string;
-  isMe: boolean;
-}>;
 
 export type PaySuccessHeroProps = Readonly<{
   recipient?: PaySuccessRecipient;

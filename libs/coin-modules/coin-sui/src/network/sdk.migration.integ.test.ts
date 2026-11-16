@@ -6,9 +6,8 @@
  *
  * gRPC is the reference leg, and the `rpc`-prefixed locals below hold it.
  */
-import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { getStakes as logicGetStakes } from "../logic/staking";
 import { ACTIVE_ACCOUNT, STAKE_DELEGATOR, STEADY_ACCOUNT } from "../test/fixtures";
@@ -44,23 +43,11 @@ beforeAll(async () => {
   coinConfig.setCoinConfig(id => {
     // Both ids carry the gRPC and GraphQL URLs — `SuiCoinConfig` requires them — and differ only in
     // `features.transport`, so a parity failure can only come from the arm, never from the endpoints.
-    const node = {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
-    };
-    const name = "Sui";
-    const unit = { name: "Sui", code: "SUI", magnitude: 9 };
     if (id === GRPC_ID) {
-      return { node, status: { type: "active" }, features: { transport: "grpc" }, name, unit };
+      return { ...suiDefaults.sui, status: { type: "active" }, features: { transport: "grpc" } };
     }
     if (id === GRAPHQL_ID) {
-      return {
-        node,
-        status: { type: "active" },
-        features: { transport: "graphql" },
-        name,
-        unit,
-      };
+      return { ...suiDefaults.sui, status: { type: "active" }, features: { transport: "graphql" } };
     }
     throw new Error(`Unknown currency id in migration integ test: ${id}`);
   });

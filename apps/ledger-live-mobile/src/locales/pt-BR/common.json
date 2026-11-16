@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Esta quantia é pequena demais para staking"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Seu validador não aceita staking. Altere o validador para aplicar."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "Dispositivo verdadeiro e atualizado",
+        "genuineTitle" : "Dispositivo verdadeiro",
         "cta" : "Continuar"
       }
     },
@@ -3639,7 +3643,7 @@
   "servicesEntryPoints" : {
     "perps" : {
       "title" : "Perpétuos",
-      "description" : "Invista com alavancagem"
+      "description" : "Investir com alavancagem"
     },
     "borrow" : {
       "title" : "Empréstimos",
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "Selecionar saldo",
+        "transparent" : {
+          "title" : "Saldo público",
+          "subtitle" : "Transparente"
+        },
+        "shielded" : {
+          "title" : "Saldo privado",
+          "subtitle" : "Blindado",
+          "pendingNoticeTitle" : "Fundos em maturação",
+          "pendingNotice" : "Algumas notas protegidas ainda estão em maturação e podem ainda não estar disponíveis para serem usada."
+        },
+        "zeroBalance" : {
+          "warning" : "Nenhum saldo disponível"
+        },
+        "requiresSync" : {
+          "notice" : "Sincronização necessária"
+        }
+      },
       "title" : "Enviar {{currency}}",
       "selectAddress" : "Selecione o endereço",
       "available" : "Disponível {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "Backup encontrado",
+      "title" : "Configurações salvas encontradas",
       "description" : "Os aplicativos e configurações não foram totalmente restaurados no dispositivo.",
-      "restore" : "Restaurar",
-      "delete" : "Excluir backup"
+      "restore" : "Reinstalar",
+      "delete" : "Descartar"
     },
     "bootloaderDiscovered" : {
       "title" : "Dispositivo no modo Bootloader.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "Deseja restaurar a configuração anterior?",
-      "description" : "Confirmo que desejo restaurar aplicativos e configurações de minha configuração anterior e que quaisquer aplicativos e dados criados desde então serão perdidos.",
-      "confirm" : "Restaurar",
+      "title" : "Reinstalar suas configurações salvas?",
+      "description" : "Os aplicativos e configurações salvos durante a atualização de seu OS serão reinstalados em seu dispositivo. Qualquer aplicativo ou dado adicionado desde então será removido.",
+      "confirm" : "Reinstalar",
       "cancel" : "Cancelar"
     },
     "deleteConfirmation" : {
-      "title" : "Excluir seu backup",
-      "description" : "Estou ciente de que a configuração anterior e os aplicativos e dados do meu último backup, incluindo as credenciais da Security Key, serão perdidos.",
-      "confirm" : "Excluir backup",
+      "title" : "Descartar suas configurações salvas?",
+      "description" : "As configurações salvas durante a atualização de seu OS, incluindo credenciais do Security Key, não estarão mais disponíveis. Ainda é possível reinstalar seus aplicativos a partir da Minha Ledger com suas configurações padrão.",
+      "confirm" : "Descartar",
       "cancel" : "Cancelar"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "Versão {{version}}",
       "banner" : "Como precaução, certifique-se de que sua frase de recuperação secreta de 24 palavras está anotada na folha de recuperação e disponível.",
       "title" : "O que tem nesta atualização do sistema operacional?",
+      "releaseNotes" : "Ver as notas de lançamento completas",
       "start" : "Iniciar Atualização"
     },
     "preparing" : {
-      "title" : "Preparando para instalar"
+      "title" : "Preparando atualização…"
     },
     "progress" : {
-      "updatingTitle" : "Atualizando seu {{productName}}",
-      "restoringTitle" : "Restaurando seus aplicativos e configurações",
-      "updateCount" : "Atualização {{index}} de {{count}}",
-      "description" : "Mantenha seu dispositivo conectado e próximo até que a atualização seja concluída."
+      "updatingTitle" : "Atualização {{index}}/{{count}}",
+      "restoringTitle" : "Reinstalando suas configurações…",
+      "updatingDescription" : "Seu {{productName}} reiniciará automaticamente várias vezes e será solicitado que o desbloqueie com o seu PIN durante a instalação.",
+      "restoringDescription" : "Quase pronto. Suas configurações estão sendo reinstaladas no seu {{productName}}."
     },
     "applied" : {
       "title" : "Atualização concluída",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "Ativo",
       "inactiveStake" : "Recompensas Sacáveis",
       "stakeAvailableBalance" : "Saldo Disponível",
+      "delegatedInfoTooltip" : "Quantia total que é delegada aos validadores.",
+      "inactiveStakeTooltip" : "Staking inativos podem ser sacados sem desativar a sua delegação.",
+      "withdrawableTitle" : "Sacáveis",
+      "withdrawableInfoTooltip" : "Quantia total que pode ser sacada das delegações.",
       "actions" : {
         "activate" : "Ativar",
         "deactivate" : "Desativar",
@@ -10469,13 +10497,13 @@
     "emptyState" : {
       "title" : "Nenhuma atividade ainda",
       "description" : {
-        "receive" : "Comece adicionando fundos por meio de Receber.",
-        "receiveSwap" : "Comece adicionando fundos através de Receber ou Trocar.",
-        "receiveBuy" : "Comece adicionando fundos através de Receber ou Comprar.",
-        "receiveSwapBuy" : "Comece adicionando fundos por meio de Receber, Trocar ou Comprar.",
-        "swap" : "Comece adicionando fundos através do trocar.",
-        "buy" : "Comece adicionando fundos através de Comprar.",
-        "swapBuy" : "Comece adicionando fundos através de Trocar ou Comprar."
+        "receive" : "Comece adicionando fundos em Receber.",
+        "receiveSwap" : "Comece adicionando fundos em Receber ou Trocar.",
+        "receiveBuy" : "Comece adicionando fundos em Receber ou Comprar.",
+        "receiveSwapBuy" : "Comece adicionando fundos em Receber, Trocar ou Comprar.",
+        "swap" : "Comece adicionando fundos em trocar.",
+        "buy" : "Comece adicionando fundos em Comprar.",
+        "swapBuy" : "Comece adicionando fundos em trocar ou comprar."
       }
     },
     "actions" : {
@@ -10499,8 +10527,8 @@
       "description" : "Saiba mais sobre a migração ou entre em contato com o suporte se precisar de assistência."
     },
     "willBeDeprecated" : {
-      "title" : "{{currencyName}} não terá suporte a partir de {{date}}",
-      "description" : "Ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
+      "title" : "{{currencyName}} não será mais suportada a partir de {{date}}",
+      "description" : "O ativo ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
     },
     "robinhoodDisclaimer" : {
       "title" : "O saldo total não inclui dividendos ou desdobramentos de ações."
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "Ativos"
+      "title" : "Ativos",
+      "add" : "Adicionar"
     },
     "refreshStatus" : {
       "upToDate" : "Conta atualizada",
@@ -10781,10 +10810,10 @@
     "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "selectDepositCurrencyTitle" : "Selecionar ativo para depositar",
     "selectDepositCurrencyDescription" : "Qualquer ativo compatível funciona. Será trocado automaticamente se necessário.",
-    "selectWithdrawCurrencyTitle" : "Select asset to withdraw to",
-    "selectWithdrawCurrencyDescription" : "Your USDC will be swapped automatically into the asset you choose.",
-    "selectAccountPerpsWithdrawFromDescription" : "Select the account you want to withdraw funds from",
-    "selectAccountPerpsWithdrawFromEmptyDescription" : "To withdraw, you need a Hyperliquid account. Add one to continue.",
+    "selectWithdrawCurrencyTitle" : "Selecionar o ativo para o qual transferir",
+    "selectWithdrawCurrencyDescription" : "Seus USDC serão trocados automaticamente pelo ativo de sua escolha.",
+    "selectAccountPerpsWithdrawFromDescription" : "Selecione a conta da qual deseja sacar fundos",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "Para sacar, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "searchPlaceholder" : "Pesquisar por nome ou endereço",
     "emptyAssetList" : "Nenhum ativo encontrado",
     "notAvailableYet" : "Ainda não disponível",
@@ -10847,22 +10876,22 @@
     }
   },
   "perpsWithdraw" : {
-    "title" : "Withdraw",
-    "review" : "Review",
-    "keypadDelete" : "Delete last digit",
-    "estimatedAmount" : "Withdraw ~{{value}}",
-    "inputSubText" : "Swap and withdraw via {{provider}}",
-    "selectCurrencyTitle" : "Withdraw to {{currencyTicker}}",
+    "title" : "Sacar",
+    "review" : "Avaliação",
+    "keypadDelete" : "Apagar último dígito",
+    "estimatedAmount" : "Sacar ~{{value}}",
+    "inputSubText" : "Trocar e sacar via {{provider}}",
+    "selectCurrencyTitle" : "Sacar para {{currencyTicker}}",
     "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
-    "selectCurrencyNoAccount" : "No account",
+    "selectCurrencyNoAccount" : "Nenhuma conta",
     "formErrors" : {
-      "insufficientBalance" : "Insufficient balance",
-      "minimumAmount" : "The minimum withdrawal is {{minAmount}} USDC.",
-      "minimumAmountUnknown" : "This amount is too low to withdraw.",
-      "lowLiquidity" : "This asset is temporarily unavailable. Try again later or choose another asset.",
-      "addressScreening" : "This withdrawal can’t be processed to this account.",
-      "quoteUnavailable" : "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
-      "currenciesUnavailable" : "We can’t load the assets you can withdraw to. Try again later."
+      "insufficientBalance" : "Saldo insuficiente",
+      "minimumAmount" : "O saque mínimo é de {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Esta quantia é muito baixa para realizar o saque.",
+      "lowLiquidity" : "Este ativo está temporariamente indisponível. Tente novamente mais tarde ou escolha outro ativo.",
+      "addressScreening" : "Este saque não pode ser processado para esta conta.",
+      "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}. Tente com um ativo diferente ou volte mais tarde.",
+      "currenciesUnavailable" : "Não foi possível carregar os ativos para os quais realizar o saque. Tente novamente mais tarde."
     }
   },
   "swapErrors" : {
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo",
         "recordsUsed" : "Registros utilizados",
         "signingTime" : "Tempo da assinatura"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "Tempo est.",
+          "info" : {
+            "title" : "Como funciona o tempo estimado",
+            "description" : "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
+          }
+        }
       }
     },
     "balancesSection" : "Saldos",

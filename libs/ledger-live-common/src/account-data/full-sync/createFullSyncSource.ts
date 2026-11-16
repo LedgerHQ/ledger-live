@@ -8,9 +8,12 @@ import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
 import { getEnv } from "@shared/env";
 import { FullSyncAccountNotFoundError } from "./errors";
+import { toAccountReceive } from "./receive";
 import { toAccountBalances } from "./balance";
 import { toAccountBalanceHistory } from "./balanceHistory";
 import { toAccountOperations } from "./operations";
+import { toAccountStatus } from "./accountStatus";
+import { toAssetStatus } from "./assetStatus";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -61,6 +64,9 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
         sync(target).then(account => toAccountOperations(account, query)),
       balanceHistory: (target, query) =>
         sync(target).then(account => toAccountBalanceHistory(account, query)),
+      receive: target => sync(target).then(toAccountReceive),
+      accountStatus: target => sync(target).then(toAccountStatus),
+      assetStatus: (target, query) => toAssetStatus(target, query, sync),
     },
     sync,
   };

@@ -118,6 +118,29 @@ inputs:
     required: false
     default: ""
 
+  # Row 4 (desktop: Windows)
+  row4_emoji:
+    required: false
+    default: ""
+  row4_label:
+    required: false
+    default: ""
+  row4_flags:
+    required: false
+    default: ""
+  row4_summary:
+    required: false
+    default: ""
+  row4_report_url:
+    required: false
+    default: ""
+  row4_status:
+    required: false
+    default: ""
+  row4_qaa_url:
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -159,6 +182,13 @@ runs:
         ROW3_REPORT_URL: ${{ inputs.row3_report_url }}
         ROW3_STATUS: ${{ inputs.row3_status }}
         ROW3_QAA_URL: ${{ inputs.row3_qaa_url }}
+        ROW4_EMOJI: ${{ inputs.row4_emoji }}
+        ROW4_LABEL: ${{ inputs.row4_label }}
+        ROW4_FLAGS: ${{ inputs.row4_flags }}
+        ROW4_SUMMARY: ${{ inputs.row4_summary }}
+        ROW4_REPORT_URL: ${{ inputs.row4_report_url }}
+        ROW4_STATUS: ${{ inputs.row4_status }}
+        ROW4_QAA_URL: ${{ inputs.row4_qaa_url }}
       with:
         script: |
           const path = require("path");

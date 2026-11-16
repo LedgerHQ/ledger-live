@@ -1,6 +1,6 @@
 import { TEST_CONFIG } from "./__tests__/fixtures/coinConfig";
 import { DEFAULT_RBF_MIN_BUMP_RATIO } from "./constants";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Transaction as BitcoinTransaction } from "bitcoinjs-lib";
 import { getWalletAccount } from "./getWalletAccount";
 import { getIncrementalFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";

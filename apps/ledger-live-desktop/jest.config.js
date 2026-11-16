@@ -97,6 +97,7 @@ const commonConfig = {
     __DATADOG_CLIENT_TOKEN__: null,
     __DATADOG_SITE__: null,
     __DATADOG_ENV__: null,
+    __PRODUCTION__: false,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
     __BUILD_ENVS__: {},
@@ -111,6 +112,15 @@ const commonConfig = {
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
+    "^.+\\.mts$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+          parser: { syntax: "typescript" },
+        },
+      },
+    ],
     "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
@@ -164,7 +174,7 @@ module.exports = {
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
-      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts"],
+      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts", "**/scripts/*.test.ts"],
       setupFilesAfterEnv: [
         ...commonConfig.setupFilesAfterEnv,
         "@ledgerhq/test-quarantine/jest-retries",

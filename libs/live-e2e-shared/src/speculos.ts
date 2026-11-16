@@ -47,7 +47,7 @@ import { sendSui, delegateSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
 import {
   getDeviceFirmwareVersion,
-  getNanoAppCatalogVersionMap,
+  getNanoAppCatalogMap,
   getSpeculosModel,
   isTouchDevice,
 } from "./speculosAppVersion";
@@ -96,14 +96,31 @@ export type Spec = {
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
 };
 
-export type Dependency = { name: string; appVersion?: string };
+/** `provider` is the catalog provider the version came from; unset when the version is pinned. */
+export type Dependency = { name: string; appVersion?: string; provider?: number };
 export type SpeculosDevice = {
   id: string;
   port: number;
   appName?: string;
   appVersion?: string;
+  appProvider?: number;
   dependencies?: Dependency[];
 };
+
+/** The Speculos apps of a test, as reported in its Allure description. */
+export function describeSpeculosApps(device: SpeculosDevice): string {
+  const label = (version?: string, provider?: number) =>
+    provider === undefined ? (version ?? "") : `${version ?? ""}, provider ${provider}`;
+
+  let info = `App: ${device.appName ?? ""} (${label(device.appVersion, device.appProvider)})`;
+  if (device.dependencies?.length) {
+    const dependencies = device.dependencies.map(
+      dep => `${dep.name} (${label(dep.appVersion, dep.provider)})`,
+    );
+    info += `\nDependencies: ${dependencies.join(", ")}`;
+  }
+  return info;
+}
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
   const map = new Map<string, Dependency>();
@@ -482,10 +499,16 @@ export const specs: Specs = {
 // the spec's model. The app binary path is deterministic via conventionalAppSubpath,
 // so we no longer scan COINAPPS — for local Docker we only verify the expected
 // .elf is present on disk (COINAPPS is still mounted into the container).
+/** The test suite asking for a device, and the API port to reuse on a local Speculos. */
+export type StartSpeculosOptions = {
+  readonly suite: string;
+  readonly apiPort?: number;
+};
+
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
-  wantedApiPort?: number,
+  { suite, apiPort }: StartSpeculosOptions,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -496,17 +519,19 @@ export async function startSpeculos(
   const { model } = appQuery;
   const firmware = appQuery.firmware ?? (await getDeviceFirmwareVersion(model));
 
-  const catalogVersions = await getNanoAppCatalogVersionMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
+  const catalog = await getNanoAppCatalogMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
 
   const displayName = spec.currency?.managerAppName || appQuery.appName;
-  const appVersion = appQuery.appVersion ?? catalogVersions.get(displayName);
+  const appVersion = appQuery.appVersion ?? catalog.get(displayName)?.version;
   invariant(appVersion, "%s: no app version found in catalog for %s", testName, displayName);
+  const appProvider = appQuery.appVersion ? undefined : catalog.get(displayName)?.provider;
 
   const appName = spec.currency ? spec.currency.managerAppName : appQuery.appName;
   const dependencies = spec.dependencies?.map(dep => {
-    const appVersion = dep.appVersion ?? catalogVersions.get(dep.name);
+    const appVersion = dep.appVersion ?? catalog.get(dep.name)?.version;
     invariant(appVersion, "%s: no dependency version found in catalog for %s", testName, dep.name);
-    return { name: dep.name, appVersion };
+    const provider = dep.appVersion ? undefined : catalog.get(dep.name)?.provider;
+    return { name: dep.name, appVersion, provider };
   });
   if (!isSpeculosRemote) {
     invariant(COINAPPS, "COINAPPS is not set");
@@ -536,8 +561,11 @@ export async function startSpeculos(
   log("engine", `test ${testName} will use ${appName} ${appVersion} on ${model} ${firmware}`);
 
   try {
-    if (isSpeculosRemote) return await createSpeculosDeviceCI(deviceParams);
-    const device = await createSpeculosDevice(deviceParams, 3, wantedApiPort);
+    if (isSpeculosRemote) {
+      const device = await createSpeculosDeviceCI(deviceParams, suite);
+      return device && { ...device, appProvider };
+    }
+    const device = await createSpeculosDevice(deviceParams, 3, apiPort);
     invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
     registerSpeculosScreen(device.id, {
       web: { url: `${getSpeculosAddress()}:${device.ports.apiPort}` },
@@ -548,6 +576,7 @@ export async function startSpeculos(
       port: device.ports.apiPort,
       appName,
       appVersion: appVersion!,
+      appProvider,
       dependencies,
     };
   } catch (e: unknown) {
@@ -1009,6 +1038,19 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   } else {
     await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await buttons.both();
+  }
+});
+
+/** Refuses the Ledger Sync approval on Speculos (the screen `activateLedgerSync` approves). */
+export const rejectLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await waitFor(DeviceLabels.CONNECT_TO);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.DONT_CONNECT);
+  } else {
+    await pressUntilTextFound(DeviceLabels.DONT_CONNECT);
     await buttons.both();
   }
 });

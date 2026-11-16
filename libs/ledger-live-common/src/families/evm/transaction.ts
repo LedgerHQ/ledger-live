@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,

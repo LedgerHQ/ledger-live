@@ -26,8 +26,14 @@ const PerpsDepositSignRoot = lazy(
 const PerpsTransactionSignedRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog"),
 );
+const PredictionsBindingRoot = lazy(
+  () => import("LLD/features/Predictions/bindingIntent/PredictionsBindingRoot"),
+);
 const PredictionsDialogRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSheet })),
+);
+const PredictionsSetupRoot = lazy(() =>
+  import("@features/flow-predictions").then(module => ({ default: module.PredictionsSetupSheet })),
 );
 const StakePositionDialogRoot = lazy(
   () => import("LLD/features/StakePosition/StakePositionDialogRoot"),
@@ -81,6 +87,12 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PredictionsDialogRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PredictionsBindingRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PredictionsSetupRoot />
     </Suspense>
     <Suspense fallback={null}>
       <StakePositionDialogRoot />

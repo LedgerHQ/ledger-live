@@ -91,6 +91,23 @@ describe("validateAndTransformSingleTokenResponse", () => {
     );
   });
 
+  it("should keep an empty categories array through the real converter", () => {
+    mockConvert.mockImplementation(jest.requireActual("../converter").convertApiToken);
+    const token = validateAndTransformSingleTokenResponse([
+      { ...mockApiTokenResponse, categories: [] },
+    ]);
+    expect(token?.categories).toEqual([]);
+  });
+
+  it("should drop null categories through the real converter", () => {
+    mockConvert.mockImplementation(jest.requireActual("../converter").convertApiToken);
+    const token = validateAndTransformSingleTokenResponse([
+      { ...mockApiTokenResponse, categories: null },
+    ]);
+    expect(token).toBeDefined();
+    expect(token).not.toHaveProperty("categories");
+  });
+
   it("should return undefined when the response is null", () => {
     expect(validateAndTransformSingleTokenResponse(null)).toBeUndefined();
   });

@@ -1,3 +1,4 @@
+import { AGENT_INTENT_PATH } from "LLD/features/AgentIntent/constants";
 import { SIDEBAR_VALUE_TO_PATH } from "./constants";
 import type { SideBarNavValue } from "./constants";
 
@@ -22,6 +23,7 @@ export function pathnameToActive(pathname: string, search = ""): SideBarActiveVa
     return returnTo === SIDEBAR_VALUE_TO_PATH.paytab ? "paytab" : "discover";
   }
   if (pathname.startsWith("/paytab")) return "paytab";
+  if (pathname === AGENT_INTENT_PATH) return "agents";
   if (pathname === "/card-new-wallet" || pathname.startsWith("/card")) return "card";
   return "";
 }

@@ -3,7 +3,8 @@ import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import { navigationRef } from "~/rootnavigation";
 import { viewNamePredicate } from "~/datadog";
 import { logStartupEvent, type StartupEvent, startupEvents } from "./logStartupTime";
-import { resolveStartupEvents, STARTUP_EVENTS } from "./resolveStartupEvents";
+import { getStartupTimeBase, resolveStartupEvents, STARTUP_EVENTS } from "./resolveStartupEvents";
+import { writeStartupToDeviceLog } from "./writeStartupToDeviceLog";
 import mmkvStorageWrapper, { type MMKVMonitoredRead } from "../storage/mmkvStorageWrapper";
 
 type LastStartupEvent = (typeof STARTUP_EVENTS)["APP_STARTED" | "NAV_READY"];
@@ -31,6 +32,7 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
   const otherStartupEvents = LAST_STARTUP_EVENT_VALUES.filter(e => e !== eventName);
   if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {
     try {
+      writeStartupToDeviceLog(eventName);
       DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, { viewNamePredicate });
       const [storageState] = await Promise.all([
         summarizeStorageData(),
@@ -39,7 +41,13 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
 
       const events = resolveStartupEvents();
       const appStartupTime = events.find(e => e.event === eventName)?.time ?? 0;
-      await track("app_startup_events", { appStartupTime, ...storageState, events });
+      const startupTimeBase = getStartupTimeBase();
+      await track("app_startup_events", {
+        appStartupTime,
+        startupTimeBase,
+        ...storageState,
+        events,
+      });
     } catch (error) {
       console.error("Error during app startup tracking:", error);
     }

@@ -34,7 +34,7 @@ export default class NewSendFlowPage {
   private readonly sponsoredFeeNudge = byId("send-sponsored-fee-nudge");
   private readonly sponsoredFeeValue = byId("send-sponsored-fee-value");
   private readonly sponsoredFeeErrorShowing = (text: string) =>
-    byIdAndText("send-sponsored-fee-error", wholeTextContaining(text));
+    byIdAndText({ id: "send-sponsored-fee-error", text: wholeTextContaining(text) });
   private readonly feePaymentEntry = byId("send-fee-payment-entry");
   private readonly networkFeesValue = byId("send-network-fees-value");
   private readonly networkFeesSecondaryValue = byId("send-network-fees-secondary-value");
@@ -45,15 +45,15 @@ export default class NewSendFlowPage {
     byId(`send-fee-payment-option-${optionId}`);
   // A string matches the whole text, so "0.85 USDT" doesn't match "10.85 USDT".
   private readonly feePaymentOptionFeeShowing = (optionId: string, fee: string) =>
-    byIdWithDescendantText(`send-fee-payment-option-${optionId}-fee`, fee);
+    byIdWithDescendantText({ id: `send-fee-payment-option-${optionId}-fee`, text: fee });
   private readonly sponsoredRentSignaturePrompt = byId("send-sponsored-rent-signature-prompt");
   private readonly sponsoredPolling = byId("send-sponsored-polling");
   private readonly sponsoredFailure = byId("send-sponsored-failure");
   private readonly sponsoredFailureMessageShowing = (text: string) =>
-    byIdAndText("send-sponsored-failure-description", wholeTextContaining(text));
+    byIdAndText({ id: "send-sponsored-failure-description", text: wholeTextContaining(text) });
   private readonly sponsoredFailureRetry = byId("send-sponsored-failure-retry");
   private readonly sponsoredFailureRetryShowing = (text: string) =>
-    byIdWithDescendantText("send-sponsored-failure-retry", wholeTextContaining(text));
+    byIdWithDescendantText({ id: "send-sponsored-failure-retry", text: wholeTextContaining(text) });
   private readonly retryBlockedBanner = byId("send-sponsored-failure-retry-blocked");
   private readonly sponsoredFailureCancel = byId("send-sponsored-failure-cancel");
 

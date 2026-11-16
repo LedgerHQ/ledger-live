@@ -84,6 +84,9 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
   return address;
 };
 
+export const accountAddressCommand = (account: Account | TokenAccount) =>
+  named("accountAddressCommand", async () => getAccountAddress(account));
+
 export const liveDataCommand = (
   account: Account | TokenAccount,
   options?: LiveDataCommandOptions,

@@ -77,12 +77,14 @@ export async function withEnrollStartLock<T>(profileId: string, fn: () => Promis
   return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
 }
 
+const COMPILED_ENTRY_POINT = /^(\/\$bunfs\/|B:[\\/]~BUN[\\/])/;
+
 /** Command line that re-runs this CLI with `args`. The compiled binary is its own entry point (its
- * `argv[1]` is a virtual `/$bunfs/` path); in dev, `process.execPath` is `bun` and `argv[1]` the
- * script. */
+ * `argv[1]` is a virtual path: `/$bunfs/`, or `B:/~BUN/` on Windows); in dev, `process.execPath` is
+ * `bun` and `argv[1]` the script. */
 export function selfCommand(args: readonly string[]): string[] {
   const script = process.argv[1];
-  return script === undefined || script.startsWith("/$bunfs/")
+  return script === undefined || COMPILED_ENTRY_POINT.test(script)
     ? [process.execPath, ...args]
     : [process.execPath, script, ...args];
 }
@@ -99,6 +101,7 @@ export function spawnDetached(command: readonly string[], logPath: string): Chil
     const [file, ...args] = command;
     const child = spawn(file, args, {
       detached: true,
+      windowsHide: true,
       stdio: ["ignore", logFd, logFd],
       env: { ...process.env, [DETACHED_LISTENER_ENV]: "1" },
     });

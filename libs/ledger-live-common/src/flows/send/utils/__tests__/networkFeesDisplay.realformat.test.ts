@@ -6,7 +6,7 @@
  * fractional amounts render — notably that a zero fee is `0 TRX` / `0 USD` (not `0.00`), which is
  * the accepted format for the read-only two-value row.
  */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Unit } from "@domain/entity-currency-unit";
 import { formatFeeCurrencyAmount, formatFeesValue } from "../networkFeesDisplay";
 

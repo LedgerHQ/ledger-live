@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
-import { networkFromCurrencyId, currencyIdFromNetwork } from "./network";
+import { networkOfV0, currencyIdFromNetwork } from "./network";
 
 // ---------------------------------------------------------------------------
 // Public error type
@@ -140,7 +140,7 @@ function matchSchemeToPath(
  * Throws UnsupportedFamilyError if the derivation scheme cannot be determined.
  */
 export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
-  const network = networkFromCurrencyId(v0.currencyId);
+  const network = networkOfV0(v0);
   const currency = getCryptoCurrencyById(v0.currencyId);
   const derivationMode = asDerivationMode(v0.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
@@ -152,7 +152,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
       version: "2",
       type: "utxo",
       network,
-      xpub: v0.seedIdentifier,
+      key: v0.seedIdentifier,
       path,
     } satisfies UtxoAccountDescriptorV1;
   }
@@ -165,7 +165,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     version: "2",
     type: "address",
     network,
-    address: v0.seedIdentifier,
+    key: v0.seedIdentifier,
     path,
   } satisfies AccountBasedDescriptorV1;
 }
@@ -186,7 +186,7 @@ export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
   const currencyId = currencyIdFromNetwork(v1.network);
   const currency = getCryptoCurrencyById(currencyId);
   const normalizedPath = fromV1Path(v1.path);
-  const seedIdentifier = v1.type === "utxo" ? v1.xpub : v1.address;
+  const seedIdentifier = v1.key;
 
   const modes = getDerivationModesForCurrency(currency);
   for (const mode of modes) {

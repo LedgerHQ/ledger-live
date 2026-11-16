@@ -8,6 +8,7 @@ description: Root workflows run at the triggering commit but call reusable workf
 ## How it runs
 
 - **Root workflows** (`build-and-test-push.yml`, `build-and-test-pr.yml`, `merge-queue.yml`, `release-*.yml`) run from the triggering commit's YAML.
+- **`merge-queue.yml`** only runs for PRs targeting `develop`, so its YAML always matches the children. An input passed only from `merge-queue.yml` can be renamed or removed in the same PR as the child, with no deprecation.
 - **Children** are pinned: `uses: LedgerHQ/ledger-live/.github/workflows/<x>-reusable.yml@develop` and `LedgerHQ/ledger-live/tools/actions/...@develop`. They always run develop's YAML.
 - **Checkout** uses `github.sha` (or `inputs.ref`), so the code, `package.json` scripts and Nx projects come from the caller's branch.
 

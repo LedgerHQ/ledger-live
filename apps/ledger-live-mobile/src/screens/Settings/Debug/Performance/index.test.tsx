@@ -1,8 +1,13 @@
 import React from "react";
+import { getProcessStartTime } from "@shared/native-performance";
 import { render, screen } from "@tests/test-renderer";
 import { startupEvents, startupFirstImportTime } from "LLM/utils/logStartupTime";
-import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
+import { resetStartupOriginForTests, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import Performance from "./index";
+
+jest.mock("@shared/native-performance", () => ({ getProcessStartTime: jest.fn() }));
+
+const mockGetProcessStartTime = jest.mocked(getProcessStartTime);
 
 jest.mock("../../SettingsNavigationScrollView", () => {
   const { View } = require("react-native");
@@ -10,8 +15,16 @@ jest.mock("../../SettingsNavigationScrollView", () => {
 });
 
 describe("Debug Performance screen", () => {
+  const originalDev = __DEV__;
+
   beforeEach(() => {
     startupEvents.splice(0);
+    resetStartupOriginForTests();
+    mockGetProcessStartTime.mockReset().mockReturnValue(null);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(global, "__DEV__", { value: originalDev, configurable: true });
   });
 
   it("shows the startup time and each startup event relative to the JS start", () => {
@@ -27,6 +40,43 @@ describe("Debug Performance screen", () => {
     expect(screen.getByText("Splash screen faded (x1)")).toBeOnTheScreen();
     expect(screen.getByText("Custom step (x1)")).toBeOnTheScreen();
     expect(screen.getAllByText("340 ms")).toHaveLength(2);
+  });
+
+  it("says the startup time counts from the JS start when the native time is not available", () => {
+    Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
+
+    render(<Performance />);
+
+    expect(
+      screen.getByText(
+        "Time from the JS start to being interactive to the user (the native initialization time is not available)",
+      ),
+    ).toBeOnTheScreen();
+  });
+
+  it("says dev builds leave out the native initialization time", () => {
+    Object.defineProperty(global, "__DEV__", { value: true, configurable: true });
+
+    render(<Performance />);
+
+    expect(
+      screen.getByText(
+        "Time from the JS start to being interactive to the user (dev builds leave out the native initialization time)",
+      ),
+    ).toBeOnTheScreen();
+  });
+
+  it("counts from the app process start in release builds", () => {
+    Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
+    mockGetProcessStartTime.mockReturnValue(startupFirstImportTime - 1000);
+    startupEvents.push({ event: STARTUP_EVENTS.NAV_READY, time: startupFirstImportTime + 340 });
+
+    render(<Performance />);
+
+    expect(
+      screen.getByText("Time from the app process start to being interactive to the user"),
+    ).toBeOnTheScreen();
+    expect(screen.getAllByText("1340 ms")).toHaveLength(2);
   });
 
   it("shows a zero startup time when the app has not finished starting", () => {

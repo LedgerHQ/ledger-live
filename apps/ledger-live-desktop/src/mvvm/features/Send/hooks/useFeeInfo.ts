@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useCalculate } from "@features/platform-market-countervalues";

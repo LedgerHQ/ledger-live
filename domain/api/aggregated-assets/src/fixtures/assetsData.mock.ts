@@ -1,11 +1,19 @@
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
+
+const injectiveProtocolId = AggregatedAssetIdSchema.parse(
+  "urn:crypto:meta-currency:injective_protocol",
+);
+const bitcoinId = AggregatedAssetIdSchema.parse("bitcoin");
+const usdcId = AggregatedAssetIdSchema.parse("usdc");
+const arbitrumId = AggregatedAssetIdSchema.parse("arbitrum");
 const mockInjectiveCurrency = getCryptoCurrencyById("injective");
 
 export const mockAssetsData = {
   cryptoAssets: {
     "urn:crypto:meta-currency:injective_protocol": {
-      id: "urn:crypto:meta-currency:injective_protocol",
+      id: injectiveProtocolId,
       ticker: "INJ",
       name: "Injective",
       assetsIds: {
@@ -60,7 +68,7 @@ export const mockAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    metaCurrencyIds: ["urn:crypto:meta-currency:injective_protocol"],
+    metaCurrencyIds: [injectiveProtocolId],
   },
 };
 
@@ -77,7 +85,7 @@ const mockBitcoinCurrency = getCryptoCurrencyById("bitcoin");
 export const mockBitcoinAssetsData = {
   cryptoAssets: {
     bitcoin: {
-      id: "bitcoin",
+      id: bitcoinId,
       ticker: "BTC",
       name: "Bitcoin",
       assetsIds: {
@@ -114,7 +122,7 @@ export const mockBitcoinAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    metaCurrencyIds: ["bitcoin"],
+    metaCurrencyIds: [bitcoinId],
   },
 };
 
@@ -122,7 +130,7 @@ export const mockBitcoinAssetsData = {
 export const mockUsdcAssetsData = {
   cryptoAssets: {
     usdc: {
-      id: "usdc",
+      id: usdcId,
       ticker: "USDC",
       name: "USD Coin",
       assetsIds: {
@@ -174,14 +182,14 @@ export const mockUsdcAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    metaCurrencyIds: ["usdc"],
+    metaCurrencyIds: [usdcId],
   },
 };
 
 export const mockArbitrumTokenAssetsData = {
   cryptoAssets: {
     arbitrum: {
-      id: "arbitrum",
+      id: arbitrumId,
       ticker: "ARB",
       name: "Arbitrum",
       assetsIds: {
@@ -212,6 +220,6 @@ export const mockArbitrumTokenAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    metaCurrencyIds: ["arbitrum"],
+    metaCurrencyIds: [arbitrumId],
   },
 };

@@ -3,7 +3,7 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
-import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared/react";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
@@ -22,15 +22,9 @@ import {
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./ContextInitializer/utils/buildDeviceInitializationInput";
+export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
-export type {
-  DeviceIntentTrackingProperties,
-  SourceFlow,
-} from "./utils/DeviceIntentTrackingContext";
+export type { SourceFlow } from "./utils/DeviceIntentTrackingContext";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,

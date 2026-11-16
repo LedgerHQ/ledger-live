@@ -1,5 +1,47 @@
 # @features/flow-account-detail-settings
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc), [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b), [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98)]:
+  - @domain/entity-currency-crypto@0.19.0
+  - @shared/ui-info-state@0.7.0
+  - @domain/entity-account-name@0.4.0
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc), [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b), [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98)]:
+  - @domain/entity-currency-crypto@0.19.0-next.0
+  - @shared/ui-info-state@0.7.0-next.0
+  - @domain/entity-account-name@0.4.0-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#24040](https://github.com/LedgerHQ/ledger-live/pull/24040) [`d185364`](https://github.com/LedgerHQ/ledger-live/commit/d185364617d5f4d2f52d05cc2d137055227dc6d3) Thanks [@ysitbon](https://github.com/ysitbon)! - `AccountSettings` moves to the web platform entry `@features/flow-account-detail-settings/web` and `AccountSettingsSheet` to the native platform entry `@features/flow-account-detail-settings/native`; `AccountSettingsDialog` becomes internal. The universal entry is one unconditioned `src/index.ts` holding the menu, advanced logs and remove contents and `buildAdvancedLogs`, and imports carry no platform suffix.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0
+  - @domain/entity-account-name@0.3.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24040](https://github.com/LedgerHQ/ledger-live/pull/24040) [`d185364`](https://github.com/LedgerHQ/ledger-live/commit/d185364617d5f4d2f52d05cc2d137055227dc6d3) Thanks [@ysitbon](https://github.com/ysitbon)! - `AccountSettings` moves to the web platform entry `@features/flow-account-detail-settings/web` and `AccountSettingsSheet` to the native platform entry `@features/flow-account-detail-settings/native`; `AccountSettingsDialog` becomes internal. The universal entry is one unconditioned `src/index.ts` holding the menu, advanced logs and remove contents and `buildAdvancedLogs`, and imports carry no platform suffix.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @domain/entity-account-name@0.3.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

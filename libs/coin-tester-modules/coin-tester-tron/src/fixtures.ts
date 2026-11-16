@@ -76,10 +76,9 @@ export function makeTrc10Token(asset: Trc10Asset, issuerAddress: string): TokenC
   return {
     type: "TokenCurrency",
     id: `tron/trc10/${asset.assetId}`,
-    // CAL stores the issuer address here, not the numeric asset id (which lives in `id`) — mirror
-    // that so the craft path is exercised realistically. A TRC10 transfer's asset_name comes from
-    // the numeric id via getAssetFromToken; putting the id here would mask that derivation.
+    // Like CAL: the issuer address, while the asset id is the `tokenIdentifier`.
     contractAddress: issuerAddress,
+    tokenIdentifier: asset.assetId,
     parentCurrencyId: TRON.id,
     tokenType: "trc10",
     name: asset.name,
@@ -110,8 +109,15 @@ export function registerTronTokensInMockStore(trc10: TokenCurrency, trc20: Token
   setCryptoAssetsStore({
     findTokenById: async (id: string) =>
       id === trc10.id ? trc10 : id === trc20.id ? trc20 : undefined,
-    findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+    findTokenByAddressInCurrency: async (
+      address: string,
+      currencyId: string,
+      tokenIdentifier?: string,
+    ) => {
       if (currencyId !== "tron") return undefined;
+      if (tokenIdentifier !== undefined) {
+        return tokenIdentifier === trc10.tokenIdentifier ? trc10 : undefined;
+      }
       if (address === trc10.contractAddress) return trc10;
       if (address === trc20.contractAddress) return trc20;
       return undefined;

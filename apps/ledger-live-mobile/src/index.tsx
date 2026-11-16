@@ -1,4 +1,5 @@
 import "LLM/utils/logStartup/beforeJSImports";
+import "LLM/utils/logStartup/claimProcessStartTime";
 // Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
 import "./iosWebsocketFix";
 require("./promise-polyfill");
@@ -28,6 +29,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isMockServerEnabledSelector,
   isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
@@ -54,6 +56,7 @@ import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
+import { MockServerOverlay } from "LLM/features/MockServer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -68,7 +71,7 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
@@ -86,7 +89,6 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
-import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
@@ -262,7 +264,13 @@ function App() {
     }
   }, [dmk, baseSocketUrl]);
 
-  useEffect(() => registerTransports(), []);
+  useEffect(
+    () =>
+      registerTransports({
+        isMockServerEnabled: () => isMockServerEnabledSelector(store.getState()),
+      }),
+    [],
+  );
 
   useEffect(() => {
     /*
@@ -325,13 +333,11 @@ function App() {
       )}
 
       <AnalyticsConsole />
+      <MockServerOverlay />
 
       <DebugTheme />
       <JsThreadMonitor />
       <Modals />
-      <FeatureToggle featureId="llmMmkvMigration">
-        <StoragePerformanceOverlay />
-      </FeatureToggle>
     </>
   );
 }

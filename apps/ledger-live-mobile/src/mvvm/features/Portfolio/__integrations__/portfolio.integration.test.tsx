@@ -2,14 +2,18 @@ import React from "react";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
 import {
+  EMPTY_STATE_MAX_ASSETS,
+  EMPTY_STATE_MAX_STABLECOINS,
+  EMPTY_STATE_MAX_STOCKS,
+} from "LLM/features/WalletAssets/constants";
+import {
   PortfolioTest,
   ReadOnlyPortfolioTest,
   overrideInitialStateWithReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
-  overrideInitialStateWithPerpsAndAssetSection,
   overrideInitialStateWithServicesEntryPoints,
-  overrideInitialStateWithAssetSection,
-  overrideInitialStateWithNoAccountsAndAssetSection,
+  overrideInitialStateWithAccounts,
+  overrideInitialStateWithNoAccounts,
   overrideInitialStateWithOnboardingWidgetVisible,
   overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly,
 } from "./shared";
@@ -93,22 +97,12 @@ describe("Portfolio Screen", () => {
 
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });
-
-    it("should show perps entry point when assetSection is also enabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithPerpsAndAssetSection,
-      });
-
-      await screen.findByTestId("PortfolioAccountsList");
-
-      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
-    });
   });
 
   describe("Services Entry Points", () => {
     it("should display the services between the cryptos and stablecoins sections", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithServicesEntryPoints(true),
+        overrideInitialState: overrideInitialStateWithServicesEntryPoints(),
       });
 
       await screen.findByTestId("portfolio-services-entry-points");
@@ -123,7 +117,7 @@ describe("Portfolio Screen", () => {
 
     it("should replace the legacy perps and borrow entry points", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithServicesEntryPoints(true),
+        overrideInitialState: overrideInitialStateWithServicesEntryPoints(),
       });
 
       await screen.findByTestId("portfolio-services-entry-points");
@@ -131,21 +125,12 @@ describe("Portfolio Screen", () => {
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
       expect(screen.queryByTestId("portfolio-borrow-entry-point")).toBeNull();
     });
-
-    it("should keep the legacy perps entry point when the asset section is hidden", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithServicesEntryPoints(false),
-      });
-
-      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
-      expect(screen.queryByTestId("portfolio-services-entry-points")).toBeNull();
-    });
   });
 
-  describe("Asset Section Feature", () => {
-    it("should display the cryptos list and crypto accounts button when assetSection is enabled and user has accounts", async () => {
+  describe("Asset Section", () => {
+    it("should display the cryptos list and crypto accounts button when the user has accounts", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithAssetSection(true),
+        overrideInitialState: overrideInitialStateWithAccounts(),
       });
 
       await screen.findByTestId("PortfolioAccountsList");
@@ -154,32 +139,9 @@ describe("Portfolio Screen", () => {
       expect(await screen.findByTestId("crypto-addresses-button")).toBeVisible();
     });
 
-    it("should not display the cryptos list nor the crypto accounts button when assetSection is disabled", async () => {
+    it("should display the cryptos list with DADA API assets when there are no accounts", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithAssetSection(false),
-      });
-
-      await screen.findByTestId("PortfolioAccountsList");
-
-      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
-    });
-
-    it("should display the fallback read-only cryptos list when user has no accounts and assetSection is disabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-
-      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
-    });
-
-    it("should display the cryptos list with DADA API assets when no accounts and assetSection is enabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+        overrideInitialState: overrideInitialStateWithNoAccounts,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
@@ -188,24 +150,12 @@ describe("Portfolio Screen", () => {
       expect(await screen.findByTestId("assetItem-Bitcoin")).toBeVisible();
       expect(await screen.findByTestId("assetItem-Ethereum")).toBeVisible();
     });
-
-    it("should display the fallback read-only cryptos list when no accounts and assetSection is disabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-
-      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
-    });
   });
 
-  describe("Stablecoin Section Feature", () => {
-    it("should display the stablecoins list with DADA API assets when no accounts and assetSection is enabled", async () => {
+  describe("Stablecoin Section", () => {
+    it("should display the stablecoins list with DADA API assets when there are no accounts", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+        overrideInitialState: overrideInitialStateWithNoAccounts,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
@@ -219,7 +169,7 @@ describe("Portfolio Screen", () => {
       setupDadaApiError();
 
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+        overrideInitialState: overrideInitialStateWithNoAccounts,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
@@ -230,18 +180,21 @@ describe("Portfolio Screen", () => {
       expect(errorStates.length).toBeGreaterThanOrEqual(2);
     });
 
-    it("should display skeleton items in both sections while DADA API is loading", async () => {
+    it("should display skeleton items in cryptos, stablecoins and stocks while DADA API is loading", async () => {
       setupDadaApiLoading();
 
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+        overrideInitialState: overrideInitialStateWithNoAccounts,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(await screen.findByTestId("PortfolioStablecoinsList")).toBeVisible();
-      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(6);
+      expect(await screen.findByTestId("PortfolioStocksList")).toBeVisible();
+      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(
+        EMPTY_STATE_MAX_ASSETS + EMPTY_STATE_MAX_STABLECOINS + EMPTY_STATE_MAX_STOCKS,
+      );
     });
   });
 

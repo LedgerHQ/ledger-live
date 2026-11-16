@@ -8,3 +8,6 @@ export const displayCell = (cell: DelegationCell | undefined, discreet: boolean)
   if (!cell) return "";
   return discreet && cell.sensitive ? MASK : cell.value;
 };
+
+export const cellTooltip = (cell: DelegationCell | undefined, discreet: boolean) =>
+  discreet && cell?.sensitive ? undefined : cell?.tooltip;

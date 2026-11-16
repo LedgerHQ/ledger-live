@@ -18,10 +18,9 @@
  * What we do NOT compare: per-object IDs, gas budget, gas price, gas-payment
  * coin-object refs. Those are resolver-determined and drift legitimately.
  */
-import { getEnv } from "@ledgerhq/live-env";
 import { parseTransactionBcs } from "@mysten/sui/client";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { ACTIVE_ACCOUNT } from "../test/fixtures";
 import { createTransaction, DEFAULT_COIN_TYPE } from "./sdk";
@@ -31,23 +30,11 @@ const GRAPHQL_ID = "sui-graphql-build-mig";
 
 beforeAll(() => {
   coinConfig.setCoinConfig(id => {
-    const node = {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
-    };
-    const name = "Sui";
-    const unit = { name: "Sui", code: "SUI", magnitude: 9 };
     if (id === GRPC_ID) {
-      return { node, status: { type: "active" }, features: { transport: "grpc" }, name, unit };
+      return { ...suiDefaults.sui, status: { type: "active" }, features: { transport: "grpc" } };
     }
     if (id === GRAPHQL_ID) {
-      return {
-        node,
-        status: { type: "active" },
-        features: { transport: "graphql" },
-        name,
-        unit,
-      };
+      return { ...suiDefaults.sui, status: { type: "active" }, features: { transport: "graphql" } };
     }
     throw new Error(`Unknown currency id in build migration test: ${id}`);
   });

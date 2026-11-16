@@ -1,8 +1,6 @@
 import React from "react";
-import {
-  DeviceIntentTrackingProvider,
-  DeviceInteractionRequiredType,
-} from "@ledgerhq/live-dmk-shared";
+import { DeviceInteractionRequiredType } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import { initializerDevice } from "../testUtils";

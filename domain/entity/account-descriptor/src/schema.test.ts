@@ -15,7 +15,8 @@ describe("AccountDescriptorSchema", () => {
   });
 
   it.each([
-    ["an empty address", { address: "" }],
+    ["an empty key", { key: "" }],
+    ["a key with whitespace", { key: "0x71c7 656e" }],
     ["a purpose other than account or mock", { purpose: "contact" }],
     ["an unknown version", { version: "1" }],
     ["an unknown type", { type: "multisig" }],
@@ -30,7 +31,7 @@ describe("AccountDescriptorSchema", () => {
 
   it("rejects an empty xpub", () => {
     expect(
-      AccountDescriptorSchema.safeParse({ ...mockUtxoAccountDescriptor(), xpub: "" }).success,
+      AccountDescriptorSchema.safeParse({ ...mockUtxoAccountDescriptor(), key: "" }).success,
     ).toBe(false);
   });
 

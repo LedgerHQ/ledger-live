@@ -1,6 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
+import BigNumber from "bignumber.js";
 import { type PolkadotCoinConfig } from "../config";
 import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 import { listOperations } from "./listOperations";

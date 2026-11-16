@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { AggregatedAccountValueCell } from "../AggregatedAccountValueCell";
 
 describe("AggregatedAccountValueCell", () => {

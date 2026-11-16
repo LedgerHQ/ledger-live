@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema, CryptoCurrencySchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, TokenCurrencySchema } from "@domain/entity-currency-token";
 import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 /**
@@ -14,6 +14,18 @@ export const CryptoOrTokenCurrencySchema = z.discriminatedUnion("type", [
 
 /** A crypto or token currency, inferred from {@link CryptoOrTokenCurrencySchema}. */
 export type CryptoOrTokenCurrency = z.infer<typeof CryptoOrTokenCurrencySchema>;
+
+/**
+ * Id of a {@link CryptoOrTokenCurrency}: a crypto currency id or a token id.
+ * Compared as a string: the two id brands share one runtime schema.
+ */
+export const CryptoOrTokenCurrencyIdSchema = z.union([
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+]);
+
+/** A crypto or token currency id, inferred from {@link CryptoOrTokenCurrencyIdSchema}. */
+export type CryptoOrTokenCurrencyId = z.infer<typeof CryptoOrTokenCurrencyIdSchema>;
 
 /**
  * Discriminated union of all currency kinds: {@link CryptoCurrency},

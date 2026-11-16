@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Unit } from "./currency";
 import type { DomainServiceResolution } from "./domain";
 import type { Operation, OperationRaw } from "./operation";

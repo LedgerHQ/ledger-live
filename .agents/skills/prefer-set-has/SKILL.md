@@ -2,7 +2,7 @@
 name: prefer-set-has
 description: |
   Prefer Set.has() over Array.includes() for constant allowlists/blocklists.
-  Read this when reviewing or writing membership checks in TypeScript files.
+  Read when reviewing or writing membership checks in TypeScript files.
 ---
 
 # Prefer Set.has() over Array.includes()

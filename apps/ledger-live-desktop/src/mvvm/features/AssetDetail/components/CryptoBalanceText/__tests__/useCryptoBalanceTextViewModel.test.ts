@@ -1,5 +1,5 @@
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { useCryptoBalanceTextViewModel } from "../useCryptoBalanceTextViewModel";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";

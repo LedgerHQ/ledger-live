@@ -1,5 +1,105 @@
 # @devtools/registry
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24325](https://github.com/LedgerHQ/ledger-live/pull/24325) [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an account-detail DevTools tool to reset the Account Detail card that redirects to Analytics
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+### Patch Changes
+
+- Updated dependencies [[`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872), [`522d62b`](https://github.com/LedgerHQ/ledger-live/commit/522d62b80064e808746ad88be9c79d8477b1bf44), [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d), [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d), [`43d4d30`](https://github.com/LedgerHQ/ledger-live/commit/43d4d308546a4013f2e230a42235015377eaa694)]:
+  - @devtools/account-operation@0.3.0
+  - @devtools/mock-accounts@0.3.0
+  - @devtools/account-balance@0.3.0
+  - @devtools/account-detail@0.2.0
+  - @devtools/env@0.3.0
+  - @devtools/cloud-sync@0.4.0
+  - @devtools/trustchain@0.4.0
+  - @devtools/feature-flags@0.12.0
+  - @devtools/app-config@0.3.0
+  - @devtools/device-onboarding@0.6.0
+  - @devtools/pay-card@0.12.0
+  - @devtools/coin-config@0.2.0
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24325](https://github.com/LedgerHQ/ledger-live/pull/24325) [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an account-detail DevTools tool to reset the Account Detail card that redirects to Analytics
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+### Patch Changes
+
+- Updated dependencies [[`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872), [`522d62b`](https://github.com/LedgerHQ/ledger-live/commit/522d62b80064e808746ad88be9c79d8477b1bf44), [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d), [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d), [`43d4d30`](https://github.com/LedgerHQ/ledger-live/commit/43d4d308546a4013f2e230a42235015377eaa694)]:
+  - @devtools/account-operation@0.3.0-next.0
+  - @devtools/mock-accounts@0.3.0-next.0
+  - @devtools/account-balance@0.3.0-next.0
+  - @devtools/account-detail@0.2.0-next.0
+  - @devtools/env@0.3.0-next.0
+  - @devtools/cloud-sync@0.4.0-next.0
+  - @devtools/trustchain@0.4.0-next.0
+  - @devtools/feature-flags@0.12.0-next.0
+  - @devtools/app-config@0.3.0-next.0
+  - @devtools/device-onboarding@0.6.0-next.0
+  - @devtools/pay-card@0.12.0-next.0
+  - @devtools/coin-config@0.2.0-next.0
+
+## 0.7.0
+
+### Minor Changes
+
+- [#24169](https://github.com/LedgerHQ/ledger-live/pull/24169) [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account balance histories slice, add a Balance history page to the DevTools Accounts section and serve the balanceHistory kind for mock accounts
+
+- [#24071](https://github.com/LedgerHQ/ledger-live/pull/24071) [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account operations slice and add an Operations page to the DevTools Accounts section
+
+- [#23985](https://github.com/LedgerHQ/ledger-live/pull/23985) [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Name every devtool by its technical id, tag each with the kind of package it inspects (entity, api, feature, shared or lib), and give account-balance to Wallet XP
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+- [#23772](https://github.com/LedgerHQ/ledger-live/pull/23772) [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - feat(devtools): add the account-portfolio devtool to call the Portfolio service, with a balance history chart and paged history
+
+### Patch Changes
+
+- Updated dependencies [[`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9)]:
+  - @devtools/account-data@0.3.0
+  - @devtools/account-operation@0.2.0
+  - @devtools/account-balance-history@0.1.0
+  - @devtools/mock-accounts@0.2.0
+  - @devtools/account-descriptor@0.3.0
+  - @devtools/account-portfolio@0.2.0
+  - @devtools/feature-flags@0.11.1
+  - @devtools/device-onboarding@0.5.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24169](https://github.com/LedgerHQ/ledger-live/pull/24169) [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account balance histories slice, add a Balance history page to the DevTools Accounts section and serve the balanceHistory kind for mock accounts
+
+- [#24071](https://github.com/LedgerHQ/ledger-live/pull/24071) [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account operations slice and add an Operations page to the DevTools Accounts section
+
+- [#23985](https://github.com/LedgerHQ/ledger-live/pull/23985) [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Name every devtool by its technical id, tag each with the kind of package it inspects (entity, api, feature, shared or lib), and give account-balance to Wallet XP
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+- [#23772](https://github.com/LedgerHQ/ledger-live/pull/23772) [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - feat(devtools): add the account-portfolio devtool to call the Portfolio service, with a balance history chart and paged history
+
+### Patch Changes
+
+- Updated dependencies [[`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9)]:
+  - @devtools/account-data@0.3.0-next.0
+  - @devtools/account-operation@0.2.0-next.0
+  - @devtools/account-balance-history@0.1.0-next.0
+  - @devtools/mock-accounts@0.2.0-next.0
+  - @devtools/account-descriptor@0.3.0-next.0
+  - @devtools/account-portfolio@0.2.0-next.0
+  - @devtools/feature-flags@0.11.1-next.0
+  - @devtools/device-onboarding@0.5.1-next.0
+
 ## 0.6.0
 
 ### Minor Changes
@@ -224,52 +324,5 @@
 - Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
   - @devtools/feature-flags@0.9.0-next.0
   - @devtools/cloud-sync@0.1.1-next.0
-
-## 0.4.0
-
-### Minor Changes
-
-- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
-
-- [#20733](https://github.com/LedgerHQ/ledger-live/pull/20733) [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Rename metadata folder from `team-platform` to `platform`, remove unused `icon` field from `ToolMetadata` schema, and consolidate the add-tool guide into `README.md`
-
-### Patch Changes
-
-- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
-  - @devtools/feature-flags@0.8.0
-  - @devtools/pay-card@0.4.0
-
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
-
-- [#20733](https://github.com/LedgerHQ/ledger-live/pull/20733) [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Rename metadata folder from `team-platform` to `platform`, remove unused `icon` field from `ToolMetadata` schema, and consolidate the add-tool guide into `README.md`
-
-### Patch Changes
-
-- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
-  - @devtools/feature-flags@0.8.0-next.0
-  - @devtools/pay-card@0.4.0-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#20634](https://github.com/LedgerHQ/ledger-live/pull/20634) [`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Extract tool registry map and types into registry.ts; rename metadata/team-platform to metadata/platform
-
-### Patch Changes
-
-- Updated dependencies [[`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
-  - @devtools/pay-card@0.3.0
-  - @devtools/feature-flags@0.7.1
-
-## 0.3.0-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.7.1-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

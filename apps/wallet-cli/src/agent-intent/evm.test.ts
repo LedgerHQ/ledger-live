@@ -22,12 +22,12 @@ describe("toChecksumAddress", () => {
 
 describe("parseEvmAddress", () => {
   it("accepts a correctly checksummed address unchanged", () => {
-    expect(parseEvmAddress(EIP55_VECTORS[0], "to")).toBe(EIP55_VECTORS[0]);
+    expect<string>(parseEvmAddress(EIP55_VECTORS[0], "to")).toBe(EIP55_VECTORS[0]);
   });
 
   it("accepts all-lowercase and all-uppercase addresses and returns them checksummed", () => {
-    expect(parseEvmAddress(EIP55_VECTORS[1].toLowerCase(), "to")).toBe(EIP55_VECTORS[1]);
-    expect(parseEvmAddress(`0x${EIP55_VECTORS[1].slice(2).toUpperCase()}`, "to")).toBe(
+    expect<string>(parseEvmAddress(EIP55_VECTORS[1].toLowerCase(), "to")).toBe(EIP55_VECTORS[1]);
+    expect<string>(parseEvmAddress(`0x${EIP55_VECTORS[1].slice(2).toUpperCase()}`, "to")).toBe(
       EIP55_VECTORS[1],
     );
   });

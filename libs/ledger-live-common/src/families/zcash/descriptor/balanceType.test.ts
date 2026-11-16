@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { zcashBalanceTypeConfig } from "./balanceType";
@@ -40,7 +40,7 @@ function account({
   return {
     id: "js:2:zcash:xpub:",
     type: "Account",
-    currency: { id: currencyId },
+    currency: { id: currencyId, family: currencyId.startsWith("zcash") ? "zcash" : "bitcoin" },
     freshAddress,
     blockHeight: REFERENCE_HEIGHT,
     pendingOperations: [],

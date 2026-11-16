@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Modal, Platform, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
@@ -11,6 +11,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { IsInBottomSheetProvider } from "@shared/ui-queued-bottom-sheet";
+import { MockServerOverlay } from "LLM/features/MockServer";
 import useQueuedDrawerNative from "./useQueuedDrawerNative";
 import Header from "./Header";
 
@@ -343,6 +344,8 @@ const QueuedDrawerNative = ({
             </View>
           </Animated.View>
         </View>
+        {/* A native Modal is its own window: on Android the app-level overlay stays under it */}
+        {Platform.OS === "android" ? <MockServerOverlay /> : null}
       </Modal>
     </Flex>
   );

@@ -6,8 +6,6 @@ import type {
   FlowConfig,
 } from "@ledgerhq/live-common/flows/wizard/types";
 
-type ScreenComponentFunction = (props: Record<string, never>) => React.JSX.Element | null;
-
 export type ReactNativeFlowScreenPresentation = "default" | "transparentModal";
 
 export type ReactNativeFlowStepConfig<TStep extends FlowStep = FlowStep> = FlowStepConfig<TStep> &
@@ -36,13 +34,4 @@ export type FlowStackNavigatorProps<
   getScreenOptions?: (step: TStep, config: TStepConfig) => NativeStackNavigationOptions;
   getInitialParams?: (step: TStep, config: TStepConfig) => Record<string, unknown>;
   onClose?: () => void;
-}>;
-
-export type StackScreenConfig<TStep extends FlowStep = FlowStep> = Readonly<{
-  step: TStep;
-  name: string;
-  component: ScreenComponentFunction;
-  options?: NativeStackNavigationOptions;
-  initialParams?: Record<string, unknown>;
-  listeners?: Record<string, unknown>;
 }>;

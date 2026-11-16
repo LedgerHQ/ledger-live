@@ -1,12 +1,11 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import type { CardanoCoinConfig } from "../config";
-import { cardanoCoinConfig } from "../fixtures/config";
+import { cardanoDefaults, type CardanoCoinConfig } from "../config";
 
 type TokenAsset = Extract<AssetInfo, { assetReference?: string }>;
 
-const config = cardanoCoinConfig;
+const config = cardanoDefaults.cardano;
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => config,
   logger: () => {},

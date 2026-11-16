@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.32.0
+
+### Minor Changes
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
 ## 0.31.0
 
 ### Minor Changes
@@ -155,21 +167,5 @@
 - Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2)]:
   - @ledgerhq/errors@6.37.0-next.0
   - @ledgerhq/hw-transport@6.35.5-next.0
-
-## 0.22.4
-
-### Patch Changes
-
-- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/errors@6.36.0
-  - @ledgerhq/hw-transport@6.35.4
-
-## 0.22.4-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/errors@6.36.0-next.0
-  - @ledgerhq/hw-transport@6.35.4-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

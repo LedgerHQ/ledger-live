@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";

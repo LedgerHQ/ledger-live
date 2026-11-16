@@ -1,16 +1,16 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { ContactsButton } from "./ContactsButton.native";
+import { ContactsButton } from "./ContactsButton";
 
 describe("ContactsButton", () => {
   it("should render the Contacts card and invoke its action", async () => {
-    const onPress = jest.fn();
+    const onOpenContacts = jest.fn();
 
     render(
       <ContactsButton
         title="Contacts"
         description="Save and manage external wallet addresses."
-        onPress={onPress}
+        onOpenContacts={onOpenContacts}
       />,
     );
 
@@ -20,7 +20,7 @@ describe("ContactsButton", () => {
 
     await userEvent.press(screen.getByTestId("my-wallet-contacts-button"));
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenContacts).toHaveBeenCalledTimes(1);
   });
 
   it("should display the New badge when it is provided", () => {
@@ -29,10 +29,23 @@ describe("ContactsButton", () => {
         title="Contacts"
         description="Save and manage external wallet addresses."
         newBadgeLabel="New"
-        onPress={jest.fn()}
+        onOpenContacts={jest.fn()}
       />,
     );
 
     expect(screen.getByTestId("contacts-button-new-badge")).toBeVisible();
+  });
+
+  it("should honor a custom test id", () => {
+    render(
+      <ContactsButton
+        title="Contacts"
+        description="Save and manage external wallet addresses."
+        onOpenContacts={jest.fn()}
+        testID="custom-contacts-button"
+      />,
+    );
+
+    expect(screen.getByTestId("custom-contacts-button")).toBeVisible();
   });
 });

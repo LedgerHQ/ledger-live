@@ -8,9 +8,9 @@ import lowerCase from "lodash/lowerCase";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import {
-  hasCoinConfigOverridesSelector,
-  setAllCoinConfigOverrides,
-} from "~/renderer/reducers/coinConfigOverrides";
+  hasLiveConfigOverridesSelector,
+  setAllLiveConfigOverrides,
+} from "@shared/live-config-overrides";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import CoinConfigDetails from "./CoinConfigDetails";
 
@@ -21,7 +21,7 @@ const CoinConfigContent = withV3StyleProvider((props: { expanded?: boolean }) =>
   const dispatch = useDispatch();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState("");
-  const hasOverrides = useSelector(hasCoinConfigOverridesSelector);
+  const hasOverrides = useSelector(hasLiveConfigOverridesSelector);
 
   const allKeys = useMemo(
     () => Object.keys(LiveConfig.instance.config).sort((a, b) => a.localeCompare(b)),
@@ -63,7 +63,7 @@ const CoinConfigContent = withV3StyleProvider((props: { expanded?: boolean }) =>
           <Button
             style={{ alignSelf: "flex-start", marginTop: 12 }}
             appearance="accent"
-            onClick={() => dispatch(setAllCoinConfigOverrides({}))}
+            onClick={() => dispatch(setAllLiveConfigOverrides({}))}
             disabled={!hasOverrides}
           >
             {t("settings.developer.coinConfig.restoreAll")}

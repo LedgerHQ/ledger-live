@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { calcMaxSpendableAmount, sortUtxos } from "../utxos/lib";
 import { KaspaUtxoGenerator } from "./utxoSelection.test";
 

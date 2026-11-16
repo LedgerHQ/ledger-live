@@ -69,7 +69,6 @@ export const modularDrawerEnableAccountSelectionSelector = (state: State) =>
   state.modularDrawer.enableAccountSelection;
 export const modularDrawerCompletionModeSelector = (state: State) =>
   state.modularDrawer.completionMode;
-export const modularDrawerPresentationSelector = (state: State) => state.modularDrawer.presentation;
 export const modularDrawerStepSelector = (state: State) => state.modularDrawer.step;
 
 const modularDrawerSlice = createSlice({

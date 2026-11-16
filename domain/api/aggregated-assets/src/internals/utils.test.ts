@@ -1,4 +1,4 @@
-import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
+import { AggregatedAssetIdSchema, type CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import {
   allSettled,
   assertDadaApiHost,
@@ -54,7 +54,7 @@ describe("chunkCurrencyIds", () => {
 type MetaMap = Record<string, CryptoAssetMeta>;
 
 const makeMeta = (id: string, assetsIds: Record<string, string>): CryptoAssetMeta => ({
-  id,
+  id: AggregatedAssetIdSchema.parse(id),
   ticker: id.toUpperCase(),
   name: id,
   assetsIds,
@@ -145,8 +145,9 @@ describe("emptyAssetsData", () => {
 
   it("is not affected by mutating a previous result", () => {
     const first = emptyAssetsData();
-    first.cryptoAssets.btc = { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} };
-    first.currenciesOrder.metaCurrencyIds.push("btc");
+    const btc = AggregatedAssetIdSchema.parse("btc");
+    first.cryptoAssets[btc] = { id: btc, ticker: "BTC", name: "Bitcoin", assetsIds: {} };
+    first.currenciesOrder.metaCurrencyIds.push(btc);
 
     expect(emptyAssetsData().cryptoAssets).toEqual({});
     expect(emptyAssetsData().currenciesOrder.metaCurrencyIds).toEqual([]);

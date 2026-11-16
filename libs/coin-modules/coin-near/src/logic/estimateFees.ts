@@ -1,5 +1,5 @@
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearContext } from "../config";
 import { getActionCosts, getGasPrice } from "../network";
 import { computeFees } from "./fees";

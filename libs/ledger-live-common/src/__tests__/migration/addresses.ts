@@ -88,10 +88,6 @@ export const migrationAddresses: MigrationAddress[] = [
   //   address: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",
   // },
   {
-    currencyId: "stargaze",
-    address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
-  },
-  {
     currencyId: "polkadot",
     address: "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV",
   },

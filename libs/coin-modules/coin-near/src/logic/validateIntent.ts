@@ -12,7 +12,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearConfig, NearContext } from "../config";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "../constants";
 import {

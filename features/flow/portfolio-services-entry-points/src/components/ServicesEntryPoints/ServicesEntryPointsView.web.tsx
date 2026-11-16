@@ -8,7 +8,7 @@ import {
   CardLeading,
   Spot,
 } from "@ledgerhq/lumen-ui-react";
-import { Coins, Infinite } from "@ledgerhq/lumen-ui-react/symbols";
+import { Coins, Infinite, Lightbulb } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 import type { ServiceEntryPointId } from "../../types";
 import type { ServicesEntryPointsViewProps } from "./ServicesEntryPointsView.types";
@@ -16,6 +16,7 @@ import type { ServicesEntryPointsViewProps } from "./ServicesEntryPointsView.typ
 const ICONS = {
   perps: Infinite,
   borrow: Coins,
+  predictions: Lightbulb,
 } as const satisfies Record<ServiceEntryPointId, unknown>;
 
 type ServiceCardProps = Readonly<{

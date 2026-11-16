@@ -18,7 +18,6 @@ export function useCategorizedAssetsFromPortfolio() {
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: "asset",
   });
 
   const {

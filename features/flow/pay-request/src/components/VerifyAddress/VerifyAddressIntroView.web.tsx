@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
-import { VerifyAddressDialog } from "./VerifyAddressDialog.web";
+import { VerifyAddressDialog } from "./VerifyAddressDialog";
 import type { VerifyAddressIntroViewProps } from "../../types";
 
 export function VerifyAddressIntroView({

@@ -1,6 +1,7 @@
 import {
   GetDeviceMetadataDeviceAction,
   UnknownDAError,
+  UserInteractionRequired,
   type GetDeviceMetadataDAError,
   type GetDeviceMetadataDAIntermediateValue,
   type GetDeviceMetadataDAOutput,
@@ -146,6 +147,19 @@ describe("firmwareCheck", () => {
 
     expect(fake.executions).toHaveLength(3);
     expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED", output: catalogueUnreachable }]);
+    stop();
+  });
+
+  it("should report a lock when the device asks to be unlocked", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    fake.lastExecution().pending({
+      requiredUserInteraction: UserInteractionRequired.UnlockDevice,
+    } as GetDeviceMetadataDAIntermediateValue);
+    await settle();
+
+    expect(received).toEqual([{ type: "LOCKED" }]);
     stop();
   });
 

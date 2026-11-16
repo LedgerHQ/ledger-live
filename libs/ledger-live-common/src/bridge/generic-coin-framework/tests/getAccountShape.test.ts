@@ -250,12 +250,14 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
-    function callWithSubAccountToken(): Promise<unknown> {
+    function callWithSubAccountToken(
+      subAccounts: unknown[] = [{ token: { id: "tok1" } }],
+    ): Promise<unknown> {
       const getShape = genericGetAccountShape(network, currency.id);
       return getShape(
         {
           address: "addr1",
-          initialAccount: { subAccounts: [{ token: { id: "tok1" } }], pendingOperations: [] },
+          initialAccount: { subAccounts, pendingOperations: [] },
           currency,
           derivationMode: "",
         } as any,
@@ -319,6 +321,61 @@ describe("genericGetAccountShape", () => {
         { asset: heldAsset, value: 500n },
         { asset: vanishedAsset, value: 0n },
       ]);
+    });
+
+    it("drops a token that vanished from the fresh balance response with dropsMissingTokens", async () => {
+      const vanishedAsset = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        dropsMissingTokens: true,
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it.each([
+      ["only by case", { type: "iou", assetReference: "usd", assetOwner: "issuerA" }],
+      ["only by issuer", { type: "iou", assetReference: "USD", assetOwner: "issuerB" }],
+    ])(
+      "zeroes a removed token whose asset differs from a held one %s with exactAssetMatch",
+      async (_, removedAsset) => {
+        const usd = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+        getBalanceMock.mockResolvedValue([
+          { asset: { type: "native" }, value: 100n, locked: 0n },
+          { asset: usd, value: 500n },
+        ]);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          exactAssetMatch: true,
+          getAssetFromToken: (token: { id: string }) => (token.id === "held" ? usd : removedAsset),
+        }));
+
+        await callWithSubAccountToken([{ token: { id: "held" } }, { token: { id: "removed" } }]);
+
+        expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+          { asset: usd, value: 500n },
+          { asset: removedAsset, value: 0n },
+        ]);
+      },
+    );
+
+    it("passes exactAssetMatch to buildSubAccounts", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        exactAssetMatch: true,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock).toHaveBeenCalledTimes(1);
+      expect(buildSubAccountsMock).toHaveBeenCalledWith(
+        expect.objectContaining({ exactAssetMatch: true }),
+      );
     });
 
     it("does not duplicate a still-held token, matching assetReference case-insensitively", async () => {
@@ -836,6 +893,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        undefined,
       );
     });
 
@@ -1000,6 +1058,94 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.subOperations).toHaveLength(1);
       expect(topOp?.subOperations?.[0]?.type).toBe("OUT");
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
+    });
+
+    describe("tokenOptParentRow", () => {
+      const address = `${currency.id}_addr_opt`;
+
+      async function syncTokenOnlyTx(
+        type: string,
+        {
+          tokenOptParentRow,
+          hasFailed = false,
+        }: { tokenOptParentRow?: boolean; hasFailed?: boolean },
+      ) {
+        getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+        listOperationsMock.mockResolvedValue({
+          items: [{ hash: "opt-hash", type, height: 20, tx: { failed: hasFailed } }],
+        });
+        lastBlockMock.mockResolvedValue({ height: 100 });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          blockHash: "0xblock",
+          fee: new BigNumber(12),
+          value: new BigNumber(0),
+          senders: [address],
+          recipients: ["rIssuer"],
+          date: new Date("2024-01-15"),
+          hasFailed,
+          extra: { assetReference: "USD", assetOwner: "rIssuer", feePayer: address },
+        }));
+        buildSubAccountsMock.mockReturnValue([]);
+        inferSubOperationsMock.mockReturnValue([]);
+        cleanedOperationMock.mockImplementation((op: any) => op);
+        mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          tokenOptParentRow,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          { address, initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        return result.operations ?? [];
+      }
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])(
+        "gives a token-only %s its own type on the parent row, worth the fee",
+        async type => {
+          const [parent, ...rest] = await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+          expect(rest).toHaveLength(0);
+          expect(parent).toMatchObject({ type, id: `accId-opt-hash-${type}` });
+          expect(parent.value?.toFixed()).toBe("12");
+        },
+      );
+
+      it("keeps a failed opt-in a failed OPT_IN", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {
+          tokenOptParentRow: true,
+          hasFailed: true,
+        });
+
+        expect(parent).toMatchObject({ type: "OPT_IN", hasFailed: true });
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a family that does not opt in, as a Stellar trust-line change", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {});
+
+        expect(parent.type).toBe("FEES");
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a token send", async () => {
+        const [parent] = await syncTokenOnlyTx("OUT", { tokenOptParentRow: true });
+
+        expect(parent.type).toBe("FEES");
+      });
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])("keeps a %s off its token account", async type => {
+        await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+        expect(buildSubAccountsMock.mock.lastCall?.[0].operations).toEqual([]);
+      });
     });
 
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
@@ -2727,6 +2873,56 @@ describe("genericGetAccountShape", () => {
       });
     });
 
+    describe("excludesFeesPaidByOthers", () => {
+      const sendPaidBy = (feesPayer: string | undefined, value = 2) =>
+        toCoreOp({
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value,
+          fee: 1,
+          ...(feesPayer === undefined ? {} : { feesPayer }),
+        });
+
+      const sync = async (operation: ReturnType<typeof toCoreOp>, optIn: boolean) => {
+        setupSpecTest();
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          ...(optIn ? { excludesFeesPaidByOthers: true } : {}),
+        }));
+        listOperationsMock.mockResolvedValue({ items: [operation], next: undefined });
+        mockNoSubAccounts();
+        mockNoInferSubOps();
+        return runGetShape("address1");
+      };
+
+      afterEach(() => getBridgeApiMock.mockImplementation(defaultBridgeApi));
+
+      test.each([
+        ["a paymaster", "paymaster"],
+        ["nobody named", undefined],
+      ])(
+        "should not charge a fee paid by %s when the family opts in",
+        async (_payer, feesPayer) => {
+          await expect(sync(sendPaidBy(feesPayer), true)).resolves.toMatchObject({
+            operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+          });
+        },
+      );
+
+      test("should keep as a send a sponsored transfer whose amount equals the fee", async () => {
+        await expect(sync(sendPaidBy("paymaster", 1), true)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should charge a fee another account paid when the family does not opt in", async () => {
+        await expect(sync(sendPaidBy("paymaster"), false)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(3), fee: new BigNumber(1) }],
+        });
+      });
+    });
+
     test("Case 2: native self send from EOA", async () => {
       setupSpecTest();
       // CoinModuleApi returns 2 ops (OUT, IN) for self-sends per spec. getAccountShape uses them as-is.
@@ -3754,7 +3950,11 @@ describe("genericGetAccountShape", () => {
       getBridgeApiMock.mockImplementation(defaultBridgeApi);
     });
 
-    const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
+    const syncWith = (
+      syncVersion: string | undefined,
+      storedSyncHash: string,
+      subAccounts?: { stored: unknown[]; rebuilt: unknown[] },
+    ) => {
       getSyncHashMock.mockReturnValue("sync-hash");
       getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
@@ -3762,7 +3962,7 @@ describe("genericGetAccountShape", () => {
       listOperationsMock.mockResolvedValue({ items: [], next: undefined });
       lastBlockMock.mockResolvedValue({ height: 900 });
       mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
-      buildSubAccountsMock.mockReturnValue([]);
+      buildSubAccountsMock.mockReturnValue(subAccounts?.rebuilt ?? []);
 
       return genericGetAccountShape(network, currency.id)(
         {
@@ -3774,6 +3974,7 @@ describe("genericGetAccountShape", () => {
             pendingOperations: [],
             blockHeight: 800,
             syncHash: storedSyncHash,
+            subAccounts: subAccounts?.stored,
           },
         } as any,
         { paginationConfig: {} as any },
@@ -3800,6 +4001,38 @@ describe("genericGetAccountShape", () => {
         "tz1sync",
         expect.objectContaining({ minHeight: 0 }),
       );
+    });
+
+    test("keeps only the pending operations and swap history of a stored token account", async () => {
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      const rebuilt = {
+        id: "tokenAccount",
+        token: { id: "usd" },
+        operations: [{ id: "rebuilt-op", hash: "h2" }],
+        pendingOperations: [],
+        swapHistory: [],
+        balanceHistoryCache: { HOUR: { balances: [], latestDate: null } },
+        creationDate: new Date("2026-01-01"),
+      };
+      const stored = {
+        ...rebuilt,
+        operations: [{ id: "stale-op", hash: "h1" }],
+        pendingOperations: [{ id: "pending-send", hash: "h3" }],
+        swapHistory: [{ swapId: "swap-1" }],
+        balanceHistoryCache: { HOUR: { balances: [1], latestDate: 0 } },
+        creationDate: new Date("2020-01-01"),
+      };
+
+      const shape = await syncWith("1", "sync-hash", { stored: [stored], rebuilt: [rebuilt] });
+
+      expect(shape.subAccounts).toEqual([
+        {
+          ...rebuilt,
+          pendingOperations: stored.pendingOperations,
+          swapHistory: stored.swapHistory,
+        },
+      ]);
     });
 
     test("keeps syncing incrementally once the account carries the versioned hash", async () => {
@@ -5035,6 +5268,47 @@ describe("genericGetAccountShape", () => {
         await syncWith(resumed);
 
         expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      describe("with exactAssetMatch", () => {
+        const heldWithOwner = { ...held, asset: { ...held.asset, assetOwner: "0xabc" } };
+        const heldUpperCase = {
+          ...heldWithOwner,
+          asset: { ...heldWithOwner.asset, assetReference: "ethereum/erc20/0xAAA" },
+        };
+
+        beforeEach(() => {
+          getAssetFromTokenMock.mockImplementation((token: { id: string }) => ({
+            type: "erc20",
+            assetReference: token.id,
+            assetOwner: "0xabc",
+          }));
+          getTokenFromAssetMock.mockImplementation(async (asset: { assetReference: string }) => ({
+            id: asset.assetReference,
+          }));
+          getBridgeApiMock.mockImplementation(() => ({
+            ...defaultBridgeApi(),
+            getAssetFromToken: getAssetFromTokenMock,
+            getTokenFromAsset: getTokenFromAssetMock,
+            balanceOptions: {},
+            exactAssetMatch: true,
+          }));
+        });
+
+        it("treats a walked reference that differs only by case as another token", async () => {
+          getBalanceMock
+            .mockResolvedValueOnce([native, heldWithOwner])
+            .mockResolvedValueOnce([native, heldWithOwner, heldUpperCase]);
+          walkTransferOf("ethereum/erc20/0xAAA");
+
+          await syncWith(resumed);
+
+          expect(getBalanceMock).toHaveBeenCalledTimes(2);
+          expect(tokenBalancesHandedToSubAccounts()).toEqual([
+            "ethereum/erc20/0xaaa",
+            "ethereum/erc20/0xAAA",
+          ]);
+        });
       });
 
       it("reconciles after an unscoped read too, so the token is stored for the next, scoped sync", async () => {

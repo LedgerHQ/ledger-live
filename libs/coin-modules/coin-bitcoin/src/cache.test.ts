@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { makeLRUCacheWithTtlOf, calculateFees } from "./cache";
 import getFeesForTransaction from "./getFeesForTransaction";

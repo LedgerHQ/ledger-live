@@ -3,8 +3,9 @@ import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { Account } from "@ledgerhq/types-live";
 import {
   getAddressVerification,
+  notifyOnDeviceRequest,
   type VerifyAddressIntentInput,
-} from "@features/platform-verify-address-intent";
+} from "@features/platform-intent-verify-address";
 
 function getExpectedVerifyAddress(account: Account): string {
   return account.derivationMode === "canton" ? (account.xpub ?? "") : account.freshAddress;
@@ -16,8 +17,8 @@ export function buildVerifyAddressIntentInput(mainAccount: Account): VerifyAddre
   return {
     expectedAddress: getExpectedVerifyAddress(mainAccount),
     startAddressVerification: ({ dmk, sessionId }) =>
-      getAddressVerification(() =>
-        getAddress(new DmkCompatTransport(dmk, sessionId), {
+      getAddressVerification(onDeviceRequest =>
+        getAddress(new DmkCompatTransport(notifyOnDeviceRequest(dmk, onDeviceRequest), sessionId), {
           currency,
           path: freshAddressPath,
           derivationMode,

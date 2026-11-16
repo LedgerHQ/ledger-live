@@ -13,7 +13,6 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { FeatureToggle } from "@features/platform-feature-flags";
-import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import InfoModal from "~/modals/Info";
 
 const OS_UPDATE_BANNER_OPTIONS: { value: DebugOsUpdateBannerMode; label: string }[] = [
@@ -29,7 +28,7 @@ export default function Features() {
   const osUpdateBannerMode = useSelector(debugOsUpdateBannerModeSelector);
   const navigateToLargeMover = () => {
     navigation.navigate(ScreenName.LargeMoverLandingPage, {
-      initialRange: InitialRange.Day,
+      initialRange: "day",
       ledgerIds: "bitcoin,ethereum,solana,ethereum/erc20/usd__coin,ethereum/erc20/wrapped_bitcoin",
     });
   };
@@ -55,10 +54,10 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutor)}
       />
       <SettingsRow
-        title="OS Update"
-        desc="Test the OS update orchestrator on a connected device"
+        title="OS Updates"
+        desc="Preview the update screens or run the real flow"
         iconLeft={<IconsLegacy.NanoFirmwareUpdateMedium size={24} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugOsUpdateOrchestrator)}
+        onPress={() => navigation.navigate(ScreenName.DebugOsUpdates)}
       />
 
       <BLEPairingFlow />

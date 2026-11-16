@@ -9,6 +9,7 @@ import {
   isSanctionedFiatTicker,
   selectSupportedFiats,
 } from "@domain/entity-currency-fiat";
+import { getMockServerConfig } from "@features/platform-device-mock-server";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
@@ -18,6 +19,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
+import { selectDustFilteringEnabled } from "@features/platform-feature-flags";
 import { selectFeature } from "@shared/feature-flags";
 import type {
   SettingsBlacklistTokenPayload,
@@ -64,6 +66,7 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
+  SettingsSetMockServerSettingsPayload,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -71,7 +74,6 @@ import type {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
@@ -169,11 +171,11 @@ export const INITIAL_STATE: SettingsState = {
   },
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
+  mockServer: { enabled: false, url: "", token: "" },
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
-  selectedTabPortfolioAssets: "Assets",
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
@@ -203,12 +205,12 @@ function isValidSettingsKey(key: string): key is keyof SettingsState {
 }
 
 export function filterValidSettings(
-  importedSettings: Partial<SettingsState>,
+  importedSettings: SettingsImportPayload,
 ): Partial<SettingsState> {
   const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
 
   return Object.fromEntries(
-    Object.entries(importedSettings).filter(
+    Object.entries(importedSettings ?? {}).filter(
       ([key]) => validKeys.has(key) && isValidSettingsKey(key),
     ),
   ) as Partial<SettingsState>;
@@ -510,14 +512,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
-    ...state,
-    lastConnectedDevice: (action as Action<SettingsSetLastConnectedDevicePayload>).payload,
-    knownDeviceModelIds: {
-      ...state.knownDeviceModelIds,
-      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload.modelId]: true,
-    },
-  }),
+  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => {
+    const device = (action as Action<SettingsSetLastConnectedDevicePayload>).payload;
+    return {
+      ...state,
+      lastConnectedDevice: device,
+      knownDeviceModelIds: device
+        ? { ...state.knownDeviceModelIds, [device.modelId]: true }
+        : state.knownDeviceModelIds,
+    };
+  },
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,
@@ -593,6 +597,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     debugOsUpdateBannerMode: (action as Action<SettingsSetDebugOsUpdateBannerMode>).payload,
   }),
+  [SettingsActionTypes.SET_MOCK_SERVER_SETTINGS]: (state, action) => ({
+    ...state,
+    mockServer: (action as Action<SettingsSetMockServerSettingsPayload>).payload,
+  }),
   [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
     ...state,
     dismissedContentCards: {
@@ -655,12 +663,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       analyticsConsentInfo: (action as Action<SettingsSetAnalyticsConsentInfoPayload>).payload,
     };
   },
-
-  [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
-    ...state,
-    selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
-      .payload,
-  }),
 
   [SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state, action) => ({
     ...state,
@@ -874,10 +876,8 @@ export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
   state.settings.hideSmallValueTokenOperations;
-export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) => {
-  const feature = selectFeature(state, "lwmDustFiltering");
-  return feature?.enabled === true;
-};
+export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) =>
+  selectDustFilteringEnabled(state, "mobile");
 export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
   hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&
   hideSmallValueTokenOperationsEnabledSelector(state);
@@ -911,8 +911,6 @@ export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-export const swapSelectableCurrenciesSelector = (state: State) =>
-  state.settings.swap.selectableCurrencies;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
@@ -956,6 +954,15 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const debugOsUpdateBannerModeSelector = (state: State) =>
   state.settings.debugOsUpdateBannerMode;
+export const mockServerSettingsSelector = (state: State) => state.settings.mockServer;
+export const mockServerConfigSelector = createSelector(
+  mockServerSettingsSelector,
+  getMockServerConfig,
+);
+export const isMockServerEnabledSelector = createSelector(
+  mockServerConfigSelector,
+  config => config !== null,
+);
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;
@@ -963,8 +970,6 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-export const selectedTabPortfolioAssetsSelector = (state: State) =>
-  state.settings.selectedTabPortfolioAssets;
 export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
   state.settings.hasDismissedContactsFeatureIntroduction;
 

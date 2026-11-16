@@ -5,8 +5,14 @@ import { byCodeUnit } from "./exclusiveLock/byCodeUnit";
 import { acquireDistributedLock } from "./exclusiveLock/distributedLock";
 import { ExclusiveLockConfigError, ExclusiveLockRefusedError } from "./errors";
 import { createR2LockStore } from "./exclusiveLock/r2LockStore";
-import { acquireCrossProcessLock } from "./crossProcessLock";
-import type { AbandonableLease, Lease, LockLogger, LockStore } from "./exclusiveLock/types";
+import { acquireCrossProcessLock, DEFAULT_STALE_MS } from "./crossProcessLock";
+import type {
+  AbandonableLease,
+  Lease,
+  LockLogger,
+  LockRecord,
+  LockStore,
+} from "./exclusiveLock/types";
 import type { Account } from "./enum/Account";
 
 export type { AbandonableLease, Lease } from "./exclusiveLock/types";
@@ -109,7 +115,7 @@ export function takeExclusiveLockWaitedMs(): number {
   return waited;
 }
 
-/** "local" locks on this machine only, even on CI, e.g. while R2 is down. */
+/** "local" locks on this machine only, even on CI: set when R2 fails the job's lock store check. */
 const EXCLUSIVE_LOCK_MODE_ENV = "E2E_EXCLUSIVE_LOCK_MODE";
 
 const isMachineLocalMode = (): boolean => {
@@ -135,8 +141,10 @@ const isHighPriority = (): boolean => {
   return priority === "high";
 };
 
-function remoteLockStoreFromEnv(): LockStore | undefined {
-  if (isMachineLocalMode()) return undefined;
+const remoteLockStoreFromEnv = (): LockStore | undefined =>
+  isMachineLocalMode() ? undefined : r2LockStoreFromEnv();
+
+function r2LockStoreFromEnv(): LockStore | undefined {
   const endpoint = process.env.E2E_EXCLUSIVE_LOCK_ENDPOINT;
   const bucket = process.env.E2E_EXCLUSIVE_LOCK_BUCKET;
   const accessKeyId = process.env.E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID;
@@ -155,10 +163,94 @@ function remoteLockStoreFromEnv(): LockStore | undefined {
   });
 }
 
+// No lock key looks like it: those are "<currency>:<path>" or a shared resource's.
+const STORE_CHECK_KEY = "store-check";
+// R2 ETags are hex digests, so no object ever has this one.
+const UNKNOWN_ETAG = '"no-such-etag"';
+const STORE_CHECK_ATTEMPTS = 4;
+
+const isFatalStoreError = (error: unknown) =>
+  error instanceof Error && error.name === "ExclusiveLockStoreFatalError";
+
+const storeErrorMessage = (error: unknown): string => {
+  if (!(error instanceof Error)) return String(error);
+  // fetch only says "fetch failed"; its cause says why, e.g. ECONNREFUSED.
+  return error.cause instanceof Error ? `${error.message}: ${error.cause.message}` : error.message;
+};
+
+/**
+ * Creates, reads and replaces the check key the way a claim does, so a bucket that is missing,
+ * cannot be read or written, or ignores If-None-Match or If-Match fails too. A replacement rejected
+ * because another job's check moved the ETag first still passes.
+ */
+async function checkLockStore(store: LockStore): Promise<void> {
+  const record: LockRecord = {
+    holder: `${HOLDER_PREFIX}${randomUUID()}`,
+    label: "lock store check",
+    leaseMs: 0,
+    settleMs: 0,
+    released: true,
+  };
+  const readCheckKey = async (when: string) => {
+    const stored = await store.read(STORE_CHECK_KEY);
+    if (!stored) throw new Error(`[exclusiveLock] R2 lost "${STORE_CHECK_KEY}" ${when}`);
+    return stored;
+  };
+  const createdIt = await store.create(STORE_CHECK_KEY, record);
+  if (createdIt && (await store.create(STORE_CHECK_KEY, record))) {
+    throw new Error(
+      `[exclusiveLock] R2 ignored If-None-Match: it created "${STORE_CHECK_KEY}" twice`,
+    );
+  }
+  if (await store.replace(STORE_CHECK_KEY, record, UNKNOWN_ETAG)) {
+    throw new Error(
+      `[exclusiveLock] R2 ignored If-Match: it replaced "${STORE_CHECK_KEY}" at ETag ${UNKNOWN_ETAG}`,
+    );
+  }
+  const current = await readCheckKey("right after writing it");
+  if (await store.replace(STORE_CHECK_KEY, record, current.etag)) return;
+  const after = await readCheckKey("after rejecting its replacement");
+  if (after.etag === current.etag) {
+    throw new Error(
+      `[exclusiveLock] R2 rejected If-Match ${current.etag} on "${STORE_CHECK_KEY}" although nothing rewrote it`,
+    );
+  }
+}
+
+/**
+ * Why the R2 bucket E2E_EXCLUSIVE_LOCK_* points at cannot hold exclusive locks, or undefined when
+ * it takes them. CI checks it before the tests, which lock on their machine only while it fails.
+ * Throws when E2E_EXCLUSIVE_LOCK_* is missing.
+ */
+export async function exclusiveLockStoreFailure({
+  sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)),
+}: { readonly sleep?: (ms: number) => Promise<void> } = {}): Promise<string | undefined> {
+  const store = r2LockStoreFromEnv();
+  if (!store) {
+    throw new ExclusiveLockConfigError(
+      "[exclusiveLock] E2E_EXCLUSIVE_LOCK_ENDPOINT, _BUCKET, _ACCESS_KEY_ID and _SECRET_ACCESS_KEY must be set to check the lock store",
+    );
+  }
+  const check = async (attempt: number): Promise<string | undefined> => {
+    try {
+      await checkLockStore(store);
+      return undefined;
+    } catch (error) {
+      if (attempt >= STORE_CHECK_ATTEMPTS || isFatalStoreError(error)) {
+        return storeErrorMessage(error);
+      }
+      await sleep(POLL_MS);
+      return check(attempt + 1);
+    }
+  };
+  return check(1);
+}
+
 let warnedMachineLocal = false;
 
 async function acquireMachineLocalLock(
   key: string,
+  settleMs: number,
   acquireTimeoutMs: number,
 ): Promise<AbandonableLease> {
   const localMode = isMachineLocalMode();
@@ -176,8 +268,12 @@ async function acquireMachineLocalLock(
       `[exclusiveLock] ${reason}: broadcasts are only serialized between processes on this machine`,
     );
   }
-  const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
-  return { release, abandon: release };
+  // A holder that dies leaves no settle window, so its lock turns stale only once one would end.
+  const release = await acquireCrossProcessLock(key, {
+    acquireTimeoutMs,
+    staleMs: DEFAULT_STALE_MS + settleMs,
+  });
+  return { release: () => release(settleMs), abandon: () => release() };
 }
 
 function joinHold(outer: LiveHold): AbandonableLease {
@@ -233,6 +329,7 @@ async function acquireKey(
     if (holds[key] === hold) Reflect.deleteProperty(holds, key);
   };
   const acquireTimeoutMs = Math.max(0, deadline - Date.now());
+  const settleMs = sharedResourceKeys.has(key) ? 0 : SETTLE_MS;
   const highPriority = isHighPriority();
   const store = remoteLockStoreFromEnv();
   const lease = store
@@ -240,7 +337,7 @@ async function acquireKey(
         holder: `${HOLDER_PREFIX}${randomUUID()}`,
         label,
         leaseMs: LEASE_MS,
-        settleMs: sharedResourceKeys.has(key) ? 0 : SETTLE_MS,
+        settleMs,
         heartbeatMs: HEARTBEAT_MS,
         pollMs: highPriority ? HIGH_PRIORITY_POLL_MS : POLL_MS,
         acquireTimeoutMs: giveUpIfHeld
@@ -254,7 +351,7 @@ async function acquireKey(
         log: consoleLogger,
         onLost: forget,
       })
-    : await acquireMachineLocalLock(key, acquireTimeoutMs);
+    : await acquireMachineLocalLock(key, settleMs, acquireTimeoutMs);
   if (allowNested) holds[key] = hold;
 
   // Calls made while nested ones still run can join, e.g. a nested call locking the account
@@ -291,7 +388,7 @@ async function endAll(
 /**
  * Locks the on-chain accounts a broadcast mutates, or shared resources, across every CI machine
  * when E2E_EXCLUSIVE_LOCK_* points at an R2 bucket, otherwise, or when E2E_EXCLUSIVE_LOCK_MODE is
- * "local", across this machine only.
+ * "local" because R2 failed its check, across this machine only.
  * Calls made while an `allowNested` lock is held, e.g. a CLI token approval inside a spec, run
  * under it instead of waiting for it, and its release waits for them. Releasing a lease another
  * holder took over throws. Abandoning it instead, when nothing was broadcast under it, spares the

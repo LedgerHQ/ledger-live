@@ -6,7 +6,7 @@ import {
   type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Subject, type Observer } from "rxjs";
+import { BehaviorSubject, Subject, type Observer } from "rxjs";
 
 import { DEFAULT_DEVICE_NOT_FOUND_DELAY, DEFAULT_SUCCESS_DELAY } from "./constants";
 import { DefaultConnectNewDeviceStateMachine } from "./ConnectNewDeviceStateMachine";
@@ -23,9 +23,9 @@ import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
   type BaseConnectionError,
-  type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 const bleTransport = "RN_BLE" as TransportIdentifier;
 const usbTransport = "RN_HID" as TransportIdentifier;
@@ -92,6 +92,9 @@ type SetupTestOptions = {
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
+  readonly embedded?: boolean;
+  /** Replayed by the discovery service to each new subscriber. */
+  readonly alreadyDiscoveredDevices?: Array<DiscoveredDevice>;
 };
 
 const startedMachines: Array<DefaultConnectNewDeviceStateMachine> = [];
@@ -106,8 +109,12 @@ const setupTest = ({
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
+  embedded,
+  alreadyDiscoveredDevices,
 }: SetupTestOptions = {}) => {
-  const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
+  const discoveredDevices = alreadyDiscoveredDevices
+    ? new BehaviorSubject<Array<DiscoveredDevice>>(alreadyDiscoveredDevices)
+    : new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
   const dmk = {
     connect,
@@ -124,13 +131,12 @@ const setupTest = ({
     complete: jest.fn(),
   };
 
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(() => discoveredDevices.next([])),
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService({
     transportIds,
     discoveredDevices,
     errors,
-  };
+    onStop: () => discoveredDevices.next([]),
+  });
 
   const machine = new DefaultConnectNewDeviceStateMachine({
     dmk,
@@ -144,6 +150,7 @@ const setupTest = ({
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
+    ...(embedded === undefined ? {} : { embedded }),
   });
   startedMachines.push(machine);
 
@@ -161,6 +168,7 @@ const setupTest = ({
     emitDiscoveryError: (error: UnknownDiscoveryError) => errors.next(error),
     lastState,
     machine,
+    observer,
     onConnected,
     onClose,
     states,
@@ -1106,6 +1114,164 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([nanoX]);
 
       expect(states).toHaveLength(statesCountAtStop);
+    });
+  });
+
+  describe("Embedded mode", () => {
+    const setupEmbeddedTest = (options: Omit<SetupTestOptions, "embedded"> = {}) =>
+      setupTest({ ...options, embedded: true });
+
+    const startParentScan = ({
+      deviceDiscoveryService,
+    }: Pick<ReturnType<typeof setupTest>, "deviceDiscoveryService">) => {
+      deviceDiscoveryService.start({ ignoreTransportIdentifiers: [usbTransport] });
+      deviceDiscoveryService.start.mockClear();
+    };
+
+    it("should not stop the discovery service when the machine is stopped while discovering", () => {
+      const { deviceDiscoveryService, machine } = setupEmbeddedTest();
+
+      machine.start();
+      machine.stop();
+
+      expect(deviceDiscoveryService.stop).not.toHaveBeenCalled();
+      expect(deviceDiscoveryService.isRunning).toBe(true);
+    });
+
+    it("should neither start nor stop the discovery service when the parent already scans", () => {
+      const setup = setupEmbeddedTest();
+      startParentScan(setup);
+
+      setup.machine.start();
+      const { scanningTransports } = setup.lastState(ConnectNewDeviceUIStateTypes.Discovering);
+      setup.machine.stop();
+
+      expect(setup.deviceDiscoveryService.start).not.toHaveBeenCalled();
+      expect(setup.deviceDiscoveryService.stop).not.toHaveBeenCalled();
+      expect(scanningTransports).toEqual([bleTransport]);
+      expect(setup.deviceDiscoveryService.ignoredTransportIds).toEqual([usbTransport]);
+    });
+
+    it("should list the devices that the parent already discovered", () => {
+      const setup = setupEmbeddedTest({ alreadyDiscoveredDevices: [nanoX] });
+      startParentScan(setup);
+
+      setup.machine.start();
+
+      expect(
+        setup
+          .lastState(ConnectNewDeviceUIStateTypes.Discovering)
+          .devices.map(({ device }) => device.id),
+      ).toEqual([nanoX.id]);
+    });
+
+    it("should restart discovery without the error transport when a DiscoveryError is closed", () => {
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine } =
+        setupEmbeddedTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError({ transportId: bleTransport }));
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [bleTransport],
+      });
+      expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).scanningTransports).toEqual([
+        usbTransport,
+      ]);
+    });
+
+    it("should neither emit Terminated nor call onClose when a DiscoveryError is closed", () => {
+      const { emitDiscoveryError, lastState, machine, onClose, states } = setupEmbeddedTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(states.map(state => state.type)).not.toContain(
+        ConnectNewDeviceUIStateTypes.Terminated,
+      );
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should restart discovery without the error transport when a DiscoveryError is closed during a retry", () => {
+      const retry = jest.fn(() => new Promise<true>(() => {}));
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine, onClose } =
+        setupEmbeddedTest();
+
+      machine.start();
+      emitDiscoveryError(
+        makeDiscoveryError({ transportId: bleTransport, resolution: { type: "prompt", retry } }),
+      );
+      const discoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      discoveryErrorState.retry!();
+      discoveryErrorState.close();
+
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [bleTransport],
+      });
+      lastState(ConnectNewDeviceUIStateTypes.Discovering);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should stop discovery when a device is selected", () => {
+      const { deviceDiscoveryService, discoverDevices, lastState, machine } = setupEmbeddedTest();
+
+      machine.start();
+      discoverDevices([nanoX]);
+      select(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
+
+      expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+      lastState(ConnectNewDeviceUIStateTypes.Connecting);
+    });
+
+    it("should neither disconnect the session nor call onConnected when the connection succeeds after the machine is stopped", async () => {
+      let resolveConnect: (sessionId: string) => void = () => {};
+      const connect = jest.fn(
+        () =>
+          new Promise<string>(resolve => {
+            resolveConnect = resolve;
+          }),
+      );
+      const setup = setupEmbeddedTest({ connect });
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      resolveConnect("late-session-id");
+      await flushPromises();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
+      expect(setup.onConnected).not.toHaveBeenCalled();
+    });
+
+    it("should neither disconnect the session nor call onConnected when the machine is stopped during the success delay", async () => {
+      const setup = setupEmbeddedTest();
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
+      expect(setup.onConnected).not.toHaveBeenCalled();
+    });
+
+    it("should send the error to the observer without stopping the discovery service when an action fails", () => {
+      const error = new Error("getDiscoveredDeviceKey failed");
+      const { deviceDiscoveryService, discoverDevices, machine, observer } = setupEmbeddedTest({
+        getDiscoveredDeviceKey: () => {
+          throw error;
+        },
+      });
+
+      machine.start();
+      discoverDevices([nanoX]);
+      // XState throws an unhandled error from a timer.
+      jest.runOnlyPendingTimers();
+
+      expect(observer.error).toHaveBeenCalledTimes(1);
+      expect(observer.error).toHaveBeenCalledWith(error);
+      expect(deviceDiscoveryService.stop).not.toHaveBeenCalled();
     });
   });
 });

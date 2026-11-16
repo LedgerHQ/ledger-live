@@ -1,5 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { SuiSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
@@ -7,16 +6,9 @@ import buildSignOperation from "./signOperation";
 describe("signOperation", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
-      },
+      ...suiDefaults.sui,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

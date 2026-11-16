@@ -215,7 +215,7 @@ describe("fetchPerpsWithdrawQuote", () => {
 
     const quote = await fetchPerpsWithdrawQuote(request);
 
-    expect(quote.payload).toEqual({ swapId: payload.swapId, typedData: payload.typedData });
+    expect(quote.payload).toEqual(payload);
   });
 
   it("has no payload when the quote carries no typed data", async () => {

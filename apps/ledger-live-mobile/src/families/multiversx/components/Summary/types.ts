@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export interface SummaryPropsType {
   account: Account;

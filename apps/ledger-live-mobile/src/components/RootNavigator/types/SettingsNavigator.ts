@@ -45,6 +45,8 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugDeviceIntentExecutorInitialization]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInitializerStates]: undefined;
   [ScreenName.DebugDeviceIntentExecutorOrchestration]: undefined;
+  [ScreenName.DebugOsUpdates]: undefined;
+  [ScreenName.DebugOsUpdateGallery]: undefined;
   [ScreenName.DebugOsUpdateOrchestrator]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]:
@@ -54,6 +56,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugStartTour]: undefined;
   [ScreenName.DebugConnectivity]: undefined;
+  [ScreenName.DebugMockServer]: { url?: string; token?: string } | undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugContentCards]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 import {
   MASS_LIMIT_PER_TX,

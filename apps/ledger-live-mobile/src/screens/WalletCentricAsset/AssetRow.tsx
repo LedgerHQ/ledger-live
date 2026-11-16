@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import useEnv from "@features/platform-env";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";
 
@@ -37,11 +37,10 @@ const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
       openFromAsset({
         currency,
         source: "wallet_centric_asset",
-        isPlaceholder: asset.isPlaceholder,
         marketId: asset.marketId,
       });
     },
-    [currency, asset.isPlaceholder, asset.marketId, openFromAsset],
+    [currency, asset.marketId, openFromAsset],
   );
 
   /**

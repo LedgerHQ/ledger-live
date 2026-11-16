@@ -6,7 +6,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculate } from "@features/platform-market-countervalues";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 jest.mock("LLD/hooks/redux");
 jest.mock("@ledgerhq/live-common/currencies/index");

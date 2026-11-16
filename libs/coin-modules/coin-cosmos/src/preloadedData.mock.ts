@@ -1,9 +1,7 @@
-import { cosmosConfig } from "./config";
+import { cosmosDefaults } from "./config";
 import type { CosmosPreloadData } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const LEDGER_VALIDATOR_ADDRESS = cosmosConfig.config_currency_cosmos.default["ledgerValidator"];
+const LEDGER_VALIDATOR_ADDRESS = cosmosDefaults.cosmos.ledgerValidator;
 // Data manually fetched from the network between heights
 // 1685677 and 1685679
 const data: CosmosPreloadData = {

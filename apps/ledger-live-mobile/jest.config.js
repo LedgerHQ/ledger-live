@@ -76,6 +76,9 @@ module.exports = {
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
+    // libs/ packages are consumed from source. Babel keeps what their built outputs had: the
+    // worklets plugin and plain export assignments that mocks can spread mid-cycle.
+    "/libs/.+\\.tsx?$": "babel-jest",
     "^.+\\.(t)sx?$": [
       "@swc/jest",
       {
@@ -146,10 +149,6 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
-    // Logic-only stub — integration tests overlay UI components via jest.mock.
-    // Other @features/flow-contacts-* packages resolve their react-native export
-    // through customExportConditions above.
-    "^@features/flow-contacts$": "<rootDir>/../../features/flow/contacts/src/jest.native.ts",
     // Map Lumen RN source entry points to a single module graph. The root
     // mapping alone is not enough: subpath imports (/symbols, /styles) must
     // target the same source tree or Jest loads duplicate @ledgerhq/lumen-ui-rnative

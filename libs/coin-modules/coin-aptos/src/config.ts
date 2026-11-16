@@ -20,3 +20,17 @@ const coinConfig: {
 } = buildCoinConfig<AptosCoinConfig>();
 
 export default coinConfig;
+
+export const aptosDefaults = {
+  aptos: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "Aptos",
+    unit: { name: "APT", code: "APT", magnitude: 8 },
+  },
+} satisfies Record<string, CurrencyConfig & Partial<AptosCoinConfig>>;

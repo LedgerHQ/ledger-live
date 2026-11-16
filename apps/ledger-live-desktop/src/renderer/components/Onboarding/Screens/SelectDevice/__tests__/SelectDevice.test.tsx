@@ -27,7 +27,7 @@ const renderSelectDevice = (featureFlags: Parameters<typeof withFlagOverrides>[0
       <SelectDevice />
     </OnboardingContext.Provider>,
     {
-      initialState: withFlagOverrides({ supportDeviceApex: { enabled: true }, ...featureFlags }),
+      initialState: withFlagOverrides(featureFlags),
     },
   );
 

@@ -202,6 +202,8 @@ describe("handlers", () => {
       // Then
       expect(result).toEqual({ transactionId: "NONCE" });
       expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
+      // The live app has its own steps before it completes: the host must not hold the device.
+      expect(mockUiStartExchange.mock.calls[0][0].continuesOnDevice).toBeUndefined();
       const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
       expect(receivedParams.exchangeType).toBe("SWAP");
       expect(receivedParams.provider).toBe("TestProvider");
@@ -349,6 +351,8 @@ describe("handlers", () => {
       const result = await handler["custom.exchange.swap"](request, context, {});
 
       expect(result).toEqual({ operationHash: "0xhash", swapId: "swap-123" });
+      // The swap goes straight on to the device confirmation, so a host can keep its session open.
+      expect(mockUiStartExchange.mock.calls[0][0].continuesOnDevice).toBe(true);
 
       const networkCall = mockedNetwork.mock.calls.find(([req]) =>
         (req as { url?: string }).url?.includes("/swap/accepted"),

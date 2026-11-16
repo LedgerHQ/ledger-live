@@ -41,7 +41,6 @@ export function useContactDetailPaneAdapter(
   addressDetailDialog: ContactAddressDetailDialogProps;
   editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
   addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
-  onOpenMe: ContactsViewProps["onOpenMe"];
   onOpenContact: ContactsViewProps["onOpenContact"];
   onSelectContact: (contactId: ContactId) => void;
 }> {
@@ -229,7 +228,6 @@ export function useContactDetailPaneAdapter(
     addressDetailDialog,
     editDeleteDialogs,
     addressDetailActionsDialogs,
-    onOpenMe: openContact,
     onOpenContact: openContact,
     onSelectContact: selectContact,
   };

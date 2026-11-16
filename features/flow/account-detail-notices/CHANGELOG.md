@@ -1,5 +1,17 @@
 # @features/flow-account-detail-notices
 
+## 0.3.0
+
+### Minor Changes
+
+- [#23982](https://github.com/LedgerHQ/ledger-live/pull/23982) [`5be64be`](https://github.com/LedgerHQ/ledger-live/commit/5be64be2b44e1ad7358a2b6db2ab56108ef73fd0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail on LWD shows the account notices (currency migration, deprecation and custom banners, Robinhood disclaimer, Perps) and the family blocks (pending transfer proposals, sub header, balance summary footer, body header) in the custom place. The notices package now maps the remote currency config into notice signals (`toCurrencyStatusSignal`, `toCustomBannerSignal`).
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23982](https://github.com/LedgerHQ/ledger-live/pull/23982) [`5be64be`](https://github.com/LedgerHQ/ledger-live/commit/5be64be2b44e1ad7358a2b6db2ab56108ef73fd0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail on LWD shows the account notices (currency migration, deprecation and custom banners, Robinhood disclaimer, Perps) and the family blocks (pending transfer proposals, sub header, balance summary footer, body header) in the custom place. The notices package now maps the remote currency config into notice signals (`toCurrencyStatusSignal`, `toCustomBannerSignal`).
+
 ## 0.2.0
 
 ### Minor Changes

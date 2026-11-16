@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
 import AccountRowLayout from "~/components/AccountRowLayout";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";

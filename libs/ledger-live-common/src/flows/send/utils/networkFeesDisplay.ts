@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";

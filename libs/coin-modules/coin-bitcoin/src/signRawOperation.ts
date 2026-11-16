@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Transaction } from "../../types";
 import { getFeeRate } from "../transaction/getFeeRate";
 

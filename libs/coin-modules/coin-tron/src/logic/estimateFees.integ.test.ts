@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { randomBytes } from "crypto";
 import { getChainParameters, getTronAccountNetwork } from "../network";
@@ -32,10 +32,7 @@ const sendIntent = (overrides: Partial<TronIntent> = {}): TronIntent => ({
 
 const mockLogger: Logger = (..._args: unknown[]) => {};
 
-const mockConfig = {
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-} as TronCoinConfig;
+const mockConfig = tronDefaults.tron as TronCoinConfig;
 
 describe("estimateFees [integ]", () => {
   describe("sanity", () => {

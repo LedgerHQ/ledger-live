@@ -1,14 +1,11 @@
 import { writeFile } from "fs/promises";
 import * as path from "path";
-import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { waitForIdentitiesInAppJson } from "tests/utils/userdata";
-import { FileUtils } from "tests/utils/fileUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 test.describe("Settings", () => {
   test.use({
@@ -145,57 +142,31 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Reset the app",
+    "Export logs and reset the app",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-821",
+        description: "B2CQA-825, B2CQA-2074, B2CQA-821",
       },
     },
     async ({ app, userdataFile, userdataDestinationPath }) => {
-      await app.mainNavigation.openSettings();
-      const { userId: userIdBefore } = await waitForIdentitiesInAppJson(userdataFile);
-
-      const staleAppJsonBackup = path.join(userdataDestinationPath, "app.json.123");
-      await writeFile(staleAppJsonBackup, "stale");
-
-      await app.settings.goToHelpTab();
-      await app.settings.resetApp();
-      await app.settingsModal.checkResetModal();
-      await app.settingsModal.clickOnConfirmButton();
-      await app.settingsModal.expectIdentitiesRegenerated(userdataFile, userIdBefore);
-
-      expect(
-        await FileUtils.waitForFileToBeRemoved(staleAppJsonBackup, TIMEOUT.medium),
-        "stale app.json.* backup should be cleaned up on the Reset-app reboot",
-      ).toBeTruthy();
-    },
-  );
-});
-
-test.describe("Settings", () => {
-  test.use({
-    teamOwner: Team.WALLET_XP,
-    userdata: "1AccountBTC1AccountETH",
-  });
-
-  test(
-    "Export logs",
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-825, B2CQA-2074",
-      },
-    },
-    async ({ app }) => {
       await app.mainNavigation.openSettings();
       await app.settings.goToHelpTab();
       await app.settings.checkViewUserDataButtonIsEnabled();
       await app.settings.clickExportLogs();
       await app.settings.expectExportLogsFileCreated();
       await app.settings.moveExportedLogsToArtifacts();
+
+      const { userId: userIdBefore } = await waitForIdentitiesInAppJson(userdataFile);
+      const staleAppJsonBackup = path.join(userdataDestinationPath, "app.json.123");
+      await writeFile(staleAppJsonBackup, "stale");
+
+      await app.settings.resetApp();
+      await app.settingsModal.checkResetModal();
+      await app.settingsModal.clickOnConfirmButton();
+      await app.settingsModal.expectIdentitiesRegenerated(userdataFile, userIdBefore);
+      await app.settingsModal.expectStaleBackupRemoved(staleAppJsonBackup);
     },
   );
 });
@@ -227,33 +198,6 @@ const languageTestData = [
   },
 ];
 
-test.describe("Settings", () => {
-  test.use({
-    teamOwner: Team.WALLET_XP,
-    userdata: "skip-onboarding-with-last-seen-device",
-  });
-
-  for (const l10n of languageTestData) {
-    test(
-      `Change app language to ${l10n.lang}`,
-      {
-        tag: [...DEVICE_TAGS],
-        annotation: { type: "TMS", description: "B2CQA-2344" },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openSettings();
-        await app.settings.changeLanguage(l10n.lang);
-        await app.settings.expectLanguageSelected(l10n.lang);
-        await app.settings.expectGeneralTabLabel(l10n.generalTabLabel);
-        await app.settings.expectCounterValueRowCharacterSet(l10n.characterSet);
-        await app.settings.expectLanguageRowTranslation(l10n.languageLabel);
-        await app.settings.expectCounterValueRowTranslation(l10n.counterValueLabel);
-        await app.settings.expectThemeRowTranslation(l10n.themeLabel);
-      },
-    );
-  }
-});
-
 const themeTestData = [
   { label: "Light", colorScheme: "light" },
   { label: "Dark", colorScheme: "dark" },
@@ -266,17 +210,28 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Change app theme",
+    "Change app theme and language",
     {
       tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-5432" },
+      annotation: { type: "TMS", description: "B2CQA-5432, B2CQA-2344" },
     },
     async ({ app }) => {
       await app.mainNavigation.openSettings();
+      // Theme labels are localized, so the theme changes run before the language changes.
       for (const theme of themeTestData) {
         await app.settings.changeTheme(theme.label);
         await app.settings.expectThemeSelected(theme.label);
         await app.settings.expectAppColorScheme(theme.colorScheme);
+      }
+
+      for (const l10n of languageTestData) {
+        await app.settings.changeLanguage(l10n.lang);
+        await app.settings.expectLanguageSelected(l10n.lang);
+        await app.settings.expectGeneralTabLabel(l10n.generalTabLabel);
+        await app.settings.expectCounterValueRowCharacterSet(l10n.characterSet);
+        await app.settings.expectLanguageRowTranslation(l10n.languageLabel);
+        await app.settings.expectCounterValueRowTranslation(l10n.counterValueLabel);
+        await app.settings.expectThemeRowTranslation(l10n.themeLabel);
       }
     },
   );

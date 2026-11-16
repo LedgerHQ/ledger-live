@@ -1,5 +1,5 @@
 import { defineConfig } from "oxlint";
-import { RELATIVE_IMPORTS } from "@support/lint/restricted-imports";
+import { BIGNUMBER_NAMED_IMPORT, RELATIVE_IMPORTS } from "@support/lint/restricted-imports";
 
 export default defineConfig({
   env: { browser: true, node: true },
@@ -21,6 +21,7 @@ export default defineConfig({
     "eslint/no-restricted-imports": [
       "error",
       {
+        paths: [BIGNUMBER_NAMED_IMPORT],
         patterns: [
           RELATIVE_IMPORTS,
           {
@@ -32,5 +33,10 @@ export default defineConfig({
       },
     ],
   },
-  overrides: [{ files: ["scripts/**"], rules: { "eslint/no-restricted-imports": "off" } }],
+  overrides: [
+    {
+      files: ["scripts/**"],
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+  ],
 });

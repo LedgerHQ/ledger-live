@@ -6,7 +6,7 @@ import type {
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
 
 export type CosmosDelegationFlowParamList = {

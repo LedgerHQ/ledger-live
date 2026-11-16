@@ -19,3 +19,5 @@ their root reducer.
 | `useHasLocallyOverriddenFeatureFlags()`   | `true` if any local override is active (`state.featureFlags.overrides` is non-empty). |
 | `<FeatureToggle featureId fallback>`      | Renders `children` when the flag is enabled, otherwise `fallback`.      |
 | `useWalletFeaturesConfig(platform)`       | Boolean config object derived from `lwdWallet40` / `lwmWallet40`.       |
+| `useDustFilteringFeature(platform)`       | `{ isEnabled }` for `lwdDustFiltering` / `lwmDustFiltering`.            |
+| `selectDustFilteringEnabled(state, platform)` | Same enabled check for selectors that cannot call a hook.           |

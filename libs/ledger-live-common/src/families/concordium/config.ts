@@ -1,29 +1,4 @@
-import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/config";
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { concordiumDefaults } from "@ledgerhq/coin-concordium/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const concordiumConfig: Record<string, ConfigInfo> = {
-  config_currency_concordium: {
-    type: "object",
-    default: {
-      status: { type: "active" },
-      name: "Concordium",
-      unit: { name: "ccd", code: "CCD", magnitude: 6 },
-      networkType: "mainnet",
-      proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-      minReserve: 0,
-      enableTokens: false,
-    } satisfies ConcordiumCoinConfig,
-  },
-  config_currency_concordium_testnet: {
-    type: "object",
-    default: {
-      status: { type: "active" },
-      name: "Concordium (Testnet)",
-      unit: { name: "ccd", code: "CCD", magnitude: 6 },
-      networkType: "testnet",
-      proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-      minReserve: 0,
-      enableTokens: false,
-    } satisfies ConcordiumCoinConfig,
-  },
-};
+export const concordiumConfig = currencyDefaultsToLiveConfig(concordiumDefaults);

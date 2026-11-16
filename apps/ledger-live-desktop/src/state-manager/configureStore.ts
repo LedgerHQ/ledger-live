@@ -2,6 +2,8 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { getEnv } from "@shared/env";
 import { createAppConfigMiddleware } from "@shared/app-config";
+import { createLiveConfigOverridesMiddleware } from "@shared/live-config-overrides";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   cardApi,
   redactCardApiAction,
@@ -93,6 +95,11 @@ const customCreateStore = ({
           }),
         )
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
+        .concat(
+          createLiveConfigOverridesMiddleware({
+            applyOverrides: overrides => LiveConfig.setAllOverrides(overrides),
+          }),
+        )
         .concat(sleepingListener.middleware)
         .concat(createDesktopCountervaluesMiddleware(countervalues))
         .concat(accountDataTaps.middleware),

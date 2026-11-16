@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as rlp from "@ethersproject/rlp";
 import {
   ERC20_CLEAR_SIGNED_SELECTORS,

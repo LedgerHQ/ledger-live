@@ -12,7 +12,7 @@ import {
   assignStakingResourcesToAccountRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   SolanaOperationExtra,
   SolanaOperationExtraRaw,

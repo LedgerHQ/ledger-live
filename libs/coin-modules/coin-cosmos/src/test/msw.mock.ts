@@ -1,5 +1,6 @@
 import { setupServer } from "msw/node";
-import coinConfig, { cosmosConfig, CosmosCoinConfig } from "../config";
+import coinConfig, { CosmosCoinConfig } from "../config";
+import { cosmosDefaultsFor } from "./cosmosDefaults";
 import { CosmosAPI } from "../network/Cosmos";
 
 // Ledger LCD proxies. MSW handlers register these exact hosts; the values only need to match what
@@ -14,7 +15,7 @@ export const server = setupServer();
  * LCD pointed at `endpoint`.
  */
 export function makeTestConfig(currencyId: string, endpoint: string): CosmosCoinConfig {
-  const defaults = cosmosConfig[`config_currency_${currencyId}`].default as CosmosCoinConfig;
+  const defaults = cosmosDefaultsFor(currencyId);
   return {
     ...defaults,
     lcd: endpoint,

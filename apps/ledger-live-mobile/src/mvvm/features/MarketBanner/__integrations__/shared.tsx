@@ -20,14 +20,11 @@ const TestScreen = () => (
 
 const MarketListScreen = () => <View testID="market-list-screen" />;
 
-const MarketDetailScreen = () => <View testID="market-detail-screen" />;
-
 export const MarketBannerTest = () => (
   <RampCatalogProvider updateFrequency={60000}>
     <Stack.Navigator initialRouteName="TestScreen">
       <Stack.Screen name="TestScreen" component={TestScreen} />
       <Stack.Screen name={ScreenName.MarketList} component={MarketListScreen} />
-      <Stack.Screen name={ScreenName.MarketDetail} component={MarketDetailScreen} />
     </Stack.Navigator>
   </RampCatalogProvider>
 );

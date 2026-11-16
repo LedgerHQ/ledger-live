@@ -8,10 +8,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
-import {
-  configureMockServerTransport,
-  resetMockServerTransport,
-} from "../mockServerTransportConfig";
 import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
@@ -58,7 +54,6 @@ const knownDevice: KnownDevice = {
 
 describe("mobile connectDevice", () => {
   afterEach(() => {
-    resetMockServerTransport();
     jest.clearAllMocks();
   });
 
@@ -74,6 +69,7 @@ describe("mobile connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected,
+      isMockServerEnabled: false,
     });
 
     // THEN
@@ -85,6 +81,7 @@ describe("mobile connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected,
+      isMockServerEnabled: false,
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
@@ -98,12 +95,12 @@ describe("mobile connectDevice", () => {
 
   it("should register the mock server source when that transport is enabled", () => {
     const dmk = {} as DeviceManagementKit;
-    configureMockServerTransport({ url: "https://mock.example", token: "session" });
 
     connectDevice({
       dmk,
       knownDevices: [knownDevice],
       onConnected: jest.fn(),
+      isMockServerEnabled: true,
     });
 
     expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);

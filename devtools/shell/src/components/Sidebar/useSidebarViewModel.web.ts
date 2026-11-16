@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import type { ChangeEventHandler, ReactNode } from "react";
 import type { Category, Tool, ToolId } from "@devtools/registry";
-import { useAccordion } from "../../hooks";
+import { useAccordion } from "../../hooks/useAccordion";
 import type { IconComponent } from "../../categoryConfig";
 import { CATEGORY_ICONS } from "../../categoryConfig";
-import { filterToolsByQuery, findCategoryForToolId } from "../../utils";
+import { filterToolsByQuery } from "../../utils";
+import { findCategoryForToolId } from "../../utils/toolsUtils";
 
 interface SidebarInput {
   categories: Array<{ category: Category; tools: Tool[] }>;

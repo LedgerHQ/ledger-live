@@ -1,6 +1,6 @@
 import React from "react";
 import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { useTranslation } from "react-i18next";
 
 import { InfoState } from "@shared/ui-info-state";

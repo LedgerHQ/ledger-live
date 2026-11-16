@@ -1,6 +1,6 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as buildOptimisticOperationModule from "./buildOptimisticOperation";
 import * as buildTransactionModule from "./buildTransaction";
 import { buildSignOperation } from "./signOperation";

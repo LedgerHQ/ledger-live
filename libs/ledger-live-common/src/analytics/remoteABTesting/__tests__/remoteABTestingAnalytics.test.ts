@@ -20,6 +20,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: "control",
       llmWalletApiDeviceIntentSignEnabled: false,
       llmWalletApiDeviceIntentSignVariant: "control",
+      llmWalletApiDeviceIntentExchangeEnabled: false,
+      llmWalletApiDeviceIntentExchangeVariant: "control",
       ptxEarnTransactionSuccessBannerEnabled: false,
       ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerDisabled",
     });
@@ -32,6 +34,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: "variant_a",
       llmWalletApiDeviceIntentSignEnabled: true,
       llmWalletApiDeviceIntentSignVariant: "variant_a",
+      llmWalletApiDeviceIntentExchangeEnabled: true,
+      llmWalletApiDeviceIntentExchangeVariant: "variant_a",
       ptxEarnTransactionSuccessBannerEnabled: true,
       ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerEnabled",
     });
@@ -44,6 +48,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: true,
       llmWalletApiDeviceIntentSignVariant: undefined,
+      llmWalletApiDeviceIntentExchangeEnabled: true,
+      llmWalletApiDeviceIntentExchangeVariant: undefined,
       ptxEarnTransactionSuccessBannerEnabled: true,
       ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerEnabled",
     });
@@ -56,6 +62,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: false,
       llmWalletApiDeviceIntentSignVariant: undefined,
+      llmWalletApiDeviceIntentExchangeEnabled: false,
+      llmWalletApiDeviceIntentExchangeVariant: undefined,
       ptxEarnTransactionSuccessBannerEnabled: false,
       ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerDisabled",
     });

@@ -576,7 +576,7 @@ describe("makeScanAccounts", () => {
       getAccountShape: () =>
         Promise.resolve({
           id: "1234",
-          balance: new BigNumber("NULL"),
+          balance: new BigNumber(NaN),
           balanceHistoryCache: createEmptyHistoryCache(),
         }),
       getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),

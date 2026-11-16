@@ -16,7 +16,7 @@ import {
   SCROLL_ACCOUNT,
   BASE_ACCOUNT,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { ModularDrawer, useModularDrawerController } from "..";
 import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNavigator";

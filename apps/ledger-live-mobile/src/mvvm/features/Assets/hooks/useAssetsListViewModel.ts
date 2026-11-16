@@ -3,7 +3,6 @@ import { useCallback, useMemo } from "react";
 import useEnv from "@features/platform-env";
 import { useFocusEffect } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
@@ -25,13 +24,11 @@ const useAssetsListViewModel = ({
   onContentChange,
 }: Props) => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
   const { openFromAsset } = useAssetDetailNavigation();
 
   const filteredDistribution = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -58,7 +55,6 @@ const useAssetsListViewModel = ({
       openFromAsset({
         currency: asset.currency,
         source: "assets",
-        isPlaceholder: asset.isPlaceholder,
         marketId: asset.marketId,
       });
     },

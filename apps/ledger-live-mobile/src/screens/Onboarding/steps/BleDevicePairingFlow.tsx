@@ -4,6 +4,7 @@ import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,
 } from "~/components/BleDevicePairingFlow";
 import React, { useCallback } from "react";
+import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
 import { Device } from "@ledgerhq/types-devices";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { NavigatorName, ScreenName } from "~/const";
@@ -18,7 +19,8 @@ export type Props = RootComposite<
 >;
 
 const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) => {
-  const { filterByDeviceModelId } = route.params;
+  // The sync-onboarding deep link carries no params: only touchscreen devices can open it
+  const filterByDeviceModelId = route.params?.filterByDeviceModelId ?? [...DevicesWithTouchScreen];
 
   const onPairingSuccess = useCallback(
     // _discoveredDevice will be used for DMK-based device connections. Do not remove.

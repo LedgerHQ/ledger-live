@@ -1,10 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  RetryableStateType,
-  type EnsureAppReadyState,
-  useDeviceIntentTracking,
-} from "@ledgerhq/live-dmk-shared";
+import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import {

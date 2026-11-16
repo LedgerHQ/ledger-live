@@ -2,7 +2,7 @@ import type { UnknownAction } from "@reduxjs/toolkit";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import rootReducer from "..";
 
 describe("the payCard blob restored into the desktop store", () => {
@@ -29,7 +29,7 @@ describe("the payCard blob restored into the desktop store", () => {
     const state = restoreAll(blob);
 
     expect(state.payCardFeatureTour.hasSeenFeatureTour).toBe(true);
-    expect(state.payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    expect(state.receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
     expect(state.payCardBalance.balanceFilter).toBe("ethereum/erc20/usd__coin");
     expect(state.payCardLoginIntro.hasSeenLoginIntro).toBe(true);
   });

@@ -1,4 +1,7 @@
 {
   "extends": "@support/tsconfig/node",
-  "include": ["index.js", "mocks/**/*.js", "setup/**/*.js"]
+  "compilerOptions": {
+    "types": ["node", "jest"]
+  },
+  "include": ["index.ts", "preset-overrides.cts", "setup/**/*.ts"]
 }

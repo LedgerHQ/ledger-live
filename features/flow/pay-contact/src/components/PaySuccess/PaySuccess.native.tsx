@@ -2,26 +2,10 @@ import React from "react";
 import { Button, Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
-import { PaySuccessHero, type PaySuccessRecipient } from "./PaySuccessHero.native";
-import {
-  PaySuccessSummary,
-  type PaySuccessSummaryIcon,
-  type PaySuccessSummaryRow,
-} from "./PaySuccessSummary.native";
-
-export type { PaySuccessRecipient };
-
-export type PaySuccessProps = Readonly<{
-  recipient?: PaySuccessRecipient;
-  recipientLabel: string;
-  amountFormatted: string;
-  fromAccountName?: string;
-  networkIcon?: PaySuccessSummaryIcon;
-  estimatedTime?: string;
-  canViewTransaction: boolean;
-  onViewTransaction: () => void;
-  onClose: () => void;
-}>;
+import type { PaySuccessProps } from "./PaySuccess.types";
+import { PaySuccessHero } from "./PaySuccessHero";
+import { PaySuccessSummary } from "./PaySuccessSummary";
+import { usePaySuccessSummaryRows } from "./usePaySuccessSummaryRows";
 
 export function PaySuccess({
   recipient,
@@ -35,27 +19,12 @@ export function PaySuccess({
   onClose,
 }: PaySuccessProps) {
   const { t } = useTranslation();
-
-  const rows: ReadonlyArray<PaySuccessSummaryRow> = fromAccountName
-    ? [
-        { id: "amount", label: t("payTab.contacts.paySuccess.amount"), value: amountFormatted },
-        ...(estimatedTime
-          ? [
-              {
-                id: "estimatedTime",
-                label: t("payTab.contacts.paySuccess.estimatedTime"),
-                value: estimatedTime,
-              },
-            ]
-          : []),
-        {
-          id: "from",
-          label: t("payTab.contacts.paySuccess.from"),
-          value: fromAccountName,
-          trailingIcon: networkIcon,
-        },
-      ]
-    : [];
+  const rows = usePaySuccessSummaryRows({
+    amountFormatted,
+    estimatedTime,
+    fromAccountName,
+    networkIcon,
+  });
 
   return (
     <Box
@@ -90,7 +59,7 @@ export function PaySuccess({
         </Box>
       ) : null}
       <Box lx={{ gap: "s16" }}>
-        {canViewTransaction ? (
+        {canViewTransaction !== false ? (
           <Button
             appearance="gray"
             size="lg"

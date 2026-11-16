@@ -54,4 +54,19 @@ describe("useFeatureFlaggedCurrencies", () => {
     const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
     expect(result.current.deactivatedCurrencyIds.has("alpen_testnet")).toBe(false);
   });
+
+  it("deactivates alpen by default", () => {
+    const { Wrapper } = makeStoreWrapper();
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.featureFlaggedCurrencies.alpen).toBeDefined();
+    expect(result.current.deactivatedCurrencyIds.has("alpen")).toBe(true);
+  });
+
+  it("stops deactivating alpen once its gating flag is enabled", () => {
+    const { Wrapper } = makeStoreWrapper({
+      resolved: { ...FEATURE_FLAGS_DEFAULTS, currencyAlpen: { enabled: true } },
+    });
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.deactivatedCurrencyIds.has("alpen")).toBe(false);
+  });
 });

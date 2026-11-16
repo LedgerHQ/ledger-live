@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createBoilerplateContext } from "../config.fixture";
 import { Transaction } from "../types";
 import { buildGetTransactionStatus } from "./getTransactionStatus";

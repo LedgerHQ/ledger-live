@@ -1,16 +1,14 @@
 {
   "name": "@features/flow-pay-contact",
-  "version": "0.7.1",
+  "version": "0.9.0",
   "private": true,
   "description": "Pay tab contact flow for Ledger Wallet",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -42,6 +40,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

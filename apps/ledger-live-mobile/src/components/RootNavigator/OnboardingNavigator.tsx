@@ -22,8 +22,6 @@ import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
 import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
-import { DeviceOnboardingFunnel } from "LLM/features/DeviceOnboarding/screens/Funnel";
-import { SyncOfferRoute } from "LLM/features/DeviceOnboarding/screens/SyncOffer/SyncOfferRoute";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
@@ -43,17 +41,12 @@ import {
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
-
-function FirmwareUpdateHeaderLeft() {
-  return null;
-}
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -215,28 +208,6 @@ export default function OnboardingNavigator() {
       />
 
       <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
-      <Stack.Screen
-        name={ScreenName.DeviceOnboardingFunnel}
-        component={DeviceOnboardingFunnel}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={ScreenName.DeviceOnboardingSyncOffer}
-        component={SyncOfferRoute}
-        options={{ headerShown: false, gestureEnabled: false, animation: "fade" }}
-      />
-      <Stack.Screen
-        name={ScreenName.FirmwareUpdate}
-        component={FirmwareUpdateScreen}
-        options={{
-          gestureEnabled: false,
-          headerShown: true,
-          headerTitle: () => null,
-          title: "",
-          headerLeft: FirmwareUpdateHeaderLeft,
-          headerRight: () => null,
-        }}
-      />
 
       <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
 

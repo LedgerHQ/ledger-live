@@ -8,13 +8,14 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { exitActions } from "../utils/exitActions";
+import { exitActions, resetToPortfolio } from "../utils/exitActions";
 import { isCurrentSessionGenuine } from "../utils/genuineSession";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
+  getNavigation?: () => NavigationProp<ParamListBase> | null;
 };
 
 /**
@@ -25,14 +26,22 @@ export function useLeaveOnboarding({
   device,
   navigateOnExit,
   wasReadOnlyAtEntry,
+  getNavigation,
 }: UseLeaveOnboardingInput) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const screenNavigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
-    if (!navigateOnExit || !device) return;
+    const navigation = getNavigation ? getNavigation() : screenNavigation;
+    if (!navigateOnExit || !device || !navigation) return;
+    const unseeded = context.onboardedOnEntry === false;
+    if (unseeded && reason === "completed") return;
+    if (unseeded && reason === "userQuit") {
+      resetToPortfolio(navigation);
+      return;
+    }
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
     const firmwareNeedsLegacyFlow =

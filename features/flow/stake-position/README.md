@@ -7,14 +7,14 @@ Ledger Wallet's own view of one staking position that a live app opens: the posi
 
 ## Wallet API contract
 
-`handlers({ uiHooks })` returns the `custom.stake.position.open` handler to merge into a live app player's custom handlers. Its params are `{ accountId, positionId, validatorAddress, rewards? }`: the Wallet API account id, the position (a stake account address on Solana), its validator, and the total rewards in the currency's smallest unit. The rewards are for display only and are dropped unless they are a whole number. Invalid params answer `INVALID_PARAMS`.
+`handlers({ uiHooks })` returns the `custom.stake.position.open` handler to merge into a live app player's custom handlers. Its params are `{ accountId, positionId, validatorAddress, rewards? }`: the Wallet API account id, the position (a stake account address on Solana), its validator, and the total rewards in the currency's smallest unit. The validator is empty when the position has none, such as an undelegated Solana stake account. The rewards are for display only and are dropped unless they are a whole number. Invalid params answer `INVALID_PARAMS`.
 
 The host answers `{ action }`:
 
 - `deactivate` or `withdraw` once the transaction is broadcast, so the live app can refresh;
 - `earnMore` before the host opens its deposit flow;
 - `null` when the user leaves, or when the flow fails or is abandoned;
-- `{ action: null, reason }`, with `reason` set to `ambiguous` or `notFound`, when the host cannot act on the position. The live app then falls back to its own behaviour. `resolvePositionMatch` decides it: the live app may group several positions of one validator in one row.
+- `{ action: null, reason }`, with `reason` set to `ambiguous` or `notFound`, when the host cannot act on the position. The live app then falls back to its own behaviour. `resolvePositionMatch` decides it: the live app may group several positions of one validator in one row. A position without a validator shares none, so it is never ambiguous: its id finds it, and only if the account holds it with no validator too.
 
 A host error keeps its name in the answer: `StakePositionAccountNotFound`, `StakePositionUnsupported` or `StakePositionBusy`. A host that registers the handler passes the live app input `NATIVE_STAKE_POSITION_INPUT_KEY` set to `NATIVE_STAKE_POSITION_INPUT_VALUE`. `stakePrograms` cannot carry it: it only names each currency's deposit provider.
 
