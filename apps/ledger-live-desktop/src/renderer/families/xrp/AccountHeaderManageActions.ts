@@ -4,7 +4,13 @@ import { openModal } from "~/renderer/actions/modals";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import IconTrash from "~/renderer/icons/Trash";
 import type { XrpFamily } from "./types";
-import { getRemoveAvailability, getXrpResources, hasTokenStandardEnabled } from "./utils";
+import { openManageAssets } from "./ManageAssetsDialog/manageAssetsDialog";
+import {
+  getManagedTokenAccounts,
+  getRemoveAvailability,
+  getXrpResources,
+  hasTokenStandardEnabled,
+} from "./utils";
 
 const AccountHeaderManageActions: XrpFamily["accountHeaderManageActions"] = ({
   account,
@@ -13,7 +19,22 @@ const AccountHeaderManageActions: XrpFamily["accountHeaderManageActions"] = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  if (account.type !== "TokenAccount" || !parentAccount) return [];
+  if (account.type === "Account") {
+    if (!hasTokenStandardEnabled(account)) return [];
+    if (getManagedTokenAccounts(account).length === 0) return [];
+
+    return [
+      {
+        key: "ManageAssets",
+        label: t("xrp.manageAssets.title"),
+        icon: IconAccountSettings,
+        accountActionsTestId: "xrp-manage-assets",
+        onClick: () => dispatch(openManageAssets()),
+      },
+    ];
+  }
+
+  if (!parentAccount) return [];
   if (!hasTokenStandardEnabled(parentAccount)) return [];
 
   const data = { account: parentAccount, tokenAccount: account };

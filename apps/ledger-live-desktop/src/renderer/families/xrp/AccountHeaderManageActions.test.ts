@@ -104,9 +104,27 @@ describe("xrp AccountHeaderManageActions", () => {
     ]);
   });
 
-  it("offers nothing on the XRP account itself", () => {
+  it("offers Manage assets on the XRP account, which opens the dialog", () => {
+    const account = { ...XRP_ACCOUNT, subAccounts: [XRP_IOU_TOKEN_ACCOUNT] };
+
+    const { result, store } = renderHook(() => {
+      return useManageActions({ account, parentAccount: null });
+    });
+
+    expect(result.current).toEqual([expect.objectContaining({ label: "Manage assets" })]);
+
+    act(() => {
+      result.current?.[0].onClick();
+    });
+
+    expect(store.getState().dialogs.XRP_MANAGE_ASSETS).toBe(true);
+  });
+
+  it("offers nothing on an XRP account that holds no token", () => {
+    const account = { ...XRP_ACCOUNT, subAccounts: [XRP_REMOVED_TOKEN_ACCOUNT] };
+
     const { result } = renderHook(() => {
-      return useManageActions({ account: XRP_ACCOUNT, parentAccount: null });
+      return useManageActions({ account, parentAccount: null });
     });
 
     expect(result.current).toEqual([]);

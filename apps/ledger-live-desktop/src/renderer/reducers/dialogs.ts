@@ -29,6 +29,7 @@ export const DIALOG_IDS = [
   "PRODUCT_TOUR",
   "GENERIC_AWARENESS_MODAL",
   "ACCOUNT_PUBLIC_KEY_UNAVAILABLE",
+  "XRP_MANAGE_ASSETS",
 ] as const;
 export type DialogId = (typeof DIALOG_IDS)[number];
 

@@ -4374,6 +4374,39 @@
         }
       }
     },
+    "manageAssets": {
+      "title": "Manage assets",
+      "tokenType": "Token type",
+      "tokenTypeTooltip": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "iou": "Trust Line (IOU)",
+      "mpt": "Multi Purpose Token",
+      "issuer": "Issuer",
+      "transferFee": "Transfer fee",
+      "balanceLimit": "Balance limit",
+      "rippling": "Rippling",
+      "ripplingTooltip": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editAsset": {
+        "title": "Edit details",
+        "limitDescription": "Select the maximum balance you can hold for this asset.",
+        "setMax": "Set to maximum",
+        "success": "{{token}} settings updated"
+      },
+      "deleteAsset": {
+        "gotIt": "Got it",
+        "confirm": {
+          "title": "Are you sure you want to delete {{token}}?",
+          "description": "This asset will be removed from your portfolio, and you won't be able to receive it anymore. The locked amount will be released to your {{accountName}} account."
+        },
+        "balanceLeft": {
+          "title": "Empty your {{token}} balance to remove it",
+          "description": "Send or swap your remaining {{token}} balance to remove this asset."
+        }
+      }
+    },
     "manageToken": {
       "title": "Manage token",
       "settings": {

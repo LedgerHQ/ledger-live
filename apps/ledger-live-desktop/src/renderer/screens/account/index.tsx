@@ -101,6 +101,7 @@ const AccountPage = ({
   const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
+  const AccountDialog = specific?.AccountDialog;
   const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
@@ -163,6 +164,7 @@ const AccountPage = ({
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
+      {AccountDialog ? <AccountDialog account={account} parentAccount={parentAccount} /> : null}
       {bridge?.isAccountEmpty(account) ? (
         <>
           <EmptyStateAccount account={account} parentAccount={parentAccount} />

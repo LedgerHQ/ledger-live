@@ -52,6 +52,9 @@ jest.mock("~/renderer/components/OperationsList", () => () => <div data-testid="
 const currency = getCryptoCurrencyById("bitcoin");
 const account = genAccount("test-account-btc", { currency, operationsSize: 1 });
 const stub = (testId: string) => () => <div data-testid={testId} />;
+const AccountDialog = ({ account: dialogAccount }: { account: { id: string } }) => (
+  <div data-testid="account-dialog">{dialogAccount.id}</div>
+);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -82,6 +85,16 @@ describe("AccountPage — useLLDCoinFamily slots", () => {
 
     expect(screen.queryByTestId("body-header")).not.toBeInTheDocument();
     expect(screen.queryByTestId("sub-header")).not.toBeInTheDocument();
+  });
+
+  it("mounts the family AccountDialog with the page account", () => {
+    mockFamily.mockReturnValue({ AccountDialog } as never);
+
+    render(<AccountPageWrapper />, {
+      initialState: { accounts: [account] },
+    });
+
+    expect(screen.getByTestId("account-dialog")).toHaveTextContent(account.id);
   });
 });
 

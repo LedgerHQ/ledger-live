@@ -2,7 +2,8 @@ import type { TFunction } from "i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getSeparators } from "@ledgerhq/live-currency-format";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { IOU_DIGITS } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { IOU_DIGITS, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type {
   TransactionStatus,
   XrpTokenAccount,
@@ -42,6 +43,10 @@ export const getXrpResources = (
   return (account as XrpTokenAccount).xrpResources;
 };
 
+export function getManagedTokenAccounts(account: Account): TokenAccount[] {
+  return (account.subAccounts ?? []).filter(subAccount => getXrpResources(subAccount));
+}
+
 export function getRemoveAvailability(account: TokenAccount, parentAccount: Account, t: TFunction) {
   if (hasPendingRemoval(parentAccount, account.token)) {
     return { disabled: true, tooltip: t("xrp.removeToken.pending") };
@@ -74,6 +79,25 @@ export function formatLongTrustLimit(limit: BigNumber, unit: Unit, locale: strin
   if (typeof value.e !== "number" || value.e < IOU_DIGITS) return null;
 
   return `${toScientificNotation(value, locale)} ${unit.code}`;
+}
+
+export function formatTrustLimit({
+  limit,
+  unit,
+  locale,
+  maximumLabel,
+}: {
+  limit: BigNumber;
+  unit: Unit;
+  locale: string;
+  maximumLabel: string;
+}): string {
+  if (isMaxTrustLimit(limit)) return maximumLabel;
+
+  return (
+    formatLongTrustLimit(limit, unit, locale) ??
+    formatCurrencyUnit(unit, limit, { locale, showCode: true })
+  );
 }
 
 // An IOU fee steps in billionths: 7 decimals of a percentage

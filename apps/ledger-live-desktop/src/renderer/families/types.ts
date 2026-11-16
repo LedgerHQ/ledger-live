@@ -296,6 +296,14 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  /**
+   * Dialog mounted once on the account page, opened by the family's own actions
+   */
+  AccountDialog?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+  }>;
+
   AccountFooter?: React.ComponentType<{
     account: A | TokenAccount;
     parentAccount?: A | undefined | null;

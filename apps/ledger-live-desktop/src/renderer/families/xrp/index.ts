@@ -3,6 +3,7 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import StepReceiveAccountCustomAlert from "./StepReceiveAccountCustomAlert";
 import addAssetAction from "./addAssetAction";
+import ManageAssetsDialog from "./ManageAssetsDialog";
 import sendAmountFields from "./SendAmountFields";
 import SendAmountFooterRow from "./SendAmountFooterRow";
 import sendRecipientFields from "./SendRecipientFields";
@@ -21,6 +22,7 @@ const family: XrpFamily = {
   getTokenTypes: currency => getXrpEnabledTokenStandards(currency.id),
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,
+  AccountDialog: ManageAssetsDialog,
   StepReceiveAccountCustomAlert,
   modalsToPreload: ["MODAL_XRP_ADD_TOKEN", "MODAL_XRP_MANAGE_TOKEN"],
 };
