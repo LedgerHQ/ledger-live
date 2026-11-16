@@ -89,11 +89,28 @@ for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
 for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
 for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
-# Offline launches: only loopback and the host (10.0.2.2, the data-import bridge) stay reachable;
-# everything else is refused at once, so network calls fail fast instead of timing out.
+# Gate-only network: loopback, the host (10.0.2.2, the data-import bridge), DNS (10.0.2.3) and the
+# hosts WaitForAppReady waits on (Remote Config, Firebase Installations, countervalues for OFAC) stay
+# reachable; every other connection is refused at once, so other calls fail fast.
+GATE_HOSTS="firebaseremoteconfig.googleapis.com firebaseinstallations.googleapis.com countervalues.live.ledger.com"
+allowed=""
+for _ in 1 2 3 4 5; do
+  for host in $GATE_HOSTS; do allowed="$allowed $(getent ahostsv4 "$host" | awk '{print $1}' | tr '\n' ' ')"; done
+  sleep 1
+done
+allowed=$(tr ' ' '\n' <<< "$allowed" | grep -E '^[0-9.]+$' | sort -u | tr '\n' ' ')
+echo "gate hosts resolve to: $allowed"
 for serial in emulator-5554 emulator-5556; do
-  adb -s "$serial" shell "su 0 sh -c 'iptables -I OUTPUT 1 -o lo -j ACCEPT && iptables -I OUTPUT 2 -d 10.0.2.2 -j ACCEPT && iptables -I OUTPUT 3 -j REJECT && ip6tables -I OUTPUT 1 -o lo -j ACCEPT && ip6tables -I OUTPUT 2 -j REJECT'"
-  adb -s "$serial" shell "su 0 iptables -S OUTPUT" | head -4
+  rules="iptables -I OUTPUT 1 -o lo -j ACCEPT && iptables -I OUTPUT 2 -d 10.0.2.2 -j ACCEPT && iptables -I OUTPUT 3 -d 10.0.2.3 -j ACCEPT"
+  n=4
+  for ip in $allowed; do
+    rules="$rules && iptables -I OUTPUT $n -d $ip -j ACCEPT"
+    n=$((n + 1))
+  done
+  rules="$rules && iptables -I OUTPUT $n -j REJECT && ip6tables -I OUTPUT 1 -o lo -j ACCEPT && ip6tables -I OUTPUT 2 -j REJECT"
+  adb -s "$serial" shell "su 0 sh -c '$rules'"
+  adb -s "$serial" shell "su 0 iptables -S OUTPUT" | head -$((n + 1))
   adb -s "$serial" shell "ping -c 1 -W 2 1.1.1.1 > /dev/null 2>&1 && echo '$serial still online' || echo '$serial offline'"
+  adb -s "$serial" shell "ping -c 1 -W 2 countervalues.live.ledger.com > /dev/null 2>&1 && echo '$serial reaches countervalues' || echo '$serial cannot ping countervalues'"
 done
 adb devices
