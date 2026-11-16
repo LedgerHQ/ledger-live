@@ -24361,9 +24361,6 @@ importers:
       coininfo:
         specifier: ^5.1.0
         version: 5.2.1
-      create-hmac:
-        specifier: ^1.1.7
-        version: 1.1.7
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -24401,9 +24398,6 @@ importers:
       '@types/bchaddrjs':
         specifier: 0.4.3
         version: 0.4.3
-      '@types/create-hmac':
-        specifier: 1.1.3
-        version: 1.1.3
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
@@ -33960,9 +33954,6 @@ packages:
 
   '@types/cors@2.8.17':
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
-
-  '@types/create-hmac@1.1.3':
-    resolution: {integrity: sha512-oDDSoBrAfdEPQuBpQp14y/ygUVU1IC6gq8Arm8IPP8TRC11AnLLYmpE3VvNUhPK/Ax3USGDjdE1Sc1LCIpf0NQ==}
 
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
@@ -53524,10 +53515,6 @@ snapshots:
   '@types/cookie@0.6.0': {}
 
   '@types/cors@2.8.17':
-    dependencies:
-      '@types/node': 24.12.0
-
-  '@types/create-hmac@1.1.3':
     dependencies:
       '@types/node': 24.12.0
 
