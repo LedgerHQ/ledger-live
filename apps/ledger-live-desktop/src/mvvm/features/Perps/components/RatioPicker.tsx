@@ -10,6 +10,8 @@ type RatioPickerProps = Readonly<{
   decimalPlaces: number;
   onChange: (value: number) => void;
   onMax: () => void;
+  /** Disables every option, e.g. while the max value is still loading. */
+  disabled?: boolean;
   testIdPrefix: string;
   className?: string;
 }>;
@@ -21,9 +23,11 @@ export function RatioPicker({
   decimalPlaces,
   onChange,
   onMax,
+  disabled = false,
   testIdPrefix,
   className,
 }: RatioPickerProps) {
+  const isUnavailable = disabled || maxValue === 0;
   const ratioOptions = [
     { label: "25%", value: applyRatio(maxValue, 0.25, decimalPlaces) },
     { label: "50%", value: applyRatio(maxValue, 0.5, decimalPlaces) },
@@ -39,7 +43,7 @@ export function RatioPicker({
         <Button
           appearance="gray"
           key={option.label}
-          disabled={maxValue === 0 || value === option.value}
+          disabled={isUnavailable || value === option.value}
           onClick={() => onChange(option.value)}
           data-testid={`${testIdPrefix}-ratio-${option.label}`}
         >
@@ -48,7 +52,7 @@ export function RatioPicker({
       ))}
       <Button
         appearance="gray"
-        disabled={maxValue === 0 || value === maxOption}
+        disabled={isUnavailable || value === maxOption}
         onClick={onMax}
         data-testid={`${testIdPrefix}-ratio-MAX`}
       >

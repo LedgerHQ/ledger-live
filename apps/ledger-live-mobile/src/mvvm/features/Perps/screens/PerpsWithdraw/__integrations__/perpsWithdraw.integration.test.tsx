@@ -58,6 +58,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummaryQuo
 
 // The device steps are covered by the sign view model test.
 let signProps: PerpsWithdrawSignProps | undefined;
+const mockUseSourceBalanceRefresh = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useSourceBalanceRefresh", () => ({
+  useSourceBalanceRefresh: (accountId: string) => mockUseSourceBalanceRefresh(accountId),
+}));
+
 jest.mock("../components/PerpsWithdrawSign", () => ({
   PerpsWithdrawSign: (props: PerpsWithdrawSignProps) => {
     signProps = props;
@@ -130,6 +135,7 @@ describe("PerpsWithdraw integration", () => {
       isError: false,
     });
     mockUsePerpsWithdrawQuote.mockReturnValue({ quote, isLoading: false, error: null });
+    mockUseSourceBalanceRefresh.mockReturnValue(false);
     mockOpenDrawer.mockImplementation(({ onAccountSelected }) => onAccountSelected(btcAccount));
     mockUseSummaryQuote.mockImplementation((initialQuote: unknown) => ({
       quote: initialQuote,
@@ -143,6 +149,18 @@ describe("PerpsWithdraw integration", () => {
 
     expect(screen.getByText(/\$2,001\.00/)).toBeOnTheScreen();
     expect(screen.getByText("$")).toBeOnTheScreen();
+  });
+
+  it("should show a skeleton instead of the old balance and block the ratios and Review while it is refreshed", () => {
+    mockUseSourceBalanceRefresh.mockReturnValue(true);
+    renderWithdraw();
+
+    expect(mockUseSourceBalanceRefresh).toHaveBeenCalledWith(sourceAccount.id);
+    expect(screen.queryByText(/\$2,001\.00/)).not.toBeOnTheScreen();
+    expect(screen.getByTestId("perps-withdraw-available-skeleton")).toBeOnTheScreen();
+    expect(screen.getByTestId("perps-withdraw-ratio-25%")).toBeDisabled();
+    expect(screen.getByTestId("perps-withdraw-ratio-MAX")).toBeDisabled();
+    expect(reviewCta()).toBeDisabled();
   });
 
   it("should follow the user's counter value currency", () => {

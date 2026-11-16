@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsWithdrawResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
@@ -11,8 +12,13 @@ import {
 import { getWithdrawRequestId } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
 import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/history";
+import {
+  getWithdrawTargetBalance,
+  waitForWithdrawBalanceReflected,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { accountSelector } from "~/reducers/accounts";
 import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
@@ -69,6 +75,15 @@ export function usePerpsWithdrawSignViewModel({
   const [step, setStep] = useState<PerpsWithdrawSignStep>({ kind: "connect" });
   const [attempt, setAttempt] = useState(0);
   const dispatch = useDispatch();
+  const sync = useBridgeSync();
+  const storedSourceAccount = useSelector(state =>
+    accountSelector(state, { accountId: sourceAccount.id }),
+  );
+  // Read while waiting for the withdraw to show up in the balance, so it must stay current.
+  const sourceBalanceRef = useRef((storedSourceAccount ?? sourceAccount).spendableBalance);
+  useEffect(() => {
+    if (storedSourceAccount) sourceBalanceRef.current = storedSourceAccount.spendableBalance;
+  }, [storedSourceAccount]);
   const action = useAppDeviceAction();
   const request = useMemo(() => ({ appName: PERPS_WITHDRAW_SIGNING_APP_NAME }), []);
 
@@ -92,6 +107,7 @@ export function usePerpsWithdrawSignViewModel({
   const handleDeviceResult = useCallback(
     async ({ device }: AppResult) => {
       setStep({ kind: "sign", device });
+      const balanceBeforeWithdraw = sourceBalanceRef.current;
       try {
         const result = await executePerpsWithdraw({
           requestId: requestIdRef.current,
@@ -125,6 +141,24 @@ export function usePerpsWithdrawSignViewModel({
             ),
           );
         }
+        // Stays on the submitting step until the balance shows the withdraw, so the next
+        // withdraw never offers money that already left.
+        await waitForWithdrawBalanceReflected({
+          targetBalance: getWithdrawTargetBalance(
+            sourceAccount,
+            balanceBeforeWithdraw,
+            quoteParams.amount,
+          ),
+          getBalance: () => sourceBalanceRef.current,
+          syncAccount: () =>
+            sync({
+              type: "SYNC_ONE_ACCOUNT",
+              accountId: sourceAccount.id,
+              priority: 10,
+              reason: "perps-withdraw",
+            }),
+          isCancelled: () => isLeavingRef.current,
+        });
         leave(() => onDone(result));
       } catch (e) {
         if (isLeavingRef.current) return;
@@ -145,6 +179,7 @@ export function usePerpsWithdrawSignViewModel({
       quote,
       quoteParams.amount,
       sourceAccount,
+      sync,
     ],
   );
 

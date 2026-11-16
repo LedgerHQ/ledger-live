@@ -14,6 +14,31 @@ import type { PerpsWithdrawViewModel } from "./usePerpsWithdrawViewModel";
 
 const TEST_ID_PREFIX = "perps-withdraw";
 const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
+const AVAILABLE_SKELETON_SIZE = { width: 64, height: 16 };
+
+function HeaderDescription({
+  headerDescription,
+  isBalanceRefreshing,
+}: Pick<PerpsWithdrawViewModel, "headerDescription" | "isBalanceRefreshing">) {
+  const text = (
+    <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+      {headerDescription}
+    </Text>
+  );
+
+  if (!isBalanceRefreshing) return text;
+
+  return (
+    <Box lx={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "s8" }}>
+      {text}
+      <Skeleton
+        testID={`${TEST_ID_PREFIX}-available-skeleton`}
+        lx={{ borderRadius: "sm" }}
+        style={AVAILABLE_SKELETON_SIZE}
+      />
+    </Box>
+  );
+}
 
 function QuotedAmount({
   quotedAmount,
@@ -86,6 +111,7 @@ function describeDestination(
 
 export function PerpsWithdrawView({
   headerDescription,
+  isBalanceRefreshing,
   amountText,
   amount,
   currencyCode,
@@ -126,9 +152,10 @@ export function PerpsWithdrawView({
   return (
     <SafeAreaView edges={["bottom"]} style={styles.root}>
       <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
-        <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-          {headerDescription}
-        </Text>
+        <HeaderDescription
+          headerDescription={headerDescription}
+          isBalanceRefreshing={isBalanceRefreshing}
+        />
 
         <Box lx={{ flex: 1, justifyContent: "center", alignItems: "center", gap: "s8" }}>
           <AmountInput
@@ -162,6 +189,7 @@ export function PerpsWithdrawView({
           value={amount}
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
+          disabled={isBalanceRefreshing}
           testIDPrefix={`${TEST_ID_PREFIX}-ratio`}
         />
 

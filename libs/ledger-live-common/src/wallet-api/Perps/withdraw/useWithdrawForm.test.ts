@@ -52,6 +52,11 @@ jest.mock("./useWithdrawQuote", () => ({
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
 }));
 
+const mockUseSourceBalanceRefresh = jest.fn();
+jest.mock("./useSourceBalanceRefresh", () => ({
+  useSourceBalanceRefresh: (accountId: string) => mockUseSourceBalanceRefresh(accountId),
+}));
+
 function createAccount(id: string, currencyId: string, balance: BigNumber.Value): Account {
   return {
     ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
@@ -97,6 +102,7 @@ describe("usePerpsWithdrawForm", () => {
       isError: false,
     });
     mockUsePerpsWithdrawQuote.mockReturnValue({ quote, isLoading: false, error: null });
+    mockUseSourceBalanceRefresh.mockReturnValue(false);
   });
 
   it("quotes the typed counter value as USDC towards the default destination", () => {
@@ -125,6 +131,16 @@ describe("usePerpsWithdrawForm", () => {
 
   it("keeps the 1 USDC fee out of Max, in the counter value", () => {
     expect(renderForm().maxAmount).toBe(1999);
+  });
+
+  it("refreshes the HyperCore balance and does not allow Review until it is done", () => {
+    mockUseSourceBalanceRefresh.mockReturnValue(true);
+
+    const form = renderForm({ amount: 500 });
+
+    expect(mockUseSourceBalanceRefresh).toHaveBeenCalledWith(sourceAccount.id);
+    expect(form.isBalanceRefreshing).toBe(true);
+    expect(form.canReview).toBe(false);
   });
 
   it("does not allow Review without an amount", () => {

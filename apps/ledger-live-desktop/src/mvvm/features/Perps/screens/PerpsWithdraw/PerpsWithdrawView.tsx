@@ -28,6 +28,7 @@ export function PerpsWithdrawView({
   selectAmountRatio,
   maxAmount,
   selectMax,
+  isBalanceRefreshing,
   destinationTicker,
   destinationLedgerId,
   destinationAccountName,
@@ -77,6 +78,7 @@ export function PerpsWithdrawView({
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
           onMax={selectMax}
+          disabled={isBalanceRefreshing}
           testIdPrefix={TEST_ID_PREFIX}
           className="justify-around"
         />
