@@ -167,79 +167,100 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
   });
 
   describe("Pause and resume", () => {
-    it("should start the flow paused when isPaused is true", () => {
+    it("GIVEN isPaused is true, WHEN the hook mounts, THEN it should start the flow paused", () => {
+      // GIVEN / WHEN
       setup({ isPaused: true });
 
+      // THEN
       expect(lastInput().isPaused).toBe(true);
     });
 
-    it("should pause when isPaused becomes true and resume when it becomes false", () => {
+    it("GIVEN isPaused became true and paused the flow, WHEN isPaused becomes false, THEN it should resume the flow", () => {
+      // GIVEN
       const { rerender } = setup();
-
       rerender({ isPaused: true });
       expect(mockPause).toHaveBeenCalledTimes(1);
+
+      // WHEN
       rerender({ isPaused: false });
 
+      // THEN
       expect(mockResume).toHaveBeenCalledTimes(2);
     });
 
-    it("should pause when the screen is not focused and resume when it is focused again", () => {
+    it("GIVEN the screen lost focus and paused the flow, WHEN the screen is focused again, THEN it should resume the flow", () => {
+      // GIVEN
       const { rerender } = setup();
       mockResume.mockClear();
-
       mockIsFocused.mockReturnValue(false);
       rerender({});
       expect(mockPause).toHaveBeenCalledTimes(1);
+
+      // WHEN
       mockIsFocused.mockReturnValue(true);
       rerender({});
 
+      // THEN
       expect(mockResume).toHaveBeenCalledTimes(1);
     });
 
-    it("should pause when the app goes to the background and resume when it comes back", () => {
+    it("GIVEN the app went to the background and paused the flow, WHEN the app comes back, THEN it should resume the flow", () => {
+      // GIVEN
       setup();
       mockResume.mockClear();
-
       act(() => appStateListener?.("background"));
       expect(mockPause).toHaveBeenCalledTimes(1);
+
+      // WHEN
       act(() => appStateListener?.("active"));
 
+      // THEN
       expect(mockResume).toHaveBeenCalledTimes(1);
     });
 
-    it("should stay paused while the screen is not focused when isPaused becomes false", () => {
+    it("GIVEN a paused flow and a screen that is not focused, WHEN isPaused becomes false, THEN it should stay paused", () => {
+      // GIVEN
       const { rerender } = setup({ isPaused: true });
       mockIsFocused.mockReturnValue(false);
       rerender({ isPaused: true });
       mockResume.mockClear();
 
+      // WHEN
       rerender({ isPaused: false });
 
+      // THEN
       expect(mockResume).not.toHaveBeenCalled();
     });
   });
 
   describe("Restart", () => {
-    it("should start a new flow when the unknown error is closed", () => {
+    it("GIVEN an unknown error, WHEN the error sheet is closed, THEN it should start a new flow", () => {
+      // GIVEN
       const { result } = setup();
       emit({ type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError, error: new Error("boom") });
 
+      // WHEN
       act(() => result.current.onCloseErrorSheet());
 
+      // THEN
       expect(mockedConnectKnownOrNewDevice).toHaveBeenCalledTimes(2);
       expect(unsubscribes[0]).toHaveBeenCalledTimes(1);
     });
 
-    it("should keep the rows of the last list under the unknown error", () => {
+    it("GIVEN a device list, WHEN an unknown error occurs, THEN it should keep the rows of the last list under the error", () => {
+      // GIVEN
       const { result } = setup();
       emit(discoveringState);
 
+      // WHEN
       emit({ type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError, error: new Error("boom") });
 
+      // THEN
       expect(result.current.devices).toEqual(discoveringState.devices);
     });
 
-    it("should close a discovery error when its sheet closes", () => {
+    it("GIVEN a discovery error, WHEN its sheet closes, THEN it should close the discovery error", () => {
+      // GIVEN
       const { result } = setup();
       const close = jest.fn();
       emit({
@@ -250,30 +271,38 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
         close,
       });
 
+      // WHEN
       act(() => result.current.onCloseErrorSheet());
 
+      // THEN
       expect(close).toHaveBeenCalledTimes(1);
       expect(mockedConnectKnownOrNewDevice).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("Save", () => {
-    it("should call onConnected with isNewDevice when the flow connects a device", () => {
+    it("GIVEN a running flow, WHEN the flow connects a device, THEN it should call onConnected with isNewDevice", () => {
+      // GIVEN
       const { initialProps } = setup();
       const connectionResult = makeConnectionResult();
 
+      // WHEN
       act(() => lastInput().onConnected(connectionResult, { isNewDevice: true }));
 
+      // THEN
       expect(initialProps.onConnected).toHaveBeenCalledWith(connectionResult, {
         isNewDevice: true,
       });
     });
 
-    it("should save the device as the last connected device and as a known device", () => {
+    it("GIVEN a running flow, WHEN the flow connects a device, THEN it should save the device as the last connected device and as a known device", () => {
+      // GIVEN
       const { store } = setup();
 
+      // WHEN
       act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
 
+      // THEN
       const state = store.getState();
       expect(state.settings.lastConnectedDevice).toEqual(
         expect.objectContaining({ deviceId: "nano-x-id", wired: false }),
@@ -283,15 +312,19 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       ]);
     });
 
-    it("should turn off the read-only mode when the flow connects a device", () => {
+    it("GIVEN a running flow, WHEN the flow connects a device, THEN it should turn off the read-only mode", () => {
+      // GIVEN
       const { store } = setup();
 
+      // WHEN
       act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
 
+      // THEN
       expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     });
 
-    it("should give the known devices of the store to the flow, and their changes", () => {
+    it("GIVEN known devices in the store, WHEN a connection changes them, THEN it should give the known devices of the store to the flow, and their changes", () => {
+      // GIVEN
       const { store } = setup({}, state => ({
         ...state,
         knownDevices: { knownDevices: [knownNanoX] },
@@ -299,59 +332,76 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       const received: Array<Array<KnownDevice>> = [];
       lastInput().knownDevices$.subscribe(devices => received.push(devices));
 
+      // WHEN
       act(() => lastInput().onConnected(makeConnectionResult(), { isNewDevice: false }));
 
+      // THEN
       expect(received[0]).toEqual([knownNanoX]);
       expect(received[received.length - 1]).toEqual(store.getState().knownDevices.knownDevices);
     });
   });
 
   describe("Remove", () => {
-    it("should remove the device from the known devices and from the legacy BLE devices", () => {
+    it("GIVEN a known device, WHEN the flow removes it, THEN it should remove the device from the known devices and from the legacy BLE devices", () => {
+      // GIVEN
       const { store } = setup({}, withKnownNanoX("other-device-id"));
 
+      // WHEN
       act(() => lastInput().removeKnownDevice(knownNanoX));
 
+      // THEN
       expect(store.getState().knownDevices.knownDevices).toEqual([]);
       expect(store.getState().ble.knownDevices).toEqual([]);
     });
 
-    it("should clear the last connected device when it is the removed device", () => {
+    it("GIVEN the known device is the last connected device, WHEN the flow removes it, THEN it should clear the last connected device", () => {
+      // GIVEN
       const { store } = setup({}, withKnownNanoX("nano-x-id"));
 
+      // WHEN
       act(() => lastInput().removeKnownDevice(knownNanoX));
 
+      // THEN
       expect(store.getState().settings.lastConnectedDevice).toBeNull();
     });
 
-    it("should keep the last connected device when it is another device", () => {
+    it("GIVEN the last connected device is another device, WHEN the flow removes a known device, THEN it should keep the last connected device", () => {
+      // GIVEN
       const { store } = setup({}, withKnownNanoX("other-device-id"));
 
+      // WHEN
       act(() => lastInput().removeKnownDevice(knownNanoX));
 
+      // THEN
       expect(store.getState().settings.lastConnectedDevice?.deviceId).toBe("other-device-id");
     });
   });
 
   describe("Add mode", () => {
-    it("should not call onAddModeChange on mount", () => {
+    it("GIVEN no Add mode, WHEN the hook mounts, THEN it should not call onAddModeChange", () => {
+      // GIVEN / WHEN
       const { initialProps } = setup();
 
+      // THEN
       expect(initialProps.onAddModeChange).not.toHaveBeenCalled();
     });
 
-    it("should call onAddModeChange when the Add mode starts and stops", () => {
+    it("GIVEN the Add mode started and called onAddModeChange with true, WHEN the Add mode stops, THEN it should call onAddModeChange with false", () => {
+      // GIVEN
       const { initialProps } = setup();
-
       emit(makeAddModeState());
       expect(initialProps.onAddModeChange).toHaveBeenLastCalledWith(true);
+
+      // WHEN
       emit(discoveringState);
 
+      // THEN
       expect(initialProps.onAddModeChange).toHaveBeenLastCalledWith(false);
       expect(initialProps.onAddModeChange).toHaveBeenCalledTimes(2);
     });
 
-    it("should close the Add mode when the Android back button is pressed", () => {
+    it("GIVEN the Add mode, WHEN the Android back button is pressed, THEN it should close the Add mode", () => {
+      // GIVEN
       const listeners: Array<() => boolean | null | undefined> = [];
       jest.spyOn(BackHandler, "addEventListener").mockImplementation((_, listener) => {
         listeners.push(listener);
@@ -359,15 +409,18 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       });
       setup();
       const close = jest.fn();
-
       emit(makeAddModeState(close));
+
+      // WHEN
       const handled = listeners[listeners.length - 1]?.();
 
+      // THEN
       expect(handled).toBe(true);
       expect(close).toHaveBeenCalledTimes(1);
     });
 
-    it("should close a discovery error of the Add mode when its sheet closes", () => {
+    it("GIVEN a discovery error in the Add mode, WHEN its sheet closes, THEN it should close the discovery error", () => {
+      // GIVEN
       const { result } = setup();
       const close = jest.fn();
       emit({
@@ -381,8 +434,10 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
         close: jest.fn(),
       });
 
+      // WHEN
       act(() => result.current.onCloseAddModeErrorSheet());
 
+      // THEN
       expect(close).toHaveBeenCalledTimes(1);
     });
   });

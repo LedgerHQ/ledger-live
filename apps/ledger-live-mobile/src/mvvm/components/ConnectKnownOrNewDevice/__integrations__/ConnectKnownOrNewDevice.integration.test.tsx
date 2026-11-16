@@ -107,21 +107,25 @@ describe("ConnectKnownOrNewDevice", () => {
     });
   });
 
-  it("should list the devices with the caller content under the list", () => {
+  it("GIVEN caller content, WHEN the flow discovers devices, THEN it should list the devices with the caller content under the list", () => {
+    // GIVEN
     renderComponent();
 
+    // WHEN
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
       devices: [{ ...nanoXRow, connect: jest.fn() }],
       addNewDevice: jest.fn(),
     });
 
+    // THEN
     expect(screen.getByText("Devices")).toBeVisible();
     expect(screen.getByText("My Nano X")).toBeVisible();
     expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
   });
 
-  it("should connect the tapped device and forward the connection result", async () => {
+  it("GIVEN a device in the list, WHEN it is tapped and the flow connects it, THEN it should connect the tapped device and forward the connection result", async () => {
+    // GIVEN
     const connect = jest.fn();
     const { onConnected, user } = renderComponent();
     emit({
@@ -130,14 +134,17 @@ describe("ConnectKnownOrNewDevice", () => {
       addNewDevice: jest.fn(),
     });
 
+    // WHEN
     await user.press(screen.getByText("My Nano X"));
     act(() => useCaseInput().onConnected(connectionResult, { isNewDevice: false }));
 
+    // THEN
     expect(connect).toHaveBeenCalledTimes(1);
     expect(onConnected).toHaveBeenCalledWith(connectionResult, { isNewDevice: false });
   });
 
-  it("should open the Add mode, show the pairing flow and close it", async () => {
+  it("GIVEN no device, WHEN Add is pressed and then the Add mode is closed, THEN it should open the Add mode, show the pairing flow and close it", async () => {
+    // GIVEN
     const addNewDevice = jest.fn();
     const close = jest.fn();
     const { onAddModeChange, user } = renderComponent();
@@ -147,6 +154,7 @@ describe("ConnectKnownOrNewDevice", () => {
       addNewDevice,
     });
 
+    // WHEN
     await user.press(screen.getByText("Add"));
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
@@ -159,20 +167,23 @@ describe("ConnectKnownOrNewDevice", () => {
       close,
     });
 
+    // THEN
     expect(addNewDevice).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Looking for your Ledger devices")).toBeVisible();
     expect(screen.queryByText("Explore all Ledger devices")).toBeNull();
     expect(onAddModeChange).toHaveBeenCalledWith(true);
 
+    // WHEN
     await user.press(screen.getByTestId("connect-known-or-new-device-add-mode-close"));
 
+    // THEN
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it("should show a discovery error over the list and retry it", async () => {
+  it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {
+    // GIVEN
     const retry = jest.fn();
     const { user } = renderComponent();
-
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError,
       devices: [nanoXRow],
@@ -181,12 +192,13 @@ describe("ConnectKnownOrNewDevice", () => {
       ignore: jest.fn(),
       close: jest.fn(),
     });
-
     expect(screen.getByText("Enable Bluetooth on your phone")).toBeVisible();
     expect(screen.getByText("My Nano X")).toBeVisible();
 
+    // WHEN
     await user.press(screen.getByText("Enable Bluetooth"));
 
+    // THEN
     expect(retry).toHaveBeenCalledTimes(1);
   });
 });
