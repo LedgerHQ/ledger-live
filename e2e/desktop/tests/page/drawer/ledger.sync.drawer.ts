@@ -61,14 +61,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Expect the activation device step in the device intent dialog")
   async expectActivationDeviceStep() {
-    await this.addMemberDeviceStep.waitFor({ state: "visible" });
     await expect(this.addMemberDeviceStep).toBeVisible();
   }
 
   /** The refusal replaces the device step in place, so it must be fully shown before Retry. */
   @step("Expect the activation refused on device in the device intent dialog")
   async expectActivationRejectedOnDevice() {
-    await this.addMemberRejected.waitFor({ state: "visible" });
     await expect(this.addMemberRejected).toBeInViewport({ ratio: 1 });
     await expect(this.addMemberRetryButton).toBeVisible();
   }
