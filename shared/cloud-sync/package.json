@@ -22,7 +22,7 @@
   "dependencies": {
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
-    "pako": "^2.0.4",
+    "pako": "^3.0.3",
     "rxjs": "catalog:",
     "ws": "catalog:",
     "zod": "catalog:"
@@ -34,7 +34,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/pako": "2.0.3",
     "@types/ws": "8.5.10",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
