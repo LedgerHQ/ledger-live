@@ -63,6 +63,77 @@ describe("solana/react", () => {
       expect(second.result.current).toEqual([ledgerValidator]);
     });
 
+    describe("search", () => {
+      const otherValidator: ValidatorsAppValidator = {
+        ...ledgerValidator,
+        voteAccount: "other-vote-account",
+        name: "Other Validator",
+      };
+      const unnamedValidator: ValidatorsAppValidator = {
+        ...ledgerValidator,
+        voteAccount: "unnamed-vote-account",
+        name: undefined,
+      };
+
+      beforeEach(() => {
+        mockedGetSolanaValidators.mockResolvedValue([
+          ledgerValidator,
+          otherValidator,
+          unnamedValidator,
+        ]);
+      });
+
+      it("returns the whole list when the search is empty", async () => {
+        const currency = nextCurrency();
+
+        const { result } = renderHook(() => hooks.useValidators(currency, ""));
+
+        await waitFor(() => expect(result.current).toHaveLength(3));
+      });
+
+      it("matches the name regardless of case", async () => {
+        const currency = nextCurrency();
+
+        const { result } = renderHook(() => hooks.useValidators(currency, "LEDGER bY"));
+
+        await waitFor(() => expect(result.current).toEqual([ledgerValidator]));
+      });
+
+      it("matches the vote account regardless of case", async () => {
+        const currency = nextCurrency();
+
+        const { result } = renderHook(() => hooks.useValidators(currency, "UNNAMED-VOTE"));
+
+        await waitFor(() => expect(result.current).toEqual([unnamedValidator]));
+      });
+
+      it("returns an empty list when nothing matches", async () => {
+        const currency = nextCurrency();
+
+        const { result, rerender } = renderHook(
+          ({ search }) => hooks.useValidators(currency, search),
+          { initialProps: { search: "" } },
+        );
+        await waitFor(() => expect(result.current).toHaveLength(3));
+
+        rerender({ search: "no-such-validator" });
+
+        expect(result.current).toEqual([]);
+      });
+
+      it("keeps a single entry per vote account", async () => {
+        mockedGetSolanaValidators.mockResolvedValue([
+          ledgerValidator,
+          { ...ledgerValidator, name: "Ledger duplicate" },
+        ]);
+        const currency = nextCurrency();
+
+        const { result } = renderHook(() => hooks.useValidators(currency, "ledger"));
+
+        await waitFor(() => expect(result.current).toEqual([ledgerValidator]));
+      });
+    });
+
     it("retries on the next mount after a failure", async () => {
       const currency = nextCurrency();
 
