@@ -50,9 +50,6 @@ export const {
   setOfflineRefreshAttempt,
 } = portfolioRefreshSlice.actions;
 
-export const selectLastSyncTimestampSnapshot = (state: State) =>
-  state.portfolioRefresh.lastSyncTimestampSnapshot;
-
 export const selectHasCompletedInitialSync = (state: State) =>
   state.portfolioRefresh.hasCompletedInitialSync;
 
