@@ -74,7 +74,9 @@ Refs are branches or tags only: a raw SHA could be a fork's commit, run with the
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
 take the branch. A run from develop, release or main builds only those branches and the
 `live-mobile@X.Y.Z` tags: its jobs get that branch's identity (OIDC), which the build jobs hold for
-JFrog and the caches trust. To measure another branch, run the workflow from it.
+JFrog and the caches trust. To measure another branch, run the workflow from it. No rule protects
+the tags, so such a run also checks, through the GitHub API, that a tag's commit is on main or the
+release bot's (`live-github-bot`), committed and signed by GitHub, as every release tag is.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
 Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%

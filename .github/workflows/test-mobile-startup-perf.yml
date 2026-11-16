@@ -111,6 +111,8 @@ jobs:
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          # Reads a release tag's commit, which a run from develop, release or main checks.
+          GH_TOKEN: ${{ github.token }}
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   # Build A of a release tag, from the cache of an earlier run, so the build jobs leave it out. The

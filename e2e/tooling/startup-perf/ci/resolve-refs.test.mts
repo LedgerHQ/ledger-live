@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  checkReleaseTags,
+  type GitHubGet,
   inputsOf,
   latestProdTag,
   type LsRemote,
@@ -239,6 +241,73 @@ describe("planBuilds", () => {
       /threshold_ms/,
     );
   });
+});
+
+describe("checkReleaseTags", () => {
+  const BOT = {
+    author: { login: "live-github-bot[bot]" },
+    committer: { login: "web-flow" },
+    commit: { verification: { verified: true } },
+  };
+  const HUMAN = { ...BOT, author: { login: "someone" } };
+  const fakeGitHub = (commit: object, status = "diverged") => {
+    const paths: string[] = [];
+    const get: GitHubGet = async path => {
+      paths.push(path);
+      return path.startsWith("commits/") ? commit : { status };
+    };
+    return { get, paths };
+  };
+  const fromDevelop = planBuilds(
+    { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" },
+    fakeLsRemote(),
+  );
+
+  it("checks the release tags of a run from develop, release or main only", () => {
+    assert.deepEqual(fromDevelop.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    const fromRelease = planBuilds(
+      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "live-mobile@4.27.1", branchName: "release" },
+      fakeLsRemote(),
+    );
+    assert.deepEqual(
+      fromRelease.tagsToCheck.map(tag => tag.ref),
+      ["live-mobile@4.27.0", "live-mobile@4.27.1"],
+    );
+    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, []);
+    const aaFromDevelop = { ...INPUTS, preset: "aa-noise", refA: "", branchName: "develop" };
+    assert.deepEqual(planBuilds(aaFromDevelop, fakeLsRemote()).tagsToCheck, []);
+  });
+
+  it("builds a tag on the release bot's signed commit, without asking where it is", async () => {
+    const github = fakeGitHub(BOT);
+    await checkReleaseTags(fromDevelop, github.get);
+    assert.deepEqual(github.paths, [`commits/${SHA(5)}?per_page=1`]);
+  });
+
+  for (const status of ["ahead", "identical"]) {
+    it(`builds a tag on main's history (compare: ${status})`, async () => {
+      const github = fakeGitHub(HUMAN, status);
+      await checkReleaseTags(fromDevelop, github.get);
+      assert.deepEqual(github.paths, [
+        `commits/${SHA(5)}?per_page=1`,
+        `compare/${SHA(5)}...main?per_page=1`,
+      ]);
+    });
+  }
+
+  for (const [name, commit] of [
+    ["someone else's", HUMAN],
+    ["the bot's unsigned", { ...BOT, commit: { verification: { verified: false } } }],
+    ["the bot's, not committed by GitHub,", { ...BOT, committer: { login: "someone" } }],
+    ["a commit with no GitHub user", { author: null, committer: null, commit: {} }],
+  ] as const) {
+    it(`refuses a tag on ${name} commit off main`, async () => {
+      await assert.rejects(
+        checkReleaseTags(fromDevelop, fakeGitHub(commit).get),
+        /live-mobile@4\.27\.1 \(5555555555\) is neither on main nor a signed commit of live-github-bot\[bot\]/,
+      );
+    });
+  }
 });
 
 describe("inputsOf", () => {

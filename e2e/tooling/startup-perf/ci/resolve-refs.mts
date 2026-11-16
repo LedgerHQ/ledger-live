@@ -46,9 +46,13 @@ interface Builds {
    * before `save-builds` caches it.
    */
   saveA: boolean;
+  /** The refs given as A or B. */
+  refs: Resolved[];
 }
 
 export interface Plan extends Builds {
+  /** The release tags a run from a reviewed branch builds, which `checkReleaseTags` vets. */
+  tagsToCheck: Array<{ ref: string; sha: string }>;
   scenarios: string[];
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
   settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata">;
@@ -56,6 +60,9 @@ export interface Plan extends Builds {
 
 /** `git ls-remote <options> <this repository> <patterns>`. */
 export type LsRemote = (options: string[], patterns: string[]) => string;
+
+/** A `GET` of this repository's GitHub REST API (`repos/<owner>/<repo>/<path>`), as JSON. */
+export type GitHubGet = (path: string) => Promise<unknown>;
 
 const PROD_TAG = /^live-mobile@(\d+)\.(\d+)\.(\d+)$/;
 const TAGS_PREFIX = "refs/tags/";
@@ -83,6 +90,7 @@ export function resolveRef(ref: string, lsRemote: LsRemote): string {
 }
 
 interface Resolved {
+  ref: string;
   sha: string;
   isReleaseTag: boolean;
   isReviewedBranch: boolean;
@@ -108,6 +116,7 @@ function resolve(ref: string, lsRemote: LsRemote): Resolved {
     );
   }
   return {
+    ref,
     sha,
     isReleaseTag: Boolean(tag) && PROD_TAG.test(ref),
     isReviewedBranch: Boolean(branch) && REVIEWED_BRANCHES.has(ref),
@@ -166,6 +175,7 @@ function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Buil
     labelB: refB,
     warnings,
     ...cachingOf(a, b.isReviewedBranch),
+    refs: [a, b],
   };
 }
 
@@ -190,6 +200,7 @@ function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
     labelB: inputs.refB,
     warnings: [],
     ...cachingOf(a, b.isReviewedBranch),
+    refs: [a, b],
   };
 }
 
@@ -198,10 +209,12 @@ function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
  * at most this workflow's own edit.
  */
 function oneCommit(inputs: PlanInputs, lsRemote: LsRemote) {
-  const a: Resolved = inputs.refA
-    ? resolveIn(inputs, inputs.refA, lsRemote)
-    : { sha: inputs.branchSha, isReleaseTag: false, isReviewedBranch: false };
-  return { sha: a.sha, label: inputs.refA || inputs.branchName, ...cachingOf(a, true) };
+  if (!inputs.refA) {
+    const label = inputs.branchName;
+    return { sha: inputs.branchSha, label, cacheA: false, saveA: false, refs: [] };
+  }
+  const a = resolveIn(inputs, inputs.refA, lsRemote);
+  return { sha: a.sha, label: inputs.refA, ...cachingOf(a, true), refs: [a] };
 }
 
 function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -250,11 +263,15 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
   }
   if (!/^\d+$/.test(inputs.thresholdMs)) throw new StepFailure("threshold_ms must be a number");
   const builds = buildsFor(inputs, lsRemote);
+  const tagsToCheck = REVIEWED_BRANCHES.has(inputs.branchName)
+    ? builds.refs.filter(r => r.isReleaseTag).map(({ ref, sha }) => ({ ref, sha }))
+    : [];
   const withSha = (label: string, sha: string) => `${label} (${sha.slice(0, 10)})`;
   return {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
+    tagsToCheck,
     scenarios: inputs.scenarios.split(","),
     settings: {
       preset: inputs.preset,
@@ -264,6 +281,30 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
       accountsUserdata: inputs.accountsUserdata,
     },
   };
+}
+
+const RELEASE_BOT = "live-github-bot[bot]";
+
+/**
+ * No rule protects the release tags: a run from a reviewed branch builds one only when its commit is
+ * on main, or the release bot's, committed and signed by GitHub, as every release tag is.
+ */
+export async function checkReleaseTags(plan: Plan, get: GitHubGet): Promise<void> {
+  for (const { ref, sha } of plan.tagsToCheck) {
+    // One page of one file: a release's merge commit lists thousands.
+    const commit = (await get(`commits/${sha}?per_page=1`)) as {
+      author: { login: string } | null;
+      committer: { login: string } | null;
+      commit: { verification?: { verified: boolean } };
+    };
+    const byTheBot = commit.author?.login === RELEASE_BOT && commit.committer?.login === "web-flow";
+    if (byTheBot && commit.commit.verification?.verified) continue;
+    const { status } = (await get(`compare/${sha}...main?per_page=1`)) as { status: string };
+    if (status === "ahead" || status === "identical") continue;
+    throw new StepFailure(
+      `${ref} (${sha.slice(0, 10)}) is neither on main nor a signed commit of ${RELEASE_BOT}, as release tags are: a run from a reviewed branch does not build it`,
+    );
+  }
 }
 
 export function outputsOf(plan: Plan): string {
@@ -323,13 +364,26 @@ export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
   };
 }
 
-function main(): void {
+/** The GitHub API with the run's token, which reads this repository's contents. */
+function gitHubGet(env: NodeJS.ProcessEnv): GitHubGet {
+  return async path => {
+    const url = `${env.GITHUB_API_URL}/repos/${env.GITHUB_REPOSITORY}/${path}`;
+    const response = await fetch(url, {
+      headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${env.GH_TOKEN}` },
+    });
+    if (!response.ok) throw new StepFailure(`GitHub API ${path}: HTTP ${response.status}`);
+    return response.json();
+  };
+}
+
+async function main(): Promise<void> {
   const env = process.env;
   const inputs = inputsOf(env);
   const repository = env.REPO_URL ?? "";
   const lsRemote: LsRemote = (options, patterns) =>
     toolOutput("git", ["ls-remote", ...options, repository, ...patterns]);
   const plan = planBuilds(inputs, lsRemote);
+  await checkReleaseTags(plan, gitHubGet(env));
   plan.warnings.forEach(warning => console.log(`::warning::${warning}`));
   const outputs = outputsOf(plan);
   if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, outputs);
