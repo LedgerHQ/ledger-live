@@ -89,6 +89,8 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
   });
 }
 
+const mockSwapSuccess = jest.fn();
+
 function renderExecution(broadcastDisabled = false) {
   const onDone = jest.fn();
   const onRefused = jest.fn();
@@ -106,7 +108,10 @@ async function signWith(signResult: unknown, broadcastDisabled = false) {
     await new Promise<void>((resolve, reject) => {
       deps.uiHooks["custom.exchange.swap"]({
         exchangeParams: swapUiRequest,
-        onSuccess: () => resolve(),
+        onSuccess: (result: unknown) => {
+          mockSwapSuccess(result);
+          resolve();
+        },
         onCancel: reject,
       });
     });
@@ -385,6 +390,14 @@ describe("usePerpsDepositExecution", () => {
     await signWith({ signedOperation: { operation } }, true);
 
     expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
+  });
+
+  it("still hands the provider swap id to executeSwap when broadcast is disabled", async () => {
+    mockSwapSuccess.mockClear();
+
+    await signWith({ signedOperation: { operation } }, true);
+
+    expect(mockSwapSuccess).toHaveBeenCalledWith(expect.objectContaining({ swapId: "swap-1" }));
   });
 
   it("settles the live app's deposit request with the swap and quoted amount", async () => {
