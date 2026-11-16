@@ -20,8 +20,7 @@ export function filterContactsByNetwork<TContact extends ContactWithAddresses>(
     const addresses = contact.addresses.filter(
       address => resolveRecipientNetworkId(address.currencyId) === networkId,
     );
-    // Me stays listed without a matching address, so the user can add one from there.
-    if (addresses.length > 0 || contact.isMe) {
+    if (addresses.length > 0) {
       matchingContacts.push({ ...contact, addresses } as TContact);
     }
 

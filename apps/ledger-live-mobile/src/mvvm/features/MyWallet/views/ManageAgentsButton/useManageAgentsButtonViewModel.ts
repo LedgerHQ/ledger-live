@@ -12,20 +12,21 @@ import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
 type ManageAgentsButtonViewModel = Readonly<{
   isEnabled: boolean;
+  showNewBadge: boolean;
   openAgentIntent: () => void;
 }>;
 
 export function useManageAgentsButtonViewModel(): ManageAgentsButtonViewModel {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { isProfileEnabled } = useAgentIntentEntryPoints();
+  const { isProfileEnabled, showNewBadge } = useAgentIntentEntryPoints();
 
   const openAgentIntent = useCallback(() => {
-    trackManageAgentsClick(MY_WALLET_TRACKING_PAGE_NAME);
+    trackManageAgentsClick(MY_WALLET_TRACKING_PAGE_NAME, showNewBadge);
     navigation.navigate(NavigatorName.AgentIntent, {
       screen: ScreenName.AgentIntent,
       params: { source: AGENT_INTENT_SOURCE.profile },
     });
-  }, [navigation]);
+  }, [navigation, showNewBadge]);
 
-  return { isEnabled: isProfileEnabled, openAgentIntent };
+  return { isEnabled: isProfileEnabled, showNewBadge, openAgentIntent };
 }

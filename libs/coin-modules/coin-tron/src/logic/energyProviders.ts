@@ -7,7 +7,7 @@ import type { EnergyProviderInfo } from "../types";
 export const TRONIFY_PROVIDER: Readonly<EnergyProviderInfo> = {
   id: "tronify",
   name: "Tronify",
-  termsUrl: "https://www.tronify.io/#/Terms?sourceFlag=tronify",
+  termsUrl: "https://www.tronify.io/#/Terms",
 };
 
 export const ENERGY_PROVIDERS: ReadonlyArray<Readonly<EnergyProviderInfo>> = [TRONIFY_PROVIDER];

@@ -1,37 +1,17 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { polkadotDefaults } from "../config";
 import polkadotAPI from "./index";
 
 const logger = jest.fn();
-const stakingActiveStatus = {
-  type: "active" as const,
-  features: [{ id: "staking_txs" as const, status: "active" as const }],
-};
 
 const CURRENCY_CONFIGS = {
   polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
-    config: {
-      status: { type: "active" as const },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: { url: "https://polkadot-rpc.publicnode.com" },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
-      indexer: { url: "https://polkadot.coin.ledger.com" },
-      staking: { electionStatusThreshold: 25 },
-    },
+    config: polkadotDefaults.polkadot,
   },
   assethub_polkadot: {
     currency: getCryptoCurrencyById("assethub_polkadot"),
-    config: {
-      status: stakingActiveStatus,
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
-      node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
-      staking: { electionStatusThreshold: 25 },
-      hasBeenMigrated: true,
-    },
+    config: polkadotDefaults.assethub_polkadot,
   },
 };
 

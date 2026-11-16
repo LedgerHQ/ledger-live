@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-intent-wallet-sync",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

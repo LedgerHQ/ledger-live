@@ -76,6 +76,9 @@ module.exports = {
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
+    // libs/ packages are consumed from source. Babel keeps what their built outputs had: the
+    // worklets plugin and plain export assignments that mocks can spread mid-cycle.
+    "/libs/.+\\.tsx?$": "babel-jest",
     "^.+\\.(t)sx?$": [
       "@swc/jest",
       {

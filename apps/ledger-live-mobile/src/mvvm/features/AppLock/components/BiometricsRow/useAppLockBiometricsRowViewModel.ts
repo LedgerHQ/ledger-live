@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { useBiometricsAvailability } from "../../hooks/useBiometricsAvailability";
 import { useKeepProtection, type KeepProtection } from "../../hooks/useKeepProtection";
 import { useBiometricsSetup } from "../../hooks/useBiometricsSetup";
-import { useBiometricsTypeLabel } from "../../hooks/useBiometricsTypeLabel";
+import { useBiometricsTypeLabel } from "@features/platform-app-lock/native";
 
 export type AppLockBiometricsRowViewModel = Readonly<{
   availability: BiometricsAvailability | undefined;

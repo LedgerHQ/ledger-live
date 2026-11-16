@@ -323,6 +323,21 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
+    it("drops a token that vanished from the fresh balance response with dropsMissingTokens", async () => {
+      const vanishedAsset = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        dropsMissingTokens: true,
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
     it.each([
       ["only by case", { type: "iou", assetReference: "usd", assetOwner: "issuerA" }],
       ["only by issuer", { type: "iou", assetReference: "USD", assetOwner: "issuerB" }],
@@ -878,6 +893,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        undefined,
       );
     });
 
@@ -1125,15 +1141,10 @@ describe("genericGetAccountShape", () => {
         expect(parent.type).toBe("FEES");
       });
 
-      it("puts an OPT_EDIT on its token account, but not an OPT_IN or OPT_OUT", async () => {
-        const tokenAccountTypes = async (type: string) => {
-          await syncTokenOnlyTx(type, { tokenOptParentRow: true });
-          return buildSubAccountsMock.mock.lastCall?.[0].operations.map((op: any) => op.type);
-        };
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])("keeps a %s off its token account", async type => {
+        await syncTokenOnlyTx(type, { tokenOptParentRow: true });
 
-        expect(await tokenAccountTypes("OPT_EDIT")).toEqual(["OPT_EDIT"]);
-        expect(await tokenAccountTypes("OPT_IN")).toEqual([]);
-        expect(await tokenAccountTypes("OPT_OUT")).toEqual([]);
+        expect(buildSubAccountsMock.mock.lastCall?.[0].operations).toEqual([]);
       });
     });
 
@@ -2859,6 +2870,56 @@ describe("genericGetAccountShape", () => {
             fee: new BigNumber(1),
           },
         ],
+      });
+    });
+
+    describe("excludesFeesPaidByOthers", () => {
+      const sendPaidBy = (feesPayer: string | undefined, value = 2) =>
+        toCoreOp({
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value,
+          fee: 1,
+          ...(feesPayer === undefined ? {} : { feesPayer }),
+        });
+
+      const sync = async (operation: ReturnType<typeof toCoreOp>, optIn: boolean) => {
+        setupSpecTest();
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          ...(optIn ? { excludesFeesPaidByOthers: true } : {}),
+        }));
+        listOperationsMock.mockResolvedValue({ items: [operation], next: undefined });
+        mockNoSubAccounts();
+        mockNoInferSubOps();
+        return runGetShape("address1");
+      };
+
+      afterEach(() => getBridgeApiMock.mockImplementation(defaultBridgeApi));
+
+      test.each([
+        ["a paymaster", "paymaster"],
+        ["nobody named", undefined],
+      ])(
+        "should not charge a fee paid by %s when the family opts in",
+        async (_payer, feesPayer) => {
+          await expect(sync(sendPaidBy(feesPayer), true)).resolves.toMatchObject({
+            operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+          });
+        },
+      );
+
+      test("should keep as a send a sponsored transfer whose amount equals the fee", async () => {
+        await expect(sync(sendPaidBy("paymaster", 1), true)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should charge a fee another account paid when the family does not opt in", async () => {
+        await expect(sync(sendPaidBy("paymaster"), false)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(3), fee: new BigNumber(1) }],
+        });
       });
     });
 

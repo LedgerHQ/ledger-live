@@ -6,6 +6,7 @@ import { getEnv } from "@shared/env";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { isSellOperation } from "../../../exchange/sell/sellOperations";
 
 /**
  * Return whether an operation is editable or not.
@@ -24,6 +25,10 @@ export const isEditableOperation = (
   // gasTracker is needed to perform the edit transaction logic,
   // it is used to estimate the fees and let the user choose them
   if (!hasGasTracker(currency)) {
+    return false;
+  }
+
+  if (isSellOperation(account, operation)) {
     return false;
   }
 

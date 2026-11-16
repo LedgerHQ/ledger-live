@@ -18,7 +18,7 @@ import { track } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
-import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
+import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
 import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import type { PerpsWithdrawSummaryData } from "../PerpsWithdrawSummary/usePerpsWithdrawSummaryViewModel";

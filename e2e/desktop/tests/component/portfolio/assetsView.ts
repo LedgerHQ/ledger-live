@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 import { AssetCategory, AssetSection } from "tests/component/portfolio/assetSection";
@@ -8,7 +9,7 @@ export class AssetsView extends Component {
   readonly section = (category: AssetCategory) => new AssetSection(this.page, category);
   private readonly root = this.page.getByTestId("assets-view");
   private readonly anyAssetsTable = new AssetsTable(this.root);
-  readonly categoryPageContent = this.page.getByTestId("crypto-assets-page-content");
+  private readonly categoryPageContent = this.page.getByTestId("crypto-assets-page-content");
 
   @step("Wait for asset sections to load")
   async waitForAssetsToLoad() {
@@ -28,6 +29,12 @@ export class AssetsView extends Component {
   async clickShowMore(category: AssetCategory) {
     await this.section(category).header.click();
     await this.categoryPageContent.waitFor();
+  }
+
+  @step("Expect the $0 category page to be open")
+  async expectCategoryPageOpen(category: string) {
+    await expect(this.page).toHaveURL(new RegExp(String.raw`/assets\?category=${category}`));
+    await expect(this.categoryPageContent).toBeVisible();
   }
 
   @step("Expect $0 section header to be visible")
@@ -57,10 +64,7 @@ export class AssetsView extends Component {
         "expectAssetsVisibleInSection called with no currencies — nothing would be asserted",
       );
     }
-    const section = this.section(category);
-    for (const currency of currencies) {
-      await section.assetsTable.expectAssetVisible(currency);
-    }
+    await this.section(category).assetsTable.expectAssetsVisible(currencies);
   }
 
   @step("Click aggregated asset $1 in $0 section")

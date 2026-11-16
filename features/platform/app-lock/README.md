@@ -88,6 +88,8 @@ import { PasswordField, usePasswordDraft } from "@features/platform-app-lock/nat
 - `PasswordDraftProvider` / `usePasswordDraft` — carries the chosen password from the step that
   picks it to the step that confirms it in a ref, deliberately not in navigation state, which is
   serialisable and gets persisted.
+- `useBiometricsTypeLabel` — the wording of a `BiometricsKind` ("Face ID"), or its raw name for a
+  kind with no wording, so every sheet names the biometrics the same way.
 
 Their tests run in the React Native project of `@support/jest/features-flow`
 (`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`), which

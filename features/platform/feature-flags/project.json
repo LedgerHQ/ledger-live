@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-feature-flags",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

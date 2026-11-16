@@ -1,8 +1,19 @@
 import "../__tests__/test-helpers/setup";
-import { isCryptoCurrency, getFamilyByCurrencyId } from "./helpers";
+import { isCryptoCurrency, getFamilyByCurrencyId, isUTXOCompliant } from "./helpers";
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 
 describe("Currencies helpers", () => {
+  test.each(["bitcoin", "litecoin", "cardano", "zcash", "zcash_testnet"])(
+    "isUTXOCompliant is true for %s",
+    currencyId => {
+      expect(isUTXOCompliant(getFamilyByCurrencyId(currencyId) as string)).toBe(true);
+    },
+  );
+
+  test.each(["ethereum", "solana", "algorand"])("isUTXOCompliant is false for %s", currencyId => {
+    expect(isUTXOCompliant(getFamilyByCurrencyId(currencyId) as string)).toBe(false);
+  });
+
   test("listCryptoCurrencies returns only crypto currencies", () => {
     const currencies = listCryptoCurrencies();
 

@@ -4,13 +4,12 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
+import type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
   OverrideDeviceIntentExecutorHeader,
-  type DeviceIntentTrackingProperties,
-  type SourceFlow,
-} from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared/react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
@@ -21,15 +20,9 @@ import ContextInitializer, { InitializerConfig } from "./ContextInitializer";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./ContextInitializer/utils/buildDeviceInitializationInput";
+export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
-export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
-export { RetryableDeviceLocked } from "./components/DeviceGenericStates/RetryableDeviceLocked";
-export { UnlockDevice } from "./components/DeviceGenericStates/UnlockDevice";
-export type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
+export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,

@@ -12,6 +12,8 @@ import { toAccountReceive } from "./receive";
 import { toAccountBalances } from "./balance";
 import { toAccountBalanceHistory } from "./balanceHistory";
 import { toAccountOperations } from "./operations";
+import { toAccountStatus } from "./accountStatus";
+import { toAssetStatus } from "./assetStatus";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -63,6 +65,8 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
       balanceHistory: (target, query) =>
         sync(target).then(account => toAccountBalanceHistory(account, query)),
       receive: target => sync(target).then(toAccountReceive),
+      accountStatus: target => sync(target).then(toAccountStatus),
+      assetStatus: (target, query) => toAssetStatus(target, query, sync),
     },
     sync,
   };

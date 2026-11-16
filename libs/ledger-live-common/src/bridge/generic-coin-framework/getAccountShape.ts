@@ -27,6 +27,9 @@ import {
   adaptCoreOperationToLiveOperation,
   cleanedOperation,
   extractBalance,
+  type FeesPayerRule,
+  isFeePaidByAccount,
+  isSameAddress,
   optionalNumeric,
   sumBalance,
 } from "./utils";
@@ -182,14 +185,21 @@ function getFeePayer(op: OperationCommon): string | undefined {
   return typeof fp === "string" && fp.length > 0 ? fp : undefined;
 }
 
-/** Compare two addresses for equality, ignoring case. */
-function isSameAddress(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-/** True when the native op is outbound with value equal to fee (fees-only). */
-function isFeesOnlyNativeOp(op: OperationCommon): boolean {
-  return op.type === "OUT" && op.value !== null && op.fee != null && op.value.eq(op.fee);
+/**
+ * True when the native op is outbound with value equal to fee (fees-only). A send whose fee another
+ * account paid holds its amount alone, which can equal the fee.
+ */
+function isFeesOnlyNativeOp(
+  op: OperationCommon,
+  feesPayerRule: FeesPayerRule | undefined,
+): boolean {
+  return (
+    op.type === "OUT" &&
+    op.value !== null &&
+    op.fee != null &&
+    op.value.eq(op.fee) &&
+    isFeePaidByAccount(getFeePayer(op), feesPayerRule)
+  );
 }
 
 /** Emit one parent op per native op: FEES when fees-only, otherwise passthrough. */
@@ -198,11 +208,12 @@ function parentOpsFromNativeOps(
   accountId: string,
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const out: OperationCommon[] = [];
   for (const nativeOp of nativeOps) {
     // Native outgoing operation with value 0 (only fees) => output as single FEES op
-    if (isFeesOnlyNativeOp(nativeOp)) {
+    if (isFeesOnlyNativeOp(nativeOp, feesPayerRule)) {
       out.push(
         cleanedOperation({
           id: encodeOperationId(accountId, nativeOp.hash, "FEES"),
@@ -294,6 +305,7 @@ function parentOpsForTxWithNonInternalOperations(
   accountId: string,
   address: string,
   tokenOptParentRow: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const nativeOps = transactionOps.filter(isNativeLiveOp);
   // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
@@ -302,7 +314,13 @@ function parentOpsForTxWithNonInternalOperations(
 
   // If transaction has native ops, use them as parents
   if (nativeOps.length > 0)
-    return parentOpsFromNativeOps(nativeOps, accountId, subOperations, internalOperations);
+    return parentOpsFromNativeOps(
+      nativeOps,
+      accountId,
+      subOperations,
+      internalOperations,
+      feesPayerRule,
+    );
 
   // If transaction has no native ops, create a synthetic parent
   const firstOp = transactionOps[0];
@@ -374,6 +392,7 @@ function buildParentOperations(
   accountId: string,
   address: string,
   tokenOptParentRow: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
@@ -392,6 +411,7 @@ function buildParentOperations(
         accountId,
         address,
         tokenOptParentRow,
+        feesPayerRule,
       ),
     );
   }
@@ -843,21 +863,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // scenario, which never converges because the lone token's balance is never seen as "gone".
     // A family's balance hook throwing/degrading already rejects the `Promise.all` above and
     // aborts the whole sync, rather than silently reaching this point with a partial result.
-    const vanishedTokenBalances: Balance[] = getAssetFromToken
-      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
-          // A throwing family implementation must not fail the whole sync over one sub-account.
-          let asset: ReturnType<typeof getAssetFromToken>;
-          try {
-            asset = getAssetFromToken(subAccount.token, address);
-          } catch {
-            return [];
-          }
-          if (!asset) return [];
-          const key = assetKey(asset, bridgeApi.exactAssetMatch);
-          if (!key || freshAssetKeys.has(key)) return [];
-          return [{ value: 0n, asset }];
-        })
-      : [];
+    const vanishedTokenBalances: Balance[] =
+      getAssetFromToken && !bridgeApi.dropsMissingTokens
+        ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
+            // A throwing family implementation must not fail the whole sync over one sub-account.
+            let asset: ReturnType<typeof getAssetFromToken>;
+            try {
+              asset = getAssetFromToken(subAccount.token, address);
+            } catch {
+              return [];
+            }
+            if (!asset) return [];
+            const key = assetKey(asset, bridgeApi.exactAssetMatch);
+            if (!key || freshAssetKeys.has(key)) return [];
+            return [{ value: 0n, asset }];
+          })
+        : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
 
     if (tokenListChangeOnly) {
@@ -976,6 +997,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // appends.
     const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id, network);
 
+    const feesPayerRule: FeesPayerRule | undefined = bridgeApi.excludesFeesPaidByOthers
+      ? { accountAddress: address }
+      : undefined;
+
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<{
       operations: OperationCommon[];
@@ -1018,7 +1043,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
       const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
       const operations = coreOps.map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra, feesPayerRule),
       ) as OperationCommon[];
       return { operations, bounded };
     };
@@ -1102,7 +1127,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operation =>
         operation?.extra?.assetReference &&
         operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type),
+        !TOKEN_OPT_TYPES.has(operation.type),
     );
 
     const newInternalOperations: OperationCommon[] = [];
@@ -1192,6 +1217,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       accountId,
       address,
       bridgeApi.tokenOptParentRow === true,
+      feesPayerRule,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
     // Useful for integrations without explorers. Not on a bounded round: it starts from an empty

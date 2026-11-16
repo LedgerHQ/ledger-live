@@ -97,6 +97,62 @@ describe("CoinModuleApi (integration)", () => {
       // The node answers with an UNKNOWN_BLOCK error rather than a header.
       await expect(api.getBlockInfo(context, 999_999_999_999)).rejects.toThrow("Server error");
     });
+
+    describe("getBlock", () => {
+      it("reads a recent block with its transactions, fees and fee payer", async () => {
+        const head = await api.lastBlock(context);
+        const height = head.height - 30;
+
+        const block = await api.getBlock(context, height);
+
+        expect(block.info.height).toBe(height);
+        expect(block.info.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/);
+        expect(block.info.time.getTime()).toBeGreaterThan(0);
+        expect(block.transactions.length).toBeGreaterThan(0);
+        block.transactions.forEach(transaction => {
+          expect(transaction.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/);
+          expect(transaction.fees).toBeGreaterThan(0n);
+          expect(transaction.feesPayer).toMatch(/\S/);
+        });
+      });
+
+      it("credits a pool withdrawal executed in a later block, beyond the node retention", async () => {
+        const block = await api.getBlock(context, 224_610_787);
+
+        const withdrawal = block.transactions.find(
+          transaction => transaction.hash === "59YRW55QZmZLErFeoqt4gDSpqURKe99G742vZUicz952",
+        );
+
+        expect(withdrawal?.failed).toBe(false);
+        expect(withdrawal?.operations).toContainEqual({
+          type: "transfer",
+          address: "eec102b30e72e579de3d01074465566351f3f727ec89338ed26e77099ab7a2db",
+          peer: "figment.poolv1.near",
+          asset: { type: "native" },
+          amount: 11_738_394_515_000_000_000_000_000_000n,
+        });
+      });
+
+      it("credits the beneficiary of a deleted account", async () => {
+        const block = await api.getBlock(context, 224_708_916);
+
+        const deletion = block.transactions.find(
+          transaction => transaction.hash === "CLDzgmyKqjhjMU9D76PFX82L7gBEYZtNsXGVaCY19ACE",
+        );
+
+        expect(deletion?.operations).toContainEqual({
+          type: "transfer",
+          address: "ce8d9c676e91d0587c7dc91fb0a5cc43feb27a189835398230554672e578469f",
+          peer: "71f7756d867f66131319fab7a55283fbd5e80368a59f5838cf1466029b6ae753",
+          asset: { type: "native" },
+          amount: 51_196_244_041_946_800_000_000n,
+        });
+      });
+
+      it("rejects a height the chain cannot have", async () => {
+        await expect(api.getBlock(context, 999_999_999_999)).rejects.toThrow("is not indexed");
+      });
+    });
   });
 
   describe("balances", () => {

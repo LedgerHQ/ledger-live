@@ -29,6 +29,24 @@ export const checksTestIds = {
   notGenuineSheet: "device-onboarding-checks-not-genuine-sheet",
 } as const;
 
+export const setupTestIds = {
+  screen: "device-onboarding-setup",
+  close: "device-onboarding-setup-close",
+  start: "device-onboarding-setup-start",
+  contactSupport: "device-onboarding-setup-contact-support",
+  reopenUpdate: "device-onboarding-setup-reopen-update",
+  skipUpdate: "device-onboarding-setup-skip-update",
+  stepper: "device-onboarding-setup-stepper",
+  stageLoading: "device-onboarding-setup-stage-loading",
+  stageSuccess: "device-onboarding-setup-stage-success",
+  allowSheet: "device-onboarding-setup-allow-sheet",
+  declinedSheet: "device-onboarding-setup-declined-sheet",
+  networkSheet: "device-onboarding-setup-network-sheet",
+  unknownSheet: "device-onboarding-setup-unknown-sheet",
+  providerSheet: "device-onboarding-setup-provider-sheet",
+  notGenuineSheet: "device-onboarding-setup-not-genuine-sheet",
+} as const;
+
 export const syncOfferTestIds = {
   screen: "device-onboarding-sync-offer",
   activate: "device-onboarding-sync-offer-activate",
