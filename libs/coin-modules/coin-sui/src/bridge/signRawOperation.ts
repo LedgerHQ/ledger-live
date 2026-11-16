@@ -4,7 +4,6 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { bcs } from "@mysten/sui/bcs";
-import { SuiGraphQLRequestError } from "@mysten/sui/graphql";
 import { Transaction as SuiTransaction } from "@mysten/sui/transactions";
 import { fromBase64, normalizeSuiAddress, toBase64, toHex } from "@mysten/sui/utils";
 import BigNumber from "bignumber.js";
@@ -24,9 +23,8 @@ import { drawsFromAddressBalance, isSuiAppUnknownError, signWithDevice } from ".
 
 function parseRawTransaction(transaction: string): SuiTransaction {
   try {
-    return transaction.trimStart().startsWith("{")
-      ? SuiTransaction.from(transaction)
-      : SuiTransaction.from(fromBase64(transaction));
+    // `Transaction.from` reads a string starting with "{" as JSON and any other as base64.
+    return SuiTransaction.from(transaction.trimStart());
   } catch (cause) {
     throw new SuiRawTransactionInvalid(undefined, { cause });
   }
@@ -89,15 +87,37 @@ async function resolveToken(
 const FETCH_FAILURE = /^(failed to fetch|fetch failed|network request failed)$/i;
 
 /**
+ * gRPC statuses that mean the node or the connection failed. Any other status (`INVALID_ARGUMENT`,
+ * `NOT_FOUND`, …) is about the transaction, as GraphQL reports it.
+ */
+const GRPC_TRANSPORT_CODES = new Set([
+  "UNAVAILABLE",
+  "DEADLINE_EXCEEDED",
+  "RESOURCE_EXHAUSTED",
+  "CANCELLED",
+]);
+
+/**
  * The node could not be reached or answered with an error (offline, timeout, HTTP or gRPC
  * failure), as opposed to the transaction itself failing to resolve.
  */
 function isTransportError(error: unknown): boolean {
-  return (
-    (error instanceof TypeError && FETCH_FAILURE.test(error.message)) ||
-    error instanceof SuiGraphQLRequestError ||
-    (error instanceof Error && (error.name === "AbortError" || error.name === "RpcError"))
-  );
+  if (!(error instanceof Error)) return false;
+  switch (error.name) {
+    case "TypeError":
+      return FETCH_FAILURE.test(error.message);
+    case "SuiGraphQLRequestError":
+    case "AbortError":
+      return true;
+    case "RpcError":
+      // The gRPC-web transport wraps a failed fetch as INTERNAL, keeping its message.
+      return (
+        GRPC_TRANSPORT_CODES.has(String((error as { code?: unknown }).code)) ||
+        FETCH_FAILURE.test(error.message)
+      );
+    default:
+      return false;
+  }
 }
 
 /** The dApp knows the intent of a raw transaction and Ledger Live does not, so the operation is a placeholder. */
@@ -174,12 +194,15 @@ async function performSignRawOperation(
 
   observer.next({ type: "device-signature-requested" });
 
+  // The device opens asynchronously and unsubscribing doesn't stop it, so check again once it's open.
   const signed = await signerContext(deviceId, suiSigner =>
-    signWithDevice(account, suiSigner, {
-      unsigned,
-      objects: built.bcsObjects,
-      ...(resolution ? { resolution } : {}),
-    }),
+    isCancelled()
+      ? Promise.resolve(undefined)
+      : signWithDevice(account, suiSigner, {
+          unsigned,
+          objects: built.bcsObjects,
+          ...(resolution ? { resolution } : {}),
+        }),
   ).catch(error => {
     if (isSuiAppUnknownError(error) && drawsFromAddressBalance(unsigned)) {
       throw new SuiAddressBalanceAppUpdateRequired();
@@ -187,7 +210,7 @@ async function performSignRawOperation(
     throw error;
   });
 
-  if (isCancelled()) return;
+  if (isCancelled() || !signed) return;
 
   observer.next({ type: "device-signature-granted" });
 
@@ -205,8 +228,9 @@ async function performSignRawOperation(
  * Signs a transaction built by a dApp (Wallet API `transaction.signRaw`).
  *
  * `transaction` is either a serialized `Transaction` JSON (`Transaction.toJSON()`) or the base64 of
- * BCS `TransactionData`. Commands are never changed; only gas price, budget, payment and object
- * versions the dApp left unset are resolved. The sender must be the account, or unset.
+ * BCS `TransactionData`. The dApp's commands are kept, except that `tx.build` expands SDK intents
+ * such as `coinWithBalance` into the commands they stand for. Gas price, budget, payment and object
+ * versions are resolved only when the dApp left them unset. The sender must be the account, or unset.
  *
  * The signed result is, in `signature`, the hex of the BCS `SenderSignedData` (transaction data plus
  * one signature). A consumer such as a WalletConnect handler decodes it with

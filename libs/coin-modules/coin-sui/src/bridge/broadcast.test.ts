@@ -19,50 +19,41 @@ describe("broadcast", () => {
   });
 
   it("calls explorer for broadcast operation", async () => {
-    // WHEN
     await broadcast({
       account: { currency: { id: "sui" } } as any,
       signedOperation: {
         signature: "SIGNATURE",
         operation: createFixtureOperation(),
         rawData: {
-          serializedSignature: new Uint8Array(64).fill(0x42),
           unsigned: Buffer.from(new Uint8Array(64).fill(0x42)).toString("base64"),
         },
       },
     });
 
-    // THEN
     expect(executeTransactionBlock).toHaveBeenCalledTimes(1);
     expect(executeTransactionBlock.mock.lastCall[1]).toHaveProperty("signature");
   });
 
   it("updates the signed operation", async () => {
-    // GIVEN
     const operation = createFixtureOperation();
 
-    // WHEN
     const result = await broadcast({
       account: { currency: { id: "sui" } } as any,
       signedOperation: {
         signature: "SIGNATURE",
         operation,
         rawData: {
-          serializedSignature: new Uint8Array(64).fill(0x42),
           unsigned: Buffer.from(new Uint8Array(64).fill(0x42)).toString("base64"),
         },
       },
     });
 
-    // THEN
     expect(result.hash).not.toEqual(operation.hash);
   });
 
   it("sends the bare serialized signature of a raw signed operation, not the signed payload", async () => {
-    // GIVEN a raw operation: `signature` carries the serialized signed transaction for the caller
     const unsigned = Buffer.from(new Uint8Array(64).fill(0x42)).toString("base64");
 
-    // WHEN
     const result = await broadcast({
       account: { currency: { id: "sui" } } as any,
       signedOperation: {
@@ -72,7 +63,6 @@ describe("broadcast", () => {
       },
     });
 
-    // THEN
     expect(executeTransactionBlock).toHaveBeenCalledWith(expect.anything(), {
       transactionBlock: unsigned,
       signature: "BARE_SIGNATURE",
@@ -81,10 +71,8 @@ describe("broadcast", () => {
   });
 
   it("falls back to the signature of an operation signed through signOperation", async () => {
-    // GIVEN no serializedSignature in rawData
     const unsigned = new Uint8Array([1, 2, 3]);
 
-    // WHEN
     await broadcast({
       account: { currency: { id: "sui" } } as any,
       signedOperation: {
@@ -94,7 +82,6 @@ describe("broadcast", () => {
       },
     });
 
-    // THEN
     expect(executeTransactionBlock).toHaveBeenCalledWith(expect.anything(), {
       transactionBlock: unsigned,
       signature: "SERIALIZED_SIGNATURE",

@@ -88,12 +88,12 @@ export class SuiAddressBalanceAppUpdateRequired extends Error {
  */
 export class SuiRawTransactionInvalid extends Error {
   override name = "SuiRawTransactionInvalid";
-  constructor(message?: string, fields?: Record<string, unknown>) {
+  constructor(message?: string, options?: ErrorOptions) {
     super(
       message ||
         "The Sui transaction could not be read. It must be a serialized transaction in JSON or base64 form.",
+      options,
     );
-    if (fields) Object.assign(this, fields);
   }
 }
 
@@ -103,11 +103,11 @@ export class SuiRawTransactionInvalid extends Error {
  */
 export class SuiRawTransactionSenderMismatch extends Error {
   override name = "SuiRawTransactionSenderMismatch";
-  constructor(message?: string, fields?: Record<string, unknown>) {
+  constructor(message?: string, options?: ErrorOptions) {
     super(
       message || "The Sui transaction was prepared for another sender than the selected account.",
+      options,
     );
-    if (fields) Object.assign(this, fields);
   }
 }
 
@@ -118,12 +118,12 @@ export class SuiRawTransactionSenderMismatch extends Error {
  */
 export class SuiRawTransactionResolutionFailed extends Error {
   override name = "SuiRawTransactionResolutionFailed";
-  constructor(message?: string, fields?: Record<string, unknown>) {
+  constructor(message?: string, options?: ErrorOptions) {
     super(
       message ||
         "The Sui transaction could not be prepared for signing. Check that its objects still exist and that the account can pay for gas.",
+      options,
     );
-    if (fields) Object.assign(this, fields);
   }
 }
 
@@ -133,11 +133,11 @@ export class SuiRawTransactionResolutionFailed extends Error {
  */
 export class SuiSponsoredTransactionBroadcastUnsupported extends Error {
   override name = "SuiSponsoredTransactionBroadcastUnsupported";
-  constructor(message?: string, fields?: Record<string, unknown>) {
+  constructor(message?: string, options?: ErrorOptions) {
     super(
       message ||
-        "This Sui transaction is paid for by a sponsor, so it can only be signed. Send the signature back to the application to execute it.",
+        "This Sui transaction is paid for by a sponsor, so Ledger Wallet can't send it to the network. The application must send it itself.",
+      options,
     );
-    if (fields) Object.assign(this, fields);
   }
 }

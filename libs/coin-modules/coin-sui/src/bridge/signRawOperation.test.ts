@@ -3,7 +3,7 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/ledger-signer";
 import { bcs } from "@mysten/sui/bcs";
-import { SuiGraphQLRequestError } from "@mysten/sui/graphql";
+import { SuiGraphQLRequestError } from "../network/graphql/client";
 import { Transaction as SuiTransaction } from "@mysten/sui/transactions";
 import { fromBase64, fromHex, toBase64 } from "@mysten/sui/utils";
 import { lastValueFrom, toArray } from "rxjs";
@@ -148,7 +148,7 @@ beforeEach(() => {
     const { gasData } = tx.getData();
     if (!gasData.price) tx.setGasPrice(1000);
     if (!gasData.budget) tx.setGasBudget(50_000_000);
-    if (!gasData.payment?.length) tx.setGasPayment([GAS_COIN]);
+    if (!gasData.payment) tx.setGasPayment([GAS_COIN]);
     return { serialized: await tx.build(), bcsObjects: [new Uint8Array([9])], coinTypes };
   });
   findTokenByAddressInCurrency.mockResolvedValue(undefined);
@@ -242,6 +242,14 @@ describe("buildSignRawOperation", () => {
       },
     );
 
+    it("reads JSON that starts with whitespace", async () => {
+      const json = await hashiDepositTransaction().toJSON();
+
+      const events = await run(`\n  ${json}`);
+
+      expect(events.at(-1)?.type).toBe("signed");
+    });
+
     it.each([
       ["JSON that does not parse", "{ not json"],
       ["JSON that is not a transaction", '{"version": 2, "inputs": "nope"}'],
@@ -320,15 +328,20 @@ describe("buildSignRawOperation", () => {
 
   describe("network failures", () => {
     const abort = Object.assign(new Error("The operation was aborted"), { name: "AbortError" });
-    const rpc = Object.assign(new Error("upstream unavailable"), { name: "RpcError" });
+    const rpc = (message: string, code: string) =>
+      Object.assign(new Error(message), { name: "RpcError", code });
 
     it.each([
       ["a desktop fetch failure", new TypeError("Failed to fetch")],
       ["a Node fetch failure", new TypeError("fetch failed")],
       ["a mobile fetch failure", new TypeError("Network request failed")],
       ["a timeout", abort],
-      ["a GraphQL HTTP error", new SuiGraphQLRequestError("GraphQL request failed: (429)")],
-      ["a gRPC error", rpc],
+      [
+        "a GraphQL HTTP error",
+        new SuiGraphQLRequestError("Sui GraphQL HTTP 429 Too Many Requests"),
+      ],
+      ["an unavailable gRPC node", rpc("upstream unavailable", "UNAVAILABLE")],
+      ["a gRPC fetch failure", rpc("Failed to fetch", "INTERNAL")],
     ])("passes %s through unchanged", async (_name, cause) => {
       mockBuildRawTransaction.mockRejectedValue(cause);
 
@@ -341,6 +354,28 @@ describe("buildSignRawOperation", () => {
 
   it("wraps a TypeError that is not a fetch failure, as a defect is not the network", async () => {
     const cause = new TypeError("Cannot read properties of undefined (reading 'objectId')");
+    mockBuildRawTransaction.mockRejectedValue(cause);
+
+    const error = await run(await hashiDepositTransaction().toJSON()).catch(e => e);
+
+    expect(error).toBeInstanceOf(SuiRawTransactionResolutionFailed);
+    expect(error.cause).toBe(cause);
+  });
+
+  it("wraps a rejection that is not an Error", async () => {
+    mockBuildRawTransaction.mockRejectedValue("dry run aborted");
+
+    const error = await run(await hashiDepositTransaction().toJSON()).catch(e => e);
+
+    expect(error).toBeInstanceOf(SuiRawTransactionResolutionFailed);
+    expect(error.cause).toBe("dry run aborted");
+  });
+
+  it("wraps a gRPC status about the transaction, as GraphQL does", async () => {
+    const cause = Object.assign(new Error("invalid transaction"), {
+      name: "RpcError",
+      code: "INVALID_ARGUMENT",
+    });
     mockBuildRawTransaction.mockRejectedValue(cause);
 
     const error = await run(await hashiDepositTransaction().toJSON()).catch(e => e);
@@ -513,6 +548,31 @@ describe("buildSignRawOperation", () => {
       answer({ signature: SERIALIZED_SIGNATURE });
       await new Promise(resolve => setTimeout(resolve, 0));
 
+      expect(events.map(e => e.type)).toEqual(["device-signature-requested"]);
+    });
+
+    it("does not prompt the device when unsubscribed while the device connection opens", async () => {
+      let open: () => void = () => {};
+      const opened = new Promise<void>(resolve => (open = resolve));
+      signerContext.mockImplementation(
+        async (_deviceId: string, fn: (signer: SuiSigner) => Promise<unknown>) => {
+          await opened;
+          return fn(mockSuiSigner);
+        },
+      );
+      const events: SignOperationEvent[] = [];
+      const subscription = sign(await hashiDepositTransaction().toJSON()).subscribe(e =>
+        events.push(e),
+      );
+      while (signerContext.mock.calls.length === 0) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+
+      subscription.unsubscribe();
+      open();
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(mockSignTransaction).not.toHaveBeenCalled();
       expect(events.map(e => e.type)).toEqual(["device-signature-requested"]);
     });
 

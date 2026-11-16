@@ -1149,7 +1149,7 @@
     },
     "SuiSponsoredTransactionBroadcastUnsupported": {
       "title": "Sponsored Sui transaction",
-      "description": "This transaction's network fees are paid by a sponsor, so Ledger Wallet can only sign it. The app sends it to the network."
+      "description": "This transaction's network fees are paid by a sponsor, so Ledger Wallet can't send it to the network. The app needs to send it itself. Contact the app's support if this keeps happening."
     },
     "PasswordIncorrect": {
       "title": "Incorrect password",
