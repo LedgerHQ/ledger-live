@@ -12,8 +12,11 @@ import {
   joinMockServerSession,
   startMockServerSession,
 } from "../../mockServerSession";
-import { selectIsMockServerFloatingButtonHidden } from "../../state/selectors";
-import { setMockServerFloatingButtonHidden, setMockServerOverlayMode } from "../../state/slice";
+import {
+  selectIsMockServerFloatingButtonHidden,
+  setMockServerFloatingButtonHidden,
+  setMockServerOverlayMode,
+} from "../../state/slice";
 import { useMockServerStatus, type MockServerStatus } from "../../useMockServerStatus";
 import type { MockServerActivation, MockServerSettingsFormProps } from "./types";
 

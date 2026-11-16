@@ -21,6 +21,11 @@ export const mockServerOverlaySlice = createSlice({
       state.isFloatingButtonHidden = action.payload;
     },
   },
+  selectors: {
+    selectMockServerOverlayMode: state => state.mode,
+    selectMockServerDeviceScreenWidth: state => state.deviceScreenWidth,
+    selectIsMockServerFloatingButtonHidden: state => state.isFloatingButtonHidden,
+  },
 });
 
 export const {
@@ -28,3 +33,9 @@ export const {
   setMockServerDeviceScreenWidth,
   setMockServerFloatingButtonHidden,
 } = mockServerOverlaySlice.actions;
+
+export const {
+  selectMockServerOverlayMode,
+  selectMockServerDeviceScreenWidth,
+  selectIsMockServerFloatingButtonHidden,
+} = mockServerOverlaySlice.selectors;

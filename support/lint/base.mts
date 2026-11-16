@@ -17,7 +17,6 @@ const SLICE_SELECTORS_WAIVERS: string[] = [
   "domain/entity/client-identity",
   "domain/entity/contact",
   "domain/entity/currency-fiat",
-  "domain/entity/device-os-update",
 ];
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline

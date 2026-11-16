@@ -20,8 +20,15 @@ export const deviceOsUpdateSlice = createSlice({
       state.hasBackup = action.payload;
     },
   },
+  selectors: {
+    selectOsUpdates: (state): OsUpdate[] => state.osUpdates,
+    selectHasOsUpdates: (state): boolean => state.osUpdates.length > 0,
+    selectHasBackup: (state): boolean => state.hasBackup,
+  },
 });
 
 export const { setOsUpdates, clearOsUpdates, setHasBackup } = deviceOsUpdateSlice.actions;
+export const { selectOsUpdates, selectHasOsUpdates, selectHasBackup } =
+  deviceOsUpdateSlice.selectors;
 
 export default deviceOsUpdateSlice.reducer;

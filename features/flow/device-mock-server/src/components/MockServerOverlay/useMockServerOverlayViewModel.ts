@@ -10,8 +10,9 @@ import {
   selectIsMockServerFloatingButtonHidden,
   selectMockServerDeviceScreenWidth,
   selectMockServerOverlayMode,
-} from "../../state/selectors";
-import { setMockServerDeviceScreenWidth, setMockServerOverlayMode } from "../../state/slice";
+  setMockServerDeviceScreenWidth,
+  setMockServerOverlayMode,
+} from "../../state/slice";
 import type { MockServerOverlayMode } from "../../state/types";
 import { useMockServerStatus, type MockServerStatus } from "../../useMockServerStatus";
 import type { MockServerOverlayDevice, MockServerOverlayProps } from "./types";
