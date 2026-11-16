@@ -316,12 +316,12 @@ describe("genericGetTransactionStatus", () => {
   });
 
   describe("token sends", () => {
-    const tokenAccount = (id: string, tokenId: string) => ({ id, token: { id: tokenId } });
+    const tokenAccount = (id: string, categories: string[]) => ({ id, token: { categories } });
     const accountWithTokens = {
       ...account,
       subAccounts: [
-        tokenAccount("pseth-account", "ethereum/erc20/pooled_staked_eth"),
-        tokenAccount("usdt-account", "ethereum/erc20/usd_tether__erc20_"),
+        tokenAccount("pseth-account", ["non_transferable"]),
+        tokenAccount("usdt-account", ["stablecoins"]),
       ],
     };
     const tokenSend = (subAccountId: string | undefined) =>
