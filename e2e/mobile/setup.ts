@@ -5,6 +5,7 @@ import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge } from "@e2e/bridge/server";
 import { setAllureDescription } from "@e2e/helpers/allure/allure-helper";
 import { deleteSpeculos } from "@e2e/utils/speculosUtils";
+import { SIMULATOR_WARM_UP_HOOK_TIMEOUT, warmUpSimulatorOnce } from "@e2e/helpers/simulatorWarmUp";
 import {
   EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT,
   EXCLUSIVE_LOCK_RELEASE_HOOK_TIMEOUT,
@@ -27,6 +28,8 @@ beforeAll(async () => {
     throw error;
   }
 }, EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT);
+
+beforeAll(warmUpSimulatorOnce, SIMULATOR_WARM_UP_HOOK_TIMEOUT);
 
 beforeAll(async () => {
   const port = await launchApp({ newInstance: true, delete: true });

@@ -235,6 +235,11 @@ export async function waitEarnReady() {
   return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.xlarge, "waitEarnReady");
 }
 
+/** Resolves once the app's first remote feature-flag fetch has settled, whether it succeeded or failed. */
+export async function waitRemoteFlagsReady() {
+  return fetchData({ type: "waitRemoteFlagsReady", id: uniqueId() }, TIMEOUT.xxlarge);
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
@@ -339,6 +344,7 @@ function onMessage(messageStr: string) {
     case "appEnvs":
     case "contactsImported":
     case "localManifestsImported":
+    case "remoteFlagsReady":
       resolvePending(msg.id, msg.payload);
       break;
     case "swapSetupDone":

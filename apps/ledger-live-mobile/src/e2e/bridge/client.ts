@@ -7,6 +7,7 @@ import {
   setOverride,
   setAllOverrides,
   selectFeature,
+  selectRemoteFlagsReady,
   getAllFeatureFlags,
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -61,6 +62,19 @@ let ws: WebSocket;
 let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
+
+function whenRemoteFlagsReady(): Promise<void> {
+  return new Promise(resolve => {
+    let unsubscribe: (() => void) | undefined;
+    const check = () => {
+      if (!selectRemoteFlagsReady(store.getState())) return;
+      unsubscribe?.();
+      resolve();
+    };
+    unsubscribe = store.subscribe(check);
+    check();
+  });
+}
 
 async function disconnectDeviceIntentSpeculosSessions() {
   const dmk = getDeviceManagementKit();
@@ -313,6 +327,11 @@ async function onMessage(event: WebSocketMessageEvent) {
           id: msg.id,
           payload,
         });
+        break;
+      }
+      case "waitRemoteFlagsReady": {
+        await whenRemoteFlagsReady();
+        postMessage({ type: "remoteFlagsReady", id: msg.id, payload: "" });
         break;
       }
       case "getEnvs": {

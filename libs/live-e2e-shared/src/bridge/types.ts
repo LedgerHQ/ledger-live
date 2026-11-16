@@ -63,6 +63,7 @@ export type ServerData =
   | { type: "localManifestsImported"; id: string; payload: string }
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone"; id: string }
+  | { type: "remoteFlagsReady"; id: string; payload: "" }
   | { type: "swapLiveAppReady" }
   | { type: "earnLiveAppReady" };
 
@@ -105,6 +106,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
+  | { type: "waitRemoteFlagsReady"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =
