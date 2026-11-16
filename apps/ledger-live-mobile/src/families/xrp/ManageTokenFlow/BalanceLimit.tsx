@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Box, Button, TextInput } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
@@ -17,13 +17,14 @@ export default function BalanceLimit(props: Props) {
         contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}
         keyboardShouldPersistTaps="handled"
       >
+        <Text typography="body2" lx={{ color: "muted" }}>
+          {t("xrp.tokenSettings.balanceLimitDescription")}
+        </Text>
         <TextInput
-          label={t("xrp.tokenSettings.balanceLimit")}
+          label={`${t("xrp.tokenSettings.balanceLimit")} (${viewModel.token.ticker})`}
           value={viewModel.limitText}
-          placeholder={viewModel.isMaximum ? t("xrp.tokenSettings.maximum") : undefined}
           onChangeText={viewModel.onChangeLimitText}
           onClear={viewModel.onClear}
-          suffix={viewModel.token.ticker}
           keyboardType="decimal-pad"
           status={viewModel.isLimitZero ? "error" : undefined}
           helperText={viewModel.isLimitZero ? t("xrp.addToken.errors.limitZero") : undefined}

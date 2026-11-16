@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -11,6 +12,10 @@ export type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenBalanceLimit>
 >;
 
+function removeMaximumText(text: string, maximumText: string) {
+  return text.startsWith(maximumText) ? text.slice(maximumText.length) : "";
+}
+
 export function useBalanceLimitViewModel({ navigation, route }: Props) {
   const { account: tokenAccount } = useAccountScreen(route);
   invariant(tokenAccount?.type === "TokenAccount", "xrp: token account required");
@@ -19,20 +24,26 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
   const { token } = tokenAccount;
   const unit = token.units[0];
   const maxLimit = getMaxTrustLimitForToken();
+  const maximumText = maxLimit.shiftedBy(-unit.magnitude).toExponential();
 
   const [isMaximum, setIsMaximum] = useState(balanceLimit.isMaximum);
   const [limitText, setLimitText] = useState(
-    balanceLimit.isMaximum ? "" : balanceLimit.limit.shiftedBy(-unit.magnitude).toFixed(),
+    balanceLimit.isMaximum
+      ? ""
+      : new BigNumber(balanceLimit.limit).shiftedBy(-unit.magnitude).toFixed(),
   );
 
   const typedLimit = parseCurrencyUnit(unit, limitText.replace(",", "."));
   const limit = isMaximum ? maxLimit : typedLimit;
   const hasTypedLimit = !isMaximum && limitText !== "";
 
-  const onChangeLimitText = useCallback((text: string) => {
-    setIsMaximum(false);
-    setLimitText(text);
-  }, []);
+  const onChangeLimitText = useCallback(
+    (text: string) => {
+      setIsMaximum(false);
+      setLimitText(isMaximum ? removeMaximumText(text, maximumText) : text);
+    },
+    [isMaximum, maximumText],
+  );
 
   const onClear = useCallback(() => onChangeLimitText(""), [onChangeLimitText]);
 
@@ -44,7 +55,7 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
   const onConfirm = useCallback(() => {
     navigation.popTo(
       ScreenName.XrpManageTokenSettings,
-      { accountId, parentId, balanceLimit: { limit, isMaximum } },
+      { accountId, parentId, balanceLimit: { limit: limit.toFixed(), isMaximum } },
       { merge: true },
     );
   }, [accountId, isMaximum, limit, navigation, parentId]);
@@ -52,11 +63,11 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
   return {
     token,
     isMaximum,
-    limitText,
     onChangeLimitText,
     onClear,
     onSetMaximum,
     onConfirm,
+    limitText: isMaximum ? maximumText : limitText,
     isLimitZero: hasTypedLimit && typedLimit.isZero(),
     isConfirmDisabled: !limit.gt(0),
   };

@@ -11,7 +11,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { getXrpResources, makeChangeTrustTransaction } from "../utils";
-import type { BalanceLimit, XrpManageTokenFlowParamList } from "./types";
+import type { XrpManageTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenSettings>
@@ -46,29 +46,28 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   });
   const { updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
 
-  const storedBalanceLimit = useMemo<BalanceLimit>(
-    () => ({ limit: storedLimit ?? new BigNumber(0), isMaximum: storedIsMaximum }),
-    [storedIsMaximum, storedLimit],
-  );
   // Balance limit hands its confirmed value back through the route params
-  const balanceLimit = route.params.balanceLimit ?? storedBalanceLimit;
+  const confirmedLimit = route.params.balanceLimit;
+  const isMaximum = confirmedLimit ? confirmedLimit.isMaximum : storedIsMaximum;
+  const limit = useMemo(() => {
+    return confirmedLimit ? new BigNumber(confirmedLimit.limit) : (storedLimit ?? new BigNumber(0));
+  }, [confirmedLimit, storedLimit]);
 
   const [isRippling, setIsRippling] = useState(storedIsRippling);
   const [isRipplingSheetOpen, setIsRipplingSheetOpen] = useState(false);
   const [isRipplingInfoOpen, setIsRipplingInfoOpen] = useState(false);
 
-  const { limit, isMaximum } = balanceLimit;
   useEffect(() => {
     updateTransaction(tx => bridge.updateTransaction(tx, { amount: limit }));
   }, [bridge, limit, updateTransaction]);
 
   const onEditLimit = useCallback(() => {
     navigation.navigate(ScreenName.XrpManageTokenBalanceLimit, {
-      balanceLimit,
+      balanceLimit: { limit: limit.toFixed(), isMaximum },
       accountId: tokenAccount.id,
       parentId: parentAccount.id,
     });
-  }, [balanceLimit, navigation, parentAccount.id, tokenAccount.id]);
+  }, [isMaximum, limit, navigation, parentAccount.id, tokenAccount.id]);
 
   const onChangeRippling = useCallback((value: boolean) => {
     setIsRippling(value);

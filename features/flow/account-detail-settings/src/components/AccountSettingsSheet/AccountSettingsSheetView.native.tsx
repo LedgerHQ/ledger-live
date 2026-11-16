@@ -24,7 +24,6 @@ export function AccountSettingsSheetView({
   title,
   onClose,
   onChangeName,
-  onManageAssets,
   onViewAdvancedLogs,
   explorerUrl,
   onConfirmRemove,
@@ -57,7 +56,6 @@ export function AccountSettingsSheetView({
             <AccountSettingsMenu
               accountName={accountName}
               onChangeName={onChangeName}
-              onManageAssets={onManageAssets}
               onViewAdvancedLogs={onViewAdvancedLogs}
               explorerUrl={explorerUrl}
               onRemoveAccount={onShowRemove}

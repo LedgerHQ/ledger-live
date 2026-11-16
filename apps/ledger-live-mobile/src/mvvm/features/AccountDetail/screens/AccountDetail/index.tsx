@@ -27,7 +27,6 @@ export default function AccountDetail() {
     onCloseSettings,
     onSettingsHidden,
     onChangeName,
-    onManageAssets,
     onViewAdvancedLogs,
     onConfirmRemove,
     onSettingsEvent,
@@ -64,7 +63,6 @@ export default function AccountDetail() {
         accountName={accountName}
         onClose={onCloseSettings}
         onChangeName={onChangeName}
-        onManageAssets={onManageAssets}
         onViewAdvancedLogs={onViewAdvancedLogs}
         account={account}
         onConfirmRemove={onConfirmRemove}

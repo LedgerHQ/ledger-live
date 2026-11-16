@@ -1930,7 +1930,6 @@
     "title": "Account settings",
     "menu": {
       "changeName": "Change name",
-      "manageAssets": "Manage assets",
       "viewAdvancedLogs": "View advanced logs",
       "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
@@ -8367,17 +8366,16 @@
       }
     },
     "manageToken": {
-      "title": "Manage assets",
-      "empty": "No token to manage on this account.",
-      "tokenType": "Token type",
-      "issuer": "Issuer",
-      "edit": "Edit",
-      "delete": "Delete"
+      "cta": "Manage",
+      "title": "Manage token",
+      "tokenSettings": "Token settings",
+      "removeToken": "Remove token"
     },
     "tokenSettings": {
       "title": "Edit details",
       "limit": "Trust limit",
       "balanceLimit": "Balance limit",
+      "balanceLimitDescription": "Select the maximum balance you can hold for this asset.",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "setToMaximum": "Set to maximum",

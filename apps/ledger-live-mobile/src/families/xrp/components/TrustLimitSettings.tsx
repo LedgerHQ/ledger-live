@@ -67,21 +67,18 @@ export function TrustLimitInput({
   );
 }
 
-/** The max limit and rippling switches, with `children` as extra rows under them */
 export function TrustLimitControls({
   isMaximum,
   isRippling,
   onChangeUseMax,
   onChangeRippling,
   onOpenMaxLimitInfo,
-  children,
 }: Readonly<{
   isMaximum: boolean;
   isRippling: boolean;
   onChangeUseMax: (useMax: boolean) => void;
   onChangeRippling: (isRippling: boolean) => void;
   onOpenMaxLimitInfo: () => void;
-  children?: React.ReactNode;
 }>) {
   const { t } = useTranslation();
   const maxLimitLabel = t("xrp.tokenSettings.maxLimit");
@@ -129,7 +126,6 @@ export function TrustLimitControls({
           testID="xrp-rippling-warning"
         />
       ) : null}
-      {children}
     </Box>
   );
 }

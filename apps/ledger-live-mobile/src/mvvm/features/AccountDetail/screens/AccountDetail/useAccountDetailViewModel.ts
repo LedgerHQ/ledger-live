@@ -5,11 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { AccountSettingsEventHandler } from "@features/flow-account-detail-settings";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useSelector } from "~/context/hooks";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import type { NavigationParamsType } from "~/components/FabActions";
-import perFamilyAccountActions from "~/generated/accountActions";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
@@ -38,19 +34,10 @@ export type AccountDetailViewModel = Readonly<{
   onCloseSettings: () => void;
   onSettingsHidden: () => void;
   onChangeName: () => void;
-  onManageAssets: (() => void) | undefined;
   onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
   onSettingsEvent: AccountSettingsEventHandler;
 }>;
-
-type FamilySettingsActions = Readonly<
-  Record<
-    string,
-    | { getManageAssetsNavigation?: (account: Account) => NavigationParamsType | undefined }
-    | undefined
-  >
->;
 
 type SettingsScreen = ScreenName.AccountDetailEditName | ScreenName.AccountDetailAdvancedLogs;
 
@@ -102,23 +89,17 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     setIsSettingsOpen(true);
   }, [onSettingsOpened]);
   const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
-  const afterSettingsHidden = useRef<(() => void) | undefined>(undefined);
-  const closeSettingsThen = useCallback((action: () => void) => {
-    afterSettingsHidden.current = action;
+  const screenToOpenAfterSettings = useRef<SettingsScreen | undefined>(undefined);
+  const openSettingsScreen = useCallback((screen: SettingsScreen) => {
+    screenToOpenAfterSettings.current = screen;
     setIsSettingsOpen(false);
   }, []);
   const onSettingsHidden = useCallback(() => {
-    const action = afterSettingsHidden.current;
-    afterSettingsHidden.current = undefined;
-    action?.();
-  }, []);
-  const openSettingsScreen = useCallback(
-    (screen: SettingsScreen) => {
-      if (!mainAccount) return;
-      closeSettingsThen(() => stackNavigation.navigate(screen, { accountId: mainAccount.id }));
-    },
-    [closeSettingsThen, mainAccount, stackNavigation],
-  );
+    const screen = screenToOpenAfterSettings.current;
+    screenToOpenAfterSettings.current = undefined;
+    if (!screen || !mainAccount) return;
+    stackNavigation.navigate(screen, { accountId: mainAccount.id });
+  }, [mainAccount, stackNavigation]);
   const onChangeName = useCallback(
     () => openSettingsScreen(ScreenName.AccountDetailEditName),
     [openSettingsScreen],
@@ -127,25 +108,6 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     () => openSettingsScreen(ScreenName.AccountDetailAdvancedLogs),
     [openSettingsScreen],
   );
-
-  const isReadOnly = useSelector(readOnlyModeEnabledSelector);
-  const manageAssetsNavigation = mainAccount
-    ? (perFamilyAccountActions as FamilySettingsActions)[
-        mainAccount.currency.family
-      ]?.getManageAssetsNavigation?.(mainAccount)
-    : undefined;
-  const onManageAssets = useMemo(() => {
-    if (!manageAssetsNavigation || isReadOnly) return undefined;
-    const [name, params] = manageAssetsNavigation;
-    return () => {
-      closeSettingsThen(() => {
-        (navigation as NativeStackNavigationProp<Record<string, object | undefined>>).navigate(
-          name,
-          params,
-        );
-      });
-    };
-  }, [closeSettingsThen, isReadOnly, manageAssetsNavigation, navigation]);
 
   const onConfirmRemove = useCallback(() => {
     setIsSettingsOpen(false);
@@ -162,7 +124,6 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     onCloseSettings,
     onSettingsHidden,
     onChangeName,
-    onManageAssets,
     onViewAdvancedLogs,
     onConfirmRemove,
     onSettingsEvent,

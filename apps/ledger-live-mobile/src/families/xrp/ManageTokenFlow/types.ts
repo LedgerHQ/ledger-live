@@ -10,10 +10,11 @@ type TokenAccountParams = {
   parentId: string;
 };
 
-export type BalanceLimit = Pick<TokenSettings, "limit" | "isMaximum">;
+// The limit is a base-units string: route params must stay serializable, a BigNumber is not
+type BalanceLimit = Readonly<{ limit: string; isMaximum: boolean }>;
 
 export type XrpManageTokenFlowParamList = {
-  [ScreenName.XrpManageTokenManage]: { accountId: string };
+  [ScreenName.XrpManageTokenManage]: TokenAccountParams;
   [ScreenName.XrpManageTokenSettings]: TokenAccountParams & {
     balanceLimit?: BalanceLimit;
   };

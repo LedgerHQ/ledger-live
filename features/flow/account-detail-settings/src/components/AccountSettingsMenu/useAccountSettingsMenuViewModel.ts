@@ -9,13 +9,11 @@ export function useAccountSettingsMenuViewModel({
   explorerUrl,
   onEvent,
   onChangeName,
-  onManageAssets,
   onViewAdvancedLogs,
   onRemoveAccount,
 }: Props): Readonly<{
   labels: AccountSettingsMenuLabels;
   onChangeName: () => void;
-  onManageAssets?: () => void;
   onViewAdvancedLogs: () => void;
   onRemoveAccount: () => void;
   onViewExplorer?: () => void;
@@ -52,13 +50,11 @@ export function useAccountSettingsMenuViewModel({
   return {
     labels: {
       changeName: t("accountDetailSettings.menu.changeName"),
-      manageAssets: t("accountDetailSettings.menu.manageAssets"),
       viewAdvancedLogs: t("accountDetailSettings.menu.viewAdvancedLogs"),
       viewExplorer: t("accountDetailSettings.menu.viewExplorer"),
       removeAccount: t("accountDetailSettings.menu.removeAccount"),
     },
     onChangeName: handleChangeName,
-    onManageAssets,
     onViewAdvancedLogs: handleViewAdvancedLogs,
     onRemoveAccount: handleRemoveAccount,
     onViewExplorer,

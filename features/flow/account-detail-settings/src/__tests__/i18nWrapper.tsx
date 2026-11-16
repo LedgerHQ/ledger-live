@@ -12,7 +12,6 @@ const resources = {
         title: "Account settings",
         menu: {
           changeName: "Change name",
-          manageAssets: "Manage assets",
           viewAdvancedLogs: "View advanced logs",
           viewExplorer: "View in explorer",
           removeAccount: "Remove account from portfolio",

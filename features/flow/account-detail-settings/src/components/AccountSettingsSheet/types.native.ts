@@ -8,7 +8,6 @@ export type AccountSettingsSheetProps = Readonly<{
   accountName: string;
   onClose: () => void;
   onChangeName: () => void;
-  onManageAssets?: () => void;
   onViewAdvancedLogs: () => void;
   account: AccountExplorerSource;
   onConfirmRemove: () => void;

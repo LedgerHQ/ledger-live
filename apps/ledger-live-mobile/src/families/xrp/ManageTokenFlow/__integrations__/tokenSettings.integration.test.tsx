@@ -6,14 +6,12 @@ import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
-import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { act, render, screen, waitFor, within } from "@tests/test-renderer";
+import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
-  XRP_REMOVED_TOKEN_ACCOUNT,
   overrideWithAccounts,
 } from "../../__mocks__/account.mock";
 import {
@@ -21,7 +19,7 @@ import {
   makeNamedError,
   mockTransactionStatus,
 } from "../../__mocks__/bridge.mock";
-import { xrpIouToken, xrpMptToken } from "../../__mocks__/currency.mock";
+import { xrpIouToken } from "../../__mocks__/currency.mock";
 
 jest.mock(
   "@ledgerhq/live-common/hw/actions/app",
@@ -116,20 +114,17 @@ function renderFlowWith(params: Record<string, unknown>, screenName: ScreenName,
   });
 }
 
-function renderManageAssets(...tokenAccounts: XrpTokenAccount[]) {
-  const account = { ...XRP_ACCOUNT, subAccounts: tokenAccounts };
+function renderFlowAt(
+  screenName: ScreenName.XrpManageTokenManage | ScreenName.XrpManageTokenSettings,
+  overrides: Partial<XrpTokenAccount> = {},
+) {
+  const { account, tokenAccount } = makeAccountWithToken(overrides);
 
-  return renderFlowWith({ accountId: account.id }, ScreenName.XrpManageTokenManage, account);
+  return renderFlowWith({ accountId: tokenAccount.id, parentId: account.id }, screenName, account);
 }
 
 function renderTokenSettings(overrides: Partial<XrpTokenAccount> = {}) {
-  const { account, tokenAccount } = makeAccountWithToken(overrides);
-
-  return renderFlowWith(
-    { accountId: tokenAccount.id, parentId: account.id },
-    ScreenName.XrpManageTokenSettings,
-    account,
-  );
+  return renderFlowAt(ScreenName.XrpManageTokenSettings, overrides);
 }
 
 function getContinueButton() {
@@ -180,70 +175,22 @@ function getSignedTransaction() {
 describe("XRP ManageTokenFlow (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
+    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou"]);
     jest.mocked(getMaxTrustLimitForToken).mockReturnValue(MAX_LIMIT);
     mockTransactionStatus(mockAccountBridge, {});
   });
 
-  describe("Manage assets", () => {
-    it("lists an IOU card with its details, Edit and a disabled Delete", async () => {
-      renderManageAssets({
-        ...XRP_IOU_TOKEN_ACCOUNT,
-        xrpResources: {
-          isLocked: false,
-          isRippling: true,
-          limit: new BigNumber(1000),
-        },
+  describe("Manage token", () => {
+    it("lists Token settings and a disabled Remove token, and opens Edit details", async () => {
+      const { user } = renderFlowAt(ScreenName.XrpManageTokenManage, {
+        balance: new BigNumber(0),
       });
 
-      const card = await screen.findByTestId(`xrp-manage-asset-${XRP_IOU_TOKEN_ACCOUNT.id}`);
-      expect(within(card).getByText("Trust Line (IOU)")).toBeVisible();
-      expect(within(card).getByText(/1\D?000 RLUSD/)).toBeVisible();
-      expect(within(card).getByText("Activated")).toBeVisible();
-      expect(within(card).getByText("Edit")).toBeVisible();
-      expect(within(card).getByText("Delete")).toBeVisible();
-      expect(
-        screen.getByTestId(`xrp-manage-asset-delete-${XRP_IOU_TOKEN_ACCOUNT.id}`),
-      ).toBeDisabled();
-    });
+      const removeToken = await screen.findByText("Remove token");
+      expect(removeToken).toBeVisible();
+      expect(screen.getByTestId("xrp-manage-token-remove")).toBeDisabled();
 
-    it("shows Maximum when the limit is the maximum", async () => {
-      renderManageAssets({
-        ...XRP_IOU_TOKEN_ACCOUNT,
-        xrpResources: { isLocked: false, isRippling: false, limit: MAX_LIMIT },
-      });
-
-      const card = await screen.findByTestId(`xrp-manage-asset-${XRP_IOU_TOKEN_ACCOUNT.id}`);
-      expect(within(card).getByText("Maximum")).toBeVisible();
-      expect(within(card).getByText("Deactivated")).toBeVisible();
-    });
-
-    it("has no Edit and no limit on an MPT card", async () => {
-      const mptTokenAccount: XrpTokenAccount = {
-        ...genTokenAccount(1, XRP_ACCOUNT, xrpMptToken),
-        xrpResources: { isLocked: false },
-      };
-      renderManageAssets(mptTokenAccount);
-
-      const card = await screen.findByTestId(`xrp-manage-asset-${mptTokenAccount.id}`);
-      expect(within(card).getByText("Multi purpose token")).toBeVisible();
-      expect(within(card).queryByText("Edit")).toBeNull();
-      expect(within(card).queryByText("Balance limit")).toBeNull();
-      expect(within(card).getByText("Delete")).toBeVisible();
-    });
-
-    it("skips a removed token and says so when nothing is left", async () => {
-      renderManageAssets(XRP_REMOVED_TOKEN_ACCOUNT);
-
-      const emptyMessage = await screen.findByTestId("xrp-manage-assets-empty");
-      expect(emptyMessage).toBeVisible();
-    });
-
-    it("opens Edit details from Edit", async () => {
-      const { user } = renderManageAssets(XRP_IOU_TOKEN_ACCOUNT);
-
-      const editButton = await screen.findByText("Edit");
-      await user.press(editButton);
+      await user.press(screen.getByText("Token settings"));
 
       const continueButton = await screen.findByTestId("xrp-settings-continue");
       expect(continueButton).toBeVisible();
@@ -304,11 +251,26 @@ describe("XRP ManageTokenFlow (integration)", () => {
       await user.press(limitRow);
       const setMaximumButton = await screen.findByTestId("xrp-limit-set-maximum");
       await user.press(setMaximumButton);
+      expect(screen.getByTestId("xrp-limit-input")).toHaveDisplayValue("1e+9");
       await user.press(screen.getByTestId("xrp-limit-confirm"));
 
       const limitValue = await screen.findByTestId("xrp-settings-limit-value");
       expect(limitValue).toHaveTextContent("Maximum");
       await waitFor(() => expect(getContinueButton()).toBeEnabled());
+    });
+
+    it("replaces the maximum by what is typed next", async () => {
+      const { user } = renderTokenSettings({ balance: new BigNumber(0) });
+
+      const limitRow = await screen.findByTestId("xrp-settings-limit-row");
+      await user.press(limitRow);
+      const setMaximumButton = await screen.findByTestId("xrp-limit-set-maximum");
+      await user.press(setMaximumButton);
+      const limitInput = screen.getByTestId("xrp-limit-input");
+      await user.type(limitInput, "5");
+
+      expect(limitInput).toHaveDisplayValue("5");
+      expect(setMaximumButton).toBeEnabled();
     });
 
     it("keeps Confirm disabled for a limit of 0 and shows the message", async () => {
