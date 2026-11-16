@@ -323,7 +323,9 @@ describe("buildSignRawOperation", () => {
     const rpc = Object.assign(new Error("upstream unavailable"), { name: "RpcError" });
 
     it.each([
-      ["a fetch failure", new TypeError("Failed to fetch")],
+      ["a desktop fetch failure", new TypeError("Failed to fetch")],
+      ["a Node fetch failure", new TypeError("fetch failed")],
+      ["a mobile fetch failure", new TypeError("Network request failed")],
       ["a timeout", abort],
       ["a GraphQL HTTP error", new SuiGraphQLRequestError("GraphQL request failed: (429)")],
       ["a gRPC error", rpc],
@@ -335,6 +337,16 @@ describe("buildSignRawOperation", () => {
       expect(error).toBe(cause);
       expect(signerContext).not.toHaveBeenCalled();
     });
+  });
+
+  it("wraps a TypeError that is not a fetch failure, as a defect is not the network", async () => {
+    const cause = new TypeError("Cannot read properties of undefined (reading 'objectId')");
+    mockBuildRawTransaction.mockRejectedValue(cause);
+
+    const error = await run(await hashiDepositTransaction().toJSON()).catch(e => e);
+
+    expect(error).toBeInstanceOf(SuiRawTransactionResolutionFailed);
+    expect(error.cause).toBe(cause);
   });
 
   describe("clear-signing token descriptor", () => {

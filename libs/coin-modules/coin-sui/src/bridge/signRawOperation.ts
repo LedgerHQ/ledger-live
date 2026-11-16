@@ -82,12 +82,19 @@ async function resolveToken(
 }
 
 /**
+ * What `fetch` rejects with when the request never gets an answer: "Failed to fetch" (Chromium,
+ * desktop), "fetch failed" (Node), "Network request failed" (React Native). Any other TypeError is a
+ * defect, not the network.
+ */
+const FETCH_FAILURE = /^(failed to fetch|fetch failed|network request failed)$/i;
+
+/**
  * The node could not be reached or answered with an error (offline, timeout, HTTP or gRPC
  * failure), as opposed to the transaction itself failing to resolve.
  */
 function isTransportError(error: unknown): boolean {
   return (
-    error instanceof TypeError ||
+    (error instanceof TypeError && FETCH_FAILURE.test(error.message)) ||
     error instanceof SuiGraphQLRequestError ||
     (error instanceof Error && (error.name === "AbortError" || error.name === "RpcError"))
   );
