@@ -30,26 +30,6 @@
         }
       ]
     },
-    "e2e:ci": {
-      "dependsOn": ["^build"],
-      "cache": true,
-      "outputs": [
-        "{projectRoot}/artifacts/**",
-        "{projectRoot}/main.jsbundle",
-        "{projectRoot}/build/**",
-        "{projectRoot}/ios/build/**",
-        "{projectRoot}/android/app/build/**"
-      ],
-      "inputs": [
-        "default",
-        "^default",
-        "mobileEnv",
-        "sharedEnv",
-        {
-          "env": "RUNNER_OS"
-        }
-      ]
-    },
     "e2e:build": {
       "dependsOn": ["^build", "build"],
       "cache": true,
