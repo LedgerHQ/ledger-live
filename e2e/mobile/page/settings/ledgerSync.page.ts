@@ -68,7 +68,7 @@ export default class LedgerSyncPage {
   /** The Device Intent Executor sheet after the activation was refused on the device. */
   @Step("Expect the activation rejected on device on DIE")
   async expectActivationRejectedOnDevice() {
-    await this.addMemberRejected.waitVisible();
+    await this.addMemberRejected.waitFullyVisible();
     await this.addMemberRejected.expectVisible();
   }
 

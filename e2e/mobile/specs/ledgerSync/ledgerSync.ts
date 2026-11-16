@@ -206,11 +206,15 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
   );
 }
 
-export function runLedgerSyncDeleteInstanceTest(
-  tmsLinks: string[],
-  tags: string[],
-  { onDie = false }: { onDie?: boolean } = {},
-) {
+export function runLedgerSyncDeleteInstanceTest({
+  tmsLinks,
+  tags,
+  onDie = false,
+}: {
+  tmsLinks: string[];
+  tags: string[];
+  onDie?: boolean;
+}) {
   ledgerSyncSuite(
     {
       suite: onDie ? "delete instance on DIE" : "delete instance",
@@ -311,11 +315,15 @@ export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationBackupTest(
-  tmsLinks: string[],
-  tags: string[],
-  { onDie = false }: { onDie?: boolean } = {},
-) {
+export function runLedgerSyncActivationBackupTest({
+  tmsLinks,
+  tags,
+  onDie = false,
+}: {
+  tmsLinks: string[];
+  tags: string[];
+  onDie?: boolean;
+}) {
   ledgerSyncSuite(
     {
       suite: onDie ? "activation flow backup activated on DIE" : "activation flow backup activated",
