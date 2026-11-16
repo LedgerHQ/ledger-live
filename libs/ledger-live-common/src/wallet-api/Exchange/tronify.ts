@@ -235,7 +235,7 @@ async function orderRentPayment(
   const request = await seam.buildEnergyRentRequest(intent, BigInt(params.approvedFee));
   const order = await seam.craftEnergyRentTransaction(request);
   const signableUntilMs = order.paymentExpiresAt - PENDING_RENT_EXPIRY_MARGIN_MS;
-  if (!(signableUntilMs > Date.now())) {
+  if (!Number.isFinite(signableUntilMs) || signableUntilMs <= Date.now()) {
     throw new Error("the rent payment expires before it can be signed");
   }
   const { toSign, paymentTxId } = seam.getEnergyRentSignaturePayload(order.transaction);
