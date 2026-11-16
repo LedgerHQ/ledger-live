@@ -270,8 +270,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.15.0
-      version: 1.15.0
+      specifier: 1.16.0
+      version: 1.16.0
     '@ledgerhq/device-signer-kit-tron':
       specifier: 0.3.0
       version: 0.3.0
@@ -23319,7 +23319,7 @@ importers:
         version: 1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.15.0(@ledgerhq/device-management-kit@1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
+        version: 1.16.0(@ledgerhq/device-management-kit@1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -29278,8 +29278,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.8.0
 
-  '@ledgerhq/device-signer-kit-solana@1.15.0':
-    resolution: {integrity: sha512-O8t4OgjnHS+pHu4Lcw+Xy4f73qbr4OHhLm2hmRikJsaIE7G/3MoZ1Anyjl3y3LOdzf18yFJWGlNb79Zy1RCBdQ==}
+  '@ledgerhq/device-signer-kit-solana@1.16.0':
+    resolution: {integrity: sha512-2w2Vrz+ke86QgX1v+Wsd7Q16aWOWlA+F70eYIHbaPns6Nq1JKoxhsQEU63CrD0Koj8NJk5vNFwoWy6fjmwRC5Q==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.11.0
 
@@ -48072,7 +48072,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-solana@1.15.0(@ledgerhq/device-management-kit@1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)':
+  '@ledgerhq/device-signer-kit-solana@1.16.0(@ledgerhq/device-management-kit@1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/context-module': 2.8.0(@ledgerhq/device-management-kit@1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/device-management-kit': 1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
