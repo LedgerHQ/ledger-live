@@ -77,6 +77,7 @@ function depsWith(accounts: AccountLike[] = []): PerpsDepositExecutionDeps {
     } as unknown as PerpsDepositExecutionDeps["deviceActions"],
     updateAccount,
     track,
+    broadcastDisabled: false,
   };
 }
 

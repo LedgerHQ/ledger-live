@@ -62,6 +62,7 @@ describe("executePerpsWithdraw", () => {
       result,
       targetCurrency: "ETH",
       track,
+      broadcastDisabled: false,
       ...overrides,
     });
 

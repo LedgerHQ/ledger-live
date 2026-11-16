@@ -33,7 +33,7 @@ export type PerpsWithdrawExecutionParams = Readonly<{
   targetCurrency: string;
   track: WithdrawTrack;
   /** Signs but never submits, as the submit moves real funds. */
-  broadcastDisabled?: boolean;
+  broadcastDisabled: boolean;
 }>;
 
 /**
@@ -50,7 +50,7 @@ export async function executePerpsWithdraw({
   onSigned,
   targetCurrency,
   track,
-  broadcastDisabled = false,
+  broadcastDisabled,
 }: PerpsWithdrawExecutionParams): Promise<PerpsWithdrawResult> {
   if (sourceAccount.type !== "Account") {
     throw new WithdrawUnsupportedRouteError("The withdraw source must be a main account");

@@ -96,7 +96,7 @@ export type PerpsDepositExecutionDeps = Readonly<{
   broadcastLogger?: (event: LogEvent) => void;
   track: PerpsDepositTrack;
   /** Skips tracking the swap, as the provider never gets the funds. */
-  broadcastDisabled?: boolean;
+  broadcastDisabled: boolean;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -121,7 +121,7 @@ export function usePerpsDepositExecution(
     updateAccount,
     broadcastLogger,
     track,
-    broadcastDisabled = false,
+    broadcastDisabled,
   }: PerpsDepositExecutionDeps,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
