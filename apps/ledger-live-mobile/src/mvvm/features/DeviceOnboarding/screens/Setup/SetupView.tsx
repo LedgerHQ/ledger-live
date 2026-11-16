@@ -19,6 +19,7 @@ import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDr
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupGlow } from "./components/SetupGlow";
+import { InfoCardView, InfoSheetView } from "./components/InfoSheets";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
 function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
@@ -53,6 +54,8 @@ export function SetupView({
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  infoCard,
+  infoSheet,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -116,6 +119,7 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
+        {infoCard ? <InfoCardView {...infoCard} /> : null}
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>
@@ -141,6 +145,7 @@ export function SetupView({
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
       />
+      {infoSheet ? <InfoSheetView {...infoSheet} /> : null}
     </Box>
   );
 }

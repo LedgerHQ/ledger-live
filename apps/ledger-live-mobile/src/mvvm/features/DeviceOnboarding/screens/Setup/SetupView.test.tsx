@@ -1,4 +1,5 @@
 import React from "react";
+import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, within } from "@tests/test-renderer";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -435,5 +436,82 @@ describe("SetupView", () => {
 
     expect(screen.getByText("Restore access")).toBeVisible();
     expect(screen.getByText("Secret Recovery Phrase")).toBeVisible();
+  });
+
+  it("should show no info card while the genuine check runs", () => {
+    renderSetup();
+
+    expect(screen.queryByTestId(setupTestIds.infoCard)).toBeNull();
+  });
+
+  it("should open the info sheet from the card without touching the device", async () => {
+    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
+      renderSetup({
+        stage: {
+          index: 3,
+          total: 5,
+          kind: "setupChoice",
+          indicator: "none",
+          infoCard: "setupChoice",
+        },
+      });
+
+    expect(screen.getByText("Which setup method?")).toBeVisible();
+    expect(screen.getByTestId(setupTestIds.infoSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+
+    await user.press(screen.getByTestId(setupTestIds.infoCard));
+
+    expect(screen.getByTestId(setupTestIds.infoSheet)).toHaveProp("accessibilityState", {
+      expanded: true,
+    });
+    expect(screen.getByText("Set up or restore?")).toBeVisible();
+    expect(screen.getByText("Set up as a new Ledger device")).toBeVisible();
+    for (const callback of [
+      onQuit,
+      onStart,
+      onRetry,
+      onCloseSheet,
+      onAcceptUpdate,
+      onDeclineUpdate,
+    ]) {
+      expect(callback).not.toHaveBeenCalled();
+    }
+  });
+
+  it("should open the Recovery Key sheet from the restore card", async () => {
+    const { user } = renderSetup({
+      stage: {
+        index: 4,
+        total: 5,
+        kind: "restore",
+        indicator: "none",
+        infoCard: "restoreRecoveryKey",
+      },
+    });
+
+    await user.press(screen.getByText("What’s a Secret Recovery Key?"));
+
+    expect(screen.getByText("Recovery Key")).toBeVisible();
+    expect(screen.getByText("Learn how to use")).toBeVisible();
+  });
+
+  it("should open the FAQ from the info sheet", async () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { user } = renderSetup({
+      stage: {
+        index: 4,
+        total: 5,
+        kind: "security",
+        indicator: "none",
+        infoCard: "recoveryPhrase",
+      },
+    });
+
+    await user.press(screen.getByTestId(setupTestIds.infoCard));
+    await user.press(screen.getByTestId(setupTestIds.infoSheetLink));
+
+    expect(openURL).toHaveBeenCalledWith(expect.stringContaining("what-is-a-recovery-phrase"));
   });
 });

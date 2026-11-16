@@ -8,6 +8,7 @@ export * from "./actors/genuineCheck";
 export * from "./actors/firmwareCheck";
 export * from "./actors/toggleEarlyCheck";
 export * from "./device/toggleEarlyCheckCommand";
+export * from "./device/recoveryKeyStatus";
 export * from "./actors/seedPolling";
 export * from "./host";
 export * from "./ports";

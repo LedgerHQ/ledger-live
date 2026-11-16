@@ -22,12 +22,20 @@ export type SetupIndicator = "none" | "loading" | "success";
 
 export type SetupStageDetail = "recoveryKey" | "recoveryPhrase";
 
+export type SetupInfoCard =
+  | "setupChoice"
+  | "recoveryPhrase"
+  | "restoreChoice"
+  | "recoveryKey"
+  | "restoreRecoveryKey";
+
 export type SetupStage = {
   index: number;
   total: number;
   kind: SetupStageKind;
   indicator: SetupIndicator;
   detail?: SetupStageDetail;
+  infoCard?: SetupInfoCard;
 };
 
 const touchOrder = [
@@ -62,6 +70,17 @@ const detailByState = new Map<string, SetupStageDetail>([
   ["deviceSetup.restoreWords", "recoveryPhrase"],
 ]);
 
+const infoCardByState = new Map<string, SetupInfoCard>([
+  ["deviceSetup.setupChoice", "setupChoice"],
+  ["deviceSetup.newSeed", "recoveryPhrase"],
+  ["deviceSetup.backupRecoveryKey", "recoveryKey"],
+  ["deviceSetup.restoreChoice", "restoreChoice"],
+  ["deviceSetup.restoreWords", "recoveryPhrase"],
+  ["deviceSetup.restoreRecoveryKey", "restoreRecoveryKey"],
+]);
+
+const recoveryKeyCards = new Set<SetupInfoCard>(["recoveryKey", "restoreRecoveryKey"]);
+
 const hiddenSetupStates = new Set(["deviceSetup.waiting"]);
 
 const finalSlot = SetupStageKind.Security;
@@ -88,10 +107,17 @@ function checksIndicator(machineState: string): SetupIndicator {
   return finishedChecksStates.has(machineState) ? "success" : "loading";
 }
 
+function infoCardOf(machineState: string, reportsRecoveryKey: boolean) {
+  const card = infoCardByState.get(machineState);
+  if (card && recoveryKeyCards.has(card) && !reportsRecoveryKey) return undefined;
+  return card;
+}
+
 export function toSetupStage(input: {
   machineState: string;
   currentStep: string | null;
   modelId: DeviceModelId;
+  reportsRecoveryKey: boolean;
 }): SetupStage | null {
   if (safetyWarningHidesStage(input.machineState, input.currentStep)) return null;
   if (hiddenSetupStates.has(input.machineState)) return null;
@@ -107,8 +133,14 @@ export function toSetupStage(input: {
 
   const indicator = kind === SetupStageKind.Checks ? checksIndicator(input.machineState) : "none";
   const detail = detailByState.get(input.machineState);
+  const infoCard = infoCardOf(input.machineState, input.reportsRecoveryKey);
 
-  return detail
-    ? { index, total: order.length, kind, indicator, detail }
-    : { index, total: order.length, kind, indicator };
+  return {
+    index,
+    total: order.length,
+    kind,
+    indicator,
+    ...(detail ? { detail } : {}),
+    ...(infoCard ? { infoCard } : {}),
+  };
 }

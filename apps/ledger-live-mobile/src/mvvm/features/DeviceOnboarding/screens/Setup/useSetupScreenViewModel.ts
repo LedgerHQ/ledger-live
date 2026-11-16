@@ -7,11 +7,18 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SetupScreenProps } from "./types";
 import type { SetupStage } from "./toSetupStage";
+import {
+  useInfoSheetsViewModel,
+  type InfoCardProps,
+  type InfoSheetProps,
+} from "./components/InfoSheets";
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
 export type SetupViewProps = ChecksDrawerProps &
   Readonly<{
+    infoCard: InfoCardProps | null;
+    infoSheet: InfoSheetProps | null;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
@@ -102,8 +109,11 @@ export function useSetupScreenViewModel({
     onNotGenuineClose: closeSheet,
     suspendSheets,
   });
+  const { infoCard, infoSheet } = useInfoSheetsViewModel(stage.infoCard);
 
   return {
+    infoCard,
+    infoSheet,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),
