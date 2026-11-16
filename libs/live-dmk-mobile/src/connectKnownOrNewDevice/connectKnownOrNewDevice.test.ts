@@ -148,12 +148,15 @@ describe("mobile connectKnownOrNewDevice", () => {
     jest.clearAllMocks();
   });
 
-  it("should delegate to the shared use case with the mobile dependencies", () => {
+  it("GIVEN mobile inputs on Android, WHEN calling connectKnownOrNewDevice, THEN it should delegate to the shared use case with the mobile dependencies", () => {
+    // GIVEN
     setPlatformOS("android");
     const getMockServerDevices = jest.fn(() => []);
 
+    // WHEN
     const { input, subscription } = setupTest({ getMockServerDevices, isPaused: true });
 
+    // THEN
     const { dmk, knownDevices$, removeKnownDevice, onConnected } = input;
     expect(mockedSharedUseCase).toHaveBeenCalledWith({
       dmk,
@@ -173,9 +176,11 @@ describe("mobile connectKnownOrNewDevice", () => {
     subscription.unsubscribe();
   });
 
-  it("should give pause and resume to the caller", () => {
+  it("GIVEN default inputs, WHEN calling connectKnownOrNewDevice, THEN it should give pause and resume to the caller", () => {
+    // GIVEN / WHEN
     const { output, subscription } = setupTest();
 
+    // THEN
     expect(output).toEqual({
       uiStates: expect.anything(),
       pause: expect.any(Function),
@@ -184,14 +189,17 @@ describe("mobile connectKnownOrNewDevice", () => {
     subscription.unsubscribe();
   });
 
-  it("should list a discovered USB device as available over USB", () => {
+  it("GIVEN a USB device discovered on Android, WHEN subscribing to the UI states, THEN it should list it as available over USB", () => {
+    // GIVEN
     setPlatformOS("android");
     discoverOn(RnHidDeviceDiscoverySource, rnHidTransportIdentifier, [
       discoveredDevice(rnHidTransportIdentifier, "usb-id"),
     ]);
 
+    // WHEN
     const { discoveringRows, subscription } = setupTest();
 
+    // THEN
     expect(discoveringRows()).toEqual([
       {
         key: `discovered:${rnHidTransportIdentifier}:${DeviceModelId.NANO_X}`,
@@ -202,7 +210,8 @@ describe("mobile connectKnownOrNewDevice", () => {
     subscription.unsubscribe();
   });
 
-  it("should list the BLE and USB mock devices with the connectivity of the mock server", () => {
+  it("GIVEN BLE and USB mock devices, WHEN subscribing to the UI states, THEN it should list them with the connectivity of the mock server", () => {
+    // GIVEN
     setPlatformOS("ios");
     discoverOn(MockServerDeviceDiscoverySource, mockserverIdentifier, [
       discoveredDevice(mockserverIdentifier, "mock-usb-id"),
@@ -210,6 +219,7 @@ describe("mobile connectKnownOrNewDevice", () => {
       discoveredDevice(mockserverIdentifier, "unknown-mock-ble-id"),
     ]);
 
+    // WHEN
     const { discoveringRows, subscription } = setupTest({
       isMockServerEnabled: true,
       knownDevices$: new BehaviorSubject([knownMockBleDevice]),
@@ -220,6 +230,7 @@ describe("mobile connectKnownOrNewDevice", () => {
       ],
     });
 
+    // THEN
     expect(discoveringRows()).toEqual([
       {
         key: `discovered:${mockserverIdentifier}:mock-usb-id`,
@@ -235,15 +246,18 @@ describe("mobile connectKnownOrNewDevice", () => {
     subscription.unsubscribe();
   });
 
-  it("should list a known BLE mock device that the mock server does not report as unavailable", () => {
+  it("GIVEN a known BLE mock device that the mock server does not report, WHEN subscribing to the UI states, THEN it should list it as unavailable", () => {
+    // GIVEN
     setPlatformOS("ios");
 
+    // WHEN
     const { discoveringRows, subscription } = setupTest({
       isMockServerEnabled: true,
       knownDevices$: new BehaviorSubject([knownMockBleDevice]),
       getMockServerDevices: () => [mockServerDevice("mock-ble-id", "BLE")],
     });
 
+    // THEN
     expect(discoveringRows()).toEqual([
       {
         key: `known:${mockserverIdentifier}:mock-ble-id`,

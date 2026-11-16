@@ -41,31 +41,40 @@ const setupTest = ({ isPaused }: { isPaused?: boolean } = {}) => {
 };
 
 describe("connectKnownOrNewDeviceUseCase", () => {
-  it("should start the state machine and emit Discovering when it is subscribed", () => {
+  it("GIVEN a use case, WHEN subscribing, THEN it should start the state machine and emit Discovering", () => {
+    // GIVEN
     const { deviceDiscoveryService, states, subscribe } = setupTest();
 
+    // WHEN
     const subscription = subscribe();
 
+    // THEN
     expect(states.at(-1)?.type).toBe(ConnectKnownOrNewDeviceUIStateTypes.Discovering);
     expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
     subscription.unsubscribe();
   });
 
-  it("should stop discovery when it is unsubscribed", () => {
+  it("GIVEN a subscribed use case, WHEN unsubscribing, THEN it should stop discovery", () => {
+    // GIVEN
     const { deviceDiscoveryService, subscribe } = setupTest();
 
+    // WHEN
     subscribe().unsubscribe();
 
+    // THEN
     expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
   });
 
-  it("should emit UnknownError and complete when the state machine fails", () => {
+  it("GIVEN a subscribed use case, WHEN the state machine fails, THEN it should emit UnknownError and complete", () => {
+    // GIVEN
     const { complete, connectedDevices$, states, subscribe } = setupTest();
     const failure = new Error("session state failed");
-
     subscribe();
+
+    // WHEN
     connectedDevices$.error(failure);
 
+    // THEN
     expect(states.at(-1)).toEqual({
       type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError,
       error: failure,
@@ -73,45 +82,61 @@ describe("connectKnownOrNewDeviceUseCase", () => {
     expect(complete).toHaveBeenCalledTimes(1);
   });
 
-  it("should start a new state machine when it is subscribed again after an UnknownError", () => {
+  it("GIVEN a use case that emitted an UnknownError, WHEN subscribing again, THEN it should start a new state machine", () => {
+    // GIVEN
     const { connectedDevices$, deviceDiscoveryService, states, subscribe } = setupTest();
-
     subscribe();
     connectedDevices$.error(new Error("session state failed"));
+
+    // WHEN
     const subscription = subscribe();
 
+    // THEN
     expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
     expect(states.at(-1)?.type).toBe(ConnectKnownOrNewDeviceUIStateTypes.UnknownError);
     subscription.unsubscribe();
   });
 
-  it("should stop discovery when it is paused and start it again when it resumes", () => {
+  it("GIVEN a subscribed use case, WHEN it is paused and then resumed, THEN it should stop discovery and start it again", () => {
+    // GIVEN
     const { deviceDiscoveryService, subscribe, useCase } = setupTest();
-
     const subscription = subscribe();
+
+    // WHEN
     useCase.pause();
+
+    // THEN
     expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+
+    // WHEN
     useCase.resume();
 
+    // THEN
     expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
     subscription.unsubscribe();
   });
 
-  it("should not start discovery when it is subscribed after a pause", () => {
+  it("GIVEN a paused use case, WHEN subscribing, THEN it should not start discovery", () => {
+    // GIVEN
     const { deviceDiscoveryService, subscribe, useCase } = setupTest();
-
     useCase.pause();
+
+    // WHEN
     const subscription = subscribe();
 
+    // THEN
     expect(deviceDiscoveryService.start).not.toHaveBeenCalled();
     subscription.unsubscribe();
   });
 
-  it("should not start discovery when it starts paused", () => {
+  it("GIVEN a use case that starts paused, WHEN subscribing, THEN it should not start discovery", () => {
+    // GIVEN
     const { deviceDiscoveryService, subscribe } = setupTest({ isPaused: true });
 
+    // WHEN
     const subscription = subscribe();
 
+    // THEN
     expect(deviceDiscoveryService.start).not.toHaveBeenCalled();
     subscription.unsubscribe();
   });
