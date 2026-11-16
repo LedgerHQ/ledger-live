@@ -19,6 +19,10 @@ function loggedErrors(): string {
   return JSON.stringify(jest.mocked(console.error).mock.calls);
 }
 
+function accountKey(xpub: string): string {
+  return `accounts.active.js:2:bitcoin:${xpub}:native_segwit`;
+}
+
 describe("storage", () => {
   let mockInitStorageState: jest.SpyInstance;
 
@@ -228,6 +232,32 @@ describe("storage", () => {
       });
     });
 
+    describe("handles bulk get error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        getMethod = jest.spyOn(asyncStorageWrapper, "get").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .get([accountKey("xpubTestAccount1"), accountKey("xpubTestAccount2")])
+          .catch(noop);
+      });
+
+      it("should log the key count and operation but not the keys", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "get",
+          keyCount: 2,
+        });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
+      });
+    });
+
     describe("read errors with MMKV", () => {
       const readCount = 6;
       let lastSyntaxError: SyntaxError;
@@ -413,17 +443,18 @@ describe("storage", () => {
         // Act
         await storage
           .save([
-            ["account1", { privatekey: "secret-bulk-value-1" }],
-            ["account2", { privatekey: "secret-bulk-value-2" }],
+            [accountKey("xpubTestAccount1"), { privatekey: "secret-bulk-value-1" }],
+            [accountKey("xpubTestAccount2"), { privatekey: "secret-bulk-value-2" }],
           ])
           .catch(noop);
       });
 
-      it("should log the key names and operation but not the values", () => {
+      it("should log the key count and operation but not the keys or values", () => {
         expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
           op: "save",
-          key: ["account1", "account2"],
+          keyCount: 2,
         });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
         expect(loggedErrors()).not.toContain("secret-bulk-value");
       });
     });
@@ -605,6 +636,32 @@ describe("storage", () => {
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
+      });
+    });
+
+    describe("handles bulk delete error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        deleteMethod = jest.spyOn(asyncStorageWrapper, "delete").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .delete([accountKey("xpubTestAccount1"), accountKey("xpubTestAccount2")])
+          .catch(noop);
+      });
+
+      it("should log the key count and operation but not the keys", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "delete",
+          keyCount: 2,
+        });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
       });
     });
   });

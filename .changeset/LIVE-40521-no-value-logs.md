@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Stop logging stored values when a storage save or push fails
+Stop logging stored values and bulk account keys when a storage operation fails
