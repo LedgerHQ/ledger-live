@@ -277,6 +277,13 @@ export type BridgeApi = {
    */
   tokenOptParentRow?: boolean;
   /**
+   * When true, the coin module names the payer of every fee its account paid (ADR-016): a native
+   * operation's value leaves out a fee whose `feesPayer` is another account or is unset, as on a
+   * zkSync paymaster transaction. Left unset, the value holds the fee whoever paid it, and a family
+   * such as Hedera takes a sponsored fee out in its own `adaptOperations`.
+   */
+  excludesFeesPaidByOthers?: boolean;
+  /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
