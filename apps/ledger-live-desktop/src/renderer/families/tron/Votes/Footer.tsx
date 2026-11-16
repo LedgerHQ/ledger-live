@@ -9,9 +9,10 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 type Props = {
   total: number;
   used: number;
+  disabled: boolean;
   onClick: () => void;
 };
-const Footer = ({ total, used }: Props) => {
+const Footer = ({ total, used, disabled, onClick }: Props) => {
   const discreet = useDiscreetMode();
   const percentVotesUsed = Math.floor(100 * (used / total)) / 100;
   if (percentVotesUsed >= 1) return null;
@@ -32,7 +33,7 @@ const Footer = ({ total, used }: Props) => {
         </Text>
       </Box>
       <Box flex="1" />
-      <Button primary disabled={true}>
+      <Button primary disabled={disabled} onClick={onClick}>
         <Trans i18nKey="tron.voting.remainingVotes.button" />
       </Button>
     </Box>

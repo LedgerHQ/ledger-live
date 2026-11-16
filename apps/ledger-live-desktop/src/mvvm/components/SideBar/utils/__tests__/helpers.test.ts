@@ -17,6 +17,7 @@ describe("pathnameToActive", () => {
     { pathname: "/card/something", expected: "card" },
     { pathname: SIDEBAR_VALUE_TO_PATH.paytab, expected: "paytab" },
     { pathname: "/paytab/details", expected: "paytab" },
+    { pathname: "/agent-intent", expected: "agents" },
   ])('should return "$expected" for pathname "$pathname"', ({ pathname, expected }) => {
     expect(pathnameToActive(pathname)).toBe(expected);
   });

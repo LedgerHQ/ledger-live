@@ -1,8 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
+import { track } from "@shared/analytics";
 import { analyticsCatalog } from "../../analytics.mock";
 import { useAnalyticsFiltersViewModel } from "./useAnalyticsFiltersViewModel";
 import type { AnalyticsFiltersProps } from "./AnalyticsFilters.types";
 import type { AnalyticsSelection } from "../../types";
+
+jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+
+beforeEach(() => jest.clearAllMocks());
 
 const labels = {
   assets: "Asset filter",
@@ -70,6 +75,7 @@ describe("useAnalyticsFiltersViewModel", () => {
       ariaLabel: "Account filter, Savings",
       value: "tron-account",
       triggerLabel: "Savings",
+      selectedMeta: { iconId: "tron", ticker: "TRX", networkName: "Tron" },
       disabled: false,
     });
     expect(result.current.account?.items.map(item => item.meta?.networkName)).toEqual([
@@ -90,5 +96,97 @@ describe("useAnalyticsFiltersViewModel", () => {
     expect(props.selectAsset).toHaveBeenNthCalledWith(2, null);
     expect(props.selectAccount).toHaveBeenNthCalledWith(1, "tron-account");
     expect(props.selectAccount).toHaveBeenNthCalledWith(2, null);
+  });
+
+  describe("tracking", () => {
+    const ethAccountSelection: AnalyticsSelection = {
+      assetId: "eth",
+      accountId: "eth-account",
+      metric: "balance",
+    };
+
+    it("should track nothing when the filters render a preselection", () => {
+      renderHook(() => useAnalyticsFiltersViewModel(createProps(ethAccountSelection)));
+      expect(track).not.toHaveBeenCalled();
+    });
+
+    it("should track each dropdown once when it opens and nothing when it closes", () => {
+      const { result } = renderHook(() =>
+        useAnalyticsFiltersViewModel(createProps(ethAccountSelection)),
+      );
+      act(() => result.current.asset.onOpenChange(true));
+      act(() => result.current.asset.onOpenChange(false));
+      act(() => result.current.account?.onOpenChange(true));
+      act(() => result.current.account?.onOpenChange(false));
+      expect(jest.mocked(track).mock.calls).toEqual([
+        ["button_clicked", { button: "asset filter", page: "Analytics" }],
+        ["button_clicked", { button: "account filter", page: "Analytics" }],
+      ]);
+    });
+
+    it("should track the asset change with the asset names", () => {
+      const { result } = renderHook(() =>
+        useAnalyticsFiltersViewModel(createProps(ethAccountSelection)),
+      );
+      act(() => result.current.asset.onValueChange("btc"));
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("filter_changed", {
+        filter: "Asset",
+        page: "Analytics",
+        value: "Bitcoin",
+        previousValue: "Ethereum",
+      });
+    });
+
+    it("should track the account change with the network names, never the account names", () => {
+      const { result } = renderHook(() =>
+        useAnalyticsFiltersViewModel(createProps(ethAccountSelection)),
+      );
+      act(() => result.current.account?.onValueChange("tron-account"));
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("filter_changed", {
+        filter: "Account",
+        page: "Analytics",
+        value: "Tron",
+        previousValue: "Ethereum",
+      });
+    });
+
+    it("should track the All options with a locale-independent value", () => {
+      const { result } = renderHook(() =>
+        useAnalyticsFiltersViewModel(createProps(ethAccountSelection)),
+      );
+      act(() => result.current.account?.onValueChange(""));
+      act(() => result.current.asset.onValueChange(""));
+      expect(jest.mocked(track).mock.calls).toEqual([
+        [
+          "filter_changed",
+          { filter: "Account", page: "Analytics", value: "all", previousValue: "Ethereum" },
+        ],
+        [
+          "filter_changed",
+          { filter: "Asset", page: "Analytics", value: "all", previousValue: "Ethereum" },
+        ],
+      ]);
+    });
+
+    it("should track nothing when the current option is picked again", () => {
+      const props = createProps(ethAccountSelection);
+      const { result } = renderHook(() => useAnalyticsFiltersViewModel(props));
+      act(() => result.current.asset.onValueChange("eth"));
+      act(() => result.current.account?.onValueChange("eth-account"));
+      expect(track).not.toHaveBeenCalled();
+      expect(props.selectAsset).not.toHaveBeenCalled();
+      expect(props.selectAccount).not.toHaveBeenCalled();
+    });
+
+    it("should track nothing when a new asset resets the account filter", () => {
+      const { rerender } = renderHook(
+        (selection: AnalyticsSelection) => useAnalyticsFiltersViewModel(createProps(selection)),
+        { initialProps: ethAccountSelection },
+      );
+      rerender({ assetId: "usdc", accountId: null, metric: "balance" });
+      expect(track).not.toHaveBeenCalled();
+    });
   });
 });

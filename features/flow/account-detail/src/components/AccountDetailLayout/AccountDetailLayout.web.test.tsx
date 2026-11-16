@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { AccountDetailLayout } from "./AccountDetailLayout.web";
+import { AccountDetailLayout } from "./AccountDetailLayout";
 
 const slotIds = () =>
   [

@@ -1,2 +1,2 @@
-export * from "./networkState.web";
+export * from "./networkState";
 export type * from "./types";

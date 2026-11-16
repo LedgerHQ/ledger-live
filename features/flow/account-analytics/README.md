@@ -46,8 +46,8 @@ state and its legacy portfolio code:
   package maps them.
 - **Renderers.** `useAnalyticsBalanceSummary` and `useAnalyticsPnlPositions` give the statuses,
   the current balance and the scoped positions a host renderer shows.
-- **Settings.** `toAnalyticsPeriod` maps the host range setting, and `resolveAnalyticsFiatCurrencyId`
-  falls back to USD for an unknown countervalue ticker.
+- **Settings.** `toAnalyticsPeriod` maps the host range setting. The query context carries the
+  ticker of the host countervalue, fiat or crypto, the same currency the balance port reads.
 
 ## Tracking
 

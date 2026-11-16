@@ -6,6 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { atlasOf, swapTokens } from "../sandboxEvm";
@@ -94,13 +95,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic BNB Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    sandbox = await startSandbox(
-      { family: "evm", network: "bsc" },
-      {
-        node: { implementation: "geth", version: "1.8.2" },
-        indexer: { implementation: "atlas", version: "2.38.26" },
-      },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "bsc" }, sandboxVersions("bsc"));
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {
       throw new Error("the sandbox instance has no node or indexer endpoint");

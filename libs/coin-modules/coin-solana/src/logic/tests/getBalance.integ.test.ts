@@ -1,19 +1,11 @@
 import { Keypair } from "@solana/web3.js";
 import { getChainAPI } from "../../network";
+import { chainConfigFrom } from "../../utils";
 import { getBalance } from "../getBalance";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import type { SolanaCoinConfig } from "../../config";
-import { TEST_CONFIG } from "../../test/coinConfig";
+import { solanaDefaults } from "../../config";
 
-const config: SolanaCoinConfig = {
-  token2022Enabled: false,
-  legacyOCMSMaxVersion: "1.0.0",
-  rpcUrl: "https://solana.coin.ledger.com",
-  status: { type: "active" },
-  name: "Solana",
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
-};
-const api = getChainAPI({ endpoint: config.rpcUrl });
+const api = getChainAPI(chainConfigFrom(solanaDefaults.solana));
 
 const FUNDED_ADDRESS = "248UcgYhsiuWZRRWodL6dH8FqLZQxWkqexMWZjUmUPjL";
 const UNFUNDED_ADDRESS = Keypair.generate().publicKey.toBase58();
@@ -50,7 +42,9 @@ function expectTokenBalance(balance: Balance) {
 
 describe("getBalance (integration)", () => {
   it("returns native balance for a funded account", async () => {
-    const balances = await getBalance(api, TEST_CONFIG, FUNDED_ADDRESS);
+    const balances = await getBalance(api, solanaDefaults.solana, FUNDED_ADDRESS, {
+      token2022Enabled: solanaDefaults.solana.token2022Enabled,
+    });
 
     expect(balances.length).toBeGreaterThanOrEqual(1);
 
@@ -73,7 +67,9 @@ describe("getBalance (integration)", () => {
   });
 
   it("returns zero balance for an unfunded account", async () => {
-    const balances = await getBalance(api, TEST_CONFIG, UNFUNDED_ADDRESS);
+    const balances = await getBalance(api, solanaDefaults.solana, UNFUNDED_ADDRESS, {
+      token2022Enabled: solanaDefaults.solana.token2022Enabled,
+    });
 
     expect(balances).toHaveLength(1);
     expect(balances[0].asset).toEqual({ type: "native" });

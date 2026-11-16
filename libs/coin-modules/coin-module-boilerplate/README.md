@@ -33,6 +33,10 @@ const boilerplateConfig = {
 
 Optional fields are read as `config.x ?? DEFAULT_X`, with the default documented by `@default` on the field in `src/config.ts`.
 
+### Defaults (ADR-063)
+
+`src/config.ts` also exports `boilerplateDefaults`: the default config per currency id, as plain data typed with `satisfies Record<string, BoilerplateCoinConfig>`. It must not import a config library nor contain env-aware logic; hosts wrap or override it. When copying the module for a new coin, rename it along with the other `Boilerplate*` identifiers. Changing a default value is a patch bump.
+
 ## Logging
 
 Log through `context.logger` (type `Logger` from `@ledgerhq/coin-module-framework/config`) and pass it down as the first parameter of the logic and network functions that need it.

@@ -1,4 +1,4 @@
-import { createRandomBase64Url, sha256Base64Url } from "../crypto.web";
+import { createRandomBase64Url, sha256Base64Url } from "../crypto";
 
 // jsdom ships `getRandomValues` but no `subtle`, so the whole WebCrypto surface these two functions
 // touch is stubbed — deterministically, to assert the base64url encoding rather than the browser's.

@@ -82,6 +82,7 @@ let mintPrograms: Record<string, string | undefined>;
 let calTokens: Record<string, TokenCandidate[]>;
 let tickerLookups: string[];
 let accountTokens: Record<string, TokenCandidate[]>;
+let accountSkippedTokenIds: string[];
 let accountTokensError: Error | undefined;
 let accountLookups: number;
 
@@ -149,9 +150,12 @@ beforeAll(() =>
           token => token.ticker === ticker || token.ticker === ticker.toUpperCase(),
         );
       },
-      findAccountTokens: async (account: { address: string }) => {
+      findAccountTokens: async (account: { key: string }) => {
         if (accountTokensError) throw accountTokensError;
-        return accountTokens[account.address] ?? [];
+        return {
+          tokens: accountTokens[account.key] ?? [],
+          skippedTokenIds: accountSkippedTokenIds,
+        };
       },
     },
   }),
@@ -215,6 +219,7 @@ describe("agent-intent send", () => {
     calTokens = { ethereum: [usdc, pepe, pepeCopy], solana: [usdcMint, pyusdMint] };
     tickerLookups = [];
     accountTokens = {};
+    accountSkippedTokenIds = [];
     accountTokensError = undefined;
     accountLookups = 0;
     restore = installOutputCapture({
@@ -565,6 +570,18 @@ describe("agent-intent send", () => {
       ]);
       expect(tickerLookups).toEqual([]);
       expect(stderrLines()).toContain(`PEPE is ${PEPE} (Pepe), held by "ethereum-1".`);
+    });
+
+    it("warns on stderr about a token the --account holds that was skipped for having no unit", async () => {
+      accountTokens = { [SENDER]: [pepe] };
+      accountSkippedTokenIds = ["ethereum/erc20/no_units"];
+
+      await runSend({ from: undefined, account: "ethereum-1", amount: "1 PEPE", output: "json" });
+
+      expect(submittedIntents).toHaveLength(1);
+      expect(stderrLines()).toContain(
+        "⚠ Skipped token ethereum/erc20/no_units: the Crypto Assets List gives no unit for it.",
+      );
     });
 
     it("looks the --account up in the session once for its network, sender and tokens", async () => {

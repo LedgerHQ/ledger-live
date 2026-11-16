@@ -1,5 +1,5 @@
 import * as ExpoClipboard from "expo-clipboard";
-import { copyToClipboard, readClipboard } from "./clipboard.native";
+import { copyToClipboard, readClipboard } from "./clipboard";
 
 jest.mock("expo-clipboard", () => ({
   setStringAsync: jest.fn(),

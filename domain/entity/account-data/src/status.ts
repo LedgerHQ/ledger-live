@@ -111,12 +111,12 @@ export const accountDataSlice = createSlice({
     accountDataRequested: (state, { payload }: PayloadAction<AccountDataRequested>) => {
       const status = statusOf(state, payload);
       status.request = { id: payload.requestId, append: payload.append };
-      status.error = undefined;
+      delete status.error;
     },
     accountDataFailed: (state, { payload }: PayloadAction<AccountDataFailed>) => {
       const status = statusOf(state, payload);
       if (!isCurrent(status, payload.requestId)) return;
-      status.request = undefined;
+      delete status.request;
       status.error = payload.error;
     },
   },
@@ -125,10 +125,11 @@ export const accountDataSlice = createSlice({
       const status = statusOf(state, payload);
       if (!isCurrent(status, payload.requestId)) return;
       if (!payload.append) status.readAt = payload.readAt;
-      status.request = undefined;
-      status.error = undefined;
+      delete status.request;
+      delete status.error;
       status.sourceId = payload.sourceId;
-      status.nextCursor = payload.nextCursor;
+      if (payload.nextCursor === undefined) delete status.nextCursor;
+      else status.nextCursor = payload.nextCursor;
     });
   },
 });

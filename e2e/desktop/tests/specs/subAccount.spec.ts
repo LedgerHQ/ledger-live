@@ -420,7 +420,7 @@ const tokenTransactionInvalid: Array<{
   },
   {
     tx: new Transaction(
-      TokenAccount.SOL_GIGA_3,
+      TokenAccount.SOL_GIGA_4,
       TokenAccount.SOL_GIGA_1,
       "0.5",
       undefined,

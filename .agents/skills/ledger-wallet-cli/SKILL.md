@@ -32,7 +32,7 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 | `ring encrypt` / `decrypt` | no | yes | yes | no |
 | `ring keys` | no | no | no | no |
 | `ring destroy` | no | yes | yes | typed `destroy` |
-| `agent-intent enroll` / `recover` | no | yes (`recover`: no for a `plaintext-file` profile) | yes | open link, compare fingerprint, approve on device; a background listener waits (`enroll --detach`) or the command itself (`recover`, and `enroll` on Windows) |
+| `agent-intent enroll` / `recover` | no | yes (`recover`: no for a `plaintext-file` profile) | yes | open link, compare fingerprint, approve on device; a background listener waits (`enroll --detach`) or the command itself (`recover`) |
 | `agent-intent list` / `show` / `wait` | no | no | no | no |
 | `agent-intent sync` / `intents` / `status` | no | yes (no for a `plaintext-file` profile) | yes | no |
 | `agent-intent send` | no | yes (no with `--dry-run` or for a `plaintext-file` profile) | yes (dry run: looks up the token) | human approves or rejects the intent via the review link |

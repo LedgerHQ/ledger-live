@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-request",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "private": true,
   "description": "Pay request flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -11,7 +11,6 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
-    "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -30,7 +29,6 @@
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/ui-qr-code": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

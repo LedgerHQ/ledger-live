@@ -139,7 +139,7 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions = {}) {
+  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions) {
     if (await isAccountDetailEnabled(this.page)) {
       await this.accountDetail.clickEarn({ asset, ...syncOptions });
       return;

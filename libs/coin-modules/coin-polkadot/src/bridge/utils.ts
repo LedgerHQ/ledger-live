@@ -2,7 +2,12 @@ import type { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { PolkadotCoinConfig } from "../config";
 import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
-import type { PolkadotAccount, PolkadotStakingProgress, Transaction } from "../types";
+import type {
+  PolkadotAccount,
+  PolkadotNomination,
+  PolkadotStakingProgress,
+  Transaction,
+} from "../types";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10_000_000_000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1_000_000_000); // Polkadot recommended Existential Deposit error margin
@@ -268,3 +273,6 @@ export const calculateAmount = ({
 
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
+
+export const isNominationKeepable = (nomination: PolkadotNomination): boolean =>
+  !!nomination.status && nomination.isRegistered !== false;

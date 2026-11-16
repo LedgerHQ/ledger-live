@@ -44,4 +44,14 @@ describe("SimplifiedTransactionConfirm", () => {
     const { container } = render(<SimplifiedTransactionConfirm device={mockDevice} />);
     expect(container.querySelectorAll("p")).toHaveLength(1);
   });
+
+  it("renders from a device model alone", () => {
+    render(<SimplifiedTransactionConfirm deviceModelId={DeviceModelId.nanoS} />);
+    expect(screen.getByTestId("send-signature-prompt")).toBeVisible();
+  });
+
+  it("renders the title override instead of the device instruction", () => {
+    render(<SimplifiedTransactionConfirm device={mockDevice} title="Confirm transfer" />);
+    expect(screen.getByTestId("send-signature-title")).toHaveTextContent("Confirm transfer");
+  });
 });

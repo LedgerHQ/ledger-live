@@ -40,4 +40,28 @@ describe("FooterSection", () => {
 
     expect(screen.queryByRole("button", { name: "View in explorer" })).not.toBeInTheDocument();
   });
+
+  it("should call the return action when it is clicked", async () => {
+    const onClick = jest.fn();
+    const { user } = render(
+      <FooterSection
+        explorerUrl="https://explorer.test/tx/1"
+        isLoading={false}
+        returnAction={{ label: "Return to Perps", onClick }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Return to Perps" }));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "View in explorer" })).toBeVisible();
+  });
+
+  it("should keep the return action while the explorer action is loading", () => {
+    render(
+      <FooterSection isLoading returnAction={{ label: "Return to Perps", onClick: jest.fn() }} />,
+    );
+
+    expect(screen.getByRole("button", { name: "Return to Perps" })).toBeVisible();
+  });
 });

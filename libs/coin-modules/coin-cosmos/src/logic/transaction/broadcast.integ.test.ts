@@ -1,4 +1,5 @@
-import { makeTestApi, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { broadcast } from "./broadcast";
 
 describe("broadcast (integ, Cosmos Hub)", () => {
@@ -8,7 +9,8 @@ describe("broadcast (integ, Cosmos Hub)", () => {
   // gets the LCD to reject the same way — without ever needing a funded key or a valid signature,
   // and without pushing anything onto the chain.
   it("rejects a bogus, non-decodable transaction — never actually broadcasts", async () => {
-    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+    const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
     await expect(broadcast(api, "deadbeef")).rejects.toThrow();
   });

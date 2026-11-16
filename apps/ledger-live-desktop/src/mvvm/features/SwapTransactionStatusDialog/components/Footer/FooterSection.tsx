@@ -4,12 +4,23 @@ import { Button, Skeleton } from "@ledgerhq/lumen-ui-react";
 import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import { openURL } from "~/renderer/linking";
 
+export type FooterReturnAction = Readonly<{
+  label: string;
+  onClick: () => void;
+}>;
+
 type FooterSectionProps = Readonly<{
+  explorerUrl?: string;
+  isLoading: boolean;
+  returnAction?: FooterReturnAction;
+}>;
+
+type ExplorerButtonProps = Readonly<{
   explorerUrl?: string;
   isLoading: boolean;
 }>;
 
-export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
+function ExplorerButton({ explorerUrl, isLoading }: ExplorerButtonProps) {
   const { t } = useTranslation();
 
   if (isLoading) {
@@ -34,5 +45,26 @@ export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
     >
       {t("swap2.modals.transactionStatus.actions.viewInExplorer")}
     </Button>
+  );
+}
+
+export function FooterSection({ explorerUrl, isLoading, returnAction }: FooterSectionProps) {
+  if (!returnAction) {
+    return <ExplorerButton explorerUrl={explorerUrl} isLoading={isLoading} />;
+  }
+
+  return (
+    <div className="flex flex-col gap-8">
+      <Button
+        appearance="base"
+        isFull
+        size="md"
+        data-testid="swap-transaction-return-btn"
+        onClick={returnAction.onClick}
+      >
+        {returnAction.label}
+      </Button>
+      <ExplorerButton explorerUrl={explorerUrl} isLoading={isLoading} />
+    </div>
   );
 }

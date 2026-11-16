@@ -29,7 +29,7 @@ describe("toV1 (V0 → V1)", () => {
     const v1 = toV1(BTC_V0);
     expect(v1.type).toBe("utxo");
     expect(v1.network).toBe(NetworkIdSchema.parse("bitcoin"));
-    expect((v1 as UtxoAccountDescriptorV1).xpub).toBe(XPUB);
+    expect((v1 as UtxoAccountDescriptorV1).key).toBe(XPUB);
     // native_segwit → purpose 84
     expect((v1 as UtxoAccountDescriptorV1).path).toMatch(/^m\/84h/);
   });
@@ -44,7 +44,7 @@ describe("toV1 (V0 → V1)", () => {
     const v1 = toV1(ETH_V0);
     expect(v1.type).toBe("address");
     expect(v1.network).toBe(NetworkIdSchema.parse("ethereum"));
-    expect((v1 as AccountBasedDescriptorV1).address).toBe(ETH_ADDR);
+    expect((v1 as AccountBasedDescriptorV1).key).toBe(ETH_ADDR);
     // BIP44 → purpose 44
     expect((v1 as AccountBasedDescriptorV1).path).toMatch(/^m\/44h/);
   });
@@ -71,7 +71,7 @@ describe("toV0 (V1 → V0)", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
-      xpub: XPUB,
+      key: XPUB,
       path: "m/84h/0h/0h",
     };
     const v0 = toV0(btcV1);
@@ -112,7 +112,7 @@ describe("toV0 (V1 → V0)", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
-      xpub: XPUB,
+      key: XPUB,
       path: "m/999h/0h/0h",
     };
     expect(() => toV0(badV1)).toThrow(UnsupportedFamilyError);

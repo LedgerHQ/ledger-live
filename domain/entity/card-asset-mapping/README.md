@@ -1,7 +1,7 @@
 # @domain/entity-card-asset-mapping
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package; the catalog grows as the provider's asset ids are confirmed.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Maps an asset as a card provider names it onto the Ledger currency it actually is. One catalog per
 provider; Baanx is the only one so far.

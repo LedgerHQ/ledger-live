@@ -31,6 +31,7 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
+  deviceIntentStepElement,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
@@ -57,6 +58,7 @@ function View({
           />
         </Flex>
       </QueuedDrawer>
+      {deviceIntentStepElement}
     </>
   );
 }

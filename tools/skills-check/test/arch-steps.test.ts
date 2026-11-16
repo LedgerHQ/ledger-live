@@ -68,10 +68,8 @@ describe("lint:arch and the CI boundaries job", () => {
   });
 
   it("run the same checks in this repository", () => {
-    const rootScripts = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).scripts as Record<
-      string,
-      string
-    >;
+    const rootScripts = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
+      .scripts as Record<string, string>;
     const job = readFileSync(join(root, ".github/workflows/test-boundaries-reusable.yml"), "utf8");
     const { checks, unclassified } = boundariesJobChecks(job, rootScripts);
     assert.deepEqual(unclassified, []);

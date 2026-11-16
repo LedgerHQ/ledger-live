@@ -50,6 +50,6 @@ jobs:
 
       - name: Run Danger
         working-directory: tools/danger
-        run: pnpm danger ci --dangerfile dangerfile.ts
+        run: pnpm danger ci --dangerfile dangerfile.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

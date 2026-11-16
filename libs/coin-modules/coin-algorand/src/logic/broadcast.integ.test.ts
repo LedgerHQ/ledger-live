@@ -1,16 +1,14 @@
 import algosdk, { base64ToBytes, makePaymentTxnWithSuggestedParamsFromObject } from "algosdk";
 import { broadcast } from "./broadcast";
-import type { AlgorandCoinConfig } from "../config";
+import { algorandDefaults, type AlgorandCoinConfig } from "../config";
 import { getTransactionParams } from "../network/algod";
 import { createMockAlgorandContext } from "../test/context";
 
 describe("Broadcast", () => {
   const mockAlgorandConfig: AlgorandCoinConfig = {
-    status: { type: "active" },
-    name: "Algorand",
-    unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
+    ...algorandDefaults.algorand,
     node: "https://algorand.coin.ledger.com/ps2/v2",
-    indexer: "",
+    indexer: "https://algorand.coin.ledger.com/idx2/v2",
   };
 
   it("throws on insufficient funds", async () => {

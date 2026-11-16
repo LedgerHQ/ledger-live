@@ -1,5 +1,5 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { estimateFees } from "./estimateFees";
 
 const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
@@ -9,16 +9,9 @@ const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716
 describe.skip("estimateFees", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: "https://fullnode.mainnet.sui.io:443",
-      },
+      ...suiDefaults.sui,
+      status: { type: "active" },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

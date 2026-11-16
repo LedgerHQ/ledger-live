@@ -102,6 +102,7 @@ const iconsComponent = {
   FEES: IconFees,
   OPT_IN: IconPlus,
   OPT_OUT: IconTrash,
+  OPT_EDIT: IconPlus,
   CLOSE_ACCOUNT: IconTrash,
   APPROVE: IconPlus,
   PRE_APPROVAL: IconPlus,

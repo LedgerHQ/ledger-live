@@ -29,6 +29,7 @@ import type {
   BuildTransactionResult,
 } from "@ledgerhq/coin-zcash/network/types";
 import type { ZCashClientDeps } from "@ledgerhq/coin-zcash/network/ZCash";
+import type { RegtestActivationHeightsJs } from "@ledgerhq/zcash-utils";
 import { toRegtestAddress } from "./regtestAddress";
 
 // The pinned catalog @ledgerhq/zcash-utils only added regtest network support
@@ -67,6 +68,27 @@ const { createSyncTimeEstimator } = jest.requireActual<ZCashSyncEstimatorModule>
  */
 const capturedPcztHexByAccount = new Map<number, string>();
 
+/**
+ * Activation schedule the native builder is told the regtest node runs. The
+ * builder learns heights from nowhere else, so a node that schedules NU7 needs
+ * the same height here for the builder to cap a transaction's expiry below it.
+ * Left undefined, the builder keeps its canonical regtest set (NU7 unscheduled).
+ */
+let regtestActivationHeights: RegtestActivationHeightsJs | undefined;
+
+export function setRegtestActivationHeights(heights: RegtestActivationHeightsJs | undefined): void {
+  regtestActivationHeights = heights;
+}
+
+/** Forgets the PCZT captured for an account, so a later lookup proves a fresh build ran. */
+export function clearCapturedPcztHex(accountIndex: number): void {
+  capturedPcztHexByAccount.delete(accountIndex);
+}
+
+// coin-zcash's build args do not declare `regtestActivationHeights`, but its
+// engine forwards the whole object to the native builder, which reads it.
+type WithRegtestHeights<T> = T & { regtestActivationHeights?: RegtestActivationHeightsJs };
+
 export function getCapturedPcztHex(accountIndex: number): string {
   const hex = capturedPcztHexByAccount.get(accountIndex);
   if (!hex) {
@@ -80,8 +102,9 @@ export function getCapturedPcztHex(accountIndex: number): string {
 async function recordingBuildTransactionJob(
   args: Omit<BuildTransactionArgs, "requestId">,
 ): Promise<BuildTransactionResult> {
-  const regtestArgs: Omit<BuildTransactionArgs, "requestId"> = {
+  const regtestArgs: WithRegtestHeights<Omit<BuildTransactionArgs, "requestId">> = {
     ...args,
+    ...(regtestActivationHeights && { regtestActivationHeights }),
     network: BUILD_NETWORK,
     outputs: args.outputs.map(output => ({ ...output, address: toRegtestAddress(output.address) })),
   };
@@ -93,8 +116,9 @@ async function recordingBuildTransactionJob(
 async function recordingBuildIronwoodTransactionJob(
   args: Omit<BuildIronwoodTransactionArgs, "requestId">,
 ): Promise<BuildIronwoodTransactionResult> {
-  const regtestArgs: Omit<BuildIronwoodTransactionArgs, "requestId"> = {
+  const regtestArgs: WithRegtestHeights<Omit<BuildIronwoodTransactionArgs, "requestId">> = {
     ...args,
+    ...(regtestActivationHeights && { regtestActivationHeights }),
     network: BUILD_NETWORK,
     outputs: args.outputs.map(output => ({ ...output, address: toRegtestAddress(output.address) })),
   };

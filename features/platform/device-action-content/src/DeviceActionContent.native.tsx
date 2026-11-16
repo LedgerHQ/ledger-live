@@ -1,8 +1,8 @@
 import React from "react";
 import { Banner, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useThemeVariant } from "@features/platform-style/hooks";
-import { Animation } from "./Animation.native";
-import { getDeviceActionAnimation } from "./getDeviceActionAnimation.native";
+import { Animation } from "./Animation";
+import { getDeviceActionAnimation } from "./getDeviceActionAnimation";
 import type { DeviceActionContentProps } from "./types";
 
 const animationStyle = { height: 200, width: 200 };

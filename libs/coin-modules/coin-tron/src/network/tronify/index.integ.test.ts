@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../../config";
+import { tronDefaults, type TronCoinConfig } from "../../config";
 import { queryPreorderInfo } from "./index";
 
 // The channel name is not committed. Provide it via the integ env to run this suite:
@@ -17,10 +17,7 @@ run("tronify queryPreorderInfo [integ]", () => {
 
   beforeAll(() => {
     config = {
-      status: { type: "active" },
-      name: "Tron",
-      unit: { name: "TRX", code: "TRX", magnitude: 6 },
-      explorer: { url: "https://tron.coin.ledger.com" },
+      ...tronDefaults.tron,
       energyRent: {
         provider: "tronify",
         tronify: {
@@ -28,7 +25,7 @@ run("tronify queryPreorderInfo [integ]", () => {
           sourceFlag: TRONIFY_SOURCE_FLAG as string,
         },
       },
-    } as unknown as TronCoinConfig;
+    } as TronCoinConfig;
   });
 
   it("returns a USDT-priced quote whose pledge also covers the payment transfer", async () => {

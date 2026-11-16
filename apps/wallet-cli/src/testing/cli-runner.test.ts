@@ -6,6 +6,7 @@ import https from "node:https";
 import { liveCommonAxiosDefaults, redirectHttpTo, runCleanups, runCli } from "./cli-runner";
 import { MockServer } from "./mock-server";
 import { makeSessionDir } from "./session-fixture";
+import { pointStateHomeAt } from "./state-home";
 
 type Reply = { status: number; body: string };
 
@@ -154,14 +155,32 @@ describe("runCli", () => {
 
   it("refuses an XDG_STATE_HOME the test set in process.env but didn't pass", async () => {
     const seeded = makeSessionDir([]);
-    const savedStateHome = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = seeded.env.XDG_STATE_HOME;
+    const restoreStateHome = pointStateHomeAt(seeded.env.XDG_STATE_HOME);
     try {
       await expect(runCli(["session", "view"])).rejects.toThrow("pass it in env too");
       expect((await runCli(["session", "view"], seeded.env)).exitCode).toBe(0);
     } finally {
-      if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = savedStateHome;
+      restoreStateHome();
+      seeded.cleanup();
+    }
+  });
+
+  it("refuses a LOCALAPPDATA other than the XDG_STATE_HOME it points the state dir at", async () => {
+    const seeded = makeSessionDir([]);
+    const refusal =
+      "runCli points LOCALAPPDATA at XDG_STATE_HOME: pass only XDG_STATE_HOME, or the same dir in both";
+    try {
+      await expect(
+        runCli(["session", "view"], { LOCALAPPDATA: seeded.env.LOCALAPPDATA }),
+      ).rejects.toThrow(refusal);
+      await expect(
+        runCli(["session", "view"], {
+          ...seeded.env,
+          LOCALAPPDATA: `${seeded.env.XDG_STATE_HOME}-other`,
+        }),
+      ).rejects.toThrow(refusal);
+      expect((await runCli(["session", "view"], seeded.env)).exitCode).toBe(0);
+    } finally {
       seeded.cleanup();
     }
   });

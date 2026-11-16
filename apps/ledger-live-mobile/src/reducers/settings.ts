@@ -19,6 +19,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
+import { selectDustFilteringEnabled } from "@features/platform-feature-flags";
 import { selectFeature } from "@shared/feature-flags";
 import type {
   SettingsBlacklistTokenPayload,
@@ -875,10 +876,8 @@ export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
   state.settings.hideSmallValueTokenOperations;
-export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) => {
-  const feature = selectFeature(state, "lwmDustFiltering");
-  return feature?.enabled === true;
-};
+export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) =>
+  selectDustFilteringEnabled(state, "mobile");
 export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
   hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&
   hideSmallValueTokenOperationsEnabledSelector(state);

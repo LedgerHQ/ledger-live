@@ -35,7 +35,7 @@ const btcDiscovered: DiscoveredAccount = {
     version: "2",
     type: "utxo",
     network: NetworkIdSchema.parse("bitcoin"),
-    xpub: XPUB,
+    key: XPUB,
     path: "m/84h/0h/0h",
   },
   freshAddress: "bc1qexample",
@@ -48,7 +48,7 @@ const ethDiscovered: DiscoveredAccount = {
     version: "2",
     type: "address",
     network: NetworkIdSchema.parse("ethereum"),
-    address: ETH_ADDR,
+    key: ETH_ADDR,
     path: "m/44h/60h/0h/0/0",
   },
   freshAddress: ETH_ADDR,
@@ -315,7 +315,7 @@ describe("HumanFormatter.formatOperation", () => {
 
     const result = await new HumanFormatter(store).formatOperation(usdtOp, "ethereum");
 
-    expect(result).toContain("1.5 USDT");
+    expect(result).toContain("1.5\u00a0USDT");
     expect(lookups).toEqual([]);
   });
 });
@@ -389,7 +389,7 @@ describe("JsonFormatter.operations", () => {
       "acct",
     );
 
-    expect(result.value).toBe("1.5 USDT");
+    expect(result.value).toBe("1.5\u00a0USDT");
     expect(result).not.toHaveProperty("unit");
     expect(lookups).toEqual([]);
   });

@@ -525,6 +525,7 @@ const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
   "APPROVE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "LOCK",
   "UNLOCK",
   "WITHDRAW",
@@ -901,6 +902,7 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (
     [
       "changeTrust",
+      "optOut",
       "send",
       "send-legacy",
       "send-eip1559",
@@ -1145,6 +1147,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "optOut":
+      return "OPT_OUT";
     case "tokenAssociate":
       return "ASSOCIATE_TOKEN";
     case "delegate":

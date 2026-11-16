@@ -220,7 +220,6 @@
     "@support/knip": "workspace:*",
     "@support/lint": "workspace:*",
     "@support/tsconfig": "workspace:*",
-    "@swc-node/register": "1.12.1",
     "@ton/crypto": "3.3.0",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "catalog:",

@@ -38,6 +38,7 @@ describe("Page utils", () => {
       expect(isWallet40Page("/borrow")).toBe(true);
       expect(isWallet40Page("/predictions")).toBe(true);
       expect(isWallet40Page("/history")).toBe(true);
+      expect(isWallet40Page("/agent-intent")).toBe(true);
     });
 
     it("returns true for wallet 4.0 prefix routes and nested paths", () => {

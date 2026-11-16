@@ -69,11 +69,9 @@ export type ConnectNewDeviceStateMachineContext<
   listedDevices: Array<ListedDevice>;
   selectedDevice: DiscoveredDevice | null;
   sessionId: string | null;
-  isDiscovering: boolean;
   showDeviceNotFound: boolean;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;
-  skipTransportIds: Array<TransportIdentifier>;
 };
 
 export enum ConnectNewDeviceStateMachineEventTypes {

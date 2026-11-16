@@ -7,11 +7,11 @@ import {
   THANKS_REMOVED,
   type ChangedFile,
   type CountLines,
-} from "../legacy-score";
+} from "../legacy-score.ts";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { isMergeConflictsPr } from "../pull-request";
+import { isMergeConflictsPr } from "../pull-request.ts";
 
 const OVERRIDE_LABEL = "legacy-code-approved";
 // GitHub lists at most 3000 files per pull request: a larger diff cannot be scored

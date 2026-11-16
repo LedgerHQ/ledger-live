@@ -1,7 +1,9 @@
+import { API_ENDPOINT, DELEGATION_API_ENDPOINT } from "../test/integEndpoints";
 /**
  * Integration tests for createApi factory.
  * Verifies unsupported methods throw and craft→combine produces valid shape.
  */
+import { multiversxDefaults } from "../config";
 import { createApi } from "./index";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { createMockMultiversXContext } from "../test/context";
@@ -13,12 +15,9 @@ const RECIPIENT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4
 describe("createApi factory (integration)", () => {
   const api = createApi();
   const context = createMockMultiversXContext({
-    status: { type: "active" },
-    name: "MultiversX",
-    unit: { name: "EGLD", code: "EGLD", magnitude: 18 },
-    apiEndpoint: process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com",
-    delegationApiEndpoint:
-      process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com",
+    ...multiversxDefaults.multiversx,
+    apiEndpoint: API_ENDPOINT,
+    delegationApiEndpoint: DELEGATION_API_ENDPOINT,
   });
 
   // Unsupported-method assertions live in index.unit.test.ts — they throw

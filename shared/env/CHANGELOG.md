@@ -1,5 +1,25 @@
 # @shared/env
 
+## 0.13.0
+
+### Minor Changes
+
+- [#24457](https://github.com/LedgerHQ/ledger-live/pull/24457) [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Read the Cardano API and epoch-params endpoints from the coin config (`api.url`, `epochParams.url`) instead of the `CARDANO_*_ENDPOINT` env variables, which are removed
+
+  **Breaking change**: `CardanoConfig` gains the required `api: { url: string }` and `epochParams: { url: string }`, and `CARDANO_API_ENDPOINT`, `CARDANO_TESTNET_API_ENDPOINT`, `CARDANO_EPOCH_PARAMS_ENDPOINT` and `CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT` are no longer exported from `src/constants`. Each currency config carries its own endpoints, so a consumer that builds its own config (such as the coin-service) passes them there; `cardanoDefaults` holds the Ledger defaults.
+
+- [#24271](https://github.com/LedgerHQ/ledger-live/pull/24271) [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the CoinGecko market client and keep the USD chart fallback
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24457](https://github.com/LedgerHQ/ledger-live/pull/24457) [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Read the Cardano API and epoch-params endpoints from the coin config (`api.url`, `epochParams.url`) instead of the `CARDANO_*_ENDPOINT` env variables, which are removed
+
+  **Breaking change**: `CardanoConfig` gains the required `api: { url: string }` and `epochParams: { url: string }`, and `CARDANO_API_ENDPOINT`, `CARDANO_TESTNET_API_ENDPOINT`, `CARDANO_EPOCH_PARAMS_ENDPOINT` and `CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT` are no longer exported from `src/constants`. Each currency config carries its own endpoints, so a consumer that builds its own config (such as the coin-service) passes them there; `cardanoDefaults` holds the Ledger defaults.
+
+- [#24271](https://github.com/LedgerHQ/ledger-live/pull/24271) [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the CoinGecko market client and keep the USD chart fallback
+
 ## 0.12.0
 
 ### Minor Changes
@@ -715,25 +735,5 @@
   When gas estimation failed, its `BigNumber(0)` fallback travelled back to the sign step, where it was read as a deliberate custom gas limit. That disabled re-estimation and produced a transaction the node rejected with `intrinsic gas too low`. A non-positive gas limit is no longer honoured as a custom value, so the estimation runs again, and crafting now fails rather than sending a zero gas limit to the device (LIVE-32644).
 
   `EIP1559_BASE_FEE_MULTIPLIER` goes from 1.27 to 1.6, so an estimated transaction stays includable for 4 blocks instead of 2 (the base fee grows by at most 12.5% per block). Max fees displayed on chains using the Ledger gas tracker will be higher, but the amount actually paid is unchanged: EIP-1559 charges the base fee plus the priority fee, and the max fee is only a ceiling (LIVE-32650).
-
-## 0.2.0
-
-### Minor Changes
-
-- [#20258](https://github.com/LedgerHQ/ledger-live/pull/20258) [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754) Thanks [@thesan](https://github.com/thesan)! - Update the staging Keycloak base URL to use the Gravitee gateway
-
-- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
-
-- [#20299](https://github.com/LedgerHQ/ledger-live/pull/20299) [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): add base URLs and network mapping for A4
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20258](https://github.com/LedgerHQ/ledger-live/pull/20258) [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754) Thanks [@thesan](https://github.com/thesan)! - Update the staging Keycloak base URL to use the Gravitee gateway
-
-- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
-
-- [#20299](https://github.com/LedgerHQ/ledger-live/pull/20299) [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): add base URLs and network mapping for A4
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

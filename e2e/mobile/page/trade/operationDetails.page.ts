@@ -127,7 +127,7 @@ export default class OperationDetailsPage {
   async expectOperationAmountTicker(ticker: string) {
     await this.waitForOperationDetails();
     await this.amount.scrollTo(this.scrollView);
-    await this.amount.expectTextContaining(ticker);
+    await this.amount.expectText(ticker, { containing: true });
   }
 
   @Step("Check view in explorer button")

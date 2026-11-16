@@ -4,13 +4,13 @@ import {
   OsUpdatesSteps,
   PreChecksStateType,
   RestoreBackupStateType,
-  RestoreBackupStatus,
   type ApplyUpdatesState,
   type CreateBackupState,
   type OsUpdatesProgress,
   type PreChecksState,
   type RestoreBackupState,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-os-update";
+import { RestoreStatus } from "@domain/entity-device-os-update";
 import {
   noop,
   previewBackupCreatedAt,
@@ -66,12 +66,12 @@ export const restoringProgress = ({ progress }: PreviewOptions) =>
   restoreBackup({ type: RestoreBackupStateType.RESTORING, progress });
 
 export const restoreStatuses = [
-  { status: RestoreBackupStatus.FULL, id: "full", label: "full restore" },
-  { status: RestoreBackupStatus.PARTIAL, id: "partial", label: "partial restore" },
-  { status: RestoreBackupStatus.OUT_OF_MEMORY, id: "outOfMemory", label: "out of memory" },
+  { status: RestoreStatus.full, id: "full", label: "full restore" },
+  { status: RestoreStatus.partial, id: "partial", label: "partial restore" },
+  { status: RestoreStatus.outOfMemory, id: "outOfMemory", label: "out of memory" },
 ] as const;
 
-const restoreResult = (restoreStatus: RestoreBackupStatus) => ({
+const restoreResult = (restoreStatus: RestoreStatus) => ({
   restoreStatus,
   restoredLanguage: undefined,
   restoredCLS: undefined,

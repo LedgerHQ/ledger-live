@@ -1,6 +1,6 @@
 import { openAuthSessionAsync } from "expo-web-browser";
 import { AppState, type AppStateStatus } from "react-native";
-import { openHostedUrlInSecureBrowser } from "../openHostedLogin.native";
+import { openHostedUrlInSecureBrowser } from "../openHostedLogin";
 
 jest.mock("expo-web-browser", () => ({
   openAuthSessionAsync: jest.fn(),

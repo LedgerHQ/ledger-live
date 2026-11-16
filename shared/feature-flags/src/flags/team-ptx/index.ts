@@ -1,6 +1,7 @@
 export * from "./buySellLoader";
 export * from "./buySellShortcut";
 export * from "./buySellUi";
+export * from "./earnApiGravitee";
 export * from "./earnTxLifecycleMonitoring";
 export * from "./earnWithdrawV2";
 export * from "./ethStakingModalWithFilters";

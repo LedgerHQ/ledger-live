@@ -34,7 +34,7 @@ export const floorThresholdToCurrencyMinorUnit = (
 export const convertThresholdMinorUnitToMajor = (
   thresholdMinorUnit: BigNumber,
   currency: Currency,
-) => thresholdMinorUnit.div(getMagnitudeFactor(currency));
+) => thresholdMinorUnit.shiftedBy(-currency.units[0].magnitude);
 
 export const formatThresholdMinorUnitForInput = (
   thresholdMinorUnit: BigNumber,
@@ -173,7 +173,7 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
   }
 
   return new BigNumber(rawUsdMinorUnit)
-    .div(getMagnitudeFactor(SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY))
+    .shiftedBy(-SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0].magnitude)
     .toNumber();
 }
 

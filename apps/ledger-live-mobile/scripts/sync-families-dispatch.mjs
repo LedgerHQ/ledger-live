@@ -39,6 +39,8 @@ const targets = [
   "Confirmation",
   "ReceiveConfirmationPostAlert",
   "ReceiveConfirmationTokenAlert",
+  "ReceiveAddressConfig",
+  "shouldCreateEmptyTokenAccount",
   "ConnectDevice",
   "VerifyAddress",
   "NoAssociatedAccounts",

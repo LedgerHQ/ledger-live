@@ -122,12 +122,15 @@ describe("findAccountTokens", () => {
   const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);
 
   it("keeps only listed tokens the account holds a balance of, without a CAL lookup per token", async () => {
-    const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue([
-      BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "5" }),
-      tokenBalance("1", erc20("USDC", "USD Coin", USDC)),
-      tokenBalance("0", erc20("PEPE", "Pepe", "0x2")),
-      tokenBalance("1", { ...erc20("USDC", "Old USDC", "0x1"), delisted: true }),
-    ]);
+    const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue({
+      balances: [
+        BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "5" }),
+        tokenBalance("1", erc20("USDC", "USD Coin", USDC)),
+        tokenBalance("0", erc20("PEPE", "Pepe", "0x2")),
+        tokenBalance("1", { ...erc20("USDC", "Old USDC", "0x1"), delisted: true }),
+      ],
+      skippedTokenIds: [],
+    });
     const store = getCryptoAssetsStore();
     const calLookups = [
       spyOn(store, "findTokenById").mockResolvedValue(undefined),
@@ -135,7 +138,7 @@ describe("findAccountTokens", () => {
     ];
 
     try {
-      const tokens = await findAccountTokens(account);
+      const { tokens } = await findAccountTokens(account);
 
       expect(calLookups.flatMap(lookup => lookup.mock.calls)).toEqual([]);
       expect(tokens).toEqual([{ ticker: "USDC", name: "USD Coin", address: USDC }]);
@@ -144,6 +147,22 @@ describe("findAccountTokens", () => {
     } finally {
       balances.mockRestore();
       calLookups.forEach(lookup => lookup.mockRestore());
+    }
+  });
+
+  it("passes on the ids of the tokens the wallet skipped", async () => {
+    const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue({
+      balances: [BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "5" })],
+      skippedTokenIds: ["ethereum/erc20/no_units"],
+    });
+
+    try {
+      expect(await findAccountTokens(account)).toEqual({
+        tokens: [],
+        skippedTokenIds: ["ethereum/erc20/no_units"],
+      });
+    } finally {
+      balances.mockRestore();
     }
   });
 });
