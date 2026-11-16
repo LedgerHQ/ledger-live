@@ -20,15 +20,17 @@ export const buildOptimisticOperation = (
   account: CeloAccount,
   transaction: Transaction,
   fee: BigNumber,
-  nonce: number,
+  /** What was signed: only some modes carry `transaction.feeCurrency` into the tx. */
+  signed: { nonce: number; feeCurrency?: string | null | undefined },
 ): CeloOperation => {
+  const { nonce, feeCurrency } = signed;
   const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
   // A CIP-64 fee is charged in the fee currency, so it is not CELO spent.
-  const isFeePaidInCelo = !isTokenTransaction && !transaction.feeCurrency;
+  const isFeePaidInCelo = !isTokenTransaction && !feeCurrency;
   const celoFee = isFeePaidInCelo ? fee : 0;
   const value =
     type === "OUT" || type === "LOCK"
@@ -59,9 +61,7 @@ export const buildOptimisticOperation = (
       // Mirror what the synced path will read back from `tx.feeCurrency`, so
       // optimistic and synced ops carry the same value (adapter address for
       // non-18-decimal tokens; adapter === contract for 18-decimal tokens).
-      ...(transaction.feeCurrency
-        ? { feeCurrencyAddress: transaction.feeCurrency.toLowerCase() }
-        : {}),
+      ...(feeCurrency ? { feeCurrencyAddress: feeCurrency.toLowerCase() } : {}),
     },
   };
 

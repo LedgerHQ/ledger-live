@@ -1,6 +1,6 @@
-import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
+import { lastValueFrom } from "rxjs";
 import {
   lockedGold,
   nonVoting,
@@ -12,8 +12,8 @@ import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/oper
 import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
 import { CeloAccount, CeloOperation, CeloOperationExtra } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { accountFixture, transactionFixture } from "./fixtures";
-import { getAccountShape } from "./synchronisation";
+import { accountFixture, transactionFixture, usdcTokenAccount } from "./fixtures";
+import { getAccountShape, postSync, sync } from "./synchronisation";
 
 const defaultInfo = {
   address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
@@ -158,7 +158,8 @@ describe("When getting the account shape", () => {
           date: new Date("2026-01-09"),
           hasFailed: false,
           fee: new BigNumber(525072996210000),
-          transactionSequenceNumber: new BigNumber(111),
+          // Sent by another address, so its nonce is not the account's.
+          transactionSequenceNumber: undefined,
           extra: {},
           isSubAccount: false,
         },
@@ -190,21 +191,50 @@ describe("When getting the account shape", () => {
 });
 
 describe("pending operation retention", () => {
-  it("drops the optimistic op once a synced op carries its nonce", async () => {
+  const sender = nativeOperation.senders[0];
+  const senderInfo = { ...defaultInfo, address: sender };
+  const senderAccount: CeloAccount = {
+    ...accountFixture,
+    id: `js:2:celo:${sender}:`,
+    freshAddress: sender,
+    syncHash: "0x0000000000000000000000000000000000001d00",
+  };
+  const pending = (nonce: number, hash = `0xpending${nonce}`) => ({
+    ...buildOptimisticOperation(senderAccount, transactionFixture, new BigNumber(2), { nonce }),
+    hash,
+  });
+  const nonces = (ops: { transactionSequenceNumber?: BigNumber }[]) =>
+    ops.map(op => op.transactionSequenceNumber?.toNumber());
+
+  it("drops the optimistic op on the sync that brings in its nonce", async () => {
     mockCreateApi.mockReturnValue({
       listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+    const initial = { ...senderAccount, pendingOperations: [pending(112), pending(111)] };
 
-    const result = await getAccountShape(defaultInfo, defaultConfig);
-    const account = { ...accountFixture, freshAddress: nativeOperation.senders[0] };
-    const synced = { ...account, operations: result.operations ?? [] };
-    const pending = (nonce: number) =>
-      buildOptimisticOperation(account, transactionFixture, new BigNumber(2), nonce);
+    const updater = await lastValueFrom(sync(initial, defaultConfig));
 
-    expect(shouldRetainPendingOperation(synced, pending(111))).toBe(false);
-    expect(shouldRetainPendingOperation(synced, pending(112))).toBe(true);
+    expect(nonces(updater(initial).pendingOperations)).toEqual([112]);
+  });
+
+  it("prunes token pending ops that are confirmed or outnumbered by the parent's nonce", () => {
+    const synced: CeloAccount = {
+      ...senderAccount,
+      operations: [{ ...pending(111, "0xs"), blockHeight: 2000 }],
+      subAccounts: [
+        {
+          ...usdcTokenAccount,
+          operations: [{ ...pending(113, "0xconfirmed"), blockHeight: 2001 }],
+          pendingOperations: [pending(113, "0xconfirmed"), pending(112), pending(111)],
+        },
+      ],
+    };
+
+    const result = postSync(senderAccount, synced);
+
+    expect(nonces(result.subAccounts?.[0].pendingOperations ?? [])).toEqual([112]);
   });
 
   it.each([
@@ -222,7 +252,37 @@ describe("pending operation retention", () => {
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
 
-    const result = await getAccountShape(defaultInfo, defaultConfig);
+    const result = await getAccountShape(senderInfo, defaultConfig);
+
+    expect(result.operations?.[0].transactionSequenceNumber).toEqual(expected);
+  });
+
+  it.each([
+    ["a native tx it sent", nativeOperation, new BigNumber(111)],
+    [
+      "a native tx someone else sent",
+      { ...nativeOperation, senders: ["0x0000000000000000000000000000000000000bad"] },
+      undefined,
+    ],
+    [
+      "a CELO token row of a tx it sent",
+      { ...erc20Operation, details: { sequence: "111", parentSenders: [sender.toLowerCase()] } },
+      new BigNumber(111),
+    ],
+    [
+      "a CELO token row of someone else's transferFrom",
+      { ...erc20Operation, senders: [sender], details: { sequence: "999" } },
+      undefined,
+    ],
+  ])("keeps the nonce only for %s", async (_, item, expected) => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [item] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockTokenEvmLogic.mockResolvedValueOnce({ ticker: "CELO", id: "celo/erc20/celo" });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+
+    const result = await getAccountShape(senderInfo, defaultConfig);
 
     expect(result.operations?.[0].transactionSequenceNumber).toEqual(expected);
   });

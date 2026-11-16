@@ -118,7 +118,7 @@ const runSignOperation = async ({
     account as CeloAccount,
     transaction,
     transaction.fees ?? new BigNumber(0),
-    nonce!,
+    { nonce: nonce!, feeCurrency },
   );
 
   observer.next({

@@ -154,7 +154,24 @@ describe("signOperation", () => {
       accountFixture,
       expect.anything(),
       new BigNumber(2),
-      BASE_UNSIGNED_TRANSACTION.nonce,
+      { nonce: BASE_UNSIGNED_TRANSACTION.nonce, feeCurrency: undefined },
+    );
+  });
+
+  it("builds the optimistic operation with the signed fee currency, not the requested one", async () => {
+    const { signerContext } = createSignerContext({});
+    mockBuildTransaction.mockResolvedValue(BASE_UNSIGNED_TRANSACTION as never);
+
+    await collectEvents(signerContext, {
+      mode: "lock",
+      feeCurrency: "0x765DE816845861e75A25fCA122bb6898B8B1282a" as `0x${string}`,
+    });
+
+    expect(mockBuildOptimisticOperation).toHaveBeenCalledWith(
+      accountFixture,
+      expect.anything(),
+      new BigNumber(2),
+      { nonce: BASE_UNSIGNED_TRANSACTION.nonce, feeCurrency: undefined },
     );
   });
 

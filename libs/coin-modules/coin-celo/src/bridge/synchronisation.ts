@@ -21,7 +21,13 @@ import type {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
+import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
+import type {
+  AccountLike,
+  Operation as OperationLive,
+  TokenAccount,
+  SyncConfig,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
 import { getCeloClient } from "../network/client";
@@ -100,6 +106,18 @@ const parseSequence = (sequence: unknown): BigNumber | undefined => {
 const toSequenceNumber = (sequence: unknown): BigNumber | undefined => {
   const value = parseSequence(sequence);
   return value?.isNaN() ? undefined : value;
+};
+
+/**
+ * A token row carries the nonce of whoever sent the tx, which is in `parentSenders` and absent when
+ * the account did not send it (a third-party `transferFrom`).
+ */
+const isSentByAccount = (item: Operation, address: string): boolean => {
+  const txSenders = item.asset.type === "native" ? item.senders : item.details?.parentSenders;
+  return (
+    Array.isArray(txSenders) &&
+    txSenders.some(sender => String(sender).toLowerCase() === address.toLowerCase())
+  );
 };
 
 /** eth_getTransactionByHash is a cheap read, so a higher fan-out is safe. */
@@ -203,7 +221,9 @@ const getOperationsList = async ({
         date: item.tx.date,
         hasFailed: item.tx.failed,
         fee: new BigNumber(item.tx.fees.toString()),
-        transactionSequenceNumber: toSequenceNumber(item.details?.sequence),
+        transactionSequenceNumber: isSentByAccount(item, address)
+          ? toSequenceNumber(item.details?.sequence)
+          : undefined,
         extra: {},
         ...(token ? { token } : undefined),
         isSubAccount,
@@ -450,7 +470,28 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   return shape;
 };
 
+/**
+ * `makeSync` filters only the parent's pending ops, and against the pre-sync account. Filtering
+ * against the synced one clears a confirmed op on the sync that brings it in, and token sends
+ * with their own nonce no longer replace each other, so their pending ops are pruned here too.
+ */
+export const postSync = (_initial: CeloAccount, synced: CeloAccount): CeloAccount => {
+  const isPending = (owner: AccountLike, op: OperationLive) =>
+    !owner.operations.some(o => o.hash === op.hash) && shouldRetainPendingOperation(synced, op);
+
+  return {
+    ...synced,
+    pendingOperations: synced.pendingOperations.filter(op => isPending(synced, op)),
+    ...(synced.subAccounts && {
+      subAccounts: synced.subAccounts.map(sub => ({
+        ...sub,
+        pendingOperations: sub.pendingOperations.filter(op => isPending(sub, op)),
+      })),
+    }),
+  };
+};
+
 // `shouldMergeOps: false`: the outer mergeOps in makeSync would re-dedupe via
 // `sameOp` (which ignores `extra`) and strip the feeCurrencyAddress backfill
 // that getAccountShape just applied.
-export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
+export const sync = makeSync({ getAccountShape, postSync, shouldMergeOps: false });
