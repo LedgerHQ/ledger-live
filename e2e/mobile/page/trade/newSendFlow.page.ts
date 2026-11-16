@@ -295,6 +295,7 @@ export default class NewSendFlowPage {
   @Step("Expect the matched recipient card for contact: {{{0}}}")
   async expectMatchedContactCard(contactName: string) {
     await this.recipientCardAvatar.waitVisible();
+    await this.recipientCardTitle.waitVisible();
     await this.recipientCardTitle.expectText(contactName);
   }
 
