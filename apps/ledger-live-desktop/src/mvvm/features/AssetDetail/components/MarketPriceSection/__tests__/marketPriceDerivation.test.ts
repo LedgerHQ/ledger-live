@@ -87,4 +87,15 @@ describe("resolveRangePriceChange", () => {
       }),
     ).toEqual({ percentage: 100, variationFiat: 100 });
   });
+
+  it("derives the all range from the chart prices instead of the market price changes", () => {
+    expect(
+      resolveRangePriceChange({
+        selectedRange: "all",
+        chartPrices: [100, 150],
+        price: 200,
+        priceChangePercentage,
+      }),
+    ).toEqual({ percentage: 50, variationFiat: 50 });
+  });
 });
