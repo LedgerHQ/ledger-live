@@ -35,13 +35,13 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
     "@noble/hashes": "catalog:",
-    "@types/semver": "catalog:",
     "purify-ts": "^2.1.0",
     "semver": "catalog:",
     "xstate": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
+    "@types/semver": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
