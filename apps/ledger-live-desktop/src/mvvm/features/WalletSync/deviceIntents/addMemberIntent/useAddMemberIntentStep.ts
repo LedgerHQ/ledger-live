@@ -1,9 +1,10 @@
 import { useCallback, useRef } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
-import type {
-  AddMemberIntent,
-  AddMemberIntentInput,
-  AddMemberJobState,
+import {
+  isCurrentMemberCredentials,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+  type AddMemberJobState,
 } from "@features/platform-intent-wallet-sync";
 import {
   memberCredentialsSelector,
@@ -12,14 +13,14 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { MemberCredentials, TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { useOnTrustchainJoined } from "../../hooks/useOnTrustchainJoined";
 import { toLegacyDevice } from "../toLegacyDevice";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
-import { useIsCurrentMemberCredentials } from "../useIsCurrentMemberCredentials";
+import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -33,16 +34,16 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const trustchain = useSelector(trustchainSelector);
   const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
-  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
+  const store = useStore();
   const resultRef = useRef<TrustchainResult | null>(null);
 
   const onResult = useCallback(
     (result: TrustchainResult, runCredentials: MemberCredentials) => {
-      if (!isCurrentMemberCredentials(runCredentials)) return;
+      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
       resultRef.current = result;
       dispatch(setTrustchain(result.trustchain));
     },
-    [dispatch, isCurrentMemberCredentials],
+    [dispatch, store],
   );
 
   const onJobStateChanged = useCallback(
@@ -73,7 +74,12 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
     ? (): AddMemberIntent =>
         createIntent<AddMemberJobState, AddMemberIntentInput, undefined, TrustchainResult>(
           addMemberIntentLWDDefinition,
-          { memberCredentials, currentTrustchain: trustchain ?? undefined, createSessionSdk },
+          {
+            memberCredentials,
+            currentTrustchain: trustchain ?? undefined,
+            createSessionSdk,
+            resultOrder: ledgerSyncResultOrder,
+          },
           { onResult: result => onResult(result, memberCredentials), onJobStateChanged },
         )
     : null;

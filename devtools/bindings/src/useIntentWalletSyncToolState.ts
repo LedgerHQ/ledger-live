@@ -8,6 +8,7 @@ import {
   type AddMemberIntentPlatformDefinition,
   type CreateSessionSdk,
   type LedgerSyncJobState,
+  type LedgerSyncResultOrder,
   type RemoveMemberIntent,
   type RemoveMemberIntentPlatformDefinition,
 } from "@features/platform-intent-wallet-sync";
@@ -34,6 +35,8 @@ export interface IntentWalletSyncToolStateParams {
   readonly addMemberIntentDefinition: AddMemberIntentPlatformDefinition;
   readonly removeMemberIntentDefinition: RemoveMemberIntentPlatformDefinition;
   readonly createSessionSdk: CreateSessionSdk;
+  /** The app's one Ledger Sync result order, the one its Ledger Sync screens pass too. */
+  readonly resultOrder: LedgerSyncResultOrder;
   /** Lists the members without the device: it authenticates with the member credentials. */
   readonly sdk: Pick<TrustchainSDK, "getMembers">;
   /** The key ring store's `setTrustchain`. Its module loads device crypto, so the app passes it. */
@@ -175,8 +178,13 @@ export function useIntentWalletSyncToolState(
   );
 
   const onAddMember = useCallback(() => {
-    const { memberCredentials, trustchain, createSessionSdk, addMemberIntentDefinition } =
-      paramsRef.current;
+    const {
+      memberCredentials,
+      trustchain,
+      createSessionSdk,
+      resultOrder,
+      addMemberIntentDefinition,
+    } = paramsRef.current;
     if (!memberCredentials) return;
 
     let completedDetail: string | null = null;
@@ -184,6 +192,7 @@ export function useIntentWalletSyncToolState(
     const input: AddMemberIntentInput = {
       memberCredentials,
       createSessionSdk,
+      resultOrder,
       ...(trustchain ? { currentTrustchain: trustchain } : {}),
     };
     const intent: AddMemberIntent = createIntent(addMemberIntentDefinition, input, {
@@ -205,8 +214,13 @@ export function useIntentWalletSyncToolState(
 
   const onRemoveMember = useCallback(
     (memberId: TrustchainMemberId) => {
-      const { memberCredentials, trustchain, createSessionSdk, removeMemberIntentDefinition } =
-        paramsRef.current;
+      const {
+        memberCredentials,
+        trustchain,
+        createSessionSdk,
+        resultOrder,
+        removeMemberIntentDefinition,
+      } = paramsRef.current;
       if (!memberCredentials || !trustchain) return;
       if (!isLoadedFor(loadedMembers, trustchain, memberCredentials)) return;
       const member = loadedMembers.members.find(candidate => candidate.id === memberId);
@@ -216,7 +230,7 @@ export function useIntentWalletSyncToolState(
       let resultTrustchain: Trustchain | null = null;
       const intent: RemoveMemberIntent = createIntent(
         removeMemberIntentDefinition,
-        { trustchain, memberCredentials, member, createSessionSdk },
+        { trustchain, memberCredentials, member, createSessionSdk, resultOrder },
         {
           onResult: result => {
             resultTrustchain = result;

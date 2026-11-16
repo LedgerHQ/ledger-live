@@ -20,6 +20,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import { LedgerSyncDeviceIntentExecutorLWD } from "../deviceIntents/LedgerSyncDeviceIntentExecutorLWD";
 import { buildDeviceConnection } from "../deviceIntents/__tests__/ledgerSyncIntentTestKit";
+import { ledgerSyncResultOrder } from "../deviceIntents/ledgerSyncResultOrder";
 import { addMemberIntentLWDDefinition } from "../deviceIntents/addMemberIntent/intentLWDDefinition";
 import { removeMemberIntentLWDDefinition } from "../deviceIntents/removeMemberIntent/intentLWDDefinition";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
@@ -212,6 +213,7 @@ describe("Ledger Sync device steps on DIE", () => {
           memberCredentials: MEMBER_CREDENTIALS,
           currentTrustchain: undefined,
           createSessionSdk: mockCreateSessionSdk,
+          resultOrder: ledgerSyncResultOrder,
         });
 
         const result: TrustchainResult = { type, trustchain: TRUSTCHAIN };
@@ -403,6 +405,7 @@ describe("Ledger Sync device steps on DIE", () => {
         memberCredentials: MEMBER_CREDENTIALS,
         member: MEMBER_TO_REMOVE,
         createSessionSdk: mockCreateSessionSdk,
+        resultOrder: ledgerSyncResultOrder,
       });
 
       deliver(NEW_TRUSTCHAIN);

@@ -2,6 +2,7 @@ import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { config, lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
+import { createLedgerSyncResultOrder, type LedgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -14,7 +15,6 @@ import {
   completeJob,
   createDeviceCallbacks,
   createLedgerSyncJob,
-  createResultOrder,
   deliverLateResult,
   failJob,
   handleCallError,
@@ -62,12 +62,16 @@ function fakeSubscriber() {
 // Lets the job's promise handlers run after the test settled the device call.
 const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
 
-function startJob(call: () => Promise<string>, onResult: (result: string) => void) {
+function startJob(
+  call: () => Promise<string>,
+  onResult: (result: string) => void,
+  resultOrder: LedgerSyncResultOrder = createLedgerSyncResultOrder(),
+) {
   return recordJob(
     createLedgerSyncJob(call)({
       deviceConnectionResult: CONNECTION,
       deviceExtractedContext: {} as never,
-      input: { createSessionSdk: () => SDK },
+      input: { createSessionSdk: () => SDK, resultOrder },
       onResult,
     }),
   );
@@ -146,40 +150,6 @@ describe("deliverLateResult", () => {
     } finally {
       consoleError.mockRestore();
     }
-  });
-});
-
-describe("createResultOrder", () => {
-  it("should keep a late ticket when no newer one was delivered", () => {
-    const order = createResultOrder();
-    const older = order.take();
-    order.take();
-
-    expect(order.isStale(older)).toBe(false);
-  });
-
-  it("should mark a ticket stale once a newer one was delivered", () => {
-    const order = createResultOrder();
-    const older = order.take();
-    const newer = order.take();
-
-    order.markDelivered(newer);
-
-    expect(order.isStale(older)).toBe(true);
-    expect(order.isStale(newer)).toBe(false);
-  });
-
-  it("should not move back when an older ticket is delivered after a newer one", () => {
-    const order = createResultOrder();
-    const older = order.take();
-    const newer = order.take();
-    const newest = order.take();
-
-    order.markDelivered(newer);
-    order.markDelivered(older);
-
-    expect(order.isStale(older)).toBe(true);
-    expect(order.isStale(newest)).toBe(false);
   });
 });
 
@@ -288,7 +258,11 @@ describe("createLedgerSyncJob", () => {
   it("should call the device call with the session SDK, the compat device id, the input and the callbacks", async () => {
     const call = jest.fn(async () => "result");
     const onResult = jest.fn();
-    const input = { createSessionSdk: () => SDK, value: 42 };
+    const input = {
+      createSessionSdk: () => SDK,
+      resultOrder: createLedgerSyncResultOrder(),
+      value: 42,
+    };
 
     const states = await lastValueFrom(
       createLedgerSyncJob(call)({
@@ -404,11 +378,20 @@ describe("createLedgerSyncJob", () => {
     it("should ignore the late result of a disconnected job once the job that replaced it delivered", async () => {
       const disconnectedDevice = createDeferred<string>();
       const onDisconnectedResult = jest.fn();
-      const disconnected = startJob(() => disconnectedDevice.promise, onDisconnectedResult);
+      const resultOrder = createLedgerSyncResultOrder();
+      const disconnected = startJob(
+        () => disconnectedDevice.promise,
+        onDisconnectedResult,
+        resultOrder,
+      );
       disconnected.subscription.unsubscribe();
 
       const onReplacementResult = jest.fn();
-      const replacement = startJob(() => Promise.resolve("newer result"), onReplacementResult);
+      const replacement = startJob(
+        () => Promise.resolve("newer result"),
+        onReplacementResult,
+        resultOrder,
+      );
       await replacement.waitFor("completed");
       disconnectedDevice.resolve("older result");
       await flushPromises();
@@ -420,12 +403,21 @@ describe("createLedgerSyncJob", () => {
     it("should keep the late result of a disconnected job when the job that replaced it has not delivered", async () => {
       const disconnectedDevice = createDeferred<string>();
       const onDisconnectedResult = jest.fn();
-      const disconnected = startJob(() => disconnectedDevice.promise, onDisconnectedResult);
+      const resultOrder = createLedgerSyncResultOrder();
+      const disconnected = startJob(
+        () => disconnectedDevice.promise,
+        onDisconnectedResult,
+        resultOrder,
+      );
       disconnected.subscription.unsubscribe();
 
       const replacementDevice = createDeferred<string>();
       const onReplacementResult = jest.fn();
-      const replacement = startJob(() => replacementDevice.promise, onReplacementResult);
+      const replacement = startJob(
+        () => replacementDevice.promise,
+        onReplacementResult,
+        resultOrder,
+      );
       disconnectedDevice.resolve("older result");
       await flushPromises();
       replacementDevice.resolve("newer result");

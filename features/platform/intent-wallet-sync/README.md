@@ -67,8 +67,14 @@ call: it stores the result and skips any navigation from a screen that is gone. 
 unsubscribe, a throw from that late `onResult`, and the result of a run that a Retry replaced are
 ignored. After a disconnection, the executor's Retry starts a new job: a late result of the
 disconnected job is dropped once the new job delivered its own, so it never overwrites a newer
-trustchain. A Ledger Sync reset rotates the member credentials, so the apps also drop a late result whose
-run started with credentials that are no longer the store's.
+trustchain. The jobs order their results through `resultOrder`, a required input: each host creates
+one `createLedgerSyncResultOrder()` for its lifetime and passes it in every add member and remove
+member input, since both write the same trustchain store.
+
+A Ledger Sync reset rotates the member credentials, so a late result whose run started with other
+credentials belongs to a Ledger Sync that is gone. The app's `onResult` drops it when
+`isCurrentMemberCredentials(store.getState(), runCredentials)` is false, reading the state when the
+result arrives.
 
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
@@ -97,7 +103,7 @@ const addMemberIntentLWMDefinition = { ...addMemberIntentDefinition, component: 
 
 const intent = createIntent(
   addMemberIntentLWMDefinition,
-  { memberCredentials, currentTrustchain, createSessionSdk },
+  { memberCredentials, currentTrustchain, createSessionSdk, resultOrder },
   { onResult: result => dispatch(setTrustchain(result.trustchain)) },
 );
 ```

@@ -1,6 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { useIntentWalletSyncToolState } from "@devtools/bindings";
+import { ledgerSyncResultOrder } from "../../WalletSync/deviceIntents/ledgerSyncResultOrder";
 import { useIntentWalletSyncTool } from "./useIntentWalletSyncTool";
 
 const mockAppSdk = { name: "app SDK" };
@@ -34,5 +35,11 @@ describe("useIntentWalletSyncTool", () => {
       createSessionSdk: mockCreateSessionSdk,
     });
     expect(getSdk).not.toHaveBeenCalled();
+  });
+
+  it("should pass the app's result order, the one its Ledger Sync screens use", () => {
+    renderHook(() => useIntentWalletSyncTool());
+
+    expect(lastToolParams().resultOrder).toBe(ledgerSyncResultOrder);
   });
 });

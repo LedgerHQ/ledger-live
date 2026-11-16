@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Observable, type Subscriber } from "rxjs";
 import type { CreateSessionSdk } from "../session";
+import type { LedgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../failure";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
@@ -66,23 +67,6 @@ export function deliverLateResult<Result>(
   }
 }
 
-// Orders results across job invocations: after a disconnect, the executor's Retry starts a new
-// invocation, and the disconnected one can still answer late. Its result must not overwrite one that
-// a newer run already delivered, but is kept when no newer run delivered.
-export function createResultOrder() {
-  let issued = 0;
-  let delivered = 0;
-  return {
-    take: () => ++issued,
-    isStale: (ticket: number) => ticket < delivered,
-    markDelivered: (ticket: number) => {
-      delivered = Math.max(delivered, ticket);
-    },
-  };
-}
-
-const ledgerSyncResultOrder = createResultOrder();
-
 export function tryCreateSessionSdk(
   createSessionSdk: CreateSessionSdk,
   connection: DeviceConnectionResult,
@@ -138,8 +122,13 @@ export function handleCallError(
   failJob(subscriber, error);
 }
 
+type LedgerSyncJobInput = Readonly<{
+  createSessionSdk: CreateSessionSdk;
+  resultOrder: LedgerSyncResultOrder;
+}>;
+
 // Builds the SDK once per run, so a retry after a refusal reuses it and its JWT.
-export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSessionSdk }, Result>(
+export function createLedgerSyncJob<Input extends LedgerSyncJobInput, Result>(
   call: LedgerSyncDeviceCall<Input, Result>,
 ): Job<LedgerSyncJobState, Input, Result> {
   return ({ deviceConnectionResult, input, onResult }) =>
@@ -151,7 +140,7 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
 
       const run = () => {
         const token = ++runToken;
-        const ticket = ledgerSyncResultOrder.take();
+        const ticket = input.resultOrder.take();
         const isLatestRun = () => token === runToken;
         const isCurrentRun = () => !subscriber.closed && isLatestRun();
         const retry = () => {
@@ -165,12 +154,12 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
           result => {
             if (!isLatestRun()) return;
             if (subscriber.closed) {
-              if (ledgerSyncResultOrder.isStale(ticket)) return;
-              ledgerSyncResultOrder.markDelivered(ticket);
+              if (input.resultOrder.isStale(ticket)) return;
+              input.resultOrder.markDelivered(ticket);
               deliverLateResult(onResult, result);
               return;
             }
-            ledgerSyncResultOrder.markDelivered(ticket);
+            input.resultOrder.markDelivered(ticket);
             completeJob(subscriber, onResult, result);
           },
           (error: unknown) => {

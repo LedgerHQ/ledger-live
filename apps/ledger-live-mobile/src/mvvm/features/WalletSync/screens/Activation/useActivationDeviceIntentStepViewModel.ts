@@ -2,7 +2,11 @@ import { useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
-import type { AddMemberIntent, AddMemberIntentInput } from "@features/platform-intent-wallet-sync";
+import {
+  isCurrentMemberCredentials,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+} from "@features/platform-intent-wallet-sync";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import {
   memberCredentialsSelector,
@@ -16,7 +20,7 @@ import {
   type TrustchainResult,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useDispatch, useSelector, useStore } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
@@ -25,7 +29,7 @@ import { AnalyticsEvents } from "../../Analytics/enums";
 import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import { addMemberIntentLWMDefinition } from "../../deviceIntents/addMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
-import { useIsCurrentMemberCredentials } from "../../deviceIntents/useIsCurrentMemberCredentials";
+import { ledgerSyncResultOrder } from "../../deviceIntents/ledgerSyncResultOrder";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -53,7 +57,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
   const createSessionSdk = useCreateSessionSdk();
-  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
+  const store = useStore();
 
   // Without a trustchain to join, only a new setup or a completed onboarding may create one.
   const checkTrustchainsExist: NonNullable<GetOrCreateTrustchainCallbacks["onInitialResponse"]> =
@@ -96,6 +100,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
         memberCredentials,
         currentTrustchain: trustchain ?? undefined,
         createSessionSdk,
+        resultOrder: ledgerSyncResultOrder,
         onInitialResponse: checkTrustchainsExist,
       };
       return createIntent(addMemberIntentLWMDefinition, intentInput, {
@@ -112,7 +117,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     seededOffer: boolean,
     runCredentials: MemberCredentials,
   ) {
-    if (!isCurrentMemberCredentials(runCredentials)) return;
+    if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
     dispatch(setTrustchain(trustchainResult.trustchain));
     track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
     activatedRef.current = { trustchainResult, seededOffer };

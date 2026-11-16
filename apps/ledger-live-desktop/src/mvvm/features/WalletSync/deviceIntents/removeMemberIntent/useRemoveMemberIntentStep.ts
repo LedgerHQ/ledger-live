@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { createIntent } from "@features/platform-device-intent";
-import type {
-  RemoveMemberIntent,
-  RemoveMemberJobState,
+import {
+  isCurrentMemberCredentials,
+  type RemoveMemberIntent,
+  type RemoveMemberJobState,
 } from "@features/platform-intent-wallet-sync";
 import {
   memberCredentialsSelector,
@@ -14,11 +15,11 @@ import type {
   Trustchain,
   TrustchainMember,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
-import { useIsCurrentMemberCredentials } from "../useIsCurrentMemberCredentials";
+import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -33,7 +34,7 @@ export function useRemoveMemberIntentStep(
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
+  const store = useStore();
   const isStoredRef = useRef(false);
 
   const onUserCancel = useCallback(
@@ -47,11 +48,11 @@ export function useRemoveMemberIntentStep(
 
   const onResult = useCallback(
     (newTrustchain: Trustchain, runCredentials: MemberCredentials) => {
-      if (!isCurrentMemberCredentials(runCredentials)) return;
+      if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
       isStoredRef.current = true;
       dispatch(setTrustchain(newTrustchain));
     },
-    [dispatch, isCurrentMemberCredentials],
+    [dispatch, store],
   );
 
   const onJobStateChanged = useCallback(
@@ -73,7 +74,13 @@ export function useRemoveMemberIntentStep(
       ? (): RemoveMemberIntent =>
           createIntent(
             removeMemberIntentLWDDefinition,
-            { trustchain, memberCredentials, member, createSessionSdk },
+            {
+              trustchain,
+              memberCredentials,
+              member,
+              createSessionSdk,
+              resultOrder: ledgerSyncResultOrder,
+            },
             {
               onResult: newTrustchain => onResult(newTrustchain, memberCredentials),
               onJobStateChanged,

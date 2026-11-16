@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { createIntent } from "@features/platform-device-intent";
-import type {
-  RemoveMemberIntent,
-  RemoveMemberIntentInput,
+import {
+  isCurrentMemberCredentials,
+  type RemoveMemberIntent,
+  type RemoveMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
 import {
   memberCredentialsSelector,
@@ -16,11 +17,11 @@ import type {
   Trustchain,
   TrustchainMember,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useDispatch, useSelector, useStore } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { removeMemberIntentLWMDefinition } from "../../deviceIntents/removeMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
-import { useIsCurrentMemberCredentials } from "../../deviceIntents/useIsCurrentMemberCredentials";
+import { ledgerSyncResultOrder } from "../../deviceIntents/ledgerSyncResultOrder";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -37,7 +38,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const createSessionSdk = useCreateSessionSdk();
-  const isCurrentMemberCredentials = useIsCurrentMemberCredentials();
+  const store = useStore();
 
   const removedMemberRef = useRef<TrustchainMember | null>(null);
 
@@ -53,6 +54,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
         memberCredentials,
         member,
         createSessionSdk,
+        resultOrder: ledgerSyncResultOrder,
       };
       return createIntent(removeMemberIntentLWMDefinition, intentInput, {
         onResult: newTrustchain => onResult(newTrustchain, member, memberCredentials),
@@ -66,7 +68,7 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
     member: TrustchainMember,
     runCredentials: MemberCredentials,
   ) {
-    if (!isCurrentMemberCredentials(runCredentials)) return;
+    if (!isCurrentMemberCredentials(store.getState(), runCredentials)) return;
     dispatch(setTrustchain(newTrustchain));
     removedMemberRef.current = member;
   }

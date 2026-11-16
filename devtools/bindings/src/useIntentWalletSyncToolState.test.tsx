@@ -5,6 +5,7 @@ import { configureStore, createAction, type UnknownAction } from "@reduxjs/toolk
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   addMemberIntentDefinition,
+  createLedgerSyncResultOrder,
   removeMemberIntentDefinition,
   TrustchainMemberId,
   type LedgerSyncJobState,
@@ -60,6 +61,7 @@ function buildParams() {
     addMemberIntentDefinition: { ...addMemberIntentDefinition, component: () => null },
     removeMemberIntentDefinition: { ...removeMemberIntentDefinition, component: () => null },
     createSessionSdk: jest.fn(),
+    resultOrder: createLedgerSyncResultOrder(),
     sdk: { getMembers: jest.fn().mockResolvedValue(MEMBERS) },
     setTrustchain,
   } satisfies IntentWalletSyncToolStateParams;
@@ -112,6 +114,7 @@ describe("useIntentWalletSyncToolState", () => {
       memberCredentials: MEMBER_CREDENTIALS,
       currentTrustchain: TRUSTCHAIN,
       createSessionSdk: params.createSessionSdk,
+      resultOrder: params.resultOrder,
     });
     expect(result.current.toolProps.status).toBe("running");
 

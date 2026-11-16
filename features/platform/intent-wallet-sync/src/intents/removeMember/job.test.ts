@@ -13,6 +13,7 @@ import type {
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import { createLedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -89,6 +90,7 @@ function createJob(removeMember: RemoveMember) {
       memberCredentials: MEMBER_CREDENTIALS,
       member: MEMBER,
       createSessionSdk: () => fakeTrustchainSdk({ removeMember }),
+      resultOrder: createLedgerSyncResultOrder(),
     },
     onResult,
   });

@@ -14,6 +14,7 @@ import {
   type TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import { createLedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -96,6 +97,7 @@ function createJob(
       memberCredentials: MEMBER_CREDENTIALS,
       currentTrustchain,
       createSessionSdk,
+      resultOrder: createLedgerSyncResultOrder(),
       ...(onInitialResponse && { onInitialResponse }),
     },
     onResult,
@@ -271,6 +273,7 @@ describe("addMemberIntentJob", () => {
           createSessionSdk: () => {
             throw error;
           },
+          resultOrder: createLedgerSyncResultOrder(),
         },
         onResult,
       }),
