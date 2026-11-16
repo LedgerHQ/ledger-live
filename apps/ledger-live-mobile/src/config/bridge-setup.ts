@@ -2,6 +2,7 @@ import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { setCountervaluesLogger } from "@features/platform-market-countervalues";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { log } from "@ledgerhq/logs";
+import { getEnv } from "@shared/env";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
@@ -14,7 +15,10 @@ import {
 import type { StoreType } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: StoreType) {
-  const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
+  const cryptoAssetsStore = buildCryptoAssetsStore({
+    dispatch: store.dispatch,
+    getCalRef: () => getEnv("CAL_REF") || undefined,
+  });
   setCryptoAssetsStore(cryptoAssetsStore);
 }
 

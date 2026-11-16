@@ -51,6 +51,9 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
       (query.endpointName === "findTokenById" ||
         query.endpointName === "findTokenByAddressInCurrency")
     ) {
+      // The restore rebuilds each query without its `ref`: a token of another CAL reference would
+      // come back as a production one
+      if ((query.originalArgs as { ref?: string } | undefined)?.ref) continue;
       const token = query.data as TokenCurrency;
       if (!token?.id) continue;
 

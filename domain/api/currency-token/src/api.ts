@@ -42,6 +42,7 @@ export const cryptoAssetsApi = calApi
             id: params.id,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ...(params.ref && { ref: params.ref }),
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
@@ -62,6 +63,7 @@ export const cryptoAssetsApi = calApi
             ...(params.token_identifier === undefined
               ? {}
               : { token_identifier: params.token_identifier }),
+            ...(params.ref && { ref: params.ref }),
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,

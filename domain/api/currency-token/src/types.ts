@@ -4,6 +4,8 @@ import { ApiTokenResponseSchema, PersistedCALSchema, PersistedTokenEntrySchema }
 
 export interface TokenByIdParams {
   id: string;
+  /** CAL reference to read from (e.g. "branch:main", "tag:tokens-1.11.12"). */
+  ref?: string;
 }
 
 /** Parameters for the `findTokenByAddressInCurrency` query. */
@@ -14,6 +16,8 @@ export interface TokenByAddressInCurrencyParams {
   network: string;
   /** The token identifier. */
   token_identifier?: string;
+  /** CAL reference to read from (e.g. "branch:main", "tag:tokens-1.11.12"). */
+  ref?: string;
 }
 
 /** Parameters for the `getTokensData` query. */

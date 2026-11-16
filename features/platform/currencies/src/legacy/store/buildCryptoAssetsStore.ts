@@ -16,6 +16,8 @@ export interface BuildCryptoAssetsStoreConfig {
   dispatch: CryptoAssetsStoreDispatch;
   /** The CAL token api. Defaults to the shared `cryptoAssetsApi`; injectable for tests. */
   api?: CryptoAssetsApi;
+  /** The CAL reference token lookups read from, read on every lookup. Production CAL when absent. */
+  getCalRef?: () => string | undefined;
 }
 
 /**
@@ -57,20 +59,26 @@ export interface BuildCryptoAssetsStoreConfig {
 export function buildCryptoAssetsStore({
   dispatch,
   api = cryptoAssetsApi,
+  getCalRef,
 }: BuildCryptoAssetsStoreConfig): CryptoAssetsStore {
   return {
     async findTokenById(id) {
-      const { data, error } = await dispatch(api.endpoints.findTokenById.initiate({ id }));
+      const ref = getCalRef?.();
+      const { data, error } = await dispatch(
+        api.endpoints.findTokenById.initiate({ id, ...(ref && { ref }) }),
+      );
       if (error) throw remapRtkQueryError(error);
       return data;
     },
 
     async findTokenByAddressInCurrency(address, currencyId, tokenIdentifier) {
+      const ref = getCalRef?.();
       const { data, error } = await dispatch(
         api.endpoints.findTokenByAddressInCurrency.initiate({
           contract_address: address,
           network: currencyId,
           ...(tokenIdentifier === undefined ? {} : { token_identifier: tokenIdentifier }),
+          ...(ref && { ref }),
         }),
       );
       if (error) throw remapRtkQueryError(error);
