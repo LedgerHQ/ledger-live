@@ -16,7 +16,9 @@ type TestParamList = OnboardingNavigatorParamList & {
 
 const Stack = createNativeStackNavigator<TestParamList>();
 
-function renderGetStarted(source?: OnboardingEntrySource, connectUnseededDevice?: boolean) {
+type DeviceOnboardingParams = { connectUnseededDevice?: boolean; connectSeededDevice?: boolean };
+
+function renderGetStarted(source?: OnboardingEntrySource, params?: DeviceOnboardingParams) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen
@@ -34,14 +36,11 @@ function renderGetStarted(source?: OnboardingEntrySource, connectUnseededDevice?
         {() => <Text>welcome back</Text>}
       </Stack.Screen>
     </Stack.Navigator>,
-    connectUnseededDevice === undefined
+    params === undefined
       ? undefined
       : {
           overrideInitialState: withFlagOverrides({
-            deviceOnboarding: {
-              enabled: true,
-              params: { connectUnseededDevice },
-            },
+            deviceOnboarding: { enabled: true, params },
           }),
         },
   );
@@ -81,7 +80,7 @@ describe("PostWelcomeSelection", () => {
   });
 
   it("should open device selection when connectUnseededDevice is off", async () => {
-    const { user } = renderGetStarted(undefined, false);
+    const { user } = renderGetStarted(undefined, { connectUnseededDevice: false });
 
     await user.press(screen.getByTestId("onboarding-setupLedger"));
 
@@ -89,12 +88,29 @@ describe("PostWelcomeSelection", () => {
   });
 
   it("should open the device flow when connectUnseededDevice is on", async () => {
-    const { user } = renderGetStarted(undefined, true);
+    const { user } = renderGetStarted(undefined, { connectUnseededDevice: true });
 
     await user.press(screen.getByTestId("onboarding-setupLedger"));
 
     expect(await screen.findByText("device flow")).toBeVisible();
     expect(screen.queryByText("device selection")).toBeNull();
+  });
+
+  it("should open welcome back when connectSeededDevice is off", async () => {
+    const { user } = renderGetStarted(undefined, { connectSeededDevice: false });
+
+    await user.press(screen.getByTestId("onboarding-accessWallet"));
+
+    expect(await screen.findByText("welcome back")).toBeVisible();
+  });
+
+  it("should open the device flow when connectSeededDevice is on", async () => {
+    const { user } = renderGetStarted(undefined, { connectSeededDevice: true });
+
+    await user.press(screen.getByTestId("onboarding-accessWallet"));
+
+    expect(await screen.findByText("device flow")).toBeVisible();
+    expect(screen.queryByText("welcome back")).toBeNull();
   });
 
   it("should keep today's events when no source is given", async () => {
