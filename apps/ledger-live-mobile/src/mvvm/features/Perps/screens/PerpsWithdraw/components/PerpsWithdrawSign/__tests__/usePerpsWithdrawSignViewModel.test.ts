@@ -192,7 +192,8 @@ describe("usePerpsWithdrawSignViewModel", () => {
     expect(mockSync).toHaveBeenCalledWith({
       type: "SYNC_ONE_ACCOUNT",
       accountId: sourceAccount.id,
-      priority: 10,
+      // Above the signing screen's SyncSkipUnderPriority(100), or the polls are dropped.
+      priority: 100,
       reason: "perps-withdraw",
     });
     expect(props.onDone).not.toHaveBeenCalled();

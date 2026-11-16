@@ -4,6 +4,11 @@ import { getAccountCurrency } from "../../../account";
 
 export const WITHDRAW_BALANCE_REFLECTION_TIMEOUT_MS = 60_000;
 export const WITHDRAW_BALANCE_REFLECTION_POLL_MS = 2_000;
+/**
+ * The signing screen skips syncs under priority 100 while a device is selected (LLM
+ * `SyncSkipUnderPriority`), and the wait runs on that screen: a lower priority would be dropped.
+ */
+export const WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY = 100;
 
 export type WithdrawBalanceReflectionOutcome = "reflected" | "timeout" | "cancelled";
 

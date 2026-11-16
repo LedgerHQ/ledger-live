@@ -15,6 +15,7 @@ import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/
 import {
   getWithdrawTargetBalance,
   waitForWithdrawBalanceReflected,
+  WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -154,7 +155,7 @@ export function usePerpsWithdrawSignViewModel({
             sync({
               type: "SYNC_ONE_ACCOUNT",
               accountId: sourceAccount.id,
-              priority: 10,
+              priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
               reason: "perps-withdraw",
             }),
           isCancelled: () => isLeavingRef.current,

@@ -18,6 +18,7 @@ import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/
 import {
   getWithdrawTargetBalance,
   waitForWithdrawBalanceReflected,
+  WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection";
 import { track } from "@shared/analytics";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -134,7 +135,7 @@ export function usePerpsWithdrawSignViewModel(
             sync({
               type: "SYNC_ONE_ACCOUNT",
               accountId: sourceAccount.id,
-              priority: 10,
+              priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
               reason: "perps-withdraw",
             }),
           isCancelled: () => closedRef.current,
