@@ -4354,8 +4354,8 @@
         "confirmation": {
           "title": "Confirmation",
           "success": {
-            "title": "{{token}} token successfully added",
-            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "title": "Request to add {{token}} sent",
+            "text": "It applies once the network confirms the transaction.",
             "cta": "View details"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -4369,8 +4369,7 @@
       "steps": {
         "confirmation": {
           "success": {
-            "title": "{{token}} trust limit updated",
-            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+            "title": "Request to update {{token}} sent"
           }
         }
       }
@@ -4401,9 +4400,7 @@
         },
         "confirmation": {
           "success": {
-            "title": "{{token}} removed",
-            "text": "Your XRP account no longer holds <0>{{token}}</0>.",
-            "released": "{{amount}} are available again."
+            "title": "Request to remove {{token}} sent"
           }
         }
       }

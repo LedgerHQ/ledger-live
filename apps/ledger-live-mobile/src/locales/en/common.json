@@ -8458,8 +8458,8 @@
         "limitZero": "The trust limit must be above 0."
       },
       "success": {
-        "title": "{{token}} added",
-        "text": "It appears in your account with a balance of 0 after the next sync."
+        "title": "Request to add {{token}} sent",
+        "text": "It applies once the network confirms the transaction."
       }
     },
     "tokenSettings": {
