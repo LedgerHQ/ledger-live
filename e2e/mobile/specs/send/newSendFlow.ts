@@ -88,10 +88,7 @@ export function runNewSendFlowTest(
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.newSend.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
         transaction.memoTag,
@@ -171,10 +168,7 @@ export function runNewSendMemoTest(
 
     if (invalidMemoInput !== undefined) {
       it(`[${label}] - Send - numeric memo only (${invalidMemoInput})`, async () => {
-        await app.send.navigateToSendScreen(
-          transaction.accountToDebit.accountName,
-          transaction.accountToDebit.currency.id,
-        );
+        await app.send.navigateToSendScreen(transaction.accountToDebit);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
         await app.newSend.expectMemoRejectsNonNumericInput(invalidMemoInput);
         if (transaction.memoTag) {
@@ -185,20 +179,14 @@ export function runNewSendMemoTest(
 
     if (memoTypeOptions !== undefined) {
       it(`[${label}] - Send - memo type options`, async () => {
-        await app.send.navigateToSendScreen(
-          transaction.accountToDebit.accountName,
-          transaction.accountToDebit.currency.id,
-        );
+        await app.send.navigateToSendScreen(transaction.accountToDebit);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
         await app.newSend.expectMemoTypeOptions(memoTypeOptions);
       });
     }
 
     it(`[${label}] - Send - with memo`, async () => {
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.newSend.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
         transaction.memoTag,
@@ -216,10 +204,7 @@ export function runNewSendMemoTest(
 
     if (broadcastWithoutMemo) {
       it(`[${label}] - Send - without memo`, async () => {
-        await app.send.navigateToSendScreen(
-          noMemoTransaction.accountToDebit.accountName,
-          noMemoTransaction.accountToDebit.currency.id,
-        );
+        await app.send.navigateToSendScreen(noMemoTransaction.accountToDebit);
         await app.newSend.setRecipientAndContinueNewFlow(
           noMemoTransaction.accountToCredit.address,
           noMemoTransaction.memoTag,
