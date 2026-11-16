@@ -1,10 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   currencyIdFromNetwork,
+  fromDescriptorPath,
   AccountDescriptorSchema,
   AddressSchema,
   type Address,
   networkFromCurrencyId,
+  toDescriptorPath,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
@@ -116,15 +118,7 @@ export function keyOfDerivedAccount(
   return publicKey.toLowerCase();
 }
 
-/** `m/44h/60h/0h/0/0` -> `44'/60'/0'/0/0`, the spelling of the legacy resolvers. */
-export const toLegacyPath = (path: string) => path.replace(/^m\//, "").replaceAll("h", "'");
-
-/** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
-export const toDescriptorPath = (path: string) =>
-  `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;
-const fromDescriptorPath = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
-
-const stripHardened = (segment: string) => (segment.endsWith("h") ? segment.slice(0, -1) : segment);
+const stripHardened = (segment: string) => (segment.endsWith("'") ? segment.slice(0, -1) : segment);
 
 /** Account index of `path` if it follows `scheme` (only a utxo path may stop before `<node>/<address>`), else null. */
 function matchSchemeToPath(
@@ -133,7 +127,7 @@ function matchSchemeToPath(
   path: string,
   allowTruncated: boolean,
 ): number | null {
-  const schemeSegments = scheme.split("/").map(s => s.replaceAll("'", "h"));
+  const schemeSegments = scheme.split("/");
   const pathSegments = path.split("/");
   if (pathSegments.length > schemeSegments.length) return null;
 
@@ -145,7 +139,7 @@ function matchSchemeToPath(
       if (!allowTruncated || (base !== "<node>" && base !== "<address>")) return null;
       continue;
     }
-    if (s.endsWith("h") !== p.endsWith("h")) return null;
+    if (s.endsWith("'") !== p.endsWith("'")) return null;
     if (base === "<coin_type>") {
       if (Number.parseInt(stripHardened(p), 10) !== coinType) return null;
     } else if (base === "<account>") {

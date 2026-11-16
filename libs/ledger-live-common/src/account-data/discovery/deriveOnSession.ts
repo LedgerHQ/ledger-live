@@ -6,13 +6,14 @@ import {
   AccountDescriptorSchema,
   currencyIdFromNetwork,
   type AccountDescriptor,
+  fromDescriptorPath,
 } from "@domain/entity-account-descriptor";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import type { DeriveAccount, LookedUpAccount } from "@features/platform-account-discovery";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import getAddress from "../../hw/getAddress";
-import { keyOfDerivedAccount, toLegacyPath } from "../../account/accountDescriptor";
+import { keyOfDerivedAccount } from "../../account/accountDescriptor";
 import { getAccountDescriptorType, loadSetupForFamily } from "../../coin-modules/registry";
 import type Transport from "@ledgerhq/hw-transport";
 import type { RunOnTransport } from "../../coin-modules/types";
@@ -30,7 +31,7 @@ function deriveAddress(
     from(
       getAddress(transport, {
         currency,
-        path: toLegacyPath(candidate.addressPath),
+        path: fromDescriptorPath(candidate.addressPath),
         derivationMode: asDerivationMode(candidate.derivationMode),
       }),
     ),
