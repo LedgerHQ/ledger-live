@@ -355,6 +355,25 @@ describe("buildSignRawOperation", () => {
       });
     });
 
+    it("passes the requested certificate kind to the signer", async () => {
+      coinTypes = [HBTC_SHORT];
+      findTokenByAddressInCurrency.mockResolvedValue(HBTC_TOKEN);
+
+      await lastValueFrom(
+        buildSignRawOperation(signerContext as unknown as SignerContext<SuiSigner>)({
+          account,
+          deviceId: "device",
+          transaction: await hashiDepositTransaction().toJSON(),
+          certificateSignatureKind: "test",
+        }).pipe(toArray()),
+      );
+
+      expect(mockSignTransaction.mock.calls[0][2]).toMatchObject({
+        certificateSignatureKind: "test",
+        tokenId: HBTC_TOKEN.id,
+      });
+    });
+
     it("sends no descriptor when only SUI is moved", async () => {
       coinTypes = [];
 

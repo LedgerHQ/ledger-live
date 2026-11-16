@@ -57,6 +57,7 @@ async function resolveToken(
   account: SuiAccount,
   coinTypes: string[],
   deviceModelId: DeviceModelId | undefined,
+  certificateSignatureKind: Resolution["certificateSignatureKind"],
 ): Promise<Resolution | undefined> {
   const store = getCryptoAssetsStore();
   const known = (
@@ -74,7 +75,7 @@ async function resolveToken(
   const [{ coinType, tokenId }] = known;
   return {
     deviceModelId,
-    certificateSignatureKind: undefined,
+    certificateSignatureKind,
     tokenId,
     tokenAddress: coinType,
   };
@@ -138,6 +139,7 @@ async function performSignRawOperation(
     transaction,
     broadcast,
     deviceModelId,
+    certificateSignatureKind,
   }: Parameters<AccountBridge<Transaction, SuiAccount>["signRawOperation"]>[0],
   observer: Observer<SignOperationEvent>,
   isCancelled: () => boolean,
@@ -153,7 +155,12 @@ async function performSignRawOperation(
     },
   );
   const unsigned = built.serialized;
-  const resolution = await resolveToken(account, built.coinTypes, deviceModelId);
+  const resolution = await resolveToken(
+    account,
+    built.coinTypes,
+    deviceModelId,
+    certificateSignatureKind,
+  );
 
   // Building and token lookup are async: a flow closed meanwhile must not prompt the device.
   if (isCancelled()) return;
