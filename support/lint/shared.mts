@@ -5,7 +5,6 @@ import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "shared/app-config",
   "shared/feature-flags",
-  "shared/live-config-overrides",
 ];
 
 export default defineConfig({
