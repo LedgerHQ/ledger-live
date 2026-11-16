@@ -24,6 +24,11 @@ export class LedgerSyncDrawer extends Drawer {
     "walletsync-activate-success-title",
   );
   private readonly deviceIntentDialog = this.page.getByTestId("device-intent-executor-dialog");
+  private readonly addMemberDeviceStep = this.page.getByTestId(
+    "wallet-sync-add-member-continue-on-device",
+  );
+  private readonly addMemberRejected = this.page.getByTestId("wallet-sync-add-member-rejected");
+  private readonly addMemberRetryButton = this.page.getByTestId("wallet-sync-add-member-retry");
 
   private async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
@@ -52,6 +57,25 @@ export class LedgerSyncDrawer extends Drawer {
   async expectDeviceIntentVisible() {
     await expect(this.deviceIntentDialog).toBeVisible();
     await expect(this.content).toBeHidden();
+  }
+
+  @step("Expect the activation device step in the device intent dialog")
+  async expectActivationDeviceStep() {
+    await this.addMemberDeviceStep.waitFor({ state: "visible" });
+    await expect(this.addMemberDeviceStep).toBeVisible();
+  }
+
+  /** The refusal replaces the device step in place, so it must be fully shown before Retry. */
+  @step("Expect the activation refused on device in the device intent dialog")
+  async expectActivationRejectedOnDevice() {
+    await this.addMemberRejected.waitFor({ state: "visible" });
+    await expect(this.addMemberRejected).toBeInViewport({ ratio: 1 });
+    await expect(this.addMemberRetryButton).toBeVisible();
+  }
+
+  @step("Retry the activation in the device intent dialog")
+  async retryActivation() {
+    await this.addMemberRetryButton.click();
   }
 
   @step("Expect the device intent dialog to be closed")
