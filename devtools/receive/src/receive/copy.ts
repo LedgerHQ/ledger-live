@@ -13,6 +13,7 @@ export const copy = {
   deeplinkDescription: "Fires a receive deeplink as the OS would.",
   deeplinkLabel: "URL",
   openDeeplink: "Open",
+  invalidDeeplink: "Not a valid URL.",
 } as const;
 
 export const DEFAULT_RECEIVE_DEEPLINK = "ledgerwallet://receive?currency=ethereum";

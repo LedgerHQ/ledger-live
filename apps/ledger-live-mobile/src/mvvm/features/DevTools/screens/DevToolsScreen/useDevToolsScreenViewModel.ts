@@ -124,8 +124,7 @@ export function useDevToolsScreenViewModel() {
     getDefaultValueByKey: getLiveConfigDefaultValue,
   });
   const accountDetailToolProps = useAccountDetailToolProps();
-  const receiveTrigger = useReceiveDevToolTrigger();
-  const receiveToolProps = useReceiveToolProps(receiveTrigger);
+  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger());
   const predictionsSetupHooks = usePredictionsSetupHooks();
   const predictionsSetup = useMemo<PredictionsSetup>(
     () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),

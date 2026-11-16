@@ -3,7 +3,7 @@ import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currenc
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { getModalData } from "~/renderer/reducers/modals";
+import { getModalData, isModalOpened } from "~/renderer/reducers/modals";
 import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
 
 const ethAccount = genAccount("receive-devtool-eth", {
@@ -19,26 +19,45 @@ const renderTrigger = () =>
   });
 
 describe("useReceiveDevToolTrigger", () => {
-  it("opens the receive modal on the token account of the asset, with its parent", () => {
+  it("opens the receive modal on the token account of the asset, with its parent", async () => {
     const { result, store } = renderTrigger();
 
     act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: usdcToken.id }));
 
-    expect(store.getState().modals.MODAL_RECEIVE).toEqual({
-      isOpened: true,
-      data: { account: usdcAccount, parentAccount: ethAccountWithToken, sourcePage: "DevTools" },
-    });
+    await waitFor(() =>
+      expect(store.getState().modals.MODAL_RECEIVE).toEqual({
+        isOpened: true,
+        data: { account: usdcAccount, parentAccount: ethAccountWithToken, sourcePage: "DevTools" },
+      }),
+    );
   });
 
-  it("opens the receive modal on the main account for its coin", () => {
+  it("opens the receive modal on the main account for its coin", async () => {
     const { result, store } = renderTrigger();
 
     act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: "ethereum" }));
 
-    expect(getModalData(store.getState(), "MODAL_RECEIVE")).toEqual({
-      account: ethAccountWithToken,
-      sourcePage: "DevTools",
-    });
+    await waitFor(() =>
+      expect(getModalData(store.getState(), "MODAL_RECEIVE")).toEqual({
+        account: ethAccountWithToken,
+        sourcePage: "DevTools",
+      }),
+    );
+  });
+
+  it("closes an open receive modal before opening it on the new asset", async () => {
+    const { result, store } = renderTrigger();
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: "ethereum" }));
+    await waitFor(() => expect(isModalOpened(store.getState(), "MODAL_RECEIVE")).toBe(true));
+
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: usdcToken.id }));
+
+    expect(isModalOpened(store.getState(), "MODAL_RECEIVE")).toBe(false);
+    await waitFor(() =>
+      expect(getModalData(store.getState(), "MODAL_RECEIVE")).toMatchObject({
+        account: usdcAccount,
+      }),
+    );
   });
 
   it("opens nothing for an unknown account", () => {
@@ -49,15 +68,17 @@ describe("useReceiveDevToolTrigger", () => {
     expect(store.getState().modals.MODAL_RECEIVE).toBeUndefined();
   });
 
-  it("opens the receive modal on its account selection step", () => {
+  it("opens the receive modal on its account selection step", async () => {
     const { result, store } = renderTrigger();
 
     act(() => result.current.onPickAsset());
 
-    expect(store.getState().modals.MODAL_RECEIVE).toEqual({
-      isOpened: true,
-      data: { sourcePage: "DevTools" },
-    });
+    await waitFor(() =>
+      expect(store.getState().modals.MODAL_RECEIVE).toEqual({
+        isOpened: true,
+        data: { sourcePage: "DevTools" },
+      }),
+    );
   });
 
   it("runs the deeplink through the app's deeplink handler", async () => {

@@ -30,6 +30,16 @@ const tether = convertApiToken({
   standard: "erc20",
 });
 
+const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+const usdCoin = convertApiToken({
+  id: USDC,
+  contractAddress: USDC_ADDRESS,
+  name: "USD Coin",
+  ticker: "USDC",
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+  standard: "erc20",
+});
+
 function buildStore() {
   const store = configureStore({
     reducer: {
@@ -158,6 +168,43 @@ describe("useReceiveToolProps", () => {
         networkId: "ethereum",
       },
     ]);
+  });
+
+  it("names a token CAL resolved by its address", async () => {
+    const { store, result } = renderTool();
+
+    act(() => {
+      store.dispatch(
+        cryptoAssetsApi.util.upsertQueryData(
+          "findTokenByAddressInCurrency",
+          { contract_address: USDC_ADDRESS, network: "ethereum" },
+          usdCoin,
+        ),
+      );
+    });
+
+    await waitFor(() =>
+      expect(result.current.trigger.assets).toContainEqual(
+        expect.objectContaining({ assetId: USDC, label: "USD Coin · Savings", ticker: "USDC" }),
+      ),
+    );
+  });
+
+  it.each([
+    [
+      "throws",
+      () => {
+        throw new Error("no handler");
+      },
+    ],
+    ["rejects", () => Promise.reject(new Error("no handler"))],
+  ])("warns instead of failing when the host's deeplink opener %s", async (_, onOpenDeeplink) => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const { result } = renderTool({ ...mockTrigger(), onOpenDeeplink });
+
+    expect(() => result.current.trigger.onOpenDeeplink("ledgerwallet://receive")).not.toThrow();
+    await waitFor(() => expect(warn).toHaveBeenCalledTimes(1));
+    warn.mockRestore();
   });
 
   it("calls the host's latest openers through a stable trigger", () => {

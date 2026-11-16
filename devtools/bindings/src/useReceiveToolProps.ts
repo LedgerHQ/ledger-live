@@ -1,7 +1,12 @@
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
-import { cryptoAssetsApi } from "@domain/api-currency-token";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  cryptoAssetsApi,
+  extractTokensFromState,
+  type WithCryptoAssetsApi,
+} from "@domain/api-currency-token";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { WithAccountBalances } from "@domain/entity-account-balance";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
@@ -16,29 +21,37 @@ type ReceiveToolAsset = ReceiveToolProps["trigger"]["assets"][number];
 /** Opening receive is app routing: the host passes its own receive openers. */
 export type ReceiveToolTrigger = Omit<ReceiveToolProps["trigger"], "assets">;
 
-type TokenCacheState = Parameters<
-  ReturnType<typeof cryptoAssetsApi.endpoints.findTokenById.select>
->[0];
-
 /** Both apps mount the accounts slice at `accountEntries` and the names at `wallet.accountNames`. */
 type State = WithAccountBalances &
-  TokenCacheState & {
+  WithCryptoAssetsApi & {
     accountEntries: AccountsState;
     wallet: { accountNames: AccountNamesState };
   };
 
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
-/** The tokens CAL already resolved, without reading the ones it has not. */
-function selectCachedTokens(
-  state: State,
-): Record<string, { name: string; ticker: string } | undefined> {
-  const tokenIds = Object.values(state.accountBalances)
-    .flatMap(rows => rows?.map(row => row.assetId) ?? [])
-    .filter(assetId => !CRYPTO_CURRENCIES_REGISTRY[assetId]);
-  return Object.fromEntries(
-    tokenIds.map(id => [id, cryptoAssetsApi.endpoints.findTokenById.select({ id })(state).data]),
-  );
+/** The tokens CAL already resolved, by id or by address, without requesting the others. */
+const selectCachedTokens = createSelector(
+  [(state: State) => state[cryptoAssetsApi.reducerPath]],
+  (cal): Record<string, { name: string; ticker: string } | undefined> =>
+    Object.fromEntries(
+      extractTokensFromState({ [cryptoAssetsApi.reducerPath]: cal }).map(({ data }) => [
+        data.id,
+        data,
+      ]),
+    ),
+);
+
+const warnDeeplinkFailure = (error: unknown) =>
+  console.warn("Receive DevTools: the host could not open the deeplink", error);
+
+/** Catches a host opener that throws or returns a rejected promise. */
+function openDeeplinkSafely(open: () => unknown) {
+  try {
+    Promise.resolve(open()).catch(warnDeeplinkFailure);
+  } catch (error) {
+    warnDeeplinkFailure(error);
+  }
 }
 
 const NO_FAMILIES: readonly string[] = [];
@@ -53,7 +66,7 @@ function useLatestTrigger(trigger: ReceiveToolTrigger): ReceiveToolTrigger {
     () => ({
       onReceive: target => latest.current.onReceive(target),
       onPickAsset: () => latest.current.onPickAsset(),
-      onOpenDeeplink: url => latest.current.onOpenDeeplink(url),
+      onOpenDeeplink: url => openDeeplinkSafely(() => latest.current.onOpenDeeplink(url)),
     }),
     [],
   );

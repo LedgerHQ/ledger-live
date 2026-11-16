@@ -10,9 +10,9 @@ import {
   Switch,
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
-import type { ReceiveToolAsset, ReceiveToolProps, ReceiveTriggerSectionProps } from "../types";
+import type { ReceiveToolProps } from "../types";
 import { copy } from "./copy";
-import { useReceiveToolViewModel } from "./useReceiveToolViewModel";
+import { type ReceiveRow, useReceiveToolViewModel } from "./useReceiveToolViewModel";
 
 function Section({
   title,
@@ -30,23 +30,14 @@ function Section({
   );
 }
 
-function AssetRow({
-  asset,
-  onReceive,
-}: Readonly<{ asset: ReceiveToolAsset; onReceive: ReceiveTriggerSectionProps["onReceive"] }>) {
-  const { legacyAccountId, assetId } = asset;
+function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
   return (
-    <ListItem onClick={() => onReceive({ legacyAccountId, assetId })}>
+    <ListItem onClick={row.onPress} aria-label={row.accessibilityLabel}>
       <ListItemLeading>
-        <CryptoIcon
-          ledgerId={asset.currencyId}
-          ticker={asset.ticker}
-          network={asset.networkId}
-          size={32}
-        />
+        <CryptoIcon {...row.icon} size={32} />
         <ListItemContent>
-          <ListItemTitle>{asset.label}</ListItemTitle>
-          <ListItemDescription>{asset.network}</ListItemDescription>
+          <ListItemTitle>{row.title}</ListItemTitle>
+          <ListItemDescription>{row.description}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>
@@ -54,16 +45,7 @@ function AssetRow({
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const {
-    flag,
-    trigger,
-    excludedDraft,
-    setExcludedDraft,
-    applyExcludedFamilies,
-    deeplinkDraft,
-    setDeeplinkDraft,
-    openDeeplink,
-  } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
 
   return (
     <div className="flex flex-col">
@@ -79,23 +61,23 @@ export function Receive(props: ReceiveToolProps) {
         <TextInput
           label={copy.excludedFamilies}
           placeholder={copy.excludedFamiliesPlaceholder}
-          value={excludedDraft}
-          onChange={event => setExcludedDraft(event.target.value)}
+          value={excluded.draft}
+          onChange={event => excluded.setDraft(event.target.value)}
         />
-        <Button className="self-end" appearance="gray" size="sm" onClick={applyExcludedFamilies}>
+        <Button className="self-end" appearance="gray" size="sm" onClick={excluded.apply}>
           {copy.apply}
         </Button>
       </Section>
       <Section title={copy.triggerTitle} description={copy.triggerDescription}>
-        <Button className="self-start" appearance="gray" size="sm" onClick={trigger.onPickAsset}>
+        <Button className="self-start" appearance="gray" size="sm" onClick={pickAsset}>
           {copy.pickAsset}
         </Button>
-        {trigger.assets.length === 0 ? (
+        {rows.length === 0 ? (
           <p className="body-3 text-muted">{copy.noAsset}</p>
         ) : (
           <div className="flex flex-col">
-            {trigger.assets.map(asset => (
-              <AssetRow key={asset.id} asset={asset} onReceive={trigger.onReceive} />
+            {rows.map(row => (
+              <AssetRow key={row.key} row={row} />
             ))}
           </div>
         )}
@@ -103,10 +85,18 @@ export function Receive(props: ReceiveToolProps) {
       <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
         <TextInput
           label={copy.deeplinkLabel}
-          value={deeplinkDraft}
-          onChange={event => setDeeplinkDraft(event.target.value)}
+          value={deeplink.draft}
+          onChange={event => deeplink.setDraft(event.target.value)}
+          helperText={deeplink.error}
+          status={deeplink.error && "error"}
         />
-        <Button className="self-end" appearance="gray" size="sm" onClick={openDeeplink}>
+        <Button
+          className="self-end"
+          appearance="gray"
+          size="sm"
+          disabled={!deeplink.canOpen}
+          onClick={deeplink.open}
+        >
           {copy.openDeeplink}
         </Button>
       </Section>

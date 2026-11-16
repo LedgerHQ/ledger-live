@@ -70,7 +70,7 @@ describe("Receive", () => {
   it("opens receive on the tapped asset", async () => {
     const { trigger } = renderTool();
 
-    await userEvent.click(screen.getByRole("button", { name: /USD Coin/ }));
+    await userEvent.click(screen.getByRole("button", { name: "USD Coin, Ethereum" }));
     expect(trigger.onReceive).toHaveBeenCalledWith({
       legacyAccountId: "js:2:ethereum:0xabc:",
       assetId: "ethereum/erc20/usd__coin",
@@ -105,5 +105,16 @@ describe("Receive", () => {
     await userEvent.type(input, "ledgerwallet://receive?currency=bitcoin");
     await userEvent.click(screen.getByRole("button", { name: "Open" }));
     expect(trigger.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive?currency=bitcoin");
+  });
+
+  it.each(["", "not-a-url"])("does not open the invalid deeplink %p", async url => {
+    const { trigger } = renderTool();
+
+    const input = screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum");
+    await userEvent.clear(input);
+    await userEvent.paste(url);
+    expect(screen.getByText("Not a valid URL.")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Open" })).toBeDisabled();
+    expect(trigger.onOpenDeeplink).not.toHaveBeenCalled();
   });
 });
