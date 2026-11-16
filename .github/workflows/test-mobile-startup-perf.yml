@@ -448,6 +448,10 @@ jobs:
       - name: Boot two emulators
         run: bash e2e/tooling/startup-perf/devices/boot-emulators.sh "$RESULTS_DIR/android"
 
+      - name: Time fixed work in the emulators (before)
+        continue-on-error: true
+        run: bash e2e/tooling/startup-perf/devices/noise-floor.sh "$RESULTS_DIR/android/noise-floor.jsonl" before
+
       - name: Measure
         env:
           SCENARIO: ${{ matrix.scenario }}
@@ -469,6 +473,11 @@ jobs:
             --read "$READ" "${TRACE_ARGS[@]}" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
+
+      - name: Time fixed work in the emulators (after)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: bash e2e/tooling/startup-perf/devices/noise-floor.sh "$RESULTS_DIR/android/noise-floor.jsonl" after
 
       - name: Analyse
         if: ${{ always() }}
