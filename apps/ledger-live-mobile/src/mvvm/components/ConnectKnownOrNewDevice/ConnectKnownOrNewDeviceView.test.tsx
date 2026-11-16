@@ -103,33 +103,42 @@ function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<Device
 
 describe("ConnectKnownOrNewDeviceView", () => {
   describe("Rows", () => {
-    it("should show the status of each device", () => {
+    it("GIVEN connected, available and unavailable devices, WHEN the list renders, THEN it should show the status of each device", () => {
+      // GIVEN / WHEN
       renderView(discovering([connectedBleRow(), availableUsbRow(), unavailableBleRow()]));
 
+      // THEN
       expect(screen.getByText("Connected")).toBeVisible();
       expect(screen.getByText("Available")).toBeVisible();
       expect(screen.getByText("Not connected")).toBeVisible();
     });
 
-    it("should connect a device when its row is pressed", async () => {
+    it("GIVEN an available device, WHEN its row is pressed, THEN it should connect the device", async () => {
+      // GIVEN
       const row = availableUsbRow();
       const { user } = renderView(discovering([row]));
 
+      // WHEN
       await user.press(screen.getByText("Nano S Plus"));
 
+      // THEN
       expect(row.connect).toHaveBeenCalledTimes(1);
     });
 
-    it("should show the Add link above the list", async () => {
+    it("GIVEN a device list, WHEN the Add link above the list is pressed, THEN it should call addNewDevice", async () => {
+      // GIVEN
       const addNewDevice = jest.fn();
       const { user } = renderView(discovering([unavailableBleRow()], addNewDevice));
 
+      // WHEN
       await user.press(screen.getByText("Add"));
 
+      // THEN
       expect(addNewDevice).toHaveBeenCalledTimes(1);
     });
 
-    it("should show no menu on the rows of a state without device actions", () => {
+    it("GIVEN a state without device actions, WHEN the list renders, THEN it should show no menu on the rows", () => {
+      // GIVEN / WHEN
       renderView(
         {
           type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
@@ -140,111 +149,140 @@ describe("ConnectKnownOrNewDeviceView", () => {
         [makeRow("Flex 329")],
       );
 
+      // THEN
       expect(screen.queryByTestId("connect-known-or-new-device-menu-Flex 329")).toBeNull();
       expect(screen.queryByText("Add")).toBeNull();
     });
   });
 
   describe("Menu", () => {
-    it("should disconnect a connected Bluetooth device from its menu", async () => {
+    it("GIVEN the open menu of a connected Bluetooth device, WHEN Disconnect is pressed, THEN it should disconnect the device", async () => {
+      // GIVEN
       const row = connectedBleRow();
       const { user } = renderView(discovering([row]));
-
       await user.press(screen.getByTestId("connect-known-or-new-device-menu-Stax 2"));
       expect(screen.getByText("Remove")).toBeVisible();
+
+      // WHEN
       await user.press(screen.getByText("Disconnect"));
 
+      // THEN
       expect(row.disconnect).toHaveBeenCalledTimes(1);
       expect(row.remove).not.toHaveBeenCalled();
     });
 
-    it("should remove a connected Bluetooth device from its menu", async () => {
+    it("GIVEN the open menu of a connected Bluetooth device, WHEN Remove is pressed, THEN it should remove the device", async () => {
+      // GIVEN
       const row = connectedBleRow();
       const { user } = renderView(discovering([row]));
-
       await user.press(screen.getByTestId("connect-known-or-new-device-menu-Stax 2"));
+
+      // WHEN
       await user.press(screen.getByText("Remove"));
 
+      // THEN
       expect(row.remove).toHaveBeenCalledTimes(1);
     });
 
-    it("should only offer Remove for a known Bluetooth device that is not connected", async () => {
+    it("GIVEN the open menu of a known Bluetooth device that is not connected, WHEN Remove is pressed, THEN it should only offer Remove", async () => {
+      // GIVEN
       const row = unavailableBleRow();
       const { user } = renderView(discovering([row]));
-
       await user.press(screen.getByTestId("connect-known-or-new-device-menu-Flex 329"));
+
+      // WHEN
       await user.press(screen.getByText("Remove"));
 
+      // THEN
       expect(screen.queryByText("Disconnect")).toBeNull();
       expect(row.remove).toHaveBeenCalledTimes(1);
     });
 
-    it("should only offer Disconnect for a connected USB device", async () => {
+    it("GIVEN the open menu of a connected USB device, WHEN Disconnect is pressed, THEN it should only offer Disconnect", async () => {
+      // GIVEN
       const row = connectedUsbRow();
       const { user } = renderView(discovering([row]));
-
       await user.press(screen.getByTestId("connect-known-or-new-device-menu-Nano X"));
+
+      // WHEN
       await user.press(screen.getByText("Disconnect"));
 
+      // THEN
       expect(screen.queryByText("Remove")).toBeNull();
       expect(row.disconnect).toHaveBeenCalledTimes(1);
     });
 
-    it("should show no menu for an available USB device", () => {
+    it("GIVEN an available USB device, WHEN the list renders, THEN it should show no menu for it", () => {
+      // GIVEN / WHEN
       renderView(discovering([availableUsbRow()]));
 
+      // THEN
       expect(screen.queryByTestId("connect-known-or-new-device-menu-Nano S Plus")).toBeNull();
     });
   });
 
   describe("Empty state", () => {
-    it("should show the Add a Ledger device row and no Add link when there is no device", async () => {
+    it("GIVEN no device and no Add link, WHEN the Add a Ledger device row is pressed, THEN it should call addNewDevice", async () => {
+      // GIVEN
       const addNewDevice = jest.fn();
       const { user } = renderView(discovering([], addNewDevice));
-
       expect(screen.queryByText("Add")).toBeNull();
+
+      // WHEN
       await user.press(screen.getByText("Add a Ledger device"));
 
+      // THEN
       expect(addNewDevice).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("Show all", () => {
-    it("should show the first 3 devices and Show all when there are more", () => {
+    it("GIVEN more than 3 devices, WHEN the list renders, THEN it should show the first 3 devices and Show all", () => {
+      // GIVEN / WHEN
       renderView(discovering(fiveRows()));
 
+      // THEN
       expect(screen.getByText("C")).toBeVisible();
       expect(screen.queryByText("D")).toBeNull();
       expect(screen.getByText("Show all 5 devices")).toBeVisible();
     });
 
-    it("should show every device and Show less when Show all is pressed", async () => {
+    it("GIVEN more than 3 devices, WHEN Show all is pressed, THEN it should show every device and Show less", async () => {
+      // GIVEN
       const { user } = renderView(discovering(fiveRows()));
 
+      // WHEN
       await user.press(screen.getByText("Show all 5 devices"));
 
+      // THEN
       expect(screen.getByText("E")).toBeVisible();
       expect(screen.getByText("Show less")).toBeVisible();
     });
 
-    it("should show the first 3 devices again when Show less is pressed", async () => {
+    it("GIVEN every device is shown, WHEN Show less is pressed, THEN it should show the first 3 devices again", async () => {
+      // GIVEN
       const { user } = renderView(discovering(fiveRows()));
-
       await user.press(screen.getByText("Show all 5 devices"));
+
+      // WHEN
       await user.press(screen.getByText("Show less"));
 
+      // THEN
       expect(screen.queryByText("D")).toBeNull();
     });
 
-    it("should not offer Show all for 3 devices", () => {
+    it("GIVEN 3 devices, WHEN the list renders, THEN it should not offer Show all", () => {
+      // GIVEN / WHEN
       renderView(discovering(fiveRows().slice(0, 3)));
 
+      // THEN
       expect(screen.queryByText(/Show all/)).toBeNull();
     });
   });
 
   describe("Drawers", () => {
-    it("should ask to power on and unlock the device while it waits for it", () => {
+    it("GIVEN the flow waits for the device, WHEN the view renders, THEN it should ask to power on and unlock the device", () => {
+      // GIVEN / WHEN
       const row = makeRow("Flex 329");
       renderView(
         {
@@ -258,11 +296,13 @@ describe("ConnectKnownOrNewDeviceView", () => {
         [row],
       );
 
+      // THEN
       expect(screen.getByText("Power on and unlock your Ledger Stax")).toBeVisible();
       expect(screen.queryByText("Can't see your Ledger device?")).toBeNull();
     });
 
-    it("should open the Add mode from the hint when the device is not found", async () => {
+    it("GIVEN the device is not found, WHEN Add a Ledger device is pressed in the hint, THEN it should open the Add mode", async () => {
+      // GIVEN
       const row = makeRow("Flex 329");
       const addNewDevice = jest.fn();
       const { user } = renderView(
@@ -276,14 +316,17 @@ describe("ConnectKnownOrNewDeviceView", () => {
         },
         [row],
       );
-
       expect(screen.getByText("Can't see your Ledger device?")).toBeVisible();
+
+      // WHEN
       await user.press(screen.getByText("Add a Ledger device"));
 
+      // THEN
       expect(addNewDevice).toHaveBeenCalledTimes(1);
     });
 
-    it("should show the connecting view while the device connects", () => {
+    it("GIVEN the device is connecting, WHEN the view renders, THEN it should show the connecting view", () => {
+      // GIVEN / WHEN
       const row = makeRow("Flex 329");
       renderView(
         {
@@ -295,6 +338,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
         [row],
       );
 
+      // THEN
       expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
     });
   });
