@@ -7,6 +7,10 @@ import {
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { ScreenName } from "~/const";
 import { EarnScreen } from "../index";
 import type { EarnV2Webview } from "../EarnV2Webview";
@@ -143,5 +147,25 @@ describe("EarnScreen canvas background wiring", () => {
     });
 
     expect(capturedProps.current?.inputs?.llmWalletApiDeviceIntentSignEnabled).toBe("true");
+  });
+
+  it("should tell the live app it opens native stake positions, whatever a deeplink says", () => {
+    const deeplinkProps = {
+      navigation: {} as never,
+      route: {
+        key: "earn",
+        name: ScreenName.Earn,
+        params: { intent: "deposit", [NATIVE_STAKE_POSITION_INPUT_KEY]: "false" },
+        path: `earn?${NATIVE_STAKE_POSITION_INPUT_KEY}=false`,
+      },
+    } as unknown as React.ComponentProps<typeof EarnScreen>;
+
+    render(<EarnScreen {...deeplinkProps} />, {
+      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true } }),
+    });
+
+    expect(capturedProps.current?.inputs?.[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(
+      NATIVE_STAKE_POSITION_INPUT_VALUE,
+    );
   });
 });

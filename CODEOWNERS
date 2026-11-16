@@ -343,6 +343,7 @@ apps/ledger-live-desktop/src/mvvm/features/LiveAppModal/                        
 apps/ledger-live-desktop/src/mvvm/features/SwapTransactionStatusDialog/                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/SwapTransactionStatus/                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/LiveAppModal/                                  @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/StakePosition/                                 @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx

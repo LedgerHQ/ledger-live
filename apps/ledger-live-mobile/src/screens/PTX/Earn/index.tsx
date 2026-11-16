@@ -4,6 +4,10 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
@@ -141,6 +145,7 @@ function Earn({ route }: Props) {
       ...restParams,
       ...Object.fromEntries(searchParams.entries()),
       llmWalletApiDeviceIntentSignEnabled: deviceIntentSignEnabled ? "true" : "false",
+      [NATIVE_STAKE_POSITION_INPUT_KEY]: NATIVE_STAKE_POSITION_INPUT_VALUE,
     };
 
     return {

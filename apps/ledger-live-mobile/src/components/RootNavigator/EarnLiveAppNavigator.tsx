@@ -20,6 +20,7 @@ import { EarnInfoBottomSheet } from "~/screens/PTX/Earn/EarnInfoBottomSheet";
 import { ActionConfirmationDialog } from "~/screens/PTX/Earn/ActionConfirmationDialog";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { StakePositionSheetRoot } from "LLM/features/StakePosition";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
@@ -194,6 +195,7 @@ export const Earn = (props: NavigationProps) => {
       <EarnInfoDrawer />
       <EarnInfoBottomSheet />
       <ActionConfirmationDialog />
+      <StakePositionSheetRoot />
       <EarnMenuDrawer navigation={navigation} />
       <EarnMenuBottomSheet navigation={navigation} />
     </>

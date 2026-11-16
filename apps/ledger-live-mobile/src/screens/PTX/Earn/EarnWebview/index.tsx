@@ -29,6 +29,7 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const/navigation";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { useStakePositionHandlers } from "LLM/features/StakePosition";
 
 export enum MobileViewState {
   AmountInputScreen = "amount",
@@ -155,13 +156,20 @@ export const EarnWebview = ({
   const customEarnHandlers = useEarnCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
+  const customStakePositionHandlers = useStakePositionHandlers(accounts);
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customEarnHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
+      ...customStakePositionHandlers,
     };
-  }, [customEarnHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
+  }, [
+    customEarnHandlers,
+    customDeeplinkHandlers,
+    customLiveAppModalHandlers,
+    customStakePositionHandlers,
+  ]);
 
   const webview = (
     <Web3AppWebview
