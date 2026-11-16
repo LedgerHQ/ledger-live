@@ -33,6 +33,14 @@ let lastFetchedAt: number | null = null;
 let bootFetchLogged = false;
 const subscribers = new Set<Subscriber>();
 
+// Test build only: names the boot fetch failure in its startup event, code and message start.
+function describeFetchError(error: unknown): string {
+  const code = (error as { code?: unknown } | null)?.code;
+  const message = error instanceof Error ? error.message : String(error);
+  const plain = (text: string) => text.replace(/[^\w/. -]+/g, " ").trim();
+  return `${typeof code === "string" ? plain(code) : "no code"} - ${plain(message).slice(0, 80)}`;
+}
+
 function logBootFetchSettled(event: string) {
   if (bootFetchLogged) return;
   bootFetchLogged = true;
@@ -112,7 +120,7 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
     configure();
     await fetchAndActivate(rc);
   } catch (error) {
-    logBootFetchSettled("Remote flags fetch failed");
+    logBootFetchSettled(`Remote flags fetch failed ${describeFetchError(error)}`);
     throw error;
   }
   logBootFetchSettled("Remote flags fetched");

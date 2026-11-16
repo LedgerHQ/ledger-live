@@ -83,7 +83,9 @@ describe("fetchRemoteFlags", () => {
 
     await expect(fetchRemoteFlags()).rejects.toThrow("network");
 
-    expect(startupEvents.map(e => e.event)).toEqual(["Remote flags fetch failed"]);
+    expect(startupEvents.map(e => e.event)).toEqual([
+      "Remote flags fetch failed no code - network",
+    ]);
   });
 
   it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
