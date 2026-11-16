@@ -1,6 +1,6 @@
 import { parseAnyAccountId } from "@domain/entity-account";
 import { computeAccountAlias, initialAccountAliasState } from "./schema";
-import { accountIdFromAliasSelector, resolveAccountIdSelector } from "./selectors";
+import { accountIdFromAliasSelector, resolveAccountIdSelector } from "./slice";
 
 const ACCOUNT_ID = "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhH:segwit";
 const accountId = parseAnyAccountId(ACCOUNT_ID);
