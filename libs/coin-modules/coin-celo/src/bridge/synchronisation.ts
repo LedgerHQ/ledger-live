@@ -83,6 +83,16 @@ const resolveTypesFromContracts = (item: {
   return item.type;
 };
 
+/**
+ * The explorer's nonce, which `shouldRetainPendingOperation` compares with the optimistic op's to
+ * drop it once its tx is synced. A missing nonce stays unset rather than 0, which would claim one.
+ */
+const toSequenceNumber = (sequence: unknown): BigNumber | undefined => {
+  if (sequence === undefined || sequence === null) return undefined;
+  const value = new BigNumber(String(sequence));
+  return value.isNaN() ? undefined : value;
+};
+
 /** eth_getTransactionByHash is a cheap read, so a higher fan-out is safe. */
 const FEE_CURRENCY_ENRICH_CONCURRENCY = 10;
 
@@ -184,7 +194,7 @@ const getOperationsList = async ({
         date: item.tx.date,
         hasFailed: item.tx.failed,
         fee: new BigNumber(item.tx.fees.toString()),
-        transactionSequenceNumber: new BigNumber(0),
+        transactionSequenceNumber: toSequenceNumber(item.details?.sequence),
         extra: {},
         ...(token ? { token } : undefined),
         isSubAccount,

@@ -20,15 +20,18 @@ export const buildOptimisticOperation = (
   account: CeloAccount,
   transaction: Transaction,
   fee: BigNumber,
+  nonce: number,
 ): CeloOperation => {
   const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
+  // A CIP-64 fee is charged in the fee currency, so it is not CELO spent.
+  const isFeePaidInCelo = !isTokenTransaction && !transaction.feeCurrency;
   const value =
     type === "OUT" || type === "LOCK"
-      ? new BigNumber(transaction.amount).plus(isTokenTransaction ? 0 : fee)
+      ? new BigNumber(transaction.amount).plus(isFeePaidInCelo ? fee : 0)
       : new BigNumber(transaction.amount);
 
   const operation: CeloOperation = {
@@ -39,6 +42,8 @@ export const buildOptimisticOperation = (
     fee,
     blockHash: null,
     blockHeight: null,
+    // Lets the pending op clear as soon as a synced op carries the same nonce.
+    transactionSequenceNumber: new BigNumber(nonce),
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: isTokenTransaction ? tokenAccount.id : account.id,

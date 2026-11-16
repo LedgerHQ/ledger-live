@@ -1,3 +1,4 @@
+import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import {
@@ -10,7 +11,8 @@ import { mockGetCoinBalance, mockTokenEvmLogic } from "./__mocks__/evm.mock";
 import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
 import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
 import { CeloAccount, CeloOperation, CeloOperationExtra } from "../types";
-import { accountFixture } from "./fixtures";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { accountFixture, transactionFixture } from "./fixtures";
 import { getAccountShape } from "./synchronisation";
 
 const defaultInfo = {
@@ -113,7 +115,7 @@ describe("When getting the account shape", () => {
               date: new Date("2026-01-09"),
               hasFailed: false,
               fee: new BigNumber(525072996210000),
-              transactionSequenceNumber: new BigNumber(0),
+              transactionSequenceNumber: undefined,
               extra: {},
               isSubAccount: true,
             },
@@ -156,7 +158,7 @@ describe("When getting the account shape", () => {
           date: new Date("2026-01-09"),
           hasFailed: false,
           fee: new BigNumber(525072996210000),
-          transactionSequenceNumber: new BigNumber(0),
+          transactionSequenceNumber: new BigNumber(111),
           extra: {},
           isSubAccount: false,
         },
@@ -184,6 +186,25 @@ describe("When getting the account shape", () => {
       },
     });
     expect(result.spendableBalance).toEqual(BigNumber(20));
+  });
+});
+
+describe("pending operation retention", () => {
+  it("drops the optimistic op once a synced op carries its nonce", async () => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+    const account = { ...accountFixture, freshAddress: nativeOperation.senders[0] };
+    const synced = { ...account, operations: result.operations ?? [] };
+    const pending = (nonce: number) =>
+      buildOptimisticOperation(account, transactionFixture, new BigNumber(2), nonce);
+
+    expect(shouldRetainPendingOperation(synced, pending(111))).toBe(false);
+    expect(shouldRetainPendingOperation(synced, pending(112))).toBe(true);
   });
 });
 

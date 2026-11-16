@@ -146,6 +146,18 @@ describe("signOperation", () => {
     expect(signedEvent.signedOperation.signature.startsWith("0x")).toBe(true);
   });
 
+  it("builds the optimistic operation with the signed nonce", async () => {
+    const { signerContext } = createSignerContext({});
+    await collectEvents(signerContext);
+
+    expect(mockBuildOptimisticOperation).toHaveBeenCalledWith(
+      accountFixture,
+      expect.anything(),
+      new BigNumber(2),
+      BASE_UNSIGNED_TRANSACTION.nonce,
+    );
+  });
+
   it("builds a cip64 transaction when feeCurrency is set", async () => {
     const { signerContext } = createSignerContext({});
     mockBuildTransaction.mockResolvedValue({
