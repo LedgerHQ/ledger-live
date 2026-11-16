@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
-import sourceOnly, { CHECKS, check } from "./source-only.mjs";
+import sourceOnly, { CHECKS, check, sourceConditionOption } from "./source-only.mjs";
 import { SOURCE_ONLY_DEBT } from "./source-only-debt.mjs";
 
 const WORKSPACE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
@@ -220,6 +220,21 @@ test("no-source-condition: split rspack configs under tools/rspack fail", () => 
   assert.deepEqual(
     found.map(({ file, message }) => [file, message.startsWith(CHECKS["no-source-condition"])]),
     [["apps/desktop/tools/rspack/rspack.common.mts", true]],
+  );
+});
+
+test("no-source-condition: a commented-out condition passes", () => {
+  for (const source of [
+    '// customExportConditions: ["@ledgerhq/source"],\nmodule.exports = {};\n',
+    '/* conditionNames: ["@ledgerhq/source"], */\nmodule.exports = {};\n',
+    'module.exports = { customExportConditions: ["node", /* "@ledgerhq/source" */] };\n',
+    'module.exports = { conditionNames: [\n  "node",\n  // "@ledgerhq/source",\n] };\n',
+  ]) {
+    assert.deepEqual(sourceConditionOption(source), undefined, source);
+  }
+  assert.equal(
+    sourceConditionOption('module.exports = { conditionNames: [/* node */ "@ledgerhq/source"] };'),
+    "conditionNames",
   );
 });
 

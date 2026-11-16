@@ -9,6 +9,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { maskSource } from "./jest.mjs";
 import { SOURCE_ONLY_DEBT } from "./source-only-debt.mjs";
 
 const DEBT_FILE = "tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs";
@@ -35,10 +36,41 @@ const BUNDLER_CONFIG = /^(?:jest(?:\.[\w-]+)?\.config|(?:rspack|repack)(?:\.[\w-
 // Where those configs live, relative to the project root.
 const CONFIG_DIRS = ["", "tools/rspack"];
 
-// `customExportConditions: [..., "@ledgerhq/source", ...]` or `conditionNames: [...]`.
-const SOURCE_CONDITION_OPTION = new RegExp(
-  `\\b(customExportConditions|conditionNames)\\s*:\\s*\\[[^\\]]*["'\`]${SOURCE_CONDITION}["'\`]`,
-);
+// The opening of `customExportConditions: [...]` or `conditionNames: [...]`, matched on masked
+// source so commented-out code never matches.
+const CONDITION_OPTION = /\b(customExportConditions|conditionNames)\s*:\s*\[/g;
+
+const QUOTES = new Set(['"', "'", "`"]);
+
+/**
+ * The export-condition option of the config that lists the source condition as a live string
+ * literal, ignoring comments.
+ *
+ * @param {string} source
+ * @returns {string | undefined} the option name
+ */
+export function sourceConditionOption(source) {
+  const masked = maskSource(source);
+  for (const match of masked.matchAll(CONDITION_OPTION)) {
+    let depth = 1;
+    let i = match.index + match[0].length;
+    while (i < masked.length && depth > 0) {
+      const char = masked[i];
+      if (QUOTES.has(char)) {
+        // maskSource blanks a literal's contents but keeps its delimiters and offsets.
+        const close = masked.indexOf(char, i + 1);
+        if (close === -1) break;
+        if (source.slice(i + 1, close) === SOURCE_CONDITION) return match[1];
+        i = close + 1;
+        continue;
+      }
+      if (char === "[") depth++;
+      if (char === "]") depth--;
+      i++;
+    }
+  }
+  return undefined;
+}
 
 /**
  * @typedef {{ check: keyof typeof CHECKS, file: string, message: string }} Finding
@@ -197,9 +229,7 @@ function sourceConditionFindings(workspaceRoot, projectRoot) {
       return [];
     }
   }).flatMap(file => {
-    const option = fs
-      .readFileSync(path.join(workspaceRoot, file), "utf8")
-      .match(SOURCE_CONDITION_OPTION)?.[1];
+    const option = sourceConditionOption(fs.readFileSync(path.join(workspaceRoot, file), "utf8"));
     return option
       ? [
           finding(
