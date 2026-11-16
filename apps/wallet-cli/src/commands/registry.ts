@@ -27,11 +27,12 @@ export const COMMANDS: readonly CommandEntry[] = [
   {
     name: "agent-intent",
     description:
-      "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana payments and Ethereum swaps for human review, list the intents they proposed, check their status and cancel them, and sync their Ledger Sync accounts.",
+      "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana payments and Ethereum swaps for human review, list the intents they proposed, check their status and cancel them, sync their Ledger Sync accounts, and ask for Ledger Key Ring access.",
     subcommands: [
       "enroll",
       "wait",
       "recover",
+      "ring-access",
       "list",
       "show",
       "send",

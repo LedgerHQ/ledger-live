@@ -36,12 +36,15 @@ const SDK_KEYS = [
   "createAgentEnrollmentChannelHost",
   "createAgentRecoveryRequest",
   "createAgentRecoveryUrl",
+  "createAgentRingAccessRequest",
+  "createAgentRingAccessUrl",
   "createAgentIntentClient",
 ] as const;
 
 const COMPLETION_AUTH_KEYS = [
   "authenticateEnrollmentCompletion",
   "authenticateRecoveryCompletion",
+  "authenticateRingAccessCompletion",
 ] as const;
 
 const KEYCHAIN_KEYS = [
@@ -49,6 +52,9 @@ const KEYCHAIN_KEYS = [
   "saveAgentIntentSecretKey",
   "loadAgentIntentSecretKey",
   "deleteAgentIntentSecretKey",
+  "saveAgentIntentEncryptionKey",
+  "loadAgentIntentEncryptionKey",
+  "deleteAgentIntentEncryptionKey",
 ] as const;
 
 const KEY_FILE_KEYS = [
@@ -56,6 +62,9 @@ const KEY_FILE_KEYS = [
   "saveAgentIntentKeyFile",
   "loadAgentIntentKeyFile",
   "deleteAgentIntentKeyFile",
+  "saveAgentIntentEncryptionKeyFile",
+  "loadAgentIntentEncryptionKeyFile",
+  "deleteAgentIntentEncryptionKeyFile",
 ] as const;
 
 const LKRP_SDK_KEYS = ["createAgentLedgerSyncSdk"] as const;

@@ -708,6 +708,40 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain("plaintext-file");
     });
 
+    it("agentIntentProfiles shows each profile's ring access with its granted path", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        {
+          ...baseProfile,
+          trustchainId: "tc-1",
+          encryptionPublicKey: "03".padEnd(66, "e"),
+          ringAccess: {
+            environment: "staging",
+            trustchainId: "tc-1",
+            applicationPath: "m/0'/17'/0'",
+            encryptionPublicKey: "03".padEnd(66, "e"),
+          },
+        },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("RING ACCESS");
+      expect(out).toContain("granted staging m/0'/17'/0'");
+    });
+
+    it("agentIntentProfileShow shows the encryption key and a ring access request in flight", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        trustchainId: "tc-1",
+        encryptionPublicKey: "03".padEnd(66, "e"),
+        pendingRingAccess: {
+          requestSignature: "ab".repeat(64),
+          expiresAt: "2099-01-01T00:00:00.000Z",
+        },
+      });
+      const out = writes.join("");
+      expect(out).toMatch(/Ring access:\s+requesting/);
+      expect(out).toContain(`Encryption key: ${"03".padEnd(66, "e")}`);
+    });
+
     it("agentIntentProfiles renders dim message when there are no profiles", () => {
       createCommandOutput("human", ctx).agentIntentProfiles([]);
       expect(writes.join("")).toContain("No Agent Intent profiles");
@@ -805,6 +839,64 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain("https://example.com/agents/new?recovery=true");
       expect(out).toContain("Ez4f ubY2 TD8k Ve");
       expect(out).toContain("keep this process running");
+    });
+
+    it("agentIntentRingAccessPending prints the link, fingerprint and the keep-running hint", () => {
+      createCommandOutput("human", ctx).agentIntentRingAccessPending({
+        profileId: "test-agent",
+        ringAccessUrl: "https://example.com/agents/ring-access?v=4",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
+        keyStore: "os-keychain",
+      });
+      const out = writes.join("");
+      expect(out).toContain("https://example.com/agents/ring-access?v=4");
+      expect(out).toContain("Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("keep this process running");
+    });
+
+    it("agentIntentRingAccessPending points a detached run at agent-intent wait", () => {
+      createCommandOutput("human", ctx).agentIntentRingAccessPending({
+        profileId: "test-agent",
+        ringAccessUrl: "https://example.com/agents/ring-access?v=4",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
+        keyStore: "os-keychain",
+        listenerPid: 4242,
+        logPath: "/state/agent-intent-ring-access/test-agent.log",
+      });
+      const out = writes.join("");
+      expect(out).toContain("pid 4242");
+      expect(out).toContain("Run `wallet-cli agent-intent wait --profile test-agent`");
+      expect(out).not.toContain("keep this process running");
+    });
+
+    it("agentIntentRingAccessWaiting prints the listener, expiry and link", () => {
+      createCommandOutput("human", ctx).agentIntentRingAccessWaiting({
+        profileId: "test-agent",
+        listenerPid: 4242,
+        expiresAt: "2026-09-22T11:28:46.999Z",
+        ringAccessUrl: "https://example.com/agents/ring-access?v=4",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+      });
+      const out = writes.join("");
+      expect(out).toContain("Public key fingerprint: Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("still pending");
+      expect(out).toContain("pid 4242");
+      expect(out).toContain("Ring access link: https://example.com/agents/ring-access?v=4");
+    });
+
+    it("agentIntentRingAccessGranted confirms the profile, path and trustchain", () => {
+      createCommandOutput("human", ctx).agentIntentRingAccessGranted({
+        profileId: "test-agent",
+        environment: "staging",
+        trustchainId: "tc-1",
+        applicationPath: "m/0'/17'/0'",
+        encryptionPublicKey: "03".padEnd(66, "e"),
+      });
+      const out = writes.join("");
+      expect(out).toContain("\"test-agent\" has Ledger Key Ring access at m/0'/17'/0'");
+      expect(out).toContain("tc-1");
     });
 
     it("agentIntentRecovered confirms the profile and trustchain id", () => {

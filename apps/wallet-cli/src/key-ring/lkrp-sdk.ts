@@ -38,10 +38,18 @@ export const refuseAgentDevice: WithDevice = () => () => {
 
 /** Software-only Ledger Sync (App-16) SDK authenticating as an Agent Intent agent key. */
 export function createAgentLedgerSyncSdk(environment: AgentIntentEnvironment) {
+  return createAgentSdk(environment, LEDGER_SYNC_APPLICATION_ID);
+}
+
+export function createAgentKeyRingSdk(environment: AgentIntentEnvironment) {
+  return createAgentSdk(environment, LKRP_APPLICATION_ID);
+}
+
+function createAgentSdk(environment: AgentIntentEnvironment, applicationId: number) {
   return getSdk(
     false,
     {
-      applicationId: LEDGER_SYNC_APPLICATION_ID,
+      applicationId,
       name: "wallet-cli agent-intent",
       apiBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
     },

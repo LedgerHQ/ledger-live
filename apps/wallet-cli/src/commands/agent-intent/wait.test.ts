@@ -44,7 +44,7 @@ afterAll(() => {
 });
 
 const { default: waitCommand, pollEnrollment } = await import("./wait");
-const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
+const { listenerPaths, withListenerLock } = await import("../../agent-intent/detach");
 
 // Resolved per test: the state dir only points at the temp dir once `beforeAll` has run.
 let logPath: string;
@@ -127,12 +127,16 @@ describe("agent-intent wait", () => {
   let stdout: string[];
 
   beforeEach(() => {
-    ({ logPath, lockPath } = enrollListenerPaths("test-agent"));
+    ({ logPath, lockPath } = listenerPaths("enroll", "test-agent"));
     expect(logPath.startsWith(stateHome)).toBe(true);
     profileReads = [pendingProfile()];
     sessionReadCalls = 0;
     onFirstSessionRead = async () => {};
     rmSync(dirname(logPath), { recursive: true, force: true });
+    rmSync(dirname(listenerPaths("ring-access", "test-agent").logPath), {
+      recursive: true,
+      force: true,
+    });
     stdout = [];
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
   });
@@ -170,7 +174,7 @@ describe("agent-intent wait", () => {
   it("keeps polling a pending profile and reports enrolled once the listener saved it", async () => {
     profileReads = [pendingProfile(), ENROLLED];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
@@ -211,7 +215,7 @@ describe("agent-intent wait", () => {
       }),
     ]);
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { code, line } = await pollWaitJson(stdout, 50);
 
       expect(code).toBe(0);
@@ -230,7 +234,7 @@ describe("agent-intent wait", () => {
   });
 
   it("omits the link from enrollment-waiting when the log no longer has it", async () => {
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { line } = await pollWaitJson(stdout, 50);
 
       expect(line.type).toBe("enrollment-waiting");
@@ -252,7 +256,7 @@ describe("agent-intent wait", () => {
       }),
     ]);
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { line } = await pollWaitJson(stdout, 50);
 
       expect(line.type).toBe("enrollment-waiting");
@@ -266,7 +270,7 @@ describe("agent-intent wait", () => {
     // The listener saves its profile and logs its pending line after this run's first poll.
     onFirstSessionRead = async () => writeLog([pendingLogLine(profile.enrollmentExpiresAt)]);
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const started = Date.now();
       const { code, line } = await pollWaitJson(stdout, 60_000);
 
@@ -287,7 +291,7 @@ describe("agent-intent wait", () => {
     // The listener writes the session before its pending line.
     const logged = setTimeout(() => writeLog([pendingLogLine(profile.enrollmentExpiresAt)]), 50);
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const started = Date.now();
       const { code, line } = await pollWaitJson(stdout, 60_000);
 
@@ -307,7 +311,7 @@ describe("agent-intent wait", () => {
     profileReads = [profile];
     writeLog([pendingLogLine(profile.enrollmentExpiresAt)]);
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const started = Date.now();
       const { line } = await pollWaitJson(stdout, 100);
 
@@ -317,7 +321,7 @@ describe("agent-intent wait", () => {
   });
 
   it("tells a human how to keep waiting at timeout", async () => {
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       await runWait({ timeout: "1s" });
     });
 
@@ -396,7 +400,7 @@ describe("agent-intent wait", () => {
     const profile = pendingProfile(-1_000);
     profileReads = [profile];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const started = Date.now();
       const { code, line } = await pollWaitJson(stdout, 100);
 
@@ -414,7 +418,7 @@ describe("agent-intent wait", () => {
     // A listener killed without cleanup leaves its pid in the lock, and the OS may reuse it.
     profileReads = [pendingProfile(-2 * 60_000)];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { code, line } = await runWaitJson(stdout);
 
       expect(code).toBe(1);
@@ -425,7 +429,7 @@ describe("agent-intent wait", () => {
   it("reports enrolled when an approval made near expiry is saved after the link expired", async () => {
     profileReads = [pendingProfile(-1_000), ENROLLED];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
@@ -436,7 +440,7 @@ describe("agent-intent wait", () => {
   it("keeps polling while a live listener has not saved its profile yet", async () => {
     profileReads = [undefined, undefined, ENROLLED];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
@@ -448,7 +452,7 @@ describe("agent-intent wait", () => {
   it("reports enrollment-waiting without expiresAt or a link at --timeout while a live listener has not saved its profile", async () => {
     profileReads = [undefined];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const started = Date.now();
       const { code, line } = await pollWaitJson(stdout, 100);
 
@@ -467,7 +471,7 @@ describe("agent-intent wait", () => {
   it("tells a human the listener is still starting at timeout", async () => {
     profileReads = [undefined];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       await pollWait(50, "human");
     });
 
@@ -480,7 +484,7 @@ describe("agent-intent wait", () => {
   it("keeps waiting for a live listener still starting after minutes, e.g. at a keychain prompt", async () => {
     profileReads = [undefined];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const takenAt = (Date.now() - 4 * 60_000) / 1000;
       utimesSync(lockPath, takenAt, takenAt);
       const { code, line } = await pollWaitJson(stdout, 50);
@@ -493,7 +497,7 @@ describe("agent-intent wait", () => {
   it("fails with listener_stuck when a live listener has not saved its profile within 10 minutes", async () => {
     profileReads = [undefined];
 
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       const takenAt = (Date.now() - 10 * 60_000 - 1_000) / 1000;
       utimesSync(lockPath, takenAt, takenAt);
       const { code, line } = await pollWaitJson(stdout);
@@ -602,5 +606,254 @@ describe("agent-intent wait", () => {
 
   it("rejects an invalid --timeout", async () => {
     await expect(runWait({ timeout: "soon" })).rejects.toThrow(/--timeout "soon" is invalid/);
+  });
+  describe("after ring-access --detach", () => {
+    const AGENT_FINGERPRINT = "Ez4f ubY2 TD8k Ve";
+    const RING_ACCESS_URL = "https://app.agents.ledger.com/agents/ring-access?v=4&opaque";
+    let ringAccessLogPath: string;
+
+    function ringAccessPendingLine(expiresAt: string, fingerprint = AGENT_FINGERPRINT): string {
+      return JSON.stringify({
+        type: "ring-access-pending",
+        command: "agent-intent ring-access",
+        network: "all",
+        profileId: "test-agent",
+        ringAccessUrl: RING_ACCESS_URL,
+        fingerprint,
+        expiresAt,
+        keyStore: "os-keychain",
+      });
+    }
+
+    const grantedLine = JSON.stringify({
+      status: "success",
+      command: "agent-intent ring-access",
+      network: "all",
+      profileId: "test-agent",
+      environment: "production",
+      trustchainId: "app18-root",
+      applicationPath: "m/0'/17'/0'",
+      encryptionPublicKey: "03".padEnd(66, "e"),
+      granted: true,
+    });
+
+    function writeRingAccessLog(lines: string[]): void {
+      mkdirSync(dirname(ringAccessLogPath), { recursive: true });
+      writeFileSync(ringAccessLogPath, lines.map(line => `${line}\n`).join(""));
+    }
+
+    const inFuture = () => new Date(Date.now() + 30 * 60_000).toISOString();
+
+    beforeEach(() => {
+      ringAccessLogPath = listenerPaths("ring-access", "test-agent").logPath;
+      rmSync(dirname(ringAccessLogPath), { recursive: true, force: true });
+      profileReads = [ENROLLED];
+    });
+
+    it("reports the grant the listener logged, exit 0", async () => {
+      writeRingAccessLog([ringAccessPendingLine(inFuture()), grantedLine]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(0);
+      expect(line).toMatchObject({
+        status: "success",
+        command: "agent-intent wait",
+        profileId: "test-agent",
+        applicationPath: "m/0'/17'/0'",
+        trustchainId: "app18-root",
+        granted: true,
+      });
+    });
+
+    it("fails with the code of the error the listener logged, such as a decline", async () => {
+      writeRingAccessLog([
+        ringAccessPendingLine(inFuture()),
+        JSON.stringify({
+          ok: false,
+          error: { code: "ring_access_declined", message: "Declined." },
+        }),
+      ]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({
+        error: { code: "ring_access_declined", message: expect.stringContaining("Declined.") },
+      });
+    });
+
+    it("reports ring-access-waiting with the logged link while the listener waits, exit 0", async () => {
+      const expiresAt = inFuture();
+      writeRingAccessLog([ringAccessPendingLine(expiresAt)]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        const { code, line } = await pollWaitJson(stdout, 50);
+
+        expect(code).toBe(0);
+        expect(line).toEqual({
+          type: "ring-access-waiting",
+          command: "agent-intent wait",
+          network: "all",
+          profileId: "test-agent",
+          listenerPid: process.pid,
+          expiresAt,
+          ringAccessUrl: RING_ACCESS_URL,
+          fingerprint: AGENT_FINGERPRINT,
+        });
+      });
+    });
+
+    it("keeps polling while the listener waits and reports the grant once it is logged", async () => {
+      writeRingAccessLog([ringAccessPendingLine(inFuture())]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        setTimeout(() => writeRingAccessLog([ringAccessPendingLine(inFuture()), grantedLine]), 30);
+        const { code, line } = await pollWaitJson(stdout, 5_000);
+
+        expect(code).toBe(0);
+        expect(line).toMatchObject({ granted: true });
+      });
+    });
+
+    it("keeps polling a listener still finishing just after the link expired", async () => {
+      const justExpired = new Date(Date.now() - 1_000).toISOString();
+      writeRingAccessLog([ringAccessPendingLine(justExpired)]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        setTimeout(() => writeRingAccessLog([ringAccessPendingLine(justExpired), grantedLine]), 30);
+        const { code, line } = await pollWaitJson(stdout, 5_000);
+
+        expect(code).toBe(0);
+        expect(line).toMatchObject({ granted: true });
+      });
+    });
+
+    it("reports ring-access-waiting without a link while the listener is still starting", async () => {
+      writeRingAccessLog([]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        const { code, line } = await pollWaitJson(stdout, 50);
+
+        expect(code).toBe(0);
+        expect(line).toEqual({
+          type: "ring-access-waiting",
+          command: "agent-intent wait",
+          network: "all",
+          profileId: "test-agent",
+          listenerPid: process.pid,
+        });
+      });
+    });
+
+    it("reports enrolled while a ring-access run without --detach holds the lock", async () => {
+      await withListenerLock("ring-access", "test-agent", async () => {
+        const { code, line } = await pollWaitJson(stdout, 50);
+
+        expect(code).toBe(0);
+        expect(line).toMatchObject({ enrolled: true });
+      });
+    });
+
+    it("ignores a ring access log written before the profile was created", async () => {
+      writeRingAccessLog([
+        JSON.stringify({ ok: false, error: { code: "keychain_unavailable", message: "Old." } }),
+      ]);
+      const longAgo = new Date(Date.now() - 60 * 60_000);
+      utimesSync(ringAccessLogPath, longAgo, longAgo);
+      profileReads = [{ ...ENROLLED, createdAt: new Date().toISOString() }];
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ enrolled: true });
+    });
+
+    it("fails with listener_exited when a detached listener died without logging an event", async () => {
+      writeRingAccessLog(["Segmentation fault"]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({
+        error: { code: "listener_exited", message: expect.stringContaining("before printing") },
+      });
+    });
+
+    it("hands the link over as soon as a starting listener logs it", async () => {
+      writeRingAccessLog([]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        setTimeout(() => writeRingAccessLog([ringAccessPendingLine(inFuture())]), 30);
+        const { line } = await pollWaitJson(stdout, 5_000);
+
+        expect(line).toMatchObject({
+          type: "ring-access-waiting",
+          ringAccessUrl: RING_ACCESS_URL,
+          fingerprint: AGENT_FINGERPRINT,
+        });
+      });
+    });
+
+    it("fails with the error a listener logged before printing its link", async () => {
+      writeRingAccessLog([
+        JSON.stringify({
+          ok: false,
+          error: { code: "keychain_unavailable", message: "No keychain." },
+        }),
+      ]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({ error: { code: "keychain_unavailable" } });
+    });
+
+    it("fails with listener_stuck when a starting listener never printed its link", async () => {
+      writeRingAccessLog([]);
+
+      await withListenerLock("ring-access", "test-agent", async () => {
+        const { lockPath: ringAccessLockPath } = listenerPaths("ring-access", "test-agent");
+        const longAgo = new Date(Date.now() - 11 * 60_000);
+        utimesSync(ringAccessLockPath, longAgo, longAgo);
+
+        const { code, line } = await pollWaitJson(stdout);
+
+        expect(code).toBe(1);
+        expect(line).toMatchObject({ error: { code: "listener_stuck" } });
+      });
+    });
+
+    it("fails with ring_access_expired when the link expired with no listener left", async () => {
+      writeRingAccessLog([ringAccessPendingLine("2026-01-01T00:00:00.000Z")]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({ error: { code: "ring_access_expired" } });
+    });
+
+    it("fails with listener_exited when the listener is gone before the link expired", async () => {
+      writeRingAccessLog([ringAccessPendingLine(inFuture())]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({
+        error: {
+          code: "listener_exited",
+          message: expect.stringContaining("ring access listener of profile"),
+        },
+      });
+    });
+
+    it("reports enrolled when the logged run belongs to another agent key", async () => {
+      writeRingAccessLog([ringAccessPendingLine(inFuture(), "OTHR KEY0 FING ER"), grantedLine]);
+
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ enrolled: true });
+    });
   });
 });

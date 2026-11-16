@@ -480,6 +480,63 @@ describe("ring-field resilience", () => {
     expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
   });
 
+  it("round-trips the encryption key and ring access grant of a profile", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), YAML.stringify({ accounts: [] }));
+    const encryptionPublicKey = "03".padEnd(66, "e");
+    const ringAccess = {
+      environment: "production" as const,
+      trustchainId: "app18-root",
+      applicationPath: "m/0'/17'/0'",
+      encryptionPublicKey,
+    };
+    const session = await Session.read();
+    session.addAgentIntentProfile(makeAgentIntentProfile({ trustchainId: "app18-root" }));
+    session.updateAgentIntentProfile("trading-bot", { encryptionPublicKey, ringAccess });
+    session.write();
+
+    const reread = await Session.read();
+    expect(reread.getAgentIntentProfile("trading-bot")).toMatchObject({
+      encryptionPublicKey,
+      ringAccess,
+    });
+  });
+
+  it("keeps a profile whose ring access marker is malformed, dropping only the marker", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({
+            trustchainId: "app18-root",
+            pendingRingAccess: { requestSignature: "ab".repeat(64), expiresAt: "not-a-date" },
+          }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")).toBeDefined();
+    expect(session.getAgentIntentProfile("trading-bot")?.pendingRingAccess).toBeUndefined();
+  });
+
+  it("refuses a profile whose recorded encryption key is not a compressed public key", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ encryptionPublicKey: "04".padEnd(130, "e") }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")).toBeUndefined();
+    expect(session.invalidAgentIntentProfileIds).toEqual(["trading-bot"]);
+  });
+
   it("keeps a profile but drops its malformed cached Ledger Sync versions", async () => {
     useTmpState();
     writeFileSync(

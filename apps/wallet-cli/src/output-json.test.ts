@@ -640,6 +640,79 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("agentIntentRingAccessPending emits a ring-access-pending event, not a final envelope", () => {
+    const out = createCommandOutput("json", {
+      command: "agent-intent ring-access",
+      network: "all",
+    });
+    out.agentIntentRingAccessPending({
+      profileId: "test-agent",
+      ringAccessUrl: "https://example.com/agents/ring-access?v=4",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
+      keyStore: "plaintext-file",
+    });
+
+    const [line] = parseLines();
+    expect(line).toEqual({
+      type: "ring-access-pending",
+      command: "agent-intent ring-access",
+      network: "all",
+      profileId: "test-agent",
+      ringAccessUrl: "https://example.com/agents/ring-access?v=4",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
+      keyStore: "plaintext-file",
+    });
+  });
+
+  it("agentIntentRingAccessWaiting emits a ring-access-waiting event", () => {
+    const out = createCommandOutput("json", { command: "agent-intent wait", network: "all" });
+    out.agentIntentRingAccessWaiting({ profileId: "test-agent", listenerPid: 4242 });
+
+    const [line] = parseLines();
+    expect(line).toEqual({
+      type: "ring-access-waiting",
+      command: "agent-intent wait",
+      network: "all",
+      profileId: "test-agent",
+      listenerPid: 4242,
+    });
+  });
+
+  it("agentIntentRingAccessGranted emits granted:true with the grant references", () => {
+    const out = createCommandOutput("json", {
+      command: "agent-intent ring-access",
+      network: "all",
+    });
+    out.agentIntentRingAccessGranted({
+      profileId: "test-agent",
+      environment: "production",
+      trustchainId: "tc-1",
+      applicationPath: "m/0'/17'/0'",
+      encryptionPublicKey: "03".padEnd(66, "e"),
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profileId: "test-agent",
+      environment: "production",
+      trustchainId: "tc-1",
+      applicationPath: "m/0'/17'/0'",
+      encryptionPublicKey: "03".padEnd(66, "e"),
+      granted: true,
+    });
+  });
+
+  it("agentIntentProfileShow reports the ring access status", () => {
+    const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
+    out.agentIntentProfileShow({ ...baseAgentIntentProfile, trustchainId: "tc-1" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ profile: { ringAccessStatus: "none" } });
+  });
+
   it("agentIntentProfileShow redacts credentials embedded in the Keycloak URL", () => {
     const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
     out.agentIntentProfileShow({

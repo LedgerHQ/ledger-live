@@ -5,11 +5,13 @@ import {
   createSoftwareAgentIdentity,
   type AgentEnrollmentCompletionV2,
   type AgentKeycloakConfig,
+  type AgentRingAccessCompletion,
 } from "@ledgerhq/agent-intent-sdk";
 import type { JWT, MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import {
   authenticateEnrollmentCompletion,
   authenticateRecoveryCompletion,
+  authenticateRingAccessCompletion,
   type CompletionAuthDependencies,
 } from "./completion-auth";
 import { refuseAgentDevice } from "../key-ring/lkrp-sdk";
@@ -230,5 +232,117 @@ describe("authenticateRecoveryCompletion", () => {
         makeDependencies(),
       ),
     ).rejects.toThrow("not a member");
+  });
+});
+
+describe("authenticateRingAccessCompletion", () => {
+  const encryptionIdentity = createSoftwareAgentIdentity();
+  const KEY_RING_PATH = "m/0'/17'/0'";
+  let keyRingEnvironments: string[];
+  let authCalls: Array<{ trustchain: Trustchain; credentials: MemberCredentials }>;
+
+  function makeGrant(
+    overrides: Partial<AgentRingAccessCompletion> = {},
+  ): AgentRingAccessCompletion {
+    return {
+      version: 4,
+      agentPubkey: identity.publicKey,
+      encryptionPublicKey: encryptionIdentity.publicKey,
+      requestSignature: "ab".repeat(64),
+      environment: "staging",
+      trustchainId: "app18-root",
+      applicationPath: KEY_RING_PATH,
+      ...overrides,
+    };
+  }
+
+  function authenticateGrant(completion = makeGrant()) {
+    return authenticateRingAccessCompletion(
+      { completion, encryptionIdentity, environment: "staging" },
+      {
+        createKeyRingSdk: environment => {
+          keyRingEnvironments.push(environment);
+          return {
+            withAuth: <T>(
+              trustchain: Trustchain,
+              credentials: MemberCredentials,
+              job: (jwt: JWT) => Promise<T>,
+            ) => {
+              authCalls.push({ trustchain, credentials });
+              const permissions =
+                jwtPermission === undefined
+                  ? {}
+                  : { [trustchain.rootId]: { [trustchain.applicationPath]: jwtPermission } };
+              return job({ accessToken: "jwt", permissions });
+            },
+          };
+        },
+      },
+    );
+  }
+
+  beforeEach(() => {
+    keyRingEnvironments = [];
+    authCalls = [];
+    jwtPermission = "fffffffb";
+  });
+
+  it("signs in with the encryption key and finds a permission on the granted path", async () => {
+    await authenticateGrant();
+
+    expect(keyRingEnvironments).toEqual(["staging"]);
+    expect(authCalls).toEqual([
+      {
+        trustchain: {
+          rootId: "app18-root",
+          applicationPath: KEY_RING_PATH,
+          walletSyncEncryptionKey: "",
+        },
+        credentials: {
+          pubkey: encryptionIdentity.publicKey,
+          privatekey: encryptionIdentity.exportSecretKey(),
+        },
+      },
+    ]);
+  });
+
+  it.each(["m/0'/17'/0'/1'/2'", "m/0'/17'/3'"])("accepts a grant at %p", async applicationPath => {
+    await authenticateGrant(makeGrant({ applicationPath }));
+
+    expect(authCalls).toEqual([
+      expect.objectContaining({ trustchain: expect.objectContaining({ applicationPath }) }),
+    ]);
+  });
+
+  it("accepts any permission the encryption key holds on the path", async () => {
+    jwtPermission = "1";
+
+    await expect(authenticateGrant()).resolves.toBeUndefined();
+  });
+
+  it("rejects a grant on another environment than the profile's", async () => {
+    await expect(authenticateGrant(makeGrant({ environment: "production" }))).rejects.toThrow(
+      "Ring access was granted on the production environment but the profile was enrolled " +
+        "against staging.",
+    );
+    expect(authCalls).toEqual([]);
+  });
+
+  it.each(["m/0'/16'/0'", "m/0'/17'", "m/0'/17'/0'/1'"])(
+    "rejects %p, which is not a Key Ring path, before contacting the Trustchain",
+    async applicationPath => {
+      await expect(authenticateGrant(makeGrant({ applicationPath }))).rejects.toThrow(
+        "Ring access path is not a Key Ring (App-17) application path.",
+      );
+      expect(authCalls).toEqual([]);
+    },
+  );
+
+  it("rejects an encryption key without a permission on the granted path", async () => {
+    jwtPermission = undefined;
+
+    await expect(authenticateGrant()).rejects.toThrow(
+      "The encryption key holds no permission on the granted Key Ring path.",
+    );
   });
 });
