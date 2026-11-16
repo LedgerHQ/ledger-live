@@ -2,10 +2,7 @@ import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 
-const SLICE_SELECTORS_WAIVERS: string[] = [
-  "features/platform/app-lock",
-  "features/platform/market-countervalues",
-];
+const SLICE_SELECTORS_WAIVERS: string[] = ["features/platform/app-lock"];
 
 export default defineConfig({
   extends: [base],
