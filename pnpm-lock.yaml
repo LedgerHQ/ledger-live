@@ -5693,6 +5693,9 @@ importers:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
+      '@ledgerhq/crypto-icons':
+        specifier: 'catalog:'
+        version: 2.0.7(ac2036a65cc0ac7c6e25271c22c4573e)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35

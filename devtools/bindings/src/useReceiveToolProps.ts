@@ -6,9 +6,12 @@ import { useFeature } from "@features/platform-feature-flags";
 
 type ReceiveToolProps = Extract<DevToolsConfig[number], { id: "receive" }>["config"];
 
+/** Opening receive is app routing: the host passes its own receive openers. */
+export type ReceiveToolTrigger = ReceiveToolProps["trigger"];
+
 const NO_FAMILIES: readonly string[] = [];
 
-export function useReceiveToolProps(): ReceiveToolProps {
+export function useReceiveToolProps(trigger: ReceiveToolTrigger): ReceiveToolProps {
   const dispatch = useDispatch();
   const flag = useFeature("newReceiveFlow");
 
@@ -38,7 +41,7 @@ export function useReceiveToolProps(): ReceiveToolProps {
   );
 
   return useMemo(
-    () => ({ flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies } }),
-    [enabled, excludedFamilies, setEnabled, setExcludedFamilies],
+    () => ({ flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies }, trigger }),
+    [enabled, excludedFamilies, setEnabled, setExcludedFamilies, trigger],
   );
 }
