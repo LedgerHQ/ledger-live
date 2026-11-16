@@ -30,7 +30,7 @@ Tapping a device that is not connected shows a sheet over the list: "power on an
 
 ## Discovery
 
-Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background.
+Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background. While discovery is stopped, the rows and the Add button show greyed out.
 
 `onConnected` does not stop discovery. A caller that uses the device after `onConnected` sets `isPaused` to `true` or leaves the screen.
 

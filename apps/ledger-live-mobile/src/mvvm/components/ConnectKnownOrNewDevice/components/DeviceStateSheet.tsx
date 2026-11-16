@@ -29,7 +29,7 @@ type DeviceStateSheetProps = {
   state: DeviceStateSheetState | null;
 };
 
-function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice: () => void }>) {
+function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void }>) {
   const { t } = useTranslation();
 
   return (
@@ -37,7 +37,13 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice: () => void }
       appearance="info"
       title={t("connectKnownOrNewDevice.waitingHint.title")}
       primaryAction={
-        <Button appearance="gray" size="sm" onPress={onAddNewDevice} lx={{ flexShrink: 1 }}>
+        <Button
+          appearance="gray"
+          size="sm"
+          disabled={!onAddNewDevice}
+          onPress={onAddNewDevice}
+          lx={{ flexShrink: 1 }}
+        >
           {t("connectKnownOrNewDevice.addDevice")}
         </Button>
       }

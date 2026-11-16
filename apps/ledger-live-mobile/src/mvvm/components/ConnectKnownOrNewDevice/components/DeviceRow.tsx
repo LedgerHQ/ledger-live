@@ -29,15 +29,21 @@ export const getDeviceName = ({ device }: DeviceRowItem): string =>
 type DeviceRowProps = {
   item: DeviceRowItem;
   onOpenMenu: () => void;
+  disabled?: boolean;
 };
 
-export function DeviceRow({ item, onOpenMenu }: Readonly<DeviceRowProps>): React.JSX.Element {
+export function DeviceRow({
+  item,
+  onOpenMenu,
+  disabled,
+}: Readonly<DeviceRowProps>): React.JSX.Element {
   const { t } = useTranslation();
   const deviceName = getDeviceName(item);
 
   return (
     <ListItem
       density="expanded"
+      disabled={disabled}
       onPress={isSelectable(item) ? item.connect : undefined}
       testID={`connect-known-or-new-device-row-${item.key}`}
     >

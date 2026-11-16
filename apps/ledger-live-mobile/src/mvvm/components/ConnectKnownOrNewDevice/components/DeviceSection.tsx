@@ -22,20 +22,26 @@ type DeviceSectionProps = {
   devices: Array<DeviceRowItem>;
   /** Only set in `Discovering`. */
   onAddNewDevice?: () => void;
+  /** Set while discovery is paused: the rows and the Add button show greyed out. */
+  disabled?: boolean;
   children?: React.ReactNode;
 };
 
-function AddDeviceRow({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void }>) {
+function AddDeviceRow({
+  onAddNewDevice,
+  disabled,
+}: Readonly<{ onAddNewDevice?: () => void; disabled?: boolean }>) {
   const { t } = useTranslation();
 
   return (
     <ListItem
       density="expanded"
+      disabled={disabled}
       onPress={onAddNewDevice}
       testID="connect-known-or-new-device-add-device"
     >
       <ListItemLeading>
-        <Spot size={48} icon={Plus} />
+        <Spot size={48} icon={Plus} disabled={disabled} />
         <ListItemContent>
           <ListItemTitle>{t("connectKnownOrNewDevice.addDevice")}</ListItemTitle>
         </ListItemContent>
@@ -47,6 +53,7 @@ function AddDeviceRow({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void
 export function DeviceSection({
   devices,
   onAddNewDevice,
+  disabled,
   children,
 }: Readonly<DeviceSectionProps>): React.JSX.Element {
   const { t } = useTranslation();
@@ -66,18 +73,28 @@ export function DeviceSection({
         <Text typography="heading5SemiBold" lx={{ color: "base" }}>
           {t("connectKnownOrNewDevice.title")}
         </Text>
-        {!isEmpty && onAddNewDevice && (
-          <Link appearance="accent" size="md" icon={PlusCircleFill} onPress={onAddNewDevice}>
+        {!isEmpty && (onAddNewDevice || disabled) && (
+          <Link
+            appearance={disabled ? "gray" : "accent"}
+            size="md"
+            icon={PlusCircleFill}
+            onPress={onAddNewDevice}
+          >
             {t("connectKnownOrNewDevice.add")}
           </Link>
         )}
       </Box>
       <Box lx={{ backgroundColor: "surface", borderRadius: "md", padding: "s4", gap: "s4" }}>
         {isEmpty ? (
-          <AddDeviceRow onAddNewDevice={onAddNewDevice} />
+          <AddDeviceRow onAddNewDevice={onAddNewDevice} disabled={disabled} />
         ) : (
           shownDevices.map(item => (
-            <DeviceRow key={item.key} item={item} onOpenMenu={() => setMenuDeviceKey(item.key)} />
+            <DeviceRow
+              key={item.key}
+              item={item}
+              disabled={disabled}
+              onOpenMenu={() => setMenuDeviceKey(item.key)}
+            />
           ))
         )}
         {isCollapsible && (

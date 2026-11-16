@@ -80,8 +80,15 @@ const discovering = (
   addNewDevice = jest.fn(),
 ): ConnectKnownOrNewDeviceUIState => ({
   type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+  isPaused: false,
   devices,
   addNewDevice,
+});
+
+const pausedDiscovering = (devices: Array<DeviceListItem>): ConnectKnownOrNewDeviceUIState => ({
+  type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+  isPaused: true,
+  devices,
 });
 
 function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<DeviceListItem> = []) {
@@ -218,6 +225,44 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.queryByTestId("connect-known-or-new-device-menu-Nano S Plus")).toBeNull();
+    });
+  });
+
+  describe("Paused", () => {
+    it("GIVEN a paused flow, WHEN the list renders, THEN it should show the rows disabled and the Add link", () => {
+      // GIVEN / WHEN
+      const row = makeRow("Flex 329");
+      renderView(pausedDiscovering([row]));
+
+      // THEN
+      expect(screen.getByTestId(`connect-known-or-new-device-row-${row.key}`)).toBeDisabled();
+      expect(screen.getByText("Add")).toBeVisible();
+    });
+
+    it("GIVEN a paused flow and no device, WHEN the list renders, THEN it should show the Add a Ledger device row disabled", () => {
+      // GIVEN / WHEN
+      renderView(pausedDiscovering([]));
+
+      // THEN
+      expect(screen.getByTestId("connect-known-or-new-device-add-device")).toBeDisabled();
+    });
+
+    it("GIVEN the device is not found while the flow is paused, WHEN the hint shows, THEN its Add a Ledger device button should be disabled", () => {
+      // GIVEN / WHEN
+      const row = makeRow("Flex 329");
+      renderView(
+        {
+          type: ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice,
+          devices: [row],
+          device: row.device,
+          showDeviceNotFound: true,
+          close: jest.fn(),
+        },
+        [row],
+      );
+
+      // THEN
+      expect(screen.getByText("Add a Ledger device")).toBeDisabled();
     });
   });
 
