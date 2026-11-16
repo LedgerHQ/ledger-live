@@ -1,8 +1,8 @@
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { getCurrencyConfiguration } from "../config";
+import { getCurrencyConfiguration } from "../../config";
 import { isLedgerValidator } from "./isLedgerValidator";
 
-jest.mock("../config", () => ({ getCurrencyConfiguration: jest.fn() }));
+jest.mock("../../config", () => ({ getCurrencyConfiguration: jest.fn() }));
 
 const COSMOS_LEDGER = "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm";
 

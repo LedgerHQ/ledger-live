@@ -103,7 +103,13 @@ export function createCoinModuleValidatorsSource(
         const validators = items.map(item =>
           toNetworkValidator(item, host.isLedgerValidator(currencyId, item.address || item.id)),
         );
-        if (!next || next === cursor) return validators;
+        if (!next) return validators;
+        // A cursor that does not advance may have replayed a page: let the next source answer.
+        if (next === cursor) {
+          throw new CoinModuleValidatorsNotServedError(
+            `The validators cursor of ${currencyId} did not advance`,
+          );
+        }
         const rest = await readPages(next, page + 1);
         return rest && [...validators, ...rest];
       };

@@ -1,7 +1,7 @@
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveChainCurrencyId } from "@ledgerhq/coin-cosmos/chain/chain";
-import { getCurrencyConfiguration } from "../config";
-import { getLedgerValidatorAddress } from "../families/evm/staking/ledgerValidator";
+import { getCurrencyConfiguration } from "../../config";
+import { getLedgerValidatorAddress } from "../../families/evm/staking/ledgerValidator";
 
 function cosmosLedgerValidator(currencyId: string): string | undefined {
   try {

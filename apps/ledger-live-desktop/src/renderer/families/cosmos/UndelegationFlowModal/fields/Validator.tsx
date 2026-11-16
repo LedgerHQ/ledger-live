@@ -44,10 +44,10 @@ export default function ValidatorField({ account, transaction, onChange }: Props
     </Box>
   );
 }
-type OptionRowProps = {
+type OptionRowProps = Readonly<{
   data: CosmosMappedDelegation;
   currency: CryptoCurrency;
-};
+}>;
 function OptionRow({
   data: { validatorAddress, validator, formattedAmount },
   currency,

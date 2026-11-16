@@ -156,7 +156,7 @@ const currencyBridge: CurrencyBridge = {
   scanAccounts,
   preload: (currency: CryptoCurrency) => {
     const config = getCurrencyConfiguration(currency.id);
-    setCosmosPreloadData("cosmos", mockPreloadedData);
+    setCosmosPreloadData(currency.id, mockPreloadedData);
     return Promise.resolve({ validators: mockPreloadedData, config });
   },
   hydrate: (
@@ -172,7 +172,7 @@ const currencyBridge: CurrencyBridge = {
     if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
     const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
     cosmosValidatorsManager.hydrateValidators(validators);
-    setCosmosPreloadData("cosmos", asSafeCosmosPreloadData(data));
+    setCosmosPreloadData(currency.id, asSafeCosmosPreloadData(data));
   },
 };
 export default {

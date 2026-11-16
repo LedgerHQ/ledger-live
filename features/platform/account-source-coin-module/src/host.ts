@@ -54,6 +54,8 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
 export type CoinModuleStakingApi = CoinModuleTokenResolver & {
   /** One page of the stakes of an address; a falsy `next` ends the list. */
   getStakes(subject: string, cursor?: string): Promise<Page<Stake>>;
+  /** The chain pays the reward account-wide (Tron): it is summed into the account's `rewards`, a position keeps its principal only. */
+  rewardsAccountWide?: boolean;
 };
 
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */

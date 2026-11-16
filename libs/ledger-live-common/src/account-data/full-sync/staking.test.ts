@@ -118,6 +118,18 @@ describe("toAccountStaking", () => {
     ]);
   });
 
+  it("leaves out an unknown completion date rather than unlocking in 1970", async () => {
+    const { positions } = await toAccountStaking(
+      cosmosOf({
+        ...createEmptyStakingResources(),
+        unbondings: [
+          { validatorAddress: "v", amount: new BigNumber(5), completionDate: new Date(0) },
+        ],
+      }),
+    );
+    expect(positions[0]).not.toHaveProperty("unlockAt");
+  });
+
   it("marks the destination of a redelegation rather than adding a position", async () => {
     const { positions } = await toAccountStaking(cosmosOf(resources));
     expect(positions.filter(({ amount }) => amount === "1000")).toHaveLength(1);
@@ -199,6 +211,24 @@ describe("toAccountStaking", () => {
       },
       { id: "tz1:unstake", assetId: "tezos", state: "deactivating", amount: "20" },
     ]);
+  });
+
+  it("answers what an undelegated stake account can withdraw as its amount", async () => {
+    const stakingResources = {
+      ...createEmptyStakingResources(),
+      unbondings: [
+        {
+          positionId: "stake-account",
+          validatorAddress: "vote",
+          amount: new BigNumber(0),
+          withdrawableAmount: new BigNumber(2_500_000),
+          completionDate,
+          status: "withdrawable" as const,
+        },
+      ],
+    };
+    const [position] = (await toAccountStaking(cosmosOf(stakingResources))).positions;
+    expect(position).toMatchObject({ state: "withdrawable", amount: "2500000" });
   });
 
   it("floors a negative amount at zero", async () => {

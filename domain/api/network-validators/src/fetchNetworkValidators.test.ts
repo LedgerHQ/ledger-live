@@ -108,6 +108,24 @@ describe("fetchNetworkValidators", () => {
     expect(selectNetworkValidatorsEntry(store.getState(), cosmos)?.validators[0]?.name).toBe("new");
   });
 
+  it("clears the read once aborted, neither publishing nor falling back", async () => {
+    const held: { resolve?: (validators: NetworkValidator[]) => void } = {};
+    const ignoresSignal = source(
+      "ignoresSignal",
+      () => new Promise<NetworkValidator[]>(resolve => (held.resolve = resolve)),
+    );
+    const fallback = source("fallback", async () => validators);
+    const store = makeStore([ignoresSignal, fallback]);
+    const read = store.dispatch(fetchNetworkValidators(cosmos));
+    read.abort();
+    expect(selectNetworkValidatorsEntry(store.getState(), cosmos)?.pending).toBeUndefined();
+    held.resolve?.(validators);
+    const result = await read;
+    expect(result.meta.requestStatus).toBe("rejected");
+    expect(fallback.read).not.toHaveBeenCalled();
+    expect(selectNetworkValidatorsEntry(store.getState(), cosmos)).toEqual({ validators: [] });
+  });
+
   it("rejects when the app did not inject the sources", async () => {
     const store = makeStore([], {});
     const result = await store.dispatch(fetchNetworkValidators(cosmos));

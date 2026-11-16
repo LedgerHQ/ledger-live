@@ -1,6 +1,6 @@
 import { NetworkIdSchema } from "@domain/entity-account-descriptor";
 import { setCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
-import type { CosmosValidatorItem } from "../families/cosmos/types";
+import type { CosmosValidatorItem } from "../../families/cosmos/types";
 import { isLedgerValidator } from "./isLedgerValidator";
 import {
   createPreloadValidatorsSource,
@@ -91,6 +91,16 @@ describe("createPreloadValidatorsSource", () => {
     const failing = createPreloadValidatorsSource({
       prepareCurrency: () => Promise.reject(new Error("down")),
     });
-    await expect(failing.read(NetworkIdSchema.parse("cosmos"), { signal })).rejects.toThrow("down");
+    await expect(failing.read(NetworkIdSchema.parse("axelar"), { signal })).rejects.toThrow("down");
+  });
+
+  it("serves the cached validators when the refresh fails", async () => {
+    setCosmosPreloadData("coreum", { validators: [cosmosValidator] });
+    const offline = createPreloadValidatorsSource({
+      prepareCurrency: () => Promise.reject(new Error("offline")),
+    });
+    await expect(offline.read(NetworkIdSchema.parse("coreum"), { signal })).resolves.toEqual([
+      fromCosmosValidator(cosmosValidator),
+    ]);
   });
 });

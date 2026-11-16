@@ -61,15 +61,26 @@ const fromDelegation = (
 
 const fromUnbonding = (
   assetId: string,
-  { positionId, validatorAddress, status, amount, completionDate }: StakingUnbonding,
+  {
+    positionId,
+    validatorAddress,
+    status,
+    amount,
+    withdrawableAmount,
+    completionDate,
+  }: StakingUnbonding,
   index: number,
 ) => ({
   id: "unbonding:" + (positionId ?? `${validatorAddress}:${completionDate.getTime()}:${index}`),
   assetId,
   validatorId: validatorAddress || undefined,
   state: status ?? "deactivating",
-  amount: toAmount(amount),
-  unlockAt: completionDate.toISOString(),
+  // An undelegated Solana stake account has no delegated `amount`, only what it can withdraw.
+  amount: toAmount(
+    withdrawableAmount && withdrawableAmount.gt(amount) ? withdrawableAmount : amount,
+  ),
+  // Solana fills an unknown completion date with the epoch.
+  ...(completionDate.getTime() > 0 && { unlockAt: completionDate.toISOString() }),
 });
 
 const fromStake = (

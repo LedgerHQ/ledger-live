@@ -20,6 +20,7 @@ import {
 import { getCurrencyConfiguration } from "../../config";
 import {
   loadBridgeApiForFamily,
+  loadCoinModuleStakesForFamily,
   loadLocalApiForFamily,
   localApiServesAccountData,
 } from "../../coin-modules/registry";
@@ -119,9 +120,15 @@ export function createCoinModuleHost({
       }
       const api = withLogging(withDefaults(localApi));
       const context = contextOf(currency.id);
+      const { normalizeStake, rewardsAccountWide } =
+        (await loadCoinModuleStakesForFamily(currency.family)) ?? {};
       return {
-        getStakes: (subject, cursor) => api.getStakes(context, subject, { cursor }),
+        getStakes: async (subject, cursor) => {
+          const page = await api.getStakes(context, subject, { cursor });
+          return normalizeStake ? { ...page, items: page.items.map(normalizeStake) } : page;
+        },
         getTokenId: tokenIdOf(bridgeApi),
+        rewardsAccountWide,
       };
     },
     // Without a `limit`, a coin module may answer the whole history in one page. Decided in the code, not the

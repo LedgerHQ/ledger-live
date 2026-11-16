@@ -20,10 +20,16 @@ const polkadot = (locked: number, unlocking: number, unlocked = 0): PolkadotAcco
 });
 
 describe("polkadotBalanceLocks", () => {
-  it("splits the bonded balance into staked and unbonding", () => {
+  it("splits the bonded balance into staked and unbonding, leaving out matured chunks", () => {
     expect(polkadotBalanceLocks(polkadot(100, 30, 10))).toEqual([
       { reason: "staked", amount: "70" },
-      { reason: "unbonding", amount: "30" },
+      { reason: "unbonding", amount: "20" },
+    ]);
+  });
+
+  it("answers no unbonding once every chunk has matured", () => {
+    expect(polkadotBalanceLocks(polkadot(100, 30, 30))).toEqual([
+      { reason: "staked", amount: "70" },
     ]);
   });
 

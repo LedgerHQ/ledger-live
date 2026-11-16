@@ -3,7 +3,7 @@ import { currencyIdFromNetwork, type NetworkId } from "@domain/entity-account-de
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { NetworkValidator } from "@domain/entity-network-validators";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
-import type { CosmosValidatorItem } from "../families/cosmos/types";
+import type { CosmosValidatorItem } from "../../families/cosmos/types";
 import { isLedgerValidator } from "./isLedgerValidator";
 
 export type PreloadValidatorsHost = {
@@ -46,10 +46,18 @@ export function createPreloadValidatorsSource(
     async read(networkId) {
       const currency = currencyOf(networkId);
       if (!currency) throw new Error(`Unknown network ${networkId}`);
-      await host.prepareCurrency(currency);
+      let refreshError: unknown;
+      try {
+        await host.prepareCurrency(currency);
+      } catch (error) {
+        refreshError = error;
+      }
+      // A failed refresh falls back to the validators hydrated from the persisted cache.
       const validators = getCurrentCosmosPreloadData()[currency.id]?.validators ?? [];
-      // An empty preload is a failed one: no network has no validator.
-      if (validators.length === 0) throw new Error(`No preloaded validators for ${currency.id}`);
+      if (validators.length === 0) {
+        if (refreshError instanceof Error) throw refreshError;
+        throw new Error(`No preloaded validators for ${currency.id}`);
+      }
       return validators.map(validator =>
         fromCosmosValidator(validator, isLedgerValidator(currency.id, validator.validatorAddress)),
       );

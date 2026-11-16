@@ -181,6 +181,38 @@ describe("Cosmos Delegations Component", () => {
       expect(screen.getByText("Known Validator")).toBeVisible();
     });
 
+    it("lists queued undelegations to one validator that share a completion date", () => {
+      const completionDate = new Date("2026-12-01T00:00:00.000Z");
+      const unbonding = { validatorAddress: "cosmosvaloper1queued", completionDate };
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const queued = {
+        ...delegated,
+        stakingResources: {
+          delegations: [],
+          redelegations: [],
+          pendingRewardsBalance: BigNumber(0),
+          delegatedBalance: BigNumber(0),
+          unbondings: [
+            { ...unbonding, amount: BigNumber(1_000_000) },
+            { ...unbonding, amount: BigNumber(2_000_000) },
+          ],
+          unbondingBalance: BigNumber(3_000_000),
+        },
+      } as unknown as CosmosAccount;
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => undefined);
+      jest.mocked(getCurrencyConfiguration).mockReturnValue({
+        status: { type: "active" },
+        name: "Cosmos",
+        unit: { name: "Atom", code: "ATOM", magnitude: 6 },
+      });
+      render(<Delegations account={queued} />, {
+        initialState: { settings: { ...INITIAL_STATE } },
+      });
+      expect(screen.getAllByText("cosmosvaloper1queued")).toHaveLength(2);
+      expect(consoleError.mock.calls.flat().join(" ")).not.toContain("same key");
+      consoleError.mockRestore();
+    });
+
     it("shows the validator address until the network validators arrive", () => {
       jest
         .mocked(useNetworkValidators)

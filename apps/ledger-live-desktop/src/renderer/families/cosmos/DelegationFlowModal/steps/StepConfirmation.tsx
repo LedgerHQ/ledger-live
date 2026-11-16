@@ -4,7 +4,7 @@ import { isStakingAccount } from "@ledgerhq/types-live";
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -42,9 +42,17 @@ function StepConfirmation({
   const voteAccAddress = transaction ? getValAddress(transaction) : "";
   const currencyId = account.currency.id;
   const { validators } = useCosmosNetworkValidators(account.currency);
+  const trackedOperationId = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (optimisticOperation && voteAccAddress && validators) {
+    // A validators refresh re-runs the effect: the operation is tracked once.
+    if (
+      optimisticOperation &&
+      voteAccAddress &&
+      validators &&
+      trackedOperationId.current !== optimisticOperation.id
+    ) {
+      trackedOperationId.current = optimisticOperation.id;
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
       track("staking_completed", {
         currency: currencyId.toUpperCase(),

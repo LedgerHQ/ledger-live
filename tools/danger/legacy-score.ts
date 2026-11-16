@@ -29,6 +29,7 @@ export const ALLOWLIST = [
   "libs/ledger-live-common/src/account-data/full-sync/",
   "libs/ledger-live-common/src/account-data/coin-module/",
   "libs/ledger-live-common/src/account-data/discovery/",
+  "libs/ledger-live-common/src/account-data/network-validators/",
 ];
 
 const SOURCE = /\.tsx?$/;

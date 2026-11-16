@@ -35,6 +35,11 @@ describe("toTronResources", () => {
     expect(toTronResources(account)).toEqual(resources);
   });
 
+  it("answers zero energy when usage is above the limit", () => {
+    const overused = mockTronAccount({ ...account.tronResources, energy: new BigNumber(-50) });
+    expect(toTronResources(overused)).toEqual({ ...resources, energy: "0" });
+  });
+
   it("rejects an account without Tron resources as not served", () => {
     expect(() =>
       toTronResources(genAccount("eth", { currency: getCryptoCurrencyById("ethereum") })),

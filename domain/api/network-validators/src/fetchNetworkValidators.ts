@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { NetworkId } from "@domain/entity-account-descriptor";
 import {
   NetworkValidatorSchema,
+  networkValidatorsCancelled,
   networkValidatorsFailed,
   networkValidatorsReceived,
   networkValidatorsRequested,
@@ -40,21 +41,29 @@ const fetchNetworkValidatorsThunk = createAsyncThunk<
   async ({ networkId }, { dispatch, extra, requestId, signal }) => {
     const sources = getNetworkValidatorsSources(extra).filter(source => source.supports(networkId));
     dispatch(networkValidatorsRequested({ networkId, requestId }));
-    let lastError: unknown = new NoNetworkValidatorsSourceError(networkId);
-    // On a failure, the next ranked source is asked.
-    for (const source of sources) {
-      try {
-        const validators = ValidatorsSchema.parse(await source.read(networkId, { signal }));
-        dispatch(
-          networkValidatorsReceived({ networkId, requestId, validators, receivedAt: Date.now() }),
-        );
-        return { validators, sourceId: source.id };
-      } catch (error) {
-        lastError = error;
+    const cancel = () => dispatch(networkValidatorsCancelled({ networkId, requestId }));
+    signal.addEventListener("abort", cancel, { once: true });
+    try {
+      let lastError: unknown = new NoNetworkValidatorsSourceError(networkId);
+      // On a failure, the next ranked source is asked.
+      for (const source of sources) {
+        try {
+          const validators = ValidatorsSchema.parse(await source.read(networkId, { signal }));
+          signal.throwIfAborted();
+          dispatch(
+            networkValidatorsReceived({ networkId, requestId, validators, receivedAt: Date.now() }),
+          );
+          return { validators, sourceId: source.id };
+        } catch (error) {
+          if (signal.aborted) throw error;
+          lastError = error;
+        }
       }
+      dispatch(networkValidatorsFailed({ networkId, requestId, error: errorOf(lastError) }));
+      throw lastError;
+    } finally {
+      signal.removeEventListener("abort", cancel);
     }
-    dispatch(networkValidatorsFailed({ networkId, requestId, error: errorOf(lastError) }));
-    throw lastError;
   },
   {
     condition: (

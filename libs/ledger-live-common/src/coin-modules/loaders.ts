@@ -94,6 +94,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/cardano/bridge/mock").then(m => m.default),
     loadBridgeApi: () => import("../families/cardano/bridge/api").then(m => m.default),
     loadBalanceLocks: () => import("../families/cardano/balanceLocks").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/cardano/coinModuleStakes").then(m => m.default),
   },
   {
     family: "casper",
@@ -120,6 +121,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-celo/deviceTransactionConfig").then(m => m.default),
     loadBridgeApi: () => import("../families/celo/bridge/api").then(m => m.default),
     loadBalanceLocks: () => import("../families/celo/balanceLocks").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/celo/coinModuleStakes").then(m => m.default),
   },
   {
     family: "concordium",
@@ -281,6 +283,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/hedera/walletApiAdapter").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/hedera/coinModuleStakes").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the
@@ -366,6 +369,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-near/account").then(m => m.default),
     loadMockBridge: () => import("../families/near/bridge/mock").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/near/coinModuleStakes").then(m => m.default),
   },
   {
     family: "polkadot",
@@ -399,6 +403,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccountRawAssign: () => import("../families/solana/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/solana/bridgeExtensions").then(m => m.default),
     loadBalanceLocks: () => import("../families/solana/balanceLocks").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/solana/coinModuleStakes").then(m => m.default),
   },
   {
     family: "stacks",
@@ -486,6 +491,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
     loadBalanceLocks: () => import("../families/tron/balanceLocks").then(m => m.default),
     loadStaking: () => import("../families/tron/staking").then(m => m.default),
+    loadCoinModuleStakes: () => import("../families/tron/coinModuleStakes").then(m => m.default),
   },
   {
     family: "vechain",

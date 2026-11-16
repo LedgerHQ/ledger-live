@@ -72,6 +72,13 @@ describe("Cosmos Delegation StepConfirmation", () => {
     );
   });
 
+  it("tracks the operation once when the validators refresh", () => {
+    const props = buildProps({ optimisticOperation: buildOperation() });
+    const { rerender } = render(<StepConfirmation {...props} />);
+    rerender(<StepConfirmation {...props} />);
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+  });
+
   it("does not track when the transaction has no chosen validator", () => {
     act(() => {
       render(

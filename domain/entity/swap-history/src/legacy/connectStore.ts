@@ -113,8 +113,11 @@ export function connectSwapHistoryStore<S>(
         fromAccountUUID: from?.accountUUID,
         fromAssetId: from?.assetId,
         toAccountUUID: to?.accountUUID,
-        // A token the receiving account holds no account of yet is only known by `tokenId`.
-        toAssetId: swap.tokenId ?? to?.assetId,
+        // `tokenId` is a currency id, or the receiving account id as the desktop swap live app writes it.
+        toAssetId:
+          swap.tokenId === undefined
+            ? to?.assetId
+            : (owners.get(swap.tokenId)?.assetId ?? swap.tokenId),
         operationId: swap.operationId || undefined,
         fromAmount: swap.fromAmount.toFixed(0),
         toAmount: swap.toAmount.toFixed(),

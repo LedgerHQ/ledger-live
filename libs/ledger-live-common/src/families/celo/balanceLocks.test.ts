@@ -25,11 +25,13 @@ const celo = (locked: number, pendingWithdrawals: CeloPendingWithdrawal[] | null
 });
 
 describe("celoBalanceLocks", () => {
-  it("answers the locked CELO as staked and its pending withdrawals as unbonding", () => {
-    expect(celoBalanceLocks(celo(100, [withdrawal(5, 0), withdrawal(7, 1)]))).toEqual([
-      { reason: "staked", amount: "100" },
-      { reason: "unbonding", amount: "12" },
-    ]);
+  it("answers the locked CELO as staked, within balance minus spendable", () => {
+    const account = celo(100, [withdrawal(5, 0), withdrawal(7, 1)]);
+    const synced = { ...account, balance: new BigNumber(130), spendableBalance: new BigNumber(30) };
+    const locks = celoBalanceLocks(synced);
+    expect(locks).toEqual([{ reason: "staked", amount: "100" }]);
+    const locked = locks.reduce((sum, { amount }) => sum.plus(amount), new BigNumber(0));
+    expect(locked.lte(synced.balance.minus(synced.spendableBalance))).toBe(true);
   });
 
   it("answers no lock when nothing is locked", () => {

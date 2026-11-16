@@ -24,6 +24,8 @@ import type { AccountCandidate } from "@domain/entity-derivation";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
+import type { Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { CoinModuleStakingApi } from "@features/platform-account-source-coin-module";
 import type Prando from "prando";
 import type { Observable } from "rxjs";
 import type Transport from "@ledgerhq/hw-transport";
@@ -158,6 +160,12 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
+export type CoinModuleStakesNormalization = Pick<CoinModuleStakingApi, "rewardsAccountWide"> & {
+  normalizeStake?: (stake: Stake) => Stake;
+  /** Brings `commissionRate` to a fraction of 1 where the module counts it otherwise. */
+  normalizeValidator?: (validator: Validator) => Validator;
+};
+
 export type CoinModuleLoader<
   T extends TransactionCommon = any,
   A extends Account = any,
@@ -197,6 +205,8 @@ export type CoinModuleLoader<
   loadBalanceLocks?: () => Promise<(account: A) => BalanceLock[]>;
   /** The staking the family keeps in its own resources, not in `stakingResources` nor `stakingPositions`. */
   loadStaking?: () => Promise<(account: A) => AccountStaking>;
+  /** Where the family's `getStakes` departs from what the coin-module staking source reads. */
+  loadCoinModuleStakes?: () => Promise<CoinModuleStakesNormalization>;
   /**
    * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would

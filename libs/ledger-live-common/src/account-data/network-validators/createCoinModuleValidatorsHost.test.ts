@@ -1,9 +1,9 @@
 import { notSupported } from "@ledgerhq/coin-module-framework/api/index";
-import { registerCoinModules, resetCoinModulesForTests } from "../coin-modules/registry";
-import type { CoinModuleLoader } from "../coin-modules/types";
+import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
+import type { CoinModuleLoader } from "../../coin-modules/types";
 import { createCoinModuleValidatorsHost } from "./createCoinModuleValidatorsHost";
 
-jest.mock("../config", () => ({ getCurrencyConfiguration: jest.fn(() => ({})) }));
+jest.mock("../../config", () => ({ getCurrencyConfiguration: jest.fn(() => ({})) }));
 
 const getValidators = jest.fn();
 const createLocalApi = jest.fn();
@@ -46,6 +46,24 @@ describe("createCoinModuleValidatorsHost", () => {
       expect.objectContaining({ config: expect.any(Function) }),
       { cursor: "2" },
     );
+  });
+
+  it("lists the validators through the family's normalization", async () => {
+    registerCoinModules([
+      loader("solana", {
+        supportedCoins: ["solana"],
+        loadLocalApi: async () => createLocalApi,
+        loadCoinModuleStakes: async () => ({
+          normalizeValidator: validator => ({ ...validator, commissionRate: "0.07" }),
+        }),
+      }),
+    ]);
+    createLocalApi.mockReturnValue({ getValidators });
+    getValidators.mockResolvedValueOnce({ items: [{ id: "v", commissionRate: "7" }] });
+    const api = await createCoinModuleValidatorsHost().getValidatorsApi("solana");
+    await expect(api?.getValidators()).resolves.toEqual({
+      items: [{ id: "v", commissionRate: "0.07" }],
+    });
   });
 
   it("is undefined when the coin module does not list validators", async () => {

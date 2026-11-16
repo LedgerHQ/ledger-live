@@ -97,9 +97,11 @@ describe("createCoinModuleValidatorsSource", () => {
     expect(isLedgerValidator).toHaveBeenCalledWith("cosmos", "v2");
   });
 
-  it("stops on a cursor that does not advance", async () => {
+  it("falls through on a cursor that does not advance", async () => {
     const stuck = jest.fn(async () => ({ items: [validator], next: "same" }));
-    await sourceWith({ getValidators: stuck }).read(cosmos, { signal });
+    await expect(sourceWith({ getValidators: stuck }).read(cosmos, { signal })).rejects.toThrow(
+      CoinModuleValidatorsNotServedError,
+    );
     expect(stuck).toHaveBeenCalledTimes(2);
   });
 

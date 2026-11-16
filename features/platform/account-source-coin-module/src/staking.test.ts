@@ -112,9 +112,12 @@ describe("createCoinModuleSource staking", () => {
     expect(getStakes).toHaveBeenCalledTimes(3);
   });
 
-  it("stops on a cursor that does not advance, and falls through past the page budget", async () => {
-    const stuck = hostOf({ "": { items: [], next: "p" }, p: { items: [], next: "p" } });
-    await readStaking(stuck.host);
+  it("falls through on a cursor that does not advance, and past the page budget", async () => {
+    const stuck = hostOf({
+      "": { items: [stake({ uid: "a" })], next: "p" },
+      p: { items: [stake({ uid: "a" })], next: "p" },
+    });
+    await expect(readStaking(stuck.host)).resolves.toMatchObject({ sourceId: "full-sync" });
     expect(stuck.getStakes).toHaveBeenCalledTimes(2);
 
     const endless = hostOf({});
@@ -144,6 +147,27 @@ describe("createCoinModuleSource staking", () => {
     expect(data.positions).toEqual([
       expect.objectContaining({ id: "t", assetId: "cosmos/ibc/listed" }),
     ]);
+  });
+
+  it("sums the rewards account-wide when the chain pays them so, leaving out an emptied position", async () => {
+    const { host } = hostOf(
+      {
+        "": {
+          items: [
+            stake({ uid: "a", amount: 1000n, amountRewarded: 15n }),
+            stake({ uid: "b", amount: 0n, amountDeposited: 0n, amountRewarded: 5n }),
+          ],
+        },
+      },
+      { rewardsAccountWide: true },
+    );
+
+    const { data } = await readStaking(host);
+
+    expect(data.positions).toEqual([
+      expect.objectContaining({ id: "a", amount: "1000", rewards: undefined }),
+    ]);
+    expect(data.rewards).toEqual([{ assetId: "cosmos", amount: "20" }]);
   });
 
   it("falls back to the next source when the coin module has no getStakes", async () => {

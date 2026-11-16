@@ -5,11 +5,8 @@ import {
   withDefaults,
   withLogging,
 } from "@ledgerhq/coin-module-framework/api/index";
-import {
-  contextOf,
-  createCoinModuleHost,
-  loadApis,
-} from "../account-data/coin-module/createCoinModuleHost";
+import { loadCoinModuleStakesForFamily } from "../../coin-modules/registry";
+import { contextOf, createCoinModuleHost, loadApis } from "../coin-module/createCoinModuleHost";
 import { isLedgerValidator } from "./isLedgerValidator";
 
 /** The validators of the local coin modules the app registered, with no generic-coin-framework layer. */
@@ -27,10 +24,12 @@ export function createCoinModuleValidatorsHost(): CoinModuleValidatorsHost {
       }
       const api = withLogging(withDefaults(localApi));
       const context = contextOf(currency.id);
+      const { normalizeValidator } = (await loadCoinModuleStakesForFamily(currency.family)) ?? {};
       return {
         getValidators: async cursor => {
-          const { items, next } = await api.getValidators(context, { cursor });
-          return next ? { items, next } : { items };
+          const page = await api.getValidators(context, { cursor });
+          const items = normalizeValidator ? page.items.map(normalizeValidator) : page.items;
+          return page.next ? { items, next: page.next } : { items };
         },
       };
     },

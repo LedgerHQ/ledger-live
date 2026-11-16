@@ -45,6 +45,17 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
+/** Queued Babylon undelegations to one validator share a completion date: repeats get an occurrence suffix. */
+function unbondingKeys(unbondings: { validatorAddress: string; completionDate: Date }[]): string[] {
+  const seen = new Map<string, number>();
+  return unbondings.map(({ validatorAddress, completionDate }) => {
+    const base = `${validatorAddress}:${completionDate.toISOString()}`;
+    const occurrence = seen.get(base) ?? 0;
+    seen.set(base, occurrence + 1);
+    return occurrence === 0 ? base : `${base}:${occurrence}`;
+  });
+}
+
 const Delegation = ({ account }: { account: CosmosAccount }) => {
   invariant(isStakingAccount(account), "cosmos staking account required");
   const navigate = useNavigate();
@@ -63,6 +74,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const mappedDelegations = useCosmosMappedDelegations(account);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
+  const mappedUnbondingKeys = unbondingKeys(mappedUnbondings);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
   const goToStakekit = useCallback(() => {
     navigate("/platform/stakekit", {
@@ -258,7 +270,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
           <UnbondingHeader />
           {mappedUnbondings.map((delegation, index) => (
             <UnbondingRow
-              key={index}
+              key={mappedUnbondingKeys[index]}
               currency={account.currency}
               delegation={delegation}
               onExternalLink={onExternalLink}

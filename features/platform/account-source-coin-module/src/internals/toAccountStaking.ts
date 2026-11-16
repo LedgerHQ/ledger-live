@@ -12,8 +12,9 @@ async function allStakes(api: CoinModuleStakingApi, subject: string): Promise<St
   for (let page = 0; page < MAX_STAKE_PAGES; page++) {
     const { items, next } = await api.getStakes(subject, cursor);
     stakes.push(...items);
-    // A falsy cursor ends the list; one that does not advance would loop.
-    if (!next || next === cursor) return stakes;
+    if (!next) return stakes;
+    // A cursor that does not advance may have replayed a page: the total is not trustworthy.
+    if (next === cursor) throw new AccountDataNotServedError("The stakes cursor did not advance");
     cursor = next;
   }
   // Truncated positions would understate the stake: let the next source answer.
@@ -30,11 +31,19 @@ export async function toAccountStaking(
   api: CoinModuleStakingApi,
 ): Promise<AccountStaking> {
   const stakes = await allStakes(api, subject);
+  const accountWide = api.rewardsAccountWide === true;
+  const rewardsByAsset = new Map<string, bigint>();
   const positions = await Promise.all(
     stakes.map(async stake => {
       const assetId =
         stake.asset.type === "native" ? currencyId : await api.getTokenId?.(stake.asset);
       if (assetId === undefined) return [];
+      if (accountWide) {
+        const reward = stake.amountRewarded ?? 0n;
+        rewardsByAsset.set(assetId, (rewardsByAsset.get(assetId) ?? 0n) + reward);
+        // Once its reward rides the account, a position may hold nothing.
+        if (stake.amount <= 0n) return [];
+      }
       return [
         {
           id: stake.uid,
@@ -43,7 +52,7 @@ export async function toAccountStaking(
           state: stake.state,
           amount: (stake.amount > 0n ? stake.amount : 0n).toString(),
           deposited: optional(stake.amountDeposited),
-          rewards: optional(stake.amountRewarded),
+          rewards: accountWide ? undefined : optional(stake.amountRewarded),
           // Modules stamp an unbonding with the date it completes.
           unlockAt:
             stake.state === "deactivating" ? stake.stateUpdatedAt?.toISOString() : undefined,
@@ -52,5 +61,11 @@ export async function toAccountStaking(
       ];
     }),
   );
-  return AccountStakingSchema.parse({ positions: positions.flat() });
+  const rewards = [...rewardsByAsset]
+    .filter(([, amount]) => amount > 0n)
+    .map(([assetId, amount]) => ({ assetId, amount: amount.toString() }));
+  return AccountStakingSchema.parse({
+    positions: positions.flat(),
+    rewards: rewards.length > 0 ? rewards : undefined,
+  });
 }

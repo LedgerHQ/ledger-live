@@ -54,6 +54,14 @@ const loaders = [
     loadLocalApi: async () => createLocalApi,
     localApiServesAccountData: false,
   }),
+  loader("tron", {
+    supportedCoins: ["tron"],
+    loadLocalApi: async () => createLocalApi,
+    loadCoinModuleStakes: async () => ({
+      normalizeStake: stake => ({ ...stake, amount: 1n }),
+      rewardsAccountWide: true,
+    }),
+  }),
 ];
 
 const apiOf = async (currencyId: string) => {
@@ -185,6 +193,14 @@ describe("createCoinModuleHost", () => {
         "0xabc",
         { cursor: "c" },
       );
+    });
+
+    it("normalises the stakes of a family declaring how its getStakes departs", async () => {
+      getStakes.mockResolvedValueOnce({ items: [{ uid: "s", amount: 5n }] });
+
+      const api = await createCoinModuleHost().getStakingApi?.("tron");
+      expect(api?.rewardsAccountWide).toBe(true);
+      await expect(api?.getStakes("T")).resolves.toEqual({ items: [{ uid: "s", amount: 1n }] });
     });
 
     it("serves a family keeping staking positions, unlike the balance", async () => {

@@ -22,8 +22,8 @@ import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
-import { createCoinModuleValidatorsHost } from "@ledgerhq/live-common/network-validators/createCoinModuleValidatorsHost";
-import { createPreloadValidatorsSource } from "@ledgerhq/live-common/network-validators/createPreloadValidatorsSource";
+import { createCoinModuleValidatorsHost } from "@ledgerhq/live-common/account-data/network-validators/createCoinModuleValidatorsHost";
+import { createPreloadValidatorsSource } from "@ledgerhq/live-common/account-data/network-validators/createPreloadValidatorsSource";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";

@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { AccountDataNotServedError, type AccountTarget } from "@domain/api-account-data";
 import { TronResourcesSchema, type TronResources } from "@domain/entity-account-tron";
@@ -11,7 +12,8 @@ export function toTronResources(account: Account): TronResources {
   if (!isTronAccount(account)) throw notTron(account.currency.id);
   const { energy, bandwidth, tronPower } = account.tronResources;
   return TronResourcesSchema.parse({
-    energy: energy.toFixed(0),
+    // The sync answers limit minus used, below zero once usage overshoots the limit.
+    energy: BigNumber.maximum(0, energy).toFixed(0),
     bandwidth: {
       freeUsed: bandwidth.freeUsed.toFixed(0),
       freeLimit: bandwidth.freeLimit.toFixed(0),

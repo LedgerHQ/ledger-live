@@ -146,6 +146,22 @@ describe("connectSwapHistoryStore", () => {
     expect(entry.operationId).toBeUndefined();
   });
 
+  it("resolves a receiving account id written as tokenId to its token", () => {
+    const desktopLiveAppSwap = swap({
+      receiverAccountId: usdcId,
+      tokenId: usdcId,
+      operationId: `${ethId}-0xabc-OUT`,
+    });
+    const { store } = setup([ethAccount([desktopLiveAppSwap]), btcAccount]);
+    expect(selectAccountSwapHistory(store.getState(), ethUUID)).toMatchObject([
+      {
+        assetId: "ethereum",
+        toAccountUUID: ethUUID,
+        toAssetId: "ethereum/erc20/usd__coin",
+      },
+    ]);
+  });
+
   it("leaves out a swap whose sender is gone, as the legacy history does", () => {
     const { store } = setup([
       ethAccount(),

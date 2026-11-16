@@ -1,6 +1,7 @@
 import { NetworkIdSchema } from "@domain/entity-account-descriptor";
 import { mockNetworkValidator } from "./schema.mock";
 import reducer, {
+  networkValidatorsCancelled,
   networkValidatorsFailed,
   networkValidatorsInitialState,
   networkValidatorsReceived,
@@ -58,6 +59,15 @@ describe("selectors", () => {
   const root = { [networkValidatorsSlice.name]: mockNetworkValidatorsState };
   const other = NetworkIdSchema.parse("osmo");
 
+  it("clears a cancelled read, unless a newer one replaced it", () => {
+    let state = reducer(undefined, networkValidatorsRequested({ networkId, requestId: "a" }));
+    state = reducer(state, networkValidatorsRequested({ networkId, requestId: "b" }));
+    state = reducer(state, networkValidatorsCancelled({ networkId, requestId: "a" }));
+    expect(state[networkId]?.pending).toEqual({ requestId: "b" });
+    state = reducer(state, networkValidatorsCancelled({ networkId, requestId: "b" }));
+    expect(state[networkId]).toEqual({ validators: [] });
+  });
+
   it("selects a network's entry and validators", () => {
     expect(selectNetworkValidatorsEntry(root, networkId)).toBe(
       mockNetworkValidatorsState[networkId],
@@ -71,4 +81,36 @@ describe("selectors", () => {
     expect(selectNetworkValidator(root, networkId, "missing")).toBeUndefined();
     expect(selectNetworkValidator(root, other, "cosmosvaloper1other")).toBeUndefined();
   });
+
+  it.each(["__proto__", "constructor", "toString"])(
+    "ignores the inherited key %s, leaving Object.prototype untouched",
+    key => {
+      const inherited = NetworkIdSchema.parse(key);
+      let state = reducer(
+        undefined,
+        networkValidatorsRequested({ networkId: inherited, requestId: "a" }),
+      );
+      state = reducer(
+        state,
+        networkValidatorsFailed({ networkId: inherited, requestId: "a", error }),
+      );
+      state = reducer(
+        state,
+        networkValidatorsReceived({
+          networkId: inherited,
+          requestId: "a",
+          validators,
+          receivedAt: 1,
+        }),
+      );
+      expect(state).toEqual(networkValidatorsInitialState);
+      expect(Object.prototype).not.toHaveProperty("pending");
+      expect(Object.prototype).not.toHaveProperty("error");
+      expect(Object).not.toHaveProperty("pending");
+      expect(Object.prototype.toString).not.toHaveProperty("pending");
+      const inheritedRoot = { networkValidators: state };
+      expect(selectNetworkValidatorsEntry(inheritedRoot, inherited)).toBeUndefined();
+      expect(selectNetworkValidators(inheritedRoot, inherited)).toBeUndefined();
+    },
+  );
 });
