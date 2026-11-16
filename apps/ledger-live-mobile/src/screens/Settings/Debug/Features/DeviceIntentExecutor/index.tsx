@@ -61,6 +61,13 @@ export default function DebugDeviceIntentExecutor() {
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorConnectNewDevice)}
       />
       <DebugEntry
+        title="Connect Known Or New Device"
+        description="Run the ConnectKnownOrNewDevice component, the device list of My Wallet, and log its callback calls."
+        onPress={() =>
+          navigation.navigate(ScreenName.DebugDeviceIntentExecutorConnectKnownOrNewDevice)
+        }
+      />
+      <DebugEntry
         title="Connect New Device animations"
         description="Preview each ConnectNewDevice Lottie in the light and the dark theme."
         onPress={() =>
