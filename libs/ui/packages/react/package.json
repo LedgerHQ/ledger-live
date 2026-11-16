@@ -93,17 +93,15 @@
   "peerDependencies": {
     "react": ">=17.0.2",
     "react-dom": ">=17.0.2",
-    "styled-components": "^5.3.3"
+    "styled-components": ">=6.0.0"
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
     "@types/color": "3.0.6",
-    "@types/hoist-non-react-statics": "3.3.5",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-transition-group": "4.4.10",
-    "@types/styled-components": "5.1.34",
     "@types/styled-system": "5.1.22",
     "csstype": "3.2.3",
     "embla-carousel": "8.0.0-rc17",
@@ -113,7 +111,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rimraf": "4.4.1",
-    "styled-components": "5.3.11",
+    "styled-components": "catalog:",
     "stylelint": "14.16.1",
     "stylelint-config-recommended": "13.0.0",
     "stylelint-config-styled-components": "0.1.1",

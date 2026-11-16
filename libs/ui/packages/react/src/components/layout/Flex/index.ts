@@ -1,6 +1,6 @@
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-const FlexBox = baseStyled.div.attrs<BaseStyledProps, BaseStyledProps>({
+const FlexBox = baseStyled.div.attrs<BaseStyledProps>({
   display: "flex",
   minWidth: 0,
 })``;

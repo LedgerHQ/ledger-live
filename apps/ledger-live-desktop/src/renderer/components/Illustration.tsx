@@ -8,10 +8,9 @@ type Props = {
   height?: number;
 };
 
-const Illustration = styled(Box).attrs<Props>(p => ({
-  width: `${p.size}px`,
-  height: p.height ? `${p.height}px` : `${p.size}px`,
-}))<Props>`
+const Illustration = styled(Box)<Props>`
+  width: ${p => p.size}px;
+  height: ${p => p.height || p.size}px;
   // prettier-ignore
   background: url('${p => (p.theme.theme === "light" ? p.lightSource : p.darkSource)}');
   background-size: cover;

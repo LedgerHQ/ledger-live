@@ -95,7 +95,7 @@ function getTextProps({ size }: TagProps): TextProps {
   }
 }
 
-const TagContainer = baseStyled.div.attrs<TagProps, TagProps>(props => ({
+const TagContainer = baseStyled.div.attrs<TagProps>(props => ({
   backgroundColor: props.bg || props.backgroundColor || getBgColor(props),
   color: props.color || getColor(props),
   borderColor: getBorderColor(props),

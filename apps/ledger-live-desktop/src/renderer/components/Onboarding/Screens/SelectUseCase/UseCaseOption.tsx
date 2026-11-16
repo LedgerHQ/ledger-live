@@ -33,7 +33,6 @@ const Container = styled(Flex).attrs({
   border: "1px solid",
   borderColor: "neutral.c40",
   position: "relative",
-  boxSizing: "border-box",
   flexDirection: "column",
 })`
   text-align: left;

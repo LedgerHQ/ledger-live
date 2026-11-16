@@ -118,7 +118,7 @@ export const BaseInput = styled.input.attrs<
 
   /* Hide type=number arrow for Chrome, Safari, Edge, Opera */
   &::-webkit-outer-spin-button,
-  ::-webkit-inner-spin-button {
+  &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }

@@ -16,13 +16,13 @@ const getTopRightSquareClippedPolygon = (boxSize: number, rectangleSize: number)
   return `polygon(0 0, 0 0, 0 0, ${diff}px 0, ${diff}px ${rectangleSize}px, 100% ${rectangleSize}px, 100% 100%, 100% 100%, 100% 100%, 0 100%, 0 100%, 0 100%)`;
 };
 
-const Container = styled(Flex).attrs((p: { size: number }) => ({
+const Container = styled(Flex).attrs<{ size: number }>(p => ({
   heigth: p.size,
   width: p.size,
   alignItems: "center",
   justifyContent: "center",
   position: "relative",
-}))<{ size: number }>``;
+}))``;
 
 const IconBoxBackground = styled(Flex)<{ size: number; badgeSize: number; hasBadge: boolean }>`
   position: absolute;

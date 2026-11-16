@@ -95,7 +95,7 @@ const Switcher = styled.div`
       background: ${props => props.theme.colors.primary.c90};
     }
 
-    :active {
+    &:active {
       background: ${props => props.theme.colors.primary.c100};
     }
   }

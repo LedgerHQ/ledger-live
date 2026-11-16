@@ -11,7 +11,7 @@ const absoluteFillObject = {
   bottom: 0,
   left: 0,
   right: 0,
-};
+} as const;
 
 const Container = styled(Box).attrs({
   position: "relative",

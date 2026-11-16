@@ -106,7 +106,6 @@ export const BottomSection: ComponentType<HTMLAttributes<HTMLDivElement>> = styl
 
 export const TermsAndConditionsText = styled(Text).attrs({
   textAlign: "center",
-  overflowWrap: "normal",
   whiteSpace: "pre-line",
   fontSize: "12px",
   opacity: 0.8,
