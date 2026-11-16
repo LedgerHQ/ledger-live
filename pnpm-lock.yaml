@@ -1736,9 +1736,6 @@ importers:
       react-markdown:
         specifier: 4.3.1
         version: 4.3.1(react@19.1.4)
-      react-motion:
-        specifier: 0.5.2
-        version: 0.5.2(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
@@ -1908,9 +1905,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      '@types/react-motion':
-        specifier: 0.0.40
-        version: 0.0.40
       '@types/react-transition-group':
         specifier: 4.4.10
         version: 4.4.10
@@ -34080,9 +34074,6 @@ packages:
   '@types/react-dom@19.0.0':
     resolution: {integrity: sha512-1KfiQKsH1o00p9m5ag12axHQSb3FOU9H20UTrujVSkNhuCrRHiQWFqgEnTNK5ZNfnzZv8UWrnXVqCmCF9fgY3w==}
 
-  '@types/react-motion@0.0.40':
-    resolution: {integrity: sha512-Bp6i9WTvW6QFN2E/XQPm8HPGMx1SVJ7H1DPsvptwWWh1XBymDZ7N7SK4nSZT/4tP4bTGvp1KHSAsswWZKO/WHA==}
-
   '@types/react-table@6.8.16':
     resolution: {integrity: sha512-R6qpqybJ9EZHrXczGSZRoODkbk5NiwUbdVdBKufDtntycikzOht3wWRs+J4mvr4qyjWVcxXfqKiZ1mIuoxSotw==}
 
@@ -40370,9 +40361,6 @@ packages:
     resolution: {integrity: sha512-eRWB5LBz7PpDu4PUlwT0PhnQfTQJlDDdPa35urV4Osrm0t0AqQFGn+UIkU3klZvwJ8KPO3VbBFsXquA6p6kqZw==}
     engines: {node: '>=12', npm: '>=6'}
 
-  performance-now@0.2.0:
-    resolution: {integrity: sha512-YHk5ez1hmMR5LOkb9iJkLKqoBlL7WD5M8ljC75ZfzXriuBIVNuecaXuU7e+hOwyqf24Wxhh7Vxgt7Hnw9288Tg==}
-
   performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
 
@@ -40782,9 +40770,6 @@ packages:
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
-  raf@3.4.1:
-    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
-
   random-int@3.1.0:
     resolution: {integrity: sha512-h8CRz8cpvzj0hC/iH/1Gapgcl2TQ6xtnCpyOI5WvWfXf/yrDx2DOU+tD9rX23j36IF11xg1KqB9W11Z18JPMdw==}
     engines: {node: '>=12'}
@@ -40893,11 +40878,6 @@ packages:
 
   react-markdown@4.3.1:
     resolution: {integrity: sha512-HQlWFTbDxTtNY6bjgp3C3uv1h2xcjCSi1zAEzfBW9OwJJvENSYiLXWNXN5hHLsoqai7RnZiiHzcnWdXk2Splzw==}
-    peerDependencies:
-      react: 19.1.4
-
-  react-motion@0.5.2:
-    resolution: {integrity: sha512-9q3YAvHoUiWlP3cK0v+w1N5Z23HXMj4IF4YuvjvWegWqNPfLXsOBE/V7UvQGpXxHFKRQQcNcVQE31g9SB/6qgQ==}
     peerDependencies:
       react: 19.1.4
 
@@ -53580,10 +53560,6 @@ snapshots:
     dependencies:
       '@types/react': 19.0.14
 
-  '@types/react-motion@0.0.40':
-    dependencies:
-      '@types/react': 19.0.14
-
   '@types/react-table@6.8.16':
     dependencies:
       '@types/react': 19.0.14
@@ -61214,8 +61190,6 @@ snapshots:
 
   pe-library@0.4.1: {}
 
-  performance-now@0.2.0: {}
-
   performance-now@2.1.0: {}
 
   picocolors@0.2.1: {}
@@ -61655,10 +61629,6 @@ snapshots:
 
   radix3@1.1.2: {}
 
-  raf@3.4.1:
-    dependencies:
-      performance-now: 2.1.0
-
   random-int@3.1.0: {}
 
   randombytes@2.1.0:
@@ -61774,13 +61744,6 @@ snapshots:
       unified: 6.2.0
       unist-util-visit: 1.4.1
       xtend: 4.0.2
-
-  react-motion@0.5.2(react@19.1.4):
-    dependencies:
-      performance-now: 0.2.0
-      prop-types: 15.8.1
-      raf: 3.4.1
-      react: 19.1.4
 
   react-native-biometrics@3.0.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)):
     dependencies:
