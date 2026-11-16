@@ -15941,7 +15941,7 @@ importers:
         version: 1.0.2
       '@stricahq/typhonjs':
         specifier: ^3.0.0
-        version: 3.0.0
+        version: 3.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -18282,7 +18282,7 @@ importers:
         version: 1.0.2
       '@stricahq/typhonjs':
         specifier: ^3.0.0
-        version: 3.0.0
+        version: 3.0.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -20378,7 +20378,7 @@ importers:
         version: 14.0.0(debug@4.4.3)
       '@stricahq/typhonjs':
         specifier: ^3.0.0
-        version: 3.0.0
+        version: 3.0.2
       '@ton-community/ton-ledger':
         specifier: ^7.3.0
         version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
@@ -33295,8 +33295,8 @@ packages:
   '@stricahq/cbors@1.0.2':
     resolution: {integrity: sha512-6ePsEiq7EGHA5IiPn9poA7sF5iXPqt30kKw3pjR/BhP7S+XHZNu/OPumESWnVl4AM+IEYC2x9eL+4qRPsTPVww==}
 
-  '@stricahq/typhonjs@3.0.0':
-    resolution: {integrity: sha512-sccJ0hqlvlCPzG8dm89Jb6QgxCXR0BSjFxmDwGT7cYvYBNRtTq+ctipdQfnR7Zq1lNs907V/AQSDU1YcUsqnkw==}
+  '@stricahq/typhonjs@3.0.2':
+    resolution: {integrity: sha512-se4Hllwkxny4N7MDEDMcTpU2G4wl9I1Em4PsVhS9TCQl6L7YLfRoNw8fqC+qf5uU464Ju5mGxpynEIgKnMGkig==}
 
   '@styled-system/background@5.1.2':
     resolution: {integrity: sha512-jtwH2C/U6ssuGSvwTN3ri/IyjdHb8W9X/g8Y0JLcrH02G+BW3OS8kZdHphF1/YyRklnrKrBT2ngwGUK6aqqV3A==}
@@ -52768,7 +52768,7 @@ snapshots:
       bignumber.js: 9.1.2
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
 
-  '@stricahq/typhonjs@3.0.0':
+  '@stricahq/typhonjs@3.0.2':
     dependencies:
       '@stricahq/cbors': 1.0.2
       bech32: 2.0.0
