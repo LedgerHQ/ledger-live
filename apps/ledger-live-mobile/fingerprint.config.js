@@ -75,7 +75,7 @@ const detoxVersion = require(require.resolve("detox/package.json", { paths: [__d
 // sourceSkips drops every package.json script, but CI builds the native apps through these.
 const { scripts } = require("./package.json");
 const e2eBuildScripts = JSON.stringify(
-  ["e2e:ci", "e2e:build"]
+  ["e2e:build"]
     .flatMap(name => [`pre${name}`, name, `post${name}`])
     .map(name => [name, scripts[name] ?? null]),
 );
