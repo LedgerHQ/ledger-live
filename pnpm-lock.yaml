@@ -20570,6 +20570,9 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
+      '@domain/entity-derivation':
+        specifier: workspace:^
+        version: link:../../domain/entity/derivation
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
