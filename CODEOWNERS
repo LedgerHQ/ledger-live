@@ -171,7 +171,6 @@ features/flow/app-password-setup/                        @ledgerhq/wallet-xp
 /shared/password-verifier/                               @ledgerhq/wallet-xp
 
 # Wallet — App availability
-features/flow/app-availability/                          @ledgerhq/wallet-xp
 domain/api/ofac/                                         @ledgerhq/wallet-xp
 
 # Wallet — shared UI
@@ -194,6 +193,10 @@ apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/wallet-xp
+
+# Platform — app availability (override WXP mvvm catch-all)
+features/flow/app-availability/                          @ledgerhq/platform
+apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integration.test.tsx @ledgerhq/platform
 
 # Coin integration: ledgerjs (PTX re-owns hw-app-exchange below)
 /libs/ledgerjs/                                          @ledgerhq/coin-integration
