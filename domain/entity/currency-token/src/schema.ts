@@ -41,6 +41,7 @@ export const TokenCurrencySchema = z.object({
   ledgerSignature: z.string().optional(),
   /** Token-family-specific identifier (e.g. FA2 token-id for Tezos, ESDT ticker for MultiversX). */
   tokenIdentifier: z.string().optional(),
+  categories: z.array(z.string()).optional(),
 });
 
 /** A token currency id, inferred from {@link TokenCurrencyIdSchema}. */
