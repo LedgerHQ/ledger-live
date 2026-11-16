@@ -187,6 +187,7 @@
       "FEES" : "Ücretler",
       "OPT_IN" : "Onayla",
       "OPT_OUT" : "Reddet",
+      "OPT_EDIT" : "Token güncellendi",
       "CLOSE_ACCOUNT" : "Hesabı kapat",
       "BOND" : "Bağla",
       "UNBOND" : "Çöz",
@@ -340,7 +341,15 @@
     "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
     "catalog" : "Keşfet",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "Ajanlar"
+  },
+  "agentIntent" : {
+    "title" : "Ajanlar",
+    "manageAgents" : {
+      "title" : "Ajanlarınızı yönetin",
+      "description" : "Yapay Zeka ajanlarının varlıklarınızı yönetmesine izin verin."
+    }
   },
   "stars" : {
     "tooltip" : "Hesabı yıldızla"
@@ -1950,13 +1959,13 @@
       "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
     },
     "info" : {
-      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
-      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "Tekrar hatırlatma"
     },
     "error" : {
       "title" : "{{device}}™ bu özelliği desteklemiyor",
-      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "Model Yükseltme Programınızı keşfedin",
     "learnMore" : "Daha fazla bilgi",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "Gönder",
     "totalSpent" : "Düşülecek tutar",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "İşleminiz gerçekleştiriliyor",
     "sign" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
-      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin.",
+      "cancelled" : {
+        "title" : "İşlem iptal edildi",
+        "description" : "İşlemi reddettiniz. Varlıklarınız etkilenmeyecektir.",
+        "close" : "Kapat",
+        "retry" : "Tekrar dene"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "Ağ ücretleri yenilenemiyor",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "Token ayarları",
+      "currentLimitZero" : "Limitiniz 0: Bu token’ı alamazsınız.",
+      "limitBelowBalance" : "Bakiyeniz ({{balance}}) bu limitin üzerinde. Bakiyeniz bu limitin altına düşene kadar bu token’ı alamazsınız.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
       "compoundReward" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
+      "changeTrust" : "alıcı",
       "tokenAssociate" : "alıcı",
       "nominate" : "doğrulayıcı",
       "stake" : "doğrulayıcı",
@@ -8089,11 +8114,15 @@
       "description" : "Bu token’ı artık tutmak istemiyorsanız onu kaldırın."
     },
     "XrpTokenFrozen" : {
-      "title" : "Bu token’ı bu alıcıya gönderemezsiniz",
-      "description" : "Bu token’ın ihraççısı token’ı dondurmuş veya hesabınızın bu token’ı tutmasını onaylamamış. Dondurulmuş bir token yine de ihraççısına geri gönderilebilir."
+      "title" : "Bu token’ı gönderemezsiniz",
+      "description" : "İhraççısı bu token'ı dondurdu."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "Bu token’ı gönderemezsiniz",
+      "description" : "Token’ın ihraççısı, hesabınızın bu token’ı tutmasını onaylamadı."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "Bu alıcı {{assetCode}} alamaz",
+      "title" : "Bu alıcı bu token’ı alamaz",
       "description" : "Alıcının önce bu token’ı eklemesi gerekiyor olabilir veya ihraççı bu transfere izin vermiyor olabilir."
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "Hesap yok",
     "review" : "İncele",
+    "learnMore" : "Daha fazla bilgi",
     "formErrors" : {
+      "offline" : "İnternet bağlantısı sorunu.",
       "amountExceedsBalance" : "Yetersiz bakiye",
+      "feeAccountEmpty" : "Ağ ücretleri için daha fazla {{ticker}} gerekiyor.",
+      "notEnoughFees" : "Ağ ücreti için {{fees}} {{ticker}} gerekiyor.",
+      "amountTooLow" : "En az {{amount}} {{ticker}} girin ve tekrar deneyin.",
+      "amountTooHigh" : "{{amount}} {{ticker}} veya daha az bir tutar girip tekrar deneyin.",
+      "feeEstimationFailed" : "Ücretler şu anda hesaplanamadı. Kripto hesaplarınız senkronize olmayabilir. Ledger Wallet uygulamasını yeniden başlatıp tekrar deneyin.",
+      "accountNotReady" : "Bu hesap henüz gönderim yapmaya hazır değil. Hesabı hesaplarınız arasından açın ve ardından tekrar deneyin.",
+      "seiEvmUnlinked" : "Takas yapmadan önce SEI EVM hesaplarının bağlanması gerekir",
+      "aleoPrivateBalance" : "Takas işlemleri yalnızca herkese açık {{ticker}} için kullanılabilir. Fonlarınız şu anda gizli olduğu için takas edilemez.",
+      "tezosUnrevealed" : "Tezos hesabınız henüz etkinleştirilmedi. Lütfen takas işleminden önce küçük bir tutarda XTZ gönderin.",
+      "dotMinimumBalance" : "Takas sonrasında en az {{minValue}} DOT bakiyesi bulundurun.",
+      "xlmMinimumBalance" : "Takas sonrasında sonra en az {{minValue}} XLM bakiyesi bulundurun.",
       "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "Yetersiz {{ticker}}",
+        "description" : "{{account}} hesabınızda ağ ücretlerini karşılayacak kadar bakiye bulunmuyor."
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} için gereken alt limit",
+        "description" : "Fiyat teklifi alabilmek için minimum {{amount}} {{ticker}} değerinde bir tutar gereklidir"
+      },
+      "buy" : "{{ticker}} satın al"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Yatırma işlemini imzalayın",
+    "genericError" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Lütfen daha sonra tekrar deneyin veya farklı bir varlık seçin."
+    },
     "terms" : "Bu işlemi imzalayarak <termsLink>SwapKit by NEAR Intents Hüküm ve Koşullarını</termsLink> kabul ediyorum"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "İşlem bilgileri",
     "title" : "Sürekli Vadeli İşlemlerinizi Fonlayın",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "Çek",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "Perpetual İşlemlere Dön"
   },
   "accountAnalytics" : {
     "assets" : "Varlık filtresi",
@@ -11451,6 +11510,7 @@
     "allAssets" : "Tüm varlıklar",
     "allAccounts" : "Tüm hesaplar",
     "error" : "Analizler yüklenemiyor. Lütfen tekrar deneyin.",
-    "unavailable" : "Bu seçim için veri mevcut değil."
+    "unavailable" : "Bu seçim için veri mevcut değil.",
+    "noResults" : "Sonuç bulunamadı"
   }
 }
