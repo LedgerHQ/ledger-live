@@ -187,6 +187,7 @@
       "FEES" : "费用",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
+      "OPT_EDIT" : "Token updated",
       "CLOSE_ACCOUNT" : "关闭账户",
       "BOND" : "绑定",
       "UNBOND" : "解绑",
@@ -340,7 +341,15 @@
     "home" : "首页",
     "refer" : "推荐好友",
     "catalog" : "探索",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "智能体"
+  },
+  "agentIntent" : {
+    "title" : "智能体",
+    "manageAgents" : {
+      "title" : "管理您的智能体",
+      "description" : "让 AI 代理管理您的资产。"
+    }
   },
   "stars" : {
     "tooltip" : "星标账户"
@@ -1950,13 +1959,13 @@
       "continue" : "继续操作，风险自担"
     },
     "info" : {
-      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "不再提醒"
     },
     "error" : {
       "title" : "{{device}}™ 不支持此功能",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "探索您的升级计划",
     "learnMore" : "了解更多",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "发送",
     "totalSpent" : "总借额",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "您的交易正在处理中",
     "sign" : {
       "title" : "在您的 Ledger {{wording}} 上继续操作",
-      "description" : "按照安全触摸屏上的指示进行操作。"
+      "description" : "按照安全触摸屏上的指示进行操作。",
+      "cancelled" : {
+        "title" : "交易已取消",
+        "description" : "您拒绝了该交易。您的资金不会受到影响。",
+        "close" : "关闭",
+        "retry" : "重试"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "无法刷新网络费用",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "代币设置",
+      "currentLimitZero" : "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance" : "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "将接收奖励的验证者",
       "compoundReward" : "将接收奖励的验证者",
       "optIn" : "接收方",
+      "changeTrust" : "recipient",
       "tokenAssociate" : "接收方",
       "nominate" : "验证者",
       "stake" : "验证者",
@@ -8089,11 +8114,15 @@
       "description" : "如要停止持有该代币，请改为将其移除。"
     },
     "XrpTokenFrozen" : {
-      "title" : "您无法向此接收者发送此代币",
-      "description" : "该代币的发行方已将其冻结，或者尚未批准您的账户持有该代币。被冻结的代币仍可退回到其发行方。"
+      "title" : "You can't send this token",
+      "description" : "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "You can't send this token",
+      "description" : "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "此接收者无法接收 {{assetCode}}",
+      "title" : "This recipient can't receive this token",
       "description" : "接收者可能需要先添加该代币，或者发行方不允许此项转账。"
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "无账户",
     "review" : "审核",
+    "learnMore" : "了解更多",
     "formErrors" : {
+      "offline" : "互联网连接问题。",
       "amountExceedsBalance" : "余额不足",
+      "feeAccountEmpty" : "您需要更多 {{ticker}} 以支付网络费用。",
+      "notEnoughFees" : "您需要 {{fees}} {{ticker}} 以支付网络费用。",
+      "amountTooLow" : "输入至少 {{amount}} {{ticker}} 并重试。",
+      "amountTooHigh" : "进入 {{amount}} {{ticker}} 或更少并重试。",
+      "feeEstimationFailed" : "我们目前无法计算费用。您的加密货币账户可能未同步。重启 Ledger Wallet 应用程序并重试。",
+      "accountNotReady" : "该账户尚未准备好进行发送。在您的账户中将其打开，然后重试。",
+      "seiEvmUnlinked" : "在进行互换前必须关联 SEI EVM 账户。",
+      "aleoPrivateBalance" : "互换仅适用于公开的 {{ticker}}。您的资金目前是私密的，无法进行互换。",
+      "tezosUnrevealed" : "您的 Tezos 账户尚未激活。请在互换前发送小额 XTZ。",
+      "dotMinimumBalance" : "请在互换后保留最低 {{minValue}} DOT 的余额。",
+      "xlmMinimumBalance" : "请在互换后保留最低 {{minValue}} XLM 的余额。",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} 不足",
+        "description" : "您的账户 {{account}} 余额不足，无法支付网络费用。"
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} 所需的最低额度",
+        "description" : "报价所需的最低价值为 {{amount}} {{ticker}}"
+      },
+      "buy" : "买入 {{ticker}}"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",
+    "genericError" : {
+      "title" : "出错了",
+      "description" : "请稍后重试或选择其他资产。"
+    },
     "terms" : "通过签署此交易，我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "交易详情",
     "title" : "为永续合约提供资金",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "提取",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "返回永续合约 (Perps)"
   },
   "accountAnalytics" : {
     "assets" : "资产筛选",
@@ -11451,6 +11510,7 @@
     "allAssets" : "所有资产",
     "allAccounts" : "所有账户",
     "error" : "无法加载分析数据。请重试。",
-    "unavailable" : "该选择无可用数据。"
+    "unavailable" : "该选择无可用数据。",
+    "noResults" : "无结果"
   }
 }
