@@ -1,4 +1,3 @@
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
   CosmosValidatorItem,
   TransactionStatus,
@@ -15,7 +14,7 @@ import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
+import { useLedgerFirstCosmosValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 import invariant from "invariant";
 
 type Props = {
@@ -31,13 +30,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
-  const currencyId = account.currency.id;
-  const { validators: networkValidators } = useCosmosNetworkValidators(account.currency);
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    currencyId,
-    networkValidators,
-    search,
-  );
+  const validators = useLedgerFirstCosmosValidators(account.currency, search);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],

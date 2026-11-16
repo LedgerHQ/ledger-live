@@ -23,11 +23,11 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 
 jest.mock("~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators", () => ({
-  useCosmosNetworkValidators: () => ({ validators: [], pending: false, error: undefined }),
-}));
-
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useLedgerFirstShuffledValidatorsCosmosFamily: () => [VALIDATOR_A],
+  useCosmosNetworkValidators: () => ({
+    validators: [VALIDATOR_A],
+    pending: false,
+    error: undefined,
+  }),
 }));
 
 const mockedTrack = track as jest.Mock;

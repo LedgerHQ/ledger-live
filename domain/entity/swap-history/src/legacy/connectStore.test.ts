@@ -98,7 +98,7 @@ describe("connectSwapHistoryStore", () => {
         toAssetId: "bitcoin",
         operationId: `${ethId}-0xabc-OUT`,
         fromAmount: "1000",
-        toAmount: "20",
+        toAmount: "20.75",
       },
     ]);
   });

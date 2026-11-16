@@ -4,6 +4,7 @@ import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-curr
 import type { NetworkValidator } from "@domain/entity-network-validators";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
 import type { CosmosValidatorItem } from "../families/cosmos/types";
+import { isLedgerValidator } from "./isLedgerValidator";
 
 export type PreloadValidatorsHost = {
   /** The app's currency bridge preload, the one FullSync runs before a sync. */
@@ -12,13 +13,10 @@ export type PreloadValidatorsHost = {
 
 const INTEGER = /^\d+$/;
 
-export function fromCosmosValidator({
-  validatorAddress,
-  name,
-  commission,
-  estimatedYearlyRewardsRate,
-  tokens,
-}: CosmosValidatorItem): NetworkValidator {
+export function fromCosmosValidator(
+  { validatorAddress, name, commission, estimatedYearlyRewardsRate, tokens }: CosmosValidatorItem,
+  ledger = false,
+): NetworkValidator {
   return {
     id: validatorAddress,
     address: validatorAddress,
@@ -26,6 +24,7 @@ export function fromCosmosValidator({
     ...(commission >= 0 && commission <= 1 ? { commission } : {}),
     ...(estimatedYearlyRewardsRate >= 0 ? { apy: estimatedYearlyRewardsRate } : {}),
     ...(INTEGER.test(tokens) ? { totalStaked: tokens } : {}),
+    ...(ledger ? { ledger: true } : {}),
   };
 }
 
@@ -51,7 +50,9 @@ export function createPreloadValidatorsSource(
       const validators = getCurrentCosmosPreloadData()[currency.id]?.validators ?? [];
       // An empty preload is a failed one: no network has no validator.
       if (validators.length === 0) throw new Error(`No preloaded validators for ${currency.id}`);
-      return validators.map(fromCosmosValidator);
+      return validators.map(validator =>
+        fromCosmosValidator(validator, isLedgerValidator(currency.id, validator.validatorAddress)),
+      );
     },
   };
 }

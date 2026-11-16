@@ -1,6 +1,5 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { isStakingAccount } from "@ledgerhq/types-live";
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
@@ -42,8 +41,7 @@ function StepConfirmation({
 
   const voteAccAddress = transaction ? getValAddress(transaction) : "";
   const currencyId = account.currency.id;
-  const { validators: networkValidators } = useCosmosNetworkValidators(account.currency);
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, networkValidators);
+  const { validators } = useCosmosNetworkValidators(account.currency);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {

@@ -20,6 +20,7 @@ Modelled on the coin module `Stake` (`@ledgerhq/coin-module-framework`), amounts
   - `state`: `inactive`, `activating`, `active`, `deactivating` (unbonding until `unlockAt`) or `withdrawable`.
   - `amount`; `rewards`, part of `amount` when the chain compounds them, to claim apart otherwise (Cosmos); `deposited`.
   - `actions`, absent when the source does not tell.
+  - `redelegatingFrom`, `{ validatorId, completesAt? }`, set on the delegation a pending redelegation moved stake to: Cosmos refuses another redelegation from that validator until `completesAt`. A redelegation is not a position of its own, its stake is already counted in the destination's delegation. When several are pending to one destination, it keeps the one completing last, the date the delegation can be redelegated again.
 - Totals are not stored. `stakingTotals(positions)` and the selectors give per asset `staked` (active and activating), `unbonding` (deactivating), `withdrawable` and `rewards`:
   - `selectAccountStakingPositions(state, accountUUID)`;
   - `selectAccountStakingTotals(state, accountUUID)`, one row per staked asset;
@@ -30,10 +31,17 @@ Modelled on the coin module `Stake` (`@ledgerhq/coin-module-framework`), amounts
 
 | Source | Covers |
 | --- | --- |
-| FullSync | `stakingResources` (Cosmos family, Solana, Hedera, EVM staking chains, Aleo): delegations, unbondings, redelegations; `stakingPositions` (Tezos, NEAR, Stacks, Celo) |
+| FullSync | `stakingResources` (Cosmos family, Solana, Hedera, EVM staking chains, Aleo): delegations, with their pending redelegation, and unbondings; `stakingPositions` (Tezos, NEAR, Stacks, Celo); family resources through `loadStakingPositions` (Tron, Polkadot) |
 | CoinModule | `getStakes` of the families the source serves, Cosmos first |
 | Mock | a delegation and an unbonding for a staking family, none otherwise |
 
-Not mapped yet: staking held in family resources (Tron votes and frozen balances, Polkadot, MultiversX, Sui, Cardano, Aptos, Tezos `tezosResources` delegation…). These families answer no position until their mapping lands.
+Family resources, mapped by `families/<family>/staking.ts` in live-common:
+
+- **Tron** votes with TRON POWER, one per frozen TRX. Each vote is an `active` position on its super representative whose `amount` is the voted power in sun (`voteCount × 10^6`), not a count of votes. Frozen TRX backing no vote is one `inactive` position without validator. Each unfreezing entry is `deactivating` until its expiry, `withdrawable` after. The reward is account-wide, not per vote: it rides on a position of its own, `inactive` with a zero `amount`.
+- **Polkadot** nominates: the whole bond backs whichever nominated validator is elected. Each nomination is a position on its validator, `active` with the stake backing it, `inactive` otherwise (usually a zero `amount`). The bond backing no elected validator, or nominating none, is one `inactive` position without validator. Each unlocking chunk is `deactivating` until its date, `withdrawable` after. Rewards are paid out, so no position carries any.
+
+These positions and the `locked` of `balance` describe the same TRX or DOT from two angles: the balance tells why it is not spendable (frozen, staked, unbonding), staking tells where it is put to work. Never add one to the other.
+
+Not mapped yet: staking held in other family resources (MultiversX, Sui, Cardano, Aptos, Tezos `tezosResources` delegation…). These families answer no position until their mapping lands.
 
 Not a fetch status: pending, the last error and the source stay in `accountData`. See [the account data layer](../../../docs/account-models/data-layer.md).

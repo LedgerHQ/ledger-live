@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosDelegationsQuerySelector } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
 import {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -40,7 +40,7 @@ export default function RedelegationSelectorField({
   onChange,
 }: RedelegationSelectorFieldProps) {
   const { t } = useTranslation();
-  const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
+  const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
     account,
     transaction,
   );

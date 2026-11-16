@@ -29,7 +29,6 @@
     "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-account-staking": "workspace:*",
     "@domain/entity-account-status": "workspace:*",
-    "@domain/entity-account-tron": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@noble/hashes": "catalog:"

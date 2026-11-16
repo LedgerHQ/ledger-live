@@ -12,12 +12,12 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { StepProps } from "../types";
-import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 export default function StepConfirmation({
   account,
   optimisticOperation,
@@ -27,7 +27,7 @@ export default function StepConfirmation({
 }: StepProps) {
   const { t } = useTranslation();
   const currencyId = account.currency.id;
-  const validators = accountValidators(account);
+  const { validators } = useCosmosNetworkValidators(account.currency);
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {

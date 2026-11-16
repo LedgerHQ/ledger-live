@@ -22,10 +22,15 @@ const validator: CoinModuleValidator = {
   apy: 0.12,
 };
 
-const sourceWith = (api: CoinModuleValidatorsApi | undefined, supported = true) =>
+const sourceWith = (
+  api: CoinModuleValidatorsApi | undefined,
+  supported = true,
+  isLedgerValidator = (_currencyId: string, _address: string) => false,
+) =>
   createCoinModuleValidatorsSource({
     isCurrencySupported: () => supported,
     getValidatorsApi: async () => api,
+    isLedgerValidator,
   });
 
 describe("toNetworkValidator", () => {
@@ -40,6 +45,11 @@ describe("toNetworkValidator", () => {
       iconUrl: "https://ledger.com/logo.png",
       url: "https://ledger.com",
     });
+  });
+
+  it("flags a Ledger validator", () => {
+    expect(toNetworkValidator(validator, true).ledger).toBe(true);
+    expect(toNetworkValidator(validator, false)).not.toHaveProperty("ledger");
   });
 
   it("leaves out the fields the entity would reject, and falls back to the address as id", () => {
@@ -73,6 +83,18 @@ describe("createCoinModuleValidatorsSource", () => {
     const validators = await sourceWith({ getValidators }).read(cosmos, { signal });
     expect(validators.map(({ id }) => id)).toEqual(["cosmosvaloper1abc", "v2"]);
     expect(getValidators).toHaveBeenLastCalledWith("2");
+  });
+
+  it("flags the validators the host knows Ledger runs", async () => {
+    const getValidators = jest.fn(async () => ({
+      items: [validator, { ...validator, id: "v2", address: "v2" }],
+    }));
+    const isLedgerValidator = jest.fn((_currencyId: string, address: string) => address === "v2");
+    const validators = await sourceWith({ getValidators }, true, isLedgerValidator).read(cosmos, {
+      signal,
+    });
+    expect(validators.map(({ ledger }) => ledger)).toEqual([undefined, true]);
+    expect(isLedgerValidator).toHaveBeenCalledWith("cosmos", "v2");
   });
 
   it("stops on a cursor that does not advance", async () => {

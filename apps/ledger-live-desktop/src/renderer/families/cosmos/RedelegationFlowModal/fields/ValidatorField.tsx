@@ -1,5 +1,4 @@
 import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosAccount,
   CosmosValidatorItem,
@@ -16,6 +15,7 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useLedgerFirstCosmosValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 
 const ValidatorsSection = styled(Box)`
   width: 100%;
@@ -33,13 +33,8 @@ export default function ValidatorField({
 }) {
   invariant(isStakingAccount(account), "cosmos staking account required");
 
-  const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    currencyId,
-    account.stakingResources.validators,
-    search,
-  );
+  const validators = useLedgerFirstCosmosValidators(account.currency, search);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],

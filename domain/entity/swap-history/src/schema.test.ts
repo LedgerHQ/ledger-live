@@ -40,9 +40,14 @@ describe("SwapHistoryEntrySchema", () => {
     ).toBe(false);
   });
 
-  it("should reject a fractional amount in the smallest unit", () => {
+  it("should keep a fractional toAmount unchanged", () => {
+    const entry = { ...mockSwapHistoryEntry(), toAmount: "2999999999.123456789" };
+    expect(SwapHistoryEntrySchema.parse(entry).toAmount).toBe("2999999999.123456789");
+  });
+
+  it("should reject a fractional fromAmount in the smallest unit", () => {
     expect(
-      SwapHistoryEntrySchema.safeParse({ ...mockSwapHistoryEntry(), toAmount: "1.5" }).success,
+      SwapHistoryEntrySchema.safeParse({ ...mockSwapHistoryEntry(), fromAmount: "1.5" }).success,
     ).toBe(false);
   });
 

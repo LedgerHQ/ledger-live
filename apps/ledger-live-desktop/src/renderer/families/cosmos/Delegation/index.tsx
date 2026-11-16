@@ -4,7 +4,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
-import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { urls } from "~/config/urls";
@@ -29,6 +28,8 @@ import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { useCosmosMappedDelegations } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 
 type DelegationActionsModalName =
   | "MODAL_COSMOS_CLAIM_REWARDS"
@@ -51,12 +52,12 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     pendingRewardsBalance: _pendingRewardsBalance,
     unbondings,
   } = account.stakingResources;
-  const validators = account.stakingResources.validators ?? [];
+  const { validators } = useCosmosNetworkValidators(account.currency);
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
-  const mappedDelegations = useCosmosFamilyMappedDelegations(account);
+  const mappedDelegations = useCosmosMappedDelegations(account);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";

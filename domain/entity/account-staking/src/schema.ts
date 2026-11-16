@@ -49,6 +49,13 @@ export const AccountStakingPositionSchema = z.object({
   unlockAt: z.iso.datetime({ offset: true }).optional(),
   /** Absent when the source does not tell. */
   actions: z.array(StakingActionSchema).optional(),
+  /** Set on the delegation a pending redelegation moved stake to: it cannot be redelegated again until `completesAt`. */
+  redelegatingFrom: z
+    .object({
+      validatorId: z.string().min(1),
+      completesAt: z.iso.datetime({ offset: true }).optional(),
+    })
+    .optional(),
 });
 
 export type AccountStakingPosition = z.infer<typeof AccountStakingPositionSchema>;

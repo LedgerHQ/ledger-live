@@ -21,11 +21,19 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 
+jest.mock("~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators", () => ({
+  useCosmosNetworkValidators: () => ({
+    validators: [VALIDATOR_A],
+    pending: false,
+    error: undefined,
+  }),
+}));
+
 const buildAccount = (): CosmosAccount =>
   ({
     type: "Account",
     currency: getCryptoCurrencyById("cosmos"),
-    stakingResources: { validators: [VALIDATOR_A] },
+    stakingResources: {},
   }) as unknown as CosmosAccount;
 
 const buildOperation = (): Operation =>

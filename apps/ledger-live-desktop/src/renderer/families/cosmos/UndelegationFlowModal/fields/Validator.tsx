@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosDelegationsQuerySelector } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
 import {
   Transaction,
   CosmosMappedDelegation,
@@ -18,7 +18,7 @@ type Props = {
 };
 export default function ValidatorField({ account, transaction, onChange }: Props) {
   const { t } = useTranslation();
-  const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
+  const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
     account,
     transaction,
   );

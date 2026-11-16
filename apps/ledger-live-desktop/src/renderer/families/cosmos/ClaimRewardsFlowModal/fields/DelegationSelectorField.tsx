@@ -1,5 +1,5 @@
 import React from "react";
-import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosDelegationsQuerySelector } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
 import {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -40,7 +40,7 @@ export default function DelegationSelectorField({
   t: TFunction;
   onChange: (t: CosmosMappedDelegation | null | undefined) => void;
 }) {
-  const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
+  const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
     account,
     transaction,
   );

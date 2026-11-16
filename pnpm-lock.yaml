@@ -5545,9 +5545,6 @@ importers:
       '@domain/entity-account-status':
         specifier: workspace:*
         version: link:../../domain/entity/account-status
-      '@domain/entity-account-tron':
-        specifier: workspace:*
-        version: link:../../domain/entity/account-tron
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -7143,6 +7140,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0

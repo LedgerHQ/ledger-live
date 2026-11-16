@@ -1,3 +1,4 @@
+import { useNetworkValidators } from "@domain/api-network-validators";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CURRENCIES_LIST } from "@ledgerhq/live-common/currencies/mock";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
@@ -10,6 +11,10 @@ import Delegations from "../index";
 
 jest.mock("@ledgerhq/live-common/config/index", () => ({
   getCurrencyConfiguration: jest.fn(),
+}));
+jest.mock("@domain/api-network-validators", () => ({
+  ...jest.requireActual("@domain/api-network-validators"),
+  useNetworkValidators: jest.fn(),
 }));
 
 describe("Cosmos Delegations Component", () => {
@@ -29,6 +34,9 @@ describe("Cosmos Delegations Component", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest
+      .mocked(useNetworkValidators)
+      .mockReturnValue({ validators: [], pending: false, error: undefined });
   });
 
   it("should render Delegations component when we do not configure disable delegations", () => {
@@ -127,5 +135,58 @@ describe("Cosmos Delegations Component", () => {
     expect(() => render(<Delegations account={noStaking} />)).toThrow(
       "cosmos staking account required",
     );
+  });
+
+  describe("delegation list", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const delegated = {
+      type: "Account",
+      currency: CURRENCIES_LIST.find(c => c.id === "cosmos")!,
+      spendableBalance: BigNumber(0),
+      stakingResources: {
+        delegations: [
+          {
+            validatorAddress: "cosmosvaloper1known",
+            amount: BigNumber(1_000_000),
+            pendingRewards: BigNumber(0),
+            status: "bonded",
+          },
+        ],
+        redelegations: [],
+        pendingRewardsBalance: BigNumber(0),
+        unbondings: [],
+        delegatedBalance: BigNumber(1_000_000),
+        unbondingBalance: BigNumber(0),
+      },
+    } as unknown as CosmosAccount;
+    const renderDelegated = () => {
+      jest.mocked(getCurrencyConfiguration).mockReturnValue({
+        status: { type: "active" },
+        name: "Cosmos",
+        unit: { name: "Atom", code: "ATOM", magnitude: 6 },
+      });
+      render(<Delegations account={delegated} />, {
+        initialState: { settings: { ...INITIAL_STATE } },
+      });
+    };
+
+    it("names a delegation's validator from the network validators", () => {
+      jest.mocked(useNetworkValidators).mockReturnValue({
+        validators: [{ id: "cosmosvaloper1known", name: "Known Validator" }],
+        pending: false,
+        error: undefined,
+      });
+      renderDelegated();
+      expect(useNetworkValidators).toHaveBeenCalledWith("cosmos");
+      expect(screen.getByText("Known Validator")).toBeVisible();
+    });
+
+    it("shows the validator address until the network validators arrive", () => {
+      jest
+        .mocked(useNetworkValidators)
+        .mockReturnValue({ validators: [], pending: true, error: undefined });
+      renderDelegated();
+      expect(screen.getByText("cosmosvaloper1known")).toBeVisible();
+    });
   });
 });

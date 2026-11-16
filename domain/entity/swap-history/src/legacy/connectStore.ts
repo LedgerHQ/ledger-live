@@ -117,7 +117,7 @@ export function connectSwapHistoryStore<S>(
         toAssetId: swap.tokenId ?? to?.assetId,
         operationId: swap.operationId || undefined,
         fromAmount: swap.fromAmount.toFixed(0),
-        toAmount: swap.toAmount.toFixed(0),
+        toAmount: swap.toAmount.toFixed(),
         finalAmount: swap.finalAmount?.toFixed(),
         feesAmount: swap.feesAmount,
         payoutFeesAmount: swap.payoutFeesAmount,

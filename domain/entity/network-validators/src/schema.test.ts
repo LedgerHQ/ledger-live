@@ -11,6 +11,10 @@ describe("NetworkValidatorSchema", () => {
     expect(NetworkValidatorSchema.parse({ id: "v", name: "" })).toEqual({ id: "v", name: "" });
   });
 
+  it("accepts the Ledger flag", () => {
+    expect(mockNetworkValidator({ ledger: true }).ledger).toBe(true);
+  });
+
   it.each([
     ["an empty id", { id: "" }],
     ["a commission above 1", { commission: 1.5 }],
@@ -18,6 +22,7 @@ describe("NetworkValidatorSchema", () => {
     ["a decimal totalStaked", { totalStaked: "1.5" }],
     ["a negative totalStaked", { totalStaked: "-1" }],
     ["an iconUrl that is not a url", { iconUrl: "logo" }],
+    ["a ledger flag set to false", { ledger: false }],
   ])("rejects %s", (_, override) => {
     expect(
       NetworkValidatorSchema.safeParse({ ...mockNetworkValidator(), ...override }).success,

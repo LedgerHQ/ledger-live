@@ -17,7 +17,7 @@ Swap history is app-owned data, not an account data kind: no source can rebuild 
 - `accountUUID`, `assetId`: the account and asset the swap is recorded on, the one holding `operationId`. It is the sender, except when the sender has no operation to anchor it (perps withdraw): then `fromAccountUUID` / `fromAssetId` name the sender.
 - `toAccountUUID`, `toAssetId`: the receiving account and asset; `toAccountUUID` is absent when the accounts list does not hold it.
 - `operationId`: absent until known.
-- `fromAmount`, `toAmount`, `feesAmount`, `payoutFeesAmount`: integer strings in the asset's smallest unit. `finalAmount` is a decimal in the receiving asset's main unit, as centralized providers report it.
+- `fromAmount`, `feesAmount`, `payoutFeesAmount`: integer strings in the asset's smallest unit. `toAmount` (amount × rate) is a non-negative decimal string in the receiving asset's smallest unit, kept unrounded. `finalAmount` is a decimal in the receiving asset's main unit, as centralized providers report it.
 - `createdAt`: ms, when no operation dates the swap yet.
 
 Slice `swapHistory`: `swapHistorySynced` replaces the whole state; selectors `selectAccountSwapHistory`, `selectSwapHistoryEntries`, `selectSwapHistoryEntry`. Mocks: `./schema.mock`, `./slice.mock`.

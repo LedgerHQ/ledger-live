@@ -6,7 +6,6 @@ import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
@@ -17,6 +16,7 @@ import { AmountField } from "~/renderer/families/cosmos/UndelegationFlowModal/fi
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import ChevronRight from "~/renderer/icons/ChevronRightSmall";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
@@ -108,7 +108,7 @@ export default function StepValidators({
     [updateRedelegation, transaction],
   );
   const amount = transaction.amount;
-  const validators = accountValidators(account);
+  const { validators } = useCosmosNetworkValidators(account.currency);
   const selectedValidatorData = useMemo(
     () =>
       dstValAddress

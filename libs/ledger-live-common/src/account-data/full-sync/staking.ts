@@ -4,9 +4,12 @@ import {
   isStakingAccount,
   type Account,
   type StakingDelegation,
+  type StakingAccount,
+  type StakingRedelegation,
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
 import { AccountStakingSchema, type AccountStaking } from "@domain/entity-account-staking";
+import { loadStakingPositionsForFamily } from "../../coin-modules/registry";
 import { toAmount } from "./balance";
 
 /** `Stake` with `BigNumber` amounts, as the generic bridge keeps it on the account; persisted without `actions` nor `asset` on some families. */
@@ -25,10 +28,23 @@ const hasStakingPositions = (
 const optionalAmount = (value: BigNumber | undefined) =>
   value === undefined ? undefined : toAmount(value);
 
+/** Per destination validator, the pending redelegation completing last: until then the delegation cannot be redelegated. */
+function latestRedelegations(redelegations: StakingRedelegation[]) {
+  const latest = new Map<string, StakingRedelegation>();
+  for (const redelegation of redelegations) {
+    const known = latest.get(redelegation.validatorDstAddress);
+    if (!known || known.completionDate < redelegation.completionDate) {
+      latest.set(redelegation.validatorDstAddress, redelegation);
+    }
+  }
+  return latest;
+}
+
 const fromDelegation = (
   assetId: string,
   { positionId, validatorAddress, status, amount, pendingRewards }: StakingDelegation,
   index: number,
+  redelegation: StakingRedelegation | undefined,
 ) => ({
   id: `delegation:${positionId ?? `${validatorAddress}:${index}`}`,
   assetId,
@@ -37,6 +53,10 @@ const fromDelegation = (
   state: status === "activating" ? "activating" : "active",
   amount: toAmount(amount),
   rewards: toAmount(pendingRewards),
+  redelegatingFrom: redelegation && {
+    validatorId: redelegation.validatorSrcAddress,
+    completesAt: redelegation.completionDate.toISOString(),
+  },
 });
 
 const fromUnbonding = (
@@ -74,21 +94,29 @@ const fromStake = (
   actions,
 });
 
-/** The `staking` kind of a synced account: `stakingResources` or `stakingPositions`; family resources are not mapped yet. */
-export function toAccountStaking(account: Account): AccountStaking {
+const fromResources = ({ currency, stakingResources }: StakingAccount) => {
+  const redelegations = latestRedelegations(stakingResources.redelegations);
+  return [
+    ...stakingResources.delegations.map((d, i) =>
+      fromDelegation(currency.id, d, i, redelegations.get(d.validatorAddress)),
+    ),
+    ...stakingResources.unbondings.map((u, i) => fromUnbonding(currency.id, u, i)),
+  ];
+};
+
+/** The `staking` kind of a synced account: `stakingResources`, `stakingPositions`, then the family's own resources. */
+export async function toAccountStaking(account: Account): Promise<AccountStaking> {
   const assetId = account.currency.id;
-  // Redelegations are left out: the moved stake is already a delegation to the new validator.
-  const resources = isStakingAccount(account)
-    ? [
-        ...account.stakingResources.delegations.map((d, i) => fromDelegation(assetId, d, i)),
-        ...account.stakingResources.unbondings.map((u, i) => fromUnbonding(assetId, u, i)),
-      ]
-    : [];
+  // A redelegation is not a position: the moved stake is already a delegation to its destination.
+  const resources = isStakingAccount(account) ? fromResources(account) : [];
   // Every family keeping positions stakes its native coin only.
   const stakes = hasStakingPositions(account)
     ? account.stakingPositions
         .filter(({ asset }) => asset === undefined || asset.type === "native")
         .map(position => fromStake(assetId, position))
     : [];
-  return AccountStakingSchema.parse({ positions: [...resources, ...stakes] });
+  const familyPositions = await loadStakingPositionsForFamily(account.currency.family);
+  return AccountStakingSchema.parse({
+    positions: [...resources, ...stakes, ...(familyPositions?.(account) ?? [])],
+  });
 }

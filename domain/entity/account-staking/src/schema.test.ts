@@ -37,8 +37,20 @@ describe("AccountStakingPositionSchema", () => {
     );
   });
 
+  it("should accept a delegation with a pending redelegation", () => {
+    const redelegatingFrom = {
+      validatorId: "cosmosvaloper1source",
+      completesAt: "2026-12-01T00:00:00.000Z",
+    };
+    expect(mockAccountStakingPosition({ redelegatingFrom }).redelegatingFrom).toEqual(
+      redelegatingFrom,
+    );
+  });
+
   it.each([
     { state: "bonded" },
+    { redelegatingFrom: { validatorId: "" } },
+    { redelegatingFrom: { validatorId: "v", completesAt: "soon" } },
     { amount: "-1" },
     { amount: "1.5" },
     { rewards: "abc" },

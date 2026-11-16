@@ -31,8 +31,8 @@ export const SwapHistoryEntrySchema = z.object({
   operationId: z.string().min(1).optional(),
   /** In the sender asset's smallest unit. */
   fromAmount: AmountStrSchema,
-  /** The quoted amount, in the receiving asset's smallest unit. */
-  toAmount: AmountStrSchema,
+  /** The quoted amount (amount × rate), in the receiving asset's smallest unit; may be fractional. */
+  toAmount: DecimalStrSchema,
   /** The amount received as a centralized provider reports it, in the receiving asset's main unit. */
   finalAmount: DecimalStrSchema.optional(),
   /** Fees the anchoring operation does not carry, in the sender asset's smallest unit. */

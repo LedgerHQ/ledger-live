@@ -3,7 +3,6 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { TrackScreen } from "@shared/analytics-react";
@@ -18,6 +17,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -29,7 +29,7 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
-  const validators = accountValidators(account);
+  const { validators } = useCosmosNetworkValidators(account.currency);
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {

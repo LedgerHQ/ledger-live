@@ -1,10 +1,15 @@
 import { NetworkIdSchema } from "@domain/entity-account-descriptor";
 import { setCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
 import type { CosmosValidatorItem } from "../families/cosmos/types";
+import { isLedgerValidator } from "./isLedgerValidator";
 import {
   createPreloadValidatorsSource,
   fromCosmosValidator,
 } from "./createPreloadValidatorsSource";
+
+jest.mock("./isLedgerValidator", () => ({
+  isLedgerValidator: jest.fn((_currencyId: string, address: string) => address === "ledgervaloper"),
+}));
 
 const signal = new AbortController().signal;
 
@@ -27,6 +32,11 @@ describe("fromCosmosValidator", () => {
       apy: 0.12,
       totalStaked: "1000000",
     });
+  });
+
+  it("flags a Ledger validator", () => {
+    expect(fromCosmosValidator(cosmosValidator, true).ledger).toBe(true);
+    expect(fromCosmosValidator(cosmosValidator, false)).not.toHaveProperty("ledger");
   });
 
   it("leaves out what the entity would reject", () => {
@@ -59,6 +69,18 @@ describe("createPreloadValidatorsSource", () => {
       fromCosmosValidator(cosmosValidator),
     ]);
     expect(prepareCurrency).toHaveBeenCalledWith(expect.objectContaining({ id: "osmo" }));
+  });
+
+  it("flags the validator Ledger runs", async () => {
+    const ledgerValidator = { ...cosmosValidator, validatorAddress: "ledgervaloper" };
+    const source = createPreloadValidatorsSource({
+      prepareCurrency: async () => {
+        setCosmosPreloadData("cosmos", { validators: [cosmosValidator, ledgerValidator] });
+      },
+    });
+    const validators = await source.read(NetworkIdSchema.parse("cosmos"), { signal });
+    expect(validators.map(({ ledger }) => ledger)).toEqual([undefined, true]);
+    expect(isLedgerValidator).toHaveBeenCalledWith("cosmos", "ledgervaloper");
   });
 
   it("fails when the preload left no validator, or failed", async () => {

@@ -2,8 +2,12 @@ import BigNumber from "bignumber.js";
 import type { Account, StakingAccount, StakingResources } from "@ledgerhq/types-live";
 import { createEmptyStakingResources } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { registerAllCoins } from "../../coin-modules/load-all-coins";
+import { mockTronAccount } from "../../families/tron/accountData.mock";
 import { genAccount } from "../../mock/account";
 import { toAccountStaking } from "./staking";
+
+registerAllCoins();
 
 const accountOf = (currencyId: string): Account => ({
   ...genAccount(`staking-${currencyId}`, { currency: getCryptoCurrencyById("ethereum") }),
@@ -60,12 +64,12 @@ const resources: StakingResources = {
 };
 
 describe("toAccountStaking", () => {
-  it("answers no position for an account that does not stake", () => {
-    expect(toAccountStaking(accountOf("ethereum"))).toEqual({ positions: [] });
+  it("answers no position for an account that does not stake", async () => {
+    expect(await toAccountStaking(accountOf("ethereum"))).toEqual({ positions: [] });
   });
 
-  it("maps delegations to staked positions and unbondings to unlocking ones", () => {
-    const { positions } = toAccountStaking(cosmosOf(resources));
+  it("maps delegations to staked positions and unbondings to unlocking ones", async () => {
+    const { positions } = await toAccountStaking(cosmosOf(resources));
     expect(positions).toEqual([
       {
         id: "delegation:cosmosvaloper1a:0",
@@ -74,6 +78,10 @@ describe("toAccountStaking", () => {
         state: "active",
         amount: "1000",
         rewards: "15",
+        redelegatingFrom: {
+          validatorId: "cosmosvaloper1c",
+          completesAt: "2026-12-01T00:00:00.000Z",
+        },
       },
       {
         id: "delegation:cosmosvaloper1b:1",
@@ -110,12 +118,38 @@ describe("toAccountStaking", () => {
     ]);
   });
 
-  it("leaves out redelegations, already counted in the delegations", () => {
-    const { positions } = toAccountStaking(cosmosOf(resources));
+  it("marks the destination of a redelegation rather than adding a position", async () => {
+    const { positions } = await toAccountStaking(cosmosOf(resources));
     expect(positions.filter(({ amount }) => amount === "1000")).toHaveLength(1);
+    expect(positions.filter(({ redelegatingFrom }) => redelegatingFrom)).toHaveLength(1);
   });
 
-  it("maps the positions kept by the generic bridge, native ones only", () => {
+  it("keeps the redelegation completing last when a destination has several", async () => {
+    const later = new Date("2026-12-20T00:00:00.000Z");
+    const [redelegation] = resources.redelegations;
+    const stakingResources = {
+      ...resources,
+      redelegations: [
+        redelegation,
+        { ...redelegation, validatorSrcAddress: "cosmosvaloper1b", completionDate: later },
+        { ...redelegation, validatorSrcAddress: "cosmosvaloper1d" },
+      ],
+    };
+    const [position] = (await toAccountStaking(cosmosOf(stakingResources))).positions;
+    expect(position.redelegatingFrom).toEqual({
+      validatorId: "cosmosvaloper1b",
+      completesAt: later.toISOString(),
+    });
+  });
+
+  it("adds the positions the family keeps in its own resources", async () => {
+    const account = mockTronAccount({ votes: [{ name: "sr", address: "TSR", voteCount: 3 }] });
+    expect((await toAccountStaking(account)).positions).toEqual([
+      { id: "vote:TSR", assetId: "tron", validatorId: "TSR", state: "active", amount: "3000000" },
+    ]);
+  });
+
+  it("maps the positions kept by the generic bridge, native ones only", async () => {
     const account = {
       ...accountOf("tezos"),
       stakingPositions: [
@@ -139,7 +173,7 @@ describe("toAccountStaking", () => {
         },
       ],
     };
-    expect(toAccountStaking(account).positions).toEqual([
+    expect((await toAccountStaking(account)).positions).toEqual([
       {
         id: "tz1:delegation",
         assetId: "tezos",
@@ -154,13 +188,13 @@ describe("toAccountStaking", () => {
     ]);
   });
 
-  it("floors a negative amount at zero", () => {
+  it("floors a negative amount at zero", async () => {
     const stakingResources = {
       ...resources,
       delegations: [{ ...resources.delegations[0], amount: new BigNumber(-1) }],
       unbondings: [],
     };
-    const [position] = toAccountStaking(cosmosOf(stakingResources)).positions;
+    const [position] = (await toAccountStaking(cosmosOf(stakingResources))).positions;
     expect(position.amount).toBe("0");
   });
 });

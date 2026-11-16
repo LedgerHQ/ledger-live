@@ -10,12 +10,14 @@ import {
   createCoinModuleHost,
   loadApis,
 } from "../account-data/coin-module/createCoinModuleHost";
+import { isLedgerValidator } from "./isLedgerValidator";
 
 /** The validators of the local coin modules the app registered, with no generic-coin-framework layer. */
 export function createCoinModuleValidatorsHost(): CoinModuleValidatorsHost {
   const { isCurrencySupported } = createCoinModuleHost();
   return {
     isCurrencySupported,
+    isLedgerValidator,
     async getValidatorsApi(currencyId) {
       const currency = getCryptoCurrencyById(currencyId);
       const { createLocalApi } = await loadApis(currency);

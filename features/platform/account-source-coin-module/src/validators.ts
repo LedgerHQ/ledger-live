@@ -28,6 +28,8 @@ export type CoinModuleValidatorsHost = {
   isCurrencySupported(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not list validators. */
   getValidatorsApi(currencyId: string): Promise<CoinModuleValidatorsApi | undefined>;
+  /** Whether Ledger runs the validator at this address, from the currency's static config. */
+  isLedgerValidator(currencyId: string, address: string): boolean;
 };
 
 export class CoinModuleValidatorsNotServedError extends Error {
@@ -46,16 +48,10 @@ const isHttpUrl = (value: string | undefined): value is string => {
 };
 
 /** Keeps only what the entity accepts: a field a module fills oddly is left out, not failing the list. */
-export function toNetworkValidator({
-  id,
-  address,
-  name,
-  url,
-  logo,
-  balance,
-  commissionRate,
-  apy,
-}: CoinModuleValidator): NetworkValidator {
+export function toNetworkValidator(
+  { id, address, name, url, logo, balance, commissionRate, apy }: CoinModuleValidator,
+  ledger = false,
+): NetworkValidator {
   const commission = commissionRate === undefined ? Number.NaN : Number(commissionRate);
   return {
     id: id || address,
@@ -66,6 +62,7 @@ export function toNetworkValidator({
     ...(balance !== undefined && balance >= 0n ? { totalStaked: balance.toString() } : {}),
     ...(isHttpUrl(logo) ? { iconUrl: logo } : {}),
     ...(isHttpUrl(url) ? { url } : {}),
+    ...(ledger ? { ledger: true } : {}),
   };
 }
 
@@ -101,7 +98,11 @@ export function createCoinModuleValidatorsSource(
       for (let page = 0; page < MAX_VALIDATOR_PAGES && !complete; page++) {
         signal.throwIfAborted();
         const { items, next } = await api.getValidators(cursor);
-        validators.push(...items.map(toNetworkValidator));
+        validators.push(
+          ...items.map(item =>
+            toNetworkValidator(item, host.isLedgerValidator(currencyId, item.address || item.id)),
+          ),
+        );
         complete = !next || next === cursor;
         cursor = next;
       }

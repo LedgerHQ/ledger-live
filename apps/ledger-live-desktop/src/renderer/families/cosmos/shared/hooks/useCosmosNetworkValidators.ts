@@ -15,9 +15,35 @@ export const toCosmosValidatorItem = (validator: NetworkValidator): CosmosValida
   tokens: validator.totalStaked ?? "0",
 });
 
+const byTotalStakedDesc = (a: NetworkValidator, b: NetworkValidator) => {
+  const diff = BigInt(b.totalStaked ?? "0") - BigInt(a.totalStaked ?? "0");
+  return diff > 0n ? 1 : diff < 0n ? -1 : 0;
+};
+
+/** Pickable validators (a full commission is left out) matching the search, Ledger's first, then by stake. */
+export function ledgerFirstValidators(
+  validators: readonly NetworkValidator[],
+  search = "",
+): CosmosValidatorItem[] {
+  const query = search.toLowerCase();
+  const pickable = validators
+    .filter(({ commission, name }) => commission !== 1 && name.toLowerCase().includes(query))
+    .sort(byTotalStakedDesc);
+  return [
+    ...pickable.filter(({ ledger }) => ledger),
+    ...pickable.filter(({ ledger }) => !ledger),
+  ].map(toCosmosValidatorItem);
+}
+
 /** The network's validators, read when the screen mounts, in the shape the Cosmos components take. */
 export function useCosmosNetworkValidators(currency: CryptoCurrency) {
   const { validators, pending, error } = useNetworkValidators(networkFromCurrencyId(currency.id));
   const items = useMemo(() => validators.map(toCosmosValidatorItem), [validators]);
   return { validators: items, pending, error };
+}
+
+/** The network's validators to pick from: see `ledgerFirstValidators`. */
+export function useLedgerFirstCosmosValidators(currency: CryptoCurrency, search?: string) {
+  const { validators } = useNetworkValidators(networkFromCurrencyId(currency.id));
+  return useMemo(() => ledgerFirstValidators(validators, search), [validators, search]);
 }
