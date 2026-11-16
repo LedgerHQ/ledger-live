@@ -1,4 +1,4 @@
-type ExchangeErrorData = {
+export type ExchangeErrorData = {
   code: string;
   message: string;
   data?: Record<string, unknown>;
@@ -95,11 +95,10 @@ export function createTronifyInsufficientBalance(): ExchangeErrorData {
   };
 }
 
-/** `offered` is the rent Tronify asked for, in `feeAsset` base units. */
-export function createTronifyPriceAboveApproved(offered: string): ExchangeErrorData {
+export function createTronifyPriceAboveApproved(offeredBaseUnits: string): ExchangeErrorData {
   return {
     code: "TRONIFY_PRICE_ABOVE_APPROVED",
-    message: `tronify rent of ${offered} base units is above the approved fee`,
+    message: `tronify rent of ${offeredBaseUnits} base units is above the approved fee`,
   };
 }
 

@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Add the custom.exchange.tronify.createRentRecord wallet-api handler so the Swap live app can create a Tronify order and sign its rent payment
+Add the custom.exchange.tronify.createRentRecord wallet-api handler that creates a Tronify order and returns its unsigned rent payment

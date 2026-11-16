@@ -343,6 +343,10 @@ describe("getTronifyQuote", () => {
   });
 });
 
+function createRecord(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
+  return createTronifyRentRecord(params as never, { accounts, getFeature });
+}
+
 describe("createTronifyRentRecord", () => {
   const RECIPIENT = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
   const INTENT = { type: "send", asset: { type: "trc20" } };
@@ -374,10 +378,6 @@ describe("createTronifyRentRecord", () => {
     approvedFee: "2310000",
     ...overrides,
   });
-
-  function createRecord(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
-    return createTronifyRentRecord(params as never, { accounts, getFeature });
-  }
 
   function expectNoOrder() {
     expect(craftEnergyRentTransaction).not.toHaveBeenCalled();
@@ -432,7 +432,16 @@ describe("createTronifyRentRecord", () => {
     });
   });
 
-  it("keeps the order it returned, for uploadHash to check against", async () => {
+  it("keeps the order it returned until 30s before its payment expires", async () => {
+    const paymentExpiresAt = Date.now() + 60_000;
+    craftEnergyRentTransaction.mockResolvedValue({
+      orderId,
+      transaction: TRANSACTION,
+      payCoinCode: "USDT",
+      payCoinAmt: "2.31",
+      paymentExpiresAt,
+    });
+
     const result = await createRecord(rentParams());
 
     expect(getTronifyRentOrder(result.orderId)).toEqual({
@@ -442,22 +451,56 @@ describe("createTronifyRentRecord", () => {
       transaction: TRANSACTION,
       paymentTxId: result.paymentTxId,
       energyNeeded: 64_285n,
-      expiresAt: expect.any(Number),
+      signableUntilMs: paymentExpiresAt - 30_000,
     });
   });
 
-  it("drops an order once its payment has expired", async () => {
+  it("keeps only the latest order of an account", async () => {
+    const first = await createRecord(rentParams());
+    orderId = `order-${++orderSeq}`;
+    const second = await createRecord(rentParams());
+
+    expect(getTronifyRentOrder(first.orderId)).toBeUndefined();
+    expect(getTronifyRentOrder(second.orderId)).toMatchObject({ orderId: second.orderId });
+  });
+
+  it.each([
+    ["has already expired", -1],
+    ["expires within 30s", 29_000],
+    ["has no valid expiry", Number.NaN],
+  ])("fails an order whose payment %s, and keeps nothing", async (_label, expiresIn) => {
     craftEnergyRentTransaction.mockResolvedValue({
       orderId,
       transaction: TRANSACTION,
       payCoinCode: "USDT",
       payCoinAmt: "2.31",
-      paymentExpiresAt: Date.now() - 1,
+      paymentExpiresAt: Date.now() + expiresIn,
     });
 
-    await createRecord(rentParams());
-
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_ORDER_FAILED",
+    });
     expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  });
+
+  it("fails with an explicit code when the intent cannot be built", async () => {
+    mockBuildIntent.mockRejectedValue(new Error("token not found"));
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_ORDER_FAILED",
+    });
+    expectNoOrder();
+  });
+
+  it("rejects a transfer the energy rent does not support before any order", async () => {
+    const error = new Error("Energy rent is only available for TRC-20 send intents");
+    error.name = "EnergyRentUnsupportedIntent";
+    buildEnergyRentRequest.mockRejectedValue(error);
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_UNSUPPORTED_TRANSFER",
+    });
+    expectNoOrder();
   });
 
   it.each([
@@ -527,7 +570,6 @@ describe("createTronifyRentRecord", () => {
   });
 
   it.each([
-    ["EnergyRentUnsupportedIntent", "TRONIFY_UNSUPPORTED_TRANSFER"],
     ["EnergyRentProviderNotConfigured", "TRONIFY_UNAVAILABLE"],
     ["TronifyApiError", "TRONIFY_ORDER_FAILED"],
     ["Error", "TRONIFY_ORDER_FAILED"],
