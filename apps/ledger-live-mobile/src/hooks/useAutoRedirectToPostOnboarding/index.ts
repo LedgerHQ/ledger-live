@@ -26,12 +26,14 @@ export function useAutoRedirectToPostOnboarding(): PostOnboardingRedirectStatus 
 
   useEffect(() => {
     if (!isFocused) return;
-    const recordOutcome = (hasRedirected: boolean) =>
-      setAttemptOutcome(hasRedirected ? "redirected" : "skipped");
+    const recordOutcome = (attempt: Promise<boolean>) =>
+      attempt
+        .catch(() => false)
+        .then(hasRedirected => setAttemptOutcome(hasRedirected ? "redirected" : "skipped"));
     if (shouldRedirectToRecoverUpsell) {
-      openRecoverUpsell().then(recordOutcome);
+      recordOutcome(openRecoverUpsell());
     } else if (shouldRedirectToPostOnboarding && lastConnectedDevice) {
-      openPostOnboarding(lastConnectedDevice.modelId).then(recordOutcome);
+      recordOutcome(openPostOnboarding(lastConnectedDevice.modelId));
     }
   }, [
     lastConnectedDevice,

@@ -96,6 +96,19 @@ describe("useAutoRedirectToPostOnboarding", () => {
     });
   });
 
+  it("should report none when opening the post onboarding hub fails", async () => {
+    navigateToPostOnboardingHub.mockImplementationOnce(() => {
+      throw new Error("navigation failed");
+    });
+
+    render(<PortfolioWithRedirect />, {
+      overrideInitialState: withJustOnboardedDevice(DeviceModelId.nanoS),
+    });
+
+    expect(await screen.findByText("none")).toBeVisible();
+    expect(navigateToPostOnboardingHub).toHaveBeenCalledTimes(1);
+  });
+
   it("should report redirected when the Recover upsell link opens", async () => {
     render(<PortfolioWithRedirect />, { overrideInitialState: withRecoverUpsellDue });
 
