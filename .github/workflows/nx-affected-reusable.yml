@@ -18,6 +18,9 @@ on:
       paths:
         description: "Newline-separated list of affected paths"
         value: ${{ jobs.nx-affected.outputs.paths }}
+      path_prefixes:
+        description: "JSON array of every leading segment run of the affected paths. Gate jobs with contains(fromJSON(...), '<path>'), which compares whole elements, not substrings"
+        value: ${{ jobs.nx-affected.outputs.path_prefixes }}
       mobile_js_hash_ios:
         description: "Nx hash of live-mobile:e2e:bundle:ios, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_js_hash_ios }}
@@ -44,6 +47,7 @@ jobs:
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
+      path_prefixes: ${{ steps.nx-affected.outputs.path_prefixes }}
       mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
       mobile_native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}

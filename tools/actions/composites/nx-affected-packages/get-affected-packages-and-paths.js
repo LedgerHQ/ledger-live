@@ -5,7 +5,7 @@
  * Get affected Nx project names and their filesystem paths.
  * Run locally: node get-affected-packages-and-paths.js
  *   Env: BASE, HEAD (optional refs for affected calculation)
- *   Prints JSON to stdout: {"packages":["..."],"paths":["..."]}
+ *   Prints JSON to stdout: {"packages":["..."],"paths":["..."],"pathPrefixes":["..."]}
  * When required from actions/github-script, pass { base, head, exec } and use the returned result.
  */
 
@@ -30,6 +30,20 @@ async function runPnpm(args, exec) {
     stderr: (r.stderr || "").trim(),
     exitCode: r.status ?? 1,
   };
+}
+
+// Every leading segment run of each path: "libs/live-e2e-shared" gives "libs" and
+// "libs/live-e2e-shared", never "shared". Workflows match these with contains() on the
+// parsed array, which compares whole elements instead of substrings.
+function toPathPrefixes(paths) {
+  const prefixes = new Set();
+  for (const p of paths) {
+    const segments = p.split(/[\\/]+/).filter(Boolean);
+    for (let i = 1; i <= segments.length; i++) {
+      prefixes.add(segments.slice(0, i).join("/"));
+    }
+  }
+  return [...prefixes].sort();
 }
 
 async function getAffectedPackagesAndPaths(options = {}) {
@@ -133,10 +147,14 @@ async function getAffectedPackagesAndPaths(options = {}) {
   }
   const pathsDeduped = [...new Set(paths)];
 
-  return { packages: packageNames, paths: pathsDeduped };
+  return {
+    packages: packageNames,
+    paths: pathsDeduped,
+    pathPrefixes: toPathPrefixes(pathsDeduped),
+  };
 }
 
-module.exports = { getAffectedPackagesAndPaths };
+module.exports = { getAffectedPackagesAndPaths, toPathPrefixes };
 
 if (require.main === module) {
   getAffectedPackagesAndPaths()
