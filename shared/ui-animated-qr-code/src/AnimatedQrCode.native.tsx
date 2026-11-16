@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
-import { Pressable, requireNativeComponent, type ViewProps } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { Pressable, requireNativeComponent, StyleSheet, type ViewProps } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { AnimatedCenter } from "./AnimatedCenter";
 import { createQrMatrix } from "./qrMatrix";
-import { useQrClock } from "./useQrClock";
+import { usePressCount } from "./usePressCount";
 import type { AnimatedQrCodeProps, QrAnimation } from "./types";
 
 const NATIVE_VIEW_NAME = "SharedAnimatedQrCodeView";
@@ -15,7 +15,7 @@ type NativeQrCodeViewProps = ViewProps &
     animation: QrAnimation;
     /** Off when the OS asks for reduced motion: the code is drawn still. */
     animated: boolean;
-    /** Each new value plays a press, e.g. from a separate button. */
+    /** Each new value plays a press: the view handles no touches itself. */
     pressCount: number;
     moduleCount: number;
     // Flat [row, col, row, col, …] pairs: one array crosses to native instead of many objects.
@@ -25,8 +25,9 @@ type NativeQrCodeViewProps = ViewProps &
 const NativeQrCodeView = requireNativeComponent<NativeQrCodeViewProps>(NATIVE_VIEW_NAME);
 
 /**
- * QR code whose dots and finders are drawn, animated and touched on the native side: JS only sends
- * the QR matrix once. The center badge is a React node, animated by AnimatedCenter.
+ * QR code whose dots and finders are drawn and animated on the native side: JS only sends the QR
+ * matrix once, and a count for each press. The center badge is a React node, animated by
+ * AnimatedCenter.
  */
 export function AnimatedQrCode({
   value,
@@ -42,22 +43,28 @@ export function AnimatedQrCode({
   const hasCenter = centerContent !== undefined && centerContent !== null;
   const matrix = useMemo(() => createQrMatrix(value, hasCenter), [value, hasCenter]);
   const dots = useMemo(() => matrix.dots.flatMap(({ row, col }) => [row, col]), [matrix]);
-  const { time, pressedAt, press, pressCount } = useQrClock(triggerKey, animated);
+  // The skeleton has nothing to ripple.
+  const { pressCount, press } = usePressCount(triggerKey, animated && animation !== "loading");
   const pressable = onPress !== undefined;
+  const sizeStyle = { width: size, height: size };
+
+  // On a confirmed press, not on touch down: the start of a scroll over the code plays nothing.
+  const handlePress = useCallback(() => {
+    press();
+    onPress?.();
+  }, [press, onPress]);
 
   return (
     <Pressable
       testID={testID}
-      style={{ width: size, height: size }}
+      style={[styles.paper, sizeStyle]}
       accessible={pressable}
       accessibilityRole={pressable ? "button" : undefined}
       accessibilityLabel={accessibilityLabel}
-      onPress={onPress}
-      // The native view handles its own touches; this one only drives the center content.
-      onPressIn={press}
+      onPress={handlePress}
     >
       <NativeQrCodeView
-        style={{ width: size, height: size }}
+        style={sizeStyle}
         animation={animation}
         animated={animated}
         pressCount={pressCount}
@@ -66,9 +73,9 @@ export function AnimatedQrCode({
       />
       {hasCenter && (
         <AnimatedCenter
-          time={time}
-          pressedAt={pressedAt}
           animation={animation}
+          animated={animated}
+          pressCount={pressCount}
           size={size}
           diameter={matrix.clearCount * (size / matrix.moduleCount) * CENTER_DIAMETER_RATIO}
         >
@@ -78,3 +85,8 @@ export function AnimatedQrCode({
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  // The ink is a fixed dark: a white paper keeps the code readable on a dark screen.
+  paper: { backgroundColor: "#FFFFFF" },
+});

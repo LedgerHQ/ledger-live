@@ -1,17 +1,24 @@
 import CoreGraphics
 
 // Mirror of src/animationTimeline.ts: change the three together so both platforms play the same
-// animation. The center badge is not drawn natively, so only dots and finders live here.
+// animation. The center badge is not drawn natively, so only dots and finders live here. A frame is
+// split into a loading level and a ripple scale: the view caches the colors and skips unchanged
+// layers.
 enum QrElementKind {
   case dot
   case finder
 }
 
-// Center of the element, in fractions of the QR side (0 to 1).
 struct QrElement {
-  let x: CGFloat
-  let y: CGFloat
   let kind: QrElementKind
+  // From the element's center to the code's, in fractions of the QR side. Computed once, not per frame.
+  let distanceToCenter: CGFloat
+
+  // x and y: center of the element, in fractions of the QR side (0 to 1).
+  init(x: CGFloat, y: CGFloat, kind: QrElementKind) {
+    self.kind = kind
+    distanceToCenter = hypot(x - 0.5, y - 0.5)
+  }
 }
 
 struct QrRgb {
@@ -19,37 +26,20 @@ struct QrRgb {
   let g: CGFloat
   let b: CGFloat
 
-  init(hex: UInt32) {
-    r = CGFloat((hex >> 16) & 0xFF) / 255
-    g = CGFloat((hex >> 8) & 0xFF) / 255
-    b = CGFloat(hex & 0xFF) / 255
+  init(gray: CGFloat) {
+    r = gray / 255
+    g = gray / 255
+    b = gray / 255
   }
-
-  init(r: CGFloat, g: CGFloat, b: CGFloat) {
-    self.r = r
-    self.g = g
-    self.b = b
-  }
-
-  func mixed(with other: QrRgb, amount: CGFloat) -> QrRgb {
-    QrRgb(
-      r: r + (other.r - r) * amount,
-      g: g + (other.g - g) * amount,
-      b: b + (other.b - b) * amount
-    )
-  }
-}
-
-struct QrElementFrame {
-  let scale: CGFloat
-  let color: QrRgb
 }
 
 enum QrAnimationTimeline {
   static let neverPressed: CGFloat = -1
-  static let ink = QrRgb(hex: 0x111111)
-  static let skeleton = QrRgb(hex: 0xE9E9E9)
-  static let shimmer = QrRgb(hex: 0xF7F7F7)
+  static let ink = QrRgb(gray: 0x11)
+  private static let skeletonGray: CGFloat = 0xE9
+  private static let shimmerGray: CGFloat = 0xF7
+  // One level per 8-bit gray from the skeleton to the shimmer: 0 is the skeleton.
+  static let loadingLevelCount = Int(shimmerGray - skeletonGray) + 1
 
   private static let shimmerBand: CGFloat = 0.3
   private static let shimmerSweep: CGFloat = 1.2
@@ -60,36 +50,29 @@ enum QrAnimationTimeline {
   private static let rippleScale: CGFloat = 0.4
   private static let rippleReach: CGFloat = 0.5.squareRoot()
 
-  static func frame(animation: String, time: CGFloat, element: QrElement, pressedAt: CGFloat) -> QrElementFrame {
-    animation == "loading"
-      ? loadingFrame(time: time, element: element)
-      : rippleFrame(time: time, element: element, pressedAt: pressedAt)
+  static func loadingColor(level: Int) -> QrRgb {
+    QrRgb(gray: skeletonGray + CGFloat(level))
+  }
+
+  static func loadingLevel(time: CGFloat, element: QrElement) -> Int {
+    let sweep = time.truncatingRemainder(dividingBy: shimmerSweep) / shimmerSweep
+    let position = sweep * (1 + 2 * shimmerBand) - shimmerBand
+    let shine = band(element.distanceToCenter / rippleReach, position, shimmerBand)
+    return Int((shine * CGFloat(loadingLevelCount - 1)).rounded())
+  }
+
+  static func rippleScale(time: CGFloat, element: QrElement, pressedAt: CGFloat) -> CGFloat {
+    let age = time - pressedAt
+    guard pressedAt >= 0, age >= 0, element.kind == .dot else { return 1 }
+    let progress = (age - rippleDelay) / rippleSweep
+    guard progress >= 0, progress <= 1 else { return 1 }
+    let position = progress * (rippleReach + rippleBand)
+    return 1 + rippleScale * band(element.distanceToCenter, position, rippleBand)
   }
 
   // Native only: the view stops its display link while nothing moves.
   static func isMoving(animation: String, time: CGFloat, pressedAt: CGFloat) -> Bool {
     animation == "loading" || (pressedAt >= 0 && time - pressedAt <= rippleDelay + rippleSweep)
-  }
-
-  private static func loadingFrame(time: CGFloat, element: QrElement) -> QrElementFrame {
-    let sweep = time.truncatingRemainder(dividingBy: shimmerSweep) / shimmerSweep
-    let position = sweep * (1 + 2 * shimmerBand) - shimmerBand
-    let shine = band(distanceToCenter(element) / rippleReach, position, shimmerBand)
-    return QrElementFrame(scale: 1, color: skeleton.mixed(with: shimmer, amount: shine))
-  }
-
-  private static func rippleFrame(time: CGFloat, element: QrElement, pressedAt: CGFloat) -> QrElementFrame {
-    let age = time - pressedAt
-    guard pressedAt >= 0, age >= 0, element.kind == .dot else { return QrElementFrame(scale: 1, color: ink) }
-    let progress = (age - rippleDelay) / rippleSweep
-    guard progress >= 0, progress <= 1 else { return QrElementFrame(scale: 1, color: ink) }
-    let position = progress * (rippleReach + rippleBand)
-    let grow = band(distanceToCenter(element), position, rippleBand)
-    return QrElementFrame(scale: 1 + rippleScale * grow, color: ink)
-  }
-
-  private static func distanceToCenter(_ element: QrElement) -> CGFloat {
-    hypot(element.x - 0.5, element.y - 0.5)
   }
 
   // 1 when value sits on position, 0 once it is width away.

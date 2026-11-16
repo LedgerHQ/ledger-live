@@ -1,19 +1,19 @@
-// Reanimated without the UI thread: shared values are plain boxes, animated styles are computed
-// at render, and tests drive frame callbacks with `runFrame`.
-import { useEffect, useMemo, useRef } from "react";
+// Reanimated without the UI thread: shared values are plain boxes and animated styles are computed
+// at render. An animation never advances: the value keeps where it started, and tests read the
+// running animation with `runningAnimation`.
+import { useRef } from "react";
 
-type FrameCallback = (frame: { timestamp: number }) => void;
-type Registration = { active: boolean; callback: FrameCallback };
+type Timing = Readonly<{ type: "timing"; toValue: number; duration?: number }>;
+type Repeat = Readonly<{ type: "repeat"; animation: Timing; count: number }>;
+type Animation = Timing | Repeat;
 
-const registrations = new Set<Registration>();
+type MockSharedValue<T> = {
+  get: () => T;
+  set: (value: T | Animation) => void;
+  animation: Animation | null;
+};
+
 let reducedMotion = false;
-
-/** Calls every active frame callback, as the UI thread would at `timestamp` (ms). */
-export function runFrame(timestamp: number): void {
-  registrations.forEach(registration => {
-    if (registration.active) registration.callback({ timestamp });
-  });
-}
 
 export function setReducedMotion(reduced: boolean): void {
   reducedMotion = reduced;
@@ -23,44 +23,52 @@ export function useReducedMotion(): boolean {
   return reducedMotion;
 }
 
-export function useSharedValue<T>(initial: T) {
-  const box = useRef<{ get: () => T; set: (value: T) => void } | null>(null);
+const isAnimation = (value: unknown): value is Animation =>
+  typeof value === "object" && value !== null && "type" in value;
+
+export function useSharedValue<T>(initial: T): MockSharedValue<T> {
+  const box = useRef<MockSharedValue<T> | null>(null);
   if (box.current === null) {
     let value = initial;
-    box.current = {
+    const sharedValue: MockSharedValue<T> = {
       get: () => value,
       set: next => {
+        if (isAnimation(next)) {
+          sharedValue.animation = next;
+          return;
+        }
+        sharedValue.animation = null;
         value = next;
       },
+      animation: null,
     };
+    box.current = sharedValue;
   }
   return box.current;
 }
 
-export function useAnimatedStyle<T>(updater: () => T): T {
-  return updater();
+export function runningAnimation(sharedValue: unknown): Animation | null {
+  return (sharedValue as MockSharedValue<unknown>).animation;
 }
 
-export function useFrameCallback(callback: FrameCallback, autostart = true) {
-  const registration = useRef<Registration>({ active: autostart, callback });
-  registration.current.callback = callback;
+export const withTiming = jest.fn((toValue: number, config?: { duration?: number }): Timing => ({
+  type: "timing",
+  toValue,
+  duration: config?.duration,
+}));
 
-  useEffect(() => {
-    const current = registration.current;
-    registrations.add(current);
-    return () => {
-      registrations.delete(current);
-    };
-  }, []);
+export function withRepeat(animation: Timing, count: number): Repeat {
+  return { type: "repeat", animation, count };
+}
 
-  return useMemo(
-    () => ({
-      setActive: (active: boolean) => {
-        registration.current.active = active;
-      },
-    }),
-    [],
-  );
+export function cancelAnimation(sharedValue: MockSharedValue<unknown>): void {
+  sharedValue.animation = null;
+}
+
+export const Easing = { linear: (t: number) => t };
+
+export function useAnimatedStyle<T>(updater: () => T): T {
+  return updater();
 }
 
 export default { View: "Animated.View" };

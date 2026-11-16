@@ -4,14 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.view.Choreographer
-import android.view.MotionEvent
+import android.os.SystemClock
 import android.view.View
 
-// Every element drawn with Canvas in onDraw, redrawn on each Choreographer frame while something
-// moves: always while loading, for the length of the ripple after a press.
+// Every element drawn with Canvas in onDraw, which asks for the next vsync while something moves:
+// always while loading, for the length of the ripple after a press.
 // The center badge is a React node drawn over this view, not here.
-class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameCallback {
+class AnimatedQrCodeView(context: Context) : View(context) {
     private companion object {
         const val FINDER_MODULES = 7
         const val DOT_RADIUS_RATIO = 0.42f
@@ -30,7 +29,6 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
             if (value == field) return
             field = value
             invalidate()
-            updateFrameCallback()
         }
     // Off when the OS asks for reduced motion: the code is drawn still and presses do nothing.
     var animated: Boolean = true
@@ -39,9 +37,8 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
             field = value
             pressedAt = QrAnimationTimeline.NEVER_PRESSED
             invalidate()
-            updateFrameCallback()
         }
-    // Each new value plays a press, e.g. from a separate button.
+    // Each new value plays a press. JS counts confirmed presses: the view handles no touches itself.
     var pressCount: Int = 0
         set(value) {
             val changed = value != field
@@ -55,82 +52,50 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
 
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
-    private val drawRect = RectF()
     private var elements: List<Element> = emptyList()
     private var needsRebuild = true
     private var builtWidth = 0
-    private val startNanos = System.nanoTime()
-    private var frameCallbackPosted = false
+    // The clock of drawingTime, the vsync time of the frame being drawn.
+    private val startMillis = SystemClock.uptimeMillis()
     private var pressedAt = QrAnimationTimeline.NEVER_PRESSED
 
-    private fun now(): Float = if (animated) (System.nanoTime() - startNanos) / 1_000_000_000f else 0f
+    private fun timeAt(millis: Long): Float = if (animated) (millis - startMillis) / 1000f else 0f
 
-    private fun isMoving(): Boolean = animated && QrAnimationTimeline.isMoving(animation, now(), pressedAt)
+    private fun isMoving(time: Float): Boolean = animated && QrAnimationTimeline.isMoving(animation, time, pressedAt)
 
     private fun press() {
         if (!animated) return
-        pressedAt = now()
-        updateFrameCallback()
+        pressedAt = timeAt(SystemClock.uptimeMillis())
+        invalidate()
     }
 
-    private fun updateFrameCallback() {
-        val shouldRun = isAttachedToWindow && isMoving()
-        if (shouldRun && !frameCallbackPosted) {
-            frameCallbackPosted = true
-            Choreographer.getInstance().postFrameCallback(this)
-        } else if (!shouldRun && frameCallbackPosted) {
-            frameCallbackPosted = false
-            Choreographer.getInstance().removeFrameCallback(this)
-        }
-    }
-
+    // Nothing redraws while detached: the first frame back drops what a ripple left mid-way.
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        updateFrameCallback()
-    }
-
-    override fun onDetachedFromWindow() {
-        frameCallbackPosted = false
-        Choreographer.getInstance().removeFrameCallback(this)
-        super.onDetachedFromWindow()
-    }
-
-    override fun doFrame(frameTimeNanos: Long) {
-        // The last frame after a ripple is already back at rest.
         invalidate()
-        frameCallbackPosted = isMoving()
-        if (frameCallbackPosted) Choreographer.getInstance().postFrameCallback(this)
-    }
-
-    // React Native's root view sees touches before this view, so the tap still reaches Pressable.
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.actionMasked == MotionEvent.ACTION_DOWN) press()
-        return true
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (needsRebuild || builtWidth != width) rebuildElements()
-        val time = now()
-        val animatesColor = animation == "loading"
+        val time = timeAt(drawingTime)
+        val loading = animation == "loading"
 
         for (element in elements) {
-            val frame = QrAnimationTimeline.frame(animation, time, element.element, pressedAt)
-            // Loading only changes colors, ripple only scales.
-            val scale = if (animatesColor) 1f else frame.scale
-            val halfWidth = element.rect.width() * scale / 2
-            val halfHeight = element.rect.height() * scale / 2
-            drawRect.set(
-                element.rect.centerX() - halfWidth,
-                element.rect.centerY() - halfHeight,
-                element.rect.centerX() + halfWidth,
-                element.rect.centerY() + halfHeight,
-            )
             val paint = if (element.ring) ringPaint else fillPaint
-            paint.color = if (animatesColor) frame.color else QrAnimationTimeline.INK
-            val radius = element.cornerRadius * scale
-            canvas.drawRoundRect(drawRect, radius, radius, paint)
+            // Loading only changes colors, ripple only scales dots.
+            paint.color = if (loading) QrAnimationTimeline.loadingColor(time, element.element) else QrAnimationTimeline.INK
+            val rect = element.rect
+            if (element.element.kind == QrElementKind.DOT) {
+                val scale = if (loading) 1f else QrAnimationTimeline.rippleScale(time, element.element, pressedAt)
+                canvas.drawCircle(rect.centerX(), rect.centerY(), element.cornerRadius * scale, paint)
+            } else {
+                canvas.drawRoundRect(rect, element.cornerRadius, element.cornerRadius, paint)
+            }
         }
+
+        // The last frame after a ripple is already back at rest.
+        if (isMoving(time)) postInvalidateOnAnimation()
     }
 
     private fun rebuildElements() {

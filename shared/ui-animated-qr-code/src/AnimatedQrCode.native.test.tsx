@@ -1,7 +1,8 @@
 import React from "react";
 import { Text } from "react-native";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { runFrame, setReducedMotion } from "../jest/mocks/react-native-reanimated";
+import * as reanimated from "../jest/mocks/react-native-reanimated";
+import { CENTER_POP } from "./animationTimeline";
 import { AnimatedQrCode } from "./index";
 import { createQrMatrix } from "./qrMatrix";
 import type { AnimatedQrCodeProps } from "./types";
@@ -31,19 +32,27 @@ const hostsNamed = (name: string) =>
 
 const nativeView = () => hostsNamed(NATIVE_VIEW)[0];
 
+const flatStyle = (style: unknown) => Object.assign({}, ...[style].flat(2));
+
 // The badge: the animated view that holds the center content.
 function badgeStyle(): Style {
-  const style = screen.getByText("Icon").parent?.props.style;
-  return Object.assign({}, ...[style].flat(2));
+  return flatStyle(screen.getByText("Icon").parent?.props.style);
 }
 
 // The skeleton disc shown in place of the badge while loading.
 function placeholderStyle(): Style & { backgroundColor?: string } {
   const [placeholder] = hostsNamed("Animated.View");
-  return Object.assign({}, ...[placeholder.props.style].flat(2));
+  return flatStyle(placeholder.props.style);
 }
 
-afterEach(() => setReducedMotion(false));
+const { withTiming } = reanimated;
+
+const popStarts = () => withTiming.mock.calls.filter(([toValue]) => toValue === CENTER_POP).length;
+
+afterEach(() => {
+  reanimated.setReducedMotion(false);
+  withTiming.mockClear();
+});
 
 describe("AnimatedQrCode", () => {
   it("sends the QR matrix to the native view as flat row and column pairs", () => {
@@ -71,11 +80,28 @@ describe("AnimatedQrCode", () => {
     expect(hostsNamed("Animated.View")).toHaveLength(0);
   });
 
+  it("shows the loading skeleton while the value is empty", () => {
+    renderQrCode({ value: "", animation: "loading" });
+
+    expect(nativeView().props.dots.length).toBeGreaterThan(0);
+    expect(placeholderStyle().opacity).toBe(1);
+  });
+
+  it("draws on white, whatever the screen behind", () => {
+    renderQrCode();
+
+    expect(flatStyle(screen.getByTestId(TEST_ID).props.style)).toMatchObject({
+      backgroundColor: "#FFFFFF",
+      width: 200,
+      height: 200,
+    });
+  });
+
   it("shows the center content", () => {
     renderQrCode();
 
     expect(screen.getByText("Icon")).toBeOnTheScreen();
-    expect(badgeStyle().opacity).toBe(1);
+    expect(badgeStyle()).toMatchObject({ opacity: 1, transform: [{ scale: 1 }] });
   });
 
   it("calls onPress on a tap", () => {
@@ -100,30 +126,31 @@ describe("AnimatedQrCode", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  // Animated styles are computed at render in tests: a re-render shows the frame reached.
-  it("pops the badge when pressed", () => {
-    const { rerender } = renderQrCode({ onPress: jest.fn() });
-    runFrame(1000);
-    runFrame(2000);
+  it("plays the ripple and pops the badge on a confirmed press", () => {
+    renderQrCode({ onPress: jest.fn() });
 
-    fireEvent(screen.getByTestId(TEST_ID), "pressIn");
-    runFrame(2150);
-    rerender({});
-
-    expect(badgeStyle().transform?.[0].scale).toBeGreaterThan(1.1);
-  });
-
-  it("pops the badge and tells the native view when the trigger key changes", () => {
-    const { rerender } = renderQrCode({ triggerKey: 3 });
-    runFrame(1000);
-    runFrame(2000);
-
-    act(() => rerender({ triggerKey: 4 }));
-    runFrame(2150);
-    rerender({ triggerKey: 4 });
+    fireEvent.press(screen.getByTestId(TEST_ID));
 
     expect(nativeView().props.pressCount).toBe(1);
-    expect(badgeStyle().transform?.[0].scale).toBeGreaterThan(1.1);
+    expect(popStarts()).toBe(1);
+  });
+
+  it("plays nothing on a touch that does not end as a press, like the start of a scroll", () => {
+    renderQrCode({ onPress: jest.fn() });
+
+    fireEvent(screen.getByTestId(TEST_ID), "pressIn");
+
+    expect(nativeView().props.pressCount).toBe(0);
+    expect(popStarts()).toBe(0);
+  });
+
+  it("plays the ripple and pops the badge when the trigger key changes", () => {
+    const { rerender } = renderQrCode({ triggerKey: 3 });
+
+    act(() => rerender({ triggerKey: 4 }));
+
+    expect(nativeView().props.pressCount).toBe(1);
+    expect(popStarts()).toBe(1);
   });
 
   it("shows a skeleton disc instead of the badge while loading", () => {
@@ -134,6 +161,14 @@ describe("AnimatedQrCode", () => {
     expect(placeholderStyle()).toMatchObject({ opacity: 1, backgroundColor: "rgb(233,233,233)" });
   });
 
+  it("plays no press while loading", () => {
+    renderQrCode({ animation: "loading", onPress: jest.fn() });
+
+    fireEvent.press(screen.getByTestId(TEST_ID));
+
+    expect(nativeView().props.pressCount).toBe(0);
+  });
+
   it("hides the skeleton disc once loaded", () => {
     renderQrCode();
 
@@ -141,7 +176,7 @@ describe("AnimatedQrCode", () => {
   });
 
   describe("with reduced motion", () => {
-    beforeEach(() => setReducedMotion(true));
+    beforeEach(() => reanimated.setReducedMotion(true));
 
     it("draws the code still", () => {
       renderQrCode();
@@ -149,27 +184,23 @@ describe("AnimatedQrCode", () => {
       expect(nativeView().props.animated).toBe(false);
     });
 
-    it("keeps the badge still on press and on trigger", () => {
-      const { rerender } = renderQrCode({ onPress: jest.fn() });
-      runFrame(1000);
-      runFrame(1100);
+    it("plays nothing on press or on trigger, but still calls onPress", () => {
+      const onPress = jest.fn();
+      const { rerender } = renderQrCode({ onPress });
 
-      fireEvent(screen.getByTestId(TEST_ID), "pressIn");
+      fireEvent.press(screen.getByTestId(TEST_ID));
       act(() => rerender({ triggerKey: 1 }));
-      runFrame(1200);
-      rerender({ triggerKey: 1 });
 
-      expect(badgeStyle().transform?.[0].scale).toBe(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
       expect(nativeView().props.pressCount).toBe(0);
+      expect(popStarts()).toBe(0);
     });
 
     it("keeps the loading skeleton without the shimmer", () => {
-      const { rerender } = renderQrCode({ animation: "loading" });
-      runFrame(1000);
-      runFrame(1300);
-      rerender({});
+      renderQrCode({ animation: "loading" });
 
       expect(placeholderStyle().backgroundColor).toBe("rgb(233,233,233)");
+      expect(withTiming).not.toHaveBeenCalled();
     });
   });
 });

@@ -2,6 +2,9 @@ import qrcode from "qrcode";
 
 export const FINDER_MODULES = 7;
 const CLEAR_ZONE_RATIO = 0.32;
+// `qrcode` throws on an empty value, e.g. an address still loading. This one has an address's
+// length and mixed case, which `qrcode` cannot pack denser, so the skeleton gets a typical density.
+const EMPTY_VALUE_PLACEHOLDER = `0x${"aB".repeat(20)}`;
 
 export type QrCell = Readonly<{ row: number; col: number }>;
 
@@ -30,7 +33,9 @@ function isInFinderPattern(row: number, col: number, count: number): boolean {
  * for center content. Error correction H keeps the code readable with that zone empty.
  */
 export function createQrMatrix(value: string, withClearCenter: boolean): QrMatrix {
-  const { modules } = qrcode.create(value, { errorCorrectionLevel: "H" });
+  const { modules } = qrcode.create(value || EMPTY_VALUE_PLACEHOLDER, {
+    errorCorrectionLevel: "H",
+  });
   const { data, size: count } = modules;
   const clearCount = withClearCenter ? getClearCount(count) : 0;
   const clearStart = (count - clearCount) / 2;

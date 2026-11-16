@@ -37,6 +37,13 @@ describe("createQrMatrix", () => {
     expect(clearStart).toBeGreaterThanOrEqual(FINDER_MODULES);
   });
 
+  it("encodes a placeholder of an address's density for an empty value", () => {
+    const empty = createQrMatrix("", true);
+
+    expect(empty.moduleCount).toBe(matrix.moduleCount);
+    expect(empty.dots.length).toBeGreaterThan(0);
+  });
+
   it("keeps the center modules without a clear center", () => {
     const full = createQrMatrix(ADDRESS, false);
     const middle = (full.moduleCount - 1) / 2;

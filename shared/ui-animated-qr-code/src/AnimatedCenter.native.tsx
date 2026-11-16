@@ -2,42 +2,46 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { getQrElementFrame, toRgbString, type QrElement } from "./animationTimeline";
-import type { QrClock } from "./useQrClock";
+import { useCenterTime } from "./useCenterTime";
 import type { QrAnimation } from "./types";
 
 const CENTER: QrElement = { x: 0.5, y: 0.5, kind: "center" };
+// useCenterTime counts the pop from the last press: in its time, every press happens at 0.
+const PRESSED_AT = 0;
 
-type AnimatedCenterProps = Pick<QrClock, "time" | "pressedAt"> &
-  Readonly<{
-    animation: QrAnimation;
-    size: number;
-    diameter: number;
-    children?: React.ReactNode;
-  }>;
+type AnimatedCenterProps = Readonly<{
+  animation: QrAnimation;
+  animated: boolean;
+  pressCount: number;
+  size: number;
+  diameter: number;
+  children?: React.ReactNode;
+}>;
 
 /**
  * The center badge: a React node (a CryptoIcon) cannot be drawn by the native view, so it is
- * animated here, on the same clock. While loading, a skeleton disc takes its place.
+ * animated here, on the same timeline. While loading, a skeleton disc takes its place.
  */
 export function AnimatedCenter({
-  time,
-  pressedAt,
   animation,
+  animated,
+  pressCount,
   size,
   diameter,
   children,
 }: AnimatedCenterProps): React.JSX.Element {
   const loading = animation === "loading";
+  const time = useCenterTime(animation, animated, pressCount);
 
   const placeholderStyle = useAnimatedStyle(() => {
     if (!loading) return { opacity: 0 };
-    const frame = getQrElementFrame(animation, time.get(), CENTER, pressedAt.get());
+    const frame = getQrElementFrame(animation, time.get(), CENTER, PRESSED_AT);
     return { backgroundColor: toRgbString(frame.color), opacity: 1 };
   });
 
   const contentStyle = useAnimatedStyle(() => {
     if (loading) return { opacity: 0, transform: [{ scale: 1 }] };
-    const frame = getQrElementFrame(animation, time.get(), CENTER, pressedAt.get());
+    const frame = getQrElementFrame(animation, time.get(), CENTER, PRESSED_AT);
     return { opacity: 1, transform: [{ scale: frame.scale }] };
   });
 

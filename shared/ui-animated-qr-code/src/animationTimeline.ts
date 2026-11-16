@@ -1,7 +1,8 @@
 import type { QrAnimation } from "./types";
 
 // Mirrored in ios/QrAnimationTimeline.swift and android/.../QrAnimationTimeline.kt:
-// change the three together so both platforms play the same animation.
+// change the three together so both platforms play the same animation. The native ones split a
+// frame into a loading level and a ripple scale, which skips allocations on every frame.
 
 export type QrElementKind = "dot" | "finder" | "center";
 
@@ -23,9 +24,11 @@ export const SKELETON: QrRgb = { r: 0xe9, g: 0xe9, b: 0xe9 };
 const SHIMMER: QrRgb = { r: 0xf7, g: 0xf7, b: 0xf7 };
 
 const SHIMMER_BAND = 0.3;
-const SHIMMER_SWEEP = 1.2;
+/** Seconds for the loading band to cross the code once. */
+export const SHIMMER_SWEEP = 1.2;
 
-const CENTER_POP = 0.35;
+/** Seconds the center content pops for after a press. */
+export const CENTER_POP = 0.35;
 const CENTER_POP_SCALE = 0.18;
 const RIPPLE_DELAY = 0.1;
 const RIPPLE_SWEEP = 0.9;
