@@ -110,22 +110,13 @@ export default defineConfig({
         "eslint/no-console": "off",
         "typescript/no-explicit-any": "off",
         "typescript/consistent-type-assertions": "off",
-        "eslint/no-restricted-imports": [
-          "error",
-          { paths: [BIGNUMBER_NAMED_IMPORT] },
-        ],
+        "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
       },
     },
     {
-      files: [
-        "coin-celo/src/api/index.ts",
-        "coin-celo/src/bridge/synchronisation.ts",
-      ],
+      files: ["coin-celo/src/api/index.ts", "coin-celo/src/bridge/synchronisation.ts"],
       rules: {
-        "eslint/no-restricted-imports": [
-          "error",
-          { paths: [BIGNUMBER_NAMED_IMPORT] },
-        ],
+        "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
       },
     },
     {

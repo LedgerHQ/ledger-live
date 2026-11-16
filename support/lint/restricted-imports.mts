@@ -4,8 +4,7 @@
 // `restricted-imports/`, which the package's `generate:restricted-imports` script writes from
 // `JSON_FRAGMENTS` and its tests keep in sync.
 
-const USE_SHARED_CLIPBOARD =
-  "Use copyToClipboard / readClipboard from @shared/clipboard";
+const USE_SHARED_CLIPBOARD = "Use copyToClipboard / readClipboard from @shared/clipboard";
 
 export const LODASH = "lodash";
 
@@ -156,8 +155,7 @@ export const COIN_MODULE_LAYER_IMPORTS = {
 
 export const RELATIVE_IMPORTS = {
   group: ["**/../**"],
-  message:
-    "Relative imports are restricted. Please use bare imports or path aliases instead.",
+  message: "Relative imports are restricted. Please use bare imports or path aliases instead.",
 };
 
 // The options of each JSON fragment, keyed by its file name. Fragments do not combine: extending
