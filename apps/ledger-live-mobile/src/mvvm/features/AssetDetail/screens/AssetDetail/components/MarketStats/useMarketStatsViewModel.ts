@@ -137,5 +137,3 @@ export function useMarketStatsViewModel({
     onTooltipOpen,
   };
 }
-
-export type MarketStatsViewModelResult = ReturnType<typeof useMarketStatsViewModel>;

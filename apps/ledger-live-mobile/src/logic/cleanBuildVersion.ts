@@ -20,12 +20,3 @@ export const getAndroidVersionCode = (buildVersion?: string | null | undefined) 
   if (!buildVersionNumber) return "";
   return Platform.OS === "android" && buildVersionNumber ? buildVersionNumber % mega : buildVersion;
 };
-export default (buildVersion?: string | null | undefined) => {
-  if (Platform.OS === "android" && buildVersion) {
-    return `${getAndroidArchitecture(buildVersion) || ""} ${
-      getAndroidVersionCode(buildVersion) || ""
-    }`;
-  }
-
-  return buildVersion;
-};

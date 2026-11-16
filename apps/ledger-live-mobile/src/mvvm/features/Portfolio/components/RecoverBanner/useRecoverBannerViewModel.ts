@@ -27,7 +27,9 @@ function useRecoverBannerViewModel() {
 
   const subscriptionState =
     data?.subscriptionState ?? LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION;
-  const isInProgress = subscriptionState in LedgerRecoverSubscriptionStateInProgressEnum;
+  const isInProgress = Object.values<string>(LedgerRecoverSubscriptionStateInProgressEnum).includes(
+    subscriptionState,
+  );
   useAddRecoverPostOnboardingAction(data?.subscriptionState);
 
   const onRedirectRecover = async () => {
