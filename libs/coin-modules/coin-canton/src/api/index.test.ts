@@ -14,16 +14,17 @@ describe("createApi", () => {
     expect(isNotSupportedStub(api.lastBlock)).toBe(false);
     expect(isNotSupportedStub(api.getBalance)).toBe(false);
     expect(isNotSupportedStub(api.listOperations)).toBe(false);
+    expect(isNotSupportedStub(api.craftTransaction)).toBe(false);
+    expect(isNotSupportedStub(api.estimateFees)).toBe(false);
     expect(isNotSupportedStub(api.combine)).toBe(false);
+    expect(isNotSupportedStub(api.broadcast)).toBe(false);
     expect(isNotSupportedStub(api.validateAddress)).toBe(false);
     expect(isNotSupportedStub(api.craftTransactionData)).toBe(false);
     expect(isNotSupportedStub(api.getNextSequence)).toBe(false);
   });
 
   it("stubs the rest of the contract", () => {
-    expect(isNotSupportedStub(api.craftTransaction)).toBe(true);
-    expect(isNotSupportedStub(api.estimateFees)).toBe(true);
-    expect(isNotSupportedStub(api.broadcast)).toBe(true);
+    expect(isNotSupportedStub(api.craftRawTransaction)).toBe(true);
     expect(isNotSupportedStub(api.getStakes)).toBe(true);
     expect(isNotSupportedStub(api.validateIntent)).toBe(true);
   });

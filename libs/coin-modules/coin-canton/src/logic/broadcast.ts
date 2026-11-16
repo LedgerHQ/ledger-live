@@ -1,11 +1,15 @@
 import type { CantonContext } from "../config";
 import { isGatewayEnabled, submit } from "../network/gateway";
+import { decodeSigned } from "./envelope";
 
 export async function broadcast(context: CantonContext, signedTx: string): Promise<string> {
-  const parsed: { serialized: string; signature: string } = JSON.parse(signedTx);
-  const [sig, party] = parsed.signature.split("__PARTY__");
+  const { party, serialized, signature } = decodeSigned(signedTx);
   const config = await context.config();
-  if (isGatewayEnabled(config))
-    return (await submit(config, party, parsed.serialized, sig)).update_id;
-  else throw new Error("Not implemented");
+  if (!isGatewayEnabled(config)) throw new Error("Not implemented");
+
+  const { update_id } = await submit(config, party, serialized, signature);
+  if (!update_id) {
+    throw new Error("canton: broadcast returned no transaction id");
+  }
+  return update_id;
 }
