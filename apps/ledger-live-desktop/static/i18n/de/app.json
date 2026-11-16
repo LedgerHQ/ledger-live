@@ -187,6 +187,7 @@
       "FEES" : "Gebühren",
       "OPT_IN" : "Zustimmen",
       "OPT_OUT" : "Ablehnen",
+      "OPT_EDIT" : "Token aktualisiert",
       "CLOSE_ACCOUNT" : "Konto schließen",
       "BOND" : "Binden",
       "UNBOND" : "Ungebunden",
@@ -340,7 +341,15 @@
     "home" : "Startseite",
     "refer" : "Freunde werben",
     "catalog" : "Neues entdecken",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "Agenten"
+  },
+  "agentIntent" : {
+    "title" : "Agenten",
+    "manageAgents" : {
+      "title" : "Verwalte deine Agenten",
+      "description" : "Lass KI-Agenten deine Assets verwalten."
+    }
   },
   "stars" : {
     "tooltip" : "Konto favorisieren"
@@ -1950,13 +1959,13 @@
       "continue" : "Handeln erfolgt auf eigenes Risiko"
     },
     "info" : {
-      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
-      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "Nicht erneut erinnern"
     },
     "error" : {
       "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
-      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "Upgrade-Programm entdecken",
     "learnMore" : "Weitere Informationen",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "send" : {
     "title" : "Senden",
     "totalSpent" : "Zu belastende Summe",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "Deine Transaktion wird verarbeitet",
     "sign" : {
       "title" : "Vorgang fortsetzen auf deinem Ledger {{wording}}",
-      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden.",
+      "cancelled" : {
+        "title" : "Transaktion abgebrochen",
+        "description" : "Du hast die Transaktion abgelehnt. Deine Assets sind nicht betroffen.",
+        "close" : "Schließen",
+        "retry" : "Wiederholen"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "Token-Einstellungen",
+      "currentLimitZero" : "Dein Limit ist 0: Du kannst dieses Token nicht empfangen.",
+      "limitBelowBalance" : "Dein Kontostand ({{balance}}) liegt über diesem Limit. Du wirst dieses Token erst empfangen können, wenn dein Kontostand unter diesem Limit liegt.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "Validator, der die Belohnungen erhält",
       "compoundReward" : "Validator, der die Rewards erhält",
       "optIn" : "Empfänger",
+      "changeTrust" : "Empfänger",
       "tokenAssociate" : "Empfänger",
       "nominate" : "Validator",
       "stake" : "Validator",
@@ -8089,11 +8114,15 @@
       "description" : "Um dieses Token nicht mehr zu halten, entferne es stattdessen."
     },
     "XrpTokenFrozen" : {
-      "title" : "Du kannst dieses Token nicht an diesen Empfänger senden",
-      "description" : "Der Herausgeber hat es freeze oder dein Konto nicht für das Halten freigegeben. Ein eingefrorenes Token kann immer noch an seinen Herausgeber zurückgehen."
+      "title" : "Du kannst dieses Token nicht senden",
+      "description" : "Der Herausgeber hat es eingefroren."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "Du kannst dieses Token nicht senden",
+      "description" : "Der Herausgeber hat dein Konto nicht für das Halten freigegeben."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "Dieser Empfänger kann {{assetCode}} nicht empfangen",
+      "title" : "Dieser Empfänger kann dieses Token nicht empfangen",
       "description" : "Der Empfänger muss dieses Token möglicherweise zuerst hinzufügen, oder der Herausgeber erlaubt diesen Transfer nicht."
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "Kein Konto",
     "review" : "Prüfen",
+    "learnMore" : "Weitere Informationen",
     "formErrors" : {
+      "offline" : "Problem mit der Internetverbindung.",
       "amountExceedsBalance" : "Unzureichendes Guthaben",
+      "feeAccountEmpty" : "Du benötigst mehr {{ticker}} für die Netzwerkgebühren.",
+      "notEnoughFees" : "Du benötigst {{fees}} {{ticker}} für die Netzwerkgebühren.",
+      "amountTooLow" : "Gib mindestens {{amount}} {{ticker}} ein und versuche es erneut.",
+      "amountTooHigh" : "Gib {{amount}} {{ticker}} oder weniger ein und versuche es erneut.",
+      "feeEstimationFailed" : "Wir konnten die Gebühren derzeit nicht berechnen. Deine Kryptokonten sind möglicherweise nicht synchron. Starte die Ledger Wallet-App neu und versuche es erneut.",
+      "accountNotReady" : "Dieses Konto ist noch nicht bereit zum Senden. Öffne es in deinen Konten und versuche es erneut.",
+      "seiEvmUnlinked" : "SEI Ethereum Virtual Machine (EVM)-Konten müssen vor dem Swappen verknüpft werden",
+      "aleoPrivateBalance" : "Swaps sind nur für öffentliche {{ticker}} verfügbar. Dein Guthaben ist derzeit privat und kann nicht einem geswappt werden.",
+      "tezosUnrevealed" : "Dein Tezos-Konto ist noch nicht aktiviert. Bitte sende vor dem Swappen einen kleinen Betrag an XTZ.",
+      "dotMinimumBalance" : "Halte nach dem Swap einen Mindestkontostand von {{minValue}} DOT.",
+      "xlmMinimumBalance" : "Halte nach dem Swap einen Mindestkontostand von {{minValue}} XLM.",
       "quoteUnavailable" : "Wir können kein Angebot von {{provider}} SwapKit erhalten. Versuche es mit einem anderen Asset oder komm später wieder."
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "Nicht genügend {{ticker}}",
+        "description" : "Dein Konto {{account}} verfügt über keinen ausreichenden Kontostand, um die Netzwerkgebühren zu decken."
+      },
+      "amountTooLow" : {
+        "title" : "Minimum für {{ticker}} erforderlich",
+        "description" : "Für Angebote ist ein Mindestwert von {{amount}} {{ticker}} erforderlich."
+      },
+      "buy" : "{{ticker}} kaufen"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Einzahlung signieren",
+    "genericError" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Bitte versuche es später noch einmal oder wähle ein anderes Asset aus."
+    },
     "terms" : "Durch das Signieren dieser Transaktion akzeptiere ich die <termsLink>AGB von SwapKit by NEAR Intents</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "Transaktionsdetails",
     "title" : "Perpetuals aufladen",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "Abheben",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "Zurück zu Perps"
   },
   "accountAnalytics" : {
     "assets" : "Asset-Filter",
@@ -11451,6 +11510,7 @@
     "allAssets" : "Alle Assets",
     "allAccounts" : "Alle Konten",
     "error" : "Analytics können nicht geladen werden. Bitte versuche es erneut.",
-    "unavailable" : "Für diese Auswahl sind keine Daten verfügbar."
+    "unavailable" : "Für diese Auswahl sind keine Daten verfügbar.",
+    "noResults" : "Keine Ergebnisse"
   }
 }
