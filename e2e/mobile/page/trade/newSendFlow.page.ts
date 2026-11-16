@@ -113,13 +113,13 @@ export default class NewSendFlowPage {
     await this.memoInput.replaceText(rawInput);
     // XRP tags are numeric-only: non-digits are stripped by sanitizeMemoValue, so the
     // field never holds the rejected characters.
-    await this.memoInput.expectText(expectedSanitizedValue, { normaliseWhitespace: true });
+    await this.memoInput.expectText(expectedSanitizedValue);
   }
 
   @Step("Expect memo field to retain numeric input: {{{0}}}")
   async expectMemoRetainsNumericInput(numericInput: string) {
     await this.memoInput.replaceText(numericInput);
-    await this.memoInput.expectText(numericInput, { normaliseWhitespace: true });
+    await this.memoInput.expectText(numericInput);
   }
 
   @Step("Fill crypto amount: {{{0}}}")
@@ -295,7 +295,7 @@ export default class NewSendFlowPage {
   @Step("Expect the matched recipient card for contact: {{{0}}}")
   async expectMatchedContactCard(contactName: string) {
     await this.recipientCardAvatar.waitVisible();
-    await this.recipientCardTitle.expectText(contactName, { normaliseWhitespace: true });
+    await this.recipientCardTitle.expectText(contactName);
   }
 
   @Step("Expect the Add contact action to be enabled")
@@ -305,7 +305,8 @@ export default class NewSendFlowPage {
 
   @Step("Expect the amount step recipient is contact: {{{0}}}")
   async expectAmountStepContact(contactName: string) {
-    await this.recipientContactName.expectText(contactName, { normaliseWhitespace: true });
+    await this.recipientContactName.waitVisible();
+    await this.recipientContactName.expectText(contactName);
   }
 
   @Step("Wait for the success confirmation screen")

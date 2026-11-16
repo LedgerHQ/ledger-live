@@ -195,20 +195,20 @@ export default class AccountPage {
     await this.accountBalance(accountId).expectVisible();
   }
 
-  /** The label shortens the address, so only its start after `0x` and its last 4 characters show. */
-  @Step("Expect the address label of {{{0}}} to show {{{1}}}")
-  async expectAccountAddressLabel(accountId: string, address: string) {
-    const start = address.slice(2, 5);
-    const end = address.slice(-4);
+  /**
+   * Both labels keep the first and last 4 characters of the address: the account detail nav bar
+   * shortens it with `formatAddress` (`useAccountDetailViewModel`), the legacy tag holds it whole.
+   */
+  @Step("Expect the address label of {{{0.accountId}}} to show {{{0.address}}}")
+  async expectAccountAddressLabel({ accountId, address }: { accountId: string; address: string }) {
+    const shortenedAddress = new RegExp(`${address.slice(0, 4)}.*${address.slice(-4)}`, "i");
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.expectAddressLabel(start, end);
+      await this.accountDetail.expectAddressLabelMatching(shortenedAddress);
       return;
     }
     const addressLabel = this.accountAddress(accountId);
     await addressLabel.scrollTo(this.accountScreenScrollView);
-    await addressLabel.expectVisible();
-    await addressLabel.expectLabel(start, { containing: true, ignoreCase: true });
-    await addressLabel.expectLabel(end, { containing: true, ignoreCase: true });
+    await addressLabel.expectLabelMatching(shortenedAddress);
   }
 
   @Step("Expect account receive and send actions")

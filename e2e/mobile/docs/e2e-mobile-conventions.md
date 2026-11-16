@@ -76,7 +76,7 @@ A screen reached from another screen MUST be its own class held as a property: `
 
 ### A handle locator MUST be a private readonly property
 
-A static locator MUST be a private readonly handle, and a dynamic one a private readonly builder that returns a handle. A step MUST NOT build a handle inline.
+A static locator MUST be a private readonly handle, and a dynamic one a private readonly arrow function that returns a handle. A step MUST NOT build a handle inline.
 
 ```ts
 private readonly recipientInput = byId("recipient-input");

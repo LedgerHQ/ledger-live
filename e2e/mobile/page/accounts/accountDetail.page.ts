@@ -47,11 +47,9 @@ export default class AccountDetailPage {
     await this.heroBalance.expectVisible();
   }
 
-  @Step("Expect the address label to contain {{{0}}} and {{{1}}}")
-  async expectAddressLabel(start: string, end: string) {
-    await this.navBarAddress.expectVisible();
-    await this.navBarAddress.expectLabel(start, { containing: true, ignoreCase: true });
-    await this.navBarAddress.expectLabel(end, { containing: true, ignoreCase: true });
+  @Step("Expect the address label to match {{{0}}}")
+  async expectAddressLabelMatching(pattern: RegExp) {
+    await this.navBarAddress.expectLabelMatching(pattern);
   }
 
   @Step("Expect account transfer action to be visible")

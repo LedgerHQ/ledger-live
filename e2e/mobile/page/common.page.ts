@@ -129,7 +129,7 @@ export default class CommonPage {
   async expectAccountName(accountName: string, index = 0) {
     if (await this.cryptoAddressesList.isVisible()) {
       await this.accountItemNameAt().scrollTo(this.cryptoAddressesList);
-      await this.accountItemNameAt(index).expectText(accountName, { normaliseWhitespace: true });
+      await this.accountItemNameAt(index).expectText(accountName);
       return;
     }
     await app.assetDetail.scrollToAddressesHeader();

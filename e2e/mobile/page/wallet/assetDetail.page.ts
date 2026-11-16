@@ -224,7 +224,7 @@ export default class AssetDetailPage {
   async expectAddressItemName(name: string, index = 0) {
     const addressItemName = this.addressItemNameAt(index);
     await addressItemName.scrollTo(await this.scrollView());
-    await addressItemName.expectText(name, { normaliseWhitespace: true });
+    await addressItemName.expectText(name);
   }
 
   @Step("Add asset to favorites from Asset Detail")
