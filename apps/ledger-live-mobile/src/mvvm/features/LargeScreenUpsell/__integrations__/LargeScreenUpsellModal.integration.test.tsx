@@ -1,6 +1,7 @@
 import { trackPage, track } from "@shared/analytics";
-import React, { useEffect } from "react";
-import { Linking, View } from "react-native";
+import React, { createContext, useContext, useEffect } from "react";
+import { Linking, Pressable, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
@@ -8,6 +9,7 @@ import { useDispatch } from "~/context/hooks";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import type { State } from "~/reducers/types";
+import type { PostOnboardingRedirectStatus } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { LargeScreenUpsellModalPortfolioMount } from "..";
 import { __resetLargeScreenUpsellAutoOpenForTests } from "../components/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
@@ -477,6 +479,132 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
+    });
+  });
+
+  describe("with a post onboarding redirect", () => {
+    const RedirectStatusContext = createContext<PostOnboardingRedirectStatus>("none");
+
+    function PortfolioScreenWithRedirectStatus() {
+      const postOnboardingRedirectStatus = useContext(RedirectStatusContext);
+      const navigation = useNavigation<{ navigate: (route: string) => void }>();
+
+      return (
+        <View style={{ flex: 1 }} testID="large-screen-upsell-integration-portfolio">
+          <Pressable accessibilityRole="button" onPress={() => navigation.navigate("Other")}>
+            <Text>Leave Portfolio</Text>
+          </Pressable>
+          <LargeScreenUpsellModalPortfolioMount
+            postOnboardingRedirectStatus={postOnboardingRedirectStatus}
+          />
+        </View>
+      );
+    }
+
+    function OtherScreen() {
+      const navigation = useNavigation();
+
+      return (
+        <Pressable accessibilityRole="button" onPress={() => navigation.goBack()}>
+          <Text>Back to Portfolio</Text>
+        </Pressable>
+      );
+    }
+
+    function IntegrationNavigatorWithRedirectStatus({
+      status,
+    }: Readonly<{ status: PostOnboardingRedirectStatus }>) {
+      return (
+        <RedirectStatusContext.Provider value={status}>
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
+            <Stack.Screen name="Portfolio" component={PortfolioScreenWithRedirectStatus} />
+            <Stack.Screen name="Other" component={OtherScreen} />
+          </Stack.Navigator>
+        </RedirectStatusContext.Provider>
+      );
+    }
+
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
+        lwmProductTour: { enabled: false },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      withKnownDeviceModels([DeviceModelId.nanoS]),
+    );
+
+    const flushAutoOpenFrame = () =>
+      act(async () => {
+        jest.runOnlyPendingTimers();
+      });
+
+    const upgradeModalViews = () =>
+      jest
+        .mocked(trackPage)
+        .mock.calls.filter(
+          ([page]) => (page as { category?: string }).category === "Modal - Upgrade",
+        );
+
+    it("should not auto-open the upsell modal when the redirect is pending", async () => {
+      const { store } = render(<IntegrationNavigatorWithRedirectStatus status="pending" />, {
+        overrideInitialState,
+      });
+
+      expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+      await flushAutoOpenFrame();
+
+      expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeOnTheScreen();
+      expect(upgradeModalViews()).toHaveLength(0);
+      expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    });
+
+    it("should keep the upsell modal closed when the redirect opens, including after Portfolio is focused again", async () => {
+      const { store, rerender, user } = render(
+        <IntegrationNavigatorWithRedirectStatus status="pending" />,
+        { overrideInitialState, userEventOptions: { advanceTimers: jest.advanceTimersByTime } },
+      );
+
+      expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+      await flushAutoOpenFrame();
+
+      rerender(<IntegrationNavigatorWithRedirectStatus status="redirected" />);
+      await flushAutoOpenFrame();
+
+      await user.press(screen.getByRole("button", { name: "Leave Portfolio" }));
+      await user.press(await screen.findByRole("button", { name: "Back to Portfolio" }));
+      expect(await screen.findByRole("button", { name: "Leave Portfolio" })).toBeVisible();
+      await flushAutoOpenFrame();
+
+      expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeOnTheScreen();
+      expect(upgradeModalViews()).toHaveLength(0);
+      expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    });
+
+    it("should auto-open the upsell modal once when the pending redirect does not happen", async () => {
+      const { store, rerender } = render(
+        <IntegrationNavigatorWithRedirectStatus status="pending" />,
+        { overrideInitialState },
+      );
+
+      expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+      await flushAutoOpenFrame();
+
+      rerender(<IntegrationNavigatorWithRedirectStatus status="none" />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
+      });
+      expect(upgradeModalViews()).toHaveLength(1);
+      expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
     });
   });
 });
