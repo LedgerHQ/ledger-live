@@ -38,6 +38,9 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
   `GetReceiveFamilyConfig` only where it differs from the defaults (notices, support, device models
   that cannot verify), and `resolveReceiveFamilyConfig` merges it and applies the
   `newReceiveFlow` excluded families.
+- `toReceiveTarget(accounts, legacyAccountId, assetId)`: the `ReceiveTarget` (`accountUUID`,
+  `descriptor`, `assetId`) behind the legacy id of a main account, from the `accounts` slice state,
+  for the entry points that still hold a legacy account. The caller gives the asset to receive.
 - `@features/flow-receive/types.mock`: `mockReceiveFamilyConfigInput`, for the families' tests.
 - `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
   seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
