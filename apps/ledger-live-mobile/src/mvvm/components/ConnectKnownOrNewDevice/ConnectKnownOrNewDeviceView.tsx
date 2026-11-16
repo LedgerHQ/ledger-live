@@ -8,6 +8,7 @@ import {
 } from "LLM/components/DeviceConnection";
 import { AddMode } from "./components/AddMode";
 import { DeviceSection } from "./components/DeviceSection";
+import { DeviceStateSheet } from "./components/DeviceStateSheet";
 import type {
   ConnectKnownOrNewDeviceErrorUIState,
   ConnectKnownOrNewDeviceViewProps,
@@ -59,6 +60,11 @@ export function ConnectKnownOrNewDeviceView({
 
   const isDiscovering = state.type === ConnectKnownOrNewDeviceUIStateTypes.Discovering;
   const errorState = isErrorState(state) ? state : null;
+  const deviceState =
+    state.type === ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice ||
+    state.type === ConnectKnownOrNewDeviceUIStateTypes.Connecting
+      ? state
+      : null;
 
   return (
     <>
@@ -68,6 +74,7 @@ export function ConnectKnownOrNewDeviceView({
       >
         {children}
       </DeviceSection>
+      <DeviceStateSheet state={deviceState} />
       <ErrorBottomSheet
         isOpen={errorState !== null}
         onClose={onCloseErrorSheet}

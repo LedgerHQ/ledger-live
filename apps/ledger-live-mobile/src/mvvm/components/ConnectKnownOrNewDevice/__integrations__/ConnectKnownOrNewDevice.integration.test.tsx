@@ -145,7 +145,7 @@ describe("ConnectKnownOrNewDevice", () => {
     expect(onConnected).toHaveBeenCalledWith(connectionResult);
   });
 
-  it("GIVEN no device, WHEN Add is pressed and then the Add mode is closed, THEN it should open the Add mode, show the pairing flow and close it", async () => {
+  it("GIVEN no device, WHEN Add a Ledger device is pressed and then the Add mode is closed, THEN it should open the Add mode, show the pairing flow and close it", async () => {
     // GIVEN
     const addNewDevice = jest.fn();
     const close = jest.fn();
@@ -158,7 +158,7 @@ describe("ConnectKnownOrNewDevice", () => {
     });
 
     // WHEN
-    await user.press(screen.getByText("Add"));
+    await user.press(screen.getByText("Add a Ledger device"));
     emit({
       type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
       connectNewDeviceUIState: {
