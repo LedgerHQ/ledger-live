@@ -290,7 +290,7 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
   });
 
-  it("should leave the flow for the onboarding device list when no device is found", async () => {
+  it("should open the onboarding device list above the flow when no device is found", async () => {
     const { user } = renderApp();
 
     await openFlow(user);
@@ -305,11 +305,9 @@ describe("device onboarding flow navigation", () => {
     await user.press(screen.getByText("I don’t see my device"));
 
     expect(await screen.findByText("missing device list")).toBeVisible();
-    expectFlowClosed();
 
     await user.press(screen.getByLabelText("back from missing device list"));
-    expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
-    expectFlowClosed();
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
   });
 
   it("should complete onboarding and go back to the portfolio after the checks", async () => {
