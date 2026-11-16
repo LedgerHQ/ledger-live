@@ -170,7 +170,7 @@ catalog:
   class-variance-authority: 0.7.1
   cross-env: 10.1.0
   crypto-browserify: 3.12.1
-  electron: 45.2.1
+  electron: 45.3.2
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0
