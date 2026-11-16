@@ -1,6 +1,12 @@
 import React from "react";
-import { Image } from "react-native";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Image, Platform } from "react-native";
+import {
+  BottomSheetHeader,
+  BottomSheetScrollView,
+  Box,
+  Button,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -39,10 +45,14 @@ export function InfoSheetView({
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       enableDynamicSizing
+      maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
       contentHasBottomSpace
       testID={setupTestIds.infoSheet}
     >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+      <BottomSheetScrollView
+        contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
+        showsVerticalScrollIndicator={false}
+      >
         <BottomSheetHeader title={title} />
         <Box lx={{ gap: "s16", paddingHorizontal: "s8" }}>
           {illustration ? <Illustration {...illustration} /> : null}
@@ -75,7 +85,7 @@ export function InfoSheetView({
             {linkLabel}
           </Button>
         </Box>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </QueuedBottomSheet>
   );
 }
