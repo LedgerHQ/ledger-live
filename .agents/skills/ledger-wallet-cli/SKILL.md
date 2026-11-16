@@ -53,12 +53,14 @@ A `plaintext-file` profile has `keyStore` `"plaintext-file"` in `agent-intent sh
   - you are about to hand the human a device command that takes `--dry-run`, from a machine with no USB.
 
   Otherwise the human typed every value in this conversation, so run the command directly: the device screen, or the Agent Intent review link, is the confirmation, and a second prompt only adds fatigue. `swap execute` has no `--dry-run`: its quote is the preview (swap.md). For a first-time Ethereum vault deposit, the dry run validates only the approve (earn.md).
+- **ENS names.** `--to` takes a `0x` address only, by design. Resolve an ENS name (`vitalik.eth`) on-chain, with a tool that reads the ENS registry on Ethereum mainnet such as `cast resolve-name`, never from memory, a web search or an explorer page; without such a tool, ask the human for the `0x` address. The resolved address is a built value, so the dry-run rule applies. For `agent-intent send`, put the name and the full checksummed address in `--description`.
 - **The device screen is the truth.** After `receive`, the human compares the address on the device with the terminal; a mismatch is handled in the core commands section below.
 - **One device command at a time.** Run device commands sequentially; parallel runs fail with `[object Object]` or garbled APDU output.
 - **Let device commands wait.** Say what the device will ask for, then leave the command running while the human acts on the device.
 - **Secrets stay out of the transcript.** Each secret goes from its source to its destination unread, as its reference shows: the `ring` password and decrypted output (`WALLET_PASS` from the human's keychain, output to a file with `-o` or the clipboard; ring.md), the Agent Intent key and its key file (agent-intent.md step 2), and synced account ids with the raw `sync` output (agent-intent.md step 6).
 - **A proposal stays a proposal.** When the human wants to approve a payment or swap themselves, use `agent-intent send` or `agent-intent swap`; `pnpm --silent wallet-cli start send` and `swap execute` sign and broadcast from the device in one go.
 - **Host sandbox.** Rows with yes under Device or OS keychain run outside the host's command sandbox (Claude Code: `dangerouslyDisableSandbox: true`). `agent-intent sync` and `recover` write the state dir, so they run outside it for a `plaintext-file` profile too. `agent-intent wait` runs with the same setting as the `enroll` it follows: it checks the listener's PID, and a PID-namespaced sandbox makes a live listener look dead. Say in one line that the command runs outside the host sandbox, then run it with the bypass. The bypass covers the whole tool call, so the call holds a single `wallet-cli` command line in a shape this skill shows: the `WALLET_PASS=$(<keychain lookup>)` prefix (ring.md), the clipboard pipe (ring.md) and the `status` polling loops (agent-intent.md) are the only additions. Run anything else, such as another program, an `&&` chain or a file redirect, in its own call inside the sandbox.
+- **Network allowlist.** A sandbox that allows only listed hosts must allow the hosts each command calls. [`references/network.md`](references/network.md) lists them and says what to do when one is blocked.
 
 ## No USB on this machine
 
@@ -141,5 +143,6 @@ The paths are relative to this skill's folder. If you read this skill through `s
 | [`references/ring.md`](references/ring.md) | before any `pnpm --silent wallet-cli start ring` command |
 | [`references/swap.md`](references/swap.md) | before any `pnpm --silent wallet-cli start swap` command |
 | [`references/earn.md`](references/earn.md) | before any `pnpm --silent wallet-cli start earn` command |
+| [`references/network.md`](references/network.md) | you run wallet-cli in a sandbox that allows only listed hosts, or a command fails with `Could not reach <host>` or `host` in its JSON error |
 | [`references/errors.md`](references/errors.md) | a command outside agent-intent exits non-zero or prints `[✖]`, before you retry it |
 | [`references/business-logic.md`](references/business-logic.md) | the human asks why something works the way it does, or you need to justify a safety rule |
