@@ -47,12 +47,10 @@ export interface TextProps extends BaseStyledProps {
   children?: React.ReactNode;
 }
 
-const Text = baseStyled.span.attrs<TextProps, TextProps>(
-  ({ variant = "body", fontSize, color }) => ({
-    fontSize: fontSize ? fontSize : variant,
-    color: color || "neutral.c100",
-  }),
-)`
+const Text = baseStyled.span.attrs<TextProps>(({ variant = "body", fontSize, color }) => ({
+  fontSize: fontSize ? fontSize : variant,
+  color: color || "neutral.c100",
+}))`
   font-weight: 500;
   white-space: ${props => props.whiteSpace ?? "normal"};
   ${(p: TextProps) => textVariantStyle[p.variant || "body"]}

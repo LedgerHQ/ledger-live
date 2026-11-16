@@ -8,7 +8,7 @@ export type Props = {
   right?: React.ReactNode;
   /* Content displayed in the middle part - vertically centered. */
   children?: React.ReactNode;
-} & React.ComponentProps<typeof FlexBox>;
+} & Omit<React.ComponentProps<typeof FlexBox>, "left" | "right">;
 
 export default function Header({
   left,

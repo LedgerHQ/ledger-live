@@ -1,6 +1,6 @@
 import React from "react";
 import gaps from "../styles/system/gaps";
-import styled, { StyledInterface, InterpolationFunction } from "styled-components";
+import styled from "styled-components";
 import {
   compose,
   flexbox,
@@ -38,16 +38,7 @@ export type BaseStyledProps = SpaceProps &
     children?: React.ReactNode;
   };
 
-export const baseStyles: InterpolationFunction<unknown> = compose(
-  flexbox,
-  space,
-  position,
-  color,
-  layout,
-  overflow,
-  gaps,
-  border,
-);
+export const baseStyles = compose(flexbox, space, position, color, layout, overflow, gaps, border);
 
 const proxyStyled = new Proxy(styled, {
   apply(target: typeof styled, thisArg, argumentsList: Parameters<typeof styled>) {
@@ -55,10 +46,10 @@ const proxyStyled = new Proxy(styled, {
   },
   get(target, property: keyof typeof styled) {
     if (typeof target[property] === "function") {
-      return styled(target[property].apply(styled, [baseStyles]));
+      return styled(Reflect.apply(target[property], styled, [baseStyles]));
     }
     return target[property];
   },
 });
 
-export default <StyledInterface>proxyStyled;
+export default proxyStyled as typeof styled;

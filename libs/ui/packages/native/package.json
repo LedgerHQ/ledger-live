@@ -70,7 +70,7 @@
   "dependencies": {
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "color": "^4.0.0",
+    "color": "^5.0.3",
     "styled-system": "catalog:"
   },
   "peerDependencies": {
@@ -104,10 +104,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/user-event": "14.5.2",
-    "@types/color": "3.0.6",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/prop-types": "15.7.12",
     "@types/react": "catalog:",
     "@types/styled-system": "5.1.22",
     "babel-loader": "10.0.0",
@@ -120,9 +117,7 @@
     "oxfmt": "catalog:",
     "fs-extra": "10.1.0",
     "glob": "^7.2.0",
-    "lodash": "catalog:",
     "minimatch": "^5.1.0",
-    "prop-types": "15.8.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-is": "19.0.0",

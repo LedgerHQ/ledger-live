@@ -45,6 +45,7 @@ const transformIncludePatterns = [
   "@shopify/flash-list",
   "@ledgerhq/lumen-.*",
   "immer",
+  "color(-convert|-name|-string)?",
   "@features/.*",
   "@ronradtke",
   "@sbaiahmed1/react-native-blur",

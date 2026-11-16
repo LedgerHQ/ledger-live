@@ -8,7 +8,7 @@ const getFontSource = (name: string) => (props: GlobalStyleProps) => {
   return `url("${fontsPath}/${fontName}") format("woff2")`;
 };
 
-export const fontStyles = css`
+export const fontStyles = css<GlobalStyleProps>`
   @font-face {
     font-family: "Inter";
     src: ${getFontSource("Inter-ExtraLight-BETA")};

@@ -1,6 +1,6 @@
 import ChevronBottom from "@ledgerhq/icons-ui/reactLegacy/ChevronBottomMedium";
 import React, { useMemo, useState } from "react";
-import styled, { css, StyledProps } from "styled-components";
+import styled, { css, DefaultTheme } from "styled-components";
 import { border, BordersProps, compose, fontSize } from "styled-system";
 import { rgba } from "../../../styles/helpers";
 import fontFamily from "../../../styles/styled/fontFamily";
@@ -38,7 +38,7 @@ const IconContainer = styled.div<{
   padding-top: 0.2em;
 `;
 
-const getVariantColors = (p: StyledProps<BaseProps>) => ({
+const getVariantColors = (p: BaseProps & { theme: DefaultTheme }) => ({
   main: {
     outline: `
         border-color: ${p.theme.colors.neutral.c100};
@@ -156,10 +156,10 @@ export const ButtonUnstyled = baseStyled.button`
   }
 `;
 
-export const Base = baseStyled.button.attrs((p: BaseProps) => ({
+export const Base = baseStyled.button.attrs<BaseProps>(p => ({
   fontFamily: "Inter",
   fontSize: p.fontSize ?? 4,
-}))<BaseProps>`
+}))`
   background-color: transparent;
   border-color: transparent;
   border-radius: 44px;
@@ -167,7 +167,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   border-width: ${p => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   font-weight: 600;
   ${compose(fontFamily, fontSize, border)};
-  line-height: ${p => p.theme.fontSizes[p.fontSize]}px;
+  line-height: ${p => p.theme.fontSizes[p.fontSize ?? 4]}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
@@ -258,10 +258,10 @@ export type ButtonExpandProps = React.PropsWithChildren<
   }
 >;
 
-const StyledButtonExpand = styled(ButtonWithRef).attrs(props => ({
-  Icon: props.Icon != null || ChevronBottom,
+const StyledButtonExpand = styled(ButtonWithRef).attrs<{ expanded: boolean }>(props => ({
+  Icon: props.Icon ?? ChevronBottom,
   iconPosition: props.iconPosition || "right",
-}))<{ expanded: boolean }>`
+}))`
   ${IconContainer} {
     transition: transform 0.25s;
     ${p => (p.expanded ? "transform: rotate(180deg)" : "")}

@@ -44,7 +44,6 @@ const SelectUseCaseContainer = styled(Flex).attrs({
   padding: "134px 0px",
   alignItems: "center",
   flexDirection: "column",
-  boxSizing: "border-box",
 })``;
 
 const Row = styled(Flex).attrs({

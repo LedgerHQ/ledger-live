@@ -63,9 +63,9 @@ export type StepProps = {
 };
 
 export const Item = {
-  Container: styled.div.attrs({
+  Container: styled.div.attrs<ColorProps & BorderProps & SpaceProps>({
     mx: "8px",
-  })<ColorProps & BorderProps & SpaceProps>`
+  })`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -80,17 +80,17 @@ export const Item = {
     align-self: stretch;
     ${space}
   `,
-  Current: styled.div.attrs({
+  Current: styled.div.attrs<ColorProps>({
     backgroundColor: "primary.c90",
-  })<ColorProps>`
+  })`
     width: 6px;
     height: 6px;
     border-radius: 6px;
     ${color}
   `,
-  Pending: styled.div.attrs({
+  Pending: styled.div.attrs<ColorProps>({
     backgroundColor: "neutral.c70",
-  })<ColorProps>`
+  })`
     width: ${p => p.theme.space[2]}px;
     height: ${p => p.theme.space[2]}px;
     border-radius: ${p => p.theme.space[2]}px;
