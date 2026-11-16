@@ -49,40 +49,40 @@ describe("loading", () => {
   });
 });
 
-describe("copy", () => {
+describe("ripple", () => {
   const PRESSED_AT = 1;
 
   it("stays still before any press", () => {
-    expect(getQrElementFrame("copy", 2, MIDDLE_DOT, NEVER_PRESSED)).toEqual({
+    expect(getQrElementFrame("ripple", 2, MIDDLE_DOT, NEVER_PRESSED)).toEqual({
       scale: 1,
       color: INK,
     });
-    expect(getQrElementFrame("copy", 2, CENTER, NEVER_PRESSED).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 2, CENTER, NEVER_PRESSED).scale).toBe(1);
   });
 
   it("does not change any color", () => {
-    expect(getQrElementFrame("copy", 1.3, MIDDLE_DOT, PRESSED_AT).color).toEqual(INK);
+    expect(getQrElementFrame("ripple", 1.3, MIDDLE_DOT, PRESSED_AT).color).toEqual(INK);
   });
 
-  it("pops the center badge right after the press", () => {
-    expect(getQrElementFrame("copy", 1.15, CENTER, PRESSED_AT).scale).toBeGreaterThan(1.1);
-    expect(getQrElementFrame("copy", 1.5, CENTER, PRESSED_AT).scale).toBe(1);
+  it("pops the center content right after the press", () => {
+    expect(getQrElementFrame("ripple", 1.15, CENTER, PRESSED_AT).scale).toBeGreaterThan(1.1);
+    expect(getQrElementFrame("ripple", 1.5, CENTER, PRESSED_AT).scale).toBe(1);
   });
 
   it("grows the dots on the ripple as it leaves the center", () => {
     // MIDDLE_DOT is 0.2 from the center: the ripple reaches it about 0.2 s after the press.
-    expect(getQrElementFrame("copy", 1.05, MIDDLE_DOT, PRESSED_AT).scale).toBe(1);
-    expect(getQrElementFrame("copy", 1.33, MIDDLE_DOT, PRESSED_AT).scale).toBeGreaterThan(1.3);
-    expect(getQrElementFrame("copy", 1.33, CORNER_DOT, PRESSED_AT).scale).toBe(1);
-    expect(getQrElementFrame("copy", 2.2, MIDDLE_DOT, PRESSED_AT).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 1.05, MIDDLE_DOT, PRESSED_AT).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 1.33, MIDDLE_DOT, PRESSED_AT).scale).toBeGreaterThan(1.3);
+    expect(getQrElementFrame("ripple", 1.33, CORNER_DOT, PRESSED_AT).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 2.2, MIDDLE_DOT, PRESSED_AT).scale).toBe(1);
   });
 
   it("leaves the finders still", () => {
-    expect(getQrElementFrame("copy", 1.3, FINDER, PRESSED_AT).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 1.3, FINDER, PRESSED_AT).scale).toBe(1);
   });
 
   it("ignores a press stored in the future", () => {
-    expect(getQrElementFrame("copy", 1, CENTER, 2).scale).toBe(1);
+    expect(getQrElementFrame("ripple", 1, CENTER, 2).scale).toBe(1);
   });
 });
 

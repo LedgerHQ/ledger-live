@@ -9,7 +9,7 @@ final class AnimatedQrCodeView: UIView {
   private static let dotRadiusRatio: CGFloat = 0.42
   private static let finderRingRadiusModules: CGFloat = 2.5
 
-  @objc var animation: NSString = "copy" {
+  @objc var animation: NSString = "ripple" {
     didSet {
       guard animation != oldValue else { return }
       // Fresh layers start from the colors and scale of the new animation.
@@ -28,7 +28,7 @@ final class AnimatedQrCodeView: UIView {
       updateDisplayLink()
     }
   }
-  // Each new value plays a press, e.g. from a copy button.
+  // Each new value plays a press, e.g. from a separate button.
   @objc var pressCount: NSInteger = 0 {
     didSet {
       if pressCount != oldValue, pressCount != 0 { press() }
@@ -115,7 +115,7 @@ final class AnimatedQrCodeView: UIView {
     CATransaction.setDisableActions(true)
     for item in animatedLayers {
       let frame = QrAnimationTimeline.frame(animation: animationName, time: time, element: item.element, pressedAt: pressedAt)
-      // Loading only changes colors, copy only scales.
+      // Loading only changes colors, ripple only scales.
       if animatesColor {
         let color = UIColor(red: frame.color.r, green: frame.color.g, blue: frame.color.b, alpha: 1).cgColor
         if item.colorsBorder {

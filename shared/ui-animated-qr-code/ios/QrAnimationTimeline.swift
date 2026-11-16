@@ -63,7 +63,7 @@ enum QrAnimationTimeline {
   static func frame(animation: String, time: CGFloat, element: QrElement, pressedAt: CGFloat) -> QrElementFrame {
     animation == "loading"
       ? loadingFrame(time: time, element: element)
-      : copyFrame(time: time, element: element, pressedAt: pressedAt)
+      : rippleFrame(time: time, element: element, pressedAt: pressedAt)
   }
 
   // Native only: the view stops its display link while nothing moves.
@@ -78,7 +78,7 @@ enum QrAnimationTimeline {
     return QrElementFrame(scale: 1, color: skeleton.mixed(with: shimmer, amount: shine))
   }
 
-  private static func copyFrame(time: CGFloat, element: QrElement, pressedAt: CGFloat) -> QrElementFrame {
+  private static func rippleFrame(time: CGFloat, element: QrElement, pressedAt: CGFloat) -> QrElementFrame {
     let age = time - pressedAt
     guard pressedAt >= 0, age >= 0, element.kind == .dot else { return QrElementFrame(scale: 1, color: ink) }
     let progress = (age - rippleDelay) / rippleSweep

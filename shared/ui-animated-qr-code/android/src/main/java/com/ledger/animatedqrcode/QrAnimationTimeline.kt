@@ -32,7 +32,7 @@ object QrAnimationTimeline {
     private val RIPPLE_REACH = sqrt(0.5f)
 
     fun frame(animation: String, time: Float, element: QrElement, pressedAt: Float): QrElementFrame =
-        if (animation == "loading") loadingFrame(time, element) else copyFrame(time, element, pressedAt)
+        if (animation == "loading") loadingFrame(time, element) else rippleFrame(time, element, pressedAt)
 
     // Native only: the view stops its frame callbacks while nothing moves.
     fun isMoving(animation: String, time: Float, pressedAt: Float): Boolean =
@@ -45,7 +45,7 @@ object QrAnimationTimeline {
         return QrElementFrame(1f, mix(SKELETON, SHIMMER, shine))
     }
 
-    private fun copyFrame(time: Float, element: QrElement, pressedAt: Float): QrElementFrame {
+    private fun rippleFrame(time: Float, element: QrElement, pressedAt: Float): QrElementFrame {
         val age = time - pressedAt
         if (pressedAt < 0 || age < 0 || element.kind != QrElementKind.DOT) return QrElementFrame(1f, INK)
         val progress = (age - RIPPLE_DELAY) / RIPPLE_SWEEP

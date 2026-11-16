@@ -20,7 +20,7 @@ import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
 <AnimatedQrCode
   value={address}
   size={208}
-  animation={address ? "copy" : "loading"}
+  animation={address ? "ripple" : "loading"}
   centerContent={<CryptoIcon ledgerId={ledgerId} ticker={ticker} size={48} />}
   onPress={copyAddress}
   accessibilityLabel={t("receive.copyAddress")}
@@ -31,17 +31,23 @@ import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
 ## Animations
 
 - `loading`: gray dots with a lighter band rippling out from the center, for as long as the value
-  is not known. The center shows a gray disc instead of `centerContent`.
-- `copy`: on press, the center badge pops and a ripple of bigger dots runs from the center. No
-  color change. A new `triggerKey` plays the same animation, e.g. from a separate copy button;
-  the first value plays nothing.
+  is not known. With `centerContent`, the center shows a gray disc in its place.
+- `ripple`: on press, a ripple of bigger dots runs from the center and `centerContent` pops. No
+  color change. A new `triggerKey` plays the same animation, e.g. from a separate button; the
+  first value plays nothing.
 
 With reduced motion on in the OS, the code is drawn still: no shimmer, no ripple.
+
+## Center content
+
+`centerContent` is optional. With it, the code keeps a clear zone in its middle for the node.
+Without it, the code is drawn whole, with no hole.
 
 ## How it works
 
 - `src/qrMatrix.ts` encodes the value with [`qrcode`](https://www.npmjs.com/package/qrcode), error
-  correction H so the center can be covered, and sends the dark modules to the native view once.
+  correction H so a center content can cover the middle, and sends the dark modules to the native
+  view once.
 - The native view draws the dots and the three finders: one `CALayer` per element and a
   `CADisplayLink` on iOS, a `Canvas` and `Choreographer` on Android. It handles its own touches and
   only runs its frame loop while something moves.

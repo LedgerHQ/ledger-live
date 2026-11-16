@@ -3,7 +3,7 @@ import { createQrMatrix, FINDER_MODULES } from "./qrMatrix";
 const ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 
 describe("createQrMatrix", () => {
-  const matrix = createQrMatrix(ADDRESS);
+  const matrix = createQrMatrix(ADDRESS, true);
 
   it("keeps dots out of the finders and the center clear zone", () => {
     const { moduleCount, clearStart, clearCount } = matrix;
@@ -31,9 +31,20 @@ describe("createQrMatrix", () => {
     ["two addresses", ADDRESS.repeat(2)],
     ["three addresses", ADDRESS.repeat(3)],
   ])("starts the clear zone on a whole module, past the finders, for %s", (_, value) => {
-    const { clearStart } = createQrMatrix(value);
+    const { clearStart } = createQrMatrix(value, true);
 
     expect(Number.isInteger(clearStart)).toBe(true);
     expect(clearStart).toBeGreaterThanOrEqual(FINDER_MODULES);
+  });
+
+  it("keeps the center modules without a clear center", () => {
+    const full = createQrMatrix(ADDRESS, false);
+    const middle = (full.moduleCount - 1) / 2;
+    const inMiddle = ({ row, col }: { row: number; col: number }) =>
+      Math.abs(row - middle) <= 2 && Math.abs(col - middle) <= 2;
+
+    expect(full.clearCount).toBe(0);
+    expect(full.dots.length).toBeGreaterThan(matrix.dots.length);
+    expect(full.dots.some(inMiddle)).toBe(true);
   });
 });

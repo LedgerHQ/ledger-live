@@ -16,7 +16,7 @@ function renderQrCode(props: Partial<AnimatedQrCodeProps> = {}) {
   const defaults: AnimatedQrCodeProps = {
     value: ADDRESS,
     size: 200,
-    animation: "copy",
+    animation: "ripple",
     testID: TEST_ID,
     centerContent: <Text>Icon</Text>,
   };
@@ -48,16 +48,27 @@ afterEach(() => setReducedMotion(false));
 describe("AnimatedQrCode", () => {
   it("sends the QR matrix to the native view as flat row and column pairs", () => {
     renderQrCode();
-    const matrix = createQrMatrix(ADDRESS);
+    const matrix = createQrMatrix(ADDRESS, true);
 
     expect(nativeView().props).toMatchObject({
-      animation: "copy",
+      animation: "ripple",
       animated: true,
       pressCount: 0,
       moduleCount: matrix.moduleCount,
       dots: matrix.dots.flatMap(({ row, col }) => [row, col]),
       style: { width: 200, height: 200 },
     });
+  });
+
+  it("draws the whole code, without a hole or a center, when there is no center content", () => {
+    renderQrCode({ centerContent: undefined, animation: "loading" });
+    const fullMatrix = createQrMatrix(ADDRESS, false);
+
+    expect(nativeView().props).toMatchObject({
+      moduleCount: fullMatrix.moduleCount,
+      dots: fullMatrix.dots.flatMap(({ row, col }) => [row, col]),
+    });
+    expect(hostsNamed("Animated.View")).toHaveLength(0);
   });
 
   it("shows the center content", () => {

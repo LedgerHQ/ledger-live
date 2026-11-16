@@ -13,7 +13,7 @@ class AnimatedQrCodeViewManager : SimpleViewManager<AnimatedQrCodeView>() {
 
     @ReactProp(name = "animation")
     fun setAnimation(view: AnimatedQrCodeView, animation: String?) {
-        view.animation = animation ?: "copy"
+        view.animation = animation ?: "ripple"
     }
 
     @ReactProp(name = "animated", defaultBoolean = true)

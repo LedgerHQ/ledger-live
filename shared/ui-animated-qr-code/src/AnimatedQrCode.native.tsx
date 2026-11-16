@@ -15,7 +15,7 @@ type NativeQrCodeViewProps = ViewProps &
     animation: QrAnimation;
     /** Off when the OS asks for reduced motion: the code is drawn still. */
     animated: boolean;
-    /** Each new value plays a press, e.g. from a copy button. */
+    /** Each new value plays a press, e.g. from a separate button. */
     pressCount: number;
     moduleCount: number;
     // Flat [row, col, row, col, …] pairs: one array crosses to native instead of many objects.
@@ -39,7 +39,8 @@ export function AnimatedQrCode({
   testID,
 }: AnimatedQrCodeProps): React.JSX.Element {
   const animated = !useReducedMotion();
-  const matrix = useMemo(() => createQrMatrix(value), [value]);
+  const hasCenter = centerContent !== undefined && centerContent !== null;
+  const matrix = useMemo(() => createQrMatrix(value, hasCenter), [value, hasCenter]);
   const dots = useMemo(() => matrix.dots.flatMap(({ row, col }) => [row, col]), [matrix]);
   const { time, pressedAt, press, pressCount } = useQrClock(triggerKey, animated);
   const pressable = onPress !== undefined;
@@ -52,7 +53,7 @@ export function AnimatedQrCode({
       accessibilityRole={pressable ? "button" : undefined}
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
-      // The native view handles its own touches; this one only drives the center badge.
+      // The native view handles its own touches; this one only drives the center content.
       onPressIn={press}
     >
       <NativeQrCodeView
@@ -63,15 +64,17 @@ export function AnimatedQrCode({
         moduleCount={matrix.moduleCount}
         dots={dots}
       />
-      <AnimatedCenter
-        time={time}
-        pressedAt={pressedAt}
-        animation={animation}
-        size={size}
-        diameter={matrix.clearCount * (size / matrix.moduleCount) * CENTER_DIAMETER_RATIO}
-      >
-        {centerContent}
-      </AnimatedCenter>
+      {hasCenter && (
+        <AnimatedCenter
+          time={time}
+          pressedAt={pressedAt}
+          animation={animation}
+          size={size}
+          diameter={matrix.clearCount * (size / matrix.moduleCount) * CENTER_DIAMETER_RATIO}
+        >
+          {centerContent}
+        </AnimatedCenter>
+      )}
     </Pressable>
   );
 }

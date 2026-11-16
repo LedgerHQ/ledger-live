@@ -25,11 +25,14 @@ function isInFinderPattern(row: number, col: number, count: number): boolean {
   return (top && left) || (top && right) || (bottom && left);
 }
 
-/** Dark modules outside the finders and the center clear zone, which holds the center badge. */
-export function createQrMatrix(value: string): QrMatrix {
+/**
+ * Dark modules outside the finders and, with `withClearCenter`, outside a clear zone in the middle
+ * for center content. Error correction H keeps the code readable with that zone empty.
+ */
+export function createQrMatrix(value: string, withClearCenter: boolean): QrMatrix {
   const { modules } = qrcode.create(value, { errorCorrectionLevel: "H" });
   const { data, size: count } = modules;
-  const clearCount = getClearCount(count);
+  const clearCount = withClearCenter ? getClearCount(count) : 0;
   const clearStart = (count - clearCount) / 2;
   const clearEnd = clearStart + clearCount;
   const dots: QrCell[] = [];

@@ -25,7 +25,7 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
         val ring: Boolean,
     )
 
-    var animation: String = "copy"
+    var animation: String = "ripple"
         set(value) {
             if (value == field) return
             field = value
@@ -41,7 +41,7 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
             invalidate()
             updateFrameCallback()
         }
-    // Each new value plays a press, e.g. from a copy button.
+    // Each new value plays a press, e.g. from a separate button.
     var pressCount: Int = 0
         set(value) {
             val changed = value != field
@@ -116,7 +116,7 @@ class AnimatedQrCodeView(context: Context) : View(context), Choreographer.FrameC
 
         for (element in elements) {
             val frame = QrAnimationTimeline.frame(animation, time, element.element, pressedAt)
-            // Loading only changes colors, copy only scales.
+            // Loading only changes colors, ripple only scales.
             val scale = if (animatesColor) 1f else frame.scale
             val halfWidth = element.rect.width() * scale / 2
             val halfHeight = element.rect.height() * scale / 2

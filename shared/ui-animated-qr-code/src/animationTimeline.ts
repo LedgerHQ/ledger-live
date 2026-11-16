@@ -73,7 +73,7 @@ function loadingFrame(time: number, element: QrElement): QrElementFrame {
   return { scale: 1, color: mix(SKELETON, SHIMMER, shine) };
 }
 
-function copyFrame(time: number, element: QrElement, pressedAt: number): QrElementFrame {
+function rippleFrame(time: number, element: QrElement, pressedAt: number): QrElementFrame {
   "worklet";
   const age = time - pressedAt;
   if (pressedAt < 0 || age < 0 || element.kind === "finder") return { scale: 1, color: INK };
@@ -97,7 +97,7 @@ export function getQrElementFrame(
 ): QrElementFrame {
   "worklet";
   if (animation === "loading") return loadingFrame(time, element);
-  return copyFrame(time, element, pressedAt);
+  return rippleFrame(time, element, pressedAt);
 }
 
 export function toRgbString({ r, g, b }: QrRgb): string {
