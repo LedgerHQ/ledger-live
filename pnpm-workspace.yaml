@@ -198,7 +198,7 @@ catalog:
   jest-environment-jsdom: 30.5.2
   jest-environment-node: 30.5.2
   jest-file-snapshot: 0.7.0
-  jest-util: 30.5.0
+  jest-util: 30.5.1
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
@@ -328,13 +328,13 @@ overrides:
   jest-mock: "30.5.2"
   jest-matcher-utils: "30.5.2"
   jest-diff: "30.5.2"
-  jest-message-util: "30.5.0"
-  jest-util: "30.5.0"
+  jest-message-util: "30.5.1"
+  jest-util: "30.5.1"
   "@jest/expect-utils": "30.5.2"
-  "@jest/create-cache-key-function": "30.5.0"
-  "@jest/types": "30.5.0"
+  "@jest/create-cache-key-function": "30.5.1"
+  "@jest/types": "30.5.1"
   expect: "30.5.2"
-  "pretty-format@^30.0.0": "30.5.0"
+  "pretty-format@^30.0.0": "30.5.1"
   # Only @polkadot/rpc-provider/mock (MockProvider) imports these; we never load it
   "@polkadot/rpc-provider>@polkadot/types-support": "-"
   "@polkadot/rpc-provider>mock-socket": "-"

@@ -35,7 +35,7 @@
     "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",
-    "@jest/types": "30.5.0",
+    "@jest/types": "30.5.1",
     "@ledgerhq/devices": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "@shared/env": "workspace:*",

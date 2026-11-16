@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@gorhom/bottom-sheet": "catalog:",
-    "@jest/types": "30.5.0",
+    "@jest/types": "30.5.1",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
