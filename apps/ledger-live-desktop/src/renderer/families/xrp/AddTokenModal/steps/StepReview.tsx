@@ -25,7 +25,10 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
 import type { StepProps } from "../types";
 
-function Row({ label, children }: Readonly<{ label: React.ReactNode; children: React.ReactNode }>) {
+export function Row({
+  label,
+  children,
+}: Readonly<{ label: React.ReactNode; children: React.ReactNode }>) {
   return (
     <Box horizontal justifyContent="space-between" alignItems="center" mb={3}>
       <Text ff="Inter|Medium" fontSize={4} color="neutral.c70">

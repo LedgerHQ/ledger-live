@@ -1,6 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getSteps, makeChangeTrustTransaction } from "./Body";
+import {
+  getSteps,
+  getTokenAction,
+  makeChangeTrustTransaction,
+  makeOptOutTransaction,
+} from "./Body";
 import type { AddTokenStep } from "./types";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT, makeXrpTokenAccount } from "../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../__mocks__/currency.mock";
@@ -39,6 +44,13 @@ describe("getSteps", () => {
     expect(steps[0].onBack).toBeUndefined();
   });
 
+  it("starts a removal at the review, with no way back", () => {
+    const steps = getSteps("remove", iou);
+
+    expect(toIds(steps)).toEqual(["review", "connectDevice", "confirmation"]);
+    expect(steps[0].onBack).toBeUndefined();
+  });
+
   it("goes back from the review to the step before it", () => {
     const transitionTo = jest.fn();
     const reviewStep = getSteps("add", mpt).find(step => step.id === "review");
@@ -47,6 +59,30 @@ describe("getSteps", () => {
     reviewStep?.onBack?.({ token: iou, transitionTo } as never);
 
     expect(transitionTo.mock.calls).toEqual([["token"], ["settings"]]);
+  });
+});
+
+describe("getTokenAction", () => {
+  it("adds without a token account, edits or removes with one", () => {
+    expect(getTokenAction({ account })).toBe("add");
+    expect(getTokenAction({ account, tokenAccount: rlusdAccount })).toBe("edit");
+    expect(getTokenAction({ account, tokenAccount: rlusdAccount, remove: true })).toBe("remove");
+  });
+});
+
+describe("makeOptOutTransaction", () => {
+  it("opts out of a held token on the parent account, with no amount", async () => {
+    const bridge = await getAccountBridge(account);
+
+    const transaction = makeOptOutTransaction(bridge, account, rlusdAccount);
+
+    expect(transaction).not.toHaveProperty("subAccountId");
+    expect(transaction).toMatchObject({
+      mode: "optOut",
+      assetReference: xrpIouToken.tokenIdentifier,
+      assetOwner: xrpIouToken.contractAddress,
+      amount: new BigNumber(0),
+    });
   });
 });
 

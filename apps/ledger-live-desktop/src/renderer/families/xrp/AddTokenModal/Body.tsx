@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -21,14 +22,14 @@ import { getXrpResources } from "../utils";
 import StepToken, { StepTokenFooter } from "./steps/StepToken";
 import StepSettings, { StepSettingsFooter } from "./steps/StepSettings";
 import StepReview, { StepReviewFooter } from "./steps/StepReview";
+import StepRemoveReview, { StepRemoveReviewFooter } from "./steps/StepRemoveReview";
+import StepRemoveConnectDevice from "./steps/StepRemoveConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { ACTION_I18N, AddTokenStep, StepId, StepProps, TokenAction } from "./types";
 
-export type Data = {
-  account: Account;
-  tokenAccount?: TokenAccount;
-  token?: TokenCurrency;
-};
+export type Data =
+  | { account: Account; token?: TokenCurrency; tokenAccount?: undefined; remove?: undefined }
+  | { account: Account; tokenAccount: TokenAccount; token?: undefined; remove?: boolean };
 
 type Props = Readonly<{
   stepId: StepId;
@@ -68,6 +69,18 @@ const connectDeviceStep: AddTokenStep = {
   onBack: ({ transitionTo }) => transitionTo("review"),
 };
 
+const removeReviewStep: AddTokenStep = {
+  id: "review",
+  label: <Trans i18nKey="xrp.addToken.steps.review.title" />,
+  component: StepRemoveReview,
+  footer: StepRemoveReviewFooter,
+};
+
+const removeConnectDeviceStep: AddTokenStep = {
+  ...connectDeviceStep,
+  component: StepRemoveConnectDevice,
+};
+
 const confirmationStep: AddTokenStep = {
   id: "confirmation",
   label: <Trans i18nKey="xrp.addToken.steps.confirmation.title" />,
@@ -76,6 +89,10 @@ const confirmationStep: AddTokenStep = {
 };
 
 export function getSteps(action: TokenAction, token: TokenCurrency | undefined): AddTokenStep[] {
+  if (action === "remove") {
+    return [removeReviewStep, removeConnectDeviceStep, confirmationStep];
+  }
+
   if (action === "edit") {
     return [settingsStep, reviewStep, connectDeviceStep, confirmationStep];
   }
@@ -120,12 +137,31 @@ export function makeChangeTrustTransaction(
   });
 }
 
+export function makeOptOutTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  tokenAccount: TokenAccount,
+): Transaction {
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "optOut",
+    ...toAssetFields(tokenAccount.token),
+    amount: new BigNumber(0),
+  });
+}
+
+export function getTokenAction({ tokenAccount, remove }: Data): TokenAction {
+  if (!tokenAccount) return "add";
+
+  return remove ? "remove" : "edit";
+}
+
 export default function Body({ stepId, onClose, onChangeStepId, params }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const device = useSelector(getCurrentDevice);
   const { tokenAccount } = params;
-  const action: TokenAction = tokenAccount ? "edit" : "add";
+  const action = getTokenAction(params);
 
   const [token, setToken] = useState<TokenCurrency | undefined>(
     tokenAccount?.token ?? params.token,
@@ -145,9 +181,12 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     bridgePending,
   } = useBridgeTransaction<Transaction>(bridge, () => {
     return {
-      transaction: makeChangeTrustTransaction(bridge, params.account, tokenAccount),
       account: params.account,
       parentAccount: undefined,
+      transaction:
+        action === "remove" && tokenAccount
+          ? makeOptOutTransaction(bridge, params.account, tokenAccount)
+          : makeChangeTrustTransaction(bridge, params.account, tokenAccount),
     };
   });
 
@@ -189,11 +228,13 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     [bridge, updateTransaction],
   );
 
+  const steps = useMemo(() => getSteps(action, token), [action, token]);
+
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     setSigned(false);
-    onChangeStepId(action === "edit" ? "settings" : "token");
-  }, [action, onChangeStepId]);
+    onChangeStepId(steps[0].id);
+  }, [steps, onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
     if (error?.name !== "UserRefusedOnDevice") {
@@ -217,7 +258,12 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     [account, dispatch],
   );
 
-  const steps = useMemo(() => getSteps(action, token), [action, token]);
+  // The removed token's page is gone once the account syncs
+  const handleClose = useCallback(() => {
+    onClose();
+    if (action === "remove" && optimisticOperation) navigate(`/account/${params.account.id}`);
+  }, [action, optimisticOperation, params.account.id, navigate, onClose]);
+
   const error = transactionError ?? bridgeError ?? undefined;
 
   const stepProps: Omit<StepProps, "transitionTo"> = {
@@ -225,7 +271,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     device,
     account,
     parentAccount,
-    onClose,
+    onClose: handleClose,
     optimisticOperation,
     error,
     signed,
