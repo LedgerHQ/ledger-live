@@ -137,7 +137,7 @@ export function useChecksScreenViewModel({
       onDeclineUpdate,
     )[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: headerQuitHidden ? undefined : onQuit,
+    onQuit: headerQuitHidden && !suspendSheets ? undefined : onQuit,
     ...drawers,
   };
 }
