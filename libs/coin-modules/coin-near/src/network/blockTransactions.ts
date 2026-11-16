@@ -26,38 +26,46 @@ export const fetchIndexedBlock = async (
   return body.data;
 };
 
-export const fetchBlockTransactions = async (
+const fetchTransactionPages = async (
   config: NearConfig,
   blockHash: string,
+  cursor: string | undefined,
+  seenCursors: ReadonlySet<string>,
+  collected: NearTransaction[],
 ): Promise<NearTransaction[]> => {
-  const transactions: NearTransaction[] = [];
-  const seenCursors = new Set<string>();
-  let cursor: string | undefined;
+  const params = new URLSearchParams({ block: blockHash, limit: String(MAX_PAGE_SIZE) });
+  if (cursor) {
+    params.set("next", cursor);
+  }
 
-  do {
-    const params = new URLSearchParams({ block: blockHash, limit: String(MAX_PAGE_SIZE) });
-    if (cursor) {
-      params.set("next", cursor);
-    }
+  const body = await fetchNearblocks<NearV3Response<NearTransaction[]>>(
+    config,
+    `/v3/txns?${params.toString()}`,
+  );
+  const page = body.data ?? [];
+  const transactions = [...collected, ...page];
+  const nextCursor = body.meta?.next_page;
 
-    const body = await fetchNearblocks<NearV3Response<NearTransaction[]>>(
-      config,
-      `/v3/txns?${params.toString()}`,
-    );
-    const page = body.data ?? [];
-    transactions.push(...page);
-    cursor = body.meta?.next_page;
+  if (!nextCursor) {
+    return transactions;
+  }
+  if (page.length === 0 || seenCursors.has(nextCursor)) {
+    throw new Error(`Near: the indexer cursor does not advance for block ${blockHash}`);
+  }
 
-    if (cursor && (page.length === 0 || seenCursors.has(cursor))) {
-      throw new Error(`Near: the indexer cursor does not advance for block ${blockHash}`);
-    }
-    if (cursor) {
-      seenCursors.add(cursor);
-    }
-  } while (cursor);
-
-  return transactions;
+  return fetchTransactionPages(
+    config,
+    blockHash,
+    nextCursor,
+    new Set([...seenCursors, nextCursor]),
+    transactions,
+  );
 };
+
+export const fetchBlockTransactions = (
+  config: NearConfig,
+  blockHash: string,
+): Promise<NearTransaction[]> => fetchTransactionPages(config, blockHash, undefined, new Set(), []);
 
 export const fetchTransactionReceipts = async (
   config: NearConfig,
