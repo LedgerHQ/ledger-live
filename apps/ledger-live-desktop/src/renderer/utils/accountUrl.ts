@@ -53,24 +53,6 @@ export function findAccountById<T extends { id: string }>(
 }
 
 /**
- * Finds an item in an array by key, trying both the decoded and encoded versions.
- * React Router decodes URL parameters, but account IDs in the Redux store are encoded.
- * This is useful for items that use 'key' instead of 'id' (e.g., dropdown items).
- *
- * @param items - Array of items to search in
- * @param key - The key to search for (may contain decoded slashes)
- * @returns The found item, or undefined if not found
- */
-export function findItemByKey<T extends { key: string }>(items: T[], key: string): T | undefined {
-  const variants = getAccountIdVariants(key);
-  for (const variant of variants) {
-    const found = items.find(item => item.key === variant);
-    if (found) return found;
-  }
-  return undefined;
-}
-
-/**
  * Finds a sub-account by ID, trying both the decoded and encoded versions.
  * React Router decodes URL parameters, but account IDs in the Redux store are encoded.
  * This is a specialized version for Account from @ledgerhq/types-live.

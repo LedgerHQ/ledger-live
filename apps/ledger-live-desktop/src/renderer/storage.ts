@@ -192,9 +192,6 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
   debouncedSetKey<K, V>(ns, keyPath)(value);
 };
 
-export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
-  db.hasEncryptionKey(ns, keyPath);
-
 export const setEncryptionKey = (encryptionKey: string, currentEncryptionKey?: string) =>
   db.setEncryptionKey(encryptionKey, currentEncryptionKey);
 

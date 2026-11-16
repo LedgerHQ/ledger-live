@@ -5,18 +5,12 @@ import {
   resolveTrackingPairs,
   type CountervaluesSettings,
 } from "@domain/entity-market-countervalues";
-import {
-  countervaluesStateSelector,
-  haveSameTrackingPairs,
-} from "@features/platform-market-countervalues";
+import { haveSameTrackingPairs } from "@features/platform-market-countervalues";
 import { selectFeature } from "@shared/feature-flags";
-import { useSelector } from "LLD/hooks/redux";
 import type { State } from ".";
 import { accountsSelector } from "./accounts";
 import { selectExtraTrackingPairs } from "./countervaluesExtraTracking";
 import { counterValueCurrencySelector } from "./settings";
-
-export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
 
 function granularitiesRatesFlagSelector(state: State) {
   return selectFeature(state, "llCounterValueGranularitiesRates");
