@@ -14,6 +14,7 @@ import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
   getLedgerEnd: jest.fn(),
+  getNativeInstrument: jest.fn(),
   getOperations: jest.fn(),
   getPartyById: jest.fn(),
   getPendingTransferProposals: jest.fn(),
@@ -35,6 +36,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 
 const mockedGetBalance = instrumentBalances.getInstrumentBalances as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
+const mockedGetNativeInstrument = gateway.getNativeInstrument as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
 const mockedGetPartyById = gateway.getPartyById as jest.Mock;
@@ -68,6 +70,12 @@ const createMockNativeBalance = (amount: string, locked = false): CantonBalance 
   utxoCount: 1,
   instrumentId: "Amulet",
   adminId: "native-admin",
+});
+
+const impostorAmulet = (value: string): CantonBalance => ({
+  ...createMockNativeBalance(value),
+  asset: { type: "token", assetReference: "Amulet" },
+  adminId: "impostor::1220dddd",
 });
 
 const createMockOperationView = (
@@ -174,6 +182,10 @@ describe("makeGetAccountShape", () => {
 
     mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
+    mockedGetNativeInstrument.mockResolvedValue({
+      instrumentId: "Amulet",
+      instrumentAdmin: "native-admin",
+    });
     mockedGetPendingTransferProposals.mockResolvedValue([]);
     mockedGetPartyById.mockResolvedValue({ party_id: "test-party-id", public_key: "" });
     mockedGetCalTokensCached.mockResolvedValue(new Map());
@@ -837,6 +849,79 @@ describe("makeGetAccountShape", () => {
       const shape = await sync();
 
       expect(shape.balance).toEqual(BigNumber(1000));
+    });
+  });
+
+  describe("native instrument admin", () => {
+    it("counts only the DSO's holdings of the native instrument id as CC", async () => {
+      mockedGetBalance.mockResolvedValue([
+        impostorAmulet("900"),
+        createMockNativeBalance("1000"),
+        createMockNativeBalance("50", true),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape).toMatchObject({
+        balance: BigNumber(1050),
+        spendableBalance: BigNumber(1000),
+        subAccounts: [],
+      });
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 2,
+        "Amulet____impostor::1220dddd": 1,
+      });
+    });
+
+    it("keeps the DSO party on the account for the offer list", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+
+      const shape = await sync();
+
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
+    });
+
+    it("scans an account without a party without reading the DSO party", async () => {
+      mockedIsOnboarded.mockResolvedValue({ isOnboarded: false });
+
+      const shape = await sync();
+
+      expect(mockedGetNativeInstrument).not.toHaveBeenCalled();
+      expect(shape.cantonResources).not.toHaveProperty("nativeInstrumentAdmin");
+    });
+
+    it("fails rather than guess the CC balance when the DSO party can't be read or was never saved", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+
+      await expect(sync()).rejects.toThrow("gateway down");
+    });
+
+    it("uses the DSO party saved by an earlier sync when it can't be read", async () => {
+      mockedGetBalance.mockResolvedValue([impostorAmulet("900"), createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+      const info = createMockCantonAccountShapeInfo({
+        initialAccount: {
+          xpub: "party123",
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+            nativeInstrumentAdmin: "native-admin",
+          },
+        } as unknown as CantonAccount,
+      });
+
+      const shape = await makeGetAccountShape(fakeSignerContext, fakeContext)(info, {
+        paginationConfig: {},
+      });
+
+      expect(mockedGetBalance).toHaveBeenCalledWith(expect.anything(), "party123", {
+        instrumentId: "Amulet",
+        instrumentAdmin: "native-admin",
+      });
+      expect(shape.balance).toEqual(BigNumber(1000));
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
     });
   });
 });

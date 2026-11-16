@@ -18,6 +18,7 @@ import {
 import { TO_MANY_UTXOS_CRITICAL_COUNT, TO_MANY_UTXOS_WARNING_COUNT } from "../../constants";
 import {
   getBalance,
+  getNativeInstrument,
   getPartyByIdCached,
   isTopologyChangeRequiredCached,
 } from "../../network/gateway";
@@ -32,11 +33,13 @@ import { validateIntent } from "../validateIntent";
 
 jest.mock("../../network/gateway", () => ({
   getBalance: jest.fn(),
+  getNativeInstrument: jest.fn(),
   getPartyByIdCached: jest.fn(),
   isTopologyChangeRequiredCached: jest.fn(),
 }));
 
 const mockedGetBalance = jest.mocked(getBalance);
+const mockedGetNativeInstrument = jest.mocked(getNativeInstrument);
 const mockedGetParty = jest.mocked(getPartyByIdCached);
 const mockedIsTopologyChangeRequired = jest.mocked(isTopologyChangeRequiredCached);
 
@@ -92,6 +95,10 @@ describe("validateIntent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGetBalance.mockResolvedValue([]);
+    mockedGetNativeInstrument.mockResolvedValue({
+      instrumentId: "Amulet",
+      instrumentAdmin: "AmuletAdmin",
+    });
     mockedGetParty.mockResolvedValue({ party_id: SENDER, public_key: "test-public-key" });
     mockedIsTopologyChangeRequired.mockResolvedValue(false);
   });
@@ -301,6 +308,31 @@ describe("validateIntent", () => {
         validate({ asset: { type: "template", assetReference: "Template" } }),
       ).rejects.toThrow(InvalidParameterError);
     });
+
+    it("should throw on a token under the native instrument id without an admin", async () => {
+      const asset = { type: "token", assetReference: "Amulet" } as const;
+
+      await expect(validate({ asset }, [native(1000n, 0n), token(1000n, asset)])).rejects.toThrow(
+        InvalidParameterError,
+      );
+    });
+
+    it.each([
+      [30n, undefined],
+      [50n, NotEnoughBalance],
+    ])(
+      "should check %d of another admin's instrument under the native id against its own holding",
+      async (amount, expected) => {
+        const asset = { type: "token", assetReference: "Amulet", assetOwner: "impostor" } as const;
+
+        const { errors } = await validate({ asset, amount }, [
+          native(1000n, 0n),
+          token(40n, asset),
+        ]);
+
+        expect(errors.amount?.constructor).toBe(expected);
+      },
+    );
   });
 
   describe("recipient", () => {
@@ -424,14 +456,23 @@ describe("validateIntent", () => {
       expect(warnings.tooManyUtxos).toBeUndefined();
     });
 
-    it("should count the native instrument under every admin, as sync does", async () => {
+    it("should count the native instrument under the DSO admin only, as sync does", async () => {
       mockedGetBalance.mockResolvedValue(
-        rows(["Amulet", "AmuletAdmin", 6], ["Amulet", "other", 6]),
+        rows(["Amulet", "AmuletAdmin", TO_MANY_UTXOS_WARNING_COUNT], ["Amulet", "other", 6]),
       );
 
       const { warnings } = await validate();
 
-      expect(warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosWarning);
+      expect(warnings.tooManyUtxos).toBeUndefined();
+    });
+
+    it("should not warn on a native transfer when the DSO party can't be read", async () => {
+      mockedGetBalance.mockResolvedValue(rows(["Amulet", "AmuletAdmin", 30]));
+      mockedGetNativeInstrument.mockRejectedValue(new Error("Network error"));
+
+      const { warnings } = await validate();
+
+      expect(warnings.tooManyUtxos).toBeUndefined();
     });
 
     it("should count only the rows of the token being sent", async () => {

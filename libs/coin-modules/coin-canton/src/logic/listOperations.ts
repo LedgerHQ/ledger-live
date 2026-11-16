@@ -158,7 +158,7 @@ export async function listOperations(
       ? await descendingPage(query, cursor)
       : await ascendingPage(query, cursor, limit);
   return {
-    items: page.items.map(row => toOperation(config.nativeInstrumentId, partyId, row)),
+    items: page.items.map(row => toOperation(partyId, row)),
     next: page.next,
   };
 }

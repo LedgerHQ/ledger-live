@@ -1,4 +1,8 @@
-import { getBalance as getBalanceFromNetwork, isGatewayEnabled } from "../../network/gateway";
+import {
+  getBalance as getBalanceFromNetwork,
+  getNativeInstrument,
+  isGatewayEnabled,
+} from "../../network/gateway";
 import {
   createMockCoinConfigValue,
   createMockContext,
@@ -9,52 +13,79 @@ import { getBalance } from "../getBalance";
 jest.mock("../../network/gateway", () => ({
   ...jest.requireActual("../../network/gateway"),
   getBalance: jest.fn(),
+  getNativeInstrument: jest.fn(),
   isGatewayEnabled: jest.fn(() => true),
 }));
 
 const mockedGetBalanceFromNetwork = jest.mocked(getBalanceFromNetwork);
+const mockedGetNativeInstrument = jest.mocked(getNativeInstrument);
 const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
+
+const DSO = "DSO";
 
 const contextWithReserve = (minReserve: number) =>
   createMockContext({ ...createMockCoinConfigValue(), minReserve });
 
 describe("getBalance", () => {
+  beforeEach(() => {
+    mockedGetNativeInstrument.mockResolvedValue({ instrumentId: "Amulet", instrumentAdmin: DSO });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("folds every native row, whatever its admin, into one native balance", async () => {
+  it("folds the DSO's native rows into one native balance and keeps another admin's as a token", async () => {
     mockedGetBalanceFromNetwork.mockResolvedValue(
       createMockInstrumentBalances(3, [
-        { instrument_id: "Amulet", admin_id: "DSO", amount: "1000", locked: false },
-        { instrument_id: "Amulet", admin_id: "DSO", amount: "300", locked: true },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "1000", locked: false },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "300", locked: true },
         { instrument_id: "Amulet", admin_id: "OtherAdmin", amount: "200", locked: false },
       ]),
     );
 
     const balances = await getBalance(contextWithReserve(0), "party");
 
-    expect(balances).toEqual([{ asset: { type: "native" }, value: 1500n, locked: 300n }]);
+    expect(balances).toEqual([
+      { asset: { type: "native" }, value: 1300n, locked: 300n },
+      {
+        asset: { type: "token", assetReference: "Amulet", assetOwner: "OtherAdmin" },
+        value: 200n,
+        locked: 0n,
+      },
+    ]);
   });
 
   it("locks the reserve once on top of the locked native rows", async () => {
     mockedGetBalanceFromNetwork.mockResolvedValue(
       createMockInstrumentBalances(3, [
-        { instrument_id: "Amulet", admin_id: "DSO", amount: "1000", locked: false },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "1000", locked: false },
         { instrument_id: "Amulet", admin_id: "OtherAdmin", amount: "500", locked: false },
-        { instrument_id: "Amulet", admin_id: "DSO", amount: "300", locked: true },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "300", locked: true },
       ]),
     );
 
     const [native] = await getBalance(contextWithReserve(100), "party");
 
-    expect(native).toEqual({ asset: { type: "native" }, value: 1800n, locked: 400n });
+    expect(native).toEqual({ asset: { type: "native" }, value: 1300n, locked: 400n });
+  });
+
+  it("fails when the DSO party can't be read, rather than guessing which rows are native", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(createMockInstrumentBalances(1));
+    mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+
+    await expect(getBalance(contextWithReserve(0), "party")).rejects.toThrow("gateway down");
   });
 
   it("locks exactly 1 CC for a reserve configured as 1e38", async () => {
     mockedGetBalanceFromNetwork.mockResolvedValue(
       createMockInstrumentBalances(1, [
-        { instrument_id: "Amulet", amount: (2n * 10n ** 38n).toString(), locked: false },
+        {
+          instrument_id: "Amulet",
+          admin_id: DSO,
+          amount: (2n * 10n ** 38n).toString(),
+          locked: false,
+        },
       ]),
     );
 
@@ -70,8 +101,8 @@ describe("getBalance", () => {
   it("caps the reserve at the unlocked native amount", async () => {
     mockedGetBalanceFromNetwork.mockResolvedValue(
       createMockInstrumentBalances(2, [
-        { instrument_id: "Amulet", amount: "40", locked: false },
-        { instrument_id: "Amulet", amount: "300", locked: true },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "40", locked: false },
+        { instrument_id: "Amulet", admin_id: DSO, amount: "300", locked: true },
       ]),
     );
 
