@@ -1,5 +1,6 @@
-import { biometricsTypeKey, type BiometricsKind } from "@features/platform-app-lock";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
+import { biometricsTypeKey } from "../biometricsType";
+import type { BiometricsKind } from "../biometricsTypes";
 
 export function useBiometricsTypeLabel(kind: BiometricsKind | undefined): string {
   const { t } = useTranslation();

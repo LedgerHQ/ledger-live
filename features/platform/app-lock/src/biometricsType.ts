@@ -4,16 +4,13 @@ const BIOMETRICS_TYPE_KEYS = {
   TouchID: "auth.enableBiometrics.touchid",
   FaceID: "auth.enableBiometrics.faceid",
   Fingerprint: "auth.enableBiometrics.fingerprint",
-} as const satisfies Partial<Record<BiometricsKind, string>>;
+  OpticID: undefined,
+  Face: undefined,
+  Iris: undefined,
+} as const satisfies Record<BiometricsKind, `auth.enableBiometrics.${string}` | undefined>;
 
-type WordedBiometricsKind = keyof typeof BIOMETRICS_TYPE_KEYS;
+type BiometricsTypeKey = (typeof BIOMETRICS_TYPE_KEYS)[keyof typeof BIOMETRICS_TYPE_KEYS];
 
-export type BiometricsTypeKey = (typeof BIOMETRICS_TYPE_KEYS)[WordedBiometricsKind];
-
-function hasWording(kind: BiometricsKind): kind is WordedBiometricsKind {
-  return Object.hasOwn(BIOMETRICS_TYPE_KEYS, kind);
-}
-
-export function biometricsTypeKey(kind: BiometricsKind): BiometricsTypeKey | undefined {
-  return hasWording(kind) ? BIOMETRICS_TYPE_KEYS[kind] : undefined;
+export function biometricsTypeKey(kind: BiometricsKind): BiometricsTypeKey {
+  return BIOMETRICS_TYPE_KEYS[kind];
 }

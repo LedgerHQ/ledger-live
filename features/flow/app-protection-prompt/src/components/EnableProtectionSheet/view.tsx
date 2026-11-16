@@ -1,4 +1,4 @@
-import { biometricsTypeKey } from "@features/platform-app-lock";
+import { useBiometricsTypeLabel } from "@features/platform-app-lock/native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { Lock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
@@ -30,10 +30,7 @@ export function EnableProtectionSheet({
   const { t } = useTranslation();
 
   const isBiometrics = variant === "biometrics";
-  const biometricsTypeLabelKey = biometricsKind ? biometricsTypeKey(biometricsKind) : undefined;
-  const biometricsType = biometricsTypeLabelKey
-    ? t(biometricsTypeLabelKey)
-    : (biometricsKind ?? "");
+  const biometricsType = useBiometricsTypeLabel(biometricsKind);
 
   const title = isBiometrics
     ? t("appLock.enableProtection.biometrics.title", { biometricsType })

@@ -1,4 +1,4 @@
-import { biometricsTypeKey } from "@features/platform-app-lock";
+import { useBiometricsTypeLabel } from "@features/platform-app-lock/native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import { InfoState } from "@shared/ui-info-state";
@@ -15,10 +15,7 @@ export function KeepProtectionSheet({
 }: KeepProtectionSheetProps): React.JSX.Element {
   const { t } = useTranslation();
 
-  const biometricsTypeLabelKey = biometricsKind ? biometricsTypeKey(biometricsKind) : undefined;
-  const biometricsType = biometricsTypeLabelKey
-    ? t(biometricsTypeLabelKey)
-    : (biometricsKind ?? "");
+  const biometricsType = useBiometricsTypeLabel(biometricsKind);
 
   return (
     <QueuedBottomSheet
