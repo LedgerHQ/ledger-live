@@ -4,13 +4,12 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
+import type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
   OverrideDeviceIntentExecutorHeader,
-  type DeviceIntentTrackingProperties,
-  type SourceFlow,
-} from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared/react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
