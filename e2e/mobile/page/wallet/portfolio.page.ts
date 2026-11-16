@@ -141,7 +141,7 @@ export default class PortfolioPage {
 
   @Step("Click on Add account button in portfolio")
   async addAccount() {
-    await this.cryptoAddressesAddAccountCta.scrollTo(this.emptyPortfolioList, { pixels: 500 });
+    await this.cryptoAddressesAddAccountCta.revealForTap(this.emptyPortfolioList);
     await this.cryptoAddressesAddAccountCta.tap();
   }
 
