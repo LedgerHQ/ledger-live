@@ -273,6 +273,17 @@ describe("coin-framework utils", () => {
       ],
       [
         "coin",
+        "optOut",
+        {},
+        {
+          parentType: "OPT_OUT",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "tokenAssociate",
         {},
         {
@@ -785,6 +796,7 @@ describe("coin-framework utils", () => {
 
       it.each([
         ["changeTrust", "changeTrust"],
+        ["optOut", "optOut"],
         ["send", "send"],
         ["send-legacy", "send-legacy"],
         ["send-eip1559", "send-eip1559"],

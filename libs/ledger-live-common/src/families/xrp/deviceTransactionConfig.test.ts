@@ -231,6 +231,44 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
   });
 });
 
+describe("getDeviceTransactionConfig for an opt-out", () => {
+  function makeOptOutInput(assetReference: string, noRipple?: boolean) {
+    const input = makeChangeTrustInput(assetReference, new BigNumber(0), noRipple);
+
+    return { ...input, transaction: { ...input.transaction, mode: "optOut" } as Transaction };
+  }
+
+  it.each([undefined, true, false])(
+    "lists no Flags for an IOU with noRipple %s",
+    async noRipple => {
+      const fields = await getDeviceTransactionConfig(makeOptOutInput(RLUSD_CODE, noRipple));
+
+      expect(fields).toEqual([
+        { type: "text", label: "Limit Amount", value: "0" },
+        { type: "text", label: "Currency", value: "RLUSD" },
+        { type: "address", label: "Issuer", address: ISSUER },
+        { type: "fees", label: "Fees" },
+      ]);
+    },
+  );
+
+  it("shows a 3-character code first in Limit Amount", async () => {
+    const fields = await getDeviceTransactionConfig(makeOptOutInput("USD"));
+
+    expect(fields).toEqual([
+      { type: "text", label: "Limit Amount", value: "USD 0" },
+      { type: "address", label: "Issuer", address: ISSUER },
+      { type: "fees", label: "Fees" },
+    ]);
+  });
+
+  it("lists only Fees for an MPT", async () => {
+    const fields = await getDeviceTransactionConfig(makeOptOutInput("0".repeat(47) + "A"));
+
+    expect(fields).toEqual([{ type: "fees", label: "Fees" }]);
+  });
+});
+
 describe("toDeviceCurrency", () => {
   it.each([
     [RLUSD_CODE, "RLUSD"],

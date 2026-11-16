@@ -15,7 +15,7 @@ export function standardOf(
   return [...standards].find(standard => standard === token.tokenType);
 }
 
-/** The tokens the account holds: a removed token keeps its token account, for its history, but loses its `xrpResources`. */
+/** The tokens the account holds: a token account without `xrpResources` holds no trust line. */
 export function heldXrpTokenIds(account: Account): ReadonlySet<string> {
   return new Set(
     (account.subAccounts ?? [])

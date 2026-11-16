@@ -260,6 +260,11 @@ export type BridgeApi = {
    */
   balanceListsEveryToken?: boolean;
   /**
+   * When true, a stored token missing from `getBalance` is no longer held: its sub-account goes at
+   * this sync. Left unset, a missing token is kept at 0 with its history.
+   */
+  dropsMissingTokens?: boolean;
+  /**
    * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair: on XRPL
    * `USD` and `usd` are two currencies, and so are `USD` from two issuers. Left unset, references
    * match in any case, as Stacks needs.
