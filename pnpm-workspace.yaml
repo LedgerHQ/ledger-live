@@ -68,10 +68,10 @@ catalog:
   "@ledgerhq/live-promise": 0.5.0
   "@ledgerhq/psbtv2": 0.7.0
   "@ledgerhq/hw-ledger-key-ring-protocol": 1.1.0
-  "@ledgerhq/ledger-key-ring-protocol": 1.2.0
+  "@ledgerhq/ledger-key-ring-protocol": 1.2.1
   "@ledgerhq/live-config": 3.10.0
   "@ledgerhq/live-env": 4.2.0
-  "@ledgerhq/live-currency-format": 0.17.0
+  "@ledgerhq/live-currency-format": 0.17.1
   "@ledgerhq/domain-service": 1.10.0
   "@ledgerhq/evm-tools": 2.1.0
   "@ledgerhq/lumen-design-core": 0.1.34
@@ -170,7 +170,7 @@ catalog:
   class-variance-authority: 0.7.1
   cross-env: 10.1.0
   crypto-browserify: 3.12.1
-  electron: 45.2.1
+  electron: 45.3.2
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0
@@ -251,12 +251,12 @@ catalog:
   "@nx/devkit": 24.0.2
   detox: 20.51.3
   "@nx/s3-cache": 5.0.7
-  oxlint: 1.90.0
+  oxlint: 1.93.0
   oxfmt: 0.75.0
   rimraf: 4.4.1
   zx: 8.8.5
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 16.5.1
+  "@ledgerhq/coin-evm": 16.5.4
   "@ledgerhq/coin-hypercore": 4.0.3
   "@ledgerhq/coin-module-framework": 11.0.1
   "@ledgerhq/coin-stellar": 12.1.2

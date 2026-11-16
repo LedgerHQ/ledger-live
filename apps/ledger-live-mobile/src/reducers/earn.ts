@@ -51,8 +51,6 @@ const handlers: ReducerMap<EarnState, EarnPayload> = {
 
 const storeSelector = (state: State): EarnState => state.earn;
 
-export const exportSelector = storeSelector;
-
 export const earnInfoModalSelector = createSelector(
   storeSelector,
   (state: EarnState) => state.infoModal,

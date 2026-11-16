@@ -11,8 +11,8 @@ import {
   type DeviceIntentTrackingProperties,
   type DeviceIntentExecutorHeaderContextValue,
   type SourceFlow,
-  useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "@ledgerhq/live-dmk-shared/react";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./ContextInitializer";

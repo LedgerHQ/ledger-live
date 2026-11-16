@@ -20,6 +20,17 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   header-override contract for platform-specific Device Intent Executor chrome
 - Centralises DMK configuration
 
+## Entry points
+
+- `@ledgerhq/live-dmk-shared` — everything that does not need React. It must not import `react`
+  or any `.tsx` file, so that non-React consumers (CLIs, coin testers) can read it from source.
+- `@ledgerhq/live-dmk-shared/react` — the React contexts, components and hooks:
+  `DeviceIntentTrackingProvider`, `useDeviceIntentTracking`,
+  `OverrideDeviceIntentExecutorHeader`, `DeviceIntentExecutorHeaderContext` and
+  `useDeviceIntentExecutorHeaderOverrideRequests`. Their types (`SourceFlow`,
+  `DeviceIntentTrackingProperties`, `DeviceIntentTrackingContextValue`,
+  `DeviceIntentExecutorHeaderContextValue`) stay exported from the root.
+
 ## Key exports / concepts
 
 - `deviceConnectivity/` — code shared by the device connection flows:
