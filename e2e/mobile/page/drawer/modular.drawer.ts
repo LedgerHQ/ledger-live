@@ -1,28 +1,25 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 
 export default class ModularDrawer {
-  private readonly bottomSheetId = (component: string) => `bottom-sheet-${component}`;
-
-  private readonly accountItem = "account-item";
-  private readonly searchBarId = "modular-drawer-search-input";
-  private readonly selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
-  private readonly networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
-
-  private readonly assetScreenId = "Asset-screen";
-  private readonly accountScreenId = "Account-screen";
-  private readonly networkScreenId = "Network-screen";
-  private readonly addNewOrExistingAccountButton = "add-new-account-button";
-  private readonly basedTitleIdMAD = `${this.bottomSheetId("header-title")}`;
-  private readonly drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
-  private readonly drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
-
-  private readonly accountItemNameId = (name: string) => `account-item-name-${name}`;
-
-  private readonly searchBar = () => getElementById(this.searchBarId);
-  private readonly assetItemByTicker = (ticker: string) => new RegExp(`asset-item-${ticker}`, "i");
-  private readonly networkItemIdMAD = (networkId: string) =>
-    new RegExp(`network-item-${networkId}`, "i");
+  private readonly accountItem = byId("account-item");
+  private readonly searchBar = byId("modular-drawer-search-input");
+  private readonly selectCryptoScrollView = byId("modular-drawer-select-crypto-scrollView");
+  private readonly networkSelectionScrollView = byId("modular-drawer-network-selection-scrollView");
+  private readonly assetScreen = byId("Asset-screen");
+  private readonly accountScreen = byId("Account-screen");
+  private readonly networkScreen = byId("Network-screen");
+  private readonly addNewOrExistingAccountButton = byId("add-new-account-button");
+  private readonly sheetTitle = byId("bottom-sheet-header-title");
+  private readonly drawerCloseButton = byId("bottom-sheet-header-close-button");
+  private readonly drawerBackButton = byId("bottom-sheet-header-back-button");
+  private readonly accountItemName = (name: string) => byId(`account-item-name-${name}`);
+  private readonly assetItem = (ticker: string) => byId(new RegExp(`asset-item-${ticker}`, "i"));
+  private readonly assetItemWithText = (assetItemId: string, text: RegExp) =>
+    byIdWithDescendantText({ id: assetItemId, text });
+  private readonly networkItem = (networkId: string) =>
+    byId(new RegExp(`network-item-${networkId}`, "i"));
 
   getNetworkNameForAccount(account: Account): string {
     return account?.parentAccount === undefined
@@ -32,63 +29,64 @@ export default class ModularDrawer {
 
   @Step("Select first account in modular drawer")
   async selectFirstAccount() {
-    await waitForElement(getElementById(this.accountItem));
-    await tapById(this.accountItem, 0);
+    await this.accountItem.tap();
   }
 
   @Step("Select first account in modular drawer if asked")
   async selectFirstAccountIfAsked(): Promise<void> {
-    if (await IsIdVisible(this.accountScreenId)) {
+    if (await this.accountScreen.isVisible()) {
       await this.selectFirstAccount();
     }
   }
 
   @Step("Select Account {{{0}}}")
   async selectAccount(accountName: string): Promise<void> {
-    const accountItemId = this.accountItemNameId(accountName);
-    await tapById(accountItemId);
+    await this.accountItemName(accountName).tap();
   }
 
   @Step("Tap on drawer back button")
   async tapDrawerBackButton() {
-    await tapById(this.drawerBackButtonId);
+    await this.drawerBackButton.tap();
   }
 
   @Step("Validate account(s) present on account list {{{0}}}")
   async validateNumberOfAccounts(expectedCount: number) {
-    const elements = await countElements(getElementsById(this.accountItem));
-    jestExpect(elements).toBe(expectedCount);
+    await this.accountItem.expectCount(expectedCount);
   }
 
   @Step("Perform search on modular drawer by ticker {{{0}}}")
-  async performSearchByTicker(ticker: string, closeKeyboard = true) {
-    await typeTextByElement(this.searchBar(), ticker, closeKeyboard);
+  async performSearchByTicker(ticker: string) {
+    await this.searchBar.replaceText(ticker);
+  }
+
+  @Step("Perform search on modular drawer by ticker {{{0}}}, keeping the keyboard open")
+  async performSearchByTickerKeepKeyboard(ticker: string) {
+    await this.searchBar.replaceTextKeepKeyboard(ticker);
   }
 
   @Step("Select currency in receive list by ticker {{{0}}}")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
-    const assetItemId = this.assetItemByTicker(ticker);
-    if (!(await IsIdVisible(assetItemId))) {
+    const assetItem = this.assetItem(ticker);
+    if (!(await assetItem.isVisible())) {
       await this.performSearchByTicker(ticker);
-      await scrollToId(assetItemId, this.selectCryptoScrollViewId);
+      await assetItem.scrollTo(this.selectCryptoScrollView);
     }
-    await tapById(assetItemId, 0);
+    await assetItem.tap();
   }
 
   @Step("Check asset {{{0}}} amount is masked in discreet mode")
   private async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
     await this.performSearchByTicker(ticker);
-    const assetItemId = this.assetItemByTicker(ticker);
-    await waitForElement(getElementById(assetItemId));
-    await detoxExpect(getElementById(assetItemId)).toBeVisible();
+    await this.assetItem(ticker).waitVisible();
+    await this.assetItem(ticker).expectVisible();
 
-    const assetItemIdentifier = await getIdByRegexp(assetItemId);
-    const fiatMask = /\$\*\*\*/;
-    const cryptoMask = new RegExp(`\\*\\*\\*\\s+${ticker}`, "i");
-
-    await detoxExpect(
-      getElementByIdWithDescendantTexts(assetItemIdentifier, fiatMask, cryptoMask).atIndex(0),
-    ).toBeVisible();
+    // The pattern can match several rows: check both masks on the first one.
+    const assetItemId = await this.assetItem(ticker).getIdentifier();
+    await this.assetItemWithText(assetItemId, /\$\*\*\*/).expectVisible();
+    await this.assetItemWithText(
+      assetItemId,
+      new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"),
+    ).expectVisible();
   }
 
   @Step("Check listed asset amounts are masked in discreet mode {{{0}}}")
@@ -100,32 +98,19 @@ export default class ModularDrawer {
 
   @Step("Select network in list if needed {{{0}}}")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
-    if (await IsIdVisible(this.networkScreenId)) {
+    if (await this.networkScreen.isVisible()) {
       await this.selectNetwork(networkName);
     }
   }
 
   @Step("Select network {{{0}}}")
   async selectNetwork(networkName: string): Promise<void> {
-    const id = this.networkItemIdMAD(networkName);
-    if (!(await IsIdVisible(id))) {
-      await getElementById(this.basedTitleIdMAD).swipe("up");
-      await revealForTap(id, { container: this.networkSelectionScrollViewId });
+    const networkItem = this.networkItem(networkName);
+    if (!(await networkItem.isVisible())) {
+      await this.sheetTitle.swipe("up");
+      await networkItem.revealForTap(this.networkSelectionScrollView);
     }
-    await tapById(id, 0);
-  }
-
-  private async swipeToNetworkItem(id: string | RegExp, maxAttempts = 5): Promise<void> {
-    const scrollView = getElementById(this.networkSelectionScrollViewId);
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      if (await IsIdVisible(id)) return;
-      await scrollView.swipe("up", "slow", 0.2, 0.5);
-    }
-    // The last swipe is only useful if its result is checked, so probe once more before failing.
-    if (await IsIdVisible(id)) return;
-    throw new Error(
-      `Network item ${String(id)} not reachable after ${maxAttempts} swipes in ${this.networkSelectionScrollViewId}`,
-    );
+    await networkItem.tap();
   }
 
   private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
@@ -151,74 +136,69 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list {{{0}}}")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
-    await waitForElement(getElementById(this.accountScreenId));
-    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select account.*/i);
+    await this.accountScreen.waitVisible();
+    await this.sheetTitle.expectTextMatching(/Select account.*/i);
     if (!accounts) {
-      await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
+      await this.accountItem.expectNotVisible();
       return;
     }
     for (const account of accounts) {
-      const accountItemId = this.accountItemNameId(account);
-      await detoxExpect(getElementById(accountItemId)).toBeVisible();
+      await this.accountItemName(account).expectVisible();
     }
   }
 
   @Step("Validate account name(s) visible on account list {{{0}}}")
   async validateAccountNames(accounts: string[]): Promise<void> {
     for (const account of accounts) {
-      const accountItemId = this.accountItemNameId(account);
-      await detoxExpect(getElementById(accountItemId)).toBeVisible();
+      await this.accountItemName(account).expectVisible();
     }
   }
 
   @Step("Validate network(s) present on network list {{{0}}}")
   async validateNetworksScreen(networks: string[]): Promise<void> {
-    await waitForElement(getElementById(this.networkScreenId));
-    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select network.*/i);
-    await getElementById(this.basedTitleIdMAD).swipe("up");
+    await this.networkScreen.waitVisible();
+    await this.sheetTitle.expectTextMatching(/Select network.*/i);
+    await this.sheetTitle.swipe("up");
     for (const network of networks) {
-      const networkItemId = this.networkItemIdMAD(network);
-      await this.swipeToNetworkItem(networkItemId);
-      await detoxExpect(getElementById(networkItemId)).toBeVisible();
+      await this.networkItem(network).scrollTo(this.networkSelectionScrollView);
+      await this.networkItem(network).expectVisible();
     }
   }
 
   @Step("Validate assets present on account list {{{0}}}")
   async validateAssetsScreen(assets: string[]): Promise<void> {
-    await waitForElement(getElementById(this.assetScreenId));
-    jestExpect(await getLabelOfElement(this.basedTitleIdMAD)).toMatch(/Select asset.*/i);
+    await this.assetScreen.waitVisible();
+    await this.sheetTitle.expectLabelMatching(/Select asset.*/i);
+    await this.sheetTitle.swipe("up");
     for (const asset of assets) {
-      const assetItemId = this.assetItemByTicker(asset);
-      await detoxExpect(getElementById(assetItemId)).toBeVisible();
+      await this.assetItem(asset).expectVisible();
     }
   }
 
   @Step("Tap on add new or existing account button")
   async tapAddNewOrExistingAccountButtonMAD(): Promise<void> {
-    await tapById(this.addNewOrExistingAccountButton);
+    await this.addNewOrExistingAccountButton.tap();
   }
 
   @Step("Expect (Select Asset) page")
   async checkSelectAssetPage() {
-    await waitForElement(getElementById(this.basedTitleIdMAD));
-    await detoxExpect(getElementById(this.basedTitleIdMAD)).toBeVisible();
-    await detoxExpect(this.searchBar()).toBeVisible();
+    await this.sheetTitle.waitVisible();
+    await this.sheetTitle.expectVisible();
+    await this.searchBar.expectVisible();
   }
 
   @Step("Tap on drawer close button")
   async tapDrawerCloseButton(options?: { onlyIfVisible: boolean }) {
-    options = options ?? { onlyIfVisible: false };
-    if (options.onlyIfVisible && !(await IsIdVisible(this.drawerCloseButtonId))) {
+    if (options?.onlyIfVisible && !(await this.drawerCloseButton.isVisible())) {
       return;
     }
-    await waitForElement(getElementById(this.drawerCloseButtonId));
-    await tapById(this.drawerCloseButtonId);
+    await this.drawerCloseButton.tap();
   }
 
   // iOS counts a view flush with the sheet edge as hidden
   // wait on the inset search field instead of the container
   @Step("Wait for modular drawer search bar")
   async waitForSearchBar() {
-    await waitForFullyVisibleById(this.searchBarId);
+    await this.searchBar.waitFullyVisible();
   }
 }

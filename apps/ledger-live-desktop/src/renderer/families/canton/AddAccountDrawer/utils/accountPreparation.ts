@@ -1,53 +1,12 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
-
-export type AddAccountsConfig = {
-  selectedAccounts: Account[];
-  editedNames: { [accountId: string]: string };
-  isReonboarding?: boolean;
-  accountToReonboard?: Account;
-  onboardingResult?: {
-    completedAccount: Account;
-  };
-};
-
-export function getCreatableAccount(
-  selectedAccounts: Account[],
-  isReonboarding?: boolean,
-  accountToReonboard?: Account,
-): Account | undefined {
-  if (isReonboarding && accountToReonboard) {
-    return accountToReonboard;
-  }
-  return selectedAccounts.find(account => !account.used);
-}
 
 export function getImportableAccounts(selectedAccounts: Account[]): Account[] {
   // Already-onboarded Canton accounts are importable even when unfunded (used=false). LIVE-32985
   return selectedAccounts.filter(
     account => account.used || (isCantonAccount(account) && account.cantonResources.isOnboarded),
   );
-}
-
-function resolveAccountName(
-  account: Account,
-  editedNames: { [accountId: string]: string },
-): string {
-  return editedNames[account.id] || getDefaultAccountName(account);
-}
-
-export function resolveCreatableAccountName(
-  creatableAccount: Account | undefined,
-  currency: CryptoCurrency,
-  editedNames: { [accountId: string]: string },
-  importableAccountsCount: number,
-): string {
-  if (!creatableAccount) {
-    return `${currency.name} ${importableAccountsCount + 1}`;
-  }
-  return resolveAccountName(creatableAccount, editedNames);
 }
 
 export function prepareAccountsForReonboarding(
@@ -107,21 +66,4 @@ export function prepareAccountsForNewOnboarding(
   );
 
   return { accounts, renamings };
-}
-
-export function prepareAccountsForAdding(config: AddAccountsConfig): {
-  accounts: Account[];
-  renamings: { [accountId: string]: string };
-} {
-  const { selectedAccounts, editedNames, isReonboarding, accountToReonboard, onboardingResult } =
-    config;
-
-  const importableAccounts = getImportableAccounts(selectedAccounts);
-  const completedAccount = onboardingResult?.completedAccount;
-
-  if (isReonboarding && completedAccount && accountToReonboard) {
-    return prepareAccountsForReonboarding(accountToReonboard, completedAccount, editedNames);
-  }
-
-  return prepareAccountsForNewOnboarding(importableAccounts, completedAccount, editedNames);
 }

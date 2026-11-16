@@ -1,8 +1,8 @@
 import React from "react";
 import { CardLoginView } from "./CardLoginView";
 import { useCardLoginViewModel } from "./useCardLoginViewModel";
-import { openHostedUrlInSecureBrowser } from "./openHostedLogin.native";
-import { mobileWallet } from "./mobileWallet.native";
+import { openHostedUrlInSecureBrowser } from "./openHostedLogin";
+import { mobileWallet } from "./mobileWallet";
 import type { CardLoginProps } from "./CardLogin.types";
 
 export function CardLogin({

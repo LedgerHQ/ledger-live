@@ -5,7 +5,7 @@ import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { EvmTransactionEIP1559 } from "@ledgerhq/live-common/families/evm/types";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";

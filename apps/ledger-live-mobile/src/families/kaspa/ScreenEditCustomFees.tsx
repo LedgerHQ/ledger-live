@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";

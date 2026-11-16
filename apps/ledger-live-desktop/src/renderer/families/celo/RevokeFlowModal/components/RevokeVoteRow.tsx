@@ -4,7 +4,7 @@ import {
   getDefaultExplorerView,
   CryptoCurrency,
 } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";

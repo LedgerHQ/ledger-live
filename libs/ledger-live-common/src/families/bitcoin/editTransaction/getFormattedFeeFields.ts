@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
 
 /**

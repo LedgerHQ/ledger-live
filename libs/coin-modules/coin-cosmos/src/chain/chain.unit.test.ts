@@ -20,7 +20,6 @@ describe("cryptoFactory test", () => {
       "nyx",
       "persistence",
       "secret_network",
-      "stargaze",
       "stride",
       "mantra",
       "crypto_org",

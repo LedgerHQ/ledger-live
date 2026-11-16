@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types/bridge";
 

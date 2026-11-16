@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type Transport from "@ledgerhq/hw-transport";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";

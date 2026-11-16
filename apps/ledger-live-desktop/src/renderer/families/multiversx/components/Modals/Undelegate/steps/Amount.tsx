@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, Fragment } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

@@ -1,11 +1,12 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: jest.fn(),
@@ -152,7 +153,7 @@ const mockData = (
   return search;
 };
 
-function renderHook(availableText = "", resetViewState = () => {}) {
+function renderHook(availableText = "", resetViewState = () => {}, isDeviceBlocked = false) {
   act(() => {
     root.render(
       <ContactsI18nTestProvider>
@@ -162,6 +163,7 @@ function renderHook(availableText = "", resetViewState = () => {}) {
             availableText={availableText}
             resetViewState={resetViewState}
           />
+          {isDeviceBlocked && <DeviceBlocker />}
         </RecipientScannerProvider>
       </ContactsI18nTestProvider>,
     );
@@ -1096,6 +1098,28 @@ describe("useSendHeaderModel", () => {
 
       expect(latestVM?.title).toBe("");
       expect(latestVM?.descriptionText).toBe("");
+    });
+  });
+
+  describe("handleClose", () => {
+    it("closes the flow", () => {
+      mockNavigation();
+      const { close } = mockActions();
+      renderHook();
+
+      act(() => latestVM?.handleClose());
+
+      expect(close).toHaveBeenCalledTimes(1);
+    });
+
+    it("ignores the close while the device blocks the UI", () => {
+      mockNavigation();
+      const { close } = mockActions();
+      renderHook("", () => {}, true);
+
+      act(() => latestVM?.handleClose());
+
+      expect(close).not.toHaveBeenCalled();
     });
   });
 });

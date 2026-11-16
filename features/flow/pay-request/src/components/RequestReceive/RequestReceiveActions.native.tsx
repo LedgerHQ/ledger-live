@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, TileButton } from "@ledgerhq/lumen-ui-rnative";
-import { useRequestReceiveActions } from "./useRequestReceiveActions.native";
+import { useRequestReceiveActions } from "./useRequestReceiveActions";
 import type { RequestReceiveActionId } from "../../types";
 
 const VERIFY_LAYER = 2;

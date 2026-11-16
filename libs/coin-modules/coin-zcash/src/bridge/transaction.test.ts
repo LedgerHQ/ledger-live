@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { Account } from "@ledgerhq/types-live";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";

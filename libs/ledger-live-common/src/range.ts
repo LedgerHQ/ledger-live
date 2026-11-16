@@ -1,5 +1,5 @@
 // Utility to deal with ranges
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 export type Range = {
   initial: BigNumber;
   min: BigNumber;

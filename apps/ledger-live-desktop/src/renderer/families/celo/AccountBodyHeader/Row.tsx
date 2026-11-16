@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";

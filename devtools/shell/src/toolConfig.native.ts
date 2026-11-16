@@ -1,4 +1,5 @@
 import {
+  ArrowDown,
   Asterisk,
   Chart2,
   ChartPie,
@@ -34,6 +35,7 @@ const TOOL_ICONS: Readonly<Record<ToolId, IconComponent>> = {
   "account-balance-history": Chart2,
   "account-operation": TransferHorizontal,
   "pay-card": CreditCard,
+  receive: ArrowDown,
 };
 
 /** The icon of a tool, or the icon of its category when the tool has none of its own. */

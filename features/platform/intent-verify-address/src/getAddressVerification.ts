@@ -46,15 +46,26 @@ function mapVerifyAddressError(error: unknown): VerifyAddressDeviceState | undef
   return undefined;
 }
 
-export function getAddressVerification(
-  verify: () => Promise<{ address: string }>,
-): VerifyAddressDeviceAction {
+/** Called by the host once the device request is actually sent (e.g. on the first APDU). */
+export type NotifyDeviceRequest = () => void;
+
+export type VerifyAddressOnDevice = (
+  onDeviceRequest: NotifyDeviceRequest,
+) => Promise<{ address: string }>;
+
+export function getAddressVerification(verify: VerifyAddressOnDevice): VerifyAddressDeviceAction {
   let cancelled = false;
 
   const observable = new Observable<VerifyAddressDeviceState>(subscriber => {
-    subscriber.next({ type: "awaiting-confirmation" });
+    let hasNotifiedDeviceRequest = false;
 
-    verify()
+    const onDeviceRequest: NotifyDeviceRequest = () => {
+      if (cancelled || subscriber.closed || hasNotifiedDeviceRequest) return;
+      hasNotifiedDeviceRequest = true;
+      subscriber.next({ type: "awaiting-confirmation" });
+    };
+
+    verify(onDeviceRequest)
       .then(result => {
         if (cancelled) return;
         subscriber.next({ type: "confirmed", address: result.address });

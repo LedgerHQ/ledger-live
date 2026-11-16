@@ -121,7 +121,7 @@
     "addressCopied" : "アドレスをコピーしました",
     "addressCopiedSuspicious" : "コピーしたアドレスとクリップボードのアドレスが一致しません。",
     "experimentalFeature" : "試験的",
-    "featureFlags" : "機能フラグ",
+    "devTools" : "開発ツール",
     "ldmkEnabled" : "LDMKトランスポート",
     "information" : "インフォメーション",
     "search" : "検索…",
@@ -2128,6 +2128,14 @@
       "link" : "Stellar資産の詳細",
       "seeTokens" : "資産を表示 ({{tokenCount}})",
       "hideTokens" : "資産を非表示 ({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "トークン",
+      "cta" : "トークンの追加",
+      "placeholder" : "{{currencyName}}アカウントにトークンを追加できます。",
+      "link" : "XRP Ledgerトークンについての詳細はこちら",
+      "seeTokens" : "トークンを表示 ({{tokenCount}})",
+      "hideTokens" : "トークンを非表示 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -3019,18 +3027,19 @@
       "insufficientFunds" : "数量と{{provider}}のエネルギーレンタル手数料を支払うのに必要な{{feeCurrency}}が不足しています。"
     },
     "sponsoredRentSignature" : {
-      "title" : "ステップ 1/2",
+      "title" : "ネットワーク手数料のスポンサーシップを承認",
       "strategy" : "エネルギーレンタル - {{provider}}",
       "crafting" : "エネルギーレンタルを準備中…",
       "submitting" : "エネルギーレンタルの支払いを送信中…",
-      "feeLabel" : "レンタル手数料"
+      "feeLabel" : "レンタル手数料",
+      "terms" : "このトランザクションへの署名により、<0>{{provider}}の利用規約</0>に同意したことになります。"
     },
     "sponsoredTransferSignature" : {
-      "title" : "ステップ 2/2"
+      "title" : "送金の確認"
     },
     "sponsoredPolling" : {
-      "title" : "エネルギーの提供を待機中",
-      "waiting" : "{{provider}}はレンタルされたエネルギーを提供しています。少々お時間がかかる場合があります。",
+      "title" : "エネルギーを提供中です。",
+      "waiting" : "通常、これには最大30秒かかります。",
       "elapsed" : "経過時間：{{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3090,6 @@
         "subtitle" : "シールド",
         "pendingNoticeTitle" : "満期を迎える資金",
         "pendingNotice" : "一部のシールドノートはまだ成熟中のため、使用できない可能性があります。"
-      },
-      "aleoPublic" : {
-        "title" : "公開残高"
-      },
-      "aleoPrivate" : {
-        "title" : "プライベート残高"
       },
       "zeroBalance" : {
         "warning" : "利用可能残高がありません"
@@ -4274,6 +4277,70 @@
           "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "トークンの追加",
+      "steps" : {
+        "token" : {
+          "title" : "トークン",
+          "selectLabel" : "トークンを選択",
+          "allAdded" : "すでに利用可能なすべてのトークンをこのアカウントに追加しています。",
+          "loadError" : "トークンリストを読み込めませんでした。",
+          "info" : "トークンを追加すると、ネットワーク手数料を支払うトランザクションが送信され、トークンを保有している間はXRPが確保されます。トランザクション履歴に表示されます。"
+        },
+        "settings" : {
+          "title" : "設定",
+          "limit" : "トラストリミット",
+          "max" : "最大",
+          "limitInfo" : "トラストリミットは、アカウントが保有を受け入れる最大の{{token}}量です。"
+        },
+        "review" : {
+          "title" : "確認",
+          "token" : "トークン",
+          "issuer" : "発行者"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "{{token}}トークンが正常に追加されました",
+            "text" : "XRPアカウントで<0>{{token}}</0>の受け取りが可能になりました。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "トークン設定",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}}のトラストラインの限度額が更新されました",
+            "text" : "お客様のXRPアカウントで、新しい限度額まで<0>{{token}}</0>の受け入れが可能になりました。"
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "editSettings" : "設定を編集",
+      "trustLimit" : "信用限度",
+      "trustLimitTooltip" : "アカウントが保有できる、このトークンの最大数量。"
+    },
+    "rippling" : {
+      "label" : "リップリング",
+      "on" : "オン",
+      "off" : "オフ",
+      "warning" : "これをオンにすると、他のユーザーによる支払いで、同一の通貨コードを持つトークン間での残高移動が許可されます。自分が何をしているのか理解している場合にのみ、オンにしてください。"
+    },
+    "receive" : {
+      "addToken" : "トークンの追加",
+      "addTokenFirst" : "XRP Ledgerトークンを受け取るには、まずアカウントに追加してください。",
+      "tokenNotHeld" : "お客様のアカウントは{{token}}を保有していません。受け取る前に、再度追加してください。"
     }
   },
   "stellar" : {
@@ -7223,6 +7290,9 @@
       "title" : "このアカウントには保留中の取引があります。",
       "description" : "取引が完了するまでお待ちください。"
     },
+    "TokenNonTransferable" : {
+      "title" : "このトークンは送信できません。そのスマートコントラクトは転送を許可していません。"
+    },
     "AccountNameRequired" : {
       "title" : "アカウント名が必要です",
       "description" : "アカウント名を入力してください。"
@@ -7725,6 +7795,14 @@
       "title" : "ネットワークエラー",
       "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
+    "WithdrawApiError" : {
+      "title" : "出金は送信されませんでした",
+      "description" : "無期限先物の残高からは何も出金されていません。閉じる、新しい見積もりで再度お試しください。"
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "出金を確認できませんでした",
+      "description" : "まだ処理が完了する可能性があります。再試行する前に、スワップ履歴を確認してください。"
+    },
     "WrongDeviceForAccount" : {
       "title" : "問題が発生しました。",
       "description" : "Ledgerデバイスに、選択したアカウントのリカバリーフレーズ、またはパスフレーズが設定されていることを確認してください。"
@@ -7892,6 +7970,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "ステーキングするには少なすぎる数量です"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "お使いのバリデーターはステーキングを受け付けていません。ステーキングするにはバリデーターを変更してください。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -7995,6 +8076,44 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "この受取人には宛先タグが必要です。"
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "このトークンタイプにはまだ対応していません。"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "数量の桁数が多すぎます。",
+      "description" : "XRP Ledgerトークンが対応している有効桁数は最大16桁です。"
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "限度額は0より大きくする必要があります",
+      "description" : "このトークンの保有を停止するには、代わりに削除してください。"
+    },
+    "XrpTokenFrozen" : {
+      "title" : "このトークンをこの受取人に送信することはできません",
+      "description" : "発行元がそれを凍結したか、またはアカウントによる保有を承認していません。凍結されたトークンは、依然として発行元に戻る可能性があります。"
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "この受取人は{{assetCode}}を受け取ることができません。",
+      "description" : "受取人が最初にこのトークンを追加する必要があるか、または発行体がこの送金を許可していない可能性があります。"
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "この数量は送金できません",
+      "description" : "受取人の限度額または発行元の送金手数料により許可されていません。数量を減らしてください。"
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "発行元がこのリクエストを拒否しました",
+      "description" : "このトークンの発行者が新規ホルダーを受け入れていないか、またはトークンが存在しません。"
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "このトランザクションは失敗します。",
+      "description" : "XRP Ledgerが{{code}}でこれを拒否しました。"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "このトランザクションには対応していません。"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "このトークンが追加されている間、アカウントの{{amount}}がロックされます。",
+      "description" : "トークンを削除すると戻ります。"
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
@@ -9625,6 +9744,74 @@
     "description" : "このアカウントは無期限先物トレードに関連しています。このアカウントではトランザクション操作はサポートされていません",
     "cta" : "無期限先物を開く"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "署名を準備中...",
+      "title" : "{{productName}}でアカウントの所有権を確認してください。",
+      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。",
+      "settingUp" : {
+        "title" : "トレードアカウントを設定中"
+      },
+      "setUp" : {
+        "created" : "トレードアカウントが作成されました。",
+        "found" : "トレードアカウントが見つかりました。",
+        "description" : "トレードアカウントの使用準備が整いました。",
+        "continue" : "続行"
+      },
+      "mismatch" : {
+        "title" : "この署名はアカウントとマッチしません",
+        "description" : "このアカウントを保持するLedgerを接続してください（パスフレーズを使用している場合は同じパスフレーズを使用してください）。その後、再度お試しください。"
+      },
+      "setupFailed" : {
+        "title" : "トレードアカウントを設定できませんでした。",
+        "failed-deploy" : "MoonPayはトレードウォレットをデプロイできませんでした。",
+        "failed-permission" : "MoonPayはトレードウォレットの権限を設定できませんでした。",
+        "timeout" : "設定に時間がかかりすぎています。",
+        "unavailable" : "MoonPayに接続できませんでした。",
+        "unknown" : "設定中に問題が発生しました。"
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "将来の出来事で取引する",
+        "subtitle" : "イベントの結果を予測してトレードできる、世界最大の予測市場にアクセスできるようになりました。MoonPay提供。",
+        "items" : {
+          "polymarket" : {
+            "title" : "Ledger WalletでPolymarketにアクセス",
+            "subtitle" : "Ledger Walletでご利用可能になりました"
+          },
+          "markets" : {
+            "title" : "スポーツ、テック、暗号資産、天気、政治",
+            "subtitle" : "さらに、すべての市場を見る"
+          },
+          "clearSign" : {
+            "title" : "すべてクリア署名する",
+            "subtitle" : "トレードする数量を指定し、クリアサインします。"
+          }
+        },
+        "discover" : "予測をアプリ一覧",
+        "learnMore" : "詳細はこちら"
+      },
+      "terms" : {
+        "title" : "利用規約に同意したものとみなされます",
+        "body" : "予測市場は投機的で、大きなリスクを伴うため、すべてのユーザーに適しているとは限りません。これらの市場でのトレードには、以下のような重大なリスクが伴います：資金の全損（ポジションはその価値のすべてを失う可能性があります）；市場および解決リスク（結果は各市場のルールに基づいて決定されますが、これはお客様の予想と異なる場合があります）；流動性リスク（希望する価格で、またはまったくポジションを売却できない可能性があります）；およびスマートコントラクトリスク（コードの脆弱性）。先に進む前に、これらのリスクを慎重に評価し、各市場の仕組みを理解してください。詳細については、<termsLink>利用規約</termsLink>をご参照ください。",
+        "checkbox" : "お客様は上記の免責事項を読み、理解したこと、および予測市場でのトレードに伴うリスクを受け入れることに同意するものとします。",
+        "cta" : "同意して続行"
+      },
+      "consent" : {
+        "title" : "MoonPay経由でPolymarketでのトレードにクリア署名する",
+        "description" : "トレードに署名し、Predictionsの残高を引き出すためのLedgerウォレットのアドレスを選択してください。",
+        "bullets" : {
+          "dedicatedWallet" : "専用のトレード用ウォレット：MoonPay Tradeは、Polymarketでのアクティビティ専用のウォレットを作成します。トレードする予定の資金のみを入金してください。Polymarketへの直接ログインはサポートされていません。",
+          "secureSigning" : "安全な署名：すべてのトレード指示は、選択したLedgerウォレットのアドレスを使用して明確に署名されます。",
+          "withdraw" : "いつでも出金可能：いつでも好きなときに、トレード残高をLedgerウォレットに戻すことができます。"
+        },
+        "checkbox" : "続行することで、お客様はMoonPay Tradeウォレットアドレスを作成すること、および選択したLedgerウォレットアドレスに取引指示の署名と出金時の資金の受け取りを許可することに同意したことになります。",
+        "cta" : "続行",
+        "footer" : "暗号資産トランザクションサービスは、サードパーティプロバイダーであるMoonPayによって提供されます。Ledgerはアドバイスや推奨を提供しておりません。"
+      }
+    }
+  },
   "portfolio" : {
     "title" : "ホーム",
     "today" : "今日",
@@ -9655,6 +9842,10 @@
     "borrow" : {
       "title" : "ローン",
       "description" : "ステーブルコインを借りる"
+    },
+    "predictions" : {
+      "title" : "予測",
+      "description" : "未来のポジション"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10303,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "署名する時間",
-          "description" : "お使いのLedger署名用デバイスは、このトランザクションが使用する各レコードを承認します。プライベート残高からより多くの額を送金すると、より多くのレコードが使用され、時間がかかる場合があります。"
+          "label" : "推定時間",
+          "description" : "プライベート残高からより多くの額を送金すると、より多くのレコードが使用され、それぞれに処理時間が追加されます。数量が多いほど、確認に時間がかかります。"
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10737,7 @@
       "copied" : "コピー済み",
       "edit" : "編集",
       "delete" : "削除",
+      "share" : "共有する",
       "networkTag" : "{{name}}ネットワーク"
     },
     "detailActions" : {
@@ -10655,11 +10847,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "アカウントのパフォーマンスをお探しですか？",
+      "description" : "すべてのパフォーマンスデータは、アナリティクスページでご確認いただけるようになりました。",
+      "cta" : "アナリティクスに移動",
+      "dismiss" : "アナリティクスの紹介を閉じる"
+    },
     "header" : {
       "settings" : "アカウント設定"
     },
     "assets" : {
-      "title" : "資産"
+      "title" : "資産",
+      "add" : "追加"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11385,14 @@
     "depositDetailTitle" : "入金の詳細",
     "depositAmountLabel" : "入金数量",
     "depositReceiveLabel" : "受け取るアカウント",
-    "depositCTA" : "入金"
+    "depositCTA" : "入金",
+    "withdrawTitle" : "SwapKit経由で出金",
+    "withdrawSubtitle" : "パートナーであるSwapKitが、1回のトランザクションでスワップと出金を管理します。これらはすべて、Ledgerデバイスによって安全に保護されます。",
+    "withdrawDetailTitle" : "出金の詳細",
+    "withdrawReceiveLabel" : "受け取るアカウント",
+    "networkFeesLabel" : "ネットワーク手数料",
+    "totalDebitedLabel" : "合計出金額",
+    "withdrawCTA" : "出金"
   },
   "perpsDeposit" : {
     "title" : "入金",
@@ -11222,6 +11428,9 @@
       "currenciesUnavailable" : "引き出し先の資産を読み込むことができません。後でもう一度お試しください。"
     }
   },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "出金の署名"
+  },
   "perpsDepositSign" : {
     "a11yTitle" : "入金の署名",
     "terms" : "このトランザクションに署名することで、私は<termsLink>SwapKit by NEAR Intentsの利用規約</termsLink>に同意します。"
@@ -11235,5 +11444,13 @@
     "dialogTitle" : "トランザクションの詳細",
     "title" : "無期限先物に資金を追加",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "accountAnalytics" : {
+    "assets" : "資産フィルター",
+    "accounts" : "アカウントフィルター",
+    "allAssets" : "全資産",
+    "allAccounts" : "すべてのアカウント",
+    "error" : "アナリティクスを読み込めません。もう一度お試しください。",
+    "unavailable" : "この選択に対するデータは利用できません。"
   }
 }

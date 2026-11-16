@@ -44,20 +44,20 @@ describe("Market banner", () => {
 
     await app.portfolio.expectMarketBannerVisible();
     await app.portfolio.tapMarketBannerTitle();
-    await app.market.expectMarketRowTitle(CURRENCY);
-    await app.market.goBackToPortfolio();
+    await app.market.expectMarketRowVisible(CURRENCY);
+    await app.market.goBack();
 
     await app.portfolio.expectMarketBannerVisible();
     await app.portfolio.swipeMarketBannerToViewAll();
     await app.portfolio.tapMarketBannerViewAll();
-    await app.market.expectMarketRowTitle(CURRENCY);
+    await app.market.expectMarketRowVisible(CURRENCY);
 
     await app.market.expectFiltersVisible();
 
     await app.market.openAssetPage(CURRENCY);
     await app.market.starFavoriteCoin();
     await app.market.backToAssetList();
-    await app.market.filterStaredAsset();
-    await app.market.expectMarketRowTitle(CURRENCY);
+    await app.market.filterStarredAsset();
+    await app.market.expectMarketRowVisible(CURRENCY);
   });
 });

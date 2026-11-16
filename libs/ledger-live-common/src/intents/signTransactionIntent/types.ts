@@ -19,11 +19,22 @@ export type SignTransactionIntentJobState =
   | SignOperationProgressState
   | { type: "cancelled"; retry: () => void };
 
+/** The result-bearing variant also keeps a signing failure open for a retry. */
+export type SignTransactionIntentWithResultJobState =
+  | SignTransactionIntentJobState
+  | { type: "error"; error: Error; retry: () => void };
+
 export type SignTransactionIntentInput = SignatureRequest;
 
 export type SignTransactionIntentDefinition = IntentDefinition<
   SignTransactionIntentJobState,
   SignTransactionIntentInput
+>;
+
+export type SignTransactionIntentWithResultDefinition = IntentDefinition<
+  SignTransactionIntentWithResultJobState,
+  SignTransactionIntentInput,
+  SignedOperation
 >;
 
 export type SignTransactionIntentPlatformDefinition<ExtraProps = undefined> =
@@ -34,3 +45,11 @@ export type SignTransactionIntent<ExtraProps = undefined> = Intent<
   SignTransactionIntentInput,
   ExtraProps
 >;
+
+export type SignTransactionIntentWithResultPlatformDefinition<ExtraProps = undefined> =
+  IntentPlatformDefinition<
+    SignTransactionIntentWithResultJobState,
+    SignTransactionIntentInput,
+    ExtraProps,
+    SignedOperation
+  >;

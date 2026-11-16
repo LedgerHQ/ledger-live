@@ -1,5 +1,5 @@
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {

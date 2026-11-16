@@ -7,7 +7,7 @@ const mockIsAccountEmpty = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockBridge = { isAccountEmpty: mockIsAccountEmpty } as any;
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { solanaConfig } from "./config";
 

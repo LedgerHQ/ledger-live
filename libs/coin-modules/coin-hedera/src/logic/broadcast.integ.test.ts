@@ -1,11 +1,11 @@
 import { AccountId, Hbar, PrivateKey, TransactionId, TransferTransaction } from "@hiero-ledger/sdk";
 import { broadcast } from "./broadcast";
 import { serializeTransaction } from "./utils";
+import { hederaDefaults } from "../config";
 import { rpcClient } from "../network/rpc";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 
 describe("Broadcast", () => {
-  const coinConfig = getMockedConfig();
+  const coinConfig = hederaDefaults.hedera;
 
   afterAll(async () => {
     await rpcClient._resetInstance();

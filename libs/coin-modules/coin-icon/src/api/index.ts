@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { LIMIT } from "../constants";
 import { isTestnet } from "../logic";

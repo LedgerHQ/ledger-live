@@ -9,7 +9,7 @@ the test runtime (specs, page objects, fixtures) — they run inside GitHub Acti
 
 | File                 | Role                                                                                                                                                                                                                                                                                                                                                       |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `escaping.mjs`       | Single source of truth for the filter grammar: splits patterns on separators (`\|` / `,`) that are not backslash-escaped and is odd-backslash aware, defines the Playwright leaf anchor `(?! [^@])`, and unescapes regex-literal characters (`unescapeLiteral`) for display.                                                                               |
+| `escaping.mjs`       | Single source of truth for the filter grammar: splits patterns on separators (`\|` / `,`) that are not backslash-escaped and is odd-backslash aware, defines the Playwright leaf anchor `(?!\s[^@])`, and unescapes regex-literal characters (`unescapeLiteral`) for display.                                                                               |
 | `resolve.mjs`        | Resolves the workflow `test_filter` input into a Playwright/Detox grep string (expands `@generic-coin-framework`, applies `@smoke`, warns on zero matches). The zero-match check mirrors the target runner (`--runner detox\|playwright`): detox reuses `selectSpecs.filterTestFiles` (path + `@`-tag), playwright matches a regex over spec path/content. |
 | `generatedTags.mjs`  | Vocabulary of tags the specs attach at **runtime** (`buildTags`): currency ids + families (from `domain/entity/currency-crypto/src/currencies/*.ts`) and the device tags (from `e2e/desktop/tests/utils/tagsUtils.ts`). Lets the playwright zero-match check downgrade "matched 0 specs" to a notice for a valid-but-unobservable tag, while a real typo still warns. |
 | `teamSpecs.mjs`      | Maps every spec to the team(s) that own it by reading the `Team.<MEMBER>` references and `coinTeamOwner` calls the specs already carry (`ownedBy()` or `teamOwner` on desktop, `setTeamOwner()` on mobile). `coinTeamOwner` counts as both BST and Coin-integration. **Additive**: ownership is per-*test*, so a spec's own references are unioned with those of the runner/registrar it imports — the `newSendFlow.tx.spec.ts` registrar picks each entry's owner with `coinTeamOwner`, so the spec genuinely has both BST and Coin-integration owners. Over-selecting a shared spec is safe; dropping one loses coverage silently. Expands a team into anchored spec basenames (playwright) or repo-relative path needles (detox). Owns `TEAM_SLUGS`, duplicated from `libs/live-e2e-shared/src/enum/Team.ts` because the mobile job sparse-checks-out `e2e/tooling/filter` but not `libs/`. |
@@ -66,8 +66,13 @@ node e2e/tooling/filter/format-summary.mjs "$RESOLVED_FILTER"
 ## Keep in sync
 
 `tools/actions/composites/get-failed-tests-summary/action.yml` re-implements the same
-escape set and the `(?! [^@])` anchor in `jq`/bash to emit the rerun filter. Any change to
+escape set and the `(?!\s[^@])` anchor in `jq`/bash to emit the rerun filter. Any change to
 the grammar in `escaping.mjs` must be mirrored there (and vice versa).
+
+A generated pattern never contains a literal space: it spells it `\s`. When the filter has no
+`|` (a rerun of one test), `resolve.mjs` and `run-e2e-playwright-tests` split on spaces, so a
+space inside a title would turn one test into OR alternatives. `resolve.mjs` still rewrites
+patterns ending in the old `(?! [^@])` anchor, which older run summaries print.
 
 That escaping applies to the **playwright** pattern only (`--grep` is a regex). The **detox**
 pattern is emitted as raw spec basenames, because `selectSpecs.mjs` matches specs by literal

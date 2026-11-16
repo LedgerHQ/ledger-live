@@ -16,6 +16,7 @@ This package may import `@devtools/registry`, may import a tool's props types on
 | `useAccountDetailToolProps()` | `account-detail` | Analytics card section: reads `hasDismissed` from the `accountAnalyticsIntroduction` slice (`@features/flow-account-detail-analytics-notice`) and wires `onReset` to `resetAccountAnalyticsIntroduction`. Requires the host to register that slice (desktop and mobile already do). |
 | `useDeviceOnboardingToolState({ snapshot, portsRef })` | `device-onboarding` | Builds the debug view of a run: `log` (newest 200 rows), `machineContext` and `nextStates`. Pass its `inspect` to `useDeviceOnboardingActor` from `@features/platform-device-onboarding`, which runs the actor, so the log starts at the actor's creation. |
 | `useDeviceOnboardingToolProps({ session, toolState, featureFlag })` | `device-onboarding` | Assembles the tool props from the host's product session, the tool state and the optional feature-flag switches. |
+| `usePredictionsToolProps(liveAppStore, setup)` | `predictions` | Reads the Predictions intro flag (`@domain/entity-predictions`) and what each environment of the live app stored (`onboarding-state` in its Wallet API storage, through the host's `liveAppStore`), and wires the resets. Previews the trading wallet setup through the host's `setup`: `usePredictionsSetupHooks()` from `@features/flow-predictions` and the failure reasons, passed in so loading the bindings doesn't load the Predictions UI. |
 
 Future tools add their own builder + row here, each depending only on the state it needs.
 

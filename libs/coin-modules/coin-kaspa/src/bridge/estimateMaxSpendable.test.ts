@@ -3,7 +3,7 @@ jest.mock("./getTransactionStatus");
 
 import type { DeepPartial, DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { KaspaAccount, KaspaUtxo, Transaction } from "../types";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getCachedUtxos } from "./getTransactionStatus";

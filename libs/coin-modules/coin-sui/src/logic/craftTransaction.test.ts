@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { SuiCoinConfig } from "../config";
 import { craftTransaction } from "../logic/craftTransaction";
 import suiAPI from "../network";

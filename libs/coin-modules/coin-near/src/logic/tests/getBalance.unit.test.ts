@@ -1,5 +1,5 @@
 import { mockNearContext } from "../../test/context";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAccount } from "../../network";
 import { getYoctoThreshold } from "../../logic";
 import { getBalance } from "../getBalance";

@@ -2,7 +2,7 @@
 export * from "@ledgerhq/coin-hedera/types/index";
 
 import type { TransactionCommon, TransactionCommonRaw } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 /** The framework's mode spelling, not coin-hedera's `HEDERA_TRANSACTION_MODES`. */
 export type HederaTransactionMode =

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { bitcoinPickingStrategy, UtxoStrategy } from "@ledgerhq/coin-bitcoin/types";
 import type { Transaction as BtcTransaction, NetworkInfo } from "@ledgerhq/coin-bitcoin/types";
 import { getAmountAndRecipient, getRbfContext } from "@ledgerhq/coin-bitcoin/rbfContext";

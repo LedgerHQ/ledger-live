@@ -18,11 +18,13 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 | Factory | Matches |
 |---|---|
 | `byId(id, index?)` | React Native `testID`; `index` picks the n-th match (default `0`) |
+| `byText(text, index?)` | visible text, for an element with no `testID` (e.g. a navigation header title) |
 | `byIdAndText({ id, text })` | `testID` and the element's own text |
 | `byIdWithDescendantText({ id, text })` | `testID` and the text of a descendant, e.g. a button label |
 | `byTextWithAncestorId({ id, text })` | a text inside the `testID` element, when the text has no `testID` of its own (e.g. a Lumen input helper text) |
 | `webById(id)` | webview `data-testid` equal to `id` (the `*WebTestId` globals match a prefix, so migrate with the full id) |
 | `webByXPath(xpath)` | webview XPath, for an element without a usable `data-testid` |
+| `webByCss(selector)` | webview CSS selector, for an element without a `data-testid` (e.g. `#app-container`) |
 
 ## Act
 
@@ -30,15 +32,19 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 
 | Method | Does |
 |---|---|
-| `waitVisible()` | waits for the element |
+| `waitVisible()` | waits for the element; native `waitVisible(timeout, errorElement)` fails at once if the `errorElement` handle shows |
 | `waitNotVisible()` | waits until the element is not visible (native) or no longer exists (webview) |
 | `tap()` | waits, then taps |
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
+| `isVisible(timeout?)` | returns a boolean for an element that may not appear, such as an optional button; a hung app still throws |
+| `expectExist()` | asserts the element exists now; it does not wait |
+| `expectNotExist()` | asserts the element does not exist now; it does not wait |
+| `expectText(text, options?)` | asserts the element's text, see [Assertions](#assertions) |
 
-Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getLabel()` (the accessibility label), `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?)` (scrolls the container handle, or the first scroll view, until the element is visible) and `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws).
+Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `getLabel()` (the accessibility label), `count({ visibleOnly? })` (how many elements match, 0 when none; it does not wait, so wait for the first match before; `visibleOnly` counts the matches visible from the first one on, for a list whose later rows stay mounted off screen), `expectCount(expected)` (asserts that count), `waitExist(timeout?, errorElement?)` (waits until the element is in the view hierarchy, for a list Detox does not measure as visible; `errorElement` fails as soon as that handle is visible), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?, { pixels?, direction? })` (scrolls the container handle, or the first scroll view, until the element is visible; `pixels` sets the step, default 300, and `direction` where to start, default `"down"`, e.g. `"up"` back to a list header or `"right"` along a carousel), `revealForTap(container?, { direction? })` (scrolls to the element and on past the viewport edge, so a sticky header or footer cannot take the next tap; use before a tap, keep `scrollTo` for assertions), `swipe(direction)` (waits, then swipes on the element, e.g. down on a bottom sheet) `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws) and `isVisibleNow()` (returns whether the element is visible once the app is idle, like `expectVisible` without throwing; to pick the on-screen match among several, where a short `isVisible` timeout would skip a screen still settling).
 
-Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
+Web handles also have `waitEnabled()`, `scrollToAndTap(timeout?)` (waits until enabled, scrolls into view, then taps; `timeout` bounds the enabled wait), `waitTextMatching(pattern)` (retries until the text matches, e.g. an amount that fills in once quotes load), `getValue()`, `expectValue(text, options?)` (compares an input's `value` like `expectText`), `scrollTo()` (scrolls the webview until the element is in view), `getIdentifier()` (the `data-testid`, e.g. which element a combined selector matched) and `getChildTexts(cssSelector)` (the non-empty texts of the descendants matching `cssSelector`, e.g. every provider name in a list). For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals. To wait until the webview is not blank, use `waitForWebviewContent()`, not `waitForWebviewContentToRender`. To clear a Live App's saved state between tests, use `removeWebviewStorageItems(keys)`, which removes those `localStorage` keys.
 
 ## Default-wait contract
 
@@ -49,16 +55,33 @@ Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use
 
 ## Assertions
 
-A wait is not an assertion. To check the current state, `expectVisible`, `expectNotVisible`, `expectNotExist` (native) and `expectText` run a Detox `expect` on the element: synchronised with the app, they do not wait. Wait first when the element may still be appearing. `expectTextContaining`, `expectTextMatching` and `expectLabelMatching` wait for the element, read its text or accessibility label, then compare. A page object does not call `jestExpect` on a value it read from an element; `jestExpect` stays for plain values (counts, URLs, parsed amounts).
+A wait is not an assertion. To check the current state, `expectVisible`, `expectNotVisible`, `expectExist`, `expectNotExist`, `expectId`, `expectToggleValue` (native) and `expectText` run a Detox `expect` on the element: synchronised with the app, they do not wait. Wait first when the element may still be appearing. `expectTextMatching` and `expectLabelMatching` wait for the element, read its text or accessibility label, then compare. A page object does not call `jestExpect` on a value it read from an element; `jestExpect` stays for plain values (counts, URLs, parsed amounts). To compare amounts computed from several elements within a tolerance (a sum of balances, a difference of quotes), use `expectWithinTolerance({ actual, expected, tolerance })` from [`amountUtils.ts`](../utils/amountUtils.ts).
+
+Web `expectText` always waits for the element, reads its text, then compares. Native `expectText(text, options)` takes string options, like [expect-webdriverio](https://webdriver.io/docs/api/expect-webdriverio#string-options): `normaliseWhitespace` (any whitespace, non-breaking spaces included, counts as one space; zero-width spaces and edges are dropped) `containing` (contains instead of equals) and `ignoreCase` (letter case is ignored, e.g. a checksummed EVM address against a lowercase fixture). With options it waits for the element, reads its text, then compares. `expectAccessibilityValue(text, options?)` (native) compares the accessibility value the same way: iOS `value`, Android `label`, e.g. a link that carries its URL there. `expectLabel(text, options?)` (native) compares the accessibility label on both platforms, for an element whose value is only in its label. `expectAmount(expected, { tolerance? })` (native) reads the number in the element's text and asserts it is within `tolerance` of `expected`, for an amount that can move a little between steps (e.g. a max amount after a fee update).
 
 | Was | Now |
 |---|---|
 | `detoxExpect(getElementById(id)).toBeVisible()` | `handle.expectVisible()` |
 | `detoxExpect(getElementById(id)).not.toBeVisible()` | `handle.expectNotVisible()` |
-| `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` (native) |
+| `detoxExpect(getElementById(id)).toExist()` | `handle.expectExist()` |
+| `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` |
+| `jestExpect(await getIdByRegexp(regex)).toBe(id)` | `handle.expectId(id)` (native) |
 | `detoxExpect(getElementById(id)).toHaveText(text)` | `handle.expectText(text)` |
-| `jestExpect(await handle.getText()).toContain(text)` | `handle.expectTextContaining(text)` |
+| `jestExpect(normalizeText(await getTextOfElement(id))).toEqual(normalizeText(text))` | `handle.expectText(text, { normaliseWhitespace: true })` (native) |
+| `jestExpect(normalizeText(await getTextOfElement(id))).toContain(normalizeText(text))` | `handle.expectText(text, { normaliseWhitespace: true, containing: true })` (native) |
+| `jestExpect((await getTextOfElement(id)).toLowerCase()).toContain(text.toLowerCase())` | `handle.expectText(text, { containing: true, ignoreCase: true })` (native) |
+| `detoxExpect(getElementById(id)).toHaveToggleValue(value)` | `handle.expectToggleValue(value)` (native) |
+| `jestExpect(await handle.getText()).toContain(text)` | `handle.expectText(text, { containing: true })` (native) |
 | `jestExpect(await handle.getText()).toMatch(regex)` | `handle.expectTextMatching(regex)` |
+| `jestExpect(normalizeText(await getWebElementText(id))).toBe(text)` | `handle.expectText(text, { normaliseWhitespace: true })` (web) |
+| `jestExpect(normalizeText(await getValueByWebTestId(id))).toBe(value)` | `handle.expectValue(value, { normaliseWhitespace: true })` (web) |
+| `waitWebElementByTestId(id, { timeout, throwOnTimeout: false })` | `handle.isVisible(timeout)` (web) |
+| `getWebElementsText(getWebElementByCssSelector(container), childCss)` | `webByCss(container).getChildTexts(childCss)` (web) |
+| `waitForWebElementToMatchRegex(id, regex, timeout)` | `handle.waitTextMatching(regex, timeout)` (web; the global defaulted to `TIMEOUT.medium`, keep that timeout at the call site) |
+| `jestExpect(isIos() ? value : label).toContain(url)` after `getAttributesOfElement(id)` | `handle.expectAccessibilityValue(url, { containing: true })` (native) |
+| `jestExpect(parseFloat(await getTextOfElement(id))).toBeGreaterThanOrEqual(expected - tolerance)` and `toBeLessThanOrEqual(expected + tolerance)` | `handle.expectAmount(expected, { tolerance })` (native) |
+| `jestExpect(await countElements(getElementsById(id))).toBe(n)` | `handle.expectCount(n)` (native) |
+| `jestExpect(await getLabelOfElement(id)).toContain(text)` | `handle.expectLabel(text, { containing: true })` (native) |
 | `jestExpect(await getLabelOfElement(id)).toMatch(regex)` | `handle.expectLabelMatching(regex)` (a control whose value is its accessibility label, e.g. a Lumen `Tag`) |
 
 Add another matcher as a handle method with the first page object that needs it.

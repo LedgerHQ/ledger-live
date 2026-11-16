@@ -52,17 +52,14 @@ class Zen extends Base {
       throw new InvalidAddress();
     }
     let outputScript: Buffer;
-    const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
+    const decoded = Buffer.from(bs58check.decode(address));
+    const version = Number("0x" + decoded.slice(0, 2).toString("hex"));
     if (version === this.network.pubKeyHash) {
       //Pay-to-PubkeyHash
-      outputScript = Buffer.from(
-        bjs.payments.p2pkh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
-      );
+      outputScript = Buffer.from(bjs.payments.p2pkh({ hash: decoded.slice(2) }).output ?? []);
     } else if (version === this.network.scriptHash) {
       //Pay-to-Script-Hash
-      outputScript = Buffer.from(
-        bjs.payments.p2sh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
-      );
+      outputScript = Buffer.from(bjs.payments.p2sh({ hash: decoded.slice(2) }).output ?? []);
     } else {
       throw new InvalidAddress();
     }

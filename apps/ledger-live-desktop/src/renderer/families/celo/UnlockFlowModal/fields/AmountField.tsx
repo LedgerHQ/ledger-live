@@ -4,7 +4,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/celo/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { TFunction } from "i18next";

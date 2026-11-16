@@ -130,5 +130,3 @@ const CardText = ({ content, testID }: { content: string; testID: string }) => {
     </Text>
   );
 };
-
-export default DeviceCard;

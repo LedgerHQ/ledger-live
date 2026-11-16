@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 import * as lib from "../utxos/lib";
 import { selectUtxos } from "../utxos/selection";

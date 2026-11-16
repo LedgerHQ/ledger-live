@@ -1,10 +1,12 @@
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import { algorandDefaults } from "../config";
 import { createApi } from ".";
 
 describe("Algorand Api (mainnet)", () => {
   // Algorand Foundation address - a well-known address with transaction history
   const SENDER = "737777777777777777777777777777777777777777777777777UFEJ2CI";
-  const mainnetConfig: AlgorandConfig = {
+  const mainnetConfig = {
+    ...algorandDefaults.algorand,
     node: "https://algorand.coin.ledger.com/ps2/v2",
     indexer: "https://algorand.coin.ledger.com/idx2/v2",
   };
@@ -491,7 +493,8 @@ describe("Algorand Api (mainnet)", () => {
 describe("Algorand Api (testnet)", () => {
   // Testnet endpoints from Algonode
   const api = createApi();
-  const testnetConfig: AlgorandConfig = {
+  const testnetConfig = {
+    ...algorandDefaults.algorand,
     node: "https://testnet-api.algonode.cloud/v2",
     indexer: "https://testnet-idx.algonode.cloud/v2",
   };

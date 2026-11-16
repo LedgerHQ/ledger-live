@@ -1,0 +1,21 @@
+{
+  "name": "@ledgerhq/mobile-startup-perf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Compares the startup time of two Ledger Wallet Mobile builds in CI (test-mobile-startup-perf.yml)",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "node --test",
+    "format": "oxfmt .",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint .",
+    "format:check": "oxfmt --check ."
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
+  }
+}

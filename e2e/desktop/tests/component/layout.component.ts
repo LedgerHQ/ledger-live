@@ -58,7 +58,9 @@ export class Layout extends Component {
   /** The topbar only offers a sync action once the wallet holds an account. */
   @step("Expect no account sync to be offered")
   async expectSyncButtonHidden() {
-    await expect(this.topbarSynchronizeButton).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.topbarSynchronizeButton).toBeHidden();
+    });
   }
 
   @step("Expect no render error")

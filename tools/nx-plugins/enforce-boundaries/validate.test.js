@@ -551,6 +551,52 @@ test("an import after a string reading import or from is flagged, a commented im
   ]);
 });
 
+test("an import or require written inside a string or template is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts":
+      'const a = \'import { x } from "@ledgerhq/logs"\';\nconst b = `require("@ledgerhq/errors")`;\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  assert.deepEqual(findSourceImportViolations(root, legacy), []);
+});
+
+test("a module file augmenting a legacy package is flagged, a global declaration file is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/augment.ts": 'declare module "@ledgerhq/logs" {}\nexport {};',
+    "shared/utils/src/global.d.ts": 'declare module "@ledgerhq/errors" {}',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["augment.ts @ledgerhq/logs"],
+  );
+});
+
+test("a namespace re-export of a legacy package is flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts": 'export * as logs from "@ledgerhq/logs";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(
+    violations.map(v => v.specifier),
+    ["@ledgerhq/logs"],
+  );
+});
+
+test("a JSDoc import type of a legacy package is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.js":
+      '/** @type {import("@ledgerhq/logs").Log} */\nmodule.exports = {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(violations, []);
+});
+
 test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/logs/types";',
@@ -1468,14 +1514,34 @@ test("devtools host apps: a static import of a non-entry DevTools file is forbid
   ]);
 });
 
-test("devtools host apps: import() and lazy(() => import()) of a DevTools file are allowed", t => {
+test("devtools host apps: import() and lazy(() => import()) of a non-entry DevTools file are forbidden", t => {
   const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
+    [`${LLM_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
     [`${LLD}/src/renderer/Default.tsx`]: [
       'import { lazy } from "react";',
-      `const Screen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));`,
+      `const Tool = lazy(() => import("LLD/features/DevTools/${NON_ENTRY}"));`,
       `const load = () => import("../mvvm/features/DevTools/${NON_ENTRY}");`,
     ].join("\n"),
     [`${LLM}/src/components/Nav.tsx`]: `const load = () => import("~/mvvm/features/DevTools/${NON_ENTRY}");`,
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/renderer/Default.tsx:2 LLD/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLD}/src/renderer/Default.tsx:3 ../mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLM}/src/components/Nav.tsx:1 ~/mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: lazy(() => import()) of a declared entry is allowed", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: "export default 1;",
+    [`${LLM_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: "export default 1;",
+    [`${LLD}/src/renderer/Default.tsx`]: [
+      'import { lazy } from "react";',
+      'const Screen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));',
+    ].join("\n"),
+    [`${LLM}/src/components/Nav.tsx`]:
+      'const load = () => import("~/mvvm/features/DevTools/screens/DevToolsScreen");',
   });
   assert.deepEqual(hostViolations(root), []);
 });

@@ -312,7 +312,13 @@ describe("operationHistoryConfig", () => {
   it("registers config_generic_operation_history as an object type, defaulting to the safety ceiling", () => {
     expect(operationHistoryConfig.config_generic_operation_history).toEqual({
       type: "object",
-      default: { maxOperations: DEFAULT_MAX_OPERATIONS, pageSize: undefined, networks: {} },
+      default: {
+        maxOperations: DEFAULT_MAX_OPERATIONS,
+        pageSize: undefined,
+        networks: {
+          solana: { maxOperations: 1000, pageSize: 200 },
+        },
+      },
     });
   });
 });

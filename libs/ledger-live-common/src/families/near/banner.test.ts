@@ -1,8 +1,7 @@
 import { getAccountBannerState } from "./banner";
-import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
 
 const ledgerValidator: NearValidatorItem = {
@@ -81,30 +80,14 @@ const account: NearAccount = {
 } as unknown as NearAccount;
 
 const validators = [expensiveValidator, cheapValidator, ledgerValidator];
-const validatorsMap = {
-  storageCost: new BigNumber("10000000000000000000"),
-  gasPrice: new BigNumber("100000000"),
-  createAccountCostSend: new BigNumber("99607375000"),
-  createAccountCostExecution: new BigNumber("99607375000"),
-  transferCostSend: new BigNumber("115123062500"),
-  transferCostExecution: new BigNumber("115123062500"),
-  addKeyCostSend: new BigNumber("101765125000"),
-  addKeyCostExecution: new BigNumber("101765125000"),
-  receiptCreationSend: new BigNumber("108059500000"),
-  receiptCreationExecution: new BigNumber("108059500000"),
-  minGasPurchasePrice: new BigNumber(0),
-  accountCreationCharge: new BigNumber(0),
-  validators,
-};
 
 describe("near/banner", () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
   it("should not display the banner is account is", async () => {
-    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canStake").mockReturnValue(false);
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, validators);
     expect(result).toStrictEqual({
       display: false,
       redelegate: false,
@@ -113,12 +96,11 @@ describe("near/banner", () => {
     });
   });
   it("should return display delegate mode is account is not empty", async () => {
-    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canUnstake").mockReturnValue(true);
-    // canStake reads the coin module's own preload cache, which the spy above does not reach, so
-    // pin it here rather than let the banner depend on what this fixture balance can afford.
+    // canStake reads the coin module's own preload cache, so pin it here rather than let the
+    // banner depend on what this fixture balance can afford.
     jest.spyOn(logic, "canStake").mockReturnValue(true);
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, validators);
     expect(result).toStrictEqual({
       display: true,
       redelegate: false,
@@ -126,25 +108,8 @@ describe("near/banner", () => {
       ledgerValidator,
     });
   });
-  it("uses validators passed in by the caller when the preload cache is empty", async () => {
-    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue({
-      ...validatorsMap,
-      validators: [],
-    });
-    jest.spyOn(logic, "canUnstake").mockReturnValue(true);
-
-    const result = getAccountBannerState(account, validators);
-
-    expect(result.ledgerValidator).toEqual(ledgerValidator);
-  });
-
-  it("reports no ledger validator when neither the caller nor the preload cache has one", async () => {
-    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue({
-      ...validatorsMap,
-      validators: [],
-    });
-
-    const result = getAccountBannerState(account);
+  it("hides the banner while the validator list is empty", async () => {
+    const result = getAccountBannerState(account, []);
 
     expect(result).toStrictEqual({
       display: false,
@@ -155,7 +120,6 @@ describe("near/banner", () => {
   });
 
   it("should return display redelegate mode when deactive is an action", async () => {
-    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canUnstake").mockReturnValue(true);
     // Set framework stakingPositions for the bad (expensive) validator
     (account as unknown as { stakingPositions: unknown[] }).stakingPositions = [
@@ -166,7 +130,7 @@ describe("near/banner", () => {
       },
       { state: "withdrawable", delegate: "vcap.poolv1.near", amount: new BigNumber("1") },
     ];
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, validators);
     expect(result).toStrictEqual({
       display: true,
       redelegate: true,

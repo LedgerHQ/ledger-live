@@ -17,6 +17,7 @@ import { installOutputCapture } from "../../shared/ui";
 import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
+import { pointStateHomeAt } from "../../testing/state-home";
 import bunliConfig from "../../../bunli.config";
 import {
   activateAgentIntentMocks,
@@ -208,15 +209,13 @@ afterAll(() => deactivateAgentIntentMocks());
 
 // The listener lock is a real file lock: keep it out of the real state dir.
 let stateHome: string;
-let savedStateHome: string | undefined;
+let restoreStateHome: () => void;
 beforeAll(() => {
-  savedStateHome = process.env.XDG_STATE_HOME;
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-enroll-test-"));
-  process.env.XDG_STATE_HOME = stateHome;
+  restoreStateHome = pointStateHomeAt(stateHome);
 });
 afterAll(() => {
-  if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = savedStateHome;
+  restoreStateHome();
   rmSync(stateHome, { recursive: true, force: true });
 });
 
@@ -805,6 +804,7 @@ describe("agent-intent enroll", () => {
       expect(hostOptions).toMatchObject({
         environment: "production",
         relayBaseUrl: "https://trustchain.api.live.ledger.com",
+        webSocketFactory: expect.any(Function),
         timeouts: { candidateTimeoutMs: 30 * 60_000, completionTimeoutMs: 30 * 60_000 },
       });
       expect(requestInputs[0]).toMatchObject({
@@ -1340,17 +1340,16 @@ describe("agent-intent enroll --detach", () => {
     expect(spawnedCommands).toHaveLength(2);
   });
 
-  it("is not supported on Windows", async () => {
-    const platform = Object.getOwnPropertyDescriptor(process, "platform");
-    Object.defineProperty(process, "platform", { value: "win32" });
+  it("starts the listener on Windows too", async () => {
+    const restorePlatform = overridePlatform("win32");
     try {
-      await expect(runEnroll({ detach: true })).rejects.toThrow(
-        /--detach is not supported on Windows/,
-      );
+      await runEnroll({ detach: true, output: "json" });
     } finally {
-      if (platform) Object.defineProperty(process, "platform", platform);
+      restorePlatform();
     }
-    expect(spawnedCommands).toEqual([]);
+
+    expect(spawnedCommands).toHaveLength(1);
+    expect(JSON.parse(stdout.join("").trim())).toMatchObject({ type: "enrollment-pending" });
   });
 });
 

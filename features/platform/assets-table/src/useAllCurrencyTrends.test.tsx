@@ -8,7 +8,7 @@ import {
 import { AssetsTablePortsProvider } from "./assetsTablePorts";
 import { mockAssetsTablePorts } from "./testing/mockAssetsTablePorts";
 import type { AssetTableItem, AssetTrendRange } from "./types";
-import { useAllCurrencyTrends } from "./useAllCurrencyTrends";
+import { useAllCurrencyTrends, type MarketDayTrendPreference } from "./useAllCurrencyTrends";
 import type { CurrencyPortfolioSnapshot } from "./ports";
 
 const bitcoin = mockCryptoCurrency();
@@ -51,14 +51,18 @@ function renderTrends(
   range: AssetTrendRange,
   marketDayChangeByCurrencyId?: ReadonlyMap<string, number>,
   ports = mockAssetsTablePorts(),
+  marketDayTrend: MarketDayTrendPreference = "flat-holding",
 ) {
   return {
     ports,
-    ...renderHook(() => useAllCurrencyTrends(items, range, marketDayChangeByCurrencyId), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <AssetsTablePortsProvider value={ports}>{children}</AssetsTablePortsProvider>
-      ),
-    }),
+    ...renderHook(
+      () => useAllCurrencyTrends(items, range, marketDayChangeByCurrencyId, marketDayTrend),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <AssetsTablePortsProvider value={ports}>{children}</AssetsTablePortsProvider>
+        ),
+      },
+    ),
   };
 }
 
@@ -208,6 +212,37 @@ describe("useAllCurrencyTrends", () => {
       "day",
       new Map([[bitcoin.id, 10]]),
       ports,
+    );
+
+    expect(result.current.get(bitcoin.id)).toBe(0.02);
+  });
+
+  it("uses the market 24h ratio when the day balance changes and the trend follows the market", () => {
+    const getCurrencyPortfolio = jest.fn();
+    const ports = mockAssetsTablePorts({ getCurrencyPortfolio });
+
+    const { result } = renderTrends(
+      [makeAssetItem({ accounts: [{ id: "btc" }] })],
+      "day",
+      new Map([[bitcoin.id, 10]]),
+      ports,
+      "market",
+    );
+
+    expect(result.current.get(bitcoin.id)).toBe(0.1);
+    expect(getCurrencyPortfolio).not.toHaveBeenCalled();
+  });
+
+  it("keeps the portfolio ratio when the range is not a day even if the trend follows the market", () => {
+    const getCurrencyPortfolio = jest.fn().mockReturnValueOnce(makePortfolio(0.02));
+    const ports = mockAssetsTablePorts({ getCurrencyPortfolio });
+
+    const { result } = renderTrends(
+      [makeAssetItem({ accounts: [{ id: "btc" }] })],
+      "week",
+      new Map([[bitcoin.id, 10]]),
+      ports,
+      "market",
     );
 
     expect(result.current.get(bitcoin.id)).toBe(0.02);

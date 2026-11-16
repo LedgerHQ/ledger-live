@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo } from "react";
-import { useDevToolsShell } from "../../context";
+import { useDevToolsShell } from "../../context/shellContext";
 import type { Tool } from "@devtools/registry";
 import type { ToolScreenProps } from "../navigation";
 

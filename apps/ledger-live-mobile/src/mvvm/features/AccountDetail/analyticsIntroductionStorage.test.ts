@@ -23,6 +23,7 @@ describe("analyticsIntroductionStorage", () => {
   let warn: jest.SpyInstance;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     warn = jest.spyOn(console, "warn").mockImplementation(() => {});
   });
 
@@ -35,30 +36,72 @@ describe("analyticsIntroductionStorage", () => {
       mockGet.mockResolvedValueOnce({ hasDismissed: true });
       const store = createStore();
 
-      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () => true);
 
       expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(true);
+      expect(mockSave).toHaveBeenCalledWith({ hasDismissed: true, isEligible: true });
       expect(warn).not.toHaveBeenCalled();
     });
 
-    it("keeps the introduction available when nothing was persisted", async () => {
-      mockGet.mockResolvedValueOnce(undefined);
+    it.each([true, false])(
+      "records the eligibility snapshot %s when nothing was persisted",
+      async hasOnboardedWithDevice => {
+        mockGet.mockResolvedValueOnce(undefined);
+        const store = createStore();
+
+        await restoreAccountAnalyticsIntroductionFromStorage(store, () => hasOnboardedWithDevice);
+
+        expect(store.getState().accountAnalyticsIntroduction).toEqual({
+          hasDismissed: false,
+          isEligible: hasOnboardedWithDevice,
+        });
+        expect(mockSave).toHaveBeenCalledWith({
+          hasDismissed: false,
+          isEligible: hasOnboardedWithDevice,
+        });
+      },
+    );
+
+    it("keeps a persisted eligibility snapshot instead of recording a new one", async () => {
+      mockGet.mockResolvedValueOnce({ hasDismissed: false, isEligible: false });
       const store = createStore();
 
-      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () => true);
 
-      expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(false);
+      expect(store.getState().accountAnalyticsIntroduction.isEligible).toBe(false);
+      expect(mockSave).not.toHaveBeenCalled();
     });
 
-    it("keeps the default state and warns when the read fails", async () => {
+    it("keeps the default state, records no snapshot and warns when the read fails", async () => {
       mockGet.mockRejectedValueOnce(new Error("storage unavailable"));
       const store = createStore();
 
       await expect(
-        restoreAccountAnalyticsIntroductionFromStorage(store.dispatch),
+        restoreAccountAnalyticsIntroductionFromStorage(store, () => true),
       ).resolves.toBeUndefined();
 
-      expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(false);
+      expect(store.getState().accountAnalyticsIntroduction).toEqual({
+        hasDismissed: false,
+        isEligible: null,
+      });
+      expect(mockSave).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledTimes(1);
+    });
+    it("records no snapshot and warns when the device history cannot be read", async () => {
+      mockGet.mockResolvedValueOnce({ hasDismissed: true });
+      const store = createStore();
+
+      await expect(
+        restoreAccountAnalyticsIntroductionFromStorage(store, () => {
+          throw new Error("settings unavailable");
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(store.getState().accountAnalyticsIntroduction).toEqual({
+        hasDismissed: true,
+        isEligible: null,
+      });
+      expect(mockSave).not.toHaveBeenCalled();
       expect(warn).toHaveBeenCalledTimes(1);
     });
   });
@@ -67,9 +110,9 @@ describe("analyticsIntroductionStorage", () => {
     it("persists the dismissal", async () => {
       mockSave.mockResolvedValueOnce();
 
-      await saveAccountAnalyticsIntroductionSafely({ hasDismissed: true });
+      await saveAccountAnalyticsIntroductionSafely({ hasDismissed: true, isEligible: true });
 
-      expect(mockSave).toHaveBeenCalledWith({ hasDismissed: true });
+      expect(mockSave).toHaveBeenCalledWith({ hasDismissed: true, isEligible: true });
       expect(warn).not.toHaveBeenCalled();
     });
 
@@ -77,7 +120,7 @@ describe("analyticsIntroductionStorage", () => {
       mockSave.mockRejectedValueOnce(new Error("storage full"));
 
       await expect(
-        saveAccountAnalyticsIntroductionSafely({ hasDismissed: true }),
+        saveAccountAnalyticsIntroductionSafely({ hasDismissed: true, isEligible: true }),
       ).resolves.toBeUndefined();
 
       expect(warn).toHaveBeenCalledTimes(1);

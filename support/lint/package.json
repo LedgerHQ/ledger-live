@@ -16,6 +16,7 @@
     "./support": "./support.mts",
     "./tools": "./tools.mts",
     "./restricted-imports": "./restricted-imports.mts",
+    "./plugins": "./plugins.mts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

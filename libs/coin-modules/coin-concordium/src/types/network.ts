@@ -175,7 +175,7 @@ export type GetTransactionCostParams =
 
 /**
  * Request payload for submitting a transfer transaction
- * PUT /v0/submitTransfer/
+ * PUT /v0/submitTransfer
  */
 export interface SubmitTransferData {
   transaction: string; // hex-encoded transaction body

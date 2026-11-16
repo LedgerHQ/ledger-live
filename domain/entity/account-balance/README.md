@@ -10,4 +10,4 @@ The `balance` kind: what each asset of an account amounts to, in crypto only. Fi
 - A balance read replaces the account's rows.
 - `selectAccountBalances`, `selectAccountAssetBalance`. Apps mount the slice at `accountBalances`.
 
-Pending, the last error and the source stay in `accountData`. See [the account data layer](../../../docs/account-data-layer.md).
+Pending, the last error and the source stay in `accountData`. See [the account data layer](../../../docs/account-models/data-layer.md).

@@ -1,5 +1,5 @@
 import { testContext } from "../fixtures/coinConfig";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import buildSignOperation from "../../signOperation";
 import type { Account, Operation } from "@ledgerhq/types-live";

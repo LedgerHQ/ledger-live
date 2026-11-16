@@ -3,27 +3,13 @@ import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
 import BigNumber from "bignumber.js";
+import { polkadotDefaults } from "../config";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { PolkadotAccount, Transaction } from "../types";
 import { buildBroadcast } from "./broadcast";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
-const broadcast = buildBroadcast(
-  createMockPolkadotContext({
-    status: { type: "active" },
-    name: "Polkadot",
-    unit: { name: "DOT", code: "DOT", magnitude: 10 },
-    node: {
-      url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-    },
-    sidecar: {
-      url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-    },
-    indexer: {
-      url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-    },
-  }),
-);
+const broadcast = buildBroadcast(createMockPolkadotContext(polkadotDefaults.assethub_polkadot));
 
 describe("broadcast", () => {
   it("throws on not deployed and empty account", async () => {
@@ -38,7 +24,7 @@ describe("broadcast", () => {
 
     await cryptoWaitReady();
 
-    const provider = new HttpProvider("https://polkadot-asset-hub-fullnodes.api.live.ledger.com");
+    const provider = new HttpProvider(polkadotDefaults.assethub_polkadot.node.url);
     const api = await ApiPromise.create({
       provider: provider as ProviderInterface,
       noInitWarn: true,

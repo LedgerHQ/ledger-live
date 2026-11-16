@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";

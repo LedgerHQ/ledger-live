@@ -368,15 +368,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "stargaze",
-    ticker: "STARS",
-    name: "Stargaze",
-    family: "cosmos",
-    color: "#e38cd4",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
     id: "secret_network",
     ticker: "SCRT",
     name: "SecretNetwork",
@@ -1030,6 +1021,15 @@ export const expectedCurrencyList = [
     name: "Unichain Sepolia",
     family: "ethereum",
     color: "#f50fb4",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "alpen",
+    ticker: "BTC",
+    name: "Alpen",
+    family: "ethereum",
+    color: "#F68B1F",
     decimals: 18,
   },
   {

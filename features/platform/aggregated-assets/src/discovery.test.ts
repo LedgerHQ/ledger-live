@@ -1,5 +1,6 @@
 import { selectTopStocks, selectTopAssetsByCategory } from "./discovery";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 
 function makeData(ids: string[]): AssetsDataWithPagination {
   return {
@@ -28,7 +29,7 @@ describe("selectTopStocks", () => {
 
   it("skips meta-currencies without a resolvable ledger id", () => {
     const data = makeData(["aapl"]);
-    data.cryptoAssets["aapl"].assetsIds = {};
+    data.cryptoAssets[AggregatedAssetIdSchema.parse("aapl")].assetsIds = {};
     data.cryptoOrTokenCurrencies = {};
 
     expect(selectTopStocks(data, 5)).toHaveLength(0);

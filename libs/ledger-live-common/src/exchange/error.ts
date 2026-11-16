@@ -70,7 +70,7 @@ export function convertTransportError(
   err: unknown,
 ): CompleteExchangeError | unknown {
   if ((err as { name?: string })?.name === "TransportStatusError") {
-    const tse = err as { statusCode?: number | null };
+    const tse = err as { statusCode?: number | null; statusText?: string };
     let errorCode: number;
     if (typeof tse.statusCode === "number") {
       errorCode = tse.statusCode;
@@ -80,9 +80,24 @@ export function convertTransportError(
       return err;
     }
     const { errorName, errorMessage } = getExchangeErrorMessage(errorCode, step);
-    return new CompleteExchangeError(step, errorName, errorMessage);
+    return new CompleteExchangeError(
+      step,
+      errorName,
+      errorMessage ?? getUnknownDeviceStatusMessage(errorCode, tse.statusText),
+    );
   }
   return err;
+}
+
+/**
+ * Keeps the raw status code of an unmapped device response so it can be grouped on in monitoring.
+ * The title stays undefined: swap-service buckets cancellations by exact `statusCode` match.
+ */
+function getUnknownDeviceStatusMessage(statusCode: number, statusText?: string): string {
+  const hexCode = `0x${statusCode.toString(16).padStart(4, "0")}`;
+  return statusText
+    ? `Unknown device status ${hexCode} (${statusText})`
+    : `Unknown device status ${hexCode}`;
 }
 
 const SIGN_VERIFICATION_FAIL_TITLE = "signVerificationFail";

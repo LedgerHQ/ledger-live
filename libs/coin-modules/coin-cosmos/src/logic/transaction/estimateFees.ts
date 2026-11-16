@@ -1,7 +1,7 @@
 import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import type { CosmosCoinConfig } from "../../config";
 import { getEstimatedFees } from "../../prepareTransaction";
-import { intentToMessageParams } from "./intentAdapter";
+import { STAKING_DEFAULT_MEMO, intentToMessageParams } from "./intentAdapter";
 
 /**
  * Estimate fees by simulating on the node; the simulated gas limit is carried in
@@ -17,8 +17,13 @@ export async function estimateFees(
 
   const { gasWanted, gasWantedFees } = await getEstimatedFees(config, params);
 
+  const hasDefaultMemo = params.mode !== "send" && params.memo === STAKING_DEFAULT_MEMO;
+
   return {
     value: BigInt(gasWantedFees.toFixed()),
-    parameters: { gasLimit: gasWanted.toFixed() },
+    parameters: {
+      gasLimit: gasWanted.toFixed(),
+      ...(hasDefaultMemo ? { memo: params.memo } : {}),
+    },
   };
 }

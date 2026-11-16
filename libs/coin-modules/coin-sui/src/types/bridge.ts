@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { DelegatedStake, StakeObject } from "./model";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export type MappedStake = StakeObject & {
   rank: number;
@@ -143,6 +143,8 @@ export type SuiOperationExtra = {
   transferAmount?: BigNumber;
   validatorAddress?: string;
   stakedAmount?: string;
+  /** Set on a stake operation whose `value` holds only its gas and reward, not the principal. */
+  principalExcluded?: "true";
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 

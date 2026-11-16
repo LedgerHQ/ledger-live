@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { BitcoinInput, BitcoinOutput, Transaction } from "./types";
 import { buildTransaction } from "./buildTransaction";
 import { perCoinLogic } from "./logic";

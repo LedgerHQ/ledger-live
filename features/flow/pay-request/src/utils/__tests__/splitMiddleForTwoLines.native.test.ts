@@ -1,5 +1,5 @@
 import { splitAddress } from "../splitAddress";
-import { splitMiddleForTwoLines } from "../splitMiddleForTwoLines.native";
+import { splitMiddleForTwoLines } from "../splitMiddleForTwoLines";
 
 function lineLengths(address: string) {
   const parts = splitAddress(address);

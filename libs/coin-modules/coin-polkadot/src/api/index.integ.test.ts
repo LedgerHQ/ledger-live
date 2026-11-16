@@ -1,6 +1,6 @@
 import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import type { PolkadotCoinConfig } from "../config";
+import { polkadotDefaults, type PolkadotCoinConfig } from "../config";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
@@ -9,20 +9,7 @@ import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@pol
 
 describe("Polkadot Api", () => {
   let module: CoinModuleApi<PolkadotCoinConfig>;
-  const mainnetConfig: PolkadotCoinConfig = {
-    status: { type: "active" },
-    name: "Polkadot",
-    unit: { name: "DOT", code: "DOT", magnitude: 10 },
-    node: {
-      url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-    },
-    sidecar: {
-      url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-    },
-    indexer: {
-      url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-    },
-  };
+  const mainnetConfig: PolkadotCoinConfig = polkadotDefaults.assethub_polkadot;
   const context = createMockPolkadotContext(mainnetConfig);
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
@@ -185,7 +172,7 @@ describe("Polkadot Api", () => {
 
       await cryptoWaitReady();
 
-      const provider = new HttpProvider("https://polkadot-asset-hub-fullnodes.api.live.ledger.com");
+      const provider = new HttpProvider(polkadotDefaults.assethub_polkadot.node.url);
       const api = await ApiPromise.create({
         provider: provider as ProviderInterface,
         noInitWarn: true,

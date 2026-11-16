@@ -1,5 +1,5 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createMockAccount, createMockTransaction } from "../__tests__/fixtures";
 import { getEstimatedFees } from "../logic/estimateFees";
 import { prepareTransaction } from "./prepareTransaction";

@@ -9,7 +9,7 @@ const UTXO_V1: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: XPUB,
+  key: XPUB,
   path: "m/84h/0h/0h",
 };
 
@@ -18,7 +18,7 @@ const ETH_V1: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  address: ETH_ADDR,
+  key: ETH_ADDR,
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -37,7 +37,7 @@ describe("serializeV1", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin_testnet"),
-      xpub: XPUB,
+      key: XPUB,
       path: "m/84h/1h/0h",
     };
     expect(serializeV1(d)).toBe(`account:2:utxo:bitcoin_testnet:${XPUB}:m/84h/1h/0h`);
@@ -49,7 +49,7 @@ describe("serializeV1", () => {
       version: "2",
       type: "address",
       network: NetworkIdSchema.parse("solana"),
-      address: SOL_ADDR,
+      key: SOL_ADDR,
       path: "m/44h/501h/0h/0h",
     };
     expect(serializeV1(d)).toBe(`account:2:address:solana:${SOL_ADDR}:m/44h/501h/0h/0h`);

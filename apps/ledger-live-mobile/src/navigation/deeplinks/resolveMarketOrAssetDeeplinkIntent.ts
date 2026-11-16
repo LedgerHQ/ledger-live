@@ -25,14 +25,12 @@ export type MarketOrAssetDeeplinkIntent =
 type ResolveParams = Readonly<{
   hostname: MarketOrAssetHostname;
   pathname: string;
-  shouldDisplayAssetDiscoverability: boolean;
   categoryParam: string | null;
 }>;
 
 export function resolveMarketOrAssetDeeplinkIntent({
   hostname,
   pathname,
-  shouldDisplayAssetDiscoverability,
   categoryParam,
 }: ResolveParams): MarketOrAssetDeeplinkIntent {
   const validatedMarketAsset = validateMarketAssetPath(pathname);
@@ -53,9 +51,7 @@ export function resolveMarketOrAssetDeeplinkIntent({
   if (hostname === "market") {
     if (hasPath) return { type: "market-banner" };
 
-    const category = shouldDisplayAssetDiscoverability
-      ? validateMarketListCategory(categoryParam)
-      : undefined;
+    const category = validateMarketListCategory(categoryParam);
     return { type: "market-banner", category };
   }
 

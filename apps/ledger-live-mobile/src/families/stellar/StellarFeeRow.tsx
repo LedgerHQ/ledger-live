@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet, Linking, TouchableOpacity } from "react-native";

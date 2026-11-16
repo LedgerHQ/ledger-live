@@ -7,7 +7,7 @@ import {
   TransactionStatusCommonRaw,
   Operation,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 /**
  * Icon account resources

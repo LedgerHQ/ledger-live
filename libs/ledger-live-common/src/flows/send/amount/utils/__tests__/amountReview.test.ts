@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getMaxAvailable, isInsufficientFundsAmountError } from "../amountReview";
 import type { TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import { AccountLike } from "@ledgerhq/types-live";

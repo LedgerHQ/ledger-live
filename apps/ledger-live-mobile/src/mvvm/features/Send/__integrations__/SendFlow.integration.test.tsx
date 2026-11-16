@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { setEnv } from "@shared/env";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
@@ -482,19 +482,15 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
-  it("should always list Me, even without an address on the account network", async () => {
-    const { user } = renderForAccount(
+  it("should not list Me without an address on the account network", async () => {
+    renderForAccount(
       accountEthereum,
       {},
       { contactsEnabled: true, contacts: [mockMeContact({ addresses: [] })] },
     );
 
-    expect(await screen.findByTestId("contacts-compact-row-contact-me")).toBeVisible();
-    expect(screen.queryByTestId("send-recipient-empty-contacts-state")).not.toBeOnTheScreen();
-
-    await user.press(screen.getByTestId("contacts-compact-row-contact-me"));
-
-    expect(await screen.findByText("Add address")).toBeVisible();
+    expect(await screen.findByTestId("send-recipient-empty-contacts-state")).toBeVisible();
+    expect(screen.queryByTestId("contacts-compact-row-contact-me")).not.toBeOnTheScreen();
   });
 
   it("should show the contact list with an empty search when going back after picking a contact", async () => {

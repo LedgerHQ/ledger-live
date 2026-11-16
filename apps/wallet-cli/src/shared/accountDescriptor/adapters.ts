@@ -152,7 +152,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
       version: "2",
       type: "utxo",
       network,
-      xpub: v0.seedIdentifier,
+      key: v0.seedIdentifier,
       path,
     } satisfies UtxoAccountDescriptorV1;
   }
@@ -165,7 +165,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     version: "2",
     type: "address",
     network,
-    address: v0.seedIdentifier,
+    key: v0.seedIdentifier,
     path,
   } satisfies AccountBasedDescriptorV1;
 }
@@ -186,7 +186,7 @@ export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
   const currencyId = currencyIdFromNetwork(v1.network);
   const currency = getCryptoCurrencyById(currencyId);
   const normalizedPath = fromV1Path(v1.path);
-  const seedIdentifier = v1.type === "utxo" ? v1.xpub : v1.address;
+  const seedIdentifier = v1.key;
 
   const modes = getDerivationModesForCurrency(currency);
   for (const mode of modes) {

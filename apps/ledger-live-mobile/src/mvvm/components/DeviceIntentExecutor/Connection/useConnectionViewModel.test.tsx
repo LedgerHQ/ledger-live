@@ -365,6 +365,7 @@ describe("useConnectionViewModel", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "hid",
+        lastUsedAt: expect.any(Number),
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([]);
@@ -374,7 +375,11 @@ describe("useConnectionViewModel", () => {
   it("should persist a BLE connected device in the BLE store and notify the caller", () => {
     // GIVEN
     const onConnected = jest.fn();
-    const connectionResult = makeConnectionResult();
+    const connectionResult = makeConnectionResult({
+      connectedDevice: {
+        transport: rnBleTransportIdentifier,
+      } as unknown as DeviceConnectionResult["connectedDevice"],
+    });
     const existingBleDevice: DeviceLike = {
       id: "device-id",
       name: "Ledger Nano X",
@@ -399,7 +404,8 @@ describe("useConnectionViewModel", () => {
         id: "device-id",
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
-        transport: "ble",
+        transport: rnBleTransportIdentifier,
+        lastUsedAt: expect.any(Number),
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([

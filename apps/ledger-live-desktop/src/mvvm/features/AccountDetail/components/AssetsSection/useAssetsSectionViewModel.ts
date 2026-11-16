@@ -8,13 +8,17 @@ import {
   accountAssetClickedProps,
 } from "@features/flow-account-detail";
 import { setTrackingSource, track } from "@shared/analytics";
-import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import {
   useAllCurrencyTrends,
   useAssetsTable,
   type AssetTableItem,
 } from "@features/platform-assets-table";
+import {
+  useMarketDayChangeByCurrencyId,
+  useStockAssetIds,
+} from "@features/platform-aggregated-assets";
 import { useSelector } from "LLD/hooks/redux";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { ASSETS_PRICE_REFRESH_INTERVAL_MS } from "LLD/features/Assets/constants";
 import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
@@ -46,18 +50,34 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
     [account, hideEmptyTokenAccounts, blacklistedTokenIds, calculateCountervalue],
   );
 
-  const currencyIds = useMemo(() => assetItems.map(item => item.currency.id), [assetItems]);
-  const marketDayChange = useMarketDayChangeByCurrencyId({
-    currencyIds,
+  const { ids: stockAssetIds } = useStockAssetIds("lld", __APP_VERSION__);
+  const stockItems = useMemo(
+    () => assetItems.filter(item => stockAssetIds.has(item.currency.id)),
+    [assetItems, stockAssetIds],
+  );
+  const cryptoItems = useMemo(
+    () => assetItems.filter(item => !stockAssetIds.has(item.currency.id)),
+    [assetItems, stockAssetIds],
+  );
+  const stockCurrencyIds = useMemo(() => stockItems.map(item => item.currency.id), [stockItems]);
+
+  const { byLedgerId: cryptoDayChange } = useMarketDayChange();
+  const stockDayChange = useMarketDayChangeByCurrencyId({
+    currencyIds: stockCurrencyIds,
     product: "lld",
     version: __APP_VERSION__,
     pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
     skipPollingIfUnfocused: true,
   });
-  const trends = useAllCurrencyTrends(assetItems, "day", marketDayChange);
+  const cryptoTrends = useAllCurrencyTrends(cryptoItems, "day", cryptoDayChange, "market");
+  const stockTrends = useAllCurrencyTrends(stockItems, "day", stockDayChange);
   const items = useMemo(
-    () => assetItems.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
-    [assetItems, trends],
+    () =>
+      assetItems.map(item => ({
+        ...item,
+        trend: stockTrends.get(item.currency.id) ?? cryptoTrends.get(item.currency.id) ?? null,
+      })),
+    [assetItems, cryptoTrends, stockTrends],
   );
 
   const onRowClick = useCallback(

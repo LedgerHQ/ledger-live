@@ -1,5 +1,5 @@
 import type { AssetInfo, Unit } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export const SUN_PER_TRX = 1_000_000;
 export const ONE_TRX = new BigNumber(SUN_PER_TRX);

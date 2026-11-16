@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DepositOptionsView } from "../DepositOptionsView.web";
+import { DepositOptionsView } from "../DepositOptionsView";
 
 const defaultProps: React.ComponentProps<typeof DepositOptionsView> = {
   isOpen: true,

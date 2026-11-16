@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";

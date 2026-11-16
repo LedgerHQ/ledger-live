@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { Transaction } from "../../coin-modules/transaction-types";
 import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";
@@ -181,6 +181,8 @@ export type SwapStatus = {
   swapId: string;
   status: ValidSwapStatus;
   finalAmount?: string;
+  /** The payout transaction hash, returned once known (e.g. perps withdraw). */
+  txHash?: string;
 };
 
 // -----
@@ -260,6 +262,10 @@ export type MappedSwapOperation = {
   fromAmount: BigNumber;
   toAmount: BigNumber;
   finalAmount?: BigNumber;
+  /** Atomic, in the sender currency, when not carried by the operation. */
+  feesAmount?: string;
+  /** Atomic, in the receiving account currency. */
+  payoutFeesAmount?: string;
 };
 export type SwapState = {
   // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`

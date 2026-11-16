@@ -37,8 +37,31 @@ export const PREDICTIONS_COPY = {
   },
 } as const;
 
+export const SETUP_COPY = {
+  settingUp: { title: "Setting up your trading account" },
+  setUp: {
+    created: "Trading account created",
+    found: "Trading account found",
+    description: "Your trading account is ready to use.",
+    continue: "Continue",
+  },
+  setupFailed: {
+    title: "Your trading account couldn't be set up",
+    "failed-deploy": "MoonPay couldn't deploy your trading wallet.",
+    "failed-permission": "MoonPay couldn't set up your trading wallet's permissions.",
+    timeout: "The setup is taking too long.",
+    unavailable: "MoonPay couldn't be reached.",
+    unknown: "Something went wrong while setting it up.",
+  },
+} as const;
+
 const RESOURCES = {
-  en: { translation: { predictions: { onboarding: PREDICTIONS_COPY } } },
+  en: {
+    translation: {
+      common: { close: "Close" },
+      predictions: { onboarding: PREDICTIONS_COPY, binding: SETUP_COPY },
+    },
+  },
 };
 
 export const openExternalMock = jest.fn();

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@domain/entity-currency";
 import { BalanceHistoryData, PortfolioRange } from "@ledgerhq/types-live";

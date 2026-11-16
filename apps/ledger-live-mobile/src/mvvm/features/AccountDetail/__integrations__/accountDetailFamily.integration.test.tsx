@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

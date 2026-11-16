@@ -4,7 +4,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/ledger-signer";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { Transaction as SuiTransaction } from "@mysten/sui/transactions";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import suiConfig from "../config";
 import { SuiAddressBalanceAppUpdateRequired } from "../errors";

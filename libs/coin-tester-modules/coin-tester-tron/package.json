@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tron",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "private": true,
   "description": "Ledger Tron Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -73,7 +73,6 @@
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",

@@ -9,7 +9,7 @@ import { getMainAccount, findSubAccountById } from "@ledgerhq/live-common/accoun
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/deviceTransactionConfig";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getDeviceAnimation } from "../DeviceAction/animations";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";

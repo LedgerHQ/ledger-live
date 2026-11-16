@@ -1,7 +1,7 @@
 # @domain/entity-analytics-consent
 
-> [!CAUTION]
-> **Status: UNSTABLE** — In active development as part of the analytics consent renewal feature.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Canonical data model for analytics consent: the privacy policy version value object and the
 stored consent state (`consentDate` + `privacyPolicyVersion`).

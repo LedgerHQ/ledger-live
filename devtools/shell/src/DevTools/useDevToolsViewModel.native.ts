@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useToolsFromConfig } from "../hooks";
-import type { DevToolsShellValue } from "../context";
+import type { DevToolsShellValue } from "../context/shellContext";
 import type { DevToolsConfig } from "@devtools/registry";
 
 interface DevToolsInput {

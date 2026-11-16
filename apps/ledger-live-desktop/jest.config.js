@@ -111,6 +111,15 @@ const commonConfig = {
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
+    "^.+\\.mts$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+          parser: { syntax: "typescript" },
+        },
+      },
+    ],
     "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {

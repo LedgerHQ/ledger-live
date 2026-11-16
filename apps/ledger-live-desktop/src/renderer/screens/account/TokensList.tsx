@@ -22,6 +22,7 @@ import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import AngleDown from "~/renderer/icons/AngleDown";
 import { useLLDCoinFamily } from "~/renderer/families";
+import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 
 type Props = {
@@ -61,13 +62,13 @@ function TokensList({ account }: Props) {
   // Pass undefined when we're about to bail out so the hook returns the empty fallback instead of
   // triggering a dynamic import + Suspense for a component that immediately renders null.
   const specific = useLLDCoinFamily(account.subAccounts ? family : undefined)?.tokenList;
+  const tokenTypes = useTokenTypes(account.subAccounts ? currency : undefined);
   if (!account.subAccounts) return null;
 
   const subAccounts = listSubAccounts(account).filter(subAccount => {
     return !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id);
   });
 
-  const tokenTypes = currency.tokenTypes || [];
   const isTokenAccount = tokenTypes.length > 0;
   const isEmpty = subAccounts.length === 0;
   const shouldSliceList = subAccounts.length >= 5;

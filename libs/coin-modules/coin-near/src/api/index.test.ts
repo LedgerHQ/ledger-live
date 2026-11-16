@@ -1,6 +1,7 @@
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { getBalance } from "../logic/getBalance";
+import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
@@ -14,6 +15,7 @@ import { createMockNearContext } from "../test/context";
 import { createApi } from "./index";
 
 jest.mock("../logic/getBalance", () => ({ getBalance: jest.fn() }));
+jest.mock("../logic/getBlock", () => ({ getBlock: jest.fn() }));
 jest.mock("../logic/getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
 jest.mock("../logic/lastBlock", () => ({ lastBlock: jest.fn() }));
 jest.mock("../logic/listOperations", () => ({ listOperations: jest.fn() }));
@@ -34,18 +36,11 @@ describe("createApi", () => {
   //
   // Kept out rather than stubbed: NEAR's nonce belongs to an access key rather than to an
   // account, a staking pool compounds rewards into the staked balance instead of emitting
-  // distribution events, and the module exposes neither a full-block read, an externally-built
-  // transaction, a contract-call escape hatch nor an enrollment step.
+  // distribution events, and the module exposes neither an externally-built transaction, a
+  // contract-call escape hatch nor an enrollment step.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(), context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getNextSequence",
-        "getRewards",
-        "register",
-      ],
+      unsupported: ["call", "craftRawTransaction", "getNextSequence", "getRewards", "register"],
       inconsistent: [],
     });
   });
@@ -53,6 +48,7 @@ describe("createApi", () => {
     const methods = [
       "lastBlock",
       "getBlockInfo",
+      "getBlock",
       "getValidators",
       "getBalance",
       "listOperations",
@@ -82,6 +78,9 @@ describe("createApi", () => {
 
       await api.getBlockInfo(context, 42);
       expect(getBlockInfo).toHaveBeenCalledWith(context, 42);
+
+      await api.getBlock(context, 42);
+      expect(getBlock).toHaveBeenCalledWith(context, 42);
 
       await api.listOperations(context, "sender.near", { minHeight: 7 });
       expect(listOperations).toHaveBeenCalledWith(context, "sender.near", { minHeight: 7 });

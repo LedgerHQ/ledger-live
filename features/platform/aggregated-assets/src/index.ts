@@ -11,5 +11,6 @@ export * from "./hooks/useMarketDayChangeByCurrencyId";
 export * from "./hooks/useLazyLedgerCurrency";
 export * from "./hooks/useLazySwapNetworkCurrencyIds";
 
+export * from "./heldMarketDayChange";
 export * from "./discovery";
 export * from "./currencySelection";

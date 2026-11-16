@@ -27,7 +27,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
-      shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
@@ -60,8 +59,6 @@ export interface WalletFeaturesConfig {
   readonly shouldUseLazyOnboarding: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
-  /** Whether to show the Asset Discoverability feature */
-  readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
   readonly shouldDisplayEarnUpselling: boolean;
   /** Whether to show the Earn Simulator component */

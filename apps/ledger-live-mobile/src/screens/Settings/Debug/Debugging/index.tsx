@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { FeatureToggle } from "@features/platform-feature-flags";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
@@ -49,14 +48,12 @@ export default function Debugging() {
         iconLeft={<IconsLegacy.ClipboardListCheckMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugBluetoothAndLocationServices)}
       />
-      <FeatureToggle featureId="llmMmkvMigration">
-        <SettingsRow
-          title="Storage Migration"
-          desc="Debug Storage Migration"
-          iconLeft={<IconsLegacy.FullnodeMedium size={32} color="black" />}
-          onPress={() => navigation.navigate(ScreenName.DebugStorageMigration)}
-        />
-      </FeatureToggle>
+      <SettingsRow
+        title="Storage Migration"
+        desc="Debug Storage Migration"
+        iconLeft={<IconsLegacy.FullnodeMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugStorageMigration)}
+      />
     </SettingsNavigationScrollView>
   );
 }

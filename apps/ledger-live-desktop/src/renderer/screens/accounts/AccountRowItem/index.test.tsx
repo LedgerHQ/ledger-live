@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
 import AccountRowItem from "./index";

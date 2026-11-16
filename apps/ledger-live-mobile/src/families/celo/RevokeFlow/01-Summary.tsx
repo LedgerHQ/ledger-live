@@ -12,7 +12,7 @@ import type {
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";

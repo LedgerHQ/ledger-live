@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 /**
  * Network parameters of the currencies coin-bitcoin serves (address versions, fee and dust policy,

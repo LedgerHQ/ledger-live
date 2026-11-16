@@ -8,7 +8,6 @@ export { default as RecoveryPhraseSetup } from "./RecoveryPhraseSetup";
 export { default as HideRecoveryPhrase } from "./HideRecoveryPhrase";
 export { default as ConnectDevice } from "./ConnectDevice";
 export { default as QuizzFinal } from "./QuizzFinal";
-export { default as SyncDesktop } from "./SyncDesktop";
 
 export { default as RestoreRecovery } from "./RestoreRecoveryPhrase";
 export { default as RestoreRecoveryStep1 } from "./RestoreRecoveryPhraseStep1";

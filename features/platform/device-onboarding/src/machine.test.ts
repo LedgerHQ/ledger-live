@@ -931,6 +931,18 @@ describe("entering the flow", () => {
     actor.stop();
   });
 
+  it("should open the unlock wait when the device is locked as the checks start", async () => {
+    const { actor } = await launch({
+      osVersion: [os(unseeded), lockedDevice],
+      genuineCheck: [{ prompts: UserInteractionRequired.UnlockDevice }],
+    });
+
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+  });
+
   it("asks again when the device was locked before the user started", async () => {
     const { actor } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
 

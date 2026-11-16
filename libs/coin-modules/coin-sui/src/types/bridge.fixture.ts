@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiAccount } from "./bridge";
 

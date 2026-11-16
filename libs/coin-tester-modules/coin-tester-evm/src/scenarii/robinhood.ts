@@ -1,10 +1,11 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { blockscoutOf, swapTokens } from "../sandboxEvm";
@@ -124,10 +125,7 @@ export const scenarioRobinhood: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     sandbox = await startSandbox(
       { family: "evm", network: "robinhood" },
-      {
-        node: { implementation: "nitro", version: "3.12.2" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
+      sandboxVersions("robinhood"),
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {

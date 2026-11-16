@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { allure } from "jest-allure2-reporter/api";
 import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";

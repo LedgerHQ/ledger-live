@@ -56,7 +56,6 @@ export const mocks: AppManifest[] = [
       "bitcoin",
       "ethereum/**",
       "axelar",
-      "stargaze",
       "secret_network",
       "umee",
       "desmos",

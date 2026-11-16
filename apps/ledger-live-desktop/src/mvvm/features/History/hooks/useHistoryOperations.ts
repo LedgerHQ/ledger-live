@@ -5,7 +5,6 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { OperationTableItem } from "../types";
 import {
-  expandRequestedAccountIdsForHistoryScope,
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
   parseAccountIdsSearchParam,
@@ -28,9 +27,8 @@ export function useHistoryOperations(contact?: Contact): OperationTableItem[] {
 
   const operationAccountIds = useMemo(() => {
     const ids = parseAccountIdsSearchParam(accountIdsQuery);
-    if (!ids) return null;
-    return expandRequestedAccountIdsForHistoryScope(allAccounts, new Set(ids));
-  }, [accountIdsQuery, allAccounts]);
+    return ids ? new Set(ids) : null;
+  }, [accountIdsQuery]);
 
   const accountScopedItems = useMemo(() => {
     if (!operationAccountIds) return baseOperationItems;

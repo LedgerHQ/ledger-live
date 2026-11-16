@@ -621,7 +621,7 @@ const GRPC_STATUS_NOT_FOUND = 5;
  * protobuf-ts throws `RpcError` with a textual `code`; the numeric form is accepted too, since the
  * proxy in front of the node can surface either.
  */
-const isNotFoundError = (error: unknown): boolean => {
+export const isNotFoundError = (error: unknown): boolean => {
   const code = (error as { code?: unknown } | null)?.code;
   return code === "NOT_FOUND" || code === GRPC_STATUS_NOT_FOUND;
 };

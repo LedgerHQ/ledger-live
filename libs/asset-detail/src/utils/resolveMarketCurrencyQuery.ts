@@ -1,4 +1,4 @@
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 
 /** Cap ledger ids in the query string to keep /v3/markets URLs within safe length. */
 export const MAX_MARKET_LEDGER_IDS = 10;
@@ -11,7 +11,7 @@ export function isCoingeckoStyleMarketId(id: string): boolean {
 export function resolveCoingeckoIdForIdsQuery(marketApiId: string | undefined): string | undefined {
   if (!marketApiId) return undefined;
   if (isCoingeckoStyleMarketId(marketApiId)) return marketApiId;
-  const converted = dadaIdToMarketId(marketApiId);
+  const converted = toMarketId(parseMarketRef(marketApiId));
   return isCoingeckoStyleMarketId(converted) ? converted : undefined;
 }
 

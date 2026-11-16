@@ -17,7 +17,7 @@ import {
 } from "./errors";
 import { AccountBridge, isStakingAccount, type StakingAccount } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { resolveSourceValidator, resolveTransactionValidators } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";

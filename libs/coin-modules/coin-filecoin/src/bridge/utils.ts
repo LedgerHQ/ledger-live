@@ -1,6 +1,6 @@
 import type { ExplorerView } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getEquivalentAddress } from "../network";
 
 export enum Methods {

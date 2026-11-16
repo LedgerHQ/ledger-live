@@ -1,10 +1,11 @@
+import { solanaDefaults } from "../../config";
 import { getValidators } from "../getValidators";
 
 describe("getValidators (integration)", () => {
   it("returns a non-empty page of well-formed validators for mainnet-beta", async () => {
     const page = await getValidators(
-      "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
-      "https://earn.api.live.ledger.com/figment/solana/validators_summary",
+      solanaDefaults.solana.validatorsUrl,
+      solanaDefaults.solana.staking.validatorsSummaryUrl,
     );
 
     expect(page).toMatchObject({ next: undefined });

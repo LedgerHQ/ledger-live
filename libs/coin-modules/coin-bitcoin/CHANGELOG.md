@@ -1,5 +1,87 @@
 # @ledgerhq/coin-bitcoin
 
+## 1.2.0
+
+### Minor Changes
+
+- [#24226](https://github.com/LedgerHQ/ledger-live/pull/24226) [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): do not spend the inputs of pending operations
+
+  `prepareTransaction` and `estimateMaxSpendable` exclude the UTXOs spent by the account's own
+  pending operations. When the explorer does not report mempool spends, a sync listed them as
+  spendable again and the next send was rejected with `txn-mempool-conflict`. An RBF edit keeps
+  the inputs of the operation it replaces.
+
+  `addPendingOperation` keeps every pending UTXO operation (those with `extra.inputs`) instead of
+  only the latest one, and removes one only when the new operation spends one of its inputs (an RBF
+  replacement). Operations of other coins are unchanged.
+
+  `isOldestBitcoinPendingOperation` takes the operation instead of its date: a pending operation
+  can be sped up unless it spends an output of another unconfirmed operation of the account. Pending
+  sends of unrelated UTXOs no longer block each other's speed-up.
+
+- [#24227](https://github.com/LedgerHQ/ledger-live/pull/24227) [`93aef61`](https://github.com/LedgerHQ/ledger-live/commit/93aef61f00e4e65de92695a983bfbca21e156ccb) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): keep pending operations until their transaction is mined
+
+  The post-sync reconciliation dropped an optimistic operation as soon as the explorer returned
+  its transaction, even unconfirmed. The edit flow then no longer found it in `pendingOperations`
+  and only offered to cancel it: speeding up a transaction worked only until the first sync after
+  the explorer indexed it. Only mined operations now resolve a pending one.
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+- [#24500](https://github.com/LedgerHQ/ledger-live/pull/24500) [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.2.0, `@ledgerhq/devices` 8.19.0, `@ledgerhq/domain-service` 1.10.0, `@ledgerhq/evm-tools` 2.1.0, `@ledgerhq/hw-ledger-key-ring-protocol` 1.1.0, `@ledgerhq/hw-transport` 6.37.0, `@ledgerhq/hw-transport-mocker` 6.36.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.0, `@ledgerhq/live-config` 3.10.0, `@ledgerhq/live-currency-format` 0.17.0, `@ledgerhq/live-env` 4.2.0, `@ledgerhq/live-network` 3.3.0, `@ledgerhq/live-promise` 0.5.0, `@ledgerhq/logs` 6.20.0, `@ledgerhq/psbtv2` 0.7.0).
+
+- [#24373](https://github.com/LedgerHQ/ledger-live/pull/24373) [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Export the default coin configs from each coin package and wrap them in `ledger-live-common` (ADR-063). `coin-celo` and `coin-cosmos` replace their `celoConfig` and `cosmosConfig` exports, which wrapped the defaults in `ConfigInfo`, with plain typed `celoDefaults` and `cosmosDefaults`; their `features` now use the `status` key instead of `type`, Desmos gets the active status it was missing, and Gonka defaults to a minimum gas price of 1 ngonka
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+### Patch Changes
+
+- Updated dependencies [[`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/types-live@6.131.0
+  - @ledgerhq/ledger-wallet-framework@3.11.0
+  - @ledgerhq/wallet-btc@1.2.0
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#24226](https://github.com/LedgerHQ/ledger-live/pull/24226) [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): do not spend the inputs of pending operations
+
+  `prepareTransaction` and `estimateMaxSpendable` exclude the UTXOs spent by the account's own
+  pending operations. When the explorer does not report mempool spends, a sync listed them as
+  spendable again and the next send was rejected with `txn-mempool-conflict`. An RBF edit keeps
+  the inputs of the operation it replaces.
+
+  `addPendingOperation` keeps every pending UTXO operation (those with `extra.inputs`) instead of
+  only the latest one, and removes one only when the new operation spends one of its inputs (an RBF
+  replacement). Operations of other coins are unchanged.
+
+  `isOldestBitcoinPendingOperation` takes the operation instead of its date: a pending operation
+  can be sped up unless it spends an output of another unconfirmed operation of the account. Pending
+  sends of unrelated UTXOs no longer block each other's speed-up.
+
+- [#24227](https://github.com/LedgerHQ/ledger-live/pull/24227) [`93aef61`](https://github.com/LedgerHQ/ledger-live/commit/93aef61f00e4e65de92695a983bfbca21e156ccb) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): keep pending operations until their transaction is mined
+
+  The post-sync reconciliation dropped an optimistic operation as soon as the explorer returned
+  its transaction, even unconfirmed. The edit flow then no longer found it in `pendingOperations`
+  and only offered to cancel it: speeding up a transaction worked only until the first sync after
+  the explorer indexed it. Only mined operations now resolve a pending one.
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+- [#24500](https://github.com/LedgerHQ/ledger-live/pull/24500) [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.2.0, `@ledgerhq/devices` 8.19.0, `@ledgerhq/domain-service` 1.10.0, `@ledgerhq/evm-tools` 2.1.0, `@ledgerhq/hw-ledger-key-ring-protocol` 1.1.0, `@ledgerhq/hw-transport` 6.37.0, `@ledgerhq/hw-transport-mocker` 6.36.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.0, `@ledgerhq/live-config` 3.10.0, `@ledgerhq/live-currency-format` 0.17.0, `@ledgerhq/live-env` 4.2.0, `@ledgerhq/live-network` 3.3.0, `@ledgerhq/live-promise` 0.5.0, `@ledgerhq/logs` 6.20.0, `@ledgerhq/psbtv2` 0.7.0).
+
+- [#24373](https://github.com/LedgerHQ/ledger-live/pull/24373) [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Export the default coin configs from each coin package and wrap them in `ledger-live-common` (ADR-063). `coin-celo` and `coin-cosmos` replace their `celoConfig` and `cosmosConfig` exports, which wrapped the defaults in `ConfigInfo`, with plain typed `celoDefaults` and `cosmosDefaults`; their `features` now use the `status` key instead of `type`, Desmos gets the active status it was missing, and Gonka defaults to a minimum gas price of 1 ngonka
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+### Patch Changes
+
+- Updated dependencies [[`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/types-live@6.131.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.11.0-next.0
+  - @ledgerhq/wallet-btc@1.2.0-next.0
+
 ## 1.1.1
 
 ### Patch Changes
@@ -381,27 +463,6 @@
   - @ledgerhq/ledger-wallet-framework@3.1.0
   - @ledgerhq/live-env@3.1.0
   - @ledgerhq/live-signer-zcash@0.10.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.51.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/types-live@6.121.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
-  - @ledgerhq/live-env@3.1.0-next.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.51.1
-
-### Patch Changes
-
-- Updated dependencies [[`8a93a70`](https://github.com/LedgerHQ/ledger-live/commit/8a93a701d631bd18b6c5125f77588802c0325b4c), [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8), [`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad), [`030fc67`](https://github.com/LedgerHQ/ledger-live/commit/030fc677db03e8a411d3d33d2fa88e1ab04df80b), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`b6da6b1`](https://github.com/LedgerHQ/ledger-live/commit/b6da6b1b1c98d022f30985c6103c239bffd0c7df), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`a20805c`](https://github.com/LedgerHQ/ledger-live/commit/a20805cebd95f2f620d394c4d7598ec93506c83e), [`030b427`](https://github.com/LedgerHQ/ledger-live/commit/030b42707768af3f9c98a15fc6751f1d64b36fe6)]:
-  - @ledgerhq/live-signer-zcash@0.10.0
-  - @ledgerhq/types-live@6.120.0
-  - @ledgerhq/ledger-wallet-framework@3.0.0
   - @ledgerhq/wallet-btc@0.3.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

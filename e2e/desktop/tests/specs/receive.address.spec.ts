@@ -16,6 +16,7 @@ import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { buildTags } from "tests/utils/tagsUtils";
+import { isAccountDetailEnabled } from "tests/utils/featureFlagUtils";
 
 type ReceiveTestCase = {
   account: Account;
@@ -44,7 +45,7 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
       await app.receive.verifySendCurrencyTokensWarningMessage(account, "TRC10/TRC20");
       break;
     case Account.ETH_1:
-      await app.receive.expectRecieveMenu();
+      await app.receive.expectReceiveMenu();
       await app.receive.clickReceive();
       await app.receive.verifySendCurrencyTokensWarningMessage(account, "Ethereum");
       break;
@@ -174,13 +175,17 @@ test.describe("Receive", tokenOwner, () => {
         description: tokenAccount.xrayTicket,
       },
     },
-    async ({ app }) => {
+    async ({ app, page }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
       await app.account.navigateToTokenInAccount(tokenAccount.account);
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();
+      if (await isAccountDetailEnabled(page)) {
+        await app.receive.expectReceiveMenu();
+        await app.receive.clickReceive();
+      }
       await app.receive.continue();
 
       const displayedAddress = await app.receive.getAddressDisplayed();

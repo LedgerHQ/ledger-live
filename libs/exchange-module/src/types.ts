@@ -177,10 +177,31 @@ export type GetTransactionStatusResponse = {
   toAccountId?: string;
   sentAmount?: string;
   receivedAmount?: string;
+  /** Atomic, in the sender main account currency. */
   feesAmount?: string;
+  /** Atomic, in the receiving account currency: fees taken from the payout (perps withdraw). */
+  payoutFeesAmount?: string;
   operationHash?: string;
   createdAt?: number;
   providerRequired?: boolean;
+};
+
+export const TRONIFY_IS_ENERGY_DELIVERED_METHOD = "custom.exchange.tronify.isEnergyDelivered";
+
+export type IsTronifyEnergyDeliveredParams = {
+  /** Wallet API id of the TRC-20 token account that sends the swap. */
+  fromAccountId: string;
+  /** Energy the transfer needs, as a positive integer decimal string. */
+  energyNeeded: string;
+};
+
+export type IsTronifyEnergyDeliveredResult = {
+  /**
+   * True once the energy available on the TRON account covers `energyNeeded`. It does not tie the
+   * energy to a rent order, and does not mean the swap is ready: the transfer can still owe TRX for
+   * bandwidth.
+   */
+  delivered: boolean;
 };
 
 export type TradeMethod = "fixed" | "float";

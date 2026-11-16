@@ -19,5 +19,11 @@ export function FamilySendAmountFooterRow() {
 
   if (!SendAmountFooterRow || !mainAccount || !transaction) return null;
 
-  return <SendAmountFooterRow account={mainAccount} transaction={transaction} />;
+  return (
+    <SendAmountFooterRow
+      account={mainAccount}
+      transaction={transaction}
+      status={state.transaction.status}
+    />
+  );
 }

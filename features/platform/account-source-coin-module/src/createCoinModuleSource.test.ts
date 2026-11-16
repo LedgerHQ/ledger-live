@@ -24,7 +24,7 @@ const utxo: AccountDescriptor = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: XPUB,
+  key: XPUB,
   path: "m/84h/0h/0h",
 };
 
@@ -33,7 +33,7 @@ const address = (network: string, value: string): AccountDescriptor => ({
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  address: value,
+  key: value,
   path: "m/44h/60h/0h/0/0",
 });
 
@@ -287,6 +287,13 @@ describe("createCoinModuleSource", () => {
 
   it("reads no batch, the router limiting and settling the accounts itself", () => {
     expect(createCoinModuleSource(hostOf({}).host).readBatch).toBeUndefined();
+  });
+
+  it("reads the address the host computes from the account key", async () => {
+    const { host, getBalance } = hostOf({});
+    await readBalance({ ...host, addressOf: async (_, key) => `address of ${key}` }, ethereum);
+
+    expect(getBalance).toHaveBeenCalledWith("address of 0xabc");
   });
 
   it("fails only the account of a currency whose coin module does not load", async () => {

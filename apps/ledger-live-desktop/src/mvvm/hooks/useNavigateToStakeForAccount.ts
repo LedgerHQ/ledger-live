@@ -20,10 +20,7 @@ export type NavigateToStakeForAccountResult =
   | { outcome: "no_funds" }
   | { outcome: "earn_deposit_fallback" };
 
-/**
- * Navigates to Earn (partner or deposit intent) or opens the native Ledger Live staking flow.
- * Partner staking always uses `/earn` with route state (`customDappUrl`, etc.), never `/platform/*`.
- */
+/** Navigates to the partner route from useStake, the native staking flow, or the Earn deposit fallback. */
 export function useNavigateToStakeForAccount() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -73,7 +70,7 @@ export function useNavigateToStakeForAccount() {
       const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount, returnTo);
 
       if (platformAppRoute) {
-        navigateToEarnScreen(platformAppRoute.state);
+        navigate(platformAppRoute.pathname, { state: platformAppRoute.state });
         return { outcome: "platform_earn", provider: platformAppRoute.state.appId };
       }
 
@@ -107,6 +104,7 @@ export function useNavigateToStakeForAccount() {
       dispatch,
       getCanStakeUsingLedgerLive,
       getRouteToPlatformApp,
+      navigate,
       navigateToEarnScreen,
       openNoFundsStakeModal,
       walletState,

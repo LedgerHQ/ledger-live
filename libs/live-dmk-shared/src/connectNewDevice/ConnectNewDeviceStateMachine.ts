@@ -1,4 +1,4 @@
-import { Subscription } from "rxjs";
+import type { Unsubscribable } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { log } from "@ledgerhq/logs";
@@ -142,35 +142,28 @@ const createConnectNewDeviceStateMachine = <
       hideDeviceNotFound: assign({
         showDeviceNotFound: () => false,
       }),
-      ignoreDiscoveryError: assign({
-        skipTransportIds: ({ context }) => {
-          const transportId = context.discoveryError!.transportId;
-          if (!transportId || context.skipTransportIds.includes(transportId)) {
-            return context.skipTransportIds;
-          }
-          return [...context.skipTransportIds, transportId];
-        },
-      }),
-      startDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (!context.isDiscovering) {
-            context.deviceDiscoveryService.start({
-              ignoreTransportIdentifiers: context.skipTransportIds,
-            });
-          }
-
-          return true;
-        },
-      }),
-      stopDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (context.isDiscovering) {
-            context.deviceDiscoveryService.stop();
-          }
-
-          return false;
-        },
-      }),
+      ignoreDiscoveryError: ({ context }) => {
+        const { ignoredTransportIds } = context.deviceDiscoveryService;
+        const transportId = context.discoveryError!.transportId;
+        context.deviceDiscoveryService.start({
+          ignoreTransportIdentifiers:
+            !transportId || ignoredTransportIds.includes(transportId)
+              ? ignoredTransportIds
+              : [...ignoredTransportIds, transportId],
+        });
+      },
+      startDiscovery: ({ context }) => {
+        if (!context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.start({
+            ignoreTransportIdentifiers: context.deviceDiscoveryService.ignoredTransportIds,
+          });
+        }
+      },
+      stopDiscovery: ({ context }) => {
+        if (context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.stop();
+        }
+      },
       emitDiscovering: ({ context, self }) => {
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.Discovering,
@@ -180,7 +173,7 @@ const createConnectNewDeviceStateMachine = <
           ),
           scanningTransports: getScanningTransports(
             context.deviceDiscoveryService.transportIds,
-            context.skipTransportIds,
+            context.deviceDiscoveryService.ignoredTransportIds,
           ),
           showDeviceNotFound: context.showDeviceNotFound,
         });
@@ -263,11 +256,9 @@ const createConnectNewDeviceStateMachine = <
       listedDevices: [],
       selectedDevice: null,
       sessionId: null,
-      isDiscovering: false,
       showDeviceNotFound: false,
       discoveryError: null,
       connectionError: null,
-      skipTransportIds: [],
     }),
     states: {
       Discovering: {
@@ -440,7 +431,12 @@ export class DefaultConnectNewDeviceStateMachine<
     ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError>
   >;
 
-  private subscriptions: Array<Subscription> = [];
+  private readonly observer: ConnectNewDeviceStateMachineInput<
+    ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >["observer"];
+
+  private subscriptions: Array<Unsubscribable> = [];
 
   constructor(
     input: ConnectNewDeviceStateMachineInput<
@@ -449,6 +445,7 @@ export class DefaultConnectNewDeviceStateMachine<
     >,
   ) {
     this.dmk = input.dmk;
+    this.observer = input.observer;
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.actor = createActor(
       createConnectNewDeviceStateMachine<TDiscoveryError, TConnectionError>(),
@@ -468,23 +465,52 @@ export class DefaultConnectNewDeviceStateMachine<
     const errorsSubscription = this.deviceDiscoveryService.errors.subscribe(error => {
       this.actor.send({ type: ConnectNewDeviceStateMachineEventTypes.DiscoveryError, error });
     });
+    // Without an error observer, XState rethrows the error outside the use case.
+    const actorErrorsSubscription = this.actor.subscribe({
+      error: error => {
+        try {
+          // A failed actor is no longer active, so stop() would skip this cleanup.
+          this.releaseResources();
+        } catch (cleanupError) {
+          log(LOG_TYPE, "failed to release the resources of a failed state machine", {
+            error: cleanupError,
+          });
+        }
+        this.observer.error(error);
+      },
+    });
+    this.subscriptions.push(
+      discoveredDevicesSubscription,
+      errorsSubscription,
+      actorErrorsSubscription,
+    );
     this.actor.start();
-    this.subscriptions.push(discoveredDevicesSubscription, errorsSubscription);
   }
 
   stop(): void {
-    const snapshot = this.actor.getSnapshot();
-    const isRunning = snapshot.status === "active";
+    const isRunning = this.actor.getSnapshot().status === "active";
 
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
     this.subscriptions = [];
-    if (isRunning && snapshot.context.isDiscovering) {
+    this.actor.stop();
+    if (isRunning) {
+      this.releaseResources();
+    }
+  }
+
+  private releaseResources(): void {
+    const snapshot = this.actor.getSnapshot();
+    // A failure while computing the initial state leaves a snapshot without context.
+    if (!snapshot.context) {
+      return;
+    }
+
+    if (this.deviceDiscoveryService.isRunning) {
       this.deviceDiscoveryService.stop();
     }
-    this.actor.stop();
 
     const { sessionId } = snapshot.context;
-    const stoppedDuringSuccessDelay = isRunning && snapshot.matches("Connected");
+    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
     if (stoppedDuringSuccessDelay && sessionId !== null) {
       disconnectUnclaimedSession(this.dmk, sessionId);
     }

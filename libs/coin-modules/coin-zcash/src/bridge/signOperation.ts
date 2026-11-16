@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type {
   AccountBridge,

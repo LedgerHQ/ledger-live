@@ -1,5 +1,97 @@
 # @ledgerhq/wallet-cli
 
+## 3.4.0
+
+### Minor Changes
+
+- [#24380](https://github.com/LedgerHQ/ledger-live/pull/24380) [`eeb7e7e`](https://github.com/LedgerHQ/ledger-live/commit/eeb7e7e7038ec432f8f6c0bb159ee869a916af8a) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent enroll --detach` works on Windows, and a lock left behind by a reboot no longer counts as held once another user's process reuses its pid
+
+- [#24387](https://github.com/LedgerHQ/ledger-live/pull/24387) [`abdcb44`](https://github.com/LedgerHQ/ledger-live/commit/abdcb441ad633fe6e7aca092bed6194302814a2d) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - On Windows, an agent key file is now refused with a clear error instead of one saying another user owns it.
+
+- [#24495](https://github.com/LedgerHQ/ledger-live/pull/24495) [`3467ad1`](https://github.com/LedgerHQ/ledger-live/commit/3467ad1ed7633b293ee4ad307c8db5562af2adf9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Connect Agent Intent enrollment and recovery relay WebSockets through standard proxy environment variables.
+
+- [#24602](https://github.com/LedgerHQ/ledger-live/pull/24602) [`245f178`](https://github.com/LedgerHQ/ledger-live/commit/245f17847ed941d08c18bfbc2fef35fc8c14299e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - wallet-cli warns on stderr when it skips a held token whose Crypto Assets List entry has no unit
+
+### Patch Changes
+
+- [#24745](https://github.com/LedgerHQ/ledger-live/pull/24745) [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Account descriptor: one `key` field for both types; Canton, Concordium, Internet Computer, TON, Aptos and Stacks accounts are keyed on their public key, their address computed through the coin module loaders; a legacy account left out is mirrored again once it converts
+
+## 3.3.0
+
+### Minor Changes
+
+- [#24491](https://github.com/LedgerHQ/ledger-live/pull/24491) [`a52deaf`](https://github.com/LedgerHQ/ledger-live/commit/a52deafcd8f621c41c19f4cdf593cbade71a7f70) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `balances` and `operations` no longer look up each held token in the Crypto Assets List to format its amounts
+
+- [#24420](https://github.com/LedgerHQ/ledger-live/pull/24420) [`21c1140`](https://github.com/LedgerHQ/ledger-live/commit/21c1140a5e1593177e5cdacc2a929ed9b93d8141) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` without `--token` no longer looks up each token the `--account` holds a second time in the Crypto Assets List
+
+- [#24566](https://github.com/LedgerHQ/ledger-live/pull/24566) [`09af998`](https://github.com/LedgerHQ/ledger-live/commit/09af998b94d2be8023bb2bdcb0952adabaca9771) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` checks token approvals with the Agent Intent SDK rules: it skips quotes that approve the zero address, have malformed `approve` calldata, or need an approval on a non-DEX 1inch, Velora or OKX quote
+
+- [#24323](https://github.com/LedgerHQ/ledger-live/pull/24323) [`770d2fe`](https://github.com/LedgerHQ/ledger-live/commit/770d2fe582869d404dcd75ef914d8e7cbf4709dc) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - After `session reset`, `agent-intent sync` pulls every Ledger Sync account again instead of reporting it up to date
+
+- [#24324](https://github.com/LedgerHQ/ledger-live/pull/24324) [`211def6`](https://github.com/LedgerHQ/ledger-live/commit/211def676e1c8104b78f6bad43b00bdca3ac871c) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `skill doctor` names the files of a locally modified skill that changed since wallet-cli installed it; `--output json` adds them as `changedFiles`
+
+- [#24294](https://github.com/LedgerHQ/ledger-live/pull/24294) [`4b13cf2`](https://github.com/LedgerHQ/ledger-live/commit/4b13cf2aae14432b3e98603d120403e98fca8baf) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Let `SWAP_API_BASE` point the swap commands at another Swap API, such as staging. wallet-cli prints that URL on stderr and refuses a value that is not an http(s) URL or carries `user:pass@`, a query or a fragment
+
+- [#24439](https://github.com/LedgerHQ/ledger-live/pull/24439) [`59c8e4e`](https://github.com/LedgerHQ/ledger-live/commit/59c8e4e5c5d6308428361772922790cd4bac5959) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Install `@ledgerhq/agent-intent-sdk` 0.2.0 from the npm registry instead of a vendored tarball
+
+- [#24272](https://github.com/LedgerHQ/ledger-live/pull/24272) [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Brand the account descriptor network as `NetworkId`, distinct from `CryptoCurrencyId`, bridged only by `currencyIdFromNetwork` and `networkFromCurrencyId`
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24455](https://github.com/LedgerHQ/ledger-live/pull/24455) [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): replace `rpcUrls` by a single `rpcUrl` per currency config. Breaking: `endpointByCurrencyId` is removed, `chainConfigFrom` and `createApi` no longer take a currency id.
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24454](https://github.com/LedgerHQ/ledger-live/pull/24454) [`1bb9463`](https://github.com/LedgerHQ/ledger-live/commit/1bb94636a978707449705afcc04228983649b495) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Exit within about 3 s after a command when the analytics endpoint is unreachable, instead of waiting up to 75 s for Segment to give up.
+
+- [#22506](https://github.com/LedgerHQ/ledger-live/pull/22506) [`437d3e2`](https://github.com/LedgerHQ/ledger-live/commit/437d3e254d041164ca6f77679ac22e7300fce55f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Reject networks wallet-cli does not support (e.g. `base`) up front with a clear error, instead of connecting to the device and running discovery
+
+- [#24315](https://github.com/LedgerHQ/ledger-live/pull/24315) [`9ae389d`](https://github.com/LedgerHQ/ledger-live/commit/9ae389d1f0cf2b0641f4cd989be524f81addd26d) Thanks [@Justkant](https://github.com/Justkant)! - The embedded wallet-cli skill no longer says every `send --data` call is decoded on the device: when the device does not decode the call, the human rejects it and the agent stops instead of suggesting blind signing
+
+- [#22441](https://github.com/LedgerHQ/ledger-live/pull/22441) [`aacc8ab`](https://github.com/LedgerHQ/ledger-live/commit/aacc8ab5ff32db1337d568e30431a08bd560cd0b) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - fix(wallet-cli): reject unaffordable swaps with a typed error instead of a raw HTTP status
+
+  JSON error envelopes of every command now carry a `code` (the error name, omitted for built-in errors) and, for swap backend rejections, `http_status`.
+
+## 3.3.0-next.0
+
+### Minor Changes
+
+- [#24491](https://github.com/LedgerHQ/ledger-live/pull/24491) [`a52deaf`](https://github.com/LedgerHQ/ledger-live/commit/a52deafcd8f621c41c19f4cdf593cbade71a7f70) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `balances` and `operations` no longer look up each held token in the Crypto Assets List to format its amounts
+
+- [#24420](https://github.com/LedgerHQ/ledger-live/pull/24420) [`21c1140`](https://github.com/LedgerHQ/ledger-live/commit/21c1140a5e1593177e5cdacc2a929ed9b93d8141) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` without `--token` no longer looks up each token the `--account` holds a second time in the Crypto Assets List
+
+- [#24566](https://github.com/LedgerHQ/ledger-live/pull/24566) [`09af998`](https://github.com/LedgerHQ/ledger-live/commit/09af998b94d2be8023bb2bdcb0952adabaca9771) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` checks token approvals with the Agent Intent SDK rules: it skips quotes that approve the zero address, have malformed `approve` calldata, or need an approval on a non-DEX 1inch, Velora or OKX quote
+
+- [#24323](https://github.com/LedgerHQ/ledger-live/pull/24323) [`770d2fe`](https://github.com/LedgerHQ/ledger-live/commit/770d2fe582869d404dcd75ef914d8e7cbf4709dc) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - After `session reset`, `agent-intent sync` pulls every Ledger Sync account again instead of reporting it up to date
+
+- [#24324](https://github.com/LedgerHQ/ledger-live/pull/24324) [`211def6`](https://github.com/LedgerHQ/ledger-live/commit/211def676e1c8104b78f6bad43b00bdca3ac871c) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `skill doctor` names the files of a locally modified skill that changed since wallet-cli installed it; `--output json` adds them as `changedFiles`
+
+- [#24294](https://github.com/LedgerHQ/ledger-live/pull/24294) [`4b13cf2`](https://github.com/LedgerHQ/ledger-live/commit/4b13cf2aae14432b3e98603d120403e98fca8baf) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Let `SWAP_API_BASE` point the swap commands at another Swap API, such as staging. wallet-cli prints that URL on stderr and refuses a value that is not an http(s) URL or carries `user:pass@`, a query or a fragment
+
+- [#24439](https://github.com/LedgerHQ/ledger-live/pull/24439) [`59c8e4e`](https://github.com/LedgerHQ/ledger-live/commit/59c8e4e5c5d6308428361772922790cd4bac5959) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Install `@ledgerhq/agent-intent-sdk` 0.2.0 from the npm registry instead of a vendored tarball
+
+- [#24272](https://github.com/LedgerHQ/ledger-live/pull/24272) [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Brand the account descriptor network as `NetworkId`, distinct from `CryptoCurrencyId`, bridged only by `currencyIdFromNetwork` and `networkFromCurrencyId`
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24455](https://github.com/LedgerHQ/ledger-live/pull/24455) [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): replace `rpcUrls` by a single `rpcUrl` per currency config. Breaking: `endpointByCurrencyId` is removed, `chainConfigFrom` and `createApi` no longer take a currency id.
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24454](https://github.com/LedgerHQ/ledger-live/pull/24454) [`1bb9463`](https://github.com/LedgerHQ/ledger-live/commit/1bb94636a978707449705afcc04228983649b495) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Exit within about 3 s after a command when the analytics endpoint is unreachable, instead of waiting up to 75 s for Segment to give up.
+
+- [#22506](https://github.com/LedgerHQ/ledger-live/pull/22506) [`437d3e2`](https://github.com/LedgerHQ/ledger-live/commit/437d3e254d041164ca6f77679ac22e7300fce55f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Reject networks wallet-cli does not support (e.g. `base`) up front with a clear error, instead of connecting to the device and running discovery
+
+- [#24315](https://github.com/LedgerHQ/ledger-live/pull/24315) [`9ae389d`](https://github.com/LedgerHQ/ledger-live/commit/9ae389d1f0cf2b0641f4cd989be524f81addd26d) Thanks [@Justkant](https://github.com/Justkant)! - The embedded wallet-cli skill no longer says every `send --data` call is decoded on the device: when the device does not decode the call, the human rejects it and the agent stops instead of suggesting blind signing
+
+- [#22441](https://github.com/LedgerHQ/ledger-live/pull/22441) [`aacc8ab`](https://github.com/LedgerHQ/ledger-live/commit/aacc8ab5ff32db1337d568e30431a08bd560cd0b) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - fix(wallet-cli): reject unaffordable swaps with a typed error instead of a raw HTTP status
+
+  JSON error envelopes of every command now carry a `code` (the error name, omitted for built-in errors) and, for swap backend rejections, `http_status`.
+
 ## 3.2.0
 
 ### Minor Changes
@@ -349,85 +441,5 @@
   - `ledger-wallet-cli` keeps working as a lookup alias in `skill retrieve` and `skill install`, so previously documented commands don't break. It resolves to the canonical skill and never installs a second copy under the old name; `skill list` shows only `wallet-cli-usage`. `skill doctor` now reports a pre-rename install directory as superseded rather than ignoring it (it never deletes it).
   - The transform is implemented once in `scripts/standalone-skill-transform.mjs` and used by both the binary codegen and the `agent-skills` sync workflow, which previously duplicated it as a `sed` pipeline. It now asserts its own output — expected input markers present, nothing monorepo-only surviving — so a reworded source fails the build instead of silently shipping instructions a standalone user cannot follow.
   - Skill collection now refuses any symlink resolving outside the skills tree, in both the binary codegen and the `agent-skills` export, so a symlink committed inside a skill directory cannot pull unrelated repo content into a published artifact.
-
-## 2.5.0
-
-### Minor Changes
-
-- [#20935](https://github.com/LedgerHQ/ledger-live/pull/20935) [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682) Thanks [@dilaouid](https://github.com/dilaouid)! - Move Solana staking onto the generic `StakingResources` account attribute.
-
-  **Breaking for `@ledgerhq/coin-solana`.** `SolanaResources`, `SolanaResourcesRaw`, `toSolanaResourcesRaw` and `fromSolanaResourcesRaw` are gone. `SolanaAccount` is now an alias of `StakingAccount`, so read staking data from `account.stakingResources` instead of `account.solanaResources`. A stake is a `StakingDelegation` or a `StakingUnbonding` (`SolanaStakingPosition`) rather than a `SolanaStake`: its stake account address is `positionId`, its validator is `validatorAddress`, and the former `activation.active` / `activation.inactive` / `withdrawable` fields are `activeAmount` / `inactiveAmount` / `withdrawableAmount`. `listSolanaStakingPositions`, `solanaActivationState` and `stakeActions` from `@ledgerhq/coin-solana/logic` cover the common access patterns. Accounts already persisted with a `solanaResources` blob are migrated on hydration, so no resync is needed.
-
-  `@ledgerhq/types-live` gains `StakingPositionDetails`, mixed into `StakingDelegation` and `StakingUnbonding` for chains that materialize each position as its own on-chain account, plus `actionFeeReserve` on `StakingResources`. Both are optional, so other chains are unaffected.
-
-  `@ledgerhq/wallet-cli`'s `earn positions` output changes shape: on `EarnSolanaStake`, `stakeBalance` and `withdrawable` go from `number` to an integer decimal string, so lamport amounts above `Number.MAX_SAFE_INTEGER` stay exact. Anything reading those two fields numerically needs updating.
-
-  `@ledgerhq/ledger-wallet-framework` now exports the generic `StakingResources` serializer (`toStakingResourcesRaw`, `fromStakingResourcesRaw`, `assignStakingResourcesToAccountRaw`, `assignStakingResourcesFromAccountRaw`), moved out of the EVM family in `live-common` so every coin module can use it.
-
-- [#21184](https://github.com/LedgerHQ/ledger-live/pull/21184) [`e2fb93a`](https://github.com/LedgerHQ/ledger-live/commit/e2fb93a55655d4741d645c8dfe9bb8eb3e3b8a9f) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Document the `send --data` flag in the wallet-cli skill and add a worked WETH wrap/unwrap example (`deposit()` / `withdraw(uint256)` selectors), so agents no longer need to hand-derive raw calldata for common contract calls.
-
-## 2.5.0-next.0
-
-### Minor Changes
-
-- [#20935](https://github.com/LedgerHQ/ledger-live/pull/20935) [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682) Thanks [@dilaouid](https://github.com/dilaouid)! - Move Solana staking onto the generic `StakingResources` account attribute.
-
-  **Breaking for `@ledgerhq/coin-solana`.** `SolanaResources`, `SolanaResourcesRaw`, `toSolanaResourcesRaw` and `fromSolanaResourcesRaw` are gone. `SolanaAccount` is now an alias of `StakingAccount`, so read staking data from `account.stakingResources` instead of `account.solanaResources`. A stake is a `StakingDelegation` or a `StakingUnbonding` (`SolanaStakingPosition`) rather than a `SolanaStake`: its stake account address is `positionId`, its validator is `validatorAddress`, and the former `activation.active` / `activation.inactive` / `withdrawable` fields are `activeAmount` / `inactiveAmount` / `withdrawableAmount`. `listSolanaStakingPositions`, `solanaActivationState` and `stakeActions` from `@ledgerhq/coin-solana/logic` cover the common access patterns. Accounts already persisted with a `solanaResources` blob are migrated on hydration, so no resync is needed.
-
-  `@ledgerhq/types-live` gains `StakingPositionDetails`, mixed into `StakingDelegation` and `StakingUnbonding` for chains that materialize each position as its own on-chain account, plus `actionFeeReserve` on `StakingResources`. Both are optional, so other chains are unaffected.
-
-  `@ledgerhq/wallet-cli`'s `earn positions` output changes shape: on `EarnSolanaStake`, `stakeBalance` and `withdrawable` go from `number` to an integer decimal string, so lamport amounts above `Number.MAX_SAFE_INTEGER` stay exact. Anything reading those two fields numerically needs updating.
-
-  `@ledgerhq/ledger-wallet-framework` now exports the generic `StakingResources` serializer (`toStakingResourcesRaw`, `fromStakingResourcesRaw`, `assignStakingResourcesToAccountRaw`, `assignStakingResourcesFromAccountRaw`), moved out of the EVM family in `live-common` so every coin module can use it.
-
-- [#21184](https://github.com/LedgerHQ/ledger-live/pull/21184) [`e2fb93a`](https://github.com/LedgerHQ/ledger-live/commit/e2fb93a55655d4741d645c8dfe9bb8eb3e3b8a9f) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Document the `send --data` flag in the wallet-cli skill and add a worked WETH wrap/unwrap example (`deposit()` / `withdraw(uint256)` selectors), so agents no longer need to hand-derive raw calldata for common contract calls.
-
-## 2.4.0
-
-### Minor Changes
-
-- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
-
-## 2.4.0-next.0
-
-### Minor Changes
-
-- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
-
-## 2.3.0
-
-### Minor Changes
-
-- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`44694e5`](https://github.com/LedgerHQ/ledger-live/commit/44694e54fa5b48e47595840638aee94a98213a37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Complete the WalletSync DDD extraction: apps now compose the DDD slices directly
-
-  `@ledgerhq/live-wallet` no longer owns sync infrastructure. `src/cloudsync/`, `src/walletsync/`,
-  `src/accountName.ts` and `src/store.ts` are removed in favour of `@shared/cloud-sync`,
-  `@shared/wallet-sync`, `@features/platform-wallet-sync`, `@domain/entity-account-name` and
-  `@domain/entity-recent-addresses`. What remains is the account list sync module (`src/accounts/`)
-  plus `src/walletSyncComposition.ts`, which assembles the sync modules into the wallet-sync schema.
-
-  Desktop and mobile replace the monolithic `wallet` reducer with a `combineReducers` of the entity
-  slices (`accountNames`, `starredAccountIds`, `walletSync`, `recentAddresses`, `nonImportedAccountInfos`)
-  and wire the watch loop and trustchain lifecycle from `@features/platform-wallet-sync` at bootstrap.
-  `@ledgerhq/live-common` drops its `@ledgerhq/live-wallet` runtime dependency: the wallet-api,
-  platform and CSV-export helpers now take an `AccountNamesState` instead of the whole `WalletState`.
-
-- [#20539](https://github.com/LedgerHQ/ledger-live/pull/20539) [`60b4626`](https://github.com/LedgerHQ/ledger-live/commit/60b462653bad19429c46ebef439ec2b5bb234140) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scope `@ledgerhq/live-wallet` down to wallet sync only
-
-  The package now exposes `./accounts` and `./walletSyncComposition` and nothing else.
-  `ordering.ts` and `addAccounts.ts` move to `@ledgerhq/live-common/account/*`, and
-  `accountRawToAccountUserData` joins `live-common/account/serialization` next to `fromAccountRaw`.
-  The `liveqr/` folder is gone: `importAccounts.ts` and `accountToAccountData` were unreachable, and
-  `accountDataToAccount` — whose only callers rehydrated a wallet-sync descriptor — becomes
-  `accounts/descriptorToAccount`. `live-common` no longer depends on `live-wallet`.
-
-- [#18764](https://github.com/LedgerHQ/ledger-live/pull/18764) [`d266e13`](https://github.com/LedgerHQ/ledger-live/commit/d266e13aa8e8b34ca74beaa09687b6e8d426f821) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Migrate the swap `fetchQuotes` helper from axios to an RTK Query endpoint (`swapQuotesApi`). The aggregator `/quote` request now flows through the Redux data layer, and the rawQuotes/providerErrors split is unchanged. Desktop and mobile register the new API and inject their store dispatch at startup via `setSwapQuotesStore`; wallet-cli, which has no app store, sets up a standalone one.
-
-  The endpoint itself now lives in the new `@domain/api-swap-quotes` package; live-common re-exports it, so existing call sites are unchanged.
-
-  Two behaviour changes to be aware of:
-
-  - `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. Both apps already register an auth provider on their store's `extra`, so whether a request carries an `Authorization` header is controlled entirely by the `lwdAuth`/`lwmAuth` feature flags. They are disabled by default; enabling either one makes `/quote` send the user's bearer token to the aggregator, and makes a 401/403 trigger the adapter's refresh-and-retry.
-  - An aggregator HTTP error (4xx/5xx) now resolves to an empty result, so the caller surfaces the `noQuotes` global. Previously the shared axios error interceptor turned these into `LedgerAPI4xx`/`LedgerAPI5xx`, which propagated to the live app as an error. Only transport failures (no HTTP response) still reject, now with a `SwapQuotesRequestFailed` error rather than a bare RTK Query error object.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

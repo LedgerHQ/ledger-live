@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import get from "lodash/get";
 import set from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { Alert, Flex } from "@ledgerhq/native-ui";

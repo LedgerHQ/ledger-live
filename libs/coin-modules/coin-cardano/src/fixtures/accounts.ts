@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BalanceHistoryCache } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CardanoAccount, CardanoDelegation, CardanoOutput } from "../types";
 
 const getDefaultUtxos = (): Array<CardanoOutput> => [

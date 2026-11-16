@@ -126,6 +126,10 @@ describe("Contacts", () => {
 });
 ```
 
+### A test's full name MUST be unique in its spec
+
+Allure keys a test on its spec path and full name (`describe` titles + `it` title), set in [`jest.config.js`](../jest.config.js). Two tests sharing a full name in one spec become a single test, and the second run is reported as a retry of the first. A variant in another spec, such as a feature-flagged revamp, SHOULD still get its own title so the report tells them apart. Moving or renaming a spec starts its tests' Allure history over.
+
 ## Stability
 
 ### A sheet wait MUST use that sheet's content anchor at 100% visibility

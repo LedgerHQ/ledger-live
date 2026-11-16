@@ -13,8 +13,9 @@ import type { Account, EIP712Message } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
 import { withDevice } from "../../../hw/deviceAccess";
 import { isDmkTransport } from "../../../hw/dmkUtils";
+import type { WithdrawAnalytics } from "./constants";
 import { WithdrawSignerMismatchError, WithdrawUnsupportedRouteError } from "./errors";
-import type { WithdrawPayload } from "./schemas";
+import { isNearWithdrawPayload, type WithdrawPayload } from "./schemas";
 
 /** The app the withdraw is signed on: it clear-signs Hyperliquid's `sendAsset`. */
 export const PERPS_WITHDRAW_SIGNING_APP_NAME = "Ethereum";
@@ -32,7 +33,7 @@ const DOMAIN_FIELD_TYPES: Record<string, string> = {
  * while the Mayan typed data would be blind-signed.
  */
 export function getWithdrawTypedData(payload: WithdrawPayload): EIP712Message {
-  if (!("hyperCoreAction" in payload)) {
+  if (!isNearWithdrawPayload(payload)) {
     throw new WithdrawUnsupportedRouteError("Only the sendAsset withdraw route can be signed");
   }
   const { domain, types, primaryType, message } = payload.hyperCoreAction.typedData;
@@ -51,7 +52,10 @@ export async function signWithdrawTypedData(
   device: Device,
   account: Account,
   typedData: EIP712Message,
+  { track, properties }: WithdrawAnalytics,
 ): Promise<string> {
+  const trackSignFailed = () => track("Perps withdraw signing failed", properties);
+
   // Full EIP-712 only: the generic EVM message signer falls back to signing the hashes, which
   // the device cannot clear-sign.
   const { r, s, v } = await firstValueFrom(
@@ -69,6 +73,7 @@ export async function signWithdrawTypedData(
   ).catch((error: unknown) => {
     // The legacy Ethereum signer reports a rejection as a raw status; the DMK one maps it.
     if (isRefusalStatus(error)) throw new UserRefusedOnDevice();
+    if (!isRefusal(error)) trackSignFailed();
     throw error;
   });
   const signature = ethers.Signature.from({
@@ -80,6 +85,7 @@ export async function signWithdrawTypedData(
   const { EIP712Domain: _domainType, ...types } = typedData.types;
   const signer = ethers.verifyTypedData(typedData.domain, types, typedData.message, signature);
   if (signer.toLowerCase() !== account.freshAddress.toLowerCase()) {
+    trackSignFailed();
     throw new WithdrawSignerMismatchError(`Signed by ${signer}, expected ${account.freshAddress}`);
   }
   return signature;
@@ -95,6 +101,16 @@ function isSignedEvent(
   event: EvmSignerEvent,
 ): event is { type: "signer.evm.signed"; value: EvmSignature } {
   return event.type === "signer.evm.signed";
+}
+
+/** The DMK signer already maps a rejection, and `instanceof` is unreliable across packages. */
+function isRefusal(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    error.name === "UserRefusedOnDevice"
+  );
 }
 
 function isRefusalStatus(error: unknown): boolean {

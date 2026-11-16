@@ -11,7 +11,7 @@ import {
   assignStakingResourcesFromAccountRaw,
   assignStakingResourcesToAccountRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   CosmosOperationExtra,
   CosmosOperationExtraRaw,

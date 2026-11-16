@@ -139,7 +139,9 @@ function VirtualMenuList<
   return (
     <div
       ref={parentRef}
+      data-testid="select-menu-list"
       style={{
+        position: "relative",
         width: "100%",
         height: listHeight,
         overflow: "auto",

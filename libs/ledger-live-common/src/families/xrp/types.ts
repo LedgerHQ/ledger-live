@@ -12,7 +12,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export type XrpOperationExtra = {
   memo?: string;
@@ -34,11 +34,14 @@ export type XrpTokenAccountRaw = TokenAccountRaw & { xrpResources?: XrpTokenReso
  * `changeTrust` opts in to a token or edits its trust limit, the `amount`. `assetReference` and
  * `assetOwner` name the token, never a `subAccountId`: it adds a pending token sub-operation worth
  * the limit, which locks the token balance until the next sync.
+ * `noRipple: false` lets rippling through the trust line; any other value blocks it.
+ * `optOut` removes the token named the same way, with amount 0 and no recipient.
  */
 type XrpTokenFields = {
-  mode?: "send" | "changeTrust";
+  mode?: "send" | "changeTrust" | "optOut";
   assetReference?: string;
   assetOwner?: string;
+  noRipple?: boolean;
 };
 
 export type Transaction = TransactionCommon &

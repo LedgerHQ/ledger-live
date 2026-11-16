@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Config as StellarSdkConfig } from "@stellar/stellar-sdk";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

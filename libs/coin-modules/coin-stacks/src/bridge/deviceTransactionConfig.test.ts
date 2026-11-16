@@ -1,5 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction, TransactionStatus } from "../types";
 import { createTransaction } from "./createTransaction";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";

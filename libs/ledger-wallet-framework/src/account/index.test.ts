@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
   accountWithMandatoryTokens,

@@ -4,7 +4,7 @@ import {
   getDefaultExplorerView,
 } from "@domain/entity-currency-crypto";
 import { MinaAccount, Transaction, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";

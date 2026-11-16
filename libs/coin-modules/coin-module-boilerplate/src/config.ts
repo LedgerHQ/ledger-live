@@ -38,3 +38,19 @@ export type BoilerplateCoinConfig = CurrencyConfig & BoilerplateConfig;
 
 /** The {@link Context} threaded through the coin-module-boilerplate low layers (ADR-019). */
 export type BoilerplateContext = Context<BoilerplateCoinConfig>;
+
+/**
+ * Default configs shipped with the package, keyed by currency id (ADR-063). Plain data: no
+ * config-library import and no env-aware logic, hosts wrap or override as needed.
+ */
+export const boilerplateDefaults = {
+  boilerplate: {
+    status: { type: "active" },
+    name: "Boilerplate",
+    unit: { name: "BOL", code: "BOL", magnitude: 8 },
+    node: { url: "https://boilerplate-node.example.com" },
+    indexer: { url: "https://boilerplate-indexer.example.com", maxTxQuery: DEFAULT_MAX_TX_QUERY },
+    fees: { fallbackFee: DEFAULT_FALLBACK_FEE },
+    minReserve: DEFAULT_MIN_RESERVE,
+  },
+} satisfies Record<string, BoilerplateCoinConfig>;

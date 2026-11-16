@@ -1,6 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
-import type { PerpsTransactionSignedParams } from "../../../types";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import { usePerpsTransactionSignedViewModel } from "../usePerpsTransactionSignedViewModel";
 
 const mockDispatch = jest.fn();

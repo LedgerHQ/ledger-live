@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { mockCryptoCurrency } from "@domain/entity-currency-crypto/schema.mock";
 import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
 import { useCalculate } from "@features/platform-market-countervalues";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { mockAssetsTablePorts, PortsWrapper } from "./testing/mockAssetsTablePorts";
 import { usePriceCellViewModel } from "./usePriceCellViewModel";
 

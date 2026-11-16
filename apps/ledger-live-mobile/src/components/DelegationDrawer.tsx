@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";

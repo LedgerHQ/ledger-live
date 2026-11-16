@@ -8,6 +8,9 @@ export const predictionsSlice = createSlice({
     markPredictionsIntroSeen: state => {
       state.hasSeenIntro = true;
     },
+    resetPredictionsIntroSeen: state => {
+      state.hasSeenIntro = false;
+    },
     // The persisted value comes from disk, so it is parsed rather than trusted.
     restorePredictionsState: (_state, { payload }: PayloadAction<unknown>) => {
       const restored = PredictionsStateSchema.safeParse(payload);
@@ -19,5 +22,6 @@ export const predictionsSlice = createSlice({
   },
 });
 
-export const { markPredictionsIntroSeen, restorePredictionsState } = predictionsSlice.actions;
+export const { markPredictionsIntroSeen, resetPredictionsIntroSeen, restorePredictionsState } =
+  predictionsSlice.actions;
 export const { selectHasSeenIntro } = predictionsSlice.selectors;

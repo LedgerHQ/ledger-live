@@ -1,5 +1,5 @@
 import { TFunction } from "i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";

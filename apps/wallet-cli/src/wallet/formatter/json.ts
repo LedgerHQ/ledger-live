@@ -5,6 +5,8 @@ export type JsonBalance = { asset: string; amount: string };
 
 export type JsonDiscoveredAccount = { label: string; freshAddress: string };
 
+export type JsonTokenInfo = Omit<TokenInfo, "unit">;
+
 export type JsonOperation = {
   accountId: string;
   asset: string;
@@ -26,7 +28,7 @@ export class JsonFormatter {
     return Promise.all(
       balances.map(async b => ({
         asset: b.assetId,
-        amount: await this.human.formatAmount(b.balance, b.assetId),
+        amount: await this.human.formatBalanceAmount(b),
       })),
     );
   }
@@ -41,7 +43,7 @@ export class JsonFormatter {
         accountId: accountV1Str,
         asset: op.assetId,
         type: op.type,
-        value: await this.human.formatAmount(op.value, op.assetId),
+        value: await this.human.formatAmount(op.value, op.assetId, op.unit),
         fee: await this.human.formatAmount(op.fee, currencyId),
         senders: op.senders,
         recipients: op.recipients,
@@ -57,7 +59,7 @@ export class JsonFormatter {
     return accounts.map(a => ({ label: a.label, freshAddress: a.freshAddress }));
   }
 
-  token(t: TokenInfo): TokenInfo {
-    return t;
+  token({ unit: _unit, ...token }: TokenInfo): JsonTokenInfo {
+    return token;
   }
 }

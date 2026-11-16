@@ -24,9 +24,7 @@ export function enrichRatesResponse(
         new BigNumber(10).pow(unitTo.magnitude),
       );
 
-      const magnitudeAwareRate = rate.div(
-        new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
-      );
+      const magnitudeAwareRate = rate.shiftedBy(unitTo.magnitude - unitFrom.magnitude);
 
       return {
         ...(r.tradeMethod === "fixed" ? { expirationTime: Number(r.expirationTime) } : {}),

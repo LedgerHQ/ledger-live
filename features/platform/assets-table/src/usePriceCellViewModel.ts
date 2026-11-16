@@ -1,6 +1,6 @@
 import type { Currency } from "@domain/entity-currency";
 import { useCalculate } from "@features/platform-market-countervalues";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAssetsTablePorts } from "./assetsTablePorts";
 
 export function usePriceCellViewModel(currency: Currency, marketPrice?: number) {

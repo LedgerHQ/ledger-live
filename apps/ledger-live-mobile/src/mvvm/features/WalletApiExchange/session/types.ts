@@ -12,9 +12,6 @@ export type ExchangeSessionManifest = Readonly<{ id: string; name: string }>;
 
 type StartHookParams = Parameters<ExchangeUiHooks["custom.exchange.start"]>[0];
 
-/** What the start hook reports alongside the nonce, for analytics. */
-export type ExchangeStartMeta = NonNullable<Parameters<StartHookParams["onSuccess"]>[2]>;
-
 /** `custom.exchange.start`, as the wallet-api UI hook receives it. */
 export type ExchangeSessionStartRequest = Readonly<{
   manifest: ExchangeSessionManifest;

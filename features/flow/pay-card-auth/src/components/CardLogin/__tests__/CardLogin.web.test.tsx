@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
-import { CardLogin } from "../CardLogin.web";
+import { CardLogin } from "../CardLogin";
 import type { CardLoginProps } from "../CardLogin.types";
 import type { CardLoginViewModel } from "../types";
 

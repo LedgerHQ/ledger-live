@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { BigNumber } from "bignumber.js";
+import { useNavigate } from "react-router";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -11,12 +11,9 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
-import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
 import type { AccountDelegationsProps } from "@features/flow-account-detail-delegations";
-import { setTrackingSource, track } from "@shared/analytics";
-import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAccount";
+import { track } from "@shared/analytics";
 import { useSelector } from "LLD/hooks/redux";
-import { useStake } from "LLD/hooks/useStake";
 import { urls } from "~/config/urls";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -26,6 +23,7 @@ import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { getAccountUrl } from "~/renderer/utils";
+import { useTronEarnAction } from "./useTronEarnAction";
 
 const STAKEKIT_PATH = "/platform/stakekit";
 const YIELD_ID = "tron-trx-native-staking";
@@ -140,9 +138,7 @@ const buildFooter = (
 export const useTronDelegationsViewModel = (account: TronAccount): AccountDelegationsProps => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { getCanStakeCurrency } = useStake();
-  const { navigateToStakeForAccount } = useNavigateToStakeForAccount();
+  const { canEarn, startEarning } = useTronEarnAction(account);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
   const unit = useAccountUnit(account);
@@ -156,7 +152,6 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
   const hasVotes = formattedVotes.length > 0;
   const hasRewards = unwithdrawnReward.gt(0);
   const showVotes = tronPower > 0 && hasVotes;
-  const canEarn = getCanStakeCurrency(account.currency.id) && account.spendableBalance.gt(0);
 
   const lastVoteDate = getLastVotedDate(account);
   const durationDays = useMemo(
@@ -212,14 +207,6 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
     [goToStakekit],
   );
 
-  const onStartDelegating = useCallback(() => {
-    setTrackingSource(ACCOUNT_DETAIL_PAGES.account);
-    navigateToStakeForAccount(account, undefined, {
-      source: ACCOUNT_DETAIL_PAGES.account,
-      returnTo: pathname,
-    });
-  }, [account, navigateToStakeForAccount, pathname]);
-
   const onOpenValidator = useCallback(
     (address: string) => {
       const url = explorerView && getAddressExplorer(explorerView, address);
@@ -264,9 +251,9 @@ export const useTronDelegationsViewModel = (account: TronAccount): AccountDelega
     onOpenValidator,
     onSelectRowAction: () => undefined,
     onSelectHeaderAction,
-    onStartDelegating,
+    onStartDelegating: startEarning,
     onLearnMore: () => openURL(stakingUrl),
-    onSelectFooterAction: onStartDelegating,
+    onSelectFooterAction: startEarning,
     testID: "account-detail-tron-votes",
   };
 };

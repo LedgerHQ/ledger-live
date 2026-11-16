@@ -8,10 +8,6 @@ export function buildPageEventName(fullScreenName: string): string {
   return `Page ${fullScreenName}`;
 }
 
-export function getLastPageEventName(): string | undefined {
-  return lastPageEventName;
-}
-
 export function setLastPageEventName(eventName: string): void {
   lastPageEventName = eventName;
 }

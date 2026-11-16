@@ -1,14 +1,13 @@
 import { AccountId, Hbar, PrivateKey, TransactionId, TransferTransaction } from "@hiero-ledger/sdk";
 import { broadcast } from "./broadcast";
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { serializeTransaction } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 
 describe("Broadcast", () => {
   const account = getMockedAccount();
-  const coinConfig = getMockedConfig();
+  const coinConfig = hederaDefaults.hedera;
 
   beforeAll(() => {
     hederaCoinConfig.setCoinConfig(() => coinConfig);

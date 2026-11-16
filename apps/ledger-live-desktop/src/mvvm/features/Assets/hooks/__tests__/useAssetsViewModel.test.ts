@@ -2,7 +2,8 @@ import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useAssetsViewModel } from "../useAssetsViewModel";
 import { padItems } from "../../utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema, type AggregatedAssetId } from "@domain/entity-aggregated-asset";
 import {
   createMockCategorizedAssets,
   BITCOIN_ASSET,
@@ -57,10 +58,17 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
 
 const mockUseAssetsData = jest.fn();
 const mockUseMarketDayChange = jest.fn((_params: unknown) => new Map<string, number>());
+const mockHeldMarketDayChange = jest.fn(() => ({
+  byLedgerId: new Map<string, number>(),
+  byMarketId: new Map<string, number>(),
+}));
 jest.mock("@features/platform-aggregated-assets", () => ({
   ...jest.requireActual("@features/platform-aggregated-assets"),
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
   useMarketDayChangeByCurrencyId: (params: unknown) => mockUseMarketDayChange(params),
+}));
+jest.mock("LLD/hooks/useMarketDayChange", () => ({
+  useMarketDayChange: () => mockHeldMarketDayChange(),
 }));
 
 const mockUseUsdToFiatRate = jest.fn();
@@ -123,12 +131,13 @@ function buildMockAssetsData(
   const cryptoAssets: AssetsDataWithPagination["cryptoAssets"] = {};
   const cryptoOrTokenCurrencies: AssetsDataWithPagination["cryptoOrTokenCurrencies"] = {};
   const markets: AssetsDataWithPagination["markets"] = {};
-  const metaCurrencyIds: string[] = [];
+  const metaCurrencyIds: AggregatedAssetId[] = [];
 
   for (const c of cryptos) {
-    metaCurrencyIds.push(c.id);
-    cryptoAssets[c.id] = {
-      id: c.id,
+    const metaId = AggregatedAssetIdSchema.parse(c.id);
+    metaCurrencyIds.push(metaId);
+    cryptoAssets[metaId] = {
+      id: metaId,
       ticker: c.ticker,
       name: c.currencyObj.name,
       assetsIds: { [c.id]: c.id },
@@ -629,14 +638,13 @@ describe("useCryptoAssetsViewModel", () => {
     ).toBe(true);
   });
 
-  it("looks up the market of owned cryptos whether or not placeholders are needed", () => {
+  it("uses the shared market 24h change for owned cryptos and skips the stocks lookup", () => {
     mockSearchParamsRef.current.set("category", "cryptos");
     renderHook(() => useCryptoAssetsViewModel(), { initialState: onboardedStateWithAccounts });
 
+    expect(mockHeldMarketDayChange).toHaveBeenCalled();
     expect(mockUseMarketDayChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        currencyIds: expect.arrayContaining([BITCOIN_ASSET.currency.id]),
-      }),
+      expect.objectContaining({ currencyIds: [] }),
     );
   });
 
@@ -702,7 +710,7 @@ describe("useCryptoAssetsViewModel", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       `/asset/${encodeURIComponent(
-        dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
+        toMarketId(parseMarketRef(placeholder!.marketId ?? placeholder!.currency.id)),
       )}`,
     );
   });

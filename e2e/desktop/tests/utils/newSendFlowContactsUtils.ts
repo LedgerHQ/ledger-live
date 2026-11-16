@@ -53,7 +53,7 @@ async function seedContacts(app: Application, seeds: readonly ContactSeed[]) {
 async function openSendFlow(app: Application, tx: Transaction) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
-  await app.account.clickSend();
+  await app.account.clickSend(tx.accountToDebit.currency);
   await app.newSendFlow.waitForDialog();
 }
 

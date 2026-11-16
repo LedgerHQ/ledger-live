@@ -2,7 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { isStakingAccount, type Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { accountValidators, mapDelegations, mapRedelegations, mapUnbondings } from "./logic";
 import { CosmosOperation } from "./types";

@@ -7,16 +7,11 @@ import {
   types as TyphonTypes,
 } from "@stricahq/typhonjs";
 import { broadcast } from "./broadcast";
-import coinConfig from "./config";
+import coinConfig, { cardanoDefaults } from "./config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      maxFeesWarning: 0,
-      maxFeesError: 0,
-      testnet: false,
-    }));
+    coinConfig.setCoinConfig(() => cardanoDefaults.cardano);
   });
   it("throws when broadcasting a transaction spending nonexistent inputs", async () => {
     const privKey = await Bip32PrivateKey.fromEntropy(randomBytes(64));

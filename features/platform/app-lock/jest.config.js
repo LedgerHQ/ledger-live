@@ -1,4 +1,4 @@
-const UI_FOLDERS = ["/PasswordField/", "/passwordDraft/"];
+const UI_FOLDERS = ["/PasswordField/", "/passwordDraft/", "/biometricsTypeLabel/"];
 
 const nativeProject = require("@support/jest/features-flow")
   .createFlowJestConfig()

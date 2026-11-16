@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { parseAnalyticsEntryState, type AnalyticsPeriod } from "@features/flow-account-analytics";
-import { findFiatCurrencyByTicker, getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { parseAnalyticsEntryState, toAnalyticsPeriod } from "@features/flow-account-analytics";
 import { useSelector } from "LLD/hooks/redux";
 import { useSyncSources } from "LLD/hooks/useSyncSources";
 import {
@@ -13,16 +12,6 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountUrl } from "~/renderer/utils";
 import { useAnalyticsCatalogAdapter } from "../../hooks/useAnalyticsCatalogAdapter";
 import { useAnalyticsBalanceAdapter } from "../../hooks/useAnalyticsBalanceAdapter";
-
-const PERIODS = {
-  day: "1d",
-  week: "1w",
-  month: "1m",
-  year: "1y",
-  all: "all",
-} as const satisfies Record<string, AnalyticsPeriod>;
-
-const UNSUPPORTED_COUNTERVALUE_FIAT = getFiatCurrencyByTicker("USD").ticker;
 
 export function useAccountAnalyticsScreenViewModel() {
   const { t } = useTranslation();
@@ -57,9 +46,8 @@ export function useAccountAnalyticsScreenViewModel() {
       catalog,
       dataPort,
       initialSelection,
-      fiatCurrencyId:
-        findFiatCurrencyByTicker(counterValue.ticker)?.ticker ?? UNSUPPORTED_COUNTERVALUE_FIAT,
-      period: PERIODS[selectedTimeRange],
+      fiatCurrencyId: counterValue.ticker,
+      period: toAnalyticsPeriod(selectedTimeRange),
       onRefresh,
     },
   };

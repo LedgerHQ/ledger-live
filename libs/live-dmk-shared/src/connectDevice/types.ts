@@ -2,7 +2,6 @@ import type {
   ConnectedDevice,
   DeviceManagementKit,
   DiscoveredDevice,
-  TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
 import type { Observer } from "rxjs";
 
@@ -21,7 +20,10 @@ import {
 /**
  * A device the user has already connected to, as saved in the app's known devices.
  */
-export type KnownDevice = Device;
+export type KnownDevice = Device & {
+  /** Time of the last saved connection, in milliseconds since the epoch. */
+  lastUsedAt?: number;
+};
 
 export type MatchedDevice = {
   knownDevice: KnownDevice;
@@ -71,10 +73,8 @@ export type ConnectDeviceStateMachineContext<
   matchedDevices: Array<MatchedDevice>;
   selectedKnownDevice: KnownDevice | null;
   selectedMatchedDevice: MatchedDevice | null;
-  isDiscovering: boolean;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;
-  skipTransportIds: Array<TransportIdentifier>;
 };
 
 export enum ConnectDeviceStateMachineEventTypes {

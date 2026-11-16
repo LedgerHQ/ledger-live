@@ -1,6 +1,7 @@
 import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
@@ -39,7 +40,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     hasCompletedOnboarding,
   }) => {
     if (!deviceWasSeeded) {
-      resetToLegacyOnboarding(navigation, device);
+      openLegacySetup(navigation, device);
       return;
     }
     if (!isGenuine) {
@@ -154,28 +155,29 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
   });
 }
 
-function resetToLegacyOnboarding(navigation: NavigationProp<ParamListBase>, device: Device) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
+/** Leaves the flow for the onboarding screens below it, where the old setup lives. `pop` removes the flow instead of stacking a second onboarding. */
+function openLegacySetup(navigation: NavigationProp<ParamListBase>, device: Device) {
+  const root = getRootNavigation(navigation);
+  if (isSyncOnboardingSupported(device.modelId)) {
+    root.navigate(
+      NavigatorName.BaseOnboarding,
       {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.Onboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.OnboardingUseCase,
-                    params: { deviceModelId: device.modelId },
-                  },
-                ],
-              },
-            },
-          ],
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: { device, backReturnsToPrevious: true },
         },
       },
-    ],
-  });
+      { pop: true },
+    );
+    return;
+  }
+  root.navigate(
+    NavigatorName.BaseOnboarding,
+    {
+      screen: NavigatorName.Onboarding,
+      params: { screen: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
+    },
+    { pop: true },
+  );
 }
