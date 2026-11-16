@@ -1,12 +1,7 @@
 import { useCallback } from "react";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import { useDispatch } from "LLD/hooks/redux";
 import { openSwapTransactionStatusDialog } from "LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog";
-
-export type PerpsTransactionSignedData = {
-  receiveCurrencyTicker: string;
-  swapId?: string;
-  provider?: string;
-};
 
 export type PerpsTransactionSignedViewModel = {
   receiveCurrencyTicker: string;
@@ -15,7 +10,7 @@ export type PerpsTransactionSignedViewModel = {
 };
 
 export function usePerpsTransactionSignedViewModel(
-  data: PerpsTransactionSignedData,
+  data: PerpsTransactionSignedParams,
   onClose: () => void,
 ): PerpsTransactionSignedViewModel {
   const { receiveCurrencyTicker, swapId, provider } = data;
