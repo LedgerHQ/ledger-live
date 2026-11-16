@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { TopologyChangeError, TransferOfferExpiredError } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
+import { instrumentKey } from "@ledgerhq/live-common/families/canton/proposalSorting";
+import {
+  useCantonAcceptOrRejectOffer,
+  useCantonOfferTokens,
+} from "@ledgerhq/live-common/families/canton/react";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { State } from "~/renderer/reducers";
@@ -19,6 +23,7 @@ jest.mock("../../hooks/topologyChangeError", () => ({
 }));
 
 const mockUseCantonAcceptOrRejectOffer = jest.mocked(useCantonAcceptOrRejectOffer);
+const mockUseCantonOfferTokens = jest.mocked(useCantonOfferTokens);
 const mockUseBridgeSync = jest.mocked(useBridgeSync);
 const mockHandleTopologyChangeError = jest.mocked(handleTopologyChangeError);
 
@@ -42,6 +47,8 @@ const createAccountWithProposal = (
           sender,
           receiver,
           amount: "1000000",
+          instrument_id: "Amulet",
+          instrument_admin: "DSO::1220",
           memo: "Test memo",
           expires_at_micros: Date.now() * 1000 + 3600000000,
           ...overrides,
@@ -66,6 +73,7 @@ describe("usePendingTransferProposalsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseCantonAcceptOrRejectOffer.mockReturnValue(mockPerformTransferInstruction);
+    mockUseCantonOfferTokens.mockReturnValue(new Map());
     mockUseBridgeSync.mockReturnValue(mockSync);
     mockHandleTopologyChangeError.mockReturnValue(true);
   });
@@ -258,6 +266,8 @@ describe("usePendingTransferProposalsViewModel", () => {
               sender: "other-party",
               receiver: "test-xpub",
               amount: "500000",
+              instrument_id: "Amulet",
+              instrument_admin: "DSO::1220",
               memo: "",
               expires_at_micros: Date.now() * 1000 + 3600000000,
             },
@@ -266,6 +276,8 @@ describe("usePendingTransferProposalsViewModel", () => {
               sender: "test-xpub",
               receiver: "other-party",
               amount: "750000",
+              instrument_id: "Amulet",
+              instrument_admin: "DSO::1220",
               memo: "",
               expires_at_micros: Date.now() * 1000 + 7200000000,
             },
@@ -299,6 +311,59 @@ describe("usePendingTransferProposalsViewModel", () => {
 
       expect(result.current.incomingCount).toBe(0);
       expect(result.current.outgoingCount).toBe(0);
+    });
+
+    describe("instrument resolution", () => {
+      const CBTC_ADMIN = "cbtc-network::1220";
+      const CBTC_UNIT = { name: "CBTC", code: "CBTC", magnitude: 38 };
+      const cbtcOffer = (instrumentAdmin: string) =>
+        createAccountWithProposal("cbtc-offer", "other-party", "test-xpub", {
+          instrument_id: "CBTC",
+          instrument_admin: instrumentAdmin,
+        }) as CantonAccount;
+      const firstIncoming = (account: CantonAccount) =>
+        renderHook(() => usePendingTransferProposalsViewModel(account, account), {
+          initialState: buildInitialState(),
+        }).result.current.groupedIncoming[0].proposals[0];
+
+      it("resolves an offer from the CAL tokens when its sub-account is missing", () => {
+        const cbtc = { id: "canton_network/cip56/cbtc", units: [CBTC_UNIT] };
+        mockUseCantonOfferTokens.mockReturnValue(
+          new Map([[instrumentKey("CBTC", CBTC_ADMIN), cbtc]]) as unknown as ReturnType<
+            typeof useCantonOfferTokens
+          >,
+        );
+        const account = cbtcOffer(CBTC_ADMIN);
+
+        const offer = firstIncoming(account);
+
+        expect(offer.unit).toEqual(CBTC_UNIT);
+        expect(offer.isUnknownInstrument).toBe(false);
+      });
+
+      it("looks CAL up on the parent, since a token account has no currency", () => {
+        const parent = cbtcOffer(CBTC_ADMIN);
+        const tokenAccount = {
+          type: "TokenAccount",
+          id: "cbtc-token-account",
+          parentId: parent.id,
+          token: { id: "canton_network/cip56/cbtc", units: [CBTC_UNIT] },
+          cantonResources: parent.cantonResources,
+        } as unknown as CantonAccount;
+
+        renderHook(() => usePendingTransferProposalsViewModel(tokenAccount, parent), {
+          initialState: buildInitialState(),
+        });
+
+        expect(mockUseCantonOfferTokens).toHaveBeenCalledWith(parent);
+      });
+
+      it("codes an unknown instrument's amount with the unknown token label", () => {
+        const offer = firstIncoming(cbtcOffer("impostor::1220"));
+
+        expect(offer.unit.code).toBe("Unknown token");
+        expect(offer.isUnknownInstrument).toBe(true);
+      });
     });
   });
 

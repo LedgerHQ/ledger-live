@@ -1,4 +1,4 @@
-import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { Button, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo } from "react";
 import CounterValue from "~/components/CounterValue";
@@ -14,13 +14,11 @@ import {
 
 type ViewProps = ProposalRowViewModel & {
   proposal: ProposalRowProps["proposal"];
-  account: ProposalRowProps["account"];
   unit: ProposalRowProps["unit"];
 };
 
 export function View({
   proposal,
-  account,
   timeRemaining,
   isExpired,
   formattedTime,
@@ -77,18 +75,20 @@ export function View({
           </Flex>
         </Flex>
 
-        <Flex alignItems="flex-end" mr={3}>
-          <Text variant="body" fontWeight="semiBold" color={amountColor}>
+        <Flex alignItems="flex-end" mr={3} flexShrink={1} maxWidth="45%">
+          <Text variant="body" fontWeight="semiBold" color={amountColor} textAlign="right">
             <CurrencyUnitValue unit={proposal.unit} value={amountValue} showCode alwaysShowSign />
           </Text>
-          <Text variant="small" color="neutral.c70" mt={0.5}>
-            <CounterValue
-              currency={getAccountCurrency(account)}
-              value={amountValue}
-              showCode
-              alwaysShowSign
-            />
-          </Text>
+          {proposal.currency && (
+            <Text variant="small" color="neutral.c70" mt={0.5}>
+              <CounterValue
+                currency={proposal.currency}
+                value={amountValue}
+                showCode
+                alwaysShowSign
+              />
+            </Text>
+          )}
         </Flex>
 
         <Flex flexDirection="row" pr={4}>
@@ -111,9 +111,9 @@ export function View({
   );
 }
 
-function ProposalRow({ proposal, account, unit, onRowClick, onOpenModal }: ProposalRowProps) {
+function ProposalRow({ proposal, unit, onRowClick, onOpenModal }: Readonly<ProposalRowProps>) {
   const viewModel = useProposalRowViewModel({ proposal, onRowClick, onOpenModal });
-  return <View {...viewModel} proposal={proposal} account={account} unit={unit} />;
+  return <View {...viewModel} proposal={proposal} unit={unit} />;
 }
 
 export default memo(ProposalRow);

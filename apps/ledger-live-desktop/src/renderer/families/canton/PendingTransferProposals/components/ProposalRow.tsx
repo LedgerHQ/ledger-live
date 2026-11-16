@@ -12,6 +12,7 @@ import Tooltip from "~/renderer/components/Tooltip";
 import IconCross from "~/renderer/icons/Cross";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
+import { amountColor } from "../utils/transferProposals";
 import {
   useProposalRowViewModel,
   type ProposalRowProps,
@@ -141,7 +142,7 @@ export function View({
             showCode
             fontSize={4}
             alwaysShowSign
-            color={isIncoming ? undefined : "neutral.c80"}
+            color={amountColor(proposal)}
           />
         </Box>
 

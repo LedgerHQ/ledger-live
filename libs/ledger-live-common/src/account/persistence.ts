@@ -22,6 +22,15 @@ function swapHistoryChanged(
   });
 }
 
+/** Canton: the DSO party that tells native CC offers apart. */
+const cantonNativeInstrumentAdmin = (account: Account): unknown =>
+  "cantonResources" in account &&
+  typeof account.cantonResources === "object" &&
+  account.cantonResources !== null &&
+  "nativeInstrumentAdmin" in account.cantonResources
+    ? account.cantonResources.nativeInstrumentAdmin
+    : undefined;
+
 /**
  * Returns true when something that is persisted and user-visible (or structurally
  * relevant) changed between prev and next. Used to decide if an account is worth
@@ -78,6 +87,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     if ((prevPrivateInfo.transactions?.length ?? 0) !== (nextPrivateInfo.transactions?.length ?? 0))
       return true;
   }
+
+  if (cantonNativeInstrumentAdmin(prev) !== cantonNativeInstrumentAdmin(next)) return true;
 
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;

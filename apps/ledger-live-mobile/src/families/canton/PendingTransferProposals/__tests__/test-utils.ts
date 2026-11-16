@@ -6,6 +6,8 @@ import type { ProcessedProposal, RawTransferProposal } from "../types";
 
 export const ACCOUNT_XPUB = "test-xpub";
 export const MOCK_UNIT: Unit = { name: "Canton", code: "CANTON", magnitude: 38 };
+// As the view model resolves an unknown instrument: its id names the unit, the label codes it.
+export const UNKNOWN_UNIT: Unit = { name: "CBTC", code: "Unknown token", magnitude: 38 };
 
 export const createCantonAccount = (
   overrides: Partial<Account> & Record<string, unknown> = {},
@@ -90,7 +92,9 @@ export const createProcessedProposal = (
     receiver: ACCOUNT_XPUB,
     amount: new BigNumber("1000000"),
     instrumentId: "instrument-1",
+    instrumentAdmin: "instrument-admin",
     unit: MOCK_UNIT,
+    isUnknownInstrument: false,
     memo: "",
     expiresAtMicros: futureMicros,
     isExpired: false,

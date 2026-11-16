@@ -8,18 +8,22 @@ import {
 import { ACCOUNT_XPUB, createRawProposal, createProcessedProposal, MOCK_UNIT } from "./test-utils";
 
 const OTHER_XPUB = "other-xpub";
-const getMockUnit = () => MOCK_UNIT;
+const resolveKnownInstrument = jest.fn(() => ({ unit: MOCK_UNIT, isUnknown: false }));
 
 describe("processTransferProposals", () => {
   it("should return empty incoming and outgoing arrays when given no proposals", () => {
-    const result = processTransferProposals([], ACCOUNT_XPUB, getMockUnit);
+    const result = processTransferProposals([], ACCOUNT_XPUB, resolveKnownInstrument);
     expect(result.incoming).toEqual([]);
     expect(result.outgoing).toEqual([]);
   });
 
   it("should classify a proposal as incoming when sender differs from accountXpub", () => {
     const raw = createRawProposal("contract-1", OTHER_XPUB, ACCOUNT_XPUB);
-    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming, outgoing } = processTransferProposals(
+      [raw],
+      ACCOUNT_XPUB,
+      resolveKnownInstrument,
+    );
 
     expect(incoming).toHaveLength(1);
     expect(outgoing).toHaveLength(0);
@@ -28,7 +32,11 @@ describe("processTransferProposals", () => {
 
   it("should classify a proposal as outgoing when sender matches accountXpub", () => {
     const raw = createRawProposal("contract-2", ACCOUNT_XPUB, OTHER_XPUB);
-    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming, outgoing } = processTransferProposals(
+      [raw],
+      ACCOUNT_XPUB,
+      resolveKnownInstrument,
+    );
 
     expect(outgoing).toHaveLength(1);
     expect(incoming).toHaveLength(0);
@@ -42,7 +50,11 @@ describe("processTransferProposals", () => {
       createRawProposal("in-2", OTHER_XPUB, ACCOUNT_XPUB),
     ];
 
-    const { incoming, outgoing } = processTransferProposals(proposals, ACCOUNT_XPUB, getMockUnit);
+    const { incoming, outgoing } = processTransferProposals(
+      proposals,
+      ACCOUNT_XPUB,
+      resolveKnownInstrument,
+    );
 
     expect(incoming).toHaveLength(2);
     expect(outgoing).toHaveLength(1);
@@ -54,7 +66,7 @@ describe("processTransferProposals", () => {
       expires_at_micros: pastMicros,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, resolveKnownInstrument);
 
     expect(incoming[0].isExpired).toBe(true);
   });
@@ -65,7 +77,7 @@ describe("processTransferProposals", () => {
       expires_at_micros: futureMicros,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, resolveKnownInstrument);
 
     expect(incoming[0].isExpired).toBe(false);
   });
@@ -77,7 +89,7 @@ describe("processTransferProposals", () => {
       memo: "test memo",
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, resolveKnownInstrument);
     const proposal = incoming[0];
 
     expect(proposal.contractId).toBe("contract-map");
@@ -95,9 +107,42 @@ describe("processTransferProposals", () => {
       memo: undefined,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, resolveKnownInstrument);
 
     expect(incoming[0].memo).toBe("");
+  });
+
+  it("should resolve each proposal by instrument id and admin, with no currency when unknown", () => {
+    const unknownUnit = { name: "CBTC", code: "CBTC", magnitude: 38 };
+    const raw = createRawProposal("foreign", OTHER_XPUB, ACCOUNT_XPUB, {
+      instrument_id: "CBTC",
+      instrument_admin: "impostor::1220",
+    });
+    const resolveInstrument = jest.fn(() => ({ unit: unknownUnit, isUnknown: true }));
+
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, resolveInstrument);
+
+    expect(resolveInstrument).toHaveBeenCalledWith("CBTC", "impostor::1220");
+    expect(incoming[0]).toMatchObject({
+      instrumentId: "CBTC",
+      instrumentAdmin: "impostor::1220",
+      unit: unknownUnit,
+      isUnknownInstrument: true,
+    });
+    expect(incoming[0]).not.toHaveProperty("currency");
+  });
+
+  it("should keep the resolved currency of a known instrument for its countervalue", () => {
+    const currency = { type: "TokenCurrency", id: "canton_network/cip56/cbtc" };
+    const raw = createRawProposal("cal-token", OTHER_XPUB, ACCOUNT_XPUB);
+
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, () => ({
+      unit: MOCK_UNIT,
+      currency: currency as never,
+      isUnknown: false,
+    }));
+
+    expect(incoming[0].currency).toBe(currency);
   });
 });
 

@@ -1,5 +1,5 @@
+import type { ResolvedInstrument } from "@ledgerhq/live-common/families/canton/proposalSorting";
 import type { TransferInstructionType } from "@ledgerhq/live-common/families/canton/react";
-import type { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 import type {
   GroupedProposals,
@@ -24,7 +24,7 @@ const startOfDay = (date: Date): Date => {
 export const processTransferProposals = (
   proposals: RawTransferProposal[],
   accountXpub: string,
-  getUnit: (instrumentId: string) => Unit,
+  resolveInstrument: (instrumentId: string, instrumentAdmin: string) => ResolvedInstrument,
 ): { incoming: ProcessedProposal[]; outgoing: ProcessedProposal[] } => {
   const currentTime = Date.now();
   const incoming: ProcessedProposal[] = [];
@@ -38,6 +38,10 @@ export const processTransferProposals = (
     const expiresAt = new Date(expiresAtTimestamp);
     const isExpired = currentTime > expiresAtTimestamp;
     const isIncoming = proposal.sender !== accountXpub;
+    const { unit, currency, isUnknown } = resolveInstrument(
+      proposal.instrument_id,
+      proposal.instrument_admin,
+    );
 
     const processed: ProcessedProposal = {
       contractId: proposal.contract_id,
@@ -45,7 +49,10 @@ export const processTransferProposals = (
       receiver: proposal.receiver,
       amount: new BigNumber(proposal.amount),
       instrumentId: proposal.instrument_id,
-      unit: getUnit(proposal.instrument_id),
+      instrumentAdmin: proposal.instrument_admin,
+      unit,
+      ...(currency ? { currency } : {}),
+      isUnknownInstrument: isUnknown,
       memo: proposal.memo ?? "",
       expiresAtMicros: proposal.expires_at_micros,
       isExpired,

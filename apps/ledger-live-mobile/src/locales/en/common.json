@@ -11438,6 +11438,9 @@
         "outgoingTitle": "Outgoing transfer details"
       },
       "amount": "Amount",
+      "unknownToken": "Unknown token",
+      "instrumentId": "Instrument ID",
+      "instrumentAdmin": "Instrument admin",
       "from": "From",
       "to": "To",
       "memo": "Memo",

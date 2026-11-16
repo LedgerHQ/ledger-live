@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import React from "react";
+import { http, HttpResponse, server } from "tests/server";
 import { render, screen, waitFor } from "tests/testSetup";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -79,6 +80,8 @@ describe("Canton pending offers integration (desktop)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPerformTransferInstruction.mockResolvedValue(undefined);
+    // The offers' CAL lookup would otherwise reach the real service.
+    server.use(http.get("*/v1/tokens", () => HttpResponse.json([])));
     if (!document.getElementById("modals")) {
       const modalsContainer = document.createElement("div");
       modalsContainer.id = "modals";

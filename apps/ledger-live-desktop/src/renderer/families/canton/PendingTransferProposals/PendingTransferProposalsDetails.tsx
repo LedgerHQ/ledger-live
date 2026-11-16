@@ -1,3 +1,4 @@
+import { withoutBidiControls } from "@ledgerhq/live-common/families/canton/proposalSorting";
 import { Divider } from "@ledgerhq/react-ui/index";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
@@ -9,6 +10,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import Text from "~/renderer/components/Text";
 import {
+  Address,
   GradientHover,
   HashContainer,
   OpDetailsData,
@@ -18,6 +20,7 @@ import {
 import IconCheck from "~/renderer/icons/Check";
 import IconCross from "~/renderer/icons/Cross";
 import type { ProcessedProposal, TransferProposalAction } from "./types";
+import { amountColor } from "./utils/transferProposals";
 import {
   usePendingTransferProposalsDetailsViewModel,
   type PendingTransferProposalsDetailsViewModel,
@@ -68,11 +71,35 @@ export function View({
               showCode
               fontSize={4}
               alwaysShowSign
-              color={isIncoming ? undefined : "neutral.c80"}
+              color={amountColor(proposal)}
             />
           </Box>
         </OpDetailsData>
       </OpDetailsSection>
+
+      {proposal.isUnknownInstrument && (
+        <>
+          <OpDetailsSection>
+            <OpDetailsTitle>{t("families.canton.pendingTransactions.instrumentId")}</OpDetailsTitle>
+            <OpDetailsData>
+              <Address>{withoutBidiControls(proposal.instrumentId)}</Address>
+            </OpDetailsData>
+          </OpDetailsSection>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              {t("families.canton.pendingTransactions.instrumentAdmin")}
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <HashContainer>
+                <SplitAddress value={proposal.instrumentAdmin} />
+              </HashContainer>
+              <GradientHover>
+                <CopyWithFeedback text={proposal.instrumentAdmin} />
+              </GradientHover>
+            </OpDetailsData>
+          </OpDetailsSection>
+        </>
+      )}
 
       <OpDetailsSection>
         <OpDetailsTitle>{t("families.canton.pendingTransactions.from")}</OpDetailsTitle>
