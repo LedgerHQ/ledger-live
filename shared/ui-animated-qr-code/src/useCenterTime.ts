@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   cancelAnimation,
   Easing,
@@ -33,11 +33,16 @@ export function useCenterTime(
     return () => cancelAnimation(time);
   }, [animation, animated, time]);
 
+  // Pops on a new count only: neither a count from before the mount nor a press that switches the
+  // code to loading in the same update replays a pop over the shimmer.
+  const playedPressCount = useRef(pressCount);
   useEffect(() => {
-    if (pressCount === 0) return;
+    if (pressCount === playedPressCount.current) return;
+    playedPressCount.current = pressCount;
+    if (animation !== "ripple" || !animated) return;
     time.set(0);
     time.set(withTiming(CENTER_POP, linearOver(CENTER_POP)));
-  }, [pressCount, time]);
+  }, [pressCount, animation, animated, time]);
 
   return time;
 }

@@ -67,4 +67,36 @@ describe("useCenterTime", () => {
     expect(result.current.get()).toBe(0);
     expect(runningAnimation(result.current)).toEqual(POP);
   });
+
+  it("keeps the shimmer when a press switches the code to loading in the same update", () => {
+    const { result, rerender } = renderCenterTime({
+      animation: "ripple",
+      animated: true,
+      pressCount: 0,
+    });
+
+    rerender({ animation: "loading", animated: true, pressCount: 1 });
+
+    expect(runningAnimation(result.current)).toEqual(SHIMMER_LOOP);
+  });
+
+  it("plays no pop for presses made before the mount", () => {
+    const { result } = renderCenterTime({ animation: "loading", animated: true, pressCount: 2 });
+
+    expect(runningAnimation(result.current)).toEqual(SHIMMER_LOOP);
+  });
+
+  it("plays the pop on the next press after a mount with earlier presses", () => {
+    const { result, rerender } = renderCenterTime({
+      animation: "ripple",
+      animated: true,
+      pressCount: 2,
+    });
+
+    expect(runningAnimation(result.current)).toBeNull();
+
+    rerender({ animation: "ripple", animated: true, pressCount: 3 });
+
+    expect(runningAnimation(result.current)).toEqual(POP);
+  });
 });
