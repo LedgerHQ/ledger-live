@@ -62,8 +62,9 @@ const isUnwrapped = node =>
   ts.isParenthesizedExpression(node) ||
   ts.isTypeAssertionExpression(node);
 
-// Calls whose arguments are a list of ids; any other call reads as its first argument (`Object.freeze(x)`).
+// The calls a mirrored table is written with: a list of ids, or a wrapper that keeps its one argument.
 const LIST_CALLS = new Set(["currencies"]);
+const WRAPPER_CALLS = new Set(["Object.freeze", "byCurrency", "derivationScheme"]);
 
 /** @param {ts.Node} node */
 function evaluate(node) {
@@ -74,10 +75,11 @@ function evaluate(node) {
   if (node.kind === ts.SyntaxKind.FalseKeyword) return false;
   if (ts.isArrayLiteralExpression(node)) return node.elements.map(evaluate);
   if (ts.isCallExpression(node)) {
-    const isList = ts.isIdentifier(node.expression) && LIST_CALLS.has(node.expression.text);
-    if (isList) return node.arguments.map(evaluate);
-    if (node.arguments.length !== 1) throw new Error("not a literal table");
-    return evaluate(node.arguments[0]);
+    const callee = node.expression.getText();
+    if (LIST_CALLS.has(callee)) return node.arguments.map(evaluate);
+    if (WRAPPER_CALLS.has(callee) && node.arguments.length === 1)
+      return evaluate(node.arguments[0]);
+    throw new Error(`not a literal table: ${callee}()`);
   }
   if (ts.isObjectLiteralExpression(node)) {
     const entries = node.properties.map(property => {

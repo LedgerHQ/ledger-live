@@ -95,6 +95,11 @@ test("reads a single id as a one-id set", () => {
   assert.deepEqual(lint(oneId), []);
 });
 
+test("reads a call other than the table helpers as no literal", () => {
+  const computed = mirror().replace(`byCurrency<number>({ hypercore: 10 })`, "Math.max(10)");
+  assert.equal(lint({ legacy: legacy(), mirror: computed }).length, 2);
+});
+
 test("reports a mirrored table that is no longer a literal", () => {
   const notLiteral = mirror().replace(`byCurrency<number>({ hypercore: 10 })`, "computeSkips()");
   assert.equal(lint({ legacy: legacy(), mirror: notLiteral }).length, 2);
