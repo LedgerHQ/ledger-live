@@ -243,13 +243,11 @@ async function orderRentPayment(
   isLatestRentRequest: () => boolean,
 ) {
   const intent = await buildTransferIntent(sender, params);
-  // The Send flow offers Tronify on a USDT transfer short of energy only; the rent request alone
-  // would rent for any TRC-20 transfer, even one the account already has the energy for.
+  // Same gate as the Send flow: the rent request alone would rent for any TRC-20 transfer, even one
+  // the account has the energy for. It also hides provider failures, so its reason stays neutral.
   const options = await seam.listFeeOptions(intent);
   if (!options.some(option => option.id === seam.feeOptionId)) {
-    throw new ExchangeError(
-      createTronifyUnsupportedTransfer("only a USDT transfer short of energy can rent"),
-    );
+    throw new ExchangeError(createTronifyUnsupportedTransfer("no Tronify fee option"));
   }
   const request = await seam.buildEnergyRentRequest(intent, BigInt(params.approvedFee));
   if (!isLatestRentRequest()) throw replacedRentOrder();
