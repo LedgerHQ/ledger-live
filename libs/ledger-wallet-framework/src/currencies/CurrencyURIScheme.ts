@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "../bignumber";
 import { getCurrenciesResolver } from "./resolver";
 import type { CryptoCurrency } from "../types";
 // see https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
@@ -59,9 +60,9 @@ export function encodeURIScheme(data: Data): string {
 }
 
 const convertedValue = (value: any, currency: CryptoCurrency) => {
-  const float = new BigNumber(value);
+  const float = parseFiniteBigNumber(value);
 
-  if (!float.isNaN() && float.gt(0)) {
+  if (float?.gt(0)) {
     const { magnitude } = currency.units[0];
     return float.times(new BigNumber(10).pow(magnitude));
   }
@@ -108,30 +109,30 @@ export function decodeURIScheme(str: string): Data {
 
   if (currency.id === "ethereum") {
     if (specificFields.value) {
-      data.amount = new BigNumber(specificFields.value);
+      const valueBN = parseFiniteBigNumber(specificFields.value, { allowHex: true });
 
-      if (data.amount.isNegative()) {
-        data.amount = new BigNumber(0);
+      if (valueBN) {
+        data.amount = valueBN.isNegative() ? new BigNumber(0) : valueBN;
       }
 
       delete specificFields.value;
     }
 
     if (specificFields.gas) {
-      data.userGasLimit = new BigNumber(specificFields.gas);
+      const gasBN = parseFiniteBigNumber(specificFields.gas, { allowHex: true });
 
-      if (data.userGasLimit.isNegative()) {
-        data.userGasLimit = new BigNumber(0);
+      if (gasBN) {
+        data.userGasLimit = gasBN.isNegative() ? new BigNumber(0) : gasBN;
       }
 
       delete specificFields.gas;
     }
 
     if (specificFields.gasPrice) {
-      data.gasPrice = new BigNumber(specificFields.gasPrice);
+      const gasPriceBN = parseFiniteBigNumber(specificFields.gasPrice, { allowHex: true });
 
-      if (data.gasPrice.isNegative()) {
-        data.gasPrice = new BigNumber(0);
+      if (gasPriceBN) {
+        data.gasPrice = gasPriceBN.isNegative() ? new BigNumber(0) : gasPriceBN;
       }
 
       delete specificFields.gasPrice;
