@@ -89,8 +89,10 @@ tools/scripts/cleanup-android-emulators.sh || true
 mkdir -p "$log_dir"
 runner_speed | tee "$log_dir/runner-speed.txt"
 for avd in "$AVD_NAME" "${AVD_NAME}_2"; do
-  AVD_LCD_WIDTH=1280 AVD_LCD_HEIGHT=2856 AVD_LCD_DENSITY=480 bash tools/scripts/patch-avd-config.sh "$avd"
-  grep -E '^(hw\.lcd\.|skin\.)' "$HOME/.android/avd/$avd.avd/config.ini"
+  cfg="$HOME/.android/avd/$avd.avd/config.ini"
+  sed -i -E '/^(hw\.lcd\.(width|height|density)|skin\.name)=/d' "$cfg"
+  printf '%s\n' hw.lcd.width=1280 hw.lcd.height=2856 hw.lcd.density=480 skin.name=1280x2856 >> "$cfg"
+  grep -E '^(hw\.lcd\.|skin\.)' "$cfg"
 done
 start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
 start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
