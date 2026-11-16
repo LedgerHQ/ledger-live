@@ -91,9 +91,11 @@ describe("StepReview", () => {
     expect(await screen.findByText("0%")).toBeVisible();
   });
 
-  it("continues to the device", async () => {
+  it("continues to the device once the issuer fee is read", async () => {
     const { user, props } = renderReview();
 
+    expect(screen.getByRole("button", { name: /Continue/ })).toBeDisabled();
+    expect(await screen.findByText("0%")).toBeVisible();
     await user.click(screen.getByText("Continue"));
 
     expect(props.transitionTo).toHaveBeenCalledTimes(1);
@@ -188,17 +190,30 @@ describe("StepReview", () => {
     expect(screen.queryByRole("button", { name: "Receive" })).not.toBeInTheDocument();
   });
 
-  it("shows Not available when the issuer fee read fails, and still continues", async () => {
+  it("blocks the device step when the issuer fee read fails, and reads it again on Try again", async () => {
     endpoints.node.mockImplementation(() => HttpResponse.error());
 
-    const { user, props } = renderReview(makeIssuerProps("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"));
+    const { user } = renderReview(makeIssuerProps("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"));
 
-    expect(await screen.findByText("Not available")).toBeVisible();
+    expect(await screen.findByText(/Couldn't fetch issuer fee details/)).toBeVisible();
+    expect(screen.queryByText("Issuer fee")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Continue/ })).toBeDisabled();
 
-    await user.click(screen.getByText("Continue"));
+    mockTransferRate(1_005_000_000);
+    await user.click(screen.getByRole("button", { name: "Try again" }));
 
-    expect(props.transitionTo).toHaveBeenCalledTimes(1);
-    expect(props.transitionTo).toHaveBeenCalledWith("connectDevice");
+    expect(await screen.findByText("0.5%")).toBeVisible();
+    expect(screen.queryByText(/Couldn't fetch issuer fee details/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Continue/ })).toBeEnabled();
+  });
+
+  it("lets an edit continue when the issuer fee read fails", async () => {
+    endpoints.node.mockImplementation(() => HttpResponse.error());
+
+    renderReview({ ...makeIssuerProps("rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf"), action: "edit" });
+
+    expect(await screen.findByText(/Couldn't fetch issuer fee details/)).toBeVisible();
+    expect(screen.getByRole("button", { name: /Continue/ })).toBeEnabled();
   });
 
   it("shows the issuer fee as a percentage", async () => {

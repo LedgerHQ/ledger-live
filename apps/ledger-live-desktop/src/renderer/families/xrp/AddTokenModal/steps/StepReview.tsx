@@ -145,6 +145,17 @@ function StatusErrorBanner(
   return <ErrorBanner error={error} />;
 }
 
+function IssuerFeeError(props: Readonly<{ onRetry: () => void }>) {
+  return (
+    <Alert type="error" mb={3}>
+      <Trans i18nKey="xrp.addToken.steps.review.issuerFeeError" />{" "}
+      <TextButton onClick={props.onRetry}>
+        <Trans i18nKey="common.tryAgain" />
+      </TextButton>
+    </Alert>
+  );
+}
+
 function TextButton(props: Readonly<{ onClick: () => void; children: React.ReactNode }>) {
   return (
     <button
@@ -172,7 +183,7 @@ export default function StepReview({
   invariant(account && transaction && token, "xrp: account, transaction and token required");
 
   const locale = useSelector(localeSelector);
-  const issuerFee = useGetIssuerFeeQuery(token);
+  const issuerFee = useGetIssuerFeeQuery(token, { refetchOnReconnect: true });
   const unit = token.units[0];
   const limitText = isMaxTrustLimit(transaction.amount)
     ? t("xrp.addToken.steps.settings.maximum")
@@ -207,7 +218,7 @@ export default function StepReview({
           {token.contractAddress}
         </Text>
       </Row>
-      {issuerFee.isLoading ? null : (
+      {typeof issuerFee.data === "string" ? (
         <Row
           label={
             <LabelWithInfo
@@ -217,14 +228,11 @@ export default function StepReview({
           }
         >
           <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
-            {typeof issuerFee.data === "string" ? (
-              formatIssuerFee(issuerFee.data, locale)
-            ) : (
-              <Trans i18nKey="xrp.addToken.steps.review.issuerFeeUnavailable" />
-            )}
+            {formatIssuerFee(issuerFee.data, locale)}
           </Text>
         </Row>
-      )}
+      ) : null}
+      {issuerFee.isError ? <IssuerFeeError onRetry={issuerFee.refetch} /> : null}
       {token.tokenType === "iou" ? (
         <>
           <Row
@@ -267,16 +275,22 @@ export function StepReviewFooter({
   parentAccount,
   status,
   bridgePending,
+  token,
+  action,
 }: StepProps) {
-  invariant(account, "xrp: account required");
+  invariant(account && token, "xrp: account and token required");
+  // Only an add waits for the issuer fee: an edit or a removal is on a token already held
+  const isAdd = action === "add";
+  const issuerFee = useGetIssuerFeeQuery(token, { skip: !isAdd, refetchOnReconnect: true });
   const hasErrors = Object.keys(status.errors).length > 0;
+  const isIssuerFeeMissing = isAdd && typeof issuerFee.data !== "string";
 
   return (
     <>
       <AccountFooter account={account} parentAccount={parentAccount} status={status} />
       <Button
         primary
-        disabled={hasErrors || bridgePending}
+        disabled={hasErrors || isIssuerFeeMissing || bridgePending}
         isLoading={bridgePending}
         onClick={() => transitionTo("connectDevice")}
       >
