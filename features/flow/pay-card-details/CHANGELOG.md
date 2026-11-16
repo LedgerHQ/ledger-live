@@ -1,5 +1,51 @@
 # @features/flow-pay-card-details
 
+## 0.11.0
+
+### Minor Changes
+
+- [#24216](https://github.com/LedgerHQ/ledger-live/pull/24216) [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff) Thanks [@ysitbon](https://github.com/ysitbon)! - Name the card assets view model callbacks after their intent: `onAssetPress` becomes `onOpenAsset`, `onTopUpPress` becomes `onTopUpAsset`, `onWithdrawPress` becomes `onOpenWithdraw`, `onShowHistoryPress` becomes `onShowHistory`, `onManagePress` becomes `onManageAssets`, `onRetryPress` becomes `onRetry` and `onAddAssetPress` becomes `onAddAsset`. `CardAssetDetailsDrawer` takes `onOpenTransaction` instead of `onTransactionPress`.
+
+- [#24216](https://github.com/LedgerHQ/ledger-live/pull/24216) [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the card details `.` entry the same on both platforms. `CardArtwork` takes one props contract, `CardArtworkProps`, whose `size` applies on web only. `CardPrimaryActionButton` moves to the `./web` entry with its props type. `CardTopUpButton`, `Freeze`, `More` and `CardVisual` are no longer exported. `pay-card` imports `CardPrimaryActionButton` from `@features/flow-pay-card-details/web`.
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency@0.5.0
+  - @features/flow-pay-card-assets@0.7.0
+  - @domain/api-card-management@0.9.0
+  - @features/flow-pay-card-auth@0.12.0
+  - @features/flow-pay-card-widget@0.7.0
+  - @features/flow-pay-card-wallets@0.6.4
+  - @features/flow-pay-card-transactions@0.7.2
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#24216](https://github.com/LedgerHQ/ledger-live/pull/24216) [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff) Thanks [@ysitbon](https://github.com/ysitbon)! - Name the card assets view model callbacks after their intent: `onAssetPress` becomes `onOpenAsset`, `onTopUpPress` becomes `onTopUpAsset`, `onWithdrawPress` becomes `onOpenWithdraw`, `onShowHistoryPress` becomes `onShowHistory`, `onManagePress` becomes `onManageAssets`, `onRetryPress` becomes `onRetry` and `onAddAssetPress` becomes `onAddAsset`. `CardAssetDetailsDrawer` takes `onOpenTransaction` instead of `onTransactionPress`.
+
+- [#24216](https://github.com/LedgerHQ/ledger-live/pull/24216) [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the card details `.` entry the same on both platforms. `CardArtwork` takes one props contract, `CardArtworkProps`, whose `size` applies on web only. `CardPrimaryActionButton` moves to the `./web` entry with its props type. `CardTopUpButton`, `Freeze`, `More` and `CardVisual` are no longer exported. `pay-card` imports `CardPrimaryActionButton` from `@features/flow-pay-card-details/web`.
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency@0.5.0-next.0
+  - @features/flow-pay-card-assets@0.7.0-next.0
+  - @domain/api-card-management@0.9.0-next.0
+  - @features/flow-pay-card-auth@0.12.0-next.0
+  - @features/flow-pay-card-widget@0.7.0-next.0
+  - @features/flow-pay-card-wallets@0.6.4-next.0
+  - @features/flow-pay-card-transactions@0.7.2-next.0
+
 ## 0.10.0
 
 ### Minor Changes
@@ -611,25 +657,5 @@
 - Updated dependencies [[`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
   - @domain/api-card-management@0.5.0
   - @shared/i18n@0.2.0
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#21617](https://github.com/LedgerHQ/ledger-live/pull/21617) [`d01e4c0`](https://github.com/LedgerHQ/ledger-live/commit/d01e4c02a513082f6484c405f9a51977f14a6c03) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Freeze component with useFreezeCardViewModel: freeze/unfreeze TileButton with optimistic state and error handling
-
-### Patch Changes
-
-- Updated dependencies [[`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @domain/api-card-management@0.5.0-next.0
-  - @shared/i18n@0.2.0
-
-## 0.2.0
-
-### Minor Changes
-
-- [#21079](https://github.com/LedgerHQ/ledger-live/pull/21079) [`f567f20`](https://github.com/LedgerHQ/ledger-live/commit/f567f20c247b03e6335d90a6ac13dc181722c8cb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the `pay-card-details` package with the `CardArtwork` card-face visual (dark gradient, halftone artwork and network logo) for the Pay tab, cross-platform (web + native).
-
-- [#21081](https://github.com/LedgerHQ/ledger-live/pull/21081) [`35c12b6`](https://github.com/LedgerHQ/ledger-live/commit/35c12b61d14889fe2863be4e9bfa0db581b206e9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `CardVisual`: the card artwork with a balance overlay (localized caption + `AmountDisplay` amount), cross-platform (web + native). Props-only and i18n-agnostic.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

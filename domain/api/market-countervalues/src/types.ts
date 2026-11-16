@@ -1,7 +1,11 @@
 import type { SerializedError } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import type { Currency } from "@domain/entity-currency";
-import type { RateGranularity, TrackingPair } from "@domain/entity-market-countervalues";
+import type { CryptoOrTokenCurrencyId, Currency } from "@domain/entity-currency";
+import type {
+  CounterValuesCacheView,
+  RateGranularity,
+  TrackingPair,
+} from "@domain/entity-market-countervalues";
 
 /** Decides which `from` currencies may share a batched spot request. */
 export type BatchStrategySolver = {
@@ -82,4 +86,14 @@ export type LoadCountervaluesOptions = {
   granularitiesRates?: Record<RateGranularity, number>;
   /** Diagnostics sink. Defaults to a no-op. */
   log?: CountervaluesLogger;
+};
+
+/** What the countervalue decorators read from the app. */
+export type CountervaluesHost = {
+  /** The rates the app holds. */
+  rates(): CounterValuesCacheView | undefined;
+  /** The currency of an asset, a coin or a token; a lookup that fails leaves its values out. */
+  findCurrency(
+    assetId: CryptoOrTokenCurrencyId,
+  ): Currency | undefined | Promise<Currency | undefined>;
 };

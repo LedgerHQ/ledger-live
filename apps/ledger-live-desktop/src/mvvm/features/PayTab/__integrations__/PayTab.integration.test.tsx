@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router";
 import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { track, trackPage } from "@shared/analytics";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
@@ -103,7 +103,7 @@ jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   },
 }));
 
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: jest.fn(),
 }));
 

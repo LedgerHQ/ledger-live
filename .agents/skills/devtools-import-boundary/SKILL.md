@@ -12,7 +12,7 @@ Every `@devtools/*` package is **self-contained**. A `@devtools/*` package may i
 - `DEVTOOLS_ALLOWED_IMPORTS` lists the imports each package may make.
 - `DEVTOOLS_TYPE_ONLY_IMPORTS` lists the packages each one may reach under `DEVTOOLS_TYPE_ONLY_RULE`.
 - `DEVTOOLS_LAZY_IMPORTS` lists the packages each one may reach only lazily, under `DEVTOOLS_LAZY_RULE`.
-- `DEVTOOLS_HOST_APPS` lists the apps that host DevTools, the one folder of each that may import `@devtools/*`, and the files of that folder product code may import statically.
+- `DEVTOOLS_HOST_APPS` lists the apps that host DevTools, the one folder of each that may import `@devtools/*`, and the files of that folder product code may import.
 
 To change what a package may import, edit those tables.
 
@@ -20,7 +20,7 @@ To change what a package may import, edit those tables.
 
 1. **The registry reaches tools lazily** (`DEVTOOLS_LAZY_RULE`). The shell loads `@devtools/registry` eagerly, so the registry may reach a tool only through `import type`, `export type … from`, `typeof import("…")` or `loader: () => import("@devtools/<tool>")`. A value import or `require()` bundles the tool with the shell.
 2. **App product code does not import `@devtools/*`** (`DEVTOOLS_HOST_APP_RULE`). In each app of `DEVTOOLS_HOST_APPS`, only files under `allowedUnder` (`src/mvvm/features/DevTools/`) may import `@devtools/*`, type imports included. A product hook calling a bindings hook, or a product type derived from `DevToolsConfig` or a bindings port type, belongs in that folder.
-3. **Product code enters the DevTools folder through its entries** (`DEVTOOLS_HOST_FOLDER_RULE`). A file outside `allowedUnder` may statically import only the files listed in `entries`; any other file of the folder is reachable only through `import()` or `lazy(() => import(...))`. Otherwise one hop through the folder would bypass rule 2. The rule resolves relative paths and the aliases of the app's `tsconfig.json` (`LLD/*`, `LLM/*`, `~/*`). Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.
+3. **Product code enters the DevTools folder through its entries** (`DEVTOOLS_HOST_FOLDER_RULE`). A file outside `allowedUnder` may reach only the files listed in `entries`, through a static import, `import()` or `lazy(() => import(...))` alike. A lazy import of any other file would still make product code depend on a tool module at runtime. To lazy-load a new screen of the folder, add it to `entries`. The rule resolves relative paths and the aliases of the app's `tsconfig.json` (`LLD/*`, `LLM/*`, `~/*`). Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.
 
 ### What lint cannot catch
 

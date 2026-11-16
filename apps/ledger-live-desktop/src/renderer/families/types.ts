@@ -26,6 +26,7 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { Features } from "@shared/feature-flags";
+import type { GetReceiveFamilyConfig } from "@features/flow-receive";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
 import type { CoinModalKey } from "./modals-loaders";
@@ -461,7 +462,7 @@ export type LLDCoinFamily<
   }>;
 
   /** Extra row rendered in the Amount step footer, right under the network fees. */
-  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T }>;
+  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T; status?: TS }>;
 
   /**
    *  One time modal that is trigger only one time on a account that never send
@@ -569,6 +570,12 @@ export type LLDCoinFamily<
   StepReceiveFundsDeviceAnimation?: React.ComponentType<
     ReceiveStepProps & { fallback: React.ReactNode }
   >;
+
+  /**
+   * Notices and support of the new receive address screen, where the family differs from the
+   * defaults of `@features/flow-receive`.
+   */
+  receiveAddressConfig?: GetReceiveFamilyConfig<A>;
 
   /**
    * Replace Network fees row on Summary Step

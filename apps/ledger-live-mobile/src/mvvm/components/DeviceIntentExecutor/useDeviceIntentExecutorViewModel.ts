@@ -8,8 +8,8 @@ import {
   dmkToLedgerDeviceIdMap,
   type DeviceFlowFailure,
   type DeviceIntentExecutorHeaderContextValue,
-  useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "@ledgerhq/live-dmk-shared/react";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   acceptsScreenFailureReports,

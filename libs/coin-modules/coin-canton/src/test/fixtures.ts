@@ -1,4 +1,3 @@
-import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,
   encodeAccountId,
@@ -8,11 +7,12 @@ import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig, { type CantonCoinConfig, type CantonContext } from "../config";
+import type { CantonCoinConfig, CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
   OnboardingPrepareResponse,
+  OperationView,
   PrepareTransferResponse,
   TransferProposal,
 } from "../types/gateway";
@@ -253,22 +253,6 @@ export const createMockInstrumentBalances = (
   );
 };
 
-export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> = {}): void => {
-  coinConfig.setCoinConfig(
-    () =>
-      ({
-        gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
-        useGateway: true,
-        networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
-        nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
-        status: {
-          type: "active",
-        },
-        ...overrides,
-      }) as unknown as ReturnType<Parameters<typeof coinConfig.setCoinConfig>[0]>,
-  );
-};
-
 export const createMockCoinConfigValue = createFactory({
   gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
   useGateway: true,
@@ -280,16 +264,11 @@ export const createMockCoinConfigValue = createFactory({
   unit: { name: "cc", code: "CC", magnitude: 38 },
 });
 
-export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
-  const configValue = createMockCoinConfigValue();
-  return jest.fn(() => configValue);
-};
-
 /** A mock {@link CantonContext} resolving to {@link createMockCoinConfigValue}. */
 export const createMockContext = (
   config: CantonCoinConfig = createMockCoinConfigValue(),
 ): CantonContext => ({
-  config: async () => config,
+  config: () => Promise.resolve(config),
   logger: () => {},
 });
 
@@ -303,6 +282,33 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   memo: "test memo",
   expires_at_micros: 1_800_000_000_000_000, // fixed far-future timestamp (microseconds)
   update_id: "test-update-id",
+});
+
+export const createMockOperationView = createFactory<OperationView>({
+  uid: "uid-1",
+  transaction_hash: "0xtxhash",
+  transaction_timestamp: "2024-01-01T00:00:00.000Z",
+  status: "Success",
+  type: "Send",
+  senders: ["alice-party"],
+  recipients: ["bob-party"],
+  transfers: [{ address: "bob-party", type: "Send", value: "100", details: {}, asset: "Amulet" }],
+  block: { height: 10, time: "2024-01-01T00:00:00.000Z", hash: "blockhash" },
+  fee: {
+    value: "1",
+    asset: {
+      type: "native",
+      instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+      instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+    },
+    details: {},
+  },
+  asset: {
+    type: "native",
+    instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+    instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+  },
+  details: {},
 });
 
 export { generateMockKeyPair };

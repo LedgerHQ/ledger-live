@@ -3,10 +3,10 @@ import { StyleSheet } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { RequestReceiveActions } from "./RequestReceiveActions.native";
-import { RequestReceiveSummary } from "./RequestReceiveSummary.native";
-import { HINT_ENTER_MS, RequestReceiveVerifyHint } from "./RequestReceiveVerifyHint.native";
-import { useRequestReceiveView } from "./useRequestReceiveView.native";
+import { RequestReceiveActions } from "./RequestReceiveActions";
+import { RequestReceiveSummary } from "./RequestReceiveSummary";
+import { HINT_ENTER_MS, RequestReceiveVerifyHint } from "./RequestReceiveVerifyHint";
+import { useRequestReceiveView } from "./useRequestReceiveView";
 import type { RequestReceiveViewProps } from "../../types";
 
 export function RequestReceiveView({

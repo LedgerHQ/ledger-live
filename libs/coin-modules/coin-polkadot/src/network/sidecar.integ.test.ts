@@ -15,60 +15,26 @@ import {
   getBlock,
   fetchChainSpec,
 } from "./sidecar";
+import { polkadotDefaults } from "../config";
 
 const logger = jest.fn();
-const stakingActiveStatus = {
-  type: "active" as const,
-  features: [{ id: "staking_txs" as const, status: "active" as const }],
-};
 
 const CURRENCY_CONFIGS = {
   polkadot: {
-    config: {
-      status: { type: "active" as const },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: { url: "https://polkadot-rpc.publicnode.com" },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
-      indexer: { url: "https://polkadot.coin.ledger.com" },
-      staking: { electionStatusThreshold: 25 },
-    },
+    config: polkadotDefaults.polkadot,
     testAddress: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
   },
   assethub_polkadot: {
-    config: {
-      status: stakingActiveStatus,
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
-      node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
-      staking: { electionStatusThreshold: 25 },
-      hasBeenMigrated: true,
-    },
+    config: polkadotDefaults.assethub_polkadot,
     // Asset Hub Polkadot uses SS58 prefix 0, so a polkadot-format address is required.
     testAddress: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
   },
   westend: {
-    config: {
-      status: { type: "active" as const },
-      name: "Westend",
-      unit: { name: "WND", code: "WND", magnitude: 12 },
-      sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
-      node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
-    },
+    config: polkadotDefaults.westend,
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },
   assethub_westend: {
-    config: {
-      status: stakingActiveStatus,
-      name: "Assethub Westend",
-      unit: { name: "WND", code: "WND", magnitude: 12 },
-      sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1" },
-      node: { url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend" },
-    },
+    config: polkadotDefaults.assethub_westend,
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },
 };
@@ -78,11 +44,11 @@ describe("sidecar integration test", () => {
     "%s tests",
     (currencyId, { config, testAddress }) => {
       describe("getValidators", () => {
-        // Westend relay-chain staking has migrated to Asset Hub and is no longer supported:
-        // the relay node no longer exposes the staking pallet, so `getValidators` returns an
-        // empty array here. `assethub_westend` (below) is the supported chain and keeps this
-        // assertion.
-        const test = currencyId === "westend" ? it.skip : it;
+        // Westend and Polkadot relay-chain staking has migrated to Asset Hub and is no longer
+        // supported: the relay node no longer registers validators in the staking pallet, so
+        // `getValidators` returns an empty array here. The `assethub_*` chains are the
+        // supported ones and keep this assertion.
+        const test = ["westend", "polkadot"].includes(currencyId) ? it.skip : it;
         test(`returns expected result with ${currencyId}`, async () => {
           const result = await getValidators(config, undefined);
 

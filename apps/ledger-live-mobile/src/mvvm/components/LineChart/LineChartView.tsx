@@ -40,6 +40,8 @@ export function LineChartView<TRange extends string>({
       selectedValue={selectedRange}
       onSelectedChange={handleSelectedChange}
       accessibilityLabel={accessibilityLabel}
+      tabLayout="fit"
+      lx={rangeSelectorStyle}
     >
       {ranges.map(({ value, label }) => (
         <SegmentedControlButton key={value} value={value} lx={rangeButtonStyle}>
@@ -115,6 +117,12 @@ const rangeSelectorControlStyle: LumenViewStyle = {
   minWidth: "s0",
 };
 
+// "fit" places the pill from each button's measured layout; "fixed" can miss the initial index.
+const rangeSelectorStyle: LumenViewStyle = {
+  alignSelf: "stretch",
+};
+
 const rangeButtonStyle: LumenViewStyle = {
+  flex: 1,
   paddingHorizontal: "s8",
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 import type { AddressParts } from "../../utils/splitAddress";
-import { splitMiddleForTwoLines } from "../../utils/splitMiddleForTwoLines.native";
+import { splitMiddleForTwoLines } from "../../utils/splitMiddleForTwoLines";
 
 type RequestReceiveAddressProps = Readonly<{
   addressParts: AddressParts;

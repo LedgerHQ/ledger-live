@@ -113,7 +113,9 @@ export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
   let device;
   try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")], {
+      suite: "mobile-e2e",
+    });
   } catch (e: unknown) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;

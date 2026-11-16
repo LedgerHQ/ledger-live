@@ -2,12 +2,12 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { LockedDeviceError } from "../errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 
-import { signTransaction } from "../common-logic/transaction/sign";
+import type { CantonCoinConfig, CantonContext } from "../config";
+import { signTransaction } from "./sign";
 import {
   getNetworkType,
   prepareOnboarding,
@@ -32,9 +32,9 @@ import {
   CantonAuthorizeResult,
 } from "../types/onboard";
 
-export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: string) => {
+export const isAccountOnboarded = async (config: CantonCoinConfig, publicKey: string) => {
   try {
-    const { party_id } = await getPartyByPubKey(currency, publicKey);
+    const { party_id } = await getPartyByPubKey(config, publicKey);
 
     if (party_id) {
       return { isOnboarded: true, partyId: party_id };
@@ -55,8 +55,8 @@ const extractExistingPartyId = (error: unknown): string | undefined =>
     ? (error.message.match(PARTY_ALREADY_EXISTS_ID_RE)?.[1] ?? undefined)
     : undefined;
 
-export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
-  const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);
+export const isCantonCoinPreapproved = async (config: CantonCoinConfig, partyId: string) => {
+  const { expires_at, receiver } = await getTransferPreApproval(config, partyId);
   const isReceiver = receiver === partyId;
   const isExpired = new Date(expires_at) < new Date();
 
@@ -85,7 +85,7 @@ const createOnboardedAccount = (
 };
 
 export const buildOnboardAccount =
-  (signerContext: SignerContext<CantonSigner>) =>
+  (signerContext: SignerContext<CantonSigner>, context: CantonContext) =>
   (
     currency: CryptoCurrency,
     deviceId: string,
@@ -95,6 +95,7 @@ export const buildOnboardAccount =
       async function main() {
         o.next({ status: OnboardStatus.INIT });
 
+        const config = await context.config(currency.id);
         const getAddress = resolver(signerContext);
         const { publicKey } = await getAddress(deviceId, {
           path: account.freshAddressPath,
@@ -104,7 +105,7 @@ export const buildOnboardAccount =
 
         o.next({ status: OnboardStatus.PREPARE });
 
-        let { partyId } = await isAccountOnboarded(currency, publicKey);
+        let { partyId } = await isAccountOnboarded(config, publicKey);
 
         // Skip submission only if account is onboarded on network but has no local xpub.
         // For re-onboarding (account has xpub), always proceed to submit a new onboarding transaction.
@@ -114,7 +115,7 @@ export const buildOnboardAccount =
           return;
         }
 
-        const preparedTransaction = await prepareOnboarding(currency, publicKey).catch(
+        const preparedTransaction = await prepareOnboarding(config, publicKey).catch(
           (error: unknown) => {
             // The gateway can report the party "already exists" while getPartyByPubKey still 404s for
             // minutes during its by-public-key indexing lag (e.g. re-adding a just-onboarded account).
@@ -148,9 +149,9 @@ export const buildOnboardAccount =
 
         o.next({ status: OnboardStatus.SUBMIT });
 
-        await submitOnboarding(currency, publicKey, preparedTransaction, signature);
+        await submitOnboarding(config, publicKey, preparedTransaction, signature);
 
-        clearIsTopologyChangeRequiredCache(currency, publicKey);
+        clearIsTopologyChangeRequiredCache(config, publicKey);
 
         const onboardedAccount = createOnboardedAccount(account, partyId, currency);
         o.next({ partyId, account: onboardedAccount }); // success
@@ -159,7 +160,7 @@ export const buildOnboardAccount =
       main().then(
         () => o.complete(),
         error => {
-          log("[canton:onboard] onboardAccount failed:", error);
+          context.logger("canton/onboard", "onboardAccount failed", { error });
 
           const handledError = handleDeviceErrors(error);
           o.error(handledError || error);
@@ -168,7 +169,7 @@ export const buildOnboardAccount =
     });
 
 export const buildAuthorizePreapproval =
-  (signerContext: SignerContext<CantonSigner>) =>
+  (signerContext: SignerContext<CantonSigner>, context: CantonContext) =>
   (
     currency: CryptoCurrency,
     deviceId: string,
@@ -179,12 +180,13 @@ export const buildAuthorizePreapproval =
       async function main() {
         o.next({ status: AuthorizeStatus.INIT });
 
-        const isPreapproved = await isCantonCoinPreapproved(currency, partyId);
+        const config = await context.config(currency.id);
+        const isPreapproved = await isCantonCoinPreapproved(config, partyId);
 
         if (!isPreapproved) {
           o.next({ status: AuthorizeStatus.PREPARE });
 
-          const preparedTransaction = await preparePreApprovalTransaction(currency, partyId);
+          const preparedTransaction = await preparePreApprovalTransaction(config, partyId);
 
           o.next({ status: AuthorizeStatus.SIGN });
 
@@ -193,15 +195,15 @@ export const buildAuthorizePreapproval =
           });
           o.next({ status: AuthorizeStatus.SUBMIT });
 
-          await submitPreApprovalTransaction(currency, partyId, preparedTransaction, signature);
+          await submitPreApprovalTransaction(config, partyId, preparedTransaction, signature);
         }
 
         o.next({ isApproved: true }); // success
 
-        if (getNetworkType(currency) !== "mainnet") {
+        if (getNetworkType(config) !== "mainnet") {
           const handleTapRequest = async () => {
             try {
-              const { serialized, hash } = await prepareTapRequest(currency, { partyId });
+              const { serialized, hash } = await prepareTapRequest(config, { partyId });
 
               if (serialized && hash) {
                 o.next({ status: AuthorizeStatus.SIGN });
@@ -212,7 +214,7 @@ export const buildAuthorizePreapproval =
 
                 o.next({ status: AuthorizeStatus.SUBMIT });
 
-                await submitTapRequest(currency, {
+                await submitTapRequest(config, {
                   partyId,
                   serialized,
                   signature,
@@ -229,7 +231,7 @@ export const buildAuthorizePreapproval =
       main().then(
         () => o.complete(),
         error => {
-          log("[canton:onboard] authorizePreapproval failed:", error);
+          context.logger("canton/onboard", "authorizePreapproval failed", { error });
 
           const handledError = handleDeviceErrors(error);
           o.error(handledError || error);

@@ -607,19 +607,19 @@ describe("BridgeAdapter.getBalances", () => {
     });
 
   it("carries the synced token's metadata on each token balance", async () => {
-    await expect(adapterHolding(usdc).getBalances(descriptor)).resolves.toEqual([
-      nativeBalance,
-      usdcBalance,
-    ]);
+    await expect(adapterHolding(usdc).getBalances(descriptor)).resolves.toEqual({
+      balances: [nativeBalance, usdcBalance],
+      skippedTokenIds: [],
+    });
   });
 
-  it("skips a sub-account whose token has no units and keeps the other balances", async () => {
+  it("reports a sub-account whose token has no units as skipped and keeps the other balances", async () => {
     const noUnits = { ...usdc, id: "solana/spl/no_units", units: [] };
 
-    await expect(adapterHolding(noUnits, usdc).getBalances(descriptor)).resolves.toEqual([
-      nativeBalance,
-      usdcBalance,
-    ]);
+    await expect(adapterHolding(noUnits, usdc).getBalances(descriptor)).resolves.toEqual({
+      balances: [nativeBalance, usdcBalance],
+      skippedTokenIds: ["solana/spl/no_units"],
+    });
   });
 });
 

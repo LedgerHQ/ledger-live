@@ -79,12 +79,6 @@ if (process.env.CI) {
 // does not flush the C library's tzset cache reliably on macOS).
 process.env.TZ = "America/New_York";
 
-// Since jest 30.5 the `^buffer$` moduleNameMapper below also captures `node:buffer`, so
-// jest.buffer-shim.js cannot reach the builtin itself. Capture what it needs here, in
-// real Node, and pass it through the environment.
-const { constants, kStringMaxLength } = require("node:buffer");
-process.env.__NODE_BUFFER_EXTRAS = JSON.stringify({ constants, kStringMaxLength });
-
 const defaultConfig = {
   globals: {
     Buffer: Uint8Array,

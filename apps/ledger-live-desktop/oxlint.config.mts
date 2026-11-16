@@ -12,6 +12,7 @@ import {
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
+import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
@@ -29,6 +30,7 @@ export default defineConfig({
   },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
   ignorePatterns: ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   rules: {
     "eslint/no-unused-vars": "warn",
@@ -61,6 +63,7 @@ export default defineConfig({
     "typescript/no-deprecated": "error",
     "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
+    "suffix-imports/no-platform-suffix": "error",
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
       "error",

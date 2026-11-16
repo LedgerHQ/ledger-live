@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
+import { formatTrendPercent, getTrendTone } from "@shared/trend";
 import { MarketTileProps } from "../../types";
 import MarketTileIcon from "../MarketTileIcon";
 
@@ -26,12 +27,12 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
     [item.ledgerIds, item.ticker, item.image],
   );
 
-  const isPositive = priceChange >= 0;
-  const changeSign = isPositive ? "+" : "";
+  const formattedChange = formatTrendPercent(priceChange, { zeroSign: "+" });
+  const changeColor = getTrendTone(priceChange) === "negative" ? "error" : "success";
 
   const accessibilityLabel = t("marketBanner.tile.accessibilityLabel", {
     name: item.name,
-    change: `${changeSign}${priceChange.toFixed(2)}%`,
+    change: formattedChange,
   });
 
   const capitalizedTicker = item.ticker.toUpperCase();
@@ -50,10 +51,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>
-          <Text lx={{ color: isPositive ? "success" : "error" }}>
-            {changeSign}
-            {priceChange.toFixed(2)}%
-          </Text>
+          <Text lx={{ color: changeColor }}>{formattedChange}</Text>
         </TileDescription>
       </TileContent>
     </Tile>

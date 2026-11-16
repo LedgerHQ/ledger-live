@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { VerifyAddressSuccessView } from "../VerifyAddressSuccessView.web";
+import { VerifyAddressSuccessView } from "../VerifyAddressSuccessView";
 
 const defaultProps: React.ComponentProps<typeof VerifyAddressSuccessView> = {
   isOpen: true,

@@ -1,4 +1,4 @@
-import { secureStore } from "./secureStore.web";
+import { secureStore } from "./secureStore";
 
 describe("secureStore.web", () => {
   afterEach(async () => {

@@ -37,7 +37,7 @@ export function ChartSectionView({ viewModel, filters, headerContent, plotConten
         ) : (
           <ChartSectionHeaderView viewModel={header} />
         )}
-        {filters ? <Box lx={slotStyle}>{filters}</Box> : null}
+        {filters ? <Box lx={filtersSlotStyle}>{filters}</Box> : null}
       </Box>
       <Box lx={slotStyle}>
         <ChartSectionChart {...chart} plotContent={plotContent} />
@@ -56,4 +56,10 @@ const headerBlockStyle: LumenViewStyle = {
 
 const slotStyle: LumenViewStyle = {
   paddingHorizontal: "s16",
+};
+
+// The chart extrema labels draw above the plot, so they need extra room under the filters.
+const filtersSlotStyle: LumenViewStyle = {
+  ...slotStyle,
+  paddingBottom: "s8",
 };

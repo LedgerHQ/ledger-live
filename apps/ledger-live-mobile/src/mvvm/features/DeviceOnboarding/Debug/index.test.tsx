@@ -2,6 +2,37 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import DeviceOnboardingDebug from "./index";
 
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  const RN = jest.requireActual("react-native");
+
+  return {
+    ...actual,
+    BottomSheetHeader: () => null,
+    BottomSheetView: ({ children }: { children?: React.ReactNode }) => (
+      <RN.View>{children}</RN.View>
+    ),
+  };
+});
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const { QueuedBottomSheet: QueuedBottomSheetMock } = jest.requireActual(
+    "@shared/ui-queued-bottom-sheet/testing/module-mock",
+  );
+
+  function QueuedBottomSheet(props: React.ComponentProps<typeof QueuedBottomSheetMock>) {
+    const isOpen = Boolean(props.isRequestingToBeOpened || props.isForcingToBeOpened);
+    return (
+      <QueuedBottomSheetMock {...props}>{isOpen ? props.children : null}</QueuedBottomSheetMock>
+    );
+  }
+
+  return {
+    ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+    QueuedBottomSheet,
+  };
+});
+
 jest.mock("~/components/QueuedDrawer", () => {
   const { View } = jest.requireActual("react-native");
 
@@ -74,7 +105,7 @@ describe("DeviceOnboardingDebug", () => {
     await user.press(screen.getByRole("button", { name: "declined" }));
 
     expect(screen.getByText("Check your device")).toBeVisible();
-    expect(screen.getByText("Ledger Genuine Check error")).toBeVisible();
+    expect(screen.getByText("Operation rejected on Ledger device")).toBeVisible();
   });
 
   it("should return to the checking screen when retry is pressed", async () => {
@@ -82,10 +113,10 @@ describe("DeviceOnboardingDebug", () => {
 
     await user.press(screen.getByRole("button", { name: "Close" }));
     await user.press(screen.getByRole("button", { name: "declined" }));
-    await user.press(screen.getByText("Try again"));
+    await user.press(screen.getByRole("button", { name: "Retry" }));
 
     expect(screen.getByText("Check your device")).toBeVisible();
-    expect(screen.queryByText("Ledger Genuine Check error")).toBeNull();
+    expect(screen.queryByText("Operation rejected on Ledger device")).toBeNull();
   });
 
   it("should move to the checking screen when the call to action is pressed", async () => {

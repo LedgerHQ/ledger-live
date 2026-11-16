@@ -83,6 +83,10 @@ describe("ContactAddressDetailDialog", () => {
         "contacts.addressDetail.copied",
       );
     });
+    expect(screen.getByTestId("contacts-address-detail-copy")).toHaveAttribute(
+      "title",
+      "contacts.addressDetail.copied",
+    );
 
     jest.advanceTimersByTime(3000);
 
@@ -91,6 +95,27 @@ describe("ContactAddressDetailDialog", () => {
         "contacts.addressDetail.copy",
       );
     });
+  });
+
+  it("should expose each full action label as a title so a truncated label stays readable", () => {
+    render(<ContactAddressDetailDialog {...createProps()} />, { wrapper: I18nTestProvider });
+
+    expect(screen.getByTestId("contacts-address-detail-send")).toHaveAttribute(
+      "title",
+      "contacts.addressDetail.send",
+    );
+    expect(screen.getByTestId("contacts-address-detail-copy")).toHaveAttribute(
+      "title",
+      "contacts.addressDetail.copy",
+    );
+    expect(screen.getByTestId("contacts-address-detail-edit")).toHaveAttribute(
+      "title",
+      "contacts.addressDetail.edit",
+    );
+    expect(screen.getByTestId("contacts-address-detail-delete")).toHaveAttribute(
+      "title",
+      "contacts.addressDetail.delete",
+    );
   });
 
   it("should hide the share action when the host cannot share", () => {

@@ -34,6 +34,21 @@ export type NearTransaction = {
   }[];
 };
 
+type NearReceiptAction = {
+  action: string;
+  method: string | null;
+  args?: { deposit?: string; beneficiary_id?: string };
+};
+
+export type NearReceiptNode = {
+  predecessor_account_id: string;
+  receiver_account_id: string;
+  public_key?: string;
+  actions: NearReceiptAction[];
+  outcome: { status: boolean };
+  receipts?: NearReceiptNode[];
+};
+
 export type NearBlockHeader = {
   height: number;
   hash: string;

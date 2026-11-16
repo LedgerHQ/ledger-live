@@ -1,6 +1,7 @@
 import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
+import type React from "react";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -12,6 +13,7 @@ import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
 import { manageKeyDrawerSelector } from "~/reducers/walletSync";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { NavigationProps } from "~/screens/AccountSettings";
+import { useActivationDeviceIntentStep } from "../Activation/useActivationDeviceIntentStep";
 
 const messageLog = "Follow Steps on device";
 
@@ -24,6 +26,8 @@ export type HookResult = {
   deleteMutation: UseMutationResult<void, Error, void, unknown>;
   handleCancel: () => void;
   onCreateKey: () => void;
+  /** Rendered by the screen outside the drawer: the step outlives it. */
+  deviceIntentStepElement: React.ReactElement | null;
 };
 
 export const useManageKeyDrawer = () => {
@@ -46,6 +50,7 @@ export const useManageKeyDrawer = () => {
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const baseNavigation = useNavigation<NavigationProps["navigation"]>();
+  const deviceIntentStep = useActivationDeviceIntentStep();
 
   const handleClose = () => {
     closeDrawer();
@@ -76,6 +81,11 @@ export const useManageKeyDrawer = () => {
   };
 
   const onCreateKey = () => {
+    if (deviceIntentStep.isEnabled) {
+      closeDrawer();
+      deviceIntentStep.start();
+      return;
+    }
     baseNavigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
@@ -90,5 +100,6 @@ export const useManageKeyDrawer = () => {
     handleCancel,
     handleClose,
     onCreateKey,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 };

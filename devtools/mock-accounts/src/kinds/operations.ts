@@ -1,7 +1,7 @@
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import { AccountOperationSchema, type AccountOperation } from "@domain/entity-account-operation";
 import { MockCursorError } from "../errors";
-import { mockCountervalueOf } from "./countervalues";
+import { accountMagnitudeOf, mockCountervalueOf } from "./countervalues";
 import { randomAmount, randomBytes, type Random } from "../random";
 import type { MockReader } from "../families/types";
 
@@ -126,7 +126,7 @@ export const operations: MockReader<"operations"> = (
   { target: { descriptor, cursor }, currency, family, random, balances, operationCount },
   query,
 ) => {
-  const own = descriptor.type === "address" ? descriptor.address : family.address(currency, random);
+  const own = descriptor.type === "address" ? descriptor.key : family.address(currency, random);
   const busy = random() < 0.2;
   const nativeFee = () => randomAmount(random, currency.units[0].magnitude, 0.00001, 0.001);
   const funded = balances().filter(({ balance }) => BigInt(balance) > 0n);
@@ -144,9 +144,7 @@ export const operations: MockReader<"operations"> = (
   );
 
   const countervalueOf = query?.countervalue
-    ? mockCountervalueOf(query.countervalue, assetId =>
-        assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId),
-      )
+    ? mockCountervalueOf(query.countervalue, accountMagnitudeOf({ currency, family }))
     : undefined;
 
   const pending = newestFirst.length > 0 && random() < 0.1;

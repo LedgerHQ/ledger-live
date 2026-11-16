@@ -4,13 +4,12 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
+import type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
   OverrideDeviceIntentExecutorHeader,
-  type DeviceIntentTrackingProperties,
-  type SourceFlow,
-} from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared/react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
@@ -77,7 +76,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
     <Dialog open={wrappedProps.enabled} onOpenChange={onOpenChange} height="fit">
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] w-[400px] p-0"
+        className="max-h-[90vh] w-[400px] p-0 text-base"
         data-testid="device-intent-executor-dialog"
         onPointerDownOutside={onOverlayDismiss}
         onEscapeKeyDown={onEscapeKeyDown}

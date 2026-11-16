@@ -1,9 +1,11 @@
-import { makeTestApi, TEST_BABYLON_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getValidators } from "./getValidators";
 
 describe("getValidators (integ, Babylon)", () => {
   it("returns the bonded validator set with a well-formed address and name", async () => {
-    const api = makeTestApi("babylon", TEST_BABYLON_ENDPOINT);
+    coinConfig.setCoinConfig(() => cosmosDefaults.babylon);
+    const api = new CosmosAPI("babylon", undefined, cosmosDefaults.babylon);
 
     const page = await getValidators(api);
 

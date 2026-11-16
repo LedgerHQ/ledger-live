@@ -147,7 +147,12 @@ describe("AccountDetail tracking: page", () => {
       {
         category: "Account",
         name: undefined,
-        props: { ...COMMON, operationsCount: ethAccount.operationsCount, hasTokens: true },
+        props: {
+          ...COMMON,
+          operationsCount: ethAccount.operationsCount,
+          hasTokens: true,
+          hasAnalyticsBanner: false,
+        },
       },
       expect.objectContaining({ updateRoutes: true }),
     );

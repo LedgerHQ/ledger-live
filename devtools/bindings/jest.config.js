@@ -31,6 +31,9 @@ module.exports = {
       displayName: "native-resolution",
       testMatch: ["**/lazyContract.test.ts"],
       moduleFileExtensions: ["native.tsx", "native.ts", "tsx", "ts", "js", "jsx", "json", "node"],
+      moduleNameMapper: {
+        "^react-native-keychain$": "<rootDir>/jest/react-native-keychain.stub.js",
+      },
     },
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],

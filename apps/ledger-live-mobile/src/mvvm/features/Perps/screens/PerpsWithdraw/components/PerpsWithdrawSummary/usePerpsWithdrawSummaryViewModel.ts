@@ -9,7 +9,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
-import type { PerpsReviewDetailItem } from "LLM/features/Perps/components/PerpsReviewSection";
+import type { PerpsReviewDetailItem } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 
 export type PerpsWithdrawSummaryParams = Readonly<{
   sourceAccount: AccountLike;

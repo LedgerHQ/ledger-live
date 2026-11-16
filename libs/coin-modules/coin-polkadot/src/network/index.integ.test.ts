@@ -1,37 +1,17 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { polkadotDefaults } from "../config";
 import polkadotAPI from "./index";
 
 const logger = jest.fn();
-const stakingActiveStatus = {
-  type: "active" as const,
-  features: [{ id: "staking_txs" as const, status: "active" as const }],
-};
 
 const CURRENCY_CONFIGS = {
   polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
-    config: {
-      status: { type: "active" as const },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: { url: "https://polkadot-rpc.publicnode.com" },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
-      indexer: { url: "https://polkadot.coin.ledger.com" },
-      staking: { electionStatusThreshold: 25 },
-    },
+    config: polkadotDefaults.polkadot,
   },
   assethub_polkadot: {
     currency: getCryptoCurrencyById("assethub_polkadot"),
-    config: {
-      status: stakingActiveStatus,
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
-      node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
-      staking: { electionStatusThreshold: 25 },
-      hasBeenMigrated: true,
-    },
+    config: polkadotDefaults.assethub_polkadot,
   },
 };
 
@@ -42,6 +22,24 @@ const CURRENCY_CONFIGS = {
  */
 describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", (_, entry) => {
   const { currency, config } = entry;
+
+  it("getStakingProgress and getMinimumBondBalance resolve", async () => {
+    const staking = await polkadotAPI.getStakingProgress(logger, config, currency.id);
+    expect(typeof staking.activeEra).toBe("number");
+    expect(typeof staking.electionClosed).toBe("boolean");
+    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency.id);
+
+    // Staking lives on Asset Hub since the migration, so the relay chain reports
+    // neither an active era nor a minimum bond — only assethub_* carries them.
+    if (currency.id.startsWith("assethub")) {
+      expect(staking.activeEra).toBeGreaterThan(0);
+      expect(minimumBondBalance.isGreaterThan(0)).toBe(true);
+    }
+  }, 60000);
+});
+
+describe("network/index on-demand validators (assethub_polkadot)", () => {
+  const { currency, config } = CURRENCY_CONFIGS.assethub_polkadot;
 
   it("getValidators('all') returns validators", async () => {
     const validators = await polkadotAPI.getValidators(config, "all", currency.id);
@@ -68,19 +66,5 @@ describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", 
       currency.id,
     );
     expect(byReversedList).toBe(byList);
-  }, 60000);
-
-  it("getStakingProgress and getMinimumBondBalance resolve", async () => {
-    const staking = await polkadotAPI.getStakingProgress(logger, config, currency.id);
-    expect(typeof staking.activeEra).toBe("number");
-    expect(typeof staking.electionClosed).toBe("boolean");
-    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency.id);
-
-    // Staking lives on Asset Hub since the migration, so the relay chain reports
-    // neither an active era nor a minimum bond — only assethub_* carries them.
-    if (currency.id.startsWith("assethub")) {
-      expect(staking.activeEra).toBeGreaterThan(0);
-      expect(minimumBondBalance.isGreaterThan(0)).toBe(true);
-    }
   }, 60000);
 });

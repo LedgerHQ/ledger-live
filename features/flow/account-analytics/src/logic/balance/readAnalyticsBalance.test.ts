@@ -1,3 +1,4 @@
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AnalyticsQueryContext, ReadAnalyticsPortfolio } from "../../types";
 import { readAnalyticsBalance } from "./readAnalyticsBalance";
 import {
@@ -119,9 +120,19 @@ describe("readAnalyticsBalance", () => {
 
   it("should reject an unsupported metric or another fiat", () => {
     expect(read({ ...context, metric: "total-return" }).status).toBe("unavailable");
-    expect(
-      read({ ...context, fiatCurrencyId: "EUR" as AnalyticsQueryContext["fiatCurrencyId"] }).status,
-    ).toBe("unavailable");
+    expect(read({ ...context, fiatCurrencyId: "EUR" }).status).toBe("unavailable");
+  });
+
+  it("should read the balance in a crypto countervalue", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const result = readAnalyticsBalance(
+      { ...context, fiatCurrencyId: bitcoin.ticker, positionIds: [eth.id] },
+      positions,
+      createAnalyticsCountervalues([eth], bitcoin),
+      bitcoin,
+      createReadPortfolio([eth.id]),
+    );
+    expect(result.status).toBe("ready");
   });
 
   it.each([

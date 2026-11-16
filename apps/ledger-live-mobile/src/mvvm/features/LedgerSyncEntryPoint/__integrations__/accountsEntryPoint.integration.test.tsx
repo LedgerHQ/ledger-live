@@ -8,9 +8,6 @@ import { TestAccountsListScreen } from "./TestAccountsListScreen";
 
 const getInitialState = withFlagOverrides(
   {
-    llmAccountListUI: {
-      enabled: true,
-    },
     llmWalletSync: {
       enabled: true,
       params: {
@@ -88,9 +85,6 @@ describe("Ledger Sync Entry Point on Accounts screen", () => {
 
 const getInitialStateWithOptimisation = withFlagOverrides(
   {
-    llmAccountListUI: {
-      enabled: true,
-    },
     llmWalletSync: {
       enabled: true,
       params: {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-internet_computer",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Internet Computer Coin Tester",

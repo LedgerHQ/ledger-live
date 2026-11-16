@@ -170,6 +170,8 @@ describe("a4Config", () => {
         maxDcRoamRetries: 5,
         chains: {
           adi: { enabled: false, registerOnly: false },
+          alpen: { enabled: false, registerOnly: false },
+          alpen_testnet: { enabled: false, registerOnly: false },
           arbitrum: { enabled: false, registerOnly: false },
           arc: { enabled: false, registerOnly: false },
           avalanche_c_chain: { enabled: false, registerOnly: false },

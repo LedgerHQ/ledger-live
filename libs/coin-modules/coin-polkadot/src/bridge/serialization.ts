@@ -29,6 +29,7 @@ function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesRaw {
       address: n.address,
       value: n.value.toString(),
       status: n.status,
+      isRegistered: n.isRegistered,
     })),
     numSlashingSpans: r.numSlashingSpans,
   };
@@ -50,6 +51,7 @@ function fromPolkadotResourcesRaw(r: PolkadotResourcesRaw): PolkadotResources {
       address: n.address,
       value: new BigNumber(n.value),
       status: n.status,
+      isRegistered: n.isRegistered,
     })),
     numSlashingSpans: Number(r.numSlashingSpans) || 0,
   };

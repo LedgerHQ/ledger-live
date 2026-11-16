@@ -4,7 +4,10 @@
     "exportDeviceIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"]
   },
   "domain/entity/client-identity/src/ids/PortfolioId.ts": {
-    "exportPortfolioIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"]
+    "exportPortfolioIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"],
+    "exportPortfolioIdForPortfolioService": [
+      "features/platform/account-source-portfolio/src/client.ts"
+    ]
   },
   "domain/entity/client-identity/src/ids/UserId.ts": {
     "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/internals/middleware.ts"],

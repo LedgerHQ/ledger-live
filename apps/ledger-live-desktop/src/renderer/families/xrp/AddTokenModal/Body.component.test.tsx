@@ -1,20 +1,17 @@
 import React from "react";
+import { useLocation } from "react-router";
 import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Operation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { act, render, screen } from "tests/testSetup";
 import logger from "~/renderer/logger";
 import Body, { type Data } from "./Body";
 import type { StepId, StepProps } from "./types";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../__mocks__/currency.mock";
+import { xrpOperation } from "../__mocks__/transaction.mock";
 
-jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/families/xrp/logicPublic"),
-  getMaxTrustLimitForToken: jest.fn(),
-}));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   const bridge = {
     createTransaction: () => ({ family: "xrp" }),
@@ -62,38 +59,19 @@ jest.mock("~/renderer/components/Stepper", () => ({
   },
 }));
 
-const mockGetMaxTrustLimit = jest.mocked(getMaxTrustLimitForToken);
 const stepper = () => mockStepper.mock.lastCall![0];
 const pick = (token: TokenCurrency) => act(() => stepper().onChangeToken(token));
 
 const rlusd = xrpIouToken;
-const usd = {
-  ...xrpIouToken,
-  id: "ripple_testnet/iou/usd",
-  tokenIdentifier: "USD",
-} as TokenCurrency;
 
-function deferMaxLimits() {
-  const resolvers: Array<(limit: BigNumber) => void> = [];
-  mockGetMaxTrustLimit.mockImplementation(
-    () => new Promise<BigNumber>(resolve => resolvers.push(resolve)),
-  );
-
-  return (call: number, limit: number) =>
-    act(async () => {
-      resolvers[call](new BigNumber(limit));
-    });
+function Location() {
+  return <span data-testid="location">{useLocation().pathname}</span>;
 }
 
-function renderBody(params: Partial<Data> = {}, stepId: StepId = "token") {
+function renderBody(params: Data = { account: XRP_ACCOUNT }, stepId: StepId = "token") {
   const onChangeStepId = jest.fn<void, [StepId]>();
   render(
-    <Body
-      stepId={stepId}
-      onClose={jest.fn()}
-      onChangeStepId={onChangeStepId}
-      params={{ account: XRP_ACCOUNT, ...params }}
-    />,
+    <Body stepId={stepId} onClose={jest.fn()} onChangeStepId={onChangeStepId} params={params} />,
   );
 
   return { onChangeStepId };
@@ -102,65 +80,19 @@ function renderBody(params: Partial<Data> = {}, stepId: StepId = "token") {
 describe("xrp AddTokenModal Body", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(logger, "warn").mockImplementation(() => {});
     jest.spyOn(logger, "critical").mockImplementation(() => {});
   });
 
   it("puts the picked token and its Max in the transaction", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
     renderBody();
 
     await pick(rlusd);
 
-    expect(stepper().maxLimit?.toNumber()).toBe(5000);
     expect(stepper().transaction).toMatchObject({
       assetReference: rlusd.tokenIdentifier,
       assetOwner: rlusd.contractAddress,
-      amount: new BigNumber(5000),
+      amount: MAX_TRUST_LIMIT,
     });
-  });
-
-  it("drops the previous token while the next one's Max loads", async () => {
-    const resolveMax = deferMaxLimits();
-    renderBody();
-
-    await pick(rlusd);
-    await resolveMax(0, 100);
-    await pick(usd);
-
-    expect(stepper().token).toBe(usd);
-    expect(stepper().transaction?.assetReference).toBeUndefined();
-  });
-
-  it("keeps only the Max of the latest pick when the user picks A, B, then A again", async () => {
-    const resolveMax = deferMaxLimits();
-    renderBody();
-
-    await pick(rlusd);
-    await pick(usd);
-    await pick(rlusd);
-    await resolveMax(0, 100);
-
-    expect(stepper().transaction?.assetReference).toBeUndefined();
-
-    await resolveMax(2, 300);
-    await resolveMax(1, 200);
-
-    expect(stepper().transaction).toMatchObject({
-      assetReference: rlusd.tokenIdentifier,
-      amount: new BigNumber(300),
-    });
-  });
-
-  it("starts the limit at 0 when the Max can't load", async () => {
-    mockGetMaxTrustLimit.mockRejectedValue(new Error("network down"));
-    renderBody();
-
-    await pick(rlusd);
-
-    expect(logger.warn).toHaveBeenCalled();
-    expect(stepper().maxLimit).toBeNull();
-    expect(stepper().transaction?.amount).toEqual(new BigNumber(0));
   });
 
   it("asks no Max for an MPT", async () => {
@@ -168,13 +100,11 @@ describe("xrp AddTokenModal Body", () => {
 
     await pick(xrpMptToken);
 
-    expect(mockGetMaxTrustLimit).not.toHaveBeenCalled();
     expect(stepper().transaction?.amount).toEqual(new BigNumber(0));
   });
 
   it("applies a preselected token on open", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
-    renderBody({ token: rlusd });
+    renderBody({ account: XRP_ACCOUNT, token: rlusd });
 
     await act(async () => {});
 
@@ -182,15 +112,29 @@ describe("xrp AddTokenModal Body", () => {
     expect(stepper().transaction?.assetReference).toBe(rlusd.tokenIdentifier);
   });
 
-  it("keeps the current limit of an edited token and loads its Max", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
-    renderBody({ tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
+  it("keeps the current limit of an edited token", async () => {
+    renderBody({ account: XRP_ACCOUNT, tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
 
     await act(async () => {});
 
     expect(stepper().action).toBe("edit");
-    expect(stepper().maxLimit?.toNumber()).toBe(5000);
     expect(stepper().transaction?.amount).toEqual(new BigNumber(1000));
+  });
+
+  it("puts the rippling switch in the transaction", () => {
+    renderBody();
+
+    expect(stepper().isRippling).toBe(false);
+
+    act(() => stepper().onChangeRippling(true));
+
+    expect(stepper().transaction?.noRipple).toBe(false);
+    expect(stepper().isRippling).toBe(true);
+
+    act(() => stepper().onChangeRippling(false));
+
+    expect(stepper().transaction?.noRipple).toBe(true);
+    expect(stepper().isRippling).toBe(false);
   });
 
   it("goes back to the first step on retry", () => {
@@ -198,16 +142,16 @@ describe("xrp AddTokenModal Body", () => {
     act(() => stepper().onRetry());
     expect(add.onChangeStepId).toHaveBeenCalledWith("token");
 
-    const edit = renderBody({ tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
+    const edit = renderBody({ account: XRP_ACCOUNT, tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
     act(() => stepper().onRetry());
     expect(edit.onChangeStepId).toHaveBeenCalledWith("settings");
   });
 
   it("pauses background syncs until the confirmation, which syncs the account", () => {
-    renderBody({}, "review");
+    renderBody(undefined, "review");
     expect(screen.getByText("sync paused")).toBeInTheDocument();
 
-    renderBody({}, "confirmation");
+    renderBody(undefined, "confirmation");
     expect(screen.getAllByText("sync paused")).toHaveLength(1);
   });
 
@@ -236,12 +180,39 @@ describe("xrp AddTokenModal Body", () => {
 
   it("shows the broadcast operation and clears the error", () => {
     renderBody();
-    const operation = { id: "op-1", accountId: XRP_ACCOUNT.id } as Operation;
 
     act(() => stepper().onTransactionError(new Error("first try")));
-    act(() => stepper().onOperationBroadcasted(operation));
+    act(() => stepper().onOperationBroadcasted(xrpOperation));
 
-    expect(stepper().optimisticOperation).toBe(operation);
+    expect(stepper().optimisticOperation).toBe(xrpOperation);
     expect(stepper().error).toBeUndefined();
+  });
+
+  it("lands on the XRP account page when a broadcast removal closes", () => {
+    const tokenPage = `/account/${XRP_ACCOUNT.id}/${XRP_IOU_TOKEN_ACCOUNT.id}`;
+
+    render(
+      <>
+        <Body
+          stepId="review"
+          onClose={jest.fn()}
+          onChangeStepId={jest.fn()}
+          params={{
+            account: XRP_ACCOUNT,
+            tokenAccount: XRP_IOU_TOKEN_ACCOUNT,
+            remove: true,
+          }}
+        />
+        <Location />
+      </>,
+      { initialRoute: tokenPage },
+    );
+
+    act(() => stepper().onClose());
+    expect(screen.getByTestId("location").textContent).toBe(tokenPage);
+
+    act(() => stepper().onOperationBroadcasted(xrpOperation));
+    act(() => stepper().onClose());
+    expect(screen.getByTestId("location").textContent).toBe(`/account/${XRP_ACCOUNT.id}`);
   });
 });

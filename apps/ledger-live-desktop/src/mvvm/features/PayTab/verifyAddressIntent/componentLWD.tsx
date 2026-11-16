@@ -72,6 +72,7 @@ export function VerifyAddressIntentComponentLWD({
 
   switch (jobState.type) {
     case "verifying":
+    case "addressDisplayed":
     case "verified":
       return <NextStepsScreen onGotIt={onClose} />;
     case "cancelled":

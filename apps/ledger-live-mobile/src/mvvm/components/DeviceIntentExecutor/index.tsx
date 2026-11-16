@@ -3,7 +3,7 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
-import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared/react";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";

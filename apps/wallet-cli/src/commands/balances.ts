@@ -2,7 +2,7 @@ import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../wallet";
 import { networkOfV0 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
-import { createCommandOutput } from "../output";
+import { createCommandOutput, warnIfTokensSkipped } from "../output";
 import {
   accountOption,
   outputOption,
@@ -34,13 +34,14 @@ export default defineCommand({
       walletCliDebug(`balances: account=${descriptor.id}, output=${output}`);
       const wallet = new WalletAdapter();
 
-      const balances = await out.withActivity(
+      const { balances, skippedTokenIds } = await out.withActivity(
         `Fetching balances for ${ctx.network}…`,
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
       );
       trackBalanceViewed({ network: ctx.network });
       await out.balances(balances);
+      warnIfTokensSkipped(skippedTokenIds);
     });
   },
 });

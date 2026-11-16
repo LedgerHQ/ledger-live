@@ -16,7 +16,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useBiometricsSetup } from "../hooks/useBiometricsSetup";
-import { useBiometricsTypeLabel } from "../hooks/useBiometricsTypeLabel";
+import { useBiometricsTypeLabel } from "@features/platform-app-lock/native";
 import { useAppProtectionPromptState } from "./AppProtectionPromptProvider";
 import { useIsRouteMounted } from "./internals/routePresence";
 import type { ProtectionSource } from "../types";

@@ -11,22 +11,34 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
-function pickTokenFields({ mode, assetReference, assetOwner }: Transaction | TransactionRaw) {
+function pickTokenFields({
+  mode,
+  assetReference,
+  assetOwner,
+  noRipple,
+}: Transaction | TransactionRaw) {
   return {
     ...(mode && { mode }),
     ...(assetReference && { assetReference }),
     ...(assetOwner && { assetOwner }),
+    ...(typeof noRipple === "boolean" && { noRipple }),
   };
 }
 
+function getAmountUnit(account: Account, subAccountId: string | null | undefined) {
+  const sentAccount = account.subAccounts?.find(a => a.id === subAccountId) ?? account;
+
+  return getAccountCurrency(sentAccount).units[0];
+}
+
 export const formatTransaction = (
-  { amount, recipient, fees, tag, useAllAmount }: Transaction,
+  { amount, recipient, fees, tag, useAllAmount, subAccountId }: Transaction,
   account: Account,
 ): string => `
 SEND ${
   useAllAmount
     ? "MAX"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+    : formatCurrencyUnit(getAmountUnit(account, subAccountId), amount, {
         showCode: true,
         disableRounding: true,
       })

@@ -77,13 +77,17 @@ Test commands below are run from the `e2e/mobile/` directory.
 **iOS (debug)** -- requires the Metro bundler running in a separate terminal:
 
 ```bash
-# Terminal 1: start the bundler (from repo root)
-pnpm mobile start
+# Terminal 1: start the Detox bundler (from repo root)
+pnpm mobile start:detox
 
 # Terminal 2: run tests (from e2e/mobile/)
 pnpm test:ios:debug                      # all tests
 pnpm test:ios:debug <testFileName>       # single file
 ```
+
+> Use `start:detox`, not `start`. It sets `DETOX=1`, so the bundle reports the `package.json` app version
+> instead of the native one, which goes stale when native builds are reused, and applies the other Detox-only
+> bundler settings.
 
 **Android (release)** -- no bundler needed, JS is bundled in the APK:
 

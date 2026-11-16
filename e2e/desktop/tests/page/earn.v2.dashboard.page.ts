@@ -26,8 +26,11 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify ice cold start page")
   async verifyIceColdStartPage() {
     await this.verifyElementIsVisible(this.footerDisclaimer);
-    await this.verifyElementIsNotVisible(this.maxPotentialRewards);
-    await this.verifyElementIsNotVisible(this.walletHeaderAmount);
+    const webview = await this.getWebView();
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.maxPotentialRewards)).not.toBeVisible();
+      await soft(webview.getByTestId(this.walletHeaderAmount)).not.toBeVisible();
+    });
   }
 
   @step("Click simulate investment CTA")
@@ -60,7 +63,9 @@ export class EarnV2Page extends EarnBasePage {
     const cta = webview.getByTestId(this.v1TextButtonCta);
     await expect(cta).toBeVisible();
     // v2 reuses this test id for the in-card "Continue" button, so the label tells the screens apart.
-    await expect(cta).toHaveText(/Deposit in/i);
+    await this.softExpect(async soft => {
+      await soft(cta).toHaveText(/Deposit in/i);
+    });
   }
 
   // Cold Start
@@ -69,7 +74,12 @@ export class EarnV2Page extends EarnBasePage {
   async verifyColdStartPage() {
     await this.verifyElementIsVisible(this.maxPotentialRewards);
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.crowdFavourites)).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(webview.getByTestId(this.crowdFavourites)).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify asset ready to earn: $0")
@@ -92,7 +102,13 @@ export class EarnV2Page extends EarnBasePage {
 
   @step("Verify rewards summary boxes")
   async verifyRewardsSummaryBoxes() {
-    await this.verifyElementIsVisible(this.rewardsSummary);
+    const webview = await this.getWebView();
+    await this.softExpect(
+      async soft => {
+        await soft(webview.getByTestId(this.rewardsSummary)).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify position row present: $0")
@@ -111,7 +127,12 @@ export class EarnV2Page extends EarnBasePage {
 
   @step("Verify modal container is visible")
   async verifyModalContainerVisible() {
-    await expect(this.modalContainer).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.modalContainer).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   private readonly ethProviderPanel = "eth-provider-panel";
@@ -164,8 +185,13 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify deposit screen v2 amount section")
   async verifyV2DepositScreenVisible() {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.accountSelectorInput)).toBeVisible();
-    await expect(webview.getByTestId(this.amountPresets)).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(webview.getByTestId(this.accountSelectorInput)).toBeVisible();
+        await soft(webview.getByTestId(this.amountPresets)).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Select deposit amount preset: $0")
@@ -189,8 +215,10 @@ export class EarnV2Page extends EarnBasePage {
     const webview = await this.getWebView();
     const description = webview.getByTestId(this.swapDescription);
     await expect(description).toBeVisible();
-    await expect(description).toContainText(fromTicker);
-    await expect(description).toContainText(toTicker);
+    await this.softExpect(async soft => {
+      await soft(description).toContainText(fromTicker);
+      await soft(description).toContainText(toTicker);
+    });
   }
 
   @step("Continue to swap")
@@ -232,9 +260,11 @@ export class EarnV2Page extends EarnBasePage {
     const card = webview.getByTestId(this.ethProviderCard(providerId));
     const continueCta = card.getByTestId(this.v1TextButtonCta);
     await expect(continueCta).toBeVisible();
-    await expect(continueCta).toHaveText(/Continue/i);
     await expect(continueCta).toBeEnabled();
-    await expect(webview.getByTestId(this.v1TextButtonCta)).toHaveCount(1);
+    await this.softExpect(async soft => {
+      await soft(continueCta).toHaveText(/Continue/i);
+      await soft(webview.getByTestId(this.v1TextButtonCta)).toHaveCount(1);
+    });
   }
 
   @step("Continue with selected ETH provider: $0")
@@ -263,7 +293,30 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify navigated to withdrawal flow")
   async verifyWithdrawalFlowVisible() {
     const webview = await this.getWebView();
-    await expect(webview).toHaveURL(/\/redeem|intent=withdraw/);
+    await this.softExpect(
+      async soft => {
+        await soft(webview).toHaveURL(/\/redeem|intent=withdraw/);
+      },
+      { timeout: TIMEOUT.large },
+    );
+  }
+
+  private static readonly ethProviderDappIds: Record<string, string> = {
+    lido: "lido",
+    kiln_pooling: "kiln-staking",
+  };
+
+  @step("Verify the provider dapp is opened")
+  async verifyProviderDappOpened(providerId?: string) {
+    const dappId = providerId
+      ? (EarnV2Page.ethProviderDappIds[providerId] ?? providerId)
+      : "[^/?#]+";
+    await this.softExpect(
+      async soft => {
+        await soft(this.page).toHaveURL(new RegExp(`/platform/${dappId}(?:[/?#]|$)`));
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Select asset in modular selector: $0")

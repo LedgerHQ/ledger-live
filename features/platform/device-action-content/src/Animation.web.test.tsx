@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Lottie } from "@shared/lottie/web";
-import { Animation } from "./Animation.web";
+import { Animation } from "./Animation";
 
 jest.mock("@shared/lottie/web", () => ({
   Lottie: jest.fn(() => <div data-testid="lottie" />),

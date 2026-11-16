@@ -6,13 +6,20 @@ import { flagWith } from "../../define";
  * `tx_broadcast` (one per broadcast outcome, every family and route). Off by default; a rollout
  * turns it on remotely, and turning it off is the kill switch.
  *
- * `includeSyncPath: false` turns off `coin_module_call` for the sync-path (read) methods, failures
- * included, and keeps the transaction and preparation calls and `tx_broadcast`.
- * `syncPathSampleRate` is the share of app sessions whose sync-path successes are sent, all of
- * them or none per session. `preparationSampleRate` does the same for `estimateFees` and
- * `validateIntent`, which the bridge calls on every edit of a transaction. Failures and
- * transaction-path calls (`craftTransaction`, `craftRawTransaction`, `craftTransactionData`,
- * `combine`, `broadcast`) are always sent.
+ * Each coin-module method belongs to a tier, defaulted in `@features/platform-coin-observability`
+ * (`DEFAULT_METHOD_TIERS`):
+ * - `transaction` (`craftTransaction`, `craftRawTransaction`, `combine`, `broadcast`): always sent;
+ * - `preparation` (`craftTransactionData`, `estimateFees`, `validateIntent`, …), called on every
+ *   edit of a transaction: successes sampled with `preparationSampleRate`;
+ * - `sync` (reads, per account and sync cycle): successes sampled with `syncPathSampleRate`;
+ * - `off`: nothing sent, failures included.
+ * `methodTiers` moves a method to another tier without a release, e.g.
+ * `{ "craftTransactionData": "off" }`. An entry with an unknown tier is ignored.
+ *
+ * A sample rate is the share of app sessions whose successes are sent, all of them or none per
+ * session. Failures are sent from every session, except for an `off` method.
+ * `includeSyncPath: false` turns off the `sync` tier, failures included, and keeps the other tiers
+ * and `tx_broadcast`.
  * `maxFailuresPerKey` caps the failures sent per method, currency and error name within an hour,
  * so a node outage does not turn every client into a log storm.
  *
@@ -25,6 +32,9 @@ export const coinObservability = flagWith(
     syncPathSampleRate: z.number().min(0).max(1),
     preparationSampleRate: z.number().min(0).max(1),
     maxFailuresPerKey: z.number().int().min(0),
+    methodTiers: z
+      .record(z.string(), z.enum(["transaction", "preparation", "sync", "off"]))
+      .optional(),
   },
   {
     enabled: false,
@@ -33,6 +43,7 @@ export const coinObservability = flagWith(
       syncPathSampleRate: 0.1,
       preparationSampleRate: 0.1,
       maxFailuresPerKey: 5,
+      methodTiers: {},
     },
   },
 );

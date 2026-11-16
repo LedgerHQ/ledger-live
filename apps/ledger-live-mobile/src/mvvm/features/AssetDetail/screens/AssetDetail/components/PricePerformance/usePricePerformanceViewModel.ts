@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { formatTrendPercent } from "@shared/trend";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
@@ -34,11 +35,6 @@ export function getRelativeTime(date: Date, now: Date, t: TFunc): string {
 function computeChangePercentage(currentPrice: number, referencePrice: number): number {
   if (referencePrice === 0) return 0;
   return ((currentPrice - referencePrice) / referencePrice) * 100;
-}
-
-function formatPercentage(value: number): string {
-  const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(2)}%`;
 }
 
 type Params = {
@@ -93,7 +89,7 @@ export function usePricePerformanceViewModel({
         }),
         date: dateFormatter.format(athDateObj),
         relativeTime: getRelativeTime(athDateObj, now, t),
-        changePercentage: formatPercentage(athChange),
+        changePercentage: formatTrendPercent(athChange, { zeroSign: "+" }),
       });
     }
 
@@ -111,7 +107,7 @@ export function usePricePerformanceViewModel({
         }),
         date: dateFormatter.format(atlDateObj),
         relativeTime: getRelativeTime(atlDateObj, now, t),
-        changePercentage: formatPercentage(atlChange),
+        changePercentage: formatTrendPercent(atlChange, { zeroSign: "+" }),
       });
     }
 

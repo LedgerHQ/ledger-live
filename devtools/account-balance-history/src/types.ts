@@ -8,6 +8,12 @@ export interface AccountBalanceHistoryToolSeries {
   readonly lastBalance?: string;
   /** Oldest first, in any unit: only their shape is drawn. */
   readonly values: readonly number[];
+  /** With the fiat checked: the points valued in it, out of `pointCount`. */
+  readonly valuedCount?: number;
+  /** With the fiat checked: the last valued point, formatted in the fiat. */
+  readonly lastCountervalue?: string;
+  /** With the fiat checked: the valued points, oldest first, drawn instead of `values`. */
+  readonly countervalues?: readonly number[];
 }
 
 export interface AccountBalanceHistoryToolAccount {
@@ -31,4 +37,9 @@ export interface AccountBalanceHistoryToolProps {
   /** Reads the account's history for the selected range again, whatever its age. */
   readonly onRead: (accountUUID: string) => void;
   readonly onReadAll: () => void;
+  /** The app's countervalue setting, e.g. `USD`: the only fiat its rates are loaded for. */
+  readonly fiat: string;
+  /** Reads and shows the history valued in `fiat`. */
+  readonly countervalue: boolean;
+  readonly onCountervalueChange: (countervalue: boolean) => void;
 }

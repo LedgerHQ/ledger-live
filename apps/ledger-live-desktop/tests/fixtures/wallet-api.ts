@@ -1025,6 +1025,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "alpen",
+    ticker: "BTC",
+    name: "Alpen",
+    family: "ethereum",
+    color: "#F68B1F",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "alpen_testnet",
     ticker: "BTC",
     name: "Alpen Testnet",

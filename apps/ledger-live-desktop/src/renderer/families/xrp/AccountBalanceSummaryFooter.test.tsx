@@ -3,15 +3,17 @@ import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { render, screen } from "tests/testSetup";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
   XRP_MPT_TOKEN_ACCOUNT,
+  makeXrpTokenAccount,
 } from "./__mocks__/account.mock";
-import { xrpIouToken } from "./__mocks__/currency.mock";
+import { xrpIouToken, xrpRlusdToken } from "./__mocks__/currency.mock";
 
 jest.mock("@ledgerhq/live-common/families/xrp/config", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
@@ -22,11 +24,6 @@ jest.mock("@ledgerhq/live-common/account/helpers", () => ({
   getParentAccount: jest.fn(),
 }));
 jest.mock("~/renderer/hooks/useAccountUnit");
-const mockDispatch = jest.fn();
-jest.mock("LLD/hooks/redux", () => ({
-  ...jest.requireActual("LLD/hooks/redux"),
-  useDispatch: () => mockDispatch,
-}));
 
 const parentAccount = XRP_ACCOUNT;
 const iouAccount = XRP_IOU_TOKEN_ACCOUNT;
@@ -47,21 +44,10 @@ describe("xrp AccountBalanceSummaryFooter", () => {
     jest.mocked(useAccountUnit).mockReturnValue(xrpIouToken.units[0]);
   });
 
-  it("opens the settings edit of a held IOU", () => {
+  it("shows the trust limit of a held IOU", () => {
     renderFooter(iouAccount);
 
     expect(screen.getByText("1,000 RLUSD")).toBeVisible();
-    fireEvent.click(screen.getByTestId("xrp-edit-token-settings"));
-
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        payload: {
-          name: "MODAL_XRP_ADD_TOKEN",
-          data: { account: parentAccount, tokenAccount: iouAccount },
-        },
-      }),
-    );
   });
 
   it("shows whether rippling is on", () => {
@@ -74,17 +60,33 @@ describe("xrp AccountBalanceSummaryFooter", () => {
     expect(screen.getByText("On")).toBeVisible();
   });
 
-  it("offers no edit for an MPT, which has no settings", () => {
+  it("shows nothing for an MPT, which has no settings", () => {
     renderFooter(mptAccount);
 
-    expect(screen.queryByTestId("xrp-edit-token-settings")).toBeNull();
+    expect(screen.queryByText("Trust limit")).toBeNull();
   });
 
-  it("offers no edit when no token standard is enabled", () => {
+  it("shows nothing when no token standard is enabled", () => {
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue([]);
 
     renderFooter(iouAccount);
 
-    expect(screen.queryByTestId("xrp-edit-token-settings")).toBeNull();
+    expect(screen.queryByText("Trust limit")).toBeNull();
+  });
+
+  it("shows Maximum for the protocol maximum", () => {
+    jest.mocked(useAccountUnit).mockReturnValue(xrpRlusdToken.units[0]);
+
+    renderFooter(makeXrpTokenAccount({ limit: MAX_TRUST_LIMIT }));
+
+    expect(screen.getByText("Maximum")).toBeVisible();
+  });
+
+  it("shows a limit above 16 integer digits in scientific notation", () => {
+    jest.mocked(useAccountUnit).mockReturnValue(xrpRlusdToken.units[0]);
+
+    renderFooter(makeXrpTokenAccount({ limit: MAX_TRUST_LIMIT.shiftedBy(-1) }));
+
+    expect(screen.getByText(/^9\.999999999999999e94 /)).toBeVisible();
   });
 });

@@ -64,7 +64,6 @@ runs:
       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
       id: setup-caches
       with:
-        skip-pnpm-cache: "true"
         skip-pod-cache: "true"
         skip-nx-cache: "true"
         cache-develop-role-arn: ${{ inputs.cache-develop-role-arn }}

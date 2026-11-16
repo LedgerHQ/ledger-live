@@ -50,6 +50,17 @@ describe("encodeURIScheme", () => {
     ).toBe(`bitcoin:${BTC_ADDRESS}?amount=1e-8`);
   });
 
+  it("keeps a single atom when magnitude exceeds DECIMAL_PLACES", () => {
+    const BigNumber20 = BigNumber.clone({ DECIMAL_PLACES: 20 });
+    const currency: CryptoCurrency = {
+      ...ethereum,
+      units: [{ ...ethereum.units[0], magnitude: 24 }],
+    };
+    expect(encodeURIScheme({ currency, address: ETH_ADDRESS, amount: new BigNumber20(1) })).toBe(
+      `ethereum:${ETH_ADDRESS}?amount=1e-24`,
+    );
+  });
+
   it("encodes spaces as %20 and leaves !'()*~ unescaped", () => {
     expect(
       encodeURIScheme({

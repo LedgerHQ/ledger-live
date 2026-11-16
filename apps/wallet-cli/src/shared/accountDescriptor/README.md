@@ -32,7 +32,7 @@ The canonical, human-readable descriptor defined in the ADR, implemented by `@do
 ### String representation
 
 ```
-account:2:<type>:<network_id>:<xpub_or_address>:<path>
+account:2:<type>:<network_id>:<key>:<path>
 ```
 
 Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read and converted: `bitcoin:testnet` → `bitcoin_testnet`. `session.yaml` entries are rewritten to version 2 on load.
@@ -41,7 +41,7 @@ Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read an
 | ----------------- | -------------------------------------------------- |
 | `type`            | `utxo` (Bitcoin family) or `address` (EVM, Solana) |
 | `network_id`      | CAL network id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`, … |
-| `xpub_or_address` | xpub/ypub/zpub (UTXO) or derived address (ACCOUNT) |
+| `key`             | xpub (UTXO), or the account key: an address, or a public key for the families keyed on it |
 | `path`            | BIP32 derivation path (see below)                  |
 
 ### Path conventions

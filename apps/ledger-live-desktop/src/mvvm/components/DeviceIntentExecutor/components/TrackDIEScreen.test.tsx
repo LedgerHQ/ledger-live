@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "tests/testSetup";
-import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { TrackScreen } from "@shared/analytics-react";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 

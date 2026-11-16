@@ -54,10 +54,12 @@ type Actions<T extends Transaction = Transaction> =
       type: "onStatus";
       status: TransactionStatus;
       transaction: T;
+      sourceTransaction: T;
     }
   | {
       type: "onStatusError";
       error: Error;
+      sourceTransaction: T;
     }
   | {
       type: "setTransaction";
@@ -202,6 +204,7 @@ const reducer = <T extends Transaction = Transaction>(
     }
 
     case "onStatus":
+      if (action.sourceTransaction !== state.transaction) return state;
       return {
         ...state,
         errorStatus: null,
@@ -211,6 +214,7 @@ const reducer = <T extends Transaction = Transaction>(
       };
 
     case "onStatusError":
+      if (action.sourceTransaction !== state.transaction) return state;
       if (action.error === state.errorStatus) return state;
       return { ...state, errorStatus: action.error };
 
@@ -362,6 +366,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
               type: "onStatus",
               status,
               transaction: preparedTransaction,
+              sourceTransaction: transaction,
             });
           },
           e => {
@@ -370,6 +375,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
             dispatch({
               type: "onStatusError",
               error: e,
+              sourceTransaction: transaction,
             });
             log("useBridgeTransaction", "prepareTransaction failed " + String(e));
             // After X seconds of hanging in this error case, we try again

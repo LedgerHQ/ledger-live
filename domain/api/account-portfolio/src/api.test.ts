@@ -71,6 +71,31 @@ describe("accountPortfolioApi", () => {
     });
   });
 
+  it("reads the block and the peers of a confirmed update", async () => {
+    const block = { hash: "0xb", height: 100, time: "2025-01-01T00:00:00Z" };
+    respond({ items: [{ ...updateView, block, senders: ["0xa"], recipients: ["0xb"] }] });
+
+    const page = await makeStore()
+      .dispatch(accountPortfolioApi.endpoints.getUpdates.initiate({ portfolioId: "p1" }))
+      .unwrap();
+
+    expect(page.items[0]).toMatchObject({ block, senders: ["0xa"], recipients: ["0xb"] });
+  });
+
+  it("rejects an update whose block has a negative height", async () => {
+    const block = { hash: "0xb", height: -1, time: "2025-01-01T00:00:00Z" };
+    respond({ items: [{ ...updateView, block }] });
+
+    const result = await makeStore().dispatch(
+      accountPortfolioApi.endpoints.getUpdates.initiate({ portfolioId: "p1" }),
+    );
+
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      data: { issues: [expect.objectContaining({ path: ["items", 0, "block", "height"] })] },
+    });
+  });
+
   it("rejects an update whose time has no offset", async () => {
     respond({ items: [{ ...updateView, time: "2025-01-01T00:00:00" }] });
 

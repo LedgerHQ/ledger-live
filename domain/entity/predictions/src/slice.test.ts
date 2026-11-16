@@ -1,5 +1,10 @@
 import { initialPredictionsState } from "./schema";
-import { markPredictionsIntroSeen, predictionsSlice, restorePredictionsState } from "./slice";
+import {
+  markPredictionsIntroSeen,
+  predictionsSlice,
+  resetPredictionsIntroSeen,
+  restorePredictionsState,
+} from "./slice";
 
 const reduce = predictionsSlice.reducer;
 const { selectHasSeenIntro } = predictionsSlice.getSelectors();
@@ -15,6 +20,12 @@ describe("predictionsSlice", () => {
     const state = reduce(initialPredictionsState, markPredictionsIntroSeen());
 
     expect(selectHasSeenIntro(state)).toBe(true);
+  });
+
+  it("shows the intro again once reset", () => {
+    const state = reduce({ hasSeenIntro: true }, resetPredictionsIntroSeen());
+
+    expect(selectHasSeenIntro(state)).toBe(false);
   });
 
   it("restores a persisted state", () => {

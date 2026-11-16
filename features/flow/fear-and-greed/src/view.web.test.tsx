@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
-import { FearAndGreedView } from "./view.web";
+import { FearAndGreedView } from "./view";
 import type { FearAndGreedAppearance, GaugeComponent } from "./types";
 
 const Gauge: GaugeComponent = ({ value }) => <span>{value}</span>;
