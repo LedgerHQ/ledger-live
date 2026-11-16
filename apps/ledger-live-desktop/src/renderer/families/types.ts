@@ -368,6 +368,7 @@ export type LLDCoinFamily<
   SendRecipientNotice?: React.ComponentType<{
     account: A;
     transaction: T;
+    status?: TS;
     onBlockedChange?: (blocked: boolean) => void;
   }>;
 
