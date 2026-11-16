@@ -271,6 +271,8 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
+    // Every run restores what develop's runs saved, under develop/, which only develop's role writes.
+    saveA: builds.saveA && inputs.branchName === "develop",
     tagsToCheck,
     scenarios: inputs.scenarios.split(","),
     settings: {
@@ -338,6 +340,10 @@ export function outputsOf(plan: Plan): string {
 }
 
 export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): string {
+  const notSaved =
+    inputs.branchName === "develop"
+      ? "B is not develop, release or main"
+      : "only a run from develop saves it";
   return [
     `### Startup performance: ${inputs.preset}`,
     "",
@@ -345,9 +351,7 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
     `- B: \`${plan.labelB}\` → \`${plan.shaB}\``,
     `- ${inputs.pairs} pairs per scenario`,
     `- Android: one job (runner) per scenario, two emulators with ${avdCores} cores each, cellular network like E2E`,
-    ...(plan.cacheA && !plan.saveA
-      ? ["- Build A is not saved to the cache: B is not develop, release or main"]
-      : []),
+    ...(plan.cacheA && !plan.saveA ? [`- Build A is not saved to the cache: ${notSaved}`] : []),
     "",
   ].join("\n");
 }

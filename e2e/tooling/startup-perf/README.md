@@ -104,15 +104,17 @@ Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like devel
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
 Build A of a `live-mobile@X.Y.Z` tag only changes on a release, so the mobile E2E builds' S3 cache
-keeps it, with their role and `develop/` prefix on develop. Its key is commit A, a hash of the
-workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`, and a version to bump by hand
-when something else the build depends on changes. The `restore-builds` job puts a cached build A in
-the run's artifacts, once its download succeeded and its commit and binary match, and the build
-matrices leave out each side whose artifact it published. `save-builds` caches a build A the run
-made, only when B is develop, release or main (the branches only a pull request changes) or A
-itself: B's build job runs B's code, which could replace A's artifact before it is cached. Neither
-job runs the measured ref's code, and the build jobs get no cache credentials. Both continue on
-error and time out: a cache that cannot be read or written only means building A as before.
+keeps it, under `develop/`: only develop's role writes there, and every run restores from there,
+read only from another branch, so no run restores a build a branch run made. Its key is commit A, a
+hash of the workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`, and a version to bump
+by hand when something else the build depends on changes. The `restore-builds` job puts a cached
+build A in the run's artifacts, once its download succeeded and its commit and binary match, and the
+build matrices leave out each side whose artifact it published. `save-builds` caches a build A a run
+from develop made, only when B is develop, release or main (the branches only a pull request
+changes) or A itself: B's build job runs B's code, which could replace A's artifact before it is
+cached. Neither job runs the measured ref's code, and the build jobs get no cache credentials. Both
+continue on error and time out: a cache that cannot be read or written only means building A as
+before.
 
 ## A launch
 

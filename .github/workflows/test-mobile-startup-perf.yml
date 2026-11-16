@@ -116,8 +116,10 @@ jobs:
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   # Build A of a release tag, from the cache of an earlier run, so the build jobs leave it out. The
-  # cache is the mobile E2E builds' (S3, develop or branch role and key prefix). Restoring and saving
-  # are jobs of their own: the cache's credentials never share a job with the code being built.
+  # cache is the mobile E2E builds' (S3): only runs from develop save to it, under develop/, which
+  # only develop's role writes, and every run restores from there (a branch role reads it), never a
+  # build a branch run made. Restoring and saving are jobs of their own: the cache's credentials
+  # never share a job with the code being built.
   restore-builds:
     name: "Restore cached build A"
     needs: [plan]
@@ -170,12 +172,12 @@ jobs:
           role-to-assume: ${{ steps.profile.outputs.role-arn }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      # As the E2E builds' keys: develop's prefix on develop, then what the build depends on besides
-      # commit A (the harness and this workflow), and a version to bump by hand.
+      # develop/ in every run (see above), then what the build depends on besides commit A (the
+      # harness and this workflow), and a version to bump by hand.
       - name: Cache keys
         id: keys
         env:
-          PREFIX: ${{ steps.profile.outputs.cache-profile == 'develop' && 'develop/' || '' }}
+          PREFIX: develop/
           HARNESS: ${{ hashFiles('.github/workflows/test-mobile-startup-perf.yml', 'e2e/tooling/startup-perf/ci/*-build.mts', 'e2e/tooling/startup-perf/ci/step.mts') }}
         run: |
           for platform in android ios; do
@@ -549,8 +551,9 @@ jobs:
           name: startup-perf-android-a
           path: startup-perf-cache/android-a
 
+      # Only develop's role writes develop/: on another run, the plan's save_a is false anyway.
       - name: Cache Android build A
-        if: ${{ steps.android-artifact.outcome == 'success' }}
+        if: ${{ steps.android-artifact.outcome == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
         continue-on-error: true
         timeout-minutes: 15
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -574,7 +577,7 @@ jobs:
           path: startup-perf-cache/ios-a
 
       - name: Cache iOS build A
-        if: ${{ steps.ios-artifact.outcome == 'success' }}
+        if: ${{ steps.ios-artifact.outcome == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
         continue-on-error: true
         timeout-minutes: 15
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
