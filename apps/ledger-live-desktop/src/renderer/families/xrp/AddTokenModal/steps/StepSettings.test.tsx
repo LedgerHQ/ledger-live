@@ -22,6 +22,7 @@ const RIPPLING_WARNING = /Turning this on allows other users' payments to move y
 const BALANCE_WARNING = /Your balance .* is above this limit/;
 const ZERO_LIMIT_MESSAGE = "Your limit is 0: you can't receive this token.";
 const UNCHANGED_MESSAGE = "These settings are already in place";
+const REMOVE_INSTEAD_MESSAGE = "To stop holding this token, remove it instead.";
 
 function toBaseUnits(value: number): BigNumber {
   return new BigNumber(value).shiftedBy(xrpRlusdToken.units[0].magnitude);
@@ -192,6 +193,28 @@ describe("StepSettings", () => {
     expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
   });
 
+  it("points to Remove on a zero limit typed in an edit", async () => {
+    const status = makeStatus({ amount: new XrpTrustLimitZero() });
+    const props = makeStepProps({ status, action: "edit" });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.type(screen.getByRole("textbox"), "0");
+    await user.tab();
+
+    expect(screen.getByText(REMOVE_INSTEAD_MESSAGE)).toBeVisible();
+  });
+
+  it("leaves Remove out of a zero limit typed while adding a token", async () => {
+    const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.type(screen.getByRole("textbox"), "0");
+    await user.tab();
+
+    expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
+    expect(screen.queryByText(REMOVE_INSTEAD_MESSAGE)).not.toBeInTheDocument();
+  });
+
   it("hides the zero limit error when the user leaves the limit without typing", async () => {
     const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
     const { user } = render(<StepSettings {...props} />);
@@ -210,6 +233,7 @@ describe("StepSettings", () => {
     );
 
     expect(screen.getByText("The limit is above the maximum")).toBeVisible();
+    expect(screen.getByText("Use Max to set the highest limit.")).toBeVisible();
   });
 
   it("turns rippling on when the user clicks the rippling switch", async () => {

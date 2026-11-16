@@ -18,6 +18,7 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
@@ -45,6 +46,7 @@ export default function StepSettings({
   token,
   isRippling,
   tokenAccount,
+  action,
   onChangeRippling,
   onUpdateTransaction,
 }: StepProps) {
@@ -69,6 +71,9 @@ export default function StepSettings({
   // A custom limit starts at 0: its error shows once the user types
   const isUntypedZeroLimit = limitError?.name === "XrpTrustLimitZero" && !isLimitTyped;
   const isLimitErrorHidden = isLimitStillZero || isUntypedZeroLimit;
+  const shownLimitError = isLimitErrorHidden ? undefined : limitError;
+  const isZeroOnAdd = action === "add" && limitError?.name === "XrpTrustLimitZero";
+  const limitErrorDescription = isZeroOnAdd ? undefined : shownLimitError;
 
   const onChangeLimit = useCallback(
     (limit: BigNumber) => {
@@ -119,7 +124,7 @@ export default function StepSettings({
           disabled
           ff="Inter"
           value={t("xrp.addToken.steps.settings.maximum")}
-          error={limitError}
+          error={shownLimitError}
           id="xrp-trust-limit-input"
           data-testid="xrp-trust-limit-max"
         />
@@ -130,12 +135,17 @@ export default function StepSettings({
           onChange={onChangeLimit}
           // Not onChange: InputCurrency skips it for a 0 typed over a limit of 0
           onInput={() => setIsLimitTyped(true)}
-          error={isLimitErrorHidden ? undefined : limitError}
+          error={shownLimitError}
           allowZero
           id="xrp-trust-limit-input"
           data-testid="xrp-trust-limit-input"
         />
       )}
+      {limitErrorDescription ? (
+        <Text ff="Inter|Regular" fontSize={3} color="error.c50" px="15px">
+          <TranslatedError error={limitErrorDescription} field="description" />
+        </Text>
+      ) : null}
       {isLimitStillZero ? (
         <Alert type="warning" mt={2}>
           <Trans i18nKey="xrp.tokenSettings.currentLimitZero" />
