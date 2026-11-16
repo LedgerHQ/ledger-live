@@ -2,7 +2,7 @@ import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useMemo, useState } from "react";
 import { Trans } from "~/context/Locale";

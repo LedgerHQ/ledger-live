@@ -15,6 +15,15 @@ const ENABLED_SERVICES: PartialFeatures = {
   ptxBorrowLiveApp: { enabled: true },
 };
 
+const THREE_SERVICES: PartialFeatures = {
+  ...ENABLED_SERVICES,
+  entryPointsServices: {
+    enabled: true,
+    params: { services: ["perps", "borrow", "predictions"] },
+  },
+  ptxPredictionsLiveAppMobile: { enabled: true, params: { manifest_id: "predictions-live-app" } },
+};
+
 function renderEntryPoints(flags: PartialFeatures = ENABLED_SERVICES) {
   const onOpenService = jest.fn();
   render(<ServicesEntryPoints page="Portfolio" onOpenService={onOpenService} />, {
@@ -47,6 +56,32 @@ describe("ServicesEntryPoints (Native)", () => {
     expect(screen.queryByText("servicesEntryPoints.perps.title")).toBeNull();
   });
 
+  it("should gate predictions on the mobile predictions flag", () => {
+    const manifest = { manifest_id: "predictions-live-app" };
+
+    renderEntryPoints({
+      ...ENABLED_SERVICES,
+      entryPointsServices: { enabled: true, params: { services: ["perps", "predictions"] } },
+      ptxPredictionsLiveAppDesktop: { enabled: true, params: manifest },
+      ptxPredictionsLiveAppMobile: { enabled: false, params: manifest },
+    });
+
+    expect(screen.queryByText("servicesEntryPoints.predictions.title")).toBeNull();
+  });
+
+  it("should render predictions when the flag lists it and its mobile feature is on", () => {
+    renderEntryPoints({
+      ...ENABLED_SERVICES,
+      entryPointsServices: { enabled: true, params: { services: ["perps", "predictions"] } },
+      ptxPredictionsLiveAppMobile: {
+        enabled: true,
+        params: { manifest_id: "predictions-live-app" },
+      },
+    });
+
+    expect(screen.getByText("servicesEntryPoints.predictions.title")).toBeVisible();
+  });
+
   it("should render nothing when no service is available", () => {
     renderEntryPoints({ entryPointsServices: ENABLED_SERVICES.entryPointsServices });
 
@@ -71,5 +106,28 @@ describe("ServicesEntryPoints (Native)", () => {
     await user.press(screen.getByText("servicesEntryPoints.perps.title"));
 
     expect(onOpenService).toHaveBeenCalledWith("perps");
+  });
+
+  it("should lay out one or two services side by side", () => {
+    renderEntryPoints();
+
+    expect(screen.getByTestId("portfolio-services-entry-points")).not.toHaveProp("horizontal");
+  });
+
+  it("should scroll three services horizontally", () => {
+    renderEntryPoints(THREE_SERVICES);
+
+    expect(screen.getByTestId("portfolio-services-entry-points")).toHaveProp("horizontal", true);
+    expect(screen.getByText("servicesEntryPoints.perps.title")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.borrow.title")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.predictions.title")).toBeVisible();
+  });
+
+  it("should open the service pressed in the carousel", async () => {
+    const { onOpenService, user } = renderEntryPoints(THREE_SERVICES);
+
+    await user.press(screen.getByText("servicesEntryPoints.predictions.title"));
+
+    expect(onOpenService).toHaveBeenCalledWith("predictions");
   });
 });

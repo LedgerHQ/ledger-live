@@ -1,10 +1,9 @@
-import liveNetwork from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { sha256 } from "@noble/hashes/sha2";
 import { isAxiosError } from "axios";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   JsonRpcProvider,
   base64Decode,
@@ -13,9 +12,10 @@ import {
   encodeTransaction,
 } from "near-api-js";
 import { type NearConfig } from "../config";
-import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
+import { MIN_ACCOUNT_BALANCE_BUFFER, VALIDATORS_CACHE_TTL_MS } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { NearAccount } from "../types";
+import { fetchNearblocks } from "./nearblocks";
 import { getActionCosts } from "./protocolConfig";
 import {
   NearAccessKey,
@@ -118,7 +118,7 @@ const getGasPriceFromRpc = async (config: NearConfig): Promise<string> => {
   });
 
   if (!data.result?.gas_price) {
-    log("Near", "getGasPrice fallback failed", data.error);
+    log("Near", "getGasPrice node returned no gas price", data.error);
     throw new Error(data.error?.message || "Near: the node returned no gas price");
   }
 
@@ -126,23 +126,21 @@ const getGasPriceFromRpc = async (config: NearConfig): Promise<string> => {
 };
 
 export const getGasPrice = async (config: NearConfig): Promise<string> => {
-  const currencyConfig = config;
-
   try {
-    const response = await liveNetwork<NearV3Response<NearStats>>({
-      url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
-    });
-
-    const gasPrice = response.data.data?.gas_price;
-    if (gasPrice) {
-      return gasPrice;
-    }
+    return await getGasPriceFromRpc(config);
   } catch (error) {
-    // The indexer rate-limits (429) under load; the node RPC is the source of truth for gas price.
-    log("Near", "getGasPrice indexer request failed, falling back to node RPC", error);
+    // The node has no shared quota; the indexer is only a fallback when the node is down.
+    log("Near", "getGasPrice node request failed, falling back to the indexer", error);
   }
 
-  return getGasPriceFromRpc(config);
+  const body = await fetchNearblocks<NearV3Response<NearStats>>(config, "/v3/stats");
+
+  const gasPrice = body.data?.gas_price;
+  if (!gasPrice) {
+    throw new Error("Near: no gas price from the node or the indexer");
+  }
+
+  return gasPrice;
 };
 
 export const getAccessKey = async (
@@ -393,12 +391,13 @@ export const getStakingPositions = async (
   let totalPending = new BigNumber(0);
   const stakingThreshold = getYoctoThreshold();
 
-  const delegatedValidators = await liveNetwork<{ deposit: string; validator_id: string }[]>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/kitwallet/staking-deposits/${address}`,
-  });
+  const delegatedValidators = await fetchNearblocks<{ deposit: string; validator_id: string }[]>(
+    config,
+    `/v3/kitwallet/staking-deposits/${address}`,
+  );
 
   const stakingPositions = await Promise.all(
-    delegatedValidators.data.map(async ({ validator_id: validatorId }) => {
+    delegatedValidators.map(async ({ validator_id: validatorId }) => {
       const view = <T extends string | boolean>(method: string) =>
         provider.callFunction<T>({
           contractId: validatorId,
@@ -473,7 +472,6 @@ type FetchValidatorsParams = {
 const VALIDATORS_PAGE_SIZE = 100;
 
 async function fetchValidators({ total, config }: FetchValidatorsParams): Promise<NearValidator[]> {
-  const currencyConfig = config;
   const collected: NearIndexerValidator[] = [];
   const maxPages = Math.ceil(total / VALIDATORS_PAGE_SIZE);
   let next: string | undefined;
@@ -481,13 +479,14 @@ async function fetchValidators({ total, config }: FetchValidatorsParams): Promis
   for (let page = 0; page < maxPages; page++) {
     const limit = Math.min(VALIDATORS_PAGE_SIZE, total - collected.length);
     const cursor = next ? `&next=${encodeURIComponent(next)}` : "";
-    const response = await liveNetwork<NearV3Response<NearIndexerValidator[]>>({
-      url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/validators?limit=${limit}${cursor}`,
-    });
+    const body = await fetchNearblocks<NearV3Response<NearIndexerValidator[]>>(
+      config,
+      `/v3/validators?limit=${limit}${cursor}`,
+    );
 
-    const validators = response.data.data ?? [];
+    const validators = body.data ?? [];
     collected.push(...validators);
-    next = response.data.meta?.next_page;
+    next = body.meta?.next_page;
 
     if (!validators.length || !next || collected.length >= total) {
       break;
@@ -507,5 +506,5 @@ async function fetchValidators({ total, config }: FetchValidatorsParams): Promis
 }
 
 export const getValidators = makeLRUCache(fetchValidators, ({ total }) => String(total), {
-  ttl: 30 * 60 * 1000,
+  ttl: VALIDATORS_CACHE_TTL_MS,
 });

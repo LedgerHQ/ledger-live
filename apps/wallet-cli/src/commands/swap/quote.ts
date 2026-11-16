@@ -1,11 +1,16 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
-import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
+import {
+  isWalletCliSupportedCurrencyId,
+  listWalletCliSupportedCurrencyIds,
+} from "../../shared/supported-currencies";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
+import { addressOfV1 } from "../../shared/accountDescriptor";
 import {
   outputOption,
   resolveAccountDescriptor,
@@ -19,8 +24,6 @@ import {
   trackSwapQuoteReturned,
 } from "../../analytics/swap-analytics";
 
-const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
-
 function formatQuotesError(error: QuotesError): string {
   if ("minAmount" in error) {
     return `amount too low (minimum: ${error.minAmount})`;
@@ -32,27 +35,27 @@ function formatQuotesError(error: QuotesError): string {
 }
 
 async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): Promise<void> {
-  if (walletCliSupportedSwapCurrencyIds.has(id)) {
+  if (isWalletCliSupportedCurrencyId(id)) {
     return;
   }
 
   const token = await getCryptoAssetsStore().findTokenById(id);
-  if (token && walletCliSupportedSwapCurrencyIds.has(token.parentCurrencyId)) {
+  if (token && isWalletCliSupportedCurrencyId(token.parentCurrencyId)) {
     return;
   }
 
   throw new Error(
-    `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS.join(", ")} (and tokens on those chains).`,
+    `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${listWalletCliSupportedCurrencyIds().join(", ")} (and tokens on those chains).`,
   );
 }
 
 async function resolveSwapAccountAddress(
   wallet: WalletAdapter,
   accountInput: string,
-): Promise<string> {
+): Promise<Address> {
   const v1 = await resolveAccountDescriptorV1(accountInput);
   if (v1.type === "address") {
-    return v1.address;
+    return addressOfV1(v1);
   }
 
   const descriptor = await resolveAccountDescriptor(accountInput);

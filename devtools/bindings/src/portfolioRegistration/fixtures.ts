@@ -1,11 +1,11 @@
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { NetworkIdSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 
 export const address = (network: string, addr: string, path: string): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "address",
-  network,
-  address: addr,
+  network: NetworkIdSchema.parse(network),
+  key: addr,
   path,
 });
 
@@ -13,8 +13,8 @@ export const utxo = (xpub: string, network = "bitcoin"): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "utxo",
-  network,
-  xpub,
+  network: NetworkIdSchema.parse(network),
+  key: xpub,
   path: "m/84h/0h/0h",
 });
 

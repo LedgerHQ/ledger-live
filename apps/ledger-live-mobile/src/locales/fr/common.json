@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Ce montant est trop faible pour être staké"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Votre validateur n’accepte pas le staking. Changez de validateur pour staker."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Commencez par vider tous les sous-comptes."
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "Appareil authentique et à jour",
+        "genuineTitle" : "Appareil authentique",
         "cta" : "Continuer"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "Sélectionner un solde",
+        "transparent" : {
+          "title" : "Solde public",
+          "subtitle" : "Transparent"
+        },
+        "shielded" : {
+          "title" : "Solde privé",
+          "subtitle" : "Shielded",
+          "pendingNoticeTitle" : "Actifs arrivant à maturité",
+          "pendingNotice" : "Certaines notes shielded sont encore en cours de maturation et peuvent ne pas encore être transférables."
+        },
+        "zeroBalance" : {
+          "warning" : "Aucun solde disponible"
+        },
+        "requiresSync" : {
+          "notice" : "Synchronisation requise"
+        }
+      },
       "title" : "Envoyer des {{currency}}",
       "selectAddress" : "Sélectionnez l’adresse",
       "available" : "Disponible : {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "Sauvegarde trouvée",
+      "title" : "Paramètres sauvegardés détectés",
       "description" : "Les apps et les paramètres n’ont pas été entièrement restaurés sur votre appareil.",
-      "restore" : "Restaurer",
-      "delete" : "Supprimer ma sauvegarde"
+      "restore" : "Réinstaller",
+      "delete" : "Rejeter"
     },
     "bootloaderDiscovered" : {
       "title" : "L’appareil est en mode Bootloader.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "Restaurer votre configuration précédente ?",
-      "description" : "Je confirme vouloir restaurer les apps et paramètres de ma configuration précédente, et que toute app et donnée créée depuis sera perdue.",
-      "confirm" : "Restaurer",
+      "title" : "Réinstaller vos paramètres sauvegardés ?",
+      "description" : "Les apps et paramètres sauvegardés lors de la mise à jour de votre système d’exploitation seront réinstallés sur votre appareil. Toute app ou donnée ajoutée depuis sera supprimée.",
+      "confirm" : "Réinstaller",
       "cancel" : "Annuler"
     },
     "deleteConfirmation" : {
-      "title" : "Supprimer votre sauvegarde ?",
-      "description" : "Je comprends que la configuration précédente, et les apps et données de ma dernière sauvegarde, y compris mes identifiants Security Key, seront perdues.",
-      "confirm" : "Supprimer ma sauvegarde",
+      "title" : "Ignorer vos paramètres sauvegardés ?",
+      "description" : "Les paramètres sauvegardés lors de la mise à jour de votre système d’exploitation, y compris les identifiants Security Key, ne seront plus disponibles. Vous pouvez toujours réinstaller vos apps depuis My Ledger, avec leurs paramètres par défaut.",
+      "confirm" : "Rejeter",
       "cancel" : "Annuler"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "Version {{version}}",
       "banner" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
       "title" : "Nouveautés de cette version",
+      "releaseNotes" : "Voir toutes les nouveautés",
       "start" : "Démarrer la mise à jour"
     },
     "preparing" : {
-      "title" : "Préparation de l’installation"
+      "title" : "Préparation de la mise à jour..."
     },
     "progress" : {
-      "updatingTitle" : "Mise à jour de votre {{productName}}",
-      "restoringTitle" : "Restauration de vos apps et paramètres",
-      "updateCount" : "Mise à jour {{index}} sur {{count}}",
-      "description" : "Gardez votre appareil connecté et à proximité jusqu’à la fin de la mise à jour."
+      "updatingTitle" : "Mise à jour {{index}}/{{count}}",
+      "restoringTitle" : "Réinstallation de vos paramètres...",
+      "updatingDescription" : "Votre {{productName}} va redémarrer automatiquement plusieurs fois. Vous serez invité(e) à le déverrouiller avec votre code PIN pendant l’installation.",
+      "restoringDescription" : "Vous y êtes presque. Vos paramètres sont en cours de réinstallation sur votre {{productName}}."
     },
     "applied" : {
       "title" : "Mise à jour terminée",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "Actif",
       "inactiveStake" : "Récompenses disponibles",
       "stakeAvailableBalance" : "Solde disponible",
+      "delegatedInfoTooltip" : "Montant total délégué à des validateurs",
+      "inactiveStakeTooltip" : "Solde staké inactif, pouvant être retiré sans désactiver votre délégation.",
+      "withdrawableTitle" : "Disponible au retrait",
+      "withdrawableInfoTooltip" : "Montant total pouvant être retiré des délégations",
       "actions" : {
         "activate" : "Activer",
         "deactivate" : "Désactiver",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "Actifs"
+      "title" : "Actifs",
+      "add" : "Ajouter"
     },
     "refreshStatus" : {
       "upToDate" : "Compte à jour",
@@ -10809,7 +10838,7 @@
   },
   "perpsReview" : {
     "depositTitle" : "Placer via SwapKit",
-    "depositSubtitle" : "Notre prestataire SwapKit gère votre échange et votre placement en une seule transaction. Tout est sécurisé par votre appareil Ledger.",
+    "depositSubtitle" : "Notre prestataire SwapKit gère votre échange et votre placement en une seule transaction. Vos actifs sont sécurisés par votre appareil Ledger.",
     "swapDetailTitle" : "Détails de l’échange",
     "amountSendLabel" : "Montant à envoyer",
     "amountReceiveLabel" : "Montant à recevoir",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Une transaction Aleo nécessite la génération d’une preuve. Vous devrez patienter un peu.",
         "recordsUsed" : "Entrées utilisées",
         "signingTime" : "Heure de signature"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "Temps est.",
+          "info" : {
+            "title" : "Estimation du temps",
+            "description" : "L’envoi d’un montant plus important depuis un solde privé mobilise plus d’entrées, ce qui augmente le temps de traitement. La confirmation des montants importants est donc plus longue."
+          }
+        }
       }
     },
     "balancesSection" : "Soldes",

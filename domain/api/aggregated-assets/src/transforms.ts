@@ -4,6 +4,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { convertApiToken } from "@domain/api-currency-token";
 import type { ApiAsset, RawApiResponse } from "./schema";
 import type { AssetsDataWithPagination } from "./types";
+import { brandAggregatedAssetIds } from "./internals/utils";
 
 /**
  * Converts the wire currency map to app currencies.
@@ -62,6 +63,7 @@ export function transformAssetsResponse(
 
   return {
     ...response,
+    ...brandAggregatedAssetIds(response),
     cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
     pagination: {
       nextCursor,

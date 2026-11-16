@@ -41,7 +41,7 @@ env:
 jobs:
   generate-desktop:
     name: "Generate desktop userdata (app.json)"
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    runs-on: [ledger-wallet-4cpu-aws-public-docker]
     permissions:
       id-token: write
       contents: read
@@ -64,7 +64,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -177,7 +176,7 @@ jobs:
   generate-mobile:
     name: "Generate mobile userdata (app.json)"
     if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'mobile' }}
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    runs-on: [ledger-wallet-4cpu-aws-public-docker]
     permissions:
       id-token: write
       contents: read
@@ -199,7 +198,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}

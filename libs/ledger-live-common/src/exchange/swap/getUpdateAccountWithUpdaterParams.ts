@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
 import addToSwapHistory from "./addToSwapHistory";
 import { ExchangeSwap, ExchangeRate } from "./types";

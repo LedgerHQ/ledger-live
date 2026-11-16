@@ -123,8 +123,8 @@ module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] });
 
 Identical to `@support/jest/features-flow`, from the same core: Lumen barrels and
 `@ledgerhq/crypto-icons` are redirected to Proxy passthrough stubs so tests don't need to
-transform them or install their peer graph. See `../core/mocks/passthrough-web.js` and
-`../core/mocks/passthrough-native.js`, exported as `@support/jest/shared/mocks/*` for a consumer
+transform them or install their peer graph. See `../core/mocks/passthrough-web.cts` and
+`../core/mocks/passthrough-native.cts`, exported as `@support/jest/shared/mocks/*` for a consumer
 that wraps one.
 
 ## Usage

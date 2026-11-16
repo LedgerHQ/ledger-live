@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { PaySuccessProps } from "@features/flow-pay-contact";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";

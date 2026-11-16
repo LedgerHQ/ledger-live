@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
-const { BigNumber } = require("bignumber.js");
+const BigNumber = require("bignumber.js");
 const axios = require("axios");
 const { getCryptoCurrencyById } = require("../lib/currencies");
 const { apiForCurrency } = require("../lib/api/Ethereum");
@@ -32,17 +32,12 @@ async function main() {
   const api = apiForCurrency(ethereum);
 
   const date = new Date();
-  const [
-    gasTracker,
-    estimatedFees,
-    etherscanR,
-    ethgasstationR,
-  ] = await Promise.all([
+  const [gasTracker, estimatedFees, etherscanR, ethgasstationR] = await Promise.all([
     api.getGasTrackerBarometer(),
     getEstimatedFees(ethereum),
     axios(
       "https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=" +
-        process.env.ETHERSCAN_API
+        process.env.ETHERSCAN_API,
     ),
     axios("https://ethgasstation.info/api/ethgasAPI.json"),
   ]);

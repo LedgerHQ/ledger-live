@@ -1,6 +1,6 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";

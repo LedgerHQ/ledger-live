@@ -36,12 +36,41 @@ export class CompleteExchangeError extends Error {
   }
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
+/**
+ * What an exchange step threw, as an `Error`. The DMK session behind a Device Intent job rejects
+ * with `{ _tag }` objects, and other code with plain objects, which `String()` would turn into
+ * "[object Object]". Their tag or name, message and status code are kept: the app's error copy is
+ * keyed on the name, and the step's error mapping reads the status code.
+ */
+export function toExchangeError(error: unknown): Error {
+  if (error instanceof Error) return error;
+  if (typeof error !== "object" || error === null) return new Error(String(error));
+
+  const tag: unknown = get(error, "_tag");
+  const name: unknown = isNonEmptyString(tag) ? tag : get(error, "name");
+  const message = [get(error, "originalError.message"), get(error, "message")].find(
+    isNonEmptyString,
+  );
+
+  const fallbackMessage = isNonEmptyString(name) ? name : String(error);
+  const converted = new Error(message ?? fallbackMessage, { cause: error });
+  if (isNonEmptyString(name)) converted.name = name;
+
+  const statusCode: unknown = get(error, "statusCode");
+  if (typeof statusCode === "number") Object.assign(converted, { statusCode });
+  return converted;
+}
+
 export function convertTransportError(
   step: CompleteExchangeStep,
   err: unknown,
 ): CompleteExchangeError | unknown {
   if ((err as { name?: string })?.name === "TransportStatusError") {
-    const tse = err as { statusCode?: number | null };
+    const tse = err as { statusCode?: number | null; statusText?: string };
     let errorCode: number;
     if (typeof tse.statusCode === "number") {
       errorCode = tse.statusCode;
@@ -51,9 +80,24 @@ export function convertTransportError(
       return err;
     }
     const { errorName, errorMessage } = getExchangeErrorMessage(errorCode, step);
-    return new CompleteExchangeError(step, errorName, errorMessage);
+    return new CompleteExchangeError(
+      step,
+      errorName,
+      errorMessage ?? getUnknownDeviceStatusMessage(errorCode, tse.statusText),
+    );
   }
   return err;
+}
+
+/**
+ * Keeps the raw status code of an unmapped device response so it can be grouped on in monitoring.
+ * The title stays undefined: swap-service buckets cancellations by exact `statusCode` match.
+ */
+function getUnknownDeviceStatusMessage(statusCode: number, statusText?: string): string {
+  const hexCode = `0x${statusCode.toString(16).padStart(4, "0")}`;
+  return statusText
+    ? `Unknown device status ${hexCode} (${statusText})`
+    : `Unknown device status ${hexCode}`;
 }
 
 const SIGN_VERIFICATION_FAIL_TITLE = "signVerificationFail";

@@ -56,7 +56,13 @@ import type {
   SolanaTokenProgram,
   SolanaTransactionIntentData,
 } from "../types";
-import { assertUnreachable, DUMMY_SIGNATURE, feesOf, ZERO_FILLED_DUMMY_SIGNATURE } from "../utils";
+import {
+  assertUnreachable,
+  DUMMY_SIGNATURE,
+  feesOf,
+  isRequiredSigner,
+  refreshesBlockhash,
+} from "../utils";
 
 // ---------------------------------------------------------------------------
 // Coin Module API: craft a transaction from a TransactionIntent
@@ -138,18 +144,15 @@ async function craftPrebuiltTransaction(
     throw new Error("Invalid or unsupported raw transaction");
   }
 
-  const feePayer = transaction.message.staticAccountKeys[0]?.toBase58();
-  if (feePayer && feePayer !== sender) {
-    throw new Error("Sender does not match transaction fee payer");
+  if (!isRequiredSigner(transaction.message, sender)) {
+    throw new Error("Sender is not a signer of the transaction");
   }
 
-  const recentBlockhash = await api.getLatestBlockhash();
-  const unsigned = transaction.signatures.every(sig => {
-    const buf = Buffer.from(sig);
-    return buf.equals(DUMMY_SIGNATURE) || buf.equals(ZERO_FILLED_DUMMY_SIGNATURE);
-  });
-  if (unsigned) {
-    transaction.message.recentBlockhash = recentBlockhash.blockhash;
+  // Only a blockhash crafting puts in has a known expiry. A kept one (the transaction is already
+  // signed, or a co-signer still signs these bytes) has its own, which crafting does not know.
+  const fresh = refreshesBlockhash(transaction) ? await api.getLatestBlockhash() : undefined;
+  if (fresh) {
+    transaction.message.recentBlockhash = fresh.blockhash;
   }
 
   const fee = customFees
@@ -160,7 +163,7 @@ async function craftPrebuiltTransaction(
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
     details: {
       recentBlockhash: transaction.message.recentBlockhash,
-      lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+      ...(fresh && { lastValidBlockHeight: fresh.lastValidBlockHeight }),
       estimatedFee: fee.toString(),
     },
   };

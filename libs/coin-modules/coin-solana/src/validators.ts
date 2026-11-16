@@ -26,7 +26,7 @@ export async function fetchValidators(
   const cluster = clusterByCurrencyId(currencyId);
 
   if (cluster === "devnet") {
-    return fetchDevnetValidators(getChainAPI(chainConfigFrom(config, currencyId)));
+    return fetchDevnetValidators(getChainAPI(chainConfigFrom(config)));
   }
 
   if (!config.validatorsUrl) {
@@ -57,10 +57,9 @@ const cachesByTtl = new Map<number, ValidatorsCache>();
 
 // Everything the fetched list depends on, so a context with another config never gets this result.
 function cacheKeyOf(config: SolanaCoinConfig, currencyId: string): string {
-  const rpcUrls: Partial<Record<string, string>> = config.rpcUrls ?? {};
   return JSON.stringify([
     currencyId,
-    rpcUrls[currencyId],
+    config.rpcUrl,
     config.validatorsUrl,
     config.staking?.validatorsSummaryUrl,
     config.staking?.ledgerValidators,

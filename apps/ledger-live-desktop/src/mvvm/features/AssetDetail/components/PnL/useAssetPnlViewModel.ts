@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { DistributionItem } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { scanOperations } from "../history/scanOperations";
 
 // Module-level mock for getTransactions

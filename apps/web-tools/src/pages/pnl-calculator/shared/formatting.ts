@@ -8,10 +8,6 @@ export const ZERO = new BigNumber(0);
 // Default display precision used when we don't know the fiat (matches USD/EUR cents).
 const DEFAULT_FIAT_DISPLAY_MAGNITUDE = 2;
 
-export function fiatMinorScale(fiat: FiatCurrency): BigNumber {
-  return new BigNumber(10).pow(fiat.units[0].magnitude);
-}
-
 export function parseBn(s: string): BigNumber {
   if (!s) return ZERO;
   const n = new BigNumber(s);
@@ -51,7 +47,7 @@ export function formatFiat(fiat: FiatCurrency, bn: BigNumber, withSign = false):
 
 export function formatCryptoAmount(currency: Currency, atomic: BigNumber): string {
   const unit = currency.units[0];
-  const major = atomic.div(new BigNumber(10).pow(unit.magnitude));
+  const major = atomic.shiftedBy(-unit.magnitude);
   const decimals = Math.min(8, unit.magnitude);
   return `${major.toFixed(decimals)} ${unit.code}`;
 }
@@ -111,11 +107,11 @@ export function toMajor<T extends AssetPnL | PortfolioPnL>(
   zero: T,
 ): T {
   const source = pnl ?? zero;
-  const scale = fiatMinorScale(fiat);
+  const { magnitude } = fiat.units[0];
   const out = {} as Record<string, unknown>;
   for (const key of Object.keys(source) as Array<keyof T>) {
     const value = source[key];
-    out[key as string] = BigNumber.isBigNumber(value) ? value.div(scale) : value;
+    out[key as string] = BigNumber.isBigNumber(value) ? value.shiftedBy(-magnitude) : value;
   }
   return out as T;
 }

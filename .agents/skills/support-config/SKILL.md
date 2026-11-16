@@ -35,19 +35,27 @@ Edit what it wrote with the rules below rather than writing a config by hand.
 | --- | --- | --- |
 | TypeScript | `tsconfig.json` that `extends` a preset, plus `types`, `paths`, `references`, `include` / `exclude` / `files` when needed | any other compiler option, an `@support/tsconfig` dependency |
 | Jest | a one-line `jest.config.js` calling a preset factory, `"@support/jest": "workspace:*"` in `devDependencies` | a hand-written config, a config that edits the factory's result |
-| Lint | a `lint` script running plain `oxlint src` | an oxlint config, a `-c` flag, an `@support/lint` dependency |
+| Lint | a `lint` script running plain `oxlint src`, plus `"@support/lint": "workspace:*"` in `devDependencies` when the layer's preset loads an npm package other than `oxlint` (today `features/flow/`) | an oxlint config, a `-c` flag, an `@support/lint` dependency its preset does not need |
 | Format | a `format` script running plain `oxfmt src`, a `format:check` script running `oxfmt src --check` | an oxfmt config, a `-c` flag, an `@support/fmt` dependency |
 
 Each tool a script runs is in `devDependencies` as `"catalog:"`, so Nx hashes its version
 ([ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553)): `tsc` is
-`"@typescript/native": "catalog:"`, and `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are declared
-under their own names. The `hygiene` rule checks it for `shared/`, `domain/` and `features/`.
-`rimraf` and `zx` have no entry in the `catalog:` of `pnpm-workspace.yaml` yet; that ends when the
-catalog defines them there. Until then, a script that runs one needs that entry first.
+`"@typescript/native": "catalog:"`, and `knip`, `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are
+declared under their own names.
+
+The `tool-dependency` rule guards the tools a package could otherwise reach through the workspace
+root: every executable the root's dependencies install in `node_modules/.bin`. It reads that list
+from the root `package.json` and each dependency's `bin`, so a tool added to the root is guarded at
+once, and a tool the root drops is enforced by the install (`command not found`). It checks every
+script of every workspace package, hooks included. Its message gives the version the root declares;
+outside `shared/`, `domain/` and `features/` any version passes.
 
 The tsconfig, lint and fmt presets resolve from the workspace root, so the package does not declare
-them. `@support/jest` is the one preset a consumer declares, because its presets carry code and peer
-dependencies, and the edge tells nx which tests a preset change affects.
+them. `@support/jest` is declared, because its presets carry code and peer dependencies, and the
+edge tells nx which tests a preset change affects. `@support/lint` is declared only by packages
+whose preset loads an npm package, such as `@ledgerhq/lumen-lint-plugin` in `features-flow`: without
+the edge, a bump of that package neither changes their `lint` hash nor marks them affected.
+`lint:tool-config` reads each preset's imports and reports a package that needs the declaration.
 
 ## Pick the tsconfig archetype
 
@@ -132,7 +140,7 @@ node tools/nx-plugins/enforce-tool-config/validate.mjs features/flow/contacts  #
 ```
 
 Each violation prints as `[rule] file: message`. The rules (`fmt`, `lint`, `tsconfig`, `jest`,
-`hygiene`, and the debt lists they read) and the fix for each check are in
+`hygiene`, `tool-dependency`, and the debt lists they read) and the fix for each check are in
 [references/tool-config-rules.md](references/tool-config-rules.md).
 
 `lint:tool-config` also runs in `pnpm lint:arch`, which CI requires.

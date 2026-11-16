@@ -1,5 +1,6 @@
 import {
   GetDeviceMetadataDeviceAction,
+  UserInteractionRequired,
   type DeviceManagementKit,
   type DeviceSessionId,
   type GetDeviceMetadataDAError,
@@ -14,7 +15,9 @@ import type { OnboardingEvent } from "../types";
 
 export type FirmwareCheckEvent = Extract<
   OnboardingEvent,
-  { type: "FIRMWARE_UP_TO_DATE" | "FIRMWARE_UPDATE_AVAILABLE" | "FIRMWARE_CHECK_FAILED" }
+  {
+    type: "LOCKED" | "FIRMWARE_UP_TO_DATE" | "FIRMWARE_UPDATE_AVAILABLE" | "FIRMWARE_CHECK_FAILED";
+  }
 >;
 
 export type FirmwareCheckInput = {
@@ -40,18 +43,27 @@ export function mapFirmwareMetadata(metadata: GetDeviceMetadataDAOutput): Firmwa
 export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
+    let reportedLock = false;
 
     const runner = createDeviceActionRunner<
       GetDeviceMetadataDAOutput,
       GetDeviceMetadataDAError,
       GetDeviceMetadataDAIntermediateValue
-    >(() =>
-      input.dmk.executeDeviceAction({
-        sessionId: input.sessionId,
-        deviceAction: new GetDeviceMetadataDeviceAction({
-          input: { useSecureChannel: true, forceUpdate: false, allowNonOnboardedDevice: true },
+    >(
+      () =>
+        input.dmk.executeDeviceAction({
+          sessionId: input.sessionId,
+          deviceAction: new GetDeviceMetadataDeviceAction({
+            input: { useSecureChannel: true, forceUpdate: false, allowNonOnboardedDevice: true },
+          }),
         }),
-      }),
+      ({ requiredUserInteraction }) => {
+        if (stopped || reportedLock) return;
+        if (requiredUserInteraction !== UserInteractionRequired.UnlockDevice) return;
+
+        reportedLock = true;
+        sendBack({ type: "LOCKED" });
+      },
     );
 
     const policy = input.retryPolicy ?? createRetryPolicy(isCatalogueUnreachable);

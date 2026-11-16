@@ -3,7 +3,13 @@ import { ConnectNewDeviceView } from "./ConnectNewDeviceView";
 import type { ConnectNewDeviceProps } from "./types";
 import { useConnectNewDeviceViewModel } from "./useConnectNewDeviceViewModel";
 
-export type { ConnectNewDeviceDelays, ConnectNewDeviceProps } from "./types";
+export type {
+  ConnectNewDeviceDelays,
+  ConnectNewDeviceProps,
+  ConnectNewDeviceViewProps,
+} from "./types";
+export { ConnectNewDeviceView } from "./ConnectNewDeviceView";
+export { isErrorState } from "./utils/isErrorState";
 
 /**
  * Discovers and connects a device the app does not know yet. It shows no top bar and does no

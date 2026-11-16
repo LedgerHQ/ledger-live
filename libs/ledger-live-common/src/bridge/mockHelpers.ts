@@ -1,7 +1,7 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
 import { genOperation } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
 import { loadMockAccountForFamily } from "../coin-modules/registry";

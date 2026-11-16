@@ -24,16 +24,6 @@ export default async function setup(
   globalConfig: Config.GlobalConfig,
   projectConfig: Config.ProjectConfig,
 ): Promise<void> {
-  const envFileName = process.env.ENV_FILE || ".env.mock";
-  const envFile = path.join(__dirname, "../../apps/ledger-live-mobile", envFileName);
-  try {
-    await fs.access(envFile, fs.constants.R_OK);
-  } catch (error) {
-    throw Object.assign(new Error(`Mock env file not found or not readable: ${envFile}`), {
-      cause: error,
-    });
-  }
-
   setupSpeculosCleanupHandlers();
   await cleanupPreviousNanoAppJsonFile();
 

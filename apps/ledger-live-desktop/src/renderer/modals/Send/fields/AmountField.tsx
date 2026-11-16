@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

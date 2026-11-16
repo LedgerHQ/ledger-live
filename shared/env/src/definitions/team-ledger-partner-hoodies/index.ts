@@ -21,28 +21,8 @@ const teamLedgerPartnerHoodies = {
     parser: stringParser,
     desc: "Ledger explorer API for tezos",
   },
-  API_SUI_GRAPHQL_PROXY: {
-    parser: stringParser,
-    def: "https://sui.coin.ledger.com/graphql",
-    desc: "reverse proxy url for sui graphql",
-  },
-  API_SUI_TESTNET_GRAPHQL_PROXY: {
-    parser: stringParser,
-    def: "https://graphql.testnet.sui.io/graphql",
-    desc: "GraphQL endpoint url for sui testnet",
-  },
   // gRPC-web is served from the host root — requests go to <url>/sui.rpc.v2.<Service>/<Method> —
   // so these carry no path, unlike their GraphQL counterparts.
-  API_SUI_GRPC_PROXY: {
-    parser: stringParser,
-    def: "https://sui.coin.ledger.com",
-    desc: "reverse proxy url for sui grpc-web",
-  },
-  API_SUI_TESTNET_GRPC_PROXY: {
-    parser: stringParser,
-    def: "https://fullnode.testnet.sui.io:443",
-    desc: "grpc-web endpoint url for sui testnet",
-  },
   SUI_ENABLE_TOKENS: {
     parser: boolParser,
     def: true,
@@ -57,26 +37,6 @@ const teamLedgerPartnerHoodies = {
     def: "",
     parser: stringParser,
     desc: "(dev feature) Switch Canton gateway nodeId for testing different presets.",
-  },
-  CARDANO_API_ENDPOINT: {
-    def: "https://cardano.coin.ledger.com/api",
-    parser: stringParser,
-    desc: "Cardano API url",
-  },
-  CARDANO_TESTNET_API_ENDPOINT: {
-    def: "https://ledger-preprod.cardanoscan.io/api",
-    parser: stringParser,
-    desc: "Cardano API url",
-  },
-  CARDANO_EPOCH_PARAMS_ENDPOINT: {
-    def: "https://ada.api.live.ledger.com/api/rest/params",
-    parser: stringParser,
-    desc: "Cardano current-epoch protocol params url (validator APY)",
-  },
-  CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT: {
-    def: "https://ada-testnet.api.live.ledger-test.com/api/rest/params",
-    parser: stringParser,
-    desc: "Cardano testnet current-epoch protocol params url (validator APY)",
   },
   LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: {
     def: false,

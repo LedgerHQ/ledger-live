@@ -1,8 +1,29 @@
 import React from "react";
 import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact/web";
-import { EmptyState } from "../EmptyState/EmptyState.web";
-import { ContactsTable } from "../ContactsTable/ContactsTable.web";
-import type { ContactsViewProps } from "../../types";
+import { EmptyState } from "../EmptyState/EmptyState";
+import { ContactsTable } from "../ContactsTable/ContactsTable";
+import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
+import type { Contact } from "@domain/entity-contact";
+import type { ContactsTableLabels, EmptyStateProps } from "../../types";
+import type { ContactsProps } from "./Contacts";
+
+export type ContactRowViewModel = Readonly<{
+  contact: Contact;
+  transactionCount: number;
+}>;
+
+export type ContactsViewProps = Pick<
+  ContactsProps,
+  "renderAddresses" | "onContactPress" | "onViewTransactions" | "onViewContact"
+> &
+  Readonly<{
+    title: string;
+    labels: ContactsTableLabels;
+    isEmpty: boolean;
+    rows: readonly ContactRowViewModel[];
+    emptyState: EmptyStateProps;
+    addContactDialog: AddContactDialogViewModel;
+  }>;
 
 export function ContactsView({
   title,

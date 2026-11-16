@@ -1,8 +1,9 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { PaySuccess, type PaySuccessProps } from "../PaySuccess.web";
-import { renderPaySuccess } from "./shared.web";
+import { PaySuccess } from "../PaySuccess";
+import type { PaySuccessProps } from "../PaySuccess.types";
+import { renderPaySuccess } from "./shared";
 
 const baseProps: PaySuccessProps = {
   recipient: { id: ContactIdSchema.parse("contact-ada"), name: "Ada", isMe: false },
@@ -71,5 +72,18 @@ describe("PaySuccess (Web)", () => {
     fireEvent.click(screen.getByTestId("pay-success-close"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the View transaction CTA when canViewTransaction is false", () => {
+    renderStep({ canViewTransaction: false });
+
+    expect(screen.queryByTestId("pay-success-view-transaction")).not.toBeInTheDocument();
+    expect(screen.getByTestId("pay-success-close")).toBeVisible();
+  });
+
+  it("shows the View transaction CTA by default", () => {
+    renderStep();
+
+    expect(screen.getByTestId("pay-success-view-transaction")).toBeVisible();
   });
 });

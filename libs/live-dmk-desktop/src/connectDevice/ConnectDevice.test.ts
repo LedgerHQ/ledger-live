@@ -73,6 +73,7 @@ describe("desktop connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected,
+      isMockServerEnabled: false,
     });
 
     // THEN
@@ -83,6 +84,7 @@ describe("desktop connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected,
+      isMockServerEnabled: false,
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
@@ -97,6 +99,7 @@ describe("desktop connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected: jest.fn(),
+      isMockServerEnabled: false,
     });
 
     // WHEN
@@ -115,7 +118,7 @@ describe("desktop connectDevice", () => {
       dmk,
       knownDevices: [knownDevice],
       onConnected: jest.fn(),
-      mockServerTransportEnabled: true,
+      isMockServerEnabled: true,
     });
 
     expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);

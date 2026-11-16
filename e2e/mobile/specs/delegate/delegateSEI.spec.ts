@@ -38,7 +38,7 @@ describeIfNotNanoS("Delegate", () => {
   it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
     const amountWithCode = DELEGATION_AMOUNT + " " + delegation.account.currency.ticker;
 
-    await app.portfolio.goToAccounts(delegation.account.currency.name);
+    await app.portfolio.openCryptoAddresses();
     await app.common.goToAccountByName(delegation.account.accountName);
 
     await app.evmStake.startDelegate();

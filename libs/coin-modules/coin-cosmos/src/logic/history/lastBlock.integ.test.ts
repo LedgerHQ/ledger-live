@@ -1,9 +1,11 @@
-import { makeTestApi, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { lastBlock } from "./lastBlock";
 
 describe("lastBlock (integ, Cosmos Hub)", () => {
   it("returns a recent block with a positive height and a non-empty hash", async () => {
-    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+    const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
     const block = await lastBlock(api);
 

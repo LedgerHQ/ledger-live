@@ -1,5 +1,5 @@
 import { Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { MinaAccount, Transaction } from "../types/common";
 import {
   getAccountNumFromPath,

@@ -14,14 +14,11 @@ import { getEnv } from "@shared/env";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName, updateKnownBleDevice } from "~/actions/ble";
-import {
-  mapDiscoveredDeviceToKnownDevice,
-  saveKnownDeviceName,
-  updateKnownDevice,
-} from "~/reducers/knownDevices";
-import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
-import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
+import { saveBleDeviceName } from "~/actions/ble";
+import { mapDiscoveredDeviceToKnownDevice, saveKnownDeviceName } from "~/reducers/knownDevices";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
+import { setReadOnlyMode } from "~/actions/settings";
+import { useSaveDevice } from "LLM/components/DeviceConnection";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
@@ -41,13 +38,19 @@ import {
   ScannedDevice,
   useBleDevicesScanning,
   useHidDevicesDiscovery,
+  useMockServerDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { isMockServerCompatDeviceId } from "@ledgerhq/live-dmk-shared";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import {
+  isMockServerEnabledSelector,
+  lastConnectedDeviceSelector,
+  mockServerConfigSelector,
+} from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
@@ -57,6 +60,7 @@ import {
   mapScannedDeviceToDisplayedAvailableDevice,
   mapHidDeviceToDisplayedAvailableDevice,
   mapDeviceLikeToDisplayedDevice,
+  mapMockServerDeviceToDisplayedAvailableDevice,
 } from "./mappers";
 
 export type { SetHeaderOptionsRequest };
@@ -146,6 +150,7 @@ export default function SelectDevice({
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
+  const saveDevice = useSaveDevice();
   const isFocused = useIsFocused();
   const { bottom } = useSafeAreaInsets();
 
@@ -168,13 +173,20 @@ export default function SelectDevice({
    * We have to progressively remove those legacy transports, hence this temporary workaround.
    */
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+  const mockServerConfig = useSelector(mockServerConfigSelector);
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
+  const mockServerDevices = useMockServerDevicesDiscovery(isFocused ? mockServerConfig : null);
 
-  const mockHidState = useMockHidDevicesDiscovery(isMockMode);
-  const realHidState = useHidDevicesDiscovery(!isMockMode);
+  const mockHidState = useMockHidDevicesDiscovery(isMockMode && !isMockServerEnabled);
+  const realHidState = useHidDevicesDiscovery(!isMockMode && !isMockServerEnabled);
   const { hidDevices } = isMockMode ? mockHidState : realHidState;
 
   const scanningEnabled =
-    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
+    isFocused &&
+    !isMockServerEnabled &&
+    !stopBleScanning &&
+    pairingFlowStep !== "pairing" &&
+    !deviceToCheckLockedStatus;
 
   const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
   const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
@@ -216,29 +228,27 @@ export default function SelectDevice({
   const notifyDeviceSelected = useCallback(
     (device: Device, discoveredDevice: DiscoveredDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
-      dispatch(setLastConnectedDevice(device));
-      dispatch(setHasConnectedDevice(true));
+      saveDevice({
+        lastConnectedDevice: device,
+        knownDevice: mapDiscoveredDeviceToKnownDevice(discoveredDevice),
+      });
       onSelect(device, discoveredDevice);
       if (!keepReadOnlyMode) dispatch(setReadOnlyMode(false));
-      dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
-      if (!device.wired) {
-        dispatch(
-          updateKnownBleDevice({
-            id: device.deviceId,
-            name: device.deviceName ?? "",
-            modelId: device.modelId,
-          }),
-        );
-      }
     },
-    [dispatch, keepReadOnlyMode, onSelect],
+    [dispatch, keepReadOnlyMode, onSelect, saveDevice],
   );
 
   const checkDeviceStatus = useCallback(
     (displayedDevice: DisplayedAvailableDevice) => {
       const isMockEnv = getEnv("MOCK");
-      const isSpeculos = displayedDevice.device.deviceId.startsWith("speculos|");
-      if (performDeviceLockedCheck && !isMockEnv && !isSpeculos) {
+      const { deviceId } = displayedDevice.device;
+      const isSpeculos = deviceId.startsWith("speculos|");
+      if (
+        performDeviceLockedCheck &&
+        !isMockEnv &&
+        !isSpeculos &&
+        !isMockServerCompatDeviceId(deviceId)
+      ) {
         setDeviceToCheckLockedStatus(displayedDevice);
       } else {
         notifyDeviceSelected(displayedDevice.device, displayedDevice.discoveredDevice);
@@ -275,8 +285,9 @@ export default function SelectDevice({
       });
 
       const isMockEnv = getEnv("MOCK");
+      const isMockServerDevice = isMockServerCompatDeviceId(deviceId);
       const isNonBleDebugDevice =
-        deviceId.includes("httpdebug") || deviceId.startsWith("speculos|");
+        deviceId.includes("httpdebug") || deviceId.startsWith("speculos|") || isMockServerDevice;
       if (!wired && !isMockEnv && !isNonBleDebugDevice) {
         setSelectedBleDevice(displayedDevice);
       } else {
@@ -288,7 +299,8 @@ export default function SelectDevice({
         }
 
         // Non-BLE debug devices can be selected without scan availability.
-        if (isNonBleDebugDevice) {
+        const canSelectWithoutScan = isNonBleDebugDevice && !isMockServerDevice;
+        if (canSelectWithoutScan) {
           checkDeviceStatus({
             device: displayedDevice.device,
             available: true,
@@ -375,7 +387,7 @@ export default function SelectDevice({
    * Auto selection of the last connected device
    */
   useAutoSelectDevice({
-    enabled: isFocused,
+    enabled: isFocused && !isMockServerEnabled,
     deviceToAutoSelect: autoSelectLastConnectedDevice ? lastConnectedDevice : null,
     hidDevices,
     onAutoSelect: handleOnSelect,
@@ -383,6 +395,13 @@ export default function SelectDevice({
   });
 
   const deviceList = useMemo(() => {
+    if (isMockServerEnabled) {
+      const devices = mockServerDevices.map(mapMockServerDeviceToDisplayedAvailableDevice);
+      return filterByDeviceModelId
+        ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
+        : devices;
+    }
+
     let devices: DisplayedDevice[] = bleKnownDevices
       .map((knownDevice): DisplayedDevice => {
         const matchingNewDevice = findMatchingNewDevice(
@@ -416,7 +435,15 @@ export default function SelectDevice({
     return filterByDeviceModelId
       ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
       : devices;
-  }, [bleKnownDevices, filteredScannedDevices, hidDevices, ProxyDevice, filterByDeviceModelId]);
+  }, [
+    isMockServerEnabled,
+    mockServerDevices,
+    bleKnownDevices,
+    filteredScannedDevices,
+    hidDevices,
+    ProxyDevice,
+    filterByDeviceModelId,
+  ]);
 
   // update device name on store when needed
   useEffect(() => {

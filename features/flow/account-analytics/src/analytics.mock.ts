@@ -7,9 +7,30 @@ export const analyticsCatalog: AnalyticsCatalog = {
     { id: "btc", name: "Bitcoin", ticker: "BTC", iconId: "bitcoin" },
   ],
   accounts: [
-    { id: "eth-account", name: "Savings", networkName: "Ethereum", address: "0x123" },
-    { id: "tron-account", name: "Savings", networkName: "Tron", address: "T123" },
-    { id: "btc-account", name: "Savings", networkName: "Bitcoin", address: "bc123" },
+    {
+      id: "eth-account",
+      name: "Savings",
+      iconId: "ethereum",
+      ticker: "ETH",
+      networkName: "Ethereum",
+      address: "0x123",
+    },
+    {
+      id: "tron-account",
+      name: "Savings",
+      iconId: "tron",
+      ticker: "TRX",
+      networkName: "Tron",
+      address: "T123",
+    },
+    {
+      id: "btc-account",
+      name: "Savings",
+      iconId: "bitcoin",
+      ticker: "BTC",
+      networkName: "Bitcoin",
+      address: "bc123",
+    },
   ],
   positions: [
     { positionId: "eth-native", accountId: "eth-account", currencyId: "ethereum", assetId: "eth" },

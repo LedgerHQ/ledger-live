@@ -10,11 +10,8 @@ import {
   type ConnectDeviceUIState,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
-import {
-  DeviceIntentTrackingProvider,
-  ledgerToDmkDeviceIdMap,
-  type KnownDevice,
-} from "@ledgerhq/live-dmk-shared";
+import { ledgerToDmkDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook } from "@testing-library/react";
 import React from "react";
@@ -191,7 +188,7 @@ describe("useConnectionViewModel", () => {
       acceptedDeviceModelIds: [],
       dmk: mockDmk,
       onConnected: expect.any(Function),
-      mockServerTransportEnabled: false,
+      isMockServerEnabled: false,
     });
   });
 
@@ -201,7 +198,7 @@ describe("useConnectionViewModel", () => {
     renderViewModel();
 
     expect(mockedConnectDevice).toHaveBeenCalledWith(
-      expect.objectContaining({ mockServerTransportEnabled: true }),
+      expect.objectContaining({ isMockServerEnabled: true }),
     );
   });
 

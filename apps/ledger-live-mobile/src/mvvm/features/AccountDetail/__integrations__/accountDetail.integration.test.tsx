@@ -27,8 +27,8 @@ jest.mock("@shared/analytics-react", () => {
   const { Text } = jest.requireActual("react-native");
   return {
     ...jest.requireActual("@shared/analytics-react"),
-    TrackScreen: ({ currency }: { currency?: string }) => (
-      <Text testID="account-detail-tracked-currency">{currency}</Text>
+    TrackScreen: ({ network }: { network?: string }) => (
+      <Text testID="account-detail-tracked-network">{network}</Text>
     ),
   };
 });
@@ -140,10 +140,10 @@ describe("AccountDetail entry", () => {
 
   it("follows the new account when the mounted entry screen receives another account", async () => {
     const { user } = renderAccountScreen({ accountId: btcAccount.id }, { enabled: true });
-    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("bitcoin");
+    expect(screen.getByTestId("account-detail-tracked-network")).toHaveTextContent("bitcoin");
 
     await user.press(screen.getByTestId("switch-to-eth-account"));
 
-    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("ethereum");
+    expect(screen.getByTestId("account-detail-tracked-network")).toHaveTextContent("ethereum");
   });
 });

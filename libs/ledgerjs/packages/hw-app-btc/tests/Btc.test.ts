@@ -769,6 +769,34 @@ describe("Btc", () => {
       expect(impl).toBeInstanceOf(BtcNew);
     });
 
+    it.each(["Hashi", "Hashi Test"])(
+      "should keep BtcNew for the %s app derived from the Bitcoin app",
+      async appName => {
+        const transport = await openTransportReplayer(RecordStore.fromString(""));
+        btc = new Btc({ transport, currency: "bitcoin" });
+
+        mockedGetAppAndVersion.mockResolvedValue(mockAppAndVersion(appName, "0.1.0"));
+
+        const impl = await btc.changeImplIfNecessary();
+
+        expect(impl).toBeInstanceOf(BtcNew);
+      },
+    );
+
+    it.each(["hashi", "Hashi Testnet"])(
+      "should use BtcOld for %s, which is not a known derived app name",
+      async appName => {
+        const transport = await openTransportReplayer(RecordStore.fromString(""));
+        btc = new Btc({ transport, currency: "bitcoin" });
+
+        mockedGetAppAndVersion.mockResolvedValue(mockAppAndVersion(appName, "0.1.0"));
+
+        const impl = await btc.changeImplIfNecessary();
+
+        expect(impl).toBeInstanceOf(BtcOld);
+      },
+    );
+
     it("should use BtcOld for unknown app names", async () => {
       const transport = await openTransportReplayer(RecordStore.fromString(""));
       btc = new Btc({ transport, currency: "bitcoin" });

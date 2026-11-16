@@ -12,7 +12,7 @@ import {
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -164,10 +164,6 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
-          /**
-           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
-           */
-          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -215,6 +211,7 @@ const linkingOptions = () => ({
               [ScreenName.ExperimentalSettings]: "settings/experimental",
               [ScreenName.DeveloperSettings]: "settings/developer",
               [ScreenName.NotificationsSettings]: "settings/notifications",
+              [ScreenName.DebugMockServer]: "mockserver/config",
             },
           },
 
@@ -276,6 +273,11 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
               [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+              [NavigatorName.Settings]: {
+                screens: {
+                  [ScreenName.DebugMockServer]: "mockserver/config",
+                },
+              },
             },
           },
         },
@@ -325,27 +327,20 @@ export const DeeplinksProvider = ({
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
   const lwmPayTabFlag = useFeature("lwmPayTab");
   const lwmContactsFlag = useFeature("lwmContacts");
+  const predictionsFlag = useFeature("ptxPredictionsLiveAppMobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
+  const predictionsManifestId = predictionsFlag?.params?.manifest_id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
-  const AccountsListScreenName = llmAccountListUI?.enabled
-    ? ScreenName.AccountsList
-    : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
     const options = linkingOptions();
@@ -381,21 +376,19 @@ export const DeeplinksProvider = ({
                           }),
 
                       /** "ledgerlive://assets will open assets screen. */
-                      ...(llmAccountListUI?.enabled && {
-                        [NavigatorName.Assets]: {
-                          screens: {
-                            /**
-                             * @params ?showHeader: boolean
-                             * @params ?isSyncEnabled: boolean
-                             * @params ?sourceScreenName: string
-                             * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
-                             * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
-                             * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
-                             */
-                            [ScreenName.AssetsList]: "assets",
-                          },
+                      [NavigatorName.Assets]: {
+                        screens: {
+                          /**
+                           * @params ?showHeader: boolean
+                           * @params ?isSyncEnabled: boolean
+                           * @params ?sourceScreenName: string
+                           * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
+                           * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
+                           * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
+                           */
+                          [ScreenName.AssetsList]: "assets",
                         },
-                      }),
+                      },
                       /**
                        * ie: "ledgerlive://perps" -> will redirect to the perps page
                        */
@@ -424,6 +417,14 @@ export const DeeplinksProvider = ({
                         },
                       },
                       /**
+                       * ie: "ledgerlive://predictions?eventSlug=XXXX" will open the predictions screen on that event
+                       */
+                      [NavigatorName.Predictions]: {
+                        screens: {
+                          [ScreenName.Predictions]: "predictions",
+                        },
+                      },
+                      /**
                        * ie: "ledgerlive://swap/history?swapId=XXXX" -> will open the swap history with that swap's status drawer
                        */
                       [NavigatorName.SwapSubScreens]: {
@@ -440,16 +441,6 @@ export const DeeplinksProvider = ({
 
                           [NavigatorName.Portfolio]: {
                             screens: {
-                              ...(!llmAccountListUI?.enabled && {
-                                [NavigatorName.PortfolioAccounts]: {
-                                  screens: {
-                                    /**
-                                     * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                                     */
-                                    [ScreenName.Accounts]: "accounts",
-                                  },
-                                },
-                              }),
                               [ScreenName.Portfolio]: "portfolio",
                             },
                           },
@@ -536,7 +527,6 @@ export const DeeplinksProvider = ({
                            * "ledgerlive://accounts" opens the main portfolio screen of accounts.
                            */
                           /**
-                           * if llmAccountListUI is enabled
                            * @params ?showHeader: boolean
                            * @params ?canAddAccount: boolean
                            * @params ?isSyncEnabled: boolean
@@ -546,7 +536,7 @@ export const DeeplinksProvider = ({
                            * ie "ledgerlive://accounts?isSyncEnabled=true will open accounts screen with sync enabled
                            * ie "ledgerlive://accounts?sourceScreenName=Portfolio will open accounts screen with source screen name Portfolio for tracking inside the screen
                            */
-                          [AccountsListScreenName]: "accounts",
+                          [ScreenName.AccountsList]: "accounts",
                           /**
                            * @params ?currency: string
                            * @params ?address: string
@@ -560,13 +550,10 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
                           /**
-                           * if shouldDisplayAssetSection is enabled
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          [ScreenName.CryptoAddresses]: "crypto-addresses",
                         },
                       },
                     },
@@ -684,8 +671,6 @@ export const DeeplinksProvider = ({
             const intent = resolveMarketOrAssetDeeplinkIntent({
               hostname,
               pathname,
-              shouldDisplayAggregatedAssets,
-              shouldDisplayAssetDiscoverability,
               categoryParam: searchParams.get("category"),
             });
 
@@ -696,15 +681,10 @@ export const DeeplinksProvider = ({
                   source: intent.source,
                   marketState: intent.marketState,
                 });
-              case "legacy-path":
-                url.pathname = `/${intent.currencyId}`;
-                return getStateFromPath(url.href?.split("://")[1], config);
               case "market-banner":
                 return handleMarketBannerDeeplink(intent.category);
               case "portfolio":
                 return getStateFromPath("portfolio", config);
-              case "continue":
-                break;
             }
           }
 
@@ -887,6 +867,8 @@ export const DeeplinksProvider = ({
               isLiveAppProviderInitialized: liveAppProviderInitialized,
               localManifests,
               remoteManifests: manifests,
+              isPredictionsEnabled: !!predictionsFlag?.enabled,
+              predictionsManifestId,
               config,
             });
           }
@@ -900,18 +882,15 @@ export const DeeplinksProvider = ({
     );
   }, [
     hasCompletedOnboarding,
-    llmAccountListUI?.enabled,
-    AccountsListScreenName,
     userAcceptedTerms,
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     localManifests,
+    predictionsManifestId,
+    predictionsFlag?.enabled,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,

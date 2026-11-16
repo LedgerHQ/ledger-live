@@ -8,6 +8,7 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   emptyState: "account-detail-empty-state",
   emptyStateSlot: "account-detail-empty-state-slot",
   notices: "account-detail-notices",
+  analyticsIntroduction: "account-analytics-introduction",
   assets: "account-detail-assets",
   addAsset: "account-detail-add-asset",
   transactions: "account-detail-transactions",

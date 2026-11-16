@@ -1,19 +1,13 @@
-import { getEnv } from "@ledgerhq/live-env";
-import type { SuiCoinConfig } from "../config";
+import { type SuiCoinConfig, suiDefaults } from "../config";
 import { withGrpcApi } from "./sdk.grpc";
 
 // Live proof that the hand-built gRPC-web transport reaches the chain: the SDK never sees a
 // `baseUrl`, so a broken transport injection surfaces here rather than in mocked unit tests.
 describe("gRPC-web transport (live mainnet)", () => {
   const config: SuiCoinConfig = {
+    ...suiDefaults.sui,
     status: { type: "active" },
-    node: {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
-    },
     features: { transport: "grpc" },
-    name: "Sui",
-    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   // Liveness is asserted through GetEpoch rather than the more obvious GetServiceInfo:

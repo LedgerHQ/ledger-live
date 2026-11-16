@@ -12,6 +12,7 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Subscription } from "rxjs";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
+import { isMockServerEnabledSelector } from "~/reducers/settings";
 import { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
 type DeviceConnectionResult = Parameters<ConnectDeviceInput["onConnected"]>[0];
@@ -28,6 +29,7 @@ type RunStatus = "idle" | "running" | "stopped";
 export default function DebugConnectDeviceScreen() {
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const subscriptionRef = useRef<Subscription | null>(null);
   const historyIdRef = useRef(0);
 
@@ -79,6 +81,7 @@ export default function DebugConnectDeviceScreen() {
       knownDevices,
       dmk,
       onConnected: handleConnected,
+      isMockServerEnabled,
     }).subscribe({
       next: appendState,
       error: error => {
@@ -87,7 +90,7 @@ export default function DebugConnectDeviceScreen() {
         setStatus("stopped");
       },
     });
-  }, [appendState, dmk, handleConnected, knownDevices]);
+  }, [appendState, dmk, handleConnected, knownDevices, isMockServerEnabled]);
 
   useEffect(() => stop, [stop]);
 

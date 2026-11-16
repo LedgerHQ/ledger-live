@@ -1,6 +1,6 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { track } from "@shared/analytics";
 import {
   SPONSORED_PHASE,

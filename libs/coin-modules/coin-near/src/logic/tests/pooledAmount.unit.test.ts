@@ -1,6 +1,6 @@
 import { mockNearConfig } from "../../test/context";
 import type { Balance, Stake } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getStakingPositions } from "../../network";
 import type { NearStakingPosition } from "../../network/sdk.types";
 import { pooledAmount } from "../pooledAmount";

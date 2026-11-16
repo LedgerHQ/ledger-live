@@ -1,26 +1,28 @@
-import React from "react";
-import { InfoState } from "@shared/ui-info-state";
-import type { Device } from "@ledgerhq/live-dmk-shared";
-import { useTranslation } from "~/context/Locale";
-import { useBootloaderDiscoveredViewModel } from "./useBootloaderDiscoveredViewModel";
+import React, { useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { OsUpdateFlowMode } from "@features/flow-device-os-update";
+import { BootloaderDiscovered as BootloaderDiscoveredBlock } from "@features/flow-device-os-update/native";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { toDmkDevice } from "../../ports/osUpdateDevice";
 
-type BootloaderDiscoveredProps = Readonly<{ device: Device }>;
-
-export function BootloaderDiscovered({ device }: BootloaderDiscoveredProps) {
-  const { t } = useTranslation();
-  const { onContinue } = useBootloaderDiscoveredViewModel(device);
+export function BootloaderDiscovered({ device }: Readonly<{ device: Device }>) {
+  const navigation = useNavigation<BaseNavigation>();
+  const onContinue = useCallback(
+    () =>
+      navigation.navigate(ScreenName.OsUpdate, {
+        device: toDmkDevice(device),
+        mode: OsUpdateFlowMode.BOOTLOADER_REPAIR,
+      }),
+    [navigation, device],
+  );
 
   return (
-    <InfoState
-      preset="text"
-      size="hug"
-      title={t("osUpdates.bootloaderDiscovered.title")}
-      description={t("osUpdates.bootloaderDiscovered.description")}
-      primaryCta={{
-        label: t("osUpdates.bootloaderDiscovered.continue"),
-        onPress: onContinue,
-      }}
-      testID="os-update-bootloader-discovered"
+    <BootloaderDiscoveredBlock
+      analyticsModelId={device.modelId}
+      wired={device.wired}
+      onContinue={onContinue}
     />
   );
 }

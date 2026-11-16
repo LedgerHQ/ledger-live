@@ -4,13 +4,10 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import {
-  BalanceAssetIdSchema,
-  type AccountAssetBalance,
-  type WithAccountBalances,
-} from "@domain/entity-account-balance";
+import { type AccountAssetBalance, type WithAccountBalances } from "@domain/entity-account-balance";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountBalanceToolProps = Extract<DevToolsConfig[number], { id: "account-balance" }>["config"];
@@ -60,7 +57,7 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
   const onReadOperations = useCallback(
     (accountUUID: string, assetId: string) => {
       const descriptor = descriptors.get(accountUUID);
-      const filterAsset = BalanceAssetIdSchema.parse(assetId);
+      const filterAsset = CryptoOrTokenCurrencyIdSchema.parse(assetId);
       const query = { filterAsset };
       if (descriptor) dispatch(fetchAccountData("operations", descriptor, { query, maxAge: 0 }));
     },

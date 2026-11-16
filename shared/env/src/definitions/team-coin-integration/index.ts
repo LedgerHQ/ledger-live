@@ -32,11 +32,6 @@ const teamCoinIntegration = {
     parser: floatParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_POLKADOT_SIDECAR_CREDENTIALS: {
-    parser: stringParser,
-    def: "",
-    desc: "Polkadot Sidecar API credentials",
-  },
   MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
@@ -46,11 +41,6 @@ const teamCoinIntegration = {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
     desc: "MultiversX DELEGATION API url",
-  },
-  API_TRONGRID_PROXY: {
-    parser: stringParser,
-    def: "https://tron.coin.ledger.com",
-    desc: "proxy url for trongrid API",
   },
   ICON_NODE_ENDPOINT: {
     parser: stringParser,

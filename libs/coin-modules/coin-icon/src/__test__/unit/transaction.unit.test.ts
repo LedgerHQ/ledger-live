@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../../transaction";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({

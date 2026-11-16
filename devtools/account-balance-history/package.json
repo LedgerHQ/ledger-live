@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-balance-history",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "DevTools page for the balanceHistory kind: read it per account for a range, see its series and its read status",
   "main": "src/index.ts",

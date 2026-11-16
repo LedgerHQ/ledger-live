@@ -14,6 +14,7 @@ import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDraw
 import { PlainOverlay } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
+import { returnToPreviousScreen } from "./returnToPreviousScreen";
 import { type SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import TwoStepSyncOnboardingCompanion from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/TwoStepSyncOnboardingCompanion";
@@ -37,7 +38,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const rootNavigation = useNavigation<RootNavigation>();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const { device } = route.params;
+  const { device, backReturnsToPrevious } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
   );
@@ -75,7 +76,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const onCloseButtonPress = useCallback(() => {
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
-    } else {
+    } else if (!returnToPreviousScreen(navigation, backReturnsToPrevious)) {
       if (hasCompletedOnboarding) {
         navigation.popToTop();
       } else {
@@ -109,7 +110,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         });
       }
     }
-  }, [currentStep, rootNavigation, navigation, hasCompletedOnboarding]);
+  }, [currentStep, rootNavigation, navigation, hasCompletedOnboarding, backReturnsToPrevious]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
@@ -184,8 +185,9 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // Called when the user taps on the "cancel" button in the mandatory drawer
   const onCancelEarlySecurityCheck = useCallback(() => {
     setIsESCMandatoryDrawerOpen(false);
+    if (returnToPreviousScreen(navigation, backReturnsToPrevious)) return;
     navigation.popToTop();
-  }, [navigation]);
+  }, [navigation, backReturnsToPrevious]);
 
   // Handles current step and toggling onboarding early check logics from polling information
   useEffect(() => {

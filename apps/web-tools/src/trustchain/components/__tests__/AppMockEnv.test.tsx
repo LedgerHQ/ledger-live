@@ -3,15 +3,24 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppMockEnv } from "../AppMockEnv";
 
+jest.mock("@ledgerhq/lumen-ui-react", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+
+  return {
+    Button: ({ children, ...props }: React.ComponentProps<"button">) =>
+      React.createElement("button", props, children),
+    Spinner: () => null,
+    Tag: ({ label }: { label: string }) => React.createElement("span", null, label),
+  };
+});
+
 jest.mock("uuid", () => ({
   v4: jest.fn(() => "mock-uuid-app-mock-env"),
 }));
 
 const mockSetEnv = jest.fn();
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   setEnv: (...args: unknown[]) => Reflect.apply(mockSetEnv, null, args),
-  getEnv: jest.fn(() => ""),
-  changes: { subscribe: jest.fn(() => ({ unsubscribe: jest.fn() })) },
 }));
 
 const mockUseEnv = jest.fn(() => "");

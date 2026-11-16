@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildPrepareTransaction } from "./prepareTransaction";
 import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { reserveNotes, _resetReservationsForTest } from "./note-reservation";

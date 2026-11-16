@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Currency } from "@domain/entity-currency";

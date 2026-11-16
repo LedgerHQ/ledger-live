@@ -4,11 +4,16 @@ import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource, track } from "@shared/analytics";
 import { buildAssetsPagePath } from "LLD/features/Assets/utils/buildAssetsPagePath";
-import { ASSETS_PAGE_CATEGORY_STOCKS, MAX_STOCKS_TO_DISPLAY } from "LLD/features/Assets/constants";
+import {
+  ASSETS_PAGE_CATEGORY_STOCKS,
+  ASSETS_PRICE_REFRESH_INTERVAL_MS,
+  MAX_STOCKS_TO_DISPLAY,
+} from "LLD/features/Assets/constants";
 import type { AssetSectionData } from "LLD/features/Assets/types";
 const TRACKING_SOURCE = "Portfolio";
 
@@ -35,7 +40,15 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
   const currencies = useMemo(() => stocksToDisplay.map(i => i.currency), [stocksToDisplay]);
   useOnDemandCurrenciesCountervalues(currencies, counterValueCurrency);
 
-  const trends = useAllCurrencyTrends(stocksToDisplay, "day");
+  const currencyIds = useMemo(() => currencies.map(currency => currency.id), [currencies]);
+  const marketDayChange = useMarketDayChangeByCurrencyId({
+    currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
+    skipPollingIfUnfocused: true,
+  });
+  const trends = useAllCurrencyTrends(stocksToDisplay, "day", marketDayChange);
   const itemsWithTrend = useMemo(
     () => stocksToDisplay.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [stocksToDisplay, trends],

@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../zcashRouting";
@@ -43,8 +44,8 @@ describe("sendFeatures.hasDefaultStrategy / getDefaultStrategyPatch", () => {
 });
 
 describe("sendFeatures.getTrackingAttributes", () => {
-  // `resolveFamily` (bridge/zcashRouting) only resolves Zcash to its own descriptor when
-  // this flag is on; otherwise it falls back to the Bitcoin chain-adapter's descriptor.
+  // The registry hands Zcash its full descriptor only when this flag is on; otherwise it
+  // hands the transparent-only one (bridge/descriptor/registry.ts).
   const previousShieldedEnabled = isZcashShieldedEnabled();
 
   beforeEach(() => {
@@ -107,5 +108,45 @@ describe("sendFeatures.rentChangesFee", () => {
 
   it("returns false for an undefined currency", () => {
     expect(sendFeatures.rentChangesFee(undefined)).toBe(false);
+  });
+});
+
+describe("sendFeatures.roundAmount", () => {
+  const amount = new BigNumber("12345678901234567890").shiftedBy(20);
+  const xrpIou = { type: "TokenCurrency", tokenType: "iou", parentCurrencyId: "ripple" };
+  const xrpMpt = { type: "TokenCurrency", tokenType: "mpt", parentCurrencyId: "ripple" };
+
+  it("rounds an XRP IOU amount down to 16 significant digits", () => {
+    const rounded = sendFeatures.roundAmount(xrpIou as TokenCurrency, amount);
+
+    expect(rounded.toFixed()).toBe(new BigNumber("1234567890123456").shiftedBy(24).toFixed());
+  });
+
+  it("keeps an XRP MPT or native amount", () => {
+    expect(sendFeatures.roundAmount(xrpMpt as TokenCurrency, amount)).toBe(amount);
+    expect(sendFeatures.roundAmount(getCryptoCurrencyById("ripple"), amount)).toBe(amount);
+  });
+
+  it("keeps the amount of a family that declares no rounding", () => {
+    expect(sendFeatures.roundAmount(ethereum, amount)).toBe(amount);
+    expect(sendFeatures.roundAmount(undefined, amount)).toBe(amount);
+  });
+});
+
+describe("sendFeatures.canSendMax", () => {
+  it("offers Max on an XRP token, not on XRP itself", () => {
+    const xrpIou = { type: "TokenCurrency", tokenType: "iou", parentCurrencyId: "ripple" };
+    const xrpMpt = { type: "TokenCurrency", tokenType: "mpt", parentCurrencyId: "ripple" };
+
+    expect(sendFeatures.canSendMax(xrpIou as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(xrpMpt as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(getCryptoCurrencyById("ripple"))).toBe(false);
+  });
+
+  it("offers Max on a coin and its token when the family declares nothing", () => {
+    const erc20 = { type: "TokenCurrency", tokenType: "erc20", parentCurrencyId: "ethereum" };
+
+    expect(sendFeatures.canSendMax(erc20 as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(ethereum)).toBe(true);
   });
 });

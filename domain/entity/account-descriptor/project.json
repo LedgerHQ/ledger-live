@@ -1,8 +1,0 @@
-{
-  "name": "@domain/entity-account-descriptor",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

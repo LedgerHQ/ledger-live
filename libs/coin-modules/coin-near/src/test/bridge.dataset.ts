@@ -3,7 +3,7 @@ import {
   NotEnoughBalance,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   NearNewAccountWarning,
   NearNewNamedAccountError,

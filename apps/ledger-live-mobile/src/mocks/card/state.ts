@@ -78,10 +78,6 @@ export type CardMockState = {
 
 type MockHost = { payCardMockState?: CardMockState };
 
-export function readCardMockState(): CardMockState | undefined {
-  return (globalThis as MockHost).payCardMockState;
-}
-
 export function createCardMockState(): CardMockState {
   const state: CardMockState = {
     tokenResponse: "pass",

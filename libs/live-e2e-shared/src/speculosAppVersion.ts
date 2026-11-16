@@ -10,7 +10,16 @@ const liveCommonVersion = "34.64.0"; // live-common version isn't really necessa
 const nanoAppProviderId = 1;
 const BASELINE_CATALOG_APP = "Bitcoin";
 
-type CatalogApp = { versionDisplayName: string; version: string };
+export type CatalogApp = { versionDisplayName: string; version: string; provider?: number };
+
+/**
+ * Provider whose app builds take precedence over provider 1, e.g. 4 for pre-release apps.
+ * Firmware and apps it does not publish still come from provider 1.
+ */
+export function getNanoAppProvider(): number {
+  const provider = Number.parseInt(process.env.SPECULOS_APP_PROVIDER ?? "", 10);
+  return Number.isNaN(provider) ? nanoAppProviderId : provider;
+}
 
 export function getSpeculosModel(): DeviceModelId {
   const speculosDevice = process.env.SPECULOS_DEVICE;
@@ -175,6 +184,26 @@ async function latestFirmwareWithBaselineApp(
   );
 }
 
+/** The provider 1 catalog, with every app {@link getNanoAppProvider} publishes swapped for its build. */
+async function getProviderAppCatalog(
+  device: DeviceModelId,
+  firmware: string,
+): Promise<(ApplicationV2Entity & { provider: number })[]> {
+  const baseline = await getNanoAppCatalog(device, firmware);
+  const byName = new Map(
+    baseline.map(app => [app.versionDisplayName, { ...app, provider: nanoAppProviderId }]),
+  );
+
+  const provider = getNanoAppProvider();
+  if (provider !== nanoAppProviderId) {
+    for (const app of await getNanoAppCatalog(device, firmware, provider)) {
+      byName.set(app.versionDisplayName, { ...app, provider });
+    }
+  }
+
+  return [...byName.values()];
+}
+
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
   const jsonFilePath = path.resolve(process.cwd(), nanoAppFilePath);
 
@@ -187,7 +216,7 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
 
     const device = getSpeculosModel();
     const firmware = await getDeviceFirmwareVersion(device);
-    const appCatalog = await getNanoAppCatalog(device, firmware);
+    const appCatalog = await getProviderAppCatalog(device, firmware);
 
     const tmpPath = `${jsonFilePath}.${process.pid}.tmp`;
     fs.writeFileSync(tmpPath, JSON.stringify(appCatalog, null, 2), "utf8");
@@ -205,9 +234,9 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
   }
 }
 
-export async function getNanoAppCatalogVersionMap(
+export async function getNanoAppCatalogMap(
   nanoAppFilePath: string,
-): Promise<Map<string, string>> {
+): Promise<Map<string, CatalogApp>> {
   const jsonFilePath = path.resolve(process.cwd(), nanoAppFilePath);
 
   try {
@@ -221,7 +250,7 @@ export async function getNanoAppCatalogVersionMap(
     const raw = fs.readFileSync(jsonFilePath, "utf8");
     const catalog: CatalogApp[] = JSON.parse(raw);
 
-    return new Map(catalog.map(entry => [entry.versionDisplayName, entry.version]));
+    return new Map(catalog.map(entry => [entry.versionDisplayName, entry]));
   } catch (error) {
     console.error("Unable to get app versions from catalog:", error);
   }
@@ -234,8 +263,8 @@ export async function getAppVersionFromCatalog(
   nanoAppFilePath: string,
 ): Promise<string | undefined> {
   try {
-    const catalogVersions = await getNanoAppCatalogVersionMap(nanoAppFilePath);
-    return catalogVersions.get(currency) ?? "";
+    const catalog = await getNanoAppCatalogMap(nanoAppFilePath);
+    return catalog.get(currency)?.version ?? "";
   } catch (error) {
     console.error(`Unable to get app version for ${currency} from catalog:`, error);
   }

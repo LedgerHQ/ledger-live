@@ -4,7 +4,7 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 // Two apps are seeded so the assertions tell a targeted uninstall from a full wipe.
-test.describe("My Ledger — uninstall an app", () => {
+test.describe("My Ledger — device information and uninstall", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     teamOwner: Team.MY_LEDGER_ONBOARDING,
@@ -14,14 +14,17 @@ test.describe("My Ledger — uninstall an app", () => {
   });
 
   test(
-    "User can uninstall an app that has no dependency",
+    "User can check the device information and uninstall an app from My Ledger",
     {
       tag: ["@myLedger", ...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-782" },
+      annotation: { type: "TMS", description: "B2CQA-2522, B2CQA-782" },
     },
-    async ({ app, mockServer }) => {
+    async ({ app, mockDevice, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
+
+      await app.myLedger.expectDeviceSummary(mockDevice.name!);
+      await app.myLedger.expectStorageSummary(2);
 
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.BITCOIN);

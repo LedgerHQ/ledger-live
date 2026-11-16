@@ -8,7 +8,7 @@ import {
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { useAssetsData } from "@features/platform-aggregated-assets";
+import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "@ledgerhq/live-common/market/utils/timers";
 import { Asset } from "~/types/asset";
 import { usePrecomputedAssetListData } from "../usePrecomputedAssetListData";
@@ -21,7 +21,7 @@ jest.mock("@features/platform-market-countervalues", () => ({
 
 jest.mock("@features/platform-aggregated-assets", () => ({
   ...jest.requireActual("@features/platform-aggregated-assets"),
-  useAssetsData: jest.fn(),
+  useMarketDayChangeByCurrencyId: jest.fn(),
 }));
 
 jest.mock("@domain/entity-market-countervalues", () => ({
@@ -45,7 +45,7 @@ const mockedCalculate = jest.mocked(calculate);
 const mockedGetCurrencyPortfolio = jest.mocked(getCurrencyPortfolio);
 const mockedGetCurrentBalanceChange = jest.mocked(getCurrentBalanceCountervalueChange);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
-const mockedUseAssetsData = jest.mocked(useAssetsData);
+const mockedUseMarketDayChange = jest.mocked(useMarketDayChangeByCurrencyId);
 
 const mockState: ReturnType<typeof useCountervaluesState> = { data: {}, status: {}, cache: {} };
 
@@ -68,7 +68,7 @@ describe("usePrecomputedAssetListData", () => {
     mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(0.035));
     mockedGetCurrentBalanceChange.mockReturnValue({ value: 0, percentage: null });
-    mockedUseAssetsData.mockReturnValue({ data: undefined } as ReturnType<typeof useAssetsData>);
+    mockedUseMarketDayChange.mockReturnValue(new Map());
   });
 
   describe("unchanged balance over the day", () => {
@@ -80,11 +80,18 @@ describe("usePrecomputedAssetListData", () => {
       ],
     } as ReturnType<typeof getCurrencyPortfolio>;
 
-    it("refreshes the assets catalog on the desktop assets interval while focused", () => {
-      renderHook(() => usePrecomputedAssetListData([]));
+    it("looks up the market of every held currency, refreshed while focused", () => {
+      const btcAccount = genAccount("btc-held", { currency: getCryptoCurrencyById("bitcoin") });
+      const assets: Asset[] = [
+        { ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] },
+        { ...createCryptoAsset(ethereum, 0), accounts: [] },
+      ];
 
-      expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      renderHook(() => usePrecomputedAssetListData(assets));
+
+      expect(mockedUseMarketDayChange).toHaveBeenCalledWith(
         expect.objectContaining({
+          currencyIds: [bitcoin.id],
           product: "llm",
           pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
           skipPollingIfUnfocused: true,
@@ -94,9 +101,7 @@ describe("usePrecomputedAssetListData", () => {
 
     it("uses the market 24h change", () => {
       mockedGetCurrencyPortfolio.mockReturnValue(flatPortfolio);
-      mockedUseAssetsData.mockReturnValue({
-        data: { markets: { [bitcoin.id]: { priceChangePercentage24h: 2 } } },
-      } as ReturnType<typeof useAssetsData>);
+      mockedUseMarketDayChange.mockReturnValue(new Map([[bitcoin.id, 2]]));
       const btcAccount = genAccount("btc-flat", { currency: getCryptoCurrencyById("bitcoin") });
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
 
@@ -123,9 +128,7 @@ describe("usePrecomputedAssetListData", () => {
           { date: new Date(1), value: 1, countervalue: 50000 },
         ],
       } as ReturnType<typeof getCurrencyPortfolio>);
-      mockedUseAssetsData.mockReturnValue({
-        data: { markets: { [bitcoin.id]: { priceChangePercentage24h: 2 } } },
-      } as ReturnType<typeof useAssetsData>);
+      mockedUseMarketDayChange.mockReturnValue(new Map([[bitcoin.id, 2]]));
       const btcAccount = genAccount("btc-flat", { currency: getCryptoCurrencyById("bitcoin") });
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
 

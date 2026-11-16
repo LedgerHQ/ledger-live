@@ -56,11 +56,6 @@ const teamBlockchainSupport = {
     def: "https://kaspa.coin.ledger.com",
     desc: "Kaspa API url",
   },
-  API_VECHAIN_THOREST: {
-    def: "https://vechain.coin.ledger.com",
-    parser: stringParser,
-    desc: "Thorest API for VeChain",
-  },
 };
 
 export default teamBlockchainSupport;

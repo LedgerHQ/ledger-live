@@ -25,6 +25,8 @@ import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { getStakes } from "../logic/staking/getStakes";
 import { getValidators } from "../logic/staking/getValidators";
+import { getBlock } from "../logic/history/getBlock";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { lastBlock } from "../logic/history/lastBlock";
 import { listOperations } from "../logic/history/listOperations";
 import { validateAddress } from "../logic/validateAddress";
@@ -44,6 +46,8 @@ jest.mock("../logic/account/getBalance", () => ({ getBalance: jest.fn() }));
 jest.mock("../logic/account/getNextSequence", () => ({ getNextSequence: jest.fn() }));
 jest.mock("../logic/staking/getStakes", () => ({ getStakes: jest.fn() }));
 jest.mock("../logic/staking/getValidators", () => ({ getValidators: jest.fn() }));
+jest.mock("../logic/history/getBlock", () => ({ getBlock: jest.fn() }));
+jest.mock("../logic/history/getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
 jest.mock("../logic/history/lastBlock", () => ({ lastBlock: jest.fn() }));
 jest.mock("../logic/history/listOperations", () => ({ listOperations: jest.fn() }));
 jest.mock("../logic/validateAddress", () => ({ validateAddress: jest.fn() }));
@@ -76,6 +80,8 @@ describe("createApi", () => {
         craftTransactionData: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
+        getBlock: expect.any(Function),
+        getBlockInfo: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
         getStakes: expect.any(Function),
@@ -173,6 +179,30 @@ describe("createApi", () => {
     expect(result).toEqual(block);
   });
 
+  it("delegates getBlockInfo to the logic function (network api, height)", async () => {
+    const info = { height: 100, hash: "100", time: new Date() };
+    jest.mocked(getBlockInfo).mockResolvedValueOnce(info);
+    const api = createApi();
+    const context = createMockMultiversXContext();
+
+    const result = await api.getBlockInfo(context, 100);
+
+    expect(getBlockInfo).toHaveBeenCalledWith(mockNetworkApi, 100);
+    expect(result).toEqual(info);
+  });
+
+  it("delegates getBlock to the logic function (network api, height)", async () => {
+    const block = { info: { height: 100, hash: "100", time: new Date() }, transactions: [] };
+    jest.mocked(getBlock).mockResolvedValueOnce(block);
+    const api = createApi();
+    const context = createMockMultiversXContext();
+
+    const result = await api.getBlock(context, 100);
+
+    expect(getBlock).toHaveBeenCalledWith(mockNetworkApi, 100);
+    expect(result).toEqual(block);
+  });
+
   it("delegates listOperations to the logic function (network api, address, options)", async () => {
     const page: Page<Operation> = { items: [], next: undefined };
     jest.mocked(listOperations).mockResolvedValueOnce(page);
@@ -255,14 +285,7 @@ describe("createApi", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(), createMockMultiversXContext())).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getRewards",
-        "register",
-      ],
+      unsupported: ["call", "craftRawTransaction", "getRewards", "register"],
       inconsistent: [],
     });
   });

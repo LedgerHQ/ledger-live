@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   formatFeesValue,
   joinFeeSublabelValues,

@@ -1,100 +1,102 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
+import { delay, escapeRegExp, isAndroid } from "@e2e/helpers/commonHelpers";
+import { byId, byIdWithDescendantText, byText } from "@e2e/helpers/elements/native";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const REVAMPED_LOCK_GRACE_MS = INTERVAL.long;
 
 export default class SettingsGeneralPage {
-  passwordSettingsSwitch = () => getElementById("password-settings-switch");
-  passwordTextInput = () => getElementById("password-text-input");
-  enterLanguageMenuButton = () => getElementById("language-button");
-  private readonly enterLedgerSyncId = "wallet-sync-button";
-  private readonly enterLedgerSync = () => getElementById(this.enterLedgerSyncId);
-  localizedText = (text: string) => getElementByText(text);
-
-  countervalueSettingsRowId = "countervalue-settings-row";
-  countervalueTickerSettingsRowId = "countervalue-ticker-settings-row";
-  counterValueSettingsFlatListId = "counter-value-settings-flat-list";
-  languageScrollViewId = "scrollView-language-change";
-  compactSettingsRowId = (currencyTicker: string) => `compact-settings-row-${currencyTicker}`;
+  private readonly passwordSettingsSwitch = byId("password-settings-switch");
+  private readonly passwordTextInput = byId("password-text-input");
+  private readonly enterLanguageMenuButton = byId("language-button");
+  private readonly enterLedgerSync = byId("wallet-sync-button");
+  private readonly countervalueSettingsRow = byId("countervalue-settings-row");
+  private readonly countervalueTickerSettingsRow = byId("countervalue-ticker-settings-row");
+  private readonly counterValueSettingsFlatList = byId("counter-value-settings-flat-list");
+  private readonly languageScrollView = byId("scrollView-language-change");
+  private readonly localizedText = (text: string) => byText(text);
+  private readonly compactSettingsRow = (currencyTicker: string) =>
+    byId(`compact-settings-row-${currencyTicker}`);
+  // Matches the text anywhere in a descendant of the row, so a longer label still passes.
+  private readonly rowContaining = (testId: string, text: RegExp) =>
+    byIdWithDescendantText({ id: testId, text: new RegExp(`.*${text.source}.*`, text.flags) });
 
   @Step("Toggle password")
   async togglePassword() {
-    await tapByElement(this.passwordSettingsSwitch());
+    await this.passwordSettingsSwitch.tap();
   }
 
   @Step("Expect password toggle to be {{{0}}}")
   async expectPasswordToggleValue(value: "ON" | "OFF") {
     const expected = value === "ON";
-    await detoxExpect(this.passwordSettingsSwitch()).toHaveToggleValue(expected);
+    await this.passwordSettingsSwitch.expectToggleValue(expected);
   }
 
   @Step("Enter new password")
   async enterNewPassword(passwordText: string) {
-    await typeTextByElement(this.passwordTextInput(), passwordText);
+    await this.passwordTextInput.replaceText(passwordText);
   }
 
   @Step("Navigate to language select")
   async navigateToLanguageSelect() {
-    await tapByElement(this.enterLanguageMenuButton());
+    await this.enterLanguageMenuButton.tap();
   }
 
   @Step("Go to Ledger Sync")
   async navigateToLedgerSync() {
-    await tapByElement(this.enterLedgerSync());
+    await this.enterLedgerSync.tap();
   }
 
   /** The row renders the same id whether or not a backup exists; only its destination changes. */
   @Step("Expect the Ledger Sync entry point to be visible")
   async expectLedgerSyncEntryPoint() {
-    await waitForElementById(this.enterLedgerSyncId);
+    await this.enterLedgerSync.waitVisible();
+    await this.enterLedgerSync.expectVisible();
   }
 
   @Step("Select language {{{0}}}")
   async selectLanguage(lang: string) {
-    await scrollToText(lang, this.languageScrollViewId);
-    await tapByText(lang);
+    await this.localizedText(lang).scrollTo(this.languageScrollView);
+    await this.localizedText(lang).tap();
   }
 
   @Step("Expect preferred currency button")
   async expectPreferredCurrencyButton() {
-    await detoxExpect(getElementById(this.countervalueSettingsRowId)).toBeVisible();
+    await this.countervalueSettingsRow.expectVisible();
   }
 
   @Step("Expect localized text {{{0}}}")
   async expectLocalizedText(text: string) {
-    await detoxExpect(this.localizedText(text)).toBeVisible();
+    await this.localizedText(text).expectVisible();
   }
 
   @Step("Expect character set {{{1}}} in {{{0}}}")
   async expectCharacterSet(testId: string, pattern: RegExp) {
-    const substringPattern = new RegExp(`.*${pattern.source}.*`, pattern.flags);
-    await detoxExpect(getElementByIdWithDescendantTexts(testId, substringPattern)).toBeVisible();
+    await this.rowContaining(testId, pattern).expectVisible();
   }
 
   @Step("Expect translated row {{{0}}} to be {{{1}}}")
   async expectTranslatedRow(testId: string, expectedText: string) {
-    await detoxExpect(getElementByIdWithDescendantTexts(testId, expectedText)).toBeVisible();
+    await this.rowContaining(testId, new RegExp(escapeRegExp(expectedText), "i")).expectVisible();
   }
 
   @Step("Click on Countervalue Settings Row")
   async clickOnCountervalueSettingsRow() {
-    await waitForElementById(this.countervalueSettingsRowId);
-    await tapById(this.countervalueSettingsRowId);
+    await this.countervalueSettingsRow.tap();
   }
 
   @Step("Change counter value to {{{0}}}")
   async changeCounterValue(currency: string) {
     await this.clickOnCountervalueSettingsRow();
-    await scrollToId(this.compactSettingsRowId(currency), this.counterValueSettingsFlatListId);
-    await tapById(this.compactSettingsRowId(currency));
+    await this.compactSettingsRow(currency).scrollTo(this.counterValueSettingsFlatList);
+    await this.compactSettingsRow(currency).tap();
   }
 
   @Step("Expect counter value to be {{{0}}}")
   async expectCounterValue(currency: string) {
-    await waitForElementById(this.countervalueTickerSettingsRowId);
-    await detoxExpect(getElementById(this.countervalueTickerSettingsRowId)).toHaveText(currency);
+    await this.countervalueTickerSettingsRow.waitVisible();
+    await this.countervalueTickerSettingsRow.expectText(currency);
   }
 
   @Step("Setup password and lock")
@@ -111,7 +113,7 @@ export default class SettingsGeneralPage {
   async setupRevampedPasswordAndLock(password: string) {
     await app.appLock.choosePassword(password);
     await app.appLock.confirmPassword(password);
-    await waitForElement(this.passwordSettingsSwitch(), TIMEOUT.medium);
+    await this.passwordSettingsSwitch.waitVisible(TIMEOUT.medium);
     await this.expectPasswordToggleValue("ON");
     await this.sendToBackgroundAndBack(REVAMPED_LOCK_GRACE_MS);
   }

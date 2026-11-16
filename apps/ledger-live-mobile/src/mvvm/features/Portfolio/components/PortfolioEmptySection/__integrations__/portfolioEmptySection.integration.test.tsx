@@ -1,12 +1,11 @@
 import React from "react";
-import { render, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, renderWithReactQuery, screen } from "@tests/test-renderer";
 import { PortfolioEmptySection } from "../index";
 import { State } from "~/reducers/types";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import {
   btcCurrency,
   ethCurrency,
-  overrideInitialStateWithAssetSection,
   overrideInitialStateWithOnboardingWidgetVisible,
 } from "../../../__integrations__/shared";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
@@ -32,21 +31,18 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-const createAccountState = withFlagOverrides(
-  { lwmWallet40: { params: { assetSection: true } } },
-  state => {
-    const btcAccount = genAccount("btc-1", { currency: btcCurrency });
-    const ethAccount = genAccount("eth-1", { currency: ethCurrency });
+const createAccountState = (state: State) => {
+  const btcAccount = genAccount("btc-1", { currency: btcCurrency });
+  const ethAccount = genAccount("eth-1", { currency: ethCurrency });
 
-    return {
-      ...state,
-      accounts: {
-        ...state.accounts,
-        active: [btcAccount, ethAccount],
-      },
-    };
-  },
-);
+  return {
+    ...state,
+    accounts: {
+      ...state.accounts,
+      active: [btcAccount, ethAccount],
+    },
+  };
+};
 
 const emptyAccountState = (state: State): State => ({
   ...state,
@@ -67,7 +63,7 @@ describe("PortfolioEmptySection", () => {
         overrideInitialState: emptyAccountState,
       });
 
-      expect(await screen.findByText(/add crypto account/i)).toBeVisible();
+      expect(await screen.findByTestId("add-account-cta")).toBeVisible();
     });
 
     it("should render quick actions CTAs", () => {
@@ -86,7 +82,7 @@ describe("PortfolioEmptySection", () => {
         },
       );
 
-      const addButton = await screen.findByText(/add crypto account/i);
+      const addButton = await screen.findByTestId("add-account-cta");
       await user.press(addButton);
 
       expect(await screen.findByTestId("modal-close-button")).toBeVisible();
@@ -118,14 +114,6 @@ describe("PortfolioEmptySection", () => {
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
     });
 
-    it("should render the read-only coins fallback when assetSection flag is off", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
-        overrideInitialState: overrideInitialStateWithAssetSection(false),
-      });
-
-      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-    });
-
     it("should render quick actions CTAs", () => {
       render(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
@@ -139,7 +127,7 @@ describe("PortfolioEmptySection", () => {
         overrideInitialState: createAccountState,
       });
 
-      expect(screen.queryByText(/add crypto account/i)).toBeNull();
+      expect(screen.queryByTestId("add-account-cta")).toBeNull();
     });
 
     it("should display the portfolio banners section", () => {

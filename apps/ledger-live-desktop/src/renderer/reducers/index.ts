@@ -33,6 +33,8 @@ import { predictionsSlice, type PredictionsState } from "@domain/entity-predicti
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-account-receive";
+import { accountStatusSlice, type AccountStatusState } from "@domain/entity-account-status";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -56,10 +58,7 @@ import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
-import {
-  payRequestVerifyHintSlice,
-  type PayRequestVerifyHintState,
-} from "@features/flow-pay-request/state";
+import { receiveVerifyHintSlice, type ReceiveVerifyHintState } from "@features/flow-receive/state";
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
@@ -88,7 +87,10 @@ import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 import genericAwarenessModal, {
   GenericAwarenessModalSliceState,
 } from "./genericAwarenessModalSlice";
-import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverrides";
+import {
+  liveConfigOverridesReducer as liveConfigOverrides,
+  type LiveConfigOverridesState,
+} from "@shared/live-config-overrides";
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
@@ -126,11 +128,13 @@ export type State = LLDRTKApiState & {
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
   genericAwarenessModal: GenericAwarenessModalSliceState;
-  coinConfigOverrides: CoinConfigOverridesState;
+  liveConfigOverrides: LiveConfigOverridesState;
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  accountReceives: AccountReceivesState;
+  accountStatus: AccountStatusState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
@@ -139,7 +143,7 @@ export type State = LLDRTKApiState & {
   payCardBalance: PayCardBalanceState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
-  payRequestVerifyHint: PayRequestVerifyHintState;
+  receiveVerifyHint: ReceiveVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -180,11 +184,13 @@ const appReducer = combineReducers({
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
   genericAwarenessModal,
-  coinConfigOverrides,
+  liveConfigOverrides,
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountReceives: accountReceivesSlice.reducer,
+  accountStatus: accountStatusSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
@@ -193,7 +199,7 @@ const appReducer = combineReducers({
   payCardBalance: payCardBalanceSlice.reducer,
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
-  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  receiveVerifyHint: receiveVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

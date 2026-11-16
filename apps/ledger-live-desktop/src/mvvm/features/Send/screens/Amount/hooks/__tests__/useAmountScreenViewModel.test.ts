@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 import { useAmountScreenViewModel } from "../useAmountScreenViewModel";

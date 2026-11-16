@@ -40,7 +40,7 @@ export const useSwapRouteCurrency = (
   routeAssetId: string | undefined,
   marketState?: MarketStateSlice,
 ) => {
-  const distribution = useDistribution({ groupBy: "asset" });
+  const distribution = useDistribution();
   return useMemo(() => {
     if (!routeAssetId) return undefined;
     const decodedAssetId = decodeRouteParam(routeAssetId).toLowerCase();

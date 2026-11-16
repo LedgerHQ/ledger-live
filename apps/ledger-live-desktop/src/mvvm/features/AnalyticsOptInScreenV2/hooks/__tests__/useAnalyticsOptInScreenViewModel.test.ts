@@ -68,6 +68,7 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Accept all",
+        page: "Analytics opt-in prompt main",
         flow: "consent onboarding",
         entryPoint: "Onboarding",
       }),

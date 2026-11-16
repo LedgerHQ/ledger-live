@@ -19,6 +19,9 @@ export function usePortfolioServicesEntryPointsViewModel(): PortfolioServicesEnt
         case "borrow":
           navigate("/borrow", { state: { returnTo: location.pathname } });
           return;
+        case "predictions":
+          navigate("/predictions", { state: { returnTo: location.pathname } });
+          return;
       }
     },
     [navigate, location.pathname],

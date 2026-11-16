@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen } from "@shared/analytics-react";

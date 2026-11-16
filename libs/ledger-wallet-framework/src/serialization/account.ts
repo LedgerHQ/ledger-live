@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   Account,
   AccountBridge,
@@ -47,8 +47,10 @@ function applyAssignFromTokenAccountRaw(
 ): void {
   if (!fromRaw?.assignFromTokenAccountRaw || !res.subAccounts) return;
 
-  res.subAccounts.forEach((subAcc, index) => {
-    const subAccRaw = subAccountsRaw?.[index];
+  // By id, not index: a token whose lookup failed is missing from `res.subAccounts`
+  const subAccountsRawById = new Map(subAccountsRaw?.map(raw => [raw.id, raw]));
+  res.subAccounts.forEach(subAcc => {
+    const subAccRaw = subAccountsRawById.get(subAcc.id);
     if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
       fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
     }
@@ -81,6 +83,7 @@ export async function fromAccountRaw(
     spendableBalance,
     subAccounts: subAccountsRaw,
     swapHistory,
+    sellOperationIds,
     syncHash,
     nfts,
     readiness,
@@ -173,6 +176,10 @@ export async function fromAccountRaw(
     res.swapHistory = swapHistory.map(fromSwapOperationRaw);
   }
 
+  if (sellOperationIds) {
+    res.sellOperationIds = sellOperationIds;
+  }
+
   if (nfts) {
     res.nfts = nfts.map(n => fromNFTRaw(n));
   }
@@ -222,6 +229,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     spendableBalance,
     subAccounts,
     swapHistory,
+    sellOperationIds,
     syncHash,
     nfts,
     readiness,
@@ -282,6 +290,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (swapHistory) {
     res.swapHistory = swapHistory.map(toSwapOperationRaw);
+  }
+
+  if (sellOperationIds) {
+    res.sellOperationIds = sellOperationIds;
   }
 
   if (nfts) {

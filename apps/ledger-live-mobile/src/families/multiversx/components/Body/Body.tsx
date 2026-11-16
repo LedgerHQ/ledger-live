@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 

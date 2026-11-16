@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import type { Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { AssetTrendRange } from "./types";
 
 export type AssetAmountCellProps = {

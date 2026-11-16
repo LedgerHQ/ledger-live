@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import wallet from "@ledgerhq/wallet-btc/index";
 import type { AccountBridge } from "@ledgerhq/types-live";

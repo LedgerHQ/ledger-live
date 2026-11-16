@@ -19,7 +19,7 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
-import type { PerpsTransactionSignedParams } from "LLM/features/Perps/types";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
@@ -27,6 +27,7 @@ import type { MarketListRouteParams } from "LLM/features/Market/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
+import type { AgentIntentNavigatorParamList } from "LLM/features/AgentIntent";
 import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -69,6 +70,7 @@ import type { InternetComputerStakingFlowParamList } from "../../../families/int
 import type { InternetComputerNeuronManageFlowParamList } from "../../../families/internet_computer/NeuronManageFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
+import type { XrpAddTokenFlowParamList } from "../../../families/xrp/AddTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
@@ -84,6 +86,7 @@ import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { BorrowLiveAppNavigatorParamList } from "./BorrowLiveAppNavigator";
+import type { PredictionsLiveAppNavigatorParamList } from "./PredictionsLiveAppNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { FeesNavigatorParamsList } from "./FeesNavigator";
@@ -114,7 +117,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
-import type { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
+import type { OsUpdateFlowMode } from "@features/flow-device-os-update";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -194,7 +197,6 @@ export type BaseNavigatorStackParamList = {
     deviceInfo: DeviceInfo;
     onNameChange(name: string): void;
   };
-  [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.MarketList]: MarketListRouteParams | undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
   [ScreenName.Account]: {
@@ -230,10 +232,6 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.EditCurrencyUnits]: {
     currency: CryptoCurrency;
   };
-  [ScreenName.MarketDetail]: {
-    currencyId: string;
-    resetSearchOnUmount?: boolean;
-  };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
@@ -255,6 +253,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.GlobalSearch]?: NavigatorScreenParams<GlobalSearchNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Borrow]?: NavigatorScreenParams<BorrowLiveAppNavigatorParamList>;
+  [NavigatorName.Predictions]?: NavigatorScreenParams<PredictionsLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
@@ -351,6 +350,9 @@ export type BaseNavigatorStackParamList = {
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
 
+  // Xrp
+  [NavigatorName.XrpAddTokenFlow]: NavigatorScreenParams<XrpAddTokenFlowParamList>;
+
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
   [NavigatorName.HederaDelegationFlow]: NavigatorScreenParams<HederaDelegationFlowParamList>;
@@ -429,6 +431,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [NavigatorName.MyWallet]?: NavigatorScreenParams<MyWalletNavigatorStackParamList>;
+  [NavigatorName.AgentIntent]?: NavigatorScreenParams<AgentIntentNavigatorParamList>;
   [NavigatorName.BackupHub]?: NavigatorScreenParams<BackupHubNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
   [ScreenName.LiveAppModal]: undefined;

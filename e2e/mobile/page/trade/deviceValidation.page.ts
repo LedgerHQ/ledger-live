@@ -1,8 +1,7 @@
-import CommonPage from "@e2e/page/common.page";
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 
-export default class DeviceValidationPage extends CommonPage {
+export default class DeviceValidationPage {
   private readonly validationScrollView = byId("device-validation-scroll-view");
   private readonly validationAmount = byId("device-validation-amount");
   private readonly validationAddress = byId("device-validation-address");

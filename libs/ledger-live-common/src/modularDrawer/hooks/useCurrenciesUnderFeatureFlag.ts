@@ -12,7 +12,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const aptos = useFeature("currencyAptos");
   const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
-  const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
@@ -92,6 +91,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const arcTestnet = useFeature("currencyArcTestnet");
   const robinhood = useFeature("currencyRobinhood");
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+  const alpen = useFeature("currencyAlpen");
   const alpenTestnet = useFeature("currencyAlpenTestnet");
   const gonka = useFeature("currencyGonka");
 
@@ -104,7 +104,6 @@ export function useCurrenciesUnderFeatureFlag() {
       aptos,
       aptos_testnet: aptosTestnet,
       axelar,
-      stargaze,
       secret_network: secretNetwork,
       desmos,
       dydx,
@@ -184,6 +183,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arc_testnet: arcTestnet,
       robinhood,
       robinhood_testnet: robinhoodTestnet,
+      alpen,
       alpen_testnet: alpenTestnet,
       gonka,
     }),
@@ -194,7 +194,6 @@ export function useCurrenciesUnderFeatureFlag() {
       aptos,
       aptosTestnet,
       axelar,
-      stargaze,
       secretNetwork,
       desmos,
       dydx,
@@ -274,6 +273,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arcTestnet,
       robinhood,
       robinhoodTestnet,
+      alpen,
       alpenTestnet,
       gonka,
     ],

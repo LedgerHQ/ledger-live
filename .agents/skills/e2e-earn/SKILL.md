@@ -1,6 +1,6 @@
 ---
 name: e2e-earn
-description: Check, update, and RUN Earn E2E tests for Ledger Wallet Desktop (Playwright) and Mobile (Detox). Covers the Earn v2 dashboard, the native + redirect staking flows, and the delegate specs (owned by the Earn team). Use to run earn.v2 / delegate locally, adapt earn page objects/flows, and triage failures.
+description: Check, update, and RUN Earn E2E tests for Ledger Wallet Desktop (Playwright) and Mobile (Detox). Covers the Earn v2 dashboard, the native + redirect staking flows, and the delegate specs (owned by the Earn team). Use when running earn.v2 / delegate locally, adapting earn page objects/flows, and triaging failures.
 ---
 
 # Earn E2E Skill

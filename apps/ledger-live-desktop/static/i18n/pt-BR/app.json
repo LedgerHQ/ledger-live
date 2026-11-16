@@ -121,7 +121,7 @@
     "addressCopied" : "Endereço Copiado",
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Marcador de Recurso",
+    "devTools" : "Ferramentas de desenvolvedor",
     "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
@@ -2128,6 +2128,14 @@
       "link" : "Saiba mais sobre os ativos Stellar",
       "seeTokens" : "Mostrar Ativos ({{tokenCount}})",
       "hideTokens" : "Ocultar Ativos ({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "Token",
+      "cta" : "Adicionar Token",
+      "placeholder" : "É possível adicionar tokens à sua conta {{currencyName}}.",
+      "link" : "Saiba mais sobre tokens do XRP Ledger",
+      "seeTokens" : "Mostrar tokens ({{tokenCount}})",
+      "hideTokens" : "Ocultar tokens ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -3019,18 +3027,19 @@
       "insufficientFunds" : "Você não tem {{feeCurrency}} suficiente para cobrir a quantia e a taxa de aluguel de energia da {{provider}}."
     },
     "sponsoredRentSignature" : {
-      "title" : "Passo 1 de 2",
+      "title" : "Aprovar patrocínio de taxas de rede",
       "strategy" : "Aluguel de energia - {{provider}}",
       "crafting" : "Preparando o aluguel de energia…",
       "submitting" : "Enviando pagamento do aluguel de energia…",
-      "feeLabel" : "Taxa de aluguel"
+      "feeLabel" : "Taxa de aluguel",
+      "terms" : "Ao assinar esta transação, você concorda com os <0>Termos e Condições de {{provider}}</0>."
     },
     "sponsoredTransferSignature" : {
-      "title" : "Passo 2 de 2"
+      "title" : "Confirmar transferência"
     },
     "sponsoredPolling" : {
-      "title" : "Aguardando entrega de energia",
-      "waiting" : "{{provider}} está entregando a energia alugada. Isso pode levar alguns instantes.",
+      "title" : "Sua energia está sendo entregue",
+      "waiting" : "Isso geralmente leva até 30 segundos.",
       "elapsed" : "Decorrido: {{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3090,6 @@
         "subtitle" : "Blindado",
         "pendingNoticeTitle" : "Fundos em maturação",
         "pendingNotice" : "Algumas notas protegidas ainda estão em maturação e podem ainda não estar disponíveis para serem usada."
-      },
-      "aleoPublic" : {
-        "title" : "Saldo público"
-      },
-      "aleoPrivate" : {
-        "title" : "Saldo privado"
       },
       "zeroBalance" : {
         "warning" : "Nenhum saldo disponível"
@@ -4274,6 +4277,70 @@
           "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "Adicionar Token",
+      "steps" : {
+        "token" : {
+          "title" : "Token",
+          "selectLabel" : "Escolha um token",
+          "allAdded" : "Todos os tokens disponíveis já foram adicionados a esta conta.",
+          "loadError" : "Não foi possível carregar a lista de tokens.",
+          "info" : "Adicionar um token envia uma transação que paga uma taxa de rede e reserva XRP enquanto o token for mantido. Aparece no seu histórico de transações."
+        },
+        "settings" : {
+          "title" : "Configurações",
+          "limit" : "Limite de confiança",
+          "max" : "Máximo",
+          "limitInfo" : "O limite de confiança é o máximo de {{token}} que sua conta aceita manter."
+        },
+        "review" : {
+          "title" : "Avaliação",
+          "token" : "Token",
+          "issuer" : "Emissor"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmação",
+          "success" : {
+            "title" : "Token {{token}} adicionado com sucesso",
+            "text" : "Agora é possível receber <0>{{token}}</0> em sua conta XRP.",
+            "cta" : "Ver detalhes"
+          },
+          "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "Configurações de token",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "Limite de confiança de {{token}} atualizar",
+            "text" : "Sua conta XRP agora aceita <0>{{token}}</0> até o novo limite."
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "editSettings" : "Editar configurações",
+      "trustLimit" : "Limite de confiança",
+      "trustLimitTooltip" : "O máximo deste token que sua conta aceita manter."
+    },
+    "rippling" : {
+      "label" : "Rippling",
+      "on" : "Ativado",
+      "off" : "Desativado",
+      "warning" : "Ativar esta opção permite que pagamentos de outros usuários movimentem seu saldo entre tokens com o mesmo código de moeda. Ative apenas se souber o que está fazendo."
+    },
+    "receive" : {
+      "addToken" : "Adicionar Token",
+      "addTokenFirst" : "Para receber um token do XRP Ledger, adicione-o primeiro à sua conta.",
+      "tokenNotHeld" : "Sua conta não possui mais {{token}}. Adicione-o novamente antes de recebê-lo."
     }
   },
   "stellar" : {
@@ -7223,6 +7290,9 @@
       "title" : "Há uma operação pendente para esta conta.",
       "description" : "Aguarde a operação terminar."
     },
+    "TokenNonTransferable" : {
+      "title" : "Este token não pode ser enviado. Seu contrato inteligente não permite transferências."
+    },
     "AccountNameRequired" : {
       "title" : "É necessário um nome de conta",
       "description" : "Insira um nome de conta"
@@ -7725,6 +7795,14 @@
       "title" : "Erro de rede",
       "description" : "Verifique sua conexão com a internet e tente novamente."
     },
+    "WithdrawApiError" : {
+      "title" : "Seu saque não foi enviado",
+      "description" : "Nenhum valor foi retirado do seu saldo de perpétuos. Fechar e tentar novamente com uma nova cotação."
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "Não foi possível confirmar o seu saque",
+      "description" : "Ainda pode ser processada. Verifique o histórico de trocas antes de tentar novamente."
+    },
     "WrongDeviceForAccount" : {
       "title" : "Algo deu errado",
       "description" : "Verifique se o seu dispositivo Ledger está configurado com a frase de recuperação ou passphrase associada à conta selecionada."
@@ -7892,6 +7970,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Esta quantia é pequena demais para staking"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Seu validador não aceita staking. Altere o validador para aplicar."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
     },
@@ -7995,6 +8076,44 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "Uma tag de destino é necessária para este destinatário"
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "Este tipo de token ainda não é compatível"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "A quantia tem dígitos demais",
+      "description" : "Os tokens do XRP Ledger aceitam no máximo 16 dígitos significativos."
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "O limite deve ser superior a 0",
+      "description" : "Para deixar de manter este token, remova-o em vez disso."
+    },
+    "XrpTokenFrozen" : {
+      "title" : "Não é possível enviar este token para este destinatário",
+      "description" : "O emissor o freeze, ou não aprovou sua conta para mantê-lo. Um token congelado ainda pode retornar ao seu emissor."
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "Este destinatário não pode receber {{assetCode}}",
+      "description" : "O destinatário pode precisar adicionar este token primeiro, ou o emissor não permite esta transferência."
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "Esta quantia não pode ser entregue",
+      "description" : "O limite do destinatário ou as taxas de transferência do emissor não o permitem. Tente uma quantia menor."
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "O emissor recusou esta solicitação",
+      "description" : "O emissor não aceita novos detentores para este token, ou o token não existe."
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "Esta transação falharia",
+      "description" : "O XRP Ledger rejeitou com {{code}}."
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "Esta transação não é suportada"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "Uma quantia de {{amount}} será bloqueada em sua conta enquanto este token for adicionado.",
+      "description" : "Ela será devolvida ao remover o token."
     },
     "InvalidExplorerResponse" : {
       "title" : "Resposta inválida do explorador {{currencyName}}"
@@ -9590,8 +9709,8 @@
     "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "selectDepositCurrencyTitle" : "Selecionar ativo para depositar",
     "selectDepositCurrencyDescription" : "Qualquer ativo compatível funciona. Será trocado automaticamente se necessário.",
-    "selectWithdrawCurrencyTitle" : "Select asset to withdraw to",
-    "selectWithdrawCurrencyDescription" : "Your USDC will be swapped automatically into the asset you choose.",
+    "selectWithdrawCurrencyTitle" : "Selecionar o ativo para o qual transferir",
+    "selectWithdrawCurrencyDescription" : "Seus USDC serão trocados automaticamente pelo ativo de sua escolha.",
     "accountCount_one" : "{{count}} conta",
     "accountCount_other" : "{{count}} contas",
     "accountsAdded" : {
@@ -9625,6 +9744,74 @@
     "description" : "Esta conta está associada ao trading de perpétuos. Esta conta não é compatível com ações transacionais",
     "cta" : "Abrir perpétuos"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "Preparando a assinatura",
+      "title" : "Confirme a propriedade da conta em sua {{productName}}",
+      "description" : "Siga as instruções exibidas na sua Tela Touch Segura.",
+      "settingUp" : {
+        "title" : "Configurando sua conta de trading"
+      },
+      "setUp" : {
+        "created" : "Conta de trading criada",
+        "found" : "Conta de trading encontrada",
+        "description" : "Sua conta de trading está pronta para uso.",
+        "continue" : "Continuar"
+      },
+      "mismatch" : {
+        "title" : "Esta assinatura não corresponde à conta",
+        "description" : "Conecte a Ledger que contém esta conta, com a mesma passphrase caso utilize uma, e tente novamente."
+      },
+      "setupFailed" : {
+        "title" : "Não foi possível configurar sua conta de trading",
+        "failed-deploy" : "A MoonPay não conseguiu implantar sua carteira de trading.",
+        "failed-permission" : "A MoonPay não conseguiu configurar as permissões da sua carteira de trading.",
+        "timeout" : "A configuração está demorando muito.",
+        "unavailable" : "Não foi possível estabelecer conexão com a MoonPay.",
+        "unknown" : "Algo deu errado ao configurar."
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "Trade on future events",
+        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items" : {
+          "polymarket" : {
+            "title" : "Access Polymarket in Ledger Wallet",
+            "subtitle" : "Now available in Ledger Wallet"
+          },
+          "markets" : {
+            "title" : "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle" : "And more, discover all markets"
+          },
+          "clearSign" : {
+            "title" : "Clear sign all",
+            "subtitle" : "You define and clear sign the amount to trade"
+          }
+        },
+        "discover" : "Discover predictions",
+        "learnMore" : "Learn more"
+      },
+      "terms" : {
+        "title" : "Terms & Conditions",
+        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta" : "Agree and Continue"
+      },
+      "consent" : {
+        "title" : "Clear signed trade on Polymarket via MoonPay",
+        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets" : {
+          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta" : "Continue",
+        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+      }
+    }
+  },
   "portfolio" : {
     "title" : "Início",
     "today" : "Hoje",
@@ -9650,11 +9837,15 @@
   "servicesEntryPoints" : {
     "perps" : {
       "title" : "Perpétuos",
-      "description" : "Invista com alavancagem"
+      "description" : "Investir com alavancagem"
     },
     "borrow" : {
       "title" : "Empréstimos",
       "description" : "Pegar stablecoin emprestado"
+    },
+    "predictions" : {
+      "title" : "Previsões",
+      "description" : "Posição sobre o futuro"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10303,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "Tempo da assinatura",
-          "description" : "Seu autenticador Ledger aprova cada registro utilizado por esta transação. Enviar mais a partir do seu saldo privado pode utilizar mais registros e levar mais tempo."
+          "label" : "Tempo est.",
+          "description" : "Enviar mais a partir do seu saldo privado pode utilizar mais registros, e cada um deles adiciona tempo de processamento. Quantias maiores levam mais tempo para serem confirmadas."
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10737,7 @@
       "copied" : "Copiado",
       "edit" : "Editar",
       "delete" : "Excluir",
+      "share" : "Compartilhar",
       "networkTag" : "Rede {{name}}"
     },
     "detailActions" : {
@@ -10613,13 +10805,13 @@
     "emptyState" : {
       "title" : "Nenhuma atividade ainda",
       "description" : {
-        "receive" : "Comece adicionando fundos por meio de Receber.",
-        "receiveSwap" : "Comece adicionando fundos por meio de Receber ou Trocar.",
-        "receiveBuy" : "Comece adicionando fundos por meio de Receber ou Comprar.",
-        "receiveSwapBuy" : "Comece adicionando fundos por meio de Receber, Trocar ou Comprar.",
-        "swap" : "Comece adicionando fundos por meio do trocar.",
-        "buy" : "Comece adicionando fundos por meio do Comprar.",
-        "swapBuy" : "Comece adicionando fundos por meio de trocar ou comprar."
+        "receive" : "Comece adicionando fundos em Receber.",
+        "receiveSwap" : "Comece adicionando fundos em Receber ou Trocar.",
+        "receiveBuy" : "Comece adicionando fundos em Receber ou Comprar.",
+        "receiveSwapBuy" : "Comece adicionando fundos em Receber, Trocar ou Comprar.",
+        "swap" : "Comece adicionando fundos em trocar.",
+        "buy" : "Comece adicionando fundos em Comprar.",
+        "swapBuy" : "Comece adicionando fundos em trocar ou comprar."
       }
     },
     "assetPicker" : {
@@ -10643,8 +10835,8 @@
       "description" : "Saiba mais sobre a migração ou entre em contato com o suporte caso precise de assistência."
     },
     "willBeDeprecated" : {
-      "title" : "{{currencyName}} não será compatível a partir de {{date}}",
-      "description" : "Ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
+      "title" : "{{currencyName}} não será mais suportada a partir de {{date}}",
+      "description" : "O ativo ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
     },
     "robinhoodDisclaimer" : {
       "title" : "O saldo total não inclui dividendos ou desdobramentos de ações."
@@ -10655,11 +10847,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "Procurando o desempenho de sua conta?",
+      "description" : "Todos os dados de seu desempenho agora estão na página de Métricas.",
+      "cta" : "Ir para Métricas",
+      "dismiss" : "Dispensar introdução de Métricas"
+    },
     "header" : {
       "settings" : "Configurações de conta"
     },
     "assets" : {
-      "title" : "Ativos"
+      "title" : "Ativos",
+      "add" : "Adicionar"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11385,14 @@
     "depositDetailTitle" : "Detalhes do depósito",
     "depositAmountLabel" : "Quantia do depósito",
     "depositReceiveLabel" : "Conta para receber",
-    "depositCTA" : "Depositar"
+    "depositCTA" : "Depositar",
+    "withdrawTitle" : "Sacar via SwapKit",
+    "withdrawSubtitle" : "Nosso parceiro SwapKit gerencia sua troca e saque em uma transação — tudo protegido pelo seu dispositivo Ledger.",
+    "withdrawDetailTitle" : "Detalhes do saque",
+    "withdrawReceiveLabel" : "Conta para receber",
+    "networkFeesLabel" : "Taxas de rede",
+    "totalDebitedLabel" : "Total debitado",
+    "withdrawCTA" : "Sacar"
   },
   "perpsDeposit" : {
     "title" : "Depositar",
@@ -11205,22 +11411,25 @@
     "a11yTitle" : "Selecione uma ação"
   },
   "perpsWithdraw" : {
-    "title" : "Withdraw",
-    "review" : "Review",
-    "estimatedAmount" : "Withdraw ~{{value}}",
-    "inputSubText" : "Swap and withdraw via {{provider}}",
-    "selectCurrencyTitle" : "Withdraw to {{currencyTicker}}",
+    "title" : "Sacar",
+    "review" : "Avaliação",
+    "estimatedAmount" : "Sacar ~{{value}}",
+    "inputSubText" : "Trocar e sacar via {{provider}}",
+    "selectCurrencyTitle" : "Sacar para {{currencyTicker}}",
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
-    "selectCurrencyNoAccount" : "No account",
+    "selectCurrencyNoAccount" : "Nenhuma conta",
     "formErrors" : {
-      "insufficientBalance" : "Insufficient balance",
-      "minimumAmount" : "The minimum withdrawal is {{minAmount}} USDC.",
-      "minimumAmountUnknown" : "This amount is too low to withdraw.",
-      "lowLiquidity" : "This asset is temporarily unavailable. Try again later or choose another asset.",
-      "addressScreening" : "This withdrawal can’t be processed to this account.",
-      "quoteUnavailable" : "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
-      "currenciesUnavailable" : "We can’t load the assets you can withdraw to. Try again later."
+      "insufficientBalance" : "Saldo insuficiente",
+      "minimumAmount" : "O saque mínimo é de {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Esta quantia é muito baixa para realizar o saque.",
+      "lowLiquidity" : "Este ativo está temporariamente indisponível. Tente novamente mais tarde ou escolha outro ativo.",
+      "addressScreening" : "Este saque não pode ser processado para esta conta.",
+      "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}. Tente com um ativo diferente ou volte mais tarde.",
+      "currenciesUnavailable" : "Não foi possível carregar os ativos para os quais realizar o saque. Tente novamente mais tarde."
     }
+  },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "Assinatura de saque"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Assinatura de depósito",
@@ -11235,5 +11444,13 @@
     "dialogTitle" : "Detalhes da transação",
     "title" : "Fundos Perpétuos",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "accountAnalytics" : {
+    "assets" : "Filtro de ativos",
+    "accounts" : "Filtro de conta",
+    "allAssets" : "Todos os ativos",
+    "allAccounts" : "Todas as contas",
+    "error" : "Não foi possível carregar as métricas. Tente novamente.",
+    "unavailable" : "Os dados não estão disponíveis para esta seleção."
   }
 }

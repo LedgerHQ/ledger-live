@@ -9,7 +9,7 @@ import {
   FeeNotLoaded,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isValidAddress } from "../common";
 import type { PolkadotContext } from "../config";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
@@ -261,6 +261,7 @@ export const buildGetTransactionStatus =
             config,
             transaction.validators || [],
             account.currency.id,
+            account.polkadotResources?.nominations?.map(nomination => nomination.address) ?? [],
           );
 
           if (notValidators.length) {

@@ -1,18 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { iconDefaults } from "@ledgerhq/coin-icon/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const iconConfig: Record<string, ConfigInfo> = {
-  config_currency_icon: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "ICON",
-      unit: { name: "ICX", code: "ICX", magnitude: 18 },
-    },
-  },
-};
+export const iconConfig = currencyDefaultsToLiveConfig(iconDefaults);

@@ -3,7 +3,7 @@ import type { RefObject } from "react";
 import { render } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
-import type { BorrowWebviewInputs } from "../useBorrowLiveAppViewModel";
+import type { LiveAppWebviewInputs } from "LLM/hooks/useLiveAppWebviewInputs";
 import { BorrowLiveAppView } from "../index";
 
 jest.mock("LLM/features/Borrow/components/BorrowWebView", () => ({
@@ -20,7 +20,7 @@ const mockManifest = {
   url: "https://borrow.example.com",
 } as unknown as LiveAppManifest;
 
-const defaultInputs: BorrowWebviewInputs = {
+const defaultInputs: LiveAppWebviewInputs = {
   devMode: "false",
   theme: "dark",
   lang: "en",
@@ -29,6 +29,7 @@ const defaultInputs: BorrowWebviewInputs = {
   currencyTicker: "USD",
   OS: "ios",
   platform: "LLM",
+  discreetMode: "false",
   safeAreaTop: "0",
   safeAreaBottom: "0",
   safeAreaLeft: "0",

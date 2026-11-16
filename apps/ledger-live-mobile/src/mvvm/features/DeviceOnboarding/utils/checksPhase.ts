@@ -28,10 +28,11 @@ const successExitStates = new Set(["syncOffer", "done"]);
 export function toChecksScreenState(
   machineState: string | null,
   checksPaused: boolean,
-  onboardedOnEntry = false,
+  onboardedOnEntry: boolean | null = null,
 ): ChecksScreenState | null {
   if (machineState === "awaitingStart") return "idle";
-  if (onboardedOnEntry && machineState !== null && successExitStates.has(machineState)) {
+  if (machineState === "done" && onboardedOnEntry === false) return "succeeded";
+  if (onboardedOnEntry === true && machineState !== null && successExitStates.has(machineState)) {
     return "succeeded";
   }
   if (!machineState?.startsWith("checks.")) return null;

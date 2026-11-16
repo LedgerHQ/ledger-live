@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.25.0",
+  "version": "1.26.0",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",
@@ -125,7 +125,6 @@
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -135,10 +134,8 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bs58check": "catalog:",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",

@@ -106,7 +106,7 @@ describe("the layer table", () => {
       expect(
         fs.existsSync(path.join(WORKSPACE_ROOT, "support/tsconfig", `${shape.tsconfig}.json`)),
       ).toBe(true);
-      const preset = require(path.join(WORKSPACE_ROOT, "support/jest", shape.jest.preset));
+      const preset = require(`@support/jest/${shape.jest.preset}`);
       expect(typeof preset[shape.jest.factory]).toBe("function");
     },
   );
@@ -130,7 +130,6 @@ describe.each(PAIRS)("a %s package on %s", (layer, platform) => {
         "README.md",
         "jest.config.js",
         "package.json",
-        "project.json",
         "tsconfig.json",
         ...(dual ? ["tsconfig.native.json", "tsconfig.web.json"] : []),
         "src/index.ts",
@@ -172,6 +171,9 @@ describe.each(PAIRS)("a %s package on %s", (layer, platform) => {
       expect(devDependencies[tool]).toBe("catalog:");
     }
     expect(devDependencies["@support/jest"]).toBe("workspace:*");
+    expect(devDependencies["@support/lint"]).toBe(
+      layer === "feature-flow" ? "workspace:*" : undefined,
+    );
     for (const version of Object.values(devDependencies)) {
       expect(["catalog:", "workspace:*"]).toContain(version);
     }
@@ -215,13 +217,6 @@ describe.each(PAIRS)("a %s package on %s", (layer, platform) => {
       "> **Status: UNSTABLE**. New package, in active development.",
     ]);
     expect(readme).toContain("TODO: one line on what this package owns.");
-  });
-
-  it("writes a project.json with a no-op build", () => {
-    expect(readJson(tree, `${projectRoot}/project.json`)).toEqual({
-      name: packageName,
-      targets: { build: { executor: "nx:noop" } },
-    });
   });
 
   it("keeps the barrels pure and private code in internals", () => {

@@ -8,12 +8,18 @@ import {
   BALANCE_HISTORY_RANGES,
   BalanceHistoryRangeSchema,
   DEFAULT_BALANCE_HISTORY_RANGE,
+  type AccountBalanceHistoryQuery,
   type AssetBalanceHistory,
   type BalanceHistoryRange,
   type WithAccountBalanceHistories,
 } from "@domain/entity-account-balance-history";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  FiatCurrencyTickerSchema,
+  findFiatCurrencyByTicker,
+  type FiatCurrencyTicker,
+} from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountBalanceHistoryToolProps = Extract<
@@ -28,9 +34,31 @@ type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
-export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolProps {
+/** The points valued in `ticker`, and the last one formatted in it. */
+function countervaluesOf(points: AssetBalanceHistory["points"], ticker: FiatCurrencyTicker) {
+  const valued = points.flatMap(point => {
+    const value = point.countervalues?.[ticker];
+    return value === undefined ? [] : [value];
+  });
+  const unit = findFiatCurrencyByTicker(ticker)?.units[0];
+  const last = valued.at(-1);
+  return {
+    valuedCount: valued.length,
+    lastCountervalue: unit && last !== undefined ? formatAmount(unit, last) : last,
+    countervalues: valued.map(Number),
+  };
+}
+
+/** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
+export function useAccountBalanceHistoryToolProps(fiat: string): AccountBalanceHistoryToolProps {
   const dispatch = useDispatch<Dispatch>();
   const [range, setRange] = useState<BalanceHistoryRange>(DEFAULT_BALANCE_HISTORY_RANGE);
+  const [countervalue, setCountervalue] = useState(false);
+  const ticker = countervalue ? FiatCurrencyTickerSchema.safeParse(fiat).data : undefined;
+  const query = useMemo<AccountBalanceHistoryQuery>(
+    () => (ticker ? { range, countervalue: ticker } : { range }),
+    [range, ticker],
+  );
   const entries = useSelector(selectAccountEntries);
   const histories = useSelector((state: State) => state.accountBalanceHistories);
   const statuses = useSelector((state: State) => state.accountData.balanceHistory);
@@ -54,8 +82,8 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
 
   const read = useCallback(
     (descriptor: AccountDescriptor) =>
-      dispatch(fetchAccountData("balanceHistory", descriptor, { maxAge: 0, query: { range } })),
-    [dispatch, range],
+      dispatch(fetchAccountData("balanceHistory", descriptor, { maxAge: 0, query })),
+    [dispatch, query],
   );
 
   const onRead = useCallback(
@@ -86,10 +114,11 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
         firstBalance: first && formatAmount(unit, first.balance),
         lastBalance: last && formatAmount(unit, last.balance),
         values: points.map(point => Number(point.balance)),
+        ...(ticker ? countervaluesOf(points, ticker) : {}),
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID]?.[accountDataQueryKey({ range })];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey(query)];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
@@ -100,7 +129,17 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
         series: histories[accountUUID]?.[range]?.series.map(toSeries),
       };
     });
-  }, [entries, statuses, histories, range, unitOf]);
+  }, [entries, statuses, histories, range, query, ticker, unitOf]);
 
-  return { ranges: BALANCE_HISTORY_RANGES, range, onRangeChange, accounts, onRead, onReadAll };
+  return {
+    ranges: BALANCE_HISTORY_RANGES,
+    range,
+    onRangeChange,
+    accounts,
+    onRead,
+    onReadAll,
+    fiat,
+    countervalue,
+    onCountervalueChange: setCountervalue,
+  };
 }

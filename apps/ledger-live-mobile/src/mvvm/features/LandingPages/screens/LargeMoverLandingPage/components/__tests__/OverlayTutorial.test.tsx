@@ -4,10 +4,7 @@ import { LargeMoverLandingPage } from "../..";
 import { ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import { Text, View } from "react-native";
-import {
-  InitialRange,
-  LandingPagesNavigatorParamList,
-} from "~/components/RootNavigator/types/LandingPagesNavigator";
+import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { mockChartData } from "../../fixtures/currency";
@@ -57,7 +54,7 @@ const mockRoute = {
   name: ScreenName.LargeMoverLandingPage,
   params: {
     ledgerIds: "bitcoin,ethereum",
-    initialRange: InitialRange.Day,
+    initialRange: "day",
   },
 } as RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>;
 

@@ -1,4 +1,12 @@
 {
   "extends": "@support/tsconfig/node",
-  "include": ["index.js", "mocks/**/*.js", "setup/**/*.js"]
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [
+    "index.ts",
+    "resolver.native.ts",
+    "setup/**/*.cts",
+    "setup/**/*.ts"
+  ]
 }

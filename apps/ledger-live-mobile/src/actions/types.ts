@@ -1,8 +1,6 @@
-import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, AccountUserData, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
-import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
@@ -26,7 +24,6 @@ import type {
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
-import type { UnknownAction } from "redux";
 import type {
   BrazeContentCard,
   CategoryContentCard,
@@ -41,7 +38,6 @@ export enum AccountsActionTypes {
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
-  CLEAN_CACHE = "CLEAN_CACHE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
@@ -97,7 +93,7 @@ export enum BleActionTypes {
   BLE_REMOVE_DEVICE = "BLE_REMOVE_DEVICE",
   BLE_REMOVE_DEVICES = "BLE_REMOVE_DEVICES",
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
-  BLE_UPDATE_DEVICE = "BLE_UPDATE_DEVICE",
+  BLE_UPSERT_DEVICE = "BLE_UPSERT_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -106,14 +102,14 @@ export enum BleActionTypes {
 export type BleRemoveKnownDevicePayload = string;
 export type BleRemoveKnownDevicesPayload = string[];
 export type BleAddKnownDevicePayload = DeviceLike;
-export type BleUpdateKnownDevicePayload = DeviceLike;
+export type BleUpsertKnownDevicePayload = DeviceLike;
 export type BleImportBlePayload = BleState;
 export type BleSaveDeviceNamePayload = { deviceId: string; name: string };
 export type BlePayload =
   | BleRemoveKnownDevicePayload
   | BleRemoveKnownDevicesPayload
   | BleAddKnownDevicePayload
-  | BleUpdateKnownDevicePayload
+  | BleUpsertKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
 
@@ -279,11 +275,11 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
+  SET_MOCK_SERVER_SETTINGS = "SET_MOCK_SERVER_SETTINGS",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
-  SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -297,7 +293,7 @@ export enum SettingsActionTypes {
   SET_HAS_CLICKED_RECOVER = "SET_HAS_CLICKED_RECOVER",
 }
 
-export type SettingsImportPayload = Partial<SettingsState>;
+export type SettingsImportPayload = Partial<SettingsState> | null | undefined;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;
@@ -340,7 +336,7 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
-export type SettingsSetLastConnectedDevicePayload = Device;
+export type SettingsSetLastConnectedDevicePayload = Device | null;
 export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
@@ -373,6 +369,7 @@ export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOn
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
+export type SettingsSetMockServerSettingsPayload = SettingsState["mockServer"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
   SettingsState["hasDismissedContactsFeatureIntroduction"];
@@ -387,8 +384,6 @@ export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
-export type SettingsSetSelectedTabPortfolioAssetsPayload =
-  SettingsState["selectedTabPortfolioAssets"];
 export type SettingsSetHasClickedRecoverPayload = SettingsState["hasClickedRecover"];
 
 export type SettingsPayload =
@@ -438,12 +433,12 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
+  | SettingsSetMockServerSettingsPayload
   | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
-  | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetHasDismissedContactsFeatureIntroductionPayload
@@ -460,14 +455,6 @@ export enum WalletConnectActionTypes {
 
 export type WalletConnectSetUriPayload = WalletConnectState["uri"] | void;
 export type WalletConnectPayload = WalletConnectSetUriPayload;
-
-// === SWAP ACTIONS ==
-export enum SwapActionTypes {
-  UPDATE_PROVIDERS = "UPDATE_PROVIDERS",
-  UPDATE_TRANSACTION = "UPDATE_TRANSACTION",
-  UPDATE_RATE = "UPDATE_RATE",
-  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
-}
 
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
@@ -520,27 +507,15 @@ export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
-  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
   MARKET_SET_HIDE_TRANSACTIONS_ON_CHART = "MARKET_SET_HIDE_TRANSACTIONS_ON_CHART",
   MARKET_IMPORT = "MARKET_IMPORT",
 }
 
-export type MarketSetMarketFilterByStarredCurrenciesPayload =
-  MarketState["marketFilterByStarredCurrencies"];
-export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
-export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
 export type MarketSetHideTransactionsOnChartPayload = MarketState["hideTransactionsOnChart"];
 
 export type MarketImportPayload = Partial<MarketState>;
 
-export type MarketPayload =
-  | MarketSetMarketFilterByStarredCurrenciesPayload
-  | MarketSetMarketRequestParamsPayload
-  | MarketSetCurrentPagePayload
-  | MarketSetHideTransactionsOnChartPayload
-  | MarketImportPayload;
+export type MarketPayload = MarketSetHideTransactionsOnChartPayload | MarketImportPayload;
 
 // === LARGE MOVER ACTIONS ===
 export enum LargeMoverActionTypes {
@@ -589,20 +564,3 @@ export type AuthPayload =
   | AuthSetLockedPayload
   | AuthSetBiometricsErrorPayload
   | AuthSetAuthModalOpenPayload;
-
-// === PAYLOADS ===
-
-export type ActionsPayload =
-  | Action<AccountsPayload>
-  | Action<AppStatePayload>
-  | Action<AuthPayload>
-  | Action<BlePayload>
-  | Action<NotificationsPayload>
-  | Action<RatingsPayload>
-  | Action<SettingsPayload>
-  | Action<WalletConnectPayload>
-  | Action<PostOnboardingPayload>
-  | Action<ProtectPayload>
-  | Action<EarnPayload>
-  | Action<MarketPayload>
-  | UnknownAction;

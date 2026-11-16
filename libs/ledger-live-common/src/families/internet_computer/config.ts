@@ -1,15 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { internet_computerDefaults } from "@ledgerhq/coin-internet_computer/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const internetComputerConfig: Record<string, ConfigInfo> = {
-  config_currency_internet_computer: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Internet Computer",
-      unit: { name: "ICP", code: "ICP", magnitude: 8 },
-    },
-  },
-};
+export const internetComputerConfig = currencyDefaultsToLiveConfig(internet_computerDefaults);

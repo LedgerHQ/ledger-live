@@ -41,7 +41,7 @@ to validate, so `markets` is excluded from the response-validation work.
 
 ### Accepted debt
 
-`dadaIdToMarketId()` and the market item type are **copied** from
+The market item type is **copied** from
 `libs/ledger-live-common/src/market`, not imported: a `domain/*` package must not import legacy
 `libs/*`. Since every field is optional, future divergence from the original will **never** produce
 a type error. Revisit when a real market entity exists.

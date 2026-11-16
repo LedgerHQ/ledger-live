@@ -3,9 +3,9 @@ import { render as renderWithoutI18n, screen } from "@testing-library/react-nati
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { DEFAULT_ME_CONTACT_NAME } from "@domain/entity-contact";
 import { mockContact } from "@domain/entity-contact/schema.mock";
-import { ContactsView } from "../ContactsView.native";
+import { ContactsView } from "../ContactsView";
 import { CONTACTS_RESOURCES } from "./i18n";
-import type { ContactsViewNativeProps } from "../../../types";
+import type { ContactsViewNativeProps } from "../ContactsView";
 
 const I18nWrapper = ({ children }: Readonly<{ children: React.ReactNode }>) => (
   <I18nTestProvider resources={CONTACTS_RESOURCES}>{children}</I18nTestProvider>

@@ -3,7 +3,7 @@ import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors"
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";

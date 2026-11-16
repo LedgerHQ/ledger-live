@@ -26,7 +26,7 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.chart.selectedRange).toBe("1w");
     expect(result.current.header.hoveredBalance).toBeNull();
     expect(result.current.header.scrubDateLabel).toBeUndefined();
-    expect(result.current.header.isBalanceAvailable).toBe(true);
+    expect(result.current.header.isVariationAvailable).toBe(true);
     expect(result.current.chart.showScrubberTooltip).toBe(false);
   });
 

@@ -14,7 +14,6 @@ import Nyx from "./Nyx";
 import Osmosis from "./Osmosis";
 import Persistence from "./Persistence";
 import SecretNetwork from "./SecretNetwork";
-import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Xion from "./Xion";
 import CosmosBase from "./cosmosBase";
@@ -49,8 +48,6 @@ function createChain(currencyId: string): CosmosBase {
       return new Persistence();
     case "secret_network":
       return new SecretNetwork();
-    case "stargaze":
-      return new Stargaze();
     case "stride":
       return new Stride();
     case "coreum":

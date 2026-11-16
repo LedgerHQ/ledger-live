@@ -1,10 +1,7 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  withOperationCountervalues,
-  type OperationCountervaluesHost,
-} from "@domain/api-market-countervalues";
+import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
 import {
   accountsSlice,
   connectAccountsStore,
@@ -19,6 +16,7 @@ import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
@@ -76,7 +74,7 @@ export function accountDataSources(
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
-  const countervalues: OperationCountervaluesHost = {
+  const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
     findCurrency: assetId =>
       findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
@@ -95,11 +93,11 @@ export function accountDataSources(
     blacklistedTokenIds,
   };
   return tapped([
-    withOperationCountervalues(
+    withCountervalues(
       createCoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
       countervalues,
     ),
-    withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+    withCountervalues(createFullSyncSource(fullSyncHost), countervalues),
   ]);
 }
 
@@ -108,6 +106,6 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
   return connectAccountsStore(store, {
     selectLegacyAccounts: accountsSelector,
     toDescriptor: fromLegacyAccount,
-    onError: error => console.warn("Account left out of the accounts slice", error),
+    onError: error => logger.critical(error, "Account left out of the accounts slice"),
   });
 }

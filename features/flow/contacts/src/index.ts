@@ -1,5 +1,5 @@
-export * from "./contactsListFacade.web";
-export * from "./contactsViewFacade.web";
+export * from "./ContactsView";
+export type * from "./ContactsView.types";
 export * from "./analytics";
 export * from "./components";
 export * from "./hooks";

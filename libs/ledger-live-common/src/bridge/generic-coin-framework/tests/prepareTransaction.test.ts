@@ -120,6 +120,38 @@ describe("genericPrepareTransaction", () => {
     expect(result).toBe(baseTransaction);
   });
 
+  it("fills the memo the estimation returns on a transaction without one", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: baseTransaction.fees,
+        parameters: { memo: "Ledger Live" },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, baseTransaction);
+
+    expect(result).toEqual(expect.objectContaining({ memo: "Ledger Live" }));
+    expect(result).not.toBe(baseTransaction);
+  });
+
+  it("keeps an existing memo and the reference over repeated preparations", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(700),
+        parameters: { memo: "Ledger Live" },
+      }),
+    });
+    const transaction = { ...baseTransaction, memo: "my memo" };
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const first = await prepareTransaction(account, transaction);
+    const second = await prepareTransaction(account, first);
+
+    expect(first).toEqual(expect.objectContaining({ memo: "my memo" }));
+    expect(second).toBe(first);
+  });
+
   it("sets fee if original fees are undefined", async () => {
     const newFee = new BigNumber(1234);
     (getCoinModuleApi as jest.Mock).mockReturnValue({

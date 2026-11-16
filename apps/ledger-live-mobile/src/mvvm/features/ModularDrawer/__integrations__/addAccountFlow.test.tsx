@@ -38,6 +38,7 @@ jest.mock("@ledgerhq/live-config/LiveConfig", () => {
         }
         return undefined;
       }),
+      setAllOverrides: jest.fn(),
       setConfig: jest.fn(),
       setProvider: jest.fn(),
       setAppinfo: jest.fn(),

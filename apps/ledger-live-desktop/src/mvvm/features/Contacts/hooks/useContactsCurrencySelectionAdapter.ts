@@ -1,10 +1,9 @@
 import { useMemo } from "react";
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type {
   AddAddressCurrencySelection,
   ContactsCurrencySelectionPort,
 } from "@features/flow-contacts-add-address";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { type CryptoOrTokenCurrency, CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   type OpenCurrencyFlow,
@@ -19,7 +18,7 @@ const CONTACTS_CURRENCY_SELECTION_CONFIGURATION: EnhancedModularDrawerConfigurat
 function resolveContactCurrencySelection(
   currency: CryptoOrTokenCurrency | null,
 ): AddAddressCurrencySelection | null {
-  const parsedCurrencyId = ContactCurrencyIdSchema.safeParse(currency?.id);
+  const parsedCurrencyId = CryptoOrTokenCurrencyIdSchema.safeParse(currency?.id);
   return parsedCurrencyId.success && currency
     ? {
         currencyId: parsedCurrencyId.data,

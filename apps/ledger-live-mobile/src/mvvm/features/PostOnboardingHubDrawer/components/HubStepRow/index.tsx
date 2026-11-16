@@ -6,14 +6,23 @@ export type HubStepRowProps = Readonly<{
   leadingIcon: React.ReactNode;
   title: string;
   description?: string;
+  descriptionTestID?: string;
   tag?: React.ReactNode;
   trailing?: React.ReactNode;
   opacity?: number;
 }>;
 
 export function HubStepRow(props: HubStepRowProps) {
-  const { leadingIcon, title, description, tag, trailing, opacity, hasDescription } =
-    useHubStepRowViewModel(props);
+  const {
+    leadingIcon,
+    title,
+    description,
+    descriptionTestID,
+    tag,
+    trailing,
+    opacity,
+    hasDescription,
+  } = useHubStepRowViewModel(props);
 
   return (
     <Box
@@ -36,7 +45,11 @@ export function HubStepRow(props: HubStepRowProps) {
           {tag}
         </Box>
         {hasDescription ? (
-          <Text typography="body3" lx={{ color: "muted", marginTop: "s4" }}>
+          <Text
+            typography="body3"
+            lx={{ color: "muted", marginTop: "s4" }}
+            testID={descriptionTestID}
+          >
             {description}
           </Text>
         ) : null}

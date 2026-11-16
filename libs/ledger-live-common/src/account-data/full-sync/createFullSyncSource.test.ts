@@ -1,9 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
 import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
@@ -87,9 +87,33 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("reads where the synced account receives", async () => {
+    const synced = { ...account, freshAddress: "0x0000000000000000000000000000000000000002" };
+    await expect(source(account, synced).read?.receive?.(target, undefined)).resolves.toMatchObject(
+      { address: "0x0000000000000000000000000000000000000002" },
+    );
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads the status of the synced account", async () => {
+    const synced = { ...account, used: false, operationsCount: 0, balance: new BigNumber(0) };
+    await expect(
+      source(account, { ...synced, subAccounts: [] }).read?.accountStatus?.(target, undefined),
+    ).resolves.toEqual({ used: false, gate: null });
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("answers the native coin of the account without syncing it", async () => {
+    const assetId = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
+    await expect(
+      source(account, account).read?.assetStatus?.(target, { assetId }),
+    ).resolves.toEqual({ assetId, status: { gate: null } });
+    expect(syncLegacyAccount).not.toHaveBeenCalled();
+  });
+
   it("applies the asset filter of the query to the operations", async () => {
     const synced = { ...account, pendingOperations: [], subAccounts: [] };
-    const filterAsset = BalanceAssetIdSchema.parse("ethereum/erc20/usd_tether__erc20_");
+    const filterAsset = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_");
     const page = await source(account, synced).read?.operations?.(target, { filterAsset });
     expect(page?.operations).toEqual([]);
   });

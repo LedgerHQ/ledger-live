@@ -1,6 +1,6 @@
 import { resolveServices } from "./resolveServices";
 
-const allAvailable = { perps: true, borrow: true };
+const allAvailable = { perps: true, borrow: true, predictions: true };
 
 describe("resolveServices", () => {
   it("should keep the order set by the flag", () => {
@@ -8,9 +8,9 @@ describe("resolveServices", () => {
   });
 
   it("should drop services that are not available", () => {
-    expect(resolveServices(["perps", "borrow"], { perps: false, borrow: true })).toEqual([
-      "borrow",
-    ]);
+    expect(
+      resolveServices(["perps", "borrow"], { perps: false, borrow: true, predictions: false }),
+    ).toEqual(["borrow"]);
   });
 
   it("should drop unknown ids coming from the remote config", () => {

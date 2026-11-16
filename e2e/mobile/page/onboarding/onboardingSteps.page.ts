@@ -1,69 +1,56 @@
 import { Step } from "jest-allure2-reporter/api";
 import { isIos } from "@e2e/helpers/commonHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class OnboardingStepsPage {
-  getStartedButtonId = "onboarding-getStarted-button";
-  acceptAnalyticsButtonId = "enabled-accept-analytics-button";
-  recoveryPhrase = "onboarding-useCase-recoveryPhrase";
-  setupLedger = "onboarding-setupLedger";
-  accessWallet = "onboarding-accessWallet";
-  currentSelectedLanguageId = "current-selected-language";
-  deviceCardBaseId = "onboarding-device-selection";
-  scrollListContainerId = "onboarding-view-scroll-list-container";
-  welcomeProgressBarId = "welcome-progress-bar";
-
-  deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
-  deviceCardTitleId = (title: string) => `${this.deviceCardId(title)}-title`;
-
-  onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
-  acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
-  setupLedgerButton = () => getElementById(this.setupLedger);
-  accessWalletButton = () => getElementById(this.accessWallet);
-  deviceCardHeader = (title: string) => getElementById(`${this.deviceCardId(title)}-header`);
-  deviceCardText = (title: string) => getElementById(`${this.deviceCardId(title)}-text`);
-  deviceCardImage = (title: string) => getElementById(`${this.deviceCardId(title)}-image`);
+  private readonly getStartedButton = byId("onboarding-getStarted-button");
+  private readonly acceptAnalyticsButton = byId("enabled-accept-analytics-button");
+  private readonly setupLedgerButton = byId("onboarding-setupLedger");
+  private readonly accessWalletButton = byId("onboarding-accessWallet");
+  private readonly scrollListContainer = byId("onboarding-view-scroll-list-container");
+  private readonly welcomeProgressBar = (index: number) => byId("welcome-progress-bar", index);
+  private readonly deviceCard = (deviceId: string) =>
+    byId(`onboarding-device-selection-${deviceId}`);
+  private readonly deviceCardPart = (
+    deviceId: string,
+    part: "header" | "text" | "image" | "title",
+  ) => byId(`onboarding-device-selection-${deviceId}-${part}`);
 
   @Step("Wait for onboarding to load")
   async waitForOnboardingToLoad(): Promise<void> {
-    await waitForElementById(this.getStartedButtonId);
+    await this.getStartedButton.waitVisible();
   }
 
   @Step("Expect 3 progress bars to be visible")
   async expectProgressBarToBeVisible(): Promise<void> {
     for (let i = 0; i < 3; i++) {
-      await detoxExpect(getElementById(this.welcomeProgressBarId, i)).toBeVisible();
+      await this.welcomeProgressBar(i).expectVisible();
     }
   }
 
   @Step("Tap on Get Started button")
   async tapOnGetStartedButton(): Promise<void> {
-    await tapById(this.getStartedButtonId);
+    await this.getStartedButton.tap();
   }
 
   @Step("Expect the 'Set up your Ledger' option not to be visible")
   async expectSetupLedgerOptionNotVisible(): Promise<void> {
-    await detoxExpect(this.setupLedgerButton()).not.toBeVisible();
+    await this.setupLedgerButton.expectNotVisible();
   }
 
   @Step("Expect 'Get Started' button to be visible")
   async expectGetStartedButtonToBeVisible(): Promise<void> {
-    await detoxExpect(this.onboardingGetStartedButton()).toBeVisible();
-  }
-
-  @Step("Expect current selected language {{{0}}}")
-  async expectCurrentSelectedLanguageToBe(language: string): Promise<void> {
-    const text = await getTextOfElement(this.currentSelectedLanguageId);
-    jestExpect(text).toContain(language);
+    await this.getStartedButton.expectVisible();
   }
 
   @Step("Select starting option {{{0}}}")
   async selectStartingOption(option: "setupLedger" | "accessWallet"): Promise<void> {
     switch (option) {
       case "setupLedger":
-        await tapByElement(this.setupLedgerButton());
+        await this.setupLedgerButton.tap();
         break;
       case "accessWallet":
-        await tapByElement(this.accessWalletButton());
+        await this.accessWalletButton.tap();
         break;
     }
   }
@@ -79,44 +66,27 @@ export default class OnboardingStepsPage {
     ];
     for (const device of devices) {
       if (device.id === "nanoS" || device.id === "nanoSP") {
-        await scrollToId(this.deviceCardId(device.id), this.scrollListContainerId, 100, "down");
+        await this.deviceCard(device.id).scrollTo(this.scrollListContainer, { pixels: 100 });
       }
-      await detoxExpect(getElementById(this.deviceCardId(device.id))).toBeVisible();
-      await detoxExpect(this.deviceCardHeader(device.id)).toHaveText("Ledger");
-      const titleId = await getTextOfElement(this.deviceCardTitleId(device.id));
-      const normalizedTitle = titleId
-        .replaceAll(/\s+/g, " ")
-        .replaceAll(/\u200B/g, "")
-        .trim();
-      jestExpect(normalizedTitle).toBe(device.name);
-      await detoxExpect(this.deviceCardImage(device.id)).toBeVisible();
+      await this.deviceCard(device.id).expectVisible();
+      await this.deviceCardPart(device.id, "header").expectText("Ledger");
+      await this.deviceCardPart(device.id, "title").expectText(device.name, {
+        normaliseWhitespace: true,
+      });
+      await this.deviceCardPart(device.id, "image").expectVisible();
       if (isIos() && (device.name === "Nano S" || device.name === "Nano S Plus")) {
-        await detoxExpect(this.deviceCardText(device.id)).toHaveText("No iPhone compatibility");
+        await this.deviceCardPart(device.id, "text").expectText("No iPhone compatibility");
       }
-    }
-  }
-
-  @Step("Start onboarding")
-  async startOnboarding(): Promise<void> {
-    await waitForElementById(this.getStartedButtonId);
-    const getStarted = this.onboardingGetStartedButton();
-    await tapByElement(getStarted);
-    await waitForElementById(new RegExp(`${this.setupLedger}|${this.acceptAnalyticsButtonId}`));
-    try {
-      await this.acceptAnalytics();
-    } catch {
-      // Analytics prompt not enabled
     }
   }
 
   @Step("Wait for analytics button to be visible")
   async waitForAnalyticsButtonToBeVisible(): Promise<void> {
-    await waitForElementById(this.acceptAnalyticsButtonId);
+    await this.acceptAnalyticsButton.waitVisible();
   }
 
   @Step("Accept analytics")
   async acceptAnalytics(): Promise<void> {
-    const analyticsBtn = this.acceptAnalyticsButton();
-    await tapByElement(analyticsBtn);
+    await this.acceptAnalyticsButton.tap();
   }
 }

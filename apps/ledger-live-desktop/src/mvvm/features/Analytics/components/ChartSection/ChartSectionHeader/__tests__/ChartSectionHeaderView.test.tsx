@@ -9,6 +9,7 @@ const baseViewModel: ChartSectionHeaderViewModel = {
   balance: mockPortfolioBalanceInfo.totalBalance,
   balanceAvailable: true,
   isLoading: false,
+  variationStatus: "ready",
   balanceFormatter: value => ({
     currencyText: "$",
     decimalSeparator: ".",
@@ -39,6 +40,23 @@ describe("ChartSectionHeaderView", () => {
     render(<ChartSectionHeaderView viewModel={{ ...baseViewModel, balanceAvailable: false }} />);
 
     expect(screen.getByTestId("analytics-balance-skeleton")).toBeVisible();
+    expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
+  });
+
+  it("shows a variation skeleton while the variation is loading", () => {
+    render(<ChartSectionHeaderView viewModel={{ ...baseViewModel, variationStatus: "loading" }} />);
+
+    expect(screen.getByTestId("analytics-variation-skeleton")).toBeVisible();
+    expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
+  });
+
+  it("hides the variation when it is unavailable", () => {
+    render(
+      <ChartSectionHeaderView viewModel={{ ...baseViewModel, variationStatus: "unavailable" }} />,
+    );
+
+    expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
+    expect(screen.queryByTestId("analytics-variation-skeleton")).not.toBeInTheDocument();
     expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
   });
 });

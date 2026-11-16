@@ -1,8 +1,8 @@
 import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../wallet";
-import { networkFromCurrencyId } from "../shared/accountDescriptor";
+import { networkOfV0 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
-import { createCommandOutput } from "../output";
+import { createCommandOutput, warnIfTokensSkipped } from "../output";
 import {
   accountOption,
   outputOption,
@@ -29,18 +29,19 @@ export default defineCommand({
       const descriptor = await resolveAccountDescriptor(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkFromCurrencyId(descriptor.currencyId);
+      ctx.network = networkOfV0(descriptor);
       ctx.account = descriptor.id;
       walletCliDebug(`balances: account=${descriptor.id}, output=${output}`);
       const wallet = new WalletAdapter();
 
-      const balances = await out.withActivity(
+      const { balances, skippedTokenIds } = await out.withActivity(
         `Fetching balances for ${ctx.network}…`,
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
       );
       trackBalanceViewed({ network: ctx.network });
       await out.balances(balances);
+      warnIfTokensSkipped(skippedTokenIds);
     });
   },
 });

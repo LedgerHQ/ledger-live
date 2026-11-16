@@ -83,3 +83,150 @@ export type BitcoinCoinConfig = CurrencyConfig & BitcoinConfig;
 
 /** The {@link Context} threaded through the coin-bitcoin bridge (ADR-019). */
 export type BitcoinContext = Context<BitcoinCoinConfig>;
+
+export const bitcoinDefaults = {
+  bitcoin: {
+    transaction: { version: 2, signalsRbf: true },
+    explorerId: "btc",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin",
+    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  bitcoin_cash: {
+    transaction: { additionals: ["bip143"] },
+    addressFormat: "cashaddr",
+    explorerId: "bch",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin Cash",
+    unit: { name: "bitcoin cash", code: "BCH", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  bitcoin_gold: {
+    transaction: { additionals: ["bip143"] },
+    explorerId: "btg",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin Gold",
+    unit: { name: "bitcoin gold", code: "BTG", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  bitcoin_regtest: {
+    transaction: { version: 2, signalsRbf: true },
+    explorerId: "btc_regtest",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin Regtest",
+    unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+    explorer: { url: "http://localhost:9876" },
+  },
+  bitcoin_testnet: {
+    transaction: { version: 2, signalsRbf: true },
+    explorerId: "btc_testnet",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin Testnet",
+    unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  dash: {
+    explorerId: "dash",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Dash",
+    unit: { name: "dash", code: "DASH", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  decred: {
+    transaction: { expiryHeight: true },
+    explorerId: "dcr",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Decred",
+    unit: { name: "decred", code: "DCR", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  digibyte: {
+    explorerId: "dgb",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "DigiByte",
+    unit: { name: "digibyte", code: "DGB", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  dogecoin: {
+    explorerId: "doge",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Dogecoin",
+    unit: { name: "dogecoin", code: "DOGE", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  komodo: {
+    transaction: {
+      expiryHeight: true,
+      extraData: true,
+      interestLockTime: true,
+      additionals: ["sapling"],
+    },
+    explorerId: "kmd",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Komodo",
+    unit: { name: "komodo", code: "KMD", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  litecoin: {
+    explorerId: "ltc",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Litecoin",
+    unit: { name: "litecoin", code: "LTC", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  qtum: {
+    explorerId: "qtum",
+    transaction: { version: 2 },
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Qtum",
+    unit: { name: "qtum", code: "QTUM", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  zencash: {
+    explorerId: "zen",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Horizen",
+    unit: { name: "zencash", code: "ZEN", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+} satisfies Record<string, BitcoinCoinConfig>;

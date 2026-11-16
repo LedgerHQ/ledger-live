@@ -87,7 +87,7 @@ export const overrideInitialState = (state: State): State => ({
 // ── MSW handlers ──
 
 export const concordiumHandlers = [
-  http.put(`${PROXY_URL}/v0/submitCredential/`, () => {
+  http.put(`${PROXY_URL}/v0/submitCredential`, () => {
     return HttpResponse.json({ submissionId: "test-submission-id" });
   }),
 ];

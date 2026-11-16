@@ -66,7 +66,6 @@ const useCryptoViewModel = ({
       openFromAsset({
         currency: asset.currency,
         source: `crypto_${resolvedVariant}_list`,
-        isPlaceholder: asset.isPlaceholder,
         marketId: asset.marketId,
       });
     },

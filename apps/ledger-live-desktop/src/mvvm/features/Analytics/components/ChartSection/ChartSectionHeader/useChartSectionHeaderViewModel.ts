@@ -24,6 +24,7 @@ export function useChartSectionHeaderViewModel({
   scrubSelection,
   chartPrices,
   isLoading,
+  variationStatus = "ready",
 }: ChartSectionHeaderInput): ChartSectionHeaderViewModel {
   const { t } = useTranslation();
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
@@ -80,6 +81,7 @@ export function useChartSectionHeaderViewModel({
     balance,
     balanceAvailable: balanceInfo.isAvailable,
     isLoading: isLoading && !isScrubbing,
+    variationStatus,
     balanceFormatter,
     discreet,
     percentageValue,

@@ -50,7 +50,7 @@ describe("User opens the application after installation", () => {
 
     await app.portfolio.tapMarketBannerTitle();
     await app.market.expectMarketScreenVisible();
-    await app.market.goBackToPortfolio();
+    await app.market.goBack();
     await app.portfolio.expectReadOnlyPortfolioVisible();
 
     await app.portfolio.tapConnectButton();

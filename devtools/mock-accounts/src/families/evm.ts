@@ -15,12 +15,12 @@ const TOKENS: Partial<Record<string, readonly MockToken[]>> = {
 
 /** Ledger Live derivation; the native coin first, then the tokens the account holds. */
 export const evm: MockFamily = {
-  descriptor: (currency, index, random) => ({
+  descriptor: (currency, network, index, random) => ({
     purpose: "mock",
     version: "2",
     type: "address",
-    network: currency.id,
-    address: checksumAddress(randomBytes(random, 20)),
+    network,
+    key: checksumAddress(randomBytes(random, 20)),
     path: `m/44h/${currency.coinType}h/${index}h/0/0`,
   }),
   address: (_currency, random) => checksumAddress(randomBytes(random, 20)),

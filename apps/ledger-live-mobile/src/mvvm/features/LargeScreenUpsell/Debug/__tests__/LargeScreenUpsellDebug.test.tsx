@@ -156,8 +156,8 @@ describe("LargeScreenUpsellDebug", () => {
 
     render(<LargeScreenUpsellDebug />);
 
-    expect(screen.getByText("modal.killThreshold")).toBeVisible();
-    expect(screen.getByText("discount")).toBeVisible();
+    expect(screen.getByLabelText("modal.killThreshold")).toBeVisible();
+    expect(screen.getByLabelText("discount")).toBeVisible();
     fireEvent.press(screen.getAllByText("Apply")[0]);
 
     expect(handleApplyKillThreshold).toHaveBeenCalledWith("3");

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import startCase from "lodash/startCase";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";

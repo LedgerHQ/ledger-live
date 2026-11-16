@@ -1,5 +1,5 @@
 import { Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   CeloAccount,
   CeloPendingWithdrawal,

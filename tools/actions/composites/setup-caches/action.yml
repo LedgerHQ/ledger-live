@@ -61,7 +61,7 @@ runs:
     # mise.toml. Elsewhere mise is missing, so this reports found=false and mise-action runs.
     - name: Detect preinstalled mise tools
       id: mise-preinstalled
-      if: inputs.use-mise == 'true' && runner.os == 'Linux'
+      if: inputs.use-mise == 'true' && runner.os != 'Windows'
       shell: bash
       env:
         MISE_EXPERIMENTAL: "1"

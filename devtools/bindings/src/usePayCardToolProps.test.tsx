@@ -10,10 +10,7 @@ import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
 } from "@features/flow-pay-feature-tour/state";
-import {
-  payRequestVerifyHintSlice,
-  markReceiveVerifyHintSeen,
-} from "@features/flow-pay-request/state";
+import { receiveVerifyHintSlice, markReceiveVerifyHintSeen } from "@features/flow-receive/state";
 import { cardApi } from "@shared/api-services";
 import {
   payCardLoginIntroSlice,
@@ -92,7 +89,7 @@ function buildStore() {
     reducer: {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
-      payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
       payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
       // The tool reads the Card endpoints, so its api has to be part of the store under test.
       [cardApi.reducerPath]: cardApi.reducer,
@@ -527,7 +524,7 @@ describe("usePayCardToolProps", () => {
       result.current.resetReceiveVerifyHintSeen();
     });
 
-    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
     expect(result.current.hasSeenReceiveVerifyHint).toBe(false);
   });
 

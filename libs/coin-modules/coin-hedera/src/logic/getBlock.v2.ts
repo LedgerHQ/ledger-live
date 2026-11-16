@@ -5,7 +5,11 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
+import {
+  FINALITY_MS,
+  HEDERA_TRANSACTION_NAMES,
+  MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
+} from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
@@ -34,9 +38,12 @@ function isStakingTransactionType(
   return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount;
 }
 
-function isTokenAssociateTransactionType(
-  item: MergedTransaction,
-): item is Extract<MergedTransaction, { type: "mirror" }> {
+function isTokenAssociateTransactionType(item: MergedTransaction): item is Extract<
+  MergedTransaction,
+  { type: "mirror" }
+> & {
+  data: { name: typeof HEDERA_TRANSACTION_NAMES.TokenAssociate };
+} {
   return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.TokenAssociate;
 }
 
@@ -259,6 +266,7 @@ export async function getBlockV2({
     };
 
     let operations: BlockOperation[];
+    let ledgerOpType: string | undefined;
 
     // "other" operations carry the transaction's familyExtra plus their own keys, so they hold the
     // whole bag the matching `listOperations` operation has
@@ -300,6 +308,11 @@ export async function getBlockV2({
         ...(item.type === "erc20" ? item.data.transfers : []),
       ];
 
+      // `listOperations` types token transfers (HTS, ERC20) from the transfers, not the tx name
+      ledgerOpType =
+        item.type === "mirror" && mirrorTx.token_transfers.length === 0
+          ? MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[mirrorTx.name]
+          : undefined;
       operations = allTransfers.flatMap(transfer => {
         if ("token_evm_address" in transfer) {
           return createBlockOperationFromERC20TokenTransfer({ transfer });
@@ -328,6 +341,7 @@ export async function getBlockV2({
       feesPayer: payerAccount,
       details: {
         ...(memo && { memo }),
+        ...(ledgerOpType && { ledgerOpType }),
         familyExtra,
       },
     };

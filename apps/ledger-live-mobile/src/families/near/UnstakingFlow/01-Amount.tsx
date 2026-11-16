@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

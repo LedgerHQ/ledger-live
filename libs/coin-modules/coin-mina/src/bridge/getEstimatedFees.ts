@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getFees } from "../logic/transaction/getFees";
 import { Transaction } from "../types/common";
 

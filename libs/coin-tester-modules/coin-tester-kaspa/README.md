@@ -56,7 +56,7 @@ This spins up kaspad in simnet mode plus a kaspa-rest-server, runs all scenario 
   keeps the rest (history scenario). Draining to a zero balance needs an account with ≤ 88 UTXOs
   (`DRAIN_BLOCKS` = 20, drain scenario).
 - **`SETUP_BLOCKS` (600) deliberately exceeds one indexer page.** Kaspa's simnet has no debug
-  balance-injection RPC (unlike EVM's `anvil_setBalance`), so funding an account means actually
+  balance-injection RPC, so funding an account means actually
   mining real blocks — each one a transaction. 600 of them put each history account past the Kaspa
   REST API's 500-item page, so every sync walks more than one page on both bridge strategies.
 - **Funding is mined once per Jest run** (`src/chainSetup.ts`, called from `globalSetup`), back to

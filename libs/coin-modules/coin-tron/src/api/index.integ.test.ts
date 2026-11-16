@@ -4,7 +4,7 @@ import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
-import type { TronCoinConfig, TronContext } from "../config";
+import { tronDefaults, type TronCoinConfig, type TronContext } from "../config";
 import type { TronMemo, TronTxData } from "../types";
 import { createApi } from ".";
 
@@ -30,13 +30,14 @@ describe("API", () => {
   let module: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>;
   let tronWeb: TronWeb;
 
-  const config = {
-    explorer: { url: TRONGRID_URL },
-    status: { type: "active" },
-  } as TronCoinConfig;
-
   const context: TronContext = {
-    config: async () => config,
+    config: async () => tronDefaults.tron as TronCoinConfig,
+    logger: () => {},
+  };
+
+  const testnetContext: TronContext = {
+    config: async () =>
+      ({ ...tronDefaults.tron, explorer: { url: TRONGRID_URL } }) as TronCoinConfig,
     logger: () => {},
   };
 
@@ -59,8 +60,10 @@ describe("API", () => {
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
 
     // WHEN
-    const result = await module.combine(context, signedTrx.raw_data_hex, [signedTrx.signature![0]]);
-    const txId = await module.broadcast(context, result);
+    const result = await module.combine(testnetContext, signedTrx.raw_data_hex, [
+      signedTrx.signature![0],
+    ]);
+    const txId = await module.broadcast(testnetContext, result);
 
     // THEN
     expect(txId).toEqual(expect.any(String));

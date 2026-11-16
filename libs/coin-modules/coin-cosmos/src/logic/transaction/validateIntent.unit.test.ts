@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 
 jest.mock("../validateAddress", () => ({
@@ -15,6 +15,9 @@ import { COSMOS_MAX_REDELEGATIONS, COSMOS_MAX_UNBONDINGS } from "../../logic";
 import { validateAddress } from "../validateAddress";
 import { validateIntent } from "./validateIntent";
 const mockedValidateAddress = validateAddress as jest.Mock;
+
+// nyx ships with `minGasPrice: 0` in its coin config.
+const zeroGasConfig = { minGasPrice: 0 } as unknown as CosmosCoinConfig;
 
 const balances: Balance[] = [{ value: 10_000_000n, asset: { type: "native" } }];
 const fees = { value: 5000n };
@@ -148,10 +151,11 @@ describe("logic/transaction/validateIntent", () => {
 
   it("accepts a zero fee on a chain with a zero gas price", async () => {
     const res = await validateIntent(
-      "gonka",
-      withOverrides({ sender: "gonka1sender", recipient: "gonka1recipient" }),
+      "nyx",
+      withOverrides({ sender: "n1sender", recipient: "n1recipient" }),
       balances,
       { value: 0n },
+      zeroGasConfig,
     );
     expect(res.errors.fees).toBeUndefined();
   });
@@ -270,14 +274,14 @@ describe("logic/transaction/validateIntent", () => {
       intentType: "staking",
       type: "delegate",
       mode: "delegate",
-      sender: "gonka1sender",
+      sender: "n1sender",
       recipient: "",
       amount: 1_000_000n,
-      valAddress: "gonkavaloper1v",
+      valAddress: "nvaloper1v",
       asset: { type: "native" },
     } as unknown as TransactionIntent;
 
-    const res = await validateIntent("gonka", intent, balances, { value: 0n });
+    const res = await validateIntent("nyx", intent, balances, { value: 0n }, zeroGasConfig);
     expect(res.errors.fees).toBeUndefined();
   });
 

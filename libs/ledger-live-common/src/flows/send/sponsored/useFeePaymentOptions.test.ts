@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { FeePaymentLabels, FeePaymentOption } from "./types";
 import { useFeePaymentOptions } from "./useFeePaymentOptions";

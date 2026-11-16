@@ -1,3 +1,4 @@
+import type { PredictionsBindingAnswer } from "../binding";
 import { handlers, type PredictionsSheet, type PredictionsUiHooks } from "../server";
 
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -8,6 +9,15 @@ type MockedHandlers = Record<string, (params?: unknown) => Promise<unknown>>;
 
 const TERMS_VERSIONS = { termsVersion: "1", disclaimerVersion: "1" };
 const CONSENT_VERSION = { disclosureVersion: "1" };
+const BINDING_ANSWER: PredictionsBindingAnswer = {
+  typedData: {
+    domain: { name: "Ledger Predictions", version: "1", chainId: 137 },
+    types: { EIP712Domain: [], ConfirmAccountOwnership: [{ name: "account", type: "address" }] },
+    primaryType: "ConfirmAccountOwnership",
+    message: { account: "0x9858EfFD232B4033E47d90003D41EC34EcaEda94" },
+  },
+  signature: "0x1234",
+};
 
 function setup({ hasSeenIntro = false } = {}) {
   let openSheet: { sheet: PredictionsSheet; onCancel: () => void } | null = null;
@@ -19,9 +29,17 @@ function setup({ hasSeenIntro = false } = {}) {
     "app.close": jest.fn(),
     "intro.isSeen": jest.fn(() => hasSeenIntro),
     "intro.markSeen": jest.fn(),
+    "binding.sign": jest.fn<Promise<PredictionsBindingAnswer>, [string]>(() =>
+      Promise.resolve(BINDING_ANSWER),
+    ),
+    "binding.reportSetup": jest.fn(),
   };
   const serverHandlers = handlers({ uiHooks }) as unknown as MockedHandlers;
   const onboard = (params?: unknown) => serverHandlers["custom.predictions.onboard"](params);
+  const bindAccount = (params?: unknown) =>
+    serverHandlers["custom.predictions.bindAccount"](params);
+  const reportSetup = (params?: unknown) =>
+    serverHandlers["custom.predictions.reportSetup"](params);
   const getOpenSheet = () => {
     if (openSheet === null) throw new Error("No sheet is open");
     return openSheet;
@@ -31,7 +49,15 @@ function setup({ hasSeenIntro = false } = {}) {
     sheet.steps.forEach(step => sheet.onStepAccept(step));
     sheet.onComplete();
   };
-  return { uiHooks, serverHandlers, onboard, getOpenSheet, acceptAllSteps };
+  return {
+    uiHooks,
+    serverHandlers,
+    onboard,
+    bindAccount,
+    reportSetup,
+    getOpenSheet,
+    acceptAllSteps,
+  };
 }
 
 describe("Predictions Wallet API handlers", () => {
@@ -165,6 +191,59 @@ describe("Predictions Wallet API handlers", () => {
           name: "UnsupportedOnboardingVersion",
         });
         expect(uiHooks["sheet.open"]).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("custom.predictions.bindAccount", () => {
+    it("signs the binding with the account and answers the message and its signature", async () => {
+      const { bindAccount, uiHooks } = setup();
+
+      await expect(bindAccount({ accountId: "wallet-account-id" })).resolves.toEqual(
+        BINDING_ANSWER,
+      );
+      expect(uiHooks["binding.sign"]).toHaveBeenCalledWith("wallet-account-id");
+    });
+
+    it("rejects when the user declines", async () => {
+      const { bindAccount, uiHooks } = setup();
+      const refusal = Object.assign(new Error("declined"), { name: "UserRefusedOnDevice" });
+      uiHooks["binding.sign"].mockRejectedValueOnce(refusal);
+
+      await expect(bindAccount({ accountId: "wallet-account-id" })).rejects.toBe(refusal);
+    });
+
+    it.each([undefined, {}, { accountId: "" }, { accountId: "id", typedData: {} }])(
+      "rejects invalid params without showing the prompt (%p)",
+      async params => {
+        const { bindAccount, uiHooks } = setup();
+
+        await expect(bindAccount(params)).rejects.toMatchObject({ name: "ZodError" });
+        expect(uiHooks["binding.sign"]).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("custom.predictions.reportSetup", () => {
+    it.each([
+      { outcome: "created" },
+      { outcome: "found" },
+      { outcome: "failed", reason: "failed-permission" },
+      { outcome: "failed", reason: "unavailable" },
+    ])("shows how the setup ended in the binding prompt (%p)", async outcome => {
+      const { reportSetup, uiHooks } = setup();
+
+      await expect(reportSetup(outcome)).resolves.toEqual({});
+      expect(uiHooks["binding.reportSetup"]).toHaveBeenCalledWith(outcome);
+    });
+
+    it.each([undefined, {}, { outcome: "failed" }, { outcome: "failed", reason: "lost" }])(
+      "rejects an invalid outcome (%p)",
+      async params => {
+        const { reportSetup, uiHooks } = setup();
+
+        await expect(reportSetup(params)).rejects.toMatchObject({ name: "ZodError" });
+        expect(uiHooks["binding.reportSetup"]).not.toHaveBeenCalled();
       },
     );
   });

@@ -19,7 +19,7 @@ import {
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Input, TX } from "@ledgerhq/wallet-btc/index";
 
 /**

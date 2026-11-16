@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act, renderHook } from "@tests/test-renderer";
 import { useOpenSwap } from "../index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

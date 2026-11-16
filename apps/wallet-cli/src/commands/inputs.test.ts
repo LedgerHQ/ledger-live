@@ -1,10 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { resolveAccountArg, resolveAccountInput, resolveOutputFormat } from "./inputs";
+import {
+  resolveAccountArg,
+  resolveAccountDescriptor,
+  resolveAccountDescriptorV1,
+  resolveAccountInput,
+  resolveOutputFormat,
+} from "./inputs";
 import { makeSessionDir } from "../testing/session-fixture";
+import { pointStateHomeAt } from "../testing/state-home";
 import { ETH_DESCRIPTOR } from "../testing/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
+const BASE_DESCRIPTOR =
+  "account:2:address:base:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46:m/44h/60h/0h/0/0";
+const BASE_V0_DESCRIPTOR = "js:2:base:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46::0";
 
 describe("resolveAccountArg", () => {
   it("prefers the --account flag over positional", () => {
@@ -20,25 +30,21 @@ describe("resolveAccountArg", () => {
   });
 });
 
-describe("resolveAccountInput", () => {
+describe("session-backed account resolution", () => {
   let sessionCleanup: (() => void) | undefined;
-  let savedXdgStateHome: string | undefined;
-
-  beforeEach(() => {
-    savedXdgStateHome = process.env.XDG_STATE_HOME;
-  });
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
     sessionCleanup?.();
     sessionCleanup = undefined;
-    if (savedXdgStateHome === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedXdgStateHome;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
   });
 
   it("resolves a known session label to its descriptor", async () => {
     const fixture = makeSessionDir([{ label: "my-eth", descriptor: ETH_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     const result = await resolveAccountInput("my-eth");
     expect(result).toBe(ETH_DESCRIPTOR);
   });
@@ -46,7 +52,7 @@ describe("resolveAccountInput", () => {
   it("throws when the label is not found in session", async () => {
     const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     await expect(resolveAccountInput("unknown-label")).rejects.toThrow(
       /No account labeled "unknown-label"/,
     );
@@ -55,7 +61,7 @@ describe("resolveAccountInput", () => {
   it("rejects a raw descriptor passed directly (contains ':')", async () => {
     const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     let caught: Error | undefined;
     try {
       await resolveAccountInput(ETH_DESCRIPTOR);
@@ -65,6 +71,27 @@ describe("resolveAccountInput", () => {
     expect(caught?.message).toMatch(/Raw descriptors are not accepted/);
     // Must not echo the descriptor back (would leak xpub/path into logs).
     expect(caught?.message).not.toContain(ETH_DESCRIPTOR);
+  });
+
+  it.each([
+    ["resolveAccountDescriptor", resolveAccountDescriptor],
+    ["resolveAccountDescriptorV1", resolveAccountDescriptorV1],
+  ])("%s rejects a saved account on an unsupported network", async (_name, resolve) => {
+    const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
+    await expect(resolve("base-1")).rejects.toThrow(
+      /Network "base" is not supported by wallet-cli/,
+    );
+  });
+
+  it("resolveAccountDescriptor rejects a legacy V0 saved account on an unsupported network", async () => {
+    const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_V0_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
+    await expect(resolveAccountDescriptor("base-1")).rejects.toThrow(
+      /Network "base" is not supported by wallet-cli/,
+    );
   });
 });
 

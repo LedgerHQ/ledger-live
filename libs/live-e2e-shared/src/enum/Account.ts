@@ -780,13 +780,13 @@ export class TokenAccount extends Account {
     parentAccount: Account.SOL_2,
     address: Addresses.SOL_GIGA_2_ATA_ADDRESS,
   });
-  static readonly SOL_GIGA_3 = new TokenAccount({
+  static readonly SOL_GIGA_4 = new TokenAccount({
     currency: Currency.SOL_GIGA,
-    accountName: "GIGACHAD 3",
-    index: 2,
-    accountPath: Account.SOL_3.accountPath,
+    accountName: "GIGACHAD 4",
+    index: 3,
+    accountPath: Account.SOL_4.accountPath,
     tokenType: TokenType.SPL,
-    parentAccount: Account.SOL_3,
+    parentAccount: Account.SOL_4,
   });
 
   static readonly SOL_WIF_1 = new TokenAccount({

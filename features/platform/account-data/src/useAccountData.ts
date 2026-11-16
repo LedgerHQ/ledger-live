@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
@@ -16,6 +16,7 @@ import {
   type AccountDescriptor,
   type AccountUUID,
 } from "@domain/entity-account-descriptor";
+import { useHeldByKey } from "./internals/useHeldByKey";
 
 export type UseAccountDataOptions<K extends AccountDataKind> = {
   maxAge?: number;
@@ -36,14 +37,6 @@ export type UseAccountDataResult = {
   /** Reads the next page; does nothing without one. */
   loadMore: () => Promise<void>;
 };
-
-/** Holds the value first seen for `key` in state, so a discarded render cannot replace it. */
-function useHeldByKey<T>(value: T, key: string | undefined): T {
-  const [held, setHeld] = useState({ key, value });
-  if (held.key === key) return held.value;
-  setHeld({ key, value });
-  return value;
-}
 
 /** Keeps one kind of data of one account read while mounted; the data is read with the entity's selectors. */
 export function useAccountData<K extends AccountDataKind>(

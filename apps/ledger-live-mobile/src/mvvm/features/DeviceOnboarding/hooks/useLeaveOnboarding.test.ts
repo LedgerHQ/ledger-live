@@ -133,10 +133,40 @@ describe("useLeaveOnboarding", () => {
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
     expect(mockReset).not.toHaveBeenCalled();
   });
+
+  it("should do nothing when an unseeded device reaches done", () => {
+    const { store } = leave("completed", true, false);
+
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+    expect(mockReset).not.toHaveBeenCalled();
+    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should open the portfolio without completing when an unseeded device quits", () => {
+    const { store } = leave("userQuit", true, false);
+
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+    expect(mockReset).toHaveBeenCalledTimes(1);
+    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should open the portfolio without completing when an unseeded device quits before a genuine verdict", () => {
+    leave("userQuit", false, false);
+
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+    expect(mockReset).toHaveBeenCalledTimes(1);
+    expect(mockGoBack).not.toHaveBeenCalled();
+  });
 });
 
-function leave(reason: DeviceOnboardingExitReason, genuine: boolean) {
-  const { result } = renderHook(() =>
+function leave(
+  reason: DeviceOnboardingExitReason,
+  genuine: boolean,
+  onboardedOnEntry: boolean | null = null,
+) {
+  const rendered = renderHook(() =>
     useLeaveOnboarding({
       device,
       navigateOnExit: true,
@@ -144,23 +174,27 @@ function leave(reason: DeviceOnboardingExitReason, genuine: boolean) {
     }),
   );
 
-  act(() => result.current(reason, machineContext({ genuine })));
+  act(() => rendered.result.current(reason, machineContext({ genuine, onboardedOnEntry })));
+  return rendered;
 }
 
 function machineContext({
   genuine,
   seeded = false,
+  onboardedOnEntry = null,
   firmwareVersion = "2.4.0",
   deviceModelId = DmkDeviceModelId.STAX,
 }: {
   genuine: boolean | null;
   seeded?: boolean;
+  onboardedOnEntry?: boolean | null;
   firmwareVersion?: string | null;
   deviceModelId?: DmkDeviceModelId;
 }): DeviceOnboardingContext {
   return {
     sessionId: "session-1",
     isOnboarded: seeded,
+    onboardedOnEntry,
     firmwareVersion,
     deviceModelId,
     genuineVerdict: genuine === null ? null : { sessionId: "session-1", isGenuine: genuine },

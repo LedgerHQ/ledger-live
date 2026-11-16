@@ -1,10 +1,12 @@
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 import {
   SPONSORED_PHASE,
   type SponsoredPhase,
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { SEND_FLOW_COMPLETION } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import { createIntent } from "@features/platform-device-intent";
+import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
 const mockFinishSigning = jest.fn();
@@ -143,5 +145,65 @@ describe("useSignatureViewModel in a standard send", () => {
 
     expect(mockFinishSigning).toHaveBeenCalled();
     expect(mockSponsoredActions.onTransferError).not.toHaveBeenCalled();
+  });
+});
+
+const signatureRequest = (balance: number) =>
+  ({
+    account: { type: "Account", id: "js:2:solana:main", balance },
+    parentAccount: null,
+    transaction: { family: "solana" },
+  }) as unknown as NonNullable<ReturnType<typeof useSendFlowSignatureCore>["request"]>;
+
+// Like a background sync, each call hands down a new request and new callbacks.
+const coreReturning = (request: ReturnType<typeof useSendFlowSignatureCore>["request"]) =>
+  jest.mocked(useSendFlowSignatureCore).mockReturnValue({
+    request,
+    finishWithError: jest.fn(),
+    finishWithSuccess: jest.fn(),
+    onDeviceActionResult: jest.fn(),
+  });
+
+describe("useSignatureViewModel while signing", () => {
+  beforeEach(() => {
+    mockSponsoredState = { phase: SPONSORED_PHASE.IDLE, paymentTxId: null };
+    jest.mocked(createIntent).mockImplementation(((_definition: unknown, input: unknown) => ({
+      input,
+    })) as unknown as typeof createIntent);
+    jest
+      .mocked(buildDeviceInitializationInput)
+      .mockResolvedValue({} as Awaited<ReturnType<typeof buildDeviceInitializationInput>>);
+  });
+
+  it("keeps the intent it started with when a background sync rebuilds the request", async () => {
+    coreReturning(signatureRequest(1));
+    const { result, rerender } = renderHook(() => useSignatureViewModel());
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+    const startedIntent = result.current.signatureIntent;
+    const startedInitializationInput = result.current.deviceInitializationInput;
+
+    coreReturning(signatureRequest(2));
+    rerender({});
+    await act(async () => {});
+
+    expect(result.current.signatureIntent).toBe(startedIntent);
+    expect(result.current.deviceInitializationInput).toBe(startedInitializationInput);
+    expect(buildDeviceInitializationInput).toHaveBeenCalledTimes(1);
+  });
+
+  it("starts once the request becomes available", () => {
+    coreReturning(null);
+    const { result, rerender } = renderHook(() => useSignatureViewModel());
+
+    const request = signatureRequest(1);
+    coreReturning(request);
+    rerender({});
+
+    expect(result.current.signatureIntent).toEqual({ input: request });
+    expect(buildDeviceInitializationInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        appRequest: expect.objectContaining({ account: request.account }),
+      }),
+    );
   });
 });

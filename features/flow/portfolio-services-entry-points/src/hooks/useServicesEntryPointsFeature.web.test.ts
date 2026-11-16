@@ -23,6 +23,26 @@ describe("useServicesEntryPointsFeature", () => {
     expect(result.current).toEqual({ isEnabled: true, services: ["borrow", "perps"] });
   });
 
+  it("should return predictions when the flag lists it and its desktop feature is on", () => {
+    const { result } = renderFeature({
+      entryPointsServices: { enabled: true, params: { services: ["perps", "predictions"] } },
+      ptxPredictionsLiveAppDesktop: {
+        enabled: true,
+        params: { manifest_id: "predictions-live-app" },
+      },
+    });
+
+    expect(result.current).toEqual({ isEnabled: true, services: ["perps", "predictions"] });
+  });
+
+  it("should leave predictions out when its desktop feature is off", () => {
+    const { result } = renderFeature({
+      entryPointsServices: { enabled: true, params: { services: ["perps", "predictions"] } },
+    });
+
+    expect(result.current).toEqual({ isEnabled: true, services: ["perps"] });
+  });
+
   it("should fall back to the default order when the flag has no params", () => {
     const { result } = renderFeature({ entryPointsServices: { enabled: true } });
 

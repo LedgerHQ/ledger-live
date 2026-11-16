@@ -1,5 +1,5 @@
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
 import { buildTransaction } from "../buildTransaction";

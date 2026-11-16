@@ -39,16 +39,14 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
   `ledgerlive://asset/bitcoin` opens the asset page for the given currency.
 
-  - When the aggregated Asset Detail flow (Wallet 4.0 `aggregatedAssets` param) is **enabled**, this opens the new Asset Detail screen (LIVE-29734). The screen view event is tracked with `source = "deeplink_asset"`.
-  - Otherwise it opens the legacy WalletCentricAsset screen.
+  - This opens the Asset Detail screen (LIVE-29734). The screen view event is tracked with `source = "deeplink_asset"`.
   - If `:currencyId` is missing or invalid, the deeplink falls back to the portfolio.
 
 - **_market/:currencyId_** 🠒 Market / Asset Detail
 
   `ledgerlive://market/bitcoin` opens market data for the given currency.
 
-  - When the aggregated Asset Detail flow (Wallet 4.0 `aggregatedAssets` param) is **enabled**, this opens the new Asset Detail screen (LIVE-29734). The screen view event is tracked with `source = "deeplink_market"`.
-  - Otherwise it opens the Market Detail screen (charts / stats).
+  - This opens the Asset Detail screen (LIVE-29734). The screen view event is tracked with `source = "deeplink_market"`.
   - If `:currencyId` is missing or invalid, the deeplink falls back to the market list.
 
 - **_send?currency_** 🠒 Send Flow

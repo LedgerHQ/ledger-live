@@ -1,10 +1,10 @@
 PODS:
   - boost (1.84.0)
-  - braze-react-native-sdk (18.0.0):
+  - braze-react-native-sdk (24.0.0):
     - boost
-    - BrazeKit (~> 13.3.0)
-    - BrazeLocation (~> 13.3.0)
-    - BrazeUI (~> 13.3.0)
+    - BrazeKit (~> 19.1.0)
+    - BrazeLocation (~> 19.1.0)
+    - BrazeUI (~> 19.1.0)
     - DoubleConversion
     - fast_float
     - fmt
@@ -31,12 +31,12 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - BrazeKit (13.3.0)
-  - BrazeLocation (13.3.0):
-    - BrazeKit (= 13.3.0)
-  - BrazeUI (13.3.0):
-    - BrazeKit (= 13.3.0)
-  - callstack-repack (5.2.5):
+  - BrazeKit (19.1.0)
+  - BrazeLocation (19.1.0):
+    - BrazeKit (= 19.1.0)
+  - BrazeUI (19.1.0):
+    - BrazeKit (= 19.1.0)
+  - callstack-repack (5.4.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -2227,8 +2227,6 @@ PODS:
     - TOCropViewController (= 2.5.3)
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-randombytes (3.6.1):
-    - React-Core
   - react-native-restart (0.0.29):
     - boost
     - DoubleConversion
@@ -2405,7 +2403,7 @@ PODS:
     - CocoaAsyncSocket
     - React-Core
   - react-native-vector-icons-material-design-icons (13.1.4)
-  - react-native-video (6.16.1):
+  - react-native-video (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2423,7 +2421,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-video/Video (= 6.16.1)
+    - react-native-video/Video (= 6.19.3)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2434,7 +2432,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Fabric (6.16.1):
+  - react-native-video/Fabric (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2462,7 +2460,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Video (6.16.1):
+  - react-native-video/Video (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3623,6 +3621,8 @@ PODS:
   - segment-analytics-react-native (2.24.2):
     - React-Core
     - sovran-react-native
+  - SharedNativePerformance (0.0.0):
+    - React-Core
   - SocketRocket (0.7.1)
   - sovran-react-native (1.1.4):
     - React-Core
@@ -3640,8 +3640,8 @@ PODS:
 
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/boost.podspec`)"
-  - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
-  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack`)"
+  - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@24.0.0/node_modules/@braze/react-native-sdk`)"
+  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_fdd20cd4dac85bbb3aa9334c1375afc7/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXApplication (from `../../../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.33_@babel+core_abeb84298ea9ca84ee1055406bccf067/node_modules/expo-application/ios`)"
@@ -3712,13 +3712,12 @@ DEPENDENCIES:
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9b199_71fa22f4b6a1db7867a1f89074fa6dc8/node_modules/react-native-fast-pbkdf2`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments`)"
-  - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_dec0d0bf7fd0dd6054bb511d43e0d925/node_modules/react-native-safe-area-context`)"
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_2af7e0ae46a2d40e67603fa9cf2f990d/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons`)"
-  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video`)"
+  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.19.3_react-native@0.81.6_p_24d493d7478d4474de07246f66b25323/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=a146323_597b567ffb91daedeaee972e2bcb44a2/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
@@ -3767,6 +3766,7 @@ DEPENDENCIES:
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native`)"
+  - SharedNativePerformance (from `../../../shared/native-performance`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera`)"
@@ -3817,9 +3817,9 @@ EXTERNAL SOURCES:
   boost:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/boost.podspec"
   braze-react-native-sdk:
-    :path: "../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk"
+    :path: "../../../node_modules/.pnpm/@braze+react-native-sdk@24.0.0/node_modules/@braze/react-native-sdk"
   callstack-repack:
-    :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack"
+    :path: "../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_fdd20cd4dac85bbb3aa9334c1375afc7/node_modules/@callstack/repack"
   DatadogSDKReactNative:
     :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
@@ -3959,8 +3959,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments"
-  react-native-randombytes:
-    :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
   react-native-restart:
     :path: "../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart"
   react-native-safe-area-context:
@@ -3972,7 +3970,7 @@ EXTERNAL SOURCES:
   react-native-vector-icons-material-design-icons:
     :path: "../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@6.19.3_react-native@0.81.6_p_24d493d7478d4474de07246f66b25323/node_modules/react-native-video"
   react-native-view-shot:
     :path: "../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot"
   react-native-webview:
@@ -4069,6 +4067,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets"
   segment-analytics-react-native:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native"
+  SharedNativePerformance:
+    :path: "../../../shared/native-performance"
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native"
   VisionCamera:
@@ -4078,11 +4078,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  braze-react-native-sdk: a3d3c07197e74e79d948b12a815ba874f8bec230
-  BrazeKit: 53ac2d77c7d5ab54ab73df75c9058ae89236fc54
-  BrazeLocation: 47cde4ac51568718b76d4677475c926ea840633b
-  BrazeUI: 4de47810a95f225e0199cf6ddc9756f9dab662eb
-  callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
+  braze-react-native-sdk: 7c747194a01cca6c27efe3a153fe14d6a647d858
+  BrazeKit: 4b8ff46fa994f2169752022d5ad814658d1c4a50
+  BrazeLocation: 0779bcdcbcf4787a5cf6897631ac15d397727814
+  BrazeUI: 6d33bc7ba2afa327c1d2beef167b85628cb0f434
+  callstack-repack: 4b006eeafeda87a9c2ea8785f578e6a24fdb44bb
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 7eed8fbaaa1575503c389f343c230858343c8baf
   DatadogCrashReporting: 04f3c3a5bfd9921aef4d44b4ab80accb39c84ddb
@@ -4182,13 +4182,12 @@ SPEC CHECKSUMS:
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
-  react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
   react-native-slider: 205c30f4f19af8469c1c24bd4e3ec74038576a67
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
-  react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
+  react-native-video: 558711646609a96027f16a724c89556d9b149806
   react-native-view-shot: 0757362ef66df80d63ce4ddd35b89bce59c908b9
   react-native-webview: 83c663c5bdf1357d3e7c00986260cb888ea0e328
   React-NativeModulesApple: 76d9e54adf2b333d0939bbd18102c62bdfebb934
@@ -4239,6 +4238,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 556a3bdd0a28ed4c6110a6c17322cf641d4ef704
+  SharedNativePerformance: ca26343c7cd7d0cc316fdcaa45d54b6b1a1484f4
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: 803ccf23b24c8c5da99f249d4a0e317d62fa35e7
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6

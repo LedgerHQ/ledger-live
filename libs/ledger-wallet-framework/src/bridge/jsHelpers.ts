@@ -1,6 +1,6 @@
 import bippath from "bip32-path";
 import isEqual from "lodash/isEqual";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   Observable,
   Observer,

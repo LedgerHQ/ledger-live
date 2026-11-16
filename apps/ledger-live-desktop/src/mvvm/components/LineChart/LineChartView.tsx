@@ -28,28 +28,31 @@ export function LineChartView({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  plotContent,
 }: LineChartViewProps) {
   return (
     <div className="flex w-full min-w-0 flex-col gap-24" data-testid="line-chart">
-      <LineChartPlotContent
-        height={height}
-        isLoading={isLoading}
-        emptyLabel={emptyLabel}
-        chartSeries={chartSeries}
-        points={points}
-        pointTooltips={pointTooltips}
-        enableScrubber={enableScrubber}
-        formatValue={formatValue}
-        tooltipTitle={tooltipTitle}
-        showScrubberTooltip={showScrubberTooltip}
-        pointTooltipsOnly={pointTooltipsOnly}
-        onScrubberPositionChange={onScrubberPositionChange}
-        showArea={showArea}
-        showXAxis={showXAxis}
-        showYAxis={showYAxis}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      />
+      {plotContent ?? (
+        <LineChartPlotContent
+          height={height}
+          isLoading={isLoading}
+          emptyLabel={emptyLabel}
+          chartSeries={chartSeries}
+          points={points}
+          pointTooltips={pointTooltips}
+          enableScrubber={enableScrubber}
+          formatValue={formatValue}
+          tooltipTitle={tooltipTitle}
+          showScrubberTooltip={showScrubberTooltip}
+          pointTooltipsOnly={pointTooltipsOnly}
+          onScrubberPositionChange={onScrubberPositionChange}
+          showArea={showArea}
+          showXAxis={showXAxis}
+          showYAxis={showYAxis}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        />
+      )}
       <div className="flex w-full min-w-0 items-center gap-8">
         <SegmentedControl
           selectedValue={selectedRange}

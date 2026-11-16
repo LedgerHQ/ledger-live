@@ -5,6 +5,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { SendFlowLayout } from "../SendFlowLayout";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../context/SendFlowContext";
@@ -101,6 +102,19 @@ describe("SendFlowLayout", () => {
       }),
     );
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("keeps the dialog open while the device blocks the UI", () => {
+    render(
+      <>
+        <SendFlowLayout isOpen onClose={onClose} />
+        <DeviceBlocker />
+      </>,
+    );
+    screen.getByRole("button", { name: "dismiss dialog" }).click();
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("tracks close as step recipient when no contact address is being selected", () => {

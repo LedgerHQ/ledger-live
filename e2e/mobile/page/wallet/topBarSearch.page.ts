@@ -1,67 +1,60 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class TopBarSearchPage {
-  private readonly topBarSearchButtonId = "topbar-search";
-  private readonly screenId = "global-search-screen";
-  private readonly searchInputId = "global-search-input";
-  private readonly defaultSectionsId = "global-search-default-sections";
-  private readonly defaultsErrorId = "global-search-defaults-error-state";
-  private readonly cryptosSectionId = "global-search-cryptos-section";
-  private readonly cryptosSectionHeaderId = "global-search-cryptos-section-header";
-  private readonly stocksSectionId = "global-search-stocks-section";
-  private readonly stocksSectionHeaderId = "global-search-stocks-section-header";
-  private readonly searchResultsId = "global-search-results";
+  private readonly topBarSearchButton = byId("topbar-search");
+  private readonly searchInput = byId("global-search-input");
+  private readonly defaultSections = byId("global-search-default-sections");
+  private readonly defaultsError = byId("global-search-defaults-error-state");
+  private readonly cryptosSection = byId("global-search-cryptos-section");
+  private readonly cryptosSectionHeader = byId("global-search-cryptos-section-header");
+  private readonly stocksSection = byId("global-search-stocks-section");
+  private readonly stocksSectionHeader = byId("global-search-stocks-section-header");
+  private readonly searchResults = byId("global-search-results");
+  private readonly firstMarketResult = byId(/^marketItem-.+$/);
   private readonly marketItemId = (currencyId: string) => `marketItem-${currencyId}`;
-  private readonly marketResultRegExp = /^marketItem-.+$/;
+  private readonly marketItem = (currencyId: string) => byId(this.marketItemId(currencyId));
 
   @Step("Open the global search screen from the portfolio top bar")
   async open() {
-    await tapById(this.topBarSearchButtonId);
-    await waitForElementById(this.searchInputId);
-    await waitForElementById(this.defaultSectionsId, undefined, {
-      errorElementId: this.defaultsErrorId,
-      checkVisibility: false,
-    });
+    await this.topBarSearchButton.tap();
+    await this.searchInput.waitVisible();
+    await this.defaultSections.waitExist(TIMEOUT.xxlarge, this.defaultsError);
   }
 
   @Step("Expect Cryptos and Stocks categories to be visible")
   async expectCategoriesVisible() {
-    await waitForElementById(this.cryptosSectionId);
-    await detoxExpect(getElementById(this.stocksSectionId)).toExist();
+    await this.cryptosSection.waitVisible();
+    await this.stocksSection.expectExist();
   }
 
   @Step("Select the Cryptos category")
   async selectCryptosCategory() {
-    await tapById(this.cryptosSectionHeaderId);
+    await this.cryptosSectionHeader.tap();
   }
 
   @Step("Select the Stocks category")
   async selectStocksCategory() {
-    await waitForElementById(this.defaultSectionsId, undefined, {
-      checkVisibility: false,
-    });
-    await scrollToId(this.stocksSectionHeaderId, this.defaultSectionsId);
-    await tapById(this.stocksSectionHeaderId);
+    await this.defaultSections.waitExist();
+    await this.stocksSectionHeader.scrollTo(this.defaultSections);
+    await this.stocksSectionHeader.tap();
   }
 
   @Step("Search for {{{0}}}")
   async searchFor(query: string) {
-    await typeTextById(this.searchInputId, query, false);
-    await waitForElementById(this.searchResultsId, undefined, {
-      checkVisibility: false,
-    });
+    await this.searchInput.replaceTextKeepKeyboard(query);
+    await this.searchResults.waitExist();
   }
 
   @Step("Clear the search field")
   async clearSearch() {
-    await clearTextByElement(getElementById(this.searchInputId));
+    await this.searchInput.clearText();
   }
 
   @Step("Expect first search result to be {{{0}}}")
   async expectFirstResult(currencyId: string) {
-    const expectedId = this.marketItemId(currencyId);
-    await waitForElementById(expectedId);
-    const firstResultId = await getIdByRegexp(this.marketResultRegExp, 0);
-    jestExpect(firstResultId).toBe(expectedId);
+    await this.marketItem(currencyId).waitVisible();
+    await this.firstMarketResult.expectId(this.marketItemId(currencyId));
   }
 }

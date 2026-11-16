@@ -3,6 +3,7 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
+  Block,
   BlockInfo,
   BroadcastConfig,
   CoinModuleImpl,
@@ -20,6 +21,7 @@ import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craf
 import type { NearConfig, NearContext } from "../config";
 import { isValidAddress } from "../logic";
 import { getBalance } from "../logic/getBalance";
+import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
@@ -45,7 +47,6 @@ import { validateIntent } from "../logic/validateIntent";
 //                             not to an account.
 //   - `getRewards`          — there is no reward distribution event to list; a staking pool
 //                             compounds rewards into the staked balance, which `getStakes` reports.
-//   - `getBlock`            — reading a block together with all its transactions is not supported.
 //   - `craftRawTransaction` — the module accepts no externally-built transaction.
 //   - `call`                — no read-only contract-call escape hatch is exposed.
 //   - `register`            — no enrollment step.
@@ -56,6 +57,7 @@ export function createApi() {
     lastBlock: (context: NearContext): Promise<BlockInfo> => lastBlock(context),
     getBlockInfo: (context: NearContext, height: number): Promise<BlockInfo> =>
       getBlockInfo(context, height),
+    getBlock: (context: NearContext, height: number): Promise<Block> => getBlock(context, height),
 
     // --- Account state ---
     getBalance: (
@@ -93,11 +95,11 @@ export function createApi() {
     ): Promise<TransactionValidation> =>
       validateIntent(context, transactionIntent, balances, options?.customFees),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-    validateAddress: async (
+    validateAddress: (
       _context: NearContext,
       address: string,
       _parameters: Partial<AddressValidationCurrencyParameters>,
-    ): Promise<boolean> => isValidAddress(address),
+    ): Promise<boolean> => Promise.resolve(isValidAddress(address)),
 
     // --- Staking ---
     getStakes: (

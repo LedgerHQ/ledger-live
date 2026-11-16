@@ -1,5 +1,7 @@
 appId: com.ledger.live
 
+afterPack: scripts/checkZcashBinaries.js
+
 protocols:
   name: Ledger Wallet
   schemes:
@@ -9,8 +11,15 @@ protocols:
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
-  # zcash-utils ships per-arch .node files, identical in both universal slices
-  x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils/*.node"
+  # zcash-utils ships one package per arch, identical in both universal slices
+  x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils-darwin-*/*.node"
+  files:
+    - from: "node_modules/@ledgerhq/zcash-utils-darwin-arm64"
+      to: "node_modules/@ledgerhq/zcash-utils-darwin-arm64"
+      filter: ["package.json", "*.node"]
+    - from: "node_modules/@ledgerhq/zcash-utils-darwin-x64"
+      to: "node_modules/@ledgerhq/zcash-utils-darwin-x64"
+      filter: ["package.json", "*.node"]
   # singleArchFiles: "**/*"
   target:
     - target: dmg
@@ -20,6 +29,10 @@ mac:
         - universal
 
 linux:
+  files:
+    - from: "node_modules/@ledgerhq/zcash-utils-linux-x64-gnu"
+      to: "node_modules/@ledgerhq/zcash-utils-linux-x64-gnu"
+      filter: ["package.json", "*.node"]
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
   category: Finance
   target:
@@ -28,6 +41,10 @@ linux:
         - x64
 
 win:
+  files:
+    - from: "node_modules/@ledgerhq/zcash-utils-win32-x64-msvc"
+      to: "node_modules/@ledgerhq/zcash-utils-win32-x64-msvc"
+      filter: ["package.json", "*.node"]
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
   icon: build/windows/app.ico
   verifyUpdateCodeSignature: false
@@ -52,7 +69,7 @@ files:
   # Explicit mapping: beforeBuild disables electron-builder's node_modules collection
   - from: "node_modules/@ledgerhq/zcash-utils"
     to: "node_modules/@ledgerhq/zcash-utils"
-    filter: ["package.json", "index.js", "*.node"]
+    filter: ["package.json", "index.js"]
   - from: "dist/node_modules"
     to: "node_modules"
     filter:
@@ -91,4 +108,4 @@ buildDependenciesFromSource: false
 beforeBuild: scripts/beforeBuild.js
 
 asarUnpack:
-  - "node_modules/@ledgerhq/zcash-utils/**/*"
+  - "node_modules/@ledgerhq/zcash-utils*/**/*"

@@ -1,10 +1,10 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Text } from "@ledgerhq/native-ui";
-import React, { useMemo } from "react";
+import React from "react";
 import { Trans } from "~/context/Locale";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
-import { urls } from "~/utils/urls";
+import { getSwapTermsCopy, type SwapTermsProvider } from "LLM/utils/getSwapTermsCopy";
 
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",
@@ -24,47 +24,18 @@ const UnderlinedText = styled(Text).attrs({
   text-decoration-line: underline;
 `;
 
-export type TermsProviders = keyof typeof urls.swap.providers;
-
-const CHANGELLY_PROVIDER = "changelly";
-const NEAR_INTENTS_PROVIDER = "nearintents";
+export type TermsProviders = SwapTermsProvider;
 
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
   sponsored?: boolean;
 }> = ({ provider, sponsored }) => {
-  // Map changelly_v2 to changelly to access the correct urls
-  const providerName = provider?.includes(CHANGELLY_PROVIDER) ? CHANGELLY_PROVIDER : provider;
-  const providerUrls = providerName && urls.swap.providers[providerName];
+  if (!provider) {
+    return null;
+  }
 
-  const { acceptTerms, urlsArray } = useMemo(() => {
-    const isChangelly = providerName === CHANGELLY_PROVIDER;
-    const isNearIntents = providerName === NEAR_INTENTS_PROVIDER;
-
-    if (isNearIntents) {
-      return {
-        acceptTerms: "DeviceAction.confirmSwap.nearIntentsAcceptTerms",
-        urlsArray: [providerUrls?.tos].filter(Boolean),
-      };
-    }
-    if (isChangelly) {
-      return {
-        acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",
-        urlsArray: [
-          providerUrls?.tos,
-          providerUrls && "amlKyc" in providerUrls ? providerUrls.amlKyc : undefined,
-          providerUrls && "support" in providerUrls ? providerUrls.support : undefined,
-        ].filter(Boolean),
-      };
-    }
-
-    return {
-      acceptTerms: "DeviceAction.confirmSwap.acceptTerms",
-      urlsArray: [providerUrls?.tos].filter(Boolean),
-    };
-  }, [providerUrls, providerName]);
-
-  if (!urlsArray.length) {
+  const { providerName, acceptTerms, links } = getSwapTermsCopy(provider);
+  if (!links.length) {
     return null;
   }
 
@@ -72,10 +43,10 @@ const TermsFooter: React.FC<{
     <CenteredText>
       <Trans
         i18nKey={acceptTerms}
-        values={{ provider: providerName && getProviderName(providerName) }}
-        components={urlsArray.map((url, idx) => (
+        values={{ provider: getProviderName(providerName) }}
+        components={links.map((url, idx) => (
           <UnderlinedText
-            onPress={() => url && Linking.openURL(url)}
+            onPress={() => Linking.openURL(url)}
             textAlign="center"
             key={`external-link-${idx}`}
           />

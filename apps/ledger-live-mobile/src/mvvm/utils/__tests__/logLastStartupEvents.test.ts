@@ -1,3 +1,4 @@
+import { getProcessStartTime } from "@shared/native-performance";
 import { track } from "@shared/analytics";
 import { DdRum } from "@datadog/mobile-react-native";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
@@ -12,7 +13,12 @@ import {
   type StorageCurrencyData,
   type StoreStorageData,
 } from "../logLastStartupEvents";
-import { STARTUP_EVENTS } from "../resolveStartupEvents";
+import { resetStartupOriginForTests, STARTUP_EVENTS } from "../resolveStartupEvents";
+import { writeStartupToDeviceLog } from "../writeStartupToDeviceLog";
+
+jest.mock("@shared/native-performance", () => ({ getProcessStartTime: jest.fn() }));
+
+const mockGetProcessStartTime = jest.mocked(getProcessStartTime);
 
 jest.mock("@datadog/mobile-react-navigation", () => ({
   DdRumReactNavigationTracking: { startTrackingViews: jest.fn() },
@@ -22,12 +28,17 @@ jest.mock("@datadog/mobile-react-native", () => ({
 }));
 jest.mock("~/rootnavigation", () => ({ navigationRef: { current: {} } }));
 jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
+jest.mock("../writeStartupToDeviceLog", () => ({ writeStartupToDeviceLog: jest.fn() }));
 
 describe("logLastStartupEvents", () => {
+  const originalDev = __DEV__;
+
   beforeEach(async () => {
     jest.useFakeTimers();
     jest.clearAllMocks();
     startupEvents.splice(0);
+    resetStartupOriginForTests();
+    mockGetProcessStartTime.mockReset().mockReturnValue(null);
     await mmkvStorageWrapper.deleteAll();
   });
 
@@ -35,6 +46,7 @@ describe("logLastStartupEvents", () => {
     await mmkvStorageWrapper.deleteAll();
     jest.clearAllTimers();
     jest.useRealTimers();
+    Object.defineProperty(global, "__DEV__", { value: originalDev, configurable: true });
   });
 
   it("tracks startup events after the buffer once both APP_STARTED and NAV_READY are logged", async () => {
@@ -54,6 +66,7 @@ describe("logLastStartupEvents", () => {
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("app_startup_events", {
+      startupTimeBase: "js",
       appStartupTime: appStartedEvent.time - startupFirstImportTime,
       events: expect.arrayContaining([
         expect.objectContaining({ event: "Step 1", count: 1 }),
@@ -61,6 +74,37 @@ describe("logLastStartupEvents", () => {
         expect.objectContaining({ event: STARTUP_EVENTS.NAV_READY, count: 1 }),
       ]),
     });
+  });
+
+  it("tracks the startup time from the app process start in release builds", async () => {
+    Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
+    mockGetProcessStartTime.mockReturnValue(startupFirstImportTime - 1000);
+    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    const appStartedEventPromise = logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    const appStartedEvent = await appStartedEventPromise;
+
+    expect(track).toHaveBeenCalledWith(
+      "app_startup_events",
+      expect.objectContaining({
+        startupTimeBase: "process",
+        appStartupTime: appStartedEvent.time - startupFirstImportTime + 1000,
+      }),
+    );
+  });
+
+  it("writes the startup to the device log as soon as it is over", async () => {
+    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    expect(writeStartupToDeviceLog).not.toHaveBeenCalled();
+
+    const appStartedEventPromise = logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+    expect(writeStartupToDeviceLog).toHaveBeenCalledTimes(1);
+    expect(writeStartupToDeviceLog).toHaveBeenCalledWith(STARTUP_EVENTS.APP_STARTED);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await appStartedEventPromise;
+    expect(writeStartupToDeviceLog).toHaveBeenCalledTimes(1);
   });
 
   it("does not track startup events if APP_STARTED is not logged", async () => {
@@ -106,6 +150,7 @@ describe("logLastStartupEvents", () => {
     const navReadyEvent = await trackingCallEvent;
     const expectedStartupTime = navReadyEvent.time - startupFirstImportTime;
     expect(track).toHaveBeenCalledWith("app_startup_events", {
+      startupTimeBase: "js",
       appStartupTime: expectedStartupTime,
       events: expect.arrayContaining([
         expect.objectContaining({ event: "First" }),
@@ -129,6 +174,7 @@ describe("logLastStartupEvents", () => {
     await navReadyEventPromise;
 
     expect(track).toHaveBeenCalledWith("app_startup_events", {
+      startupTimeBase: "js",
       appStartupTime: expect.any(Number),
       events: expect.arrayContaining([
         expect.objectContaining({ event: "DD view loaded", count: 1 }),
@@ -162,6 +208,7 @@ describe("logLastStartupEvents", () => {
     await navReadyEventPromise;
 
     expect(track).toHaveBeenCalledWith("app_startup_events", {
+      startupTimeBase: "js",
       appStartupTime: expect.any(Number),
       events: expect.any(Array),
       reduxStore_readTime: 150,
@@ -207,6 +254,7 @@ describe("logLastStartupEvents", () => {
     await navReadyEventPromise;
 
     expect(track).toHaveBeenCalledWith("app_startup_events", {
+      startupTimeBase: "js",
       appStartupTime: expect.any(Number),
       events: expect.any(Array),
       reduxStore_readTime: 200,

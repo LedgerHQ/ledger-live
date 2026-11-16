@@ -271,3 +271,56 @@ test("a package without a manifest or scripts is only checked for configs", () =
   assert.deepEqual(messages(root, "shared/a"), []);
   assert.deepEqual(messages(root, "shared/b"), []);
 });
+
+const PLUGIN_PRESET = {
+  "support/lint/features-flow.mts":
+    'import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";\n' +
+    'import { defineConfig } from "oxlint";\n' +
+    'import base from "./base.mts";\n',
+  "support/lint/base.mts":
+    'import { defineConfig } from "oxlint";\nimport fs from "node:fs";\n' +
+    'const message = "x" +\n  "import it from \'not-a-package\'";\n',
+  "support/lint/shared.mts":
+    'import { defineConfig } from "oxlint";\nexport { LODASH } from "./restricted.mts";\n',
+  "support/lint/restricted.mts": 'export * from "eslint-plugin-thing/rules";\n',
+};
+
+/**
+ * @param {Record<string, string>} devDependencies
+ * @returns {string} a package.json with a lint script
+ */
+function linted(devDependencies = {}) {
+  return JSON.stringify({ name: "pkg", scripts: { lint: "oxlint src" }, devDependencies });
+}
+
+test("a package whose preset loads an npm package must declare @support/lint", () => {
+  const root = workspace({
+    ...PLUGIN_PRESET,
+    "features/flow/a/package.json": linted(),
+    "shared/b/package.json": linted(),
+  });
+  assert.deepEqual(messages(root, "features/flow/a"), [
+    'the features-flow lint preset loads @ledgerhq/lumen-lint-plugin: declare "@support/lint": ' +
+      '"workspace:*" in devDependencies, so nx hashes them in lint and marks the package affected ' +
+      "when they change",
+  ]);
+  assert.match(messages(root, "shared/b")[0], /shared lint preset loads eslint-plugin-thing:/);
+});
+
+test("a package that declares @support/lint, or whose preset loads only oxlint, passes", () => {
+  const root = workspace({
+    ...PLUGIN_PRESET,
+    "features/flow/a/package.json": linted({ "@support/lint": "workspace:*" }),
+    "domain/b/package.json": linted(),
+  });
+  assert.deepEqual(messages(root, "features/flow/a"), []);
+  assert.deepEqual(messages(root, "domain/b"), []);
+});
+
+test("a package without a lint script does not need @support/lint", () => {
+  const root = workspace({
+    ...PLUGIN_PRESET,
+    "features/flow/a/package.json": manifest({ test: "jest" }),
+  });
+  assert.deepEqual(messages(root, "features/flow/a"), []);
+});

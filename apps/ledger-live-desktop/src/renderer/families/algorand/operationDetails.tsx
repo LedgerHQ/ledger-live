@@ -1,7 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/families/algorand/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";

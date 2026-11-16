@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { MINA_MAINNET_NETWORK_ID } from "../consts";
 import { getAccountNumFromPath } from "../logic/utils";
 import { Transaction, TxType } from "../types";

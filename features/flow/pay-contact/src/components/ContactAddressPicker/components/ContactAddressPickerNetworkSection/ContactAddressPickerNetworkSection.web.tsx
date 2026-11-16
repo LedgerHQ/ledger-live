@@ -4,8 +4,8 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type {
   ContactAddressPickerNetworkGroup,
   ContactAddressPickerProps,
-} from "../../../../types";
-import { ContactAddressPickerRow } from "../ContactAddressPickerRow/ContactAddressPickerRow.web";
+} from "../../ContactAddressPicker.types";
+import { ContactAddressPickerRow } from "../ContactAddressPickerRow/ContactAddressPickerRow";
 
 const NETWORK_ICON_SIZE = 16;
 

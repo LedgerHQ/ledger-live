@@ -7,7 +7,7 @@ import { createIntent, type DeviceConnectionParams } from "@features/platform-de
 import type {
   VerifyAddressIntentInput,
   VerifyAddressIntentJobState,
-} from "@features/platform-verify-address-intent";
+} from "@features/platform-intent-verify-address";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,

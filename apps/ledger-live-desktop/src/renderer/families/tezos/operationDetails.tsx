@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import CounterValue from "~/renderer/components/CounterValue";

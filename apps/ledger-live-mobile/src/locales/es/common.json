@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Este monto es demasiado pequeño para ponerlo en participación"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Tu validador no acepta puesta en participación. Cambia de validador para poner en participación."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Primero vacía las subcuentas"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "Dispositivo original y actualizado",
+        "genuineTitle" : "Dispositivo genuino",
         "cta" : "Continuar"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "Seleccionar saldo",
+        "transparent" : {
+          "title" : "Saldo público",
+          "subtitle" : "Transparente"
+        },
+        "shielded" : {
+          "title" : "Saldo privado",
+          "subtitle" : "Blindado",
+          "pendingNoticeTitle" : "Maduración de fondos",
+          "pendingNotice" : "Algunas notas blindadas aún están madurando y es posible que todavía no se puedan gastar"
+        },
+        "zeroBalance" : {
+          "warning" : "No hay saldo disponible"
+        },
+        "requiresSync" : {
+          "notice" : "Sincronización requerida"
+        }
+      },
       "title" : "Enviar {{currency}}",
       "selectAddress" : "Seleccionar dirección",
       "available" : "Disponibles {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "Copia de respaldo encontrada",
+      "title" : "Se han encontrado ajustes guardados",
       "description" : "Las aplicaciones y los ajustes no se restauraron por completo en el dispositivo.",
-      "restore" : "Restaurar",
-      "delete" : "Eliminar copia de respaldo"
+      "restore" : "Reinstalar",
+      "delete" : "Descartar"
     },
     "bootloaderDiscovered" : {
       "title" : "Tu dispositivo está en modo Bootloader.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "¿Restaurar la configuración anterior?",
-      "description" : "Confirmo que quiero restaurar las apps y los ajustes de mi configuración anterior y que cualquier app y datos creados desde entonces se perderán.",
-      "confirm" : "Restaurar",
+      "title" : "¿Deseas reinstalar los ajustes guardados?",
+      "description" : "Las apps y los ajustes guardados al actualizar el SO se reinstalarán en tu dispositivo. Cualquier app o dato añadido desde entonces se eliminará.",
+      "confirm" : "Reinstalar",
       "cancel" : "Cancelar"
     },
     "deleteConfirmation" : {
-      "title" : "Eliminar tu copia de respaldo",
-      "description" : "Soy consciente de que la configuración anterior y la app y los datos de mi última copia de respaldo, incluidas las credenciales de Security Key, se perderán.",
-      "confirm" : "Eliminar copia de respaldo",
+      "title" : "¿Deseas descartar los ajustes guardados?",
+      "description" : "Los ajustes guardados al actualizar el SO, incluidas las credenciales de Security Key, ya no estarán disponibles. Todavía puedes reinstalar tus aplicaciones desde Mi Ledger con sus ajustes predeterminados.",
+      "confirm" : "Descartar",
       "cancel" : "Cancelar"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "Versión {{version}}",
       "banner" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
       "title" : "¿Qué incluye la actualización del SO?",
+      "releaseNotes" : "Consulta las notas de versión completas",
       "start" : "Iniciar actualización"
     },
     "preparing" : {
-      "title" : "Preparando la instalación"
+      "title" : "Preparando actualización..."
     },
     "progress" : {
-      "updatingTitle" : "Actualizando tu {{productName}}",
-      "restoringTitle" : "Restaurando las apps y los ajustes",
-      "updateCount" : "Actualización {{index}} de {{count}}",
-      "description" : "Mantén el dispositivo conectado y cerca hasta que se complete la actualización."
+      "updatingTitle" : "Actualizar {{index}}/{{count}}",
+      "restoringTitle" : "Reinstalando tus ajustes...",
+      "updatingDescription" : "Tu {{productName}} se reiniciará automáticamente varias veces y se te pedirá que lo desbloquees con el PIN durante la instalación.",
+      "restoringDescription" : "Ya casi está. Los ajustes se están reinstalando en tu {{productName}}."
     },
     "applied" : {
       "title" : "Actualización completa",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "Activo",
       "inactiveStake" : "Recompensas retirables",
       "stakeAvailableBalance" : "Saldo disponible",
+      "delegatedInfoTooltip" : "Cantidad total delegada a validadores.",
+      "inactiveStakeTooltip" : "Es posible retirar tu participación inactiva sin desactivar tu delegación.",
+      "withdrawableTitle" : "Puede retirarse",
+      "withdrawableInfoTooltip" : "Cantidad total que es posible retirar de las delegaciones.",
       "actions" : {
         "activate" : "Activar",
         "deactivate" : "Desactivar",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "Activos"
+      "title" : "Activos",
+      "add" : "Agregar"
     },
     "refreshStatus" : {
       "upToDate" : "Cuenta actualizada",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "La transacción de Aleo requiere la generación de una prueba. Esto puede tardar un tiempo.",
         "recordsUsed" : "Registros utilizados",
         "signingTime" : "Hora de la firma"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "Tiempo est.",
+          "info" : {
+            "title" : "Cómo funciona el tiempo estimado",
+            "description" : "Enviar más desde tu saldo privado puede utilizar más registros, y cada uno añade tiempo de procesamiento. Las cantidades mayores tardan más en confirmarse."
+          }
+        }
       }
     },
     "balancesSection" : "Saldos",

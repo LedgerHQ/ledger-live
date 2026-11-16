@@ -4,7 +4,7 @@ import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeAddress } from "@polkadot/util-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isValidAddress } from "../common";
 import { type PolkadotCoinConfig } from "../config";
 import { DEFAULT_MAX_TX_QUERY } from "../constants";

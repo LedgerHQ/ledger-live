@@ -12,7 +12,7 @@ import {
   type DeviceIntentExecutorHookState,
   type IntentExecutionSnapshot,
 } from "./deriveHookState";
-export type { DeviceIntentExecutorHookState, IntentExecutionSnapshot } from "./deriveHookState";
+export type { DeviceIntentExecutorHookState } from "./deriveHookState";
 
 // ---- Hook ----
 
@@ -111,7 +111,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
       listeners: {
         onExecutorStateChanged: state => {
           setExecutorState(state);
-          onExecutorStateChangedRef.current(state);
+          onExecutorStateChangedRef.current?.(state);
           if (state.type === "executingIntent") {
             setLatestJobState(undefined);
             lastIntentSnapshotRef.current = {

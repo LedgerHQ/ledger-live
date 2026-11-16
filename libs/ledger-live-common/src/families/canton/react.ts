@@ -2,11 +2,12 @@ import { useCallback, useState, useEffect, useMemo } from "react";
 import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
-import coinConfig from "@ledgerhq/coin-canton/config";
+import type { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import BigNumber from "bignumber.js";
+import { getCurrencyConfiguration } from "../../config";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
   currency: CryptoCurrency;
@@ -160,7 +161,7 @@ export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]
     // parent Canton account, the token's instrument_id for a token sub-account.
     const isParent = account.type === "Account";
     const nativeInstrumentId = isParent
-      ? coinConfig.getCoinConfig(mainAccount.currency.id).nativeInstrumentId
+      ? getCurrencyConfiguration<CantonCoinConfig>(mainAccount.currency.id).nativeInstrumentId
       : undefined;
     const matchesAccountInstrument = (instrumentId: string): boolean => {
       if (isParent) return instrumentId === nativeInstrumentId;

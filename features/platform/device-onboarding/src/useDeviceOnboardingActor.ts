@@ -112,11 +112,13 @@ export function useDeviceOnboardingActor({
     [currentSessionId],
   );
 
+  /** Returns false when the machine cannot take the event now (for example while locked). */
   const send = useCallback(
-    (event: HostOnboardingEvent) => {
+    (event: HostOnboardingEvent): boolean => {
       const actor = actorRef.current;
-      if (!actor?.getSnapshot().can(stampSession(event, currentSessionId))) return;
+      if (!actor?.getSnapshot().can(stampSession(event, currentSessionId))) return false;
       sendToActor(event);
+      return true;
     },
     [currentSessionId, sendToActor],
   );

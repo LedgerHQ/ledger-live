@@ -15,6 +15,7 @@ export type ContactsAddressEntryState =
       value: string;
       resolvedAddress: null;
       inputMethod: ContactsAddressInputSource;
+      keepsEnsDisclaimer: boolean;
     }>
   | Readonly<{
       status: "valid";

@@ -6,6 +6,7 @@ import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import type { SoftExpectMatcher } from "tests/utils/softExpect";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -27,9 +28,8 @@ export class PortfolioPage extends AppPage {
   private readonly noBalanceTitle = this.page.getByTestId("no-balance-title");
   private readonly quickActionButton = (action: QuickActionButton) =>
     this.page.getByTestId(`quick-action-button-${action}`);
-  private readonly quickActionButtons = this.page
-    .getByTestId("quick-actions-actions-list")
-    .getByRole("button");
+  private readonly quickActionsList = this.page.getByTestId("quick-actions-actions-list");
+  private readonly quickActionButtons = this.quickActionsList.getByRole("button");
   private readonly connectQuickActionButton = this.page.getByTestId("quick-action-button-connect");
   private readonly buyALedgerQuickActionButton = this.page.getByTestId(
     "quick-action-button-buy-a-ledger",
@@ -57,6 +57,11 @@ export class PortfolioPage extends AppPage {
 
   private async checkVisibility(locator: Locator) {
     await expect(locator).toBeVisible();
+  }
+
+  private async checkQuickAction(assertion: (soft: SoftExpectMatcher) => Promise<void>) {
+    await expect(this.quickActionsList).toBeVisible();
+    await this.softExpect(assertion, { timeout: TIMEOUT.large });
   }
 
   @step("Expect add account button to be visible")
@@ -95,7 +100,9 @@ export class PortfolioPage extends AppPage {
   async expectTotalBalanceToBeZero() {
     await expect(this.portfolioTotalBalance).toBeVisible();
     // DisplayAmount animation pollutes textContent with hidden digits; aria-label keeps the clean amount.
-    await expect(this.portfolioTotalBalance).toHaveAttribute("aria-label", "$ 0.00");
+    await this.softExpect(async soft => {
+      await soft(this.portfolioTotalBalance).toHaveAttribute("aria-label", "$ 0.00");
+    });
   }
 
   @step("Expect balance diff to display the correct counter value $0")
@@ -175,22 +182,26 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect portfolio total balance to not be visible")
   async expectPortfolioTotalBalanceNotVisible() {
-    await expect(this.portfolioTotalBalance).not.toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.portfolioTotalBalance).not.toBeVisible();
+    });
   }
 
   @step("Expect one-day performance indicator to not be visible")
   async expectOneDayPerformanceIndicatorNotVisible() {
-    await expect(this.portfolioTrend).not.toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.portfolioTrend).not.toBeVisible();
+    });
   }
 
   @step("Check receive button is visible")
   async checkReceiveButtonVisibility() {
-    await this.checkVisibility(this.quickActionButton("receive"));
+    await this.checkQuickAction(soft => soft(this.quickActionButton("receive")).toBeVisible());
   }
 
   @step("Check buy button is visible")
   async checkBuyButtonVisibility() {
-    await this.checkVisibility(this.quickActionButton("buy"));
+    await this.checkQuickAction(soft => soft(this.quickActionButton("buy")).toBeVisible());
   }
 
   @step("Check connect button is visible")
@@ -205,32 +216,37 @@ export class PortfolioPage extends AppPage {
 
   @step("Check buy a ledger button is visible")
   async checkBuyALedgerButtonVisibility() {
-    await this.checkVisibility(this.buyALedgerQuickActionButton);
+    await this.checkQuickAction(soft => soft(this.buyALedgerQuickActionButton).toBeVisible());
   }
 
   @step("Check sell button is disabled")
   async checkSellButtonDisabled() {
-    await expect(this.quickActionButton("sell")).toBeDisabled();
+    await this.checkQuickAction(soft => soft(this.quickActionButton("sell")).toBeDisabled());
   }
 
   @step("Check send button is disabled")
   async checkSendButtonDisabled() {
-    await expect(this.quickActionButton("send")).toBeDisabled();
+    await this.checkQuickAction(soft => soft(this.quickActionButton("send")).toBeDisabled());
   }
 
   @step("Check sell button is enabled")
   async checkSellButtonEnabled() {
-    await expect(this.quickActionButton("sell")).toBeEnabled();
+    await this.checkQuickAction(soft => soft(this.quickActionButton("sell")).toBeEnabled());
   }
 
   @step("Check send button is enabled")
   async checkSendButtonEnabled() {
-    await expect(this.quickActionButton("send")).toBeEnabled();
+    await this.checkQuickAction(soft => soft(this.quickActionButton("send")).toBeEnabled());
   }
 
   @step("Check no device title is visible")
   async checkNoDeviceTitleVisibility() {
-    await this.checkVisibility(this.noDeviceTitle);
+    await this.softExpect(
+      async soft => {
+        await soft(this.noDeviceTitle).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect the Wallet home without a device")
@@ -240,20 +256,28 @@ export class PortfolioPage extends AppPage {
     await expect(this.page).not.toHaveURL(/\/onboarding/);
   }
 
-  @step("Expect the no-device title in place of a balance")
+  /** The no-device title itself is checked by `expectNoDeviceWalletHome`. */
+  @step("Expect no balance in the no-device header")
   async expectNoDeviceHeader() {
-    await expect(this.noDeviceTitle).toBeVisible();
-    await expect(this.portfolioBalance).toBeHidden();
-    await expect(this.portfolioTotalBalance).toBeHidden();
-    await expect(this.portfolioTrend).toBeHidden();
+    await this.softExpect(async soft => {
+      await Promise.all(
+        [this.portfolioBalance, this.portfolioTotalBalance, this.portfolioTrend].map(locator =>
+          soft(locator).toBeHidden(),
+        ),
+      );
+    });
   }
 
   /** Without a device, Receive, Buy, Sell and Send are not rendered at all, and desktop has no Swap action. */
   @step("Expect Connect and Buy a Ledger to be the only quick actions")
   async expectNoDeviceQuickActions() {
-    await expect(this.connectQuickActionButton).toBeVisible();
-    await expect(this.buyALedgerQuickActionButton).toBeVisible();
-    await expect(this.quickActionButtons).toHaveCount(2);
+    await this.softExpect(async soft => {
+      await Promise.all([
+        soft(this.connectQuickActionButton).toBeVisible(),
+        soft(this.buyALedgerQuickActionButton).toBeVisible(),
+        soft(this.quickActionButtons).toHaveCount(2),
+      ]);
+    });
   }
 
   @step("Click send button")
@@ -286,7 +310,9 @@ export class PortfolioPage extends AppPage {
   async expectStocksHoldingsVisible() {
     await this.stocksSection.scrollIntoViewIfNeeded();
     await expect(this.stocksSection).toBeVisible();
-    await expect(this.stocksExploreCta).not.toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.stocksExploreCta).not.toBeVisible();
+    });
   }
 
   @step("Click the Stocks category title")

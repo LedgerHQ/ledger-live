@@ -6,6 +6,7 @@ import {
   isAccountDataReceived,
 } from "@domain/entity-account-data";
 import {
+  NetworkIdSchema,
   computeAccountUUID,
   type AccountDescriptor,
   type AccountUUID,
@@ -72,14 +73,14 @@ export const descriptorOf = (index: number, network = "ethereum"): AccountDescri
   purpose: "account",
   version: "2",
   type: "address",
-  network,
-  address: `0x${index}`,
+  network: NetworkIdSchema.parse(network),
+  key: `0x${index}`,
   path: `m/44h/60h/${index}h/0/0`,
 });
 
 /** The index a toy account was made with. */
 export const indexOf = ({ descriptor }: { descriptor: AccountDescriptor }): number =>
-  descriptor.type === "address" ? Number(descriptor.address.slice(2)) : Number.NaN;
+  descriptor.type === "address" ? Number(descriptor.key.slice(2)) : Number.NaN;
 
 export const descriptor = descriptorOf(0);
 

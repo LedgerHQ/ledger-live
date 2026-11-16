@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CellContext } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";

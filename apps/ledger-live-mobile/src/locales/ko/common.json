@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "최소 금액을 충족하지 않아 스테이킹이 불가합니다."
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "스테이킹을 지원하지 않는 검증인입니다. 다른 검증인으로 변경하세요."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "장치가 정품이며 최신 상태입니다",
+        "genuineTitle" : "정품 장치",
         "cta" : "계속"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "수량 선택",
+        "transparent" : {
+          "title" : "공개 수량",
+          "subtitle" : "Transparent(공개)"
+        },
+        "shielded" : {
+          "title" : "비공개 수량",
+          "subtitle" : "Shielded(비공개)",
+          "pendingNoticeTitle" : "자산 활성화 대기 중",
+          "pendingNotice" : "일부 비공개 노트(shielded notes)가 대기 상태에 있어 사용이 불가능할 수 있습니다"
+        },
+        "zeroBalance" : {
+          "warning" : "이용 가능 수량 없음"
+        },
+        "requiresSync" : {
+          "notice" : "동기화 필요"
+        }
+      },
       "title" : "{{currency}} 전송",
       "selectAddress" : "주소 선택",
       "available" : "가용 수량: {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "백업을 찾았습니다",
+      "title" : "저장된 설정을 찾았습니다",
       "description" : "앱과 설정이 장치에 완전히 복원되지 않았습니다.",
-      "restore" : "복구하기",
-      "delete" : "백업 삭제"
+      "restore" : "재설치",
+      "delete" : "삭제"
     },
     "bootloaderDiscovered" : {
       "title" : "장치가 부트로더 모드에 있습니다.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "이전 구성을 복구하시겠습니까?",
-      "description" : "앱 및 설정을 이전 구성으로 복구하는 데 동의하며, 이후 생성된 모든 앱과 데이터가 삭제됨을 확인합니다.",
-      "confirm" : "복구하기",
+      "title" : "저장된 설정을 다시 설치하시겠습니까?",
+      "description" : "OS 업데이트 중에 저장된 앱과 설정이 장치에 다시 설치됩니다. 그 이후에 추가된 앱이나 데이터는 제거됩니다.",
+      "confirm" : "재설치",
       "cancel" : "취소"
     },
     "deleteConfirmation" : {
-      "title" : "백업을 삭제하시겠습니까?",
-      "description" : "보안 키 인증 정보를 포함하여, 이전 구성과 마지막 백업의 앱 및 데이터가 모두 삭제된다는 점을 확인했습니다.",
-      "confirm" : "백업 삭제",
+      "title" : "저장된 설정을 삭제하시겠어요?",
+      "description" : "OS 업데이트 중 저장된 설정(보안 키 자격 증명 포함)은 더 이상 사용할 수 없습니다. 내 Ledger에서 기본 설정으로 앱을 다시 설치할 수 있습니다.",
+      "confirm" : "삭제",
       "cancel" : "취소"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "버전 {{version}}",
       "banner" : "만약을 대비하여 24개 단어로 구성된 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.",
       "title" : "OS에 무엇이 새롭게 업데이트되었나요?",
+      "releaseNotes" : "전체 릴리스 노트 보기",
       "start" : "업데이트 시작"
     },
     "preparing" : {
-      "title" : "설치 준비 중"
+      "title" : "업데이트 준비 중..."
     },
     "progress" : {
-      "updatingTitle" : "{{productName}} 업데이트 중",
-      "restoringTitle" : "앱 및 설정 복구 중",
-      "updateCount" : "업데이트({{index}}/{{count}}단계)",
-      "description" : "업데이트가 완료될 때까지 장치의 연결을 유지하고 가까이 두세요."
+      "updatingTitle" : "업데이트 {{index}}/{{count}}",
+      "restoringTitle" : "설정을 다시 설치하는 중...",
+      "updatingDescription" : "{{productName}} 장치가 자동으로 여러 번 재시작되며, 설치하는 동안 PIN 잠금 해제 요청이 표시됩니다.",
+      "restoringDescription" : "거의 완료되었습니다. {{productName}}에 설정을 다시 설치하는 중입니다."
     },
     "applied" : {
       "title" : "업데이트 완료",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "활성",
       "inactiveStake" : "인출 가능 보상",
       "stakeAvailableBalance" : "이용 가능 잔액",
+      "delegatedInfoTooltip" : "검증인에게 위임된 총 금액입니다.",
+      "inactiveStakeTooltip" : "위임을 해제하지 않고도 인출할 수 있는 비활성 스테이킹 수량을 의미합니다.",
+      "withdrawableTitle" : "출금 가능",
+      "withdrawableInfoTooltip" : "위임자로부터 인출할 수 있는 총액입니다.",
       "actions" : {
         "activate" : "활성화",
         "deactivate" : "비활성화",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "자산"
+      "title" : "자산",
+      "add" : "추가"
     },
     "refreshStatus" : {
       "upToDate" : "계정이 최신 상태입니다",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Aleo 트랜잭션에는 증명 생성이 필요합니다. 이 작업은 시간이 다소 소요될 수 있습니다.",
         "recordsUsed" : "사용된 레코드",
         "signingTime" : "서명 시간"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "예상 시간",
+          "info" : {
+            "title" : "예상 소요 시간 산정 방식",
+            "description" : "비공개 수량 전송량이 많을수록 더 많은 레코드가 사용될 수 있으며, 레코드가 추가될 때마다 처리 시간이 늘어납니다. 전송량이 많을수록 승인까지 더 오랜 시간이 소요됩니다."
+          }
+        }
       }
     },
     "balancesSection" : "수량",

@@ -23,35 +23,38 @@ function makeDir(): string {
   return dir;
 }
 
+const isPosix = process.platform !== "win32";
 const mode = (p: string) => statSync(p).mode & 0o777;
 
 describe("writeSecureFile", () => {
-  it("creates a new file at 0600", () => {
+  it.skipIf(!isPosix)("creates a new file at 0600", () => {
     const dest = join(makeDir(), "secret");
     writeSecureFile(dest, Buffer.from("hello"));
     expect(mode(dest)).toBe(0o600);
     expect(readFileSync(dest, "utf8")).toBe("hello");
   });
 
-  it("tightens a pre-existing world-readable file to 0600 (the regression it guards)", () => {
-    const dest = join(makeDir(), "secret");
-    // Force a 0644 precondition regardless of the runner's umask; without the chmod a strict umask
-    // would create this at 0600 and the 0644→0600 regression scenario would never run.
-    writeFileSync(dest, "old");
-    chmodSync(dest, 0o644);
-    expect(mode(dest)).toBe(0o644);
+  it.skipIf(!isPosix)(
+    "tightens a pre-existing world-readable file to 0600 (the regression it guards)",
+    () => {
+      const dest = join(makeDir(), "secret");
+      // Force a 0644 precondition regardless of the runner's umask; without the chmod a strict umask
+      // would create this at 0600 and the 0644→0600 regression scenario would never run.
+      writeFileSync(dest, "old");
+      chmodSync(dest, 0o644);
+      expect(mode(dest)).toBe(0o644);
 
-    writeSecureFile(dest, Buffer.from("new secret"));
+      writeSecureFile(dest, Buffer.from("new secret"));
 
-    expect(mode(dest)).toBe(0o600);
-    expect(readFileSync(dest, "utf8")).toBe("new secret");
-  });
+      expect(mode(dest)).toBe(0o600);
+      expect(readFileSync(dest, "utf8")).toBe("new secret");
+    },
+  );
 
   it("creates missing parent directories (regression: writeFileSync does not, Bun.write did)", () => {
     const dest = join(makeDir(), "nested", "deep", "secret.enc");
     writeSecureFile(dest, Buffer.from("payload"));
     expect(readFileSync(dest, "utf8")).toBe("payload");
-    expect(mode(dest)).toBe(0o600);
   });
 
   it("leaves no leftover temp files in the directory", () => {

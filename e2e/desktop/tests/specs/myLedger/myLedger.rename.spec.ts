@@ -6,18 +6,24 @@ import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 // so the new name stays below the smallest limit.
 const RENAMED = "QAA Renamed";
 
-// isEditDeviceNameSupported excludes nanoS, so the LNS tag is dropped from this spec.
-test.describe("My Ledger — rename the device", () => {
+// The drawer keys its options by the language id, while the trigger renders the localized label.
+const TARGET_LANGUAGE = "german";
+const TARGET_LABEL = "Deutsch";
+const DEFAULT_LABEL = "English";
+
+// isEditDeviceNameSupported excludes nanoS and isDeviceLocalizationSupported has no range for it,
+// so the LNS tag is dropped from this spec.
+test.describe("My Ledger — device name and language", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     teamOwner: Team.MY_LEDGER_ONBOARDING,
   });
 
   test(
-    "User can rename the device from My Ledger",
+    "User can rename the device and change its language from My Ledger",
     {
       tag: ["@myLedger", ...deviceTagsWithoutLNS()],
-      annotation: { type: "TMS", description: "B2CQA-2594" },
+      annotation: { type: "TMS", description: "B2CQA-2594, B2CQA-1025" },
     },
     async ({ app, mockDevice, mockServer }) => {
       await app.mainNavigation.openMyLedger();
@@ -28,6 +34,12 @@ test.describe("My Ledger — rename the device", () => {
       await app.myLedger.expectDeviceName(RENAMED);
 
       await mockServer.expectDeviceName(RENAMED);
+
+      await app.myLedger.expectDeviceLanguage(DEFAULT_LABEL);
+      await app.myLedger.changeDeviceLanguage(TARGET_LANGUAGE);
+      await app.myLedger.expectDeviceLanguage(TARGET_LABEL);
+
+      await mockServer.expectDeviceLanguage(TARGET_LANGUAGE);
     },
   );
 });

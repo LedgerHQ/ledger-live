@@ -6,7 +6,7 @@ import type {
   StakeAction,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccount } from "../network";
 import type { TronResources, UnFrozenInfo } from "../types";

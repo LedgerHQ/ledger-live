@@ -20,11 +20,6 @@ export class ModularAssetDialog extends Dialog {
     await this.dialogOverlay.waitFor({ state: "attached" });
   }
 
-  @step("Validate modular asset dialog is visible")
-  async isModularAssetDialogVisible(): Promise<boolean> {
-    return await this.modularAssetSelectorContainer.isVisible();
-  }
-
   @step("Validate asset dialog elements")
   async validateAssetDialogItems() {
     await this.waitForDialogToBeVisible();
@@ -52,8 +47,10 @@ export class ModularAssetDialog extends Dialog {
 
     const row = this.assetItemRow(ticker).first();
     await expect(row).toBeVisible();
-    await expect(row).toContainText("$***");
-    await expect(row).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+    await this.softExpect(async soft => {
+      await soft(row).toContainText("$***");
+      await soft(row).toContainText(new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"));
+    });
   }
 
   @step("Check listed asset amounts are masked in discreet mode")

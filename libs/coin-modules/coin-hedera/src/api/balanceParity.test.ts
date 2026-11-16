@@ -1,5 +1,5 @@
 import type { BlockTransaction, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_NAMES, STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { getBlockInfo } from "../logic/getBlockInfo";

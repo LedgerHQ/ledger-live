@@ -3,15 +3,12 @@ import { act, cleanup, render, screen, waitFor, withFlagOverrides } from "tests/
 import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
 import cantonHandlers, {
-  CANTON_DEVNET_GATEWAY,
-  CANTON_DEVNET_NODE_ID,
   CANTON_DEVNET_ONBOARDING_PREPARE_RE,
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
 import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getEnv, setEnv } from "@shared/env";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
-import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
 import {
@@ -45,7 +42,7 @@ jest.mock("@ledgerhq/coin-canton/signer", () => ({
   ),
 }));
 
-jest.mock("@ledgerhq/coin-canton/common-logic/transaction/sign", () => ({
+jest.mock("@ledgerhq/coin-canton/bridge/sign", () => ({
   __esModule: true,
   signTransaction: jest.fn().mockResolvedValue({
     signature: "cc".repeat(66),
@@ -104,17 +101,6 @@ describe("OnboardModal Integration", () => {
   beforeAll(async () => {
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
-
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-      networkType: "devnet",
-      gatewayUrl: CANTON_DEVNET_GATEWAY,
-      nodeId: CANTON_DEVNET_NODE_ID,
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-    }));
 
     await getCurrencyBridge(getCryptoCurrencyById("canton_network_devnet"));
   });

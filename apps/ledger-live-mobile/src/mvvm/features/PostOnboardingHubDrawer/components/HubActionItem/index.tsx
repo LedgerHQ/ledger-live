@@ -49,6 +49,7 @@ export function HubActionItem(props: HubActionItemProps) {
         leadingIcon={leadingIcon}
         title={titleText}
         description={descriptionText}
+        descriptionTestID={`post-onboarding-hub-action-${id}-description`}
         tag={tag}
         trailing={trailing}
         opacity={isFeatureDisabled ? 0.5 : 1}

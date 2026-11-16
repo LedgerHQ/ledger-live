@@ -7,5 +7,5 @@ export const TEST_CONFIG: SolanaCoinConfig = {
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
-  rpcUrls: { solana: "https://solana.test.invalid" },
+  rpcUrl: "https://solana.test.invalid",
 };

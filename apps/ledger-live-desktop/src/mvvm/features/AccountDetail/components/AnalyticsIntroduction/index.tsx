@@ -1,5 +1,5 @@
 import React from "react";
-import { AccountAnalyticsIntroduction } from "@features/flow-account-detail-analytics-notice/web";
+import { AccountAnalyticsIntroduction } from "@features/flow-account-detail-analytics-notice";
 import type { Account } from "@ledgerhq/types-live";
 import { useAnalyticsIntroductionViewModel } from "./useAnalyticsIntroductionViewModel";
 

@@ -6,13 +6,9 @@ import { addContact, contact, contactsSlice, type Contact } from "@domain/entity
 import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
 import { StyleProvider } from "@features/platform-style/web";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import type {
-  ContactsProps,
-  ContactsTableLabels,
-  ContactsViewProps,
-  EmptyStateLabels,
-  PayAddContactProps,
-} from "../../../types";
+import type { ContactsTableLabels, EmptyStateLabels, PayAddContactProps } from "../../../types";
+import type { ContactsProps } from "../Contacts";
+import type { ContactsViewProps } from "../ContactsView";
 import { CONTACTS_RESOURCES, type I18nResources } from "./i18n";
 
 export { CONTACTS_RESOURCES };

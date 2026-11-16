@@ -11,25 +11,28 @@ import {
   quickActionClickedProps,
 } from "./accountDetailTracking";
 
-const facts = { currencyId: "ethereum/erc20/usd_tether", isTokenAccount: true };
+const facts = { networkId: "ethereum" };
 
 describe("account detail tracking", () => {
-  it("puts the currency id and the token flag on every payload", () => {
-    expect(accountTrackingProps(facts)).toEqual({
-      currency: "ethereum/erc20/usd_tether",
-      isTokenAccount: true,
-    });
+  it("puts the network id on every payload", () => {
+    expect(accountTrackingProps(facts)).toEqual({ network: "ethereum" });
   });
 
   it("describes the page view with where the user comes from and what the account holds", () => {
     expect(
-      accountPageViewProps({ ...facts, source: "Asset", operationsCount: 12, hasTokens: false }),
+      accountPageViewProps({
+        ...facts,
+        source: "Asset",
+        operationsCount: 12,
+        hasTokens: false,
+        hasAnalyticsBanner: true,
+      }),
     ).toEqual({
-      currency: "ethereum/erc20/usd_tether",
-      isTokenAccount: true,
+      network: "ethereum",
       source: "Asset",
       operationsCount: 12,
       hasTokens: false,
+      hasAnalyticsBanner: true,
     });
   });
 

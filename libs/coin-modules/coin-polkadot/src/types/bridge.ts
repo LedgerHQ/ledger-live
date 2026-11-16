@@ -14,7 +14,7 @@ import type {
   OperationExtra,
   OperationExtraRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { PolkadotOperationMode } from "./model";
 
 export type RewardDestinationType = "Staked" | "Stash" | "Account" | "Controller";
@@ -23,12 +23,14 @@ export type PolkadotNomination = {
   address: string;
   value: BigNumber;
   status: PolkadotNominationStatus;
+  isRegistered?: boolean | undefined;
 };
 
 export type PolkadotNominationRaw = {
   address: string;
   value: string;
   status: PolkadotNominationStatus;
+  isRegistered?: boolean | undefined;
 };
 
 export type PolkadotUnlocking = {
@@ -95,6 +97,7 @@ export type PolkadotValidator = {
   selfBonded: BigNumber;
   isElected: boolean;
   isOversubscribed: boolean;
+  isBlocked: boolean;
 };
 
 export type PolkadotNominationInfo = string;

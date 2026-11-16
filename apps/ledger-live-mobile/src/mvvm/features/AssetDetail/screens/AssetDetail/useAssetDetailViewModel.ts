@@ -43,7 +43,6 @@ export function useAssetDetailViewModel() {
 
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const distribution = useDistribution({
-    groupBy: "asset",
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });

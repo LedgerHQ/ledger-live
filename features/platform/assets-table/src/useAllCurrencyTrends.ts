@@ -3,12 +3,15 @@ import { alignFlatDayCountervalueChange } from "./alignFlatDayCountervalueChange
 import { useAssetsTablePorts } from "./assetsTablePorts";
 import type { AssetTableItem, AssetTrendRange } from "./types";
 
+export type MarketDayTrendPreference = "flat-holding" | "market";
+
 // A missing portfolio percentage falls back to the price move of the current balance, so a
 // position opened inside the range still shows a variation.
 export function useAllCurrencyTrends(
   items: readonly AssetTableItem[],
   range: AssetTrendRange,
   marketDayChangeByCurrencyId?: ReadonlyMap<string, number>,
+  marketDayTrend: MarketDayTrendPreference = "flat-holding",
 ): Map<string, number | null> {
   const { getCurrencyPortfolio, getCurrentBalanceCountervalueChange } = useAssetsTablePorts();
 
@@ -23,6 +26,16 @@ export function useAllCurrencyTrends(
         map.set(item.currency.id, 0);
         continue;
       }
+      const marketPercentPoints = marketDayChangeByCurrencyId?.get(item.currency.id);
+      if (
+        marketDayTrend === "market" &&
+        range === "day" &&
+        marketPercentPoints != null &&
+        Number.isFinite(marketPercentPoints)
+      ) {
+        map.set(item.currency.id, marketPercentPoints / 100);
+        continue;
+      }
       const portfolio = getCurrencyPortfolio(item.accounts, range);
       const balanceAtRangeStart = portfolio.history[0]?.value;
       const balanceAtRangeEnd = portfolio.history.at(-1)?.value;
@@ -35,7 +48,7 @@ export function useAllCurrencyTrends(
               balanceAtRangeStart,
               balanceAtRangeEnd,
               currentCountervalue: portfolio.history.at(-1)?.countervalue,
-              marketDayChangePercentPoints: marketDayChangeByCurrencyId?.get(item.currency.id),
+              marketDayChangePercentPoints: marketPercentPoints,
             });
       const trend =
         countervalueChange.percentage ??
@@ -48,6 +61,7 @@ export function useAllCurrencyTrends(
     items,
     range,
     marketDayChangeByCurrencyId,
+    marketDayTrend,
     getCurrencyPortfolio,
     getCurrentBalanceCountervalueChange,
   ]);

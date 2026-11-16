@@ -1,6 +1,6 @@
 import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";

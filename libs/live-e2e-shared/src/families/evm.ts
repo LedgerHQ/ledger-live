@@ -39,6 +39,14 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     "Expected amount to be displayed on Speculos device",
   );
 
+  if (tx.expectedFee) {
+    expectSpeculosEventsContainExactly(
+      tx.expectedFee,
+      events,
+      "Expected fee to be displayed on Speculos device",
+    );
+  }
+
   if (tx.accountToDebit instanceof TokenAccount) {
     // The ticker, not the currency name: the ERC-20 descriptor sent to the device carries no
     // name — it is { contractAddress, ticker, decimals, chainId, signature } (see hw-app-eth

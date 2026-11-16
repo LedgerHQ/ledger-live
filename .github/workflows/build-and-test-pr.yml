@@ -152,6 +152,8 @@ jobs:
       check_pod_lockfile: true
       js_bundle_hash_ios: ${{ needs.determine-affected.outputs.mobile_js_hash_ios }}
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
+      native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
+      native_fingerprint_android: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_android }}
 
   # Tests
   test-libraries:
@@ -337,6 +339,14 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-wallet-cli-windows:
+    name: "Test Wallet CLI (Windows)"
+    permissions:
+      contents: read
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
+    uses: ./.github/workflows/test-wallet-cli-windows-reusable.yml
 
   test-additional:
     name: "Test Additional"

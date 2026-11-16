@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Bu tutar stake etmek için çok düşük."
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Doğrulayıcınız stake kabul etmiyor. Stake etmek için doğrulayıcınızı değiştirin."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "Cihaz orijinal ve güncel",
+        "genuineTitle" : "Cihaz orijinal",
         "cta" : "Devam"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "Bakiye seçin",
+        "transparent" : {
+          "title" : "Açık bakiye",
+          "subtitle" : "Şeffaf"
+        },
+        "shielded" : {
+          "title" : "Gizli bakiye",
+          "subtitle" : "Korumalı",
+          "pendingNoticeTitle" : "Vadesi dolmak üzere olan bakiye",
+          "pendingNotice" : "Bazı korumalı notlar hâlâ vade ödülü üretme sürecinde olduğundan henüz harcanamayabilir"
+        },
+        "zeroBalance" : {
+          "warning" : "Mevcut bakiye yok"
+        },
+        "requiresSync" : {
+          "notice" : "Senkronizasyon gerekiyor"
+        }
+      },
       "title" : "{{currency}} gönder",
       "selectAddress" : "Adres seçin",
       "available" : "Mevcut: {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "Yedekleme bulundu",
+      "title" : "Kayıtlı ayarlar bulundu",
       "description" : "Uygulamalar ve ayarlar cihazınızda tam olarak geri yüklenmedi.",
-      "restore" : "Geri yükle",
-      "delete" : "Yedeklemeyi sil"
+      "restore" : "Yeniden yükle",
+      "delete" : "Kaldır"
     },
     "bootloaderDiscovered" : {
       "title" : "Cihaz Bootloader (önyükleyici) modunda.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "Önceki yapılandırmanızı geri yüklemek istiyor musunuz?",
-      "description" : "Uygulamaları ve ayarları önceki yapılandırmamdan geri yüklemek istediğimi ve o tarihten bu yana oluşturulan tüm uygulamaların ve verilerin silineceğini onaylıyorum.",
-      "confirm" : "Geri yükle",
+      "title" : "Kayıtlı ayarlarınızı yeniden yüklemek ister misiniz?",
+      "description" : "İşletim sistemi güncellemeniz sırasında kaydedilen uygulamalar ve ayarlar cihazınıza yeniden yüklenecektir. O tarihten bu yana eklenen tüm uygulamalar ve veriler kaldırılacaktır.",
+      "confirm" : "Yeniden yükle",
       "cancel" : "İptal et"
     },
     "deleteConfirmation" : {
-      "title" : "Yedeklemeniz silinsin mi?",
-      "description" : "Önceki yapılandırmanın ve Security Key kimlik bilgileri dahil olmak üzere son yedeğimdeki uygulamaların ve verilerin silineceğinin farkındayım.",
-      "confirm" : "Yedeklemeyi sil",
+      "title" : "Kaydedilen ayarlarınızı silmek istiyor musunuz?",
+      "description" : "İşletim sistemi güncellemeniz sırasında kaydedilen ayarlar, Güvenlik Anahtarı kimlik bilgileri dâhil, artık kullanılamayacak. Uygulamalarınızı varsayılan ayarlarıyla My Ledger’dan yeniden yükleyebilirsiniz.",
+      "confirm" : "Kaldır",
       "cancel" : "İptal et"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "Sürüm {{version}}",
       "banner" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.",
       "title" : "Bu güncellemede neler var?",
+      "releaseNotes" : "Tüm sürüm notlarını gör",
       "start" : "Güncellemeyi başlat"
     },
     "preparing" : {
-      "title" : "Kurulum için hazırlanıyor"
+      "title" : "Güncelleme hazırlanıyor..."
     },
     "progress" : {
-      "updatingTitle" : "{{productName}} cihazınız güncelleniyor",
-      "restoringTitle" : "Uygulama ve ayarlarınız geri yükleniyor",
-      "updateCount" : "{{index}} / {{count}} güncelleniyor",
-      "description" : "Güncelleme tamamlanıncaya kadar cihazınızı bağlı ve yakınınızda tutun."
+      "updatingTitle" : "Güncelleme {{index}}/{{count}}",
+      "restoringTitle" : "Ayarlarınız yeniden yükleniyor...",
+      "updatingDescription" : "Kurulum sırasında {{productName}} cihazınız otomatik olarak birkaç kez yeniden başlatılacak ve cihazın kilidini PIN’inizle açmanız istenecektir.",
+      "restoringDescription" : "Neredeyse bitti. Ayarlarınız {{productName}} cihazınıza yeniden yükleniyor."
     },
     "applied" : {
       "title" : "Güncelleme tamamlandı",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "Aktif",
       "inactiveStake" : "Çekilebilir Ödüller",
       "stakeAvailableBalance" : "Mevcut bakiye",
+      "delegatedInfoTooltip" : "Doğrulayıcılara yetkisi devredilen toplam tutar.",
+      "inactiveStakeTooltip" : "Yetki devrinizi devre dışı bırakmadan çekilebilecek aktif olmayan stake.",
+      "withdrawableTitle" : "Çekilebilir bakiye",
+      "withdrawableInfoTooltip" : "Yetki devirlerinden çekilebilecek toplam tutar.",
       "actions" : {
         "activate" : "Etkinleştir",
         "deactivate" : "Devre dışı bırak",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "Varlıklar"
+      "title" : "Varlıklar",
+      "add" : "Ekle"
     },
     "refreshStatus" : {
       "upToDate" : "Hesap güncel",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir.",
         "recordsUsed" : "Kullanılan kayıtlar",
         "signingTime" : "İmzalama zamanı"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "Tahmini süre",
+          "info" : {
+            "title" : "Tahmini süre nasıl çalışır?",
+            "description" : "Gizli bakiyenizden daha fazla tutar göndermek daha fazla kayıt kullanılmasını gerektirebilir ve her kayıt işlem süresini uzatır. Daha büyük tutarların onaylanması daha uzun sürer."
+          }
+        }
       }
     },
     "balancesSection" : "Bakiyeler",

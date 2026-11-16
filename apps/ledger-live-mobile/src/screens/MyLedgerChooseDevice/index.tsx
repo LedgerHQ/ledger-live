@@ -9,11 +9,7 @@ import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import {
-  BaseComposite,
-  ReactNavigationHeaderOptions,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 
@@ -30,11 +26,6 @@ type NavigationProps = BaseComposite<
 >;
 
 type Props = NavigationProps;
-
-// Defines here some of the header options for this screen to be able to reset back to them.
-export const headerOptions: ReactNavigationHeaderOptions = {
-  headerShown: false,
-};
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;

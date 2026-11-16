@@ -1,6 +1,7 @@
 import { collectAllByCategory } from "./collectAllByCategory";
 import { AssetCategory, type GetAssetsByCategoryParams } from "../types";
 import type { RawApiResponse } from "../schema";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 
 /*
  * `@shared/env` is mocked because the Domain Test CI job installs only ./domain/** and ./shared/**,
@@ -22,7 +23,10 @@ const queryArg: GetAssetsByCategoryParams = {
 
 const rawWith = (tickers: string[]): RawApiResponse => ({
   cryptoAssets: Object.fromEntries(
-    tickers.map(t => [t, { id: t, ticker: t.toUpperCase(), name: t, assetsIds: {} }]),
+    tickers.map(t => [
+      t,
+      { id: AggregatedAssetIdSchema.parse(t), ticker: t.toUpperCase(), name: t, assetsIds: {} },
+    ]),
   ),
   networks: {},
   cryptoOrTokenCurrencies: {},

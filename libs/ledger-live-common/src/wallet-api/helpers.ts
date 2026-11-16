@@ -38,7 +38,21 @@ export function isBitcoinSignPsbtOptionsAllowed(
 ): boolean {
   const hwAppId = options?.hwAppId;
   if (hwAppId === undefined || hwAppId === currency.managerAppName) return true;
-  return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currency.id]?.has(hwAppId) ?? false;
+  return isAppAllowedInPlaceOfAccountApp(currency, hwAppId);
+}
+
+/**
+ * Whether `appName` is allowed to sign for accounts of `currency` in place of the currency's own
+ * app (e.g. an app derived from the Bitcoin app). Such an app does not need the account's app on
+ * the device.
+ */
+export function isAppAllowedInPlaceOfAccountApp(
+  currency: CryptoCurrency,
+  appName: string | undefined,
+): boolean {
+  return (
+    appName !== undefined && (BITCOIN_SIGN_PSBT_ALLOWED_APPS[currency.id]?.has(appName) ?? false)
+  );
 }
 
 export function isWalletAPICryptoCurrency(

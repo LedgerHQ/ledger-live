@@ -39,6 +39,7 @@ Set these environment variables before you run tests and change the values as pe
 export MOCK="0"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
+export SPECULOS_APP_PROVIDER="1"        # Optional: 4 runs pre-release apps, falling back to 1 for apps it doesn't publish
 ```
 
 Consider adding these exports to your profile so they persist.
@@ -52,10 +53,9 @@ pnpm clean
 pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..."
 pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 # Android release build
-pnpm mobile e2e:build -c android.emu.release
+pnpm e2e:mobile build:android
 # iOS debug build
-pnpm mobile pod
-pnpm mobile e2e:build -c ios.sim.debug
+pnpm e2e:mobile build:ios:debug
 ```
 
 > `build-e2e-deps` builds the libraries the mobile app
@@ -77,13 +77,17 @@ Test commands below are run from the `e2e/mobile/` directory.
 **iOS (debug)** -- requires the Metro bundler running in a separate terminal:
 
 ```bash
-# Terminal 1: start the bundler (from repo root)
-pnpm mobile start
+# Terminal 1: start the Detox bundler (from repo root)
+pnpm mobile start:detox
 
 # Terminal 2: run tests (from e2e/mobile/)
 pnpm test:ios:debug                      # all tests
 pnpm test:ios:debug <testFileName>       # single file
 ```
+
+> Use `start:detox`, not `start`. It sets `DETOX=1`, so the bundle reports the `package.json` app version
+> instead of the native one, which goes stale when native builds are reused, and applies the other Detox-only
+> bundler settings.
 
 **Android (release)** -- no bundler needed, JS is bundled in the APK:
 
@@ -133,6 +137,19 @@ export E2E_MOBILE_FEATURE_FLAGS="some-preset"
 Or use the "Choose a feature flag set" options dropdown on the GitHub workflow.
 
 See the `ffPresetMap` in `utils/featureFlagUtils.ts` for available presets.
+
+## Buy/Sell from a custom URL
+
+Set `BUY_SELL_UI_URL` to run Buy/Sell specs against a buy-sell-ui other than the catalog one, such as a PR preview or a local dev server:
+
+```bash
+BUY_SELL_UI_URL=http://localhost:3000 pnpm test:android specs/buySell/sellFlow_BTC.spec.ts
+```
+
+Every `buy-sell-ui*` catalog manifest then loads that URL. Unset, nothing changes.
+
+- On Android, a `localhost` or `127.0.0.1` URL gets its port reversed to the host (`adb reverse`).
+- `*.aws.stg.ldg-tech.com` previews are only reachable from Ledger's network or WARP, so they fail on GitHub-hosted runners.
 
 ## Skipping tests from CI
 

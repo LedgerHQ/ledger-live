@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useFeePresetValuesCore } from "../useFeePresetValuesCore";
 import { getAccountBridge } from "../../../../bridge/impl";

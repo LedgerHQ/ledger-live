@@ -11,12 +11,20 @@ import { urls } from "~/utils/urls";
 import { useTronDelegationsViewModel } from "./useTronDelegationsViewModel";
 
 const mockNavigate = jest.fn();
+const mockOpenStakeForAccount = jest.fn();
+const mockGetCanStakeCurrency = jest.fn();
 const DAY_MS = 24 * 60 * 60 * 1000;
 const ONE_TRX = 1_000_000;
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+}));
+jest.mock("LLM/features/Stake", () => ({
+  useOpenStakeDrawer: () => ({ openStakeForAccount: mockOpenStakeForAccount }),
+}));
+jest.mock("LLM/hooks/useStake/useStake", () => ({
+  useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
 jest.mock("@ledgerhq/live-common/families/tron/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/tron/react"),
@@ -78,6 +86,7 @@ describe("useTronDelegationsViewModel", () => {
     openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
     jest.mocked(useRemoteLiveAppManifest).mockReturnValue(undefined);
     jest.mocked(useLocalLiveAppManifest).mockReturnValue(undefined);
+    mockGetCanStakeCurrency.mockReturnValue(true);
   });
 
   describe("visibility", () => {
@@ -146,16 +155,40 @@ describe("useTronDelegationsViewModel", () => {
       const props = getProps(accountWith({ tronPower: 10 }, 2 * ONE_TRX));
 
       expect(props.title).toBe("Votes");
-      expect(props.emptyState).toMatchObject({ actionLabel: "Vote", actionDisabled: true });
+      expect(props.emptyState).toMatchObject({ actionLabel: "Vote", actionDisabled: false });
     });
 
     it("introduces freezing when there is no tron power", () => {
       const props = getProps(accountWith({}, 2 * ONE_TRX));
 
       expect(props.title).not.toBe("Votes");
-      expect(props.emptyState?.description).toBe(
-        "You can now earn rewards by freezing and voting.",
-      );
+      expect(props.emptyState).toMatchObject({
+        description: "You can now earn rewards by freezing and voting.",
+        actionLabel: "Earn rewards",
+        actionDisabled: false,
+      });
+    });
+
+    it("disables the empty state action without a balance to stake", () => {
+      const props = getProps(accountWith({ unwithdrawnReward: new BigNumber(ONE_TRX) }));
+
+      expect(props.emptyState?.actionDisabled).toBe(true);
+    });
+
+    it("disables the empty state action when staking is not offered for the currency", () => {
+      mockGetCanStakeCurrency.mockReturnValue(false);
+
+      expect(getProps(accountWith({}, 2 * ONE_TRX)).emptyState?.actionDisabled).toBe(true);
+      expect(mockGetCanStakeCurrency).toHaveBeenCalledWith("tron");
+    });
+
+    it("opens the earn flow of the account from the empty state action", () => {
+      const account = accountWith({}, 2 * ONE_TRX);
+      const props = getProps(account);
+
+      act(() => props.onStartDelegating());
+
+      expect(mockOpenStakeForAccount).toHaveBeenCalledWith(account);
     });
   });
 
@@ -251,11 +284,8 @@ describe("useTronDelegationsViewModel", () => {
       expect(openURL).toHaveBeenCalledWith(urls.tronStaking);
     });
 
-    it("keeps the row and start delegating callbacks inert", () => {
-      const props = getProps(votingAccount());
-
-      expect(props.onSelectRowAction("sr-1", "any")).toBeUndefined();
-      expect(props.onStartDelegating()).toBeUndefined();
+    it("keeps the row callback inert", () => {
+      expect(getProps(votingAccount()).onSelectRowAction("sr-1", "any")).toBeUndefined();
     });
   });
 });

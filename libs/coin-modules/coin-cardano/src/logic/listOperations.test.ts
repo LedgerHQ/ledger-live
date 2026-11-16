@@ -100,6 +100,17 @@ describe("listOperations", () => {
     );
   });
 
+  it("queries the transactions of the API set in the coin config", async () => {
+    mockResponse([]);
+    const customApiConfig = { ...config, api: { url: "https://cardano-api.example" } };
+
+    await listOperations(customApiConfig, "cardano", ADDRESS, options);
+
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: "https://cardano-api.example/v1/transaction" }),
+    );
+  });
+
   it("maps an incoming transfer to a native IN operation", async () => {
     mockResponse([
       makeTx({

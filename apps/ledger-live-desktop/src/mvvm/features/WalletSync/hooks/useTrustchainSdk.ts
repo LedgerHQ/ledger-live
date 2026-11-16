@@ -1,43 +1,28 @@
-import { useMemo } from "react";
-import { getEnv } from "@shared/env";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { trustchainLifecycle } from "@features/platform-wallet-sync";
-import { useStore } from "LLD/hooks/redux";
-import { walletSelector } from "~/renderer/reducers/wallet";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useInstanceName } from "./useInstanceName";
+import { type TrustchainSdkSetup, useTrustchainSdkContext } from "./useTrustchainSdkContext";
 
-let sdkInstance: TrustchainSDK | null = null;
+let cachedSdk: Readonly<{ sdk: TrustchainSDK; setup: TrustchainSdkSetup }> | null = null;
 
-export function useTrustchainSdk() {
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
-  const name = useInstanceName();
-  const isMockEnv = !!getEnv("MOCK");
+function useCachedSdk() {
+  const setup = useTrustchainSdkContext();
 
-  const defaultContext = useMemo(() => {
-    const applicationId = 16;
-    return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
-  }, [trustchainApiBaseUrl, name]);
-
-  const store = useStore();
-  const lifecycle = useMemo(
-    () =>
-      trustchainLifecycle({
-        cloudSyncApiBaseUrl,
-        getCurrentWSState: () => walletSelector(store.getState()).walletSync.walletSyncState,
-      }),
-    [cloudSyncApiBaseUrl, store],
-  );
-
-  if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, defaultContext, withDevice, lifecycle);
+  if (cachedSdk === null) {
+    cachedSdk = {
+      sdk: getSdk(setup.isMockEnv, setup.context, withDevice, setup.lifecycle),
+      setup,
+    };
   }
 
-  return sdkInstance;
+  return cachedSdk;
+}
+
+export function useTrustchainSdk(): TrustchainSDK {
+  return useCachedSdk().sdk;
+}
+
+/** The setup the cached SDK was built with, not the current flag: every SDK of a session uses it. */
+export function useTrustchainSdkSetup(): TrustchainSdkSetup {
+  return useCachedSdk().setup;
 }

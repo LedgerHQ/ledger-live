@@ -7,8 +7,9 @@
 # Optional environment:
 #   AVD_OPTIONS       — extra emulator flags (word-split like the workflow; may be empty)
 #   EMULATOR_SERIALS  — space-separated adb serials (default: emulator-5554 emulator-5556 emulator-5558)
+#   EMULATOR_CORE_DUMPS — non-empty to keep qemu core dumps (emulator diagnostics)
 #
-# Requires: ANDROID_HOME, adb on PATH
+# Requires: ANDROID_HOME, adb on PATH, prlimit
 
 set -uo pipefail
 
@@ -55,6 +56,16 @@ use_cellular_network() {
 
 : "${AVD_NAME:?AVD_NAME is required}"
 : "${ANDROID_HOME:?ANDROID_HOME is required}"
+
+# QAA-1509: a crashed qemu otherwise stays attached for up to a minute while it pipes a ~1 GB core
+# to systemd-coredump. The kernel skips piped core dumps when RLIMIT_CORE is exactly 1 byte.
+if [[ -n "${EMULATOR_CORE_DUMPS:-}" ]]; then
+  log "🧯 Emulator core dumps on"
+elif prlimit --pid $$ --core=1; then
+  log "🧯 Emulator core dumps off"
+else
+  log "⚠️ Could not disable emulator core dumps"
+fi
 
 IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
 if [[ "${#SERIALS[@]}" -ne "$_EXPECTED_EMULATOR_COUNT" ]]; then

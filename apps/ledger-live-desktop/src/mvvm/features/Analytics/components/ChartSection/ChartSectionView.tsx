@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { LineChart } from "LLD/components/LineChart";
 import type { LineChartProps } from "LLD/components/LineChart";
 import { ChartSectionHeader } from "./ChartSectionHeader";
@@ -6,6 +6,9 @@ import type { ChartSectionViewModelResult } from "./types";
 
 type ChartSectionViewProps = Readonly<{
   viewModel: ChartSectionViewModelResult;
+  filters?: ReactNode;
+  plotContent?: ReactNode;
+  headerContent?: ReactNode;
 }>;
 
 /**
@@ -16,13 +19,19 @@ const ChartSectionChart = React.memo(function ChartSectionChart(props: LineChart
   return <LineChart {...props} />;
 });
 
-export function ChartSectionView({ viewModel }: ChartSectionViewProps) {
+export function ChartSectionView({
+  viewModel,
+  filters,
+  plotContent,
+  headerContent,
+}: ChartSectionViewProps) {
   const { header, chart } = viewModel;
 
   return (
     <div className="flex flex-col gap-24" data-testid="analytics-chart-section">
-      <ChartSectionHeader {...header} />
-      <ChartSectionChart {...chart} />
+      {headerContent ?? <ChartSectionHeader {...header} />}
+      {filters}
+      <ChartSectionChart {...chart} plotContent={plotContent} />
     </div>
   );
 }

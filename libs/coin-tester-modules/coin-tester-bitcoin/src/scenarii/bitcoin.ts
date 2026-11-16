@@ -7,7 +7,7 @@ import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import type { BitcoinCoinConfig, BitcoinContext } from "@ledgerhq/coin-bitcoin/config";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   mineToWalletAddress,
   sendTransaction,

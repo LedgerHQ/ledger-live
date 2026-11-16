@@ -1,6 +1,8 @@
 import {
   NotEnoughBalance,
+  NotEnoughBalanceFees,
   NotEnoughBalanceInParentAccount,
+  NotEnoughGas,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CompleteExchangeError } from "./error";
@@ -10,6 +12,9 @@ describe("isNotEnoughBalance", () => {
   it.each([
     ["the bridge", new NotEnoughBalance()],
     ["the bridge, once fees are reserved", new NotEnoughSpendableBalance()],
+    ["an EVM bridge short on gas", new NotEnoughGas()],
+    ["a token bridge whose parent account is short on fees", new NotEnoughBalanceInParentAccount()],
+    ["the Aptos, Celo and Sui bridges short on fees", new NotEnoughBalanceFees()],
   ])("recognises a shortfall reported by %s", (_case, error) => {
     expect(isNotEnoughBalance(error)).toBe(true);
   });
@@ -21,6 +26,25 @@ describe("isNotEnoughBalance", () => {
     expect(isNotEnoughBalance(error)).toBe(true);
   });
 
+  it.each([NotEnoughGas, NotEnoughBalanceInParentAccount, NotEnoughBalanceFees])(
+    "recognises a %p shortfall wrapped by executeSwap",
+    ErrorClass => {
+      const bridgeError = new ErrorClass();
+      const error = new CompleteExchangeError("INIT", bridgeError.name, "");
+
+      expect(isNotEnoughBalance(error)).toBe(true);
+    },
+  );
+
+  it.each(["TonNotEnoughBalanceInParentAccount", "CardanoNotEnoughFunds", "NotEnoughEGLDForFees"])(
+    "recognises the %s family shortfall wrapped by executeSwap",
+    familyErrorName => {
+      const error = new CompleteExchangeError("INIT", familyErrorName, "");
+
+      expect(isNotEnoughBalance(error)).toBe(true);
+    },
+  );
+
   it("recognises a shortfall wrapped by the Exchange app, which keeps only the message", () => {
     const bridgeError = new NotEnoughBalance();
     const error = new CompleteExchangeError("INIT", "amount", bridgeError.message);
@@ -30,10 +54,6 @@ describe("isNotEnoughBalance", () => {
 
   it.each([
     ["a plain failure", new Error("boom")],
-    [
-      "a parent account short on fees, which a lower amount cannot fix",
-      new NotEnoughBalanceInParentAccount(),
-    ],
     [
       "an Exchange failure that is not a shortfall",
       new CompleteExchangeError("INIT", "internalError", "boom"),

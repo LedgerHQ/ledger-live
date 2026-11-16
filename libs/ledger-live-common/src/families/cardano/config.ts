@@ -1,39 +1,4 @@
-import { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
-import { CurrencyLiveConfigDefinition } from "../../config";
+import { cardanoDefaults } from "@ledgerhq/coin-cardano/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const cardanoConfig: CurrencyLiveConfigDefinition = {
-  config_currency_cardano: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "Cardano",
-      unit: { name: "ada", code: "ADA", magnitude: 6 },
-      maxFeesWarning: 5e6,
-      maxFeesError: 10e6,
-      testnet: false,
-    } as CardanoCoinConfig,
-  },
-  config_currency_cardano_testnet: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "Cardano (Testnet)",
-      unit: { name: "ada", code: "tADA", magnitude: 6 },
-      maxFeesWarning: 5e6,
-      maxFeesError: 10e6,
-      testnet: true,
-    } as CardanoCoinConfig,
-  },
-};
+export const cardanoConfig = currencyDefaultsToLiveConfig(cardanoDefaults);

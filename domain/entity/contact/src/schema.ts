@@ -1,5 +1,4 @@
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { NonEmptyStringSchema } from "@shared/schema-primitives";
 import { z } from "zod";
 import {
@@ -12,9 +11,8 @@ import {
   ExternalAddressDeviceContextSchema,
 } from "./device/types";
 
-export const ContactIdSchema = NonEmptyStringSchema;
-export const ContactAddressIdSchema = NonEmptyStringSchema;
-export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
+export const ContactIdSchema = NonEmptyStringSchema.brand<"ContactId">();
+export const ContactAddressIdSchema = NonEmptyStringSchema.brand<"ContactAddressId">();
 
 const ContactNamePattern = /^(?=.*[^ ])[\x20-\x7E]+$/;
 const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
@@ -56,11 +54,11 @@ export const ContactAddressLabelInputSchema = z
   .transform(label => label.normalize("NFC"))
   .pipe(z.union([z.literal(""), ContactAddressLabelSchema]));
 
-export const ContactAddressValueSchema = NonEmptyStringSchema;
+export const ContactAddressValueSchema = NonEmptyStringSchema.brand<"ContactAddressValue">();
 
 export const ContactAddressSchema = z.object({
   id: ContactAddressIdSchema,
-  currencyId: ContactCurrencyIdSchema,
+  currencyId: CryptoOrTokenCurrencyIdSchema,
   label: ContactAddressLabelSchema,
   address: ContactAddressValueSchema,
   device: ExternalAddressDeviceContextSchema,
