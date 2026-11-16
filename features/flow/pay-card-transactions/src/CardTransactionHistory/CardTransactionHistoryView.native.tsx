@@ -5,9 +5,8 @@ import { CreditCard, InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols"
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
 import { DayHeader } from "./components/DayHeader";
 import { HistoryRow } from "./components/HistoryRow";
-import { SectionSeparator } from "./components/SectionSeparator";
+import { SectionSeparator, type HistorySection } from "./components/SectionSeparator";
 import type { CardTransactionItem } from "../types";
-import type { HistorySection } from "./components/types";
 import type { CardTransactionHistoryViewProps } from "./types";
 
 const PROVIDER_DISCLAIMER_KEY = "payTab.disclaimer";
