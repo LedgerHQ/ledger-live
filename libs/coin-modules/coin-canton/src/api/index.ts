@@ -1,14 +1,17 @@
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import { notSupportedApi } from "@ledgerhq/coin-module-framework/api/index";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
 import { type CantonCoinConfig } from "../config";
 import { combine } from "../logic/combine";
+import { getBalance } from "../logic/getBalance";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 
 // The caller builds the {@link CantonContext} (config + logger) and passes it to each method (ADR-019).
 //
 // Not wired yet:
-// - lastBlock, getBalance, listOperations: LIVE-36963.
 // - craftTransaction, estimateFees, broadcast: LIVE-36964.
 // - validateIntent: LIVE-36965.
 //
@@ -21,6 +24,10 @@ import { combine } from "../logic/combine";
 export function createApi(): CoinModuleApi<CantonCoinConfig> {
   return {
     ...notSupportedApi<CantonCoinConfig>(),
+    lastBlock,
+    getBalance: (context, address, options?) =>
+      rejectBalanceOptions(() => getBalance(context, address), options),
+    listOperations,
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),

@@ -1,4 +1,5 @@
 import { isNotSupportedStub } from "@ledgerhq/coin-module-framework/api/index";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
@@ -10,6 +11,9 @@ describe("createApi", () => {
   // are framework stubs. The previous test listed every method name, which only restated that
   // the object was shaped like the contract.
   it("implements what Canton supports today", () => {
+    expect(isNotSupportedStub(api.lastBlock)).toBe(false);
+    expect(isNotSupportedStub(api.getBalance)).toBe(false);
+    expect(isNotSupportedStub(api.listOperations)).toBe(false);
     expect(isNotSupportedStub(api.combine)).toBe(false);
     expect(isNotSupportedStub(api.validateAddress)).toBe(false);
     expect(isNotSupportedStub(api.craftTransactionData)).toBe(false);
@@ -17,14 +21,17 @@ describe("createApi", () => {
   });
 
   it("stubs the rest of the contract", () => {
-    expect(isNotSupportedStub(api.lastBlock)).toBe(true);
-    expect(isNotSupportedStub(api.getBalance)).toBe(true);
-    expect(isNotSupportedStub(api.listOperations)).toBe(true);
     expect(isNotSupportedStub(api.craftTransaction)).toBe(true);
     expect(isNotSupportedStub(api.estimateFees)).toBe(true);
     expect(isNotSupportedStub(api.broadcast)).toBe(true);
     expect(isNotSupportedStub(api.getStakes)).toBe(true);
     expect(isNotSupportedStub(api.validateIntent)).toBe(true);
+  });
+
+  it("rejects balance options, since the gateway always returns every holding", async () => {
+    await expect(api.getBalance(createMockContext(), "party", {})).rejects.toThrow(
+      InvalidParameterError,
+    );
   });
 
   it("answers sequence 0 because Canton has no account nonce", async () => {
