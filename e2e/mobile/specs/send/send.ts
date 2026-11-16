@@ -143,10 +143,7 @@ export function runSendTest(
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
       await verifySendAndOperationDetails(transaction, amountWithCode);
@@ -181,10 +178,7 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid address - ${scenario}`, async () => {
       const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
-      await app.send.navigateToSendScreen(
-        accountName || transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit, accountName);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);
     });
@@ -210,10 +204,7 @@ export function runSendValidAddressTest(
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - valid address - ${scenario}`, async () => {
-      await app.send.navigateToSendScreen(
-        accountName || transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit, accountName);
       const shouldLowerCaseRecipientAddress =
         transaction.accountToCredit === Account.ETH_2_LOWER_CASE ||
         scenario.toLowerCase().includes("lower case");
@@ -255,10 +246,7 @@ export function runSendInvalidAmountTest(
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.amount})`, async () => {
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.send.setRecipientAndContinue(
         transaction.accountToCredit.address,
         transaction.memoTag,
@@ -288,8 +276,8 @@ export function runSendInvalidTokenAmountTest(
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.amount})`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.send.navigateToSendScreen(
+        transaction.accountToDebit,
         transaction.accountToDebit.currency.name,
-        transaction.accountToDebit.currency.id,
       );
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmount(transaction.amount);
@@ -325,10 +313,7 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - max amount`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       const amount = await app.send.setAmount("max");
       await app.send.expectSendAmountSuccess();
@@ -358,10 +343,7 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
       const ensName = transaction.accountToCredit.ensName;
       invariant(ensName, "ENS name is not provided");
 
-      await app.send.navigateToSendScreen(
-        transaction.accountToDebit.accountName,
-        transaction.accountToDebit.currency.id,
-      );
+      await app.send.navigateToSendScreen(transaction.accountToDebit);
       await app.send.setRecipientAndContinue(ensName, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
