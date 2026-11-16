@@ -109,7 +109,7 @@ export function useSetupScreenViewModel({
     onNotGenuineClose: closeSheet,
     suspendSheets,
   });
-  const { infoCard, infoSheet } = useInfoSheetsViewModel(stage.infoCard);
+  const { infoCard, infoSheet } = useInfoSheetsViewModel(stage.infoCard, suspendSheets);
 
   return {
     infoCard,

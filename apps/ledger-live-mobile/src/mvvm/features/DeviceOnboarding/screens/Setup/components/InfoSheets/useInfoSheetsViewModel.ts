@@ -120,7 +120,10 @@ function openUrl(url: string) {
   Linking.openURL(url).catch(() => undefined);
 }
 
-export function useInfoSheetsViewModel(card: SetupInfoCard | undefined): InfoSheetsViewModel {
+export function useInfoSheetsViewModel(
+  card: SetupInfoCard | undefined,
+  suspendSheets: boolean,
+): InfoSheetsViewModel {
   const { t } = useTranslation();
   const [openedCard, setOpenedCard] = useState<SetupInfoCard | null>(null);
   const [shownCard, setShownCard] = useState(card);
@@ -138,9 +141,11 @@ export function useInfoSheetsViewModel(card: SetupInfoCard | undefined): InfoShe
     infoCard: { title: cardTitle(t, card), onPress: () => setOpenedCard(card) },
     infoSheet: {
       ...sheetContent(t, sheet),
-      isOpen: openedCard === card,
+      isOpen: openedCard === card && !suspendSheets,
       onOpenLink: () => openUrl(linkBySheet[sheet]),
-      onClose: () => setOpenedCard(null),
+      onClose: () => {
+        if (!suspendSheets) setOpenedCard(null);
+      },
     },
   };
 }

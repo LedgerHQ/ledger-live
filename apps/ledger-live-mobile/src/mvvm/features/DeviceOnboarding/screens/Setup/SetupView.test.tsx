@@ -480,6 +480,28 @@ describe("SetupView", () => {
     }
   });
 
+  it("should hide an open info sheet while the device is locked and bring it back after", async () => {
+    const { user, rerender, props } = renderSetup({
+      stage: {
+        index: 3,
+        total: 5,
+        kind: "setupChoice",
+        indicator: "none",
+        infoCard: "setupChoice",
+      },
+    });
+    const sheet = () => screen.getByTestId(setupTestIds.infoSheet);
+
+    await user.press(screen.getByTestId(setupTestIds.infoCard));
+    expect(sheet()).toHaveProp("accessibilityState", { expanded: true });
+
+    rerender(<SetupScreen {...props} suspendSheets />);
+    expect(sheet()).toHaveProp("accessibilityState", { expanded: false });
+
+    rerender(<SetupScreen {...props} suspendSheets={false} />);
+    expect(sheet()).toHaveProp("accessibilityState", { expanded: true });
+  });
+
   it("should open the Recovery Key sheet from the restore card", async () => {
     const { user } = renderSetup({
       stage: {
