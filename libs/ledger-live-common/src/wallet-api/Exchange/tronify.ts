@@ -2,8 +2,11 @@ import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { createAccountNotFound, ServerError } from "@ledgerhq/wallet-api-core";
 import {
+  TRONIFY_CREATE_RENT_RECORD_METHOD,
   TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  type CreateTronifyRentRecordParams,
+  type CreateTronifyRentRecordResult,
   type GetTronifyQuoteParams,
   type GetTronifyQuoteResult,
   type IsTronifyEnergyDeliveredParams,
@@ -23,6 +26,9 @@ import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import {
   createAccounIdNotFound,
   createTronifyDisabled,
+  createTronifyInsufficientBalance,
+  createTronifyOrderFailed,
+  createTronifyPriceAboveApproved,
   createTronifyQuoteFailed,
   createTronifyUnavailable,
   createTronifyUnsupportedAccount,
@@ -161,6 +167,117 @@ export async function getTronifyQuote(
   };
 }
 
+/** A rent order as Tronify created it, kept so `uploadHash` signs off on these bytes only. */
+export type TronifyRentOrder = {
+  orderId: string;
+  accountId: string;
+  payerAddress: string;
+  transaction: unknown;
+  paymentTxId: string;
+  energyNeeded: bigint;
+  /** ms since epoch, read from the payment's verified bytes. */
+  expiresAt: number;
+};
+
+// Module-level: the apps re-create `handlers()` in a `useMemo`, and an order must outlive that.
+const rentOrders = new Map<string, TronifyRentOrder>();
+
+function pruneExpiredRentOrders(now: number): void {
+  for (const [orderId, order] of rentOrders) {
+    if (order.expiresAt <= now) rentOrders.delete(orderId);
+  }
+}
+
+/** The order `createRentRecord` created under `orderId`, unless its payment has expired. */
+export function getTronifyRentOrder(orderId: string): TronifyRentOrder | undefined {
+  pruneExpiredRentOrders(Date.now());
+  return rentOrders.get(orderId);
+}
+
+function isRentRecordParams(
+  params: CreateTronifyRentRecordParams | undefined,
+): params is CreateTronifyRentRecordParams {
+  return (
+    isTransferParams(params) &&
+    typeof params.approvedFee === "string" &&
+    POSITIVE_INTEGER.test(params.approvedFee)
+  );
+}
+
+/** The Send flow's order path: the request checks the balance, the craft checks the payment. */
+async function placeRentOrder(seam: SponsoredCoinApi, intent: unknown, approvedFee: bigint) {
+  const request = await seam.buildEnergyRentRequest(intent, approvedFee);
+  const order = await seam.craftEnergyRentTransaction(request);
+  const { toSign, paymentTxId } = seam.getEnergyRentSignaturePayload(order.transaction);
+  return { request, order, toSign, paymentTxId };
+}
+
+/** A rejection the live app can explain gets its own code; anything else fails the order. */
+function toRentOrderError(seam: SponsoredCoinApi, error: unknown): ExchangeError {
+  const rejection = seam.classifyRentOrderError(error);
+  if (rejection?.reason === "insufficientBalance") {
+    return new ExchangeError(createTronifyInsufficientBalance());
+  }
+  if (rejection?.reason === "priceAboveApproved") {
+    return new ExchangeError(createTronifyPriceAboveApproved(rejection.offered.amount.toString()));
+  }
+  const name = error instanceof Error ? error.name : undefined;
+  const reason = error instanceof Error ? error.message : String(error);
+  switch (name) {
+    case "EnergyRentUnsupportedIntent":
+      return new ExchangeError(createTronifyUnsupportedTransfer(reason));
+    case "EnergyRentProviderNotConfigured":
+      return new ExchangeError(createTronifyUnavailable());
+    default:
+      return new ExchangeError(createTronifyOrderFailed(reason));
+  }
+}
+
+/**
+ * `custom.exchange.tronify.createRentRecord`: creates the Tronify order for a TRC-20 transfer and
+ * returns the unsigned rent payment. It goes through the Send flow's seam, so every check coin-tron
+ * runs on the payment applies before the device sees it.
+ */
+export async function createTronifyRentRecord(
+  params: CreateTronifyRentRecordParams | undefined,
+  { accounts, getFeature }: TronifyDeps,
+): Promise<CreateTronifyRentRecordResult> {
+  if (!isRentRecordParams(params)) throw new ExchangeError(createWrongTronifyParams(params));
+  assertTronifyEnabled(getFeature);
+
+  const sender = resolveTronSender(params.fromAccountId, accounts);
+  const seam = await loadTronifySeam(sender.payer);
+  const intent = await buildTransferIntent(sender, params);
+
+  const { request, order, toSign, paymentTxId } = await placeRentOrder(
+    seam,
+    intent,
+    BigInt(params.approvedFee),
+  ).catch(error => {
+    throw toRentOrderError(seam, error);
+  });
+
+  pruneExpiredRentOrders(Date.now());
+  rentOrders.set(order.orderId, {
+    orderId: order.orderId,
+    accountId: sender.tokenAccount.id,
+    payerAddress: request.payerAddress,
+    transaction: order.transaction,
+    paymentTxId,
+    energyNeeded: request.energy,
+    expiresAt: order.paymentExpiresAt,
+  });
+
+  return {
+    orderId: order.orderId,
+    rawTransaction: toSign,
+    paymentTxId,
+    payCoinCode: order.payCoinCode,
+    payCoinAmt: order.payCoinAmt,
+    energyNeeded: request.energy.toString(),
+  };
+}
+
 /**
  * `custom.exchange.tronify.isEnergyDelivered`: one on-chain read of the payer's available energy
  * against `energyNeeded`. It answers "has the energy arrived", not "will the swap validate".
@@ -194,6 +311,10 @@ export const tronifyHandlers = (deps: TronifyDeps) =>
     [TRONIFY_GET_QUOTE_METHOD]: customWrapper<GetTronifyQuoteParams, GetTronifyQuoteResult>(
       params => getTronifyQuote(params, deps),
     ),
+    [TRONIFY_CREATE_RENT_RECORD_METHOD]: customWrapper<
+      CreateTronifyRentRecordParams,
+      CreateTronifyRentRecordResult
+    >(params => createTronifyRentRecord(params, deps)),
     [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: customWrapper<
       IsTronifyEnergyDeliveredParams,
       IsTronifyEnergyDeliveredResult

@@ -6,7 +6,13 @@ import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsor
 import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
-import { getTronifyQuote, isTronifyEnergyDelivered, tronifyHandlers } from "./tronify";
+import {
+  createTronifyRentRecord,
+  getTronifyQuote,
+  getTronifyRentOrder,
+  isTronifyEnergyDelivered,
+  tronifyHandlers,
+} from "./tronify";
 
 jest.mock("../../bridge/generic-coin-framework/sponsored", () => ({
   getSponsoredCoinApi: jest.fn(),
@@ -337,10 +343,225 @@ describe("getTronifyQuote", () => {
   });
 });
 
+describe("createTronifyRentRecord", () => {
+  const RECIPIENT = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+  const INTENT = { type: "send", asset: { type: "trc20" } };
+  const REQUEST = {
+    payerAddress: TRON_ADDRESS,
+    receiverAddress: TRON_ADDRESS,
+    energy: 64_285n,
+    durationSeconds: 3600,
+    maxPayCoinAmt: "2.541",
+    maxPayCoinCode: "USDT",
+  };
+  const TRANSACTION = { txID: "ab12", raw_data_hex: "0a02beef" };
+
+  const buildEnergyRentRequest = jest.fn();
+  const craftEnergyRentTransaction = jest.fn();
+  const classifyRentOrderError = jest.fn();
+  const getEnergyRentSignaturePayload = (tx: typeof TRANSACTION) => ({
+    toSign: tx.raw_data_hex,
+    paymentTxId: tx.txID,
+  });
+
+  let orderSeq = 0;
+  let orderId: string;
+
+  const rentParams = (overrides: Record<string, unknown> = {}) => ({
+    fromAccountId: walletId(usdtAccount),
+    recipient: RECIPIENT,
+    amount: "1000000",
+    approvedFee: "2310000",
+    ...overrides,
+  });
+
+  function createRecord(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
+    return createTronifyRentRecord(params as never, { accounts, getFeature });
+  }
+
+  function expectNoOrder() {
+    expect(craftEnergyRentTransaction).not.toHaveBeenCalled();
+    expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    orderId = `order-${++orderSeq}`;
+    mockGetSponsoredCoinApi.mockResolvedValue({
+      buildEnergyRentRequest,
+      craftEnergyRentTransaction,
+      classifyRentOrderError,
+      getEnergyRentSignaturePayload,
+    } as never);
+    mockGenericValidateAddress.mockReturnValue(validateAddress);
+    validateAddress.mockResolvedValue(true);
+    mockBuildIntent.mockResolvedValue(INTENT as never);
+    buildEnergyRentRequest.mockResolvedValue(REQUEST);
+    craftEnergyRentTransaction.mockImplementation(async () => ({
+      orderId,
+      transaction: TRANSACTION,
+      payCoinCode: "USDT",
+      payCoinAmt: "2.31",
+      paymentExpiresAt: Date.now() + 60_000,
+    }));
+    classifyRentOrderError.mockReturnValue(null);
+  });
+
+  it("returns the unsigned rent payment of the order it created", async () => {
+    await expect(createRecord(rentParams())).resolves.toEqual({
+      orderId,
+      rawTransaction: "0a02beef",
+      paymentTxId: "ab12",
+      payCoinCode: "USDT",
+      payCoinAmt: "2.31",
+      energyNeeded: "64285",
+    });
+    expect(buildEnergyRentRequest).toHaveBeenCalledWith(INTENT, 2_310_000n);
+    expect(craftEnergyRentTransaction).toHaveBeenCalledWith(REQUEST);
+  });
+
+  it("builds the TRC-20 send intent on the TRON account, as the Send flow does", async () => {
+    await createRecord(rentParams());
+
+    expect(mockBuildIntent).toHaveBeenCalledWith("tron", "local", tronAccount, {
+      family: "tron",
+      recipient: RECIPIENT,
+      amount: new BigNumber("1000000"),
+      useAllAmount: false,
+      subAccountId: usdtAccount.id,
+    });
+  });
+
+  it("keeps the order it returned, for uploadHash to check against", async () => {
+    const result = await createRecord(rentParams());
+
+    expect(getTronifyRentOrder(result.orderId)).toEqual({
+      orderId,
+      accountId: usdtAccount.id,
+      payerAddress: TRON_ADDRESS,
+      transaction: TRANSACTION,
+      paymentTxId: result.paymentTxId,
+      energyNeeded: 64_285n,
+      expiresAt: expect.any(Number),
+    });
+  });
+
+  it("drops an order once its payment has expired", async () => {
+    craftEnergyRentTransaction.mockResolvedValue({
+      orderId,
+      transaction: TRANSACTION,
+      payCoinCode: "USDT",
+      payCoinAmt: "2.31",
+      paymentExpiresAt: Date.now() - 1,
+    });
+
+    await createRecord(rentParams());
+
+    expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  });
+
+  it.each([
+    ["no params", undefined],
+    ["no approved fee", rentParams({ approvedFee: undefined })],
+    ["a zero approved fee", rentParams({ approvedFee: "0" })],
+    ["a fractional approved fee", rentParams({ approvedFee: "2.31" })],
+    ["a numeric approved fee", rentParams({ approvedFee: 2_310_000 })],
+    ["no recipient", rentParams({ recipient: undefined })],
+    ["a zero amount", rentParams({ amount: "0" })],
+    ["a raw transaction instead of a transfer", { rawTransaction: "0a02beef" }],
+  ])("rejects %s before any network call", async (_label, params) => {
+    await expect(createRecord(params)).rejects.toMatchObject({ cause: "WRONG_TRONIFY_PARAMS" });
+    expect(mockGetSponsoredCoinApi).not.toHaveBeenCalled();
+    expectNoOrder();
+  });
+
+  it("rejects when the gasSponsorship flag is off", async () => {
+    await expect(createRecord(rentParams(), flagOff)).rejects.toMatchObject({
+      cause: "TRONIFY_DISABLED",
+    });
+    expectNoOrder();
+  });
+
+  it("rejects a native TRX account", async () => {
+    await expect(
+      createRecord(rentParams({ fromAccountId: walletId(tronAccount) })),
+    ).rejects.toMatchObject({ cause: "TRONIFY_UNSUPPORTED_ACCOUNT" });
+    expectNoOrder();
+  });
+
+  it("rejects an invalid TRON recipient before building the request", async () => {
+    validateAddress.mockResolvedValue(false);
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "WRONG_TRONIFY_PARAMS",
+    });
+    expect(buildEnergyRentRequest).not.toHaveBeenCalled();
+    expectNoOrder();
+  });
+
+  it("creates no order when the balance does not cover the transfer plus the rent", async () => {
+    const error = new Error("USDT balance does not cover the transfer amount plus the energy rent");
+    error.name = "EnergyRentInsufficientBalance";
+    buildEnergyRentRequest.mockRejectedValue(error);
+    classifyRentOrderError.mockReturnValue({ reason: "insufficientBalance" });
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      name: "ExchangeError",
+      cause: "TRONIFY_INSUFFICIENT_BALANCE",
+    });
+    expectNoOrder();
+  });
+
+  it("reports the rent Tronify offered above the approved fee", async () => {
+    craftEnergyRentTransaction.mockRejectedValue(new Error("ceiling"));
+    classifyRentOrderError.mockReturnValue({
+      reason: "priceAboveApproved",
+      offered: { asset: {}, amount: 2_900_000n },
+    });
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      cause: "TRONIFY_PRICE_ABOVE_APPROVED",
+      message: "tronify rent of 2900000 base units is above the approved fee",
+    });
+    expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  });
+
+  it.each([
+    ["EnergyRentUnsupportedIntent", "TRONIFY_UNSUPPORTED_TRANSFER"],
+    ["EnergyRentProviderNotConfigured", "TRONIFY_UNAVAILABLE"],
+    ["TronifyApiError", "TRONIFY_ORDER_FAILED"],
+    ["Error", "TRONIFY_ORDER_FAILED"],
+  ])("maps a %s from the order to %s and keeps nothing", async (name, cause) => {
+    const error = new Error("payee");
+    error.name = name;
+    craftEnergyRentTransaction.mockRejectedValue(error);
+
+    await expect(createRecord(rentParams())).rejects.toMatchObject({
+      name: "ExchangeError",
+      cause,
+    });
+    expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  });
+
+  it("keeps the order failure code across the wallet API wire", async () => {
+    craftEnergyRentTransaction.mockRejectedValue(new Error("payee not listed"));
+    const error = await createRecord(rentParams()).catch(e => e);
+
+    const onTheWire = JSON.parse(JSON.stringify(serializeError(error)));
+
+    expect(deserializeError(onTheWire)).toMatchObject({
+      name: "ExchangeError",
+      message: "tronify rent order failed: payee not listed",
+      cause: "TRONIFY_ORDER_FAILED",
+    });
+  });
+});
+
 describe("tronifyHandlers", () => {
   it("exposes the method ids the exchange-module client calls", () => {
     expect(Object.keys(tronifyHandlers({ accounts, getFeature: flagOn }))).toEqual([
       "custom.exchange.tronify.getQuote",
+      "custom.exchange.tronify.createRentRecord",
       "custom.exchange.tronify.isEnergyDelivered",
     ]);
   });

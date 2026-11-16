@@ -88,6 +88,28 @@ export function createTronifyQuoteFailed(reason: string): ExchangeErrorData {
   };
 }
 
+export function createTronifyInsufficientBalance(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_INSUFFICIENT_BALANCE",
+    message: "tronify energy rental needs a balance that covers the transfer plus the rent",
+  };
+}
+
+/** `offered` is the rent Tronify asked for, in `feeAsset` base units. */
+export function createTronifyPriceAboveApproved(offered: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_PRICE_ABOVE_APPROVED",
+    message: `tronify rent of ${offered} base units is above the approved fee`,
+  };
+}
+
+export function createTronifyOrderFailed(reason: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_ORDER_FAILED",
+    message: `tronify rent order failed: ${reason}`,
+  };
+}
+
 /**
  * Extends `Error` so that the wallet-api serializer keeps `message` and `cause` (the code) on the
  * wire. The live app reads the code from `cause`.
