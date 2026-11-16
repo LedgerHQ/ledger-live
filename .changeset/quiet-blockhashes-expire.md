@@ -6,4 +6,4 @@
 "live-mobile": minor
 ---
 
-Simulate a Solana transaction once more after 500 ms when the node cannot find its blockhash, then report an expired blockhash as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that tells the user how to avoid it
+Simulate a Solana transaction once more after 500 ms when the node cannot find its blockhash, then report an expired blockhash as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again

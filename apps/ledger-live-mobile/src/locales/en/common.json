@@ -1443,7 +1443,7 @@
     },
     "SolanaTxBlockhashExpired": {
       "title": "Transaction has expired",
-      "description": "Solana transactions must be approved on your device within about 30 seconds. Please try again. Updating the Solana app on your device may remove this limit."
+      "description": "The network no longer accepts this transaction. Please try again to create a new one."
     },
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
