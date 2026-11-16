@@ -464,6 +464,29 @@ describe("createTronifyRentRecord", () => {
     expect(getTronifyRentOrder(second.orderId)).toMatchObject({ orderId: second.orderId });
   });
 
+  it("fails an older order that resolves after a newer one, and keeps the newer one", async () => {
+    let resolveOlder: (order: unknown) => void = () => {};
+    craftEnergyRentTransaction.mockImplementationOnce(
+      () => new Promise(resolve => (resolveOlder = resolve)),
+    );
+    const older = createRecord(rentParams());
+    await new Promise(setImmediate);
+    orderId = `order-${++orderSeq}`;
+    const newer = await createRecord(rentParams());
+
+    resolveOlder({
+      orderId: "older-order",
+      transaction: TRANSACTION,
+      payCoinCode: "USDT",
+      payCoinAmt: "2.31",
+      paymentExpiresAt: Date.now() + 60_000,
+    });
+
+    await expect(older).rejects.toMatchObject({ cause: "TRONIFY_ORDER_FAILED" });
+    expect(getTronifyRentOrder("older-order")).toBeUndefined();
+    expect(getTronifyRentOrder(newer.orderId)).toMatchObject({ orderId: newer.orderId });
+  });
+
   it.each([
     ["has already expired", -1],
     ["expires within 30s", 29_000],

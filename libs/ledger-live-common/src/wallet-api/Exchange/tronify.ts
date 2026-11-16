@@ -200,6 +200,14 @@ export function getTronifyRentOrder(orderId: string): TronifyRentOrder | undefin
   return rentOrders.get(orderId);
 }
 
+const latestRentRequestByAccount = new Map<string, object>();
+
+function startRentRequest(accountId: string): () => boolean {
+  const request = {};
+  latestRentRequestByAccount.set(accountId, request);
+  return () => latestRentRequestByAccount.get(accountId) === request;
+}
+
 function keepRentOrder(order: TronifyRentOrder): void {
   pruneUnsignableRentOrders(Date.now());
   for (const [orderId, kept] of rentOrders) {
@@ -257,6 +265,7 @@ export async function createTronifyRentRecord(
   assertTronifyEnabled(getFeature);
 
   const sender = resolveTronSender(params.fromAccountId, accounts);
+  const isLatestRentRequest = startRentRequest(sender.tokenAccount.id);
   const seam = await loadTronifySeam(sender.payer);
 
   const { request, order, toSign, paymentTxId, signableUntilMs } = await orderRentPayment(
@@ -266,6 +275,9 @@ export async function createTronifyRentRecord(
   ).catch(error => {
     throw toRentOrderError(seam, error);
   });
+  if (!isLatestRentRequest()) {
+    throw new ExchangeError(createTronifyOrderFailed("a newer rent order replaced this one"));
+  }
 
   keepRentOrder({
     orderId: order.orderId,
