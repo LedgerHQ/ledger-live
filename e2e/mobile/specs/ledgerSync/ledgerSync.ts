@@ -331,8 +331,8 @@ export function runLedgerSyncActivationBackupTest({
       tmsLinks,
       tags,
       // The app creates this trustchain on a fresh seed, so this is the first activation. The
-      // teardown has no handle on it: the DIE variant deletes it through the app, the legacy one
-      // relies on the generated seed making it unreachable. The hook still releases Speculos.
+      // teardown has no handle on it and relies on the generated seed making it unreachable. The
+      // hook still releases Speculos.
       init: () =>
         initUnactivated(
           AppInfos.LS,
@@ -354,8 +354,6 @@ export function runLedgerSyncActivationBackupTest({
       }
       await app.ledgerSync.activateLedgerSyncOnSpeculos();
       await expectActivationSucceeded();
-
-      if (onDie) await deleteAppCreatedBackup();
     },
   );
 }
@@ -385,8 +383,6 @@ export function runLedgerSyncActivationRejectRetryTest(tmsLinks: string[], tags:
       await app.ledgerSync.expectActivationDeviceStep();
       await app.ledgerSync.activateLedgerSyncOnSpeculos();
       await expectActivationSucceeded();
-
-      await deleteAppCreatedBackup();
     },
   );
 }
@@ -398,14 +394,4 @@ async function expectActivationSucceeded() {
   // A backup exists now, so the settings row leads to the management screen.
   await openLedgerSyncSettings();
   await app.ledgerSync.expectLedgerSyncManagementVisible();
-}
-
-/**
- * The app created this trustchain, not the CLI, so the suite teardown has no handle on it: the app
- * deletes it instead. Expects the Ledger Sync management screen to be open.
- */
-async function deleteAppCreatedBackup() {
-  await app.ledgerSync.openDeleteSync();
-  await app.ledgerSync.confirmDeleteSync();
-  await app.ledgerSync.expectBackupDeletion();
 }
