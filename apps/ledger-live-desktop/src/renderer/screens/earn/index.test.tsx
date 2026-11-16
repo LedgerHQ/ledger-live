@@ -5,6 +5,10 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { useDeepLinkListener } from "./useDeepLinkListener";
 import Earn from ".";
 
@@ -167,6 +171,31 @@ describe("Earn screen", () => {
     };
 
     expect(lastCall.inputs.intent).toBe("simulate");
+    useLocationSpy.mockRestore();
+  });
+
+  it("tells Earn it opens stake positions natively, whatever the route state says", () => {
+    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
+      pathname: "/earn",
+      search: "",
+      hash: "",
+      state: { [NATIVE_STAKE_POSITION_INPUT_KEY]: "false" },
+    });
+
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(
+      NATIVE_STAKE_POSITION_INPUT_VALUE,
+    );
     useLocationSpy.mockRestore();
   });
 

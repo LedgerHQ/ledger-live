@@ -3,6 +3,10 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
@@ -113,6 +117,7 @@ const Earn = () => {
     return {
       ...earnInitParams,
       ...earnRouteParams,
+      [NATIVE_STAKE_POSITION_INPUT_KEY]: NATIVE_STAKE_POSITION_INPUT_VALUE,
       devMode,
       routerState: JSON.stringify(location.state ?? {}),
       goToURL: customDappUrl ? buildEarnGoToURL(customDappUrl, earnInitParams) : undefined,

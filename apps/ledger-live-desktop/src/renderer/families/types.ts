@@ -26,6 +26,7 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { Features } from "@shared/feature-flags";
+import type { ShownStakePosition, ShownStakePositionRequest } from "@features/flow-stake-position";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
 import type { CoinModalKey } from "./modals-loaders";
@@ -93,6 +94,13 @@ export type EditTransactionModalConfig = {
     transactionRaw: TransactionCommonRaw;
     transactionHash: string;
   };
+};
+
+export type StakePositionDialogContentProps<A extends Account> = {
+  account: A;
+  request: ShownStakePositionRequest;
+  phase: ShownStakePosition["phase"];
+  onEarnMore: () => void;
 };
 
 export type SummaryNetworkFeesRowProps<T extends TransactionCommon = TransactionCommon> = {
@@ -286,6 +294,12 @@ export type LLDCoinFamily<
     account: A | TokenAccount;
     parentAccount: A | null | undefined;
   }>;
+
+  /**
+   * Details and full exit of one staking position, inside the global stake position dialog that a
+   * live app opens. A family without it refuses the live app's request.
+   */
+  StakePositionDialogContent?: React.ComponentType<StakePositionDialogContentProps<A>>;
 
   /**
    * Allow to add component below account body header

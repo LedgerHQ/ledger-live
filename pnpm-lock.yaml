@@ -1289,6 +1289,9 @@ importers:
       '@features/flow-predictions':
         specifier: workspace:^
         version: link:../../features/flow/predictions
+      '@features/flow-stake-position':
+        specifier: workspace:^
+        version: link:../../features/flow/stake-position
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics

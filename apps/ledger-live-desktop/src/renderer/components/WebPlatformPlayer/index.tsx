@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { usePredictionsHandlers } from "LLD/features/Predictions/hooks/usePredictionsHandlers";
+import { useStakePositionHandlers } from "LLD/features/StakePosition";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -67,6 +68,7 @@ export default function WebPlatformPlayer({
 
   const customPerpsHandlers = usePerpsHandlers(accounts);
   const customPredictionsHandlers = usePredictionsHandlers(onClose);
+  const customStakePositionHandlers = useStakePositionHandlers(accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -77,6 +79,7 @@ export default function WebPlatformPlayer({
       ...props.customHandlers,
       ...customPerpsHandlers,
       ...customPredictionsHandlers,
+      ...customStakePositionHandlers,
     };
   }, [
     customPTXHandlers,
@@ -85,6 +88,7 @@ export default function WebPlatformPlayer({
     customLiveAppModalHandlers,
     customPerpsHandlers,
     customPredictionsHandlers,
+    customStakePositionHandlers,
   ]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {

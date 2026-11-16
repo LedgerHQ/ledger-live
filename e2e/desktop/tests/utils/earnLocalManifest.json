@@ -43,6 +43,7 @@
     "custom.dialog.info",
     "custom.dialog.confirmation",
     "custom.dialog.menu",
+    "custom.stake.position.open",
     "custom.liveApp.modal.open",
     "custom.liveApp.modal.getInitialPayload",
     "custom.liveApp.modal.close",
