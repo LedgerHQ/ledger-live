@@ -416,6 +416,9 @@
       "title" : "มีการดำเนินการที่ค้างอยู่สำหรับบัญชีนี้",
       "description" : "โปรดรอให้การดำเนินการเสร็จสิ้นก่อน"
     },
+    "TokenNonTransferable" : {
+      "title" : "ไม่สามารถส่งโทเคนนี้ได้ เพราะสัญญาอัจฉริยะของสินทรัพย์นี้ไม่อนุญาตให้ทำการโอน"
+    },
     "AccountNameRequired" : {
       "title" : "ต้องมีชื่อบัญชี",
       "description" : "โปรดป้อนชื่อบัญชี"
@@ -1272,6 +1275,14 @@
       "title" : "ขออภัย การเชื่อมต่อล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยการเชื่อมต่อเครือข่ายที่ดีขึ้น (Websocket ล้มเหลว)"
     },
+    "WithdrawApiError" : {
+      "title" : "ส่งคำขอถอนให้คุณไม่สำเร็จ",
+      "description" : "ยังไม่มีการโอนสินทรัพย์ออกจากยอดคงเหลือ Perps ของคุณ ปิดหน้าต่างและขอโควตใหม่เพื่อลองอีกครั้ง"
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "เราไม่สามารถยืนยันการถอนของคุณได้",
+      "description" : "รายการอาจยังอยู่ระหว่างดำเนินการ โปรดตรวจสอบประวัติการสวอปก่อนลองอีกครั้ง"
+    },
     "WrongDeviceForAccount" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "โปรดตรวจสอบว่ามีการติดตั้งอุปกรณ์ Ledger ของคุณด้วย Recovery Phrase หรือ Passphrase ที่เชื่อมโยงกับบัญชีที่เลือกแล้ว"
@@ -1597,6 +1608,48 @@
     "XrpDestinationTagRequired" : {
       "title" : "ต้องระบุแท็กปลายทางสำหรับผู้รับนี้ด้วย"
     },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "ขณะนี้ยังไม่รองรับโทเคนประเภทนี้"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "จำนวนเงินมีจำนวนหลักมากเกินไป",
+      "description" : "โทเคน XRP ของ Ledger ยอมรับเลขได้สูงสุด 16 หลัก"
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "ขีดจำกัดต้องมากกว่า 0",
+      "description" : "หากต้องการหยุดถือครองโทเคนนี้ ให้ลบออกแทน"
+    },
+    "XrpTokenFrozen" : {
+      "title" : "You can't send this token",
+      "description" : "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "You can't send this token",
+      "description" : "Its issuer hasn't approved your account to hold it."
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "This recipient can't receive this token",
+      "description" : "ผู้รับอาจจำเป็นต้องเพิ่มโทเคนนี้ก่อน หรือผู้ออกไม่อนุญาตให้โอนรายการนี้"
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "ไม่สามารถส่งจำนวนนี้ได้",
+      "description" : "ขีดจำกัดของผู้รับหรือค่าธรรมเนียมการโอนของผู้ออกไม่อนุญาตให้ทำรายการนี้ ลองระบุจำนวนที่น้อยกว่านี้"
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "ผู้ออกโทเคนปฏิเสธคำขอนี้",
+      "description" : "ผู้ออกโทเคนไม่รับผู้ถือครองรายใหม่สำหรับโทเคนนี้ หรือไม่มีโทเคนนี้อยู่"
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "ธุรกรรมนี้จะล้มเหลว",
+      "description" : "บัญชี XRP ของ Ledger ปฏิเสธด้วย {{code}}"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "ไม่รองรับธุรกรรมนี้"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "{{amount}} จะถูกล็อกในบัญชีของคุณในระหว่างที่เพิ่มโทเคนนี้",
+      "description" : "คุณจะได้รับคืนเมื่อคุณลบโทเคนออก"
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 100 ตัวอักษร"
     },
@@ -1707,10 +1760,10 @@
       "description" : "หากต้องการซิงค์แอปของคุณ โปรดตรวจสอบให้แน่ใจว่าทั้งสองแอปได้รับการอัปเดตเป็นเวอร์ชันล่าสุดแล้ว"
     },
     "AppManifestUnknownError" : {
-      "title" : "ไม่พบแอป Swap Live"
+      "title" : "ค้นหา Live App ไม่พบ"
     },
     "AppManifestNotFoundError" : {
-      "title" : "โหลดแอป Swap Live ไม่สำเร็จ"
+      "title" : "โหลด Live App ไม่สำเร็จ"
     },
     "InvalidMemoMina" : {
       "title" : "Memo ไม่สามารถยาวเกิน 32 ตัวอักษร"
@@ -2292,6 +2345,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Address securely displayed",
+      "description" : "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta" : "Got it"
+    }
+  },
   "ratings" : {
     "init" : {
       "title" : "ชอบแอปของเราหรือเปล่า?",
@@ -2386,13 +2446,13 @@
       "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
     },
     "info" : {
-      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
-      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "title" : "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder" : "ไม่ต้องเตือนฉันอีก"
     },
     "error" : {
       "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
-      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+      "subtitle" : "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม",
@@ -2569,6 +2629,16 @@
     }
   },
   "deviceOnboarding" : {
+    "karaoke" : {
+      "tapToContinue" : "Tap to continue",
+      "intro" : {
+        "takeControl" : "You’re about to take control.",
+        "keysStayWithYou" : "Your keys stay with you.",
+        "nothingMoves" : "Nothing moves without your say.",
+        "setUp" : "Let’s set it up.",
+        "cta" : "Check your device"
+      }
+    },
     "checks" : {
       "close" : "ปิด",
       "synchronizing" : {
@@ -2584,10 +2654,36 @@
         "description" : "กำลังยืนยันว่าอุปกรณ์ลงนาม Ledger ของคุณปลอดภัยต่อการใช้งานและได้รับการอัปเดตล่าสุดแล้ว",
         "cta" : "กำลังตรวจสอบ..."
       },
+      "updating" : {
+        "title" : "มีอัปเดตระบบ Ledger OS พร้อมสำหรับติดตั้ง",
+        "description" : "ติดตั้ง Ledger OS ล่าสุดตอนนี้ หรือข้ามเพื่อตรวจสอบอุปกรณ์ของคุณให้เสร็จสิ้น",
+        "installCta" : "ติดตั้งการอัปเดต Ledger OS",
+        "skipCta" : "ข้ามการอัปเดต Ledger OS"
+      },
       "succeeded" : {
         "title" : "อุปกรณ์นี้เป็นของแท้และได้รับการอัปเดตล่าสุดแล้ว",
         "genuineTitle" : "อุปกรณ์นี้เป็นของแท้",
         "cta" : "ดำเนินการต่อ"
+      },
+      "network" : {
+        "title" : "เกิดข้อผิดพลาดของเครือข่าย",
+        "description" : "ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ ติดต่อ Ledger Support หากยังคงมีปัญหาอยู่"
+      }
+    },
+    "quitConfirmation" : {
+      "title" : "ต้องการหยุดการติดตั้งไว้ก่อน?",
+      "description" : "ข้อมูลที่ยังไม่บันทึกในขั้นตอนนี้จะหายไปทั้งหมด",
+      "restart" : "คุณจะต้องเริ่มต้นใหม่จาก {{step}} ในครั้งถัดไป",
+      "leave" : "ยกเลิกโดยไม่ทำการบันทึก",
+      "continue" : "ดำเนินการติดตั้งต่อ",
+      "steps" : {
+        "intro" : "คำแนะนำ",
+        "checks" : "การตรวจสอบว่าอุปกรณ์และ OS เป็นของแท้",
+        "name" : "ชื่ออุปกรณ์",
+        "pin" : "PIN",
+        "setupChoice" : "ตัวเลือกการติดตั้ง",
+        "security" : "การตั้งค่าความปลอดภัย",
+        "restore" : "กู้คืนการเข้าถึง"
       }
     },
     "syncOffer" : {
@@ -2595,7 +2691,11 @@
       "description" : "ซิงก์ข้อมูลยอดเงินและพอร์ตการลงทุนของคุณให้ตรงกันอยู่เสมอ ไม่ว่าจะเปลี่ยนโทรศัพท์เครื่องใหม่หรือเปลี่ยนไปใช้งานบนคอมพิวเตอร์",
       "learnMore" : "เรียนรู้เพิ่มเติม",
       "activate" : "เปิดใช้งาน",
-      "skip" : "ข้ามไปก่อน"
+      "skip" : "ข้ามไปก่อน",
+      "success" : {
+        "title" : "ซิงค์เสร็จเรียบร้อยแล้ว",
+        "cta" : "ดำเนินการต่อ"
+      }
     },
     "connection" : {
       "connecting" : "กำลังเชื่อมต่อกับอุปกรณ์ของคุณ",
@@ -3648,6 +3748,10 @@
     "borrow" : {
       "title" : "สินเชื่อ",
       "description" : "กู้ยืมสเตเบิลคอยน์"
+    },
+    "predictions" : {
+      "title" : "แนวโน้ม",
+      "description" : "ความเป็นไปได้ในอนาคต"
     }
   },
   "addAccountsModal" : {
@@ -3739,6 +3843,7 @@
       "TRANSFER_WITHDRAWN" : "การโอนที่ยกเลิก",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
+      "OPT_EDIT" : "Token updated",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
       "APPROVE" : "เปิดใช้งานแล้ว",
       "BOND" : "ผูกมัด",
@@ -3916,6 +4021,11 @@
         "addTokens" : "เพิ่มสินทรัพย์",
         "howTo" : "คุณสามารถเพิ่มสินทรัพย์ไปยังบัญชี Stellar ของคุณได้",
         "addAsset" : "เพิ่มสินทรัพย์"
+      },
+      "xrp" : {
+        "seeMore" : "See more tokens",
+        "seeLess" : "See fewer tokens",
+        "howTo" : "You can add tokens to your XRP account."
       }
     },
     "subaccounts" : {
@@ -5447,11 +5557,14 @@
         "paidIn" : "ได้ทำการจ่ายด้วย {{currency}} แล้ว",
         "nudge" : "คุณประหยัดได้ถึง {{amount}} ผ่าน {{provider}}",
         "saved" : "ประหยัดได้ เมื่อชำระด้วย {{provider}}",
+        "rentArriving" : "การเช่า Energy ของคุณกำลังอยู่ระหว่างดำเนินการ ค่าธรรมเนียมเครือข่ายจะอัปเดตเมื่อ Energy มาถึง",
         "confirm" : "ยืนยัน",
         "disclaimer" : "เมื่อใช้ {{provider}} ซึ่งเป็นผู้ให้บริการ Energy บุคคลที่ 3 คุณจะต้องจ่ายค่าธรรมเนียมด้วย {{feeCurrency}}",
         "insufficientFunds" : "คุณมี {{feeCurrency}} ไม่พอที่จะครอบคลุมจำนวนและค่าเช่า Energy กับ {{provider}}"
       },
       "sponsoredRentSignature" : {
+        "title" : "อนุมัติการจ่ายค่าธรรมเนียมเครือข่าย",
+        "terms" : "การลงนามในธุรกรรมนี้ จะถือว่าคุณยอมรับ <0>ข้อกำหนดและเงื่อนไขของ {{provider}}</0>",
         "crafting" : "กำลังเตรียมเช่า Energy...",
         "strategy" : "การเช่า Energy กับ {{provider}}",
         "fee" : "ค่าธรรมเนียมการเช่า: {{amount}}",
@@ -5460,9 +5573,12 @@
           "description" : "คุณได้ปฏิเสธการชำระค่าธรรมเนียมการเช่า ยอดเงินของคุณจะไม่มีการเปลี่ยนแปลง"
         }
       },
+      "sponsoredTransferSignature" : {
+        "title" : "ยืนยันการโอน"
+      },
       "sponsoredPolling" : {
-        "title" : "กำลังรอการส่งมอบ Energy",
-        "waiting" : "{{provider}} กำลังส่งมอบ Energy ที่คุณขอเช่า อาจใช้เวลาสักครู่",
+        "title" : "กำลังส่งมอบ Energy ให้คุณ",
+        "waiting" : "โดยปกติจะใช้เวลาไม่เกิน 30 วินาที",
         "elapsed" : "ใช้เวลาไป: {{time}}"
       },
       "sponsoredFailure" : {
@@ -5944,13 +6060,13 @@
       "cancel" : "ยกเลิก"
     },
     "actions" : {
-      "retry" : "ลองใหม่",
-      "cancel" : "ยกเลิก",
-      "close" : "ปิด"
+      "cancelOsUpdate" : "ยกเลิกการอัปเดต OS",
+      "close" : "ปิด",
+      "finish" : "เสร็จสิ้น"
     },
     "closeConfirmation" : {
       "title" : "กำลังอัปเดต OS",
-      "description" : "การตั้งค่าและแอปของคุณอาจไม่ได้รับการกู้คืนอย่างถูกต้องหากคุณยกเลิกการอัปเดตตอนนี้",
+      "description" : "การตั้งค่าและแอปของคุณอาจไม่ได้รับการกู้คืนอย่างสมบูรณ์หากคุณยกเลิกการอัปเดตตอนนี้",
       "continue" : "ดำเนินการอัปเดต OS ต่อ",
       "cancel" : "ยกเลิกการอัปเดต OS"
     },
@@ -5967,17 +6083,24 @@
     },
     "progress" : {
       "updatingTitle" : "อัปเดต {{index}}/{{count}}",
-      "restoringTitle" : "กำลังติดตั้งการตั้งค่าของคุณอีกครั้ง...",
-      "updatingDescription" : "{{productName}} ของคุณจะรีสตาร์ทโดยอัตโนมัติหลายครั้ง และระบบจะขอให้คุณปลดล็อกด้วย PIN ระหว่างการติดตั้ง",
-      "restoringDescription" : "อัปเดตใกล้เสร็จแล้ว กำลังติดตั้งการตั้งค่าของคุณอีกครั้งบน {{productName}}"
+      "restoringTitle" : "กำลังติดตั้งแอปและการตั้งค่าของคุณอีกครั้ง...",
+      "updatingDescription" : "{{productName}} ของคุณจะรีสตาร์ทโดยอัตโนมัติ และระบบจะขอให้คุณปลดล็อกด้วย PIN ระหว่างการติดตั้ง\n\nเปิดหน้าจอนี้ไว้จนกว่าการอัปเดตจะเสร็จสมบูรณ์",
+      "whyUpdatesTitle" : "ทำไมต้องมีการอัปเดต {{count}} รายการ?",
+      "whyUpdatesDescription" : "อุปกรณ์ของคุณจำเป็นต้องมีการอัปเดต Ledger OS ให้ครบถ้วน ก่อนจะสามารถติดตั้ง OS เวอร์ชันล่าสุดได้ ระบบจะดำเนินการอัปเดตถัดไปอัตโนมัติ",
+      "restoringDescription" : "อัปเดตใกล้เสร็จแล้ว ภาษา ภาพล็อกสกรีน และแอปของคุณกำลังได้รับการติดตั้งใหม่บน {{productName}} ของคุณ",
+      "stayOnScreen" : "เปิดหน้าจอนี้ไว้จนกว่าการอัปเดตจะเสร็จสมบูรณ์"
     },
     "applied" : {
-      "title" : "การอัปเดตเสร็จสมบูรณ์",
-      "description" : "{{productName}} ของคุณได้รับการอัปเดตล่าสุดแล้ว"
+      "title" : "{{productName}} ของคุณได้รับการอัปเดตล่าสุดแล้ว",
+      "version" : "เวอร์ชัน OS: {{version}}"
     },
     "restored" : {
-      "title" : "กู้คืนการสำรองข้อมูลแล้ว",
-      "description" : "แอปและการตั้งค่าของคุณกลับมาอยู่บน {{productName}} แล้ว"
+      "title" : "ติดตั้งแอปและการตั้งค่าบน {{productName}} ของคุณอีกครั้งแล้ว",
+      "description" : "ล็อกสกรีน ภาษา และแอป"
+    },
+    "restoreResult" : {
+      "partial" : "คุณยังไม่ได้ติดตั้งแอปและล็อกสกรีนใหม่ คริปโตของคุณปลอดภัย คุณสามารถติดตั้งแอปและล็อกสกรีนของคุณใหม่ได้ตลอดเวลา",
+      "outOfMemory" : "พื้นที่จัดเก็บไม่เพียงพอขณะติดตั้งแอปและล็อกสกรีนของคุณ คริปโตของคุณปลอดภัย คุณสามารถติดตั้งแอปและล็อกสกรีนของคุณใหม่ได้ตลอดเวลา"
     },
     "continueOnDevice" : {
       "title" : "ดำเนินการต่อบน {{productName}} ของคุณ",
@@ -5987,34 +6110,42 @@
       "title" : "ปลดล็อก {{productName}} ของคุณ"
     },
     "deviceDisconnected" : {
-      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
-      "description" : "เชื่อมต่ออุปกรณ์ Ledger ของคุณอีกครั้งเพื่อดำเนินการต่อ การอัปเดตจะดำเนินการต่อโดยอัตโนมัติ"
+      "title" : "เปิดและปลดล็อก {{productName}} ของคุณ"
+    },
+    "connectionTimedOut" : {
+      "title" : "การเชื่อมต่อหมดเวลาแล้ว",
+      "description" : "เริ่มขั้นตอนอัปเดตใหม่อีกครั้ง",
+      "restart" : "รีสตาร์ทการอัปเดตระบบปฏิบัติการ"
     },
     "unexpectedError" : {
       "title" : "มีบางอย่างผิดปกติ",
-      "description" : "การอัปเดต OS ไม่สามารถดำเนินต่อได้ ติดต่อ Ledger Support หากยังคงมีปัญหาอยู่"
+      "description" : "ไม่สามารถดำเนินการอัปเดต OS ต่อได้ ติดต่อ <supportLink>Ledger Support</supportLink> หากยังพบปัญหา"
     },
     "batteryTooLow" : {
-      "title" : "ชาร์จ {{productName}} ของคุณ",
-      "description" : "แบตเตอรี่อุปกรณ์ของคุณอยู่ที่ {{percentage}}% เสียบสายชาร์จหรือชาร์จให้มากกว่า 20% เพื่อดำเนินการต่อ"
+      "title" : "เชื่อมต่อกับ {{productName}} ของคุณเพื่อดำเนินการต่อ",
+      "description" : "การติดตั้งจะเริ่มขึ้นเมื่อ {{productName}} ของคุณเชื่อมต่ออยู่ หรือมีแบตเตอรี่ 20% ขึ้นไป",
+      "batteryLevel" : "ระดับแบตเตอรี่: {{percentage}}%",
+      "cancel" : "ยกเลิกการอัปเดต OS"
     },
     "backupSelection" : {
-      "title" : "ใช้การสำรองข้อมูลที่มีอยู่ของคุณหรือไม่?",
-      "description" : "การสำรองข้อมูลล่าสุดของคุณมีอายุมากกว่า 24 ชั่วโมงแล้ว คุณสามารถใช้ข้อมูลนี้ หรือสร้างข้อมูลใหม่เพื่อแทนที่ได้ สิ่งที่ใช้รับรองตัวตนของ Security Key เป็นส่วนหนึ่งของการสำรองข้อมูล",
-      "useExisting" : "ใช้การสำรองข้อมูลที่มีอยู่",
-      "createNew" : "สร้างการสำรองข้อมูลใหม่"
+      "title" : "การตั้งค่าก่อนหน้านี้ได้รับการบันทึกแล้ว",
+      "description" : "พบข้อมูลแอปและการตั้งค่าจากการอัปเดตรอบก่อน เลือกการตั้งค่าต้องการใช้บน {{productName}} ของคุณหลังการอัปเดต",
+      "useExisting" : "ใช้การตั้งค่าก่อนหน้านี้",
+      "createNew" : "ใช้การตั้งค่าปัจจุบัน",
+      "lastSave" : "บันทึกล่าสุดเมื่อ",
+      "lastSaveDate" : "{{date}} {{time}}"
     },
     "secureConnectionRefused" : {
-      "title" : "การเชื่อมต่อที่ปลอดภัยถูกปฏิเสธ",
-      "description" : "คุณปฏิเสธการเชื่อมต่อที่ปลอดภัยบนอุปกรณ์ของคุณ ลองอีกครั้งเพื่อดำเนินการต่อ"
+      "title" : "ยกเลิกการเชื่อมต่อที่ปลอดภัย?",
+      "description" : "จำเป็นต้องมีการเชื่อมต่อที่ปลอดภัยเพื่อดำเนินการอัปเดต {{productName}} ของคุณต่อ",
+      "retry" : "ลองเชื่อมต่ออย่างปลอดภัยอีกครั้ง",
+      "cancel" : "ยกเลิกการเชื่อมอย่างปลอดภัย"
     },
     "installFirmwareRefused" : {
-      "title" : "ปฏิเสธการติดตั้ง",
-      "description" : "การติดตั้งถูกปฏิเสธบนอุปกรณ์ของคุณ การอัปเดตจึงไม่สามารถดำเนินการต่อได้"
-    },
-    "outOfMemory" : {
-      "title" : "พื้นที่บนอุปกรณ์ของคุณไม่เพียงพอ",
-      "description" : "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอที่จะดำเนินการต่อ เพิ่มพื้นที่ว่างแล้วลองอีกครั้ง"
+      "title" : "การติดตั้งการอัปเดต OS บน {{productName}} ได้รับการยกเลิกแล้ว",
+      "description" : "หากมีข้อผิดพลาด โปรดรีสตาร์ทการอัปเดต",
+      "restart" : "เริ่มขั้นตอนอัปเดต OS ใหม่อีกครั้ง",
+      "cancel" : "ยกเลิกการอัปเดต OS"
     }
   },
   "deviceIntentExecutor" : {
@@ -6494,6 +6625,7 @@
       "buyDeviceCTA" : "<0>ต้องการ Ledger ใหม่หรือไม่? </0><1>ซื้อตอนนี้</1>",
       "item" : {
         "usb" : "เชื่อมต่อกับ USB แล้ว",
+        "mocked" : "ตัวอย่างจำลอง",
         "available" : "พร้อมใช้งาน แตะเพื่อเชื่อมต่อ",
         "unavailable" : "ไม่ได้เชื่อมต่อ"
       }
@@ -6703,7 +6835,7 @@
     "updateCancelled" : "การติดตั้งการอัปเดต OS ได้ถูกยกเลิกบน {{deviceName}} แล้ว",
     "updateCancelledDescription" : "หากมีข้อผิดพลาด โปรดรีสตาร์ทการอัปเดต",
     "updateNotYetComplete" : "กำลังอัปเดต OS",
-    "updateNotYetCompleteDescription" : "การตั้งค่าและแอปของคุณอาจไม่ได้รับการกู้คืนอย่างถูกต้องหากคุณยกเลิกการอัปเดตตอนนี้",
+    "updateNotYetCompleteDescription" : "การตั้งค่าและแอปของคุณอาจไม่ได้รับการกู้คืนอย่างสมบูรณ์หากคุณยกเลิกการอัปเดตตอนนี้",
     "restartUpdate" : "รีสตาร์ทการอัปเดตระบบปฏิบัติการ",
     "quitUpdate" : "ยกเลิกการอัปเดต OS",
     "continueUpdate" : "ดำเนินการอัปเดต OS ต่อ",
@@ -8209,6 +8341,66 @@
       "newAddressTRC20" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งาน"
     }
   },
+  "xrp" : {
+    "token" : "Tokens",
+    "addToken" : {
+      "cta" : "Add token",
+      "title" : "เพิ่มโทเคน",
+      "receiveAlert" : "Add this token to your account before you receive it.",
+      "receive" : "Receive",
+      "steps" : {
+        "token" : {
+          "title" : "Choose a token",
+          "alreadyAddedTag" : "Already added",
+          "alreadyAdded" : "You've already added this token. Open its page to see or edit its settings.",
+          "openTokenPage" : "Open token page",
+          "empty" : "No token is available for this account.",
+          "loadError" : "ไม่สามารถโหลดรายการโทเคนได้"
+        },
+        "settings" : {
+          "title" : "การตั้งค่า",
+          "limitInfo" : "ขีดจำกัดความไว้วางใจ (Trust Limit) คือจำนวน {{token}} สูงสุดที่บัญชีของคุณยินยอมถือครอง"
+        },
+        "review" : {
+          "title" : "ตรวจสอบ",
+          "tokenType" : "Token type",
+          "tokenTypeIou" : "Trust Line (IOU)",
+          "tokenTypeMpt" : "Multi purpose token",
+          "account" : "Account address",
+          "tokenName" : "Token name",
+          "issuer" : "ผู้ออกโทเคน",
+          "networkFees" : "Network fees"
+        },
+        "selectDevice" : {
+          "title" : "Select device"
+        },
+        "connectDevice" : {
+          "title" : "Connect device"
+        }
+      },
+      "errors" : {
+        "notEnoughXrp" : "You need at least {{minimumAmount}} available to add this token.",
+        "notEnoughXrpLocked" : "{{amount}} will be locked on your account.",
+        "limitZero" : "The trust limit must be above 0."
+      },
+      "success" : {
+        "title" : "{{token}} added",
+        "text" : "It appears in your account with a balance of 0 after the next sync."
+      }
+    },
+    "tokenSettings" : {
+      "limit" : "Trust limit",
+      "maxLimit" : "Max trust limit",
+      "maxLimitInfo" : "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
+      "maximum" : "Maximum"
+    },
+    "rippling" : {
+      "label" : "Rippling",
+      "on" : "เปิด",
+      "off" : "ปิด",
+      "warning" : "เปิดใช้งานเพื่ออนุญาตให้การชำระเงินของคนอื่นสามารถโอนย้ายยอดเงินของคุณข้ามโทเคนที่ใช้รหัสสกุลเงินเดียวกันได้ เปิดใช้งานสิ่งนี้ เฉพาะเมื่อคุณทราบรายละเอียดการทำงานอย่างถ่องแท้เท่านั้น"
+    }
+  },
   "stellar" : {
     "token" : "สินทรัพย์",
     "memo" : {
@@ -9552,6 +9744,15 @@
     }
   },
   "ApplicationVersion" : "v{{version}}",
+  "accountAnalytics" : {
+    "assets" : "ตัวกรองสินทรัพย์",
+    "accounts" : "ตัวกรองบัญชี",
+    "allAssets" : "สินทรัพย์ทั้งหมด",
+    "allAccounts" : "บัญชีทั้งหมด",
+    "error" : "ไม่สามารถโหลดข้อมูลวิเคราะห์ได้ โปรดลองอีกครั้ง",
+    "unavailable" : "ไม่มีข้อมูลสำหรับตัวเลือกนี้",
+    "noResults" : "No results"
+  },
   "analytics" : {
     "title" : "การวิเคราะห์",
     "operations" : {
@@ -10506,6 +10707,9 @@
         "swapBuy" : "เริ่มใช้งานโดยเติมเงินผ่าน \"สวอป\" หรือ \"ซื้อ\""
       }
     },
+    "assetPicker" : {
+      "title" : "เลือกสินทรัพย์"
+    },
     "actions" : {
       "transfer" : "โอน",
       "receive" : "รับ",
@@ -10539,6 +10743,12 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "ต้องการดูผลการดำเนินงานของบัญชี?",
+      "description" : "ตอนนี้ข้อมูลผลการดำเนินงานทั้งหมดอยู่ที่หน้าการวิเคราะห์แล้ว",
+      "cta" : "ไปที่หน้าการวิเคราะห์",
+      "dismiss" : "ปิดคำแนะนำจากการวิเคราะห์"
+    },
     "assets" : {
       "title" : "สินทรัพย์",
       "add" : "เพิ่ม"
@@ -10556,9 +10766,6 @@
       "label" : "ชื่อที่อยู่",
       "submit" : "เปลี่ยนชื่อ"
     }
-  },
-  "accountAssetPicker" : {
-    "title" : "เลือกสินทรัพย์"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10846,9 +11053,20 @@
     "depositDetailTitle" : "รายละเอียดการฝาก",
     "depositAmountLabel" : "จำนวนเงินฝาก",
     "depositReceiveLabel" : "บัญชีผู้รับ",
-    "depositCTA" : "ฝาก"
+    "depositCTA" : "ฝาก",
+    "withdrawTitle" : "ถอนผ่าน SwapKit",
+    "withdrawSubtitle" : "ผู้ให้บริการ SwapKit ให้คุณจัดการสวอปและถอนเงินของคุณได้ในธุรกรรมเดียว โดยมีอุปกรณ์ Ledger ของคุณคอยรักษาความปลอดภัย",
+    "withdrawDetailTitle" : "รายละเอียดการถอน",
+    "withdrawReceiveLabel" : "บัญชีผู้รับ",
+    "networkFeesLabel" : "ค่าธรรมเนียมเครือข่าย",
+    "totalDebitedLabel" : "ยอดรวมที่หัก",
+    "withdrawCTA" : "ถอน"
   },
   "perpsDepositSign" : {
+    "genericError" : {
+      "title" : "เกิดข้อผิดพลาดบางอย่าง",
+      "description" : "โปรดลองอีกครั้งในภายหลัง หรือเลือกสินทรัพย์อื่น"
+    },
     "terms" : "เมื่อลงนามในธุรกรรมนี้ ฉันยอมรับ <termsLink>ข้อกำหนดและเงื่อนไขของ SwapKit by NEAR Intents</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -10858,6 +11076,7 @@
   },
   "perpsTransactionStatus" : {
     "title" : "เติมเงินในสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals)",
+    "withdrawTitle" : "การถอน",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}",
     "returnToPerps" : "กลับไปที่ Perps"
   },
@@ -10870,9 +11089,33 @@
     "selectCurrencyNoAccount" : "ไม่มีบัญชี",
     "review" : "ตรวจสอบ",
     "keypadDelete" : "ลบหลักสุดท้าย",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "formErrors" : {
+      "offline" : "มีปัญหาการเชื่อมต่ออินเทอร์เน็ต",
       "amountExceedsBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "feeAccountEmpty" : "คุณต้องมี {{ticker}} เพิ่มเติมสำหรับค่าธรรมเนียมเครือข่าย",
+      "notEnoughFees" : "คุณต้องมี {{fees}} {{ticker}} เพื่อจ่ายค่าธรรมเนียมเครือข่าย",
+      "amountTooLow" : "ป้อนอย่างน้อย {{amount}} {{ticker}} แล้วลองอีกครั้ง",
+      "amountTooHigh" : "ป้อนไม่เกิน {{amount}} {{ticker}} หรือน้อยกว่านั้น แล้วลองอีกครั้ง",
+      "feeEstimationFailed" : "ระบบไม่สามารถคำนวณค่าธรรมเนียมได้ในตอนนี้ คุณอาจยังไม่ได้ซิงค์บัญชีคริปโตของคุณ โปรดรีสตาร์ทแอป Ledger Wallet แล้วลองอีกครั้ง",
+      "accountNotReady" : "ยังไม่สามารถโอนจากบัญชีนี้ได้ ให้ทำการเปิดบัญชีของคุณขึ้นมา แล้วลองอีกครั้ง",
+      "seiEvmUnlinked" : "ต้องเชื่อมต่อกับบัญชี SEI EVM ก่อนทำการสวอป",
+      "aleoPrivateBalance" : "สวอปได้เฉพาะ {{ticker}} สาธารณะเท่านั้น ปัจจุบันเงินของคุณอยู่ในบัญชีส่วนตัว และไม่สามารถทำการสวอปได้",
+      "tezosUnrevealed" : "คุณยังไม่ได้เปิดใช้งานบัญชี Tezos ของคุณ โปรดส่ง XTZ จำนวนเล็กน้อยก่อนทำการสวอป",
+      "dotMinimumBalance" : "ต้องมีอย่างน้อย {{minValue}} DOT หลังจากการสวอป",
+      "xlmMinimumBalance" : "ต้องมีอย่างน้อย {{minValue}} XLM หลังจากการสวอป",
       "quoteUnavailable" : "ไม่สามารถรับโควตจาก {{provider}} ได้ โปรดลองใช้สินทรัพย์อื่นหรือกลับมาใหม่ในภายหลัง"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "มี {{ticker}} ไม่เพียงพอ",
+        "description" : "บัญชี {{account}} ของคุณมียอดคงเหลือไม่เพียงพอเพื่อจ่ายค่าธรรมเนียมเครือข่าย"
+      },
+      "amountTooLow" : {
+        "title" : "ขั้นต่ำที่ต้องมีสำหรับ {{ticker}}",
+        "description" : "สำหรับโควตนี้ ต้องมีขั้นต่ำ {{amount}} {{ticker}}"
+      },
+      "buy" : "ซื้อ {{ticker}}"
     }
   },
   "perpsWithdraw" : {
@@ -11221,7 +11464,15 @@
     "earn" : "สร้างรายได้",
     "yield" : "ผลตอบแทน",
     "card" : "บัตร",
-    "paytab" : "จ่าย"
+    "paytab" : "จ่าย",
+    "agents" : "Agents"
+  },
+  "agentIntent" : {
+    "title" : "Agents",
+    "manageAgents" : {
+      "title" : "Manage your agents",
+      "description" : "Let AI agents manage your assets."
+    }
   },
   "payTab" : {
     "disclaimer" : "ให้บริการโดย Monavate OnChain",
@@ -12165,6 +12416,74 @@
           "title" : "เป็นส่วนตัวบนทุกอุปกรณ์ Ledger ของคุณ",
           "description" : "ได้รับการเข้ารหัสแบบครบวงจรด้วยฟีเจอร์ Ledger Sync"
         }
+      }
+    }
+  },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "กำลังเตรียมการลงนาม",
+      "title" : "ยืนยันการเป็นเจ้าของบัญชีบน {{productName}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบนหน้าจอรักษาความปลอดภัยของคุณ",
+      "settingUp" : {
+        "title" : "กำลังตั้งค่าบัญชีการเทรดของคุณ"
+      },
+      "setUp" : {
+        "created" : "สร้างบัญชีการเทรดแล้ว",
+        "found" : "พบบัญชีการเทรด",
+        "description" : "บัญชีการเทรดของคุณพร้อมใช้งานแล้ว",
+        "continue" : "ดำเนินการต่อ"
+      },
+      "mismatch" : {
+        "title" : "ลายเซ็นนี้ไม่ตรงกับบัญชีของคุณ",
+        "description" : "เชื่อมต่อ Ledger ของบัญชีนี้ด้วย Passphrase เดิมหากมีการติดตั้งไว้ แล้วลองใหม่อีกครั้ง"
+      },
+      "setupFailed" : {
+        "title" : "ไม่สามารถสร้างบัญชีการเทรดของคุณได้",
+        "failed-deploy" : "MoonPay ไม่สามารถติดตั้งวอลเล็ตการเทรดของคุณได้",
+        "failed-permission" : "MoonPay ไม่สามารถตั้งค่าสิทธิ์ของวอลเล็ตการเทรดให้คุณได้",
+        "timeout" : "การติดตั้งใช้เวลานานเกินไป",
+        "unavailable" : "ไม่สามารถเชื่อมต่อกับ MoonPay ได้",
+        "unknown" : "เกิดข้อผิดพลาดระหว่างการตั้งค่า"
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "เทรดตามเหตุการณ์ในอนาคต",
+        "subtitle" : "ตอนนี้คุณสามารถเข้าถึงตลาดการทำนายที่ใหญ่ที่สุดในโลก ซึ่งคุณสามารถเทรดตามผลลัพธ์ของเหตุการณ์ต่าง ๆ ได้ ให้บริการโดย MoonPay",
+        "items" : {
+          "polymarket" : {
+            "title" : "เข้าใช้งาน Polymarket ในแอป Ledger Wallet",
+            "subtitle" : "มีให้บริการแล้วในแอป Ledger Wallet"
+          },
+          "markets" : {
+            "title" : "กีฬา, เทคโนโลยี, คริปโต, สภาพอากาศ, การเมือง",
+            "subtitle" : "และอีกมากมาย ค้นพบตลาดทั้งหมด"
+          },
+          "clearSign" : {
+            "title" : "Clear sign ทั้งหมด",
+            "subtitle" : "คุณกำหนดและทำการ Clear Sign จำนวนที่จะเทรด"
+          }
+        },
+        "discover" : "ค้นพบการคาดการณ์",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
+      },
+      "terms" : {
+        "title" : "ข้อกำหนดและเงื่อนไข",
+        "body" : "ตลาดพยากรณ์เป็นการเก็งกำไร มีความเสี่ยงสูง และอาจไม่เหมาะสำหรับผู้ใช้ทุกคน การเทรดในตลาดเหล่านี้มีความเสี่ยงที่สำคัญ รวมถึง: การสูญเสียเงินทั้งหมด (สถานะอาจสูญเสียมูลค่าทั้งหมด), ความเสี่ยงด้านตลาดและการตัดสินผล (ผลลัพธ์จะถูกตัดสินภายใต้กฎของแต่ละตลาด ซึ่งอาจแตกต่างจากที่คุณคาดหวัง), ความเสี่ยงด้านสภาพคล่อง (คุณอาจไม่สามารถขายสถานะในราคาที่ต้องการ หรืออาจขายไม่ได้เลย) และความเสี่ยงด้านสัญญาอัจฉริยะ (ช่องโหว่ของโค้ด) ประเมินความเสี่ยงเหล่านี้อย่างรอบคอบและทำความเข้าใจการทำงานของแต่ละตลาดก่อนดำเนินการต่อ แนะนำ <termsLink>เงื่อนไขการใช้งาน</termsLink> เพื่อดูข้อมูลเพิ่มเติม",
+        "checkbox" : "คุณรับทราบว่าคุณได้อ่านและทำความเข้าใจข้อจำกัดความรับผิดชอบข้างต้นแล้ว และยอมรับความเสี่ยงในการเทรดบนตลาดพยากรณ์",
+        "cta" : "ยอมรับและดำเนินการต่อ"
+      },
+      "consent" : {
+        "title" : "การเทรดแบบ Clear Sign บน Polymarket ผ่าน MoonPay",
+        "description" : "เลือกที่อยู่คริปโตของแอป Ledger Wallet เพื่อลงนามธุรกรรมการซื้อขายของคุณและถอนยอดคงเหลือในบัญชี Predictions ของคุณ",
+        "bullets" : {
+          "dedicatedWallet" : "วอลเล็ตสำหรับการเทรดโดยเฉพาะ: MoonPay Trade จะสร้างวอลเล็ตขึ้นมาโดยเฉพาะสำหรับกิจกรรม Polymarket ของคุณ ฝากเฉพาะจำนวนที่คุณวางแผนจะเทรดเท่านั้น ไม่รองรับการเข้าสู่ระบบโดยตรงบน Polymarket",
+          "secureSigning" : "การลงนามอย่างปลอดภัย: ทุกคำสั่งการเทรดจะได้รับการลงนามแบบ Clear Signing โดยใช้ที่อยู่คริปโตของแอป Ledger Wallet ที่คุณเลือก",
+          "withdraw" : "ถอนเงินได้ทุกเมื่อ: โอนยอดคงเหลือในบัญชีการเทรดของคุณกลับไปยังแอป Ledger Wallet ของคุณได้ทุกเมื่อที่คุณต้องการ"
+        },
+        "checkbox" : "เมื่อดำเนินการต่อ คุณตกลงที่จะสร้างที่อยู่คริปโตของวอลเล็ต MoonPay Trade และอนุญาตให้ที่อยู่คริปโตของแอป Ledger Wallet ที่เลือก ลงนามในคำสั่งเทรดและรับเงินของคุณเมื่อคุณถอนเงิน",
+        "cta" : "ดำเนินการต่อ",
+        "footer" : "บริการธุรกรรมคริปโตให้บริการโดยผู้ให้บริการบุคคลที่ 3 MoonPay Ledger ไม่มีคำแนะนำหรือข้อเสนอแนะใด ๆ"
       }
     }
   }
