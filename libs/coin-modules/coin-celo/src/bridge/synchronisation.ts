@@ -476,8 +476,14 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
  * with their own nonce no longer replace each other, so their pending ops are pruned here too.
  */
 export const postSync = (_initial: CeloAccount, synced: CeloAccount): CeloAccount => {
+  // `shouldRetainPendingOperation` reads only the latest op from the sender, which a nonce-less
+  // row (someone else's `transferFrom`) would hide.
+  const withNonces = {
+    ...synced,
+    operations: synced.operations.filter(o => o.transactionSequenceNumber !== undefined),
+  };
   const isPending = (owner: AccountLike, op: OperationLive) =>
-    !owner.operations.some(o => o.hash === op.hash) && shouldRetainPendingOperation(synced, op);
+    !owner.operations.some(o => o.hash === op.hash) && shouldRetainPendingOperation(withNonces, op);
 
   return {
     ...synced,

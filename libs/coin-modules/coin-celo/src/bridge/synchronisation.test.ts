@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { lastValueFrom } from "rxjs";
 import {
@@ -203,8 +204,7 @@ describe("pending operation retention", () => {
     ...buildOptimisticOperation(senderAccount, transactionFixture, new BigNumber(2), { nonce }),
     hash,
   });
-  const nonces = (ops: { transactionSequenceNumber?: BigNumber }[]) =>
-    ops.map(op => op.transactionSequenceNumber?.toNumber());
+  const nonces = (ops: Operation[]) => ops.map(op => op.transactionSequenceNumber?.toNumber());
 
   it("drops the optimistic op on the sync that brings in its nonce", async () => {
     mockCreateApi.mockReturnValue({
@@ -235,6 +235,25 @@ describe("pending operation retention", () => {
     const result = postSync(senderAccount, synced);
 
     expect(nonces(result.subAccounts?.[0].pendingOperations ?? [])).toEqual([112]);
+  });
+
+  it("looks past a newer nonce-less row to the confirmed nonce", () => {
+    const synced: CeloAccount = {
+      ...senderAccount,
+      operations: [
+        {
+          ...pending(0, "0xtransferfrom"),
+          transactionSequenceNumber: undefined,
+          blockHeight: 2001,
+        },
+        { ...pending(111, "0xreplacement"), blockHeight: 2000 },
+      ],
+      pendingOperations: [pending(112), pending(111)],
+    };
+
+    const result = postSync(senderAccount, synced);
+
+    expect(nonces(result.pendingOperations)).toEqual([112]);
   });
 
   it.each([
