@@ -205,6 +205,33 @@ describe("listOperations", () => {
     expect(items[0].type).toBe("OPT_IN");
   });
 
+  it("should not classify a zero clawback self-transfer as OPT_IN", async () => {
+    const tx = {
+      id: "TX_CLAWBACK_SELF",
+      type: AlgoTransactionType.ASSET_TRANSFER,
+      senderAddress: "ASSET_MANAGER",
+      fee: new BigNumber("1000"),
+      round: 1000006,
+      timestamp: "1700000600",
+      note: undefined,
+      senderRewards: new BigNumber("0"),
+      recipientRewards: new BigNumber("0"),
+      details: {
+        assetAmount: new BigNumber("0"),
+        assetRecipientAddress: address,
+        assetSenderAddress: address,
+        assetId: "12345",
+        assetCloseToAddress: undefined,
+        assetCloseAmount: undefined,
+      },
+    };
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({ items: [{ type: "OUT", value: 0n }] });
+  });
   it("should detect OPT_OUT operation", async () => {
     const tx = {
       id: "TX_OPTOUT",

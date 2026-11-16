@@ -181,6 +181,21 @@ describe("getBlock", () => {
       ledgerOpType: "OPT_IN",
     });
   });
+  it("does not add an OPT_IN operation to a zero clawback self-transfer", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        sender: "MANAGER",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE, sender: ALICE }),
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].operations).not.toContainEqual(
+      expect.objectContaining({ type: "other", ledgerOpType: "OPT_IN" }),
+    );
+  });
   it("takes a clawback from the revoked account, not from the asset manager", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
@@ -333,7 +348,7 @@ describe("getBlock", () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
         id: "PAY",
-        "payment-transaction": payment(100, BOB, { amount: 900, to: CAROL }),
+        "payment-transaction": payment(100, ALICE, { amount: 900, to: CAROL }),
       }),
       transaction({
         id: "ASA",
@@ -364,7 +379,7 @@ describe("getBlock", () => {
             amount: new BigNumber(100),
             closeAmount: new BigNumber(900),
             closeToAddress: CAROL,
-            recipientAddress: BOB,
+            recipientAddress: ALICE,
           },
         },
         {

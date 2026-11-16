@@ -132,6 +132,7 @@ function getOperationType(tx: AlgoTransaction, address: string): string {
     const sender = details.assetSenderAddress ?? tx.senderAddress;
     if (
       details.assetAmount.isZero() &&
+      !details.assetSenderAddress &&
       sender === details.assetRecipientAddress &&
       !details.assetCloseToAddress
     ) {
@@ -183,8 +184,9 @@ function getAddressTransferAmount(
   address: string,
 ): BigNumber {
   let value = amount.minus(amount);
-  if (sender === address || recipient === address) value = value.plus(amount);
-  if (closeAmount && (sender === address || closeTo === address)) value = value.plus(closeAmount);
+  if ((sender === address) !== (recipient === address)) value = value.plus(amount);
+  if (closeAmount && (sender === address) !== (closeTo === address))
+    value = value.plus(closeAmount);
   return value;
 }
 

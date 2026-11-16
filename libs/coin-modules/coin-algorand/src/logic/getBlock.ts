@@ -68,7 +68,10 @@ function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Blo
     const source = assetTransfer.sender ?? tx.sender;
     const closeTo = assetTransfer["close-to"];
     const ledgerOpType =
-      assetTransfer.amount === 0 && source === assetTransfer.receiver && !closeTo
+      assetTransfer.amount === 0 &&
+      !assetTransfer.sender &&
+      source === assetTransfer.receiver &&
+      !closeTo
         ? "OPT_IN"
         : closeTo && source === tx.sender
           ? "OPT_OUT"

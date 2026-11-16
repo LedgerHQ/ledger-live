@@ -100,7 +100,9 @@ const getASAOperationType = (
   transaction: AlgoTransaction,
   accountAddress: string,
 ): OperationType => {
-  return transaction.senderAddress === accountAddress ? "OUT" : "IN";
+  const details = transaction.details as AlgoAssetTransferInfo;
+  const sender = details.assetSenderAddress ?? transaction.senderAddress;
+  return sender === accountAddress ? "OUT" : "IN";
 };
 
 const getOperationType = (transaction: AlgoTransaction, accountAddress: string): OperationType => {
@@ -108,6 +110,7 @@ const getOperationType = (transaction: AlgoTransaction, accountAddress: string):
     const details = transaction.details as AlgoAssetTransferInfo;
     if (
       details.assetAmount.isZero() &&
+      !details.assetSenderAddress &&
       transaction.senderAddress === details.assetRecipientAddress
     ) {
       return "OPT_IN";
@@ -200,7 +203,9 @@ const mapTransactionToASAOperation = (
   const blockHeight = tx.round;
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const fee = tx.fee;
-  const senders: string[] = getOperationSenders(tx);
+  const senders: string[] = [
+    (tx.details as AlgoAssetTransferInfo).assetSenderAddress ?? tx.senderAddress,
+  ];
   const recipients: string[] = getOperationRecipients(tx);
   const type = getASAOperationType(tx, accountAddress);
   const amount = getASAOperationAmount(tx, accountAddress);
