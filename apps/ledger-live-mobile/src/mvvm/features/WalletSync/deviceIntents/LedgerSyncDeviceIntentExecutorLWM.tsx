@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import type { DeviceConnectionParams, Intent } from "@features/platform-device-intent";
+import type {
+  DeviceConnectionParams,
+  ExecutorState,
+  Intent,
+} from "@features/platform-device-intent";
 import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
 import {
   buildDeviceInitializationInput,
@@ -15,6 +19,8 @@ const noop = () => undefined;
 type LedgerSyncDeviceIntentExecutorLWMProps<Input, Result> = Readonly<{
   intent: Intent<LedgerSyncJobState, Input, undefined, Result>;
   onUserCancel: () => void;
+  onExecutorStateChanged?: (executorState: ExecutorState) => void;
+  onIntentJobStateChanged?: (jobState: LedgerSyncJobState) => void;
 }>;
 
 /**
@@ -24,6 +30,8 @@ type LedgerSyncDeviceIntentExecutorLWMProps<Input, Result> = Readonly<{
 export function LedgerSyncDeviceIntentExecutorLWM<Input, Result>({
   intent,
   onUserCancel,
+  onExecutorStateChanged = noop,
+  onIntentJobStateChanged,
 }: LedgerSyncDeviceIntentExecutorLWMProps<Input, Result>): React.ReactElement | null {
   const [initializationInput, setInitializationInput] = useState<InitializationInput | null>(null);
 
@@ -47,7 +55,8 @@ export function LedgerSyncDeviceIntentExecutorLWM<Input, Result>({
       deviceInitializationInput={initializationInput}
       intent={intent}
       intentComponentExtraProps={undefined}
-      onExecutorStateChanged={noop}
+      onExecutorStateChanged={onExecutorStateChanged}
+      onIntentJobStateChanged={onIntentJobStateChanged}
       cancelIntentRequestId={undefined}
       onUserCancel={onUserCancel}
     />

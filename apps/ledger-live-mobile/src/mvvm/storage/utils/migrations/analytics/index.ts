@@ -9,13 +9,12 @@ const TRACK_EVENT_NAME = "StorageMigration";
 
 export function trackStorageMigration(migrateFrom: StorageType) {
   const state = storage.getState();
-  const { migrationStatus, rollbackStatus, numberOfReadErrors, lastError } = state;
+  const { migrationStatus, numberOfReadErrors, lastError } = state;
 
   const trackData: StorageMigrationUserEvent = {
     from: migrateFrom,
     to: migrateFrom === STORAGE_TYPE.ASYNC_STORAGE ? STORAGE_TYPE.MMKV : STORAGE_TYPE.ASYNC_STORAGE,
     migrationStatus,
-    rollbackStatus,
     errors: {
       count: numberOfReadErrors,
       ...lastError,
@@ -31,7 +30,6 @@ export function getMigrationUserProps(): StorageMigrationUserProps {
   const { migrationStatus, numberOfReadErrors } = state;
 
   return {
-    hasRolledBack: migrationStatus === MIGRATION_STATUS.ROLLED_BACK ? "Yes" : "No",
     hasMigrated: migrationStatus === MIGRATION_STATUS.COMPLETED ? "Yes" : "No",
     useMMKV: state.storageType === "MMKV" ? "Yes" : "No",
     numberOfReadErrors,

@@ -7,8 +7,8 @@ jest.mock("../bitcoin/zcashActivationTracking", () => ({
 }));
 
 describe("getFamilyAppEffect", () => {
-  it("loads the bitcoin family effect on its own", async () => {
-    const AppEffect = getFamilyAppEffect("bitcoin");
+  it("loads the zcash family effect on its own", async () => {
+    const AppEffect = getFamilyAppEffect("zcash");
     expect(AppEffect).toBeDefined();
     if (!AppEffect) return;
 
@@ -22,10 +22,10 @@ describe("getFamilyAppEffect", () => {
   });
 
   it("returns the same component on every call, so React never remounts it", () => {
-    expect(getFamilyAppEffect("bitcoin")).toBe(getFamilyAppEffect("bitcoin"));
+    expect(getFamilyAppEffect("zcash")).toBe(getFamilyAppEffect("zcash"));
   });
 
-  it.each(["evm", "solana", "unknown"])("has no effect for %s", family => {
+  it.each(["bitcoin", "evm", "solana", "unknown"])("has no effect for %s", family => {
     expect(getFamilyAppEffect(family)).toBeUndefined();
   });
 });

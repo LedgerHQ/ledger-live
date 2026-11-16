@@ -4,7 +4,8 @@ import {
 } from "@react-navigation/native-stack";
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { type DevToolsBaseProps } from "./DevTools.types";
-import { DevToolsProvider, DevToolsShellProvider } from "../context";
+import { DevToolsProvider } from "../context";
+import { DevToolsShellProvider } from "../context/shellContext";
 import { useDevToolsViewModel } from "./useDevToolsViewModel";
 import { CategoriesScreen } from "./screens/CategoriesScreen";
 import { ToolsScreen } from "./screens/ToolsScreen";

@@ -30,15 +30,16 @@ describe("useNavigateToStakeForAccount", () => {
     mockGetRouteToPlatformApp.mockReturnValue(null);
   });
 
-  it("navigates to Earn for partner routes, not /platform", () => {
+  it("navigates to the partner live app path from useStake", () => {
     const account = genAccount("tron-stake", { currency: tron });
     const platformState = {
-      appId: "partner-app",
-      customDappUrl: "https://earn.example/?yieldId=tron-native-staking",
+      appId: "stakekit",
+      customDappUrl: "https://stakekit.example/?yieldId=tron-native-staking",
       returnTo: "/asset/tron",
+      yieldId: "tron-native-staking",
     };
     mockGetRouteToPlatformApp.mockReturnValue({
-      pathname: "/platform/partner-app",
+      pathname: "/platform/stakekit",
       state: platformState,
     });
 
@@ -51,9 +52,29 @@ describe("useNavigateToStakeForAccount", () => {
       });
     });
 
-    expect(outcome).toEqual({ outcome: "platform_earn", provider: "partner-app" });
+    expect(outcome).toEqual({ outcome: "platform_earn", provider: "stakekit" });
+    expect(mockNavigate).toHaveBeenCalledWith("/platform/stakekit", { state: platformState });
+  });
+
+  it("navigates to Earn when useStake returns the Earn manifest path", () => {
+    const account = genAccount("eth-earn", { currency: getCryptoCurrencyById("ethereum") });
+    const platformState = {
+      appId: "earn",
+      customDappUrl: "https://earn.example/?intent=deposit",
+      returnTo: "/asset/ethereum",
+    };
+    mockGetRouteToPlatformApp.mockReturnValue({
+      pathname: "/earn",
+      state: platformState,
+    });
+
+    const { result } = renderHook(() => useNavigateToStakeForAccount());
+
+    act(() => {
+      result.current.navigateToStakeForAccount(account, undefined);
+    });
+
     expect(mockNavigate).toHaveBeenCalledWith("/earn", { state: platformState });
-    expect(mockNavigate).not.toHaveBeenCalledWith("/platform/partner-app", expect.anything());
   });
 
   it("opens the native staking modal for Ledger Live staking currencies", () => {

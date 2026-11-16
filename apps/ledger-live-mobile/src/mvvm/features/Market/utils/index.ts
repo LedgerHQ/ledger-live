@@ -1,11 +1,8 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { TFunction } from "i18next";
-
-export const RANGES = Object.keys(rangeDataTable).filter(key => key !== "1h");
 
 const indexes: [string, number][] = [
   ["d", 1],

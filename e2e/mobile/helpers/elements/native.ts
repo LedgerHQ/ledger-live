@@ -10,6 +10,7 @@ import { PageScroller } from "@e2e/helpers/pageScroller";
 import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { compareText, type ExpectTextOptions } from "./compareText";
 import type { ElementHandle } from "./elementHandle";
 import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
@@ -37,15 +38,6 @@ type ScrollOptions = {
   direction?: Direction;
 };
 
-type ExpectTextOptions = {
-  /** Any run of whitespace, non-breaking spaces included, counts as one space; zero-width spaces and edges are dropped. */
-  normaliseWhitespace?: boolean;
-  /** The element's text contains `text` instead of being equal to it. */
-  containing?: boolean;
-  /** Letter case is ignored, e.g. a checksummed EVM address against a lowercase fixture. */
-  ignoreCase?: boolean;
-};
-
 type CountOptions = {
   /**
    * Counts only the matches visible once the app is idle, from the first until one is hidden:
@@ -57,25 +49,6 @@ type CountOptions = {
 type ExpectAmountOptions = {
   /** How far the amount may be from the expected one, either way. 0 by default: equal. */
   tolerance?: number;
-};
-
-/** Applies the options that change the text itself, to the actual and the expected text alike. */
-const prepareText = (value: string, { normaliseWhitespace, ignoreCase }: ExpectTextOptions) => {
-  const preppedValue = normaliseWhitespace
-    ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim()
-    : value;
-  return ignoreCase ? preppedValue.toLowerCase() : preppedValue;
-};
-
-/** Compares an element's text as the options say: equal by default, or containing. */
-const compareText = (actual: string, expected: string, options: ExpectTextOptions) => {
-  const preparedActual = prepareText(actual, options);
-  const preparedExpected = prepareText(expected, options);
-  if (options.containing) {
-    jestExpect(preparedActual).toContain(preparedExpected);
-  } else {
-    jestExpect(preparedActual).toBe(preparedExpected);
-  }
 };
 
 const scroller = new PageScroller();

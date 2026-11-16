@@ -3,6 +3,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -100,10 +101,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     sandbox = await startSandbox(
       { family: "evm", network: "ethereum" },
-      {
-        node: { implementation: "geth", version: "1.17.9" },
-        indexer: { implementation: "atlas", version: "2.38.16" },
-      },
+      sandboxVersions("ethereum"),
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {

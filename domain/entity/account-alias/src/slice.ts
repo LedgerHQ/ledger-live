@@ -1,6 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { parseAnyAccountId } from "@domain/entity-account";
-import { computeAccountAlias, initialAccountAliasState } from "./schema";
+import {
+  parseAnyAccountId,
+  safeParseAnyAccountId,
+  type AnyAccountId,
+} from "@domain/entity-account";
+import { computeAccountAlias, initialAccountAliasState, type AccountAliasState } from "./schema";
 
 export const accountAliasSlice = createSlice({
   name: "accountAlias",
@@ -17,6 +21,27 @@ export const accountAliasSlice = createSlice({
       }
     },
   },
+  selectors: {
+    /** Account id behind an alias, `undefined` when the alias was never registered. */
+    accountIdFromAliasSelector: (
+      state: AccountAliasState,
+      alias: string,
+    ): AnyAccountId | undefined => state.accountIdByAlias[alias],
+
+    /**
+     * Account id behind a route segment, falling back to the segment when it is already a well-formed
+     * id so legacy deeplinks keep working. `undefined` when it is neither.
+     */
+    resolveAccountIdSelector: (
+      state: AccountAliasState,
+      segment: string,
+    ): AnyAccountId | undefined =>
+      state.accountIdByAlias[segment] ?? safeParseAnyAccountId(segment),
+  },
 });
 
 export const { registerAccountAliases } = accountAliasSlice.actions;
+
+// Bound to the slice state itself: the desktop app mounts this slice at `accountAliases`.
+export const { accountIdFromAliasSelector, resolveAccountIdSelector } =
+  accountAliasSlice.getSelectors();

@@ -7,6 +7,7 @@ import {
   resolveOutputFormat,
 } from "./inputs";
 import { makeSessionDir } from "../testing/session-fixture";
+import { pointStateHomeAt } from "../testing/state-home";
 import { ETH_DESCRIPTOR } from "../testing/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
@@ -31,23 +32,19 @@ describe("resolveAccountArg", () => {
 
 describe("session-backed account resolution", () => {
   let sessionCleanup: (() => void) | undefined;
-  let savedXdgStateHome: string | undefined;
-
-  beforeEach(() => {
-    savedXdgStateHome = process.env.XDG_STATE_HOME;
-  });
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
     sessionCleanup?.();
     sessionCleanup = undefined;
-    if (savedXdgStateHome === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedXdgStateHome;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
   });
 
   it("resolves a known session label to its descriptor", async () => {
     const fixture = makeSessionDir([{ label: "my-eth", descriptor: ETH_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     const result = await resolveAccountInput("my-eth");
     expect(result).toBe(ETH_DESCRIPTOR);
   });
@@ -55,7 +52,7 @@ describe("session-backed account resolution", () => {
   it("throws when the label is not found in session", async () => {
     const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     await expect(resolveAccountInput("unknown-label")).rejects.toThrow(
       /No account labeled "unknown-label"/,
     );
@@ -64,7 +61,7 @@ describe("session-backed account resolution", () => {
   it("rejects a raw descriptor passed directly (contains ':')", async () => {
     const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     let caught: Error | undefined;
     try {
       await resolveAccountInput(ETH_DESCRIPTOR);
@@ -82,7 +79,7 @@ describe("session-backed account resolution", () => {
   ])("%s rejects a saved account on an unsupported network", async (_name, resolve) => {
     const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     await expect(resolve("base-1")).rejects.toThrow(
       /Network "base" is not supported by wallet-cli/,
     );
@@ -91,7 +88,7 @@ describe("session-backed account resolution", () => {
   it("resolveAccountDescriptor rejects a legacy V0 saved account on an unsupported network", async () => {
     const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_V0_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
-    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    restoreStateHome = pointStateHomeAt(fixture.env.XDG_STATE_HOME);
     await expect(resolveAccountDescriptor("base-1")).rejects.toThrow(
       /Network "base" is not supported by wallet-cli/,
     );

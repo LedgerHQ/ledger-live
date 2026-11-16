@@ -1,5 +1,5 @@
 import { mapTxToOps } from "../bridge/bridgeHelpers/account";
-import { ICP_NETWORK_URL } from "../consts";
+import { internet_computerDefaults, nodeUrl } from "../config";
 import { fetchTxns } from "../network/api";
 import { getBalance } from "./getBalance";
 import { getBlockInfo } from "./getBlockInfo";
@@ -9,13 +9,14 @@ import { listOperations } from "./listOperations";
 // A mainnet account with a short, settled history: transactions 25132406, 25132352, 25132338 and
 // 5432782, newest first.
 const ADDRESS = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
+const NODE_URL = nodeUrl(internet_computerDefaults.internet_computer);
 const HISTORY = [25132406, 25132352, 25132338, 5432782];
 // Anyone can send to the account, so each walk starts just above its known history.
 const ABOVE_HISTORY = String(HISTORY[0] + 1);
 
 describe("lastBlock", () => {
   it("returns the tip with a hash, a recent time and its parent", async () => {
-    const tip = await lastBlock(ICP_NETWORK_URL);
+    const tip = await lastBlock(NODE_URL);
 
     expect(tip.height).toBeGreaterThan(0);
     expect(tip.hash).toMatch(/^[0-9a-f]{64}$/);
@@ -24,8 +25,8 @@ describe("lastBlock", () => {
   });
 
   it("chains to the block below it", async () => {
-    const tip = await lastBlock(ICP_NETWORK_URL);
-    const parent = await getBlockInfo(ICP_NETWORK_URL, tip.height - 1);
+    const tip = await lastBlock(NODE_URL);
+    const parent = await getBlockInfo(NODE_URL, tip.height - 1);
 
     expect(tip.parent?.hash).toBe(parent.hash);
   });
@@ -33,7 +34,7 @@ describe("lastBlock", () => {
 
 describe("getBlockInfo", () => {
   it("reads an archived block", async () => {
-    expect(await getBlockInfo(ICP_NETWORK_URL, 25132352)).toEqual({
+    expect(await getBlockInfo(NODE_URL, 25132352)).toEqual({
       height: 25132352,
       hash: "140ba81ec6f5b51f7833b0af174cb580b5faa2e5a5efaa90c5527c6f3e30c802",
       time: new Date(1750760223449),
@@ -45,16 +46,16 @@ describe("getBlockInfo", () => {
   });
 
   it("reads the genesis block", async () => {
-    const genesis = await getBlockInfo(ICP_NETWORK_URL, 0);
+    const genesis = await getBlockInfo(NODE_URL, 0);
 
     expect(genesis.hash).toBe("ffca0ecf5e837541c7ee5be431e433ad8e972a7f371e86fbe4f8ad646c7cbcea");
     expect(genesis.parent).toBeUndefined();
   });
 
   it("throws above the tip", async () => {
-    const tip = await lastBlock(ICP_NETWORK_URL);
+    const tip = await lastBlock(NODE_URL);
 
-    await expect(getBlockInfo(ICP_NETWORK_URL, tip.height + 1_000_000)).rejects.toThrow(
+    await expect(getBlockInfo(NODE_URL, tip.height + 1_000_000)).rejects.toThrow(
       /No block at height/,
     );
   });
@@ -62,7 +63,7 @@ describe("getBlockInfo", () => {
 
 describe("getBalance", () => {
   it("returns one native balance", async () => {
-    const balances = await getBalance(ICP_NETWORK_URL, ADDRESS);
+    const balances = await getBalance(NODE_URL, ADDRESS);
 
     expect(balances).toHaveLength(1);
     expect(balances[0].asset).toEqual({ type: "native" });
@@ -72,7 +73,7 @@ describe("getBalance", () => {
 
 describe("listOperations", () => {
   it("walks the whole history in pages, newest first", async () => {
-    const first = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+    const first = await listOperations(NODE_URL, ADDRESS, {
       minHeight: 0,
       limit: 2,
       cursor: ABOVE_HISTORY,
@@ -80,7 +81,7 @@ describe("listOperations", () => {
     expect(first.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(0, 2));
     expect(first.next).toBe(String(HISTORY[1]));
 
-    const second = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+    const second = await listOperations(NODE_URL, ADDRESS, {
       minHeight: 0,
       limit: 2,
       cursor: first.next,
@@ -90,7 +91,7 @@ describe("listOperations", () => {
   });
 
   it("stops at minHeight", async () => {
-    const page = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+    const page = await listOperations(NODE_URL, ADDRESS, {
       minHeight: HISTORY[2],
       cursor: ABOVE_HISTORY,
     });
@@ -100,11 +101,11 @@ describe("listOperations", () => {
   });
 
   it("reports the hashes and dates the account bridge reports", async () => {
-    const { items } = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+    const { items } = await listOperations(NODE_URL, ADDRESS, {
       minHeight: 0,
       cursor: ABOVE_HISTORY,
     });
-    const legacy = (await fetchTxns(ICP_NETWORK_URL, ADDRESS, BigInt(ABOVE_HISTORY))).flatMap(
+    const legacy = (await fetchTxns(NODE_URL, ADDRESS, BigInt(ABOVE_HISTORY))).flatMap(
       mapTxToOps("accountId", ADDRESS),
     );
 

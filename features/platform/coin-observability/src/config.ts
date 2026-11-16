@@ -1,15 +1,22 @@
+import { toMethodTiers, type MethodTiers } from "./tiers";
+
 export type CoinModuleCallTransmissionConfig = {
   /**
-   * `false` sends nothing for the sync-path (read) methods, failures included; the transaction
-   * and preparation calls are left. Distinct from `syncPathSampleRate: 0`, which still sends the
-   * read failures.
+   * `false` sends nothing for the `sync` tier, failures included; the transaction and preparation
+   * calls are left. Distinct from `syncPathSampleRate: 0`, which still sends the sync failures.
    */
   includeSyncPath: boolean;
+  /** Share of app sessions that send their `sync`-tier successes. */
   syncPathSampleRate: number;
-  /** Share of app sessions that send their `estimateFees` and `validateIntent` successes. */
+  /** Share of app sessions that send their `preparation`-tier successes. */
   preparationSampleRate: number;
   /** Failures sent per method, currency and error name within an hour. */
   maxFailuresPerKey: number;
+  /**
+   * Moves a method to another tier (`transaction`, `preparation`, `sync` or `off`) over
+   * `DEFAULT_METHOD_TIERS`, without a release.
+   */
+  methodTiers?: MethodTiers;
 };
 
 export const DEFAULT_SYNC_PATH_SAMPLE_RATE = 0.1;
@@ -61,13 +68,18 @@ export function coinObservabilityConfigFor({
 /**
  * Turns the `coinObservability` flag into a config. Structural, so this package does not depend
  * on the flag registry; each missing param falls back to its default, since a remote config may
- * turn the flag on without sending any params.
+ * turn the flag on without sending any params. `methodTiers` keeps only its entries that name a
+ * known tier.
  */
 export function toCoinObservabilityConfig(
   flag:
     | {
         enabled: boolean;
-        params?: Partial<CoinModuleCallTransmissionConfig> | null;
+        params?:
+          | (Partial<Omit<CoinModuleCallTransmissionConfig, "methodTiers">> & {
+              methodTiers?: unknown;
+            })
+          | null;
       }
     | null
     | undefined,
@@ -78,5 +90,6 @@ export function toCoinObservabilityConfig(
     syncPathSampleRate: flag.params?.syncPathSampleRate ?? DEFAULT_SYNC_PATH_SAMPLE_RATE,
     preparationSampleRate: flag.params?.preparationSampleRate ?? DEFAULT_PREPARATION_SAMPLE_RATE,
     maxFailuresPerKey: flag.params?.maxFailuresPerKey ?? DEFAULT_MAX_FAILURES_PER_KEY,
+    methodTiers: toMethodTiers(flag.params?.methodTiers),
   };
 }

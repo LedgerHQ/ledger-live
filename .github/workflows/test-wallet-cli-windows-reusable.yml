@@ -37,11 +37,6 @@ jobs:
       - name: Build dependencies and typecheck
         run: pnpm exec nx run @ledgerhq/wallet-cli:typecheck
 
-      - name: Test enroll --detach and wait
+      - name: Test
         working-directory: apps/wallet-cli
-        run: >-
-          bun test
-          src/agent-intent/detach.test.ts
-          src/commands/agent-intent/enroll.test.ts
-          src/commands/agent-intent/wait.test.ts
-          src/shared/file-lock.test.ts
+        run: pnpm test

@@ -10,6 +10,7 @@ function renderIntroduction(
 ) {
   const props = {
     isEnabled: true,
+    isEligible: true,
     hasConfirmedHistory: true,
     hasDismissed: false,
     onDismiss: jest.fn(),
@@ -31,14 +32,16 @@ describe("AccountAnalyticsIntroduction (native)", () => {
     expect(onDismiss).not.toHaveBeenCalled();
   });
 
-  it.each([{ isEnabled: false }, { hasConfirmedHistory: false }, { hasDismissed: true }])(
-    "should hide the introduction with %o",
-    override => {
-      renderIntroduction(override);
+  it.each([
+    { isEnabled: false },
+    { isEligible: false },
+    { hasConfirmedHistory: false },
+    { hasDismissed: true },
+  ])("should hide the introduction with %o", override => {
+    renderIntroduction(override);
 
-      expect(screen.queryByTestId(TEST_ID)).toBeNull();
-    },
-  );
+    expect(screen.queryByTestId(TEST_ID)).toBeNull();
+  });
 
   it("should consume the introduction when it is closed", () => {
     const { onDismiss, onOpenAnalytics } = renderIntroduction();

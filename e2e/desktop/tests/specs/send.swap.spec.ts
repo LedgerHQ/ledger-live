@@ -21,7 +21,8 @@ const swaps = [
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2744, B2CQA-2432, B2CQA-3450",
+    xrayTicket: "B2CQA-2744, B2CQA-2432, B2CQA-3450, B2CQA-3389, B2CQA-2370",
+    checkFeedbackLink: true,
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
   },
   {
@@ -175,7 +176,15 @@ const swaps = [
   },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason } of swaps) {
+for (const {
+  fromAccount,
+  toAccount,
+  xrayTicket,
+  tag,
+  postSeedHook,
+  skipReason,
+  checkFeedbackLink,
+} of swaps) {
   test.describe("Swap - accepted", () => {
     test.skip(!!skipReason, skipReason);
 
@@ -246,6 +255,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,
           );
+          if (checkFeedbackLink) {
+            await app.swapDrawer.checkShareYourFeedbackLinkVisible();
+          }
           await app.swapDrawer.closeDrawer();
           await app.swapDrawer.waitForDrawerToBeHidden();
           await app.swap.expectSelectedAssetDisplayed(fromAccount.currency.ticker);

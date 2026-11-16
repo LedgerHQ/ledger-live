@@ -1,5 +1,33 @@
 # @ledgerhq/live-signer-solana
 
+## 0.23.0
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+### Patch Changes
+
+- Updated dependencies [[`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`19eed0f`](https://github.com/LedgerHQ/ledger-live/commit/19eed0fa359f4af78d4bca8367092d6e38c5d943), [`8ee0ffd`](https://github.com/LedgerHQ/ledger-live/commit/8ee0ffdaa8e77c3fefc5fb49a277f04d52301a8f), [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/ledger-wallet-framework@3.11.0
+  - @ledgerhq/coin-solana@3.0.0
+  - @ledgerhq/ledger-cal-service@1.19.12
+  - @ledgerhq/ledger-trust-service@0.8.23
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+### Patch Changes
+
+- Updated dependencies [[`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`19eed0f`](https://github.com/LedgerHQ/ledger-live/commit/19eed0fa359f4af78d4bca8367092d6e38c5d943), [`8ee0ffd`](https://github.com/LedgerHQ/ledger-live/commit/8ee0ffdaa8e77c3fefc5fb49a277f04d52301a8f), [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/ledger-wallet-framework@3.11.0-next.0
+  - @ledgerhq/coin-solana@3.0.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.12-next.0
+  - @ledgerhq/ledger-trust-service@0.8.23-next.0
+
 ## 0.22.4
 
 ### Patch Changes
@@ -212,38 +240,5 @@
   - @ledgerhq/live-env@3.2.0
   - @ledgerhq/ledger-cal-service@1.19.4
   - @ledgerhq/ledger-trust-service@0.8.15
-
-## 0.21.1-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932)]:
-  - @ledgerhq/coin-solana@2.0.0-next.1
-
-## 0.21.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`a4e5995`](https://github.com/LedgerHQ/ledger-live/commit/a4e5995bea7f9e1f164bfa50939e15031765b2fa), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`bc1093b`](https://github.com/LedgerHQ/ledger-live/commit/bc1093bc06adfda3700841b5dbd5598825cb52d1)]:
-  - @ledgerhq/coin-solana@2.0.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-  - @ledgerhq/ledger-cal-service@1.19.4-next.0
-  - @ledgerhq/ledger-trust-service@0.8.15-next.0
-
-## 0.21.0
-
-### Minor Changes
-
-- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
-
-### Patch Changes
-
-- Updated dependencies [[`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-env@3.1.0
-  - @ledgerhq/coin-solana@1.0.1
-  - @ledgerhq/ledger-cal-service@1.19.3
-  - @ledgerhq/ledger-trust-service@0.8.14
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

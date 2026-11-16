@@ -9,13 +9,13 @@ The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces
 
 ## Format (version 2)
 
-`<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`
+`<purpose>:2:<type>:<network_id>:<key>:<path>`
 
 - `purpose`: `account` for a real account; `mock` for a generated one (`@devtools/mock-accounts`), which only the mock source serves. A mock and the real account it mirrors have different AccountUUIDs.
 - `network_id`: the CAL network id (`bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`).
 
-- `utxo`: the subject is an xpub, the path is hardened up to the account.
-- `address`: the subject is the address, the path is the full path of that address.
+- `type`: the account model. `utxo`: the key is an xpub, the path is hardened up to the account. `address`: the path is the full path of the account's address.
+- `key`: the public value the account is found and read from on its network. An xpub for `utxo`; for `address`, the address, or the public key (lowercase hex) when the address cannot give back what reading needs (Canton, Concordium, Internet Computer, TON, Aptos, Stacks), or the network account id (Hedera `0.0.x`).
 
 A path is `m/` followed by indices below 2^31 without leading zeros; `'` and `H` are read as `h`.
 
@@ -31,9 +31,9 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | Export | Role |
 | --- | --- |
 | `AccountDescriptorSchema` | zod union of `utxo` (xpub, hardened-only path) and `address` descriptors; `'` and `H` hardened markers are read as `h` |
-| `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`; a parsed descriptor always has `h` markers |
-| `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`) |
-| `computeAccountUUID` | uuid v5 of the canonical key; same on every device, no xpub nor address |
+| `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<key>:<path>`; a parsed descriptor always has `h` markers |
+| `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`): `h` markers, lowercase network, lowercase `0x` address or hex public key |
+| `computeAccountUUID` | uuid v5 of the canonical key; same on every device, carries no account key |
 | `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
 | `AddressSchema` / `Address` | an address on a network, branded so analytics can refuse it |
 | `DerivationPathSchema` | a full BIP32 path, read with `h` hardened markers |

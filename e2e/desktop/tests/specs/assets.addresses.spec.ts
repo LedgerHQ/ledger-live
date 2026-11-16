@@ -1,11 +1,8 @@
 import { test } from "tests/fixtures/common";
-import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
-import { coinDetailUrlPattern } from "tests/utils/urlUtils";
-import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   EMPTY_STATE_CRYPTOS,
   EMPTY_STATE_STABLECOINS,
@@ -25,11 +22,10 @@ const EXPECTED_STABLECOINS = [Currency.ETH_USDT, Currency.ETH_USDC];
 test.describe("Wallet assets", () => {
   // This suite covers the Wallet 4.0 Assets section UI (cryptos/stablecoins sections and category
   // pages), which only exists with the Asset Section ON, so opt into the Q2 feature-flag set.
-  test.use({ featureFlags: FF_LWD_WALLET_40_Q2 });
+  test.use({ teamOwner: Team.WALLET_XP, featureFlags: FF_LWD_WALLET_40_Q2 });
 
   test.describe("Empty state", () => {
     test.use({
-      teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Currency.BTC.speculosApp,
     });
@@ -40,7 +36,7 @@ test.describe("Wallet assets", () => {
         tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
-          description: "B2CQA-4839, B2CQA-4840, B2CQA-4841",
+          description: "B2CQA-4839, B2CQA-4840",
         },
       },
       async ({ app }) => {
@@ -55,53 +51,29 @@ test.describe("Wallet assets", () => {
         );
         await app.portfolio.cryptoAddressesBanner.expectAddAccountCTAVisible();
 
-        // Step 2: Select a placeholder asset — redirects to the asset detail page
-        await test.step("Click placeholder asset - redirected to asset page", async () => {
-          await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
-          const page = app.layout.getPage();
-          await expect(page).toHaveURL(coinDetailUrlPattern("bitcoin"));
-        });
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
+        await app.marketCoin.expectMarketCoinPageToBeVisible(Currency.BTC.id);
 
-        // Step 3: Go back to portfolio
-        await test.step("Go back to portfolio", async () => {
-          await app.mainNavigation.openTargetFromMainNavigation("home");
-          await app.portfolio.assetsView.waitForAssetsToLoad();
-        });
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.clickAddAccountButton();
+        await app.modularDialog.validateItems();
+        await app.modularDialog.selectAssetByTicker(Currency.BTC);
+        await app.modularDialog.selectNetwork(Currency.BTC);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickCloseButton();
 
-        // Step 4: Add account CTA opens the add account flow (Modular Dialog)
-        await test.step("Click Add account CTA - modular add account dialog opens", async () => {
-          await app.portfolio.clickAddAccountButton();
-          expect(await app.modularDialog.isVisible()).toBeTruthy();
-        });
-
-        // Step 5: Add a Bitcoin account through the modular dialog
-        await test.step("Add a Bitcoin account via the modular dialog", async () => {
-          const selector = await getModularSelector(app, "ASSET");
-          if (selector) {
-            await selector.selectAssetByTicker(Currency.BTC);
-            await selector.selectNetwork(Currency.BTC);
-            await app.scanAccountsDrawer.selectFirstAccount();
-            await app.scanAccountsDrawer.clickCloseButton();
-          }
-        });
-
-        // Step 6: Verify the added account is reflected in the assets section
-        await test.step("After adding account, Bitcoin is visible in cryptos section and Add account CTA is gone", async () => {
-          await app.mainNavigation.openTargetFromMainNavigation("home");
-          await app.portfolio.assetsView.waitForAssetsToLoad();
-          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", Currency.BTC);
-          await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
-          await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
-        });
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", Currency.BTC);
+        await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
       },
     );
   });
 
   test.describe("Fewer than 6 assets", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "1AccountBTC1AccountETH",
-    });
+    test.use({ userdata: "1AccountBTC1AccountETH" });
 
     test(
       `[${EXPECTED_CRYPTOS.map(c => c.testLabel).join("-")}] - Wallet assets section with fewer than 6 cryptos and stablecoins`,
@@ -125,10 +97,7 @@ test.describe("Wallet assets", () => {
   });
 
   test.describe("Capped display", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "portfolioWithManyStablecoins",
-    });
+    test.use({ userdata: "portfolioWithManyStablecoins" });
 
     test(
       "Wallet assets section caps cryptos and stablecoins at 6",

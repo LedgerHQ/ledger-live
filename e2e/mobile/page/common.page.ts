@@ -5,6 +5,7 @@ import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byText } from "@e2e/helpers/elements/native";
 import { device, log } from "detox";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { GENERIC_ERROR_MODAL_ID } from "@e2e/page/error.page";
 
@@ -106,6 +107,9 @@ export default class CommonPage {
   @Step("Go to the account {{{0}}}")
   async goToAccount(accountId: string, currencyId: string) {
     if (await this.accountGraph(accountId).isVisible()) {
+      return;
+    }
+    if (isAccountDetailEnabled() && (await app.account.isAccountDetailVisible())) {
       return;
     }
     await openDeeplink(`asset/${currencyId}`);

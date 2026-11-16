@@ -3,20 +3,11 @@
   "version": "0.6.0",
   "private": true,
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
-  "main": "lib/index.js",
   "typescriptMain": "index.ts",
   "exports": {
-    ".": {
-      "require": "./lib/cjs/index.js",
-      "default": "./lib/index.js"
-    },
-    "./": {
-      "require": "./lib/cjs/",
-      "default": "./lib/"
-    },
+    ".": "./index.ts",
     "./package.json": "./package.json"
   },
-  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -27,13 +18,7 @@
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/shared",
   "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "license": "MIT",
-  "files": [
-    "lib"
-  ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json && node scripts/transpile",
-    "prepublishOnly": "npm run build",
-    "clean": "rimraf lib",
     "lint": "oxlint ./"
   },
   "devDependencies": {

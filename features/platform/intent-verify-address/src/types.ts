@@ -7,7 +7,10 @@ import type {
 } from "@features/platform-device-intent";
 import type { Observable } from "rxjs";
 
-/** Unexpected failures must be observable errors, not a state. */
+/**
+ * `awaiting-confirmation`: the device request is in flight, not a read of the Secure Screen.
+ * Unexpected failures must be observable errors, not a state.
+ */
 export type VerifyAddressDeviceState =
   | { type: "awaiting-confirmation" }
   | { type: "confirmed"; address: string }
@@ -32,10 +35,12 @@ export type VerifyAddressIntentInput = {
 
 /**
  * `verified` / `mismatch` / `unsupported` complete the observable.
+ * `addressDisplayed` (device request in flight: address shown or about to be) is non-terminal.
  * `cancelled` stays open and exposes `retry`. Other failures are observable errors.
  */
 export type VerifyAddressIntentJobState =
   | { type: "verifying"; deviceModelId: DeviceModelId; deviceName: string }
+  | { type: "addressDisplayed" }
   | { type: "verified"; address: string }
   | { type: "cancelled"; retry: () => void }
   | { type: "mismatch"; expectedAddress: string; reportedAddress: string }

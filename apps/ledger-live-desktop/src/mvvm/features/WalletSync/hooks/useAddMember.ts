@@ -4,19 +4,13 @@ import {
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
-import { Flow, Step, walletSyncOnboardingNewDeviceSelector } from "~/renderer/reducers/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { track } from "@shared/analytics";
-import {
-  AnalyticsFlow,
-  AnalyticsPage,
-  walletSyncEntryFlowProperties,
-} from "./useLedgerSyncAnalytics";
-import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
-import { useNavigate } from "react-router";
+import { AnalyticsPage } from "./useLedgerSyncAnalytics";
+import { useOnTrustchainJoined } from "./useOnTrustchainJoined";
 
 export function useAddMember({
   device,
@@ -26,12 +20,9 @@ export function useAddMember({
   sourcePage?: AnalyticsPage;
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const isOnboardingNewDevice = useSelector(walletSyncOnboardingNewDeviceSelector);
-  const isOnboardingNewDeviceInitial = useRef(isOnboardingNewDevice);
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
@@ -41,32 +32,14 @@ export function useAddMember({
   const trustchainRef = useRef(trustchain);
   const memberCredentialsRef = useRef(memberCredentials);
 
+  const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
+
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
-      track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
-      if (sourcePage === AnalyticsPage.Onboarding) {
-        if (!isOnboardingNewDeviceInitial.current) {
-          dispatch(saveSettings({ hasCompletedOnboarding: true }));
-          dispatch(setLastOnboardedDevice(device));
-          navigate("/");
-        }
-        dispatch(setDrawerVisibility(false));
-      } else {
-        dispatch(
-          setFlow({
-            flow: Flow.Activation,
-            step: Step.ActivationLoading,
-            nextStep:
-              trustchainResult.type === TrustchainResultType.created
-                ? Step.ActivationFinal
-                : Step.SynchronizationFinal,
-            hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
-          }),
-        );
-      }
+      onTrustchainJoined(trustchainResult, device);
     },
-    [device, dispatch, navigate, sourcePage],
+    [device, dispatch, onTrustchainJoined],
   );
 
   const handleMissingDevice = useCallback(() => {

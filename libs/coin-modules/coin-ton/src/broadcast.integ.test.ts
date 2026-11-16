@@ -2,19 +2,11 @@ import { mnemonicNew, mnemonicToPrivateKey } from "@ton/crypto";
 import { WalletContractV4 } from "@ton/ton";
 import { internal, toNano, Address, beginCell, external, storeMessage } from "@ton/core";
 import broadcast from "./broadcast";
-import { setCoinConfig } from "./config";
+import { setCoinConfig, tonDefaults } from "./config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setCoinConfig(
-      () =>
-        ({
-          status: { type: "active" },
-          infra: {
-            API_TON_ENDPOINT: "https://ton.coin.ledger.com/api/v3",
-          },
-        }) as any,
-    );
+    setCoinConfig(() => tonDefaults.ton);
   });
 
   it("throws on not deployed and empty account", async () => {

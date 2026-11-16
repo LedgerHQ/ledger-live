@@ -71,11 +71,3 @@ export const loadLocaleData = (language: string): void => {
 export const isLocaleDataLoaded = (language: string): boolean => {
   return loadedLanguages.has(language);
 };
-
-/**
- * Gets the list of loaded languages
- * @returns Array of loaded language codes
- */
-export const getLoadedLanguages = (): string[] => {
-  return Array.from(loadedLanguages);
-};

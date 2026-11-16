@@ -18,6 +18,7 @@ export default defineConfig({
     "typescript/no-namespace": ["error", { allowDeclarations: true }],
     "jsx-a11y/prefer-tag-over-role": "off",
     "jsx-a11y/anchor-is-valid": ["error", { components: [] }],
+    "redux-slices/selectors-in-slice": "off",
   },
   overrides: [
     {

@@ -54,6 +54,8 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
   isCurrencySupported(currencyId: string): boolean;
+  /** The address an account-based coin module reads, from the descriptor key; it rejects a key its family is not keyed on. Absent, the key is the address. */
+  addressOf?(currencyId: string, key: string): Promise<string>;
   /** Synchronous: whether the currency's coin module reads a whole utxo account from its xpub. Absent, no utxo account is served: a coin module reads one address, not an xpub. */
   readsXpub?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the balance read. */

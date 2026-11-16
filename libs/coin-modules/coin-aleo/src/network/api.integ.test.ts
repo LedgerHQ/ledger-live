@@ -1,5 +1,4 @@
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
@@ -8,7 +7,7 @@ import {
 import { getPristineAccount } from "../__tests__/helpers/account";
 import { apiClient } from "./api";
 
-const config = getTestnetIntegConfig();
+const config = aleoDefaults.aleo_testnet;
 let emptyAddress: string;
 
 beforeAll(async () => {

@@ -8,6 +8,8 @@ operations on the Device Intent Executor (DIE) session:
 
 - **Add member** (`addMemberIntentDefinition`): `getOrCreateTrustchain`, which creates the
   trustchain, joins an existing one, or restores it. Its result is the SDK's `TrustchainResult`.
+  The optional `onInitialResponse` input sees the seed's trustchains before anything is created or
+  joined; a throw ends the run, and `NoTrustchainInitialized` ends it as `failed` with `no-trustchain`.
 - **Remove member** (`removeMemberIntentDefinition`): `removeMember`, which rotates the trustchain
   key. Its result is the new `Trustchain`, which the app must store.
 
@@ -90,5 +92,6 @@ const intent = createIntent(
 );
 ```
 
-No app binds these intents yet. The rollout flags `lwmLedgerSyncDie` and `lwdLedgerSyncDie` gate them
-once they do.
+Both apps bind these intents in the Ledger Sync intents devtool. Ledger Wallet Mobile also runs
+them in its Ledger Sync screens behind the `lwmLedgerSyncDie` rollout flag. `lwdLedgerSyncDie` will gate
+the Ledger Wallet Desktop screens once they bind them.

@@ -3,22 +3,35 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { OsUpdatesOrchestratorComponent } from "@ledgerhq/live-common/os-update/components/OsUpdatesOrchestratorComponent";
-import { osUpdatePlatformComponents } from "../components/osUpdatePlatformComponents";
-import { WhatsNewScreen } from "../screens/WhatsNewScreen";
+import { OsUpdatesOrchestrator } from "@features/platform-device-os-update";
+import {
+  CloseConfirmation,
+  OsUpdateStep,
+  WhatsNewScreen,
+} from "@features/flow-device-os-update/native";
 import { useOsUpdatesOrchestratorDebugScreenViewModel } from "./useOsUpdatesOrchestratorDebugScreenViewModel";
 import type { DebugDiscoveredDevice } from "./types";
+import { WithOsUpdatePorts } from "../ports/WithOsUpdatePorts";
 
 export default function OsUpdatesOrchestratorDebugScreen() {
+  return (
+    <WithOsUpdatePorts>
+      <OsUpdatesOrchestratorDebugContent />
+    </WithOsUpdatePorts>
+  );
+}
+
+function OsUpdatesOrchestratorDebugContent() {
   const viewModel = useOsUpdatesOrchestratorDebugScreenViewModel();
 
   if (viewModel.orchestratorRun) {
     return (
       <View style={styles.container}>
         <View style={styles.orchestrator}>
-          <OsUpdatesOrchestratorComponent
+          <OsUpdatesOrchestrator
             {...viewModel.orchestratorRun}
-            platformComponents={osUpdatePlatformComponents}
+            renderStep={props => <OsUpdateStep {...props} />}
+            renderCloseConfirmation={props => <CloseConfirmation {...props} />}
           />
         </View>
       </View>

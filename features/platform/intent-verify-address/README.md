@@ -11,13 +11,21 @@ receive address on the device Secure Screen.
 The job hands the live DMK session to a **host-injected** device operation and
 maps its device-action stream to a small, UI-friendly state union:
 
-| `JobState`    | Meaning                                                       | Terminal |
-| ------------- | ------------------------------------------------------------- | -------- |
-| `verifying`   | Address is being displayed on the device, awaiting the user.  | no       |
-| `verified`    | Device address matches the expected one.                      | yes      |
-| `mismatch`    | Device address differs from the expected one.                 | yes      |
-| `cancelled`   | User refused on device. Carries a `retry()` handler.          | no       |
-| `unsupported` | Device app cannot display the address.                        | yes      |
+| `JobState`         | Meaning                                                       | Terminal |
+| ------------------ | ------------------------------------------------------------- | -------- |
+| `verifying`        | App is open, the address is being requested from the device.  | no       |
+| `addressDisplayed` | Device request in flight: address shown or about to be.       | no       |
+| `verified`         | Device address matches the expected one.                      | yes      |
+| `mismatch`         | Device address differs from the expected one.                 | yes      |
+| `cancelled`        | User refused on device. Carries a `retry()` handler.          | no       |
+| `unsupported`      | Device app cannot display the address.                        | yes      |
+
+Each attempt emits `verifying` then, once something is actually sent to the
+device, `addressDisplayed` once; a retry after `cancelled` starts the sequence
+again. `addressDisplayed` is not a read of the Secure Screen: the legacy
+`getAddress` is a single Promise with no "address on screen" event, so the first
+device request is the closest signal. A failure before any device request (for
+example `unsupported`) never emits `addressDisplayed`.
 
 Any other device failure escapes as an observable error, so the executor renders
 its shared intent-error screen.
@@ -42,12 +50,16 @@ The host is free to implement the seam however it wants — a DMK-native signer
 kit, or (as LWD / LWM do) the generic `getAddress` resolver run over the DIE's
 DMK transport. `getAddressVerification` turns that Promise into the
 normalized `{ observable, cancel }` action so each app only owns the
-`getAddress` + `DmkCompatTransport` call:
+`getAddress` + `DmkCompatTransport` call. It emits `awaiting-confirmation` only
+when the host calls the `onDeviceRequest` callback it receives;
+`notifyOnDeviceRequest` wraps the DMK so that callback runs on the first APDU
+(`DmkCompatTransport`) or device action (DMK signer kits):
 
 ```ts
 import { createIntent } from "@features/platform-device-intent";
 import {
   getAddressVerification,
+  notifyOnDeviceRequest,
   verifyAddressIntentDefinition,
 } from "@features/platform-intent-verify-address";
 
@@ -59,8 +71,11 @@ const verifyAddressIntentPlatformDefinition = {
 const intent = createIntent(verifyAddressIntentPlatformDefinition, {
   expectedAddress: mainAccount.freshAddress,
   startAddressVerification: ({ dmk, sessionId }) =>
-    getAddressVerification(() =>
-      getAddress(new DmkCompatTransport(dmk, sessionId), { ...params, verify: true }),
+    getAddressVerification(onDeviceRequest =>
+      getAddress(new DmkCompatTransport(notifyOnDeviceRequest(dmk, onDeviceRequest), sessionId), {
+        ...params,
+        verify: true,
+      }),
     ),
 });
 ```
@@ -79,6 +94,7 @@ const intent = createIntent(verifyAddressIntentPlatformDefinition, {
 | `VerifyAddressIntentPlatformDefinition` | Platform definition alias (adds the renderer).           |
 | `VerifyAddressIntent`                   | Runtime intent alias.                                    |
 | `getAddressVerification`               | Turns a host `getAddress` Promise into `{ observable, cancel }`, mapping refusal / unsupported errors. |
+| `notifyOnDeviceRequest`                | Wraps a DMK so a callback runs when an APDU, command or device action is sent. |
 
 ## Installation
 

@@ -20,6 +20,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;
@@ -161,7 +162,10 @@ export function useAmountInput({
         return;
       }
 
-      const nextAmount = calculateCryptoAmount(processed.value) ?? new BigNumber(0);
+      const nextAmount = sendFeatures.roundAmount(
+        accountCurrency,
+        calculateCryptoAmount(processed.value) ?? new BigNumber(0),
+      );
       lastFiatAmountRef.current = processed.value;
       lastTransactionAmountRef.current = nextAmount;
       debouncedUpdateTransaction({
@@ -169,7 +173,7 @@ export function useAmountInput({
         useAllAmount: false,
       });
     },
-    [calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
+    [accountCurrency, calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
   );
 
   const handleCryptoInput = useCallback(

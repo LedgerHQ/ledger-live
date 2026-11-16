@@ -15,8 +15,11 @@ import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/ind
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
+  type AccountAnalyticsIntroductionState,
 } from "@features/flow-account-detail-analytics-notice/state";
 
 jest.mock("~/renderer/storage", () => ({
@@ -90,7 +93,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 const mockedSetKey = jest.mocked(setKey);
 
 type FakeState = {
-  accountAnalyticsIntroduction: { hasDismissed: boolean };
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: { loaded: boolean; starredMarketCoins: string[] };
   market: Record<string, unknown>;
   application: { isLocked: boolean };
@@ -112,7 +115,7 @@ type FakeState = {
   payCardFeatureTour: {
     hasSeenFeatureTour: boolean;
   };
-  payRequestVerifyHint: {
+  receiveVerifyHint: {
     hasSeenReceiveVerifyHint: boolean;
   };
   payCardLoginIntro: {
@@ -128,7 +131,7 @@ type FakeState = {
 };
 
 const baseState = (): FakeState => ({
-  accountAnalyticsIntroduction: { hasDismissed: false },
+  accountAnalyticsIntroduction: { hasDismissed: false, isEligible: null },
   settings: { loaded: true, starredMarketCoins: [] },
   market: { currentPage: 1 },
   application: { isLocked: false },
@@ -141,7 +144,7 @@ const baseState = (): FakeState => ({
   largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
-  payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+  receiveVerifyHint: { hasSeenReceiveVerifyHint: false },
   payCardLoginIntro: { hasSeenLoginIntro: false },
   payCardOnboardingWidget: {
     hasCompletedOnboarding: false,
@@ -297,7 +300,7 @@ describe("DBMiddleware - payCard branch", () => {
   const payCardState: FakeState = {
     ...baseState(),
     payCardFeatureTour: { hasSeenFeatureTour: true },
-    payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
     payCardOnboardingWidget: {
@@ -321,7 +324,7 @@ describe("DBMiddleware - payCard branch", () => {
 
   it.each([
     "payCardFeatureTour/markPayCardFeatureTourSeen",
-    "payRequestVerifyHint/markReceiveVerifyHintSeen",
+    "receiveVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
     "payCardLoginIntro/markPayCardLoginIntroSeen",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
@@ -416,7 +419,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted: PersistedCAL = { version: 3, tokens: [{ data: usdcToken, timestamp: 0 }] };
+    const persisted: PersistedCAL = { version: 4, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
@@ -429,11 +432,11 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   it("replaces stale tokens on disk when a changed hash evicts every token", () => {
     // A changed hash enters the cache before its eviction removes the tokens
     const staleTokens: PersistedCAL = {
-      version: 3,
+      version: 4,
       tokens: [{ data: usdcToken, timestamp: 0 }],
       hashes: { ethereum: "new-hash" },
     };
-    const evicted: PersistedCAL = { version: 3, tokens: [], hashes: { ethereum: "new-hash" } };
+    const evicted: PersistedCAL = { version: 4, tokens: [], hashes: { ethereum: "new-hash" } };
     jest
       .mocked(extractPersistedCALFromState)
       .mockReturnValueOnce(staleTokens)
@@ -447,7 +450,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("does not persist a CAL cache with neither tokens nor hashes", () => {
-    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 3, tokens: [] });
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 4, tokens: [] });
     const state = baseState();
 
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
@@ -474,13 +477,14 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: true,
+      isEligible: null,
     });
   });
 
   it("should avoid rewriting storage when dismissal is already consumed", () => {
     const state: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
 
     runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
@@ -491,7 +495,7 @@ describe("DBMiddleware - Analytics introduction", () => {
   it("should persist the reset so the introduction shows again after a restart", () => {
     const before: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
     const action = resetAccountAnalyticsIntroduction();
     const after: FakeState = {
@@ -506,6 +510,7 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: false,
+      isEligible: null,
     });
   });
 
@@ -513,6 +518,58 @@ describe("DBMiddleware - Analytics introduction", () => {
     const state = baseState();
 
     runMiddleware([state, state], resetAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should persist the eligibility snapshot when it is recorded", () => {
+    const before = baseState();
+    const action = recordAccountAnalyticsIntroductionEligibility(true);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: true,
+    });
+  });
+
+  it("should persist an eligibility forced from the DevTools", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
+    };
+    const action = overrideAccountAnalyticsIntroductionEligibility(false);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: false,
+    });
+  });
+
+  it("should avoid rewriting storage when the eligibility snapshot already exists", () => {
+    const state: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: false },
+    };
+
+    runMiddleware([state, state], recordAccountAnalyticsIntroductionEligibility(true));
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

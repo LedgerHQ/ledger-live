@@ -1,5 +1,6 @@
 import { webHidTransportIdentifier, type DisplayedDevice } from "@ledgerhq/live-dmk-desktop";
-import { DeviceIntentTrackingProvider, type KnownDevice } from "@ledgerhq/live-dmk-shared";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import React, { type ReactNode } from "react";
 

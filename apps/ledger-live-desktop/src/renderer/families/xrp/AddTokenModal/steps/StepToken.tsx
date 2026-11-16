@@ -94,7 +94,7 @@ export default function StepToken({
           stylesMap={centerNotices}
           noOptionsMessage={({ inputValue }: { inputValue: string }) => {
             if (isError) return t("xrp.addToken.steps.token.loadError");
-            if (options.length === 0) return t("xrp.addToken.steps.token.allAdded");
+            if (options.length === 0) return t("xrp.addToken.steps.token.empty");
             return t("common.selectNoResults", { query: inputValue });
           }}
           onChange={onChangeToken}

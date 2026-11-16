@@ -71,7 +71,7 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
@@ -89,7 +89,6 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
-import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
@@ -339,9 +338,6 @@ function App() {
       <DebugTheme />
       <JsThreadMonitor />
       <Modals />
-      <FeatureToggle featureId="llmMmkvMigration">
-        <StoragePerformanceOverlay />
-      </FeatureToggle>
     </>
   );
 }

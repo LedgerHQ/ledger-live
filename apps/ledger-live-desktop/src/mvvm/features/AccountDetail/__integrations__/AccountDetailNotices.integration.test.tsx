@@ -49,6 +49,7 @@ const renderAccount = (account: Account, flags: Record<string, { enabled: boolea
           ...flags,
         }),
         accounts: [account],
+        accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
       },
     },
   );

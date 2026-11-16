@@ -18,7 +18,7 @@ export default class SwapPage {
   private readonly baseLink = "swap";
 
   private readonly proceedButton = byId("proceed-button");
-  private readonly deviceActionError = byId(app.swapLiveApp.deviceActionErrorDescriptionId);
+  private readonly deviceActionError = byId("error-description-deviceAction");
   private readonly swapSuccessTitle = byId("swap-success-title");
   private readonly closeButton = byId("NavigationHeaderCloseButton");
   private readonly historyButton = byId("navigation-header-swap-history");
@@ -133,8 +133,6 @@ export default class SwapPage {
   @Step("Wait for swap success and close")
   async waitForSuccessAndClose() {
     await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.deviceActionError);
-    // iOS runs this flow without synchronization, so the tap does not wait for the screen to
-    // settle: wait until the header close button is fully on screen first.
     await this.closeButton.waitFullyVisible();
     await this.closeButton.tap();
     await this.swapSuccessTitle.waitNotVisible();

@@ -36,8 +36,11 @@ describe("QuitConfirmation", () => {
     );
 
     expect(screen.getByText("Pause setup for now?")).toBeVisible();
-    expect(screen.getByText("Any unsaved progress on this step will be lost.")).toBeVisible();
-    expect(screen.getByText("You'll need to restart from Introduction next time.")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Any unsaved progress on this step will be lost.\nYou'll need to restart from Introduction next time.",
+      ),
+    ).toBeVisible();
     expect(screen.getByText("Leave without saving")).toBeVisible();
     expect(screen.getByText("Continue setup")).toBeVisible();
 

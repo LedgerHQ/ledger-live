@@ -231,7 +231,7 @@ describe("mergeSyncedAccounts", () => {
 
       expect(report.invalid).toEqual([]);
       expect(session.accounts.map(({ descriptor }) => parseV1(descriptor))).toEqual([
-        expect.objectContaining({ type: "address", address }),
+        expect.objectContaining({ type: "address", key: address }),
       ]);
     },
   );
@@ -241,7 +241,7 @@ describe("mergeSyncedAccounts", () => {
     mergeSyncedAccounts(session, [{ ...BTC_RAW, seedIdentifier: "02a1b2c3d4e5f6" }]);
 
     expect(session.accounts.map(({ descriptor }) => parseV1(descriptor))).toEqual([
-      expect.objectContaining({ type: "utxo", xpub: XPUB }),
+      expect.objectContaining({ type: "utxo", key: XPUB }),
     ]);
   });
 

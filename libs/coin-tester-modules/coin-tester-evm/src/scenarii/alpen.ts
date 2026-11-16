@@ -5,6 +5,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -66,13 +67,7 @@ export const scenarioAlpen: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Alpen Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    sandbox = await startSandbox(
-      { family: "evm", network: "alpen" },
-      {
-        node: { implementation: "alpen-client", version: "0.4.0" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "alpen" }, sandboxVersions("alpen"));
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {
       throw new Error("the sandbox instance has no node or indexer endpoint");

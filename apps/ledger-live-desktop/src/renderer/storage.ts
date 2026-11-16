@@ -28,7 +28,7 @@ import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
-import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
+import type { ReceiveVerifyHintState } from "@features/flow-receive/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
 
@@ -52,7 +52,7 @@ export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
 export type PayCard = PayCardFeatureTourState &
-  PayRequestVerifyHintState &
+  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;

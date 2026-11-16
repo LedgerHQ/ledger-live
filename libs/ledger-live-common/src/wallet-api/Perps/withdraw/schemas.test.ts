@@ -16,18 +16,13 @@ describe("withdraw schemas", () => {
     expect(DecimalSchema.safeParse(value).success).toBe(false);
   });
 
-  it("keeps only the NEAR swap id and its untouched hyperCoreAction", () => {
-    expect(WithdrawPayloadSchema.parse(nearWithdrawPayload)).toEqual({
-      swapId: nearWithdrawPayload.swapId,
-      hyperCoreAction: nearWithdrawPayload.hyperCoreAction,
-    });
+  // /submit needs the payload back unmodified, so fields we don't read (e.g. `@type`) must stay.
+  it("keeps the whole NEAR payload untouched", () => {
+    expect(WithdrawPayloadSchema.parse(nearWithdrawPayload)).toEqual(nearWithdrawPayload);
   });
 
-  it("keeps only the Mayan swap id and its untouched typedData", () => {
-    expect(WithdrawPayloadSchema.parse(mayanWithdrawPayload)).toEqual({
-      swapId: mayanWithdrawPayload.swapId,
-      typedData: mayanWithdrawPayload.typedData,
-    });
+  it("keeps the whole Mayan payload untouched", () => {
+    expect(WithdrawPayloadSchema.parse(mayanWithdrawPayload)).toEqual(mayanWithdrawPayload);
   });
 
   it("rejects a payload without a swap id", () => {

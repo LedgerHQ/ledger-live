@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { FlagFilter } from "../../types";
-import { FILTERS } from "../../hooks";
+import { FILTERS } from "../../hooks/useFeatureFlagsFilters";
 import type { SortCategory, SortDirection } from "../../hooks";
 import type { FilterOption, ToolBarInput, ToolBarViewProps } from "./types";
 

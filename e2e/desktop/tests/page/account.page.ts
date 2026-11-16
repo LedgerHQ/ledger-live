@@ -139,7 +139,7 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions = {}) {
+  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions) {
     if (await isAccountDetailEnabled(this.page)) {
       await this.accountDetail.clickEarn({ asset, ...syncOptions });
       return;
@@ -257,8 +257,9 @@ export class AccountPage extends AppPage {
     const operationCount = await this.operationRows.count();
     if (await this.showMoreButton.isVisible()) {
       await this.showMoreButton.click();
-      const operationCountAfterClick = await this.operationRows.count();
-      expect(operationCountAfterClick).toBeGreaterThan(operationCount);
+      await this.softExpect(async soft => {
+        await soft.poll(() => this.operationRows.count()).toBeGreaterThan(operationCount);
+      });
     }
   }
 
@@ -272,7 +273,9 @@ export class AccountPage extends AppPage {
     await this.advancedButton.click();
     const advancedLogsText = await this.accountAdvancedLogs.innerText();
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
-    expect(advancedLogsJson).toHaveProperty("index", indexNumber);
+    await this.softExpect(soft => {
+      soft(advancedLogsJson).toHaveProperty("index", indexNumber);
+    });
     await this.closeModal.click();
   }
 

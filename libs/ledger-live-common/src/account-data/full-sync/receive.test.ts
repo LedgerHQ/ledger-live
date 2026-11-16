@@ -133,6 +133,7 @@ describe("toAccountReceive", () => {
     });
     await expect(toAccountReceive(hedera)).resolves.toEqual({
       address: "0.0.1234",
+      memo: { type: "text" },
     });
   });
 
@@ -145,7 +146,22 @@ describe("toAccountReceive", () => {
     await expect(toAccountReceive(hedera)).resolves.toEqual({
       address: "0.0.1234",
       verification: { type: "publicKey", path: "m/44h/3030h/0h/0h/0h", publicKey: "302a" },
+      memo: { type: "text" },
     });
+  });
+
+  it("tells the senders of a coin whose transfers carry a tag to attach one", async () => {
+    await expect(toAccountReceive(accountOf("ripple"))).resolves.toMatchObject({
+      memo: { type: "tag" },
+    });
+  });
+
+  it.each(["ethereum", "bitcoin"])("tells no memo for %s, whose transfers carry none", async id => {
+    await expect(toAccountReceive(accountOf(id))).resolves.not.toHaveProperty("memo");
+  });
+
+  it("tells no memo for a family without a send descriptor", async () => {
+    await expect(toAccountReceive(concordium(true))).resolves.not.toHaveProperty("memo");
   });
 });
 
@@ -168,6 +184,10 @@ const zcash = (shieldedAddress: string | null): ZcashAccount => ({
   },
 });
 
+// A unified address with an Orchard receiver (coin-zcash test fixture): a memo can ride to it.
+const ORCHARD_ADDRESS =
+  "utest1hap277en6ayclu5027232d44kv0s6nd0tacmnj07v0avarpuv4vzyfjreu3qexw05v9jvpx8ce37lpt5j4qexyrwhrlrma9msypee8x4";
+
 describe("toAccountReceive on Zcash", () => {
   const transparent = {
     address: "t1transparent",
@@ -176,13 +196,14 @@ describe("toAccountReceive on Zcash", () => {
 
   afterEach(() => setZcashShieldedEnabled(false));
 
-  it("adds the shielded address while the shielded engine runs", async () => {
+  it("adds the shielded address while the shielded engine runs, with the memo it alone carries", async () => {
     setZcashShieldedEnabled(true);
-    await expect(toAccountReceive(zcash("u1shielded"))).resolves.toEqual({
+    await expect(toAccountReceive(zcash(ORCHARD_ADDRESS))).resolves.toEqual({
       ...transparent,
       shielded: {
-        address: "u1shielded",
-        verification: { type: "shieldedAddress", path: "m/32h/133h/0h", address: "u1shielded" },
+        address: ORCHARD_ADDRESS,
+        verification: { type: "shieldedAddress", path: "m/32h/133h/0h", address: ORCHARD_ADDRESS },
+        memo: { type: "text" },
       },
     });
   });

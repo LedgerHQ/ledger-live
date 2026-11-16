@@ -1,5 +1,10 @@
 import type { z } from "zod";
-import { AccountReceiveSchema, ReceiveVerificationSchema, type AccountReceive } from "./schema";
+import {
+  AccountReceiveSchema,
+  ReceiveVerificationSchema,
+  type AccountReceive,
+  type ReceiveMemo,
+} from "./schema";
 
 type VerificationInput = z.input<typeof ReceiveVerificationSchema>;
 
@@ -8,7 +13,8 @@ export function mockAccountReceive(
   overrides: {
     address?: string;
     verification?: VerificationInput;
-    shielded?: { address: string; verification?: VerificationInput };
+    memo?: ReceiveMemo;
+    shielded?: { address: string; verification?: VerificationInput; memo?: ReceiveMemo };
   } = {},
 ): AccountReceive {
   const address = overrides.address ?? "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
@@ -19,6 +25,7 @@ export function mockAccountReceive(
   return AccountReceiveSchema.parse({
     address,
     verification,
+    memo: overrides.memo,
     shielded: overrides.shielded,
   });
 }

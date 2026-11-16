@@ -9,21 +9,21 @@ const ACCOUNT_UUID_NAMESPACE = "b4a1d3a8-6c0e-4f0e-9a52-7d1f3c5e8a21";
 
 export const AccountUUIDSchema = z.uuid({ version: "v5" }).brand<"AccountUUID">();
 
-/** Deterministic identity of an account, the same on every device; carries neither xpub nor address. */
+/** Deterministic identity of an account, the same on every device; carries no account key. */
 export type AccountUUID = z.infer<typeof AccountUUIDSchema>;
 
-/** Canonical key and identity of an account: network case, hardened marker and `0x` address case collapse to one key. */
+/** A public key in hex: at least 32 bytes, so that no base58 or bech32 key matches. */
+const HEX_PUBLIC_KEY = /^([0-9a-f]{2}){32,}$/i;
+
+const isCaseInsensitive = (key: string) => key.startsWith("0x") || HEX_PUBLIC_KEY.test(key);
+
+/** Canonical key and identity of an account: network case, hardened marker and hex key case collapse to one key. */
 export function accountDescriptorKey(descriptor: AccountDescriptor): string {
-  const subject =
-    descriptor.type === "utxo"
-      ? descriptor.xpub
-      : descriptor.address.startsWith("0x")
-        ? descriptor.address.toLowerCase()
-        : descriptor.address;
+  const { key } = descriptor;
   return formatDescriptorFields({
     ...descriptor,
     network: descriptor.network.toLowerCase(),
-    subject,
+    key: descriptor.type === "address" && isCaseInsensitive(key) ? key.toLowerCase() : key,
     path: canonicalPath(descriptor.path),
   });
 }

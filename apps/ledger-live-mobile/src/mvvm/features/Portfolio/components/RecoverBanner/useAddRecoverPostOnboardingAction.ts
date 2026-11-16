@@ -27,7 +27,9 @@ export function useAddRecoverPostOnboardingAction(
     const shouldAddRecoverToPostOnboarding =
       shouldDisplayOnboardingWidget &&
       subscriptionState !== undefined &&
-      (subscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
+      (Object.values<string>(LedgerRecoverSubscriptionStateInProgressEnum).includes(
+        subscriptionState,
+      ) ||
         subscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE) &&
       actionStateRecover === undefined &&
       actionsState.length > 0 &&

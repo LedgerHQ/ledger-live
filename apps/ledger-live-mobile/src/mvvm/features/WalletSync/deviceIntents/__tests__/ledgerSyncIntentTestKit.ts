@@ -1,6 +1,10 @@
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DeviceManagementKitBuilder, DeviceModelId } from "@ledgerhq/device-management-kit";
-import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
+import {
+  createIntent,
+  type DeviceConnectionResult,
+  type DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type {
   AddMemberIntent,
   AddMemberIntentInput,
@@ -20,6 +24,13 @@ export const INITIALIZATION_INPUT: InitializationInput = {
   appName: TRUSTCHAIN_APP_NAME,
   dependencies: [],
   requireLatestFirmware: false,
+};
+
+export const EXTRACTED_CONTEXT: DeviceExtractedContext = {
+  currentOsVersion: "2.0.0",
+  osUpdateAvailable: false,
+  currentAppName: TRUSTCHAIN_APP_NAME,
+  currentAppVersion: "1.0.0",
 };
 
 const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };

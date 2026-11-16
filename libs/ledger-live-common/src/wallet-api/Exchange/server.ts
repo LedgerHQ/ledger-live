@@ -27,13 +27,15 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  TRONIFY_IS_ENERGY_DELIVERED_METHOD,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
+  type IsTronifyEnergyDeliveredParams,
+  type IsTronifyEnergyDeliveredResult,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import BigNumber from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
-import { resolveFamily } from "../../bridge/zcashRouting";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
@@ -60,6 +62,7 @@ import {
   type GetTransactionStatusWireArgs,
 } from "./transactionStatus";
 import type { ExchangeStartParamsUiRequest, ExchangeUiHooks } from "./uiRequests";
+import { tronifyHandlers } from "./tronify";
 
 export { ExchangeType };
 
@@ -76,6 +79,10 @@ type Handlers = {
   "custom.exchange.getTransactionStatus": RPCHandler<
     GetTransactionStatusResponse,
     GetTransactionStatusWireArgs
+  >;
+  [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: RPCHandler<
+    IsTronifyEnergyDeliveredResult,
+    IsTronifyEnergyDeliveredParams
   >;
 };
 
@@ -258,7 +265,7 @@ export const handlers = ({
         }
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-        const mainFromAccountFamily = resolveFamily(mainFromAccount.currency);
+        const mainFromAccountFamily = mainFromAccount.currency.family;
 
         const transaction = deserializeTransaction(params.rawTransaction);
 
@@ -434,6 +441,8 @@ export const handlers = ({
       }
       return getTransactionStatus(params, { accounts });
     }),
+
+    ...tronifyHandlers({ accounts, getFeature }),
   }) as const satisfies Handlers;
 
 function extractSellStartParam(

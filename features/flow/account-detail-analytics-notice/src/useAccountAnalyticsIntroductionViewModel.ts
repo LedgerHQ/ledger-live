@@ -5,6 +5,7 @@ import type { AccountAnalyticsIntroductionViewModel } from "./AccountAnalyticsIn
 
 export function useAccountAnalyticsIntroductionViewModel({
   isEnabled,
+  isEligible,
   hasConfirmedHistory,
   hasDismissed,
   onDismiss,
@@ -16,6 +17,7 @@ export function useAccountAnalyticsIntroductionViewModel({
   return {
     isVisible: shouldShowAccountAnalyticsIntroduction({
       isEnabled,
+      isEligible,
       hasConfirmedHistory,
       hasDismissed,
     }),

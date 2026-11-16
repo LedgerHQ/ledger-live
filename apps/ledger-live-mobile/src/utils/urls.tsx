@@ -91,6 +91,7 @@ export const urls = {
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
+    XrpSendToIssuer: "https://support.ledger.com/article/115005177349-zd",
     AddressesSanctionedError:
       "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
     BleForgetDevice:

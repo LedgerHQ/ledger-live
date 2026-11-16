@@ -323,6 +323,21 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
+    it("drops a token that vanished from the fresh balance response with dropsMissingTokens", async () => {
+      const vanishedAsset = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        dropsMissingTokens: true,
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
     it.each([
       ["only by case", { type: "iou", assetReference: "usd", assetOwner: "issuerA" }],
       ["only by issuer", { type: "iou", assetReference: "USD", assetOwner: "issuerB" }],
@@ -878,6 +893,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        undefined,
       );
     });
 
@@ -1042,6 +1058,94 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.subOperations).toHaveLength(1);
       expect(topOp?.subOperations?.[0]?.type).toBe("OUT");
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
+    });
+
+    describe("tokenOptParentRow", () => {
+      const address = `${currency.id}_addr_opt`;
+
+      async function syncTokenOnlyTx(
+        type: string,
+        {
+          tokenOptParentRow,
+          hasFailed = false,
+        }: { tokenOptParentRow?: boolean; hasFailed?: boolean },
+      ) {
+        getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+        listOperationsMock.mockResolvedValue({
+          items: [{ hash: "opt-hash", type, height: 20, tx: { failed: hasFailed } }],
+        });
+        lastBlockMock.mockResolvedValue({ height: 100 });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          blockHash: "0xblock",
+          fee: new BigNumber(12),
+          value: new BigNumber(0),
+          senders: [address],
+          recipients: ["rIssuer"],
+          date: new Date("2024-01-15"),
+          hasFailed,
+          extra: { assetReference: "USD", assetOwner: "rIssuer", feePayer: address },
+        }));
+        buildSubAccountsMock.mockReturnValue([]);
+        inferSubOperationsMock.mockReturnValue([]);
+        cleanedOperationMock.mockImplementation((op: any) => op);
+        mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          tokenOptParentRow,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          { address, initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        return result.operations ?? [];
+      }
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])(
+        "gives a token-only %s its own type on the parent row, worth the fee",
+        async type => {
+          const [parent, ...rest] = await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+          expect(rest).toHaveLength(0);
+          expect(parent).toMatchObject({ type, id: `accId-opt-hash-${type}` });
+          expect(parent.value?.toFixed()).toBe("12");
+        },
+      );
+
+      it("keeps a failed opt-in a failed OPT_IN", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {
+          tokenOptParentRow: true,
+          hasFailed: true,
+        });
+
+        expect(parent).toMatchObject({ type: "OPT_IN", hasFailed: true });
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a family that does not opt in, as a Stellar trust-line change", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {});
+
+        expect(parent.type).toBe("FEES");
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a token send", async () => {
+        const [parent] = await syncTokenOnlyTx("OUT", { tokenOptParentRow: true });
+
+        expect(parent.type).toBe("FEES");
+      });
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])("keeps a %s off its token account", async type => {
+        await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+        expect(buildSubAccountsMock.mock.lastCall?.[0].operations).toEqual([]);
+      });
     });
 
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
@@ -2766,6 +2870,56 @@ describe("genericGetAccountShape", () => {
             fee: new BigNumber(1),
           },
         ],
+      });
+    });
+
+    describe("excludesFeesPaidByOthers", () => {
+      const sendPaidBy = (feesPayer: string | undefined, value = 2) =>
+        toCoreOp({
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value,
+          fee: 1,
+          ...(feesPayer === undefined ? {} : { feesPayer }),
+        });
+
+      const sync = async (operation: ReturnType<typeof toCoreOp>, optIn: boolean) => {
+        setupSpecTest();
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          ...(optIn ? { excludesFeesPaidByOthers: true } : {}),
+        }));
+        listOperationsMock.mockResolvedValue({ items: [operation], next: undefined });
+        mockNoSubAccounts();
+        mockNoInferSubOps();
+        return runGetShape("address1");
+      };
+
+      afterEach(() => getBridgeApiMock.mockImplementation(defaultBridgeApi));
+
+      test.each([
+        ["a paymaster", "paymaster"],
+        ["nobody named", undefined],
+      ])(
+        "should not charge a fee paid by %s when the family opts in",
+        async (_payer, feesPayer) => {
+          await expect(sync(sendPaidBy(feesPayer), true)).resolves.toMatchObject({
+            operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+          });
+        },
+      );
+
+      test("should keep as a send a sponsored transfer whose amount equals the fee", async () => {
+        await expect(sync(sendPaidBy("paymaster", 1), true)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should charge a fee another account paid when the family does not opt in", async () => {
+        await expect(sync(sendPaidBy("paymaster"), false)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(3), fee: new BigNumber(1) }],
+        });
       });
     });
 

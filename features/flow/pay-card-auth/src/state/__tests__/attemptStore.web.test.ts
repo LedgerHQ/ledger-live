@@ -1,4 +1,4 @@
-import { clearAttempt, loadAttempt, saveAttempt } from "../attemptStore.web";
+import { clearAttempt, loadAttempt, saveAttempt } from "../attemptStore";
 
 const attempt = { codeVerifier: "verifier-value" };
 

@@ -17,7 +17,7 @@ declare module "@domain/entity-account-data" {
 
 const accountUUID = computeAccountUUID(mockAddressAccountDescriptor());
 const otherAccountUUID = computeAccountUUID(
-  mockAddressAccountDescriptor({ address: "0x0000000000000000000000000000000000000001" }),
+  mockAddressAccountDescriptor({ key: "0x0000000000000000000000000000000000000001" }),
 );
 const sourceId = AccountDataSourceIdSchema.parse("s");
 const fresh = mockAccountReceive({ address: "0x0000000000000000000000000000000000000002" });

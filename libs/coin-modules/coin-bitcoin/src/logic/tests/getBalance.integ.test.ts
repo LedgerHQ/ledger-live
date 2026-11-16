@@ -1,4 +1,4 @@
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { getBalance } from "../getBalance";
 import {
   EMPTIED_P2PKH,
@@ -12,21 +12,8 @@ import {
   PRISTINE_P2WPKH,
 } from "./helpers/fixtures";
 
-const EXPLORER_IDS: Record<string, string> = {
-  bitcoin: "btc",
-  litecoin: "ltc",
-  digibyte: "dgb",
-  dogecoin: "doge",
-};
-
 const liveContext: BitcoinContext = {
-  config: async currencyId => ({
-    status: { type: "active" },
-    name: currencyId ?? "bitcoin",
-    unit: { name: "unit", code: "UNIT", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: EXPLORER_IDS[currencyId ?? "bitcoin"],
-  }),
+  config: async currencyId => bitcoinDefaults[currencyId as keyof typeof bitcoinDefaults],
   logger: () => {},
 };
 

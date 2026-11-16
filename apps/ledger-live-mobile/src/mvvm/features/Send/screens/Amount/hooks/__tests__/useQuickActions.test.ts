@@ -8,7 +8,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 jest.mock("~/context/Locale");
@@ -66,6 +66,7 @@ describe("useQuickActions", () => {
       .mocked(getAccountCurrency)
       .mockReturnValue(mockCurrency as ReturnType<typeof getAccountCurrency>);
     jest.mocked(sendFeatures.canSendMax).mockReturnValue(true);
+    jest.mocked(sendFeatures.roundAmount).mockImplementation((_currency, amount) => amount);
   });
 
   describe("structure", () => {
@@ -125,6 +126,28 @@ describe("useQuickActions", () => {
 
       const ratioActions = result.current.filter(a => a.id !== "max");
       expect(ratioActions.every(a => !a.disabled)).toBe(true);
+    });
+
+    it("asks canSendMax about the token sent, not its parent coin", () => {
+      const tokenCurrency = { type: "TokenCurrency", id: "ripple/iou/usd" };
+      const tokenAccount = {
+        type: "TokenAccount",
+        token: tokenCurrency,
+      } as unknown as TokenAccount;
+      jest.mocked(getAccountCurrency).mockImplementation(account => {
+        const currency = account === tokenAccount ? tokenCurrency : mockCurrency;
+        return currency as ReturnType<typeof getAccountCurrency>;
+      });
+      jest
+        .mocked(sendFeatures.canSendMax)
+        .mockImplementation(currency => currency === tokenCurrency);
+
+      const { result } = renderHook(() =>
+        useQuickActions({ ...defaultParams, account: tokenAccount, parentAccount: mockAccount }),
+      );
+
+      const maxAction = result.current.find(a => a.id === "max");
+      expect(maxAction?.disabled).toBe(false);
     });
   });
 
@@ -235,6 +258,20 @@ describe("useQuickActions", () => {
 
       const expected = availableBalance.multipliedBy(0.75).integerValue(BigNumber.ROUND_DOWN);
       expect(onSetAmountFromRatio).toHaveBeenCalledWith(expected);
+    });
+
+    it("passes a ratio amount through the currency's rounding", () => {
+      const rounded = new BigNumber(22_000_000);
+      jest.mocked(sendFeatures.roundAmount).mockReturnValue(rounded);
+      const { result } = renderHook(() => useQuickActions(defaultParams));
+
+      act(() => {
+        result.current.find(a => a.id === "quarter")?.onPress();
+      });
+
+      const quarter = availableBalance.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
+      expect(sendFeatures.roundAmount).toHaveBeenCalledWith(mockCurrency, quarter);
+      expect(onSetAmountFromRatio).toHaveBeenCalledWith(rounded);
     });
 
     it("calls onSelectMax when max pressed", () => {

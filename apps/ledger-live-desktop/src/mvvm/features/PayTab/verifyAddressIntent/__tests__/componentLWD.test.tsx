@@ -33,6 +33,7 @@ const jobStates = {
     deviceModelId: DeviceModelId.STAX,
     deviceName: "Ledger Stax",
   }),
+  addressDisplayed: (): VerifyAddressIntentJobState => ({ type: "addressDisplayed" }),
   verified: (): VerifyAddressIntentJobState => ({ type: "verified", address: ADDRESS }),
   cancelled: (retry: () => void = jest.fn()): VerifyAddressIntentJobState => ({
     type: "cancelled",
@@ -74,6 +75,7 @@ describe("VerifyAddressIntentComponentLWD", () => {
   /** `verified` keeps the same screen for the frame before the host unmounts the executor. */
   describe.each([
     ["verifying", jobStates.verifying],
+    ["addressDisplayed", jobStates.addressDisplayed],
     ["verified", jobStates.verified],
   ])("when the job state is %s", (_, buildJobState) => {
     it("should show the next steps to follow while the address is on the Secure Screen", () => {

@@ -7,16 +7,29 @@ import type {
   GenuineErrorKind,
 } from "LLM/features/DeviceOnboarding/types";
 
+const screenPreviews = new Set<string>(["offer", "unseededIntro", "recoverCopy1", "recoverCopy2"]);
 const errorPreviews = new Set<string>(["declined", "notGenuine", "provider", "network", "unknown"]);
 
-export type DeviceOnboardingPreview = ChecksScreenState | "offer" | GenuineErrorKind;
+export type DeviceOnboardingPreview =
+  | ChecksScreenState
+  | "offer"
+  | "unseededIntro"
+  | "recoverCopy1"
+  | "recoverCopy2"
+  | GenuineErrorKind;
+
+function isScreenPreview(
+  preview: DeviceOnboardingPreview,
+): preview is "offer" | "unseededIntro" | "recoverCopy1" | "recoverCopy2" {
+  return screenPreviews.has(preview);
+}
 
 function isErrorPreview(preview: DeviceOnboardingPreview): preview is GenuineErrorKind {
   return errorPreviews.has(preview);
 }
 
 function checksStateForPreview(preview: DeviceOnboardingPreview): ChecksScreenState {
-  if (preview === "offer") return "idle";
+  if (isScreenPreview(preview)) return "idle";
   if (isErrorPreview(preview)) return "checking";
   return preview;
 }
@@ -62,6 +75,7 @@ export function useDeviceOnboardingDebugViewModel() {
     },
     onBack: () => navigation.goBack(),
     screenProps,
+    onClosePreview: closePreview,
     syncOfferProps: {
       onActivate: () => undefined,
       onSkip: () => undefined,

@@ -35,13 +35,13 @@ import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
-import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
+import type { ReceiveVerifyHintState } from "@features/flow-receive/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
-  PayRequestVerifyHintState &
+  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;
@@ -50,10 +50,6 @@ const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
 const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
-export async function clearDb() {
-  const list = await storage.keys();
-  await storage.delete(list);
-}
 /** Used only at boot for migration from legacy "user" into identities. */
 export async function getUser(): Promise<User> {
   const user = (await storage.get("user")) as User;
@@ -82,12 +78,25 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
     };
   }
 
-  return ((await storage.get(keys)) as CounterValuesStateRaw[]).reduce(
-    (prev: CounterValuesStateRaw, val: RateMapRaw | CounterValuesStatus, i: number) =>
-      ({
-        ...prev,
-        [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
-      }) as CounterValuesStateRaw,
+  // A multi-get drops missing values, so read each key on its own to keep values with their keys
+  const entries = await Promise.all(
+    keys.map(
+      async key =>
+        [
+          key.slice(COUNTERVALUES_DB_PREFIX.length),
+          (await storage.get(key)) as RateMapRaw | CounterValuesStatus | undefined,
+        ] as const,
+    ),
+  );
+
+  return entries.reduce(
+    (prev: CounterValuesStateRaw, [pair, val]) =>
+      val === undefined || val === null
+        ? prev
+        : ({
+            ...prev,
+            [pair]: val,
+          } as CounterValuesStateRaw),
     {} as CounterValuesStateRaw,
   );
 }

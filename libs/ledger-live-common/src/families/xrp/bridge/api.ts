@@ -2,21 +2,23 @@ import BigNumber from "bignumber.js";
 import type { AccountInfo, AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Account } from "@ledgerhq/types-live";
 import type {
   BridgeApi,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
+import type { XrpAccountInfo, XrpTxData } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
+import { heldXrpTokenIds } from "../tokenHolding";
 import type { XrpTokenResources } from "../types";
 
-const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
+export const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
 const MPT_ISSUANCE_ID = /^[0-9A-F]{48}$/;
 
-function getStandardFromReference(assetReference: string): string | undefined {
+export function getStandardFromReference(assetReference: string): string | undefined {
   if (assetReference.length === 3 || IOU_HEX_CODE.test(assetReference)) return "iou";
   if (MPT_ISSUANCE_ID.test(assetReference)) return "mpt";
 
@@ -107,15 +109,29 @@ export async function buildTokenAccountShapes(
 }
 
 /**
- * A `changeTrust` amount is a trust limit, not XRP: the pending row records 0. It is an `OPT_IN`
- * even when it edits the limit of a held token, as sync records every own limit above 0.
+ * A `changeTrust` amount is a trust limit, not XRP: the pending row records 0. On a held token it
+ * is an `OPT_EDIT`: a pending row whose type differs from the synced one changes its operation id.
  */
 export function describeOptimisticOperation(
   mode: string,
+  account: Account,
+  transaction: Record<string, unknown>,
 ): OptimisticOperationDescriptor | undefined {
   if (mode !== "changeTrust") return undefined;
 
-  return { type: "OPT_IN", value: new BigNumber(0) };
+  const { assetReference, assetOwner } = transaction;
+  const heldTokenIds = heldXrpTokenIds(account);
+  const isHeld = (account.subAccounts ?? []).some(sub => {
+    return heldTokenIds.has(sub.token.id) && isTokenOfAsset(sub.token, assetReference, assetOwner);
+  });
+
+  return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
+}
+
+export function buildIntentData(transaction: Record<string, unknown>): XrpTxData {
+  if (transaction.mode !== "changeTrust") return { type: "none" };
+
+  return { type: "changeTrust", noRipple: transaction.noRipple !== false };
 }
 
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
@@ -123,9 +139,13 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
 
   return {
     getAssetFromToken,
+    buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
+    // The balance lists every trust line and MPToken, at 0 too: a missing token is no longer held
+    dropsMissingTokens: true,
     exactAssetMatch: true,
+    tokenOptParentRow: enabledStandards.length > 0,
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     buildTokenAccountShapes: address => buildTokenAccountShapes(currency, address),
     // Turning a standard on or off resyncs from scratch, to build its token accounts' history

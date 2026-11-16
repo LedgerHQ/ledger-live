@@ -25,8 +25,11 @@ import {
   useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAccountSourcePortfolioToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
+  useAccountReceiveToolProps,
+  useAccountStatusToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
   useReceiveToolProps,
@@ -121,14 +124,22 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
-  const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
+  const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps(
+    counterValueCurrency.ticker,
+  );
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
   });
   const accountDataRecorder = useAccountDataRecorder();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const accountSourcePortfolioToolProps = useAccountSourcePortfolioToolProps({
+    serviceUrl: getPortfolioServiceUrl(),
+    recorder: accountDataRecorder,
+  });
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
+  const accountReceiveToolProps = useAccountReceiveToolProps();
+  const accountStatusToolProps = useAccountStatusToolProps();
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
   const receiveToolProps = useReceiveToolProps();
@@ -151,11 +162,14 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
+      { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
+      { id: "account-receive", config: accountReceiveToolProps },
+      { id: "account-status", config: accountStatusToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
@@ -178,7 +192,10 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountBalanceHistoryToolProps,
       accountPortfolioToolProps,
       accountDataToolProps,
+      accountSourcePortfolioToolProps,
       accountNameToolProps,
+      accountReceiveToolProps,
+      accountStatusToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
       receiveToolProps,

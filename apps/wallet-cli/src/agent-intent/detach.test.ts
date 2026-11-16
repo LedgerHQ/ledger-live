@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid } from "../shared/file-lock";
-import { pointStateHomeAt } from "../testing/state-home";
+import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 import {
   enrollListenerPaths,
   readFirstLogJsonLine,
@@ -50,10 +50,7 @@ function startChild(script: string, logPath: string): ChildProcess {
 
 describe("enrollListenerPaths", () => {
   it("puts the log and lock under the CLI state dir", () => {
-    const cliStateDir = isPosix
-      ? join(stateHome, "ledger-wallet-cli")
-      : join(stateHome, "ledger-wallet-cli", "State");
-    const dir = join(cliStateDir, "agent-intent-enroll");
+    const dir = join(cliStateDirIn(stateHome), "agent-intent-enroll");
     expect(enrollListenerPaths("My-Agent")).toEqual({
       logPath: join(dir, "my-agent-b59f3481.log"),
       lockPath: join(dir, "my-agent-b59f3481.lock"),

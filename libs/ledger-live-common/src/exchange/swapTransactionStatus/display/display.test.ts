@@ -16,6 +16,9 @@ import {
   getSwapTransactionStatusSectionItems,
   getSwapTransactionStatusTitleKey,
   getSwapTransactionStatusVisualTokens,
+  isSwapPayoutOperation,
+  isPerpsWithdrawSwap,
+  joinSwapTransactionStatusFees,
   resolveSwapTransactionStatusAccountLike,
   truncateSwapTransactionStatusIdentifier,
 } from "./index";
@@ -117,6 +120,43 @@ describe("findSwapSendOperation", () => {
     expect(findSwapSendOperation(accounts, "unknown")).toBeUndefined();
     expect(findSwapSendOperation([], "hash-a")).toBeUndefined();
   });
+
+  describe("isSwapPayoutOperation", () => {
+    const sender = { account: makeAccount("hypercore", []) };
+    const receiver = { account: makeAccount("eth", [{ hash: "payout-hash" }]) };
+
+    it("should be true for an operation made on the receiving account only (perps withdraw)", () => {
+      expect(isSwapPayoutOperation(sender, receiver, "payout-hash")).toBe(true);
+    });
+
+    it("should be false for the sender's own operation, even when it also credits the receiver", () => {
+      const sameTx = { account: makeAccount("eth-sender", [{ hash: "payout-hash" }]) };
+
+      expect(isSwapPayoutOperation(sameTx, receiver, "payout-hash")).toBe(false);
+    });
+
+    it("should be false without an operation hash or receiving account", () => {
+      expect(isSwapPayoutOperation(sender, receiver, undefined)).toBe(false);
+      expect(isSwapPayoutOperation(sender, undefined, "payout-hash")).toBe(false);
+    });
+  });
+});
+
+describe("isPerpsWithdrawSwap", () => {
+  const hypercore = getCryptoCurrencyById("hypercore");
+
+  it("should be true for a swap from HyperCore through the perps SwapKit provider", () => {
+    expect(isPerpsWithdrawSwap("swapkit_hyperliquid", hypercore)).toBe(true);
+  });
+
+  it("should be false for a perps deposit, which goes the other way", () => {
+    expect(isPerpsWithdrawSwap("swapkit_hyperliquid", ethereum)).toBe(false);
+  });
+
+  it("should be false for a swap from HyperCore through another provider", () => {
+    expect(isPerpsWithdrawSwap("lifi", hypercore)).toBe(false);
+    expect(isPerpsWithdrawSwap(undefined, hypercore)).toBe(false);
+  });
 });
 
 describe("amount formatting", () => {
@@ -138,6 +178,12 @@ describe("amount formatting", () => {
     expect(formatSwapTransactionStatusAmount(undefined, "123", "en-US")).toBeUndefined();
     expect(formatSwapTransactionStatusAmount(bitcoin, undefined, "en-US")).toBeUndefined();
     expect(formatSwapTransactionStatusFeesAmount(undefined, "123", "en-US")).toBeUndefined();
+  });
+
+  it("should join fees in different currencies, payout fees first", () => {
+    expect(joinSwapTransactionStatusFees(["0.0004 ETH", "1 USDC"])).toBe("0.0004 ETH + 1 USDC");
+    expect(joinSwapTransactionStatusFees([undefined, "1 USDC"])).toBe("1 USDC");
+    expect(joinSwapTransactionStatusFees([undefined, undefined])).toBeUndefined();
   });
 });
 

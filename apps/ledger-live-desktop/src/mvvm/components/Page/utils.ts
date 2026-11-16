@@ -26,6 +26,7 @@ const WALLET_40_PAGES = new Set<string>([
   "/contacts",
   "/devtools",
   "/paytab",
+  "/agent-intent",
 ]);
 
 /**
