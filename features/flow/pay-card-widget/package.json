@@ -50,7 +50,6 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
-    "@types/react-dom": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",

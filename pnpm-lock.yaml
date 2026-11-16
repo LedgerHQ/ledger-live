@@ -552,8 +552,8 @@ catalogs:
       specifier: 24.12.0
       version: 24.12.0
     '@types/qrcode':
-      specifier: 1.5.5
-      version: 1.5.5
+      specifier: 1.5.6
+      version: 1.5.6
     '@types/semver':
       specifier: 7.7.1
       version: 7.7.1
@@ -1637,12 +1637,6 @@ importers:
       '@tippyjs/react':
         specifier: 4.2.6
         version: 4.2.6(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/qrcode':
-        specifier: 1.5.5
-        version: 1.5.5
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@xstate/react':
         specifier: 'catalog:'
         version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
@@ -1902,6 +1896,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/qrcode':
+        specifier: 'catalog:'
+        version: 1.5.6
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -1917,9 +1914,9 @@ importers:
       '@types/redux-actions':
         specifier: 2.6.5
         version: 2.6.5
-      '@types/serve-handler':
-        specifier: 6.1.4
-        version: 6.1.4
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
@@ -2004,9 +2001,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      serve-handler:
-        specifier: 6.1.5
-        version: 6.1.5
       tailwindcss:
         specifier: 'catalog:'
         version: 4.2.2
@@ -3293,9 +3287,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@types/w3c-web-usb':
         specifier: 1.0.10
         version: 1.0.10
@@ -3554,12 +3545,6 @@ importers:
       encoding:
         specifier: ^0.1.13
         version: 0.1.13
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
@@ -3663,20 +3648,14 @@ importers:
       '@testing-library/user-event':
         specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
       '@types/qrcode':
-        specifier: 1.5.6
+        specifier: 'catalog:'
         version: 1.5.6
       '@types/react':
         specifier: 19.0.14
@@ -6026,9 +6005,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6544,9 +6520,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6602,9 +6575,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6663,9 +6633,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6733,9 +6700,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6885,9 +6849,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6943,9 +6904,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -6995,9 +6953,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -7053,9 +7008,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -8539,15 +8491,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/body-parser':
-        specifier: 1.19.5
-        version: 1.19.5
-      '@types/cors':
-        specifier: 2.8.17
-        version: 2.8.17
-      '@types/express':
-        specifier: 4.17.21
-        version: 4.17.21
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
@@ -8561,7 +8504,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/ws':
-        specifier: 8.5.10
+        specifier: 'catalog:'
         version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
@@ -8569,12 +8512,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      body-parser:
-        specifier: 2.4.0
-        version: 2.4.0
-      cors:
-        specifier: 2.8.5
-        version: 2.8.5
       detox:
         specifier: 'catalog:'
         version: 20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.2)(@jest/types@30.5.1)(bufferutil@4.1.0)(expect@30.5.2)(jest-environment-jsdom@30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.2)(jest@30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0))(utf-8-validate@6.0.6)
@@ -8584,9 +8521,6 @@ importers:
       expect:
         specifier: 30.5.2
         version: 30.5.2
-      express:
-        specifier: 5.2.1
-        version: 5.2.1
       glob:
         specifier: ^11.0.1
         version: 11.0.2
@@ -10141,9 +10075,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -10453,9 +10384,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -10944,9 +10872,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -11305,9 +11230,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -11831,9 +11753,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -11958,9 +11877,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -12351,9 +12267,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -12533,9 +12446,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -15667,9 +15577,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -15857,9 +15764,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -15882,9 +15786,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -16151,12 +16052,6 @@ importers:
       imurmurhash:
         specifier: ^0.1.4
         version: 0.1.4
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -16185,15 +16080,9 @@ importers:
       '@types/imurmurhash':
         specifier: 0.1.4
         version: 0.1.4
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16557,9 +16446,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -16597,9 +16483,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16830,12 +16713,6 @@ importers:
       eip55:
         specifier: ^2.1.0
         version: 2.1.1
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -16864,15 +16741,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16936,9 +16807,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -16967,9 +16835,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -17018,9 +16883,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -17043,9 +16905,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -17121,9 +16980,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       protobufjs:
         specifier: ^8.4.1
         version: 8.4.1
@@ -17155,9 +17011,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -17885,12 +17738,6 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -17916,15 +17763,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -20412,9 +20253,6 @@ importers:
       '@types/pako':
         specifier: ^2.0.0
         version: 2.0.3
-      '@types/qs':
-        specifier: ^6.9.7
-        version: 6.9.14
       '@types/redux-actions':
         specifier: ^2.6.2
         version: 2.6.5
@@ -20593,6 +20431,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/qs':
+        specifier: ^6.9.7
+        version: 6.9.14
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -21375,9 +21216,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21935,7 +21773,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/semver':
-        specifier: 7.7.1
+        specifier: 'catalog:'
         version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
@@ -22436,9 +22274,6 @@ importers:
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       purify-ts:
         specifier: ^2.1.0
         version: 2.1.0
@@ -22479,6 +22314,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -22555,9 +22393,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -23631,9 +23466,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/ws':
-        specifier: 8.5.10
-        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -23655,9 +23487,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-      ws:
-        specifier: 8.22.0
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/speculos-transport:
     dependencies:
@@ -24017,15 +23846,9 @@ importers:
       '@types/color':
         specifier: 3.0.6
         version: 3.0.6
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/prop-types':
-        specifier: 15.7.12
-        version: 15.7.12
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -24059,9 +23882,6 @@ importers:
       glob:
         specifier: ^7.2.0
         version: 7.2.3
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
@@ -24071,9 +23891,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
-      prop-types:
-        specifier: 15.8.1
-        version: 15.8.1
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -24688,9 +24505,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -24896,7 +24710,7 @@ importers:
         specifier: 2.0.3
         version: 2.0.3
       '@types/ws':
-        specifier: 8.5.10
+        specifier: 'catalog:'
         version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
@@ -25881,7 +25695,7 @@ importers:
         version: 24.12.0
       '@types/qrcode':
         specifier: 'catalog:'
-        version: 1.5.5
+        version: 1.5.6
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -26031,9 +25845,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -26199,9 +26010,6 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.3.2(@swc/helpers@0.5.23)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -33919,9 +33727,6 @@ packages:
   '@types/bn.js@5.2.0':
     resolution: {integrity: sha512-DLbJ1BPqxvQhIGbeu8VbUC1DiAiahHtAYvA0ZEAa4P31F7IaArc8z3C3BRQdWX4mtLQuABG4yzp76ZrS02Ui1Q==}
 
-  '@types/body-parser@1.19.5':
-    resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
-
   '@types/bs58check@2.1.2':
     resolution: {integrity: sha512-xpXaQlOIY1KoXlA/ytHGHpEIU87PJt+g9SH7nC6HdCgaBwT2IEZIwBMHbjuX6BpnfbiUMlmwqurdLDwXpcdmSA==}
 
@@ -33952,9 +33757,6 @@ packages:
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
-  '@types/cors@2.8.17':
-    resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
-
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
 
@@ -33982,12 +33784,6 @@ packages:
   '@types/events@3.0.3':
     resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
 
-  '@types/express-serve-static-core@4.17.43':
-    resolution: {integrity: sha512-oaYtiBirUOPQGSWNGPWnzyAFJ0BP3cwvN4oWZQY+zUBwpVIGsKUkpBpSztp74drYcjavs7SKFZ4DX1V2QeN8rg==}
-
-  '@types/express@4.17.21':
-    resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
-
   '@types/fs-extra@9.0.13':
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
 
@@ -34005,9 +33801,6 @@ packages:
 
   '@types/http-cache-semantics@4.0.4':
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
-
-  '@types/http-errors@2.0.4':
-    resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
 
   '@types/http-proxy@1.17.17':
     resolution: {integrity: sha512-ED6LB+Z1AVylNTu7hdzuBqOgMnvG/ld6wGCG8wFnAzKX5uyW2K3WD52v0gnLCTK/VLpXtKckgWuyScYK6cSPaw==}
@@ -34054,12 +33847,6 @@ packages:
   '@types/mdurl@2.0.0':
     resolution: {integrity: sha512-RGdgjQUZba5p6QEFAVx2OGb8rQDL/cPRG7GiedRzMcJ1tYnUANBncjbSB1NRGwbvjcPeikRABz2nshyPk1bhWg==}
 
-  '@types/mime@1.3.5':
-    resolution: {integrity: sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==}
-
-  '@types/mime@3.0.4':
-    resolution: {integrity: sha512-iJt33IQnVRkqeqC7PzBHPTC6fDlRNRW8vjrgqtScAhrmMwe8c4Eo7+fUGTa+XdWrpEgpyKWMYmi2dIwMAYRzPw==}
-
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
 
@@ -34093,23 +33880,14 @@ packages:
   '@types/prismjs@1.26.6':
     resolution: {integrity: sha512-vqlvI7qlMvcCBbVe0AKAb4f97//Hy0EBTaiW8AalRnG/xAN5zOiWWyrNqNXeq8+KAuvRewjCVY1+IPxk4RdNYw==}
 
-  '@types/prop-types@15.7.12':
-    resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
-
   '@types/qrcode-terminal@0.12.2':
     resolution: {integrity: sha512-v+RcIEJ+Uhd6ygSQ0u5YYY7ZM+la7GgPbs0V/7l/kFs2uO4S8BcIUEMoP7za4DNIqNnUD5npf0A/7kBhrCKG5Q==}
-
-  '@types/qrcode@1.5.5':
-    resolution: {integrity: sha512-CdfBi/e3Qk+3Z/fXYShipBT13OJ2fDO2Q2w5CIP5anLTLIndQG9z6P1cnm+8zCWSpm5dnxMFd/uREtb0EXuQzg==}
 
   '@types/qrcode@1.5.6':
     resolution: {integrity: sha512-te7NQcV2BOvdj2b1hCAHzAoMNuj65kNBMz0KBaxM6c3VGBOhU0dURQKOtH8CFNI/dsKkwlv32p26qYQTWoB5bw==}
 
   '@types/qs@6.9.14':
     resolution: {integrity: sha512-5khscbd3SwWMhFqylJBLQ0zIu7c1K6Vz0uBIt915BI3zV0q1nfjRQD3RqSBcPaO6PHEF4ov/t9y89fSiyThlPA==}
-
-  '@types/range-parser@1.2.7':
-    resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
 
   '@types/react-dom@19.0.0':
     resolution: {integrity: sha512-1KfiQKsH1o00p9m5ag12axHQSb3FOU9H20UTrujVSkNhuCrRHiQWFqgEnTNK5ZNfnzZv8UWrnXVqCmCF9fgY3w==}
@@ -34138,14 +33916,8 @@ packages:
   '@types/semver@7.7.1':
     resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
-  '@types/send@0.17.4':
-    resolution: {integrity: sha512-x2EM6TJOybec7c52BX0ZspPodMsQUd5L6PRwOunVyVUhXiBSKf3AezDL8Dgvgt5o0UfKNfuA0eMLr2wLT4AiBA==}
-
   '@types/serve-handler@6.1.4':
     resolution: {integrity: sha512-aXy58tNie0NkuSCY291xUxl0X+kGYy986l4kqW6Gi4kEXgr6Tx0fpSH7YwUSa5usPpG3s9DBeIR6hHcDtL2IvQ==}
-
-  '@types/serve-static@1.15.5':
-    resolution: {integrity: sha512-PDRk21MnK70hja/YF8AHfC7yIsiQHn1rcXx7ijCFBX/k+XQJhQT/gw3xekXKJvx+5SXaMMS8oqQy09Mzvz2TuQ==}
 
   '@types/sha.js@2.4.4':
     resolution: {integrity: sha512-Qukd+D6S2Hm0wLVt2Vh+/eWBIoUt+wF8jWjBsG4F8EFQRwKtYvtXCPcNl2OEUQ1R+eTr3xuSaBYUyM3WD1x/Qw==}
@@ -36038,10 +35810,6 @@ packages:
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
-
-  cors@2.8.5:
-    resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
-    engines: {node: '>= 0.10'}
 
   corser@2.0.1:
     resolution: {integrity: sha512-utCYNzRSQIZNPIcGZdQc92UVJYAhtGAteCFg0yRaFm8f0P+CPtyGyHXJcGXnffjCybUCEx3FQ2G7U3/o9eIkVQ==}
@@ -53474,11 +53242,6 @@ snapshots:
     dependencies:
       '@types/node': 24.12.0
 
-  '@types/body-parser@1.19.5':
-    dependencies:
-      '@types/connect': 3.4.38
-      '@types/node': 24.12.0
-
   '@types/bs58check@2.1.2':
     dependencies:
       '@types/node': 24.12.0
@@ -53514,10 +53277,6 @@ snapshots:
 
   '@types/cookie@0.6.0': {}
 
-  '@types/cors@2.8.17':
-    dependencies:
-      '@types/node': 24.12.0
-
   '@types/d3-array@3.2.2': {}
 
   '@types/d3-path@3.1.0': {}
@@ -53544,20 +53303,6 @@ snapshots:
 
   '@types/events@3.0.3': {}
 
-  '@types/express-serve-static-core@4.17.43':
-    dependencies:
-      '@types/node': 24.12.0
-      '@types/qs': 6.9.14
-      '@types/range-parser': 1.2.7
-      '@types/send': 0.17.4
-
-  '@types/express@4.17.21':
-    dependencies:
-      '@types/body-parser': 1.19.5
-      '@types/express-serve-static-core': 4.17.43
-      '@types/qs': 6.9.14
-      '@types/serve-static': 1.15.5
-
   '@types/fs-extra@9.0.13':
     dependencies:
       '@types/node': 24.12.0
@@ -53576,8 +53321,6 @@ snapshots:
       hoist-non-react-statics: 3.3.2
 
   '@types/http-cache-semantics@4.0.4': {}
-
-  '@types/http-errors@2.0.4': {}
 
   '@types/http-proxy@1.17.17':
     dependencies:
@@ -53629,10 +53372,6 @@ snapshots:
 
   '@types/mdurl@2.0.0': {}
 
-  '@types/mime@1.3.5': {}
-
-  '@types/mime@3.0.4': {}
-
   '@types/minimist@1.2.5': {}
 
   '@types/ms@0.7.34': {}
@@ -53661,21 +53400,13 @@ snapshots:
 
   '@types/prismjs@1.26.6': {}
 
-  '@types/prop-types@15.7.12': {}
-
   '@types/qrcode-terminal@0.12.2': {}
-
-  '@types/qrcode@1.5.5':
-    dependencies:
-      '@types/node': 24.12.0
 
   '@types/qrcode@1.5.6':
     dependencies:
       '@types/node': 24.12.0
 
   '@types/qs@6.9.14': {}
-
-  '@types/range-parser@1.2.7': {}
 
   '@types/react-dom@19.0.0':
     dependencies:
@@ -53709,19 +53440,8 @@ snapshots:
 
   '@types/semver@7.7.1': {}
 
-  '@types/send@0.17.4':
-    dependencies:
-      '@types/mime': 1.3.5
-      '@types/node': 24.12.0
-
   '@types/serve-handler@6.1.4':
     dependencies:
-      '@types/node': 24.12.0
-
-  '@types/serve-static@1.15.5':
-    dependencies:
-      '@types/http-errors': 2.0.4
-      '@types/mime': 3.0.4
       '@types/node': 24.12.0
 
   '@types/sha.js@2.4.4':
@@ -55994,11 +55714,6 @@ snapshots:
   core-util-is@1.0.2: {}
 
   core-util-is@1.0.3: {}
-
-  cors@2.8.5:
-    dependencies:
-      object-assign: 4.1.1
-      vary: 1.1.2
 
   corser@2.0.1: {}
 

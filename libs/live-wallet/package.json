@@ -37,12 +37,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "8.5.10",
     "jest": "catalog:",
     "msw": "catalog:",
     "timemachine": "0.3.2",
     "typescript": "catalog:",
-    "ws": "8.22.0",
     "@typescript/native": "catalog:",
     "rimraf": "catalog:",
     "oxlint": "catalog:"
