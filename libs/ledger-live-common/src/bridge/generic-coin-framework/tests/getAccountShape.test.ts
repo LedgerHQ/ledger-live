@@ -3695,9 +3695,11 @@ describe("genericGetAccountShape", () => {
       const result = await runGetShape("address1");
 
       expect(adaptOperationsMock).toHaveBeenCalledTimes(1);
-      expect(adaptOperationsMock).toHaveBeenCalledWith("address1", [
-        expect.objectContaining({ type: "REWARD" }),
-      ]);
+      expect(adaptOperationsMock).toHaveBeenCalledWith(
+        "address1",
+        [expect.objectContaining({ type: "REWARD" })],
+        { height: 100 },
+      );
       expect(result.operations?.map(op => op.type)).toEqual(["REWARD", "FEES"]);
     });
   });

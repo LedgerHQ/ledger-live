@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import type { AccountInfo, AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AccountInfo, AssetInfo, BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type {
   BridgeApi,
   OptimisticOperationDescriptor,
@@ -128,6 +128,19 @@ export function describeOptimisticOperation(
   return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
 }
 
+/**
+ * `account_tx` reads up to the newest validated ledger, which can close after `lastBlock`: a newer
+ * operation waits for the next sync, which resumes from the newest stored one. The balance is read
+ * next to `lastBlock`, not at its ledger, so this narrows the gap with the history but can't close it.
+ */
+export function adaptOperations(
+  _address: string,
+  operations: Operation[],
+  blockInfo: BlockInfo,
+): Operation[] {
+  return operations.filter(op => (op.blockHeight ?? 0) <= blockInfo.height);
+}
+
 export function buildIntentData(transaction: Record<string, unknown>): XrpTxData {
   if (transaction.mode !== "changeTrust") return { type: "none" };
 
@@ -139,6 +152,7 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
 
   return {
     getAssetFromToken,
+    adaptOperations,
     buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,

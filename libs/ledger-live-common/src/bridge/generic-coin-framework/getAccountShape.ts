@@ -1110,7 +1110,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     }
 
     if (bridgeApi.adaptOperations) {
-      newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
+      newOps = bridgeApi.adaptOperations(address, newOps, blockInfo) as OperationCommon[];
     }
 
     // A bounded round is treated the same way a from-scratch sync already is for both merges
