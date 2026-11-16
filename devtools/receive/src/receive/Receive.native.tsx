@@ -14,7 +14,7 @@ import {
   Text,
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { ReceiveToolAsset, ReceiveToolProps } from "../types";
+import type { ReceiveToolAsset, ReceiveToolProps, ReceiveTriggerSectionProps } from "../types";
 import { copy } from "./copy";
 import { useReceiveToolViewModel } from "./useReceiveToolViewModel";
 
@@ -48,9 +48,13 @@ function Section({
 function AssetRow({
   asset,
   onReceive,
-}: Readonly<{ asset: ReceiveToolAsset; onReceive: (assetId: string) => void }>) {
+}: Readonly<{ asset: ReceiveToolAsset; onReceive: ReceiveTriggerSectionProps["onReceive"] }>) {
+  const { legacyAccountId, assetId } = asset;
   return (
-    <ListItem onPress={() => onReceive(asset.id)} accessibilityLabel={asset.label}>
+    <ListItem
+      onPress={() => onReceive({ legacyAccountId, assetId })}
+      accessibilityLabel={asset.label}
+    >
       <ListItemLeading>
         <CryptoIcon
           ledgerId={asset.currencyId}

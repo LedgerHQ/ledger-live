@@ -31,6 +31,7 @@ export { useAccountPortfolioToolProps } from "./useAccountPortfolioToolProps";
 export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 export { useReceiveToolProps, type ReceiveToolTrigger } from "./useReceiveToolProps";
+export { findReceiveAccount } from "./findReceiveAccount";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
 export { usePredictionsToolProps } from "./usePredictionsToolProps";

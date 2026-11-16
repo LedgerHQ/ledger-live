@@ -31,33 +31,10 @@ const renderTrigger = () =>
 describe("useReceiveDevToolTrigger", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("lists every account and token account, a token with its network badge", () => {
+  it("opens the receive confirmation of the asset's token account with its parent", () => {
     const { result } = renderTrigger();
 
-    expect(result.current.assets).toEqual([
-      {
-        id: ethAccount.id,
-        label: `Ethereum ${ethAccount.index + 1}`,
-        ticker: "ETH",
-        currencyId: "ethereum",
-        network: "Ethereum",
-        networkId: undefined,
-      },
-      {
-        id: usdcAccount.id,
-        label: usdcToken.name,
-        ticker: usdcToken.ticker,
-        currencyId: usdcToken.id,
-        network: "Ethereum",
-        networkId: "ethereum",
-      },
-    ]);
-  });
-
-  it("opens the receive confirmation of a token account with its parent", () => {
-    const { result } = renderTrigger();
-
-    act(() => result.current.onReceive(usdcAccount.id));
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: usdcToken.id }));
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
@@ -70,10 +47,26 @@ describe("useReceiveDevToolTrigger", () => {
     });
   });
 
+  it("opens the receive confirmation of the main account for its coin", () => {
+    const { result } = renderTrigger();
+
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: "ethereum" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConfirmation,
+      params: {
+        parentId: undefined,
+        currency: ethereum,
+        accountId: ethAccount.id,
+        hideBackButton: true,
+      },
+    });
+  });
+
   it("opens nothing for an unknown account", () => {
     const { result } = renderTrigger();
 
-    act(() => result.current.onReceive("unknown"));
+    act(() => result.current.onReceive({ legacyAccountId: "unknown", assetId: "ethereum" }));
 
     expect(mockNavigate).not.toHaveBeenCalled();
   });

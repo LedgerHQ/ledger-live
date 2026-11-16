@@ -3,7 +3,9 @@ import type { ReceiveToolAsset } from "../types";
 import { Receive } from "./Receive";
 
 const ETHEREUM: ReceiveToolAsset = {
-  id: "js:2:ethereum:0xabc:",
+  id: "uuid-eth:ethereum",
+  legacyAccountId: "js:2:ethereum:0xabc:",
+  assetId: "ethereum",
   label: "Ethereum 1",
   ticker: "ETH",
   currencyId: "ethereum",
@@ -11,7 +13,9 @@ const ETHEREUM: ReceiveToolAsset = {
 };
 
 const USDC: ReceiveToolAsset = {
-  id: "js:2:ethereum:0xabc:+ethereum%2Ferc20%2Fusd__coin",
+  id: "uuid-eth:ethereum/erc20/usd__coin",
+  legacyAccountId: "js:2:ethereum:0xabc:",
+  assetId: "ethereum/erc20/usd__coin",
   label: "USD Coin",
   ticker: "USDC",
   currencyId: "ethereum/erc20/usd__coin",
@@ -64,7 +68,10 @@ describe("Receive", () => {
     const { trigger } = renderTool();
 
     fireEvent.press(screen.getByLabelText("USD Coin"));
-    expect(trigger.onReceive).toHaveBeenCalledWith(USDC.id);
+    expect(trigger.onReceive).toHaveBeenCalledWith({
+      legacyAccountId: "js:2:ethereum:0xabc:",
+      assetId: "ethereum/erc20/usd__coin",
+    });
   });
 
   it("opens receive from the asset selection", () => {

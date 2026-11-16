@@ -19,33 +19,10 @@ const renderTrigger = () =>
   });
 
 describe("useReceiveDevToolTrigger", () => {
-  it("lists every account and token account, a token with its network badge", () => {
-    const { result } = renderTrigger();
-
-    expect(result.current.assets).toEqual([
-      {
-        id: ethAccount.id,
-        label: `Ethereum ${ethAccount.index + 1}`,
-        ticker: "ETH",
-        currencyId: "ethereum",
-        network: "Ethereum",
-        networkId: undefined,
-      },
-      {
-        id: usdcAccount.id,
-        label: usdcToken.name,
-        ticker: usdcToken.ticker,
-        currencyId: usdcToken.id,
-        network: "Ethereum",
-        networkId: "ethereum",
-      },
-    ]);
-  });
-
-  it("opens the receive modal on a token account with its parent", () => {
+  it("opens the receive modal on the token account of the asset, with its parent", () => {
     const { result, store } = renderTrigger();
 
-    act(() => result.current.onReceive(usdcAccount.id));
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: usdcToken.id }));
 
     expect(store.getState().modals.MODAL_RECEIVE).toEqual({
       isOpened: true,
@@ -53,14 +30,13 @@ describe("useReceiveDevToolTrigger", () => {
     });
   });
 
-  it("opens the receive modal on an account without parent", () => {
+  it("opens the receive modal on the main account for its coin", () => {
     const { result, store } = renderTrigger();
 
-    act(() => result.current.onReceive(ethAccount.id));
+    act(() => result.current.onReceive({ legacyAccountId: ethAccount.id, assetId: "ethereum" }));
 
     expect(getModalData(store.getState(), "MODAL_RECEIVE")).toEqual({
       account: ethAccountWithToken,
-      parentAccount: undefined,
       sourcePage: "DevTools",
     });
   });
@@ -68,7 +44,7 @@ describe("useReceiveDevToolTrigger", () => {
   it("opens nothing for an unknown account", () => {
     const { result, store } = renderTrigger();
 
-    act(() => result.current.onReceive("unknown"));
+    act(() => result.current.onReceive({ legacyAccountId: "unknown", assetId: "ethereum" }));
 
     expect(store.getState().modals.MODAL_RECEIVE).toBeUndefined();
   });

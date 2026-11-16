@@ -6,8 +6,13 @@ export interface ReceiveFlagSectionProps {
   readonly setExcludedFamilies: (families: readonly string[]) => void;
 }
 
-export interface ReceiveToolAsset {
-  /** The account the host opens receive on. */
+/** Where the host opens receive: a main account by its legacy id, and the coin or token to receive. */
+export interface ReceiveToolTarget {
+  readonly legacyAccountId: string;
+  readonly assetId: string;
+}
+
+export interface ReceiveToolAsset extends ReceiveToolTarget {
   readonly id: string;
   readonly label: string;
   readonly ticker: string;
@@ -18,9 +23,9 @@ export interface ReceiveToolAsset {
 }
 
 export interface ReceiveTriggerSectionProps {
-  /** Every account and token account. */
+  /** Each account, then each token it holds. */
   readonly assets: readonly ReceiveToolAsset[];
-  readonly onReceive: (assetId: string) => void;
+  readonly onReceive: (target: ReceiveToolTarget) => void;
   readonly onPickAsset: () => void;
   readonly onOpenDeeplink: (url: string) => void;
 }
