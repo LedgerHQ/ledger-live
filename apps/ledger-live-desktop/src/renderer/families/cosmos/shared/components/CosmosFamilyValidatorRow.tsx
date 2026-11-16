@@ -4,7 +4,6 @@ import {
   getAddressExplorer,
   CryptoCurrency,
 } from "@domain/entity-currency-crypto";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
@@ -19,6 +18,7 @@ import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useCosmosLedgerValidatorIds } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 
 type Props = {
   currency: CryptoCurrency;
@@ -29,20 +29,19 @@ type Props = {
 };
 function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
-  const currencyID = currency.id;
+  const ledgerValidatorIds = useCosmosLedgerValidatorIds(currency);
 
   const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const onExternalLink = useCallback(
     (address: string) => {
-      const ledgerValidator = cryptoFactory(currencyID).ledgerValidator;
-      if (address === ledgerValidator) {
+      if (ledgerValidatorIds.includes(address)) {
         openURL(ledgerValidatorUrl);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
         if (srURL) openURL(srURL);
       }
     },
-    [currencyID, explorerView, ledgerValidatorUrl],
+    [ledgerValidatorIds, explorerView, ledgerValidatorUrl],
   );
   return (
     <StyledValidatorRow
@@ -51,7 +50,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
       validator={{
         address: validator.validatorAddress,
       }}
-      icon={<CosmosFamilyLedgerValidatorIcon validator={validator} />}
+      icon={<CosmosFamilyLedgerValidatorIcon currency={currency} validator={validator} />}
       title={validator.name || validator.validatorAddress}
       onExternalLink={onExternalLink}
       unit={unit}

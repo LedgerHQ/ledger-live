@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  AccountStakingPositionSchema,
-  type AccountStakingPosition,
-} from "@domain/entity-account-staking";
+import { AccountStakingSchema, type AccountStaking } from "@domain/entity-account-staking";
 import { sumOf } from "../../account/balanceLocks";
 import { isTronAccount, type UnFrozenInfo } from "./types";
 
@@ -12,10 +9,10 @@ const SUN_PER_VOTE = 1_000_000;
 
 /**
  * Votes as active positions on their super representative, their power in sun; frozen TRX backing no
- * vote as one inactive position; unfreezing TRX as unlocking ones; the account-wide reward on its own.
+ * vote as one inactive position; unfreezing TRX as unlocking ones; the reward account-wide.
  */
-export default function tronStakingPositions(account: Account): AccountStakingPosition[] {
-  if (!isTronAccount(account)) return [];
+export default function tronStaking(account: Account): AccountStaking {
+  if (!isTronAccount(account)) return { positions: [] };
   const assetId = account.currency.id;
   const { frozen, delegatedFrozen, legacyFrozen, unFrozen, votes, unwithdrawnReward } =
     account.tronResources;
@@ -25,6 +22,7 @@ export default function tronStakingPositions(account: Account): AccountStakingPo
     validatorId: address,
     state: "active",
     amount: new BigNumber(voteCount).times(SUN_PER_VOTE).toFixed(0),
+    votes: String(voteCount),
   }));
   const frozenTotal = sumOf([
     frozen.bandwidth?.amount,
@@ -47,23 +45,17 @@ export default function tronStakingPositions(account: Account): AccountStakingPo
       amount: amount.toFixed(0),
       unlockAt: expireTime.toISOString(),
     }));
-  return [
-    ...voted,
-    ...(unvoted.gt(0)
-      ? [{ id: "frozen", assetId, state: "inactive", amount: unvoted.toFixed(0) }]
-      : []),
-    ...unfreezing("bandwidth", unFrozen.bandwidth),
-    ...unfreezing("energy", unFrozen.energy),
-    ...(unwithdrawnReward.gt(0)
-      ? [
-          {
-            id: "reward",
-            assetId,
-            state: "inactive",
-            amount: "0",
-            rewards: unwithdrawnReward.toFixed(0),
-          },
-        ]
-      : []),
-  ].map(position => AccountStakingPositionSchema.parse(position));
+  return AccountStakingSchema.parse({
+    positions: [
+      ...voted,
+      ...(unvoted.gt(0)
+        ? [{ id: "frozen", assetId, state: "inactive", amount: unvoted.toFixed(0) }]
+        : []),
+      ...unfreezing("bandwidth", unFrozen.bandwidth),
+      ...unfreezing("energy", unFrozen.energy),
+    ],
+    rewards: unwithdrawnReward.gt(0)
+      ? [{ assetId, amount: unwithdrawnReward.toFixed(0) }]
+      : undefined,
+  });
 }

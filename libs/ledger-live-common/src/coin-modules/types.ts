@@ -18,7 +18,7 @@ import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
 import type { BalanceLock } from "@domain/entity-account-balance";
-import type { AccountStakingPosition } from "@domain/entity-account-staking";
+import type { AccountStaking } from "@domain/entity-account-staking";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
@@ -195,8 +195,8 @@ export type CoinModuleLoader<
   loadAssetStatus?: () => Promise<(account: A, token: TokenCurrency) => AssetStatus>;
   /** Why part of the native balance is not spendable (staked, frozen, reserve); no breakdown when absent. */
   loadBalanceLocks?: () => Promise<(account: A) => BalanceLock[]>;
-  /** The staking positions the family keeps in its own resources, not in `stakingResources` nor `stakingPositions`. */
-  loadStakingPositions?: () => Promise<(account: A) => AccountStakingPosition[]>;
+  /** The staking the family keeps in its own resources, not in `stakingResources` nor `stakingPositions`. */
+  loadStaking?: () => Promise<(account: A) => AccountStaking>;
   /**
    * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would

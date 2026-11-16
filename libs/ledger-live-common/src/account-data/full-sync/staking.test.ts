@@ -142,11 +142,24 @@ describe("toAccountStaking", () => {
     });
   });
 
-  it("adds the positions the family keeps in its own resources", async () => {
-    const account = mockTronAccount({ votes: [{ name: "sr", address: "TSR", voteCount: 3 }] });
-    expect((await toAccountStaking(account)).positions).toEqual([
-      { id: "vote:TSR", assetId: "tron", validatorId: "TSR", state: "active", amount: "3000000" },
-    ]);
+  it("adds the positions and rewards the family keeps in its own resources", async () => {
+    const account = mockTronAccount({
+      votes: [{ name: "sr", address: "TSR", voteCount: 3 }],
+      unwithdrawnReward: new BigNumber(42),
+    });
+    expect(await toAccountStaking(account)).toEqual({
+      positions: [
+        {
+          id: "vote:TSR",
+          assetId: "tron",
+          validatorId: "TSR",
+          state: "active",
+          amount: "3000000",
+          votes: "3",
+        },
+      ],
+      rewards: [{ assetId: "tron", amount: "42" }],
+    });
   });
 
   it("maps the positions kept by the generic bridge, native ones only", async () => {

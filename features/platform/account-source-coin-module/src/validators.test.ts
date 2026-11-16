@@ -48,8 +48,8 @@ describe("toNetworkValidator", () => {
   });
 
   it("flags a Ledger validator", () => {
-    expect(toNetworkValidator(validator, true).ledger).toBe(true);
-    expect(toNetworkValidator(validator, false)).not.toHaveProperty("ledger");
+    expect(toNetworkValidator(validator, true).isLedger).toBe(true);
+    expect(toNetworkValidator(validator, false)).not.toHaveProperty("isLedger");
   });
 
   it("leaves out the fields the entity would reject, and falls back to the address as id", () => {
@@ -93,7 +93,7 @@ describe("createCoinModuleValidatorsSource", () => {
     const validators = await sourceWith({ getValidators }, true, isLedgerValidator).read(cosmos, {
       signal,
     });
-    expect(validators.map(({ ledger }) => ledger)).toEqual([undefined, true]);
+    expect(validators.map(({ isLedger }) => isLedger)).toEqual([undefined, true]);
     expect(isLedgerValidator).toHaveBeenCalledWith("cosmos", "v2");
   });
 

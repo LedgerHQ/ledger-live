@@ -380,7 +380,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => import("../families/polkadot/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/polkadot/bridge/mock").then(m => m.default),
     loadBalanceLocks: () => import("../families/polkadot/balanceLocks").then(m => m.default),
-    loadStakingPositions: () => import("../families/polkadot/staking").then(m => m.default),
+    loadStaking: () => import("../families/polkadot/staking").then(m => m.default),
   },
   {
     family: "solana",
@@ -485,7 +485,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccountRawAssign: () => import("../families/tron/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
     loadBalanceLocks: () => import("../families/tron/balanceLocks").then(m => m.default),
-    loadStakingPositions: () => import("../families/tron/staking").then(m => m.default),
+    loadStaking: () => import("../families/tron/staking").then(m => m.default),
   },
   {
     family: "vechain",

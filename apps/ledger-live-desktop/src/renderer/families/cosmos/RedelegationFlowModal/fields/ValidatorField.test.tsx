@@ -16,7 +16,7 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 const VALIDATOR_A: NetworkValidator = { id: "validatorA", name: "Validator A", totalStaked: "2" };
 const VALIDATOR_B: NetworkValidator = { id: "validatorB", name: "Validator B", totalStaked: "1" };
-const LEDGER: NetworkValidator = { id: "ledger", name: "Ledger", totalStaked: "0", ledger: true };
+const LEDGER: NetworkValidator = { id: "ledger", name: "Ledger", totalStaked: "0", isLedger: true };
 
 const account = {
   type: "Account",

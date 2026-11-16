@@ -18,7 +18,7 @@ export const NetworkValidatorSchema = z.object({
   iconUrl: z.string().url().optional(),
   url: z.string().url().optional(),
   /** Set when the validator is run by Ledger, for screens to put it first. */
-  ledger: z.literal(true).optional(),
+  isLedger: z.literal(true).optional(),
 });
 
 export type NetworkValidator = z.infer<typeof NetworkValidatorSchema>;

@@ -50,7 +50,7 @@ const isHttpUrl = (value: string | undefined): value is string => {
 /** Keeps only what the entity accepts: a field a module fills oddly is left out, not failing the list. */
 export function toNetworkValidator(
   { id, address, name, url, logo, balance, commissionRate, apy }: CoinModuleValidator,
-  ledger = false,
+  isLedger = false,
 ): NetworkValidator {
   const commission = commissionRate === undefined ? Number.NaN : Number(commissionRate);
   return {
@@ -62,7 +62,7 @@ export function toNetworkValidator(
     ...(balance !== undefined && balance >= 0n ? { totalStaked: balance.toString() } : {}),
     ...(isHttpUrl(logo) ? { iconUrl: logo } : {}),
     ...(isHttpUrl(url) ? { url } : {}),
-    ...(ledger ? { ledger: true } : {}),
+    ...(isLedger ? { isLedger: true } : {}),
   };
 }
 

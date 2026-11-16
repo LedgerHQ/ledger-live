@@ -23,13 +23,15 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosMappedDelegations } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
-import { useCosmosNetworkValidators } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
+import {
+  useCosmosLedgerValidatorIds,
+  useCosmosNetworkValidators,
+} from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 
 type DelegationActionsModalName =
   | "MODAL_COSMOS_CLAIM_REWARDS"
@@ -53,6 +55,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     unbondings,
   } = account.stakingResources;
   const { validators } = useCosmosNetworkValidators(account.currency);
+  const ledgerValidatorIds = useCosmosLedgerValidatorIds(account.currency);
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
@@ -114,14 +117,14 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
     (address: string) => {
-      if (cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(address)) {
+      if (ledgerValidatorIds.includes(address)) {
         openURL(validatorUrl);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
         if (srURL) openURL(srURL);
       }
     },
-    [explorerView, validatorUrl],
+    [ledgerValidatorIds, explorerView, validatorUrl],
   );
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings && unbondings.length > 0;
@@ -254,7 +257,12 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
           />
           <UnbondingHeader />
           {mappedUnbondings.map((delegation, index) => (
-            <UnbondingRow key={index} delegation={delegation} onExternalLink={onExternalLink} />
+            <UnbondingRow
+              key={index}
+              currency={account.currency}
+              delegation={delegation}
+              onExternalLink={onExternalLink}
+            />
           ))}
         </TableContainer>
       ) : null}

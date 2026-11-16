@@ -35,8 +35,8 @@ describe("fromCosmosValidator", () => {
   });
 
   it("flags a Ledger validator", () => {
-    expect(fromCosmosValidator(cosmosValidator, true).ledger).toBe(true);
-    expect(fromCosmosValidator(cosmosValidator, false)).not.toHaveProperty("ledger");
+    expect(fromCosmosValidator(cosmosValidator, true).isLedger).toBe(true);
+    expect(fromCosmosValidator(cosmosValidator, false)).not.toHaveProperty("isLedger");
   });
 
   it("leaves out what the entity would reject", () => {
@@ -79,7 +79,7 @@ describe("createPreloadValidatorsSource", () => {
       },
     });
     const validators = await source.read(NetworkIdSchema.parse("cosmos"), { signal });
-    expect(validators.map(({ ledger }) => ledger)).toEqual([undefined, true]);
+    expect(validators.map(({ isLedger }) => isLedger)).toEqual([undefined, true]);
     expect(isLedgerValidator).toHaveBeenCalledWith("cosmos", "ledgervaloper");
   });
 

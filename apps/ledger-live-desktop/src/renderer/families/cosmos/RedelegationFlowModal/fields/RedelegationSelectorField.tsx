@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useTranslation } from "react-i18next";
 import { useCosmosDelegationsQuerySelector } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
 import {
@@ -11,16 +12,18 @@ import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/c
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
-const renderItem = ({
+const Item = ({
   data: { validatorAddress, validator, formattedAmount },
+  currency,
 }: {
   data: CosmosMappedDelegation;
+  currency: CryptoCurrency;
 }) => {
   const name = validator?.name ?? validatorAddress;
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <CosmosFamilyLedgerValidatorIcon validator={validator} />
+        <CosmosFamilyLedgerValidatorIcon currency={currency} validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>
@@ -43,6 +46,12 @@ export default function RedelegationSelectorField({
   const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
     account,
     transaction,
+  );
+  const renderItem = useCallback(
+    ({ data }: { data: CosmosMappedDelegation }) => (
+      <Item data={data} currency={account.currency} />
+    ),
+    [account.currency],
   );
   return (
     <Box flow={1} pb={5}>

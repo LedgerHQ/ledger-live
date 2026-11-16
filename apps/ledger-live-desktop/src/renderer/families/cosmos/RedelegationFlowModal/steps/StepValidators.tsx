@@ -143,7 +143,10 @@ export default function StepValidators({
           <Box flex="1" horizontal alignItems="center" justifyContent="space-between">
             {selectedValidatorData ? (
               <Box horizontal alignItems="center">
-                <CosmosFamilyLedgerValidatorIcon validator={selectedValidatorData} />
+                <CosmosFamilyLedgerValidatorIcon
+                  currency={account.currency}
+                  validator={selectedValidatorData}
+                />
                 <Text ff="Inter|Medium" ml={2}>
                   {selectedValidatorData.name || selectedValidatorData.validatorAddress}
                 </Text>

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
@@ -18,13 +18,14 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import BigNumber from "bignumber.js";
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
+import { useCosmosLedgerValidatorIds } from "~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators";
 import {
   type CosmosAccount,
   type Transaction as CosmosTransaction,
@@ -90,6 +91,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
+  const ledgerValidatorId = useCosmosLedgerValidatorIds(account.currency).at(0);
   const {
     transaction,
     setTransaction,
@@ -103,7 +105,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
-      valAddress: cryptoFactory(account.currency.id).ledgerValidator ?? "",
+      valAddress: ledgerValidatorId ?? "",
       amount: BigNumber(0),
       recipient: account.freshAddress,
     });
@@ -113,6 +115,14 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
       transaction,
     };
   });
+
+  // The validators may arrive after the modal opened: preselect Ledger's unless one is picked.
+  useEffect(() => {
+    if (!ledgerValidatorId) return;
+    updateTransaction(tx =>
+      getValAddress(tx) ? tx : bridge.updateTransaction(tx, { valAddress: ledgerValidatorId }),
+    );
+  }, [bridge, ledgerValidatorId, updateTransaction]);
 
   const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {

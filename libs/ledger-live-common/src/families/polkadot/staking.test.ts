@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { genAccount } from "../../mock/account";
 import type { PolkadotAccount, PolkadotResources } from "./types";
-import polkadotStakingPositions from "./staking";
+import polkadotStaking from "./staking";
 
 const past = new Date("2020-01-01T00:00:00.000Z");
 const future = new Date("2999-01-01T00:00:00.000Z");
@@ -23,8 +23,8 @@ const polkadot = (resources: Partial<PolkadotResources> = {}): PolkadotAccount =
   },
 });
 
-describe("polkadotStakingPositions", () => {
-  it("maps nominations to positions on their validator, the bond backing none as inactive", () => {
+describe("polkadotStaking", () => {
+  it("maps the bond to one position nominating its validators, active while one is elected", () => {
     const account = polkadot({
       lockedBalance: new BigNumber(100),
       unlockingBalance: new BigNumber(30),
@@ -33,23 +33,35 @@ describe("polkadotStakingPositions", () => {
         { address: "val2", value: new BigNumber(0), status: "waiting" },
       ],
     });
-    expect(polkadotStakingPositions(account)).toEqual([
+    expect(polkadotStaking(account).positions).toEqual([
       {
-        id: "nomination:val1",
+        id: "bonded",
         assetId: "polkadot",
-        validatorId: "val1",
+        validatorIds: ["val1", "val2"],
         state: "active",
-        amount: "60",
+        amount: "70",
       },
-      {
-        id: "nomination:val2",
-        assetId: "polkadot",
-        validatorId: "val2",
-        state: "inactive",
-        amount: "0",
-      },
-      { id: "bonded", assetId: "polkadot", state: "inactive", amount: "10" },
     ]);
+  });
+
+  it("keeps the bond inactive while no nominated validator is elected, without validators when none", () => {
+    const waiting = polkadot({
+      lockedBalance: new BigNumber(50),
+      nominations: [{ address: "val1", value: new BigNumber(0), status: "waiting" }],
+    });
+    expect(polkadotStaking(waiting).positions).toEqual([
+      {
+        id: "bonded",
+        assetId: "polkadot",
+        validatorIds: ["val1"],
+        state: "inactive",
+        amount: "50",
+      },
+    ]);
+    const [bonded] = polkadotStaking(
+      polkadot({ lockedBalance: new BigNumber(50), nominations: null }),
+    ).positions;
+    expect(bonded.validatorIds).toBeUndefined();
   });
 
   it("maps unlocking chunks to unlocking positions, withdrawable once unlocked", () => {
@@ -61,7 +73,7 @@ describe("polkadotStakingPositions", () => {
         { amount: new BigNumber(20), completionDate: past },
       ],
     });
-    expect(polkadotStakingPositions(account)).toEqual([
+    expect(polkadotStaking(account).positions).toEqual([
       {
         id: `unlocking:${future.getTime()}:0`,
         assetId: "polkadot",
@@ -80,12 +92,14 @@ describe("polkadotStakingPositions", () => {
   });
 
   it("answers no position when nothing is bonded", () => {
-    expect(polkadotStakingPositions(polkadot({ nominations: null, unlockings: null }))).toEqual([]);
+    expect(polkadotStaking(polkadot({ nominations: null, unlockings: null }))).toEqual({
+      positions: [],
+    });
   });
 
   it("answers no position for an account without Polkadot resources", () => {
     expect(
-      polkadotStakingPositions(genAccount("eth", { currency: getCryptoCurrencyById("ethereum") })),
-    ).toEqual([]);
+      polkadotStaking(genAccount("eth", { currency: getCryptoCurrencyById("ethereum") })),
+    ).toEqual({ positions: [] });
   });
 });

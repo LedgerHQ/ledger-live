@@ -30,8 +30,8 @@ export function ledgerFirstValidators(
     .filter(({ commission, name }) => commission !== 1 && name.toLowerCase().includes(query))
     .sort(byTotalStakedDesc);
   return [
-    ...pickable.filter(({ ledger }) => ledger),
-    ...pickable.filter(({ ledger }) => !ledger),
+    ...pickable.filter(({ isLedger }) => isLedger),
+    ...pickable.filter(({ isLedger }) => !isLedger),
   ].map(toCosmosValidatorItem);
 }
 
@@ -46,4 +46,13 @@ export function useCosmosNetworkValidators(currency: CryptoCurrency) {
 export function useLedgerFirstCosmosValidators(currency: CryptoCurrency, search?: string) {
   const { validators } = useNetworkValidators(networkFromCurrencyId(currency.id));
   return useMemo(() => ledgerFirstValidators(validators, search), [validators, search]);
+}
+
+/** Ids of the validators Ledger runs on the network, empty until the validators are read. */
+export function useCosmosLedgerValidatorIds(currency: CryptoCurrency): readonly string[] {
+  const { validators } = useNetworkValidators(networkFromCurrencyId(currency.id));
+  return useMemo(
+    () => validators.filter(({ isLedger }) => isLedger).map(({ id }) => id),
+    [validators],
+  );
 }

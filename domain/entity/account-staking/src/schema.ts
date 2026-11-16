@@ -38,9 +38,13 @@ export const AccountStakingPositionSchema = z.object({
   assetId: CryptoOrTokenCurrencyIdSchema,
   /** The validator, pool or delegate address; absent when the chain has none. */
   validatorId: z.string().min(1).optional(),
+  /** The validators one stake backs together (Polkadot nominations); `validatorId` names a single one. */
+  validatorIds: z.array(z.string().min(1)).min(1).optional(),
   state: StakingPositionStateSchema,
   /** What the position holds, in the asset's smallest unit. */
   amount: AmountStrSchema,
+  /** The votes cast, where the chain counts votes apart from `amount` (Tron: `amount` is the voted power in sun). */
+  votes: AmountStrSchema.optional(),
   /** Rewards earned: part of `amount` when the chain compounds them (`amount = deposited + rewards`), to claim apart otherwise (Cosmos). */
   rewards: AmountStrSchema.optional(),
   /** The part of `amount` that was deposited. */
@@ -60,9 +64,19 @@ export const AccountStakingPositionSchema = z.object({
 
 export type AccountStakingPosition = z.infer<typeof AccountStakingPositionSchema>;
 
+/** Rewards claimable account-wide, not earned by one position (Tron). */
+export const AccountStakingRewardSchema = z.object({
+  assetId: CryptoOrTokenCurrencyIdSchema,
+  amount: AmountStrSchema,
+});
+
+export type AccountStakingReward = z.infer<typeof AccountStakingRewardSchema>;
+
 export const AccountStakingSchema = z.object({
   /** Empty for an account that does not stake, or whose family stakes another way. */
   positions: z.array(AccountStakingPositionSchema),
+  /** Absent when every reward rides on its position. */
+  rewards: z.array(AccountStakingRewardSchema).optional(),
 });
 
 export type AccountStaking = z.infer<typeof AccountStakingSchema>;
@@ -91,7 +105,7 @@ export const StakingTotalsSchema = z.object({
   /** Deactivating. */
   unbonding: AmountStrSchema,
   withdrawable: AmountStrSchema,
-  /** The `rewards` of every position. */
+  /** The `rewards` of every position, plus the account-wide ones. */
   rewards: AmountStrSchema,
 });
 

@@ -144,9 +144,7 @@ export const loadBalanceLocksForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadBalanceLocks?.(),
 );
 
-export const loadStakingPositionsForFamily = makeLoaderCache(family =>
-  loaders.get(family)?.loadStakingPositions?.(),
-);
+export const loadStakingForFamily = makeLoaderCache(family => loaders.get(family)?.loadStaking?.());
 
 export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadWalletApiAdapter?.(),

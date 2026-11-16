@@ -15,7 +15,7 @@ const INTEGER = /^\d+$/;
 
 export function fromCosmosValidator(
   { validatorAddress, name, commission, estimatedYearlyRewardsRate, tokens }: CosmosValidatorItem,
-  ledger = false,
+  isLedger = false,
 ): NetworkValidator {
   return {
     id: validatorAddress,
@@ -24,7 +24,7 @@ export function fromCosmosValidator(
     ...(commission >= 0 && commission <= 1 ? { commission } : {}),
     ...(estimatedYearlyRewardsRate >= 0 ? { apy: estimatedYearlyRewardsRate } : {}),
     ...(INTEGER.test(tokens) ? { totalStaked: tokens } : {}),
-    ...(ledger ? { ledger: true } : {}),
+    ...(isLedger ? { isLedger: true } : {}),
   };
 }
 

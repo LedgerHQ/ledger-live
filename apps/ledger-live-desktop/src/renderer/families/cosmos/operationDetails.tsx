@@ -7,7 +7,7 @@ import {
   CryptoCurrency,
 } from "@domain/entity-currency-crypto";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
-import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
+import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   CosmosAccount,
   CosmosOperation,
@@ -38,6 +38,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { useCosmosNetworkValidators } from "./shared/hooks/useCosmosNetworkValidators";
 
 function getURLFeesInfo({
   op,
@@ -133,7 +134,7 @@ const OperationDetailsExtra = ({
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const { extra } = operation;
-  const cosmosValidators = accountValidators(account);
+  const { validators: cosmosValidators } = useCosmosNetworkValidators(account.currency);
   const getValidatorName = (address: string): string => {
     return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
   };

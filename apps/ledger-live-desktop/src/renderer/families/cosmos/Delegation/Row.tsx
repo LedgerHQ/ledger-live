@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -118,6 +119,7 @@ export function Row({
   onExternalLink,
   isCroAccount,
 }: Props) {
+  const { currency } = account;
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
       onManageAction(validatorAddress, action.key as DelegationActionsModalName);
@@ -187,6 +189,7 @@ export function Row({
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
           <CosmosFamilyLedgerValidatorIcon
+            currency={currency}
             validator={
               validator ?? {
                 validatorAddress,
@@ -251,10 +254,12 @@ export function Row({
   );
 }
 type UnbondingRowProps = {
+  currency: CryptoCurrency;
   delegation: CosmosMappedUnbonding;
   onExternalLink: (address: string) => void;
 };
 export function UnbondingRow({
+  currency,
   delegation: { validator, formattedAmount, validatorAddress, completionDate },
   onExternalLink,
 }: UnbondingRowProps) {
@@ -270,6 +275,7 @@ export function UnbondingRow({
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
           <CosmosFamilyLedgerValidatorIcon
+            currency={currency}
             validator={
               validator ?? {
                 validatorAddress,

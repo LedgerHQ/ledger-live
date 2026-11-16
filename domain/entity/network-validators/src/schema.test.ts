@@ -12,7 +12,7 @@ describe("NetworkValidatorSchema", () => {
   });
 
   it("accepts the Ledger flag", () => {
-    expect(mockNetworkValidator({ ledger: true }).ledger).toBe(true);
+    expect(mockNetworkValidator({ isLedger: true }).isLedger).toBe(true);
   });
 
   it.each([
@@ -22,7 +22,7 @@ describe("NetworkValidatorSchema", () => {
     ["a decimal totalStaked", { totalStaked: "1.5" }],
     ["a negative totalStaked", { totalStaked: "-1" }],
     ["an iconUrl that is not a url", { iconUrl: "logo" }],
-    ["a ledger flag set to false", { ledger: false }],
+    ["an isLedger flag set to false", { isLedger: false }],
   ])("rejects %s", (_, override) => {
     expect(
       NetworkValidatorSchema.safeParse({ ...mockNetworkValidator(), ...override }).success,

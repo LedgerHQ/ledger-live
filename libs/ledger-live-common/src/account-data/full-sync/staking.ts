@@ -9,7 +9,7 @@ import {
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
 import { AccountStakingSchema, type AccountStaking } from "@domain/entity-account-staking";
-import { loadStakingPositionsForFamily } from "../../coin-modules/registry";
+import { loadStakingForFamily } from "../../coin-modules/registry";
 import { toAmount } from "./balance";
 
 /** `Stake` with `BigNumber` amounts, as the generic bridge keeps it on the account; persisted without `actions` nor `asset` on some families. */
@@ -115,8 +115,9 @@ export async function toAccountStaking(account: Account): Promise<AccountStaking
         .filter(({ asset }) => asset === undefined || asset.type === "native")
         .map(position => fromStake(assetId, position))
     : [];
-  const familyPositions = await loadStakingPositionsForFamily(account.currency.family);
+  const familyStaking = (await loadStakingForFamily(account.currency.family))?.(account);
   return AccountStakingSchema.parse({
-    positions: [...resources, ...stakes, ...(familyPositions?.(account) ?? [])],
+    positions: [...resources, ...stakes, ...(familyStaking?.positions ?? [])],
+    rewards: familyStaking?.rewards,
   });
 }

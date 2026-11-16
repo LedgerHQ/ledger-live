@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useCosmosDelegationsQuerySelector } from "~/renderer/families/cosmos/shared/hooks/useCosmosMappedDelegations";
 import {
@@ -6,6 +6,7 @@ import {
   CosmosMappedDelegation,
   CosmosAccount,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -22,6 +23,12 @@ export default function ValidatorField({ account, transaction, onChange }: Props
     account,
     transaction,
   );
+  const renderRow = useCallback(
+    ({ data }: { data: CosmosMappedDelegation }) => (
+      <OptionRow data={data} currency={account.currency} />
+    ),
+    [account.currency],
+  );
   return (
     <Box mb={4}>
       <Label>{t("cosmos.undelegation.flow.steps.amount.fields.validator")}</Label>
@@ -30,8 +37,8 @@ export default function ValidatorField({ account, transaction, onChange }: Props
         options={options}
         inputValue={query}
         onInputChange={setQuery}
-        renderOption={OptionRow}
-        renderValue={OptionRow}
+        renderOption={renderRow}
+        renderValue={renderRow}
         onChange={onChange}
       />
     </Box>
@@ -39,13 +46,17 @@ export default function ValidatorField({ account, transaction, onChange }: Props
 }
 type OptionRowProps = {
   data: CosmosMappedDelegation;
+  currency: CryptoCurrency;
 };
-function OptionRow({ data: { validatorAddress, validator, formattedAmount } }: OptionRowProps) {
+function OptionRow({
+  data: { validatorAddress, validator, formattedAmount },
+  currency,
+}: OptionRowProps) {
   const name = validator?.name ?? validatorAddress;
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <CosmosFamilyLedgerValidatorIcon validator={validator} />
+        <CosmosFamilyLedgerValidatorIcon currency={currency} validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>

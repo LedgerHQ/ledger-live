@@ -4,6 +4,7 @@ import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import {
   initialAccountStakingState,
+  type AccountStaking,
   type AccountStakingPosition,
   type AccountStakingState,
   type StakingTotals,
@@ -13,11 +14,16 @@ import { assetStakingTotals, stakingTotals } from "./totals";
 /** Keys come from action payloads: one inherited from `Object.prototype` is never a record entry. */
 const isInheritedKey = (key: string) => key in Object.prototype;
 
+const stakingOf = (
+  state: AccountStakingState,
+  accountUUID: AccountUUID,
+): AccountStaking | undefined =>
+  isInheritedKey(accountUUID) ? undefined : state[accountUUID]?.staking;
+
 const positionsOf = (
   state: AccountStakingState,
   accountUUID: AccountUUID,
-): AccountStakingPosition[] | undefined =>
-  isInheritedKey(accountUUID) ? undefined : state[accountUUID]?.staking.positions;
+): AccountStakingPosition[] | undefined => stakingOf(state, accountUUID)?.positions;
 
 export const accountStakingSlice = createSlice({
   name: "accountStaking",
@@ -26,21 +32,21 @@ export const accountStakingSlice = createSlice({
   selectors: {
     selectAccountStakingPositions: positionsOf,
     /** One row per staked asset, `undefined` until the account is read. */
-    selectAccountStakingTotals: createSelector([positionsOf], positions =>
-      positions ? stakingTotals(positions) : undefined,
+    selectAccountStakingTotals: createSelector([stakingOf], staking =>
+      staking ? stakingTotals(staking) : undefined,
     ),
-    /** The totals of one asset, zero when it has no position, `undefined` until the account is read. */
+    /** The totals of one asset, zero when it has neither position nor reward, `undefined` until the account is read. */
     selectAccountAssetStakingTotals: createSelector(
       [
-        positionsOf,
+        stakingOf,
         (
           _state: AccountStakingState,
           _accountUUID: AccountUUID,
           assetId: CryptoOrTokenCurrencyId,
         ) => assetId,
       ],
-      (positions, assetId): StakingTotals | undefined =>
-        positions && assetStakingTotals(positions, assetId),
+      (staking, assetId): StakingTotals | undefined =>
+        staking && assetStakingTotals(staking, assetId),
     ),
   },
   extraReducers: builder => {

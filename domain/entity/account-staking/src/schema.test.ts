@@ -47,8 +47,22 @@ describe("AccountStakingPositionSchema", () => {
     );
   });
 
+  it("should accept a Tron vote with its count", () => {
+    expect(mockAccountStakingPosition({ votes: "4", amount: "4000000" }).votes).toBe("4");
+  });
+
+  it("should accept a stake backing several validators", () => {
+    const validatorIds = ["val1", "val2"];
+    expect(
+      mockAccountStakingPosition({ validatorId: undefined, validatorIds }).validatorIds,
+    ).toEqual(validatorIds);
+  });
+
   it.each([
     { state: "bonded" },
+    { votes: "1.5" },
+    { validatorIds: [] },
+    { validatorIds: [""] },
     { redelegatingFrom: { validatorId: "" } },
     { redelegatingFrom: { validatorId: "v", completesAt: "soon" } },
     { amount: "-1" },
@@ -68,6 +82,23 @@ describe("AccountStakingPositionSchema", () => {
 describe("AccountStakingSchema", () => {
   it("should accept an account that does not stake", () => {
     expect(AccountStakingSchema.parse({ positions: [] })).toEqual({ positions: [] });
+  });
+
+  it("should accept account-wide rewards", () => {
+    const rewards = [{ assetId: "tron", amount: "42" }];
+    expect(AccountStakingSchema.parse({ positions: [], rewards })).toEqual({
+      positions: [],
+      rewards,
+    });
+  });
+
+  it("should reject an account-wide reward with a bad amount", () => {
+    expect(
+      AccountStakingSchema.safeParse({
+        positions: [],
+        rewards: [{ assetId: "tron", amount: "-1" }],
+      }).success,
+    ).toBe(false);
   });
 
   it("should reject a result without positions", () => {

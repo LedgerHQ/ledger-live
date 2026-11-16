@@ -38,6 +38,7 @@ jest.mock("~/renderer/families/cosmos/shared/hooks/useCosmosNetworkValidators", 
     pending: false,
     error: undefined,
   }),
+  useCosmosLedgerValidatorIds: () => [],
 }));
 
 let selectorOnChange: ((delegation?: CosmosMappedDelegation | null) => void) | null = null;

@@ -116,6 +116,30 @@ describe("selectAccountStakingTotals", () => {
     ]);
   });
 
+  it("should add the account-wide rewards to their asset, with a row for an asset without position", () => {
+    const staking = mockAccountStaking({
+      positions: [mockAccountStakingPosition({ id: "a", amount: "100", rewards: "1" })],
+      rewards: [
+        { assetId: cosmos, amount: "10" },
+        { assetId: token, amount: "4" },
+      ],
+    });
+    const state = {
+      accountStaking: mockAccountStakingState({ [accountUUID]: { revision: 0, staking } }),
+    };
+    expect(selectAccountStakingTotals(state, accountUUID)).toEqual([
+      { assetId: cosmos, staked: "100", unbonding: "0", withdrawable: "0", rewards: "11" },
+      { assetId: token, staked: "0", unbonding: "0", withdrawable: "0", rewards: "4" },
+    ]);
+    expect(selectAccountAssetStakingTotals(state, accountUUID, token)).toEqual({
+      assetId: token,
+      staked: "0",
+      unbonding: "0",
+      withdrawable: "0",
+      rewards: "4",
+    });
+  });
+
   it("should return the same totals while the positions do not change", () => {
     expect(selectAccountStakingTotals(rootState, accountUUID)).toBe(
       selectAccountStakingTotals(rootState, accountUUID),

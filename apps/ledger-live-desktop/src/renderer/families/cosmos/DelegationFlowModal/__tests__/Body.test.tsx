@@ -4,6 +4,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useNetworkValidators } from "@domain/api-network-validators";
+import type { NetworkValidator } from "@domain/entity-network-validators";
 import Body from "../Body";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
@@ -16,9 +18,9 @@ jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
   Track: () => null,
 }));
-jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
-  __esModule: true,
-  default: () => ({ ledgerValidator: "ledger-validator-address" }),
+jest.mock("@domain/api-network-validators", () => ({
+  ...jest.requireActual("@domain/api-network-validators"),
+  useNetworkValidators: jest.fn(),
 }));
 jest.mock("../steps/StepDelegation", () => ({
   __esModule: true,
@@ -61,6 +63,14 @@ jest.mock("~/renderer/components/Stepper", () => ({
 
 const mockedUseAccountBridge = jest.mocked(useAccountBridge);
 const mockedUseBridgeTransaction = jest.mocked(useBridgeTransaction);
+const updateTransaction = jest.fn<void, [(tx: Transaction) => Transaction]>();
+
+const LEDGER: NetworkValidator = { id: "ledger-validator-address", name: "Ledger", isLedger: true };
+const OTHER: NetworkValidator = { id: "other-validator-address", name: "Other" };
+const mockValidators = (validators: NetworkValidator[]) =>
+  jest
+    .mocked(useNetworkValidators)
+    .mockReturnValue({ validators, pending: false, error: undefined });
 
 const currency = getCryptoCurrencyById("cosmos");
 const account = {
@@ -92,7 +102,7 @@ const setupHooks = () => {
     return {
       transaction: initial.transaction,
       setTransaction: jest.fn(),
-      updateTransaction: jest.fn(),
+      updateTransaction,
       account: initial.account,
       parentAccount: initial.parentAccount,
       status: { errors: {}, warnings: {} },
@@ -106,6 +116,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   stepperPropsCapture.mockClear();
   setupHooks();
+  mockValidators([OTHER, LEDGER]);
 });
 
 const renderBody = () => {
@@ -134,6 +145,54 @@ describe("DelegationFlowModal/Body", () => {
         mode: "delegate",
         recipient: "cosmos1test",
       }),
+    );
+  });
+
+  it("preselects the Ledger validator when the validators are already loaded", () => {
+    renderBody();
+    expect(baseBridge.updateTransaction).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ valAddress: "ledger-validator-address" }),
+    );
+  });
+
+  it("preselects the Ledger validator once the validators arrive, keeping a validator already picked", () => {
+    mockValidators([]);
+    const { rerender } = renderBody();
+    expect(baseBridge.updateTransaction).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ valAddress: "" }),
+    );
+    expect(updateTransaction).not.toHaveBeenCalled();
+
+    mockValidators([OTHER, LEDGER]);
+    rerender(
+      <Body
+        stepId="validator"
+        onClose={jest.fn()}
+        onChangeStepId={jest.fn()}
+        params={{ account }}
+      />,
+    );
+    const updater = updateTransaction.mock.calls[0][0];
+    const delegate = (valAddress: string) =>
+      baseBridge.updateTransaction(baseBridge.createTransaction(), {
+        mode: "delegate",
+        valAddress,
+      });
+    const empty = delegate("");
+    const picked = delegate("other-validator-address");
+    expect(updater(empty)).toMatchObject({ valAddress: "ledger-validator-address" });
+    expect(updater(picked)).toBe(picked);
+  });
+
+  it("preselects nothing when no validator is Ledger's", () => {
+    mockValidators([OTHER]);
+    renderBody();
+    expect(updateTransaction).not.toHaveBeenCalled();
+    expect(baseBridge.updateTransaction).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ valAddress: "" }),
     );
   });
 });
