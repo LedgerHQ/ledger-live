@@ -1,7 +1,12 @@
 import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getIssuerFee } from "@ledgerhq/coin-xrp/logic-public";
-import { MAX_TRUST_LIMIT, getIssuerFeeForToken, isMaxTrustLimit } from "./logicPublic";
+import {
+  MAX_TRUST_LIMIT,
+  getIssuerFeeAmount,
+  getIssuerFeeForToken,
+  isMaxTrustLimit,
+} from "./logicPublic";
 
 jest.mock("@ledgerhq/coin-xrp/logic-public", () => {
   return {
@@ -56,5 +61,19 @@ describe("getIssuerFeeForToken", () => {
         assetOwner: token.contractAddress,
       },
     );
+  });
+});
+
+describe("getIssuerFeeAmount", () => {
+  it("is the part of the total spent above the amount on a token send", () => {
+    const status = { amount: new BigNumber(200), totalSpent: new BigNumber(201) };
+
+    expect(getIssuerFeeAmount(status)).toEqual(new BigNumber(1));
+  });
+
+  it("is null when the token has no fee", () => {
+    const status = { amount: new BigNumber(200), totalSpent: new BigNumber(200) };
+
+    expect(getIssuerFeeAmount(status)).toBeNull();
   });
 });
