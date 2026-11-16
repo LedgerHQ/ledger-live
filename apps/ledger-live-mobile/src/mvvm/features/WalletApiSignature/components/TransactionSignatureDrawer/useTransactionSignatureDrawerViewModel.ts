@@ -135,7 +135,6 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
           notePromptShown();
           break;
         case "cancelled":
-        case "error":
           noteSettled();
           break;
         case "signed":

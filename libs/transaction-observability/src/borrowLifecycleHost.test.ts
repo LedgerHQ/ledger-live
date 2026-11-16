@@ -15,6 +15,7 @@ import {
 } from "./logEvent";
 import { emitTransactionEvent, resetTransactionObservers } from "./observer";
 import { clearPendingTxLifecycle } from "./txLifecycle";
+import { listenToTxLifecycle } from "./txLifecycleEndpoint.mock";
 import { registerTxLifecycleObserver, toTxLifecyclePayload } from "./txLifecycleProducts";
 
 const common = {
@@ -34,16 +35,9 @@ const intent: LogEvent = { status: "intent", stage: TransactionStage.Sign, ...co
 const success: LogEvent = { status: "success", stage: TransactionStage.Broadcast, ...common };
 
 describe("borrow lifecycle", () => {
-  let fetchSpy: jest.SpiedFunction<typeof fetch>;
-
-  const calls = () =>
-    fetchSpy.mock.calls.map(([url, init]) => ({
-      url: String(url),
-      body: JSON.parse(String(init?.body)) as Record<string, unknown>,
-    }));
+  const lifecycle = listenToTxLifecycle();
 
   beforeEach(() => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
     setBorrowTxLifecycleBaseUrl("https://borrow.example.test/");
     setTxLifecycleBaseUrl("https://earn.example.test");
     setBorrowTxLifecycleFlagReader(() => true);
@@ -60,10 +54,9 @@ describe("borrow lifecycle", () => {
     setBorrowManifestIdReader(null);
     setBorrowTxLifecycleBaseUrl(undefined);
     setTxLifecycleBaseUrl(undefined);
-    fetchSpy.mockRestore();
   });
 
-  it("recognises the default manifest and the one the flag configures", () => {
+  it("recognises the default manifest and the one the flag configures", async () => {
     expect(isBorrowApp("borrow")).toBe(true);
     expect(isBorrowApp("borrow-stg")).toBe(false);
     setBorrowManifestIdReader(() => "borrow-stg");
@@ -72,7 +65,7 @@ describe("borrow lifecycle", () => {
     expect(isBorrowApp("lido")).toBe(false);
   });
 
-  it("maps a borrow sign intent onto the dapp path", () => {
+  it("maps a borrow sign intent onto the dapp path", async () => {
     expect(toTxLifecyclePayload(intent, "desktop")).toMatchObject({
       event: "tx_intent",
       path: "dapp",
@@ -80,19 +73,19 @@ describe("borrow lifecycle", () => {
     });
   });
 
-  it("leaves intent and success to the live app", () => {
+  it("leaves intent and success to the live app", async () => {
     emitTransactionEvent(intent);
     emitTransactionEvent(success);
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("reports an attempt abandoned with the webview to the Borrow sink only", () => {
+  it("reports an attempt abandoned with the webview to the Borrow sink only", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     close?.();
 
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       {
         url: "https://borrow.example.test/v1/tx/lifecycle",
         body: expect.objectContaining({
@@ -105,49 +98,49 @@ describe("borrow lifecycle", () => {
     ]);
   });
 
-  it("does not report anything when the webview closes with no attempt pending", () => {
+  it("does not report anything when the webview closes with no attempt pending", async () => {
     startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("does not report an attempt that already ended", () => {
+  it("does not report an attempt that already ended", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     emitTransactionEvent(success);
     close?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("answers to its own kill-switch, not Earn's", () => {
+  it("answers to its own kill-switch, not Earn's", async () => {
     setEarnTxLifecycleFlagReader(() => false);
     let close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     close?.();
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       expect.objectContaining({ url: "https://borrow.example.test/v1/tx/lifecycle" }),
     ]);
 
-    fetchSpy.mockClear();
+    await lifecycle.forget();
     setBorrowTxLifecycleFlagReader(() => false);
     setEarnTxLifecycleFlagReader(() => true);
     close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     close?.();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("drops the pending attempt when the flag is off at mount", () => {
+  it("drops the pending attempt when the flag is off at mount", async () => {
     emitTransactionEvent(intent);
     expect(startBorrowLifecycleMonitoring("desktop", "borrow", false)).toBeUndefined();
     setBorrowTxLifecycleFlagReader(() => true);
     startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("keeps a Borrow kill-switch from clearing Earn attempts", () => {
+  it("keeps a Borrow kill-switch from clearing Earn attempts", async () => {
     const earnIntent: LogEvent = {
       ...intent,
       manifestId: "lido",
@@ -156,15 +149,15 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(earnIntent);
     setBorrowTxLifecycleFlagReader(() => false);
     emitTransactionEvent(intent);
-    fetchSpy.mockClear();
+    await lifecycle.forget();
 
     emitTransactionEvent({ ...success, manifestId: "lido" });
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       expect.objectContaining({ url: "https://earn.example.test/v1/tx/lifecycle" }),
     ]);
   });
 
-  it("clears pending attempts when the kill-switch turns off at runtime", () => {
+  it("clears pending attempts when the kill-switch turns off at runtime", async () => {
     let enabled = true;
     const listener = installBorrowLifecycleHost({
       platform: "desktop",
@@ -180,23 +173,23 @@ describe("borrow lifecycle", () => {
     enabled = true;
     close?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("does not report an attempt left pending before the screen mounted", () => {
+  it("does not report an attempt left pending before the screen mounted", async () => {
     emitTransactionEvent(intent);
     startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("posts an attempt still pending when the Borrow screen goes away, once", () => {
+  it("posts an attempt still pending when the Borrow screen goes away, once", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     close?.();
     close?.();
 
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       {
         url: "https://borrow.example.test/v1/tx/lifecycle",
         body: expect.objectContaining({
@@ -209,7 +202,7 @@ describe("borrow lifecycle", () => {
     ]);
   });
 
-  it("leaves a closed sign modal to the live app, which reports it as a cancel", () => {
+  it("leaves a closed sign modal to the live app, which reports it as a cancel", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     emitTransactionEvent({
@@ -222,10 +215,10 @@ describe("borrow lifecycle", () => {
     });
     close?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("leaves a device refusal to the live app and closes the attempt", () => {
+  it("leaves a device refusal to the live app and closes the attempt", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     emitTransactionEvent({
@@ -237,18 +230,18 @@ describe("borrow lifecycle", () => {
     });
     close?.();
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("does not post a superseded attempt, then posts the new one at teardown", () => {
+  it("does not post a superseded attempt, then posts the new one at teardown", async () => {
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     emitTransactionEvent({ ...intent, currencyId: "polygon" });
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
 
     close?.();
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       {
         url: "https://borrow.example.test/v1/tx/lifecycle",
         body: expect.objectContaining({ failure_class: "abandoned", network: "polygon" }),
@@ -256,7 +249,7 @@ describe("borrow lifecycle", () => {
     ]);
   });
 
-  it("gives a manifest both products claim to Earn, which has priority", () => {
+  it("gives a manifest both products claim to Earn, which has priority", async () => {
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
 
@@ -264,12 +257,12 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(lidoIntent);
     emitTransactionEvent({ ...success, manifestId: "lido" });
 
-    const origins = calls().map(call => new URL(call.url).origin);
+    const origins = (await lifecycle.received()).map(call => new URL(call.url).origin);
     expect(origins.length).toBeGreaterThan(0);
     expect(origins.every(origin => origin === "https://earn.example.test")).toBe(true);
   });
 
-  it("keeps Earn's events for a doubly claimed manifest when Borrow monitoring is off", () => {
+  it("keeps Earn's events for a doubly claimed manifest when Borrow monitoring is off", async () => {
     setBorrowTxLifecycleFlagReader(() => false);
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
@@ -277,23 +270,23 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(lidoIntent);
     emitTransactionEvent({ ...success, manifestId: "lido" });
 
-    const origins = calls().map(call => new URL(call.url).origin);
+    const origins = (await lifecycle.received()).map(call => new URL(call.url).origin);
     expect(origins.length).toBeGreaterThan(0);
     expect(origins.every(origin => origin === "https://earn.example.test")).toBe(true);
   });
 
-  it("leaves Earn's attempt on a doubly claimed manifest to Earn at Borrow mount and teardown", () => {
+  it("leaves Earn's attempt on a doubly claimed manifest to Earn at Borrow mount and teardown", async () => {
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
 
     emitTransactionEvent(lidoIntent);
     const close = startBorrowLifecycleMonitoring("desktop", "lido", true);
-    fetchSpy.mockClear();
+    await lifecycle.forget();
     close?.();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
 
     emitTransactionEvent({ ...success, manifestId: "lido" });
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       {
         url: "https://earn.example.test/v1/tx/lifecycle",
         body: expect.objectContaining({ event: "tx_terminal", outcome: "success" }),
@@ -301,7 +294,7 @@ describe("borrow lifecycle", () => {
     ]);
   });
 
-  it("sends a terminal to the product that opened the attempt after the claim moved", () => {
+  it("sends a terminal to the product that opened the attempt after the claim moved", async () => {
     setEarnTxLifecycleFlagReader(() => false);
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
@@ -312,12 +305,12 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent({ ...success, manifestId: "lido" });
 
     // Borrow opened it, so its `reports` filter drops the success and nothing reaches Earn.
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
     close?.();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("lets Borrow claim a doubly claimed manifest when Earn monitoring is off", () => {
+  it("lets Borrow claim a doubly claimed manifest when Earn monitoring is off", async () => {
     setEarnTxLifecycleFlagReader(() => false);
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
@@ -326,7 +319,7 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(lidoIntent);
     close?.();
 
-    expect(calls()).toEqual([
+    expect(await lifecycle.received()).toEqual([
       {
         url: "https://borrow.example.test/v1/tx/lifecycle",
         body: expect.objectContaining({ failure_class: "abandoned" }),
@@ -334,12 +327,14 @@ describe("borrow lifecycle", () => {
     ]);
   });
 
-  it("falls back to the staging sink when the build sets no base URL", () => {
+  it("falls back to the staging sink when the build sets no base URL", async () => {
     setBorrowTxLifecycleBaseUrl(undefined);
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     close?.();
 
-    expect(calls()[0]?.url).toBe("https://global.api.stg.ledger-test.com/borrow/v1/tx/lifecycle");
+    expect((await lifecycle.received())[0]?.url).toBe(
+      "https://global.api.stg.ledger-test.com/borrow/v1/tx/lifecycle",
+    );
   });
 });
