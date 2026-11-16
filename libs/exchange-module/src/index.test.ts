@@ -1,5 +1,6 @@
 import type { WalletAPIClient } from "@ledgerhq/wallet-api-client";
 import { ExchangeModule } from "./index";
+import type { Quote } from "./types";
 
 function setup(result: unknown) {
   const request = jest.fn().mockResolvedValue(result);
@@ -76,5 +77,48 @@ describe("ExchangeModule Tronify methods", () => {
     const module = new ExchangeModule({ request } as unknown as WalletAPIClient);
 
     await expect(module.getTronifyQuote(transfer)).rejects.toBe(error);
+  });
+});
+
+describe("ExchangeModule swap methods", () => {
+  it("getQuotes sends custom.exchange.getQuotes with the quote request", async () => {
+    const params = {
+      providers: ["changelly"],
+      data: {
+        amount: "1000000",
+        sendAccountId: "send-account-id",
+        receiveAccountId: "receive-account-id",
+      },
+    };
+    const response = { quotes: [], providerErrors: [], warnings: [], errors: [] };
+    const { module, request } = setup(response);
+
+    await expect(module.getQuotes(params)).resolves.toEqual(response);
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledWith("custom.exchange.getQuotes", params);
+  });
+
+  it("customSwap sends custom.swap with the selected quote", async () => {
+    const params = {
+      quote: { key: "quote-1", provider: "uniswap" } as Quote,
+      fromAccountId: "send-account-id",
+      toAccountId: "receive-account-id",
+      provider: "uniswap",
+    };
+    const { module, request } = setup({ swapTxHash: "0xswap" });
+
+    await expect(module.customSwap(params)).resolves.toEqual({ swapTxHash: "0xswap" });
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledWith("custom.swap", params);
+  });
+
+  it("getTransactionStatus sends custom.exchange.getTransactionStatus with the swap id", async () => {
+    const params = { swapId: "swap-1", provider: "changelly" };
+    const status = { swapId: "swap-1", status: "finished" };
+    const { module, request } = setup(status);
+
+    await expect(module.getTransactionStatus(params)).resolves.toEqual(status);
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledWith("custom.exchange.getTransactionStatus", params);
   });
 });
