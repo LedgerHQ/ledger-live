@@ -34,11 +34,13 @@ export type XrpTokenAccountRaw = TokenAccountRaw & { xrpResources?: XrpTokenReso
  * `changeTrust` opts in to a token or edits its trust limit, the `amount`. `assetReference` and
  * `assetOwner` name the token, never a `subAccountId`: it adds a pending token sub-operation worth
  * the limit, which locks the token balance until the next sync.
+ * `noRipple: false` lets rippling through the trust line; any other value blocks it.
  */
 type XrpTokenFields = {
   mode?: "send" | "changeTrust";
   assetReference?: string;
   assetOwner?: string;
+  noRipple?: boolean;
 };
 
 export type Transaction = TransactionCommon &

@@ -1,5 +1,4 @@
 import type { TFunction } from "i18next";
-import type BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -36,7 +35,6 @@ export type StepProps = Readonly<{
   action: TokenAction;
   token: TokenCurrency | undefined;
   onChangeToken: (token: TokenCurrency | undefined | null) => void;
-  maxLimit: BigNumber | null;
   isRippling: boolean;
   onChangeRippling: (isRippling: boolean) => void;
   tokenAccount: TokenAccount | undefined;

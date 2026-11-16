@@ -2,6 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { HttpResponse, http, server } from "tests/server";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import {
   XrpAccountNotActivated,
   XrpTrustLimitTooHigh,
@@ -185,6 +186,26 @@ describe("StepReview", () => {
 
     expect(await screen.findByText("0.5%")).toBeVisible();
     expect(screen.getByText("Issuer fee")).toBeVisible();
+  });
+
+  it("shows Maximum for a limit at the protocol maximum", async () => {
+    render(
+      <StepReview {...makeStepProps({ transaction: { ...optIn, amount: MAX_TRUST_LIMIT } })} />,
+    );
+
+    expect(await screen.findByText("Maximum")).toBeVisible();
+  });
+
+  it("shows a limit above 16 integer digits in scientific notation", async () => {
+    render(
+      <StepReview
+        {...makeStepProps({
+          transaction: { ...optIn, amount: MAX_TRUST_LIMIT.shiftedBy(-1) },
+        })}
+      />,
+    );
+
+    expect(await screen.findByText(/^9\.999999999999999e94 /)).toBeVisible();
   });
 
   it("shows an MPT with its issuer fee, but no limit or rippling", async () => {

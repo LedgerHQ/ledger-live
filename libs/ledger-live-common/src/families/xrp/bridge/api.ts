@@ -8,7 +8,7 @@ import type {
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
+import type { XrpAccountInfo, XrpTxData } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
@@ -128,11 +128,18 @@ export function describeOptimisticOperation(
   return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
 }
 
+export function buildIntentData(transaction: Record<string, unknown>): XrpTxData {
+  if (transaction.mode !== "changeTrust") return { type: "none" };
+
+  return { type: "changeTrust", noRipple: transaction.noRipple !== false };
+}
+
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
   const enabledStandards = getXrpEnabledTokenStandards(currency.id);
 
   return {
     getAssetFromToken,
+    buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
     exactAssetMatch: true,

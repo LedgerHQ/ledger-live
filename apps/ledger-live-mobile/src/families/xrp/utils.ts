@@ -42,6 +42,7 @@ export function makeChangeTrustTransaction(
   account: Account,
   token: TokenCurrency,
   amount: BigNumber,
+  noRipple: boolean,
 ): Transaction {
   const asset = getAssetFromToken(token);
   const assetFields =
@@ -53,5 +54,6 @@ export function makeChangeTrustTransaction(
     mode: "changeTrust",
     ...assetFields,
     amount,
+    noRipple,
   });
 }
