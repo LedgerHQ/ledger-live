@@ -1,4 +1,4 @@
-import { isUserRefusal } from "../isUserRefusal";
+import { isUserRefusal } from "./isUserRefusal";
 
 describe("isUserRefusal", () => {
   it.each([
