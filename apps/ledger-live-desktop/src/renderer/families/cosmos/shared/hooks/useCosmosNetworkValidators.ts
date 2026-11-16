@@ -17,7 +17,8 @@ export const toCosmosValidatorItem = (validator: NetworkValidator): CosmosValida
 
 const byTotalStakedDesc = (a: NetworkValidator, b: NetworkValidator) => {
   const diff = BigInt(b.totalStaked ?? "0") - BigInt(a.totalStaked ?? "0");
-  return diff > 0n ? 1 : diff < 0n ? -1 : 0;
+  if (diff === 0n) return 0;
+  return diff > 0n ? 1 : -1;
 };
 
 /** Pickable validators (a full commission is left out) matching the search, Ledger's first, then by stake. */

@@ -92,22 +92,24 @@ export function createCoinModuleValidatorsSource(
           `No validators in the ${currencyId} coin module`,
         );
       }
-      const validators: NetworkValidator[] = [];
-      let cursor: string | undefined;
-      let complete = false;
-      for (let page = 0; page < MAX_VALIDATOR_PAGES && !complete; page++) {
+      // Pages are read one after the other: each needs the previous page's cursor.
+      const readPages = async (
+        cursor: string | undefined,
+        page: number,
+      ): Promise<NetworkValidator[] | undefined> => {
+        if (page >= MAX_VALIDATOR_PAGES) return undefined;
         signal.throwIfAborted();
         const { items, next } = await api.getValidators(cursor);
-        validators.push(
-          ...items.map(item =>
-            toNetworkValidator(item, host.isLedgerValidator(currencyId, item.address || item.id)),
-          ),
+        const validators = items.map(item =>
+          toNetworkValidator(item, host.isLedgerValidator(currencyId, item.address || item.id)),
         );
-        complete = !next || next === cursor;
-        cursor = next;
-      }
+        if (!next || next === cursor) return validators;
+        const rest = await readPages(next, page + 1);
+        return rest && [...validators, ...rest];
+      };
+      const validators = await readPages(undefined, 0);
       // A truncated list would hide the validator a user delegates to: let the next source answer.
-      if (!complete) {
+      if (!validators) {
         throw new CoinModuleValidatorsNotServedError(
           `More than ${MAX_VALIDATOR_PAGES} pages of validators for ${currencyId}`,
         );

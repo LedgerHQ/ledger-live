@@ -195,7 +195,7 @@ export const getSwapHistorySections = async (
   const legacyIdOf = (accountUUID: AccountUUID | undefined) =>
     accountUUID === undefined ? undefined : toLegacyAccountId(accountUUID);
   const swaps = await Promise.all(
-    entries.map(entry => {
+    entries.map(async entry => {
       const account = findLegacyAccount(accounts, legacyIdOf(entry.accountUUID), entry.assetId);
       const receiverParentId = legacyIdOf(entry.toAccountUUID);
       if (!account || receiverParentId === undefined) return null;

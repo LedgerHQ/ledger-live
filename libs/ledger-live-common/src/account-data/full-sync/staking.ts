@@ -46,7 +46,7 @@ const fromDelegation = (
   index: number,
   redelegation: StakingRedelegation | undefined,
 ) => ({
-  id: `delegation:${positionId ?? `${validatorAddress}:${index}`}`,
+  id: "delegation:" + (positionId ?? `${validatorAddress}:${index}`),
   assetId,
   validatorId: validatorAddress || undefined,
   // The status is the validator's bond state: the delegation itself stays staked.
@@ -64,7 +64,7 @@ const fromUnbonding = (
   { positionId, validatorAddress, status, amount, completionDate }: StakingUnbonding,
   index: number,
 ) => ({
-  id: `unbonding:${positionId ?? `${validatorAddress}:${completionDate.getTime()}:${index}`}`,
+  id: "unbonding:" + (positionId ?? `${validatorAddress}:${completionDate.getTime()}:${index}`),
   assetId,
   validatorId: validatorAddress || undefined,
   state: status ?? "deactivating",
