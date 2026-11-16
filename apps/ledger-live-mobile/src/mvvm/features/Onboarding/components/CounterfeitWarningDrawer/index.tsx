@@ -10,4 +10,3 @@ const CounterfeitWarningDrawer = (props: CounterfeitWarningDrawerContainerProps)
 );
 
 export default CounterfeitWarningDrawer;
-export type { CounterfeitWarningDrawerContainerProps } from "./useCounterfeitWarningDrawerViewModel";
