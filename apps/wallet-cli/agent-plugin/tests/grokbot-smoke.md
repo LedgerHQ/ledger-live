@@ -6,7 +6,7 @@ You are running a smoke test of the `wallet-cli-usage` skill on Grok Bot. You se
 
 ## 1. Setup
 
-Make the skill available in Grok Bot by any route that works; Grok Bot reads the same files as Cursor, and this repository documents no Grok Bot install step. Install wallet-cli on the bot's machine at exactly the skill's version (`npm i -g @ledgerhq/wallet-cli@<version from plugin.json>`): the skill stops on any other. Done when the bot can see the `wallet-cli-usage` skill and `wallet-cli --version` prints that version.
+Make the skill available in Grok Bot by any route that works; Grok Bot reads the same files as Cursor, and this repository documents no Grok Bot install step. Install wallet-cli on the bot's machine at exactly the skill's version (`npm i -g @ledgerhq/wallet-cli@<version from plugin.json>`), so the run tests the plugin's copy of the skill rather than the one embedded in another wallet-cli. Done when the bot can see the `wallet-cli-usage` skill and `wallet-cli --version` prints that version.
 
 ## 2. Prompt
 

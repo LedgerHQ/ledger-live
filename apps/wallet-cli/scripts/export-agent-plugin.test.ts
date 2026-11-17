@@ -89,7 +89,7 @@ describe("export-agent-plugin", () => {
 
   it("stamps the wallet-cli version into the skill and pins its install", () => {
     const skillMd = exportedSkillMd(target);
-    expect(skillMd).toContain(`This copy documents wallet-cli ${version} and only that version.`);
+    expect(skillMd).toContain(`This copy documents wallet-cli ${version}.`);
     expect(skillMd).toContain(`\`npm i -g @ledgerhq/wallet-cli@${version}\``);
   });
 
@@ -169,9 +169,7 @@ describe("export-agent-plugin with a version", () => {
     expect(JSON.parse(readFileSync(path.join(dir, "plugin.json"), "utf8")).version).toBe(
       "9.8.7-nightly.1",
     );
-    expect(exportedSkillMd(dir)).toContain(
-      "This copy documents wallet-cli 9.8.7-nightly.1 and only that version.",
-    );
+    expect(exportedSkillMd(dir)).toContain("This copy documents wallet-cli 9.8.7-nightly.1.");
     expect(exportedSkillMd(dir)).toContain("`npm i -g @ledgerhq/wallet-cli@9.8.7-nightly.1`");
   });
 

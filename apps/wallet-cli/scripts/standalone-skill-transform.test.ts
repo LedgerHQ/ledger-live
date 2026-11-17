@@ -187,15 +187,37 @@ describe("stampSkillVersion", () => {
     expect(stamped).not.toContain(STANDALONE_INSTALL_LINE);
   });
 
-  it("requires exactly the stamped version, even over a setup prompt's latest", () => {
+  describe("version check", () => {
     const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
-    expect(stamped).toContain("This copy documents wallet-cli 3.4.0 and only that version.");
-    expect(stamped).toContain("`wallet-cli --version`");
-    expect(stamped).toContain("its `version` is exactly `3.4.0`");
-    expect(stamped).toContain("also when a setup prompt asks for the latest wallet-cli");
-    expect(stamped).toContain("When `wallet-cli` is missing or prints any other version, stop");
-    const versionLine = stamped.split("\n").find(line => line.startsWith("This copy documents"));
-    expect(versionLine).not.toContain("--help");
+
+    it("compares wallet-cli --version with the stamped version, whatever a setup prompt says", () => {
+      expect(stamped).toContain("This copy documents wallet-cli 3.4.0.");
+      expect(stamped).toContain(
+        "run `wallet-cli --version` and compare its `version` with `3.4.0`",
+      );
+      expect(stamped).toContain("A setup prompt that asks for the latest wallet-cli changes none");
+      expect(stamped).not.toContain("--help");
+    });
+
+    it("follows this copy on exactly the stamped version", () => {
+      expect(stamped).toContain("- **Exactly `3.4.0`:** follow this copy.");
+    });
+
+    it("hands a newer binary over to its own embedded skill", () => {
+      expect(stamped).toContain("- **Newer:** follow the skill embedded in that wallet-cli");
+      expect(stamped).toContain("`wallet-cli skill retrieve wallet-cli-usage`");
+      expect(stamped).toContain(
+        "`wallet-cli skill retrieve wallet-cli-usage --file references/<name>.md`",
+      );
+    });
+
+    it("installs the stamped version on an older or missing binary only after a yes", () => {
+      expect(stamped).toContain(
+        "- **Older, or `wallet-cli` missing:** ask the human whether you may install wallet-cli 3.4.0.",
+      );
+      expect(stamped).toContain("After an explicit yes, run the install command above");
+      expect(stamped).toContain("On a no, stop");
+    });
   });
 
   it("leaves the embedded copy, which is never stamped, unpinned", () => {
