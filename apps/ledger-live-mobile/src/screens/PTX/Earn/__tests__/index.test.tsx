@@ -238,5 +238,20 @@ describe("EarnScreen canvas background wiring", () => {
       expect(goToURL.searchParams.has(KEY)).toBe(false);
       expect(inputs).not.toHaveProperty(KEY);
     });
+
+    it.each([
+      ["off", FLAG_OFF],
+      ["not set", { lwmWallet40: { enabled: true } }],
+    ])("should drop the capability a dapp URL carries when the flag is %s", (_state, flags) => {
+      const inputs = renderEarnRoute(flags, {
+        params: { customDappUrl: `${DAPP_URL}?${KEY}=true` },
+      });
+
+      const goToURL = goToURLOf(inputs);
+      expect(goToURL.origin + goToURL.pathname).toBe(DAPP_URL);
+      expect(goToURL.searchParams.get("intent")).toBe("deposit");
+      expect(goToURL.searchParams.has(KEY)).toBe(false);
+      expect(inputs).not.toHaveProperty(KEY);
+    });
   });
 });
