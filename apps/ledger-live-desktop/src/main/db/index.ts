@@ -17,11 +17,29 @@ import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
-const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
+const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
+  let pendingArgs: T[] = [];
   let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
   let rejectRefs: Array<(error: unknown) => void> = [];
-  return (...args: T[]) => {
+  let inFlight: Promise<void> = Promise.resolve();
+  const run = () => {
+    timeout = undefined;
+    const args = pendingArgs;
+    const resolves = resolveRefs;
+    const rejects = rejectRefs;
+    resolveRefs = [];
+    rejectRefs = [];
+    inFlight = inFlight.then(async () => {
+      try {
+        const res = await fn(...args);
+        resolves.forEach(r => r(res));
+      } catch (err) {
+        rejects.forEach(r => r(err));
+      }
+    });
+  };
+  const debounced = (...args: T[]) => {
     const promise: Promise<R> = new Promise((resolve, reject) => {
       resolveRefs.push(resolve);
       rejectRefs.push(reject);
@@ -29,18 +47,20 @@ const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(async () => {
-      try {
-        const res = await fn(...args);
-        resolveRefs.forEach(r => r(res));
-      } catch (err) {
-        rejectRefs.forEach(r => r(err));
-      }
-      resolveRefs = [];
-      rejectRefs = [];
-    }, ms);
+    pendingArgs = args;
+    timeout = setTimeout(run, ms);
     return promise;
   };
+  debounced.flush = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      run();
+    }
+    return inFlight;
+  };
+  debounced.pending = () => timeout !== undefined;
+  debounced.inFlight = () => inFlight;
+  return debounced;
 };
 
 let DBPath: string | null = null;
@@ -58,6 +78,26 @@ function save(ns: string) {
     saversByNamespace.set(ns, saveNamespace);
   }
   return saveNamespace(ns);
+}
+
+/** Saves that keep coming must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
+
+/**
+ * Write the pending saves of all namespaces now, before the app quits.
+ */
+function flush(): Promise<void> {
+  return flushSavers(0);
+}
+
+async function flushSavers(round: number): Promise<void> {
+  const savers = Array.from(saversByNamespace.values());
+  const writes = savers.map(saver => saver.flush());
+  await Promise.all(writes);
+  const savedDuringFlush =
+    saversByNamespace.size !== savers.length ||
+    savers.some((saver, i) => saver.pending() || saver.inFlight() !== writes[i]);
+  if (savedDuringFlush && round + 1 < MAX_FLUSH_ROUNDS) return flushSavers(round + 1);
 }
 
 // Track which keyPaths triggered saves for each namespace
@@ -361,13 +401,18 @@ function buildAppNamespacePayload(memory: Record<string, unknown>): Record<strin
  */
 async function saveToDisk(ns: string) {
   if (!DBPath) throw new NoDBPathGiven();
-  await ensureNSLoaded(ns);
+  const memory = memoryNamespaces[ns];
+  // Loading it again here would queue a save behind this one, which waits for it.
+  const resetClearedNamespace = !memory;
+  if (resetClearedNamespace) {
+    saveTriggers.delete(ns);
+    return;
+  }
 
   const startTime = Date.now();
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  const memory = memoryNamespaces[ns]!;
   const raw = ns === "app" ? buildAppNamespacePayload(memory) : memory;
   const clone = cloneDeep(raw);
 
@@ -447,4 +492,5 @@ export default {
   hasBeenDecrypted,
   cleanCache,
   resetAll,
+  flush,
 };
