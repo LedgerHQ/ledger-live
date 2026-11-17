@@ -112,6 +112,63 @@ export function generateHistoryFromOperations(account: AccountLike): BalanceHist
   };
 }
 
+function refreshHistoryFromOperationsG(
+  account: AccountLike,
+  g: GranularityId,
+): BalanceHistoryDataCache {
+  const { increment, startOf, maxDatapoints } = granularities[g];
+  const latestDate = startOf(new Date()).getTime();
+  const saved = account.balanceHistoryCache?.[g];
+  const savedDate = saved?.latestDate;
+  if (!saved?.balances.length || !savedDate) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+  const elapsedPeriods = (latestDate - savedDate) / increment;
+  const gridLinesUp = Number.isInteger(elapsedPeriods) && elapsedPeriods >= 0;
+  if (!gridLinesUp || elapsedPeriods > maxDatapoints) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+
+  const { operations } = account;
+  const sinceSavedDate = Array.from<number>({ length: elapsedPeriods + 1 });
+  let { balance } = account;
+  let i = 0;
+  for (let period = elapsedPeriods; period >= 0; period--) {
+    const regenerationEndedEarlier = i === operations.length;
+    if (regenerationEndedEarlier) return generateHistoryFromOperationsG(account, g);
+    const date = savedDate + period * increment;
+    while (i < operations.length && operations[i].date.valueOf() > date) {
+      balance = balance.minus(getOperationAmountNumberWithInternals(operations[i]));
+      i++;
+    }
+    sinceSavedDate[period] = Math.max(balance.toNumber(), 0);
+  }
+
+  const [balanceAtSavedDate, ...newBalances] = sinceSavedDate;
+  if (balanceAtSavedDate !== saved.balances[saved.balances.length - 1]) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+  if (newBalances.length === 0) return saved;
+
+  return {
+    balances: saved.balances.concat(newBalances).slice(-(maxDatapoints + 1)),
+    latestDate,
+  };
+}
+
+/**
+ * Extends the account's saved cache with the periods since its date. The saved points stay as
+ * they are, even when operations older than that date were dropped since. A cache that does not
+ * line up with the current periods or balance is regenerated.
+ */
+export function refreshHistoryFromOperations(account: AccountLike): BalanceHistoryCache {
+  return {
+    HOUR: refreshHistoryFromOperationsG(account, "HOUR"),
+    DAY: refreshHistoryFromOperationsG(account, "DAY"),
+    WEEK: refreshHistoryFromOperationsG(account, "WEEK"),
+  };
+}
+
 /**
  * get the current balance history of the account. if possible from the cache.
  */
