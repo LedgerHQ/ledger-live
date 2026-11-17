@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { track, trackPage } from "@shared/analytics";
 import { receiveTestWrapper } from "../../__tests__/receiveTestStore";
+import { toReceiveAddressTracking } from "./receiveAddressTracking";
 import { useReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { DEFAULT_RECEIVE_FAMILY_CONFIG } from "../../logic/resolveReceiveFamilyConfig";
 import { toReceiveAddressOptions } from "../../logic/toReceiveAddressOptions";
@@ -25,6 +26,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressNotices>[0]
         copy: useReceiveAddressCopy({ assetTicker: "TRX", networkName: "Tron" }),
         onOpenUrl,
         openServiceStatus,
+        tracking: toReceiveAddressTracking(),
         ...overrides,
       }),
     { wrapper: receiveTestWrapper() },

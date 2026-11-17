@@ -29,6 +29,7 @@ import { getPayAttributes } from "./getPayAttributes";
 import { getSwapConsoleAbtestAttributes } from "./getSwapConsoleAbtestAttributes";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
 import { getAgentIntentAttributes } from "@features/flow-agent-intent-entry-points";
+import { getNewReceiveFlowAttributes } from "@features/flow-receive";
 import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
@@ -365,6 +366,7 @@ const extraProperties = (store: ReduxStore) => {
     analyticsFeatureFlagMethod?.("entryPointsServices"),
   );
   const agentIntent = getAgentIntentAttributes(analyticsFeatureFlagMethod?.("agentIntent"));
+  const newReceive = getNewReceiveFlowAttributes(analyticsFeatureFlagMethod?.("newReceiveFlow"));
   const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
   const accountDetail = accountDetailFeature?.enabled ?? false;
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
@@ -429,6 +431,7 @@ const extraProperties = (store: ReduxStore) => {
     lwdSwapConsoleAbtest,
     entryPointsServices,
     agentIntent,
+    newReceive,
     accountDetail,
     accountDetailAnalyticsBanner,
     ...remoteABTestingAttributes,

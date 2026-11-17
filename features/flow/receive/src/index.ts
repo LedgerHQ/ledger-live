@@ -1,3 +1,4 @@
+export * from "./analytics/getNewReceiveFlowAttributes";
 export * from "./hooks/useVerifyAddressExecutorViewModel";
 export * from "./hooks/useVerifyAddressFlow";
 export * from "./logic/canVerifyOnDevice";

@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { track, trackPage } from "@shared/analytics";
 import { receiveTestWrapper } from "../../__tests__/receiveTestStore";
+import { toReceiveAddressTracking } from "./receiveAddressTracking";
 import { useReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { RECEIVE_URLS } from "../../urls";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
@@ -18,6 +19,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressHelp>[0]> =
         onOpenUrl,
         open,
         close: jest.fn(),
+        tracking: toReceiveAddressTracking(),
         ...overrides,
       }),
     { wrapper: receiveTestWrapper() },

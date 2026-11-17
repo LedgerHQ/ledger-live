@@ -1,7 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { track } from "@shared/analytics";
+import { toReceiveAddressTracking } from "./receiveAddressTracking";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
+
+const tracking = toReceiveAddressTracking("Account Page");
 
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
@@ -12,7 +15,7 @@ describe("useReceiveAddressSelection", () => {
 
   it("shows the only address right away", () => {
     const receive = mockAccountReceive();
-    const { result } = renderHook(() => useReceiveAddressSelection(receive));
+    const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 
     expect(result.current.isSelecting).toBe(false);
     expect(result.current.selected?.address).toBe(receive.address);
@@ -20,7 +23,7 @@ describe("useReceiveAddressSelection", () => {
   });
 
   it("selects nothing before the receive is read", () => {
-    const { result } = renderHook(() => useReceiveAddressSelection(undefined));
+    const { result } = renderHook(() => useReceiveAddressSelection(undefined, tracking));
 
     expect(result.current).toEqual(
       expect.objectContaining({ options: [], selected: undefined, isSelecting: false }),
@@ -29,7 +32,7 @@ describe("useReceiveAddressSelection", () => {
 
   it("lets the user pick the shielded address of a Zcash account, then go back", () => {
     const receive = mockAccountReceive({ shielded: { address: Z_ADDR } });
-    const { result } = renderHook(() => useReceiveAddressSelection(receive));
+    const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 
     expect(result.current.isSelecting).toBe(true);
     expect(result.current.selected).toBeUndefined();
@@ -38,7 +41,11 @@ describe("useReceiveAddressSelection", () => {
     expect(result.current.selected?.address).toBe(Z_ADDR);
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
-      expect.objectContaining({ button: "private address", flow: "receive" }),
+      expect.objectContaining({
+        button: "private address",
+        flow: "receive",
+        source: "Account Page",
+      }),
     );
 
     act(() => result.current.backToSelection?.());
@@ -47,7 +54,7 @@ describe("useReceiveAddressSelection", () => {
 
   it("tracks the public address choice", () => {
     const receive = mockAccountReceive({ shielded: { address: Z_ADDR } });
-    const { result } = renderHook(() => useReceiveAddressSelection(receive));
+    const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 
     act(() => result.current.select("transparent"));
 

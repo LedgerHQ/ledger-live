@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { track, trackPage } from "@shared/analytics";
 import { receiveTestWrapper } from "../../__tests__/receiveTestStore";
+import { toReceiveAddressTracking } from "./receiveAddressTracking";
 import { useReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { toReceiveAddressOptions } from "../../logic/toReceiveAddressOptions";
 import { RECEIVE_URLS } from "../../urls";
@@ -36,6 +37,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressMemo>[0]> =
         onOpenUrl,
         open,
         close,
+        tracking: toReceiveAddressTracking(),
         ...overrides,
       }),
     { wrapper: receiveTestWrapper() },

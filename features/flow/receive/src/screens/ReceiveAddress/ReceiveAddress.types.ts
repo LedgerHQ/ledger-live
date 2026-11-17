@@ -8,6 +8,8 @@ export type ReceiveAddressProps = Readonly<{
   accountUUID: AccountUUID;
   assetId: CryptoOrTokenCurrencyId;
   onClose: () => void;
+  /** The entry point the user came from, sent with every event of the screen. */
+  source?: string;
   /** Copies the address; resolves `false` when the clipboard refused it. Without it, no Copy. */
   onCopyAddress?: (address: string) => Promise<boolean>;
   /** Opens the system share sheet with the address. Without it, no Share. */

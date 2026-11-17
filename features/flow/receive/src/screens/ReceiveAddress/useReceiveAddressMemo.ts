@@ -3,7 +3,7 @@ import { trackPage } from "@shared/analytics";
 import type { ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import type { ReceiveAddressOption } from "../../logic/toReceiveAddressOptions";
 import { RECEIVE_URLS } from "../../urls";
-import { RECEIVE_ADDRESS_PAGE, trackReceiveAddressButton } from "./receiveAddressTracking";
+import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 import type { ReceiveMemoCardView, ReceiveMemoPanelView } from "./ReceiveAddressView.types";
 
 type Params = Readonly<{
@@ -14,6 +14,7 @@ type Params = Readonly<{
   onOpenUrl: ((url: string) => void) | undefined;
   open: () => void;
   close: () => void;
+  tracking: ReceiveAddressTracking;
 }>;
 
 export type ReceiveAddressMemo = Readonly<{
@@ -32,18 +33,19 @@ export function useReceiveAddressMemo({
   onOpenUrl,
   open,
   close,
+  tracking,
 }: Params): ReceiveAddressMemo {
   const hasMemo = !!selected?.memo;
 
   useEffect(() => {
     if (!isOpen) return;
-    void trackPage({ category: "Receive - Need Memo", props: RECEIVE_ADDRESS_PAGE });
-  }, [isOpen]);
+    void trackPage({ category: "Receive - Need Memo", props: tracking });
+  }, [isOpen, tracking]);
 
   const openMemo = useCallback(() => {
-    trackReceiveAddressButton("memo tag info");
+    trackReceiveAddressButton("memo tag info", tracking);
     open();
-  }, [open]);
+  }, [open, tracking]);
 
   return {
     memoCard: hasMemo ? { title: copy.memoTitle, onPress: openMemo } : undefined,

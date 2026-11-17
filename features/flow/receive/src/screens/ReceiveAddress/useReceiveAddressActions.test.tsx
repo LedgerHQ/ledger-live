@@ -9,6 +9,7 @@ import {
   testAccountUUID,
 } from "../../__tests__/receiveTestStore";
 import { toReceiveAddressOptions } from "../../logic/toReceiveAddressOptions";
+import { toReceiveAddressTracking } from "./receiveAddressTracking";
 import { useReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { DEFAULT_RECEIVE_FAMILY_CONFIG } from "../../logic/resolveReceiveFamilyConfig";
 import { selectHasSeenReceiveVerifyHint } from "../../state";
@@ -39,6 +40,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressActions>[0]
         onCopyAddress,
         onShareAddress,
         onClose: jest.fn(),
+        tracking: toReceiveAddressTracking(),
         ...overrides,
       }),
     { wrapper: receiveTestWrapper(store) },

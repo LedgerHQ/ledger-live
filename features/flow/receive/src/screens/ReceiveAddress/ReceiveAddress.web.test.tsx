@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { track } from "@shared/analytics";
 import {
   makeReceiveTestStore,
   receiveTestWrapper,
@@ -12,6 +13,8 @@ import {
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
+
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
 const renderScreen = (
   onClose = jest.fn(),
@@ -35,11 +38,17 @@ const VerifyAddressExecutor = ({ selection }: UseVerifyAddressExecutorViewModelP
 describe("ReceiveAddress (Web)", () => {
   it("opens as a dialog that closes from its header", async () => {
     const onClose = jest.fn();
-    renderScreen(onClose);
+    renderScreen(onClose, makeReceiveTestStore(), { source: "Account Page" });
 
     expect(screen.getByTestId("receive-address")).toBeVisible();
     await userEvent.setup().click(screen.getByRole("button", { name: "Close" }));
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      page: "Receive - Confirmation",
+      flow: "receive",
+      source: "Account Page",
+    });
   });
 
   it("names the asset and its network in the header", () => {

@@ -1,13 +1,16 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
+import { canVerifyOnDevice } from "../../logic/canVerifyOnDevice";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import { toReceiveAddressTracking, trackReceiveAddressButton } from "./receiveAddressTracking";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
 import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
+import { useReceiveAddressPageEvent } from "./useReceiveAddressPageEvent";
 import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
@@ -29,11 +32,13 @@ export function useReceiveAddressViewModel({
   getFamilyConfig,
   serviceIncidents,
   onOpenUrl,
+  source,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
+  const tracking = useMemo(() => toReceiveAddressTracking(source), [source]);
   const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
-  const selection = useReceiveAddressSelection(receive);
+  const selection = useReceiveAddressSelection(receive, tracking);
   const familyConfig = useReceiveFamilyConfig({
     getFamilyConfig,
     descriptor,
@@ -43,19 +48,28 @@ export function useReceiveAddressViewModel({
   });
   const { copy } = header;
   const { selected } = selection;
-  const { actions, verification } = useReceiveAddressActions({
+  const closeFlow = useCallback(() => {
+    trackReceiveAddressButton("close", tracking);
+    onClose();
+  }, [tracking, onClose]);
+  const { actions, verification, isVerified } = useReceiveAddressActions({
     accountUUID,
     assetId,
     selected,
     familyConfig,
     copy,
     hasVerifyExecutor: !!VerifyAddressExecutor,
+    tracking,
     onCopyAddress,
     onShareAddress,
     onClose,
   });
 
-  const { panel, openPanel, closePanel } = useReceiveAddressPanel();
+  const { panel, openPanel, closePanel: closeOpenPanel } = useReceiveAddressPanel();
+  const closePanel = useCallback(() => {
+    trackReceiveAddressButton("close", tracking);
+    closeOpenPanel();
+  }, [tracking, closeOpenPanel]);
   const { notices, serviceWarning } = useReceiveAddressNotices({
     familyConfig,
     selected,
@@ -63,6 +77,7 @@ export function useReceiveAddressViewModel({
     copy,
     onOpenUrl,
     openServiceStatus: () => openPanel("serviceStatus"),
+    tracking,
   });
 
   const { memoCard, memoPanel } = useReceiveAddressMemo({
@@ -72,6 +87,7 @@ export function useReceiveAddressViewModel({
     onOpenUrl,
     open: () => openPanel("memo"),
     close: closePanel,
+    tracking,
   });
 
   const { helpCard, helpPanel } = useReceiveAddressHelp({
@@ -80,6 +96,18 @@ export function useReceiveAddressViewModel({
     onOpenUrl,
     open: () => openPanel("help"),
     close: closePanel,
+    tracking,
+  });
+
+  useReceiveAddressPageEvent({
+    shownKey: selected?.address ?? (data.type === "activationRequired" ? data.method : undefined),
+    assetId,
+    descriptor,
+    isVerified,
+    isVerifyPopoverDisplayed: !!actions.verifyHint,
+    canVerifyOnDevice: canVerifyOnDevice(selected?.verification),
+    isTokenAssociationRequired: data.type === "activationRequired" && data.method === "association",
+    tracking,
   });
 
   const address = useMemo(
@@ -135,6 +163,6 @@ export function useReceiveAddressViewModel({
     networkLabel: header.networkLabel,
     networkIcon: header.data?.networkIcon,
     onBack: selection.backToSelection,
-    onClose,
+    onClose: closeFlow,
   };
 }

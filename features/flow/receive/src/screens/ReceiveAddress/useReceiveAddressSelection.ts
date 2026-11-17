@@ -5,7 +5,7 @@ import {
   type ReceiveAddressOption,
   type ReceiveAddressOptionId,
 } from "../../logic/toReceiveAddressOptions";
-import { trackReceiveAddressButton } from "./receiveAddressTracking";
+import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 
 const OPTION_BUTTON: Readonly<Record<ReceiveAddressOptionId, string>> = {
   transparent: "public address",
@@ -26,15 +26,19 @@ export type ReceiveAddressSelection = Readonly<{
 /** Which of the account's addresses the screen shows: the only one, or the one the user picked. */
 export function useReceiveAddressSelection(
   receive: AccountReceive | undefined,
+  tracking: ReceiveAddressTracking,
 ): ReceiveAddressSelection {
   const options = useMemo(() => (receive ? toReceiveAddressOptions(receive) : []), [receive]);
   const hasChoice = options.length > 1;
   const [pickedId, setPickedId] = useState<ReceiveAddressOptionId>();
 
-  const select = useCallback((id: ReceiveAddressOptionId) => {
-    trackReceiveAddressButton(OPTION_BUTTON[id]);
-    setPickedId(id);
-  }, []);
+  const select = useCallback(
+    (id: ReceiveAddressOptionId) => {
+      trackReceiveAddressButton(OPTION_BUTTON[id], tracking);
+      setPickedId(id);
+    },
+    [tracking],
+  );
   const backToSelection = useCallback(() => setPickedId(undefined), []);
 
   const selected = hasChoice ? options.find(option => option.id === pickedId) : options[0];

@@ -5,7 +5,7 @@ import { canVerifyOnDevice } from "../../logic/canVerifyOnDevice";
 import type { ReceiveAddressOption } from "../../logic/toReceiveAddressOptions";
 import { toReceiveNotices } from "../../logic/toReceiveNotices";
 import type { ReceiveFamilyConfig, ReceiveServiceIncident } from "../../types";
-import { RECEIVE_ADDRESS_PAGE, trackReceiveAddressButton } from "./receiveAddressTracking";
+import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 import type { ReceiveNoticeView, ReceiveServiceWarningView } from "./ReceiveAddressView.types";
 
 const SERVICE_WARNING_CTA_BUTTON = "service incident details";
@@ -18,6 +18,7 @@ type Params = Readonly<{
   copy: ReceiveAddressCopy;
   onOpenUrl: ((url: string) => void) | undefined;
   openServiceStatus: () => void;
+  tracking: ReceiveAddressTracking;
 }>;
 
 export type ReceiveAddressNotices = Readonly<{
@@ -36,6 +37,7 @@ export function useReceiveAddressNotices({
   copy,
   onOpenUrl,
   openServiceStatus,
+  tracking,
 }: Params): ReceiveAddressNotices {
   const [incident] = serviceIncidents;
 
@@ -43,9 +45,9 @@ export function useReceiveAddressNotices({
     if (!incident) return;
     void trackPage({
       category: "Receive - Infra Warning",
-      props: { warning: "service incident", ...RECEIVE_ADDRESS_PAGE },
+      props: { warning: "service incident", ...tracking },
     });
-  }, [incident]);
+  }, [incident, tracking]);
 
   const notices = useMemo(
     () =>
@@ -73,7 +75,7 @@ export function useReceiveAddressNotices({
           title: incident.title,
           ctaLabel: copy.serviceWarningCta,
           onPress: () => {
-            trackReceiveAddressButton(SERVICE_WARNING_CTA_BUTTON);
+            trackReceiveAddressButton(SERVICE_WARNING_CTA_BUTTON, tracking);
             openServiceStatus();
           },
         }

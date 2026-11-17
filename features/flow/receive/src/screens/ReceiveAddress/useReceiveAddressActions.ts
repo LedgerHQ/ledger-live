@@ -8,8 +8,8 @@ import { useVerifyAddressFlow } from "../../hooks/useVerifyAddressFlow";
 import { canVerifyOnDevice } from "../../logic/canVerifyOnDevice";
 import type { ReceiveAddressOption } from "../../logic/toReceiveAddressOptions";
 import { markReceiveVerifyHintSeen, selectHasSeenReceiveVerifyHint } from "../../state";
-import type { ReceiveFamilyConfig } from "../../types";
-import { trackReceiveAddressButton } from "./receiveAddressTracking";
+import type { ReceiveFamilyConfig, VerifyAddressOutcome } from "../../types";
+import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 import type { ReceiveAddressActionsView } from "./ReceiveAddressView.types";
 
 const COPIED_FEEDBACK_MS = 3000;
@@ -22,6 +22,7 @@ type Params = Readonly<{
   familyConfig: ReceiveFamilyConfig;
   copy: ReceiveAddressCopy;
   hasVerifyExecutor: boolean;
+  tracking: ReceiveAddressTracking;
   onCopyAddress?: (address: string) => Promise<boolean>;
   onShareAddress?: (address: string) => void;
   onClose: () => void;
@@ -29,6 +30,8 @@ type Params = Readonly<{
 
 export type ReceiveAddressActions = Readonly<{
   actions: ReceiveAddressActionsView;
+  /** The device confirmed the address shown. */
+  isVerified: boolean;
   /** The device verification to mount, while one runs. */
   verification: UseVerifyAddressExecutorViewModelParams | undefined;
 }>;
@@ -44,6 +47,7 @@ export function useReceiveAddressActions({
   familyConfig,
   copy,
   hasVerifyExecutor,
+  tracking,
   onCopyAddress,
   onShareAddress,
   onClose,
@@ -53,6 +57,7 @@ export function useReceiveAddressActions({
   const verifyFlow = useVerifyAddressFlow({ onCloseFlow: onClose });
   const [copiedAddress, setCopiedAddress] = useState<string>();
   const [copyButtonPresses, setCopyButtonPresses] = useState(0);
+  const [verifiedAddress, setVerifiedAddress] = useState<string>();
 
   const address = selected?.address;
   const verification = selected?.verification;
@@ -66,9 +71,9 @@ export function useReceiveAddressActions({
 
   const copyAddress = useCallback(async () => {
     if (!address || !onCopyAddress) return;
-    trackReceiveAddressButton("copy address");
+    trackReceiveAddressButton("copy address", tracking);
     if (await onCopyAddress(address)) setCopiedAddress(address);
-  }, [address, onCopyAddress]);
+  }, [address, onCopyAddress, tracking]);
 
   const copyFromButton = useCallback(async () => {
     setCopyButtonPresses(presses => presses + 1);
@@ -77,25 +82,37 @@ export function useReceiveAddressActions({
 
   const shareAddress = useCallback(() => {
     if (!address || !onShareAddress) return;
-    trackReceiveAddressButton("share address");
+    trackReceiveAddressButton("share address", tracking);
     onShareAddress(address);
-  }, [address, onShareAddress]);
+  }, [address, onShareAddress, tracking]);
 
   const verifyAddress = useCallback(() => {
     if (!canVerifyOnDevice(verification)) return;
-    trackReceiveAddressButton("verify address");
+    trackReceiveAddressButton("verify address", tracking);
     dispatch(markReceiveVerifyHintSeen());
     verifyFlow.start({ accountUUID, assetId, verification });
-  }, [verification, dispatch, verifyFlow, accountUUID, assetId]);
+  }, [verification, dispatch, verifyFlow, accountUUID, assetId, tracking]);
 
   const dismissVerifyHint = useCallback(() => {
-    trackReceiveAddressButton("dismiss verify popover");
+    trackReceiveAddressButton("dismiss verify popover", tracking);
     dispatch(markReceiveVerifyHintSeen());
-  }, [dispatch]);
+  }, [dispatch, tracking]);
 
   const isShown = address !== undefined;
+  const onVerifyExit = verifyFlow.onExit;
+  const verifiedSelection = verifyFlow.selection;
+  const exitVerification = useCallback(
+    (outcome: VerifyAddressOutcome) => {
+      const verified = verifiedSelection?.verification;
+      if (outcome === "verified" && canVerifyOnDevice(verified))
+        setVerifiedAddress(verified.address);
+      onVerifyExit(outcome);
+    },
+    [onVerifyExit, verifiedSelection],
+  );
 
   return {
+    isVerified: canVerify && verification.address === verifiedAddress,
     actions: {
       disabled: !isShown,
       copy: onCopyAddress
@@ -125,7 +142,7 @@ export function useReceiveAddressActions({
         ? undefined
         : {
             selection: verifyFlow.selection,
-            onExit: verifyFlow.onExit,
+            onExit: exitVerification,
             unsupportedDeviceModelIds: familyConfig.unsupportedDeviceModelIds,
           },
   };

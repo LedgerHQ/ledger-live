@@ -25,6 +25,7 @@ const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => stat
 export function useReceiveAddressDialogViewModel({
   accountUUID,
   assetId,
+  source,
 }: ReceiveAddressDialogTarget): ReceiveAddressProps {
   const dispatch = useDispatch();
   const onClose = useCallback(() => dispatch(closeReceiveAddressDialog()), [dispatch]);
@@ -55,6 +56,7 @@ export function useReceiveAddressDialogViewModel({
   return {
     accountUUID,
     assetId,
+    source,
     onClose,
     onCopyAddress,
     VerifyAddressExecutor: VerifyAddressExecutorLWD,

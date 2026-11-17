@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { track, trackPage } from "@shared/analytics";
 import { RECEIVE_HELP_QUESTIONS, type ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { RECEIVE_URLS } from "../../urls";
-import { RECEIVE_ADDRESS_PAGE, trackReceiveAddressButton } from "./receiveAddressTracking";
+import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 import type { ReceiveHelpCardView, ReceiveHelpPanelView } from "./ReceiveAddressView.types";
 
 type Params = Readonly<{
@@ -12,6 +12,7 @@ type Params = Readonly<{
   onOpenUrl: ((url: string) => void) | undefined;
   open: () => void;
   close: () => void;
+  tracking: ReceiveAddressTracking;
 }>;
 
 export type ReceiveAddressHelp = Readonly<{
@@ -26,16 +27,17 @@ export function useReceiveAddressHelp({
   onOpenUrl,
   open,
   close,
+  tracking,
 }: Params): ReceiveAddressHelp {
   useEffect(() => {
     if (!isOpen) return;
-    void trackPage({ category: "Receive - Help", props: RECEIVE_ADDRESS_PAGE });
-  }, [isOpen]);
+    void trackPage({ category: "Receive - Help", props: tracking });
+  }, [isOpen, tracking]);
 
   const openHelp = useCallback(() => {
-    trackReceiveAddressButton("help");
+    trackReceiveAddressButton("help", tracking);
     open();
-  }, [open]);
+  }, [open, tracking]);
 
   const questions = useMemo(
     () =>
@@ -44,12 +46,12 @@ export function useReceiveAddressHelp({
             id,
             label: copy.helpQuestions[id],
             onPress: () => {
-              track("faq_clicked", { faq: copy.helpQuestions[id], ...RECEIVE_ADDRESS_PAGE });
+              track("faq_clicked", { faq: copy.helpQuestions[id], ...tracking });
               onOpenUrl(RECEIVE_URLS[id]);
             },
           }))
         : [],
-    [copy.helpQuestions, onOpenUrl],
+    [copy.helpQuestions, onOpenUrl, tracking],
   );
 
   if (!onOpenUrl) return { helpCard: undefined, helpPanel: undefined };
