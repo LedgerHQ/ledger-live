@@ -69,18 +69,19 @@ export default class AccountDetailPage {
   }
 
   @Step("Tap on send {{{0}}}")
-  async tapSend(currencyId?: string) {
+  async tapSend(currencyId?: string, isToken = false) {
     await this.openTransferDrawer();
     await app.transferDrawer.tapSend();
-    if (await this.sendOpensAssetPicker()) {
+    // A token is held next to its chain's asset, so the picker has to ask which one to send.
+    if (isToken || (await this.sendOpensAssetPicker())) {
       if (!currencyId) throw new Error("Send asks which asset to send: pass the currency to pick");
       await app.transferDrawer.pickAsset(currencyId);
     }
   }
 
   /**
-   * Send asks which asset to send when the account holds several, which only the app knows once it
-   * has synced the tokens: take whichever of the picker or the recipient screen shows first.
+   * A native send asks which asset to send only when the account holds several, which the app knows
+   * once it has synced the tokens: take whichever of the picker or the recipient screen shows first.
    */
   private async sendOpensAssetPicker() {
     const deadline = Date.now() + TIMEOUT.xxlarge;
