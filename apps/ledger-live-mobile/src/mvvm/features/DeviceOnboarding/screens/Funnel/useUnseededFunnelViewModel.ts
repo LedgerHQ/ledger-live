@@ -62,7 +62,7 @@ export function useUnseededFunnelViewModel(
   const visibleStage = stage ?? (holdsPrevious ? heldStage : null);
   const send = input.send;
   const connection = useSessionReconnect({
-    dropped: unseeded && machineState === droppedState && visibleStage !== null,
+    dropped: unseeded && input.liveMachineState === droppedState && visibleStage !== null,
     error: input.connectionError,
     connect: input.reconnect,
   });

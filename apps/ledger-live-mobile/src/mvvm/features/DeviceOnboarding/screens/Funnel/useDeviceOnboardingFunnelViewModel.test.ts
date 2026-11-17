@@ -1810,6 +1810,20 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       expect(setup.connection).toBeNull();
     });
 
+    it("should reconnect again on a second drop after reconnecting to a locked device", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "deviceLocked" });
+      const locked = setupOf(result.current);
+      expect(locked.stage.kind).toBe("pin");
+      expect(locked.connection).toBeNull();
+
+      update({ state: "awaitingSession" });
+
+      expect(setupOf(result.current).connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(2);
+    });
+
     it("should keep showing the connecting screen after a firmware update", () => {
       const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
 
