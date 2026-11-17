@@ -33,6 +33,7 @@ import {
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { paginatedProgramAccounts } from "./rpc/program-accounts";
+import { clearSharedTokenAccounts, sharedTokenAccounts } from "./sharedTokenAccounts";
 import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
 import {
@@ -246,6 +247,19 @@ export function getChainAPI(
     logger,
   );
 
+  // Shared across `ChainAPI` instances: one sync reads the same token accounts from `getBalance`,
+  // the token account shapes and `listOperations`, each with its own instance.
+  const getTokenAccountsByOwner = (
+    address: string,
+    programId: PublicKey,
+  ): ReturnType<Connection["getParsedTokenAccountsByOwner"]> => {
+    const callback = () =>
+      connection.getParsedTokenAccountsByOwner(new PublicKey(address), { programId });
+    return sharedTokenAccounts(config.endpoint, programId.toBase58(), address, () =>
+      callback().catch(remapErrorsWithRetry(callback, retryPolicy)),
+    );
+  };
+
   return {
     getBalance: (address: string) =>
       connection.getBalance(new PublicKey(address)).catch(remapErrors),
@@ -259,21 +273,11 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
-    getParsedTokenAccountsByOwner: (address: string) => {
-      const callback = () =>
-        connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
-          programId: TOKEN_PROGRAM_ID,
-        });
-      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
-    },
+    getParsedTokenAccountsByOwner: (address: string) =>
+      getTokenAccountsByOwner(address, TOKEN_PROGRAM_ID),
 
-    getParsedToken2022AccountsByOwner: (address: string) => {
-      const callback = () =>
-        connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
-          programId: TOKEN_2022_PROGRAM_ID,
-        });
-      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
-    },
+    getParsedToken2022AccountsByOwner: (address: string) =>
+      getTokenAccountsByOwner(address, TOKEN_2022_PROGRAM_ID),
 
     getStakeAccountsByWithdrawAuth: (authAddr: string) => {
       const callback = () =>
@@ -379,7 +383,7 @@ export function getChainAPI(
       connection.simulateTransaction(transaction, config).catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
-      return (async () => {
+      const sent = (async () => {
         const commitment = "confirmed";
 
         let signature: string;
@@ -437,6 +441,9 @@ export function getChainAPI(
         }
         return signature;
       })().catch(remapErrors);
+      // Whatever the outcome, the transaction may have opened or closed a token account.
+      void sent.then(clearSharedTokenAccounts, clearSharedTokenAccounts);
+      return sent;
     },
 
     findAssocTokenAccAddress: (owner: string, mint: string, program: SolanaTokenProgram) => {

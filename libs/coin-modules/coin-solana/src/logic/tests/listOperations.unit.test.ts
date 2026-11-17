@@ -1,5 +1,9 @@
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
-import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
@@ -54,6 +58,50 @@ describe("listOperations", () => {
     jest.clearAllMocks();
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
     mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [] });
+  });
+
+  describe("signature sources", () => {
+    const token2022Ata = () => ({
+      pubkey: getAssociatedTokenAddressSync(
+        new PublicKey(USDC_MINT_FIXTURE),
+        new PublicKey(TEST_ADDRESS),
+        undefined,
+        TOKEN_2022_PROGRAM_ID,
+      ),
+      account: { data: { parsed: { info: { mint: USDC_MINT_FIXTURE } } } },
+    });
+
+    it("skips the Token-2022 accounts when Token-2022 is disabled, as getBalance does", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([]);
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [token2022Ata()] });
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetParsedToken2022AccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetSignaturesForAddress.mock.calls.map(([source]) => source)).toEqual([
+        TEST_ADDRESS,
+      ]);
+    });
+
+    it("walks the Token-2022 associated accounts when Token-2022 is enabled", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([]);
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [token2022Ata()] });
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: true }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetSignaturesForAddress.mock.calls.map(([source]) => source)).toEqual([
+        TEST_ADDRESS,
+        token2022Ata().pubkey.toBase58(),
+      ]);
+    });
   });
 
   it("should return empty list when no signatures found", async () => {

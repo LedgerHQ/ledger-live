@@ -6,6 +6,7 @@ import type {
 import { http, HttpResponse } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import { getChainAPI, type ChainAPI } from "../../../network";
+import { clearSharedTokenAccounts } from "../../../network/chain/sharedTokenAccounts";
 
 export const TEST_ENDPOINT = "https://test-solana-rpc.example.com";
 
@@ -83,6 +84,9 @@ function invokeHandler(
 }
 
 export function rpcHandler(methodHandlers: RpcMethodHandlers) {
+  // Every case reads the same owners on the same endpoint: new fixtures must not be answered with
+  // token accounts a previous case shared.
+  clearSharedTokenAccounts();
   const handlers = { ...methodHandlers } as Record<string, (params: unknown[]) => unknown>;
   // Stake discovery asks for the paginated getProgramAccountsV2 (see
   // network/chain/rpc/program-accounts.ts); serve the declared V1 result as a single page.

@@ -44,7 +44,9 @@ export async function listOperations(
   const decoded = decodeCursor(cursor, address);
   let before = decoded.cursors;
   let activeSources =
-    cursor && !decoded.legacy ? Object.keys(before) : await signatureSources(api, address);
+    cursor && !decoded.legacy
+      ? Object.keys(before)
+      : await signatureSources(api, address, config.token2022Enabled);
 
   const items: Operation[] = [];
 
@@ -154,11 +156,17 @@ export async function listOperations(
 }
 
 /** Canonical associated accounts only: `getBalance` reports no others. */
-async function signatureSources(api: ChainAPI, address: string): Promise<string[]> {
+async function signatureSources(
+  api: ChainAPI,
+  address: string,
+  token2022Enabled: boolean,
+): Promise<string[]> {
   const owner = new PublicKey(address);
   const [splTokenAccounts, token2022Accounts] = await Promise.all([
     api.getParsedTokenAccountsByOwner(address).then(res => res.value),
-    api.getParsedToken2022AccountsByOwner(address).then(res => res.value),
+    token2022Enabled
+      ? api.getParsedToken2022AccountsByOwner(address).then(res => res.value)
+      : Promise.resolve([]),
   ]);
 
   const associated = [
