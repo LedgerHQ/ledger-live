@@ -25,11 +25,16 @@ const extraProperties = () => ({
 /** The part of the Segment client wallet-cli uses. */
 type SegmentClient = Pick<Analytics, "identify" | "track" | "closeAndFlush">;
 
-export const createSegmentClient = (writeKey: string, host?: string): SegmentClient =>
+type SegmentClientOptions = { host?: string; requestTimeoutMs?: number };
+
+export const createSegmentClient = (
+  writeKey: string,
+  { host, requestTimeoutMs = ANALYTICS_FLUSH_TIMEOUT_MS }: SegmentClientOptions = {},
+): SegmentClient =>
   new Analytics({
     writeKey,
     // The flush timeout does not abort an in-flight request; this caps every request, so slow mid-run batches get retried.
-    httpRequestTimeout: ANALYTICS_FLUSH_TIMEOUT_MS,
+    httpRequestTimeout: requestTimeoutMs,
     ...(host ? { host } : {}),
   });
 

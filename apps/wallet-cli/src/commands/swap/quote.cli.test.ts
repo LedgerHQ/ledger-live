@@ -212,14 +212,20 @@ describe("quote command — API auth key", () => {
   it("does not count the time the keychain dialog waits for the user against the auth timeout", async () => {
     // Generous for a slow runner: the rest of the token fetch must fit in it.
     _setTestAuthRequestTimeoutMs(500);
-    // The macOS keychain dialog blocks the read until the user answers.
+    // The macOS keychain dialog blocks the read until the user answers, a second later on the
+    // monotonic clock the auth deadline runs on.
+    const monotonicNow = performance.now.bind(performance);
+    let dialogWaitedMs = 0;
+    const clock = spyOn(performance, "now").mockImplementation(
+      () => monotonicNow() + dialogWaitedMs,
+    );
     const keychain = new InMemoryKeychain();
     const previousKeychain = _setTestKeychain((service, account) => {
       const entry = keychain.open(service, account);
       return {
         ...entry,
         getPassword: () => {
-          Bun.sleepSync(1_000);
+          dialogWaitedMs += 1_000;
           return entry.getPassword();
         },
       };
@@ -227,9 +233,11 @@ describe("quote command — API auth key", () => {
     try {
       await runQuoteAndGetAuthSignature(fixture.env);
     } finally {
+      clock.mockRestore();
       _setTestKeychain(previousKeychain);
       _setTestAuthRequestTimeoutMs(null);
     }
+    expect(dialogWaitedMs).toBeGreaterThan(0);
   });
 });
 
@@ -309,7 +317,7 @@ describe("quote command — authentication failures", () => {
   });
 
   describe("when an auth call does not answer", () => {
-    beforeAll(() => _setTestAuthRequestTimeoutMs(200));
+    beforeAll(() => _setTestAuthRequestTimeoutMs(100));
     afterAll(resetTestSeams);
 
     it.each([
@@ -334,7 +342,7 @@ describe("quote command — authentication failures", () => {
           ? {
               ...route,
               onRequest: async (request: Request) => {
-                await Bun.sleep(120);
+                await Bun.sleep(60);
                 return route.onRequest?.(request);
               },
             }

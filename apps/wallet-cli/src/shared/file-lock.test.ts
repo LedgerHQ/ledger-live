@@ -14,6 +14,8 @@ import { join } from "node:path";
 import { readLiveLockHolderPid, withFileLock } from "./file-lock";
 
 const MOCKED_UPTIME_SECONDS = 3_600;
+// Room for two retries, 50 ms apart, before giving up on a held lock.
+const ACQUIRE_TIMEOUT_MS = 60;
 
 let dir: string | undefined;
 let restoreUptime: (() => void) | undefined;
@@ -116,7 +118,7 @@ describe("withFileLock", () => {
 
     const first = withFileLock(path, async () => {
       events.push("first-start");
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 10));
       events.push("first-end");
     });
     const second = withFileLock(path, () => {
@@ -144,7 +146,7 @@ describe("withFileLock", () => {
 
     const restoreKill = mockKillEperm();
     try {
-      expect(await withFileLock(path, () => "acquired", 300)).toBe("acquired");
+      expect(await withFileLock(path, () => "acquired", ACQUIRE_TIMEOUT_MS)).toBe("acquired");
     } finally {
       restoreKill();
     }
@@ -158,7 +160,7 @@ describe("withFileLock", () => {
     const restoreUptime = mockUnreadableUptime();
     const restoreKill = mockKillEperm();
     try {
-      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "stolen", ACQUIRE_TIMEOUT_MS)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     } finally {
@@ -172,7 +174,7 @@ describe("withFileLock", () => {
 
     await withFileLock(path, async () => {
       backdateBeforeLastBoot(path);
-      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "stolen", ACQUIRE_TIMEOUT_MS)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     });
@@ -189,7 +191,7 @@ describe("withFileLock", () => {
     try {
       // Short acquire timeout — this test is about the "give up and report" path, not about
       // proving it waits the full production default.
-      await expect(withFileLock(path, () => "should not run", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "should not run", ACQUIRE_TIMEOUT_MS)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     } finally {

@@ -11,17 +11,16 @@ import { MockServer } from "../../testing/mock-server";
 import { makeSessionDir } from "../../testing/session-fixture";
 import {
   dexQuoteRow,
-  EXCHANGE_NONCE,
   FakeEvmBroadcast,
   FakeExchangeApp,
   PAYIN_ADDRESS,
   PAYLOAD_SIGNATURE,
   SWAP_ID,
   SwapBackend,
-  SwapDevice,
   swapPayload,
   UNISWAP_ROUTER,
 } from "../../testing/swap-execute";
+import { EXCHANGE_NONCE, FakeLedger } from "../../testing/fake-ledger";
 import { makeSwapQuoteRoutes } from "../../testing/swap-quote-routes";
 import { _setTestBroadcastEvmJob } from "./cli-swap-die-pipeline";
 import { _setTestCompleteExchange } from "./cli-swap-pipeline";
@@ -50,7 +49,7 @@ const server = new MockServer([
 ]);
 const session = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
 
-let device: SwapDevice;
+let device: FakeLedger;
 let exchangeApp: FakeExchangeApp;
 let broadcast: FakeEvmBroadcast;
 let undo: (() => void)[] = [];
@@ -62,7 +61,7 @@ afterAll(() => {
 });
 beforeEach(() => {
   backend.reset();
-  device = new SwapDevice();
+  device = new FakeLedger();
   exchangeApp = new FakeExchangeApp(device);
   broadcast = new FakeEvmBroadcast();
   _setTestCompleteExchange(exchangeApp.completeExchange);
@@ -132,21 +131,6 @@ function recordAnalytics() {
     for (const spy of Object.values(spies)) spy.mockRestore();
   });
   return spies;
-}
-
-/**
- * Runs `swap` and returns what it wrote to the process's stderr: the CLI framework prints there an
- * error the command's output didn't, outside what `runCli` captures.
- */
-async function swapPrintingError(options: SwapOptions, ...extra: string[]) {
-  const write = spyOn(process.stderr, "write").mockImplementation(() => true);
-  try {
-    const run = await swap(options, ...extra);
-    const printed = write.mock.calls.map(([chunk]) => String(chunk)).join("");
-    return { ...run, printedError: printed && JSON.parse(printed).error };
-  } finally {
-    write.mockRestore();
-  }
 }
 
 /**
@@ -544,7 +528,7 @@ describe("swap execute in the provider's embedded coin app (DEX providers)", () 
   });
 
   it("fails when the device doesn't tell its model", async () => {
-    device = new SwapDevice("no-device-model");
+    device = new FakeLedger({ initialState: "no-device-model" });
     undo.push(device.install());
     backend.quotes = [dexQuoteRow("uniswap")];
 
@@ -594,7 +578,7 @@ describe("swap execute in the provider's embedded coin app (DEX providers)", () 
     async (_case, provider, resolved, quote, reason) => {
       backend.quotes = [quote];
 
-      const { stderr, exitCode, printedError } = await swapPrintingError({ provider });
+      const { stderr, exitCode } = await swap({ provider });
 
       expect(backend.quoteRequests[0].query["providers-whitelist"]).toBe(resolved);
       expect(stderr).toContain(
@@ -603,7 +587,9 @@ describe("swap execute in the provider's embedded coin app (DEX providers)", () 
       // The Exchange app only takes CEX partners: a DEX swap stops once it opened.
       expect(device.events).toEqual(["open Exchange", "close session"]);
       expect(exitCode).toBe(1);
-      expect(printedError.message).toBe("Unsupported provider type DEX");
+      // The CLI framework prints the error envelope after the progress lines.
+      const envelope = JSON.parse(stderr.slice(stderr.indexOf("\n{") + 1));
+      expect(envelope.error.message).toBe("Unsupported provider type DEX");
     },
   );
 
@@ -706,10 +692,10 @@ describe("swap execute arguments", () => {
       "Swap execute requires --to-account <descriptor-or-session-label>.",
     ],
   ])("rejects %s before any quote or device step", async (_case, options, message) => {
-    const { stdout, exitCode, printedError } = await swapPrintingError(options, "--output", "json");
+    const { stdout, stderr, exitCode } = await swap(options, "--output", "json");
 
     expect(exitCode).toBe(1);
-    expect((stdout ? JSON.parse(stdout).error : printedError).message).toMatch(message);
+    expect(JSON.parse(stdout || stderr).error.message).toMatch(message);
     expect(backend.quoteRequests).toEqual([]);
     expect(backend.swapRequests).toEqual([]);
     expect(device.events).toEqual([]);
@@ -718,7 +704,7 @@ describe("swap execute arguments", () => {
   it("reports an unknown currency as a failed swap", async () => {
     const analytics = recordAnalytics();
 
-    await swapPrintingError({ to: "test" });
+    await swap({ to: "test" });
 
     expect(analytics.failed).toHaveBeenCalledWith(
       expect.objectContaining({ fromCurrency: "ethereum", toCurrency: "test", errorCode: "Error" }),

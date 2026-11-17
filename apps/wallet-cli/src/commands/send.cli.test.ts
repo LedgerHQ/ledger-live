@@ -4,6 +4,8 @@ import { runCli } from "../testing/cli-runner";
 import { makeSessionDir } from "../testing/session-fixture";
 import { ETH_SYNC_ROUTES } from "../testing/eth-sync-routes";
 import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../testing/constants";
+import { FakeEvmNode } from "../testing/earn-vault";
+import { FakeLedger } from "../testing/fake-ledger";
 
 // Routes needed by prepareTransaction (gas estimation, nonce, fee data) in addition to sync.
 // The balance route is placed first (before ETH_SYNC_ROUTES) so it overrides the default
@@ -120,5 +122,74 @@ describe("send --dry-run command", () => {
     expect(typeof data.recipient).toBe("string");
     expect(typeof data.amount).toBe("string");
     expect(typeof data.fee).toBe("string");
+  });
+});
+
+describe("send refused on the device", () => {
+  const node = new FakeEvmNode([`0x${"ab".repeat(32)}`]);
+  const server = new MockServer(node.routes);
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+  let unplug: (() => void) | undefined;
+  afterEach(() => unplug?.());
+
+  function plugIn(device: FakeLedger): void {
+    unplug = device.install();
+  }
+
+  async function send() {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    try {
+      const run = await runCli(
+        [
+          "send",
+          "--account",
+          "ethereum-1",
+          "--to",
+          "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+          "--amount",
+          "0.001 ETH",
+          "--output",
+          "json",
+        ],
+        { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+      );
+      return { ...run, result: JSON.parse(run.stdout.split("\n").at(-1)!) };
+    } finally {
+      fixture.cleanup();
+    }
+  }
+
+  it("stops at the app the user refused to open", async () => {
+    const device = new FakeLedger();
+    device.refuseToOpen = "Ethereum";
+    plugIn(device);
+
+    const { result, exitCode } = await send();
+
+    expect(exitCode).toBe(2);
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        command: "send",
+        code: "rejected",
+        message: "Rejected on device. App was not opened.",
+      },
+    });
+    expect(node.broadcasts).toEqual([]);
+  });
+
+  it("broadcasts nothing when the user refuses the transaction", async () => {
+    const device = new FakeLedger();
+    device.refuseToSign = true;
+    plugIn(device);
+
+    const { result, exitCode } = await send();
+
+    expect(exitCode).toBe(1);
+    expect(result.error).toMatchObject({ code: "UserRefusedOnDevice" });
+    expect(device.events).toEqual(["open Ethereum", "sign 44'/60'/0'/0/0", "close session"]);
+    expect(node.broadcasts).toEqual([]);
   });
 });

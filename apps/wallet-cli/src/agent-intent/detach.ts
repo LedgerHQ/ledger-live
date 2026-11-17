@@ -18,10 +18,14 @@ const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
 export const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
 const startupTimeoutMs = createTestSeam(STARTUP_TIMEOUT_MS);
+const startupPollMs = createTestSeam(STARTUP_POLL_MS);
 
 /** @internal Test seam — how long a `--detach` parent waits for the listener's first line; `null`
  * restores {@link STARTUP_TIMEOUT_MS}. */
 export const _setTestStartupTimeoutMs = startupTimeoutMs.set;
+/** @internal Test seam — how often the parent reads the listener's log for its first line; `null`
+ * restores {@link STARTUP_POLL_MS}. */
+export const _setTestStartupPollMs = startupPollMs.set;
 const START_LOCK_MARGIN_MS = 5_000;
 /** How long a live listener may hold its lock without saving its profile. A human may answer a
  * keychain unlock prompt late; past this, `wait` reports the listener `listener_stuck`: stuck, or
@@ -218,7 +222,7 @@ export async function readFirstLogJsonLine(
         );
       }
       if (Date.now() >= deadline) return undefined;
-      await sleep(STARTUP_POLL_MS);
+      await sleep(startupPollMs.get());
     }
   } finally {
     child.off("exit", onExit);

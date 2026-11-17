@@ -28,6 +28,8 @@ const SEPOLIA_ACCOUNT = {
   label: "sepolia-1",
   descriptor: `account:2:address:ethereum_sepolia:${MOCK_ETH_ADDRESS}:m/44h/60h/0h/0/0`,
 };
+const ETH_SIGN = "sign 44'/60'/0'/0/0";
+const SOL_SIGN = "sign 44'/501'/0'/0'";
 const DEPOSIT = [
   "deposit",
   "--account",
@@ -148,15 +150,9 @@ describe("earn deposit (EVM, signed on the device)", () => {
     expect(sleeps).toEqual([5000, 5000, 5000]);
 
     // The Ethereum app opens with Kiln, which clear-signs the vault calldata.
-    expect(device.signed).toBe(2);
-    expect(device.openedApps.length).toBeGreaterThan(0);
-    for (const app of device.openedApps) {
-      expect(app).toMatchObject({
-        application: { name: "Ethereum" },
-        dependencies: [{ name: "Kiln" }],
-        unlockTimeout: 1234,
-      });
-    }
+    const signedTx = ["open Ethereum with Kiln", ETH_SIGN, "close session"];
+    expect(device.events).toEqual([...signedTx, ...signedTx]);
+    expect(device.unlockTimeouts).toEqual([1234, 1234]);
   });
 
   it("deposits alone when the allowance suffices, and fails fast on a 4xx status", async () => {
@@ -192,13 +188,13 @@ describe("earn deposit (EVM, signed on the device)", () => {
   it("broadcasts nothing when the user refuses on the device", async () => {
     const { earn, env } = signedEvm(["0xdeposit"]);
     earn.api.approve = null;
-    earn.device.refuse = true;
+    earn.device.refuseToSign = true;
 
     const { stdout, exitCode } = await runEarn(ETH_ACCOUNT, DEPOSIT, env);
 
     expect(exitCode).toBe(1);
     expect(earnResults(stdout)[0].error?.code).toBe("UserRefusedOnDevice");
-    expect(earn.device.signed).toBe(1);
+    expect(earn.device.events).toEqual(["open Ethereum with Kiln", ETH_SIGN, "close session"]);
     expect(earn.node.broadcasts).toEqual([]);
     expect(earn.api.polls).toEqual([]);
   });
@@ -217,7 +213,7 @@ describe("earn deposit (EVM, signed on the device)", () => {
       "is on chain id 11155111 but vault usdc-vault is on chain id 1",
     );
     expect(earn.api.posts).toEqual([]);
-    expect(earn.device.openedApps).toEqual([]);
+    expect(earn.device.events).toEqual([]);
   });
 });
 
@@ -257,19 +253,22 @@ describe("earn deposit (Solana, signed on the device)", () => {
         validator: SOLANA_VALIDATOR,
         status: "broadcasted",
         transactions: [
-          { kind: "stake.createAccount", hash: earn.node.signature, status: "broadcasted" },
+          {
+            kind: "stake.createAccount",
+            hash: earn.node.broadcastSignature,
+            status: "broadcasted",
+          },
         ],
       }),
     ]);
-    expect(earn.device.openedApps[0]).toMatchObject({ application: { name: "Solana" } });
-    expect(earn.device.signed).toBe(1);
-    expect(earn.node.sent).toHaveLength(1);
-    expect(references(earn.node.sent[0], SOLANA_VALIDATOR)).toBe(true);
+    expect(earn.device.events).toEqual(["open Solana", SOL_SIGN, "close session"]);
+    expect(earn.node.broadcasts).toHaveLength(1);
+    expect(references(earn.node.broadcasts[0], SOLANA_VALIDATOR)).toBe(true);
   });
 
   it("broadcasts nothing when the user refuses on the device", async () => {
     const { earn, env } = signedSolana();
-    earn.device.refuse = true;
+    earn.device.refuseToSign = true;
 
     const { stdout, exitCode } = await runEarn(SOLANA_ACCOUNT, SOL_DEPOSIT, env);
 
@@ -278,8 +277,8 @@ describe("earn deposit (Solana, signed on the device)", () => {
       code: "rejected",
       message: "Rejected on device. No action taken.",
     });
-    expect(earn.device.signed).toBe(1);
-    expect(earn.node.sent).toEqual([]);
+    expect(earn.device.events).toEqual(["open Solana", SOL_SIGN, "close session"]);
+    expect(earn.node.broadcasts).toEqual([]);
   });
 });
 

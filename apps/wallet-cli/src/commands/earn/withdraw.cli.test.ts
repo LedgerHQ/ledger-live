@@ -112,7 +112,11 @@ describe("earn withdraw (EVM, signed on the device)", () => {
     ]);
     expect(earn.node.broadcasts).toHaveLength(1);
     expect(calls(earn.node.broadcasts[0], VAULT.vault)).toBe(true);
-    expect(earn.device.openedApps[0]).toMatchObject({ dependencies: [{ name: "Kiln" }] });
+    expect(earn.device.events).toEqual([
+      "open Ethereum with Kiln",
+      "sign 44'/60'/0'/0/0",
+      "close session",
+    ]);
   });
 
   it("fails when the redeem reverts on-chain instead of reporting success", async () => {
@@ -143,7 +147,7 @@ describe("earn withdraw (EVM, signed on the device)", () => {
     expect(exitCode).toBe(1);
     expect(earnResults(stdout)[0].error?.message).toContain("does not match the vault asset");
     expect(earn.api.posts).toEqual([]);
-    expect(earn.device.openedApps).toEqual([]);
+    expect(earn.device.events).toEqual([]);
   });
 });
 
@@ -173,12 +177,12 @@ describe("earn withdraw (Solana, signed on the device)", () => {
         finalize: false,
         status: "broadcasted",
         transactions: [
-          { kind: "stake.undelegate", hash: earn.node.signature, status: "broadcasted" },
+          { kind: "stake.undelegate", hash: earn.node.broadcastSignature, status: "broadcasted" },
         ],
       }),
     ]);
-    expect(earn.node.sent).toHaveLength(1);
-    expect(references(earn.node.sent[0], SOLANA_STAKE)).toBe(true);
+    expect(earn.node.broadcasts).toHaveLength(1);
+    expect(references(earn.node.broadcasts[0], SOLANA_STAKE)).toBe(true);
   });
 });
 

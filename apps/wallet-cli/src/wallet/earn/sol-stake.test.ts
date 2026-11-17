@@ -7,7 +7,7 @@ import type { TransactionIntent } from "../intents";
 import type { CommandOutput } from "../../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
 import { resetTestSeams } from "../../shared/test-seam";
-import { SigningDevice } from "../../testing/earn-vault";
+import { FakeLedger } from "../../testing/fake-ledger";
 import { SolanaStakeAmountError } from "./errors";
 import type { SolanaStakeLimits } from "./types";
 import { depositSolana, describeStakeAmountError, withdrawSolana } from "./sol-stake";
@@ -375,7 +375,7 @@ describe("stake intents signed on the device", () => {
 
   // The bridge always reports a broadcast hash; a wallet that reports none reaches the guard.
   it("fails instead of reporting a stake or unstake no broadcast hash came back for", async () => {
-    new SigningDevice().plugIn();
+    new FakeLedger().install();
     const signing = {
       descriptor: DESCRIPTOR,
       network: "solana",
