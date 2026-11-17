@@ -50,6 +50,9 @@ function StakingAmount({ navigation, route }: Props) {
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);
+  const [isMaxSelected, setIsMaxSelected] = useState(
+    () => route?.params?.transaction.useAllAmount ?? false,
+  );
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);
   const remaining = useMemo(() => max.minus(value), [max, value]);
   const { transaction, updateTransaction, bridgePending, status } = route.params;
@@ -58,7 +61,7 @@ function StakingAmount({ navigation, route }: Props) {
 
     const transaction = bridge.updateTransaction(tx, {
       amount: value,
-      useAllAmount: value.gte(max),
+      useAllAmount: isMaxSelected,
     });
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
@@ -66,12 +69,14 @@ function StakingAmount({ navigation, route }: Props) {
       transaction,
       fromSelectAmount: true,
     });
-  }, [navigation, route.params, bridge, value, max]);
+  }, [navigation, route.params, bridge, value, isMaxSelected]);
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    (amount: BigNumber, isMaxSelected: boolean) => {
       if (!amount.isNaN()) {
         setValue(amount);
-        updateTransaction && updateTransaction(oldTx => ({ ...oldTx, amount }));
+        setIsMaxSelected(isMaxSelected);
+        updateTransaction &&
+          updateTransaction(oldTx => ({ ...oldTx, amount, useAllAmount: isMaxSelected }));
       }
     },
     [updateTransaction],
@@ -110,7 +115,7 @@ function StakingAmount({ navigation, route }: Props) {
               <AmountInput
                 editable={true}
                 account={account}
-                onChange={onChange}
+                onChange={amount => onChange(amount, false)}
                 value={value}
                 error={error}
                 warning={warning}
@@ -139,7 +144,7 @@ function StakingAmount({ navigation, route }: Props) {
                     ]}
                     onPress={() => {
                       Keyboard.dismiss();
-                      onChange(v);
+                      onChange(v, label === "100%");
                     }}
                   >
                     <LText
