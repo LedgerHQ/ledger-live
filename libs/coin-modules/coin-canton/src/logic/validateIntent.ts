@@ -121,7 +121,8 @@ async function utxoWarning(
   if (!countsUtxos(intent)) return undefined;
   const rows = await getBalance(config, intent.sender).catch(() => []);
   const count = rows
-    .filter(row => isInstrument(target, row.instrument_id, row.admin_id))
+    // The gateway picks transfer inputs from unlocked holdings only.
+    .filter(row => !row.locked && isInstrument(target, row.instrument_id, row.admin_id))
     .reduce((sum, row) => sum + row.utxo_count, 0);
   if (count > TO_MANY_UTXOS_CRITICAL_COUNT) return new TooManyUtxosCritical();
   if (count > TO_MANY_UTXOS_WARNING_COUNT) {

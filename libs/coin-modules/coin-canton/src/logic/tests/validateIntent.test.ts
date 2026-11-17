@@ -391,9 +391,13 @@ describe("validateIntent", () => {
   });
 
   describe("UTXO count", () => {
-    it("should warn critically above the critical count, counting locked rows too", async () => {
+    it("should warn critically above the critical count", async () => {
       mockedGetBalance.mockResolvedValue(
-        rows(["Amulet", "AmuletAdmin", 20], ["Amulet", "AmuletAdmin", 5]),
+        rows(
+          ["Amulet", "AmuletAdmin", TO_MANY_UTXOS_CRITICAL_COUNT],
+          ["Amulet", "AmuletAdmin", 30],
+          ["Amulet", "AmuletAdmin", 1],
+        ),
       );
 
       const { warnings } = await validate();
@@ -424,9 +428,23 @@ describe("validateIntent", () => {
       expect(warnings.tooManyUtxos).toBeUndefined();
     });
 
+    it("should not count locked rows", async () => {
+      mockedGetBalance.mockResolvedValue(
+        rows(["Amulet", "AmuletAdmin", TO_MANY_UTXOS_WARNING_COUNT], ["Amulet", "AmuletAdmin", 30]),
+      );
+
+      const { warnings } = await validate();
+
+      expect(warnings.tooManyUtxos).toBeUndefined();
+    });
+
     it("should count the native instrument under every admin, as sync does", async () => {
       mockedGetBalance.mockResolvedValue(
-        rows(["Amulet", "AmuletAdmin", 6], ["Amulet", "other", 6]),
+        rows(
+          ["Amulet", "AmuletAdmin", TO_MANY_UTXOS_WARNING_COUNT],
+          ["Amulet", "other", 30],
+          ["Amulet", "other", 1],
+        ),
       );
 
       const { warnings } = await validate();

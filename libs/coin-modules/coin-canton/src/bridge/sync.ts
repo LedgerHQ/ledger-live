@@ -232,9 +232,15 @@ export function makeGetAccountShape(
     const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
     // Keyed by admin too: any party can issue an instrument under a CAL token's id.
     const tokensByKey = new Map<string, TokenCurrency>();
-    for (const [tokenId, instrumentId] of calTokens.entries()) {
-      if (!heldInstrumentIds.has(instrumentId)) continue;
-      const token = await getCryptoAssetsStore().findTokenById(tokenId);
+    const heldTokens = await Promise.all(
+      [...calTokens.entries()]
+        .filter(([, instrumentId]) => heldInstrumentIds.has(instrumentId))
+        .map(async ([tokenId, instrumentId]) => ({
+          instrumentId,
+          token: await getCryptoAssetsStore().findTokenById(tokenId),
+        })),
+    );
+    for (const { instrumentId, token } of heldTokens) {
       if (token?.contractAddress) {
         tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
       }
@@ -254,13 +260,14 @@ export function makeGetAccountShape(
           existing.lockedBalance += balance.value;
         } else {
           existing.unlockedBalance += balance.value;
+          existing.utxoCount += balance.utxoCount;
         }
-        existing.utxoCount += balance.utxoCount;
       } else {
         aggregatedBalances.set(balanceKey, {
           unlockedBalance: balance.locked ? 0n : balance.value,
           lockedBalance: balance.locked ? balance.value : 0n,
-          utxoCount: balance.utxoCount,
+          // The gateway picks transfer inputs from unlocked holdings only.
+          utxoCount: balance.locked ? 0 : balance.utxoCount,
           token,
           adminId: balance.adminId,
         });

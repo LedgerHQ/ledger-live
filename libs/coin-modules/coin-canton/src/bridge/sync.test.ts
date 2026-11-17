@@ -737,7 +737,7 @@ describe("makeGetAccountShape", () => {
       ]);
       expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
         Amulet: 1,
-        [`${instrumentId}____${calAdmin}`]: 2,
+        [`${instrumentId}____${calAdmin}`]: 1,
         [`${instrumentId}____${otherAdmin}`]: 1,
       });
     });
