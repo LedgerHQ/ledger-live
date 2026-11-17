@@ -20000,6 +20000,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@domain/entity-derivation':
+        specifier: workspace:^
+        version: link:../../domain/entity/derivation
       '@domain/entity-interest-rate':
         specifier: workspace:^
         version: link:../../domain/entity/interest-rate
@@ -20469,9 +20472,6 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
-      '@domain/entity-derivation':
-        specifier: workspace:^
-        version: link:../../domain/entity/derivation
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies

@@ -106,6 +106,9 @@ export async function addressFromKey(currencyId: string, key: string): Promise<A
   return AddressSchema.parse(derive(key));
 }
 
+/** `m/44h/60h/0h/0/0` -> `44'/60'/0'/0/0`, the spelling of the legacy resolvers. */
+export const toLegacyPath = (path: string) => path.replace(/^m\//, "").replaceAll("h", "'");
+
 /** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
 export const toDescriptorPath = (path: string) =>
   `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;
