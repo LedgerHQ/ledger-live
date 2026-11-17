@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  checkReleaseTags,
+  type GitHubGet,
   inputsOf,
   latestProdTag,
   type LsRemote,
@@ -180,6 +182,34 @@ describe("planBuilds", () => {
     );
   });
 
+  it("builds only develop, release, main and release tags in a run from one of them", () => {
+    const refs = fakeLsRemote([
+      ...REFS,
+      [SHA(8), "refs/heads/main"],
+      [SHA(8), "refs/heads/feat/x"],
+    ]);
+    const plan = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs);
+    assert.equal(plan({ preset: "prod-vs-develop", refA: "", refB: "" }).shaB, SHA(1));
+    assert.equal(plan({ preset: "prod-vs-release", refA: "", refB: "" }).shaB, SHA(2));
+    assert.equal(plan({ refA: "live-mobile@4.27.0", refB: "main" }).shaB, SHA(8));
+    assert.equal(plan({ preset: "aa-noise", refA: "" }).shaA, SHA(9));
+    for (const inputs of [
+      { preset: "prod-vs-develop", refA: "", refB: "feat/x" },
+      { refA: "feat/x", refB: "develop" },
+      { refA: "live-mobile@4.28.0-nightly.1" },
+      { preset: "known-regression", refA: "feat/x" },
+    ]) {
+      assert.throws(
+        () => plan(inputs),
+        /a run from develop builds only develop, release, main and live-mobile@X\.Y\.Z tags, as its jobs get develop's identity: to measure '[^']+', run the workflow from it/,
+      );
+    }
+    assert.throws(() => plan({ branchName: "release", refB: "feat/x" }), /a run from release/);
+    const fromTheBranch = planBuilds({ ...INPUTS, branchName: "feat/x", refB: "feat/x" }, refs);
+    assert.equal(fromTheBranch.shaB, SHA(8));
+  });
+
   it("saves build A only from develop, when B is develop, release, main or A's own", () => {
     const refs = fakeLsRemote([...REFS, [SHA(8), "refs/heads/main"]]);
     const saveA = (inputs: Partial<PlanInputs>) =>
@@ -209,6 +239,89 @@ describe("planBuilds", () => {
       /threshold_ms/,
     );
   });
+});
+
+describe("checkReleaseTags", () => {
+  const BOT = {
+    author: { login: "live-github-bot[bot]" },
+    committer: { login: "web-flow" },
+    commit: {
+      message: "chore(hotfix): :fire: hotfix release [skip ci]",
+      verification: { verified: true },
+    },
+  };
+  const HUMAN = { ...BOT, author: { login: "someone" } };
+  const RENOVATE_SYNC = {
+    ...BOT,
+    commit: { ...BOT.commit, message: "chore(deps): sync Podfile.lock and changeset" },
+  };
+  const fakeGitHub = (commit: object, status = "diverged") => {
+    const paths: string[] = [];
+    const get: GitHubGet = async path => {
+      paths.push(path);
+      return path.startsWith("commits/") ? commit : { status };
+    };
+    return { get, paths };
+  };
+  const fromDevelop = planBuilds(
+    { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" },
+    fakeLsRemote(),
+  );
+
+  it("checks the release tags of a run from develop, release or main only", () => {
+    assert.deepEqual(fromDevelop.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    const fromRelease = planBuilds(
+      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "live-mobile@4.27.1", branchName: "release" },
+      fakeLsRemote(),
+    );
+    assert.deepEqual(
+      fromRelease.tagsToCheck.map(tag => tag.ref),
+      ["live-mobile@4.27.0", "live-mobile@4.27.1"],
+    );
+    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, []);
+    const aaFromDevelop = { ...INPUTS, preset: "aa-noise", refA: "", branchName: "develop" };
+    assert.deepEqual(planBuilds(aaFromDevelop, fakeLsRemote()).tagsToCheck, []);
+  });
+
+  it("builds a tag on the release bot's signed hotfix release, without asking where it is", async () => {
+    const github = fakeGitHub(BOT);
+    await checkReleaseTags(fromDevelop, github.get);
+    assert.deepEqual(github.paths, [`commits/${SHA(5)}?per_page=1`]);
+  });
+
+  for (const [name, commit] of [
+    ["someone else's", HUMAN],
+    ["the bot's renovate-sync", RENOVATE_SYNC],
+  ] as const) {
+    for (const status of ["ahead", "identical"]) {
+      it(`builds a tag on ${name} commit on main's history (compare: ${status})`, async () => {
+        const github = fakeGitHub(commit, status);
+        await checkReleaseTags(fromDevelop, github.get);
+        assert.deepEqual(github.paths, [
+          `commits/${SHA(5)}?per_page=1`,
+          `compare/${SHA(5)}...main?per_page=1`,
+        ]);
+      });
+    }
+  }
+
+  for (const [name, commit] of [
+    ["someone else's", HUMAN],
+    ["the bot's renovate-sync", RENOVATE_SYNC],
+    [
+      "the bot's unsigned",
+      { ...BOT, commit: { ...BOT.commit, verification: { verified: false } } },
+    ],
+    ["the bot's, not committed by GitHub,", { ...BOT, committer: { login: "someone" } }],
+    ["a commit with no GitHub user", { author: null, committer: null, commit: {} }],
+  ] as const) {
+    it(`refuses a tag on ${name} commit off main`, async () => {
+      await assert.rejects(
+        checkReleaseTags(fromDevelop, fakeGitHub(commit).get),
+        /live-mobile@4\.27\.1 \(5555555555\) is neither on main nor a signed hotfix release commit of live-github-bot\[bot\]/,
+      );
+    });
+  }
 });
 
 describe("inputsOf", () => {
