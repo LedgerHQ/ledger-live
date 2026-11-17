@@ -38,4 +38,5 @@ To keep the dependencies short and the size small.
 ## Local development
 
 This package is private and has no build. Its `exports` point at `src/`, so the apps of the monorepo
-read its current source. A `.tsx` subpath needs its own entry in `exports`.
+read its current source. Add `exports` entries as the
+[package checklist](../../../../docs/new-library.md#package-checklist) says.

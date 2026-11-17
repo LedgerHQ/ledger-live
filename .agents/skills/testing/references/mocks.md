@@ -26,6 +26,8 @@ Private packages are served from `src/`, and the transpiler compiles their expor
 without it the spy is silently inert.
 
 ```typescript
+import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
+
 jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
   __esModule: true,
   ...jest.requireActual("@ledgerhq/wallet-pnl/hooks"),

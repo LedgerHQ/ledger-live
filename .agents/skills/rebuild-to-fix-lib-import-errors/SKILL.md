@@ -29,7 +29,7 @@ nx run @ledgerhq/ledger-wallet-framework:build
 
 The error is in the source or the `exports` map, and a rebuild cannot fix it. Check that:
 
-- the subpath has an entry in the lib's `exports`. A `"./*": "./src/*.ts"` wildcard never reaches a
-  `.tsx` file, which needs its own entry;
+- the subpath has an entry in the lib's `exports`: see the
+  [package checklist](../../../docs/new-library.md#package-checklist);
 - the error is not in the lib's own source, compiled with the consumer's options: see
   [typescript](../typescript/SKILL.md#packages-read-from-source).
