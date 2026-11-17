@@ -201,6 +201,20 @@ describe("operations command — history longer than --limit", () => {
     expect(second.data.nextCursor).toBeNull();
   });
 
+  it("human output: prints nextCursor on stderr only while more operations exist", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const env = { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env };
+
+    const first = await runCli(["operations", "--account", "ethereum-1", "--limit", "2"], env);
+    expect(first.exitCode, `stderr: ${first.stderr}`).toBe(0);
+    expect(first.stderr).toContain("nextCursor: ");
+
+    const last = await runCli(["operations", "--account", "ethereum-1", "--limit", "3"], env);
+    expect(last.exitCode, `stderr: ${last.stderr}`).toBe(0);
+    expect(last.stderr).not.toContain("nextCursor");
+  });
+
   it("json output: an unknown cursor exits with code 1", async () => {
     const { exitCode, data } = await operationsJson(["--limit", "2", "--cursor", "not-a-cursor"]);
     expect(exitCode).toBe(1);

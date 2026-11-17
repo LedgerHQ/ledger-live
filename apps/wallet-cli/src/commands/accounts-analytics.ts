@@ -43,15 +43,16 @@ export function trackBalanceViewed(p: { network: string }): void {
   });
 }
 
+// The cursor value encodes an operation id, which contains the account address or xpub.
 export function trackOperationViewed(p: {
   network: string;
   limit?: number;
-  cursor?: string;
+  hasCursor: boolean;
 }): void {
   track("operation_viewed", {
     page: OPERATIONS,
     network: p.network,
     limit: p.limit,
-    cursor: p.cursor,
+    hasCursor: p.hasCursor,
   });
 }
