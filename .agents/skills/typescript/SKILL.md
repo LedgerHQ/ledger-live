@@ -44,8 +44,9 @@ Private packages have no build: a consumer compiles their `src/` with its own co
 apps run them through per-file transpilers (SWC, Babel, rspack, Bun).
 
 - A consumer must compile its dependencies' sources: it can be no stricter than them, and it needs the
-  settings their files require. A relaxation it needs for them goes in
-  [`tsconfig-debt.mjs`](../../../tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs).
+  settings their files require. When it cannot be, fix the dependency's source: the existing
+  exceptions are in [`tsconfig-debt.mjs`](../../../tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs),
+  a list that only shrinks.
 - Keep `isolatedModules` on. Every file must compile alone.
 - Export a type with `export type` or `export { type X }`, never as a plain re-export.
 - Never read a `const enum` from another package: a per-file transpiler cannot inline it. Use an object
