@@ -171,7 +171,8 @@ const jestAllure2ReporterOptions = {
 const detoxAllure2AdapterOptions = {
   // Streams every simulator/emulator process at debug level (~2.6 of 12 vCPU on an iOS shard) but is
   // only kept for failing tests, for the AI artifact. CI turns it on just when that artifact is built.
-  deviceLogs: !process.env.CI || process.env.E2E_DEVICE_LOGS === "true",
+  // Diagnostic run (QAA-1840): keep device logs for passing tests too, to find cold-flag launches.
+  deviceLogs: (!process.env.CI || process.env.E2E_DEVICE_LOGS === "true") && { saveAll: true },
   deviceScreenshots: false,
   deviceVideos: false,
   deviceViewHierarchy: false,

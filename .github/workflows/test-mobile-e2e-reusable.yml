@@ -976,6 +976,25 @@ jobs:
         run: |
           GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run ledger-live-mobile-e2e-tests:test:ci -- -p ios $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
+      # Diagnostic run (QAA-1840): why does the first TLS trust evaluation fail on a fresh simulator?
+      - name: Dump iOS simulator trust logs
+        if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          out="$MOBILE_ARTIFACTS_ROOT/trust-logs"
+          mkdir -p "$out"
+          xcrun simctl list devices booted > "$out/booted.txt" 2>&1 || true
+          date -u +%FT%TZ > "$out/dumped-at.txt"
+          for i in $(seq 1 "${IOS_SIMULATOR_COUNT:-3}"); do
+            name="iOS Simulator"; [[ "$i" -gt 1 ]] && name="iOS Simulator $i"
+            xcrun simctl spawn "$name" log show --last 4h --info --debug --style compact \
+              --predicate 'process == "trustd" OR subsystem BEGINSWITH "com.apple.security" OR (subsystem == "com.apple.network" AND category IN {"boringssl", "connection"}) OR eventMessage CONTAINS[c] "trust evaluat" OR eventMessage CONTAINS "-1200"' \
+              > "$out/sim-$i.log" 2> "$out/sim-$i.err" || true
+            ls -la "$out/sim-$i.log"
+          done
+          cp "${IOS_SIMULATOR_BOOT_LOG:-/dev/null}" "$out/" 2>/dev/null || true
+
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && matrix.shard == 1
         continue-on-error: true
