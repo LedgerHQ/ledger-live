@@ -254,6 +254,17 @@ describe("Earn screen", () => {
           NATIVE_STAKE_POSITION_INPUT_VALUE,
         );
       });
+
+      it("overrides a value that the destination URL itself carries", () => {
+        const inputs = renderEarn({
+          state: { customDappUrl: `${customDappUrl}&${NATIVE_STAKE_POSITION_INPUT_KEY}=false` },
+          isEnabled: true,
+        });
+
+        expect(goToURLQuery(inputs).get(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(
+          NATIVE_STAKE_POSITION_INPUT_VALUE,
+        );
+      });
     });
 
     describe.each<[string, boolean | undefined]>([
@@ -295,6 +306,15 @@ describe("Earn screen", () => {
         });
 
         expect(inputs).not.toHaveProperty(NATIVE_STAKE_POSITION_INPUT_KEY);
+        expect(goToURLQuery(inputs).has(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(false);
+      });
+
+      it("drops a capability that the destination URL itself carries", () => {
+        const inputs = renderEarn({
+          state: { customDappUrl: `${customDappUrl}&${NATIVE_STAKE_POSITION_INPUT_KEY}=true` },
+          isEnabled,
+        });
+
         expect(goToURLQuery(inputs).has(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(false);
       });
     });
