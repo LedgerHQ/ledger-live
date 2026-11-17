@@ -1,5 +1,5 @@
-import { describe, expect, it, beforeEach, afterEach } from "bun:test";
-import { hyperlink, isInteractive, withSpinner } from "./ui";
+import { describe, expect, it, beforeEach, afterEach, spyOn } from "bun:test";
+import { hyperlink, isInteractive, withSpinner, writeStderr } from "./ui";
 
 describe("isInteractive", () => {
   const envVars = [
@@ -36,6 +36,18 @@ describe("isInteractive", () => {
   it("returns false when AGENT=amp", () => {
     process.env.AGENT = "amp";
     expect(isInteractive()).toBe(false);
+  });
+});
+
+describe("writeStderr", () => {
+  it("writes to process.stderr when no capture is installed", () => {
+    const write = spyOn(process.stderr, "write").mockImplementation(() => true);
+    try {
+      writeStderr("hello\n");
+      expect(write).toHaveBeenCalledWith("hello\n");
+    } finally {
+      write.mockRestore();
+    }
   });
 });
 

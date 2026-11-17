@@ -12,9 +12,8 @@
  *   - Within that single process, tests run one at a time, so stdout/stderr capture,
  *     env-var patching, and DMK state are safe without locks as long as each call cleans
  *     up after itself (see `runCleanups` in runCli).
- *   - Because module mocks are global and cannot be undone, a test file that has to mock a
- *     module also imported by these CLI runs uses `createGatedModuleMock` (see
- *     `gated-module-mock.ts`), so other files keep the real module.
+ *   - Because module mocks are global and cannot be undone, tests replace dependencies with
+ *     test seams or environment fakes instead (see README.md, "Test doubles").
  *
  * HTTP interception:
  *   Installed while a mock port is set and removed when it is cleared, so tests that run

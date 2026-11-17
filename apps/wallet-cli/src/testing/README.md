@@ -27,13 +27,17 @@ binary.
 | `cal-cache` | A fresh CAL token cache for each test, so tokens other files resolved don't leak in (`useFreshCalCache`) |
 | `sigint` | Runs a CLI run the test interrupts with Ctrl+C without firing other files' SIGINT listeners (`withOwnSigint`) |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
+| `swap-execute` | A Ledger with the Exchange, Ethereum and DEX plugin apps for `_setTestDmkTransport`, recording what the CLI asks it and refusing on demand (`SwapDevice`); the Exchange app confirmation without its 3 s wait (`FakeExchangeApp`); a broadcast job that confirms at once (`FakeEvmBroadcast`); and the Swap API and Ethereum explorer a swap talks to, recording each request (`SwapBackend`, `swapPayload`, `dexQuoteRow`) |
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
 | `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
 | `print-swap-api-base` | Standalone script spawned to assert which Swap API URL startup leaves for live-common |
 | `os-keychain` | A failing Linux Secret Service probe, and a `process.platform` override |
 | `in-memory-keychain` | OS keychain fake for `_setTestKeychain` |
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |
-| `gated-module-mock` | Module mock that other test files can't see (`createGatedModuleMock`) |
+| `fake-speculos` | Speculos as its HTTP API answers the DMK Speculos transport: an app open (`ethereumApp`, `solanaApp`), an HTTP failure (`failWith`) or a hang (`hang`); records APDUs (`FakeSpeculos`, `SPECULOS_CONNECT_APDU`) |
+| `fake-solana-rpc` | The Solana node (JSON-RPC at `/`, always `routes[0]`) and the Ledger services a Solana bridge sync calls: balance, SPL token and stake accounts, vote accounts, scripted RPC failures, broadcasts (`FakeSolanaRpc`) |
+| `fake-stdin` | A raw-mode terminal on stdin typing given keystrokes (`terminalTyping`), piped stdin (`pipedStdin`), installed for one run (`withStdin`) |
+| `earn-vault` | The earn backend's `/v1/defi` routes with a tx status script per hash (status, 400/500 or refused connection) (`FakeEarnApi`); the Ethereum explorer recording each broadcast (`FakeEvmNode`); `FakeSolanaRpc` also taking signed txs (`FakeStakingSolanaNode`); a device that signs or refuses every transaction, through Ethereum DMK actions and Solana app APDUs, recording the apps it opened (`SigningDevice`); runs wired with these, EVM with an instant poll wait (`SignedEvmEarn`, `SignedSolanaEarn`); `runEarn` / `earnResults` |
 | `clear-shell-env` | Test preload (`bunfig.toml`) that drops `SPECULOS_*` and `SWAP_API_BASE` from the shell or `.env`, so tests don't pick the Speculos transport or another Swap API |
 | `skill-fixtures` | Reads an installed skill's files and rewrites its sidecar, e.g. as an older wallet-cli would have |
 
@@ -51,6 +55,7 @@ All external I/O is replaced — no real device or network needed:
 |-------|-----------------|-----|
 | `MockServer` | Outbound `fetch` / axios / `http(s).request` calls | `runCli` with `WALLET_CLI_MOCK_PORT=<n>` redirects them to the server |
 | `MockDeviceManagementKit` | USB Ledger device (DMK) | `runCli` with `WALLET_CLI_MOCK_DMK=1` installs a mock transport; coin results come from `WALLET_CLI_MOCK_APP_RESULTS` (JSON) |
+| `FakeSpeculos` | Speculos emulator | `runCli` with `SPECULOS_API_PORT=<fake.port>` runs the real DMK and Speculos transport on real APDUs |
 | `InMemoryKeychain` | OS keychain | `runCli` uses its own unless the test installed one with `_setTestKeychain` |
 | Temp state dir | `session.yaml` and the rest of the state dir | `runCli` gives each run an empty one unless the test passes `XDG_STATE_HOME` (e.g. `makeSessionDir`) |
 
@@ -67,15 +72,16 @@ the first option that works:
    `_setTestLkrpSdk`, `_setTestAgentLedgerSyncSdk`, `_setTestGenuineCheck`,
    `_setTestSpinner`, `_setTestDmkTransport`, `_setTestDmk`,
    `_setTestConfirmPrompt`, `_setTestRelayChannelHost`, `_setTestSpawn`,
-   `_setTestStartupTimeoutMs`, `_setTestPollSleep`), built with `createTestSeam`
+   `_setTestStartupTimeoutMs`, `_setTestPollSleep`, `_setTestEarnPollSleep`,
+   `_setTestSpeculosConnectTimeoutMs`, `_setTestControllingTtyPath`,
+   `_setTestRename`, `_setTestCompleteExchange`, `_setTestBroadcastEvmJob`),
+   built with `createTestSeam`
    (`shared/test-seam.ts`). Set it in `beforeAll`/`beforeEach` and call
    `resetTestSeams()` in the matching `after*` hook, which restores every seam.
    Files using `makeEnrolledProfile` reset only the seams they set instead:
    `resetTestSeams()` would also remove the fixture's keychain.
 3. **Environment fake** — `MockServer` and `MockDeviceManagementKit` above.
 4. **`spyOn`** — on a module namespace, restored in `afterEach` or `finally`.
-5. **`createGatedModuleMock`** — when none of the above fits. It forwards to the
-   real module unless the file activated its fakes (`beforeAll` / `afterAll`).
 
 ## Order independence
 
