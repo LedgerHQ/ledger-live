@@ -95,7 +95,7 @@ export type PerpsDepositExecutionDeps = Readonly<{
   updateAccount: (accountId: string, updater: (account: Account) => Account) => void;
   broadcastLogger?: (event: LogEvent) => void;
   track: PerpsDepositTrack;
-  /** Skips tracking the swap, as the provider never gets the funds. */
+  /** The deposit is not recorded or reported to the live app, and the swap is reported cancelled. */
   broadcastDisabled: boolean;
 }>;
 

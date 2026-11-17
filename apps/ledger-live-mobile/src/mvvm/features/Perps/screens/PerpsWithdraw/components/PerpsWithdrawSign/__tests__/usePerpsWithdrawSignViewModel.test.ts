@@ -14,6 +14,11 @@ import {
   type PerpsWithdrawSignProps,
 } from "../usePerpsWithdrawSignViewModel";
 
+const mockIsBroadcastDisabled = jest.fn();
+jest.mock("../../../../../utils/isBroadcastDisabled", () => ({
+  isBroadcastDisabled: () => mockIsBroadcastDisabled(),
+}));
+
 const mockExecute = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute"),
@@ -72,7 +77,10 @@ function renderViewModel() {
 }
 
 describe("usePerpsWithdrawSignViewModel", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsBroadcastDisabled.mockReturnValue(false);
+  });
 
   it("should connect to the Ethereum app first", () => {
     const { result } = renderViewModel();
@@ -123,6 +131,36 @@ describe("usePerpsWithdrawSignViewModel", () => {
         track,
       }),
     );
+  });
+
+  it.each([true, false])(
+    "should pass the app's broadcast setting (%s) to the withdraw",
+    async disabled => {
+      mockIsBroadcastDisabled.mockReturnValue(disabled);
+      mockExecute.mockResolvedValue({ swapId: "swap-1" });
+      const { result, props } = renderViewModel();
+
+      act(() => result.current.handleDeviceResult(appResult));
+
+      await waitFor(() => expect(props.onDone).toHaveBeenCalled());
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ broadcastDisabled: disabled }),
+      );
+    },
+  );
+
+  it("should not record a swap in the history when nothing was submitted", async () => {
+    mockIsBroadcastDisabled.mockReturnValue(true);
+    mockExecute.mockResolvedValue({});
+    const { result, store, props } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalledWith({}));
+    const receiver = store
+      .getState()
+      .accounts.active.find(account => account.id === destinationAccount.id);
+    expect(receiver?.swapHistory ?? []).toEqual([]);
   });
 
   it("should go back to the summary when the withdrawal is declined on the device", async () => {

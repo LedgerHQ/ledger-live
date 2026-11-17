@@ -6,6 +6,11 @@ import { track } from "@shared/analytics";
 import { renderHook } from "tests/testSetup";
 import { usePerpsDepositExecution } from "../usePerpsDepositExecution";
 
+const mockIsBroadcastDisabled = jest.fn();
+jest.mock("../../utils/isBroadcastDisabled", () => ({
+  isBroadcastDisabled: () => mockIsBroadcastDisabled(),
+}));
+
 const mockSharedExecution = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (params: unknown, callbacks: unknown, deps: unknown) =>
@@ -47,7 +52,10 @@ function renderExecution() {
 }
 
 describe("usePerpsDepositExecution (desktop)", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsBroadcastDisabled.mockReturnValue(false);
+  });
 
   it("runs the shared deposit with the wallet's flattened accounts and the desktop device actions", () => {
     const { deps } = renderExecution();
@@ -63,6 +71,17 @@ describe("usePerpsDepositExecution (desktop)", () => {
     });
     expect(deps.track).toBe(track);
   });
+
+  it.each([true, false])(
+    "passes the app's broadcast setting (%s) to the shared deposit",
+    disabled => {
+      mockIsBroadcastDisabled.mockReturnValue(disabled);
+
+      const { deps } = renderExecution();
+
+      expect(deps.broadcastDisabled).toBe(disabled);
+    },
+  );
 
   it("writes the swap's pending operation to the store", () => {
     const { deps, store } = renderExecution();
