@@ -50,8 +50,15 @@ import {
   type CliInitInput,
   type CliSwapIntent,
 } from "./cli-swap-flow-ports";
+import { createTestSeam } from "../../shared/test-seam";
 
 const ETHEREUM_APP_NAME = CLI_ETHEREUM_INIT_INPUT.appName;
+
+// live-common's broadcast job polls the receipt every 3 s, too slow for a test run.
+const broadcastJob = createTestSeam(broadcastEvmJob);
+
+/** @internal Test seam — replaces the job that broadcasts a signed transaction and awaits its receipt. */
+export const _setTestBroadcastEvmJob = broadcastJob.set;
 
 const STUB_DEVICE_EXTRACTED_CONTEXT: DeviceExtractedContext = {
   currentOsVersion: "",
@@ -147,7 +154,7 @@ function launchIntent(args: {
           onResult: () => {},
         });
       default:
-        return broadcastEvmJob({
+        return broadcastJob.get()({
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
