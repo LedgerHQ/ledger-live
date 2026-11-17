@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppAvailability } from "@features/flow-app-availability";
-import { selectRemoteFlagsReady } from "@shared/feature-flags";
+import { selectCachedFlagsSettled, selectRemoteFlagsReady } from "@shared/feature-flags";
 import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
 import { useHideSplashScreen } from "../features/LaunchScreen/useHideSplashScreen";
@@ -22,10 +22,13 @@ export function WaitForAppReady({
 
   const availability = useAppAvailability();
   const pendingAvailabilityCheck = availability.status === "pending";
+  // Test branch: the gate waits for the flags cached on the device, not for the Firebase fetch.
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
-  const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
+  const cachedFlagsSettled = useSelector(selectCachedFlagsSettled);
+  const isLoaded = currencyInitialized && !pendingAvailabilityCheck && cachedFlagsSettled;
 
   logWhenFirstMet(currencyInitialized, "WaitForAppReady currencies ready");
+  logWhenFirstMet(cachedFlagsSettled, "WaitForAppReady cached flags settled");
   logWhenFirstMet(remoteFlagsReady, "WaitForAppReady remote flags ready");
   logWhenFirstMet(!pendingAvailabilityCheck, "WaitForAppReady availability checked");
 
