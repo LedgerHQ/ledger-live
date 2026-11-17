@@ -155,14 +155,11 @@ describe("Asset aggregation", () => {
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
     await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await detoxExpect(getElementByText("POLYGON 1")).toBeVisible();
-    const accountAddressLabel =
-      await app.account.getVisibleAccountAddressLabel(POLYGON_DAI_ACCOUNT_ID);
-    const polygonDaiAddress = getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID);
-    expect(accountAddressLabel.toLowerCase()).toContain(
-      polygonDaiAddress.slice(2, 5).toLowerCase(),
-    );
-    expect(accountAddressLabel.toLowerCase()).toContain(polygonDaiAddress.slice(-4).toLowerCase());
+    await app.account.expectAccountTitleVisible("POLYGON 1");
+    await app.account.expectAccountAddressLabel({
+      accountId: POLYGON_DAI_ACCOUNT_ID,
+      address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
+    });
     await app.account.expectAccountBalanceVisible(POLYGON_DAI_ACCOUNT_ID);
     await app.account.expectReceiveAndSendActionsVisible();
     await app.account.expectOperationHistoryVisible(POLYGON_DAI_ACCOUNT_ID);
