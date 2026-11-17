@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { setEnv } from "@shared/env";
 import { track } from "@shared/analytics";
 import {
   abandonStakePosition,
@@ -36,6 +35,11 @@ jest.mock("~/components/DeviceAction", () => ({
 }));
 jest.mock("~/hooks/deviceActions", () => ({
   useTransactionDeviceAction: () => ({}),
+}));
+// No network under Jest: the broadcast returns the operation the signature carries, as a bridge
+// returns the optimistic operation. The screen then adds it to the account as it does in the app.
+jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
+  useBroadcast: () => async (signedOperation: SignedOperation) => signedOperation.operation,
 }));
 
 const STAKE_ACCOUNT = "StakeAccount3333333333333333333333333333333";
@@ -158,9 +162,6 @@ const isPending = async (answer: Promise<unknown>) => {
 };
 
 describe("SolanaStakePositionFlow", () => {
-  beforeAll(() => setEnv("DISABLE_TRANSACTION_BROADCAST", true));
-  afterAll(() => setEnv("DISABLE_TRANSACTION_BROADCAST", false));
-
   beforeEach(() => {
     jest.clearAllMocks();
     mockSignedOperation = null;

@@ -84,14 +84,15 @@ function contentOf(
   request: ShownStakePositionRequest,
   { isAccountRemoved, isSyncing }: Pick<StakePositionSheetProps, "isAccountRemoved" | "isSyncing">,
 ): SheetContent {
-  const position = isAccountRemoved
-    ? undefined
-    : findSolanaStakingPosition(account, request.positionId);
-  if (!position) return { kind: isSyncing ? "loading" : "notFound" };
+  // A removed account is only the snapshot the request first saw: nothing in it can be matched.
+  if (isAccountRemoved) return { kind: isSyncing ? "loading" : "notFound" };
+  const position = findSolanaStakingPosition(account, request.positionId);
   // The match waits for the sync: another position of the validator may appear or go away.
-  if (isSyncing) return { kind: "position", position };
+  if (isSyncing) return position ? { kind: "position", position } : { kind: "loading" };
+  // Checked first: Earn's merged-row fallback needs this answer for an absent stake account too.
   const match = resolvePositionMatch(toStakePositionCandidates(account), request);
-  return match.kind === "match" ? { kind: "position", position } : match;
+  if (match.kind === "ambiguous") return match;
+  return position && match.kind === "match" ? { kind: "position", position } : { kind: "notFound" };
 }
 
 /** The exit being confirmed, as long as the position still offers it. */

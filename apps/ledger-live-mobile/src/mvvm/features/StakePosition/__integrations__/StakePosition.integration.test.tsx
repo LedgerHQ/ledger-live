@@ -24,6 +24,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { track, trackPage } from "@shared/analytics";
+import { setOverride } from "@shared/feature-flags";
 import {
   abandonStakePosition,
   dismissStakePosition,
@@ -37,6 +38,7 @@ import {
   renderHook,
   screen,
   waitFor,
+  withFlagOverrides,
 } from "@tests/test-renderer";
 import { HttpResponse, http, server } from "@tests/server";
 import { deleteAccount, updateAccount, updateAccountWithUpdater } from "~/actions/accounts";
@@ -75,6 +77,7 @@ const FIGMENT_VOTE = "FigmentVote1111111111111111111111111111111";
 const UNLISTED_VOTE = "UnlistedVote22222222222222222222222222222222";
 const STAKE_ACCOUNT = "StakeAccount3333333333333333333333333333333";
 const OTHER_STAKE_ACCOUNT = "StakeAccount4444444444444444444444444444444";
+const THIRD_STAKE_ACCOUNT = "StakeAccount5555555555555555555555555555555";
 const SHEET = "stake-position-sheet";
 
 const solana = getCryptoCurrencyById("solana");
@@ -187,11 +190,19 @@ type OpenHandler = (request: { params: unknown }) => Promise<StakePositionResult
 
 function renderEarn(
   account: Account,
-  { withSolRate = false, discreet = false }: { withSolRate?: boolean; discreet?: boolean } = {},
+  {
+    withSolRate = false,
+    discreet = false,
+    isNativeStakePositionEnabled = true,
+  }: { withSolRate?: boolean; discreet?: boolean; isNativeStakePositionEnabled?: boolean } = {},
 ) {
   const accounts = [account, ethAccount, usdcAccount, bitcoinAccount];
   accounts.forEach(({ id }) => setWalletApiIdForAccountId(id));
-  const player = renderHook(() => useStakePositionHandlers(accounts));
+  const player = renderHook(() => useStakePositionHandlers(accounts), {
+    overrideInitialState: withFlagOverrides({
+      earnNativeStakePosition: { enabled: isNativeStakePositionEnabled },
+    }),
+  });
   const view = render(
     <BridgeSyncTestProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -371,6 +382,47 @@ describe("StakePosition", () => {
     });
   });
 
+  describe("earnNativeStakePosition flag", () => {
+    const METHOD = "custom.stake.position.open";
+
+    it("should register the method while the flag is on", () => {
+      const { player } = renderEarn(solanaAccountWith([activePosition()]));
+
+      expect(player.result.current).toEqual({ [METHOD]: expect.any(Function) });
+      player.unmount();
+    });
+
+    it("should leave the method unknown while the flag is off, so no sheet can open", () => {
+      const { player } = renderEarn(solanaAccountWith([activePosition()]), {
+        isNativeStakePositionEnabled: false,
+      });
+      const shown = renderHook(() => useShownStakePosition("earn"));
+
+      expect(Object.keys(player.result.current)).toEqual([]);
+      expect(shown.result.current.request).toBeNull();
+      expect(isSheetOpen()).toBe(false);
+      shown.unmount();
+      player.unmount();
+    });
+
+    it("should follow the flag when it changes while the player is mounted", () => {
+      const { player } = renderEarn(solanaAccountWith([activePosition()]));
+      const setFlag = (enabled: boolean) =>
+        act(() => {
+          player.store.dispatch(
+            setOverride({ key: "earnNativeStakePosition", value: { enabled } }),
+          );
+        });
+
+      setFlag(false);
+      expect(Object.keys(player.result.current)).toEqual([]);
+
+      setFlag(true);
+      expect(Object.keys(player.result.current)).toEqual([METHOD]);
+      player.unmount();
+    });
+  });
+
   describe("details", () => {
     it("should show the position with its validator, APY and rewards in one sheet", async () => {
       const { openPosition, player } = renderEarn(solanaAccountWith([activePosition()]), {
@@ -417,6 +469,24 @@ describe("StakePosition", () => {
       expect(screen.queryByText("2\u00a0SOL")).toBeNull();
       expect(screen.queryByText("$150.00")).toBeNull();
       expect(screen.getAllByText(/\*\*\*/).length).toBeGreaterThanOrEqual(2);
+      player.unmount();
+    });
+
+    it.each([
+      ["an active position without the stake authority", [activePosition({ canStake: false })], []],
+      ["a deactivated position under a lockup", [], [inactivePosition({ canWithdraw: false })]],
+    ])("should say another wallet or a lockup may block %s", (_case, delegations, unbondings) => {
+      const { openPosition, player } = renderEarn(solanaAccountWith(delegations, unbondings));
+
+      openPosition();
+
+      expect(
+        screen.getByText(
+          "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
+        ),
+      ).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Deactivate to withdraw" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Withdraw all" })).toBeNull();
       player.unmount();
     });
 
@@ -754,6 +824,53 @@ describe("StakePosition", () => {
       );
 
       await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
+      player.unmount();
+    });
+
+    it("should answer ambiguous when the stake account is unknown but its validator has two positions", async () => {
+      const { openPosition, player } = renderEarn(
+        solanaAccountWith([
+          activePosition({ positionId: OTHER_STAKE_ACCOUNT }),
+          activePosition({ positionId: THIRD_STAKE_ACCOUNT }),
+        ]),
+      );
+
+      const answer = openPosition();
+
+      await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
+      expect(isSheetOpen()).toBe(false);
+      player.unmount();
+    });
+
+    it("should wait for the sync before telling an unknown stake account is ambiguous", async () => {
+      const account = solanaAccountWith(
+        [
+          activePosition({ positionId: OTHER_STAKE_ACCOUNT }),
+          activePosition({ positionId: THIRD_STAKE_ACCOUNT }),
+        ],
+        [],
+        syncedSecondsAgo(120),
+      );
+      const { openPosition, player, dispatch } = renderEarn(account);
+      const answer = openPosition();
+
+      expect(screen.getByText("Loading your position...")).toBeVisible();
+      expect(await isPending(answer)).toBe(true);
+
+      await dispatch(updateAccount({ id: account.id, lastSyncDate: new Date() }));
+
+      await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
+      player.unmount();
+    });
+
+    it("should tell the position is not found when its validator has only one other position", () => {
+      const { openPosition, player } = renderEarn(
+        solanaAccountWith([activePosition({ positionId: OTHER_STAKE_ACCOUNT })]),
+      );
+
+      openPosition();
+
+      expect(screen.getByText("Position not found")).toBeVisible();
       player.unmount();
     });
 

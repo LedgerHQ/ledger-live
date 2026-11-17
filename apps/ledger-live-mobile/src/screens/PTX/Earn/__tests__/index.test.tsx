@@ -78,6 +78,8 @@ const renderEarnScreen = (
     overrideInitialState: withFlagOverrides(flags),
   });
 
+const goToURLOf = (inputs: Record<string, string | undefined>) => new URL(inputs.goToURL ?? "");
+
 describe("EarnScreen canvas background wiring", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -149,23 +151,92 @@ describe("EarnScreen canvas background wiring", () => {
     expect(capturedProps.current?.inputs?.llmWalletApiDeviceIntentSignEnabled).toBe("true");
   });
 
-  it("should tell the live app it opens native stake positions, whatever a deeplink says", () => {
-    const deeplinkProps = {
-      navigation: {} as never,
-      route: {
-        key: "earn",
-        name: ScreenName.Earn,
-        params: { intent: "deposit", [NATIVE_STAKE_POSITION_INPUT_KEY]: "false" },
-        path: `earn?${NATIVE_STAKE_POSITION_INPUT_KEY}=false`,
-      },
-    } as unknown as React.ComponentProps<typeof EarnScreen>;
+  describe("native stake position input", () => {
+    const KEY = NATIVE_STAKE_POSITION_INPUT_KEY;
+    const DAPP_URL = "https://dapp.test/stake";
+    const FLAG_ON = { lwmWallet40: { enabled: true }, earnNativeStakePosition: { enabled: true } };
+    const FLAG_OFF = {
+      lwmWallet40: { enabled: true },
+      earnNativeStakePosition: { enabled: false },
+    };
 
-    render(<EarnScreen {...deeplinkProps} />, {
-      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true } }),
+    type EarnRoute = { params?: Record<string, string>; path?: string };
+
+    const renderEarnRoute = (flags: Parameters<typeof withFlagOverrides>[0], route: EarnRoute) => {
+      const props = {
+        navigation: {} as never,
+        route: {
+          key: "earn",
+          name: ScreenName.Earn,
+          params: { intent: "deposit", ...route.params },
+          path: route.path,
+        },
+      } as unknown as React.ComponentProps<typeof EarnScreen>;
+
+      render(<EarnScreen {...props} />, { overrideInitialState: withFlagOverrides(flags) });
+
+      return capturedProps.current?.inputs ?? {};
+    };
+
+    const claims = (value: string): Array<[string, EarnRoute]> => [
+      ["a route param", { params: { [KEY]: value } }],
+      ["a deeplink path", { path: `earn?${KEY}=${value}` }],
+    ];
+
+    it("should tell the live app it opens native stake positions when the flag is on", () => {
+      const inputs = renderEarnRoute(FLAG_ON, {});
+
+      expect(inputs[KEY]).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
     });
 
-    expect(capturedProps.current?.inputs?.[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(
-      NATIVE_STAKE_POSITION_INPUT_VALUE,
+    it.each(claims("false"))(
+      "should not let %s override it when the flag is on",
+      (_source, route) => {
+        const inputs = renderEarnRoute(FLAG_ON, route);
+
+        expect(inputs[KEY]).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+      },
     );
+
+    it("should carry it in the goToURL when the flag is on, whatever the route and the dapp URL say", () => {
+      const inputs = renderEarnRoute(FLAG_ON, {
+        params: { customDappUrl: `${DAPP_URL}?${KEY}=false`, [KEY]: "false" },
+        path: `earn?${KEY}=false`,
+      });
+
+      const goToURL = goToURLOf(inputs);
+      expect(goToURL.origin + goToURL.pathname).toBe(DAPP_URL);
+      expect(goToURL.searchParams.get("intent")).toBe("deposit");
+      expect(goToURL.searchParams.get(KEY)).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+      expect(inputs[KEY]).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+    });
+
+    it.each([
+      ["off", FLAG_OFF],
+      ["not set", { lwmWallet40: { enabled: true } }],
+    ])("should leave the input out when the flag is %s", (_state, flags) => {
+      const inputs = renderEarnRoute(flags, {});
+
+      expect(inputs).not.toHaveProperty(KEY);
+    });
+
+    it.each(claims("true"))("should not let %s grant it when the flag is off", (_source, route) => {
+      const inputs = renderEarnRoute(FLAG_OFF, route);
+
+      expect(inputs).not.toHaveProperty(KEY);
+    });
+
+    it("should leave it out of the goToURL when the flag is off, whatever the route says", () => {
+      const inputs = renderEarnRoute(FLAG_OFF, {
+        params: { customDappUrl: DAPP_URL, [KEY]: "true" },
+        path: `earn?${KEY}=true`,
+      });
+
+      const goToURL = goToURLOf(inputs);
+      expect(goToURL.origin + goToURL.pathname).toBe(DAPP_URL);
+      expect(goToURL.searchParams.get("intent")).toBe("deposit");
+      expect(goToURL.searchParams.has(KEY)).toBe(false);
+      expect(inputs).not.toHaveProperty(KEY);
+    });
   });
 });

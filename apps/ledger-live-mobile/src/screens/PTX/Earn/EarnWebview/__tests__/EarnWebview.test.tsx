@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { render } from "@tests/test-renderer";
+import { render, withFlagOverrides } from "@tests/test-renderer";
 import { EarnWebview } from "../index";
 
 // The webview is native: the test reads the custom handlers the Earn player hands to it.
@@ -36,16 +36,38 @@ const MANIFEST: LiveAppManifest = {
 const Stack = createNativeStackNavigator();
 const EarnTestScreen = () => <EarnWebview manifest={MANIFEST} />;
 
-describe("EarnWebview", () => {
-  it("should let the Earn live app open a stake position", () => {
-    render(
-      <Stack.Navigator>
-        <Stack.Screen name="EarnTest" component={EarnTestScreen} />
-      </Stack.Navigator>,
-    );
+const STAKE_POSITION_METHOD = "custom.stake.position.open";
 
-    expect(mockWebviewProps.mock.lastCall?.[0].customHandlers).toEqual(
-      expect.objectContaining({ "custom.stake.position.open": expect.any(Function) }),
+function renderEarnWebview(flags: Parameters<typeof withFlagOverrides>[0]) {
+  render(
+    <Stack.Navigator>
+      <Stack.Screen name="EarnTest" component={EarnTestScreen} />
+    </Stack.Navigator>,
+    { overrideInitialState: withFlagOverrides(flags) },
+  );
+  return mockWebviewProps.mock.lastCall?.[0].customHandlers as Record<string, unknown>;
+}
+
+describe("EarnWebview", () => {
+  beforeEach(() => {
+    mockWebviewProps.mockClear();
+  });
+
+  it("should let the Earn live app open a stake position when the flag is on", () => {
+    const customHandlers = renderEarnWebview({ earnNativeStakePosition: { enabled: true } });
+
+    expect(customHandlers).toEqual(
+      expect.objectContaining({ [STAKE_POSITION_METHOD]: expect.any(Function) }),
     );
+  });
+
+  it.each([
+    ["off", { earnNativeStakePosition: { enabled: false } }],
+    ["not set", {}],
+  ])("should leave the stake position method unknown while the flag is %s", (_state, flags) => {
+    const customHandlers = renderEarnWebview(flags);
+
+    expect(Object.keys(customHandlers)).not.toContain(STAKE_POSITION_METHOD);
+    expect(Object.keys(customHandlers).length).toBeGreaterThan(0);
   });
 });
