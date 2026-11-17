@@ -46,10 +46,6 @@ export const setupTestIds = {
   unknownSheet: "device-onboarding-setup-unknown-sheet",
   providerSheet: "device-onboarding-setup-provider-sheet",
   notGenuineSheet: "device-onboarding-setup-not-genuine-sheet",
-  reconnectingSheet: "device-onboarding-setup-reconnecting-sheet",
-  connectionFailedSheet: "device-onboarding-setup-connection-failed-sheet",
-  connectionRetry: "device-onboarding-setup-connection-retry",
-  connectionHelp: "device-onboarding-setup-connection-help",
 } as const;
 
 export const syncOfferTestIds = {

@@ -125,6 +125,20 @@ function unseededContext(
   } as DeviceOnboardingSession["context"];
 }
 
+function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
+  const connect = jest.fn();
+  const unseeded = unseededContext({ currentOnboardingStep: "pin" });
+  useSession.mockReturnValue(session({ state: "deviceSetup.pin", context: unseeded, connect }));
+  const hook = renderFunnel();
+  const update = (overrides: Partial<DeviceOnboardingSession>) => {
+    useSession.mockReturnValue(session({ context: unseeded, connect, ...overrides }));
+    hook.rerender(undefined);
+  };
+  update({ state: "awaitingSession", ...afterDrop });
+
+  return { ...hook, connect, update };
+}
+
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -1764,20 +1778,6 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "RETRY" });
   });
   describe("when an unseeded device disconnects during the setup", () => {
-    function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
-      const connect = jest.fn();
-      const unseeded = unseededContext({ currentOnboardingStep: "pin" });
-      useSession.mockReturnValue(session({ state: "deviceSetup.pin", context: unseeded, connect }));
-      const hook = renderFunnel();
-      const update = (overrides: Partial<DeviceOnboardingSession>) => {
-        useSession.mockReturnValue(session({ context: unseeded, connect, ...overrides }));
-        hook.rerender(undefined);
-      };
-      update({ state: "awaitingSession", ...afterDrop });
-
-      return { ...hook, connect, update };
-    }
-
     it("should keep the stage, reconnect to the same device and show the reconnecting sheet", () => {
       const { result, connect } = dropDuringPin();
 

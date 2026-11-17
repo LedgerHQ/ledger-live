@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { Linking } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
-import { urls } from "~/utils/urls";
-import type { SessionReconnectState } from "LLM/features/DeviceOnboarding/hooks/useSessionReconnect";
+import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import {
   useChecksDrawers,
   type ChecksDrawerProps,
@@ -14,18 +11,11 @@ import type { SetupStage } from "./toSetupStage";
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
-export type SetupConnectionSheet = Readonly<{
-  state: SessionReconnectState;
-  isOpen: boolean;
-  productName: string;
-  onRetry: () => void;
-  onGetHelp: () => void;
-  onClose: () => void;
-}>;
-
 export type SetupViewProps = ChecksDrawerProps &
   Readonly<{
-    connectionSheet: SetupConnectionSheet | null;
+    connection: SessionReconnect | null;
+    productName: string;
+    suspendSheets: boolean;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
@@ -92,13 +82,7 @@ export function useSetupScreenViewModel({
   connection = null,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
-  const [dismissedConnection, setDismissedConnection] = useState<SessionReconnectState | null>(
-    null,
-  );
-  const connectionState = connection?.state ?? null;
-  if (dismissedConnection !== null && dismissedConnection !== connectionState) {
-    setDismissedConnection(null);
-  }
+
   const checksIdle = checks?.state === "idle";
   const pausedNotGenuine = checksIdle && checks.deviceNotGenuine;
   const status = stageStatus(stage, checksIdle);
@@ -126,16 +110,9 @@ export function useSetupScreenViewModel({
   });
 
   return {
-    connectionSheet: connection
-      ? {
-          state: connection.state,
-          isOpen: dismissedConnection !== connection.state && !suspendSheets,
-          productName,
-          onRetry: connection.retry,
-          onGetHelp: () => void Linking.openURL(urls.errors.PairingFailed),
-          onClose: () => setDismissedConnection(connection.state),
-        }
-      : null,
+    connection,
+    productName,
+    suspendSheets,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),

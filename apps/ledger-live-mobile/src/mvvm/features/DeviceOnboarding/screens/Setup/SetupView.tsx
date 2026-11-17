@@ -18,8 +18,8 @@ import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import { ConnectionSheet } from "./components/ConnectionSheet";
 import { SetupGlow } from "./components/SetupGlow";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
 function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
@@ -54,7 +54,9 @@ export function SetupView({
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
-  connectionSheet,
+  connection,
+  productName,
+  suspendSheets,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -143,7 +145,11 @@ export function SetupView({
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
       />
-      {connectionSheet ? <ConnectionSheet {...connectionSheet} /> : null}
+      <ReconnectSheet
+        connection={connection}
+        productName={productName}
+        suspendSheets={suspendSheets}
+      />
     </Box>
   );
 }

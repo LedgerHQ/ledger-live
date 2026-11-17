@@ -1,6 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
-import type { SessionReconnect } from "LLM/features/DeviceOnboarding/hooks/useSessionReconnect";
+import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStage } from "./toSetupStage";
 
 export type SetupChecksProps = {

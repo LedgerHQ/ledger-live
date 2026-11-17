@@ -1,5 +1,4 @@
 import React from "react";
-import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, within } from "@tests/test-renderer";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -442,76 +441,17 @@ describe("SetupView", () => {
 describe("SetupView connection sheets", () => {
   const pinStage = { index: 2, total: 5, kind: "pin", indicator: "none" } as const;
 
-  function renderDropped(state: "reconnecting" | "failed") {
-    const retry = jest.fn();
-    const view = renderSetup({ stage: pinStage, connection: { state, retry } });
-    return { ...view, retry };
-  }
-
-  it("should show the reconnecting sheet over the current stage, with no action", () => {
-    renderDropped("reconnecting");
+  it("should show the reconnecting sheet over the current stage", () => {
+    renderSetup({ stage: pinStage, connection: { state: "reconnecting", retry: jest.fn() } });
 
     expect(screen.getByText("PIN creation")).toBeVisible();
-    expect(screen.getByTestId(setupTestIds.reconnectingSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
     expect(screen.getByText("Reconnecting to your Ledger Stax")).toBeVisible();
-    expect(screen.queryByTestId(setupTestIds.connectionRetry)).toBeNull();
-  });
-
-  it("should retry the connection from the failed sheet", async () => {
-    const { user, retry } = renderDropped("failed");
-
-    expect(screen.getByText("Couldn't connect to Ledger Stax")).toBeVisible();
-    await user.press(screen.getByTestId(setupTestIds.connectionRetry));
-
-    expect(retry).toHaveBeenCalledTimes(1);
-  });
-
-  it("should open help from the failed sheet", async () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { user } = renderDropped("failed");
-
-    await user.press(screen.getByTestId(setupTestIds.connectionHelp));
-
-    expect(openURL).toHaveBeenCalledWith(expect.stringContaining("support.ledger.com"));
-  });
-
-  it("should close the sheet onto the same stage and open it again on the next connection state", async () => {
-    const { user, rerender, props, retry } = renderDropped("reconnecting");
-
-    await user.press(screen.getByTestId(`${setupTestIds.reconnectingSheet}-header-close`));
-
-    expect(screen.getByTestId(setupTestIds.reconnectingSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
-    expect(screen.getByText("PIN creation")).toBeVisible();
-
-    rerender(<SetupScreen {...props} connection={{ state: "failed", retry }} />);
-
-    expect(screen.getByTestId(setupTestIds.connectionFailedSheet)).toHaveProp(
-      "accessibilityState",
-      { expanded: true },
-    );
-  });
-
-  it("should hide the sheet while other sheets are suspended", () => {
-    renderSetup({
-      stage: pinStage,
-      suspendSheets: true,
-      connection: { state: "failed", retry: jest.fn() },
-    });
-
-    expect(screen.getByTestId(setupTestIds.connectionFailedSheet)).toHaveProp(
-      "accessibilityState",
-      { expanded: false },
-    );
   });
 
   it("should show no connection sheet while the session is up", () => {
     renderSetup({ stage: pinStage, connection: null });
 
-    expect(screen.queryByTestId(setupTestIds.reconnectingSheet)).toBeNull();
-    expect(screen.queryByTestId(setupTestIds.connectionFailedSheet)).toBeNull();
+    expect(screen.queryByText("Reconnecting to your Ledger Stax")).toBeNull();
+    expect(screen.queryByText("Couldn't connect to Ledger Stax")).toBeNull();
   });
 });

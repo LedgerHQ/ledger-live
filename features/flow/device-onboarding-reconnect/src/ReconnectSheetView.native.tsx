@@ -1,25 +1,28 @@
-import React from "react";
+import React, { type ComponentProps } from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { InfoState } from "@shared/ui-info-state";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { useTranslation } from "~/context/Locale";
-import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import type { SetupConnectionSheet } from "../useSetupScreenViewModel";
+import { reconnectSheetTestIds } from "./internals";
+import type { ReconnectSheetViewProps } from "./useReconnectSheetViewModel";
 
-function ReconnectingSpinner({ size }: Readonly<{ size?: number }>) {
+function ReconnectingSpinner({
+  size,
+}: Readonly<{ size?: ComponentProps<typeof Spinner>["size"] }>) {
   return <Spinner size={size} />;
 }
 
-export function ConnectionSheet({
+export function ReconnectSheetView({
   state,
   isOpen,
-  productName,
+  title,
+  description,
+  retryLabel,
+  helpLabel,
   onRetry,
   onGetHelp,
   onClose,
-}: SetupConnectionSheet) {
-  const { t } = useTranslation();
+}: ReconnectSheetViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const reconnecting = state === "reconnecting";
 
@@ -31,7 +34,7 @@ export function ConnectionSheet({
       enablePanDownToClose={false}
       enableDynamicSizing
       contentHasBottomSpace
-      testID={reconnecting ? setupTestIds.reconnectingSheet : setupTestIds.connectionFailedSheet}
+      testID={reconnecting ? reconnectSheetTestIds.reconnecting : reconnectSheetTestIds.failed}
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
@@ -41,28 +44,24 @@ export function ConnectionSheet({
               preset="spot"
               spotProps={{ icon: ReconnectingSpinner, size: 72 }}
               size="hug"
-              title={t("deviceOnboarding.setup.connection.reconnecting.title", { productName })}
-              description={t("deviceOnboarding.setup.connection.reconnecting.description", {
-                productName,
-              })}
+              title={title}
+              description={description}
             />
           ) : (
             <InfoState
               preset="error"
               size="hug"
-              title={t("deviceOnboarding.setup.connection.failed.title", { productName })}
-              description={t("deviceOnboarding.setup.connection.failed.description", {
-                productName,
-              })}
+              title={title}
+              description={description}
               primaryCta={{
-                label: t("deviceOnboarding.setup.connection.failed.retryCta"),
+                label: retryLabel,
                 onPress: onRetry,
-                testID: setupTestIds.connectionRetry,
+                testID: reconnectSheetTestIds.retry,
               }}
               secondaryCta={{
-                label: t("deviceOnboarding.setup.connection.failed.helpCta"),
+                label: helpLabel,
                 onPress: onGetHelp,
-                testID: setupTestIds.connectionHelp,
+                testID: reconnectSheetTestIds.help,
               }}
             />
           )}

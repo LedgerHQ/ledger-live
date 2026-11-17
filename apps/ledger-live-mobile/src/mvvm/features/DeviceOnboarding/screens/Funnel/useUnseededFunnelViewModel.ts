@@ -6,7 +6,7 @@ import {
   toChecksScreenState,
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
-import { useSessionReconnect } from "LLM/features/DeviceOnboarding/hooks/useSessionReconnect";
+import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupScreenProps } from "../Setup/types";
 
