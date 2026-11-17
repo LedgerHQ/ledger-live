@@ -116,7 +116,7 @@ export function useSetupScreenViewModel({
 
   return {
     infoCard: stage.infoCard,
-    suspendInfoSheet: suspendSheets,
+    suspendInfoSheet: suspendSheets || connection !== null,
     reportsRecoveryKey,
     connection,
     productName,
