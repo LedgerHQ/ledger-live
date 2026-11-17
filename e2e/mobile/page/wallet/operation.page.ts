@@ -75,8 +75,8 @@ export default class OperationPage {
     await this.operationItem.tap();
   }
 
-  @Step("Get operation counter value text")
-  async getOperationCounterValue() {
-    return await this.operationCounterValue.getText();
+  @Step("Expect operation counter value to contain {{{0}}}")
+  async expectOperationCounterValue(counterValue: string) {
+    await this.operationCounterValue.expectText(counterValue, { containing: true });
   }
 }

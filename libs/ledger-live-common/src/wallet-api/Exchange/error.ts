@@ -74,6 +74,20 @@ export function createTronifyUnavailable(): ExchangeErrorData {
   };
 }
 
+export function createTronifyUnsupportedTransfer(reason: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_UNSUPPORTED_TRANSFER",
+    message: `tronify energy rental does not support this transfer: ${reason}`,
+  };
+}
+
+export function createTronifyQuoteFailed(reason: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_QUOTE_FAILED",
+    message: `tronify quote failed: ${reason}`,
+  };
+}
+
 /**
  * Extends `Error` so that the wallet-api serializer keeps `message` and `cause` (the code) on the
  * wire. The live app reads the code from `cause`.
