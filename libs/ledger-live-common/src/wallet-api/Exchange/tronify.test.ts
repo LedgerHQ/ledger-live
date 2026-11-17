@@ -807,10 +807,20 @@ function upload(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) 
 }
 
 describe("uploadTronifyHash", () => {
-  const TRANSACTION = { txID: "ab12", raw_data_hex: "0a02beef" };
-  const SIGNATURE = "11".repeat(65);
+  // A USDT transfer owned by the address of private key 0x11…11, and that key's signature over it.
+  const TRANSACTION = {
+    txID: "ab12",
+    raw_data_hex:
+      "0a020ee522082e5fc67747a428af40f0e2ace4d3325aad01081f12a8010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412730a154119e7e376e7c213b7e7e7e46cc70a5dd086daff2a121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2243a9059cbb000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000000000000000000000000000000000000f424070fd9ca9e4d33290018087a70e",
+  };
+  const SIGNATURE =
+    "b012c72290538ab3e61c3c22fb3662f85f9c87f1ec4cc0d686b42dcf5fb48e580035b3c7d44563a1bd34c366769b3960e9da6695ee38702130297f7cdef693d31c";
+  // The same transaction signed by private key 0x22…22.
+  const OTHER_KEY_SIGNATURE =
+    "267b81f7c0b37f346dc223a5fb2b70b2bf69cc60fb80a5a2776f6b11e0a8b9bf350ce81efdeeb787e1bd93bee9d704e5dc19ac243a3ca205c84bc5d4b9d8e0a11b";
   // The `transaction.signRaw` output: 4-hex-char length prefix, echoed raw tx, signature.
-  const SIGNED_HEX = `0008${TRANSACTION.raw_data_hex}${SIGNATURE}`;
+  const lengthPrefix = (rawDataHex: string) => rawDataHex.length.toString(16).padStart(4, "0");
+  const SIGNED_HEX = `${lengthPrefix(TRANSACTION.raw_data_hex)}${TRANSACTION.raw_data_hex}${SIGNATURE}`;
   const SIGNED_TRANSACTION = { ...TRANSACTION, signature: [SIGNATURE] };
   const ENERGY_NEEDED = 64_285n;
 
@@ -977,9 +987,10 @@ describe("uploadTronifyHash", () => {
   });
 
   it.each([
+    ["a signature by another key", SIGNED_HEX.replace(SIGNATURE, OTHER_KEY_SIGNATURE)],
     ["a signature over other bytes", `0008deadbeef${SIGNATURE}`],
-    ["a wrong length prefix", `0009${TRANSACTION.raw_data_hex}${SIGNATURE}`],
-    ["a missing signature", `0008${TRANSACTION.raw_data_hex}`],
+    ["a wrong length prefix", `0000${SIGNED_HEX.slice(4)}`],
+    ["a missing signature", SIGNED_HEX.replace(SIGNATURE, "")],
   ])("rejects %s and keeps the order for a new signature", async (_label, signedTransactionHex) => {
     await expect(upload(uploadParams({ signedTransactionHex }))).rejects.toMatchObject({
       cause: "WRONG_TRONIFY_PARAMS",
