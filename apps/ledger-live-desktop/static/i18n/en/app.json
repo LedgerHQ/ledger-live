@@ -5682,10 +5682,6 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
-      "hideNightlyLayer": {
-        "title": "Hide pre-release overlay",
-        "desc": "Hide the PRERELEASE watermark shown on nightly builds, for example to take clean screenshots."
-      },
       "devTools": {
         "rowTitle": "DevTools",
         "rowDesc": "Open the DevTools shell (feature flags and dev tools panel)."

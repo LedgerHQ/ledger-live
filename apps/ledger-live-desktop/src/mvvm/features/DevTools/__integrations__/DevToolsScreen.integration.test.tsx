@@ -73,6 +73,10 @@ jest.mock("../IntentWalletSync/useIntentWalletSyncTool", () => ({
   }),
 }));
 
+jest.mock("../DevSettings/useDevSettingsTool", () => ({
+  useDevSettingsTool: () => ({ marker: "dev-settings-props" }),
+}));
+
 jest.mock("@devtools/wire", () => {
   const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "host" };
   return {
@@ -125,6 +129,7 @@ describe("DevToolsScreen", () => {
           { id: "receive", config: { marker: "receive-props" } },
           { id: "predictions", config: { marker: "predictions-props" } },
           { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
+          { id: "dev-settings", config: { marker: "dev-settings-props" } },
         ],
       }),
     );

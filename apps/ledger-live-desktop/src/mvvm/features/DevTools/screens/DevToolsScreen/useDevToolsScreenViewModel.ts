@@ -44,6 +44,7 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
+import { useDevSettingsTool } from "../../DevSettings/useDevSettingsTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
@@ -150,6 +151,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   );
   const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
   const intentWalletSync = useIntentWalletSyncTool();
+  const devSettingsToolProps = useDevSettingsTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -176,6 +178,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "receive", config: receiveToolProps },
       { id: "predictions", config: predictionsToolProps },
       { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
+      { id: "dev-settings", config: devSettingsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -201,6 +204,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       receiveToolProps,
       predictionsToolProps,
       intentWalletSync.toolProps,
+      devSettingsToolProps,
     ],
   );
 

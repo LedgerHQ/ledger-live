@@ -28,7 +28,6 @@ import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import EnableThemeConsole from "./EnableThemeConsole";
-import { HideNightlyLayerRow } from "LLD/components/NightlyLayer/HideNightlyLayerRow";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import CustomCALRefInput from "./CustomCALRefInput";
@@ -112,7 +111,6 @@ const Default = () => {
       >
         <EnableThemeConsole />
       </Row>
-      <HideNightlyLayerRow />
       <RunLocalAppButton />
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
