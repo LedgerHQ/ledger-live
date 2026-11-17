@@ -6,11 +6,23 @@ import {
 } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
+import { startupLogged } from "LLM/utils/logLastStartupEvents";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { useBrazeEligibilityContext } from "LLM/features/DynamicContent/hooks/useBrazeEligibilityContext";
 import {
   filterEligibleContentCards,
   type ContentCardEligibilityEvaluation,
 } from "LLM/features/DynamicContent/utils/filterEligibleContentCards";
+
+// Cards that land during startup wait for the root layout, so their handling cannot delay it.
+const STARTUP_WAIT_MAX_MS = 5_000;
+
+function afterStartup(): Promise<void> {
+  return Promise.race([
+    startupLogged,
+    new Promise<void>(resolve => setTimeout(resolve, STARTUP_WAIT_MAX_MS)),
+  ]);
+}
 
 export function useBrazeContentCardsProviderViewModel() {
   const { updateDynamicContent, clearOldDismissedContentCards, setDynamicContentLoading } =
@@ -49,21 +61,26 @@ export function useBrazeContentCardsProviderViewModel() {
   const handleContentCardsUpdated = useCallback(
     (event: Braze.ContentCardsUpdatedEvent, subscriptionEpoch: number) => {
       if (subscriptionEpoch !== subscriptionEpochRef.current) return;
+      logStartupEvent("Braze content cards received");
 
-      const pendingRefresh = pendingRefreshRef.current;
+      void afterStartup().then(() => {
+        if (subscriptionEpoch !== subscriptionEpochRef.current) return;
 
-      try {
-        lastFetchedCardsRef.current = event.cards;
-        setLastFetchedCards(event.cards);
-        publishEligibleCards(event.cards);
-        pendingRefresh?.resolve();
-      } catch (error) {
-        setDynamicContentLoading(false);
-        pendingRefresh?.reject(error);
-        console.warn("Error updating dynamic content", error);
-      } finally {
-        pendingRefreshRef.current = null;
-      }
+        const pendingRefresh = pendingRefreshRef.current;
+
+        try {
+          lastFetchedCardsRef.current = event.cards;
+          setLastFetchedCards(event.cards);
+          publishEligibleCards(event.cards);
+          pendingRefresh?.resolve();
+        } catch (error) {
+          setDynamicContentLoading(false);
+          pendingRefresh?.reject(error);
+          console.warn("Error updating dynamic content", error);
+        } finally {
+          pendingRefreshRef.current = null;
+        }
+      });
     },
     [publishEligibleCards, setDynamicContentLoading],
   );
