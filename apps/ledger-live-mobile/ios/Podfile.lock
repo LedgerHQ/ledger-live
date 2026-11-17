@@ -3523,7 +3523,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.8.1):
+  - RNWorklets (0.8.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3550,11 +3550,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/apple (= 0.8.1)
-    - RNWorklets/common (= 0.8.1)
+    - RNWorklets/apple (= 0.8.3)
+    - RNWorklets/common (= 0.8.3)
     - SocketRocket
     - Yoga
-  - RNWorklets/apple (0.8.1):
+  - RNWorklets/apple (0.8.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3583,7 +3583,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets/common (0.8.1):
+  - RNWorklets/common (0.8.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3788,17 +3788,17 @@ DEPENDENCIES:
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_3a775044d093838ec0d4ddaff956f920/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_28977b39fe38e3b6c57ba2008696f21a/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.24.0_react-native@0.81.6_75fc90bcfeca222c07ffbdf3de53e203/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg`)"
-  - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
+  - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.3_patch_hash=8e8345e8_fbd42cab9870c49d5a0ad44288d0ba0f/node_modules/react-native-worklets`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native`)"
   - SharedNativePerformance (from `../../../shared/native-performance`)
   - SharedUiGlow (from `../../../shared/ui-glow`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native`)"
-  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera`)"
+  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_4b126359e4d6abf94eca6ad9fe4df216/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -4085,7 +4085,7 @@ EXTERNAL SOURCES:
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_28977b39fe38e3b6c57ba2008696f21a/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@4.24.0_react-native@0.81.6_75fc90bcfeca222c07ffbdf3de53e203/node_modules/react-native-screens"
   RNShare:
@@ -4093,7 +4093,7 @@ EXTERNAL SOURCES:
   RNSVG:
     :path: "../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg"
   RNWorklets:
-    :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets"
+    :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.3_patch_hash=8e8345e8_fbd42cab9870c49d5a0ad44288d0ba0f/node_modules/react-native-worklets"
   segment-analytics-react-native:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native"
   SharedNativePerformance:
@@ -4103,7 +4103,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native"
   VisionCamera:
-    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera"
+    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_4b126359e4d6abf94eca6ad9fe4df216/node_modules/react-native-vision-camera"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/yoga"
 
@@ -4265,7 +4265,7 @@ SPEC CHECKSUMS:
   RNScreens: e902eba58a27d3ad399a495d578e8aba3ea0f490
   RNShare: 81b8cfb58b1460c4a197d5379934bdf70980c124
   RNSVG: b1cb00d54dbc3066a3e98732e5418c8361335124
-  RNWorklets: 10d3516524deb2a03e2b49cd9176b615e2000a30
+  RNWorklets: 85a72a7c3cd59a12a3deabb47cc3482cf4b4cd99
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 556a3bdd0a28ed4c6110a6c17322cf641d4ef704
