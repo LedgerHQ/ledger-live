@@ -128,6 +128,38 @@ describe("swap status", () => {
   });
 });
 
+describe("swap status of a swap that is over", () => {
+  const server = new MockServer([
+    statusRoute(requests =>
+      Response.json(
+        requests.map(({ provider, swapId }) => ({
+          provider,
+          // The provider may leave the swap id out of its answer.
+          swapId: swapId === "swap-done" ? swapId : "",
+          status: { "swap-done": "finished", "swap-expired": "expired" }[swapId] ?? "refunded",
+        })),
+      ),
+    ),
+  ]);
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  it.each([
+    ["swap-done", "[✔] FINISHED swap-done"],
+    ["swap-expired", "[↩] REFUNDED swap-expired"],
+    ["swap-refunded", "[↩] REFUNDED swap-refunded"],
+  ])("shows %s as `%s`", async (swapId, line) => {
+    const { stdout, stderr, exitCode } = await runCli(
+      ["swap", "status", "--swap-id", swapId, "--provider", PROVIDER],
+      { WALLET_CLI_MOCK_PORT: String(server.port) },
+    );
+
+    expect(exitCode, stderr).toBe(0);
+    expect(stdout).toBe(line);
+  });
+});
+
 describe("swap status when the provider lookup fails", () => {
   const server = new MockServer([
     statusRoute(requests => {
