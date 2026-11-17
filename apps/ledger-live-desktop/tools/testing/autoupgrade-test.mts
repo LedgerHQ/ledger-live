@@ -1,0 +1,151 @@
+import { once } from "events";
+import path from "path";
+import { execa } from "execa";
+import { setTimeout as sleep } from "timers/promises";
+import { platformBuild } from "./utils/builds.mts";
+import { parseAutoUpgradeOptions, startAutoUpgrade } from "./utils/startAutoUpgrade.mts";
+
+const pollInterval = 1_000;
+const readyTimeout = 180_000;
+const installTimeout = 60_000;
+// An app that skips the check downloads from the local feed right after fetching the signature.
+const downloadTimeout = 15_000;
+const quitTimeout = 30_000;
+
+process.on("uncaughtException", error => {
+  console.error(error);
+  exit(false, error.message);
+});
+
+const options = parseAutoUpgradeOptions();
+if (options.downloadSpeed) {
+  throw new Error(
+    "--download-speed is for watching the download with tools/testing/autoupgrade.mts",
+  );
+}
+const startedAt = Date.now();
+const served = new Set<string>();
+
+const { base, update, app } = await startAutoUpgrade(options, file => served.add(file));
+// A run stopped by Ctrl+C or an error must not leave the app running for the next one.
+process.on("exit", () => app.kill("SIGKILL"));
+
+const updateBinary = feedBinaryName(update.version);
+const signatureFetched = () =>
+  [...served].some(file => file.endsWith(`-${update.version}.sha512sum.sig`));
+// Also matches the blockmap, which a differential download requests first.
+const updateDownloaded = () => [...served].some(file => file.startsWith(updateBinary));
+
+if (!(await isInstalled(base.version))) {
+  await quitApp();
+  exit(false, `Could not read ${base.version} as the installed version`);
+}
+
+console.log(`Waiting for ${base.version} to check the signature of ${update.version}`);
+if (!(await waitForApp(signatureFetched, readyTimeout))) {
+  exit(false, `${base.version} did not fetch the signature of ${update.version}`);
+}
+
+if (options.badSignature) await checkRejection();
+else await checkUpgrade();
+
+async function checkUpgrade() {
+  console.log(`Waiting for ${base.version} to download ${update.version}`);
+  if (!(await waitForApp(isUpdateStaged, readyTimeout))) {
+    exit(false, `${update.version} was not ready to install within ${readyTimeout / 1000}s`);
+  }
+
+  console.log(`Quitting ${base.version}`);
+  await quitApp();
+
+  if (!(await poll(() => isInstalled(update.version), installTimeout))) {
+    exit(false, `${base.version} did not upgrade to ${update.version}`);
+  }
+
+  exit(true, `${base.version} upgraded to ${update.version}`);
+}
+
+async function checkRejection() {
+  console.log(`Checking that ${base.version} does not download ${update.version}`);
+  if (await waitForApp(updateDownloaded, downloadTimeout)) {
+    exit(false, `${base.version} downloaded ${update.version} despite the bad signature`);
+  }
+
+  console.log(`Quitting ${base.version}`);
+  await quitApp();
+
+  exit(true, `${base.version} did not download ${update.version}, which has a bad signature`);
+}
+
+async function waitForApp(check: () => boolean, timeout: number) {
+  const passed = await poll(() => check() || hasExited(), timeout);
+  if (hasExited()) {
+    exit(
+      false,
+      `${base.version} quit on its own, did it crash or is another Ledger Wallet running?`,
+    );
+  }
+  return passed;
+}
+
+async function poll(check: () => boolean | Promise<boolean>, timeout: number) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if (await check()) return true;
+    await sleep(pollInterval);
+  }
+  return false;
+}
+
+function isUpdateStaged() {
+  try {
+    return platformBuild().isUpdateStaged(startedAt);
+  } catch {
+    return false;
+  }
+}
+
+function feedBinaryName(version: string) {
+  return path.basename(platformBuild().feedBinary(version));
+}
+
+async function isInstalled(version: string) {
+  try {
+    return await platformBuild().isInstalled(version);
+  } catch {
+    return false;
+  }
+}
+
+// On Windows and Linux, the updater installs on quit only when the app exits with code 0.
+async function quitApp() {
+  if (hasExited()) return;
+  const exited = once(app, "exit", { signal: AbortSignal.timeout(quitTimeout) });
+  try {
+    if (process.platform === "win32") {
+      // Without /F, taskkill asks the app windows to close, and the app quits once they are closed.
+      await execa("taskkill", ["/PID", String(app.pid)]);
+    } else {
+      app.kill("SIGTERM");
+    }
+    await exited;
+  } catch (error) {
+    app.kill("SIGKILL");
+    throw new Error("Could not quit the app, killed it", { cause: error });
+  }
+  // The bundled signal-exit re-raises the SIGTERM sent above, so the app ends by that signal.
+  if (app.exitCode !== 0 && app.signalCode !== "SIGTERM") {
+    const exitReason = app.signalCode ?? `exit code ${app.exitCode}`;
+    throw new Error(`The app quit abnormally, with ${exitReason}`);
+  }
+}
+
+function hasExited() {
+  return app.exitCode !== null || app.signalCode !== null;
+}
+
+function exit(passed: boolean, message: string): never {
+  if (passed) console.log(`PASS: ${message}`);
+  else console.error(`FAIL: ${message}`);
+  process.exit(passed ? 0 : 1);
+}
