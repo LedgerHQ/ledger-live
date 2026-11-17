@@ -8,7 +8,7 @@ binary.
 
 | Helper | What it provides |
 |--------|-----------------|
-| `cli-runner` | Runs a command in-process, as if spawned (`runCli`) |
+| `cli-runner` | Runs a command in-process, as if spawned (`runCli`), capturing what the CLI framework prints to the process streams too, with stdout a pipe, not a TTY |
 | `mock-server` | Serves canned HTTP routes on a local port |
 | `session-fixture` | Temp state dir pre-populated with session entries, or a session file under a given one (`writeSessionIn`) |
 | `state-home` | Points the CLI state dir at a temp dir, Windows included (`pointStateHomeAt`), and the CLI state dir under a temp one (`cliStateDirIn`) |
@@ -27,17 +27,17 @@ binary.
 | `cal-cache` | A fresh CAL token cache for each test, so tokens other files resolved don't leak in (`useFreshCalCache`) |
 | `sigint` | Runs a CLI run the test interrupts with Ctrl+C without firing other files' SIGINT listeners (`withOwnSigint`) |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
-| `swap-execute` | A Ledger with the Exchange, Ethereum and DEX plugin apps for `_setTestDmkTransport`, recording what the CLI asks it and refusing on demand (`SwapDevice`); the Exchange app confirmation without its 3 s wait (`FakeExchangeApp`); a broadcast job that confirms at once (`FakeEvmBroadcast`); and the Swap API and Ethereum explorer a swap talks to, recording each request (`SwapBackend`, `swapPayload`, `dexQuoteRow`) |
-| `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
+| `fake-ledger` | A Ledger for `_setTestDmkTransport` with the Exchange, Ethereum and plugin apps, and the Solana app for `solanaAddress`: opens any app but `refuseToOpen`, signs unless `refuseToSign`, and records what the CLI asked in `events` (`open Ethereum with Kiln`, `sign 44'/60'/0'/0/0`, `start Exchange transaction`, `close session`…), plus `signedTransactions` and `unlockTimeouts` (`FakeLedger`) |
+| `swap-execute` | The Exchange app confirmation without its 3 s wait (`FakeExchangeApp`); a broadcast job that confirms at once (`FakeEvmBroadcast`); and the Swap API and Ethereum explorer a swap talks to, recording each request (`SwapBackend`, `swapPayload`, `dexQuoteRow`) |
 | `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
 | `print-swap-api-base` | Standalone script spawned to assert which Swap API URL startup leaves for live-common |
 | `os-keychain` | A failing Linux Secret Service probe, and a `process.platform` override |
 | `in-memory-keychain` | OS keychain fake for `_setTestKeychain` |
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |
 | `fake-speculos` | Speculos as its HTTP API answers the DMK Speculos transport: an app open (`ethereumApp`, `solanaApp`), an HTTP failure (`failWith`) or a hang (`hang`); records APDUs (`FakeSpeculos`, `SPECULOS_CONNECT_APDU`) |
-| `fake-solana-rpc` | The Solana node (JSON-RPC at `/`, always `routes[0]`) and the Ledger services a Solana bridge sync calls: balance, SPL token and stake accounts, vote accounts, scripted RPC failures, broadcasts (`FakeSolanaRpc`) |
+| `fake-solana-rpc` | The Solana node (JSON-RPC at `/`) and the Ledger services a Solana bridge sync calls: balance, SPL token and stake accounts, vote accounts, scripted RPC failures, broadcasts (`FakeSolanaRpc`) |
 | `fake-stdin` | A raw-mode terminal on stdin typing given keystrokes (`terminalTyping`), piped stdin (`pipedStdin`), installed for one run (`withStdin`) |
-| `earn-vault` | The earn backend's `/v1/defi` routes with a tx status script per hash (status, 400/500 or refused connection) (`FakeEarnApi`); the Ethereum explorer recording each broadcast (`FakeEvmNode`); `FakeSolanaRpc` also taking signed txs (`FakeStakingSolanaNode`); a device that signs or refuses every transaction, through Ethereum DMK actions and Solana app APDUs, recording the apps it opened (`SigningDevice`); runs wired with these, EVM with an instant poll wait (`SignedEvmEarn`, `SignedSolanaEarn`); `runEarn` / `earnResults` |
+| `earn-vault` | The earn backend's `/v1/defi` routes with a tx status script per hash (status, 400/500 or refused connection) (`FakeEarnApi`); the Ethereum explorer recording each broadcast (`FakeEvmNode`); runs wired with these and a `FakeLedger`, EVM with an instant poll wait (`SignedEvmEarn`, `SignedSolanaEarn`); `runEarn` / `earnResults` |
 | `clear-shell-env` | Test preload (`bunfig.toml`) that drops `SPECULOS_*` and `SWAP_API_BASE` from the shell or `.env`, so tests don't pick the Speculos transport or another Swap API |
 | `skill-fixtures` | Reads an installed skill's files and rewrites its sidecar, e.g. as an older wallet-cli would have |
 
@@ -72,7 +72,7 @@ the first option that works:
    `_setTestLkrpSdk`, `_setTestAgentLedgerSyncSdk`, `_setTestGenuineCheck`,
    `_setTestSpinner`, `_setTestDmkTransport`, `_setTestDmk`,
    `_setTestConfirmPrompt`, `_setTestRelayChannelHost`, `_setTestSpawn`,
-   `_setTestStartupTimeoutMs`, `_setTestPollSleep`, `_setTestEarnPollSleep`,
+   `_setTestStartupTimeoutMs`, `_setTestStartupPollMs`, `_setTestPollSleep`, `_setTestEarnPollSleep`,
    `_setTestSpeculosConnectTimeoutMs`, `_setTestControllingTtyPath`,
    `_setTestRename`, `_setTestCompleteExchange`, `_setTestBroadcastEvmJob`),
    built with `createTestSeam`

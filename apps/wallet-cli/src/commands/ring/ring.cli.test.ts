@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
@@ -10,10 +10,12 @@ import { deriveWrappingKey } from "../../key-ring/crypto";
 import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
 import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
-import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
+import { _setTestControllingTtyPath } from "../../key-ring/prompt";
+import { loadKeyRing } from "../../key-ring/load-key-ring";
 import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
 import { makeSessionDir, writeSessionIn } from "../../testing/session-fixture";
-import { pointStateHomeAt } from "../../testing/state-home";
+import { cliStateDirIn, pointStateHomeAt } from "../../testing/state-home";
+import { pipedStdin, terminalTyping, withStdin } from "../../testing/fake-stdin";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
@@ -636,21 +638,36 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
   });
 });
 
-// Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
-// the LKRP SDK method under test.
-async function seedInitializedRing(dir: string): Promise<void> {
-  writeSessionIn(dir, {
-    accounts: [],
-    trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
-  });
+const SEED_TRUSTCHAIN = { rootId: "seed-root", applicationPath: "m/0'/17'/0'" };
+
+// Seeds ring state (session + keychain) without `ring init`, so a test fakes only the LKRP SDK
+// method under test. With `wrappedBy`, the key is stored password-protected.
+async function seedRing(
+  dir: string,
+  session: Record<string, unknown>,
+  wrappedBy?: { password: string; salt: string },
+): Promise<void> {
+  writeSessionIn(dir, { accounts: [], ...session });
   // savePrivateKey hashes the account name from the state dir, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
   const restoreStateHome = pointStateHomeAt(dir);
   try {
-    await savePrivateKey("aa".repeat(32), "bb".repeat(33));
+    const wrappingKey = wrappedBy && (await deriveWrappingKey(wrappedBy.password, wrappedBy.salt));
+    await savePrivateKey("aa".repeat(32), "bb".repeat(33), wrappingKey);
   } finally {
     restoreStateHome();
   }
+}
+
+function seedInitializedRing(dir: string): Promise<void> {
+  return seedRing(dir, { trustchain: SEED_TRUSTCHAIN });
+}
+
+function readSession(dir: string): Record<string, unknown> {
+  return YAML.parse(readFileSync(join(cliStateDirIn(dir), "session.yaml"), "utf8")) as Record<
+    string,
+    unknown
+  >;
 }
 
 describe("ring destroy — ejected member wipes locally", () => {
@@ -683,28 +700,6 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(cleanup);
 
-  // Asserted at unit level (like the "stray password-protected key" block above): Bunli prints the
-  // command Error to the real stderr, which runCli's output capture does not observe.
-  it("loadDomainKey rethrows an ejected stream as actionable guidance", async () => {
-    _store.clear();
-    await seedInitializedRing(dir);
-
-    // The application was deactivated on the ring elsewhere: restoreTrustchain rejects a closed stream.
-    useLkrpSdk({
-      restoreTrustchain: async () => {
-        throw new TrustchainEjected("application stream is closed");
-      },
-    });
-
-    const restoreStateHome = pointStateHomeAt(dir); // pin the session dir + keychain account to this temp dir
-    try {
-      await expect(loadDomainKey("mykey")).rejects.toThrow(/deactivated/i);
-      await expect(loadDomainKey("mykey")).rejects.toThrow(/ring init/i);
-    } finally {
-      restoreStateHome();
-    }
-  });
-
   it("the encrypt command fails on an ejected stream (but succeeds on an open one)", async () => {
     // Self-contained: seed the ring state here too so the test passes when run in isolation (filtered).
     _store.clear();
@@ -724,8 +719,6 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
     ];
 
     // Positive control: with an open stream, the exact same command succeeds and writes ciphertext.
-    // This pins the failure below to the ejection — Bunli prints the command Error to the real stderr
-    // (not captured by runCli), so exit code + file side effect are all we can observe at CLI level.
     useLkrpSdk({
       restoreTrustchain: async () => ({
         rootId: "seed-root",
@@ -737,15 +730,21 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
     expect(ok.exitCode, ok.stderr).toBe(0);
     expect(existsSync(outFile)).toBe(true);
 
-    // Now the stream is ejected: the same command must fail and must NOT leave ciphertext behind.
+    // Now the stream is ejected (deactivated elsewhere): the same command must fail with the way
+    // back, and must NOT leave ciphertext behind.
     rmSync(outFile, { force: true });
     useLkrpSdk({
       restoreTrustchain: async () => {
         throw new TrustchainEjected("application stream is closed");
       },
     });
-    const r = await runCli(encryptArgs, env);
+    const r = await runCli([...encryptArgs, "--output", "json"], env);
     expect(r.exitCode).toBe(1);
+    expect(JSON.parse(r.stdout).error.message).toBe(
+      "The wallet-cli application is no longer active on this Ledger Key Ring (deactivated " +
+        "elsewhere, or this member was removed). Run `wallet-cli ring destroy` then " +
+        "`wallet-cli ring init` to reactivate.",
+    );
     expect(existsSync(outFile)).toBe(false); // aborted before writing ciphertext
   });
 });
@@ -773,5 +772,300 @@ describe("ring destroy — non-destructive deactivation keeps the ring but wipes
     // at the lib level) would run instead of hitting the "already initialized" guard.
     const keys = await runCli(["ring", "keys"], env);
     expect(keys.exitCode).toBe(1); // not initialized → init guard is clear
+  });
+});
+
+/** Stdin where the user types "destroy" once `meanwhile`, another command, has run. */
+function typeDestroyAfter(meanwhile: () => void): Readable {
+  let typed = false;
+  return new Readable({
+    read() {
+      if (typed) return;
+      typed = true;
+      meanwhile();
+      this.push("destroy\n");
+      this.push(null);
+    },
+  });
+}
+
+describe("ring destroy — confirmation, password and concurrent changes", () => {
+  const SALT = "0".repeat(32);
+  const OTHER_RING = { rootId: "seed-root", applicationPath: "m/0'/17'/1'" };
+  let dir: string;
+  let env: Record<string, string>;
+  let remoteDestroys: number;
+
+  beforeEach(() => {
+    _store.clear();
+    ({ dir, env } = makeTmpDir());
+    remoteDestroys = 0;
+    useLkrpSdk({
+      destroyApplication: async () => {
+        remoteDestroys += 1;
+        return { trustchainDestroyed: true };
+      },
+    });
+  });
+  afterEach(() => {
+    _setTestControllingTtyPath(null);
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  function destroy(stdin: Readable, ...args: string[]) {
+    return withStdin(stdin, () => runCli(["ring", "destroy", ...args], env));
+  }
+
+  async function destroyJson(stdin: Readable, extraEnv: Record<string, string> = {}) {
+    const run = await withStdin(stdin, () =>
+      runCli(["ring", "destroy", "--output", "json"], { ...env, ...extraEnv }),
+    );
+    return { ...run, json: JSON.parse(run.stdout) };
+  }
+
+  const LOCALLY_WIPED =
+    "✔ Ledger Key Ring local credentials wiped (remote teardown skipped or failed).";
+
+  it.each([
+    ["an initialized ring", { trustchain: SEED_TRUSTCHAIN }],
+    ["a stray key", { trustchain: undefined }],
+  ])("keeps %s when the user types anything but destroy", async (_, session) => {
+    await seedRing(dir, session);
+
+    const { json, exitCode } = await destroyJson(pipedStdin("yes\n"));
+
+    expect(exitCode).toBe(0);
+    expect(json).toMatchObject({ status: "success", cancelled: true });
+    expect(_store.size).toBe(1);
+    expect(readSession(dir).trustchain).toEqual(session.trustchain);
+    expect(remoteDestroys).toBe(0);
+  });
+
+  it("wipes locally without the remote teardown when Enter is pressed at the password prompt", async () => {
+    await seedRing(
+      dir,
+      { trustchain: SEED_TRUSTCHAIN, passwordSalt: SALT },
+      { password: "pw", salt: SALT },
+    );
+
+    const { stdout, exitCode, stderr } = await destroy(terminalTyping("destroy\n", "\r"));
+
+    expect(exitCode, stderr).toBe(0);
+    expect(stderr).toContain("No password provided — continuing with local wipe.");
+    expect(stdout).toBe(LOCALLY_WIPED);
+    expect(remoteDestroys).toBe(0);
+    expect(_store.size).toBe(0);
+    expect(readSession(dir)).toEqual({ accounts: [] });
+  });
+
+  it("aborts without a terminal to ask the password on, or WALLET_PASS", async () => {
+    await seedRing(
+      dir,
+      { trustchain: SEED_TRUSTCHAIN, passwordSalt: SALT },
+      { password: "pw", salt: SALT },
+    );
+    _setTestControllingTtyPath(join(dir, "no-tty"));
+
+    const { json, exitCode } = await destroyJson(pipedStdin("destroy\n"));
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toContain(
+      "Password required but no TTY available and WALLET_PASS is not set.",
+    );
+    expect(json.error.message).toContain("Aborting — no changes made. Re-run with the correct");
+    expect(_store.size).toBe(1);
+    expect(readSession(dir).trustchain).toEqual(SEED_TRUSTCHAIN);
+  });
+
+  it("keeps a password-protected key when the remote teardown fails, and offers the skip", async () => {
+    await seedRing(
+      dir,
+      { trustchain: SEED_TRUSTCHAIN, passwordSalt: SALT },
+      { password: "pw", salt: SALT },
+    );
+    useLkrpSdk({
+      destroyApplication: async () => {
+        throw new Error("network down");
+      },
+    });
+
+    const { json, exitCode } = await destroyJson(pipedStdin("destroy\n"), { WALLET_PASS: "pw" });
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toBe(
+      "Remote teardown failed (network/backend). No local changes made — retry when connectivity " +
+        "is restored or re-run and press Enter at the password prompt to skip the remote teardown " +
+        "and wipe locally.",
+    );
+    expect(_store.size).toBe(1);
+  });
+
+  it("aborts on a password-protected key once the session lost its password salt", async () => {
+    // A malformed salt reads as none, so nothing can unlock the key to authenticate the teardown.
+    await seedRing(
+      dir,
+      { trustchain: SEED_TRUSTCHAIN, passwordSalt: "not-a-salt" },
+      { password: "pw", salt: SALT },
+    );
+
+    const { json, exitCode } = await destroyJson(pipedStdin("destroy\n"));
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toContain("this session has no password metadata to unlock it");
+    expect(remoteDestroys).toBe(0);
+    expect(_store.size).toBe(1);
+  });
+
+  it("wipes the ring locally when the keychain holds no key for it", async () => {
+    writeSessionIn(dir, { accounts: [], trustchain: SEED_TRUSTCHAIN });
+
+    const { stdout, exitCode, stderr } = await destroy(pipedStdin("destroy\n"));
+
+    expect(exitCode, stderr).toBe(0);
+    expect(stderr).toContain("No credentials found in keychain — continuing with local wipe.");
+    expect(stdout).toBe(LOCALLY_WIPED);
+    expect(remoteDestroys).toBe(0);
+    expect(readSession(dir).trustchain).toBeUndefined();
+  });
+
+  it("leaves a stray key alone once another command initialized a ring during the confirmation", async () => {
+    await seedRing(dir, {});
+
+    const { json, exitCode } = await destroyJson(
+      typeDestroyAfter(() => writeSessionIn(dir, { accounts: [], trustchain: SEED_TRUSTCHAIN })),
+    );
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toContain(
+      "Ledger Key Ring was initialized by another process while this destroy was waiting",
+    );
+    expect(_store.size).toBe(1);
+    expect(readSession(dir).trustchain).toEqual(SEED_TRUSTCHAIN);
+  });
+
+  it("tears nothing down once the ring changed during the confirmation", async () => {
+    await seedInitializedRing(dir);
+
+    const { json, exitCode } = await destroyJson(
+      typeDestroyAfter(() => writeSessionIn(dir, { accounts: [], trustchain: OTHER_RING })),
+    );
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toContain(
+      "Ledger Key Ring changed locally while this destroy was waiting for confirmation/password",
+    );
+    expect(remoteDestroys).toBe(0);
+    expect(_store.size).toBe(1);
+  });
+
+  it("keeps the local ring that replaced the one torn down remotely", async () => {
+    await seedInitializedRing(dir);
+    useLkrpSdk({
+      destroyApplication: async () => {
+        writeSessionIn(dir, { accounts: [], trustchain: OTHER_RING });
+        return { trustchainDestroyed: true };
+      },
+    });
+
+    const { json, exitCode } = await destroyJson(pipedStdin("destroy\n"));
+
+    expect(exitCode).toBe(1);
+    expect(json.error.message).toContain(
+      "The remote teardown above completed, but the local pointer was left untouched",
+    );
+    expect(_store.size).toBe(1);
+    expect(readSession(dir).trustchain).toEqual(OTHER_RING);
+  });
+});
+
+describe("ring encrypt/decrypt — stdin, stdout and ring changes", () => {
+  const ROTATED = { rootId: "seed-root", applicationPath: "m/0'/17'/1'" };
+  let dir: string;
+  let env: Record<string, string>;
+  let encFile: string;
+
+  beforeEach(async () => {
+    _store.clear();
+    ({ dir, env } = makeTmpDir());
+    encFile = join(dir, "secret.enc");
+    await seedInitializedRing(dir);
+  });
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  /** The ring as LKRP restores it, at `applicationPath`; `meanwhile` runs as it does. */
+  function restoreRingAt(applicationPath: string, meanwhile = () => {}): void {
+    useLkrpSdk({
+      restoreTrustchain: async () => {
+        meanwhile();
+        return { rootId: "seed-root", applicationPath, walletSyncEncryptionKey: "00".repeat(32) };
+      },
+    });
+  }
+
+  function ring(command: "encrypt" | "decrypt", ...args: string[]) {
+    return runCli(["ring", command, "--key", "notes", ...args], env);
+  }
+
+  function encryptFile(text: string) {
+    const plainFile = join(dir, "secret.txt");
+    writeFileSync(plainFile, text);
+    return ring("encrypt", "--input", plainFile, "--out", encFile);
+  }
+
+  it("refuses JSON to stdout, and a terminal as input", async () => {
+    const json = await ring("encrypt", "--input", encFile, "--output", "json");
+    const terminal = await withStdin(terminalTyping(), () =>
+      ring("encrypt", "--out", encFile, "--output", "json"),
+    );
+
+    expect(json.exitCode).toBe(1);
+    expect(JSON.parse(json.stdout).error.message).toContain(
+      "--output json requires --out <file>: binary ciphertext cannot be written as JSON to stdout.",
+    );
+    expect(terminal.exitCode).toBe(1);
+    expect(JSON.parse(terminal.stdout).error.message).toBe(
+      "No input: provide --input FILE or pipe data to stdin.",
+    );
+  });
+
+  it("decrypts to stdout", async () => {
+    restoreRingAt(SEED_TRUSTCHAIN.applicationPath);
+
+    const encrypt = await encryptFile("meet at noon");
+    const decrypt = await ring("decrypt", "--input", encFile);
+
+    expect(encrypt.exitCode, encrypt.stderr).toBe(0);
+    expect(decrypt.exitCode, decrypt.stderr).toBe(0);
+    expect(decrypt.stdout).toBe("meet at noon");
+    expect(readSession(dir).domains).toEqual([{ domain: "notes", firstUsed: expect.any(String) }]);
+  });
+
+  it("records a ring rotation before encrypting with the new key", async () => {
+    restoreRingAt(ROTATED.applicationPath);
+
+    const { exitCode, stderr } = await encryptFile("x");
+
+    expect(exitCode, stderr).toBe(0);
+    expect(stderr).toContain("⚠ Ledger Key Ring rotated since last use");
+    expect(readSession(dir)).toMatchObject({
+      trustchain: ROTATED,
+      domains: [{ domain: "notes" }],
+    });
+  });
+
+  it("warns, and tracks no key, when the ring changed while encrypting", async () => {
+    restoreRingAt(SEED_TRUSTCHAIN.applicationPath, () =>
+      writeSessionIn(dir, { accounts: [], trustchain: ROTATED }),
+    );
+
+    const { exitCode, stderr } = await encryptFile("x");
+
+    expect(exitCode, stderr).toBe(0);
+    expect(stderr).toContain(
+      "⚠ Ledger Key Ring changed while this operation was running — the output above was produced " +
+        "with a key from the ring as it was before that change.",
+    );
+    expect(existsSync(encFile)).toBe(true);
+    expect(readSession(dir)).toEqual({ accounts: [], trustchain: ROTATED });
   });
 });

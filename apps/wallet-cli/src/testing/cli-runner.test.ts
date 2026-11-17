@@ -139,6 +139,23 @@ describe("runCleanups", () => {
 });
 
 describe("runCli", () => {
+  it("captures what bunli prints to the process streams, then puts the streams back", async () => {
+    const original = {
+      stdout: process.stdout.write,
+      stderr: process.stderr.write,
+      isTTY: Object.getOwnPropertyDescriptor(process.stdout, "isTTY"),
+    };
+
+    const version = await runCli(["--version"]);
+    const unknown = await runCli(["nope"]);
+
+    expect(JSON.parse(version.stdout).data.type).toBe("version");
+    expect(JSON.parse(unknown.stderr).error.kind).toBe("command-not-found");
+    expect(process.stdout.write).toBe(original.stdout);
+    expect(process.stderr.write).toBe(original.stderr);
+    expect(Object.getOwnPropertyDescriptor(process.stdout, "isTTY")).toEqual(original.isTTY);
+  });
+
   it("removes the HTTP redirect when setup fails before the command runs", async () => {
     const originalFetch = globalThis.fetch;
 

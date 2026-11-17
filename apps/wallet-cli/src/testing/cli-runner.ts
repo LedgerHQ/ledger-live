@@ -361,6 +361,41 @@ function restoreEnv(saved: Record<string, string | undefined>): void {
 }
 
 // ---------------------------------------------------------------------------
+// Process streams — what the CLI framework (bunli) prints straight to them
+// ---------------------------------------------------------------------------
+
+type Write = typeof process.stdout.write;
+
+function appendTo(chunks: string[]): Write {
+  return ((chunk: string | Uint8Array, ...rest: unknown[]) => {
+    chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString());
+    const callback = rest.find(arg => typeof arg === "function") as (() => void) | undefined;
+    callback?.();
+    return true;
+  }) as Write;
+}
+
+/**
+ * Sends what is written to `process.stdout` and `process.stderr` into `out` and `err`, with stdout
+ * a pipe, not a TTY; returns the function that puts the streams back.
+ */
+function captureProcessStreams(out: string[], err: string[]): () => void {
+  const { stdout, stderr } = process;
+  const writes = { stdout: stdout.write, stderr: stderr.write };
+  const stdoutIsTTY = Object.getOwnPropertyDescriptor(stdout, "isTTY");
+  // A script reads the CLI through a pipe, where bunli prints JSON instead of a TTY's text.
+  Object.defineProperty(stdout, "isTTY", { value: false, configurable: true, writable: true });
+  stdout.write = appendTo(out);
+  stderr.write = appendTo(err);
+  return () => {
+    stdout.write = writes.stdout;
+    stderr.write = writes.stderr;
+    if (stdoutIsTTY) Object.defineProperty(stdout, "isTTY", stdoutIsTTY);
+    else delete (stdout as { isTTY?: boolean }).isTTY;
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Core runner
 // ---------------------------------------------------------------------------
 
@@ -388,7 +423,8 @@ export function runCleanups(cleanups: readonly (() => void)[]): { error: unknown
 
 /**
  * Run the CLI in-process with the given argv and env overrides.
- * Captures stdout/stderr and returns them along with the exit code.
+ * Captures stdout/stderr, the process streams included (stdout as a pipe, not a TTY), and returns
+ * them along with the exit code.
  *
  * This is the in-process equivalent of spawning `bun wrapper.ts ...args`.
  * Module loading (live-common-setup, each command on first use) happens once per test process.
@@ -458,7 +494,8 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
 
     // 4. Temporary env vars (XDG_STATE_HOME, etc.)
     const savedEnv = applyEnv(mergedEnv);
-    // 5. Capture wallet-cli stdout / stderr without patching process-global streams.
+    // 5. Capture wallet-cli stdout / stderr, and in the same order what bunli writes to the
+    //    process streams (help, version, its own errors).
     const restoreOutputCapture = installOutputCapture({
       stdout: chunk => {
         outChunks.push(chunk);
@@ -467,10 +504,16 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
         errChunks.push(chunk);
       },
     });
+    const restoreProcessStreams = captureProcessStreams(outChunks, errChunks);
     // 6. Keychain: the test's own, or the in-memory one
     const restoreKeychain = useRunCliKeychain(setTestKeychain, keychain);
     // Steps 4–6 only assign variables and cannot throw, so they register their undo together.
-    cleanups.push(() => restoreEnv(savedEnv), restoreOutputCapture, restoreKeychain);
+    cleanups.push(
+      () => restoreEnv(savedEnv),
+      restoreOutputCapture,
+      restoreProcessStreams,
+      restoreKeychain,
+    );
 
     outcome = { exitCode: await runMain(args) };
   } catch (e) {

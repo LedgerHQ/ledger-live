@@ -1,142 +1,20 @@
 import { createHash } from "node:crypto";
 import { concat, defer, Observable, of } from "rxjs";
-import {
-  ApduResponse,
-  DeviceActionStatus,
-  UserInteractionRequired,
-  type DeviceActionState,
-  type ExecuteDeviceActionReturnType,
-} from "@ledgerhq/device-management-kit";
 import { ledger_trade } from "@ledgerhq/hw-app-exchange/generate-protocol";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import type { broadcastEvmJob } from "@ledgerhq/live-common/wallet-api/Exchange/intents/index";
-import { MockDeviceManagementKit } from "../device/mock-dmk";
-import { WalletCliDmkTransport } from "../device/wallet-cli-dmk-transport";
-import { _setTestDmkTransport } from "../device/register-dmk-transport";
 import { USDT_CONTRACT } from "./cal-fixtures";
-import { MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "./constants";
+import { MOCK_ETH_ADDRESS } from "./constants";
+import { EXCHANGE_NONCE, type FakeLedger } from "./fake-ledger";
 import type { Route } from "./mock-server";
 
-/** The nonce the Exchange app hands out for a legacy (10-byte) swap. */
-export const EXCHANGE_NONCE = "SWAPNONCE1";
 export const PAYIN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 export const UNISWAP_ROUTER = "0x66a9893cc07d91d95644aedd05d03f95e1dba8af";
 export const SWAP_ID = "swap-1";
 /** The partner signature of every Swap API payload. */
 export const PAYLOAD_SIGNATURE = "11".repeat(64);
-
-const START_NEW_TRANSACTION = 0x03;
-const LEGACY_SWAP = 0x00;
-const OK = new Uint8Array([0x90, 0x00]);
-
-/** Valid secp256k1 `r`, `s` for chain 1: the Ethereum app's answer to any transaction. */
-const DEVICE_SIGNATURE = {
-  r: "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
-  s: `0x${"22".repeat(32)}`,
-  v: 37,
-};
-
-type ActionState = DeviceActionState<unknown, unknown, unknown>;
-
-function deviceAction<Output, Error, Intermediate>(
-  ...states: ActionState[]
-): ExecuteDeviceActionReturnType<Output, Error, Intermediate> {
-  const observable = new Observable<DeviceActionState<Output, Error, Intermediate>>(subscriber => {
-    for (const state of states)
-      subscriber.next(state as DeviceActionState<Output, Error, Intermediate>);
-    subscriber.complete();
-  });
-  return { observable, cancel: () => {} };
-}
-
-const completed = (output: unknown): ActionState => ({
-  status: DeviceActionStatus.Completed,
-  output,
-});
-const failed = (error: unknown): ActionState => ({ status: DeviceActionStatus.Error, error });
-const awaitingApproval: ActionState = {
-  status: DeviceActionStatus.Pending,
-  intermediateValue: { requiredUserInteraction: UserInteractionRequired.SignTransaction },
-};
-
-/**
- * A Ledger with the Exchange, Ethereum and DEX plugin apps, for `_setTestDmkTransport`: opens any
- * app but `refuseToOpen`, starts Exchange transactions, and signs every Ethereum transaction and
- * typed message once the user approves, unless `refuseToSign`. `events` records what the CLI asked
- * of it, in order, session close included. `"no-device-model"` hides which model it is.
- */
-export class SwapDevice extends MockDeviceManagementKit {
-  readonly events: string[] = [];
-  /** Unsigned transactions the Ethereum app signed, as hex. */
-  readonly signedTransactions: string[] = [];
-  refuseToOpen: string | undefined;
-  refuseToSign = false;
-
-  constructor(initialState?: "no-device-model") {
-    super({
-      initialState,
-      appResults: { Ethereum: { publicKey: MOCK_ETH_PUBKEY, address: MOCK_ETH_ADDRESS } },
-    });
-  }
-
-  /** Makes it the CLI's device; returns the undo. */
-  install(): () => void {
-    const previous = _setTestDmkTransport(
-      new WalletCliDmkTransport(this as never, "mock-session-id"),
-    );
-    return () => {
-      _setTestDmkTransport(previous);
-    };
-  }
-
-  override executeDeviceAction<Output, Error, Intermediate, Input>(args: {
-    sessionId: string;
-    deviceAction: { input: Input };
-  }): ExecuteDeviceActionReturnType<Output, Error, Intermediate> {
-    const input = args.deviceAction.input as Record<string, unknown>;
-    const application = input.application as { name: string } | undefined;
-    if (application) {
-      this.events.push(`open ${application.name}`);
-      return this.refuseToOpen === application.name
-        ? deviceAction(failed({ _tag: "RefusedByUserDAError" }))
-        : deviceAction(completed({}));
-    }
-    if (typeof input.derivationPath !== "string") {
-      return super.executeDeviceAction(args as never) as ExecuteDeviceActionReturnType<
-        Output,
-        Error,
-        Intermediate
-      >;
-    }
-    const isTransaction = input.transaction instanceof Uint8Array;
-    this.events.push(`${isTransaction ? "sign" : "sign typed data"} ${input.derivationPath}`);
-    if (this.refuseToSign) {
-      return deviceAction(failed({ _tag: "EthAppCommandError", errorCode: "6985" }));
-    }
-    if (isTransaction) {
-      this.signedTransactions.push(Buffer.from(input.transaction as Uint8Array).toString("hex"));
-    }
-    return deviceAction(awaitingApproval, completed(DEVICE_SIGNATURE));
-  }
-
-  getConnectedDevice(_args: { sessionId: string }) {
-    return { id: "mock-device-id", name: "Ledger Nano S Plus (mock)", type: "USB" };
-  }
-
-  override sendApdu({ apdu }: { apdu: Uint8Array }): Promise<ApduResponse> {
-    if (apdu[1] !== START_NEW_TRANSACTION) return super.sendApdu({ apdu });
-    this.events.push("start Exchange transaction");
-    const nonce = apdu[2] === LEGACY_SWAP ? Buffer.from(EXCHANGE_NONCE) : Buffer.alloc(32, 7);
-    return Promise.resolve(new ApduResponse({ statusCode: OK, data: new Uint8Array(nonce) }));
-  }
-
-  override disconnect(args: unknown): Promise<void> {
-    this.events.push("close session");
-    return super.disconnect(args);
-  }
-}
 
 type CompleteExchange = typeof completeExchange;
 type CompleteExchangeInput = Parameters<CompleteExchange>[0];
@@ -153,7 +31,7 @@ export class FakeExchangeApp {
   >[] = [];
   failure: Error | undefined;
 
-  constructor(private readonly device: SwapDevice) {}
+  constructor(private readonly device: FakeLedger) {}
 
   readonly completeExchange: CompleteExchange = input =>
     new Observable(subscriber => {
