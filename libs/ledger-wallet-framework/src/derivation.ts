@@ -525,7 +525,8 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     if (
       currency.id === "bitcoin" ||
       currency.id === "bitcoin_testnet" ||
-      currency.id === "bitcoin_regtest"
+      currency.id === "bitcoin_regtest" ||
+      currency.id === "bitcoin_signet"
     ) {
       all.push("taproot");
     }

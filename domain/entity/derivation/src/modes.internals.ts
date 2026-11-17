@@ -189,7 +189,12 @@ export const MANDATORY_EMPTY_ACCOUNT_SKIP_BY_CURRENCY = byCurrency<number>({
   hypercore: 10,
 });
 
-export const WITH_TAPROOT = currencies("bitcoin", "bitcoin_testnet", "bitcoin_regtest");
+export const WITH_TAPROOT = currencies(
+  "bitcoin",
+  "bitcoin_testnet",
+  "bitcoin_regtest",
+  "bitcoin_signet",
+);
 
 /** Per family, the modes whose first empty account is offered for creation, besides the standard one and segwit. */
 export const CREATABLE_MODES_BY_FAMILY: ReadonlyMap<
