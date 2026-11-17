@@ -110,7 +110,7 @@ export function DeviceSection({
           </Link>
         )}
       </Box>
-      <LayoutAnimationConfig skipEntering>
+      <LayoutAnimationConfig skipEntering skipExiting>
         <Animated.View layout={layoutTransition} style={styles.card}>
           {isEmpty ? (
             <AddDeviceRow onAddNewDevice={onAddNewDevice} disabled={disabled} />
