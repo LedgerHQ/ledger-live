@@ -42,16 +42,21 @@ export const hyperliquidSignIntentJob: Job<
       deviceName: compatDeviceName,
     });
 
-    const sign = async () => input.signOnSession({ dmk, sessionId, connectedDevice });
+    const controller = new AbortController();
+    let isSettled = false;
+    const sign = async () =>
+      input.signOnSession({ dmk, sessionId, connectedDevice }, controller.signal);
 
     sign().then(
       signatures => {
+        isSettled = true;
         if (subscriber.closed) return;
         onResult({ type: "signed", signatures });
         subscriber.next({ type: "signed" });
         subscriber.complete();
       },
       (error: unknown) => {
+        isSettled = true;
         if (subscriber.closed) return;
         if (isDeviceDisconnectedError(error)) {
           subscriber.error(error);
@@ -68,4 +73,8 @@ export const hyperliquidSignIntentJob: Job<
         subscriber.complete();
       },
     );
+
+    return () => {
+      if (!isSettled) controller.abort();
+    };
   });

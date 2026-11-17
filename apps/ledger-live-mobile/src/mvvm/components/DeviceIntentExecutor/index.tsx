@@ -28,7 +28,6 @@ export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
 export { UserRefusedOnDevice } from "./components/DeviceGenericStates/UserRefusedOnDevice";
 export type { SourceFlow } from "./utils/DeviceIntentTrackingContext";
-export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
   DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitializationInput, Result>,

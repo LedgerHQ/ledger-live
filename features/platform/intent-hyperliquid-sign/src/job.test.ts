@@ -87,11 +87,38 @@ describe("hyperliquidSignIntentJob", () => {
     startJob(signOnSession);
     await flushPromises();
 
-    expect(signOnSession).toHaveBeenCalledWith({
-      dmk: DMK,
-      sessionId: "session-1",
-      connectedDevice: CONNECTED_DEVICE,
+    expect(signOnSession).toHaveBeenCalledWith(
+      {
+        dmk: DMK,
+        sessionId: "session-1",
+        connectedDevice: CONNECTED_DEVICE,
+      },
+      expect.any(AbortSignal),
+    );
+  });
+
+  it("should abort the signer when unsubscribed while signing", () => {
+    let signal: AbortSignal | undefined;
+    const { subscription } = startJob((_, abortSignal) => {
+      signal = abortSignal;
+      return new Promise(() => {});
     });
+
+    expect(signal?.aborted).toBe(false);
+    subscription.unsubscribe();
+
+    expect(signal?.aborted).toBe(true);
+  });
+
+  it("should not abort the signer once signing has settled", async () => {
+    let signal: AbortSignal | undefined;
+    startJob((_, abortSignal) => {
+      signal = abortSignal;
+      return Promise.resolve(SIGNATURES);
+    });
+    await flushPromises();
+
+    expect(signal?.aborted).toBe(false);
   });
 
   it("should report the signatures once and complete", async () => {

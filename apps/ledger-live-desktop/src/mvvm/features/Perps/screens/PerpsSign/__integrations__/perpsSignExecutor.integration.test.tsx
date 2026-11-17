@@ -144,8 +144,30 @@ describe("PerpsSign with the device intent executor", () => {
 
     act(() => openPerpsSign(second, MANIFEST));
 
+    expect(first.onCancel).toHaveBeenCalled();
+    expect(first.onSuccess).not.toHaveBeenCalled();
+    expect(second.onCancel).not.toHaveBeenCalled();
+  });
+
+  it("should cancel a request replaced before its executor renders", async () => {
+    const first = makeRequest();
+    const second = makeRequest();
+    renderWithDeviceIntentSign();
+
+    act(() => {
+      openPerpsSign(first, MANIFEST);
+      openPerpsSign(second, MANIFEST);
+    });
+    await screen.findByTestId("device-intent-executor");
+
     expect(first.onCancel).toHaveBeenCalledTimes(1);
     expect(second.onCancel).not.toHaveBeenCalled();
+    act(() => {
+      mockExecutorProps!.intent.onResult?.({ type: "signed", signatures: SIGNATURES });
+      mockExecutorProps!.onIntentJobComplete();
+    });
+    expect(second.onSuccess).toHaveBeenCalledWith({ signatures: SIGNATURES });
+    expect(first.onSuccess).not.toHaveBeenCalled();
   });
 
   it("should close the executor and cancel the request when navigating away", async () => {
@@ -158,7 +180,8 @@ describe("PerpsSign with the device intent executor", () => {
       navigate("/manager?q=Hyperliquid");
     });
 
-    expect(request.onCancel).toHaveBeenCalledTimes(1);
+    expect(request.onCancel).toHaveBeenCalled();
+    expect(request.onSuccess).not.toHaveBeenCalled();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
   });
 

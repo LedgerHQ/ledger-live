@@ -15261,10 +15261,10 @@ importers:
         version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
+        version: 1.15.11(@swc/helpers@0.5.24)
       '@swc/jest':
         specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -15294,7 +15294,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react:
         specifier: 19.1.4
         version: 19.1.4

@@ -92,7 +92,7 @@ describe("usePerpsHandlers", () => {
   });
 
   describe("with the device intent sign flag on", () => {
-    const signParams = {
+    const makeSignParams = () => ({
       appName: "Hyperliquid",
       appOptions: undefined,
       signFactory: jest.fn(),
@@ -100,7 +100,8 @@ describe("usePerpsHandlers", () => {
       onSuccess: jest.fn(),
       onError: jest.fn(),
       onCancel: jest.fn(),
-    };
+    });
+    const signParams = makeSignParams();
 
     it("should keep the request for the drawer instead of navigating", () => {
       const { result } = renderWithFlag();
@@ -130,6 +131,56 @@ describe("usePerpsHandlers", () => {
 
       act(() => result.current.clearSignRequest(2));
       expect(result.current.signRequest).toBeNull();
+    });
+
+    it("should cancel a request replaced before the drawer renders it", () => {
+      const first = makeSignParams();
+      const second = makeSignParams();
+      const { result } = renderWithFlag();
+
+      act(() => {
+        signingExecute()(first);
+        signingExecute()(second);
+      });
+
+      expect(first.onCancel).toHaveBeenCalledTimes(1);
+      expect(second.onCancel).not.toHaveBeenCalled();
+      expect(result.current.signRequest).toEqual({ id: 2, request: second });
+    });
+
+    it("should not cancel a request that was answered before the next one", () => {
+      const first = makeSignParams();
+      const { result } = renderWithFlag();
+      act(() => signingExecute()(first));
+
+      act(() => {
+        result.current.clearSignRequest(1);
+        signingExecute()(makeSignParams());
+      });
+
+      expect(first.onCancel).not.toHaveBeenCalled();
+    });
+
+    it("should not reuse an id when a request is cleared and the next one arrives in one batch", () => {
+      const { result } = renderWithFlag();
+      act(() => signingExecute()(makeSignParams()));
+
+      act(() => {
+        result.current.clearSignRequest(1);
+        signingExecute()(makeSignParams());
+      });
+
+      expect(result.current.signRequest?.id).toBe(2);
+    });
+
+    it("should cancel the pending request on unmount", () => {
+      const pending = makeSignParams();
+      const { unmount } = renderWithFlag();
+      act(() => signingExecute()(pending));
+
+      unmount();
+
+      expect(pending.onCancel).toHaveBeenCalledTimes(1);
     });
   });
 
