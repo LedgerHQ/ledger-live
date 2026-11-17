@@ -103,6 +103,12 @@ const receiveTestResources = {
           description:
             "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
         },
+        help: {
+          cardTitle: "Need support? Get help",
+          title: "Get help",
+          receiveFromExchange: "How to receive from exchanges?",
+          receiveSecurely: "How to receive securely?",
+        },
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",

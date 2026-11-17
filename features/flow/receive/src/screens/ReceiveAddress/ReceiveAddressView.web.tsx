@@ -26,6 +26,7 @@ export function ReceiveAddressView({
   serviceStatus,
   memoCard,
   memoPanel,
+  helpCard,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -122,7 +123,7 @@ export function ReceiveAddressView({
                   </>
                 )}
                 <ReceiveAddressExtras memoCard={memoCard} />
-                <ZonePlaceholder zone="extras" />
+                <ZonePlaceholder zone="extras" label={helpCard?.title} />
               </DialogBody>
             </>
           )}

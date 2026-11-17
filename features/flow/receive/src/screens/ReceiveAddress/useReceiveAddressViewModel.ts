@@ -5,6 +5,7 @@ import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
 import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
@@ -73,6 +74,14 @@ export function useReceiveAddressViewModel({
     close: closePanel,
   });
 
+  const { helpCard, helpPanel } = useReceiveAddressHelp({
+    isOpen: panel === "help",
+    copy,
+    onOpenUrl,
+    open: () => openPanel("help"),
+    close: closePanel,
+  });
+
   const address = useMemo(
     () =>
       selected && header.data
@@ -119,6 +128,8 @@ export function useReceiveAddressViewModel({
         : undefined,
     memoCard,
     memoPanel,
+    helpCard,
+    helpPanel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

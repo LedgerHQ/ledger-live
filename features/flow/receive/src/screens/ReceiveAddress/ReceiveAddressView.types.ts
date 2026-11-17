@@ -84,6 +84,16 @@ export type ReceiveMemoPanelView = Readonly<{
   onClose: () => void;
 }>;
 
+/** "Need support? Get help". */
+export type ReceiveHelpCardView = Readonly<{ title: string; onPress: () => void }>;
+
+/** The support questions, over the address. */
+export type ReceiveHelpPanelView = Readonly<{
+  title: string;
+  questions: readonly (ReceiveAddressAction & Readonly<{ id: string }>)[];
+  onClose: () => void;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
@@ -99,6 +109,9 @@ export type ReceiveAddressViewProps = Readonly<{
   memoCard?: ReceiveMemoCardView;
   /** Set while the memo panel is open. */
   memoPanel?: ReceiveMemoPanelView;
+  helpCard?: ReceiveHelpCardView;
+  /** Set while the help is open. */
+  helpPanel?: ReceiveHelpPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */
