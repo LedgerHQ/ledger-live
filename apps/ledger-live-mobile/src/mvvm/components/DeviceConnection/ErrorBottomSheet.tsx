@@ -1,5 +1,5 @@
 import React from "react";
-import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -28,7 +28,7 @@ export function ErrorBottomSheet({
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
-        <Box lx={{ paddingHorizontal: "s16" }}>{children}</Box>
+        {children}
       </BottomSheetView>
     </QueuedBottomSheet>
   );
