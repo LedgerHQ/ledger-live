@@ -142,7 +142,7 @@ describe("StakePositionDetails (native)", () => {
     ["deactivating", "Deactivation in progress. You can withdraw your SOL once it is complete."],
     [
       "missingAuthority",
-      "Another wallet controls this position, so you can't change it from this account.",
+      "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
     ],
   ] as const)("should explain the %s notice", (notice, text) => {
     renderDetails({ exitAction: null, notice });
