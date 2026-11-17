@@ -105,6 +105,7 @@ export function useAmountScreenViewModel({
     reviewDisabled: coreReviewDisabled,
     amountComputationPending,
     hasInsufficientFundsError,
+    showGetFundsCta,
     hasRawAmount,
   } = amountReviewCore;
 
@@ -237,14 +238,14 @@ export function useAmountScreenViewModel({
   const sponsoredRentNotice =
     rentArriving && rentChangesFee ? t("send.newSendFlow.feePayment.rentArriving") : null;
 
-  // An insufficient amount turns Review into Get funds, which needs no sponsored quote and stays
-  // pressable.
+  // An insufficient amount needs no sponsored quote: it turns Review into Get funds when Buy is
+  // available, which stays pressable, and leaves a disabled Review otherwise.
   const sponsoredReviewNotReady = !reviewReady && !hasInsufficientFundsError;
   const reviewDisabled =
     coreReviewDisabled ||
     amountInput.isTyping ||
     sponsoredReviewNotReady ||
-    (sponsoredUnaffordable && !hasInsufficientFundsError);
+    (sponsoredUnaffordable && !showGetFundsCta);
   const reviewLoading = amountComputationPending || sponsoredReviewNotReady;
 
   return useMemo(
@@ -274,7 +275,7 @@ export function useAmountScreenViewModel({
         showIcon: coreReviewShowIcon,
         disabled: reviewDisabled,
         loading: reviewLoading,
-        onPress: hasInsufficientFundsError ? onGetFunds : onReview,
+        onPress: showGetFundsCta ? onGetFunds : onReview,
       },
       message: amountMessage,
     }),
@@ -288,7 +289,7 @@ export function useAmountScreenViewModel({
       mainAccount.balance,
       reviewLabel,
       coreReviewShowIcon,
-      hasInsufficientFundsError,
+      showGetFundsCta,
       reviewDisabled,
       reviewLoading,
       onGetFunds,

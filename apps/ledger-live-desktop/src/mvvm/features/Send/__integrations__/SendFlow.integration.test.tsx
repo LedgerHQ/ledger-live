@@ -65,6 +65,14 @@ type MockExecutorProps = Readonly<{
 
 let mockExecutorProps: MockExecutorProps | null = null;
 
+// The new Send flow offers "Get {ticker}" on insufficient funds only when Buy supports the currency.
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: () => true,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
+
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(() => Promise.resolve({ appRequest: {} })),
   DeviceIntentExecutor: (props: MockExecutorProps) => {

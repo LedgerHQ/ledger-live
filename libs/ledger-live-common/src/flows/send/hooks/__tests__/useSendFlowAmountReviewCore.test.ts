@@ -8,9 +8,17 @@ import { useSendFlowAmountReviewCore } from "../useSendFlowAmountReviewCore";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { AccountLike } from "@ledgerhq/types-live";
 
-const mockCurrency = { ticker: "BTC", type: "CryptoCurrency" as const };
+const mockCurrency = { id: "bitcoin", ticker: "BTC", type: "CryptoCurrency" as const };
+
+const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: string) => true);
 
 jest.mock("../../../../bridge/impl");
+jest.mock("../../../../platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: mockIsCurrencyAvailable,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getMainAccount: jest.fn((acc: AccountLike) => acc),
   getAccountCurrency: jest.fn(() => mockCurrency),
@@ -57,6 +65,7 @@ const mockLabels = {
 describe("useSendFlowAmountReviewCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsCurrencyAvailable.mockReturnValue(true);
     const getAccountBridge = jest.requireMock("../../../../bridge/impl").getAccountBridge;
     getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
@@ -147,8 +156,37 @@ describe("useSendFlowAmountReviewCore", () => {
     );
 
     expect(result.current.hasInsufficientFundsError).toBe(true);
+    expect(result.current.showGetFundsCta).toBe(true);
     expect(result.current.reviewLabel).toBe("Get BTC");
     expect(result.current.reviewShowIcon).toBe(false);
+    expect(result.current.reviewDisabled).toBe(false);
+    expect(mockIsCurrencyAvailable).toHaveBeenCalledWith("bitcoin", "onRamp");
+  });
+
+  it("keeps a disabled Review CTA on insufficient funds when Buy is unavailable for the currency", () => {
+    mockIsCurrencyAvailable.mockReturnValue(false);
+    const status = createStatus();
+    (status as { errors?: Record<string, Error> }).errors = {
+      amount: { name: "NotEnoughBalance" } as Error,
+    };
+    const { result } = renderHook(() =>
+      useSendFlowAmountReviewCore({
+        account: createAccount(),
+        parentAccount: null,
+        transaction: createTransaction(),
+        status,
+        bridgePending: false,
+        transactionActions: { updateTransaction: jest.fn() } as never,
+        labels: mockLabels,
+      }),
+    );
+
+    expect(mockIsCurrencyAvailable).toHaveBeenCalledWith("bitcoin", "onRamp");
+    expect(result.current.hasInsufficientFundsError).toBe(true);
+    expect(result.current.showGetFundsCta).toBe(false);
+    expect(result.current.reviewLabel).toBe("Review");
+    expect(result.current.reviewShowIcon).toBe(true);
+    expect(result.current.reviewDisabled).toBe(true);
   });
 
   it("sets reviewLabel to reviewCta when no insufficient funds error", () => {
@@ -166,6 +204,7 @@ describe("useSendFlowAmountReviewCore", () => {
     );
 
     expect(result.current.hasInsufficientFundsError).toBe(false);
+    expect(result.current.showGetFundsCta).toBe(false);
     expect(result.current.reviewLabel).toBe("Review");
     expect(result.current.reviewShowIcon).toBe(true);
   });

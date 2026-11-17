@@ -73,6 +73,14 @@ type RenderForAccountOptions = Readonly<{
   contacts?: State["contacts"]["contacts"];
 }>;
 
+// The new Send flow offers "Get {ticker}" on insufficient funds only when Buy supports the currency.
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: () => true,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
+
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
     validateAddress: async ({ address }: { address: string }) => ({
