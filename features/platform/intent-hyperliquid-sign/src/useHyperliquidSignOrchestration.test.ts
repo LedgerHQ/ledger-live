@@ -19,7 +19,6 @@ function makeRequest(
   overrides: Partial<HyperliquidSignOrchestrationRequest> = {},
 ): HyperliquidSignOrchestrationRequest {
   return {
-    appName: "Hyperliquid",
     appOptions: {
       requireLatestFirmware: true,
       allowPartialDependencies: false,
@@ -61,7 +60,7 @@ async function renderOrchestration(
 describe("useHyperliquidSignOrchestration", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("should resolve the app initialization input with the request's appName and options", async () => {
+  it("should resolve the Hyperliquid app initialization input with the request's options", async () => {
     const { result, buildDeviceInitializationInput } = await renderOrchestration();
 
     expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
@@ -74,18 +73,27 @@ describe("useHyperliquidSignOrchestration", () => {
     expect(result.current.deviceInitializationInput).toBe(INIT_INPUT);
   });
 
-  it("should default appName to Hyperliquid when omitted on the request", async () => {
-    const { buildDeviceInitializationInput } = await renderOrchestration(
-      makeRequest({ appName: undefined }),
-    );
+  it("should keep the initialization input when callback identities change", async () => {
+    const request = makeRequest();
+    const { result, rerender, buildDeviceInitializationInput } = await renderOrchestration(request);
+    const initialInput = result.current.deviceInitializationInput;
 
-    expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
-      appRequest: {
-        appName: "Hyperliquid",
-        requireLatestFirmware: true,
-        allowPartialDependencies: false,
-      },
-    });
+    rerender({ req: { ...request, onSuccess: jest.fn(), onError: jest.fn() } });
+
+    expect(buildDeviceInitializationInput).toHaveBeenCalledTimes(1);
+    expect(result.current.deviceInitializationInput).toBe(initialInput);
+  });
+
+  it("should answer with the latest onSuccess after a re-render", async () => {
+    const request = makeRequest();
+    const latestOnSuccess = jest.fn();
+    const { rerender, finishJob } = await renderOrchestration(request);
+
+    rerender({ req: { ...request, onSuccess: latestOnSuccess } });
+    finishJob({ type: "signed", signatures: SIGNATURES });
+
+    expect(request.onSuccess).not.toHaveBeenCalled();
+    expect(latestOnSuccess).toHaveBeenCalledWith({ signatures: SIGNATURES });
   });
 
   it("should forward the executor session to request.signOnSession and unwrap signatures", async () => {
