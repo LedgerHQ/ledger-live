@@ -18,7 +18,7 @@ const renderDeveloperRowWithOverlay = (hideNightlyLayer: boolean) =>
     { initialState: { settings: { ...SETTINGS_INITIAL_STATE, hideNightlyLayer } } },
   );
 
-const theSwitch = () => screen.getByTestId("settings-hide-nightly-layer");
+const theSwitch = () => screen.getByRole("switch", { name: "Hide pre-release overlay" });
 
 describe("HideNightlyLayerRow", () => {
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe("HideNightlyLayerRow", () => {
 
     renderDeveloperRowWithOverlay(false);
 
-    expect(screen.queryByTestId("settings-hide-nightly-layer")).not.toBeInTheDocument();
+    expect(screen.queryByRole("switch")).not.toBeInTheDocument();
     expect(screen.queryByText("Hide pre-release overlay")).not.toBeInTheDocument();
   });
 

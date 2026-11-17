@@ -10,13 +10,16 @@ type HideNightlyLayerRowViewProps = {
 
 export function HideNightlyLayerRowView({ isHidden, onChange }: HideNightlyLayerRowViewProps) {
   const { t } = useTranslation();
+  const title = t("settings.developer.hideNightlyLayer.title");
 
   return (
-    <SettingsSectionRow
-      title={t("settings.developer.hideNightlyLayer.title")}
-      desc={t("settings.developer.hideNightlyLayer.desc")}
-    >
-      <Switch selected={isHidden} onChange={onChange} data-testid="settings-hide-nightly-layer" />
+    <SettingsSectionRow title={title} desc={t("settings.developer.hideNightlyLayer.desc")}>
+      <Switch
+        selected={isHidden}
+        onChange={onChange}
+        aria-label={title}
+        data-testid="settings-hide-nightly-layer"
+      />
     </SettingsSectionRow>
   );
 }
