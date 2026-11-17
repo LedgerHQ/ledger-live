@@ -13,7 +13,7 @@ import {
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
-import type { SetupScreenProps } from "../Setup/types";
+import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
@@ -50,39 +50,76 @@ export type UnseededFunnelModel =
   | { status: "success"; sawRecoverPitch: boolean };
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
-  const [heldStage, setHeldStage] = useState<SetupStage | null>(null);
-  const continuedChecks = useRef(false);
-  const device = input.device;
-  const machineState = input.machineState;
+  const { device, machineState, liveMachineState, send } = input;
   const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
-  const stage =
-    unseeded && device && machineState
-      ? toSetupStage({
-          machineState,
-          currentStep: input.currentStep,
-          modelId: device.modelId,
-          reportsRecoveryKey: input.reportsRecoveryKey,
-        })
-      : null;
+  const stage = unseeded
+    ? toUnseededStage(device, machineState, input.currentStep, input.reportsRecoveryKey)
+    : null;
+  const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
+
+  const visibleStage = useHeldStage(stage, holdsPrevious);
+  const connection = useSessionReconnect({
+    dropped: unseeded && liveMachineState === droppedState && visibleStage !== null,
+    error: input.connectionError,
+    connect: input.reconnect,
+  });
+  useContinueChecks(unseeded, liveMachineState, send);
+
+  if (unseeded && machineState === doneState) return toDoneModel(input);
+  if (!unseeded || !visibleStage || !device || !machineState) return null;
+
+  return {
+    status: "setup",
+    setup: {
+      device,
+      stage: visibleStage,
+      suspendSheets: input.suspendSheets,
+      reportsRecoveryKey: input.reportsRecoveryKey,
+      connection,
+      checks: toChecks(input, machineState),
+      onQuit: input.onQuit,
+    },
+  };
+}
+
+function toUnseededStage(
+  device: Device | null,
+  machineState: string | null,
+  currentStep: string | null,
+  reportsRecoveryKey: boolean,
+): SetupStage | null {
+  if (!device || !machineState) return null;
+  return toSetupStage({ machineState, currentStep, modelId: device.modelId, reportsRecoveryKey });
+}
+
+function holdsPreviousStage(machineState: string | null, currentStep: string | null): boolean {
+  if (machineState === null) return false;
   const holdsDuringSafetyWarning =
-    machineState?.startsWith("deviceSetup.") === true &&
-    input.currentStep === OnboardingStep.SafetyWarning;
-  const keepsStage = machineState !== null && statesThatKeepTheStage.has(machineState);
-  const holdsPrevious =
-    unseeded && (machineState === waitingState || holdsDuringSafetyWarning || keepsStage);
+    machineState.startsWith("deviceSetup.") && currentStep === OnboardingStep.SafetyWarning;
+  return (
+    machineState === waitingState ||
+    holdsDuringSafetyWarning ||
+    statesThatKeepTheStage.has(machineState)
+  );
+}
+
+/** Keeps the last stage on screen while the machine passes through a transient state. */
+function useHeldStage(stage: SetupStage | null, holdsPrevious: boolean): SetupStage | null {
+  const [heldStage, setHeldStage] = useState<SetupStage | null>(null);
 
   if (stage && !sameStage(stage, heldStage)) setHeldStage(stage);
   else if (!stage && !holdsPrevious && heldStage) setHeldStage(null);
 
-  const visibleStage = stage ?? (holdsPrevious ? heldStage : null);
-  const send = input.send;
-  const connection = useSessionReconnect({
-    dropped: unseeded && input.liveMachineState === droppedState && visibleStage !== null,
-    error: input.connectionError,
-    connect: input.reconnect,
-  });
+  return stage ?? (holdsPrevious ? heldStage : null);
+}
 
-  const liveMachineState = input.liveMachineState;
+/** Sends CONTINUE once per successful checks run, then re-arms when the run ends. */
+function useContinueChecks(
+  unseeded: boolean,
+  liveMachineState: string | null,
+  send: UnseededFunnelInput["send"],
+) {
+  const continuedChecks = useRef(false);
 
   useEffect(() => {
     if (!unseeded || liveMachineState !== checksSucceededState) {
@@ -93,43 +130,30 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
     continuedChecks.current = true;
     send({ type: "CONTINUE" });
   }, [liveMachineState, send, unseeded]);
+}
 
-  if (unseeded && machineState === doneState) {
-    const sawRecoverPitch = input.seedPath === SeedPath.NewSeed;
-    if (sawRecoverPitch && !input.pastRecover) return { status: "recoverNewSeed" };
-    return { status: "success", sawRecoverPitch };
-  }
+function toDoneModel(input: Pick<UnseededFunnelInput, "seedPath" | "pastRecover">) {
+  const sawRecoverPitch = input.seedPath === SeedPath.NewSeed;
+  if (sawRecoverPitch && !input.pastRecover) return { status: "recoverNewSeed" as const };
+  return { status: "success" as const, sawRecoverPitch };
+}
 
-  if (!unseeded || !visibleStage || !device || !machineState) return null;
+function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecksProps | null {
+  if (!machineState.startsWith("checks.")) return null;
+  const state = toChecksScreenState(machineState, input.checksPaused, false);
+  if (!state) return null;
 
-  const checksState = machineState.startsWith("checks.")
-    ? toChecksScreenState(machineState, input.checksPaused, false)
-    : null;
-
+  const send = input.send;
   return {
-    status: "setup",
-    setup: {
-      device,
-      stage: visibleStage,
-      suspendSheets: input.suspendSheets,
-      reportsRecoveryKey: input.reportsRecoveryKey,
-      connection,
-      checks: checksState
-        ? {
-            state: checksState,
-            error: toChecksError(machineState, input.genuineFailureKind),
-            deviceNotGenuine: input.deviceNotGenuine,
-            update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
-            onStart: () =>
-              send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
-            onRetry: () => send({ type: "RETRY" }),
-            onCloseSheet: () => send({ type: "CLOSE" }),
-            onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
-            onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
-          }
-        : null,
-      onQuit: input.onQuit,
-    },
+    state,
+    error: toChecksError(machineState, input.genuineFailureKind),
+    deviceNotGenuine: input.deviceNotGenuine,
+    update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
+    onStart: () => send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
+    onRetry: () => send({ type: "RETRY" }),
+    onCloseSheet: () => send({ type: "CLOSE" }),
+    onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
+    onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
   };
 }
 

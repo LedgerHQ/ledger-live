@@ -1,50 +1,17 @@
 import { useDispatch, useStore } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
+import { PostOnboardingState } from "@ledgerhq/types-live";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
 import { postOnboardingHubActionIds } from "../logic/postOnboardingHubActionIds";
 
-const emptyQueue = {
-  actionsToComplete: [],
-  actionsCompleted: {},
-} as const satisfies Pick<PostOnboardingState, "actionsToComplete" | "actionsCompleted">;
+type PostOnboardingRootState = { postOnboarding: PostOnboardingState };
 
-function isActionId(value: unknown): value is PostOnboardingActionId {
-  return (
-    typeof value === "string" && Object.values(PostOnboardingActionId).some(id => id === value)
-  );
-}
-
-function queuedPostOnboarding(
-  state: unknown,
-): Pick<PostOnboardingState, "actionsToComplete" | "actionsCompleted"> {
-  if (typeof state !== "object" || state === null || !("postOnboarding" in state)) {
-    return emptyQueue;
-  }
-  const slice: unknown = state.postOnboarding;
-  if (typeof slice !== "object" || slice === null) return emptyQueue;
-  if (!("actionsToComplete" in slice) || !("actionsCompleted" in slice)) return emptyQueue;
-
-  const actionsToComplete: unknown = slice.actionsToComplete;
-  const actionsCompleted: unknown = slice.actionsCompleted;
-  if (!Array.isArray(actionsToComplete)) return emptyQueue;
-  if (typeof actionsCompleted !== "object" || actionsCompleted === null) return emptyQueue;
-
-  const completedEntries = Object.entries(actionsCompleted);
-  if (
-    !actionsToComplete.every(isActionId) ||
-    !completedEntries.every(([id, completed]) => isActionId(id) && typeof completed === "boolean")
-  ) {
-    return emptyQueue;
-  }
-
-  return {
-    actionsToComplete,
-    actionsCompleted: Object.fromEntries(completedEntries),
-  };
+// The app store always has this slice; the check only narrows the untyped store state.
+function hasPostOnboardingSlice(state: unknown): state is PostOnboardingRootState {
+  return typeof state === "object" && state !== null && "postOnboarding" in state;
 }
 
 type StartPostOnboardingOptions = {
@@ -75,13 +42,14 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
   return useCallback(
     (options: StartPostOnboardingOptions) => {
       const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
-      const queued = queuedPostOnboarding(store.getState());
+      const state = store.getState();
+      const queue = hasPostOnboardingSlice(state) ? state.postOnboarding : null;
       const actionsIds = postOnboardingHubActionIds({
         actions: getPostOnboardingActionsForDevice(deviceModelId, mock),
         isFlagEnabled: featureFlagId => Boolean(flags[featureFlagId]?.enabled),
         canShowRecover: Boolean(options.canShowRecover),
-        queuedActionIds: queued.actionsToComplete,
-        completedActionIds: queued.actionsCompleted,
+        queuedActionIds: queue?.actionsToComplete ?? [],
+        completedActionIds: queue?.actionsCompleted ?? {},
       });
       dispatch(
         initPostOnboarding({
