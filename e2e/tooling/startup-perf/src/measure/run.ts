@@ -342,13 +342,9 @@ async function measureScenario(scenario: string): Promise<void> {
     for (const side of order) {
       const device = placement[side];
       await installAndInject({ scenario, side, device, userdata });
+      // Test branch: no Debug-screen check in warm-ups; its long Maestro session changes the next launch.
       for (let w = 0; w < WARMUPS; w++) {
-        // The last one reads only the log: on iOS a screen read would slow round 0.
-        const lastWarmup = side === order.at(-1) && w === WARMUPS - 1;
-        await sample(
-          { scenario, phase, round: -1 - w, side, device, warmup: true },
-          { checkScreen: !lastWarmup },
-        );
+        await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
     }
     for (let round = 0; round < PAIRS / 2; round++) {
