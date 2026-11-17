@@ -6,7 +6,6 @@ import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
-import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
 
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
@@ -157,40 +156,73 @@ export const getKey = async <
   return data as V;
 };
 
-let debounceToUse = debounce;
-if (getEnv("PLAYWRIGHT_RUN")) {
-  debounceToUse =
-    fn =>
-    (...args) =>
-      // @ts-expect-error This is specific to playwright, silence the error
-      setTimeout(() => fn(...args));
-}
+const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
 
-const debouncedSetKey = memoize(
-  <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse(async (value: V) => {
-      try {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const transform = transforms[keyPath as keyof Transforms];
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const transformedValue = transform
-          ? await transform.set(value as Parameters<typeof transform.set>[0])
-          : value;
-        await db.setKey(ns, keyPath, transformedValue as Serializable);
-      } catch (e) {
-        logger.error("debouncedSetKey failed", { ns, keyPath }, e);
-      }
-    }, 1000),
-  (ns: string, keyPath: string) => `${ns}:${keyPath}`,
-);
+type DebouncedSetKey = ReturnType<typeof debounce<(value: unknown) => Promise<void>>>;
+
+const debouncedSetKeys = new Map<string, DebouncedSetKey>();
+
+/** A reset increments it: the writes queued before the reset do not reach main. */
+let writeGeneration = 0;
+
+const debouncedSinceLastFlush = new Set<DebouncedSetKey>();
+
+function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues): DebouncedSetKey {
+  const id = `${ns}:${keyPath}`;
+  const existing = debouncedSetKeys.get(id);
+  if (existing) return existing;
+
+  const write = async (value: unknown, generation: number) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const transform = transforms[keyPath as keyof Transforms];
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const transformedValue = transform
+        ? await transform.set(value as Parameters<typeof transform.set>[0])
+        : value;
+      const resetSinceQueued = generation !== writeGeneration;
+      if (resetSinceQueued) return;
+      await db.setKey(ns, keyPath, transformedValue as Serializable);
+    } catch (e) {
+      logger.error("debouncedSetKey failed", { ns, keyPath }, e);
+    }
+  };
+  // An older value that still encodes must not reach main after a newer one.
+  let lastWrite: Promise<void> = Promise.resolve();
+  const debouncedSetKey = debounce((value: unknown) => {
+    const generation = writeGeneration;
+    lastWrite = lastWrite.then(() => write(value, generation));
+    return lastWrite;
+  }, SET_KEY_DEBOUNCE_MS);
+  debouncedSetKeys.set(id, debouncedSetKey);
+  return debouncedSetKey;
+}
 
 export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val extends V = V>(
   ns: string,
   keyPath: K,
   value: Val,
 ) => {
-  debouncedSetKey<K, V>(ns, keyPath)(value);
+  const debouncedSetKey = getDebouncedSetKey(ns, keyPath);
+  debouncedSinceLastFlush.add(debouncedSetKey);
+  debouncedSetKey(value);
 };
+
+/** A store that keeps writing must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
+
+/**
+ * Send the debounced `setKey` calls to main now, and wait until main has them.
+ */
+export const flushPendingWrites = (): Promise<void> => flushDebouncedSetKeys(0);
+
+async function flushDebouncedSetKeys(round: number): Promise<void> {
+  if (round >= MAX_FLUSH_ROUNDS || debouncedSinceLastFlush.size === 0) return;
+  const toFlush = Array.from(debouncedSinceLastFlush);
+  debouncedSinceLastFlush.clear();
+  await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
+  return flushDebouncedSetKeys(round + 1);
+}
 
 export const setEncryptionKey = (encryptionKey: string, currentEncryptionKey?: string) =>
   db.setEncryptionKey(encryptionKey, currentEncryptionKey);
@@ -203,7 +235,12 @@ export const isEncryptionKeyCorrect = (encryptionKey: string) =>
 
 export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 
-export const resetAll = () => db.resetAll();
+export const resetAll = () => {
+  writeGeneration++;
+  debouncedSetKeys.forEach(debouncedSetKey => debouncedSetKey.cancel());
+  debouncedSinceLastFlush.clear();
+  return db.resetAll();
+};
 
 export const reload = () => db.reload();
 
