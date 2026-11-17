@@ -18,6 +18,16 @@ import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const APP_INSTANCE_NAME = "LWD";
 
+// The device steps run in the side panel by default, and in the device intent dialog with the flag.
+const DEVICE_STEP_VARIANTS = [
+  { titleSuffix: "", onDie: false },
+  { titleSuffix: " - Device Intent", onDie: true },
+] as const;
+
+function ledgerSyncDieFlag(onDie: boolean) {
+  return { lwdLedgerSyncDie: { enabled: onDie } };
+}
+
 function setupSeed() {
   // Restore through process.env, not setEnv: startSpeculos reads process.env.SEED directly, so a
   // setEnv restore leaves the generated seed in place for whatever runs next in this worker.
@@ -36,7 +46,10 @@ function destroyTrustchainAfterAll() {
   test.afterAll(destroyTrustchain);
 }
 
-function preSeededTrustchain(seedCommands: CliCommand[] = []) {
+function preSeededTrustchain({
+  seedCommands = [],
+  onDie = false,
+}: { seedCommands?: CliCommand[]; onDie?: boolean } = {}) {
   return {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -59,6 +72,7 @@ function preSeededTrustchain(seedCommands: CliCommand[] = []) {
         },
       },
       lldLedgerSyncEntryPoints: { enabled: true },
+      ...ledgerSyncDieFlag(onDie),
     },
   };
 }
@@ -122,7 +136,7 @@ test.describe("Ledger Sync - rename account and delete backup", () => {
   const defaultAccountName = `${Currency.ETH.name} 1`;
   const renamedAccountName = `${Currency.ETH.name} LedgerSync 1`;
 
-  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
+  test.use(preSeededTrustchain({ seedCommands: [pushAccountsToTrustchain([ethAccount])] }));
 
   test(
     "[WXP][Ledger Sync] Renaming Account (Online), then Delete backup",
@@ -173,7 +187,11 @@ test.describe("Ledger Sync - delete account", () => {
   const deletedAccountName = `${Currency.ETH.name} 1`;
   const remainingAccountName = `${Currency.ETH.name} 2`;
 
-  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount, secondEthAccount])]));
+  test.use(
+    preSeededTrustchain({
+      seedCommands: [pushAccountsToTrustchain([ethAccount, secondEthAccount])],
+    }),
+  );
 
   test(
     "[WXP][Ledger Sync] Deleting Account (Online)",
@@ -206,43 +224,52 @@ test.describe("Ledger Sync - delete account", () => {
   );
 });
 
-test.describe("Ledger Sync - delete instance", () => {
-  setupSeed();
+for (const { titleSuffix, onDie } of DEVICE_STEP_VARIANTS) {
+  test.describe(`Ledger Sync - delete instance${titleSuffix}`, () => {
+    setupSeed();
 
-  destroyTrustchainAfterAll();
+    destroyTrustchainAfterAll();
 
-  test.use(preSeededTrustchain([addTrustchainMember(APP_INSTANCE_NAME)]));
+    test.use(
+      preSeededTrustchain({ seedCommands: [addTrustchainMember(APP_INSTANCE_NAME)], onDie }),
+    );
 
-  test(
-    "[WXP][Ledger Sync] Delete instance",
-    {
-      tag: deviceTagsWithoutLNS(),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2297",
+    test(
+      `[WXP][Ledger Sync] Delete instance${titleSuffix}`,
+      {
+        tag: deviceTagsWithoutLNS(),
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-2297",
+        },
       },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openSettings();
-      await app.settings.openManageLedgerSync();
-      await app.ledgerSync.manageInstances();
-      await app.ledgerSync.expectCLIMemberVisible();
+      async ({ app }) => {
+        await app.mainNavigation.openSettings();
+        await app.settings.openManageLedgerSync();
+        await app.ledgerSync.manageInstances();
+        await app.ledgerSync.expectCLIMemberVisible();
 
-      await app.ledgerSync.removeCLIMember();
-      await app.speculos.removeMemberFromLedgerSync();
-      await app.ledgerSync.expectMemberRemoval();
-      await app.ledgerSync.expectCLIMemberRemoved();
-      await app.drawer.closeDrawer();
+        await app.ledgerSync.removeCLIMember();
+        if (onDie) {
+          await app.ledgerSync.expectDeviceIntentVisible();
+          await app.ledgerSync.expectRemoveInstanceDeviceStep();
+        }
+        await app.speculos.removeMemberFromLedgerSync();
+        if (onDie) await app.ledgerSync.expectDeviceIntentFinished();
+        await app.ledgerSync.expectMemberRemoval();
+        await app.ledgerSync.expectCLIMemberRemoved();
+        await app.drawer.closeDrawer();
 
-      await app.settings.openManageLedgerSync();
-      await app.ledgerSync.manageInstances();
-      await app.ledgerSync.expectCLIMemberRemoved();
-      await app.drawer.closeDrawer();
-    },
-  );
-});
+        await app.settings.openManageLedgerSync();
+        await app.ledgerSync.manageInstances();
+        await app.ledgerSync.expectCLIMemberRemoved();
+        await app.drawer.closeDrawer();
+      },
+    );
+  });
+}
 
-function unactivatedFeatureFlags() {
+function unactivatedFeatureFlags({ onDie = false }: { onDie?: boolean } = {}) {
   return {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -270,6 +297,7 @@ function unactivatedFeatureFlags() {
         },
       },
       lwdLedgerSyncOptimisation: { enabled: true },
+      ...ledgerSyncDieFlag(onDie),
     },
   };
 }
@@ -296,14 +324,57 @@ test.describe("Ledger Sync - entry point and activation flow no backup activated
   );
 });
 
-test.describe("Ledger Sync - activation flow backup activated", () => {
+for (const { titleSuffix, onDie } of DEVICE_STEP_VARIANTS) {
+  test.describe(`Ledger Sync - activation flow backup activated${titleSuffix}`, () => {
+    setupSeed();
+    destroyTrustchainAfterAll();
+
+    test.use({ ...unactivatedFeatureFlags({ onDie }), speculosApp: AppInfos.LS });
+
+    test(
+      `[WXP][Ledger Sync] Activation Flow - Backup Activated${titleSuffix}`,
+      {
+        tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-2294",
+        },
+      },
+      async ({ app }) => {
+        await app.mainNavigation.openSettings();
+        await app.settings.expectLedgerSyncSettingsRow();
+        await app.settings.expectLedgerSyncSettingsEntryPoint();
+        await app.settings.clickSyncLedgerSync();
+        await app.ledgerSync.expectActivationScreenVisible();
+
+        await app.ledgerSync.clickTurnOnLedgerSync();
+        await app.ledgerSync.clickConnectDevice();
+        if (onDie) {
+          await app.ledgerSync.expectDeviceIntentVisible();
+          await app.ledgerSync.expectActivationDeviceStep();
+        }
+        await app.speculos.activateLedgerSync();
+        if (onDie) await app.ledgerSync.expectDeviceIntentFinished();
+        await app.ledgerSync.expectActivationSuccess();
+
+        await app.drawer.closeDrawer();
+        await app.settings.openManageLedgerSync();
+        await app.ledgerSync.expectLedgerSyncManagementVisible();
+        await app.drawer.closeDrawer();
+      },
+    );
+  });
+}
+
+// Flag on only: the refusal and its Retry are device intent dialog screens.
+test.describe("Ledger Sync - activation flow refused on device then retried - Device Intent", () => {
   setupSeed();
   destroyTrustchainAfterAll();
 
-  test.use({ ...unactivatedFeatureFlags(), speculosApp: AppInfos.LS });
+  test.use({ ...unactivatedFeatureFlags({ onDie: true }), speculosApp: AppInfos.LS });
 
   test(
-    "[WXP][Ledger Sync] Activation Flow - Backup Activated",
+    "[WXP][Ledger Sync] Activation Flow - Refused on device, Retry, approved, Backup Activated - Device Intent",
     {
       tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
       annotation: {
@@ -313,14 +384,22 @@ test.describe("Ledger Sync - activation flow backup activated", () => {
     },
     async ({ app }) => {
       await app.mainNavigation.openSettings();
-      await app.settings.expectLedgerSyncSettingsRow();
       await app.settings.expectLedgerSyncSettingsEntryPoint();
       await app.settings.clickSyncLedgerSync();
       await app.ledgerSync.expectActivationScreenVisible();
 
       await app.ledgerSync.clickTurnOnLedgerSync();
       await app.ledgerSync.clickConnectDevice();
+      await app.ledgerSync.expectDeviceIntentVisible();
+      await app.ledgerSync.expectActivationDeviceStep();
+      await app.speculos.rejectLedgerSync();
+      await app.ledgerSync.expectActivationRejectedOnDevice();
+
+      // Retry replays the device step in the same dialog.
+      await app.ledgerSync.retryActivation();
+      await app.ledgerSync.expectActivationDeviceStep();
       await app.speculos.activateLedgerSync();
+      await app.ledgerSync.expectDeviceIntentFinished();
       await app.ledgerSync.expectActivationSuccess();
 
       await app.drawer.closeDrawer();
