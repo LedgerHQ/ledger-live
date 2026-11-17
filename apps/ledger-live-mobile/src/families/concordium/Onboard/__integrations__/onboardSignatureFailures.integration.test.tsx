@@ -34,7 +34,7 @@ jest.mock("@ledgerhq/coin-concordium/signer", () => require("./testMockSetup").s
 jest.mock("@ledgerhq/live-common/bridge/index", () =>
   require("./testMockSetup").createBridgeModule(),
 );
-jest.mock("react-native-qrcode-svg", () => require("./testMockSetup").MockQRCode);
+jest.mock("@shared/ui-qr-code", () => ({ QrCode: require("./testMockSetup").MockQRCode }));
 jest.mock("@react-navigation/native", () => require("./testMockSetup").createNavigationModule());
 /* eslint-enable @typescript-eslint/no-require-imports */
 

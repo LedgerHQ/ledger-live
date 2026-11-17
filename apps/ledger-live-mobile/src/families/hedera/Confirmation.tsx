@@ -1,7 +1,7 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode } from "@shared/ui-qr-code";
 import { Trans } from "~/context/Locale";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -90,7 +90,6 @@ export default function ReceiveConfirmation({ route }: Props) {
                 <Flex
                   p={6}
                   borderRadius={24}
-                  position="relative"
                   bg="constant.white"
                   borderWidth={1}
                   borderColor="neutral.c40"
@@ -98,21 +97,20 @@ export default function ReceiveConfirmation({ route }: Props) {
                   justifyContent="center"
                   testID={"receive-qr-code-container-" + mainAccountName}
                 >
-                  <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
-                  <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    width={QRSize * 0.3}
-                    height={QRSize * 0.3}
-                    bg="constant.white"
-                    position="absolute"
-                  >
-                    <CurrencyIcon
-                      currency={currency}
-                      size={48}
-                      testID={"receive-currency-icon-" + currency.id}
+                  {freshAccountAddress ? (
+                    <QrCode
+                      value={freshAccountAddress}
+                      size={QRSize}
+                      foregroundColor={colors.constant.black}
+                      centerContent={
+                        <CurrencyIcon
+                          currency={currency}
+                          size={48}
+                          testID={"receive-currency-icon-" + currency.id}
+                        />
+                      }
                     />
-                  </Flex>
+                  ) : null}
                 </Flex>
                 <Text
                   testID="receive-fresh-address"

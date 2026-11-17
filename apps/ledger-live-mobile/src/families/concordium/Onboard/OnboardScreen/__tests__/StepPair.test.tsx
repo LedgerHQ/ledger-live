@@ -18,10 +18,12 @@ jest.mock("../hooks/useIdAppDetection", () => ({
   useIdAppDetection: () => mockUseIdAppDetection(),
 }));
 
-jest.mock("react-native-qrcode-svg", () => {
+jest.mock("@shared/ui-qr-code", () => {
   const { View } = require("react-native");
-  return function MockQRCode({ value }: { value: string }) {
-    return <View testID={`qr-code-${value}`} />;
+  return {
+    QrCode: function MockQRCode({ value }: { value: string }) {
+      return <View testID={`qr-code-${value}`} />;
+    },
   };
 });
 
