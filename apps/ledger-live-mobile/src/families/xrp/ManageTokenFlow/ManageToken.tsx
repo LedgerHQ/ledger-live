@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -35,15 +35,14 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
 import { OWNER_RESERVE } from "../utils";
+import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
 
 function Row(
   props: Readonly<{
     label: string;
     children: React.ReactNode;
     info?: string;
-    hasChevron?: boolean;
   }>,
 ) {
   return (
@@ -73,7 +72,6 @@ function Row(
       </DescriptionItemLeading>
       <DescriptionItemTrailing>
         <DescriptionItemValue>{props.children}</DescriptionItemValue>
-        {props.hasChevron ? <ChevronRight size={16} color="muted" /> : null}
       </DescriptionItemTrailing>
     </DescriptionItem>
   );
@@ -175,7 +173,7 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
             <CounterValue currency={currency} value={OWNER_RESERVE} Wrapper={WithSeparator} />
           </Row>
           {isIou && limit ? (
-            <Row label={t("xrp.tokenSettings.balanceLimit")} hasChevron>
+            <Row label={t("xrp.tokenSettings.balanceLimit")}>
               {isMaxTrustLimit(limit) ? (
                 t("xrp.tokenSettings.maximum")
               ) : (
@@ -184,11 +182,7 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
             </Row>
           ) : null}
           {isIou ? (
-            <Row
-              label={t("xrp.rippling.label")}
-              info={t("xrp.manageAssets.ripplingInfo")}
-              hasChevron
-            >
+            <Row label={t("xrp.rippling.label")} info={t("xrp.manageAssets.ripplingInfo")}>
               {xrpResources?.isRippling
                 ? t("xrp.rippling.activated")
                 : t("xrp.rippling.deactivated")}
@@ -225,13 +219,18 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
 export default function ManageToken(props: Props) {
   const { t } = useTranslation();
 
+  const styles = useStyleSheet(
+    theme => ({ list: { padding: theme.spacings.s16, gap: theme.spacings.s24 } }),
+    [],
+  );
+
   const { account, tokenAccounts } = useManageTokenViewModel(props);
   if (!account) return null;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="XrpManageTokenFlow" name="ManageToken" />
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 24 }}>
+      <ScrollView contentContainerStyle={styles.list}>
         <Text typography="heading3SemiBold" lx={{ color: "base" }}>
           {t("xrp.manageAssets.title")}
         </Text>

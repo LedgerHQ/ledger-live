@@ -8478,10 +8478,8 @@
         "text": "It applies once the network confirms the transaction."
       }
     },
-    "manageToken": {
-      "cta": "Manage"
-    },
     "manageAssets": {
+      "cta": "Manage",
       "title": "Manage assets",
       "empty": "This account has no tokens yet.",
       "tokenType": "Token type",

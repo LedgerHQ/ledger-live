@@ -2,13 +2,12 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import {
-  MAX_TRUST_LIMIT,
-  getIssuerFeeForToken,
-} from "@ledgerhq/live-common/families/xrp/logicPublic";
-import { renderWithReactQuery, screen } from "@tests/test-renderer";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { HttpResponse, http, server } from "@tests/server";
+import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import ManageToken from "../ManageToken";
+import type { XrpManageTokenFlowParamList } from "../types";
 import {
   XRP_ACCOUNT,
   XRP_ACCOUNT_WITH_TOKEN,
@@ -26,24 +25,39 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => {
-  return {
-    ...jest.requireActual("@ledgerhq/live-common/families/xrp/logicPublic"),
-    getIssuerFeeForToken: jest.fn(),
-  };
-});
-
 const EDIT_BUTTON = `xrp-manage-asset-edit-${xrpIouToken.id}`;
 const DELETE_BUTTON = `xrp-manage-asset-delete-${xrpIouToken.id}`;
 
-const Stack = createNativeStackNavigator();
+const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
+
+const Stack = createNativeStackNavigator<XrpManageTokenFlowParamList>();
+
+const endpoints = { node: jest.fn<Response, [{ request: Request }]>() };
+
+function mockTransferRate(transferRate?: number) {
+  endpoints.node.mockImplementation(() => {
+    const node = { LedgerEntryType: "AccountRoot", Flags: 0, TransferRate: transferRate };
+
+    return HttpResponse.json({ result: { node, account_data: node, status: "success" } });
+  });
+}
+
+// coin-xrp caches each issuer's account root: a test that reads a fee needs its own issuer
+function makeAccountWithIssuer(contractAddress: string): Account {
+  const tokenAccount = {
+    ...XRP_IOU_TOKEN_ACCOUNT,
+    token: { ...XRP_IOU_TOKEN_ACCOUNT.token, contractAddress },
+  };
+
+  return { ...XRP_ACCOUNT, subAccounts: [tokenAccount] };
+}
 
 function renderManageToken(account: Account) {
-  return renderWithReactQuery(
+  return render(
     <Stack.Navigator>
       <Stack.Screen
-        name={ScreenName.XrpManageTokenManage}
-        component={ManageToken as React.ComponentType}
+        name={ScreenName.XrpManageTokenList}
+        component={ManageToken}
         initialParams={{ accountId: account.id }}
       />
     </Stack.Navigator>,
@@ -54,7 +68,9 @@ function renderManageToken(account: Account) {
 describe("XRP Manage assets", () => {
   beforeEach(() => {
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
-    jest.mocked(getIssuerFeeForToken).mockResolvedValue("0.5");
+    endpoints.node.mockReset();
+    mockTransferRate();
+    server.use(http.post(XRPL_TESTNET_NODE, endpoints.node));
   });
 
   it("lists a held token with its limit and rippling", async () => {
@@ -68,8 +84,9 @@ describe("XRP Manage assets", () => {
     expect(screen.getByText("Deactivated")).toBeVisible();
   });
 
-  it("shows the transfer fee and the locked owner reserve", async () => {
-    renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
+  it("shows the issuer's transfer fee and the locked owner reserve", async () => {
+    mockTransferRate(1_005_000_000);
+    renderManageToken(makeAccountWithIssuer("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"));
 
     const transferFee = await screen.findByText("0.5%");
 
@@ -78,8 +95,8 @@ describe("XRP Manage assets", () => {
   });
 
   it("shows the transfer fee as not available when it can't be fetched", async () => {
-    jest.mocked(getIssuerFeeForToken).mockRejectedValue(new Error("network"));
-    renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
+    endpoints.node.mockImplementation(() => HttpResponse.error());
+    renderManageToken(makeAccountWithIssuer("rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf"));
 
     const feeError = await screen.findByText("Not available");
 

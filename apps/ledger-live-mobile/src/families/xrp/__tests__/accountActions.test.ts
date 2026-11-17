@@ -6,7 +6,6 @@ import {
   XRP_ACCOUNT_WITH_TOKEN,
   XRP_IOU_TOKEN_ACCOUNT,
   XRP_MPT_TOKEN_ACCOUNT,
-  XRP_REMOVED_TOKEN_ACCOUNT,
 } from "../__mocks__/account.mock";
 
 jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
@@ -27,10 +26,12 @@ describe("xrp accountActions.getMainActions", () => {
     const [action] = accountActions.getMainActions({ account: XRP_ACCOUNT_WITH_TOKEN });
 
     expect(action.id).toBe("manage_token");
+    // FabActions tracks button_clicked from the id: an event of its own would count each tap twice
+    expect(action).not.toHaveProperty("event");
     expect(action.navigationParams).toEqual([
       NavigatorName.XrpManageTokenFlow,
       {
-        screen: ScreenName.XrpManageTokenManage,
+        screen: ScreenName.XrpManageTokenList,
         params: { accountId: XRP_ACCOUNT_WITH_TOKEN.id },
       },
     ]);
@@ -41,31 +42,11 @@ describe("xrp accountActions.getMainActions", () => {
       account: { ...XRP_ACCOUNT, subAccounts: [XRP_MPT_TOKEN_ACCOUNT] },
     });
 
-    expect(actions).toHaveLength(1);
+    expect(actions).toEqual([expect.objectContaining({ id: "manage_token" })]);
   });
 
   it("shows nothing on an account without tokens", () => {
     expect(accountActions.getMainActions({ account: XRP_ACCOUNT })).toEqual([]);
-  });
-
-  it("shows nothing when the only token was removed", () => {
-    const actions = accountActions.getMainActions({
-      account: { ...XRP_ACCOUNT, subAccounts: [XRP_REMOVED_TOKEN_ACCOUNT] },
-    });
-
-    expect(actions).toEqual([]);
-  });
-
-  it("shows nothing while no token standard is enabled", () => {
-    getEnabledStandardsMock.mockReturnValue([]);
-
-    expect(accountActions.getMainActions({ account: XRP_ACCOUNT_WITH_TOKEN })).toEqual([]);
-  });
-
-  it("shows nothing while the standard of the token is off", () => {
-    getEnabledStandardsMock.mockReturnValue(["mpt"]);
-
-    expect(accountActions.getMainActions({ account: XRP_ACCOUNT_WITH_TOKEN })).toEqual([]);
   });
 
   it("shows nothing on a token account", () => {

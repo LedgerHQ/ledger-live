@@ -12,9 +12,8 @@ function getMainActions({ account }: { account: AccountLike }): ActionButtonEven
   return [
     {
       id: "manage_token",
-      label: i18n.t("xrp.manageToken.cta"),
+      label: i18n.t("xrp.manageAssets.cta"),
       Icon: IconsLegacy.SettingsMedium,
-      event: "button_clicked",
       testId: "account-quick-action-button-manage-token",
       eventProperties: {
         button: "manage_token",
@@ -24,7 +23,7 @@ function getMainActions({ account }: { account: AccountLike }): ActionButtonEven
       navigationParams: [
         NavigatorName.XrpManageTokenFlow,
         {
-          screen: ScreenName.XrpManageTokenManage,
+          screen: ScreenName.XrpManageTokenList,
           params: { accountId: account.id },
         },
       ] satisfies NavigationParamsType,
