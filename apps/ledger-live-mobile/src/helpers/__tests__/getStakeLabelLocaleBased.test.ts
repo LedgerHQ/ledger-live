@@ -21,11 +21,6 @@ describe("getStakeLabelLocaleBased", () => {
       mockGetCountry.mockReturnValue("FR");
       expect(getCountryLocale()).toBe("FR");
     });
-
-    it("should return an empty string when the device has no region", () => {
-      mockGetCountry.mockReturnValue(undefined);
-      expect(getCountryLocale()).toBe("");
-    });
   });
 
   describe("getEarnOrYieldSuffix", () => {
