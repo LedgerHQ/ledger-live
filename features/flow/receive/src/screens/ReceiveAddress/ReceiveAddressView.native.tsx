@@ -9,6 +9,8 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { MemoPanel } from "./components/MemoPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
@@ -31,6 +33,7 @@ export function ReceiveAddressView({
   serviceWarning,
   serviceStatus,
   memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -118,11 +121,13 @@ export function ReceiveAddressView({
             </>
           )}
           <Box {...dimmed}>
-            <ZonePlaceholder zone="extras" label={memoCard?.title} />
+            <ReceiveAddressExtras memoCard={memoCard} />
+            <ZonePlaceholder zone="extras" />
           </Box>
         </ScrollView>
       )}
       {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
+      {memoPanel ? <MemoPanel memoPanel={memoPanel} /> : null}
     </Box>
   );
 }
