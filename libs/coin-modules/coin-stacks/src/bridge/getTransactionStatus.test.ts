@@ -134,6 +134,39 @@ describe("getTransactionStatus", () => {
     expect(status.errors).toEqual({});
   });
 
+  it("should validate fixed token transfer amounts", async () => {
+    const tokenAccount = {
+      id: "token-account",
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(500),
+    } as TokenAccount;
+    const status = await getTransactionStatus(
+      { ...account, subAccounts: [tokenAccount] },
+      { ...transaction, subAccountId: tokenAccount.id, amount: new BigNumber(100) },
+    );
+
+    expect(status.errors).toEqual({});
+    expect(status.amount).toEqual(new BigNumber(100));
+    expect(status.totalSpent).toEqual(new BigNumber(100));
+  });
+
+  it.each([
+    [new BigNumber(501), NotEnoughBalance],
+    [new BigNumber(0), AmountRequired],
+  ])("should reject invalid token amount %s", async (amount, expectedError) => {
+    const tokenAccount = {
+      id: "token-account",
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(500),
+    } as TokenAccount;
+    const status = await getTransactionStatus(
+      { ...account, subAccounts: [tokenAccount] },
+      { ...transaction, subAccountId: tokenAccount.id, amount },
+    );
+
+    expect(status.errors.amount).toBeInstanceOf(expectedError);
+  });
+
   it("should reject a token transfer when the native balance cannot pay its fee", async () => {
     const tokenAccount = {
       id: "token-account",
