@@ -1,5 +1,6 @@
 import {
   clearSharedTokenAccounts,
+  SHARED_TOKEN_ACCOUNTS_MAX,
   SHARED_TOKEN_ACCOUNTS_TTL_MS,
   sharedTokenAccounts,
 } from "./sharedTokenAccounts";
@@ -10,13 +11,27 @@ const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const OWNER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 
 describe("sharedTokenAccounts", () => {
+  // lru-cache keeps the `performance` object it finds at load time, so faking timers alone does
+  // not move its clock: drive `performance.now` by hand and advance timers alongside it.
+  let clock = 0;
+  const advance = (ms: number) => {
+    clock += ms;
+    jest.advanceTimersByTime(ms);
+  };
+
   beforeEach(() => {
-    jest.useFakeTimers();
+    // Not 0: lru-cache reads a start time of 0 as "no TTL".
+    clock = 1_000_000;
+    jest.useFakeTimers({ doNotFake: ["performance"] });
+    jest.spyOn(performance, "now").mockImplementation(() => clock);
     clearSharedTokenAccounts();
   });
 
   afterEach(() => {
+    // lru-cache clears its cached "now" on a timer: run it, or the next test reads a frozen clock.
+    jest.runOnlyPendingTimers();
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   it("shares one lookup between concurrent callers", async () => {
@@ -31,30 +46,27 @@ describe("sharedTokenAccounts", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it("reuses a resolved lookup within the window, then reads again", async () => {
+  it("reuses a lookup within the window, then reads again", async () => {
     const fetch = jest.fn().mockResolvedValueOnce("before").mockResolvedValueOnce("after");
 
     await sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch);
-    jest.advanceTimersByTime(SHARED_TOKEN_ACCOUNTS_TTL_MS - 1);
+    advance(SHARED_TOKEN_ACCOUNTS_TTL_MS - 1);
     await expect(sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch)).resolves.toBe("before");
 
-    jest.advanceTimersByTime(1);
+    advance(2);
     await expect(sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch)).resolves.toBe("after");
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("starts the window when the lookup resolves, not when it starts", async () => {
-    let resolve!: (value: string) => void;
-    const slow = jest.fn(() => new Promise<string>(r => (resolve = r)));
+  it("stops handing out a lookup that never settles after the window", async () => {
+    const hung = jest.fn(() => new Promise<string>(() => {}));
+    const fresh = jest.fn().mockResolvedValue("fresh");
 
-    const pending = sharedTokenAccounts(ENDPOINT, SPL, OWNER, slow);
-    jest.advanceTimersByTime(SHARED_TOKEN_ACCOUNTS_TTL_MS * 2);
-    resolve("accounts");
-    await pending;
+    void sharedTokenAccounts(ENDPOINT, SPL, OWNER, hung);
+    advance(SHARED_TOKEN_ACCOUNTS_TTL_MS + 1);
 
-    jest.advanceTimersByTime(SHARED_TOKEN_ACCOUNTS_TTL_MS - 1);
-    await sharedTokenAccounts(ENDPOINT, SPL, OWNER, slow);
-    expect(slow).toHaveBeenCalledTimes(1);
+    await expect(sharedTokenAccounts(ENDPOINT, SPL, OWNER, fresh)).resolves.toBe("fresh");
+    expect(hung).toHaveBeenCalledTimes(1);
   });
 
   it("does not keep a failed lookup", async () => {
@@ -77,6 +89,22 @@ describe("sharedTokenAccounts", () => {
     await sharedTokenAccounts(ENDPOINT, SPL, "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ", fetch);
 
     expect(fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it("evicts the least recently used lookup past the maximum", async () => {
+    const fetch = jest.fn((): Promise<string> => Promise.resolve("accounts"));
+
+    await sharedTokenAccounts(ENDPOINT, SPL, "owner-0", fetch);
+    for (let i = 1; i <= SHARED_TOKEN_ACCOUNTS_MAX; i++) {
+      await sharedTokenAccounts(ENDPOINT, SPL, `owner-${i}`, fetch);
+    }
+    expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 1);
+
+    // owner-0 was the least recently used: it is read again; owner-1..MAX are still kept.
+    await sharedTokenAccounts(ENDPOINT, SPL, "owner-0", fetch);
+    expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 2);
+    await sharedTokenAccounts(ENDPOINT, SPL, `owner-${SHARED_TOKEN_ACCOUNTS_MAX}`, fetch);
+    expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 2);
   });
 
   it("reads again after a clear", async () => {
