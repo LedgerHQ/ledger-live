@@ -9,9 +9,11 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Trash, Unlink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { SelectableDeviceListItem } from "@ledgerhq/live-dmk-mobile";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
+
+/** The space under the last action in the design, the safe area included. */
+const BOTTOM_PADDING = 24;
 
 type DeviceMenuSheetProps = {
   /** The row whose menu is open, or `null`. */
@@ -24,7 +26,7 @@ export function DeviceMenuSheet({
   onClose,
 }: Readonly<DeviceMenuSheetProps>): React.JSX.Element {
   const { t } = useTranslation();
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const bottomInset = useBottomSheetBottomInset();
   const disconnect = item && "disconnect" in item ? item.disconnect : undefined;
   const remove = item?.remove;
 
@@ -38,9 +40,10 @@ export function DeviceMenuSheet({
       isRequestingToBeOpened={item !== null}
       onClose={onClose}
       enableDynamicSizing
+      contentHasBottomSpace
       testID="connect-known-or-new-device-menu-sheet"
     >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+      <BottomSheetView style={{ paddingBottom: Math.max(bottomInset, BOTTOM_PADDING) }}>
         <BottomSheetHeader />
         {disconnect && (
           <ListItem
