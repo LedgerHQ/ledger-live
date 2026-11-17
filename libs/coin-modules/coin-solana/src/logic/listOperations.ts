@@ -138,6 +138,11 @@ export async function listOperations(
       const nativeOps = parseNativeOperations(address, tx, txMeta);
       const tokenOps = parseTokenOperations(address, tx, txMeta);
 
+      if (nativeOps.length === 0 && tokenOps.length === 0) {
+        items.push(makeNoBalanceChangeOperation(address, txMeta));
+        continue;
+      }
+
       items.push(...nativeOps, ...tokenOps);
     }
 
@@ -284,6 +289,31 @@ function makeOperation(params: MakeOperationParams): Operation {
       failed: meta.failed,
     },
   };
+}
+
+/**
+ * A `NONE` operation of value 0 for a fetched transaction that changes nothing the address holds.
+ *
+ * Such a transaction reaches the walk through one of the address's token accounts without the
+ * address itself in its account keys: a failed transfer, or a transfer of 0 tokens (a common
+ * address-poisoning pattern). Without a row, the caller has nothing to record that it was read: a
+ * caller that resumes from its newest stored operation (the generic coin framework does) downloads
+ * it again on every sync, and the backlog grows until the owner makes a real transaction.
+ *
+ * `NONE` matches what `classifyNativeTransfer` already returns for a transaction that involves the
+ * address without changing its balance. Wallets hide `NONE` rows and count them as 0.
+ */
+function makeNoBalanceChangeOperation(address: string, meta: TxMeta): Operation {
+  return makeOperation({
+    address,
+    opType: "NONE",
+    value: 0n,
+    senders: [],
+    recipients: [],
+    asset: { type: "native" },
+    meta,
+    operationIndex: 0,
+  });
 }
 
 /**

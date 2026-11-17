@@ -4993,6 +4993,87 @@ describe("genericGetAccountShape", () => {
       expect(result.operations?.map(op => op.blockHeight)).toEqual([8]);
       expect(result.blockHeight).not.toBe(0);
     });
+
+    describe("a NONE row for a transaction that changed nothing", () => {
+      const noneOp = (hash: string, height: number) => ({ ...coreOp(hash, height), type: "NONE" });
+
+      test("is stored, so the next sync resumes above it instead of downloading it again", async () => {
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+        // Sync 1: a real operation at 9, then two transactions at 11 and 12 that changed nothing.
+        listOperationsMock.mockResolvedValueOnce({
+          items: [noneOp("spam12", 12), noneOp("spam11", 11), coreOp("h9", 9)],
+        });
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result1 = await getShape(
+          { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result1.operations?.map(op => [op.type, op.blockHeight])).toEqual([
+          ["NONE", 12],
+          ["NONE", 11],
+          ["IN", 9],
+        ]);
+
+        // Sync 2: resumes at 13. Without the NONE rows it would resume at 10, and fetch 11 and 12
+        // again, on this sync and every later one.
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+        await getShape(
+          {
+            address: "addr1",
+            initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(listOperationsMock).toHaveBeenNthCalledWith(
+          2,
+          expect.anything(),
+          "addr1",
+          expect.objectContaining({ minHeight: 13 }),
+        );
+      });
+
+      test("counts toward a bounded walk like any row, and the resume point stays on what was fetched", async () => {
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+        // The bound stops the walk after the first page: the second page is never fetched.
+        listOperationsMock
+          .mockResolvedValueOnce({ items: [noneOp("spam12", 12), coreOp("h11", 11)], next: "c1" })
+          .mockResolvedValueOnce({ items: [coreOp("h9", 9)] });
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result1 = await getShape(
+          { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        // The bounded stop drops the block it cut into (11), as for any row; the NONE row stays.
+        expect(result1.operations?.map(op => [op.type, op.blockHeight])).toEqual([["NONE", 12]]);
+
+        listOperationsMock.mockReset();
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+        await getShape(
+          {
+            address: "addr1",
+            initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        // The newest row fetched, never a height the walk did not reach.
+        expect(listOperationsMock).toHaveBeenCalledWith(
+          expect.anything(),
+          "addr1",
+          expect.objectContaining({ minHeight: 13 }),
+        );
+      });
+    });
   });
 
   describe("resumable token discovery", () => {
