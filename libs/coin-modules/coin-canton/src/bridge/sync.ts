@@ -229,17 +229,15 @@ export function makeGetAccountShape(
     }
 
     const calTokens = await getCalTokensCached(currency.id);
-    const tokenIdentifierToId = new Map<string, string>();
-    for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
-      tokenIdentifierToId.set(tokenIdentifier, tokenId);
-    }
-
+    const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
+    // Keyed by admin too: any party can issue an instrument under a CAL token's id.
     const tokensByKey = new Map<string, TokenCurrency>();
-    for await (const balance of balances) {
-      const tokenId = tokenIdentifierToId.get(balance.instrumentId) ?? "";
+    for (const [tokenId, instrumentId] of calTokens.entries()) {
+      if (!heldInstrumentIds.has(instrumentId)) continue;
       const token = await getCryptoAssetsStore().findTokenById(tokenId);
-      if (!token) continue;
-      tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
+      if (token?.contractAddress) {
+        tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
+      }
     }
 
     for await (const balance of balances) {
@@ -269,8 +267,7 @@ export function makeGetAccountShape(
       }
     }
 
-    // Find native balance (token is null for native)
-    const nativeBalance = Array.from(aggregatedBalances.values()).find(data => data.token === null);
+    const nativeBalance = aggregatedBalances.get(nativeInstrumentId);
     const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
     const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
     const totalBalance = unlockedAmount.plus(lockedAmount);
