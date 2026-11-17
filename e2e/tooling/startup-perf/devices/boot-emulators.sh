@@ -59,6 +59,18 @@ switch_to_cellular() {
   echo "::warning title=Emulator not on cellular::$serial is not on cellular after $((CELLULAR_POLLS * 2)) s"
 }
 
+# Status bar in demo mode: fixed icons and clock. Its data-activity redraws took the CPUs in most online launches.
+freeze_status_bar() {
+  local serial="$1"
+  adb -s "$serial" shell settings put global sysui_demo_allowed 1
+  for command in "enter" "clock -e hhmm 1200" "network -e mobile show -e level 4 -e datatype lte -e wifi hide" \
+    "battery -e level 100 -e plugged false" "notifications -e visible false"; do
+    # shellcheck disable=SC2086 # the extras are separate words
+    adb -s "$serial" shell am broadcast -a com.android.systemui.demo -e command $command > /dev/null
+  done
+  echo "$serial status bar in demo mode"
+}
+
 # Waits for a load average below 1, until the shared deadline.
 wait_until_idle() {
   local serial="$1" deadline="$2" load=""
@@ -91,6 +103,7 @@ start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
 start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
 for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
 for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
+for serial in emulator-5554 emulator-5556; do freeze_status_bar "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
 for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
 adb devices
