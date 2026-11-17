@@ -34,7 +34,6 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
 
 const checkThenDownload = async (info: UpdateInfo) => {
   try {
-    sendStatus("checking");
     const appUpdater = createElectronAppUpdater({
       feedURL: UPDATE_CHECK_FEED,
       info,
