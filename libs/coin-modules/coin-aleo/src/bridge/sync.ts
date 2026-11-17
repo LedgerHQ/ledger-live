@@ -19,6 +19,7 @@ import { lastBlock } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
   extractViewKey,
+  findViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
   isStakingOperation,
@@ -77,7 +78,7 @@ export async function performPublicSync(
   syncConfig: SyncConfig,
 ): Promise<Partial<AleoAccount>> {
   const { initialAccount, address, derivationMode, currency } = info;
-  const viewKey = initialAccount ? extractViewKey(initialAccount) : undefined;
+  const viewKey = initialAccount ? findViewKey(initialAccount) : undefined;
 
   const ledgerAccountId = encodeAccountId({
     type: "js",
@@ -729,7 +730,7 @@ export function buildSyncObservables(
   const { initialAccount } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED;
 
-  const viewKey = initialAccount ? extractViewKey(initialAccount) : undefined;
+  const viewKey = initialAccount ? findViewKey(initialAccount) : undefined;
   const privateEnabled = !!initialAccount && !!viewKey;
 
   const isPublicSync = !!(syncType & SYNC_TYPE_TRANSPARENT);

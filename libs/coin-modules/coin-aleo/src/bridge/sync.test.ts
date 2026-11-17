@@ -28,7 +28,7 @@ import {
   mockUnspentRecord1,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import type { AleoAccount, AleoPrivateRecord, AleoTokenAccount } from "../types";
+import type { AleoAccount, AleoOperation, AleoPrivateRecord, AleoTokenAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { deepFreezeLikeImmer } from "../__tests__/helpers/freeze";
@@ -56,6 +56,7 @@ import {
 } from "./sync";
 import { apiClient } from "../network/api";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
+import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account"),
@@ -93,6 +94,16 @@ const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
 const mockApiClient = jest.mocked(apiClient);
 const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
+
+const givenChain = (balance: bigint, operations: AleoOperation[]) => {
+  mockGetPublicBalance.mockResolvedValue([{ asset: { type: "native" as const }, value: balance }]);
+  mockListOperations.mockResolvedValue({
+    operations,
+    tokenOperations: [],
+    calTokens: new Map(),
+    nextCursor: null,
+  });
+};
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
@@ -3173,6 +3184,70 @@ describe("sync.ts", () => {
           lastPrivateSyncDate: newerSyncLandedAt,
         });
       });
+    });
+  });
+
+  describe("an account synced from its address alone (discovery)", () => {
+    const addressOnlyId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: mockCurrency.id,
+      xpubOrAddress: MOCK_ALEO_ADDRESS,
+      derivationMode: mockDerivationMode,
+    });
+    const {
+      aleoResources: _aleoResources,
+      subAccounts: _subAccounts,
+      ...withoutAleoFields
+    } = getMockedAccount({ id: addressOnlyId, freshAddress: MOCK_ALEO_ADDRESS });
+    const placeholder: AleoAccount = {
+      ...withoutAleoFields,
+      balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
+    };
+
+    const syncedPlaceholder = async () => {
+      const updaters = await collectAll(sync(placeholder, mockSyncConfig));
+      return updaters.reduce((account, updater) => updater(account), placeholder);
+    };
+
+    const scannedAccount = () =>
+      firstValueFrom(
+        makeScanAccounts({
+          getAccountShape: makeGetAccountShape(),
+          getAddressFn: async (_deviceId, { path }) => ({
+            address: MOCK_ALEO_ADDRESS,
+            path,
+            publicKey: MOCK_ALEO_ADDRESS,
+          }),
+        })({ currency: mockCurrency, deviceId: "", syncConfig: mockSyncConfig, scheme: "" }),
+        { defaultValue: undefined },
+      ).then(event => event?.account);
+
+    it("runs the public sync only, without a view key", async () => {
+      givenChain(BigInt(0), []);
+      const synced = await syncedPlaceholder();
+      expect(synced.id).toBe(addressOnlyId);
+      expect(mockListOperations).toHaveBeenCalledTimes(1);
+      expect(mockAccessProvableApi).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
+    });
+
+    it("is unused, as the legacy scan finds no account, with no balance and no operation", async () => {
+      givenChain(BigInt(0), []);
+      await expect(scannedAccount()).resolves.toBeUndefined();
+      await expect(syncedPlaceholder()).resolves.toMatchObject({ used: false });
+    });
+
+    it.each([
+      ["a balance only", BigInt(1000), []],
+      ["an operation only", BigInt(0), [getMockedOperation()]],
+    ])("is used with the id the legacy scan finds, with %s", async (_, balance, operations) => {
+      givenChain(balance, operations);
+      const scanned = await scannedAccount();
+      const synced = await syncedPlaceholder();
+      expect(scanned).toMatchObject({ used: true, id: addressOnlyId });
+      expect(synced).toMatchObject({ used: true, id: addressOnlyId });
     });
   });
 });
