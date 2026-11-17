@@ -13264,6 +13264,9 @@ importers:
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
+      '@support/lint':
+        specifier: workspace:*
+        version: link:../../../support/lint
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.24)
