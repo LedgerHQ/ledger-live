@@ -12,7 +12,7 @@ import { usesMockBridges } from "../../bridge/mockMode";
 
 /** An account the store does not hold, from its descriptor (the mock scan's own in mock mode). */
 export async function placeholderAccount(descriptor: AccountDescriptor): Promise<Account> {
-  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey } =
+  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey, customData } =
     toLegacyAccount(descriptor);
   const currency = getCryptoCurrencyById(currencyId);
   // A public-key family's sync reads its key from the account id (TON, ICP, Aptos, Stacks).
@@ -32,6 +32,7 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
       currencyId,
       xpubOrAddress,
       derivationMode,
+      customData,
     }),
     seedIdentifier: xpubOrAddress,
     derivationMode,

@@ -1603,13 +1603,8 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
   }
 }
 
-/** The view key the account id carries; absent on an account synced from its address alone (a discovery candidate). */
-export function findViewKey(account: AleoAccount): string | undefined {
-  return decodeAccountId(account.id).customData || undefined;
-}
-
 export function extractViewKey(account: AleoAccount): string {
-  const viewKey = findViewKey(account);
+  const viewKey = decodeAccountId(account.id).customData;
   invariant(viewKey, `aleo: view key is missing in ${account.freshAddress} account`);
   return viewKey;
 }
