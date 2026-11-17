@@ -50,7 +50,6 @@ import path from "path";
 import fs from "fs";
 import { InitializationManager, InitOptions } from "@e2e/utils/initUtil";
 import { randomUUID } from "crypto";
-import { readHeldAssetCounts } from "@e2e/utils/fixtureAccounts";
 
 export type ApplicationOptions = InitOptions;
 
@@ -67,7 +66,6 @@ const lazyInit = <T>(PageClass: new () => T) => {
 };
 
 export class Application {
-  private heldAssetCounts = new Map<string, number>();
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
@@ -126,15 +124,9 @@ export class Application {
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
     try {
       await InitializationManager.initialize(options, userdataPath, userdataSpeculos);
-      this.heldAssetCounts = readHeldAssetCounts(userdataPath);
     } finally {
       fs.unlinkSync(userdataPath);
     }
-  }
-
-  /** How many assets (native coin plus tokens) the account holds in the userdata of this run. */
-  public heldAssetCount(accountName: string) {
-    return this.heldAssetCounts.get(accountName) ?? 1;
   }
 
   public get walletApiSignatureDrawer() {

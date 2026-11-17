@@ -24,6 +24,7 @@ export default class AccountDetailPage {
   private readonly transferDrawer = byId("transfer-drawer");
   private readonly transferDrawerAction = (action: string) => byId(`transfer-action-${action}`);
   private readonly sendAssetPicker = byId("transfer-asset-picker-list");
+  private readonly sendRecipientInput = byId("recipient-input");
   private readonly sendAssetPickerRow = (currencyId: string) =>
     byId(`transfer-asset-picker-${currencyId}`);
   private readonly transactions = byId("account-detail-transactions");
@@ -73,17 +74,30 @@ export default class AccountDetailPage {
     await this.transferDrawerAction("receive").tap();
   }
 
-  /** Pass `currencyId` when the account holds several assets: Send then asks which one to send. */
   @Step("Tap on send {{{0}}}")
   async tapSend(currencyId?: string) {
     await this.openTransferDrawer();
     await this.transferDrawerAction("send").tap();
-    if (currencyId) {
+    if (await this.sendOpensAssetPicker()) {
+      if (!currencyId) throw new Error("Send asks which asset to send: pass the currency to pick");
       await this.sendAssetPicker.waitFullyVisible();
       // The rows are sorted by value: the asset can sit below the visible ones.
       await this.sendAssetPickerRow(currencyId).scrollTo(this.sendAssetPicker);
       await this.sendAssetPickerRow(currencyId).tap();
     }
+  }
+
+  /**
+   * Send asks which asset to send when the account holds several, which only the app knows once it
+   * has synced the tokens: take whichever of the picker or the recipient screen shows first.
+   */
+  private async sendOpensAssetPicker() {
+    const deadline = Date.now() + TIMEOUT.xxlarge;
+    while (Date.now() < deadline) {
+      if (await this.sendAssetPicker.isVisible(TIMEOUT.xxxsmall)) return true;
+      if (await this.sendRecipientInput.isVisible(TIMEOUT.xxxsmall)) return false;
+    }
+    throw new Error("Send opened neither the asset picker nor the recipient screen");
   }
 
   private async openTransferDrawer() {
