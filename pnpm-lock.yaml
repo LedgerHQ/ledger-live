@@ -20015,6 +20015,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-discovery':
+        specifier: workspace:^
+        version: link:../../features/platform/account-discovery
       '@features/platform-account-source-coin-module':
         specifier: workspace:^
         version: link:../../features/platform/account-source-coin-module
