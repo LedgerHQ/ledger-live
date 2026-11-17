@@ -21,7 +21,7 @@ on:
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop)"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop). From develop, release or main, only those or a live-mobile@X.Y.Z tag: to measure another branch, run from it"
         required: false
         type: string
       platforms:
@@ -111,6 +111,8 @@ jobs:
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          # Reads a release tag's commit, which a run from develop, release or main checks.
+          GH_TOKEN: ${{ github.token }}
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   # Restores build A of a release tag from the mobile E2E builds' S3 cache (develop/, which only

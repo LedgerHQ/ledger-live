@@ -77,6 +77,17 @@ still count the Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
 
+A run from develop, release or main gets that branch's identity (OIDC), which the build jobs hold
+for JFrog and the caches trust, so it builds only:
+
+- develop, release and main;
+- `live-mobile@X.Y.Z` tags whose commit is on main, or is the release bot's (`live-github-bot`)
+  hotfix release commit, committed and signed by GitHub, as every release tag is. No rule protects
+  the tags, so the plan checks this through the GitHub API. The bot also commits on Renovate
+  branches, hence the commit message.
+
+To measure another branch, run the workflow from that branch.
+
 ## The build
 
 The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` x86_64 APK on
