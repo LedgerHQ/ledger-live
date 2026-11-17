@@ -6,11 +6,11 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { HelpPanel } from "./components/HelpPanel";
 import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -27,6 +27,7 @@ export function ReceiveAddressView({
   memoCard,
   memoPanel,
   helpCard,
+  helpPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -53,7 +54,19 @@ export function ReceiveAddressView({
           <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
         ) : null}
         <DialogBackgroundToneProvider>
-          {memoPanel ? (
+          {helpPanel ? (
+            <>
+              <DialogHeader
+                density="expanded"
+                title={helpPanel.title}
+                onBack={helpPanel.onClose}
+                onClose={closeDialog}
+              />
+              <DialogBody>
+                <HelpPanel helpPanel={helpPanel} />
+              </DialogBody>
+            </>
+          ) : memoPanel ? (
             <>
               <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
               <DialogBody>
@@ -122,8 +135,7 @@ export function ReceiveAddressView({
                     <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
                   </>
                 )}
-                <ReceiveAddressExtras memoCard={memoCard} />
-                <ZonePlaceholder zone="extras" label={helpCard?.title} />
+                <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
               </DialogBody>
             </>
           )}

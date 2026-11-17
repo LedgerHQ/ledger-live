@@ -32,16 +32,25 @@ function NavigationCard({
 }
 
 /** The cards at the bottom of the screen, each opening its panel. */
-export function ReceiveAddressExtras({ memoCard }: ReceiveAddressExtrasProps) {
-  if (!memoCard) return null;
+export function ReceiveAddressExtras({ memoCard, helpCard }: ReceiveAddressExtrasProps) {
+  if (!memoCard && !helpCard) return null;
 
   return (
     <div className="flex flex-col gap-8" data-testid="receive-address-extras">
-      <NavigationCard
-        title={memoCard.title}
-        onPress={memoCard.onPress}
-        testId="receive-address-memo-card"
-      />
+      {memoCard ? (
+        <NavigationCard
+          title={memoCard.title}
+          onPress={memoCard.onPress}
+          testId="receive-address-memo-card"
+        />
+      ) : null}
+      {helpCard ? (
+        <NavigationCard
+          title={helpCard.title}
+          onPress={helpCard.onPress}
+          testId="receive-address-help-card"
+        />
+      ) : null}
     </div>
   );
 }

@@ -174,12 +174,16 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 
-  it("lays the zones out in screen order", async () => {
-    renderScreen();
-    await screen.findByTestId("receive-address-summary");
+  it("opens the help from its card, each question opening its article", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onOpenUrl });
+    const user = userEvent.setup();
 
-    expect(
-      screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
-    ).toEqual(["receive-address-zone-extras"]);
+    await user.click(await screen.findByTestId("receive-address-help-card"));
+    await user.click(screen.getByText("How to receive securely?"));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.receiveSecurely);
+
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 });
