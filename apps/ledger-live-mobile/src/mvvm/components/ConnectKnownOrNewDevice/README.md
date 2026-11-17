@@ -50,7 +50,7 @@ Discovery, connection and unknown errors show in a bottom sheet over the list, w
 
 ## Try it
 
-Settings > Debug > Features > Device Intent Executor > Connect Known Or New Device renders the component with an `isPaused` switch and logs each callback call. With the mock server, it lists the BLE and USB mock devices.
+Settings > Debug > Features > Device Intent Executor > Connect Known Or New Device renders the component with an `isPaused` switch and an "Auto pauses on connect" switch (off by default: when it is on, `onConnected` sets `isPaused` to `true`), and logs each callback call. With the mock server, it lists the BLE and USB mock devices.
 
 ## Links
 

@@ -17,13 +17,14 @@ type LogEntry = {
 const MAX_LOG_ENTRIES = 50;
 
 /**
- * Shows ConnectKnownOrNewDevice the way My Wallet does. The isPaused switch and the log of the
- * callback calls stay at the bottom: a caller can set the prop at any time.
+ * Shows ConnectKnownOrNewDevice the way My Wallet does. The switches and the log of the callback
+ * calls stay at the bottom: a caller can set the prop at any time.
  */
 export default function DebugConnectKnownOrNewDeviceScreen() {
   const logIdRef = useRef(0);
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [autoPausesOnConnect, setAutoPausesOnConnect] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -39,9 +40,11 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
   const onConnected = useCallback(
     (result: DeviceConnectionResult) => {
       log("onConnected", formatConnectionResult(result));
-      setIsPaused(true);
+      if (autoPausesOnConnect) {
+        setIsPaused(true);
+      }
     },
-    [log],
+    [autoPausesOnConnect, log],
   );
   const onAddModeChange = useCallback(
     (adding: boolean) => {
@@ -80,6 +83,19 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
             isPaused
           </Text>
           <Switch checked={isPaused} onCheckedChange={setIsPaused} />
+        </Box>
+        <Box
+          lx={{
+            ...cardStyle,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text typography="body2" lx={{ color: "base" }}>
+            Auto pauses on connect
+          </Text>
+          <Switch checked={autoPausesOnConnect} onCheckedChange={setAutoPausesOnConnect} />
         </Box>
         <Box lx={cardStyle} style={styles.log}>
           <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
