@@ -259,10 +259,16 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
 }
 
 const RELEASE_BOT = "live-github-bot[bot]";
+/**
+ * The commit a hotfix tag is on, off main (release-prepare-hotfix.yml). The bot also commits on
+ * Renovate branches (renovate-sync-reusable.yml), on code nobody reviewed.
+ */
+const HOTFIX_RELEASE_COMMIT = "chore(hotfix): :fire: hotfix release [skip ci]";
 
 /**
  * No rule protects the release tags: a run from a reviewed branch builds one only when its commit is
- * on main, or the release bot's, committed and signed by GitHub, as every release tag is.
+ * on main, or the release bot's hotfix release commit, committed and signed by GitHub, as every
+ * release tag is.
  */
 export async function checkReleaseTags(plan: Plan, get: GitHubGet): Promise<void> {
   await Promise.all(plan.tagsToCheck.map(tag => checkReleaseTag(tag, get)));
@@ -276,14 +282,15 @@ async function checkReleaseTag(
   const commit = (await get(`commits/${sha}?per_page=1`)) as {
     author: { login: string } | null;
     committer: { login: string } | null;
-    commit: { verification?: { verified: boolean } };
+    commit: { message?: string; verification?: { verified: boolean } };
   };
   const byTheBot = commit.author?.login === RELEASE_BOT && commit.committer?.login === "web-flow";
-  if (byTheBot && commit.commit.verification?.verified) return;
+  const isHotfixRelease = commit.commit.message === HOTFIX_RELEASE_COMMIT;
+  if (byTheBot && isHotfixRelease && commit.commit.verification?.verified) return;
   const { status } = (await get(`compare/${sha}...main?per_page=1`)) as { status: string };
   if (status === "ahead" || status === "identical") return;
   throw new StepFailure(
-    `${ref} (${sha.slice(0, 10)}) is neither on main nor a signed commit of ${RELEASE_BOT}, as release tags are: a run from a reviewed branch does not build it`,
+    `${ref} (${sha.slice(0, 10)}) is neither on main nor a signed hotfix release commit of ${RELEASE_BOT}, as release tags are: a run from a reviewed branch does not build it`,
   );
 }
 
