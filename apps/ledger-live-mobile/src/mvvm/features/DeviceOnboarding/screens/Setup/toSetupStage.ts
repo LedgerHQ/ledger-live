@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { OnboardingStep } from "@features/platform-device-onboarding";
+import { toSetupInfoCard, type SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
 const modelsWithoutNaming = new Set<DeviceModelId>([
   DeviceModelId.nanoS,
@@ -21,13 +22,6 @@ export type SetupStageKind = (typeof SetupStageKind)[keyof typeof SetupStageKind
 export type SetupIndicator = "none" | "loading" | "success";
 
 export type SetupStageDetail = "recoveryKey" | "recoveryPhrase";
-
-export type SetupInfoCard =
-  | "setupChoice"
-  | "recoveryPhrase"
-  | "restoreChoice"
-  | "recoveryKey"
-  | "restoreRecoveryKey";
 
 export type SetupStage = {
   index: number;
@@ -70,17 +64,6 @@ const detailByState = new Map<string, SetupStageDetail>([
   ["deviceSetup.restoreWords", "recoveryPhrase"],
 ]);
 
-const infoCardByState = new Map<string, SetupInfoCard>([
-  ["deviceSetup.setupChoice", "setupChoice"],
-  ["deviceSetup.newSeed", "recoveryPhrase"],
-  ["deviceSetup.backupRecoveryKey", "recoveryKey"],
-  ["deviceSetup.restoreChoice", "restoreChoice"],
-  ["deviceSetup.restoreWords", "recoveryPhrase"],
-  ["deviceSetup.restoreRecoveryKey", "restoreRecoveryKey"],
-]);
-
-const recoveryKeyCards = new Set<SetupInfoCard>(["recoveryKey", "restoreRecoveryKey"]);
-
 const hiddenSetupStates = new Set(["deviceSetup.waiting"]);
 
 const finalSlot = SetupStageKind.Security;
@@ -107,12 +90,6 @@ function checksIndicator(machineState: string): SetupIndicator {
   return finishedChecksStates.has(machineState) ? "success" : "loading";
 }
 
-function infoCardOf(machineState: string, reportsRecoveryKey: boolean) {
-  const card = infoCardByState.get(machineState);
-  if (card && recoveryKeyCards.has(card) && !reportsRecoveryKey) return undefined;
-  return card;
-}
-
 export function toSetupStage(input: {
   machineState: string;
   currentStep: string | null;
@@ -133,7 +110,7 @@ export function toSetupStage(input: {
 
   const indicator = kind === SetupStageKind.Checks ? checksIndicator(input.machineState) : "none";
   const detail = detailByState.get(input.machineState);
-  const infoCard = infoCardOf(input.machineState, input.reportsRecoveryKey);
+  const infoCard = toSetupInfoCard(input.machineState, input.reportsRecoveryKey);
 
   return {
     index,

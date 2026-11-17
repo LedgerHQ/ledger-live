@@ -1,9 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { OnboardingStep } from "@features/platform-device-onboarding";
+import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 import {
   toSetupStage,
   type SetupIndicator,
-  type SetupInfoCard,
   type SetupStageDetail,
   type SetupStageKind,
 } from "./toSetupStage";

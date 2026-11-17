@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Linking, type ImageSourcePropType } from "react-native";
-import { useTranslation } from "~/context/Locale";
-import { urls } from "~/utils/urls";
-import type { SetupInfoCard } from "../../toSetupStage";
+import { useTranslation } from "@shared/i18n";
+import type { SetupInfoCard, SetupInfoProps } from "./SetupInfo.types";
+import { setupInfoUrls } from "./urls";
 import secretRecoveryPhraseImage from "./assets/secret-recovery-phrase.webp";
 import recoveryKeyImage from "./assets/recovery-key-card.webp";
 
@@ -26,7 +26,7 @@ export type InfoSheetProps = Readonly<{
   onClose: () => void;
 }>;
 
-export type InfoSheetsViewModel = Readonly<{
+export type SetupInfoViewProps = Readonly<{
   infoCard: InfoCardProps | null;
   infoSheet: InfoSheetProps | null;
 }>;
@@ -46,10 +46,10 @@ const sheetByCard = {
 } as const satisfies Record<SetupInfoCard, InfoSheetKind>;
 
 const linkBySheet = {
-  setupChoice: urls.faq,
-  recoveryPhrase: urls.recoveryPhraseInfo,
-  restoreChoice: urls.faq,
-  recoveryKey: urls.faq,
+  setupChoice: setupInfoUrls.faq,
+  recoveryPhrase: setupInfoUrls.recoveryPhrase,
+  restoreChoice: setupInfoUrls.faq,
+  recoveryKey: setupInfoUrls.faq,
 } as const satisfies Record<InfoSheetKind, string>;
 
 function cardTitle(t: Translate, card: SetupInfoCard) {
@@ -120,10 +120,7 @@ function openUrl(url: string) {
   Linking.openURL(url).catch(() => undefined);
 }
 
-export function useInfoSheetsViewModel(
-  card: SetupInfoCard | undefined,
-  suspendSheets: boolean,
-): InfoSheetsViewModel {
+export function useSetupInfoViewModel({ card, suspendSheets }: SetupInfoProps): SetupInfoViewProps {
   const { t } = useTranslation();
   const [openedCard, setOpenedCard] = useState<SetupInfoCard | null>(null);
   const [shownCard, setShownCard] = useState(card);

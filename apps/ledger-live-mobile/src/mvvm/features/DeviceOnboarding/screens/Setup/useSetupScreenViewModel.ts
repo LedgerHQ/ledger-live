@@ -7,18 +7,14 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SetupScreenProps } from "./types";
 import type { SetupStage } from "./toSetupStage";
-import {
-  useInfoSheetsViewModel,
-  type InfoCardProps,
-  type InfoSheetProps,
-} from "./components/InfoSheets";
+import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
 export type SetupViewProps = ChecksDrawerProps &
   Readonly<{
-    infoCard: InfoCardProps | null;
-    infoSheet: InfoSheetProps | null;
+    infoCard: SetupInfoCard | undefined;
+    suspendInfoSheet: boolean;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
@@ -109,11 +105,10 @@ export function useSetupScreenViewModel({
     onNotGenuineClose: closeSheet,
     suspendSheets,
   });
-  const { infoCard, infoSheet } = useInfoSheetsViewModel(stage.infoCard, suspendSheets);
 
   return {
-    infoCard,
-    infoSheet,
+    infoCard: stage.infoCard,
+    suspendInfoSheet: suspendSheets,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),

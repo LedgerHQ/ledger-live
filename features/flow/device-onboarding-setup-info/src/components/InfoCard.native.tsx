@@ -8,12 +8,12 @@ import {
   CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import type { InfoCardProps } from "./useInfoSheetsViewModel";
+import { setupInfoTestIds } from "../internals";
+import type { InfoCardProps } from "../useSetupInfoViewModel";
 
-export function InfoCardView({ title, onPress }: InfoCardProps) {
+export function InfoCard({ title, onPress }: InfoCardProps) {
   return (
-    <Card type="interactive" onPress={onPress} testID={setupTestIds.infoCard}>
+    <Card type="interactive" onPress={onPress} testID={setupInfoTestIds.card}>
       <CardHeader>
         <CardLeading>
           <CardContent>

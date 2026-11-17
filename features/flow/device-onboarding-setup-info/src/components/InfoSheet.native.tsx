@@ -9,8 +9,8 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import type { InfoSheetIllustration, InfoSheetProps } from "./useInfoSheetsViewModel";
+import { setupInfoTestIds } from "../internals";
+import type { InfoSheetIllustration, InfoSheetProps } from "../useSetupInfoViewModel";
 
 const illustrationStyles = {
   recoveryPhrase: { width: 206, height: 157, transform: [{ rotate: "-4.43deg" }] },
@@ -28,7 +28,7 @@ function Illustration({ kind, source }: InfoSheetIllustration) {
   );
 }
 
-export function InfoSheetView({
+export function InfoSheet({
   isOpen,
   title,
   illustration,
@@ -47,7 +47,7 @@ export function InfoSheetView({
       enableDynamicSizing
       maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
       contentHasBottomSpace
-      testID={setupTestIds.infoSheet}
+      testID={setupInfoTestIds.sheet}
     >
       <BottomSheetScrollView
         contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
@@ -79,7 +79,7 @@ export function InfoSheetView({
             appearance="no-background"
             size="md"
             isFull
-            testID={setupTestIds.infoSheetLink}
+            testID={setupInfoTestIds.sheetLink}
             onPress={onOpenLink}
           >
             {linkLabel}
