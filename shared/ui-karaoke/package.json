@@ -16,6 +16,9 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
+  "dependencies": {
+    "@shared/ui-glow": "workspace:*"
+  },
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

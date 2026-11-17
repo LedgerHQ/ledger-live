@@ -6,14 +6,11 @@ export type KaraokeRootProps = Readonly<{
   phrases: readonly string[];
   /** The "tap to continue" hint, also read by screen readers. */
   tapLabel: string;
+  /** Replaces the tap hint on the last phrase, and keeps the sequence on screen. */
+  action?: ReactNode;
   testID?: string;
   /** Sequence, Final, then anything that must sit above the tap area (a close bar). */
   children: ReactNode;
-}>;
-
-export type KaraokeSequenceProps = Readonly<{
-  /** Replaces the tap hint on the last phrase, and keeps the sequence on screen. */
-  action?: ReactNode;
 }>;
 
 export type KaraokeFinalProps = Readonly<{
