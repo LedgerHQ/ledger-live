@@ -1,5 +1,5 @@
 name: "Check iOS simulators"
-description: "Wait for boot-ios-simulators-background, reboot any simulator that cannot launch an app, and fail if one still cannot, so Detox never runs on a dead simulator"
+description: "Wait for boot-ios-simulators-background, reboot any simulator that cannot launch an app, and fail if one still cannot, so Detox never runs on a dead simulator. Then wait for each simulator's trust store update, which stalls its TLS connections"
 
 runs:
   using: "composite"
@@ -7,3 +7,7 @@ runs:
     - name: Check iOS simulators
       shell: bash
       run: bash "${GITHUB_ACTION_PATH}/check-simulators.sh"
+
+    - name: Wait for the iOS trust store update
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/wait-trust-store-update.sh"
