@@ -94,6 +94,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
             value={qrCodeValue}
             size={QRCodeSize}
             foregroundColor={colors.constant.black}
+            testID="ws-qr-code"
             centerContent={
               <Image
                 source={require("~/images/bigSquareLogo.webp")}
