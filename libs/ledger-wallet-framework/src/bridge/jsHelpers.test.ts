@@ -24,6 +24,7 @@ import {
   makeScanAccounts,
   makeSync,
   mergeOps,
+  mergeOpsKeepingOlder,
   updateTransaction,
 } from "./jsHelpers";
 import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
@@ -98,6 +99,26 @@ describe("makeSync", () => {
     expect(newAccount.id).not.toEqual(account.id);
     expect(newAccount.creationDate).not.toEqual(account.creationDate);
     expect(newAccount.lastSyncDate).not.toEqual(account.lastSyncDate);
+  });
+
+  it.each([
+    [
+      "clears a stored historyRecheck when the shape sets it to undefined",
+      { historyRecheck: undefined },
+      undefined,
+    ],
+    ["keeps a stored historyRecheck when the shape omits the key", {}, { reason: "failed" }],
+  ])("%s", async (_name, shape, expected) => {
+    const account = createAccount({ id: "12" });
+    account.historyRecheck = { reason: "failed" };
+
+    const updater = await firstValueFrom(
+      makeSync({
+        getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve(shape as Account),
+      })(account, {} as SyncConfig),
+    );
+
+    expect(updater(account).historyRecheck).toEqual(expected);
   });
 
   it("returns a account with a corrected formatted id", async () => {
@@ -1481,6 +1502,32 @@ describe("mergeOps", () => {
       transactionSequenceNumber,
     }) as Operation;
 
+  it("replaces an operation re-read with the same id once its fee is known", () => {
+    const stored = { ...op(undefined), fee: new BigNumber(0) } as Operation;
+    const reread = { ...op(undefined), fee: new BigNumber(23) } as Operation;
+
+    const merged = mergeOps([stored], [reread]);
+
+    expect(merged).toHaveLength(1);
+    expect(merged[0].fee.toFixed()).toBe("23");
+  });
+
+  it("replaces an operation re-read with the same id once its failure is known", () => {
+    const stored = { ...op(undefined), fee: new BigNumber(23) } as Operation;
+    const reread = { ...op(undefined), fee: new BigNumber(23), hasFailed: true } as Operation;
+
+    const merged = mergeOps([stored], [reread]);
+
+    expect(merged).toHaveLength(1);
+    expect(merged[0].hasFailed).toBe(true);
+  });
+
+  it("keeps the stored operation when only an absent and a false failure flag differ", () => {
+    const existing = [{ ...op(undefined), hasFailed: false } as Operation];
+
+    expect(mergeOps(existing, [op(undefined)])).toBe(existing);
+  });
+
   it("backfills an operation stored without a sequence number", () => {
     const [merged] = mergeOps([op(undefined)], [op(new BigNumber(313))]);
 
@@ -1497,6 +1544,39 @@ describe("mergeOps", () => {
     const existing = [op(new BigNumber(313))];
 
     expect(mergeOps(existing, [op(new BigNumber(313))])).toBe(existing);
+  });
+});
+describe("mergeOpsKeepingOlder", () => {
+  const at = (id: string, time: number) =>
+    ({
+      id,
+      hash: id,
+      type: "IN",
+      value: new BigNumber(1),
+      fee: new BigNumber(0),
+      blockHeight: time,
+      date: new Date(time),
+      senders: [],
+      recipients: [],
+    }) as unknown as Operation;
+
+  it("keeps fetched operations older than every stored one, newest first", () => {
+    const merged = mergeOpsKeepingOlder(
+      [at("newer", 2_000), at("stored", 1_000)],
+      [at("oldest", 100), at("older", 500), at("older", 500)],
+    );
+
+    expect(merged.map(({ id }) => id)).toEqual(["newer", "stored", "older", "oldest"]);
+  });
+
+  it("merges like mergeOps when nothing is older", () => {
+    const existing = [at("stored", 1_000)];
+
+    expect(mergeOpsKeepingOlder(existing, [at("stored", 1_000)])).toBe(existing);
+    expect(mergeOpsKeepingOlder(existing, [at("new", 2_000)]).map(({ id }) => id)).toEqual([
+      "new",
+      "stored",
+    ]);
   });
 });
 

@@ -58,6 +58,17 @@ function applyAssignFromTokenAccountRaw(
   });
 }
 
+// Isolated so the optional-field checks don't add to `fromAccountRaw`'s own complexity.
+function applyOptionalFromRaw(raw: AccountRaw, res: Account): void {
+  const { swapHistory, sellOperationIds, nfts, readiness, sequence, historyRecheck } = raw;
+  if (swapHistory) res.swapHistory = swapHistory.map(fromSwapOperationRaw);
+  if (sellOperationIds) res.sellOperationIds = sellOperationIds;
+  if (nfts) res.nfts = nfts.map(n => fromNFTRaw(n));
+  if (readiness) res.readiness = readiness;
+  if (sequence !== undefined) res.sequence = sequence;
+  if (historyRecheck !== undefined) res.historyRecheck = historyRecheck;
+}
+
 export async function fromAccountRaw(
   rawAccount: AccountRaw,
   fromRaw?: FromFamiliyRaw,
@@ -84,12 +95,7 @@ export async function fromAccountRaw(
     spendableBalance,
     balances,
     subAccounts: subAccountsRaw,
-    swapHistory,
-    sellOperationIds,
     syncHash,
-    nfts,
-    readiness,
-    sequence,
   } = rawAccount;
 
   const store = getCryptoAssetsStore();
@@ -176,25 +182,7 @@ export async function fromAccountRaw(
     res.subAccounts = subAccounts as TokenAccount[];
   }
 
-  if (swapHistory) {
-    res.swapHistory = swapHistory.map(fromSwapOperationRaw);
-  }
-
-  if (sellOperationIds) {
-    res.sellOperationIds = sellOperationIds;
-  }
-
-  if (nfts) {
-    res.nfts = nfts.map(n => fromNFTRaw(n));
-  }
-
-  if (readiness) {
-    res.readiness = readiness;
-  }
-
-  if (sequence !== undefined) {
-    res.sequence = sequence;
-  }
+  applyOptionalFromRaw(rawAccount, res);
 
   if (fromRaw?.assignFromAccountRaw) {
     fromRaw.assignFromAccountRaw(rawAccount, res);
@@ -239,6 +227,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     nfts,
     readiness,
     sequence,
+    historyRecheck,
   } = account;
 
   const convertOperation = (op: Operation) =>
@@ -315,6 +304,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (sequence !== undefined) {
     res.sequence = sequence;
+  }
+
+  if (historyRecheck !== undefined) {
+    res.historyRecheck = historyRecheck;
   }
 
   return res;
