@@ -1,6 +1,10 @@
 import { EventEmitter } from "events";
+import fs from "fs/promises";
+import os from "os";
+import path from "path";
 import { app, ipcMain, type BrowserWindow } from "electron";
 import { CHANNELS } from "~/bridge/contract";
+import db from "~/main/db";
 import {
   RENDERER_FLUSH_TIMEOUT_MS,
   flushBeforeQuit,
@@ -203,5 +207,52 @@ describe("flushOnQuit", () => {
     ipcMain.emit(CHANNELS.flushWritesDone, { sender: window.webContents });
     await settle();
     expect(answered).toBe(true);
+  });
+});
+
+describe("flushOnQuit with the database on disk", () => {
+  let dir: string;
+
+  beforeEach(async () => {
+    app.removeAllListeners();
+    ipcMain.removeAllListeners();
+    jest.mocked(app.quit).mockReset();
+    dir = await fs.mkdtemp(path.join(os.tmpdir(), "lld-flush-on-quit-"));
+    db.init(dir);
+    await db.load("app");
+    await db.load("windowParams");
+  });
+
+  afterEach(async () => {
+    await fs.rm(dir, { recursive: true, force: true });
+  });
+
+  const readFromDisk = async (ns: string) =>
+    JSON.parse(await fs.readFile(path.join(dir, `${ns}.json`), "utf8")).data;
+
+  it("writes to disk a write made just before quit", async () => {
+    const window = createWindow(() => db.setKey("app", "settings", { theme: "dark" }));
+    setupFlushOnQuit(asBrowserWindow(window), db.flush);
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+
+    const quit = nextQuit();
+    app.emit("before-quit", preventableEvent());
+    await quit;
+
+    expect(await readFromDisk("app")).toEqual({ settings: { theme: "dark" } });
+    expect(await readFromDisk("windowParams")).toEqual({
+      MainWindow: { positions: { x: 1, y: 2 } },
+    });
+  });
+
+  it("writes to disk a write made just before the window closes", async () => {
+    const window = createWindow(() => db.setKey("app", "settings", { theme: "dark" }));
+    setupFlushOnQuit(asBrowserWindow(window), db.flush);
+    const closed = new Promise<void>(resolve => window.close.mockImplementation(() => resolve()));
+
+    window.emit("close", preventableEvent());
+    await closed;
+
+    expect(await readFromDisk("app")).toEqual({ settings: { theme: "dark" } });
   });
 });
