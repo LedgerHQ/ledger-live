@@ -58,7 +58,7 @@ pnpm e2e:mobile build:android
 pnpm e2e:mobile build:ios:debug
 ```
 
-> `build-e2e-deps` builds the dependencies of the mobile app and the E2E suite that have a build,
+> `build-e2e-deps` runs `build` on the dependencies of the E2E suite (`^build`), not of the app,
 > including @ledgerhq/live-cli. Other private libraries are read from source and need no build.
 
 > **Why release for Android?** Android debug builds are broken locally due to a known
