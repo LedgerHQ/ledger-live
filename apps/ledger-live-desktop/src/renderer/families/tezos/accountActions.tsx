@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import {
   SendActionDefault,
@@ -10,6 +9,7 @@ import {
 } from "~/renderer/screens/account/AccountActionsDefault";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { openReceiveFlow } from "LLD/features/Receive";
 type Props = {
   account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
@@ -39,7 +39,7 @@ const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {
   const onClickDecorated = useCallback(() => {
     if (receiveShouldWarnDelegation) {
       dispatch(
-        openModal("MODAL_RECEIVE", {
+        openReceiveFlow({
           parentAccount,
           account,
           startWithWarning: receiveShouldWarnDelegation,

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
@@ -16,6 +15,7 @@ import useAddAccountAnalytics from "../../../analytics/useAddAccountAnalytics";
 import { IconContainer } from "./IconContainer";
 import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 const ActionItem = styled(Flex)`
   cursor: pointer;
   padding: 12px;
@@ -58,9 +58,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
     });
     setDrawer();
     if (location.pathname === "/manager") navigate(accountsPath);
-    dispatch(
-      openModal("MODAL_RECEIVE", { account, sourcePage: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS }),
-    );
+    dispatch(openReceiveFlow({ account, sourcePage: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS }));
   }, [account, accountsPath, dispatch, location.pathname, navigate, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {

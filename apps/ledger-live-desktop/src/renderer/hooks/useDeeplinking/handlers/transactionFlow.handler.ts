@@ -2,7 +2,7 @@ import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
@@ -63,7 +63,7 @@ async function handleTransactionFlow(
       });
     } else {
       dispatch(
-        openModal(modal, {
+        openModalWithReceiveFlow(modal, {
           ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
         }),
       );
@@ -94,7 +94,7 @@ async function handleTransactionFlow(
     }
 
     dispatch(
-      openModal(modal, {
+      openModalWithReceiveFlow(modal, {
         ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
         recipient,
         account,
