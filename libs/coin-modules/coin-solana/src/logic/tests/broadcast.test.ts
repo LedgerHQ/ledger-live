@@ -57,7 +57,7 @@ const simulateBlockhashNotFound = () => ({
 });
 
 describe("broadcast (MSW integration)", () => {
-  it("simulates twice, then asks the node whether the blockhash is still valid at processed commitment", async () => {
+  it("simulates once, then asks the node whether the blockhash is still valid at processed commitment", async () => {
     let capturedParams: unknown[] = [];
     let simulations = 0;
 
@@ -75,7 +75,7 @@ describe("broadcast (MSW integration)", () => {
     );
 
     await expect(broadcast(api, buildSignedTxBase64())).rejects.toThrow(SolanaTxBlockhashExpired);
-    expect(simulations).toBe(2);
+    expect(simulations).toBe(1);
     expect(capturedParams).toEqual([RECENT_BLOCKHASH, { commitment: "processed" }]);
   });
 

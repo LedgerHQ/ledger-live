@@ -105,13 +105,27 @@ describe("broadcast", () => {
       jest.useRealTimers();
     });
 
-    it("simulates again after 500 ms and sends when the retry finds the blockhash", async () => {
+    it("throws SolanaTxBlockhashExpired at once when the node no longer knows the blockhash", async () => {
+      const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
+        simulateValues: [{ err: "BlockhashNotFound" }],
+        blockhashStillValid: false,
+      });
+
+      // No timer is advanced: an expired blockhash must not wait for a retry.
+      await expect(broadcast(api, txBase64)).rejects.toBeInstanceOf(SolanaTxBlockhashExpired);
+      expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
+      expect(simulateTransaction).toHaveBeenCalledTimes(1);
+      expect(sendRawTransaction).not.toHaveBeenCalled();
+    });
+
+    it("simulates again after 500 ms when the blockhash is still valid, and sends when the retry finds it", async () => {
       const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
         simulateValues: [{ err: "BlockhashNotFound" }, { err: null }],
       });
 
       const promise = broadcast(api, txBase64);
       await jest.advanceTimersByTimeAsync(499);
+      expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
       expect(simulateTransaction).toHaveBeenCalledTimes(1);
       await jest.advanceTimersByTimeAsync(1);
       expect(simulateTransaction).toHaveBeenCalledTimes(2);
@@ -122,25 +136,11 @@ describe("broadcast", () => {
       });
 
       await expect(promise).resolves.toBe("sig");
-      expect(isBlockhashValid).not.toHaveBeenCalled();
+      expect(isBlockhashValid).toHaveBeenCalledTimes(1);
       expect(sendRawTransaction).toHaveBeenCalledTimes(1);
     });
 
-    it("throws SolanaTxBlockhashExpired when the retry fails and the node no longer knows the blockhash", async () => {
-      const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
-        simulateValues: [{ err: "BlockhashNotFound" }, { err: "BlockhashNotFound" }],
-        blockhashStillValid: false,
-      });
-
-      await expect(settle(broadcast(api, txBase64))).rejects.toBeInstanceOf(
-        SolanaTxBlockhashExpired,
-      );
-      expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
-      expect(simulateTransaction).toHaveBeenCalledTimes(2);
-      expect(sendRawTransaction).not.toHaveBeenCalled();
-    });
-
-    it("keeps Blockhash not found when the retry fails but the blockhash is still valid", async () => {
+    it("keeps Blockhash not found when the blockhash is still valid but the retry fails too", async () => {
       const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
         simulateValues: [{ err: "BlockhashNotFound" }, { err: "BlockhashNotFound" }],
       });
@@ -163,13 +163,21 @@ describe("broadcast", () => {
           throw new Error("node unreachable");
         },
       ],
-    ])("keeps Blockhash not found when the validity check %s", async (_label, check) => {
-      const { api, isBlockhashValid, sendRawTransaction } = buildApi({
+    ])("simulates again after 500 ms when the validity check %s", async (_label, check) => {
+      const { api, isBlockhashValid, simulateTransaction, sendRawTransaction } = buildApi({
         simulateValues: [{ err: "BlockhashNotFound" }, { err: "BlockhashNotFound" }],
       });
       isBlockhashValid.mockImplementationOnce(check);
 
-      await expectInvalidTransactionError(settle(broadcast(api, txBase64)), "Blockhash not found");
+      const promise = broadcast(api, txBase64);
+      promise.catch(() => undefined);
+      await jest.advanceTimersByTimeAsync(499);
+      expect(simulateTransaction).toHaveBeenCalledTimes(1);
+      await jest.advanceTimersByTimeAsync(1);
+
+      await expectInvalidTransactionError(promise, "Blockhash not found");
+      expect(isBlockhashValid).toHaveBeenCalledTimes(1);
+      expect(simulateTransaction).toHaveBeenCalledTimes(2);
       expect(sendRawTransaction).not.toHaveBeenCalled();
     });
 
@@ -184,13 +192,13 @@ describe("broadcast", () => {
       expect(sendRawTransaction).not.toHaveBeenCalled();
     });
 
-    it("reports the retry's own failure without checking the blockhash", async () => {
+    it("reports the retry's own failure", async () => {
       const { api, sendRawTransaction, isBlockhashValid } = buildApi({
         simulateValues: [{ err: "BlockhashNotFound" }, { err: "AccountInUse" }],
       });
 
       await expectInvalidTransactionError(settle(broadcast(api, txBase64)), "Account in use");
-      expect(isBlockhashValid).not.toHaveBeenCalled();
+      expect(isBlockhashValid).toHaveBeenCalledTimes(1);
       expect(sendRawTransaction).not.toHaveBeenCalled();
     });
   });

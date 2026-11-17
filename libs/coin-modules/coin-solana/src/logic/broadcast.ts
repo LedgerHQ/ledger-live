@@ -56,8 +56,8 @@ function classifySimulationError(err: TransactionError): Error {
   }
 }
 
-// Time for a node behind its peers to catch up with the blockhash it could not find.
-const LAGGING_NODE_RETRY_DELAY_MS = 500;
+// Time for a node to confirm a blockhash it has only processed.
+const BLOCKHASH_RETRY_DELAY_MS = 500;
 
 function simulate(api: ChainAPI, signedTx: VersionedTransaction) {
   return api.simulateTransaction(signedTx, {
@@ -95,16 +95,13 @@ export async function broadcast(
   let { value } = await simulate(api, signedTx);
 
   if (getTransactionErrorKey(value.err) === "BlockhashNotFound") {
-    // This node may lag behind the one that served the blockhash: give it a moment.
-    log("solana", "blockhash not found, simulating again", { logs: value.logs });
-    await new Promise(resolve => setTimeout(resolve, LAGGING_NODE_RETRY_DELAY_MS));
-    ({ value } = await simulate(api, signedTx));
-    if (
-      getTransactionErrorKey(value.err) === "BlockhashNotFound" &&
-      (await isBlockhashExpired(api, signedTx.message.recentBlockhash))
-    ) {
+    log("solana", "blockhash not found", { logs: value.logs });
+    if (await isBlockhashExpired(api, signedTx.message.recentBlockhash)) {
       throw new SolanaTxBlockhashExpired();
     }
+    // Not expired, or the check failed: this node may not have confirmed the blockhash yet.
+    await new Promise(resolve => setTimeout(resolve, BLOCKHASH_RETRY_DELAY_MS));
+    ({ value } = await simulate(api, signedTx));
   }
 
   if (value.err !== null) {
