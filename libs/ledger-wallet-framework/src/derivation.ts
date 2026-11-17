@@ -1,3 +1,4 @@
+// The scan tables below are mirrored in @domain/entity-derivation: see domain/entity/derivation/README.md.
 import { getCurrenciesResolver } from "./currencies/resolver";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "./types";

@@ -25,3 +25,5 @@ Change both in the same PR:
 | bitcoin branch of `shouldShowNewAccount` | `CREATABLE_MODES_BY_FAMILY` |
 
 A new mode also goes in the `DerivationMode` union of `@ledgerhq/types-live`.
+
+Two guards fail on drift: the [`derivation-mirror/in-step`](../../../support/lint/README.md#derivation-mirrorin-step) lint rule compares the first four tables on whichever file you edit, and [`derivation.parity.test.ts`](../../../libs/ledger-live-common/src/account/derivation.parity.test.ts) runs both copies for every supported currency.
