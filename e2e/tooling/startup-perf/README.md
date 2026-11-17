@@ -154,8 +154,9 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 - **Android**: the E2E AVD (develop's `avd.env`), two emulators with 4 cores each on the 8-CPU
   runner (faster and tighter A/A margins than 2 or 3: runs 39989878998, 39966762708, 39970514979),
   cold-booted (the snapshot has 2 cores), animations on, screen kept on, cellular network (the
-  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), and idle (load average below 1)
-  before the first launch.
+  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), the Messages and Google apps
+  disabled (their background jobs, a few minutes after boot, took the CPUs in ~4% of launches,
+  +20–100 ms), and idle (load average below 1) before the first launch.
 - **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time,
   measured once the host's 1-minute load is below its CPU count (at most 10 min after boot): 60 s
   after `bootstatus` it was still rising (74 → 128 and 83 → 106, runs 42260331032, 42261755814).
