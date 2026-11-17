@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { StakingMappedDelegation } from "@ledgerhq/live-common/families/evm/staking/types";

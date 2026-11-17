@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import { assetsDataApi } from "./api";
 import type { RawApiResponse } from "./schema";
 
@@ -19,6 +20,9 @@ function makeStore() {
     middleware: getDefault => getDefault().concat(assetsDataApi.middleware),
   });
 }
+
+const btc = AggregatedAssetIdSchema.parse("btc");
+const eth = AggregatedAssetIdSchema.parse("eth");
 
 const emptyRaw: RawApiResponse = {
   cryptoAssets: {},
@@ -108,7 +112,7 @@ async function getAssetData(body: RawApiResponse, nextCursor?: string) {
 describe("transformAssetsResponse, via getAssetData", () => {
   it("passes non-currency collections through untouched", async () => {
     const body = raw({
-      cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
+      cryptoAssets: { [btc]: { id: btc, ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
       networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
       interestRates: {
         bitcoin: { currencyId: "bitcoin", rate: 4.2, type: "APY", fetchAt: "2026-07-31" },
@@ -356,12 +360,12 @@ describe("getChunkedAssetsData", () => {
       const first = raw({
         networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
         markets: { bitcoin: { price: 65000 } },
-        currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: ["btc"] },
+        currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: [btc] },
       });
       const second = raw({
         networks: { ethereum: { id: "ethereum", name: "Ethereum" } },
         markets: { ethereum: { price: 3200 } },
-        currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: ["eth"] },
+        currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: [eth] },
       });
 
       const result = await getChunked(ids(26), [okResponse(first), okResponse(second)]);
@@ -374,18 +378,18 @@ describe("getChunkedAssetsData", () => {
     it("deep-merges assetsIds for a meta-currency split across chunks", async () => {
       const first = raw({
         cryptoAssets: {
-          eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: { ethereum: "ethereum" } },
+          [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: { ethereum: "ethereum" } },
         },
       });
       const second = raw({
         cryptoAssets: {
-          eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: { arbitrum: "arbitrum" } },
+          [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: { arbitrum: "arbitrum" } },
         },
       });
 
       const result = await getChunked(ids(26), [okResponse(first), okResponse(second)]);
 
-      expect(result.data?.cryptoAssets.eth.assetsIds).toEqual({
+      expect(result.data?.cryptoAssets[eth].assetsIds).toEqual({
         ethereum: "ethereum",
         arbitrum: "arbitrum",
       });

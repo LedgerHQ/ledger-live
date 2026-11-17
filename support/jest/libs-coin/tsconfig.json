@@ -1,4 +1,7 @@
 {
   "extends": "@support/tsconfig/node",
-  "include": ["index.js"]
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["index.ts"]
 }

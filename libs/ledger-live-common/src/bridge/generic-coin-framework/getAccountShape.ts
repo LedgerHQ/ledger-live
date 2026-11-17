@@ -27,6 +27,9 @@ import {
   adaptCoreOperationToLiveOperation,
   cleanedOperation,
   extractBalance,
+  type FeesPayerRule,
+  isFeePaidByAccount,
+  isSameAddress,
   optionalNumeric,
   sumBalance,
 } from "./utils";
@@ -50,6 +53,7 @@ import type {
   Account,
   AccountIdParams,
   AccountReadiness,
+  OperationType,
   StakingDelegation,
   StakingDelegationStatus,
   StakingPositionDetails,
@@ -181,14 +185,21 @@ function getFeePayer(op: OperationCommon): string | undefined {
   return typeof fp === "string" && fp.length > 0 ? fp : undefined;
 }
 
-/** Compare two addresses for equality, ignoring case. */
-function isSameAddress(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-/** True when the native op is outbound with value equal to fee (fees-only). */
-function isFeesOnlyNativeOp(op: OperationCommon): boolean {
-  return op.type === "OUT" && op.value !== null && op.fee != null && op.value.eq(op.fee);
+/**
+ * True when the native op is outbound with value equal to fee (fees-only). A send whose fee another
+ * account paid holds its amount alone, which can equal the fee.
+ */
+function isFeesOnlyNativeOp(
+  op: OperationCommon,
+  feesPayerRule: FeesPayerRule | undefined,
+): boolean {
+  return (
+    op.type === "OUT" &&
+    op.value !== null &&
+    op.fee != null &&
+    op.value.eq(op.fee) &&
+    isFeePaidByAccount(getFeePayer(op), feesPayerRule)
+  );
 }
 
 /** Emit one parent op per native op: FEES when fees-only, otherwise passthrough. */
@@ -197,11 +208,12 @@ function parentOpsFromNativeOps(
   accountId: string,
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const out: OperationCommon[] = [];
   for (const nativeOp of nativeOps) {
     // Native outgoing operation with value 0 (only fees) => output as single FEES op
-    if (isFeesOnlyNativeOp(nativeOp)) {
+    if (isFeesOnlyNativeOp(nativeOp, feesPayerRule)) {
       out.push(
         cleanedOperation({
           id: encodeOperationId(accountId, nativeOp.hash, "FEES"),
@@ -237,6 +249,8 @@ function parentOpsFromNativeOps(
   return out;
 }
 
+const TOKEN_OPT_TYPES = new Set<OperationType>(["OPT_IN", "OPT_OUT", "OPT_EDIT"]);
+
 /** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
 function syntheticParentForTokenOnlyTx(
   referenceOp: OperationCommon,
@@ -244,6 +258,7 @@ function syntheticParentForTokenOnlyTx(
   address: string,
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
+  tokenOptParentRow: boolean,
 ): OperationCommon {
   // Parent op is FEES only when the account actually paid a fee; NONE otherwise. A zero fee (e.g. a
   // token send whose energy/bandwidth is fully covered) is not a FEES row — it stays hidden as NONE
@@ -252,7 +267,9 @@ function syntheticParentForTokenOnlyTx(
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
   const paysFee = isFeePayer && !referenceOp.fee?.isZero();
-  const parentType = paysFee ? "FEES" : "NONE";
+  const keepsOptType = tokenOptParentRow && TOKEN_OPT_TYPES.has(referenceOp.type);
+  const feeType = paysFee ? "FEES" : "NONE";
+  const parentType = keepsOptType ? referenceOp.type : feeType;
   const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
@@ -287,6 +304,8 @@ function parentOpsForTxWithNonInternalOperations(
   subOperationIndex: SubOperationIndex,
   accountId: string,
   address: string,
+  tokenOptParentRow: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const nativeOps = transactionOps.filter(isNativeLiveOp);
   // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
@@ -295,12 +314,25 @@ function parentOpsForTxWithNonInternalOperations(
 
   // If transaction has native ops, use them as parents
   if (nativeOps.length > 0)
-    return parentOpsFromNativeOps(nativeOps, accountId, subOperations, internalOperations);
+    return parentOpsFromNativeOps(
+      nativeOps,
+      accountId,
+      subOperations,
+      internalOperations,
+      feesPayerRule,
+    );
 
   // If transaction has no native ops, create a synthetic parent
   const firstOp = transactionOps[0];
   return [
-    syntheticParentForTokenOnlyTx(firstOp, accountId, address, subOperations, internalOperations),
+    syntheticParentForTokenOnlyTx(
+      firstOp,
+      accountId,
+      address,
+      subOperations,
+      internalOperations,
+      tokenOptParentRow,
+    ),
   ];
 }
 
@@ -359,6 +391,8 @@ function buildParentOperations(
   newInternalOperations: OperationCommon[],
   accountId: string,
   address: string,
+  tokenOptParentRow: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
@@ -376,6 +410,8 @@ function buildParentOperations(
         subOperationIndex,
         accountId,
         address,
+        tokenOptParentRow,
+        feesPayerRule,
       ),
     );
   }
@@ -398,12 +434,13 @@ function buildParentOperations(
 
 const TOKEN_LOOKUP_BATCH_SIZE = 50;
 
-// Lower-cased, like every other asset reference comparison here: a chain's balance response and
-// its own derivations aren't guaranteed to agree on casing.
-function lowercasedReference(asset: AssetInfo): string | undefined {
-  return "assetReference" in asset && asset.assetReference
-    ? asset.assetReference.toLowerCase()
-    : undefined;
+// Default: the lower-cased reference alone, as a chain's balance response and its own derivations
+// can disagree on casing. With `exactAssetMatch`: the exact (owner, reference) pair.
+function assetKey(asset: AssetInfo, exactAssetMatch?: boolean): string | undefined {
+  if (!("assetReference" in asset) || !asset.assetReference) return undefined;
+  return exactAssetMatch
+    ? JSON.stringify([asset.assetOwner, asset.assetReference])
+    : asset.assetReference.toLowerCase();
 }
 
 /**
@@ -422,26 +459,28 @@ async function resolveUnbalancedTokenAssets(
   {
     getTokenFromAsset,
     getAssetFromToken,
-  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken">,
+    exactAssetMatch,
+  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken" | "exactAssetMatch">,
   address: string,
   blacklistedTokenIds: string[],
 ): Promise<AssetInfo[]> {
   if (!getTokenFromAsset || !getAssetFromToken) return [];
 
-  const balanced = new Set(balances.map(b => lowercasedReference(b.asset)));
-  const unbalanced = new Map<string, OperationCommon>();
+  const balanced = new Set(balances.map(b => assetKey(b.asset, exactAssetMatch)));
+  const unbalanced = new Map<string | undefined, AssetInfo>();
   for (const op of operations) {
-    const reference = String(op.extra.assetReference).toLowerCase();
-    if (!balanced.has(reference) && !unbalanced.has(reference)) unbalanced.set(reference, op);
-  }
-
-  const resolve = async (op: OperationCommon) => {
     // `"token"` when the precise type is unknown, as when building a transaction intent.
-    const token = await getTokenFromAsset({
+    const asset: AssetInfo = {
       type: "token",
       assetReference: String(op.extra.assetReference),
       assetOwner: String(op.extra.assetOwner),
-    });
+    };
+    const key = assetKey(asset, exactAssetMatch);
+    if (!balanced.has(key) && !unbalanced.has(key)) unbalanced.set(key, asset);
+  }
+
+  const resolve = async (asset: AssetInfo) => {
+    const token = await getTokenFromAsset(asset);
     return token && !blacklistedTokenIds.includes(token.id)
       ? getAssetFromToken(token, address)
       : undefined;
@@ -453,6 +492,21 @@ async function resolveUnbalancedTokenAssets(
     assets.push(...(await Promise.all(batch.map(resolve))));
   }
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
+}
+
+function keepPendingAndSwapHistory(
+  rebuilt: TokenAccount[],
+  stored: TokenAccount[],
+): TokenAccount[] {
+  if (stored.length === 0) return rebuilt;
+
+  const storedByTokenId = new Map(stored.map(sa => [String(sa.token.id), sa]));
+  return rebuilt.map(sa => {
+    const match = storedByTokenId.get(String(sa.token.id));
+    return match
+      ? { ...sa, pendingOperations: match.pendingOperations, swapHistory: match.swapHistory }
+      : sa;
+  });
 }
 
 /**
@@ -791,16 +845,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // read would never be re-processed -- silently freezing its subAccount's balance and
     // operations at their pre-sweep state forever instead of ever reflecting the sweep.
     const getAssetFromToken = bridgeApi.getAssetFromToken;
-    // Lower-cased: a chain's balance-listing response and its own `getAssetFromToken` derivation
-    // aren't guaranteed to agree on reference casing (observed on Stacks -- the balance response
-    // lowercases addresses, `getAssetFromToken` returns the contract address verbatim/uppercase),
-    // so a case-sensitive comparison here would misclassify an still-held, non-zero token as
-    // vanished and inject a spurious zero-value duplicate for it.
-    const freshAssetReferences = new Set(
+    // Keyed by `assetKey`, lower-cased by default: a chain's balance-listing response and its own
+    // `getAssetFromToken` derivation aren't guaranteed to agree on reference casing (observed on
+    // Stacks -- the balance response lowercases addresses, `getAssetFromToken` returns the
+    // contract address verbatim/uppercase), so a case-sensitive comparison here would misclassify
+    // a still-held, non-zero token as vanished and inject a spurious zero-value duplicate for it.
+    const freshAssetKeys = new Set(
       freshTokenAssetsBalances
-        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
-        .filter((ref): ref is string => !!ref)
-        .map(ref => ref.toLowerCase()),
+        .map(b => assetKey(b.asset, bridgeApi.exactAssetMatch))
+        .filter((key): key is string => !!key),
     );
     // Not gated on "fresh list non-empty": a wallet whose only token gets fully swept legitimately
     // reports an empty token list on the next balance read (some chains, e.g. Stacks, omit
@@ -810,26 +863,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // scenario, which never converges because the lone token's balance is never seen as "gone".
     // A family's balance hook throwing/degrading already rejects the `Promise.all` above and
     // aborts the whole sync, rather than silently reaching this point with a partial result.
-    const vanishedTokenBalances: Balance[] = getAssetFromToken
-      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
-          // A throwing family implementation must not fail the whole sync over one sub-account.
-          let asset: ReturnType<typeof getAssetFromToken>;
-          try {
-            asset = getAssetFromToken(subAccount.token, address);
-          } catch {
-            return [];
-          }
-          if (
-            !asset ||
-            !("assetReference" in asset) ||
-            !asset.assetReference ||
-            freshAssetReferences.has(asset.assetReference.toLowerCase())
-          ) {
-            return [];
-          }
-          return [{ value: 0n, asset }];
-        })
-      : [];
+    const vanishedTokenBalances: Balance[] =
+      getAssetFromToken && !bridgeApi.dropsMissingTokens
+        ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
+            // A throwing family implementation must not fail the whole sync over one sub-account.
+            let asset: ReturnType<typeof getAssetFromToken>;
+            try {
+              asset = getAssetFromToken(subAccount.token, address);
+            } catch {
+              return [];
+            }
+            if (!asset) return [];
+            const key = assetKey(asset, bridgeApi.exactAssetMatch);
+            if (!key || freshAssetKeys.has(key)) return [];
+            return [{ value: 0n, asset }];
+          })
+        : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
 
     if (tokenListChangeOnly) {
@@ -948,6 +997,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // appends.
     const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id, network);
 
+    const feesPayerRule: FeesPayerRule | undefined = bridgeApi.excludesFeesPaidByOthers
+      ? { accountAddress: address }
+      : undefined;
+
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<{
       operations: OperationCommon[];
@@ -990,7 +1043,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
       const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
       const operations = coreOps.map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra, feesPayerRule),
       ) as OperationCommon[];
       return { operations, bounded };
     };
@@ -1074,7 +1127,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operation =>
         operation?.extra?.assetReference &&
         operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type),
+        !TOKEN_OPT_TYPES.has(operation.type),
     );
 
     const newInternalOperations: OperationCommon[] = [];
@@ -1100,7 +1153,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           syncConfig.blacklistedTokenIds ?? [],
         )
       : [];
-    const lateReferences = new Set(lateAssets.map(lowercasedReference));
+    const lateKeys = new Set(lateAssets.map(asset => assetKey(asset, bridgeApi.exactAssetMatch)));
     const lateTokenBalances =
       balanceOptions && lateAssets.length
         ? (
@@ -1108,7 +1161,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
               ...balanceOptions,
               knownAssets: [...(balanceOptions.knownAssets ?? []), ...lateAssets],
             })
-          ).filter(b => lateReferences.has(lowercasedReference(b.asset)))
+          ).filter(b => lateKeys.has(assetKey(b.asset, bridgeApi.exactAssetMatch)))
         : [];
 
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
@@ -1119,12 +1172,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
       familyShapes,
+      exactAssetMatch: bridgeApi.exactAssetMatch,
     });
     // A from-scratch sync goes through the same call with nothing stored, rather than around it:
     // the bound has to apply to the sub-accounts this sync *creates* too. `paginateOperations`
     // returns the whole page that reached the bound rather than splitting a transaction, so a walk
     // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
-    // single token.
+    // single token. Nothing stored also keeps the stale history out; only `pendingOperations` and
+    // `swapHistory`, which the chain cannot give back, are then copied from the stored account.
     //
     // A bounded (but not from-scratch) round zeroes each sub-account's *operations* rather than
     // dropping the sub-account itself: an empty `oldSubAccounts` array takes `mergeSubAccounts`'s
@@ -1135,15 +1190,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
     // interval, while keeping every sub-account matched so that carry-over still runs. Gated on
     // `discardOld`, the same condition as the parent merge below, so both histories agree.
-    const subAccounts = mergeSubAccounts(
+    const storedSubAccounts = initialAccount?.subAccounts ?? [];
+    const mergedSubAccounts = mergeSubAccounts(
       syncFromScratch
         ? []
-        : (initialAccount?.subAccounts ?? []).map(sa =>
-            discardOld ? { ...sa, operations: [] } : sa,
-          ),
+        : storedSubAccounts.map(sa => (discardOld ? { ...sa, operations: [] } : sa)),
       newSubAccounts,
       maxOperations,
     );
+    const subAccounts = syncFromScratch
+      ? keepPendingAndSwapHistory(mergedSubAccounts, storedSubAccounts)
+      : mergedSubAccounts;
 
     // From the bounded sub-accounts, not `newSubAccounts`: a restored account recomputes each
     // parent's sub-operations from the stored (bounded) ones, so the synced shape has to as well.
@@ -1159,6 +1216,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       newInternalOperations,
       accountId,
       address,
+      bridgeApi.tokenOptParentRow === true,
+      feesPayerRule,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
     // Useful for integrations without explorers. Not on a bounded round: it starts from an empty

@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react-native";
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import usePortfolioCryptosSectionViewModel from "../usePortfolioCryptosSectionViewModel";
@@ -25,12 +25,6 @@ const mockCategorizedAssets = jest.fn();
 
 jest.mock("LLM/hooks/useCategorizedAssetsFromPortfolio", () => ({
   useCategorizedAssetsFromPortfolio: () => mockCategorizedAssets(),
-}));
-
-const mockReadOnlyCoins = jest.fn();
-
-jest.mock("~/hooks/useReadOnlyCoins", () => ({
-  useReadOnlyCoins: (opts: { maxDisplayed: number }) => mockReadOnlyCoins(opts),
 }));
 
 const toCategorizedItem = (asset: Asset) => ({
@@ -62,7 +56,6 @@ describe("usePortfolioCryptosSectionViewModel", () => {
     jest.clearAllMocks();
     mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: false });
     mockPortfolioWithCryptos();
-    mockReadOnlyCoins.mockReturnValue({ sortedCryptoCurrencies: [] });
   });
 
   describe("asset filtering and display", () => {
@@ -138,12 +131,8 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   });
 
   describe("onPressShowAll", () => {
-    it("should navigate to Crypto screen when assetSection is enabled", () => {
-      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: true } },
-        }),
-      });
+    it("should navigate to Crypto screen", () => {
+      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
       act(() => {
         result.current.onPressShowAll();
@@ -157,22 +146,6 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         },
       });
     });
-
-    it("should navigate to legacy Assets screen when assetSection is disabled", () => {
-      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: false } },
-        }),
-      });
-
-      act(() => {
-        result.current.onPressShowAll();
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Assets,
-      });
-    });
   });
 
   describe("onItemPress", () => {
@@ -184,13 +157,13 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         result.current.onItemPress(result.current.assetsToDisplay[0]);
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: ethereum },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: { currencyId: ethereum.id, source: "portfolio" },
       });
     });
 
-    it("should navigate to MarketDetail for placeholder assets", () => {
+    it("should open Asset Detail for a placeholder and forward its market id", () => {
       const placeholderAsset: Asset = {
         ...createCryptoAsset(bitcoin, 0),
         isPlaceholder: true,
@@ -202,8 +175,13 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         result.current.onItemPress(placeholderAsset);
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, {
-        currencyId: "bitcoin",
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: {
+          currencyId: bitcoin.id,
+          source: "portfolio",
+          marketState: { id: "bitcoin", ledgerIds: [bitcoin.id] },
+        },
       });
     });
   });
@@ -239,39 +217,19 @@ describe("usePortfolioCryptosSectionViewModel", () => {
     });
   });
 
-  describe("isReadOnly", () => {
-    it("should return assets from useReadOnlyCoins", () => {
-      mockReadOnlyCoins.mockReturnValue({
-        sortedCryptoCurrencies: [bitcoin, ethereum],
-      });
+  describe("variant: readOnly", () => {
+    it("should ignore portfolio holdings and report hasMore false", () => {
+      mockPortfolioWithCryptos([createCryptoAsset(bitcoin, 100000)]);
 
       const { result } = renderHook(() =>
         usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
-      expect(result.current.assetsCount).toBe(2);
-      expect(result.current.assetsToDisplay).toHaveLength(2);
-      expect(result.current.assetsToDisplay[0].currency).toBe(bitcoin);
-      expect(result.current.assetsToDisplay[1].currency).toBe(ethereum);
+      expect(result.current.assetsCount).toBe(0);
+      expect(result.current.hasMore).toBe(false);
     });
 
-    it("should always return hasMore true", () => {
-      mockReadOnlyCoins.mockReturnValue({
-        sortedCryptoCurrencies: [bitcoin, ethereum],
-      });
-
-      const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
-      );
-
-      expect(result.current.hasMore).toBe(true);
-    });
-
-    it("should navigate to legacy Assets screen on show all press", () => {
-      mockReadOnlyCoins.mockReturnValue({
-        sortedCryptoCurrencies: [bitcoin, ethereum],
-      });
-
+    it("should navigate to the Assets screen on show all press", () => {
       const { result } = renderHook(() =>
         usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
@@ -282,41 +240,6 @@ describe("usePortfolioCryptosSectionViewModel", () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
         screen: ScreenName.Assets,
-      });
-    });
-
-    it("should build assets with zero amount and empty accounts", () => {
-      mockReadOnlyCoins.mockReturnValue({
-        sortedCryptoCurrencies: [bitcoin],
-      });
-
-      const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
-      );
-
-      expect(result.current.assetsToDisplay[0]).toMatchObject({
-        currency: bitcoin,
-        amount: 0,
-        accounts: [],
-      });
-    });
-
-    it("should navigate to Asset detail on item press", () => {
-      mockReadOnlyCoins.mockReturnValue({
-        sortedCryptoCurrencies: [ethereum],
-      });
-
-      const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
-      );
-
-      act(() => {
-        result.current.onItemPress(result.current.assetsToDisplay[0]);
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: ethereum },
       });
     });
   });

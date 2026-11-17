@@ -1,5 +1,45 @@
 # @features/flow-contacts-delete-address
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-contact@0.13.0
+  - @features/platform-contacts@0.12.2
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-contact@0.13.0-next.0
+  - @features/platform-contacts@0.12.2-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- [#24030](https://github.com/LedgerHQ/ledger-live/pull/24030) [`0c9ce30`](https://github.com/LedgerHQ/ledger-live/commit/0c9ce30960837b6cf52f5df9be2999a5c7377abf) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsDeleteAddressDialog` takes one props contract, `ContactsDeleteAddressDialogProps`, on both platforms. `ContactsDeleteAddressDrawerProps` and its unused `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3
+  - @features/platform-contacts@0.12.1
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24030](https://github.com/LedgerHQ/ledger-live/pull/24030) [`0c9ce30`](https://github.com/LedgerHQ/ledger-live/commit/0c9ce30960837b6cf52f5df9be2999a5c7377abf) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsDeleteAddressDialog` takes one props contract, `ContactsDeleteAddressDialogProps`, on both platforms. `ContactsDeleteAddressDrawerProps` and its unused `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3-next.0
+  - @features/platform-contacts@0.12.1-next.0
+
 ## 0.3.0
 
 ### Minor Changes

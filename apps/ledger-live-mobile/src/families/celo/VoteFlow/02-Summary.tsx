@@ -11,7 +11,7 @@ import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/cel
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "~/context/Locale";

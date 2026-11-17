@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SpotNumber } from "@ledgerhq/lumen-ui-react";
 import { ShieldLock } from "@ledgerhq/lumen-ui-react/symbols";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { InfoState } from "@shared/ui-info-state";
 
 type Props = Readonly<{
@@ -72,6 +72,7 @@ export function VerifyAddressIntentComponentLWD({
 
   switch (jobState.type) {
     case "verifying":
+    case "addressDisplayed":
     case "verified":
       return <NextStepsScreen onGotIt={onClose} />;
     case "cancelled":

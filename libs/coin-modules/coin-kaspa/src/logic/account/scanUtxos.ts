@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getUtxosForAddresses } from "../../network";
 import { AccountAddress, AccountAddresses, KaspaUtxo } from "../../types";
 import { scanAddresses } from "./scanAddresses";

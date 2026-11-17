@@ -1,4 +1,5 @@
 import type { DeviceManagementKit, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import {
   connectDeviceUseCase,
   DefaultDeviceDiscoveryService,
@@ -12,7 +13,6 @@ import type { Observable } from "rxjs";
 import type { MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectDeviceUIState } from "./types";
 import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
-import { isMockServerTransportEnabled } from "../mockServerTransportConfig";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
@@ -23,6 +23,7 @@ export type ConnectDeviceInput = {
   acceptedDeviceModelIds?: Array<DeviceModelId>;
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
+  isMockServerEnabled: boolean;
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<MobileConnectDeviceUIState> {
@@ -33,7 +34,7 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
 
   // A Bluetooth error stops every source. The iOS simulator has no Bluetooth, so the
   // mock-server session must be the only source or the test stops on that error.
-  if (isMockServerTransportEnabled()) {
+  if (input.isMockServerEnabled) {
     const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
     discoverySources.set(mockServerSource.transportId, mockServerSource);
   } else {
@@ -45,8 +46,14 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     discoverySources.set(speculosSource.transportId, speculosSource);
   }
 
+  // Only mock devices can be discovered in mock mode: a physical known device would never match.
+  const knownDevices = input.isMockServerEnabled
+    ? input.knownDevices.filter(device => device.transport === mockserverIdentifier)
+    : input.knownDevices;
+
   return connectDeviceUseCase({
     ...input,
+    knownDevices,
     deviceDiscoveryService: new DefaultDeviceDiscoveryService<MobileDiscoveryError>(
       discoverySources,
     ),

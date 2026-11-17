@@ -19,6 +19,6 @@ export const RECOVER_DEEPLINK_BASE = "ledgerlive://recover";
 
 export const BACKUP_HUB_RECOVER_DEEPLINK_QUERY = {
   inProgress:
-    "redirectTo=resumeActivate&source=lld-entry-point-backup-up&ajs_recover_source=lld-entry-point-backup-up&ajs_recover_campaign=native-lld-ongoing-subscription",
+    "redirectTo=upsell&source=lld-entry-point-backup-up&ajs_recover_source=lld-entry-point-backup-up&ajs_recover_campaign=native-lld-ongoing-subscription",
   done: "source=lld-entry-point-backup-up&ajs_prop_source=lld-entry-point-backup-up&ajs_prop_campaign=native-lld-subscribed",
 } as const;

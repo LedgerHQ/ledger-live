@@ -1,6 +1,6 @@
 import React from "react";
 import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { UninstallAppDemoIntentExtraProps, UninstallAppDemoIntentJobState } from "./types";
 

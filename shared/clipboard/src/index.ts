@@ -1,1 +1,1 @@
-export * from "./clipboard.web";
+export * from "./clipboard";

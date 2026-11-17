@@ -16,6 +16,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
+  ...jest.requireActual("../hooks/useFirmwareUpdateHandover"),
   useFirmwareUpdateHandover: jest.fn(() => ({ close: jest.fn() })),
 }));
 

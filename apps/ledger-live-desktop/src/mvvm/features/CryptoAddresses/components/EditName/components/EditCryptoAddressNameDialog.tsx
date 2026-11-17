@@ -13,9 +13,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
-import { Chip } from "./Chip";
 import { isWithinGhostClickGuard } from "./ghostClickGuard";
 import { useRestoreFocusOnDialogClose } from "LLD/hooks/useRestoreFocusOnDialogClose";
+
+const chipButtonClassName = "rounded-sm !px-8 !py-4 body-2 hover:bg-muted active:bg-muted";
 
 type EditCryptoAddressNameDialogProps = {
   open: boolean;
@@ -98,13 +99,16 @@ export const EditCryptoAddressNameDialog = ({
           />
           <div className="flex gap-8">
             {suggestions.map(suggestion => (
-              <Chip
+              <Button
                 key={suggestion}
+                appearance="gray"
+                size="sm"
+                className={chipButtonClassName}
                 onClick={() => setValue(suggestion)}
-                dataTestId={`edit-crypto-address-name-suggestion-${suggestion}`}
+                data-testid={`edit-crypto-address-name-suggestion-${suggestion}`}
               >
                 {suggestion}
-              </Chip>
+              </Button>
             ))}
           </div>
         </DialogBody>

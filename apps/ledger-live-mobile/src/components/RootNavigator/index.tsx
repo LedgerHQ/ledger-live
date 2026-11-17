@@ -6,6 +6,7 @@ import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import BaseNavigator from "./BaseNavigator";
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
+import { DeviceOnboardingNavigator } from "LLM/features/DeviceOnboarding/navigation/DeviceOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
@@ -33,6 +34,12 @@ export default function RootNavigator() {
           {hasCompletedOnboarding ? (
             <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
           ) : null}
+          {/* The iOS swipe on a nested screen pops this root route, so the flow turns it off here. */}
+          <Stack.Screen
+            name={NavigatorName.DeviceOnboarding}
+            component={DeviceOnboardingNavigator}
+            options={{ gestureEnabled: false }}
+          />
         </Stack.Navigator>
       </AnalyticsContextProvider>
     </StartupTimeMarker>

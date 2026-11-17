@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-push-devices",
-  "version": "0.2.10",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain API client for Push Devices Service: RTK Query mutation and Redux sync middleware",
   "main": "src/index.ts",
@@ -29,7 +29,6 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

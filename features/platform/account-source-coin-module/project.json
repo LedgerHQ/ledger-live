@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-account-source-coin-module",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

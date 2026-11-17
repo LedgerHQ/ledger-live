@@ -77,7 +77,7 @@ async function transactionsForAddress(
   address: string,
 ): Promise<ReturnType<typeof toApiTransaction>[]> {
   const metas = (await yaciGet<YaciTxMeta[]>(`/addresses/${address}/transactions`)) ?? [];
-  const out = [];
+  const out: ReturnType<typeof toApiTransaction>[] = [];
   for (const meta of metas) {
     const tx = await yaciGet<YaciTx>(`/txs/${meta.tx_hash}`);
     if (!tx) continue;
@@ -150,7 +150,7 @@ export function initYaciIndexer(): () => void {
       );
     }),
     http.get(`${MOCK_API}/v1/pool/detail`, () => HttpResponse.json(POOL_DETAIL)),
-    // Epoch params for getValidators' APY (env.setup points CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT here).
+    // Epoch params for getValidators' APY (MOCK_ENDPOINTS points the coin config's epochParams here).
     http.get(`${MOCK_API}/epoch-params`, () => HttpResponse.json(EPOCH_PARAMS)),
   );
 

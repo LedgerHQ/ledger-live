@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { NEAR_NOMINATION_EXP } from "near-api-js";
 import {
   FRACTIONAL_DIGITS,

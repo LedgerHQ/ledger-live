@@ -107,5 +107,3 @@ export function getQ3WalletV4Tour(variant: ReleaseTourVariant | undefined): Wall
     variant: resolvedVariant,
   };
 }
-
-export const Q3_WALLET_V4_TOUR = getQ3WalletV4Tour("q3_a");

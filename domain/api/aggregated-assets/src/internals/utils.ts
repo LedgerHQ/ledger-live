@@ -1,4 +1,9 @@
-import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
+import {
+  AggregatedAssetIdSchema,
+  type AggregatedAssetId,
+  type CryptoAssetMeta,
+} from "@domain/entity-aggregated-asset";
+import type { RawApiResponse } from "../schema";
 import type { AssetsData } from "../types";
 
 type SettledResult<T> = { status: "fulfilled"; value: T } | { status: "rejected"; reason: unknown };
@@ -76,4 +81,31 @@ export function emptyAssetsData(): AssetsData {
     markets: {},
     currenciesOrder: { metaCurrencyIds: [], key: "", order: "" },
   };
+}
+
+/**
+ * Brands the aggregated asset ids of a wire response where it enters the domain, one item at a
+ * time: an asset whose id is not a string, or an order entry that is not one, is dropped rather
+ * than failing the response. A page without `cryptoAssets` or `currenciesOrder` does not throw:
+ * it yields no assets and an empty `metaCurrencyIds`, the order's other fields left as sent.
+ */
+export function brandAggregatedAssetIds(
+  raw: Pick<RawApiResponse, "cryptoAssets" | "currenciesOrder">,
+): Pick<AssetsData, "cryptoAssets" | "currenciesOrder"> {
+  // fromEntries defines own properties, so a wire key such as "__proto__" stays a key.
+  const cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta> = Object.fromEntries(
+    Object.entries(raw.cryptoAssets ?? {}).flatMap<[AggregatedAssetId, CryptoAssetMeta]>(
+      ([key, meta]) => {
+        const id = AggregatedAssetIdSchema.safeParse(meta?.id);
+        return id.success ? [[AggregatedAssetIdSchema.parse(key), { ...meta, id: id.data }]] : [];
+      },
+    ),
+  );
+
+  const metaCurrencyIds = (raw.currenciesOrder?.metaCurrencyIds ?? []).flatMap(entry => {
+    const id = AggregatedAssetIdSchema.safeParse(entry);
+    return id.success ? [id.data] : [];
+  });
+
+  return { cryptoAssets, currenciesOrder: { ...raw.currenciesOrder, metaCurrencyIds } };
 }

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
 import {
   FALLBACK_GAS_PRICE,
@@ -20,7 +20,6 @@ let currentPreloadedData: NearPreloadedData = {
   receiptCreationExecution: new BigNumber(0),
   minGasPurchasePrice: new BigNumber(FALLBACK_MIN_GAS_PURCHASE_PRICE),
   accountCreationCharge: new BigNumber(0),
-  validators: [],
 };
 
 const updates = new Subject<NearPreloadedData>();

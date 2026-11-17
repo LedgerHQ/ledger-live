@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 type CatalogFilter = "all" | "not_installed" | "supported";
 type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
@@ -81,6 +82,13 @@ export class MyLedgerPage extends AppPage {
     "close-language-installation-button",
   );
 
+  private readonly deviceNotOnboardedError = this.page.locator("#error-device-not-onboarded");
+  private readonly setUpDeviceButton = (deviceName: string) =>
+    this.deviceNotOnboardedError.getByRole("button", {
+      name: `Set up my ${deviceName}`,
+      exact: true,
+    });
+
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
   private readonly appRow = (app: AppInfos) =>
@@ -114,6 +122,17 @@ export class MyLedgerPage extends AppPage {
     await expect(this.deviceOptions).toBeAttached();
   }
 
+  @step("Expect My Ledger to report the device as not set up")
+  async expectDeviceNotOnboarded() {
+    await expect(this.deviceNotOnboardedError).toBeVisible();
+    await expect(this.storageCard).toBeHidden();
+  }
+
+  @step("Click the device setup button for $0")
+  async startDeviceSetup(deviceName: string) {
+    await this.setUpDeviceButton(deviceName).click();
+  }
+
   /** The submit button becomes the close button once the rename lands, so both are needed. */
   @step("Rename the device to $0")
   async renameDevice(name: string) {
@@ -127,25 +146,31 @@ export class MyLedgerPage extends AppPage {
 
   @step("Expect the device to be named $0")
   async expectDeviceName(name: string) {
-    await expect(this.storageCard).toContainText(name);
+    await this.softExpect(async soft => {
+      await soft(this.storageCard).toContainText(name);
+    });
   }
 
   /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */
   @step("Expect the device summary to report $0")
   async expectDeviceSummary(deviceName: string) {
-    await expect(this.storageCard).toContainText(deviceName);
-    await expect(this.osVersion).toContainText("OS version");
-    await expect(this.osVersion).toContainText(/\d+\.\d+/);
-    await expect(this.genuineBadge).toContainText("Ledger Genuine check");
+    await this.softExpect(async soft => {
+      await soft(this.storageCard).toContainText(deviceName);
+      await soft(this.osVersion).toContainText("OS version");
+      await soft(this.osVersion).toContainText(/\d\.\d/);
+      await soft(this.genuineBadge).toContainText("Ledger Genuine check");
+    });
   }
 
   /** Sizes are matched as a value and a unit, because the capacity differs per model. */
   @step("Expect the device storage to report $0 installed apps")
   async expectStorageSummary(appsCount: number) {
-    await expect(this.storageAppsCount).toHaveText(String(appsCount));
-    await expect(this.storageUsed).toHaveText(BYTE_SIZE);
-    await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
-    await expect(this.storageFree).toContainText(BYTE_SIZE);
+    await this.softExpect(async soft => {
+      await soft(this.storageAppsCount).toHaveText(String(appsCount));
+      await soft(this.storageUsed).toHaveText(BYTE_SIZE);
+      await soft(this.storageCapacity).toHaveText(BYTE_SIZE);
+      await soft(this.storageFree).toContainText(BYTE_SIZE);
+    });
   }
 
   @step("Read the device storage figures")
@@ -155,8 +180,10 @@ export class MyLedgerPage extends AppPage {
 
   @step("Expect the device storage to have moved from the snapshot")
   async expectStorageChangedFrom(before: StorageSnapshot) {
-    await expect(this.storageUsed).not.toHaveText(before.used);
-    await expect(this.storageFree).not.toHaveText(before.free);
+    await this.softExpect(async soft => {
+      await soft(this.storageUsed).not.toHaveText(before.used);
+      await soft(this.storageFree).not.toHaveText(before.free);
+    });
   }
 
   @step("Open the app catalog tab")
@@ -196,34 +223,74 @@ export class MyLedgerPage extends AppPage {
   }
 
   /** Row ids are the only DOM-ordered handle the list exposes. */
-  @step("Read the listed app names")
-  async listedAppNames(): Promise<string[]> {
+  private listedAppNames(): Promise<string[]> {
     return this.appRows.evaluateAll(rows =>
       rows.map(row => row.id.replace("managerAppsList-", "")),
     );
   }
 
+  /** The search and sort checks are computed from this list, so it must hold the whole catalog. */
+  @step("Read the app catalog")
+  async readCatalogAppNames(): Promise<string[]> {
+    await expect.poll(async () => (await this.listedAppNames()).length).toBeGreaterThan(1);
+    return this.listedAppNames();
+  }
+
+  @step("Expect the catalog search to narrow the list down to the searched app")
+  async expectCatalogNarrowedTo(app: AppInfos, everyApp: string[]) {
+    await this.softExpect(async soft => {
+      await soft
+        .poll(async () => (await this.listedAppNames()).length)
+        .toBeLessThan(everyApp.length);
+      await soft.poll(() => this.listedAppNames()).toContain(app.name);
+    });
+  }
+
+  @step("Expect the catalog to list apps by name A-Z")
+  async expectCatalogSortedByName(): Promise<string[]> {
+    const ascending = (await this.listedAppNames()).toSorted((a, b) => a.localeCompare(b));
+    await this.softExpect(async soft => {
+      await soft.poll(() => this.listedAppNames()).toEqual(ascending);
+    });
+    return ascending;
+  }
+
+  @step("Expect the catalog to list apps by name Z-A")
+  async expectCatalogReversed(ascending: string[]) {
+    await this.softExpect(async soft => {
+      await soft.poll(() => this.listedAppNames()).toEqual(ascending.toReversed());
+    });
+  }
+
   /** Row ids, not the action buttons: an installed app in the catalog renders neither. */
   @step("Expect $0 to be listed in the catalog")
   async expectAppInCatalog(app: AppInfos) {
-    await expect.poll(() => this.listedAppNames()).toContain(app.name);
+    await this.softExpect(async soft => {
+      await soft.poll(() => this.listedAppNames()).toContain(app.name);
+    });
   }
 
   @step("Expect $0 not to be listed")
   async expectAppNotListed(app: AppInfos) {
-    await expect.poll(() => this.listedAppNames()).not.toContain(app.name);
+    await this.softExpect(async soft => {
+      await soft.poll(() => this.listedAppNames()).not.toContain(app.name);
+    });
   }
 
   /** Unsupported assets read "Requires 3rd-party wallet" where supported ones read supported. */
   @step("Expect $0 to be marked as not supported by Ledger Wallet")
   async expectAppNotSupported(app: AppInfos) {
-    await expect(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+    await this.softExpect(async soft => {
+      await soft(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+    });
   }
 
   @step("Expect $0 to offer Learn more rather than Add account")
   async expectLearnMoreOffered(app: AppInfos) {
-    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeVisible();
-    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeVisible();
+      await soft(this.appRow(app).getByRole("button", { name: "Add account" })).toBeHidden();
+    });
   }
 
   @step("Install $0")
@@ -242,13 +309,16 @@ export class MyLedgerPage extends AppPage {
   /** The two images are the app icons the modal links together. */
   @step("Expect the modal to ask to install the app $0 depends on")
   async expectDependencyInstallModal(app: AppInfos, dependency: AppInfos) {
-    await expect(this.modal).toContainText(`${dependency.name} app is required`);
-    await expect(this.modal).toContainText(
-      `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
-    );
-    await expect(this.modal.locator("img")).toHaveCount(2);
-    await expect(this.confirmModalButton).toHaveText("Install apps");
-    await expect(this.cancelModalButton).toHaveText("Cancel");
+    await expect(this.modal).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.modal).toContainText(`${dependency.name} app is required`);
+      await soft(this.modal).toContainText(
+        `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
+      );
+      await soft(this.modal.locator("img")).toHaveCount(2);
+      await soft(this.confirmModalButton).toHaveText("Install apps");
+      await soft(this.cancelModalButton).toHaveText("Cancel");
+    });
   }
 
   @step("Uninstall $0")
@@ -263,19 +333,25 @@ export class MyLedgerPage extends AppPage {
     await expect(this.uninstallButton(app)).toBeVisible();
   }
 
+  /** The banner only renders once the install has completed, so it is waited on before its content. */
   @step("Expect the install success banner to offer to add $0 accounts")
   async expectInstallSuccessBanner(app: AppInfos) {
-    await expect(this.installSuccessBanner).toContainText(app.name);
-    await expect(this.manageAccountsButton).toBeVisible();
-    await expect(this.manageAccountsButton).toContainText("Manage my accounts");
+    await expect(this.installSuccessBanner).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.installSuccessBanner).toContainText(app.name);
+      await soft(this.manageAccountsButton).toBeVisible();
+      await soft(this.manageAccountsButton).toContainText("Manage my accounts");
+    });
   }
 
   /** A supported asset reads supported and offers Add account where an unsupported one offers Learn more. */
   @step("Expect $0 to offer Add account rather than Learn more")
   async expectAddAccountOffered(app: AppInfos) {
-    await expect(this.appRow(app)).toContainText("Ledger Wallet supported");
-    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeVisible();
-    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.appRow(app)).toContainText("Ledger Wallet supported");
+      await soft(this.appRow(app).getByRole("button", { name: "Add account" })).toBeVisible();
+      await soft(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeHidden();
+    });
   }
 
   @step("Expect $0 to be uninstalled")
@@ -302,19 +378,24 @@ export class MyLedgerPage extends AppPage {
   /** The list of apps to uninstall only mounts once "Show apps to uninstall" is opened. */
   @step("Expect the modal to ask to uninstall the apps that depend on $0")
   async expectDependentsUninstallModal(app: AppInfos, dependents: AppInfos[]) {
-    await expect(this.modal).toContainText(`Uninstall ${app.name} and its related apps?`);
-    await expect(this.modal).toContainText(
-      `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
-    );
-    await expect(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
-    await expect(this.cancelModalButton).toHaveText("Cancel");
+    await expect(this.modal).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.modal).toContainText(`Uninstall ${app.name} and its related apps?`);
+      await soft(this.modal).toContainText(
+        `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
+      );
+      await soft(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
+      await soft(this.cancelModalButton).toHaveText("Cancel");
+    });
 
     await this.modal.getByText("Show apps to uninstall").click();
-    await Promise.all(
-      [app, ...dependents].map(listed =>
-        expect(this.modal.getByText(listed.name, { exact: true })).toBeVisible(),
-      ),
-    );
+    await this.softExpect(async soft => {
+      await Promise.all(
+        [app, ...dependents].map(listed =>
+          soft(this.modal.getByText(listed.name, { exact: true })).toBeVisible(),
+        ),
+      );
+    });
   }
 
   @step("Expect no app to be installed")
@@ -342,7 +423,9 @@ export class MyLedgerPage extends AppPage {
   /** The trigger renders the installed language, so it doubles as the read back. */
   @step("Expect the device language to read $0")
   async expectDeviceLanguage(label: string) {
-    await expect(this.changeLanguageButton).toContainText(label);
+    await this.softExpect(async soft => {
+      await soft(this.changeLanguageButton).toContainText(label);
+    });
   }
 
   @step("Open the custom lock screen manager")
@@ -362,7 +445,12 @@ export class MyLedgerPage extends AppPage {
 
   @step("Expect the custom lock screen action to read $0")
   async expectCustomLockScreenAction(label: string) {
-    await expect(this.customImageButton).toContainText(label);
+    await this.softExpect(
+      async soft => {
+        await soft(this.customImageButton).toContainText(label);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect a firmware update to be offered")
@@ -377,7 +465,12 @@ export class MyLedgerPage extends AppPage {
 
   @step("Expect the device to run OS version $0")
   async expectOsVersion(version: string) {
-    await expect(this.osVersion).toHaveText(`OS version ${version}`);
+    await this.softExpect(
+      async soft => {
+        await soft(this.osVersion).toHaveText(`OS version ${version}`);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   /** The banner opens the release notes first; the update only starts from their install button. */

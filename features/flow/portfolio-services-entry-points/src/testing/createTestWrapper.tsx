@@ -9,13 +9,7 @@ import {
 } from "@shared/feature-flags";
 import { I18nTestProvider } from "@shared/i18n/testing";
 
-type WalletFlag = { enabled: boolean; params?: { assetSection: boolean } };
-
-function withAssetSection<T extends WalletFlag>(flag: T, assetSection: boolean): T {
-  return { ...flag, enabled: true, params: flag.params && { ...flag.params, assetSection } };
-}
-
-export function createTestWrapper(flags: PartialFeatures, { isAssetSectionDisplayed = true } = {}) {
+export function createTestWrapper(flags: PartialFeatures) {
   const store = configureStore({
     reducer: { featureFlags: featureFlagsReducer },
     preloadedState: {
@@ -23,11 +17,6 @@ export function createTestWrapper(flags: PartialFeatures, { isAssetSectionDispla
         ...FEATURE_FLAGS_INITIAL_STATE,
         resolved: {
           ...FEATURE_FLAGS_DEFAULTS,
-          lwdWallet40: FEATURE_FLAGS_DEFAULTS.lwdWallet40,
-          lwmWallet40: withAssetSection(
-            FEATURE_FLAGS_DEFAULTS.lwmWallet40,
-            isAssetSectionDisplayed,
-          ),
           ...flags,
         },
       },

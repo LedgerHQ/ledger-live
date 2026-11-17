@@ -11,7 +11,7 @@ export abstract class PageHolder {
   ) {}
 
   protected async softExpect(
-    assertion: (soft: SoftExpectMatcher) => Promise<void>,
+    assertion: (soft: SoftExpectMatcher) => Promise<void> | void,
     options: SoftExpectOptions = {},
   ) {
     await softExpect({ page: this.page, assertion }, options);

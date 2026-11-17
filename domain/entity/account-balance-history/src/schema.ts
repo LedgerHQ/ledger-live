@@ -1,7 +1,9 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { AmountStrSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 
 /** The periods of the balance graph, as the portfolio offers them. */
 export const BALANCE_HISTORY_RANGES = ["day", "week", "month", "year", "all"] as const;
@@ -11,15 +13,22 @@ export const BalanceHistoryRangeSchema = z.enum(BALANCE_HISTORY_RANGES);
 /** What a source answers when a read names no range. */
 export const DEFAULT_BALANCE_HISTORY_RANGE = BalanceHistoryRangeSchema.enum.month;
 
+export const BalancePointCountervaluesSchema = z.partialRecord(
+  FiatCurrencyTickerSchema,
+  AmountStrSchema,
+);
+
 /** The balance of one asset at one date, in the asset's smallest unit. */
 export const BalancePointSchema = z.object({
   date: DateTimeIsoSchema,
   balance: AmountStrSchema,
+  /** What `balance` was worth at `date`, in the fiat's smallest unit, for the fiat the read asked for. */
+  countervalues: BalancePointCountervaluesSchema.optional(),
 });
 
 /** The balance of one asset over the range, oldest point first; the last point is the current balance. */
 export const AssetBalanceHistorySchema = z.object({
-  assetId: BalanceAssetIdSchema,
+  assetId: CryptoOrTokenCurrencyIdSchema,
   points: z.array(BalancePointSchema),
 });
 
@@ -30,19 +39,31 @@ export const AccountBalanceHistorySchema = z.object({
 });
 
 export type BalanceHistoryRange = z.infer<typeof BalanceHistoryRangeSchema>;
+export type BalancePointCountervalues = z.infer<typeof BalancePointCountervaluesSchema>;
 export type BalancePoint = z.infer<typeof BalancePointSchema>;
 export type AssetBalanceHistory = z.infer<typeof AssetBalanceHistorySchema>;
 export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
 
 export type AccountBalanceHistoryQuery = {
   range: BalanceHistoryRange;
+  /** The fiat each point is valued in, at its date, into `countervalues`. */
+  countervalue?: FiatCurrencyTicker;
 };
+
+/** Per asset, date and fiat, the `revision` of the answer a stored countervalue comes from. */
+export const CountervalueRevisionsSchema = z.partialRecord(
+  CryptoOrTokenCurrencyIdSchema,
+  z.partialRecord(DateTimeIsoSchema, z.partialRecord(FiatCurrencyTickerSchema, z.number())),
+);
 
 /** The series of one range, and the `revision` of the answer they come from. */
 export const BalanceHistoryEntrySchema = z.object({
   revision: z.number(),
   series: z.array(AssetBalanceHistorySchema),
+  countervalueRevisions: CountervalueRevisionsSchema.optional(),
 });
+
+export type CountervalueRevisions = z.infer<typeof CountervalueRevisionsSchema>;
 
 /** The series of each account, by the range they were read for. */
 export const AccountBalanceHistoriesStateSchema = z.partialRecord(

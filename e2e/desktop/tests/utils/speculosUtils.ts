@@ -5,6 +5,7 @@ import {
   stopSpeculos,
   type SpeculosDevice,
   getSpeculosAddress,
+  describeSpeculosApps,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
@@ -28,13 +29,22 @@ export async function launchSpeculos(
   const device = await startSpeculos(
     testTitle ?? "cli_speculos",
     specs[appName.replace(/ /g, "_")],
-    previousDevice?.port,
+    {
+      suite: "desktop-e2e",
+      apiPort: previousDevice?.port,
+    },
   );
 
   invariant(device, "[E2E Setup] Speculos not started");
 
   if (process.env.REMOTE_SPECULOS === "true") {
-    await waitForSpeculosReady(device.id);
+    try {
+      await waitForSpeculosReady(device.id);
+    } catch (error) {
+      // The caller never gets this device, so nothing else would free its Speculinho slot.
+      await cleanSpeculos(device);
+      throw error;
+    }
     console.warn(
       `[E2E Setup] Remote Speculos ready - SPECULOS_ADDRESS: ${process.env.SPECULOS_ADDRESS}`,
     );
@@ -44,11 +54,7 @@ export async function launchSpeculos(
   process.env.SPECULOS_API_PORT = device.port.toString();
   CLI.registerSpeculosTransport(device.id, device.port.toString(), getSpeculosAddress());
 
-  let info = `App: ${device.appName || ""} (${device.appVersion || ""})`;
-  if (device.dependencies?.length) {
-    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
-  }
-  await allure.description("SPECULOS\n" + info);
+  await allure.description("SPECULOS\n" + describeSpeculosApps(device));
 
   console.warn(
     `Speculos ${device.id} ${appName} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,

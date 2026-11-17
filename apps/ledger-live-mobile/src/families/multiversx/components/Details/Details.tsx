@@ -3,7 +3,7 @@ import { Linking, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 

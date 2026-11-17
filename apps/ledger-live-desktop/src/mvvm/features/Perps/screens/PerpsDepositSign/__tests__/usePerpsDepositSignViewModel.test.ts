@@ -17,18 +17,24 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/request", () => ({
   cancelDepositRequest: () => mockCancelDepositRequest(),
 }));
 
+const mockOpenPerpsTransactionSigned = jest.fn();
+jest.mock("../../PerpsTransactionSigned/PerpsTransactionSignedDialog", () => ({
+  openPerpsTransactionSigned: (data: unknown) => mockOpenPerpsTransactionSigned(data),
+}));
+
 const mockOpenPerpsReview = jest.fn();
 jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
   openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
 }));
 
 let capturedCallbacks: PerpsDepositExecutionCallbacks | undefined;
+let mockDeviceStep: unknown = { kind: "processing" };
 const mockExecuteDeposit = jest.fn();
 jest.mock("LLD/features/Perps/hooks/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (_params: unknown, callbacks: PerpsDepositExecutionCallbacks) => {
     capturedCallbacks = callbacks;
     return {
-      deviceStep: { kind: "processing" },
+      deviceStep: mockDeviceStep,
       executeDeposit: mockExecuteDeposit,
       retry: jest.fn(),
     };
@@ -75,12 +81,30 @@ describe("usePerpsDepositSignViewModel", () => {
     const onClose = jest.fn();
     renderHook(() => usePerpsDepositSignViewModel(data, onClose));
 
-    capturedCallbacks?.onNotEnoughBalance();
+    capturedCallbacks?.onReturnToForm();
 
     // The form comes back with the amount the holder typed, ready to be lowered.
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("should reopen the deposit form when the error of a generic failure is closed", () => {
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("swap api 500"),
+      isGeneric: true,
+      returnsToForm: true,
+    };
+    const onClose = jest.fn();
+    const { result } = renderHook(() => usePerpsDepositSignViewModel(data, onClose));
+
+    result.current.onDismiss();
+
+    expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
+    expect(mockCancelDepositRequest).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+    mockDeviceStep = { kind: "processing" };
   });
 
   it("should close and abandon the deposit when the holder heads to My Ledger", () => {
@@ -115,12 +139,17 @@ describe("usePerpsDepositSignViewModel", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it("should close without reopening the review once the deposit goes through", () => {
+  it("should hand off to the signed dialog without reopening the review once the deposit goes through", () => {
     const onClose = jest.fn();
     renderHook(() => usePerpsDepositSignViewModel(data, onClose));
 
-    capturedCallbacks?.onDone();
+    capturedCallbacks?.onDone({ swapId: "swap-1" });
 
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
+      receiveCurrencyTicker: "ETH",
+      swapId: "swap-1",
+      provider: "swapkit_hyperliquid",
+    });
     expect(onClose).toHaveBeenCalled();
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
   });

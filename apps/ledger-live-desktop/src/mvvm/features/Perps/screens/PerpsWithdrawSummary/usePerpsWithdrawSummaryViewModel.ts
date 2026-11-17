@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/quote";
 import { usePerpsWithdrawSummary } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummary";
 import { useSelector } from "LLD/hooks/redux";
-import type { PerpsReviewDetailItem } from "LLD/features/Perps/components/PerpsReviewSection";
+import type { PerpsReviewDetailItem } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { openPerpsWithdraw } from "../PerpsWithdraw/PerpsWithdrawDialog";

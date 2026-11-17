@@ -5,7 +5,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
 // HyperCore has no send flow on Ledger Wallet; transactions only exist for (de)serialization and are

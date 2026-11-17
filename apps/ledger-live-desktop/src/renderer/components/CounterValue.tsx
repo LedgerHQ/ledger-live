@@ -1,6 +1,6 @@
 import { useCalculate } from "@features/platform-market-countervalues";
 import { Currency } from "@domain/entity-currency";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";

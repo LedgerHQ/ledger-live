@@ -14,6 +14,17 @@ const DURATION_RE = /^([1-9]\d*)([smhd])$/;
 const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
 const MAX_DURATION_MS = 30 * DURATION_UNITS_MS.d;
 
+export function relayProxyFromEnv(
+  environment: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  return (
+    environment.HTTPS_PROXY ||
+    environment.https_proxy ||
+    environment.HTTP_PROXY ||
+    environment.http_proxy
+  );
+}
+
 function isDurationUnit(value: string): value is keyof typeof DURATION_UNITS_MS {
   return value in DURATION_UNITS_MS;
 }
@@ -72,6 +83,12 @@ export function createRelayHost(
   return createAgentEnrollmentChannelHost({
     environment,
     relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
+    webSocketFactory: url => {
+      const proxy = relayProxyFromEnv();
+      type BunWebSocketConstructor = new (url: string, options?: Bun.WebSocketOptions) => WebSocket;
+      const BunWebSocket = WebSocket as BunWebSocketConstructor;
+      return proxy ? new BunWebSocket(url, { proxy }) : new BunWebSocket(url);
+    },
     timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
   });
 }

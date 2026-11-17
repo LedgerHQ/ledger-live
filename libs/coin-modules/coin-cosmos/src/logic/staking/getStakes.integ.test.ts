@@ -1,4 +1,5 @@
-import { makeTestApi, makeTestConfig, TEST_BABYLON_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getStakes } from "./getStakes";
 
 // A delegator to a bonded validator on the live Babylon LCD, resolved by querying a bonded
@@ -17,8 +18,9 @@ const ADDR = "bbn1qe2g5cspv4m59chuhrmy26f6ddrygtms6jx6zj";
 
 describe("getStakes (integ, Babylon)", () => {
   it("returns stakes with a well-formed delegate address and a positive amount", async () => {
-    const config = makeTestConfig("babylon", TEST_BABYLON_ENDPOINT);
-    const api = makeTestApi("babylon", TEST_BABYLON_ENDPOINT);
+    const config = cosmosDefaults.babylon;
+    coinConfig.setCoinConfig(() => cosmosDefaults.babylon);
+    const api = new CosmosAPI("babylon", undefined, cosmosDefaults.babylon);
 
     const page = await getStakes(config, api, ADDR);
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tron",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "private": true,
   "description": "Ledger Tron Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -18,36 +18,12 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-tron",
-  "typesVersions": {
-    "*": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "*": [
-        "lib/*"
-      ]
-    }
-  },
   "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
+    "./*": "./src/*.ts",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "format": "oxfmt src",
@@ -66,14 +42,13 @@
     "@noble/hashes": "catalog:",
     "bignumber.js": "^9",
     "bs58": "catalog:",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "tronweb": "6.5.1"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
@@ -82,5 +57,12 @@
     "oxlint": "catalog:",
     "rimraf": "5.0.10",
     "typescript": "catalog:"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "nx:noop"
+      }
+    }
   }
 }

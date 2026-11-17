@@ -1,8 +1,6 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
 
-export type HistorySection = Readonly<{ day?: Date; data: readonly CardTransactionItem[] }>;
-
 export type HistoryRowProps = Readonly<{
   item: CardTransactionItem;
   formatters?: CardTransactionFormatters;

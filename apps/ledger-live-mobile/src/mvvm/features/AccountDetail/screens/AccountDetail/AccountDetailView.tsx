@@ -14,6 +14,7 @@ import { AssetsSection } from "./components/AssetsSection";
 import { FamilySection } from "./components/FamilySection";
 import { Hero } from "./components/Hero";
 import { AccountRefreshStatus } from "./components/RefreshStatus";
+import { AnalyticsIntroduction } from "./components/AnalyticsIntroduction";
 import { Transactions } from "./components/Transactions";
 import type { AccountRefresh } from "./useAccountRefresh";
 import { useAccountDetailContentViewModel } from "./useAccountDetailContentViewModel";
@@ -55,6 +56,7 @@ export function AccountDetailView({ account, refresh }: Props) {
         <Box lx={showsEmptyState ? filledContentStyle : contentStyle}>
           <AccountDetailLayout
             hero={<Hero {...hero} />}
+            analyticsNotice={<AnalyticsIntroduction account={account} />}
             customPlace={<FamilySection account={account} />}
             assets={showsEmptyState ? null : <AssetsSection account={account} />}
             transactions={showsEmptyState ? null : <Transactions account={account} />}

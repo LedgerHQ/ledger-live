@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-wallet-sync",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

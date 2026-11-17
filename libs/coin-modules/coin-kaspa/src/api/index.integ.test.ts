@@ -1,6 +1,6 @@
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
-import type { KaspaCoinConfig } from "../config";
+import { kaspaDefaults, type KaspaCoinConfig } from "../config";
 import { publicKeyToAddress } from "../logic/kaspaAddresses";
 import { createApi } from "./index";
 import { createMockKaspaContext } from "../test/context";
@@ -24,7 +24,7 @@ const INTENT = {
 
 describe("createApi (integration)", () => {
   let api: CoinModuleApi<KaspaCoinConfig>;
-  const context = createMockKaspaContext();
+  const context = createMockKaspaContext(kaspaDefaults.kaspa);
 
   beforeAll(() => {
     // Through withDefaults, as the consumer resolver does: the module omits the capabilities Kaspa

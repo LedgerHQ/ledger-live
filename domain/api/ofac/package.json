@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-ofac",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "description": "Domain API client for the OFAC geo-block check on the Countervalues Service: RTK Query endpoint returning blocked true or false",
   "main": "src/index.ts",
@@ -28,7 +28,6 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

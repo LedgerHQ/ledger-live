@@ -3,56 +3,49 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { AccountAnalyticsIntroduction } from "./AccountAnalyticsIntroduction";
 
+function renderIntroduction(
+  overrides: Partial<React.ComponentProps<typeof AccountAnalyticsIntroduction>> = {},
+) {
+  const props = {
+    isEnabled: true,
+    isEligible: true,
+    hasConfirmedHistory: true,
+    hasDismissed: false,
+    onDismiss: jest.fn(),
+    onOpenAnalytics: jest.fn(),
+    ...overrides,
+  };
+  render(<AccountAnalyticsIntroduction {...props} />, { wrapper: I18nTestProvider });
+  return props;
+}
+
 describe("AccountAnalyticsIntroduction", () => {
   it("should show the introduction without consuming it when the account is eligible", () => {
-    const onDismiss = jest.fn();
-    render(
-      <AccountAnalyticsIntroduction
-        hasConfirmedHistory
-        hasDismissed={false}
-        onDismiss={onDismiss}
-        onOpenAnalytics={jest.fn()}
-      />,
-      { wrapper: I18nTestProvider },
-    );
+    const { onDismiss } = renderIntroduction();
 
     expect(screen.getByText("accountDetail.analyticsIntroduction.title")).toBeVisible();
     expect(onDismiss).not.toHaveBeenCalled();
   });
 
   it.each([
-    { hasConfirmedHistory: false, hasDismissed: false },
-    { hasConfirmedHistory: true, hasDismissed: true },
-  ])("should hide the introduction when ineligible with %o", status => {
-    render(
-      <AccountAnalyticsIntroduction
-        {...status}
-        onDismiss={jest.fn()}
-        onOpenAnalytics={jest.fn()}
-      />,
-      { wrapper: I18nTestProvider },
-    );
+    { isEnabled: false },
+    { isEligible: false },
+    { hasConfirmedHistory: false },
+    { hasDismissed: true },
+  ])("should hide the introduction with %o", override => {
+    renderIntroduction(override);
 
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("should consume the introduction before opening Analytics when the CTA is activated", () => {
-    const onDismiss = jest.fn();
-    const onOpenAnalytics = jest.fn(() => expect(onDismiss).toHaveBeenCalledTimes(1));
-    render(
-      <AccountAnalyticsIntroduction
-        hasConfirmedHistory
-        hasDismissed={false}
-        onDismiss={onDismiss}
-        onOpenAnalytics={onOpenAnalytics}
-      />,
-      { wrapper: I18nTestProvider },
-    );
+  it("should open Analytics without consuming the introduction when the CTA is activated", () => {
+    const { onDismiss, onOpenAnalytics } = renderIntroduction();
 
     fireEvent.click(
       screen.getByRole("button", { name: "accountDetail.analyticsIntroduction.cta" }),
     );
 
     expect(onOpenAnalytics).toHaveBeenCalledTimes(1);
+    expect(onDismiss).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,6 @@
 jest.mock("../network/sdk", () => ({ getVotes: jest.fn(), getPendingWithdrawals: jest.fn() }));
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getPendingWithdrawals, getVotes } from "../network/sdk";
 import { getStakes } from "./getStakes";
 

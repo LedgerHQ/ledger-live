@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";

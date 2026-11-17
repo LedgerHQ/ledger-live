@@ -1,0 +1,13 @@
+{
+  "extends": "@support/tsconfig/dual",
+  "compilerOptions": {
+    "paths": {
+      "jest/*": ["./jest/*"]
+    },
+    "types": ["node", "jest"]
+  },
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
+}

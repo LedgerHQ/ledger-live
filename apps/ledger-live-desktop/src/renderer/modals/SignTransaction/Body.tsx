@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { useTranslation } from "react-i18next";

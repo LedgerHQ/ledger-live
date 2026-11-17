@@ -21,10 +21,12 @@ const WALLET_40_PAGES = new Set<string>([
   "/earn",
   "/perps",
   "/borrow",
+  "/predictions",
   "/history",
   "/contacts",
   "/devtools",
   "/paytab",
+  "/agent-intent",
 ]);
 
 /**

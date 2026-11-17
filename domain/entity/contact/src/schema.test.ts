@@ -1,9 +1,9 @@
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   ContactAddressLabelInputSchema,
   ContactAddressLabelSchema,
   ContactAddressSchema,
   ContactAddressValueSchema,
-  ContactCurrencyIdSchema,
   CONTACT_NAME_MAX_LENGTH,
   ContactNameInputSchema,
   ContactNameSchema,
@@ -104,13 +104,13 @@ describe("ContactAddressSchema", () => {
   });
 
   it("parses a token currency id selected through MAD", () => {
-    expect(ContactCurrencyIdSchema.parse("ethereum/erc20/usd-tether")).toBe(
+    expect(CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd-tether")).toBe(
       "ethereum/erc20/usd-tether",
     );
   });
 
   it("parses a crypto currency id selected through MAD", () => {
-    expect(ContactCurrencyIdSchema.parse("ethereum")).toBe("ethereum");
+    expect(CryptoOrTokenCurrencyIdSchema.parse("ethereum")).toBe("ethereum");
   });
 
   it("rejects empty addresses", () => {

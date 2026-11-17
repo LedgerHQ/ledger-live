@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper } from "../__tests__/i18nWrapper";
-import { AccountHero } from "./AccountHero.web";
+import { AccountHero } from "./AccountHero";
 import type { AccountHeroAvailability, AccountHeroPort } from "./types";
 
 const TEST_ID = "hero";

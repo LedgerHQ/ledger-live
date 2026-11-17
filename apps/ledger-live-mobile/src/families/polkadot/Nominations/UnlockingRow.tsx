@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import isBefore from "date-fns/isBefore";
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";

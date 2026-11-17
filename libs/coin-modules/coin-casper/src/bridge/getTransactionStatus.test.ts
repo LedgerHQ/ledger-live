@@ -5,7 +5,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   CASPER_FEES_MOTES,
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,

@@ -28,6 +28,7 @@ import path from "node:path";
 import { getCliProcessExitCode } from "../cli-process-exit-error";
 import { installOutputCapture } from "../shared/ui";
 import { InMemoryKeychain } from "./in-memory-keychain";
+import { stateHomeEnv } from "./state-home";
 
 // ---------------------------------------------------------------------------
 // Lazy CLI loader — deferred until the first runCli() call
@@ -107,7 +108,7 @@ export async function storedApiAuthPubkey(env: {
     import("../key-ring/keychain-entry"),
     import("../session/session-store"),
   ]);
-  const saved = applyEnv(env);
+  const saved = applyEnv({ ...env, ...stateHomeEnv(env.XDG_STATE_HOME) });
   const restoreKeychain = useRunCliKeychain(setTestKeychain);
   try {
     const privatekey = openKeychainEntry(APP_NAME, apiAuthKeychainAccount()).getPassword();
@@ -411,6 +412,11 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
       "runCli ignores process.env.XDG_STATE_HOME, which this test changed: pass it in env too",
     );
   }
+  if (env.LOCALAPPDATA !== undefined && env.LOCALAPPDATA !== env.XDG_STATE_HOME) {
+    throw new Error(
+      "runCli points LOCALAPPDATA at XDG_STATE_HOME: pass only XDG_STATE_HOME, or the same dir in both",
+    );
+  }
 
   // 0. Lazy-load the CLI module graph (once per test process; cached once it loads).
   //    Doing this lazily ensures module-resolution failures appear as individual
@@ -449,6 +455,7 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
       mergedEnv.XDG_STATE_HOME = stateHome;
       keychain = new InMemoryKeychain();
     }
+    Object.assign(mergedEnv, stateHomeEnv(mergedEnv.XDG_STATE_HOME));
 
     // 4. Temporary env vars (XDG_STATE_HOME, etc.)
     const savedEnv = applyEnv(mergedEnv);

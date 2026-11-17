@@ -9,6 +9,15 @@ import { useAssetDetailChartSeries } from "../../../hooks/useAssetDetailChartSer
 
 jest.mock("../../../hooks/useAssetDetailChartSeries");
 
+const mockHeldByLedgerId = { current: new Map<string, number>() };
+const mockHeldByMarketId = { current: new Map<string, number>() };
+jest.mock("LLD/hooks/useMarketDayChange", () => ({
+  useMarketDayChange: () => ({
+    byLedgerId: mockHeldByLedgerId.current,
+    byMarketId: mockHeldByMarketId.current,
+  }),
+}));
+
 const mockedUseAssetDetailChartSeries = jest.mocked(useAssetDetailChartSeries);
 
 const baseMarketCurrencyData = createMockMarketCurrencyData();
@@ -36,6 +45,8 @@ const makeScrubWrapper = (selection: ScrubSelection | undefined) =>
 
 describe("useMarketPriceSectionViewModel", () => {
   beforeEach(() => {
+    mockHeldByLedgerId.current = new Map();
+    mockHeldByMarketId.current = new Map();
     mockedUseAssetDetailChartSeries.mockReturnValue({
       prices: [],
       timestamps: [],
@@ -98,6 +109,58 @@ describe("useMarketPriceSectionViewModel", () => {
     expect(result.current.variationText).toMatch(/^\+/);
     expect(result.current.variationText).not.toBe("—");
     expect(result.current.variationText).not.toBe("***");
+  });
+
+  it("should show the held coin's shared 24h change keyed by ledger id when it differs from the market id", () => {
+    mockHeldByLedgerId.current = new Map([["ethereum/erc20/usd__coin", -5.41]]);
+    mockHeldByMarketId.current = new Map([["usd-coin", 9]]);
+
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "ethereum/erc20/usd__coin",
+          marketData: {
+            ...marketData,
+            marketCurrencyData: createMockMarketCurrencyData({
+              id: "usd-coin",
+              ledgerIds: ["ethereum/erc20/usd__coin"],
+              price: 1,
+              priceChangePercentage: {
+                ...baseMarketCurrencyData.priceChangePercentage,
+                [KeysPriceChange.day]: 1.2,
+              },
+            }),
+          },
+          isDistributionLoading: false,
+          selectedRange: "1d",
+        }),
+      { initialState: { settings: { counterValue: "USD", locale: "en-US" } } },
+    );
+
+    expect(result.current.percentageText).toBe("-5.41%");
+  });
+
+  it("should read the held change by market id when the market has no ledger ids", () => {
+    mockHeldByMarketId.current = new Map([["bitcoin", 2]]);
+    const { ledgerIds: _ledgerIds, ...marketWithoutLedgerIds } = createMockMarketCurrencyData({
+      id: "bitcoin",
+      price: 100,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          marketData: {
+            ...marketData,
+            marketCurrencyData: marketWithoutLedgerIds as typeof baseMarketCurrencyData,
+          },
+          isDistributionLoading: false,
+          selectedRange: "1d",
+        }),
+      { initialState: { settings: { counterValue: "USD", locale: "en-US" } } },
+    );
+
+    expect(result.current.percentageText).toBe("+2.00%");
   });
 
   it("should pass the header price into the chart series", () => {

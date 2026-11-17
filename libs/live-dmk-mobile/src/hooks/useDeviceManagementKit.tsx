@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useState } from "react";
 import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
@@ -6,14 +6,14 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  getMockServerSecureChannelUrl,
+  stripTrailingSlashes,
+  type MockServerConfig,
+} from "@features/platform-device-mock-server";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
-import {
-  getConfiguredMockServerTransport,
-  getMockScriptRunnerBaseUrl,
-  isMockServerTransportEnabled,
-} from "../mockServerTransportConfig";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
 import {
   speculosDmkTransportFactory,
@@ -30,11 +30,18 @@ let instance: DeviceManagementKit | null = null;
  */
 let firmwareDistributionSalt: string | undefined;
 
-export const getDeviceManagementKit = (): DeviceManagementKit => {
+type DeviceManagementKitOptions = {
+  mockServerConfig?: MockServerConfig | null;
+};
+
+/** The options apply to the first call only: it builds the instance that every later call returns. */
+export const getDeviceManagementKit = ({
+  mockServerConfig = null,
+}: DeviceManagementKitOptions = {}): DeviceManagementKit => {
   if (!instance) {
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
-      mockServerTransportEnabled: isMockServerTransportEnabled(),
+      isMockServerEnabled: mockServerConfig !== null,
     });
     const builder = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
@@ -44,13 +51,13 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig(firmwareDistributionSalt ? { firmwareDistributionSalt } : {});
 
-    const mockServerTransport = getConfiguredMockServerTransport();
-    if (mockServerTransport) {
-      const { url, token } = mockServerTransport;
-      const webSocketUrl = getMockScriptRunnerBaseUrl(url, token);
-      builder
-        .addTransport(mockserverTransportFactory(url, token))
-        .addConfig({ mockUrl: url, ...(webSocketUrl ? { webSocketUrl } : {}) });
+    if (mockServerConfig) {
+      const url = stripTrailingSlashes(mockServerConfig.url);
+      const secureChannelUrl = getMockServerSecureChannelUrl(url, mockServerConfig.token);
+      builder.addTransport(mockserverTransportFactory(url, mockServerConfig.token)).addConfig({
+        mockUrl: url,
+        ...(secureChannelUrl ? { webSocketUrl: secureChannelUrl } : {}),
+      });
     }
 
     instance = builder.build();
@@ -68,14 +75,16 @@ const DeviceManagementKitContext = createContext<DeviceManagementKit | null>(nul
 
 type Props = {
   children: React.ReactNode;
+  mockServerConfig?: MockServerConfig | null;
 };
 
-export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
+export const DeviceManagementKitProvider: React.FC<Props> = ({
+  children,
+  mockServerConfig = null,
+}) => {
   tracer.trace("DeviceManagementKitProvider render");
 
-  const deviceManagementKit = useMemo(() => {
-    return getDeviceManagementKit();
-  }, []);
+  const [deviceManagementKit] = useState(() => getDeviceManagementKit({ mockServerConfig }));
 
   if (deviceManagementKit === null) {
     return <>{children}</>;

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";

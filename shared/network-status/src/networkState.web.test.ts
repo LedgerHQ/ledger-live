@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { getNetworkState, subscribeToNetworkState, useNetworkState } from "./networkState.web";
+import { getNetworkState, subscribeToNetworkState, useNetworkState } from "./networkState";
 
 const onLine = jest.spyOn(navigator, "onLine", "get");
 

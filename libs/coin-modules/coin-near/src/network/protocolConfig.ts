@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
 import { NearProtocolConfigNotLoaded } from "../errors";
 import type { NearProtocolConfig } from "./sdk.types";

@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-card-management",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "private": true,
   "description": "Domain API client for Card Management: RTK Query endpoints injected into the shared cardApi service",
   "main": "src/index.ts",
@@ -37,7 +37,6 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

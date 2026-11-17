@@ -121,7 +121,7 @@
     "addressCopied" : "주소 복사됨",
     "addressCopiedSuspicious" : "복사된 주소와 클립보드 주소가 일치하지 않습니다.",
     "experimentalFeature" : "실험적 기능",
-    "featureFlags" : "기능 플래그",
+    "devTools" : "개발자 도구",
     "ldmkEnabled" : "LDMK 전송",
     "information" : "정보",
     "search" : "검색 중...",
@@ -2128,6 +2128,14 @@
       "link" : "스텔라 자산에 대해 자세히 알아보기",
       "seeTokens" : "자산 표시({{tokenCount}})",
       "hideTokens" : "자산 숨기기({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "토큰",
+      "cta" : "토큰 추가",
+      "placeholder" : "{{currencyName}} 계정에 토큰을 추가할 수 있습니다.",
+      "link" : "XRP Ledger 토큰에 대해 자세히 알아보기",
+      "seeTokens" : "토큰 보기 ({{tokenCount}})",
+      "hideTokens" : "토큰 숨기기 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -3019,18 +3027,19 @@
       "insufficientFunds" : "결제 금액과 {{provider}} 에너지 대여 수수료를 충당할 {{feeCurrency}}이(가) 부족합니다."
     },
     "sponsoredRentSignature" : {
-      "title" : "1/2단계",
+      "title" : "네트워크 수수료 지원 승인",
       "strategy" : "에너지 대여 - {{provider}}",
       "crafting" : "에너지 대여 준비 중...",
       "submitting" : "에너지 대여 수수료 결제 제출 중...",
-      "feeLabel" : "대여 수수료"
+      "feeLabel" : "대여 수수료",
+      "terms" : "이 트랜잭션에 서명함으로써 <0>{{provider}}의 이용약관</0>에 동의하게 됩니다."
     },
     "sponsoredTransferSignature" : {
-      "title" : "2/2단계"
+      "title" : "전송 확인"
     },
     "sponsoredPolling" : {
-      "title" : "에너지 지급 대기 중",
-      "waiting" : "{{provider}}에서 대여한 에너지를 전송하고 있습니다. 약간의 시간이 소요될 수 있습니다.",
+      "title" : "에너지 전송 중",
+      "waiting" : "일반적으로 최대 30초가 소요됩니다.",
       "elapsed" : "경과 시간: {{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3090,6 @@
         "subtitle" : "Shielded(비공개)",
         "pendingNoticeTitle" : "자산 활성화 대기 중",
         "pendingNotice" : "일부 비공개 노트(shielded notes)가 대기 상태에 있어 사용이 불가능할 수 있습니다"
-      },
-      "aleoPublic" : {
-        "title" : "공개 수량"
-      },
-      "aleoPrivate" : {
-        "title" : "비공개 수량"
       },
       "zeroBalance" : {
         "warning" : "이용 가능 수량 없음"
@@ -4274,6 +4277,70 @@
           "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "토큰 추가",
+      "steps" : {
+        "token" : {
+          "title" : "토큰",
+          "selectLabel" : "토큰을 선택하세요",
+          "allAdded" : "이 계정에 이미 사용 가능한 모든 토큰을 추가했습니다.",
+          "loadError" : "토큰 목록을 불러오지 못했습니다.",
+          "info" : "토큰 추가 시 네트워크 수수료가 지불되며, 토큰 보유 기간 동안 XRP가 예치됩니다. 관련 작업은 트랜잭션 내역에서 확인할 수 있습니다."
+        },
+        "settings" : {
+          "title" : "설정",
+          "limit" : "보유 한도",
+          "max" : "최대",
+          "limitInfo" : "보유 한도는 계정에서 보유할 수 있는 {{token}}의 최대 수량입니다."
+        },
+        "review" : {
+          "title" : "검토",
+          "token" : "토큰",
+          "issuer" : "발행자"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "{{token}} 토큰이 성공적으로 추가되었습니다",
+            "text" : "이제 XRP 계정에서 <0>{{token}}</0> 자산을 받을 수 있습니다.",
+            "cta" : "상세 내역 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패했을 수 있습니다. 잠시 후 트랜잭션 내역을 확인한 뒤 다시 시도해 주세요."
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "토큰 설정",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} 보유 한도 업데이트",
+            "text" : "이제 XRP 계정에서 새로운 한도까지 <0>{{token}}</0> 자산을 보유할 수 있습니다."
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "editSettings" : "설정 편집",
+      "trustLimit" : "보유 한도",
+      "trustLimitTooltip" : "계정에서 보유할 수 있는 해당 토큰의 최대 수량입니다."
+    },
+    "rippling" : {
+      "label" : "리플링",
+      "on" : "켜짐",
+      "off" : "꺼짐",
+      "warning" : "이 기능을 켜면 다른 사용자의 결제 트랜잭션 과정에서 내 지갑에 있는 같은 종류의 토큰끼리 잔액이 바뀔 수 있습니다. 기능의 의미를 확실히 아는 경우에만 켜두세요."
+    },
+    "receive" : {
+      "addToken" : "토큰 추가",
+      "addTokenFirst" : "XRP Ledger 토큰을 받으려면 먼저 계정에 추가하세요.",
+      "tokenNotHeld" : "현재 계정에 {{token}} 잔액이 없습니다. 자산을 받으려면 먼저 토큰을 추가하세요."
     }
   },
   "stellar" : {
@@ -7223,6 +7290,9 @@
       "title" : "이 계정에 대기 중인 거래가 있습니다",
       "description" : "거래가 완료될 때까지 기다려 주세요."
     },
+    "TokenNonTransferable" : {
+      "title" : "전송이 불가능한 토큰입니다. 스마트 계약상 전송이 지원되지 않는 토큰입니다."
+    },
     "AccountNameRequired" : {
       "title" : "계정 이름이 필요합니다",
       "description" : "계정 이름을 입력하세요"
@@ -7725,6 +7795,14 @@
       "title" : "네트워크 오류",
       "description" : "인터넷에 연결되어 있는지 확인하고 다시 시도하세요."
     },
+    "WithdrawApiError" : {
+      "title" : "출금 요청 전송 실패",
+      "description" : "무기한 선물 잔고에서 차감된 자산이 없습니다. 창을 닫고 새로운 견적으로 다시 시도해 주세요."
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "출금 상태 확인 불가",
+      "description" : "출금이 여전히 처리 중일 수 있습니다. 다시 시도하기 전에 스왑 내역을 먼저 확인하세요."
+    },
     "WrongDeviceForAccount" : {
       "title" : "문제가 발생했습니다",
       "description" : "선택한 계정에 연결된 복구 문구 또는 패스프레이즈로 Ledger 장치를 설정했는지 확인해 주세요."
@@ -7892,6 +7970,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "최소 금액을 충족하지 않아 스테이킹이 불가합니다."
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "스테이킹을 지원하지 않는 검증인입니다. 다른 검증인으로 변경하세요."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
     },
@@ -7995,6 +8076,44 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "이 수취인 주소는 데스티네이션 태그(Destination Tag) 입력이 필수입니다."
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "지원되지 않는 토큰 유형입니다"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "허용되는 자릿수를 초과했습니다",
+      "description" : "XRP Ledger 토큰은 최대 16자리까지만 입력할 수 있습니다."
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "한도는 0보다 커야 합니다",
+      "description" : "토큰 홀딩을 중단하려면 삭제해 주세요."
+    },
+    "XrpTokenFrozen" : {
+      "title" : "이 수신자에게는 이 토큰을 보낼 수 없습니다.",
+      "description" : "발행자가 토큰을 동결했거나, 귀하의 계정에서 토큰 홀딩을 승인하지 않았습니다. 동결된 토큰이라도 발행자에게 다시 반환할 수는 있습니다."
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "이 수신자는 {{assetCode}} 자산을 받을 수 없습니다.",
+      "description" : "수신자가 먼저 이 토큰을 추가해야 하거나, 발행자가 해당 전송을 허용하지 않는 상태입니다."
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "전송할 수 없는 수량입니다",
+      "description" : "수신자의 보유 한도 또는 발행자의 전송 수수료 조건에 맞지 않아 전송이 불가합니다. 수량을 줄여 다시 시도하세요."
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "발행자가 이 요청을 거부했습니다.",
+      "description" : "발행자가 이 토큰의 신규 보유자를 허용하지 않거나, 존재하지 않는 토큰입니다."
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "해당 트랜잭션은 실패할 것으로 예상됩니다.",
+      "description" : "XRP Ledger에서 요청을 거부했습니다. (오류 코드: {{code}})"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "지원되지 않는 트랜잭션입니다"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "이 토큰이 추가되어 있는 동안 계정에 {{amount}}의 자산이 잠금 처리됩니다.",
+      "description" : "토큰을 삭제하면 예치된 자산을 다시 돌려받습니다."
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
@@ -9625,6 +9744,74 @@
     "description" : "무기한 선물 거래 전용 계정입니다. 이 계정에서는 일반 트랜잭션(입출금 및 전송 등) 기능이 지원되지 않습니다.",
     "cta" : "무기한 선물 열기"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "서명 준비 중",
+      "title" : "{{productName}}에서 계정 소유권을 확인하세요",
+      "description" : "보안 스크린에 표시된 안내를 따라주세요.",
+      "settingUp" : {
+        "title" : "트레이딩 계정 설정 중"
+      },
+      "setUp" : {
+        "created" : "트레이딩 계정이 생성되었습니다",
+        "found" : "트레이딩 계정을 찾았습니다",
+        "description" : "트레이딩 계정을 사용할 준비가 되었습니다.",
+        "continue" : "계속"
+      },
+      "mismatch" : {
+        "title" : "서명이 계정과 일치하지 않습니다",
+        "description" : "해당 계정이 있는 Ledger 장치를 연결해 주세요. 패스프레이즈(Passphrase)를 사용하는 경우 동일하게 적용한 후 다시 시도해 주세요."
+      },
+      "setupFailed" : {
+        "title" : "트레이딩 계정을 설정할 수 없습니다.",
+        "failed-deploy" : "MoonPay에서 트레이딩 지갑을 배포할 수 없습니다.",
+        "failed-permission" : "MoonPay에서 트레이딩 지갑 권한을 설정할 수 없습니다.",
+        "timeout" : "설정에 시간이 너무 오래 소요됩니다.",
+        "unavailable" : "MoonPay에 연결할 수 없습니다.",
+        "unknown" : "설정 중 문제가 발생했습니다."
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "Trade on future events",
+        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items" : {
+          "polymarket" : {
+            "title" : "Access Polymarket in Ledger Wallet",
+            "subtitle" : "Now available in Ledger Wallet"
+          },
+          "markets" : {
+            "title" : "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle" : "And more, discover all markets"
+          },
+          "clearSign" : {
+            "title" : "Clear sign all",
+            "subtitle" : "You define and clear sign the amount to trade"
+          }
+        },
+        "discover" : "Discover predictions",
+        "learnMore" : "Learn more"
+      },
+      "terms" : {
+        "title" : "Terms & Conditions",
+        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta" : "Agree and Continue"
+      },
+      "consent" : {
+        "title" : "Clear signed trade on Polymarket via MoonPay",
+        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets" : {
+          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta" : "Continue",
+        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+      }
+    }
+  },
   "portfolio" : {
     "title" : "홈",
     "today" : "오늘",
@@ -9655,6 +9842,10 @@
     "borrow" : {
       "title" : "대출",
       "description" : "스테이블코인 대출받기"
+    },
+    "predictions" : {
+      "title" : "예측",
+      "description" : "미래 결과 예측"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10303,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "서명 소요 시간",
-          "description" : "Ledger 사이너에서 이 트랜잭션에서 사용되는 각 레코드를 승인합니다. 비공개 수량에서 전송하는 금액이 커질수록 사용되는 레코드가 늘어나 처리 시간이 지연될 수 있습니다."
+          "label" : "예상 시간",
+          "description" : "비공개 수량 전송량이 많을수록 더 많은 레코드가 사용될 수 있으며, 레코드가 추가될 때마다 처리 시간이 늘어납니다. 전송량이 많을수록 승인까지 더 오랜 시간이 소요됩니다."
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10737,7 @@
       "copied" : "복사됨",
       "edit" : "편집",
       "delete" : "삭제",
+      "share" : "공유",
       "networkTag" : "{{name}} 네트워크"
     },
     "detailActions" : {
@@ -10655,11 +10847,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "계정 수익률을 확인하고 싶으신가요?",
+      "description" : "이제 모든 성과 데이터는 애널리틱스 페이지에서 확인하실 수 있습니다.",
+      "cta" : "애널리틱스로 이동",
+      "dismiss" : "애널리틱스 안내 닫기"
+    },
     "header" : {
       "settings" : "계정 설정"
     },
     "assets" : {
-      "title" : "자산"
+      "title" : "자산",
+      "add" : "추가"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11385,14 @@
     "depositDetailTitle" : "입금 상세 정보",
     "depositAmountLabel" : "입금 수량",
     "depositReceiveLabel" : "전송 받을 계정",
-    "depositCTA" : "입금"
+    "depositCTA" : "입금",
+    "withdrawTitle" : "SwapKit로 출금",
+    "withdrawSubtitle" : "SwapKit은 단 한 번의 트랜잭션으로 스왑과 출금을 모두 처리합니다. 모든 과정은 Ledger 장치로 안전하게 보호됩니다.",
+    "withdrawDetailTitle" : "출금 상세 정보",
+    "withdrawReceiveLabel" : "전송 받을 계정",
+    "networkFeesLabel" : "네트워크 수수료",
+    "totalDebitedLabel" : "총 인출 금액",
+    "withdrawCTA" : "출금"
   },
   "perpsDeposit" : {
     "title" : "입금",
@@ -11222,6 +11428,9 @@
       "currenciesUnavailable" : "출금 가능한 자산을 불러올 수 없습니다. 나중에 다시 시도하세요."
     }
   },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "출금 서명 진행 중"
+  },
   "perpsDepositSign" : {
     "a11yTitle" : "입금 서명",
     "terms" : "이 트랜잭션에 서명함으로써 <termsLink>NEAR Intents의 SwapKit 이용약관(T&C)</termsLink>에 동의합니다."
@@ -11235,5 +11444,13 @@
     "dialogTitle" : "트랜잭션 세부 사항",
     "title" : "증거금 입금",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "accountAnalytics" : {
+    "assets" : "자산 필터",
+    "accounts" : "계정 필터",
+    "allAssets" : "모든 자산",
+    "allAccounts" : "모든 계정",
+    "error" : "분석을 불러올 수 없습니다. 다시 시도하세요.",
+    "unavailable" : "선택한 항목과 관련하여 조회 가능한 데이터가 없습니다."
   }
 }

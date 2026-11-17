@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { MarketBanner } from "../MarketBanner.web";
+import { MarketBanner } from "../MarketBanner";
 
 describe("MarketBanner (Web)", () => {
   it("should render the banner title", () => {

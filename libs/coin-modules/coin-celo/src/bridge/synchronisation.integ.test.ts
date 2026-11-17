@@ -1,5 +1,4 @@
-import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
-import { setCoinConfig } from "../config";
+import { celoDefaults, setCoinConfig } from "../config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
@@ -26,21 +25,7 @@ describe("Integration — getAccountShape with real implementations", () => {
       getTokensSyncHash: async () => "0",
     });
 
-    setCoinConfig(
-      () =>
-        ({
-          info: {
-            node: {
-              type: "external",
-              uri: "https://celo.coin.ledger.com/archive",
-            },
-            explorer: {
-              type: "etherscan",
-              uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
-            },
-          },
-        }) as unknown as EvmCoinConfig,
-    );
+    setCoinConfig(() => ({ info: celoDefaults.celo }));
   });
 
   it("should fetch account data with expected structure", async () => {

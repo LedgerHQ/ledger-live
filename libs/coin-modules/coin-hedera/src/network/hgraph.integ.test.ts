@@ -1,11 +1,10 @@
 import BigNumber from "bignumber.js";
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { hgraphClient } from "./hgraph";
 
 describe("hgraphClient", () => {
-  const coinConfig = getMockedConfig();
+  const coinConfig = hederaDefaults.hedera;
 
   beforeAll(() => {
     hederaCoinConfig.setCoinConfig(() => coinConfig);

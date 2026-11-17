@@ -25,13 +25,16 @@ One package per tool. Each README holds the presets, their options and the detai
 | --- | --- | --- |
 | [`@support/tsconfig`](./tsconfig) | `extends` of a preset, one per project archetype, in each `tsconfig*.json` | `types`, `paths`, `references`, `include` / `exclude` / `files` |
 | [`@support/jest`](./jest) | a one-line `jest.config.js` calling its layer's factory, and `"@support/jest": "workspace:*"` in `devDependencies` | the factory's overrides argument |
-| [`@support/lint`](./lint) | nothing: the layer root's one-line `oxlint.config.mts` re-exports the layer's preset | a rule flag on its `lint` script, from the allowlist |
+| [`@support/lint`](./lint) | the layer root's one-line `oxlint.config.mts`, which re-exports the layer's preset, and `"@support/lint": "workspace:*"` in `devDependencies` when that preset loads an npm package other than `oxlint` (today `features-flow`) | a rule flag on its `lint` script, from the allowlist |
 | `@support/fmt` | nothing: the workspace-root `oxfmt.config.mts` re-exports [the one config](./fmt/oxfmt.config.mts) | nothing |
 
 `oxlint` and `oxfmt` find their config by walking up from the file they process, so a package runs
 plain `oxlint src` and `oxfmt src`, with no config file and no `-c`. `@support/tsconfig`,
-`@support/lint` and `@support/fmt` resolve from the workspace root; only `@support/jest` is
-declared, because its presets carry code and peer dependencies.
+`@support/lint` and `@support/fmt` resolve from the workspace root. `@support/jest` is declared,
+because its presets carry code and peer dependencies. `@support/lint` is declared only where the
+layer's preset loads an npm package (the `features-flow` preset loads
+`@ledgerhq/lumen-lint-plugin`): Nx hashes that package in `lint`, and marks the package affected
+when it changes, only through the dependency edge.
 
 Two more packages live here. `@support/knip` holds the repository's knip configs, which the root
 `knip.config.js` and `knip.config.base.mjs` re-export. [`@ledgerhq/test-quarantine`](./test-quarantine)

@@ -1,5 +1,5 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { accountFixture, transactionFixture } from "../../bridge/fixtures";
 import { buildSignOperation } from "../../bridge/signOperation";
@@ -144,6 +144,35 @@ describe("signOperation", () => {
     }
     expect(typeof signedEvent.signedOperation.signature).toBe("string");
     expect(signedEvent.signedOperation.signature.startsWith("0x")).toBe(true);
+  });
+
+  it("builds the optimistic operation with the signed nonce", async () => {
+    const { signerContext } = createSignerContext({});
+    await collectEvents(signerContext);
+
+    expect(mockBuildOptimisticOperation).toHaveBeenCalledWith(
+      accountFixture,
+      expect.anything(),
+      new BigNumber(2),
+      { nonce: BASE_UNSIGNED_TRANSACTION.nonce, feeCurrency: undefined },
+    );
+  });
+
+  it("builds the optimistic operation with the signed fee currency, not the requested one", async () => {
+    const { signerContext } = createSignerContext({});
+    mockBuildTransaction.mockResolvedValue(BASE_UNSIGNED_TRANSACTION as never);
+
+    await collectEvents(signerContext, {
+      mode: "lock",
+      feeCurrency: "0x765DE816845861e75A25fCA122bb6898B8B1282a" as `0x${string}`,
+    });
+
+    expect(mockBuildOptimisticOperation).toHaveBeenCalledWith(
+      accountFixture,
+      expect.anything(),
+      new BigNumber(2),
+      { nonce: BASE_UNSIGNED_TRANSACTION.nonce, feeCurrency: undefined },
+    );
   });
 
   it("builds a cip64 transaction when feeCurrency is set", async () => {

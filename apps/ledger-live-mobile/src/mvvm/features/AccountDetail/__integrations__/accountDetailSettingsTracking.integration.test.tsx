@@ -20,7 +20,7 @@ const btcAccount = genAccount("account-detail-settings-tracking-btc", {
   operationsSize: 1,
 });
 
-const COMMON = { currency: "bitcoin", isTokenAccount: false };
+const COMMON = { network: "bitcoin" };
 const SETTINGS = { ...COMMON, page: "Account Settings" };
 const REMOVE = { ...COMMON, page: "Remove Account" };
 

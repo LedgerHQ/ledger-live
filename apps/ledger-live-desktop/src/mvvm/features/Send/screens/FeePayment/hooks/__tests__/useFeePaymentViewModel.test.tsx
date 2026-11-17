@@ -1,6 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import { track } from "@shared/analytics";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import {
   createMockAccount,

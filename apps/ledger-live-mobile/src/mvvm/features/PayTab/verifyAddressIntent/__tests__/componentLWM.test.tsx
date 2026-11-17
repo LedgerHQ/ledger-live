@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { VerifyAddressIntentComponentLWM } from "../componentLWM";
 
 const ADDRESS = "0xAbC0000000000000000000000000000000000001";
@@ -30,6 +30,7 @@ const jobStates = {
     deviceModelId: DeviceModelId.STAX,
     deviceName: "Ledger Stax",
   }),
+  addressDisplayed: (): VerifyAddressIntentJobState => ({ type: "addressDisplayed" }),
   verified: (): VerifyAddressIntentJobState => ({ type: "verified", address: ADDRESS }),
   cancelled: (retry: () => void = jest.fn()): VerifyAddressIntentJobState => ({
     type: "cancelled",
@@ -70,6 +71,7 @@ describe("VerifyAddressIntentComponentLWM", () => {
 
   describe.each([
     ["verifying", jobStates.verifying],
+    ["addressDisplayed", jobStates.addressDisplayed],
     ["verified", jobStates.verified],
   ])("when the job state is %s", (_, buildJobState) => {
     it("should show the next steps to follow while the address is on the Secure Screen", () => {

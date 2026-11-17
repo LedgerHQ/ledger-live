@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, type Dispatch, type SetStateAction } from "react";
 import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
@@ -9,7 +9,7 @@ import {
   type WithdrawFormError,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawForm";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { applyRatio } from "LLD/features/Perps/utils/applyRatio";
 import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -32,7 +32,14 @@ export type PerpsWithdrawData = PerpsWithdrawUiParams & {
   draft?: PerpsWithdrawDraft;
 };
 
-const EMPTY_AMOUNT_TEXT = "0";
+export const EMPTY_AMOUNT_TEXT = "0";
+
+export type PerpsWithdrawFormState = Readonly<{
+  amountText: string;
+  setAmountText: Dispatch<SetStateAction<string>>;
+  picked: PickedWithdrawAccount | undefined;
+  setPicked: Dispatch<SetStateAction<PickedWithdrawAccount | undefined>>;
+}>;
 
 function toAmountText(amount: number): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
@@ -65,8 +72,8 @@ export type PerpsWithdrawViewModel = Readonly<{
 export function usePerpsWithdrawViewModel(
   data: PerpsWithdrawData,
   onClose: () => void,
+  { amountText, setAmountText, picked, setPicked }: PerpsWithdrawFormState,
 ): PerpsWithdrawViewModel {
-  const { draft } = data;
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
   // The store copy stays in sync while the screen is open.
@@ -78,9 +85,6 @@ export function usePerpsWithdrawViewModel(
   const dispatch = useDispatch();
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
   const counterValueUnit = counterValueCurrency.units[0];
-
-  const [amountText, setAmountText] = useState(draft?.amountText ?? EMPTY_AMOUNT_TEXT);
-  const [picked, setPicked] = useState<PickedWithdrawAccount | undefined>(draft?.picked);
 
   const amount = useMemo(() => {
     const parsed = Number(amountText.replace(/[^0-9.]/g, ""));
@@ -101,18 +105,21 @@ export function usePerpsWithdrawViewModel(
     ? getAccountCurrency(destinationAccount)
     : undefined;
 
-  const changeAmount = useCallback((formattedValue: string) => {
-    setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
-  }, []);
+  const changeAmount = useCallback(
+    (formattedValue: string) => {
+      setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
+    },
+    [setAmountText],
+  );
 
   const selectAmountRatio = useCallback(
     (ratioAmount: number) => setAmountText(toAmountText(ratioAmount)),
-    [],
+    [setAmountText],
   );
 
   const selectMax = useCallback(
     () => setAmountText(toAmountText(applyRatio(maxAmount, 1, counterValueUnit.magnitude))),
-    [counterValueUnit, maxAmount],
+    [counterValueUnit, maxAmount, setAmountText],
   );
 
   const pickDestinationAccount = useCallback(() => {
@@ -124,7 +131,7 @@ export function usePerpsWithdrawViewModel(
     })
       .then(({ account, parentAccount }) => setPicked({ account, parentAccount }))
       .catch(() => undefined);
-  }, [dispatch, openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise, setPicked]);
 
   const handleReview = useCallback(() => {
     if (!form.canReview || !destinationAccount || !usdcAmount || !quote) return;

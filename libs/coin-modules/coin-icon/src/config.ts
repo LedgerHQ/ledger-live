@@ -27,3 +27,17 @@ export const getCoinConfig = (): IconCoinConfig => {
 
   return coinConfig();
 };
+
+export const iconDefaults = {
+  icon: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "ICON",
+    unit: { name: "ICX", code: "ICX", magnitude: 18 },
+  },
+} satisfies Record<string, CurrencyConfig & Partial<IconCoinConfig>>;

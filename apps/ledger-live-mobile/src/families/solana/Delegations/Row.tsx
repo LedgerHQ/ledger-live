@@ -6,7 +6,7 @@ import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { StyleSheet, TouchableOpacity, View } from "react-native";

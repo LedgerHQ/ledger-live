@@ -1,7 +1,7 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { StakingResources } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isAccountEmpty } from "./helpers";
 import { txToOps } from "./logic/history/txToOps";
 import { CosmosAPI } from "./network/Cosmos";

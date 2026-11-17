@@ -5,22 +5,18 @@ import {
   useCategorizedAssets,
   type CategorizedAssetItem,
 } from "@ledgerhq/asset-aggregation/assetCategorization/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { appVersion } from "LLM/utils/appVersion";
 import { useDistribution } from "~/actions/general";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 export function useCategorizedAssetsFromPortfolio() {
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const version = appVersion;
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
   const {
@@ -33,7 +29,7 @@ export function useCategorizedAssetsFromPortfolio() {
     ids: stockAssetIds,
     isLoading: isLoadingStockIds,
     isError: isStockIdsError,
-  } = useStockAssetIds("llm", version, !shouldDisplayAssetDiscoverability);
+  } = useStockAssetIds("llm", version);
 
   const categorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
 
@@ -46,8 +42,7 @@ export function useCategorizedAssetsFromPortfolio() {
 
     for (const item of categorizedAssets.cryptos) {
       if (blacklistedTokenIdsSet.has(item.currency.id)) continue;
-      if (shouldDisplayAssetDiscoverability && stockAssetIds.has(item.currency.id))
-        stocks.push(item);
+      if (stockAssetIds.has(item.currency.id)) stocks.push(item);
       else cryptos.push(item);
     }
 
@@ -56,7 +51,7 @@ export function useCategorizedAssetsFromPortfolio() {
     );
 
     return { cryptos, stablecoins, stocks };
-  }, [categorizedAssets, blacklistedTokenIdsSet, stockAssetIds, shouldDisplayAssetDiscoverability]);
+  }, [categorizedAssets, blacklistedTokenIdsSet, stockAssetIds]);
 
   return {
     categorizedAssets: filteredCategorizedAssets,

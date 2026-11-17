@@ -46,6 +46,7 @@ export type {
   ConnectNewDeviceStateMachineInput,
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateType,
+  EmbeddedConnectNewDeviceUIState,
   ListedDevice,
   SelectableDevice,
 } from "./connectNewDevice/types";
@@ -57,17 +58,14 @@ export {
   connectNewDeviceUseCase,
   type ConnectNewDeviceUseCaseInput,
 } from "./connectNewDevice/connectNewDeviceUseCase";
+export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
-export {
-  DeviceIntentTrackingProvider,
-  useDeviceIntentTracking,
-} from "./deviceIntentTracking/DeviceIntentTrackingContext";
 export type {
   DeviceIntentTrackingContextValue,
   DeviceIntentTrackingProperties,
   SourceFlow,
-} from "./deviceIntentTracking/DeviceIntentTrackingContext";
+} from "./deviceIntentTracking/types";
 export {
   DeviceFlowFailureType,
   getConnectDeviceFailure,
@@ -85,10 +83,7 @@ export type {
   DeviceFlowFailureProperties,
   DeviceFlowTransport,
 } from "./deviceIntentTracking/deviceFlowFailure";
-export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
-export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
-export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
-export { useDeviceIntentExecutorHeaderOverrideRequests } from "./deviceIntentHeader/useDeviceIntentExecutorHeaderOverrideRequests";
+export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/types";
 export { AddressBookProvider } from "./services/AddressBookProvider";
 export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
@@ -101,6 +96,13 @@ export {
 } from "./services/LiveBlindSigningReporter";
 export type { LiveBlindSigningContext } from "./services/LiveBlindSigningReporter";
 export { DmkCompatTransport } from "./transport/DmkCompatTransport";
+export { DeviceManagementKitMockServerTransport } from "./transport/DeviceManagementKitMockServerTransport";
+export {
+  MOCK_SERVER_COMPAT_DEVICE_ID_PREFIX,
+  buildMockServerCompatDeviceId,
+  getMockServerDeviceIdFromCompatId,
+  isMockServerCompatDeviceId,
+} from "./mockServer/mockServerCompatDeviceId";
 
 export { ConnectAppDeviceAction } from "./device-action/ConnectApp/ConnectAppDeviceAction";
 export {
@@ -150,4 +152,3 @@ export type {
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
 } from "./device-action/PrepareConnectManager/types";
-export * from "./os-update/api";

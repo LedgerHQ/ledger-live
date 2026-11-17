@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCurrenciesResolver } from "./currencies/resolver";
 import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";
@@ -177,6 +177,7 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "UNDELEGATE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "SLASH",
   "LOCK",
   "BURN",

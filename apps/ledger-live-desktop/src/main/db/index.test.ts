@@ -68,6 +68,21 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect((written as Record<string, unknown>)._this_is_not_valid_field_).toBeUndefined();
   });
 
+  it("writes both files when a windowParams save follows an app save within the debounce delay", async () => {
+    readFileMock.mockResolvedValue(appJson({}));
+
+    await Promise.all([
+      db.setKey("app", "settings", { saved: true }),
+      db.setKey("windowParams", "MainWindow", { width: 800 }),
+    ]);
+
+    const writtenPaths = writeFileMock.mock.calls.map(([path]) => path);
+    expect(writtenPaths).toContain(`${testDir}/app.json`);
+    expect(writtenPaths).toContain(`${testDir}/windowParams.json`);
+    const appCall = writeFileMock.mock.calls.find(([path]) => path === `${testDir}/app.json`)!;
+    expect(JSON.parse(appCall[1]).data.settings).toEqual({ saved: true });
+  });
+
   it("keeps user in file until identities is written", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({

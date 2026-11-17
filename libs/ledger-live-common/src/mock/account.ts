@@ -1,5 +1,5 @@
 import Prando from "prando";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenAccountOptions } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -79,6 +79,7 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
           });
           break;
         case "bitcoin":
+        case "zcash":
           (account as BitcoinAccount).bitcoinResources = {
             utxos: [],
             walletAccount: undefined,

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TRANSACTION_TYPE } from "../constants";
 import type { AleoUnspentRecord, Transaction as AleoTransaction } from "../types";

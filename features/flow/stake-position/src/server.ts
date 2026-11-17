@@ -7,7 +7,8 @@ const walletApiValue = z.string().trim().min(1).max(128);
 const openParamsSchema = z.object({
   accountId: walletApiValue,
   positionId: walletApiValue,
-  validatorAddress: walletApiValue,
+  // Empty for a position delegated to no validator, such as an undelegated Solana stake account.
+  validatorAddress: z.string().trim().max(128),
   rewards: z.unknown().optional(),
 });
 

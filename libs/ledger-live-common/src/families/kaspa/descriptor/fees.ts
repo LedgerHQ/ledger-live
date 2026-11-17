@@ -1,5 +1,5 @@
 import type { FeeDescriptor } from "../../../bridge/descriptor/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 type KaspaNetworkInfoItem = {
   label: string;

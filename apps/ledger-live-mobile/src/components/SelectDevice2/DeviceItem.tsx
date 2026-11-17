@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { isMockServerCompatDeviceId } from "@ledgerhq/live-dmk-shared";
 import Touchable from "~/components/Touchable";
 import RemoveDeviceMenu from "./RemoveDeviceMenu";
 import { type DisplayedDevice } from "./DisplayedDevice";
@@ -30,12 +31,18 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
   }
 }
 
+function getStatusWording({ device, available }: DisplayedDevice) {
+  if (isMockServerCompatDeviceId(device.deviceId)) return "mocked";
+  if (device.wired) return "usb";
+  return available ? "available" : "unavailable";
+}
+
 export default function DeviceItem({ displayedDevice, onPress }: Props) {
-  const { available } = displayedDevice;
-  const { wired } = displayedDevice.device;
+  const { wired, deviceId } = displayedDevice.device;
+  const isRemovable = !wired && !isMockServerCompatDeviceId(deviceId);
   const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] = useState<boolean>(false);
 
-  const wording = wired ? "usb" : available ? "available" : "unavailable";
+  const wording = getStatusWording(displayedDevice);
   const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";
   const testID = `device-item-${displayedDevice.device.deviceId}`;
 
@@ -69,7 +76,7 @@ export default function DeviceItem({ displayedDevice, onPress }: Props) {
             <Trans i18nKey={`manager.selectDevice.item.${wording}`} />
           </Text>
         </Flex>
-        {!wired ? (
+        {isRemovable ? (
           <>
             <Touchable event="ItemForget" onPress={onItemContextPress}>
               <IconsLegacy.OthersMedium size={24} color={"neutral.c100"} />

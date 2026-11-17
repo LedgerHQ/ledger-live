@@ -1,5 +1,7 @@
 import { BottomSheetModalProvider, GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
+import { useSelector } from "~/context/hooks";
+import { mockServerConfigSelector } from "~/reducers/settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppLockProvider } from "LLM/features/AppLock/AppLockProvider";
 import { InViewProvider } from "LLM/contexts/InViewContext";
@@ -19,11 +21,12 @@ const queryClient = new QueryClient();
 
 function AppProviders({ children }: Readonly<AppProvidersProps>) {
   logStartupEvent("AppProviders render");
+  const mockServerConfig = useSelector(mockServerConfigSelector);
 
   return (
     <QueryClientProvider client={queryClient}>
       <WalletSyncProvider>
-        <DeviceManagementKitProvider>
+        <DeviceManagementKitProvider mockServerConfig={mockServerConfig}>
           <BottomSheetModalProvider>
             <AppLockProvider>
               <PostOnboardingProviderWrapped>

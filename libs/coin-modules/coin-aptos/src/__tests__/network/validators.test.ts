@@ -1,4 +1,3 @@
-import { ApolloClient } from "@apollo/client";
 import { Aptos } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 import { getValidators } from "../../network/validators";
@@ -6,13 +5,9 @@ import { getValidators } from "../../network/validators";
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptos: jest.Mocked<any>;
 
-jest.mock("@apollo/client");
-let mockedApolloClient: jest.Mocked<any>;
-
 describe("getValidators", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
-    mockedApolloClient = jest.mocked(ApolloClient);
   });
 
   afterAll(() => {
@@ -84,17 +79,10 @@ describe("getValidators", () => {
   ];
 
   it("returns the correct information and caches the 2nd call", async () => {
+    const mockedGetValidatorsQuery = jest.fn().mockResolvedValue({ current_delegator_balances });
     mockedAptos.mockImplementation(() => ({
       getAccountResource: async () => ({ locked_until_secs: "1750051574" }),
-    }));
-
-    const mockedGetValidatorsQuery = jest.fn().mockImplementation(async () => ({
-      data: {
-        current_delegator_balances,
-      },
-    }));
-    mockedApolloClient.mockImplementation(() => ({
-      query: mockedGetValidatorsQuery,
+      queryIndexer: mockedGetValidatorsQuery,
     }));
 
     jest.useFakeTimers().setSystemTime(new Date("2025-05-15"));

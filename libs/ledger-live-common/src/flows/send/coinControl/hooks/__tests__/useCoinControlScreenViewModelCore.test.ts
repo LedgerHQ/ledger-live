@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react";
 import type {
   CoinControlConfig,

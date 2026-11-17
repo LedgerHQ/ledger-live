@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import invariant from "invariant";

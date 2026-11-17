@@ -23,6 +23,8 @@ import {
 } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import openTransportAsSubject from "../hw/openTransportAsSubject";
+import { useDispatch } from "react-redux";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 
 const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
@@ -503,6 +505,49 @@ describe("currency.list handler — token lookup concurrency", () => {
     renderHook(() => useWalletAPIServer(createDefaultOptions()));
 
     await expect(getHandler()({ currencyIds: ["ethereum/erc20/usd__coin"] })).resolves.toEqual([]);
+  });
+});
+
+describe("currency.list handler — token categories", () => {
+  const stockToken = mockTokenCurrency({ categories: ["stocks"] });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("returns the categories of a token looked up by id", async () => {
+    jest.mocked(getCryptoAssetsStore).mockReturnValue({
+      findTokenById: jest.fn().mockResolvedValue(stockToken),
+    } as never);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: [stockToken.id],
+    });
+
+    expect(currencies).toEqual([expect.objectContaining({ categories: ["stocks"] })]);
+  });
+
+  it("returns the categories of a token listed by family", async () => {
+    const tokensPage = { pages: [{ tokens: [stockToken], pagination: {} }], pageParams: [] };
+    jest.mocked(useDispatch()).mockReturnValueOnce(
+      Object.assign(Promise.resolve({ data: tokensPage, hasNextPage: false }), {
+        unsubscribe: jest.fn(),
+      }) as never,
+    );
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: ["ethereum/**"],
+    });
+
+    expect(currencies).toContainEqual(
+      expect.objectContaining({ id: stockToken.id, categories: ["stocks"] }),
+    );
   });
 });
 

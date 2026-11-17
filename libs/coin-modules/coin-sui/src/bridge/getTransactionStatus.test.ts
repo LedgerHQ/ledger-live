@@ -16,6 +16,7 @@ import {
   OneSuiMinForStake,
   OneSuiMinForUnstake,
   OneSuiMinForUnstakeToBeLeft,
+  SomeSuiForUnstake,
   SuiStakeNotFound,
   SuiUnstakeExceedsStake,
 } from "../errors";
@@ -126,6 +127,74 @@ describe("getTransactionStatus", () => {
       gasBudget: BigNumber(100_000_000),
     });
     const result = await getTransactionStatus(lowBalanceAccount, transaction);
+
+    expect(result.errors.amount).toEqual(new NotEnoughBalance());
+  });
+  describe("SomeSuiForUnstake warning on delegate", () => {
+    const delegate = createFixtureTransaction({
+      mode: "delegate",
+      amount: BigNumber(2_000_000_000),
+      fees: BigNumber(9_759_296),
+      gasBudget: BigNumber(100_000_000),
+    });
+
+    it("warns when the fee leaves less than 0.1 SUI", async () => {
+      // 0.105 SUI before gas, about 0.095 SUI after the fee.
+      const acc = createFixtureAccount({
+        balance: BigNumber(2_105_000_000),
+        spendableBalance: BigNumber(2_105_000_000),
+      });
+      const result = await getTransactionStatus(acc, delegate);
+
+      expect(result.warnings.amount).toEqual(new SomeSuiForUnstake());
+    });
+
+    it("does not warn on a max stake, which leaves exactly 0.1 SUI after the fee", async () => {
+      const acc = createFixtureAccount({
+        balance: BigNumber(2_109_759_296),
+        spendableBalance: BigNumber(2_109_759_296),
+      });
+      const result = await getTransactionStatus(acc, delegate);
+
+      expect(result.warnings.amount).toBeUndefined();
+    });
+  });
+  it("does not let staked SUI pay the gas of a token send", async () => {
+    const transaction = createFixtureTransaction({
+      subAccountId: "subAccountId",
+      amount: BigNumber(1),
+      fees: BigNumber(1_000_000),
+      gasBudget: BigNumber(2_000_000),
+    });
+    const stakedAccount = createFixtureAccount({
+      id: "parentAccountId",
+      balance: BigNumber(10_000_000_000),
+      spendableBalance: BigNumber(1_000_000),
+      subAccounts: [
+        createFixtureAccount({
+          id: "subAccountId",
+          parentId: "parentAccountId",
+          type: "TokenAccount",
+          balance: BigNumber(100),
+        }),
+      ],
+    });
+    const result = await getTransactionStatus(stakedAccount, transaction);
+
+    expect(result.errors.amount).toEqual(new NotEnoughBalanceInParentAccount());
+  });
+  it("does not let staked SUI fund a send", async () => {
+    // `balance` includes staked SUI, which cannot be spent until unstaked.
+    const stakedAccount = createFixtureAccount({
+      balance: BigNumber(10_000_000_000),
+      spendableBalance: BigNumber(1_000_000_000),
+    });
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(2_000_000_000),
+      fees: BigNumber(1_000_000),
+      gasBudget: BigNumber(2_000_000),
+    });
+    const result = await getTransactionStatus(stakedAccount, transaction);
 
     expect(result.errors.amount).toEqual(new NotEnoughBalance());
   });

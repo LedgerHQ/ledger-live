@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import type { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
@@ -17,10 +16,8 @@ import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 type MarketScreenRoute = RouteProp<MarketNavigatorStackParamList, ScreenName.MarketList>;
 
-export type { MarketHighlightCard } from "./useMarketHighlights";
-
-export type { MarketCategories, MarketCategoryTab } from "./useMarketCategories";
-export type { MarketFilters, MarketFilterOption } from "./useMarketFilters";
+export type { MarketCategories } from "./useMarketCategories";
+export type { MarketFilters } from "./useMarketFilters";
 
 export type MarketScreenAssetsList = {
   assets: MarketAssetDisplayData[];
@@ -44,10 +41,7 @@ export type MarketScreenViewModel = {
 
 export function useMarketScreenViewModel(): MarketScreenViewModel {
   const route = useRoute<MarketScreenRoute>();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
-  const routeCategory = shouldDisplayAssetDiscoverability
-    ? parseMarketListCategory(route.params?.category)
-    : undefined;
+  const routeCategory = parseMarketListCategory(route.params?.category);
   const search = useMarketSearch();
   const highlights = useMarketHighlights();
   const categories = useMarketCategories({ routeCategory });

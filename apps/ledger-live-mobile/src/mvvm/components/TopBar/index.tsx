@@ -13,7 +13,6 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const {
     onMyWalletPress,
-    shouldDisplayAssetDiscoverability,
     onSearchPress,
     onDiscoverPress,
     onTransactionHistoryPress,
@@ -33,7 +32,6 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
   return (
     <TopBarView
       onMyWalletPress={onMyWalletPress}
-      shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
       onSearchPress={onSearchPress}
       onDiscoverPress={onDiscoverPress}
       onTransactionHistoryPress={onTransactionHistoryPress}

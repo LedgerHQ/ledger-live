@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getFees } from "./network";
 import { GAS } from "./constants";
 import { MultiversXEncodeTransaction } from "./encode";

@@ -1,4 +1,5 @@
-import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCY_ALIASES } from "../registry";
+import { CRYPTO_CURRENCIES_REGISTRY } from "../registry";
+import { CRYPTO_CURRENCY_ALIASES } from "../registry.internals";
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,

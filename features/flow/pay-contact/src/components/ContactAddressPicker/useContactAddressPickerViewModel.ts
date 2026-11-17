@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
-import type { ContactAddressPickerProps } from "../../types";
+import type { ContactAddressPickerProps } from "./ContactAddressPicker.types";
 import { buildContactAddressPickerGroups } from "./model/buildContactAddressPickerGroups";
 
 export type UseContactAddressPickerViewModelParams = Readonly<{

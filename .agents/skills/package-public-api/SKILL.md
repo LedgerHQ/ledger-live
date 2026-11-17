@@ -3,7 +3,7 @@ name: package-public-api
 description: |
   A new-architecture package (shared/, domain/, features/) exposes its API through barrels that
   contain nothing but `export *`, and keeps its private code in an internals location.
-  Read this when creating a package under shared/, domain/ or features/, when editing any
+  Read when creating a package under shared/, domain/ or features/, when editing any
   `index.*` file, or when a `lint:structure` check fails.
 ---
 
@@ -52,8 +52,6 @@ Under `src/`, an `index.*` (platform variants included) is allowed in three plac
    way do not count). The wording is `BARREL_LOCATION` and `CHAIN_BREAKS` in
    [`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js).
    <!-- rules.js: BARREL_LOCATION, CHAIN_BREAKS -->
-   An entry reached from another entry counts from itself, so `jest.native.ts` re-exporting
-   `index.native.ts` adds no level, and the entry may hold whatever the barrel rules allow it.
 3. **An internals location**: `internals/`, as defined below.
 
 ```text

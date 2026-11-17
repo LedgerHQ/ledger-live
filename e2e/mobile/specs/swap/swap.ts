@@ -69,7 +69,6 @@ export function runSwapTest(
             `skipping swap completion (covered by the token-approval spec).`,
         );
       } else {
-        await app.common.disableSynchronizationForiOS();
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
         await app.swap.waitForSuccessAndClose();

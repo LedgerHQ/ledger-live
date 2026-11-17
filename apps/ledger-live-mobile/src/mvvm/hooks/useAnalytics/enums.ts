@@ -4,8 +4,6 @@ export enum AnalyticContexts {
 }
 
 export enum AnalyticPages {
-  AddAccountSelectAsset = "Add Account Select Asset",
-  AddAccountSelectNetwork = "Add Account Select Network",
   AddAccountSuccess = "Add Account Success",
   AddAccountWarning = "Add Account Warning",
   AccountsFound = "Found Accounts",
@@ -13,14 +11,9 @@ export enum AnalyticPages {
 }
 
 export enum AnalyticEvents {
-  AssetClicked = "asset_clicked",
   ButtonClicked = "button_clicked",
-  AssetSearched = "asset_searched",
-  NetworkClicked = "network_clicked",
   AccountAdded = "account_added",
   AccountClicked = "account_clicked",
-  SelectAsset = "Add Account Select Asset",
-  SelectNetwork = "Add Account Select Network",
   AccountLookup = "Looking for accounts",
   FundingQuickAction = "Add Account Funding Actions",
 }

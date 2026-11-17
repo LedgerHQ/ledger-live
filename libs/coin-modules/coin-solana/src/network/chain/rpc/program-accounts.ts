@@ -35,9 +35,9 @@ const MAX_PAGES = 100;
  *
  * Helius deprioritizes large getProgramAccounts requests and wants the paginated
  * getProgramAccountsV2 instead, but V2 is a Helius extension rather than standard Solana
- * RPC: vanilla agave answers -32601, which covers devnet and testnet (clusterApiUrl, see
- * endpointByCurrencyId), the coin tester's local validator, and any provider we fail over
- * to through the remotely configurable rpcUrls. So we try V2 and fall back to V1.
+ * RPC: vanilla agave answers -32601, which covers devnet and testnet (public cluster
+ * endpoints), the coin tester's local validator, and any provider we switch to through the
+ * remotely configurable rpcUrl. So we try V2 and fall back to V1.
  * web3.js has no helper for V2, hence the raw JSON-RPC call.
  *
  * @see https://www.helius.dev/docs/api-reference/rpc/http/getprogramaccountsv2

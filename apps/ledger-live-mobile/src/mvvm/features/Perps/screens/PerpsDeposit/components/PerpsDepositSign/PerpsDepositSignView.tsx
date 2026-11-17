@@ -48,7 +48,11 @@ function DepositStep({ deviceStep, device, onDeviceError }: DepositStepProps) {
   ));
 }
 
-function DepositError({ error, retry }: Readonly<{ error: Error; retry: () => void }>) {
+function DepositError({
+  error,
+  isGeneric,
+  retry,
+}: Readonly<{ error: Error; isGeneric: boolean; retry: () => void }>) {
   const { t } = useTranslation();
 
   return (
@@ -57,8 +61,20 @@ function DepositError({ error, retry }: Readonly<{ error: Error; retry: () => vo
       <InfoState
         preset="error"
         size="hug"
-        title={<TranslatedError error={error} field="title" />}
-        description={<TranslatedError error={error} field="description" />}
+        title={
+          isGeneric ? (
+            t("perpsDepositSign.genericError.title")
+          ) : (
+            <TranslatedError error={error} field="title" />
+          )
+        }
+        description={
+          isGeneric ? (
+            t("perpsDepositSign.genericError.description")
+          ) : (
+            <TranslatedError error={error} field="description" />
+          )
+        }
         primaryCta={{
           label: t("common.retry"),
           onPress: retry,
@@ -113,7 +129,7 @@ export function PerpsDepositSignView({
       >
         <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
           {selectedDevice && deviceStep.kind === "error" ? (
-            <DepositError error={deviceStep.error} retry={retry} />
+            <DepositError error={deviceStep.error} isGeneric={deviceStep.isGeneric} retry={retry} />
           ) : (
             <Box lx={{ alignItems: "center" }} testID="perps-deposit-sign-step">
               {selectedDevice ? (

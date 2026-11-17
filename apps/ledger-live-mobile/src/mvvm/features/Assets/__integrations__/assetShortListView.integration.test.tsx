@@ -62,15 +62,16 @@ const renderComponent = (
 };
 
 describe("AssetShortListView", () => {
-  it("should render all assets when no limit is set", () => {
+  it("should render all assets when no limit is set", async () => {
     renderComponent({});
 
     const assetsList = screen.getByTestId("AssetsList");
     expect(assetsList).toBeVisible();
 
-    // MockedAccounts has 7 accounts across 7 currencies + 1 USDT token = 8 assets
+    // MockedAccounts has 7 accounts across 7 currencies + 1 USDT token = 8 assets.
+    // Linea is remapped to Ethereum via the DADA ethereum meta-currency.
     const expectedAssetCount = 8;
-    const assetNames = screen.getAllByTestId(/^assetItem-.+-name$/);
+    const assetNames = await screen.findAllByTestId(/^assetItem-.+-name$/);
     const balanceElements = screen.getAllByTestId(/^assetItem-.+-balance$/);
     const tickerElements = screen.getAllByTestId(/^assetItem-.+-ticker$/);
     // Delta component renders "−" placeholder when percentage is 0/null/NaN
@@ -83,22 +84,23 @@ describe("AssetShortListView", () => {
     expect(minusSigns.length).toBe(expectedAssetCount);
   });
 
-  it("should render asset currency names", () => {
+  it("should render asset currency names", async () => {
     renderComponent({});
-    // Use testIDs to avoid ambiguity (e.g. "Dash" name vs "DASH" ticker)
-    expect(screen.getByTestId("assetItem-Cronos-name")).toBeVisible();
+    // Use testIDs to avoid ambiguity (e.g. "Dash" name vs "DASH" ticker).
+    // Linea is remapped to Ethereum via the DADA ethereum meta-currency.
+    expect(await screen.findByTestId("assetItem-Cronos-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-Dash-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-Dogecoin-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-Energy Web-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-Ethereum Classic-name")).toBeVisible();
-    expect(screen.getByTestId("assetItem-Linea-name")).toBeVisible();
+    expect(screen.getByTestId("assetItem-Ethereum-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-NEAR-name")).toBeVisible();
     expect(screen.getByTestId("assetItem-Tether-name")).toBeVisible();
   });
 
-  it("should limit the number of displayed assets", () => {
+  it("should limit the number of displayed assets", async () => {
     renderComponent({ limitNumberOfAssets: 3 });
-    const assetNames = screen.getAllByTestId(/^assetItem-.+-name$/);
+    const assetNames = await screen.findAllByTestId(/^assetItem-.+-name$/);
     expect(assetNames.length).toBe(3);
   });
 
@@ -135,17 +137,19 @@ describe("AssetShortListView", () => {
       jest.clearAllMocks();
     });
 
-    it("should display a token that is not blacklisted", () => {
+    it("should display a token that is not blacklisted", async () => {
       renderComponent({}, mockStateWithNonBlacklistedToken);
-      expect(screen.getByText(usdcToken.name)).toBeVisible();
+      expect(await screen.findByText(usdcToken.name)).toBeVisible();
     });
 
-    it("should not display a blacklisted token", () => {
+    it("should not display a blacklisted token", async () => {
       renderComponent({}, mockStateWithBlacklistedToken);
+      // Wait for the parent asset to load so the empty-token assertion is not a false positive.
+      expect(await screen.findByTestId("assetItem-Ethereum-name")).toBeVisible();
       expect(screen.queryByText(usdcToken.name)).toBeNull();
     });
 
-    it("should not display a blacklisted parent CryptoCurrency", () => {
+    it("should not display a blacklisted parent CryptoCurrency", async () => {
       const mockStateWithBlacklistedEthereum = (state: State): State => {
         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
         return {
@@ -156,13 +160,17 @@ describe("AssetShortListView", () => {
       };
 
       renderComponent({}, mockStateWithBlacklistedEthereum);
+      // Wait for the token sibling so the missing-parent assertion is not a false positive.
+      expect(await screen.findByText(usdcToken.name)).toBeVisible();
       expect(screen.queryByTestId("assetItem-Ethereum-name")).toBeNull();
     });
   });
 
   it("should handle asset press", async () => {
     const { user } = renderComponent({ limitNumberOfAssets: 3 });
-    const assetItems = screen.getAllByTestId(/^assetItem-(?!.*-(name|ticker|balance|delta)$)/);
+    const assetItems = await screen.findAllByTestId(
+      /^assetItem-(?!.*-(name|ticker|balance|delta)$)/,
+    );
     expect(assetItems.length).toBe(3);
 
     // Press the first asset — should not throw

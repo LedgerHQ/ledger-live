@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getChangeToReturn, hasTxOutputs, type StatusWithTxOutputs } from "../changeToReturn";
 import type { TransactionStatus } from "../../../../../coin-modules/transaction-types";
 

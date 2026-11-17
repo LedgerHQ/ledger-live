@@ -1,6 +1,6 @@
 import React from "react";
 import type { Currency } from "@domain/entity-currency";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { CounterValueCellView } from "./CounterValueCellView";
 import { useCounterValueCellViewModel } from "./useCounterValueCellViewModel";
 

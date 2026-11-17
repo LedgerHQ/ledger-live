@@ -1,6 +1,6 @@
 ---
 name: test-coverage
-description: Increase test coverage to 90% on a target zone with iterative writing and refactoring
+description: Increase test coverage to 90% on a target zone with iterative writing and refactoring. Use when driving coverage toward 90% in a chosen package or folder.
 disable-model-invocation: true
 ---
 

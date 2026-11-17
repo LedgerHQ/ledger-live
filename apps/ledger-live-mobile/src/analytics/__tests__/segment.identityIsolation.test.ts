@@ -194,5 +194,24 @@ describe("segment identity isolation (LIVE-34720)", () => {
 
       expect(result?.integrations?.Appboy).not.toBe(false);
     });
+
+    it("skips Braze when only the startup time traits changed", () => {
+      const plugin = new BrazePlugin();
+      const identify = (traits: Record<string, unknown>) =>
+        plugin.execute({
+          type: EventType.IdentifyEvent,
+          userId: ANALYTICS_USER_ID,
+          anonymousId: "anonymous-id",
+          traits: { braze_external_id: ANALYTICS_USER_ID, ...traits },
+        } as SegmentEvent);
+
+      identify({ appTimeToInteractiveMilliseconds: 1200, appTimeToInteractiveBase: "process" });
+      const result = identify({
+        appTimeToInteractiveMilliseconds: 300,
+        appTimeToInteractiveBase: "js",
+      });
+
+      expect(result?.integrations?.Appboy).toBe(false);
+    });
   });
 });

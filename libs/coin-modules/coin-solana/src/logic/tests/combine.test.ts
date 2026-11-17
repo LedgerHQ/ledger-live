@@ -1,8 +1,32 @@
-import { PublicKey, VersionedTransaction, TransactionMessage } from "@solana/web3.js";
+import {
+  PublicKey,
+  SystemProgram,
+  VersionedTransaction,
+  TransactionMessage,
+} from "@solana/web3.js";
 import { combine } from "../combine";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+const TEST_PARTNER = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
 const TEST_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+
+/** A partner pays the fees (index 0) and TEST_ADDRESS signs second, as in a gasless swap. */
+function makeCoSignedTx(): string {
+  const message = new TransactionMessage({
+    payerKey: new PublicKey(TEST_PARTNER),
+    recentBlockhash: TEST_BLOCKHASH,
+    instructions: [
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(TEST_ADDRESS),
+        toPubkey: new PublicKey(TEST_PARTNER),
+        lamports: 1,
+      }),
+    ],
+  });
+  return Buffer.from(new VersionedTransaction(message.compileToV0Message()).serialize()).toString(
+    "base64",
+  );
+}
 
 function makeSerializedTx(payerKey: string = TEST_ADDRESS): string {
   const message = new TransactionMessage({
@@ -25,6 +49,34 @@ describe("combine", () => {
     const deserialized = VersionedTransaction.deserialize(Buffer.from(result, "base64"));
     expect(deserialized.signatures).toHaveLength(1);
     expect(Buffer.from(deserialized.signatures[0]).toString("hex")).toBe(signature);
+  });
+
+  it("places the signature in the signer's slot when a partner pays the fees", () => {
+    const signature = Buffer.alloc(64, 2).toString("hex");
+
+    const result = combine(makeCoSignedTx(), [signature], TEST_ADDRESS);
+
+    const deserialized = VersionedTransaction.deserialize(Buffer.from(result, "base64"));
+    expect(deserialized.signatures).toHaveLength(2);
+    expect(Buffer.from(deserialized.signatures[1]).toString("hex")).toBe(signature);
+    expect(Buffer.from(deserialized.signatures[0]).equals(Buffer.alloc(64))).toBe(true);
+  });
+
+  it("places the signature in the signer's slot when the signer pays the fees", () => {
+    const signature = Buffer.alloc(64, 2).toString("hex");
+
+    const result = combine(makeSerializedTx(), [signature], TEST_ADDRESS);
+
+    const deserialized = VersionedTransaction.deserialize(Buffer.from(result, "base64"));
+    expect(Buffer.from(deserialized.signatures[0]).toString("hex")).toBe(signature);
+  });
+
+  it("refuses a signer the transaction does not require", () => {
+    const signature = Buffer.alloc(64, 2).toString("hex");
+
+    expect(() =>
+      combine(makeCoSignedTx(), [signature], "3Mc6bGBhgRyT5RMa2Cfkp3BD2TXFoaVaKzDrKJLemnaZ"),
+    ).toThrow("not required to sign");
   });
 
   it("should throw for transaction with no account keys", () => {

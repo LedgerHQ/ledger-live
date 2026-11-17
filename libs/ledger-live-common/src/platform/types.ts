@@ -15,7 +15,19 @@ export const FAMILIES_MAPPING_PLATFORM_TO_LL = {
   ripple: "xrp",
 } as const;
 
-export const FAMILIES_MAPPING_LL_TO_PLATFORM = reverseRecord(FAMILIES_MAPPING_PLATFORM_TO_LL);
+/**
+ * Ledger Wallet families the live-app-sdk has no family for, presented to live apps as the one
+ * whose transactions and account model they share. Not reversible: a live app's "bitcoin" is
+ * bitcoin.
+ */
+const LL_ONLY_FAMILIES_MAPPING_TO_PLATFORM = {
+  zcash: "bitcoin",
+} as const;
+
+export const FAMILIES_MAPPING_LL_TO_PLATFORM = {
+  ...reverseRecord(FAMILIES_MAPPING_PLATFORM_TO_LL),
+  ...LL_ONLY_FAMILIES_MAPPING_TO_PLATFORM,
+};
 
 /**
  * this is a hack to add the "evm" family to the list of supported families of
@@ -27,6 +39,7 @@ export const FAMILIES_MAPPING_LL_TO_PLATFORM = reverseRecord(FAMILIES_MAPPING_PL
 export const PLATFORM_FAMILIES = [
   ...Object.values(FAMILIES),
   ...Object.values(FAMILIES_MAPPING_PLATFORM_TO_LL),
+  ...Object.keys(LL_ONLY_FAMILIES_MAPPING_TO_PLATFORM),
 ];
 
 export { FAMILIES as PLATFORM_FAMILIES_ENUM };

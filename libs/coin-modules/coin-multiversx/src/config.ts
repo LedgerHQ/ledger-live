@@ -24,3 +24,17 @@ export default coinConfig;
 // Backward-compatible named exports used by the bridge path.
 export const setCoinConfig = coinConfig.setCoinConfig.bind(coinConfig);
 export const getCoinConfig = coinConfig.getCoinConfig.bind(coinConfig);
+
+export const multiversxDefaults = {
+  multiversx: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "MultiversX",
+    unit: { name: "EGLD", code: "EGLD", magnitude: 18 },
+  },
+} satisfies Record<string, CurrencyConfig & Partial<MultiversXCoinConfig>>;

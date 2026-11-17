@@ -12,6 +12,7 @@ const sonic = getCryptoCurrencyById("sonic");
 const core = getCryptoCurrencyById("core");
 const base = getCryptoCurrencyById("base");
 const robinhood = getCryptoCurrencyById("robinhood");
+const alpenTestnet = getCryptoCurrencyById("alpen_testnet");
 
 export const USDC_ON_ETHEREUM: TokenCurrency = {
   type: "TokenCurrency",
@@ -128,6 +129,19 @@ export const STCORE_ON_CORE: TokenCurrency = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "stCORE", code: "stCORE", magnitude: 18 }],
+} as TokenCurrency;
+
+export const WABTC_ON_ALPEN_TESTNET: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "alpen_testnet/erc20/wrapped_alpen_btc_0xa2903243f20eede1839cb07ee5ce6b2ba5820000",
+  contractAddress: "0xA2903243F20eEdE1839Cb07Ee5ce6b2Ba5820000",
+  parentCurrencyId: alpenTestnet.id,
+  tokenType: "erc20",
+  name: "Wrapped Alpen BTC",
+  ticker: "tWABTC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "Wrapped Alpen BTC", code: "tWABTC", magnitude: 18 }],
 } as TokenCurrency;
 
 setCryptoAssetsStore(

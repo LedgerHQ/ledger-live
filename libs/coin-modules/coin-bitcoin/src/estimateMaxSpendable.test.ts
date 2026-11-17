@@ -1,5 +1,5 @@
 // libs/coin-modules/coin-bitcoin/src/estimateMaxSpendable.test.ts
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 // ---------- Mocks (paths must match imports inside estimateMaxSpendable.ts) ----------
 const estimateAccountMaxSpendable = jest.fn().mockResolvedValue(new BigNumber(123456));

@@ -1,9 +1,6 @@
 import { renderHook } from "@testing-library/react";
-import {
-  BlockingStateType,
-  DeviceIntentTrackingProvider,
-  FinalStateType,
-} from "@ledgerhq/live-dmk-shared";
+import { BlockingStateType, FinalStateType } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import React from "react";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { initializerDevice } from "../../testUtils";

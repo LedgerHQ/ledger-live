@@ -3,7 +3,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import BigNumber from "bignumber.js";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";
-import cosmosBridge, { getDeviceSignOptions } from "./api";
+import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";
+import cosmosBridge, { describeOptimisticOperation, getDeviceSignOptions } from "./api";
 
 const mockGetRedelegations = jest.fn();
 jest.mock("@ledgerhq/coin-cosmos/logic/staking/getRedelegations", () => ({
@@ -77,6 +78,74 @@ describe("cosmos bridge", () => {
       expect(mockGetRedelegations).toHaveBeenCalledWith("cosmos", "uatom", "cosmos1a");
       expect(result.redelegations).toEqual(redelegations);
       expect(result.delegatedBalance).toBe(base.delegatedBalance);
+    });
+  });
+
+  describe("describeOptimisticOperation", () => {
+    const account = { currency: cosmos } as never;
+
+    it("leaves a send to the generic mapping", () => {
+      expect(
+        describeOptimisticOperation("send", account, { mode: "send", recipient: "cosmos1r" }),
+      ).toBeUndefined();
+    });
+
+    it.each(["delegate", "undelegate", "claimReward", "compoundReward"])(
+      "exposes the validator and amount of a %s on extra.validators",
+      mode => {
+        const amount = new BigNumber(1_000_000);
+        const descriptor = describeOptimisticOperation(mode, account, {
+          mode,
+          valAddress: "cosmosvaloper1val",
+          amount,
+        });
+
+        expect(descriptor?.extra).toEqual({
+          validators: [{ address: "cosmosvaloper1val", amount }],
+        });
+        expect(descriptor?.type).toBeUndefined();
+        expect(descriptor?.value).toBeUndefined();
+      },
+    );
+
+    it("exposes the destination as validator and the origin as sourceValidator of a redelegation", () => {
+      const amount = new BigNumber(42);
+      const descriptor = describeOptimisticOperation("redelegate", account, {
+        mode: "redelegate",
+        valAddress: "cosmosvaloper1src",
+        dstValAddress: "cosmosvaloper1dst",
+        amount,
+      });
+
+      expect(descriptor?.extra).toEqual({
+        validators: [{ address: "cosmosvaloper1dst", amount }],
+        sourceValidator: "cosmosvaloper1src",
+      });
+    });
+
+    it("surfaces the validator on the operation built after signing a delegation", () => {
+      const operation = buildOptimisticOperation(
+        {
+          id: "js:2:cosmos:cosmos1sender:",
+          freshAddress: "cosmos1sender",
+          currency: cosmos,
+        } as never,
+        {
+          family: "cosmos",
+          mode: "delegate",
+          recipient: "",
+          valAddress: "cosmosvaloper1val",
+          amount: new BigNumber(1_000_000),
+          fees: new BigNumber(5_000),
+        } as never,
+        7n,
+        describeOptimisticOperation,
+      );
+
+      expect(operation.type).toBe("DELEGATE");
+      expect(operation.extra).toMatchObject({
+        validators: [{ address: "cosmosvaloper1val", amount: new BigNumber(1_000_000) }],
+      });
     });
   });
 

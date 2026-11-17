@@ -8,6 +8,14 @@ const USE_SHARED_CLIPBOARD = "Use copyToClipboard / readClipboard from @shared/c
 
 export const LODASH = "lodash";
 
+// Listed by every config: bignumber.js 11's CJS types expose the class only as the default export.
+export const BIGNUMBER_NAMED_IMPORT = {
+  name: "bignumber.js",
+  importNames: ["BigNumber"],
+  message:
+    'Import the default export: import BigNumber from "bignumber.js" (bignumber.js 11 types).',
+};
+
 export const EXPO_CLIPBOARD = {
   name: "expo-clipboard",
   message: `${USE_SHARED_CLIPBOARD} instead of expo-clipboard.`,
@@ -49,7 +57,10 @@ export const WALLET_FRAMEWORK_CURRENCY_TYPES = [
     name: "@ledgerhq/ledger-wallet-framework/types",
     ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION,
   },
-  { name: "@ledgerhq/ledger-wallet-framework/api", ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION },
+  {
+    name: "@ledgerhq/ledger-wallet-framework/api",
+    ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION,
+  },
 ];
 
 export const LIVE_COMMON_LIB = {
@@ -122,6 +133,26 @@ export const COIN_MODULE_CREATE_API = {
     "break.",
 };
 
+export const COIN_MODULE_LAYER_IMPORTS = {
+  group: [
+    "@ledgerhq/**",
+    "!@ledgerhq/logs",
+    "!@ledgerhq/logs/**",
+    "!@ledgerhq/live-network",
+    "!@ledgerhq/live-network/**",
+    "!@ledgerhq/coin-module-framework",
+    "!@ledgerhq/coin-module-framework/**",
+    "!@ledgerhq/ledger-wallet-framework",
+    "!@ledgerhq/ledger-wallet-framework/**",
+  ],
+  message:
+    "The api/, logic/ and network/ folders of a coin module may import only @ledgerhq/logs, " +
+    "@ledgerhq/live-network, @ledgerhq/coin-module-framework and " +
+    "@ledgerhq/ledger-wallet-framework, so the module can move to LedgerHQ/coin-modules. " +
+    "Read the value from the coin config (context.config()) instead, or move the code to " +
+    "bridge/. If the import is genuinely needed, add the file to the exemptions in libs-coin.mts.",
+};
+
 export const RELATIVE_IMPORTS = {
   group: ["**/../**"],
   message: "Relative imports are restricted. Please use bare imports or path aliases instead.",
@@ -131,10 +162,14 @@ export const RELATIVE_IMPORTS = {
 // two that set the rule keeps the last one only, so a JSON config extends the one that holds its
 // whole list.
 export const JSON_FRAGMENTS = {
-  "lodash.json": { paths: [LODASH] },
-  "relative-imports.json": { patterns: [RELATIVE_IMPORTS] },
+  "bignumber.json": { paths: [BIGNUMBER_NAMED_IMPORT] },
+  "lodash.json": { paths: [LODASH, BIGNUMBER_NAMED_IMPORT] },
+  "relative-imports.json": {
+    paths: [BIGNUMBER_NAMED_IMPORT],
+    patterns: [RELATIVE_IMPORTS],
+  },
   "wallet-cli.json": {
-    paths: [LODASH],
+    paths: [LODASH, BIGNUMBER_NAMED_IMPORT],
     patterns: [LIVE_COMMON_LIB, LIVE_COMMON_CURRENCY_ACCESSORS],
   },
 };

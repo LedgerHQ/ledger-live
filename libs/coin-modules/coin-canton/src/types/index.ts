@@ -15,3 +15,4 @@ export type {
   PreApprovalResult,
 } from "./onboard";
 export * from "./signer";
+export * from "./transaction";

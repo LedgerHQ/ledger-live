@@ -1,5 +1,10 @@
 import { mergeAssetsDataPages } from "./pagination";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import type { AssetsDataWithPagination } from "./types";
+
+const btc = AggregatedAssetIdSchema.parse("btc");
+const eth = AggregatedAssetIdSchema.parse("eth");
+const sol = AggregatedAssetIdSchema.parse("sol");
 
 const makePage = (overrides: Partial<AssetsDataWithPagination> = {}): AssetsDataWithPagination => ({
   cryptoAssets: {},
@@ -23,8 +28,8 @@ describe("mergeAssetsDataPages", () => {
 
   it("returns the single page's content unchanged", () => {
     const page = makePage({
-      cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
-      currenciesOrder: { metaCurrencyIds: ["btc"], key: "marketCap", order: "desc" },
+      cryptoAssets: { [btc]: { id: btc, ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
+      currenciesOrder: { metaCurrencyIds: [btc], key: "marketCap", order: "desc" },
       pagination: { nextCursor: "cursor-2" },
     });
 
@@ -35,7 +40,7 @@ describe("mergeAssetsDataPages", () => {
     it("combines disjoint keys from every collection", () => {
       const merged = mergeAssetsDataPages([
         makePage({
-          cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
+          cryptoAssets: { [btc]: { id: btc, ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
           networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
           interestRates: {
             btc: { currencyId: "btc", rate: 1, type: "APY", fetchAt: "2026-01-01" },
@@ -43,7 +48,7 @@ describe("mergeAssetsDataPages", () => {
           markets: { btc: { price: 1 } },
         }),
         makePage({
-          cryptoAssets: { eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: {} } },
+          cryptoAssets: { [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: {} } },
           networks: { ethereum: { id: "ethereum", name: "Ethereum" } },
           interestRates: {
             eth: { currencyId: "eth", rate: 2, type: "APR", fetchAt: "2026-01-01" },
@@ -72,25 +77,25 @@ describe("mergeAssetsDataPages", () => {
       const merged = mergeAssetsDataPages([
         makePage({
           cryptoAssets: {
-            eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: { ethereum: "ethereum" } },
+            [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: { ethereum: "ethereum" } },
           },
         }),
         makePage({
           cryptoAssets: {
-            eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: { arbitrum: "arbitrum" } },
+            [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: { arbitrum: "arbitrum" } },
           },
         }),
       ]);
 
-      expect(merged!.cryptoAssets.eth.assetsIds).toEqual({ arbitrum: "arbitrum" });
+      expect(merged!.cryptoAssets[eth].assetsIds).toEqual({ arbitrum: "arbitrum" });
     });
   });
 
   describe("currenciesOrder", () => {
     it("concatenates metaCurrencyIds in page order", () => {
       const merged = mergeAssetsDataPages([
-        makePage({ currenciesOrder: { metaCurrencyIds: ["btc", "eth"], key: "k", order: "desc" } }),
-        makePage({ currenciesOrder: { metaCurrencyIds: ["sol"], key: "k", order: "desc" } }),
+        makePage({ currenciesOrder: { metaCurrencyIds: [btc, eth], key: "k", order: "desc" } }),
+        makePage({ currenciesOrder: { metaCurrencyIds: [sol], key: "k", order: "desc" } }),
       ]);
 
       expect(merged!.currenciesOrder.metaCurrencyIds).toEqual(["btc", "eth", "sol"]);
@@ -98,8 +103,8 @@ describe("mergeAssetsDataPages", () => {
 
     it("keeps duplicate ids rather than deduplicating them", () => {
       const merged = mergeAssetsDataPages([
-        makePage({ currenciesOrder: { metaCurrencyIds: ["btc"], key: "k", order: "desc" } }),
-        makePage({ currenciesOrder: { metaCurrencyIds: ["btc"], key: "k", order: "desc" } }),
+        makePage({ currenciesOrder: { metaCurrencyIds: [btc], key: "k", order: "desc" } }),
+        makePage({ currenciesOrder: { metaCurrencyIds: [btc], key: "k", order: "desc" } }),
       ]);
 
       expect(merged!.currenciesOrder.metaCurrencyIds).toEqual(["btc", "btc"]);
@@ -138,12 +143,12 @@ describe("mergeAssetsDataPages", () => {
 
   it("does not mutate the input pages", () => {
     const first = makePage({
-      cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
-      currenciesOrder: { metaCurrencyIds: ["btc"], key: "k", order: "desc" },
+      cryptoAssets: { [btc]: { id: btc, ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
+      currenciesOrder: { metaCurrencyIds: [btc], key: "k", order: "desc" },
     });
     const second = makePage({
-      cryptoAssets: { eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: {} } },
-      currenciesOrder: { metaCurrencyIds: ["eth"], key: "k", order: "desc" },
+      cryptoAssets: { [eth]: { id: eth, ticker: "ETH", name: "Ether", assetsIds: {} } },
+      currenciesOrder: { metaCurrencyIds: [eth], key: "k", order: "desc" },
     });
 
     mergeAssetsDataPages([first, second]);
@@ -155,7 +160,7 @@ describe("mergeAssetsDataPages", () => {
 
   it("builds a fresh accumulator on every call", () => {
     const page = makePage({
-      currenciesOrder: { metaCurrencyIds: ["btc"], key: "k", order: "desc" },
+      currenciesOrder: { metaCurrencyIds: [btc], key: "k", order: "desc" },
     });
 
     const first = mergeAssetsDataPages([page]);

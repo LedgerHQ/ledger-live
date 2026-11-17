@@ -26,7 +26,7 @@ import {
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useFeature } from "@features/platform-feature-flags";
 import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
-import { hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { selectHasOsUpdates } from "@domain/entity-device-os-update";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
   AppWithDependencies,
@@ -65,7 +65,7 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   }, [device.wired, lastConnectedDevice, navigation]);
 
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
-  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
+  const hasOsUpdates = useSelector(selectHasOsUpdates);
   // Landing here with `firmwareUpdate` (e.g. from the portfolio banner) opens the OS update "What's new".
   useEffect(() => {
     if (!isOsUpdatesEnabled || !firmwareUpdate) return;

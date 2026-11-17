@@ -3,7 +3,17 @@
   "targets": {
     "build-e2e-deps": {
       "executor": "nx:noop",
-      "dependsOn": ["^build", "live-mobile:build"]
+      "dependsOn": ["^build"]
+    },
+    "test:ci": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "cache": false,
+      "options": {
+        "command": "pnpm test:ci",
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": true
+      }
     }
   }
 }

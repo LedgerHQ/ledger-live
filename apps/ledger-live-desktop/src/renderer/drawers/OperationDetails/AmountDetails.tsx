@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";

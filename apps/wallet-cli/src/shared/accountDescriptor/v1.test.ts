@@ -2,13 +2,14 @@ import { describe, expect, it } from "bun:test";
 import { parseV1, serializeV1 } from "./v1";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1 } from "./v1";
 import { XPUB, ETH_ADDR, SOL_ADDR } from "./test-fixtures";
+import { NetworkIdSchema } from "./network";
 
 const UTXO_V1: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
-  xpub: XPUB,
+  network: NetworkIdSchema.parse("bitcoin"),
+  key: XPUB,
   path: "m/84h/0h/0h",
 };
 
@@ -16,8 +17,8 @@ const ETH_V1: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "address",
-  network: "ethereum",
-  address: ETH_ADDR,
+  network: NetworkIdSchema.parse("ethereum"),
+  key: ETH_ADDR,
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -35,8 +36,8 @@ describe("serializeV1", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin_testnet",
-      xpub: XPUB,
+      network: NetworkIdSchema.parse("bitcoin_testnet"),
+      key: XPUB,
       path: "m/84h/1h/0h",
     };
     expect(serializeV1(d)).toBe(`account:2:utxo:bitcoin_testnet:${XPUB}:m/84h/1h/0h`);
@@ -47,8 +48,8 @@ describe("serializeV1", () => {
       purpose: "account",
       version: "2",
       type: "address",
-      network: "solana",
-      address: SOL_ADDR,
+      network: NetworkIdSchema.parse("solana"),
+      key: SOL_ADDR,
       path: "m/44h/501h/0h/0h",
     };
     expect(serializeV1(d)).toBe(`account:2:address:solana:${SOL_ADDR}:m/44h/501h/0h/0h`);
@@ -73,7 +74,7 @@ describe("parseV1", () => {
   ])("reads the version 1 descriptor %s as version 2", (input, network) => {
     const result = parseV1(input);
     expect(result.version).toBe("2");
-    expect(result.network).toBe(network);
+    expect(result.network).toBe(NetworkIdSchema.parse(network));
   });
 
   it("accepts apostrophe hardened markers as aliases for h", () => {

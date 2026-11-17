@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { prepareTransaction, sameExcludeUTXOs } from "../../prepareTransaction";
 import { getExcludeUTXOsFromPendingOperations } from "../../pendingInputs";
 import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";

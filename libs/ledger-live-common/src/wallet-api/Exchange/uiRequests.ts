@@ -1,5 +1,5 @@
 import { ExchangeStartResult, SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ExchangeSwap } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../coin-modules/transaction-types";
@@ -57,6 +57,11 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
 export type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
+    /**
+     * The caller goes straight on to the device confirmation once it has the nonce (a swap run by
+     * `executeSwap`), so a host can keep its device session open instead of closing it.
+     */
+    continuesOnDevice?: boolean;
     onSuccess: (
       nonce: string,
       device?: ExchangeStartResult["device"],

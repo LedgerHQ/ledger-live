@@ -6,13 +6,22 @@ import type {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
   useEnvDevToolProps,
   useAppConfigToolProps,
+  useCoinConfigToolProps,
+  useAccountDetailToolProps,
+  useReceiveToolProps,
+  usePredictionsToolProps,
+  type LiveAppStore,
+  type PredictionsSetup,
 } from "@devtools/bindings";
+import { usePredictionsSetupHooks } from "@features/flow-predictions";
+import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
 import { useCurrenciesByIds } from "@features/platform-currencies";
@@ -25,14 +34,21 @@ import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { getStoreValue, setStoreValue } from "~/store";
+
+const LIVE_APP_STORE: LiveAppStore = { get: getStoreValue, set: setStoreValue };
 
 type BaseNavigation = NativeStackNavigationProp<
   BaseNavigatorStackParamList,
   keyof BaseNavigatorStackParamList,
   typeof BASE_NAVIGATOR_ID
 >;
+
+const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
+const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
 
 export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
@@ -100,6 +116,20 @@ export function useDevToolsScreenViewModel() {
   );
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const liveConfigKeys = useMemo(() => Object.keys(LiveConfig.instance.config), []);
+  const coinConfigToolProps = useCoinConfigToolProps({
+    keys: liveConfigKeys,
+    getValueByKey: getLiveConfigValue,
+    getDefaultValueByKey: getLiveConfigDefaultValue,
+  });
+  const accountDetailToolProps = useAccountDetailToolProps();
+  const receiveToolProps = useReceiveToolProps();
+  const predictionsSetupHooks = usePredictionsSetupHooks();
+  const predictionsSetup = useMemo<PredictionsSetup>(
+    () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),
+    [predictionsSetupHooks],
+  );
+  const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
@@ -109,6 +139,7 @@ export function useDevToolsScreenViewModel() {
     offerSync,
     navigateOnExit: false,
   });
+  const intentWalletSync = useIntentWalletSyncTool();
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();
@@ -118,10 +149,26 @@ export function useDevToolsScreenViewModel() {
       { id: "feature-flags", config: featureFlagsProps },
       { id: "env", config: envToolProps },
       { id: "app-config", config: appConfigToolProps },
+      { id: "coin-config", config: coinConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-detail", config: accountDetailToolProps },
+      { id: "receive", config: receiveToolProps },
+      { id: "predictions", config: predictionsToolProps },
+      { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
     ],
-    [featureFlagsProps, envToolProps, appConfigToolProps, payCardToolProps, deviceOnboardingProps],
+    [
+      featureFlagsProps,
+      envToolProps,
+      appConfigToolProps,
+      coinConfigToolProps,
+      payCardToolProps,
+      deviceOnboardingProps,
+      accountDetailToolProps,
+      receiveToolProps,
+      predictionsToolProps,
+      intentWalletSync.toolProps,
+    ],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {
@@ -139,5 +186,7 @@ export function useDevToolsScreenViewModel() {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    intentWalletSyncRun: intentWalletSync.run,
+    onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
   };
 }

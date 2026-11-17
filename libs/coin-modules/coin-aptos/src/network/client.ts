@@ -1,4 +1,3 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
 import {
   type AccountData,
   Aptos,
@@ -70,8 +69,6 @@ export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
 
-  readonly apolloClient: ApolloClient<object>;
-
   constructor(currencyIdOrSettings: AptosSettings | string) {
     const appVersion = getEnv("LEDGER_CLIENT_VERSION");
 
@@ -104,12 +101,14 @@ export class AptosAPI {
     }
 
     this.aptosClient = new Aptos(this.aptosConfig);
-    this.apolloClient = new ApolloClient({
-      uri: this.aptosConfig.indexer ?? "",
-      cache: new InMemoryCache(),
-      headers: {
-        "X-Ledger-Client-Version": appVersion,
-      },
+  }
+
+  queryIndexer<T extends object, V extends object = object>(
+    query: string,
+    variables?: V,
+  ): Promise<T> {
+    return this.aptosClient.queryIndexer<T>({
+      query: variables ? { query, variables } : { query },
     });
   }
 
@@ -338,24 +337,15 @@ export class AptosAPI {
 
     while (condition) {
       try {
-        const queryResponse = await this.apolloClient.query<
+        const data = await this.queryIndexer<
           GetAccountTransactionsDataQuery,
           GetAccountTransactionsDataGtQueryVariables
-        >({
-          query,
-          variables: {
-            address,
-            limit: 100,
-            gt,
-            offset,
-          },
-          fetchPolicy: "network-only",
-        });
+        >(query, { address, limit: 100, gt, offset });
         offset += 100;
 
-        allTransactions = allTransactions.concat(queryResponse.data.account_transactions);
+        allTransactions = allTransactions.concat(data.account_transactions);
 
-        if (queryResponse.data.account_transactions.length < 100) {
+        if (data.account_transactions.length < 100) {
           break;
         }
       } catch (error: any) {

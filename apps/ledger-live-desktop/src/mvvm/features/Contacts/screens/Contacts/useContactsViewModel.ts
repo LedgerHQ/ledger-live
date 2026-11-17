@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -8,6 +8,8 @@ import { addAddress, contactAddress, type ContactId } from "@domain/entity-conta
 import {
   createContactsListViewModel,
   createContactsSearchViewModel,
+} from "@features/flow-contacts-list";
+import {
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -338,7 +340,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailDialog,
     editDeleteDialogs,
     addressDetailActionsDialogs,
-    onOpenMe,
     onOpenContact,
     onSelectContact,
   } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
@@ -356,8 +357,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
 
     return createContactsListViewModel(meContact, contacts);
   }, [contacts, getDisplayName, meContact, searchQuery]);
-  const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  const onSearchQueryChange = useCallback((query: string) => {
+    setSearchQuery(query);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
@@ -412,10 +413,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailActionsDialogs,
     viewModel,
     searchQuery,
-    onSearchInputChange,
+    onSearchQueryChange,
     onClearSearch,
     onRequestAddContact,
-    onOpenMe,
     onOpenContact,
     onSelectContact,
     detail,

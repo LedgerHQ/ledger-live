@@ -18,7 +18,7 @@ jest.mock("react-router", () => ({
   useLocation: () => ({ pathname: "/market" }),
 }));
 
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: () => ({ openAssetAndAccount: mockOpenAssetAndAccount }),
 }));
 

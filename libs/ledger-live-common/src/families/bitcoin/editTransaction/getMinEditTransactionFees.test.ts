@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { getBitcoinCoinConfig } from "../coinConfig";

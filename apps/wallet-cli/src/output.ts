@@ -10,6 +10,7 @@
 
 import type { Spinner } from "yocto-spinner";
 import { z } from "zod";
+import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
@@ -122,13 +123,13 @@ export interface CommandOutput {
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
   token(t: TokenInfo): void;
   /** Output a receive / fresh address. `verified` indicates whether the device attested it. */
-  address(addr: string, verified: boolean): void;
+  address(addr: Address, verified: boolean): void;
   /**
    * Surface the derived address before device confirmation so the user (or an agent
    * watching the stream) can compare it with what the Ledger displays.
    * Human: stderr line. Json: NDJSON `pre-verify-address` event.
    */
-  preVerifyAddress(addr: string): void;
+  preVerifyAddress(addr: Address): void;
   /** Output the result of a successful device genuine check. */
   genuineCheck(): void;
 
@@ -480,7 +481,7 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  address(addr: string, verified: boolean): void {
+  address(addr: Address, verified: boolean): void {
     if (!verified) {
       writeStderr("Warning: address was NOT verified on device\n");
     }
@@ -491,7 +492,7 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatTokenInfo(t));
   }
 
-  preVerifyAddress(addr: string): void {
+  preVerifyAddress(addr: Address): void {
     writeStderr(addr + "\n");
     writeStderr("Compare the address above with what's shown on your Ledger…\n");
   }
@@ -1317,7 +1318,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ operations, nextCursor }));
   }
 
-  address(addr: string, verified: boolean): void {
+  address(addr: Address, verified: boolean): void {
     this._writeNdjson(
       this._envelope({
         address: addr,
@@ -1331,7 +1332,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ token: this._jsonFmt.token(t) }));
   }
 
-  preVerifyAddress(addr: string): void {
+  preVerifyAddress(addr: Address): void {
     this._writeNdjson({
       type: "pre-verify-address",
       command: this._ctx.command,
@@ -1725,8 +1726,14 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
 }
 
 // ---------------------------------------------------------------------------
-// Proposal warnings (stderr, in both formats, after the result)
+// Warnings (stderr, in both formats, after the result)
 // ---------------------------------------------------------------------------
+
+export function warnIfTokensSkipped(skippedTokenIds: readonly string[]): void {
+  for (const tokenId of skippedTokenIds) {
+    writeStderr(`⚠ Skipped token ${tokenId}: the Crypto Assets List gives no unit for it.\n`);
+  }
+}
 
 function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
   if (!summary.needsTokenApproval) return;

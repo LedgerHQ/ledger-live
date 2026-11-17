@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAddressesActive, getBalancesForAddresses } from "../../network";
 import { AccountAddress, AccountAddresses } from "../../types";
 import KaspaBIP32 from "../bip32";

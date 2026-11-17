@@ -23,11 +23,15 @@ const topLevel = {
 
 const seededSuccessExits = new Set(["syncOffer", "done"]);
 
-export function phaseOf(machineState: string | null, onboardedOnEntry = false): FunnelPhase | null {
+export function phaseOf(
+  machineState: string | null,
+  onboardedOnEntry: boolean | null = null,
+): FunnelPhase | null {
   if (machineState === null) return "connecting";
   if (machineState.startsWith("checks.")) return "checks";
   if (machineState.startsWith("deviceSetup.")) return "synchronizing";
-  if (onboardedOnEntry && seededSuccessExits.has(machineState)) return "checks";
+  if (onboardedOnEntry === true && seededSuccessExits.has(machineState)) return "checks";
+  if (onboardedOnEntry === false && machineState === "done") return "checks";
   if (machineState in topLevel) return topLevel[machineState as keyof typeof topLevel];
   return null;
 }

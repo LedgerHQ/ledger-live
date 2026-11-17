@@ -3,7 +3,7 @@ import { useThemeVariant } from "@features/platform-style/hooks";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { QrCode } from "@shared/ui-qr-code";
-import { RequestReceiveAddress } from "./RequestReceiveAddress.web";
+import { RequestReceiveAddress } from "./RequestReceiveAddress";
 import type { RequestReceiveIconProps } from "../../types";
 import type { AddressParts } from "../../utils/splitAddress";
 

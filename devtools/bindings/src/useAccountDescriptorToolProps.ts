@@ -24,7 +24,7 @@ export function useAccountDescriptorToolProps(): AccountDescriptorToolProps {
         type: descriptor.type,
         network: descriptor.network,
         path: descriptor.path,
-        key: descriptor.type === "utxo" ? descriptor.xpub : descriptor.address,
+        key: descriptor.key,
       })),
     [entries],
   );

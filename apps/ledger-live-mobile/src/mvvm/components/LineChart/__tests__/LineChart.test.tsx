@@ -118,4 +118,11 @@ describe("LineChart", () => {
 
     expect(screen.getByTestId("line-chart")).toBeOnTheScreen();
   });
+
+  it("replaces the plot with the given content and keeps the range selector", () => {
+    renderLineChart({ plotContent: <Text>Data is not available</Text> });
+
+    expect(screen.getByText("Data is not available")).toBeVisible();
+    expect(screen.getByText("1D")).toBeVisible();
+  });
 });

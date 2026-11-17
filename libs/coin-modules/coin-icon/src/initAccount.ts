@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { IconAccount } from "./types";
 
 export function initAccount(account: Account): void {

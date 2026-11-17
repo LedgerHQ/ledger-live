@@ -4,7 +4,7 @@ import { LedgerSigner } from "@mysten/ledger-signer";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";
 import { toSerializedSignature as mockToSerializedSignature } from "@mysten/sui/cryptography";
 import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@mysten/sui/verify";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { take } from "rxjs/operators";
 import coinConfig from "../config";
 import { SuiAddressBalanceAppUpdateRequired } from "../errors";

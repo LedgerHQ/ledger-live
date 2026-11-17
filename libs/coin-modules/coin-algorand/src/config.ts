@@ -23,3 +23,14 @@ export const setCoinConfig = coinConfig.setCoinConfig;
 export const getCoinConfig = coinConfig.getCoinConfig;
 
 export default coinConfig;
+
+export const algorandDefaults = {
+  algorand: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Algorand",
+    unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
+  },
+} satisfies Record<string, CurrencyConfig & Partial<AlgorandCoinConfig>>;

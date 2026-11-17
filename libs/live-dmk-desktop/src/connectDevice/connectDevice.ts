@@ -20,7 +20,7 @@ export type ConnectDeviceInput = {
   acceptedDeviceModelIds?: Array<DeviceModelId>;
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
-  mockServerTransportEnabled?: boolean;
+  isMockServerEnabled: boolean;
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConnectDeviceUIState> {
@@ -32,7 +32,7 @@ export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConn
   > = new Map();
   discoverySources.set(webHidSource.transportId, webHidSource);
   discoverySources.set(speculosSource.transportId, speculosSource);
-  if (input.mockServerTransportEnabled) {
+  if (input.isMockServerEnabled) {
     const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
     discoverySources.set(mockServerSource.transportId, mockServerSource);
   }

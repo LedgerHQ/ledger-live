@@ -1,6 +1,6 @@
 const { createSharedJestConfig } = require("@support/jest/shared");
 
-// Exception listed in support/jest/core/preset-overrides.js.
+// Exception listed in support/jest/core/preset-overrides.cts.
 module.exports = createSharedJestConfig({
   rootDir: __dirname,
   testEnvironment: "jsdom",

@@ -157,7 +157,6 @@ describe("useAssetDetailViewModel", () => {
 
       expect(useDistribution).toHaveBeenCalledWith(
         expect.objectContaining({
-          groupBy: "asset",
           showEmptyAccounts: true,
           hideEmptyTokenAccount: true,
         }),

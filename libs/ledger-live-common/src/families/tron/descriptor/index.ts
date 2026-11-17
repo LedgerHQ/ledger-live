@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CoinDescriptor, NetworkFeesInfo } from "../../../bridge/descriptor/types";
 
 type TronFeeStatus = {

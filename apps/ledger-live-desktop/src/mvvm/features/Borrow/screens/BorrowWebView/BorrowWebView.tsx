@@ -9,7 +9,7 @@ import {
 } from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { BorrowLoader } from "LLD/features/Borrow/components/BorrowLoader";
-import type { BorrowWebviewInputs } from "../BorrowApp/useBorrowAppViewModel";
+import type { LiveAppWebviewInputs } from "LLD/hooks/useLiveAppWebviewInputs";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { createBorrowNavigateHandler } from "@ledgerhq/live-common/wallet-api/Borrow/navigate";
@@ -17,7 +17,7 @@ import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-ap
 
 export type BorrowWebProps = {
   manifest: LiveAppManifest;
-  inputs: BorrowWebviewInputs;
+  inputs: LiveAppWebviewInputs;
   webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   onStateChange: WebviewProps["onStateChange"];

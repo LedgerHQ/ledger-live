@@ -11,7 +11,7 @@ import type {
   OperationType,
 } from "@ledgerhq/types-live";
 import type { NetworkInfo, NetworkInfoRaw, StellarMemo } from "@ledgerhq/coin-stellar/types";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export type StellarTransactionMode = "send" | "changeTrust";
 

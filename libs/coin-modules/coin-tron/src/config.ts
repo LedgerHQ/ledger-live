@@ -56,3 +56,31 @@ export type TronCoinConfig = CurrencyConfig & TronConfig;
 
 /** The {@link Context} threaded through the coin-tron API layer (ADR-019). */
 export type TronContext = Context<TronCoinConfig>;
+
+export const tronDefaults = {
+  tron: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "Tron",
+    unit: { name: "TRX", code: "TRX", magnitude: 6 },
+    explorer: {
+      url: "https://tron.coin.ledger.com",
+    },
+    // The sourceFlag and paymentAddresses come from the remote config only: Tronify must confirm
+    // the channel name first, and an array here would merge by index under the remote one.
+    energyRent: {
+      provider: "tronify",
+      tronify: { url: "https://tronify.api.live.ledger.com" },
+    },
+  },
+} satisfies Record<
+  string,
+  Omit<TronCoinConfig, "energyRent"> & {
+    energyRent: { provider: EnergyRentConfig["provider"]; tronify: Partial<TronifyProviderConfig> };
+  }
+>;

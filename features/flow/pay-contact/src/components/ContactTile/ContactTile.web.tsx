@@ -8,8 +8,8 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactAvatar } from "@features/platform-contacts";
-import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
-import { ContactName } from "./ContactName.web";
+import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu";
+import { ContactName } from "./ContactName";
 import { usePayContactDisplayName } from "./usePayContactDisplayName";
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsTableLabels } from "../../types";

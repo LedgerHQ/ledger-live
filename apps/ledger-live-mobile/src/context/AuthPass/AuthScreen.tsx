@@ -77,6 +77,7 @@ const FormFooter = ({
       disabled={!!passwordError || passwordEmpty}
       isFocused
       useTouchable
+      testID="auth-unlock-login-button"
     />
   ) : (
     <Touchable event="ForgetPassword" onPress={onPress}>

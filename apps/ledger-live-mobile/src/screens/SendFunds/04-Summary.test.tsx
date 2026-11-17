@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { FeeNotLoaded, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GasLessThanEstimate, NotEnoughGas } from "@ledgerhq/coin-evm/errors";
 import { render, screen } from "@tests/test-renderer";

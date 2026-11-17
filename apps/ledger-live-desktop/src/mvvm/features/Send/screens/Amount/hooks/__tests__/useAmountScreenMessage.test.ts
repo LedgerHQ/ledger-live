@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { FeeTooHigh } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit } from "@ledgerhq/live-common/errors";

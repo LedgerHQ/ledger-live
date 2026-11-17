@@ -17,12 +17,16 @@ import {
   toV1,
   UnsupportedFamilyError,
   UnknownNetworkError,
+  UnsupportedNetworkError,
+  currencyIdFromNetwork,
+  networkOfV0,
   AccountDescriptorV1Schema,
   AccountDescriptorV0Schema,
   type AccountDescriptorV0,
   type AccountDescriptorV1,
 } from "../shared/accountDescriptor";
 import { SUPPORTED_TRANSACTION_FAMILIES } from "../wallet/intents";
+import { isWalletCliSupportedCurrency } from "../shared/supported-currencies";
 import { Session } from "../session/session-store";
 
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
@@ -168,6 +172,7 @@ export function importSupport(): ImportSupport {
     families: SUPPORTED_FAMILIES,
     currencies: listCryptoCurrencies(true)
       .filter(currency => SUPPORTED_FAMILIES.has(currency.family))
+      .filter(isWalletCliSupportedCurrency)
       .map(currency => currency.id),
     derivationModes: KNOWN_DERIVATION_MODES,
   };
@@ -255,9 +260,14 @@ function convertSyncedAccount(
 
   let v1: AccountDescriptorV1;
   try {
+    // A supported family on an unsupported network ("base" under evm) must be skipped here: the
+    // toV0() round-trip check at the end would otherwise report it as invalid.
+    currencyIdFromNetwork(networkOfV0(descriptor));
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
-    return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
+    return e instanceof UnsupportedFamilyError ||
+      e instanceof UnknownNetworkError ||
+      e instanceof UnsupportedNetworkError
       ? { status: "skipped", id: descriptor.id, reason: e.message }
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }

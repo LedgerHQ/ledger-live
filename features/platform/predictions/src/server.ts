@@ -1,5 +1,7 @@
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { z } from "zod";
+import type { PredictionsBindingAnswer } from "./binding";
+import { PREDICTIONS_SETUP_FAILURE_REASONS, type PredictionsSetupOutcome } from "./setup";
 import { UnsupportedOnboardingVersion } from "./errors";
 
 // Strict, so a misspelt document fails instead of silently showing nothing.
@@ -67,6 +69,13 @@ export type PredictionsUiHooks = {
   "app.close": () => void;
   "intro.isSeen": () => boolean;
   "intro.markSeen": () => void;
+  /**
+   * `accountId` is a Wallet API account id. Rejects with `UserRefusedOnDevice` when the prompt
+   * closes unsigned. Once signed, the trading wallet setup shows until `binding.reportSetup`.
+   */
+  "binding.sign": (accountId: string) => Promise<PredictionsBindingAnswer>;
+  /** Resolves once the user closes the setup, or right away when none is open. */
+  "binding.reportSetup": (setup: PredictionsSetupOutcome) => Promise<void>;
 };
 
 function toSupportedVersion<T extends string>(
@@ -107,6 +116,17 @@ function toRequestedDocuments(params: z.infer<typeof onboardingSchema>): Onboard
   return requested;
 }
 
+const bindAccountSchema = z.strictObject({ accountId: z.string().min(1) });
+
+const reportSetupSchema = z.discriminatedUnion("outcome", [
+  z.strictObject({ outcome: z.literal("created") }),
+  z.strictObject({ outcome: z.literal("found") }),
+  z.strictObject({
+    outcome: z.literal("failed"),
+    reason: z.enum(PREDICTIONS_SETUP_FAILURE_REASONS),
+  }),
+]) satisfies z.ZodType<PredictionsSetupOutcome>;
+
 export const handlers = ({ uiHooks }: { uiHooks: PredictionsUiHooks }) => ({
   "custom.predictions.onboard": customWrapper<
     z.input<typeof onboardingSchema>,
@@ -139,6 +159,20 @@ export const handlers = ({ uiHooks }: { uiHooks: PredictionsUiHooks }) => ({
         () => resolve({ isCompleted: false, ...accepted }),
       );
     });
+  }),
+  "custom.predictions.bindAccount": customWrapper<
+    z.input<typeof bindAccountSchema>,
+    PredictionsBindingAnswer
+  >(async rawParams => {
+    const { accountId } = bindAccountSchema.parse(rawParams);
+    return uiHooks["binding.sign"](accountId);
+  }),
+  "custom.predictions.reportSetup": customWrapper<
+    z.input<typeof reportSetupSchema>,
+    Record<string, never>
+  >(async rawParams => {
+    await uiHooks["binding.reportSetup"](reportSetupSchema.parse(rawParams));
+    return {};
   }),
   "custom.predictions.close": customWrapper<Record<string, never>, Record<string, never>>(
     async () => {

@@ -460,7 +460,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "PUT",
-          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitTransfer/",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitTransfer",
           data: {
             transaction: "transaction-body-hex",
             signatures: {
@@ -487,7 +487,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "PUT",
-          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitCredential/",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitCredential",
           data: credentialData,
         }),
       );

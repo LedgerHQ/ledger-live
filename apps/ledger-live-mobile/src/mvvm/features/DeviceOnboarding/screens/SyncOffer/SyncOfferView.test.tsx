@@ -45,11 +45,12 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: QueuedBottomSheetMock,
 }));
 
-function renderSyncOffer() {
+function renderSyncOffer(phase: "offer" | "synchronizing" | "success" = "offer") {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
   const onQuit = jest.fn();
+  const onContinue = jest.fn();
 
   return {
     ...render(
@@ -58,12 +59,15 @@ function renderSyncOffer() {
         onSkip={onSkip}
         onLearnMore={onLearnMore}
         onQuit={onQuit}
+        onContinue={onContinue}
+        phase={phase}
       />,
     ),
     onActivate,
     onSkip,
     onLearnMore,
     onQuit,
+    onContinue,
   };
 }
 
@@ -125,6 +129,40 @@ describe("SyncOfferView", () => {
     expect(screen.queryByText("Are you sure?")).toBeNull();
     expect(onSkip).not.toHaveBeenCalled();
     expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should leave from the synchronizing layout", async () => {
+    const { user, onQuit, onContinue, onActivate } = renderSyncOffer("synchronizing");
+
+    expect(screen.getByText("Synchronizing...")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Continue" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Activate" })).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onContinue).not.toHaveBeenCalled();
+    expect(onActivate).not.toHaveBeenCalled();
+  });
+
+  it("should continue or leave from the success layout", async () => {
+    const { user, onContinue, onQuit, onActivate, onSkip } = renderSyncOffer("success");
+
+    expect(screen.getByText("Sync complete")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Activate" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Skip for now" })).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Continue" }));
+
+    expect(onContinue).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+    expect(onActivate).not.toHaveBeenCalled();
+    expect(onSkip).not.toHaveBeenCalled();
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
   });
 
   it("should open learn more and leave from the header", async () => {

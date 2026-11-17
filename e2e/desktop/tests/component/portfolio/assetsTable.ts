@@ -1,7 +1,9 @@
 import { expect, Locator } from "@playwright/test";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { sanitizeAssetNameForTestId } from "@features/platform-assets-table/test-id";
 import { step } from "tests/misc/reporters/step";
+import { softExpect } from "tests/utils/softExpect";
 
 export class AssetsTable {
   readonly root: Locator;
@@ -24,8 +26,7 @@ export class AssetsTable {
     return this.root.getByTestId(`w40-asset-row-value-${this.getCurrencyTestIdSuffix(currency)}`);
   }
 
-  // Wallet 4.0 Q2 `aggregatedAssets` renders one synthetic row per asset across networks; those
-  // rows have no single Currency-enum id, so they are matched by their displayed name instead.
+  // One synthetic row per asset spans networks and has no single Currency id, so match by name.
   private rowsByName(assetName: string): Locator {
     return this.rows.filter({ hasText: assetName });
   }
@@ -57,6 +58,29 @@ export class AssetsTable {
 
   @step("Expect number of rows to be $0")
   async expectNumberOfRows(numberOfRows: number) {
-    await expect(this.rows).toHaveCount(numberOfRows);
+    await softExpect(
+      {
+        page: this.root.page(),
+        assertion: async soft => {
+          await soft(this.rows).toHaveCount(numberOfRows);
+        },
+      },
+      { timeout: TIMEOUT.large },
+    );
+  }
+
+  @step("Expect assets to be visible")
+  async expectAssetsVisible(currencies: Currency[]) {
+    await softExpect(
+      {
+        page: this.root.page(),
+        assertion: async soft => {
+          await Promise.all(
+            currencies.map(currency => soft(this.assetByCurrency(currency)).toBeVisible()),
+          );
+        },
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 }

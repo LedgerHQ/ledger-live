@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { splitTransaction } from "@ledgerhq/hw-app-btc/splitTransaction";
 import * as utils from "@ledgerhq/wallet-btc/utils";

@@ -13,6 +13,13 @@ const SELECTABLE_DEVICES = [
   DeviceModelId.apex,
 ];
 
+// Written out rather than imported from the app, so a change to which devices use sync onboarding fails here.
+const SYNC_ONBOARDING_DEVICES = new Set([
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.apex,
+]);
+
 type TutorialScreen =
   | "how-to-get-started"
   | "device-how-to"
@@ -49,6 +56,9 @@ export class OnboardingPage extends AppPage {
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
   private readonly restoreDeviceOption = this.page.getByTestId("v3-onboarding-restore-device");
+  private readonly connectInitializedDeviceOption = this.page.getByTestId(
+    "v3-onboarding-initialized-device",
+  );
   private readonly counterfeitWarningContinueButton = this.page.getByTestId(
     "counterfeit-warning-continue-button",
   );
@@ -107,6 +117,16 @@ export class OnboardingPage extends AppPage {
     );
   }
 
+  @step("Expect the setup entry screen for $0")
+  async expectSetupEntryScreen(device: DeviceModelId) {
+    if (SYNC_ONBOARDING_DEVICES.has(device)) {
+      await expect(this.page).toHaveURL(new RegExp(`/sync-onboarding/${device}$`));
+    } else {
+      await this.expectDeviceSelectionScreen();
+      await this.expectDeviceCards();
+    }
+  }
+
   @step("Expect the use case screen")
   async expectUseCaseScreen() {
     await expect(this.page).toHaveURL(/\/onboarding\/select-use-case$/);
@@ -130,6 +150,11 @@ export class OnboardingPage extends AppPage {
   @step("Choose to restore a device from a recovery phrase")
   async restoreWithRecoveryPhrase() {
     await this.restoreDeviceOption.click();
+  }
+
+  @step("Choose to connect a device that already has a recovery phrase")
+  async connectInitializedDevice() {
+    await this.connectInitializedDeviceOption.click();
   }
 
   /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */

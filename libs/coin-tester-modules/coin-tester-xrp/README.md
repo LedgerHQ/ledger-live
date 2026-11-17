@@ -3,8 +3,8 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Deterministic integration tester for the XRP family. Spins up a local rippled
-node in standalone mode via Docker and runs a single scenario through the
+Deterministic integration tester for the XRP family. Asks coin-sandbox for a
+rippled node in standalone mode and runs a single scenario through the
 coin-framework bridge that ships in production.
 
 ## Run
@@ -13,7 +13,9 @@ coin-framework bridge that ships in production.
 pnpm coin:tester:xrp start
 ```
 
-Requires a running Docker daemon. Boot takes ~10 s; full suite ~30 s.
+Requires coin-sandbox's server running (`deno task server` in its repository, port
+8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon. The scenario asks
+for its own `ripple` instance in `setup` and removes it in `teardown`.
 
 ## Coverage
 
@@ -33,13 +35,11 @@ the same Docker boot.
 
 | File | Role |
 | --- | --- |
-| `src/rippled.ts` | `docker compose` lifecycle, genesis funding via the master passphrase account, `ledger_accept` advance, `tx` polling |
+| `src/rippled.ts` | The sandbox node's RPC, `ledger_accept` advance, `tx` polling |
 | `src/signer.ts` | Software secp256k1 signer (via `ripple-keypairs` + `ripple-binary-codec`) implementing `XrpSigner` |
 | `src/helpers.ts` | `getBridges(signer)` — wires the generic coin-framework bridges with the local node URL |
-| `src/fixtures.ts` | Currency, recipient, genesis account, account factory |
+| `src/fixtures.ts` | Currency, recipient, account factory |
 | `src/scenarii/xrp.ts` | Single scenario combining the full transaction sequence |
-| `rippled.cfg` | Minimal config exposing admin JSON-RPC :5005 and admin WS :6006 |
-| `docker-compose.yml` | rippled standalone service |
 
 ## Limitations
 

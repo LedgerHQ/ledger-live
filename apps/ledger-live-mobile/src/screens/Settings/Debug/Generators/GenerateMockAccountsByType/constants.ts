@@ -38,10 +38,6 @@ const allCurrencies = listSupportedCurrencies();
 export const MAINNET_CURRENCIES = allCurrencies.filter(c => !c.isTestnetFor);
 export const TESTNET_CURRENCIES = allCurrencies.filter(c => !!c.isTestnetFor);
 
-export const STABLECOIN_PARENT_CURRENCY_IDS = Object.keys(
-  STABLECOIN_TOKENS_BY_NETWORK,
-) as (keyof typeof STABLECOIN_TOKENS_BY_NETWORK)[];
-
 export function findCurrencyById(id: string) {
   return allCurrencies.find(c => c.id === id);
 }

@@ -7,15 +7,16 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { cantonDefaults } from "../config";
 import * as gateway from "../network/gateway";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
+import { createMockContext } from "../test/fixtures";
 import { CantonAccount } from "../types";
 import { makeGetAccountShape } from "./sync";
 
 const TEST_ADDRESS =
   "b6400f93ea1c74aea86be39b0ccc846fc5de01f12b2ad0d7c31848d6fb6eb6d9::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
-const currency = getCryptoCurrencyById("canton_network");
+const currency = getCryptoCurrencyById("canton_network_devnet");
 const derivationMode = getDerivationModesForCurrency(currency)[0];
 const derivationPath = runDerivationScheme(
   getDerivationScheme({ derivationMode, currency }),
@@ -36,6 +37,8 @@ const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
   } as CantonAccount,
 };
 const TIMEOUT = 30000;
+const devnetConfig = cantonDefaults.canton_network_devnet;
+const devnetContext = createMockContext(devnetConfig);
 
 // Mock signer context for testing
 const keyPair = generateMockKeyPair();
@@ -45,25 +48,11 @@ const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => 
 });
 
 describe.skip("sync (devnet)", () => {
-  beforeAll(async () => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
-  });
-
   describe("makeGetAccountShape", () => {
     it(
       "should fetch account shape for a valid address",
       async () => {
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
         expect(result.id).toEqual(expect.any(String));
@@ -84,7 +73,7 @@ describe.skip("sync (devnet)", () => {
     it(
       "should handle address with colons correctly",
       async () => {
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
         expect(result.xpub).toContain("::");
@@ -95,7 +84,7 @@ describe.skip("sync (devnet)", () => {
     it(
       "should merge operations correctly with initial account",
       async () => {
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
 
         const operations: Operation[] = [
           {
@@ -161,7 +150,7 @@ describe.skip("sync (devnet)", () => {
           },
         ]);
 
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
         expect(result.balance?.toNumber()).toBe(1000500);
@@ -202,7 +191,7 @@ describe.skip("sync (devnet)", () => {
           },
         } as unknown as CantonAccount;
 
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
         const result = await getAccountShape(
           {
             ...ACCOUNT_SHAPE_INFO,
@@ -211,7 +200,7 @@ describe.skip("sync (devnet)", () => {
           { paginationConfig: {} },
         );
 
-        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+        expect(mockGetOperations).toHaveBeenCalledWith(devnetConfig, TEST_ADDRESS, {
           cursor: (operation.blockHeight || 0) + 1,
           limit: 100,
         });
@@ -225,12 +214,12 @@ describe.skip("sync (devnet)", () => {
       async () => {
         const mockGetOperations = jest.spyOn(gateway, "getOperations");
 
-        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const getAccountShape = makeGetAccountShape(mockSignerContext, devnetContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
-        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+        expect(mockGetOperations).toHaveBeenCalledWith(devnetConfig, TEST_ADDRESS, {
           cursor: 0,
           limit: 100,
         });

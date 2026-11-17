@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CosmosValidatorsManager } from "@ledgerhq/coin-cosmos/CosmosValidatorsManager";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";

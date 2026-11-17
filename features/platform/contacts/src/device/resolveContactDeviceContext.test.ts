@@ -1,4 +1,4 @@
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   isContactDeviceCurrencySupported,
   resolveContactDeviceContext,
@@ -15,7 +15,7 @@ const evmConfig = (chainId: number) => ({
 describe("resolveContactDeviceContext", () => {
   it("GIVEN Ethereum WHEN resolving its context THEN it returns the Ethereum app and chain ID", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("ethereum");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
 
     // WHEN
     const context = resolveContactDeviceContext(currencyId, evmConfig(1));
@@ -34,7 +34,7 @@ describe("resolveContactDeviceContext", () => {
 
   it("GIVEN a token WHEN resolving its context THEN it uses the parent network", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("base/erc20/usd_coin");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("base/erc20/usd_coin");
 
     // WHEN
     const context = resolveContactDeviceContext(currencyId, evmConfig(8453));
@@ -49,7 +49,7 @@ describe("resolveContactDeviceContext", () => {
 
   it("GIVEN Tron WHEN resolving its context THEN it returns the Tron app and coin type", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("tron");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("tron");
 
     // WHEN
     const context = resolveContactDeviceContext(currencyId);
@@ -68,7 +68,7 @@ describe("resolveContactDeviceContext", () => {
 
   it("GIVEN an unsupported app WHEN resolving its context THEN it rejects the currency", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("bitcoin");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("bitcoin");
 
     // WHEN
     const resolve = () => resolveContactDeviceContext(currencyId);
@@ -79,7 +79,7 @@ describe("resolveContactDeviceContext", () => {
 
   it("GIVEN an EVM network shipping its own app WHEN resolving its context THEN it still registers through Ethereum", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("sei_evm");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("sei_evm");
 
     // WHEN
     const context = resolveContactDeviceContext(currencyId, evmConfig(1329));
@@ -97,7 +97,7 @@ describe("resolveContactDeviceContext", () => {
   });
 
   it("GIVEN an EVM network WHEN resolving its context without a config chain ID THEN it rejects the currency", () => {
-    const currencyId = ContactCurrencyIdSchema.parse("ethereum_classic");
+    const currencyId = CryptoOrTokenCurrencyIdSchema.parse("ethereum_classic");
 
     expect(() => resolveContactDeviceContext(currencyId)).toThrow(
       UnsupportedContactDeviceCurrencyError,
@@ -116,13 +116,16 @@ describe("isContactDeviceCurrencySupported", () => {
     ["bitcoin", false],
   ])("GIVEN %s THEN it reports %s", (currencyId, isSupported) => {
     expect(
-      isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse(currencyId), evmConfig(1)),
+      isContactDeviceCurrencySupported(
+        CryptoOrTokenCurrencyIdSchema.parse(currencyId),
+        evmConfig(1),
+      ),
     ).toBe(isSupported);
   });
 
   it("GIVEN an EVM network without a config chain ID THEN it reports false", () => {
     expect(
-      isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse("ethereum_classic")),
+      isContactDeviceCurrencySupported(CryptoOrTokenCurrencyIdSchema.parse("ethereum_classic")),
     ).toBe(false);
   });
 });

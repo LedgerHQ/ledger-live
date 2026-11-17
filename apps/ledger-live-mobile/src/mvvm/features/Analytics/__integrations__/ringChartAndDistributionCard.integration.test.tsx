@@ -110,10 +110,11 @@ describe("DistributionCard integration", () => {
       page: "Detailed Allocation",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
       params: {
-        currency: mockBitcoinCurrency,
+        currencyId: mockBitcoinCurrency.id,
+        source: "detailed_allocation",
       },
     });
   });

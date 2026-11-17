@@ -40,3 +40,36 @@ export type ZcashCoinConfig = CurrencyConfig & ZcashConfig;
 
 /** The {@link Context} threaded through the coin-zcash bridge (ADR-019). */
 export type ZcashContext = Context<ZcashCoinConfig>;
+
+export const zcashDefaults = {
+  zcash: {
+    explorerId: "zec",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Zcash",
+    unit: { name: "zcash", code: "ZEC", magnitude: 8 },
+    zaino: { url: "https://zec-indexer.coin.ledger.com" },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
+  zcash_regtest: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Zcash Regtest",
+    unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
+  },
+  zcash_testnet: {
+    explorerId: "zec_testnet",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Zcash Testnet",
+    unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
+    zaino: { url: "https://testnet.zec.rocks:443" },
+    explorer: { url: "https://explorers.api.live.ledger-test.com" },
+  },
+} satisfies Record<string, CurrencyConfig & Partial<ZcashCoinConfig>>;

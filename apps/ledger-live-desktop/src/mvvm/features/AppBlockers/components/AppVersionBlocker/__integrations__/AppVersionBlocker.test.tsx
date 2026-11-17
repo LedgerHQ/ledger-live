@@ -28,6 +28,7 @@ jest.mock("~/firebase/remoteConfig", () => ({
 jest.mock("@ledgerhq/live-config/LiveConfig", () => ({
   LiveConfig: {
     getValueByKey: jest.fn(),
+    setAllOverrides: jest.fn(),
   },
 }));
 

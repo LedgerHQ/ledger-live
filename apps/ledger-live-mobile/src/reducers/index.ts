@@ -5,6 +5,7 @@ import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import { appConfigReducer } from "@shared/app-config";
+import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -40,7 +41,7 @@ import trustchain from "./trustchain";
 import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
-import osUpdate from "LLM/features/OsUpdate/state/osUpdateSlice";
+import deviceOsUpdate from "@domain/entity-device-os-update";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
@@ -51,11 +52,15 @@ import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
-import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
+import { accountAnalyticsIntroductionSlice } from "@features/flow-account-detail-analytics-notice/state";
+import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
+import { accountReceivesSlice } from "@domain/entity-account-receive";
+import { accountStatusSlice } from "@domain/entity-account-status";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
@@ -86,6 +91,7 @@ const appReducer = combineReducers({
   inView,
   knownDevices,
   largeMover,
+  liveConfigOverrides: liveConfigOverridesReducer,
   market,
   marketListConfig: marketListConfigReducer,
   marketBanner: marketBannerReducer,
@@ -93,7 +99,7 @@ const appReducer = combineReducers({
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,
   transferDrawer,
-  osUpdate,
+  deviceOsUpdate,
   swapTransactionStatusDrawer,
   currencyRegionRestrictedDrawer,
   notifications,
@@ -107,10 +113,12 @@ const appReducer = combineReducers({
   sendFlow,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
-  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  receiveVerifyHint: receiveVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
+  mockServerOverlay: mockServerOverlaySlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,
+  accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   toasts,
   trustchain,
   wallet,
@@ -123,6 +131,8 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountReceives: accountReceivesSlice.reducer,
+  accountStatus: accountStatusSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

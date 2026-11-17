@@ -1,9 +1,9 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
-import { renderWithStyle } from "../../../__tests__/renderWithStyle.web";
-import { ContactAddressPicker } from "../ContactAddressPicker.web";
-import type { ContactAddressPickerProps } from "../../../types";
+import { renderWithStyle } from "../../../__tests__/renderWithStyle";
+import { ContactAddressPicker } from "../ContactAddressPicker";
+import type { ContactAddressPickerProps } from "../ContactAddressPicker.types";
 
 const contactAddress = mockContactAddress({
   id: "address-eth",

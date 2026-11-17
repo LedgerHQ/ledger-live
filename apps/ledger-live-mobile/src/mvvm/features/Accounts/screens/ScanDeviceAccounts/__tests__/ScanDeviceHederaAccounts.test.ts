@@ -109,6 +109,26 @@ describe("ScanDeviceHederaAccounts", () => {
     expect(replace).not.toHaveBeenCalledWith(ScreenName.NoAssociatedAccounts, expect.anything());
   });
 
+  it("navigates to NoAssociatedAccounts when every discovered Hedera account is already imported", async () => {
+    const importedAccount = createHederaAccount({ used: true });
+    setScanObservable(of(makeDiscoveredEvent(importedAccount)));
+
+    renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [importedAccount],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(replace).toHaveBeenCalled());
+
+    expect(replace).toHaveBeenCalledWith(ScreenName.NoAssociatedAccounts, {
+      CustomNoAssociatedAccounts: expect.any(Function),
+    });
+    expect(replace).not.toHaveBeenCalledWith(ScreenName.AddAccountsWarning, expect.anything());
+  });
+
   it("navigates to NoAssociatedAccounts when no Hedera accounts are discovered", async () => {
     setScanObservable(EMPTY);
 

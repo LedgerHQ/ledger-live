@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { AssetsViewModelResult } from "../types";
 import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
@@ -26,7 +27,7 @@ import {
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
@@ -60,17 +61,6 @@ export function useAssetsViewModel(): AssetsViewModelResult {
     if (!assetsData?.markets) return map;
     for (const [currencyId, market] of Object.entries(assetsData.markets)) {
       if (market?.price != null) map.set(currencyId, market.price);
-    }
-    return map;
-  }, [assetsData]);
-
-  const marketDayChangeByCurrencyId = useMemo(() => {
-    const map = new Map<string, number>();
-    if (!assetsData?.markets) return map;
-    for (const [currencyId, market] of Object.entries(assetsData.markets)) {
-      if (market?.priceChangePercentage24h != null) {
-        map.set(currencyId, market.priceChangePercentage24h);
-      }
     }
     return map;
   }, [assetsData]);
@@ -111,7 +101,7 @@ export function useAssetsViewModel(): AssetsViewModelResult {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(toMarketId(parseMarketRef(rawId)))}`
           : `/asset/${item.currency.id}`,
       );
     },
@@ -157,7 +147,8 @@ export function useAssetsViewModel(): AssetsViewModelResult {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const trends = useAllCurrencyTrends(allItems, "day", marketDayChangeByCurrencyId);
+  const { byLedgerId: marketDayChange } = useMarketDayChange();
+  const trends = useAllCurrencyTrends(allItems, "day", marketDayChange, "market");
 
   const cryptosWithTrend = useMemo(
     () =>

@@ -7,7 +7,7 @@ import {
 import { markPayCardFeatureTourSeen } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
-import { PAY_TAB_FEATURE_FLAG } from "../payTabFeatureFlag.native";
+import { PAY_TAB_FEATURE_FLAG } from "../payTabFeatureFlag";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { FEATURE_TOUR_RESOURCES, makeFeatureTourStore } from "./fixtures";
 

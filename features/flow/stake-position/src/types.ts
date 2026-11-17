@@ -20,6 +20,7 @@ export type StakePositionOpenParams = Readonly<{
   /** The Wallet API id, as `account.list` returns it. */
   accountId: string;
   positionId: string;
+  /** Empty when the position has no validator, such as an undelegated Solana stake account. */
   validatorAddress: string;
   /** Total rewards in the currency's smallest unit, for display only. */
   rewards?: string;
@@ -37,6 +38,7 @@ export type StakePositionNotice = "deactivating" | "missingAuthority";
 
 export type StakePositionCandidate = Readonly<{
   positionId: string;
+  /** Empty when the position has no validator: it then shares no validator with another one. */
   validatorAddress: string;
 }>;
 

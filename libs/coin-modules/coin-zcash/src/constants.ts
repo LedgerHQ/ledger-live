@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { ZcashPrivateInfo } from "./network/types";
 import { zcashNetworkOf, type ZcashNetwork } from "./logic/network";
 

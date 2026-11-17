@@ -23,9 +23,9 @@ const mockedGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
 
 describe("AccountWarningBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: CryptoCurrencyIdSchema.parse("fantom"),
-    name: "Fantom",
-    ticker: "FTM",
+    id: CryptoCurrencyIdSchema.parse("sonic"),
+    name: "Sonic",
+    ticker: "S",
     type: "CryptoCurrency",
     managerAppName: "Mock Manager App",
     coinType: 0,
@@ -42,11 +42,11 @@ describe("AccountWarningBanner", () => {
 
   test("renders migration warning banner", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       status: {
         type: "migration",
-        chain: "fantom",
+        chain: "sonic",
         from: "OldCoin",
         to: "NewCoin",
         link: "https://migrationsupport.com",
@@ -62,8 +62,8 @@ describe("AccountWarningBanner", () => {
 
   test("renders feature unavailable warning banner", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       status: { type: "feature_unavailable", feature: "send", link: "https://featuresupport.com" },
     });
 
@@ -74,8 +74,8 @@ describe("AccountWarningBanner", () => {
 
   test("renders will be deprecated warning banner", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       status: {
         type: "will_be_deprecated",
         deprecated_date: "2025-12-31",
@@ -104,9 +104,9 @@ describe("AccountWarningBanner", () => {
 
 describe("AccountWarningCustomBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: CryptoCurrencyIdSchema.parse("fantom"),
-    name: "Fantom",
-    ticker: "FTM",
+    id: CryptoCurrencyIdSchema.parse("sonic"),
+    name: "Sonic",
+    ticker: "S",
     type: "CryptoCurrency",
     managerAppName: "Mock Manager App",
     coinType: 0,
@@ -133,8 +133,8 @@ describe("AccountWarningCustomBanner", () => {
 
   it("renders nothing if no banner is defined in currencyConfig", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       status: {
         type: "active",
       },
@@ -147,8 +147,8 @@ describe("AccountWarningCustomBanner", () => {
 
   it("renders nothing if banner.isDisplay is false", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: false,
         bannerText: "Network maintenance soon",
@@ -170,8 +170,8 @@ describe("AccountWarningCustomBanner", () => {
     const bannerLinkText = "Read more";
 
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: true,
         bannerText,
@@ -194,8 +194,8 @@ describe("AccountWarningCustomBanner", () => {
     const bannerText = "Announcement without link text.";
 
     mockedGetCurrencyConfiguration.mockReturnValue({
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: true,
         bannerText,

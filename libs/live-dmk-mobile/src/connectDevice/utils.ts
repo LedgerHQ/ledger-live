@@ -1,13 +1,11 @@
-import {
-  PairingRefusedError,
-  rnBleTransportIdentifier,
-} from "@ledgerhq/device-transport-kit-react-native-ble";
+import { PairingRefusedError } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import type { ConnectedDevice, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
-  dmkToLedgerDeviceIdMap,
+  buildMockServerCompatDeviceId,
+  toDevice,
   type KnownDevice,
   type MatchedDevice,
 } from "@ledgerhq/live-dmk-shared";
@@ -17,7 +15,7 @@ import {
   ConnectionErrorTypes,
   type MobileConnectionError,
 } from "../deviceConnectivity/types";
-import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
+import { findMatchingDevice } from "../utils/findMatchingDevice";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 import {
   buildSpeculosLegacyDeviceId,
@@ -30,35 +28,7 @@ export const filterMatchedDevices = (
 ): MatchedDevice[] => {
   return discoveredDevices
     .map(device => {
-      const matchedDevice = knownDevices.find(knownDevice => {
-        if (device.transport !== knownDevice.transport) {
-          return false;
-        }
-
-        const matchesByModelOnly =
-          knownDevice.transport === rnHidTransportIdentifier ||
-          knownDevice.transport === speculosIdentifier ||
-          knownDevice.transport === mockserverIdentifier;
-
-        if (matchesByModelOnly) {
-          return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
-        }
-
-        if (knownDevice.transport === rnBleTransportIdentifier) {
-          const oldDevice = {
-            deviceId: knownDevice.id,
-            deviceName: knownDevice.name,
-            modelId: knownDevice.deviceModelId,
-          };
-          const newDevice = {
-            deviceId: device.id,
-            deviceName: device.name,
-            modelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],
-          };
-
-          return findMatchingNewDevice(oldDevice, [newDevice]) !== null;
-        }
-      });
+      const matchedDevice = findMatchingDevice(toDevice(device), knownDevices);
 
       return matchedDevice ? { knownDevice: matchedDevice, discoveredDevice: device } : null;
     })
@@ -74,10 +44,12 @@ export const buildMobileCompatDeviceId = (device: ConnectedDevice): string => {
   }
 
   if (device.transport === mockserverIdentifier) {
-    return device.id;
+    return buildMockServerCompatDeviceId(device.id);
   }
 
-  if (device.type === "USB") {
+  // Only native RN HID devices use the `usb|` prefix in the legacy transport registry;
+  // HTTP proxy devices also report `type: "USB"` but already carry their `httpdebug|` id.
+  if (device.transport === rnHidTransportIdentifier) {
     return buildUsbCompatDeviceId(device.id);
   }
 

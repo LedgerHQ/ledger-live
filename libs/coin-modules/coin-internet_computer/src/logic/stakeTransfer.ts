@@ -7,7 +7,7 @@ import {
   InvalidTransactionError,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { parseNeuronId } from "../common-logic/neuron";
 import {
   E8S_PER_ICP,

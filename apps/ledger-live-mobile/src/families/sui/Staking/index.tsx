@@ -5,7 +5,7 @@ import type { MappedStake, SuiAccount } from "@ledgerhq/live-common/families/sui
 import { Account } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";

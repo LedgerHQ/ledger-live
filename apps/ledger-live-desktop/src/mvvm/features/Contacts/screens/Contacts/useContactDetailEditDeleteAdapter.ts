@@ -1,9 +1,9 @@
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
   useContactDetailEditDeleteAnalytics,
-  useContactsMeContact,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import { useContactsMeContact } from "@features/platform-contacts";
 import {
   type ContactsEditSignerMismatchDialogProps,
   createContactDetailEditDeleteUiState,

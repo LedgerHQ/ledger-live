@@ -3,7 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import { RequestReceive } from "../RequestReceive";
-import { RequestReceiveView } from "../RequestReceiveView.web";
+import { RequestReceiveView } from "../RequestReceiveView";
 import { createRequestReceiveProps, REQUEST_RECEIVE_ADDRESS } from "./fixtures";
 import type { RequestReceiveProps } from "../../../types";
 import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";

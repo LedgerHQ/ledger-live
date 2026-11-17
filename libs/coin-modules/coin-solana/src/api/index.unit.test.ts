@@ -86,7 +86,7 @@ describe("createApi", () => {
   const mockConfig: SolanaCoinConfig = {
     token2022Enabled: false,
     legacyOCMSMaxVersion: "1.0.0",
-    rpcUrls: { solana: "https://solana.test.invalid" },
+    rpcUrl: "https://solana.test.invalid",
     status: { type: "active" },
     name: "Solana",
     unit: { name: "SOL", code: "SOL", magnitude: 9 },
@@ -104,7 +104,7 @@ describe("createApi", () => {
   });
 
   it("declares every method the chain supports", () => {
-    const api = createApi("solana");
+    const api = createApi();
 
     expect(api).toEqual(
       expect.objectContaining({
@@ -128,7 +128,7 @@ describe("createApi", () => {
   it("should pass parameters correctly to broadcast", async () => {
     jest.mocked(broadcast).mockResolvedValueOnce("txHash");
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.broadcast(context, "transaction");
 
     expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
@@ -139,7 +139,7 @@ describe("createApi", () => {
     const mockBalances: Balance[] = [{ value: BigInt(1000), asset: { type: "native" as const } }];
     jest.mocked(getBalance).mockResolvedValueOnce(mockBalances);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.getBalance(context, "address");
 
     expect(getBalance).toHaveBeenCalledWith(mockChainAPI, mockConfig, "address", {
@@ -151,7 +151,7 @@ describe("createApi", () => {
   it("should pass parameters correctly to lastBlock", async () => {
     const mockedDate = new Date();
     jest.mocked(lastBlock).mockResolvedValueOnce({ height: 100, hash: "hash", time: mockedDate });
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.lastBlock(context);
 
     expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
@@ -160,10 +160,10 @@ describe("createApi", () => {
 
   it("should pass parameters correctly to combine", async () => {
     jest.mocked(combine).mockReturnValueOnce("txHash");
-    const api = createApi("solana");
-    const result = await api.combine(context, "transaction", ["signature"]);
+    const api = createApi();
+    const result = await api.combine(context, "transaction", ["signature"], { pubkey: "signer" });
 
-    expect(combine).toHaveBeenCalledWith("transaction", ["signature"]);
+    expect(combine).toHaveBeenCalledWith("transaction", ["signature"], "signer");
     expect(result).toBe("txHash");
   });
 
@@ -178,7 +178,7 @@ describe("createApi", () => {
     };
     jest.mocked(craftTransaction).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -201,7 +201,7 @@ describe("createApi", () => {
     };
     jest.mocked(craftRawTransaction).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.craftRawTransaction(context, "tx", "sender", "pubkey", 42n);
 
     expect(craftRawTransaction).toHaveBeenCalledWith("tx", "sender");
@@ -212,7 +212,7 @@ describe("createApi", () => {
     const mockResult = { value: 5000n };
     jest.mocked(estimateFees).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -231,7 +231,7 @@ describe("createApi", () => {
     const mockResult: Page<Operation> = { items: [], next: "next" };
     jest.mocked(listOperations).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.listOperations(context, "address", { minHeight: 14, order: "asc" });
 
     expect(listOperations).toHaveBeenCalledWith(mockChainAPI, mockConfig, "address", {
@@ -245,7 +245,7 @@ describe("createApi", () => {
     const mockResult = { items: [] };
     jest.mocked(getStakes).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.getStakes(context, "address");
 
     expect(getStakes).toHaveBeenCalledWith(mockChainAPI, "address", undefined);
@@ -256,7 +256,7 @@ describe("createApi", () => {
     const mockResult = { errors: {}, warnings: {}, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
     jest.mocked(validateIntent).mockResolvedValueOnce(mockResult);
 
-    const api = createApi("solana");
+    const api = createApi();
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -274,7 +274,7 @@ describe("createApi", () => {
   it("should delegate getNextSequence to the logic function", async () => {
     jest.mocked(getNextSequence).mockReturnValueOnce(42n);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.getNextSequence(context, "address");
 
     expect(getNextSequence).toHaveBeenCalledWith("address");
@@ -284,7 +284,7 @@ describe("createApi", () => {
   it("should delegate validateAddress to the logic function", async () => {
     jest.mocked(validateAddress).mockResolvedValueOnce(true);
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.validateAddress(context, "address", {});
 
     expect(validateAddress).toHaveBeenCalledWith("address", {});
@@ -306,7 +306,7 @@ describe("createApi", () => {
       next: undefined,
     });
 
-    const api = createApi("solana");
+    const api = createApi();
     const result = await api.getValidators(context);
 
     expect(getValidators).toHaveBeenCalledWith(
@@ -329,7 +329,7 @@ describe("createApi", () => {
   });
 
   it("omits the capabilities the chain has none of", () => {
-    const impl = createApi("solana");
+    const impl = createApi();
 
     for (const method of ["call", "register", "getBlock", "getBlockInfo", "getRewards"] as const) {
       expect(impl).not.toHaveProperty(method);
@@ -338,7 +338,7 @@ describe("createApi", () => {
 
   it("raises 'not supported' for those capabilities once withDefaults is applied", () => {
     // The consumer path: the resolver wraps the module, and the wrapper is what answers.
-    const api = withDefaults(createApi("solana"));
+    const api = withDefaults(createApi());
 
     expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(context, 1)).toThrow("getBlockInfo is not supported");
@@ -351,7 +351,7 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("should throw an exception when options is provided", async () => {
-      const api = createApi("solana");
+      const api = createApi();
       await expect(
         api.getBalance(context, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });

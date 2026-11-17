@@ -9,7 +9,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export enum PaymentChain {
   external = 0,

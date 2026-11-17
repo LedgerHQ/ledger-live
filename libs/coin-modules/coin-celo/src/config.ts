@@ -1,5 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmCoinConfig, EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 
 /**
  * Celo is an EVM chain, but it owns its own coin-config injection rather than relying on coin-evm's
@@ -22,28 +21,25 @@ export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
   return coinConfig(currencyId);
 };
 
-export const celoConfig: Record<string, ConfigInfo> = {
-  config_currency_celo: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
-        ],
-      },
-      chainId: 42220,
-      name: "Celo",
-      unit: { name: "CELO", code: "CELO", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://celo.coin.ledger.com/archive",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
-      },
+export const celoDefaults = {
+  celo: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    chainId: 42220,
+    name: "Celo",
+    unit: { name: "CELO", code: "CELO", magnitude: 18 },
+    node: {
+      type: "external",
+      uri: "https://celo.coin.ledger.com/archive",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
     },
   },
-};
+} satisfies Record<string, EvmConfigInfo>;

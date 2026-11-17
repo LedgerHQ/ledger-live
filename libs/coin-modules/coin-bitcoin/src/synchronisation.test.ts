@@ -3,7 +3,7 @@ jest.mock("./explorer", () => ({
   bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
 }));
 jest.mock("@ledgerhq/wallet-btc/index", () => {
-  const { BigNumber } = require("bignumber.js");
+  const BigNumber = require("bignumber.js").default;
   const mock = {
     generateAccount: jest.fn(),
     syncAccount: jest.fn(),

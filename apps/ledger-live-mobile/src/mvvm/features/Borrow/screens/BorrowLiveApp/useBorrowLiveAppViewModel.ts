@@ -7,34 +7,15 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useNetworkState } from "@shared/network-status";
-import { Platform } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTheme } from "styled-components/native";
-import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
-import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
-import { useSettings } from "~/hooks";
-import { counterValueCurrencySelector, exportSettingsSelector } from "~/reducers/settings";
 import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
+import {
+  useLiveAppWebviewInputs,
+  type LiveAppWebviewInputs,
+} from "LLM/hooks/useLiveAppWebviewInputs";
 import type { RefObject } from "react";
-
-export type BorrowWebviewInputs = {
-  devMode: string;
-  theme: string;
-  lang: string;
-  locale: string;
-  countryLocale: string;
-  currencyTicker: string;
-  OS: string;
-  platform: "LLM";
-  // Safe-area insets (RN layout units) forwarded to the web app; stringified for query params.
-  safeAreaTop: string;
-  safeAreaBottom: string;
-  safeAreaLeft: string;
-  safeAreaRight: string;
-};
 
 type BorrowLiveAppViewModel = {
   manifest: LiveAppManifest | undefined;
@@ -43,7 +24,7 @@ type BorrowLiveAppViewModel = {
   webviewState: WebviewState;
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
-  webviewInputs: BorrowWebviewInputs;
+  webviewInputs: LiveAppWebviewInputs;
 };
 
 const DEFAULT_MANIFEST_ID =
@@ -54,14 +35,9 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const borrowConfig = useBorrowLiveConfig();
   const { isConnected } = useNetworkState();
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const { theme } = useTheme();
-  const { language } = useSettings();
-  const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
-  const exportSettings = useSelector(exportSettingsSelector);
-  const insets = useSafeAreaInsets();
+  const webviewInputs = useLiveAppWebviewInputs();
 
   const webviewRef = useRef<WebviewAPI>(null);
-  const countryLocale = getCountryLocale();
 
   const borrowManifestId = borrowConfig?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
 
@@ -81,34 +57,6 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const onWebviewStateChange = useCallback((state: WebviewState) => {
     setWebviewState(state);
   }, []);
-
-  const webviewInputs = useMemo<BorrowWebviewInputs>(
-    () => ({
-      devMode: exportSettings.developerModeEnabled.toString(),
-      theme,
-      lang: language,
-      locale: language,
-      countryLocale,
-      currencyTicker,
-      OS: Platform.OS,
-      platform: "LLM",
-      safeAreaTop: insets.top.toString(),
-      safeAreaBottom: insets.bottom.toString(),
-      safeAreaLeft: insets.left.toString(),
-      safeAreaRight: insets.right.toString(),
-    }),
-    [
-      currencyTicker,
-      countryLocale,
-      exportSettings.developerModeEnabled,
-      language,
-      theme,
-      insets.top,
-      insets.bottom,
-      insets.left,
-      insets.right,
-    ],
-  );
 
   const error: Error | null = useMemo(() => {
     const hasError = !manifest || isConnected === false;

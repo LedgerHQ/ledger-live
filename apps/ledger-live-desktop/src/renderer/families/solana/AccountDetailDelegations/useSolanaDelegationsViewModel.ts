@@ -1,11 +1,9 @@
 import { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   solanaActivationState,
   stakeActions as solanaStakeActions,
-  stakeActivePercent,
 } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import type {
@@ -18,6 +16,7 @@ import type {
   DelegationRow,
   DelegationStatus,
 } from "@features/flow-account-detail-delegations";
+import { delegationAmountCell } from "LLD/features/AccountDetail/utils/delegationAmountCell";
 import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
@@ -62,13 +61,6 @@ export const useSolanaDelegationsViewModel = (
   const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const explorerView = getDefaultExplorerView(account.currency);
   const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
-
-  const formatAmount = (amount: BigNumber | number) =>
-    formatCurrencyUnit(unit, BigNumber.isBigNumber(amount) ? amount : new BigNumber(amount), {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    });
 
   const onSelectRowAction = useCallback(
     (rowId: string, actionId: string) => {
@@ -125,14 +117,8 @@ export const useSolanaDelegationsViewModel = (
         ),
       },
       cells: {
-        delegated: { value: formatAmount(stake.amount), sensitive: true },
-        active: {
-          value: `${stake.validatorAddress ? stakeActivePercent(stake).toFixed(2) : "0"} %`,
-        },
-        available: {
-          value: formatAmount(stake.withdrawableAmount ?? new BigNumber(0)),
-          sensitive: true,
-        },
+        delegated: delegationAmountCell(unit, stake.amount),
+        available: delegationAmountCell(unit, stake.withdrawableAmount ?? new BigNumber(0)),
       },
       actions: solanaStakeActions(stake).map(action => {
         const modal = ACTION_MODALS[action];
@@ -148,7 +134,6 @@ export const useSolanaDelegationsViewModel = (
     statusColumnLabel: t("delegation.status"),
     columns: [
       { id: "delegated", label: t("delegation.delegated") },
-      { id: "active", label: t("solana.delegation.active") },
       { id: "available", label: t("solana.delegation.availableBalance") },
     ],
     rows,

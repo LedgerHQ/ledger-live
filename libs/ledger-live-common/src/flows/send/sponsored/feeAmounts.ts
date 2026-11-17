@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Unit } from "@domain/entity-currency-unit";
 import { formatFeesValue } from "../utils/networkFeesDisplay";
 import type { SponsoredFeeQuote } from "../../../bridge/generic-coin-framework/sponsored";

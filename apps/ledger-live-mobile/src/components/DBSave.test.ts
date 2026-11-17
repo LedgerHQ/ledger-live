@@ -1,5 +1,79 @@
-import { featureFlagsLense, payCardDbSaveSliceSelector, payCardPersistedSelector } from "./DBSave";
+import { AppState, type AppStateStatus } from "react-native";
+import { act, renderHook } from "@tests/test-renderer";
+import { saveSettings } from "~/db";
+import { setTheme } from "~/actions/settings";
+import {
+  ConfigureDBSaveEffects,
+  featureFlagsLense,
+  payCardDbSaveSliceSelector,
+  payCardPersistedSelector,
+} from "./DBSave";
 import type { State } from "~/reducers/types";
+
+jest.mock("~/db");
+
+describe("ConfigureDBSaveEffects", () => {
+  let appStateListener: (nextAppState: AppStateStatus) => void;
+  let addEventListenerSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.mocked(saveSettings).mockClear();
+    addEventListenerSpy = jest
+      .spyOn(AppState, "addEventListener")
+      .mockImplementation((_event, listener) => {
+        appStateListener = listener;
+        return { remove: jest.fn() };
+      });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    addEventListenerSpy.mockRestore();
+  });
+
+  it("saves a change made just before the app goes to the background", async () => {
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+    act(() => {
+      store.dispatch(setTheme("dark"));
+    });
+    expect(saveSettings).not.toHaveBeenCalled();
+
+    await act(async () => {
+      appStateListener("background");
+    });
+
+    expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({ theme: "dark" }), true);
+  });
+
+  it("saves a change made during a save in flight when the app goes to the background", async () => {
+    let finishFirstSave: (() => void) | undefined;
+    jest
+      .mocked(saveSettings)
+      .mockImplementationOnce(() => new Promise<void>(resolve => (finishFirstSave = resolve)));
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+    act(() => {
+      store.dispatch(setTheme("dark"));
+    });
+    await act(async () => {
+      appStateListener("background");
+    });
+    act(() => {
+      store.dispatch(setTheme("light"));
+    });
+
+    await act(async () => {
+      appStateListener("background");
+      finishFirstSave?.();
+    });
+
+    expect(saveSettings).toHaveBeenCalledTimes(2);
+    expect(saveSettings).toHaveBeenLastCalledWith(
+      expect.objectContaining({ theme: "light" }),
+      true,
+    );
+  });
+});
 
 describe("featureFlagsLense", () => {
   it("projects only { overrides, bannerVisible } — never the transient readiness flags", () => {
@@ -25,7 +99,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
   it("composes the pay card flow slices into one persisted blob", () => {
     const state = {
       payCardFeatureTour: { hasSeenFeatureTour: true },
-      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+      receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
       payCardLoginIntro: { hasSeenLoginIntro: true },
       payCardOnboardingWidget: {
@@ -54,7 +128,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
 describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
   const base = {
     payCardFeatureTour: { hasSeenFeatureTour: false },
-    payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: false },
     payCardBalance: { balanceFilter: "all" },
     payCardLoginIntro: { hasSeenLoginIntro: false },
     payCardOnboardingWidget: { hasCompletedOnboarding: false },
@@ -66,7 +140,7 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
 
   it.each([
     "payCardFeatureTour",
-    "payRequestVerifyHint",
+    "receiveVerifyHint",
     "payCardBalance",
     "payCardLoginIntro",
     "payCardOnboardingWidget",

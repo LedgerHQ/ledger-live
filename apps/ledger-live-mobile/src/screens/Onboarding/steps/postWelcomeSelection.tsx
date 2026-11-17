@@ -6,11 +6,13 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { setOnboardingHasDevice } from "~/actions/settings";
+import { setOnboardingHasDevice, setOnboardingType } from "~/actions/settings";
 import { updateIdentify } from "~/analytics";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import { NavigatorName, ScreenName } from "~/const";
+import { OnboardingType } from "~/reducers/types";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 import { urls } from "~/utils/urls";
@@ -18,7 +20,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useFeature } from "@features/platform-feature-flags";
 
 type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
+  OnboardingNavigatorParamList & RootStackParamList,
   ScreenName.OnboardingPostWelcomeSelection
 >;
 
@@ -37,6 +39,9 @@ function PostWelcomeSelection() {
   const deviceOnboarding = useFeature("deviceOnboarding");
   const openUnseededFunnel = Boolean(
     deviceOnboarding?.enabled && deviceOnboarding.params?.connectUnseededDevice,
+  );
+  const openSeededFunnel = Boolean(
+    deviceOnboarding?.enabled && deviceOnboarding.params?.connectSeededDevice,
   );
 
   const identifyUser = useCallback(
@@ -64,9 +69,8 @@ function PostWelcomeSelection() {
   const setupLedger = () => {
     identifyUser(null);
     if (openUnseededFunnel) {
-      navigation.navigate(ScreenName.OnboardingPairNew, {
-        deviceModelId: undefined,
-        connectUnseededDevice: true,
+      navigation.navigate(NavigatorName.DeviceOnboarding, {
+        screen: ScreenName.DeviceOnboardingConnect,
       });
       return;
     }
@@ -75,6 +79,13 @@ function PostWelcomeSelection() {
 
   const accessExistingWallet = () => {
     identifyUser(null);
+    if (openSeededFunnel) {
+      dispatch(setOnboardingType(OnboardingType.connect));
+      navigation.navigate(NavigatorName.DeviceOnboarding, {
+        screen: ScreenName.DeviceOnboardingConnect,
+      });
+      return;
+    }
     navigation.navigate(ScreenName.OnboardingWelcomeBack);
   };
 

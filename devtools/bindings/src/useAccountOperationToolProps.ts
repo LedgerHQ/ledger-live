@@ -5,7 +5,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
-import { BalanceAssetIdSchema, type WithAccountBalances } from "@domain/entity-account-balance";
+import { type WithAccountBalances } from "@domain/entity-account-balance";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   selectAccountOperations,
@@ -13,6 +13,7 @@ import {
   type AccountOperationsQuery,
   type WithAccountOperations,
 } from "@domain/entity-account-operation";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { FiatCurrencyTickerSchema, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
@@ -36,7 +37,7 @@ const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => st
 function toQuery(options: AccountOperationToolQuery, fiat: string): AccountOperationsQuery {
   return {
     limit: options.limit,
-    filterAsset: BalanceAssetIdSchema.optional().safeParse(options.filterAsset).data,
+    filterAsset: CryptoOrTokenCurrencyIdSchema.optional().safeParse(options.filterAsset).data,
     countervalue: options.countervalue ? FiatCurrencyTickerSchema.safeParse(fiat).data : undefined,
   };
 }
@@ -57,7 +58,7 @@ function queryOf(queryKey: string): AccountOperationsQuery | undefined {
   if (typeof parsed !== "object" || parsed === null) return undefined;
   const field = (name: string) => (name in parsed ? Reflect.get(parsed, name) : undefined);
   const limit = field("limit");
-  const filterAsset = BalanceAssetIdSchema.optional().safeParse(field("filterAsset"));
+  const filterAsset = CryptoOrTokenCurrencyIdSchema.optional().safeParse(field("filterAsset"));
   const countervalue = FiatCurrencyTickerSchema.optional().safeParse(field("countervalue"));
   return {
     limit: typeof limit === "number" ? limit : undefined,

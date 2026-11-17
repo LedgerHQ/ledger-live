@@ -57,6 +57,7 @@ export function ValidationBanner(props: ValidationBannerProps) {
   if (!translatedError) return null;
 
   const dataTestId = `${variant}-${type}-banner`;
+  const learnMoreUrl: string | undefined = type === "warning" ? urls.errors[error.name] : undefined;
 
   return (
     <Banner
@@ -64,6 +65,13 @@ export function ValidationBanner(props: ValidationBannerProps) {
       title={translatedError.title}
       description={translatedError.description}
       data-testid={dataTestId}
+      primaryAction={
+        learnMoreUrl ? (
+          <Button appearance="transparent" size="sm" onClick={() => openURL(learnMoreUrl)}>
+            {t("common.learnMore")}
+          </Button>
+        ) : undefined
+      }
     />
   );
 }

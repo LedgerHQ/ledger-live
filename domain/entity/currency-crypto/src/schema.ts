@@ -1,23 +1,9 @@
 import { z } from "zod";
 import { UnitSchema } from "@domain/entity-currency-unit";
+import { ExplorerViewSchema } from "./schema.internals";
 
 /** Opaque identifier for a crypto currency (e.g. `"bitcoin"`, `"ethereum"`). Non-empty string. */
 export const CryptoCurrencyIdSchema = z.string().min(1).brand<"CryptoCurrencyId">();
-
-/**
- * Blockchain explorer URL templates for a crypto currency.
- * Each field is a URL pattern where `$hash` or `$address` is replaced at runtime.
- */
-export const ExplorerViewSchema = z.object({
-  /** Transaction detail URL (e.g. `"https://blockstream.info/tx/$hash"`). */
-  tx: z.string().optional(),
-  /** Address detail URL (e.g. `"https://blockstream.info/address/$address"`). */
-  address: z.string().optional(),
-  /** Token detail URL. */
-  token: z.string().optional(),
-  /** Stake pool detail URL. */
-  stakePool: z.string().optional(),
-});
 
 /**
  * Canonical Zod-first schema for a crypto currency entity.
