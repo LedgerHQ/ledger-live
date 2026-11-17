@@ -27,6 +27,6 @@ A request that does not get through names its host:
 
 Two failures name no host yet: `agent-intent` errors name the Agent Intent service, not its host, and `swap quote` says `No quotes available: noQuotes` when `swap.ledger.com` is blocked. In a sandbox, check the hosts of that command in the table above.
 
-Tell the human which host to allow and in which sandbox setting, and re-run once they have; a blocked host fails the same way every time. The exception is a failure after the human approved on the device: follow [errors.md](errors.md) before any re-run. A blocked `global.api.prd.ledger.com` can keep `balances` busy for about 30 s before it fails, as each token lookup is retried.
+Tell the human which host to allow and in which sandbox setting, and re-run once they have; a blocked host fails the same way every time. The exception is a failure after the human approved on the device: follow [errors.md](errors.md) before any re-run.
 
 A 403 can come from the host itself, too: when the human says the host is already allowed, handle it as the command's own error. `Request to <host> failed with HTTP <status>.` means the host answered: the sandbox let it through. Handle it as the command's own error ([errors.md](errors.md)).
