@@ -248,7 +248,6 @@ export type CreateTronifyRentRecordResult = {
   /** `txID` of the rent payment. */
   paymentTxId: string;
   payCoinCode: string;
-  /** Rent in `payCoinCode` as Tronify's decimal string (`"2.31"`), not in base units. */
   payCoinAmt: string;
   /** Energy rented for the transfer, to pass to `isTronifyEnergyDelivered`. */
   energyNeeded: string;
