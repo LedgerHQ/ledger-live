@@ -72,7 +72,10 @@ stateDiagram-v2
 - The discovery error state has a `close` action for when the user closes its
   sheet. In standalone mode, it moves to `Terminated`, also while a retry runs:
   the retry result is then dropped. In embedded mode, it does the same as ignore.
-- `Connecting` stops discovery, then calls `dmk.connect` with the selected
+- `Connecting` stops discovery and starts the disconnection of the other
+  devices' sessions without waiting for it (`disconnectOtherSessions`). If the
+  selected device already has an open DMK session (same id and transport), the
+  machine uses that session. Otherwise, it calls `dmk.connect` with the selected
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
@@ -90,9 +93,10 @@ stateDiagram-v2
 - `stop()` stops discovery and the timers, and calls neither `onConnected` nor
   `onClose`. If a connection succeeds after `stop()`, or if `stop()` runs during
   the success delay, the machine disconnects that session, because no caller
-  received it.
+  received it. A session that the machine used but did not open stays open.
 - When an action fails, the machine stops discovery, disconnects a session that
-  waits for the success delay, and sends the error to `observer.error`. The use
+  it opened and that waits for the success delay, and sends the error to
+  `observer.error`. The use
   case then emits the unknown error. A failure of this cleanup is logged, and
   the error is still sent.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.

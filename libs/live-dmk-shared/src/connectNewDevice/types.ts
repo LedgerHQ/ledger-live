@@ -75,6 +75,8 @@ export type ConnectNewDeviceStateMachineContext<
   listedDevices: Array<ListedDevice>;
   selectedDevice: DiscoveredDevice | null;
   sessionId: string | null;
+  /** `true` when the selected device already had an open session, so the machine never closes it. */
+  isSessionReused: boolean;
   showDeviceNotFound: boolean;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;

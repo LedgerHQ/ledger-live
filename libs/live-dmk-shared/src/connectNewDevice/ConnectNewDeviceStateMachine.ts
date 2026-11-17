@@ -65,17 +65,28 @@ const createConnectNewDeviceStateMachine = <
             disconnectsUnclaimedSession: boolean;
           };
           signal: AbortSignal;
-        }): Promise<string> => {
-          disconnectOtherSessions(input.dmk, input.discoveredDevice);
-          const sessionId = await input.dmk.connect({
-            device: input.discoveredDevice,
+        }): Promise<{ sessionId: string; isSessionReused: boolean }> => {
+          const { dmk, discoveredDevice } = input;
+          disconnectOtherSessions(dmk, discoveredDevice);
+          const openSessionOfDevice = dmk
+            .listConnectedDevices()
+            .find(
+              ({ id, transport }) =>
+                id === discoveredDevice.id && transport === discoveredDevice.transport,
+            );
+          if (openSessionOfDevice) {
+            return { sessionId: openSessionOfDevice.sessionId, isSessionReused: true };
+          }
+
+          const sessionId = await dmk.connect({
+            device: discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
           const machineStoppedWhileConnecting = signal.aborted;
           if (machineStoppedWhileConnecting && input.disconnectsUnclaimedSession) {
-            disconnectUnclaimedSession(input.dmk, sessionId);
+            disconnectUnclaimedSession(dmk, sessionId);
           }
-          return sessionId;
+          return { sessionId, isSessionReused: false };
         },
       ),
       retryDiscovery: fromPromise<true | BaseDiscoveryError, BaseDiscoveryError>(
@@ -137,9 +148,7 @@ const createConnectNewDeviceStateMachine = <
       clearConnectionError: assign({
         connectionError: () => null,
       }),
-      assignSessionId: assign({
-        sessionId: (_, params: { sessionId: string }) => params.sessionId,
-      }),
+      assignSession: assign((_, params: { sessionId: string; isSessionReused: boolean }) => params),
       showDeviceNotFound: assign({
         showDeviceNotFound: () => true,
       }),
@@ -261,6 +270,7 @@ const createConnectNewDeviceStateMachine = <
       listedDevices: [],
       selectedDevice: null,
       sessionId: null,
+      isSessionReused: false,
       showDeviceNotFound: false,
       discoveryError: null,
       connectionError: null,
@@ -376,8 +386,8 @@ const createConnectNewDeviceStateMachine = <
           onDone: {
             target: "Connected",
             actions: {
-              type: "assignSessionId",
-              params: ({ event }) => ({ sessionId: event.output }),
+              type: "assignSession",
+              params: ({ event }) => event.output,
             },
           },
           onError: {
@@ -513,7 +523,7 @@ export class DefaultConnectNewDeviceStateMachine<
       return;
     }
 
-    const { embedded, sessionId } = snapshot.context;
+    const { embedded, sessionId, isSessionReused } = snapshot.context;
     // The parent keeps scanning, and lists the unclaimed session as a connected device.
     if (embedded) {
       return;
@@ -524,7 +534,7 @@ export class DefaultConnectNewDeviceStateMachine<
     }
 
     const stoppedDuringSuccessDelay = snapshot.matches("Connected");
-    if (stoppedDuringSuccessDelay && sessionId !== null) {
+    if (stoppedDuringSuccessDelay && sessionId !== null && !isSessionReused) {
       disconnectUnclaimedSession(this.dmk, sessionId);
     }
   }
