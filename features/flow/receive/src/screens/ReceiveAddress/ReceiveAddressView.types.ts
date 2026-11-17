@@ -1,6 +1,7 @@
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
+import type { ReceiveServiceIncident } from "../../types";
 
 /** The account data could not be read: Retry reads what failed again. */
 export type ReceiveAddressError = Readonly<{
@@ -48,6 +49,29 @@ export type ReceiveAddressActionsView = Readonly<{
   verifyHint?: Readonly<{ message: string; gotItLabel: string; onGotIt: () => void }>;
 }>;
 
+/** A banner under the actions. */
+export type ReceiveNoticeView = Readonly<{
+  id: string;
+  tone: "info" | "warning";
+  text: string;
+  learnMore?: ReceiveAddressAction;
+}>;
+
+/** A service incident on the network: its banner opens the incidents. */
+export type ReceiveServiceWarningView = Readonly<{
+  title: string;
+  ctaLabel: string;
+  onPress: () => void;
+}>;
+
+/** The open incidents, over the address. */
+export type ReceiveServiceStatusView = Readonly<{
+  title: string;
+  incidents: readonly ReceiveServiceIncident[];
+  gotItLabel: string;
+  onClose: () => void;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
@@ -56,6 +80,10 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
   actions: ReceiveAddressActionsView;
+  notices: readonly ReceiveNoticeView[];
+  serviceWarning?: ReceiveServiceWarningView;
+  /** Set while the incidents are open. */
+  serviceStatus?: ReceiveServiceStatusView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

@@ -5,6 +5,8 @@ import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
+import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
 import { useReceiveScreenData } from "./useReceiveScreenData";
@@ -23,6 +25,8 @@ export function useReceiveAddressViewModel({
   onShareAddress,
   VerifyAddressExecutor,
   getFamilyConfig,
+  serviceIncidents,
+  onOpenUrl,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
@@ -47,6 +51,16 @@ export function useReceiveAddressViewModel({
     onCopyAddress,
     onShareAddress,
     onClose,
+  });
+
+  const { panel, openPanel, closePanel } = useReceiveAddressPanel();
+  const { notices, serviceWarning } = useReceiveAddressNotices({
+    familyConfig,
+    selected,
+    serviceIncidents,
+    copy,
+    onOpenUrl,
+    openServiceStatus: () => openPanel("serviceStatus"),
   });
 
   const address = useMemo(
@@ -82,6 +96,17 @@ export function useReceiveAddressViewModel({
       : undefined,
     address,
     actions,
+    notices,
+    serviceWarning,
+    serviceStatus:
+      panel === "serviceStatus" && serviceIncidents
+        ? {
+            title: copy.serviceStatusTitle,
+            incidents: serviceIncidents,
+            gotItLabel: copy.gotItLabel,
+            onClose: closePanel,
+          }
+        : undefined,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

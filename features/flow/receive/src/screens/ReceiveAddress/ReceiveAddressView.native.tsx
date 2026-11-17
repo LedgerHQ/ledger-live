@@ -25,6 +25,8 @@ export function ReceiveAddressView({
   addressSelection,
   address,
   actions,
+  notices,
+  serviceWarning,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -107,7 +109,12 @@ export function ReceiveAddressView({
               </Box>
               <AddressActions actions={actions} />
               <Box {...dimmed}>
-                <ZonePlaceholder zone="notices" />
+                <ZonePlaceholder
+                  zone="notices"
+                  label={[serviceWarning?.title, ...notices.map(notice => notice.text)]
+                    .filter(Boolean)
+                    .join(" · ")}
+                />
               </Box>
             </>
           )}

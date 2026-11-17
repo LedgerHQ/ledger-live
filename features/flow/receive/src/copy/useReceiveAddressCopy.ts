@@ -1,5 +1,6 @@
 import { useTranslation } from "@shared/i18n";
 import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
+import type { ReceiveNoticeKind } from "../logic/toReceiveNotices";
 
 export type ReceiveAddressCopy = Readonly<{
   title: string;
@@ -15,6 +16,11 @@ export type ReceiveAddressCopy = Readonly<{
   verifyLabel: string;
   verifyHintMessage: string;
   verifyHintGotIt: string;
+  noticeTexts: Readonly<Record<ReceiveNoticeKind, string>>;
+  learnMoreLabel: string;
+  serviceWarningCta: string;
+  serviceStatusTitle: string;
+  gotItLabel: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -41,5 +47,18 @@ export function useReceiveAddressCopy({
     verifyLabel: t("receiveAddress.actions.verify"),
     verifyHintMessage: t("receiveAddress.verifyHint.message"),
     verifyHintGotIt: t("receiveAddress.verifyHint.gotIt"),
+    noticeTexts: {
+      utxo: t("receiveAddress.notices.utxo"),
+      taproot: t("receiveAddress.notices.taproot"),
+      dashStaking: t("receiveAddress.notices.dashStaking"),
+      tronInactiveAccount: t("receiveAddress.notices.tronInactiveAccount"),
+      tezosDelegation: t("receiveAddress.notices.tezosDelegation"),
+      zcashPrivateNotEnabled: t("receiveAddress.notices.zcashPrivateNotEnabled"),
+      unverifiableAddress: t("receiveAddress.notices.unverifiableAddress"),
+    },
+    learnMoreLabel: t("receiveAddress.notices.learnMore"),
+    serviceWarningCta: t("receiveAddress.serviceStatus.cta"),
+    serviceStatusTitle: t("receiveAddress.serviceStatus.title"),
+    gotItLabel: t("receiveAddress.gotIt"),
   };
 }

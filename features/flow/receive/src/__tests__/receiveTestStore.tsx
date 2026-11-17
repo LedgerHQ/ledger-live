@@ -84,6 +84,20 @@ const receiveTestResources = {
         selectAddress: { title: "Select address" },
         addressOptions: { transparent: "Public address", shielded: "Private address" },
         actions: { copy: "Copy", copied: "Copied", share: "Share", verify: "Verify" },
+        notices: {
+          utxo: "For privacy reasons, a new address is generated after each transaction. The previous ones remain valid.",
+          taproot: "Make sure the sender supports Taproot addresses before sending.",
+          dashStaking: "Don't use this address to receive staking rewards.",
+          tronInactiveAccount: "Send at least 0.1 TRX to this address first to activate it.",
+          tezosDelegation: "Funds received won't be delegated until the next delegation cycle.",
+          zcashPrivateNotEnabled:
+            "Private (shielded) receiving isn't enabled on this account yet. Enable it from the account page to get a private address.",
+          unverifiableAddress:
+            "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
+          learnMore: "Learn more",
+        },
+        serviceStatus: { cta: "See details", title: "Service incident" },
+        gotIt: "Got it",
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",

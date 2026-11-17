@@ -4,6 +4,7 @@ export * from "./logic/canVerifyOnDevice";
 export * from "./logic/resolveReceiveFamilyConfig";
 export * from "./logic/resolveReceiveRoute";
 export * from "./logic/showsReceiveOptions";
+export * from "./logic/toReceiveServiceIncidents";
 export * from "./logic/toReceiveTarget";
 export * from "./screens/AddressDisplayed";
 export * from "./screens/AddressMismatch";
