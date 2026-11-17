@@ -83,6 +83,25 @@ describe("glow shaders", () => {
     expect(KOTLIN_MANAGER).toMatch(setter);
   });
 
+  it("should draw on the canvas color on both platforms", () => {
+    expect(GLSL).toMatch(/uniform vec3\s+uCanvas;/);
+    expect(KOTLIN).toContain("glUniform3f(u.uCanvas,");
+    expect(METAL).toContain("float3(u.canvasR, u.canvasG, u.canvasB)");
+    expect(OBJC).toMatch(/_params\.canvasR = /);
+  });
+
+  it.each(["LIGHT_GAIN", "LIGHT_MAX"])("should use the same %s in both shaders", name => {
+    const value = new RegExp(`${name} = ([\\d.]+);`);
+    expect(numberAfter(GLSL, value)).toBeGreaterThan(0);
+    expect(numberAfter(METAL, value)).toBe(numberAfter(GLSL, value));
+  });
+
+  it("should define the GLSL canvas step in the fragment stage, where main calls it", () => {
+    const fragment = GLSL.slice(GLSL.indexOf("#ifdef FRAGMENT"));
+    expect(GLSL.indexOf("#ifdef FRAGMENT")).toBeGreaterThan(0);
+    expect(fragment).toContain("vec3 onCanvas(");
+  });
+
   it("should fade each glow in GLOW_FADE_MS on both platforms", () => {
     expect(numberAfter(OBJC, /kFadeSeconds = ([\d.]+);/) * 1000).toBe(GLOW_FADE_MS);
     expect(numberAfter(KOTLIN_FADE, /const val FADE_SECONDS = ([\d.]+)/) * 1000).toBe(GLOW_FADE_MS);

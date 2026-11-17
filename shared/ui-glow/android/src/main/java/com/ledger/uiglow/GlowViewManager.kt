@@ -1,5 +1,6 @@
 package com.ledger.uiglow
 
+import android.graphics.Color
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
@@ -88,6 +89,10 @@ class GlowViewManager : SimpleViewManager<GlowView>(), GlowViewManagerInterface<
   override fun setShowTop(view: GlowView, value: Boolean) = view.setShowTop(value)
 
   override fun setShowBottom(view: GlowView, value: Boolean) = view.setShowBottom(value)
+
+  override fun setCanvasColor(view: GlowView, value: Int?) {
+    view.canvasColor = value ?: Color.BLACK
+  }
 
   override fun setDelayMs(view: GlowView, value: Double) {
     view.delayMs = value

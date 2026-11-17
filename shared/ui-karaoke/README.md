@@ -14,7 +14,7 @@ A tap-through story: one phrase at a time, the user taps to see the next one. Th
 
 ## Exports
 
-- `Karaoke.Root`: holds the state (which phrase, done or not) and the glow (`@shared/ui-glow`). Pass `phrases`, `tapLabel`, and an optional `action` that replaces the hint on the last phrase (for example a button). Then the top glow fades out while the bottom glow fades in: at once when the action shows, or 2 s after a `Final` shows, once its title is read.
+- `Karaoke.Root`: holds the state (which phrase, done or not) and the glow (`@shared/ui-glow`). Pass `phrases`, `tapLabel`, and an optional `action` that replaces the hint on the last phrase (for example a button). Then the top glow fades out while the bottom glow fades in: at once when the action shows, or 2 s after a `Final` shows, once its title is read. The glow draws on the Lumen `bg.canvas` color, so it follows light and dark mode.
 - `Karaoke.Sequence`: the phrases and the "tap to continue" hint (or the `action`).
 - `Karaoke.Final`: shown after the last tap, in place of the sequence (for example a pitch screen).
 - `karaokeTestIds`: the tap area test ID.

@@ -1,13 +1,16 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { SeedPath } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
+import { NavigatorName } from "~/const";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
+const resetNavigation = jest.fn();
 type RemovalEvent = {
   preventDefault: () => void;
   data: { action: { type: string } };
@@ -21,6 +24,8 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
     goBack,
+    reset: resetNavigation,
+    getParent: () => undefined,
     addListener: (event: string, handler: (event: RemovalEvent) => void) => {
       listeners.set(event, handler);
       return jest.fn();
@@ -740,6 +745,45 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).state).toBe("synchronizing");
   });
 
+  describe("on done", () => {
+    function doneSession(onboardedOnEntry: boolean, seedPath: SeedPath | null) {
+      return session({
+        state: "done",
+        status: "exited",
+        context: { onboardedOnEntry, checksPaused: false } as DeviceOnboardingSession["context"],
+        snapshot: { context: { seedPath } } as DeviceOnboardingSession["snapshot"],
+      });
+    }
+
+    it.each([SeedPath.RestorePhrase, SeedPath.Recover, SeedPath.RecoveryKey, null])(
+      "should end an unseeded restore (%s) on the success karaoke",
+      seedPath => {
+        useSession.mockReturnValue(doneSession(false, seedPath));
+
+        const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+        expect(result.current.status).toBe("unseededSuccessKaraoke");
+        expect(result.current.quitConfirmation).toBeNull();
+      },
+    );
+
+    it("should leave a new seed to the Recover pitch", () => {
+      useSession.mockReturnValue(doneSession(false, SeedPath.NewSeed));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(result.current.status).not.toBe("unseededSuccessKaraoke");
+    });
+
+    it("should keep a seeded device on the shipped success screen", () => {
+      useSession.mockReturnValue(doneSession(true, SeedPath.RestorePhrase));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(checksOf(result.current).state).toBe("succeeded");
+    });
+  });
+
   it.each([
     [true, true],
     [false, false],
@@ -809,6 +853,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
           onboardedOnEntry: false,
           checksPaused: false,
         } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
       }),
     );
 
@@ -968,6 +1015,34 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(send).not.toHaveBeenCalled();
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should leave a finished restore for the portfolio on Android back, without completing it", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "done",
+        status: "running",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.RestorePhrase },
+        } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).toHaveBeenCalledWith(
+      expect.objectContaining({ routes: [expect.objectContaining({ name: NavigatorName.Base })] }),
+    );
   });
 
   it("should release the error sheet while Android back asks to leave a seeded device", () => {
@@ -1252,7 +1327,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
-  it("should keep the success screen when an unseeded device reaches done", () => {
+  it("should keep the success screen when a new seed reaches done", () => {
     useSession.mockReturnValue(
       session({
         state: "done",
@@ -1260,6 +1335,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
           onboardedOnEntry: false,
           checksPaused: false,
         } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
       }),
     );
 

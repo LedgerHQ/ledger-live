@@ -2,9 +2,9 @@ import React, { createContext, useContext, useMemo, useState, type ReactNode } f
 import { AccessibilityInfo, Pressable, StyleSheet, View } from "react-native";
 import Animated, { Easing, FadeIn, FadeOut, LayoutAnimationConfig } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { GLOW_FADE_MS, Glow } from "@shared/ui-glow/native";
-import { KARAOKE_GLOW_SIZE, KaraokeGlow } from "./KaraokeGlow";
+import { KARAOKE_ACTION_GLOW_SIZE, KARAOKE_GLOW_SIZE, KaraokeGlow } from "./KaraokeGlow";
 import { KaraokeLines } from "./KaraokeLines";
 import type { KaraokeFinalProps, KaraokeRootProps } from "../Karaoke.types";
 import { karaokeTestIds } from "../karaokeTestIds";
@@ -50,6 +50,7 @@ function Root({ phrases, tapLabel, action, testID, children }: KaraokeRootProps)
   // The glow moves down when the action shows, or once the `Final` title is read.
   const isGlowAtBottom = (isLastPhrase && hasAction) || isDone;
   const glowDelayMs = hasAction ? 0 : FINAL_READING_MS;
+  const { theme, colorScheme } = useTheme();
 
   const karaoke = useMemo(
     () => ({
@@ -83,8 +84,16 @@ function Root({ phrases, tapLabel, action, testID, children }: KaraokeRootProps)
             showTop={!isGlowAtBottom}
             showBottom={isGlowAtBottom}
             delayMs={glowDelayMs}
-            params={KARAOKE_GLOW_SIZE}
-            fallback={<KaraokeGlow isAtBottom={isGlowAtBottom} delayMs={glowDelayMs} />}
+            canvasColor={theme.colors.bg.canvas}
+            params={hasAction ? KARAOKE_ACTION_GLOW_SIZE : KARAOKE_GLOW_SIZE}
+            fallback={
+              <KaraokeGlow
+                isAtBottom={isGlowAtBottom}
+                delayMs={glowDelayMs}
+                isLight={colorScheme === "light"}
+                hasAction={hasAction}
+              />
+            }
           />
           {children}
         </Box>

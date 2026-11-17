@@ -8,6 +8,7 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { SeedPath } from "@features/platform-device-onboarding";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
@@ -24,9 +25,11 @@ import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
+import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useUnseededFunnelViewModel } from "./useUnseededFunnelViewModel";
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
@@ -52,6 +55,7 @@ export type DeviceOnboardingFunnelModel = (
       unseededIntroKaraoke: UnseededIntroKaraokeScreenProps;
       unlockSheet: UnlockSheetModel | null;
     }
+  | { status: "unseededSuccessKaraoke"; unseededSuccessKaraoke: UnseededSuccessKaraokeScreenProps }
   | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "setup"; setup: SetupScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
@@ -74,6 +78,7 @@ type LeaveActions = {
   allowLeave: boolean;
   state: string | null;
   status: string;
+  unseeded: boolean;
   confirmsQuit: boolean;
   quitConfirmationOpen: boolean;
   leaveFirmwareReconnect: () => void;
@@ -82,6 +87,7 @@ type LeaveActions = {
   continueSetup: () => void;
   quitMachine: () => void;
   leave: () => void;
+  leaveFinishedSetup: () => void;
 };
 
 function blockBack(event: BackEvent, actions: LeaveActions) {
@@ -89,6 +95,10 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   const action = event.data.action.type;
   if (action !== "GO_BACK" && action !== "POP") return;
   event.preventDefault();
+  if (actions.unseeded && actions.state === "done") {
+    actions.leaveFinishedSetup();
+    return;
+  }
   if (actions.state === awaitingSessionAfterFirmwareUpdateState) {
     actions.leaveFirmwareReconnect();
     return;
@@ -129,6 +139,8 @@ type ScreenActions = {
   screenState: ChecksScreenProps["state"] | null;
   phase: ReturnType<typeof phaseOf>;
   unseeded: boolean;
+  seedPath: SeedPath | null;
+  wasReadOnlyAtEntry: boolean;
   confirmsQuit: boolean;
   suspendSheets: boolean;
   quitConfirmation: QuitConfirmationModel | null;
@@ -177,6 +189,17 @@ function connectingScreen(
     closeLabel: copy.closeLabel,
     onQuit,
     quitConfirmation,
+  };
+}
+
+function successScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null {
+  if (!actions.unseeded || actions.state !== "done" || actions.seedPath === SeedPath.NewSeed) {
+    return null;
+  }
+  return {
+    status: "unseededSuccessKaraoke",
+    unseededSuccessKaraoke: { wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry },
+    quitConfirmation: null,
   };
 }
 
@@ -391,6 +414,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     navigation.goBack();
   }, [navigation, onboarding]);
 
+  const leaveFinishedSetup = useCallback(() => {
+    allowLeave.current = true;
+    resetToPortfolio(navigation);
+  }, [navigation]);
+
   const leaveFirmwareReconnect = useCallback(() => {
     allowLeave.current = true;
     onboarding.abortFirmwareReconnect();
@@ -436,6 +464,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       allowLeave: allowLeave.current,
       state: onboarding.state,
       status: onboarding.status,
+      unseeded,
       confirmsQuit,
       quitConfirmationOpen,
       leaveFirmwareReconnect,
@@ -444,11 +473,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       continueSetup,
       quitMachine,
       leave,
+      leaveFinishedSetup,
     });
   }, [
     closeFirmwareHandover,
     continueSetup,
     leave,
+    leaveFinishedSetup,
     leaveFirmwareReconnect,
     onboarding.state,
     onboarding.status,
@@ -456,6 +487,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     quitMachine,
     requestQuit,
     confirmsQuit,
+    unseeded,
   ]);
 
   const retry = useCallback(() => {
@@ -474,6 +506,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           allowLeave: allowLeave.current,
           state: onboarding.state,
           status: onboarding.status,
+          unseeded,
           confirmsQuit,
           quitConfirmationOpen,
           leaveFirmwareReconnect,
@@ -482,12 +515,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           continueSetup,
           quitMachine,
           leave,
+          leaveFinishedSetup,
         });
       }),
     [
       closeFirmwareHandover,
       continueSetup,
       leave,
+      leaveFinishedSetup,
       leaveFirmwareReconnect,
       navigation,
       onboarding.state,
@@ -496,6 +531,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       quitMachine,
       requestQuit,
       confirmsQuit,
+      unseeded,
     ],
   );
 
@@ -549,6 +585,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     screenState,
     phase,
     unseeded,
+    seedPath: onboarding.snapshot?.context.seedPath ?? null,
+    wasReadOnlyAtEntry,
     confirmsQuit,
     suspendSheets,
     quitConfirmation,
@@ -571,14 +609,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
-  const built = unseededSetup
-    ? {
-        status: "setup" as const,
-        setup: unseededSetup.setup,
-        quitConfirmation,
-        unlockSheet: null,
-      }
-    : (earlyScreen(screen) ?? checksScreen(screen));
+  const built =
+    successScreen(screen) ??
+    (unseededSetup
+      ? {
+          status: "setup" as const,
+          setup: unseededSetup.setup,
+          quitConfirmation,
+          unlockSheet: null,
+        }
+      : (earlyScreen(screen) ?? checksScreen(screen)));
   const nextHeld = nextHeldState(
     heldState,
     machineState,

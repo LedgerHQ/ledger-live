@@ -21,9 +21,11 @@ import { NavigatorName, ScreenName } from "~/const";
 import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
 import { DeviceOnboardingNavigator } from "../navigation/DeviceOnboardingNavigator";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
+import { karaokeTestIds } from "@shared/ui-karaoke/native";
 import {
   checksTestIds,
   unseededIntroKaraokeTestIds,
+  unseededSuccessKaraokeTestIds,
   quitConfirmationTestIds,
   syncOfferTestIds,
 } from "../testIds";
@@ -330,6 +332,38 @@ describe("device onboarding flow navigation", () => {
     await user.press(await screen.findByTestId("onboarding-setupLedger"));
     expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
     await pairAndPassChecks(user, device);
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+  });
+
+  it("should end a restore on the success karaoke and complete onboarding on its last tap", async () => {
+    answerWelcome(device);
+    const { user, store } = renderApp({ firstLaunch: true });
+
+    await user.press(await screen.findByTestId("onboarding-setupLedger"));
+    showStax(device);
+    await user.press(screen.getByLabelText("Connect Ledger Stax"));
+    for (let tap = 0; tap < 3; tap++) {
+      await user.press(await screen.findByTestId(karaokeTestIds.advance));
+    }
+    await user.press(await screen.findByTestId(unseededIntroKaraokeTestIds.action));
+    device.acceptToggle();
+    await waitFor(() => act(() => device.passGenuineCheck()));
+    await waitFor(() => act(() => device.reportFirmwareUpToDate()));
+    device.acceptToggle();
+    const words = { numberOfWords: 24, currentWordIndex: 0 };
+    device.answerState({ ...words, onboardingState: OnboardingStep.RestoreSeed });
+    device.answerState({ ...words, onboardingState: OnboardingStep.Ready, isOnboarded: true });
+
+    expect(
+      await screen.findByTestId(unseededSuccessKaraokeTestIds.screen, {}, { timeout: 5000 }),
+    ).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    await user.press(await screen.findByRole("button", { name: "Explore now" }));
 
     expect(await screen.findByText("portfolio")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);

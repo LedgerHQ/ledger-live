@@ -1,9 +1,11 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState } from "@shared/ui-info-state";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { Trans } from "~/context/Locale";
 import type { CounterfeitWarningDrawerViewProps } from "./useCounterfeitWarningDrawerViewModel";
+
+const CONTENT_BOTTOM_SPACING = 24;
 
 type BodyLinkProps = Readonly<{
   children?: React.ReactNode;
@@ -36,9 +38,38 @@ const CounterfeitWarningDrawerView = ({
     isRequestingToBeOpened={isOpen}
     onClose={onDismiss}
     enableDynamicSizing
+    contentHasBottomSpace
     testID="counterfeit-warning-drawer"
   >
-    <BottomSheetView>
+    <CounterfeitWarningContent
+      title={title}
+      primaryCtaLabel={primaryCtaLabel}
+      secondaryCtaLabel={secondaryCtaLabel}
+      onProceed={onProceed}
+      onConcern={onConcern}
+      onLedgerComLink={onLedgerComLink}
+      onResellerLink={onResellerLink}
+    />
+  </QueuedBottomSheet>
+);
+
+type CounterfeitWarningContentProps = Omit<
+  CounterfeitWarningDrawerViewProps,
+  "isOpen" | "onDismiss"
+>;
+
+const CounterfeitWarningContent = ({
+  title,
+  primaryCtaLabel,
+  secondaryCtaLabel,
+  onProceed,
+  onConcern,
+  onLedgerComLink,
+  onResellerLink,
+}: CounterfeitWarningContentProps) => {
+  const bottomInset = useBottomSheetBottomInset();
+  return (
+    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
       <BottomSheetHeader />
       <Box lx={{ paddingHorizontal: "s16" }}>
         <InfoState
@@ -59,7 +90,7 @@ const CounterfeitWarningDrawerView = ({
         />
       </Box>
     </BottomSheetView>
-  </QueuedBottomSheet>
-);
+  );
+};
 
 export default CounterfeitWarningDrawerView;

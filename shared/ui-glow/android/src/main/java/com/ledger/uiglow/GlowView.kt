@@ -1,6 +1,7 @@
 package com.ledger.uiglow
 
 import android.content.Context
+import android.graphics.Color
 import android.database.ContentObserver
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
@@ -32,6 +33,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
 
   /** The design params. The GL thread reads them on each frame. */
   @Volatile var params = GlowParams()
+  @Volatile var canvasColor = Color.BLACK
   /** Wait before a show change starts. */
   var delayMs = 0.0
   var onShaderError: ((message: String) -> Unit)? = null
@@ -151,7 +153,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       bottomFade.step(now)
       if (program == 0 && !hasFailed) buildProgram()
       val u = uniforms
-      if (program == 0 || u == null) return clearToBlack()
+      if (program == 0 || u == null) return clearToCanvas()
       setUniforms(u, now)
       GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3) // one big triangle covers the view
     }
@@ -162,8 +164,9 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       lastFrameNanos = if (isReduceMotion) 0L else now
     }
 
-    private fun clearToBlack() {
-      GLES20.glClearColor(0f, 0f, 0f, 1f)
+    private fun clearToCanvas() {
+      val color = canvasColor
+      GLES20.glClearColor(Color.red(color) / 255f, Color.green(color) / 255f, Color.blue(color) / 255f, 1f)
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
     }
 
@@ -176,6 +179,8 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       GLES20.glUniform1f(u.uFade, entryFade)
       GLES20.glUniform1f(u.uFadeTop, topFade.value)
       GLES20.glUniform1f(u.uFadeBottom, bottomFade.value)
+      val color = canvasColor
+      GLES20.glUniform3f(u.uCanvas, Color.red(color) / 255f, Color.green(color) / 255f, Color.blue(color) / 255f)
       val p = params
       GLES20.glUniform4f(u.uLook, p.intensity, p.opacity, p.grain, p.grainSize)
       GLES20.glUniform4f(u.uShape, p.chroma, p.softness, p.width, p.reach)
@@ -209,6 +214,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     val uFade = find("uFade")
     val uFadeTop = find("uFadeTop")
     val uFadeBottom = find("uFadeBottom")
+    val uCanvas = find("uCanvas")
     val uLook = find("uLook")
     val uShape = find("uShape")
     val uTone = find("uTone")

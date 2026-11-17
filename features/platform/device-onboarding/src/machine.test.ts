@@ -1398,6 +1398,16 @@ describe("device setup", () => {
     expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
+  it("knows a new seed first seen on its confirmation step", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [OnboardingStep.Pin, OnboardingStep.NewDeviceConfirming]);
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+  });
+
   it("skips naming on a nano and still reaches done", async () => {
     const { actor } = await enterSetup({ deviceModelId: DeviceModelId.NANO_X });
 

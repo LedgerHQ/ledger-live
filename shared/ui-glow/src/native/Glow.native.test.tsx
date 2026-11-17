@@ -26,6 +26,15 @@ describe("Glow", () => {
     expect(view.props.bottom).toBeUndefined();
   });
 
+  it("should draw on the canvas color, black by default", () => {
+    const { rerender } = render(<Glow testID="glow" />);
+    expect(screen.getByTestId("glow").props.canvasColor).toBe("#000000");
+
+    rerender(<Glow testID="glow" canvasColor="#ffffff" />);
+
+    expect(screen.getByTestId("glow").props.canvasColor).toBe("#ffffff");
+  });
+
   it("should show the fallback only when the shader fails", () => {
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     render(<Glow testID="glow" fallback={<Text>Static glow</Text>} />);
