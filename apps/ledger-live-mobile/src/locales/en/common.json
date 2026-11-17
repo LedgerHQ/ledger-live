@@ -2432,6 +2432,11 @@
       "description": "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
       "contactSupportCta": "Contact Ledger Support",
       "closeCta": "Close"
+    },
+    "error": {
+      "title": "We couldn't load this address",
+      "description": "Check your internet connection, then try again.",
+      "retry": "Retry"
     }
   },
   "ratings": {

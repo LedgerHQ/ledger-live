@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
+import { InfoState } from "@shared/ui-info-state";
+import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
@@ -14,6 +16,8 @@ export function ReceiveAddressView({
   title,
   networkLabel,
   networkIcon,
+  isLoading,
+  error,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -48,10 +52,33 @@ export function ReceiveAddressView({
         }}
       >
         <ReceiveAddressTitle title={title} networkLabel={networkLabel} networkIcon={networkIcon} />
-        <ZonePlaceholder zone="summary" />
-        <ZonePlaceholder zone="address" />
-        <ZonePlaceholder zone="actions" />
-        <ZonePlaceholder zone="notices" />
+        {error ? (
+          <InfoState
+            preset="error"
+            size="hug"
+            title={error.title}
+            description={error.description}
+            primaryCta={{
+              label: error.retryLabel,
+              onPress: error.onRetry,
+              testID: "receive-address-retry",
+            }}
+            testID="receive-address-error"
+          />
+        ) : (
+          <>
+            {isLoading ? (
+              <AddressSummarySkeleton />
+            ) : (
+              <>
+                <ZonePlaceholder zone="summary" />
+                <ZonePlaceholder zone="address" />
+              </>
+            )}
+            <ZonePlaceholder zone="actions" />
+            <ZonePlaceholder zone="notices" />
+          </>
+        )}
         <ZonePlaceholder zone="extras" />
       </ScrollView>
     </Box>

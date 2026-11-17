@@ -1,8 +1,17 @@
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
-import type { ReceiveScreenData } from "./useReceiveScreenData";
+
+/** The account data could not be read: Retry reads what failed again. */
+export type ReceiveAddressError = Readonly<{
+  title: string;
+  description: string;
+  retryLabel: string;
+  onRetry: () => void;
+}>;
 
 export type ReceiveAddressViewProps = Readonly<{
-  data: ReceiveScreenData;
+  /** The address is not known yet: skeletons hold the place of the QR card and the address. */
+  isLoading: boolean;
+  error?: ReceiveAddressError;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

@@ -11,8 +11,19 @@ export function useReceiveAddressViewModel({
   const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
 
+  const { copy } = header;
+
   return {
-    data,
+    isLoading: data.type === "loading",
+    error:
+      data.type === "error"
+        ? {
+            title: copy.errorTitle,
+            description: copy.errorDescription,
+            retryLabel: copy.retryLabel,
+            onRetry: data.retry,
+          }
+        : undefined,
     title: header.title,
     networkLabel: header.networkLabel,
     networkIcon: header.data?.networkIcon,

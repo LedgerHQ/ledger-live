@@ -2792,7 +2792,12 @@
       "closeCta": "Close"
     },
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "error": {
+      "title": "We couldn't load this address",
+      "description": "Check your internet connection, then try again.",
+      "retry": "Retry"
+    }
   },
   "send": {
     "title": "Send",

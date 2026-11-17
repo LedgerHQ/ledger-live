@@ -74,6 +74,11 @@ const receiveTestResources = {
         networkLabel: "{{network}} network",
         close: "Close",
         back: "Back",
+        error: {
+          title: "We couldn't load this address",
+          description: "Check your internet connection, then try again.",
+          retry: "Retry",
+        },
       },
     },
   },
