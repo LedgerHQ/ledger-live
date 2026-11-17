@@ -42,24 +42,6 @@ jest.mock("~/components/KeyboardView", () => {
   const { View } = jest.requireActual("react-native");
   return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;
 });
-jest.mock("~/components/Button", () => {
-  const { Text, TouchableOpacity } = jest.requireActual("react-native");
-  return ({
-    disabled,
-    onPress,
-    title,
-    testID,
-  }: {
-    disabled?: boolean;
-    onPress: () => void;
-    title: React.ReactNode;
-    testID?: string;
-  }) => (
-    <TouchableOpacity testID={testID} disabled={disabled} onPress={onPress}>
-      <Text>{title}</Text>
-    </TouchableOpacity>
-  );
-});
 
 type Mode = "stake" | "unstake" | "withdraw";
 
@@ -145,7 +127,7 @@ describe("NEAR staking amount", () => {
       expect(screen.getByTestId("send-amount-error")).toHaveTextContent(
         `errors.${errorName}.title`,
       );
-      expect(screen.getByTestId("near-delegation-amount-continue")).toBeDisabled();
+      expect(screen.getByTestId("disabled-near-delegation-amount-continue")).toBeDisabled();
     },
   );
 
@@ -153,7 +135,7 @@ describe("NEAR staking amount", () => {
     renderScreen("stake");
 
     fireEvent.changeText(screen.getByTestId("near-delegation-amount-input"), "100");
-    fireEvent.press(screen.getByTestId("near-delegation-amount-continue"));
+    fireEvent.press(screen.getByTestId("enabled-near-delegation-amount-continue"));
 
     expect(navigate).toHaveBeenLastCalledWith(
       ScreenName.NearStakingValidator,
@@ -161,7 +143,7 @@ describe("NEAR staking amount", () => {
     );
 
     fireEvent.press(screen.getByText("100%"));
-    fireEvent.press(screen.getByTestId("near-delegation-amount-continue"));
+    fireEvent.press(screen.getByTestId("enabled-near-delegation-amount-continue"));
 
     expect(navigate).toHaveBeenLastCalledWith(
       ScreenName.NearStakingValidator,
