@@ -77,6 +77,10 @@ const transformIncludePatterns = [
   "@mysten\\+",
   "@scure\\+",
   "@noble\\+",
+  "color@",
+  "color-convert@",
+  "color-name@",
+  "color-string@",
 ];
 
 const commonConfig = {
