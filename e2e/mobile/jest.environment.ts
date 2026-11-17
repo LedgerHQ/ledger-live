@@ -37,11 +37,7 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "@e2e/utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import {
-  NativeElementHelpers,
-  WebElementHelpers,
-  isUnansweredDetoxRequestError,
-} from "@e2e/helpers/elementHelpers";
+import { isUnansweredDetoxRequestError } from "@e2e/helpers/elements/hardTimeout";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 
@@ -268,7 +264,6 @@ export default class TestEnvironment extends DetoxEnvironment {
       CLI,
       Currency,
       Delegate,
-      detoxExpect: NativeElementHelpers.expect,
       Fee,
       jestExpect: expect,
       Swap,
@@ -276,73 +271,10 @@ export default class TestEnvironment extends DetoxEnvironment {
       Transaction,
     };
 
-    const nativeHelpers = {
-      clearTextByElement: NativeElementHelpers.clearTextByElement,
-      countElements: NativeElementHelpers.countElements,
-      countElementsById: NativeElementHelpers.countElementsById,
-      getAttributesOfElement: NativeElementHelpers.getAttributesOfElement,
-      getElementById: NativeElementHelpers.getElementById,
-      getElementByIdAndText: NativeElementHelpers.getElementByIdAndText,
-      getElementByIdWithAncestorIds: NativeElementHelpers.getElementByIdWithAncestorIds,
-      getElementByIdWithDescendantTexts: NativeElementHelpers.getElementByIdWithDescendantTexts,
-      getElementByText: NativeElementHelpers.getElementByText,
-      getElementsById: NativeElementHelpers.getElementsById,
-      getIdByRegexp: NativeElementHelpers.getIdByRegexp,
-      getIdOfElement: NativeElementHelpers.getIdOfElement,
-      getTextOfElement: NativeElementHelpers.getTextOfElement,
-      getLabelOfElement: NativeElementHelpers.getLabelOfElement,
-      IsIdPresent: NativeElementHelpers.isIdPresent,
-      IsIdVisible: NativeElementHelpers.isIdVisible,
-      revealForTap: NativeElementHelpers.revealForTap,
-      scrollByPixels: NativeElementHelpers.scrollByPixels,
-      scrollToId: NativeElementHelpers.scrollToId,
-      scrollToText: NativeElementHelpers.scrollToText,
-      tapByElement: NativeElementHelpers.tapByElement,
-      tapById: NativeElementHelpers.tapById,
-      tapByIdAndExpectToDisappear: NativeElementHelpers.tapByIdAndExpectToDisappear,
-      tapByText: NativeElementHelpers.tapByText,
-      typeTextByElement: NativeElementHelpers.typeTextByElement,
-      typeTextById: NativeElementHelpers.typeTextById,
-      waitForElement: NativeElementHelpers.waitForElement,
-      waitForElementById: NativeElementHelpers.waitForElementById,
-      waitForElementByText: NativeElementHelpers.waitForElementByText,
-      waitForFullyVisibleById: NativeElementHelpers.waitForFullyVisibleById,
-      waitForElementNotVisible: NativeElementHelpers.waitForElementNotVisible,
-    };
-
-    const webHelpers = {
-      expectWebElementNotVisible: WebElementHelpers.expectWebElementNotVisible,
-      getCurrentWebviewUrl: WebElementHelpers.getCurrentWebviewUrl,
-      getValueByWebTestId: WebElementHelpers.getValueByWebTestId,
-      getWebElementByCssSelector: WebElementHelpers.getWebElementByCssSelector,
-      getWebElementById: WebElementHelpers.getWebElementById,
-      getWebElementByTag: WebElementHelpers.getWebElementByTag,
-      getWebElementByTestId: WebElementHelpers.getWebElementByTestId,
-      getWebElementByXpath: WebElementHelpers.getWebElementByXpath,
-      getWebElementsByIdAndText: WebElementHelpers.getWebElementsByIdAndText,
-      getWebElementsText: WebElementHelpers.getWebElementsText,
-      getWebElementText: WebElementHelpers.getWebElementText,
-      isWebElementPresent: WebElementHelpers.isWebElementPresent,
-      scrollToWebElement: WebElementHelpers.scrollToWebElement,
-      tapWebElementByElement: WebElementHelpers.tapWebElementByElement,
-      tapWebElementByTestId: WebElementHelpers.tapWebElementByTestId,
-      typeTextByWebTestId: WebElementHelpers.typeTextByWebTestId,
-      waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
-      waitForWebviewContentToRender: WebElementHelpers.waitForWebviewContentToRender,
-      waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
-      waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
-      waitWebElement: WebElementHelpers.waitWebElement,
-      waitWebElementByTestId: WebElementHelpers.waitWebElementByTestId,
-    };
-
     Object.assign(this.global, enums);
-    Object.assign(this.global, nativeHelpers);
-    Object.assign(this.global, webHelpers);
     Object.assign(this.global, cliCommandsUtils);
 
     Object.assign(globalThis, enums);
-    Object.assign(globalThis, nativeHelpers);
-    Object.assign(globalThis, webHelpers);
     Object.assign(globalThis, cliCommandsUtils);
   }
 

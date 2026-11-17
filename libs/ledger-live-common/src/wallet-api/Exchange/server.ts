@@ -27,9 +27,12 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
+  type GetTronifyQuoteParams,
+  type GetTronifyQuoteResult,
   type IsTronifyEnergyDeliveredParams,
   type IsTronifyEnergyDeliveredResult,
 } from "@ledgerhq/wallet-api-exchange-module";
@@ -80,6 +83,7 @@ type Handlers = {
     GetTransactionStatusResponse,
     GetTransactionStatusWireArgs
   >;
+  [TRONIFY_GET_QUOTE_METHOD]: RPCHandler<GetTronifyQuoteResult, GetTronifyQuoteParams>;
   [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: RPCHandler<
     IsTronifyEnergyDeliveredResult,
     IsTronifyEnergyDeliveredParams

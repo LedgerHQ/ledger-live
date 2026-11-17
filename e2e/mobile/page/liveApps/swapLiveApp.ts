@@ -395,6 +395,15 @@ export default class SwapLiveAppPage {
     return await this.fromAmountInput.getValue();
   }
 
+  @Step("Expect send amount {{{0}}}")
+  async expectAmountToSend(expected: string | RegExp) {
+    if (typeof expected === "string") {
+      await this.fromAmountInput.expectValue(expected);
+    } else {
+      await this.fromAmountInput.expectValueMatching(expected);
+    }
+  }
+
   @Step("Retrieve receive currency amount value")
   async getAmountToReceive() {
     return await this.toAmountInput.getText();

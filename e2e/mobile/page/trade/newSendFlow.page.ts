@@ -113,15 +113,13 @@ export default class NewSendFlowPage {
     await this.memoInput.replaceText(rawInput);
     // XRP tags are numeric-only: non-digits are stripped by sanitizeMemoValue, so the
     // field never holds the rejected characters.
-    const actualValue = await this.memoInput.getText();
-    jestExpect(actualValue).toEqual(expectedSanitizedValue);
+    await this.memoInput.expectText(expectedSanitizedValue);
   }
 
   @Step("Expect memo field to retain numeric input: {{{0}}}")
   async expectMemoRetainsNumericInput(numericInput: string) {
     await this.memoInput.replaceText(numericInput);
-    const actualValue = await this.memoInput.getText();
-    jestExpect(actualValue).toEqual(numericInput);
+    await this.memoInput.expectText(numericInput);
   }
 
   @Step("Fill crypto amount: {{{0}}}")
@@ -297,20 +295,19 @@ export default class NewSendFlowPage {
   @Step("Expect the matched recipient card for contact: {{{0}}}")
   async expectMatchedContactCard(contactName: string) {
     await this.recipientCardAvatar.waitVisible();
-    const actualTitle = await this.recipientCardTitle.getText();
-    jestExpect(actualTitle).toEqual(contactName);
+    await this.recipientCardTitle.waitVisible();
+    await this.recipientCardTitle.expectText(contactName);
   }
 
   @Step("Expect the Add contact action to be enabled")
   async expectAddContactEnabled() {
-    const { enabled } = await this.recipientCardAddContact.getAttributes();
-    jestExpect(enabled).toBe(true);
+    await this.recipientCardAddContact.expectEnabled();
   }
 
   @Step("Expect the amount step recipient is contact: {{{0}}}")
   async expectAmountStepContact(contactName: string) {
-    const actualName = await this.recipientContactName.getText();
-    jestExpect(actualName).toEqual(contactName);
+    await this.recipientContactName.waitVisible();
+    await this.recipientContactName.expectText(contactName);
   }
 
   @Step("Wait for the success confirmation screen")
