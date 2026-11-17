@@ -127,12 +127,10 @@ describe("validateIntent", () => {
       { value: 900n },
     );
 
-    expect(result).toMatchObject({
-      errors: {},
-      amount: 1_000n,
-      totalSpent: 1_000n,
-      estimatedFees: 900n,
-    });
+    expect(result.errors).toEqual({});
+    expect(result.amount).toBe(1_000n);
+    expect(result.totalSpent).toBe(1_000n);
+    expect(result.estimatedFees).toBe(900n);
   });
 
   it("resolves useAllAmount to the spendable token balance", async () => {

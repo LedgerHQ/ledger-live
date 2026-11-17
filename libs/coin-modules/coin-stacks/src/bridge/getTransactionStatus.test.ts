@@ -45,13 +45,11 @@ describe("getTransactionStatus", () => {
   it("should return the calculated status for a valid native transfer", async () => {
     const status = await getTransactionStatus(account, transaction);
 
-    expect(status).toMatchObject({
-      errors: {},
-      warnings: {},
-      estimatedFees: transaction.fee,
-      amount: transaction.amount,
-      totalSpent: new BigNumber(110),
-    });
+    expect(status.errors).toEqual({});
+    expect(status.warnings).toEqual({});
+    expect(status.estimatedFees).toEqual(transaction.fee);
+    expect(status.amount).toEqual(transaction.amount);
+    expect(status.totalSpent).toEqual(new BigNumber(110));
   });
 
   it("should require a recipient", async () => {
