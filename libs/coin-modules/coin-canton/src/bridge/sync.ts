@@ -232,9 +232,15 @@ export function makeGetAccountShape(
     const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
     // Keyed by admin too: any party can issue an instrument under a CAL token's id.
     const tokensByKey = new Map<string, TokenCurrency>();
-    for (const [tokenId, instrumentId] of calTokens.entries()) {
-      if (!heldInstrumentIds.has(instrumentId)) continue;
-      const token = await getCryptoAssetsStore().findTokenById(tokenId);
+    const heldTokens = await Promise.all(
+      [...calTokens.entries()]
+        .filter(([, instrumentId]) => heldInstrumentIds.has(instrumentId))
+        .map(async ([tokenId, instrumentId]) => ({
+          instrumentId,
+          token: await getCryptoAssetsStore().findTokenById(tokenId),
+        })),
+    );
+    for (const { instrumentId, token } of heldTokens) {
       if (token?.contractAddress) {
         tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
       }
