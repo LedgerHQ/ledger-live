@@ -26,6 +26,7 @@ function mockState(overrides: {
   parentAccount?: unknown;
   transaction?: unknown;
   status?: unknown;
+  bridgePending?: boolean;
 }) {
   mockedUseSendFlowData.mockReturnValue({
     state: {
@@ -36,6 +37,7 @@ function mockState(overrides: {
       transaction: {
         transaction: "transaction" in overrides ? overrides.transaction : transaction,
         status: overrides.status,
+        bridgePending: overrides.bridgePending,
       },
     },
   } as never);
@@ -77,6 +79,20 @@ describe("FamilySendAmountFooterRow", () => {
 
     expect(SendAmountFooterRow).toHaveBeenCalledTimes(1);
     expect(SendAmountFooterRow).toHaveBeenCalledWith({ account, transaction, status }, undefined);
+  });
+
+  it("passes whether the bridge is computing the transaction", () => {
+    mockState({ bridgePending: true });
+    const SendAmountFooterRow = jest.fn(() => <div data-testid="send-amount-footer-row" />);
+    mockedUseLLDCoinFamily.mockReturnValue({ SendAmountFooterRow } as never);
+
+    render(<FamilySendAmountFooterRow />);
+
+    expect(SendAmountFooterRow).toHaveBeenCalledTimes(1);
+    expect(SendAmountFooterRow).toHaveBeenCalledWith(
+      { account, transaction, bridgePending: true },
+      undefined,
+    );
   });
 
   it("renders nothing when the family declares no SendAmountFooterRow", () => {

@@ -31,14 +31,9 @@ export const countervaluesInitialState: CountervaluesStoreState = {
 
 type RootState = { countervalues: CountervaluesStoreState };
 
-export function countervaluesStateSelector(s: RootState): CounterValuesState {
-  return s.countervalues.rates;
-}
-
-/** The rates' cache alone: what conversions read. */
-export function countervaluesCacheSelector(s: RootState): CounterValuesState["cache"] {
-  return s.countervalues.rates.cache;
-}
+/** The rates selectors, read from the root state. */
+export const { selectState: countervaluesStateSelector, selectCache: countervaluesCacheSelector } =
+  countervaluesRatesSlice.getSelectors((s: RootState) => s.countervalues.rates);
 
 /** The sync selectors, read from the root state. */
 export const {

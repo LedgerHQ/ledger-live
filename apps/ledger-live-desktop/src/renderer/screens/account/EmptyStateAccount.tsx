@@ -6,7 +6,6 @@ import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { canReceive, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import IconReceive from "~/renderer/icons/Receive";
 import IconExchange from "~/renderer/icons/Exchange";
 import Box from "~/renderer/components/Box";
@@ -21,6 +20,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 const mapDispatchToProps = {
   openModal,
 };
@@ -35,6 +35,7 @@ type Props = OwnProps & {
 function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
+  const tokenTypes = useTokenTypes(mainAccount.currency);
   const { isCurrencyAvailable } = useRampCatalog();
   const navigate = useNavigate();
   const location = useLocation();
@@ -86,11 +87,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               </Text>
               {"and"}
               <Text ff="Inter|SemiBold" color="neutral.c100">
-                {account &&
-                  account.type === "TokenAccount" &&
-                  (getCryptoCurrencyById(account.token.parentCurrencyId).tokenTypes || []).join(
-                    ", ",
-                  )}
+                {account.type === "TokenAccount" && tokenTypes.join(", ")}
                 {"tokens"}
               </Text>
             </Trans>

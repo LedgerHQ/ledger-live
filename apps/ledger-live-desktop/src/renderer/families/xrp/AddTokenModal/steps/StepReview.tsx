@@ -23,7 +23,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
-import type { StepProps } from "../types";
+import type { StepProps, TokenAction } from "../types";
 
 export function Row({
   label,
@@ -61,8 +61,13 @@ function LabelWithInfo(props: Readonly<{ label: string; info: React.ReactNode }>
   );
 }
 
-function NotActivatedBanner(
-  props: Readonly<{ error: Error; account: Account; onClose: () => void }>,
+function GetXrpBanner(
+  props: Readonly<{
+    title: React.ReactNode;
+    children?: React.ReactNode;
+    account: Account;
+    onClose: () => void;
+  }>,
 ) {
   const { account } = props;
   const dispatch = useDispatch();
@@ -89,8 +94,8 @@ function NotActivatedBanner(
   };
 
   return (
-    <Alert type="error" mb={4} title={<TranslatedError error={props.error} field="title" noLink />}>
-      <TranslatedError error={props.error} field="description" />
+    <Alert type="error" mb={4} title={props.title}>
+      {props.children}
       <Box horizontal mt={2} flow={4}>
         <TextButton onClick={onReceive}>
           <Trans i18nKey="xrp.addToken.steps.review.receive" />
@@ -101,6 +106,52 @@ function NotActivatedBanner(
           </TextButton>
         ) : null}
       </Box>
+    </Alert>
+  );
+}
+
+function StatusErrorBanner(
+  props: Readonly<{ error: Error; action: TokenAction; account: Account; onClose: () => void }>,
+) {
+  const { error, account, onClose } = props;
+
+  if (error.name === "XrpAccountNotActivated") {
+    return (
+      <GetXrpBanner
+        title={<TranslatedError error={error} field="title" noLink />}
+        account={account}
+        onClose={onClose}
+      >
+        <TranslatedError error={error} field="description" />
+      </GetXrpBanner>
+    );
+  }
+
+  // Missing XRP on an edit only means the network fee, which the generic message covers
+  if (error.name === "NotEnoughSpendableBalance" && props.action === "add") {
+    const minimumAmount = "minimumAmount" in error ? error.minimumAmount : undefined;
+
+    return (
+      <GetXrpBanner
+        title={
+          <Trans i18nKey="xrp.addToken.steps.review.notEnoughReserve" values={{ minimumAmount }} />
+        }
+        account={account}
+        onClose={onClose}
+      />
+    );
+  }
+
+  return <ErrorBanner error={error} />;
+}
+
+function IssuerFeeError(props: Readonly<{ onRetry: () => void }>) {
+  return (
+    <Alert type="error" mb={3}>
+      <Trans i18nKey="xrp.addToken.steps.review.issuerFeeError" />{" "}
+      <TextButton onClick={props.onRetry}>
+        <Trans i18nKey="common.tryAgain" />
+      </TextButton>
     </Alert>
   );
 }
@@ -127,11 +178,12 @@ export default function StepReview({
   token,
   error,
   isRippling,
+  action,
 }: StepProps) {
   invariant(account && transaction && token, "xrp: account, transaction and token required");
 
   const locale = useSelector(localeSelector);
-  const issuerFee = useGetIssuerFeeQuery(token);
+  const issuerFee = useGetIssuerFeeQuery(token, { refetchOnReconnect: true });
   const unit = token.units[0];
   const limitText = isMaxTrustLimit(transaction.amount)
     ? t("xrp.addToken.steps.settings.maximum")
@@ -144,18 +196,15 @@ export default function StepReview({
     <Box flow={1}>
       <TrackScreen category="XRP add token" name="Step Review" />
       {error ? <ErrorBanner error={error} /> : null}
-      {errors.map(statusError =>
-        statusError.name === "XrpAccountNotActivated" ? (
-          <NotActivatedBanner
-            key={statusError.name}
-            error={statusError}
-            account={getMainAccount(account, parentAccount)}
-            onClose={onClose}
-          />
-        ) : (
-          <ErrorBanner key={statusError.name} error={statusError} />
-        ),
-      )}
+      {errors.map(statusError => (
+        <StatusErrorBanner
+          key={statusError.name}
+          error={statusError}
+          action={action}
+          account={getMainAccount(account, parentAccount)}
+          onClose={onClose}
+        />
+      ))}
       {warnings.map(warning => (
         <ErrorBanner key={warning.name} error={warning} warning />
       ))}
@@ -169,7 +218,7 @@ export default function StepReview({
           {token.contractAddress}
         </Text>
       </Row>
-      {issuerFee.isLoading ? null : (
+      {typeof issuerFee.data === "string" ? (
         <Row
           label={
             <LabelWithInfo
@@ -179,14 +228,11 @@ export default function StepReview({
           }
         >
           <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
-            {typeof issuerFee.data === "string" ? (
-              formatIssuerFee(issuerFee.data, locale)
-            ) : (
-              <Trans i18nKey="xrp.addToken.steps.review.issuerFeeUnavailable" />
-            )}
+            {formatIssuerFee(issuerFee.data, locale)}
           </Text>
         </Row>
-      )}
+      ) : null}
+      {issuerFee.isError ? <IssuerFeeError onRetry={issuerFee.refetch} /> : null}
       {token.tokenType === "iou" ? (
         <>
           <Row
@@ -229,16 +275,22 @@ export function StepReviewFooter({
   parentAccount,
   status,
   bridgePending,
+  token,
+  action,
 }: StepProps) {
-  invariant(account, "xrp: account required");
+  invariant(account && token, "xrp: account and token required");
+  // Only an add waits for the issuer fee: an edit or a removal is on a token already held
+  const isAdd = action === "add";
+  const issuerFee = useGetIssuerFeeQuery(token, { skip: !isAdd, refetchOnReconnect: true });
   const hasErrors = Object.keys(status.errors).length > 0;
+  const isIssuerFeeMissing = isAdd && typeof issuerFee.data !== "string";
 
   return (
     <>
       <AccountFooter account={account} parentAccount={parentAccount} status={status} />
       <Button
         primary
-        disabled={hasErrors || bridgePending}
+        disabled={hasErrors || isIssuerFeeMissing || bridgePending}
         isLoading={bridgePending}
         onClick={() => transitionTo("connectDevice")}
       >

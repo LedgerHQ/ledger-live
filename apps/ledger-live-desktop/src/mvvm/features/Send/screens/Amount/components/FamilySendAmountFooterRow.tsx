@@ -24,6 +24,7 @@ export function FamilySendAmountFooterRow() {
       account={mainAccount}
       transaction={transaction}
       status={state.transaction.status}
+      bridgePending={state.transaction.bridgePending}
     />
   );
 }
