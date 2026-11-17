@@ -60,23 +60,17 @@ const granularities = {
 
 function generateHistoryFromOperationsG(
   account: AccountLike,
-  g: GranularityId, // partial=true allows a faster implementation that only recompose the last part of the history
-  // to only use when we do not recalculate the history but we just want to access it
-  partial = false,
+  g: GranularityId,
 ): BalanceHistoryDataCache {
   const { increment, startOf, maxDatapoints } = granularities[g];
   const latestDate = startOf(new Date()).getTime();
-  let balances: number[] = [];
+  const balances: number[] = [];
   let { balance } = account;
   const operationsLength = account.operations.length;
   let date = latestDate;
-  const reference = account.balanceHistoryCache?.[g];
 
   for (let i = 0; i < operationsLength;) {
-    if (
-      (partial && reference?.latestDate && date < reference.latestDate) ||
-      balances.length > maxDatapoints
-    ) {
+    if (balances.length > maxDatapoints) {
       break;
     }
 
@@ -92,10 +86,6 @@ function generateHistoryFromOperationsG(
 
     balances.unshift(Math.max(balance.toNumber(), 0));
     date -= increment;
-  }
-
-  if (partial && reference?.balances) {
-    balances = reference.balances.concat(balances);
   }
 
   return {
@@ -181,8 +171,7 @@ export function getAccountHistoryBalances(account: AccountLike, g: GranularityId
     return cacheData.balances;
   }
 
-  // account cache was not up to date or missing. recalculating on the fly
-  return generateHistoryFromOperationsG(account, g, true).balances;
+  return refreshHistoryFromOperationsG(account, g).balances;
 }
 
 /**

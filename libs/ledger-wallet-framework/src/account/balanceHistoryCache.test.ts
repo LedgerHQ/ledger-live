@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
-import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import type { AccountLike, GranularityId, Operation } from "@ledgerhq/types-live";
 import {
   startOfHour,
   startOfDay,
   startOfWeek,
   generateHistoryFromOperations,
+  getAccountHistoryBalances,
   refreshHistoryFromOperations,
 } from "./balanceHistoryCache";
 
@@ -273,4 +274,21 @@ describe("history from a saved cache", () => {
 
     expect(refreshHistoryFromOperations(account)).toEqual(generateHistoryFromOperations(account));
   });
+
+  it.each<GranularityId>(["HOUR", "DAY", "WEEK"])(
+    "should show the %s points of a regeneration while the cache is from an earlier period",
+    granularity => {
+      const elapsedRanges = [3 * HOUR_MS, 3 * DAY_MS, 60 * DAY_MS, 3 * 365 * DAY_MS];
+      for (let trial = 0; trial < 100; trial++) {
+        const savedAt = new Date(SAVED_AT.getTime() + Math.floor(random() * 365 * DAY_MS));
+        const elapsed = Math.floor(random() * elapsedRanges[trial % elapsedRanges.length]);
+        const account = savedThen(randomAccount(savedAt), savedAt);
+        at(new Date(savedAt.getTime() + elapsed));
+
+        expect(getAccountHistoryBalances(account, granularity)).toEqual(
+          generateHistoryFromOperations(account)[granularity].balances,
+        );
+      }
+    },
+  );
 });
