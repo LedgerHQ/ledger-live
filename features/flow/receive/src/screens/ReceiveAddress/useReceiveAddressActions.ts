@@ -52,6 +52,7 @@ export function useReceiveAddressActions({
   const hasSeenVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const verifyFlow = useVerifyAddressFlow({ onCloseFlow: onClose });
   const [copiedAddress, setCopiedAddress] = useState<string>();
+  const [copyButtonPresses, setCopyButtonPresses] = useState(0);
 
   const address = selected?.address;
   const verification = selected?.verification;
@@ -68,6 +69,11 @@ export function useReceiveAddressActions({
     trackReceiveAddressButton("copy address");
     if (await onCopyAddress(address)) setCopiedAddress(address);
   }, [address, onCopyAddress]);
+
+  const copyFromButton = useCallback(async () => {
+    setCopyButtonPresses(presses => presses + 1);
+    await copyAddress();
+  }, [copyAddress]);
 
   const shareAddress = useCallback(() => {
     if (!address || !onShareAddress) return;
@@ -96,7 +102,9 @@ export function useReceiveAddressActions({
         ? {
             label: address && copiedAddress === address ? copy.copiedLabel : copy.copyLabel,
             hasCopied: !!address && copiedAddress === address,
-            onPress: copyAddress,
+            onPress: copyFromButton,
+            onPressCode: copyAddress,
+            buttonPresses: copyButtonPresses,
           }
         : undefined,
       share: onShareAddress ? { label: copy.shareLabel, onPress: shareAddress } : undefined,

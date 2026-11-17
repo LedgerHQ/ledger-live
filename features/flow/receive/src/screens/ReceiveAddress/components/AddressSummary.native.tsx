@@ -1,17 +1,22 @@
 import React from "react";
+import Animated, { FadeIn } from "react-native-reanimated";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
-import { Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
-import { QrCode } from "@shared/ui-qr-code";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
+import { Box, Text, ThemeProvider, type SupportedLocale } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "@shared/i18n";
+import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
 import { splitMiddleForTwoLines } from "../../../logic/splitMiddleForTwoLines";
 import type { AddressSummaryProps } from "./AddressSummary.types";
 
 const QR_CARD_SIZE = 256;
 const QR_SIZE = 208;
 const QR_CENTER_ICON_SIZE = 48;
+// The loading shimmer hands over to the code with a short fade.
+const QR_FADE_IN_MS = 400;
 
 /** The QR card, the asset icon in its middle, then the address on two lines, edges standing out. */
-export function AddressSummary({ address }: AddressSummaryProps) {
-  const { theme } = useTheme();
+export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
+  const { i18n } = useTranslation();
   const { start, middle, end } = address.parts;
   const [middleFirstLine, middleSecondLine] = splitMiddleForTwoLines(address.parts);
 
@@ -22,32 +27,43 @@ export function AddressSummary({ address }: AddressSummaryProps) {
           {address.label}
         </Text>
       ) : null}
-      <Box
-        lx={{
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "white",
-          borderRadius: "2xl",
-        }}
-        style={{ width: QR_CARD_SIZE, height: QR_CARD_SIZE }}
-      >
-        <QrCode
-          value={address.value}
-          size={QR_SIZE}
-          // The card is white in both themes: the modules stay dark.
-          foregroundColor={theme.colors.text.black}
-          testID="receive-address-qr-code"
-          centerContent={
-            <CryptoIcon
-              ledgerId={address.assetIcon.ledgerId}
-              ticker={address.assetIcon.ticker}
-              network={address.assetIcon.network}
-              size={QR_CENTER_ICON_SIZE}
-              shape="circle"
-            />
-          }
-        />
-      </Box>
+      <Animated.View entering={FadeIn.duration(QR_FADE_IN_MS)}>
+        <Box
+          lx={{
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "white",
+            borderRadius: "2xl",
+          }}
+          style={{ width: QR_CARD_SIZE, height: QR_CARD_SIZE }}
+        >
+          <AnimatedQrCode
+            value={address.value}
+            size={QR_SIZE}
+            animation="ripple"
+            onPress={onCopy}
+            accessibilityLabel={copyLabel}
+            triggerKey={copyKey}
+            testID="receive-address-qr-code"
+            centerContent={
+              // The card is white in both themes: the network badge border stays light too.
+              <ThemeProvider
+                themes={ledgerLiveThemes}
+                colorScheme="light"
+                locale={i18n.language as SupportedLocale}
+              >
+                <CryptoIcon
+                  ledgerId={address.assetIcon.ledgerId}
+                  ticker={address.assetIcon.ticker}
+                  network={address.assetIcon.network}
+                  size={QR_CENTER_ICON_SIZE}
+                  shape="circle"
+                />
+              </ThemeProvider>
+            }
+          />
+        </Box>
+      </Animated.View>
       <Text
         typography="body2"
         lx={{ color: "muted", textAlign: "center" }}

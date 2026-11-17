@@ -15,6 +15,27 @@ jest.mock("@ledgerhq/crypto-icons/native", () => {
   return ({ ledgerId }: { ledgerId: string }) => <Text>{`icon:${ledgerId}`}</Text>;
 });
 
+jest.mock("@shared/ui-animated-qr-code/native", () => {
+  const { Pressable, Text } = jest.requireActual("react-native");
+  return {
+    AnimatedQrCode: ({
+      animation,
+      onPress,
+      triggerKey,
+      testID,
+    }: {
+      animation: string;
+      onPress?: () => void;
+      triggerKey?: number;
+      testID?: string;
+    }) => (
+      <Pressable onPress={onPress} testID={testID ?? `qr-code-${animation}`}>
+        <Text>{`${animation}:${triggerKey ?? 0}`}</Text>
+      </Pressable>
+    ),
+  };
+});
+
 const renderScreen = (
   onClose = jest.fn(),
   store = makeReceiveTestStore(),
@@ -56,6 +77,7 @@ describe("ReceiveAddress (Native)", () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
+    expect(screen.getByTestId("qr-code-loading")).toBeTruthy();
     expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
   });
@@ -105,6 +127,19 @@ describe("ReceiveAddress (Native)", () => {
     expect(onShareAddress).toHaveBeenCalledWith(testReceive.address);
     expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
     expect(await screen.findByText("Copied")).toBeTruthy();
+  });
+
+  it("copies from a press on the QR code, and replays its animation from the Copy button", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
+
+    fireEvent.press(await screen.findByTestId("receive-address-qr-code"));
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.getByText("ripple:0")).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId("receive-address-copy"));
+    expect(await screen.findByText("ripple:1")).toBeTruthy();
+    expect(onCopyAddress).toHaveBeenCalledTimes(2);
   });
 
   it("points at Verify until the hint is dismissed, then verifies on the device", async () => {
