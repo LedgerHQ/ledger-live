@@ -477,7 +477,7 @@ describe("validateIntent", () => {
 
     it("should count only the rows of the token being sent", async () => {
       mockedGetBalance.mockResolvedValue(
-        rows(["USDCx", ISSUER, 11], ["USDCx", "other::1220", 30], ["Amulet", "AmuletAdmin", 30]),
+        rows(["USDCx", ISSUER, 7], ["USDCx", "other::1220", 30], ["Amulet", "AmuletAdmin", 30]),
       );
 
       const { warnings } = await validate({ asset: TOKEN }, [native(1000n, 0n), token(1000n)]);
