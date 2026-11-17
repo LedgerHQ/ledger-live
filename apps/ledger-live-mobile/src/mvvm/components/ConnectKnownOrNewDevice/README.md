@@ -17,7 +17,9 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 
 ## Discovery
 
-Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background. After each `onConnected`, discovery stays stopped until one of these values changes back: `isPaused` becomes `false`, or the screen is focused again, or the app comes back to the foreground.
+Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background.
+
+`onConnected` does not stop discovery. A caller that uses the device after `onConnected` sets `isPaused` to `true` or leaves the screen.
 
 ## Saving and removing a device
 
