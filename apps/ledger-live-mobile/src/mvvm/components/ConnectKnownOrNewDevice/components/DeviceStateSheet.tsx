@@ -63,7 +63,7 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
-        <Box lx={{ paddingHorizontal: "s16", gap: "s16" }}>
+        <Box lx={{ gap: "s16" }}>
           {state?.type === ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice && (
             <>
               <WaitingForSelectedDeviceState device={state.device} />
