@@ -72,6 +72,8 @@ const receiveTestResources = {
       receiveAddress: {
         title: "Receive {{asset}}",
         networkLabel: "{{network}} network",
+        close: "Close",
+        back: "Back",
       },
     },
   },
