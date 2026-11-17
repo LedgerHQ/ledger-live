@@ -174,29 +174,130 @@ describe("Earn screen", () => {
     useLocationSpy.mockRestore();
   });
 
-  it("tells Earn it opens stake positions natively, whatever the route state says", () => {
-    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
-      pathname: "/earn",
-      search: "",
-      hash: "",
-      state: { [NATIVE_STAKE_POSITION_INPUT_KEY]: "false" },
+  describe("native stake position input", () => {
+    type EarnInputs = Record<string, string | undefined>;
+
+    const customDappUrl = "https://earn.example/?yieldId=tron-native-staking&accountId=abc";
+    let useLocationSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      useLocationSpy = jest.spyOn(require("react-router"), "useLocation");
     });
 
-    render(<Earn />, {
-      initialState: withFlagOverrides({
-        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
-        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
-      }),
+    afterEach(() => {
+      useLocationSpy.mockRestore();
     });
 
-    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
-      inputs: Record<string, string | undefined>;
+    // Leaving `isEnabled` out overrides nothing: the flag keeps the default of the registry.
+    function renderEarn({
+      state,
+      isEnabled,
+    }: {
+      state?: Record<string, string>;
+      isEnabled?: boolean;
+    } = {}): EarnInputs {
+      useLocationSpy.mockReturnValue({ pathname: "/earn", search: "", hash: "", state });
+
+      render(<Earn />, {
+        initialState: withFlagOverrides({
+          ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+          stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+          ...(isEnabled !== undefined && { earnNativeStakePosition: { enabled: isEnabled } }),
+        }),
+      });
+
+      const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+        inputs: EarnInputs;
+      };
+      return lastCall.inputs;
+    }
+
+    const goToURLQuery = ({ goToURL }: EarnInputs) => {
+      expect(goToURL).toEqual(expect.stringContaining("yieldId=tron-native-staking"));
+      return new URL(goToURL ?? "").searchParams;
     };
 
-    expect(lastCall.inputs[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(
-      NATIVE_STAKE_POSITION_INPUT_VALUE,
-    );
-    useLocationSpy.mockRestore();
+    describe("when the flag is on", () => {
+      it("tells Earn it opens stake positions natively", () => {
+        const inputs = renderEarn({ isEnabled: true });
+
+        expect(inputs[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+      });
+
+      it("keeps telling it when the route state denies the capability", () => {
+        const inputs = renderEarn({
+          state: { [NATIVE_STAKE_POSITION_INPUT_KEY]: "false", intent: "deposit" },
+          isEnabled: true,
+        });
+
+        expect(inputs[NATIVE_STAKE_POSITION_INPUT_KEY]).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+        expect(inputs.intent).toBe("deposit");
+        // Earn flattens `routerState` into its own query, where it would deny the capability again.
+        expect(JSON.parse(inputs.routerState ?? "")).toEqual({ intent: "deposit" });
+      });
+
+      it("tells it on the goToURL path too", () => {
+        const inputs = renderEarn({ state: { customDappUrl }, isEnabled: true });
+
+        const query = goToURLQuery(inputs);
+        expect(query.get(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(NATIVE_STAKE_POSITION_INPUT_VALUE);
+        expect(query.get("accountId")).toBe("abc");
+      });
+
+      it("keeps telling it on the goToURL path when the route state denies the capability", () => {
+        const inputs = renderEarn({
+          state: { customDappUrl, [NATIVE_STAKE_POSITION_INPUT_KEY]: "false" },
+          isEnabled: true,
+        });
+
+        expect(goToURLQuery(inputs).get(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(
+          NATIVE_STAKE_POSITION_INPUT_VALUE,
+        );
+      });
+    });
+
+    describe.each<[string, boolean | undefined]>([
+      ["off", false],
+      ["unset", undefined],
+    ])("when the flag is %s", (_flag, isEnabled) => {
+      it("does not tell Earn it opens stake positions natively", () => {
+        const inputs = renderEarn({ isEnabled });
+
+        expect(inputs).not.toHaveProperty(NATIVE_STAKE_POSITION_INPUT_KEY);
+      });
+
+      it.each<[string, string]>([
+        ["claims", "true"],
+        ["denies", "false"],
+      ])("drops a route state that %s the capability", (_claim, value) => {
+        const inputs = renderEarn({
+          state: { [NATIVE_STAKE_POSITION_INPUT_KEY]: value, intent: "deposit" },
+          isEnabled,
+        });
+
+        expect(inputs).not.toHaveProperty(NATIVE_STAKE_POSITION_INPUT_KEY);
+        expect(inputs.intent).toBe("deposit");
+        expect(JSON.parse(inputs.routerState ?? "")).toEqual({ intent: "deposit" });
+      });
+
+      it("does not tell it on the goToURL path", () => {
+        const inputs = renderEarn({ state: { customDappUrl }, isEnabled });
+
+        const query = goToURLQuery(inputs);
+        expect(query.has(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(false);
+        expect(query.get("accountId")).toBe("abc");
+      });
+
+      it("drops a route state that claims the capability on the goToURL path", () => {
+        const inputs = renderEarn({
+          state: { customDappUrl, [NATIVE_STAKE_POSITION_INPUT_KEY]: "true" },
+          isEnabled,
+        });
+
+        expect(inputs).not.toHaveProperty(NATIVE_STAKE_POSITION_INPUT_KEY);
+        expect(goToURLQuery(inputs).has(NATIVE_STAKE_POSITION_INPUT_KEY)).toBe(false);
+      });
+    });
   });
 
   it("passes uiVersion v3 when earn upselling is enabled", () => {

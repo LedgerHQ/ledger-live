@@ -6,7 +6,8 @@ import { isPositionDataStale } from "@features/flow-stake-position";
 /**
  * Syncs the account once when the dialog opens with outdated data. Returns whether the position may
  * still change: the sync is queued or running. A failed sync ends the wait, so the user is never
- * stuck on outdated data that cannot be refreshed.
+ * stuck on outdated data that cannot be refreshed. The error an earlier sync left on the account
+ * is not that failure, it stays there until this sync starts: only a different error is.
  */
 export function useStakePositionSyncOnOpen(account: Account): boolean {
   const sync = useBridgeSync();
@@ -16,12 +17,13 @@ export function useStakePositionSyncOnOpen(account: Account): boolean {
   const [outdatedSyncTime] = useState(() =>
     isPositionDataStale(lastSyncTime, Date.now()) ? lastSyncTime : null,
   );
+  const [errorOnOpen] = useState(error);
 
   useEffect(() => {
     if (outdatedSyncTime === null) return;
     sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority: 10, reason: "stake-position-open" });
   }, [sync, accountId, outdatedSyncTime]);
 
-  const isWaitingForSync = outdatedSyncTime === lastSyncTime && !error;
+  const isWaitingForSync = outdatedSyncTime === lastSyncTime && (!error || error === errorOnOpen);
   return pending || isWaitingForSync;
 }

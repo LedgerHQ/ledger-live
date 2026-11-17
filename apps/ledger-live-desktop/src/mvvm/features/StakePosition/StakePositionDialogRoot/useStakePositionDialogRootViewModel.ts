@@ -70,6 +70,21 @@ function useRequestAccount(accountId: string | undefined) {
   return { account: walletAccount ?? knownAccount, isInWallet: walletAccount !== undefined };
 }
 
+/**
+ * The account can leave the wallet while the handler loads its family: the request then targets an
+ * account the dialog never cached, which it cannot show. It is dismissed, or its call is never
+ * answered and the dialog flag stays open. A committed or settled request keeps its own flow.
+ */
+function useDismissRequestWithoutAccount(
+  requestId: number | undefined,
+  phase: ShownStakePosition["phase"],
+  hasAccount: boolean,
+) {
+  useEffect(() => {
+    if (requestId !== undefined && phase === "open" && !hasAccount) dismissStakePosition(requestId);
+  }, [hasAccount, phase, requestId]);
+}
+
 export function useStakePositionDialogRootViewModel(): StakePositionDialogRootViewModel {
   const { request, phase } = useShownStakePosition(STAKE_POSITION_ORIGIN);
   const { account, isInWallet } = useRequestAccount(request?.accountId);
@@ -77,6 +92,7 @@ export function useStakePositionDialogRootViewModel(): StakePositionDialogRootVi
   const { navigateToStakeForAccount } = useNavigateToStakeForAccount();
   useStakePositionDialogFlag();
   useDismissOnNavigation(request?.id);
+  useDismissRequestWithoutAccount(request?.id, phase, account !== undefined);
 
   const onEarnMore = useCallback(() => {
     if (!request || !account) return;

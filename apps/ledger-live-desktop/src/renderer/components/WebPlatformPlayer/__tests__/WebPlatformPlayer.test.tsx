@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { act, render, renderHook, waitFor } from "tests/testSetup";
+import { act, render, renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -50,15 +50,34 @@ describe("WebPlatformPlayer", () => {
   beforeAll(() => importLLDCoinFamily(solanaAccount.currency.family));
 
   it("should let the live app open a stake position", () => {
-    render(<WebPlatformPlayer manifest={manifest} inputs={{}} />);
+    render(<WebPlatformPlayer manifest={manifest} inputs={{}} />, {
+      initialState: withFlagOverrides({ earnNativeStakePosition: { enabled: true } }),
+    });
 
     expect(lastCustomHandlers()["custom.stake.position.open"]).toEqual(expect.any(Function));
+  });
+
+  it("should not let the live app open a stake position while the flag is off", () => {
+    render(<WebPlatformPlayer manifest={manifest} inputs={{}} />, {
+      initialState: withFlagOverrides({ earnNativeStakePosition: { enabled: false } }),
+    });
+
+    expect(Object.keys(lastCustomHandlers())).not.toContain("custom.stake.position.open");
+  });
+
+  it("should not let the live app open a stake position while the flag is unset", () => {
+    render(<WebPlatformPlayer manifest={manifest} inputs={{}} />);
+
+    expect(Object.keys(lastCustomHandlers())).not.toContain("custom.stake.position.open");
   });
 
   it("should answer null to the stake position it opened when it unmounts", async () => {
     setWalletApiIdForAccountId(solanaAccount.id);
     const { unmount, store } = render(<WebPlatformPlayer manifest={manifest} inputs={{}} />, {
-      initialState: { accounts: [solanaAccount] },
+      initialState: {
+        ...withFlagOverrides({ earnNativeStakePosition: { enabled: true } }),
+        accounts: [solanaAccount],
+      },
     });
     const shown = renderHook(() => useShownStakePosition(), { store });
     const open = lastCustomHandlers()["custom.stake.position.open"] as unknown as OpenHandler;

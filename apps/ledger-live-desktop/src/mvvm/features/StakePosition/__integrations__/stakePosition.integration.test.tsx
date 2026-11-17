@@ -21,7 +21,7 @@ import {
   BridgeSyncContext,
   BridgeSyncStateContext,
 } from "@ledgerhq/live-common/bridge/react/index";
-import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";
+import type { BridgeSyncState, SyncState } from "@ledgerhq/live-common/bridge/react/types";
 import type { SolanaAccount, Transaction } from "@ledgerhq/live-common/families/solana/types";
 import {
   getWalletApiIdFromAccountId,
@@ -40,6 +40,7 @@ import {
   type StakePositionResult,
 } from "@features/flow-stake-position";
 import { track, trackPage } from "@shared/analytics";
+import { setOverride } from "@shared/feature-flags";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { removeAccount, updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { importLLDCoinFamily } from "~/renderer/families";
@@ -219,6 +220,7 @@ type SetupOptions = {
   settings?: typeof AFTER_ONBOARDING_STATE;
   hasSolRate?: boolean;
   syncState?: BridgeSyncState;
+  isNativeStakePositionEnabled?: boolean;
 };
 
 function setup({
@@ -227,6 +229,7 @@ function setup({
   settings = AFTER_ONBOARDING_STATE,
   hasSolRate = true,
   syncState = {},
+  isNativeStakePositionEnabled = true,
 }: SetupOptions = {}) {
   liveAppAccounts.forEach(({ id }) => setWalletApiIdForAccountId(id));
   const view = render(<Harness syncState={syncState} />, {
@@ -235,6 +238,7 @@ function setup({
     initialState: {
       ...withFlagOverrides({
         stakePrograms: { enabled: true, params: { list: ["solana"], redirects: {} } },
+        earnNativeStakePosition: { enabled: isNativeStakePositionEnabled },
       }),
       settings,
       accounts: [account],
@@ -243,9 +247,10 @@ function setup({
   const liveApp = renderHook(() => useStakePositionHandlers(liveAppAccounts), {
     store: view.store,
   });
+  const handlers = () => liveApp.result.current;
 
   const open = (params: Record<string, unknown> = {}) => {
-    const handler = liveApp.result.current["custom.stake.position.open"] as unknown as OpenHandler;
+    const handler = handlers()["custom.stake.position.open"] as unknown as OpenHandler;
     let answer: Promise<StakePositionResult> = Promise.resolve({ action: null });
     act(() => {
       answer = handler({
@@ -267,10 +272,33 @@ function setup({
 
   return {
     ...view,
+    handlers,
     open,
     updateAccount,
     setSyncState: (state: BridgeSyncState) => view.rerender(<Harness syncState={state} />),
     closeLiveApp: liveApp.unmount,
+  };
+}
+
+/**
+ * An account whose data is outdated, so the dialog syncs it, with two positions of the requested
+ * validator: the request is ambiguous until the refreshed data says otherwise. An earlier sync
+ * failed and left its error on the account, as it stays until the next sync starts.
+ */
+function setupWithEarlierSyncError() {
+  const account = solanaAccount({
+    lastSyncDate: new Date(Date.now() - 2 * 60_000),
+    delegations: [activePosition(), activePosition({ positionId: OTHER_STAKE_ACCOUNT })],
+  });
+  const syncStateOf = (state: SyncState): BridgeSyncState => ({ [account.id]: state });
+  const view = setup({
+    account,
+    syncState: syncStateOf({ pending: false, error: new Error("The previous sync failed") }),
+  });
+
+  return {
+    ...view,
+    setAccountSyncState: (state: SyncState) => view.setSyncState(syncStateOf(state)),
   };
 }
 
@@ -349,6 +377,36 @@ describe("Stake position dialog", () => {
     const { request } = result.current;
     if (request) act(() => abandonStakePosition(request.id));
     unmount();
+  });
+
+  describe("the earnNativeStakePosition flag", () => {
+    it("should register the handler when it is on", () => {
+      const { handlers } = setup({ isNativeStakePositionEnabled: true });
+
+      expect(handlers()["custom.stake.position.open"]).toEqual(expect.any(Function));
+    });
+
+    it("should neither register the handler nor open a dialog when it is off", () => {
+      const { handlers, store } = setup({ isNativeStakePositionEnabled: false });
+
+      expect(Object.keys(handlers())).not.toContain("custom.stake.position.open");
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(selectIsStakePositionDialogOpen(store.getState())).toBe(false);
+    });
+
+    it("should register the handler as soon as it turns on, and drop it as soon as it turns off", () => {
+      const { handlers, store } = setup({ isNativeStakePositionEnabled: false });
+
+      act(() => {
+        store.dispatch(setOverride({ key: "earnNativeStakePosition", value: { enabled: true } }));
+      });
+      expect(handlers()["custom.stake.position.open"]).toEqual(expect.any(Function));
+
+      act(() => {
+        store.dispatch(setOverride({ key: "earnNativeStakePosition", value: { enabled: false } }));
+      });
+      expect(Object.keys(handlers())).not.toContain("custom.stake.position.open");
+    });
   });
 
   describe("when Earn asks for a position", () => {
@@ -440,6 +498,25 @@ describe("Stake position dialog", () => {
       expect(shown.result.current.request).toBeNull();
       await expect(answer).resolves.toEqual({ action: null });
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("should answer null, and leave no dialog open, when the account leaves the wallet while the family loads", async () => {
+      const family = await importLLDCoinFamily(solana.family);
+      const familyImport = createDeferred<typeof family>();
+      jest.mocked(importLLDCoinFamily).mockReturnValueOnce(familyImport.promise);
+      const account = solanaAccount();
+      const { open, store } = setup({ account });
+
+      const answer = open();
+      act(() => {
+        store.dispatch(removeAccount(account));
+      });
+      await act(async () => familyImport.resolve(family));
+
+      expect(await isPending(answer)).toBe(false);
+      await expect(answer).resolves.toEqual({ action: null });
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(selectIsStakePositionDialogOpen(store.getState())).toBe(false);
     });
   });
 
@@ -615,6 +692,81 @@ describe("Stake position dialog", () => {
 
       await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
       await dialogIsClosed();
+    });
+
+    describe("when an earlier sync left an error on the account", () => {
+      it("should keep waiting for the sync that has not started, then show the refreshed position", async () => {
+        const { open, updateAccount, setAccountSyncState } = setupWithEarlierSyncError();
+
+        const answer = open();
+        const dialog = await findDialog();
+        // The sync is queued, not started: the error still on the account is not its failure.
+        expect(within(dialog).getByText("Loading your position...")).toBeVisible();
+        expect(await isPending(answer)).toBe(true);
+
+        setAccountSyncState({ pending: true, error: null });
+        updateAccount(current => ({
+          ...current,
+          lastSyncDate: new Date(),
+          stakingResources: {
+            ...(current as SolanaAccount).stakingResources,
+            delegations: [
+              activePosition({
+                amount: new BigNumber(3 * SOL),
+                activeAmount: new BigNumber(3 * SOL),
+              }),
+            ],
+          },
+        }));
+        setAccountSyncState({ pending: false, error: null });
+
+        expect(await within(dialog).findByText("3 SOL")).toBeVisible();
+        expect(within(dialog).queryByText("Loading your position...")).not.toBeInTheDocument();
+        expect(await isPending(answer)).toBe(true);
+      });
+
+      it("should let Earn fall back when the refreshed positions are still ambiguous", async () => {
+        const { open, updateAccount, setAccountSyncState } = setupWithEarlierSyncError();
+
+        const answer = open();
+        await findDialog();
+        expect(await isPending(answer)).toBe(true);
+
+        setAccountSyncState({ pending: true, error: null });
+        updateAccount(current => ({ ...current, lastSyncDate: new Date() }));
+        setAccountSyncState({ pending: false, error: null });
+
+        expect(await isPending(answer)).toBe(false);
+        await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
+        await dialogIsClosed();
+      });
+
+      it("should stop waiting when the sync of the dialog fails with a new error", async () => {
+        const { open, setAccountSyncState } = setupWithEarlierSyncError();
+
+        const answer = open();
+        const dialog = await findDialog();
+        expect(within(dialog).getByText("Loading your position...")).toBeVisible();
+
+        setAccountSyncState({ pending: true, error: null });
+        expect(await isPending(answer)).toBe(true);
+        setAccountSyncState({ pending: false, error: new Error("The sync failed") });
+
+        expect(await isPending(answer)).toBe(false);
+        await expect(answer).resolves.toEqual({ action: null, reason: "ambiguous" });
+        await dialogIsClosed();
+      });
+
+      it("should let the user close the dialog while it waits for the sync", async () => {
+        const { open } = setupWithEarlierSyncError();
+
+        const answer = open();
+        const dialog = await findDialog();
+        expect(within(dialog).getByText("Loading your position...")).toBeVisible();
+        await userClose(dialog);
+
+        await expect(answer).resolves.toEqual({ action: null });
+      });
     });
   });
 
@@ -878,7 +1030,7 @@ describe("Stake position dialog", () => {
 
       expect(
         await screen.findByText(
-          "Another wallet controls this position, so you can't change it from this account.",
+          "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
         ),
       ).toBeVisible();
       expect(
