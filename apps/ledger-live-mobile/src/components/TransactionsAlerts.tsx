@@ -5,11 +5,11 @@ import { userIdSelector, type UserId } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   reconcileTransactionsAlertsAddresses,
+  createTransactionsAlertsAddressesResolver,
   deleteUserChainwatchAccounts,
   deduplicateTransactionsAlertsAddresses,
   flattenTransactionsAlertsAddresses,
   mergeTransactionsAlertsAddresses,
-  resolveTransactionsAlertsAddressesByAccount,
   getTransactionsAlertsAddressKey,
   type TransactionsAlertsAddress,
   type TransactionsAlertsAddressesByAccount,
@@ -61,12 +61,13 @@ const TransactionsAlerts = () => {
   const refAddresses = useRef<TransactionsAlertsAddress[]>([]);
   const refScheduledOperation = useRef<ScheduledOperation | undefined>(undefined);
   const refOperationQueue = useRef<Promise<void>>(Promise.resolve());
+  const [resolveAddresses] = useState(createTransactionsAlertsAddressesResolver);
 
   useEffect(() => {
     if (!chainwatchBaseUrl || !isActive) return;
 
     let cancelled = false;
-    resolveTransactionsAlertsAddressesByAccount(accountsFilteredBySupportedChains).then(
+    resolveAddresses(accountsFilteredBySupportedChains).then(
       resolved => {
         if (!cancelled) {
           setWatchedAddressesByAccount(watched =>
@@ -83,7 +84,7 @@ const TransactionsAlerts = () => {
     return () => {
       cancelled = true;
     };
-  }, [accountsFilteredBySupportedChains, chainwatchBaseUrl, isActive]);
+  }, [accountsFilteredBySupportedChains, chainwatchBaseUrl, isActive, resolveAddresses]);
 
   useEffect(() => {
     if (!chainwatchBaseUrl) return;

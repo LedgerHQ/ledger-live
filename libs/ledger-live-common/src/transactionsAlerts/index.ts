@@ -59,6 +59,28 @@ export const resolveTransactionsAlertsAddressesByAccount = async (
   return resolved;
 };
 
+/**
+ * Same result as `resolveTransactionsAlertsAddressesByAccount`, but an account object resolved by a
+ * previous call is answered from cache, so only the accounts that changed are resolved again.
+ */
+export const createTransactionsAlertsAddressesResolver = () => {
+  const cache = new WeakMap<Account, TransactionsAlertsAddress[]>();
+  return async (accounts: Account[]): Promise<TransactionsAlertsAddressesByAccount> => {
+    const changedAccounts = accounts.filter(account => !cache.has(account));
+    const resolvedChanges = await resolveTransactionsAlertsAddressesByAccount(changedAccounts);
+    changedAccounts.forEach(account => {
+      const addresses = resolvedChanges[account.id];
+      if (addresses) cache.set(account, addresses);
+    });
+    const resolved: TransactionsAlertsAddressesByAccount = {};
+    accounts.forEach(account => {
+      const addresses = cache.get(account);
+      if (addresses) resolved[account.id] = addresses;
+    });
+    return resolved;
+  };
+};
+
 const maxRememberedAddressesPerAccount = 100;
 
 /**

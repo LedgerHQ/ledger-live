@@ -4,6 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "../bridge/index";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 import {
+  createTransactionsAlertsAddressesResolver,
   getTransactionsAlertsAddresses,
   getTransactionsAlertsAddressKey,
   flattenTransactionsAlertsAddresses,
@@ -90,6 +91,49 @@ describe("resolveTransactionsAlertsAddressesByAccount", () => {
     ]);
 
     expect(addresses).toEqual({ [workingAccount.id]: [makeAddress("0x02")] });
+  });
+});
+
+describe("createTransactionsAlertsAddressesResolver", () => {
+  const getAddressesToWatch = jest.fn((account: Account) =>
+    Promise.resolve([account.freshAddress]),
+  );
+
+  beforeEach(() => {
+    getAddressesToWatch.mockClear();
+    mockedGetAccountBridge.mockResolvedValue({
+      getAddressesToWatch,
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
+  });
+
+  it("should only resolve the accounts that changed since the previous call", async () => {
+    const resolve = createTransactionsAlertsAddressesResolver();
+    const unchangedAccount = makeAccount("account-1", "0x01");
+    const changedAccount = makeAccount("account-2", "0x02");
+    await resolve([unchangedAccount, changedAccount]);
+    getAddressesToWatch.mockClear();
+    const updatedAccount = { ...changedAccount, freshAddress: "0x03" };
+
+    const addresses = await resolve([unchangedAccount, updatedAccount]);
+
+    expect(getAddressesToWatch.mock.calls).toEqual([[updatedAccount]]);
+    expect(addresses).toEqual({
+      [unchangedAccount.id]: [makeAddress("0x01")],
+      [updatedAccount.id]: [makeAddress("0x03")],
+    });
+  });
+
+  it("should resolve again an account that failed", async () => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    const resolve = createTransactionsAlertsAddressesResolver();
+    const account = makeAccount("account-1", "0x01");
+    getAddressesToWatch.mockRejectedValueOnce(new Error("corrupt wallet state"));
+    await resolve([account]);
+
+    const addresses = await resolve([account]);
+
+    expect(getAddressesToWatch).toHaveBeenCalledTimes(2);
+    expect(addresses).toEqual({ [account.id]: [makeAddress("0x01")] });
   });
 });
 
