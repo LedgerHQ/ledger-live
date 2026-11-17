@@ -1,7 +1,7 @@
 // Experiment for QAA-1501, not for develop: a startup event when each request is sent and when it
 // ends, to see which requests the startup waits on. fetch and axios both go through XMLHttpRequest.
-// Test branch: a request sent between the app gate and App started waits for App started (at most
-// 5 s), so its network and response work cannot land in the first render.
+// Test branch: a request sent between the first App render and App started waits for App started
+// (at most 5 s): the burst the first screen sends, not the countervalues sync sent before it.
 import { logStartupEvent, type StartupEvent, startupEvents } from "../logStartupTime";
 
 type TrackedRequest = XMLHttpRequest & { startupTarget?: string };
@@ -12,6 +12,7 @@ const send = XMLHttpRequest.prototype.send;
 const HOLD_MAX_MS = 5_000;
 let sent = 0;
 let holding = false;
+let started = false;
 let releaseHeld: () => void = () => {};
 const appStarted = new Promise<void>(resolve => {
   releaseHeld = resolve;
@@ -20,8 +21,9 @@ const appStarted = new Promise<void>(resolve => {
 const push = startupEvents.push.bind(startupEvents);
 startupEvents.push = (...events: StartupEvent[]) => {
   for (const { event } of events) {
-    if (event === "WaitForAppReady done") holding = true;
+    if (event === "App render" && !started) holding = true;
     if (event === "App started") {
+      started = true;
       holding = false;
       releaseHeld();
     }
