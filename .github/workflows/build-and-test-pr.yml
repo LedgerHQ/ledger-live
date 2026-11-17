@@ -17,7 +17,18 @@ jobs:
       contents: read
       id-token: write
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/renovate-sync-reusable.yml
+    uses: LedgerHQ/ledger-wallet-actions/.github/workflows/renovate-sync-reusable.yml@main
+    with:
+      runs-on: ledger-wallet-2cpu-aws-public
+      minor-packages: |
+        ledger-live-desktop
+        live-mobile
+      bundled-paths: apps/
+      registry: ${{ vars.ARTIFACTORY_URL }}
+      install-command: pnpm i --frozen-lockfile --filter="@ledgerhq/ledger-live" --filter="live-mobile..." --unsafe-perm --ignore-scripts
+      command: tools/scripts/renovate-pod-lockfile.sh
+      files: apps/ledger-live-mobile/ios/Podfile.lock
+      commit-message: "chore(deps): sync Podfile.lock and changeset"
     secrets:
       GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
       GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
