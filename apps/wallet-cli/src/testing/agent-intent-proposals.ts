@@ -8,6 +8,7 @@ import {
   type SendIntent,
   type SwapIntent,
 } from "@ledgerhq/agent-intent-sdk";
+import { BalanceSchema, type AccountBalances } from "../wallet/models";
 import type { FakeAgentIntentService } from "./agent-intent-service";
 import type { Route } from "./mock-server";
 import { makeSwapQuoteRoutes } from "./swap-quote-routes";
@@ -61,11 +62,14 @@ function calRow({ id, network, address, ticker, name, decimals }: CalToken) {
 }
 
 /**
- * CAL's `/v1/tokens`, knowing only `tokens`: by contract, by id, and by ticker (case-sensitively,
- * like CAL). Records each ticker search as `<network> <ticker>`.
+ * CAL's `/v1/tokens`, knowing only `tokens`: by contract, by id, by ticker (case-sensitively, like
+ * CAL) and by a case-insensitive `search` of tickers. Records each ticker search as
+ * `<network> <ticker>`.
  */
 export class FakeCal {
   readonly tickerSearches: string[] = [];
+  /** Which lookups answer 500: `search` alone, or every ticker lookup. */
+  failing: "search" | "tickers" | undefined;
 
   constructor(private readonly tokens: CalToken[]) {}
 
@@ -74,23 +78,56 @@ export class FakeCal {
       method: "GET",
       match: /\/v1\/tokens\?/,
       response: [],
-      onRequest: request => Response.json(this.#answer(new URL(request.url).searchParams)),
+      onRequest: request => this.#answer(new URL(request.url).searchParams),
     },
   ];
+
+  reset() {
+    this.tickerSearches.length = 0;
+    this.failing = undefined;
+  }
 
   #answer(query: URLSearchParams) {
     const network = query.get("network");
     const ticker = query.get("ticker");
+    const search = query.get("search")?.toLowerCase();
     const address = query.get("contract_address")?.toLowerCase();
     const id = query.get("id");
     if (ticker) this.tickerSearches.push(`${network} ${ticker}`);
+    if ((search !== undefined && this.failing) || (ticker !== null && this.failing === "tickers")) {
+      return new Response(null, { status: 500 });
+    }
     const matches = (token: CalToken) => {
       if (ticker) return token.network === network && token.ticker === ticker;
+      if (search !== undefined) {
+        return token.network === network && token.ticker.toLowerCase().includes(search);
+      }
       if (address) return token.network === network && token.address.toLowerCase() === address;
       return token.id === id;
     };
-    return this.tokens.filter(matches).map(calRow);
+    return Response.json(this.tokens.filter(matches).map(calRow));
   }
+}
+
+/** What `WalletAdapter.getAccountBalances` returns for an account holding one of each token. */
+export function holdingBalances(...tokens: CalToken[]): AccountBalances {
+  const native = { kind: "native", assetId: "native", balance: "1" };
+  const held = tokens.map(token => ({
+    kind: "token",
+    assetId: token.id,
+    balance: "1",
+    token: {
+      id: token.id,
+      ticker: token.ticker,
+      name: token.name,
+      contractAddress: token.address,
+      parentCurrencyId: token.network,
+      tokenType: token.network === "ethereum" ? "erc20" : "spl",
+      decimals: token.decimals,
+      unit: { name: token.ticker, code: token.ticker, magnitude: token.decimals },
+    },
+  }));
+  return { balances: [native, ...held].map(b => BalanceSchema.parse(b)), skippedTokenIds: [] };
 }
 
 const TOKEN_PROGRAM_OWNERS = {

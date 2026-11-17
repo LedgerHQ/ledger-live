@@ -18,6 +18,7 @@ import {
 } from "../../testing/agent-intent-service";
 import {
   FakeCal,
+  holdingBalances,
   solanaMintsRoute,
   submittedIntents,
   type CalToken,
@@ -28,7 +29,6 @@ import { USDT_CONTRACT } from "../../testing/cal-fixtures";
 import { runCli } from "../../testing/cli-runner";
 import { MockServer } from "../../testing/mock-server";
 import { WalletAdapter } from "../../wallet";
-import { BalanceSchema, type AccountBalances } from "../../wallet/models";
 
 // EIP-55 specification vectors, so checksums are known-good.
 const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
@@ -68,6 +68,9 @@ const PEPE_COPY = erc20(
   "PEPE",
   "Pepe_0xbe042e",
 );
+// ERC-20s named like USDC in lowercase, and like another chain's coin.
+const USDC_NAMESAKE = erc20("usdc_namesake", `0x${"0".repeat(39)}1`, "usdc", "usdc");
+const BTC_NAMESAKE = erc20("btc_namesake", `0x${"0".repeat(39)}3`, "BTC", "BTC namesake");
 // USDC is a classic SPL Token mint, PYUSD a Token-2022 one.
 const USDC_MINT = spl("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "USDC", "USD Coin");
 const PYUSD_MINT = spl("2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", "PYUSD", "PayPal USD");
@@ -84,6 +87,7 @@ const cal = new FakeCal([
   USDC,
   PEPE,
   PEPE_COPY,
+  BTC_NAMESAKE,
   USDC_MINT,
   PYUSD_MINT,
   EURC_MINT,
@@ -133,35 +137,17 @@ beforeEach(() => {
   restoreCalCache = useFreshCalCache();
   service.reset();
   service.reply("createIntent", { text: "https://bff.example.com/intents/intent-123" });
-  cal.tickerSearches.length = 0;
+  cal.reset();
   // The tokens a --account holds come from its sync; by default, none.
-  accountBalances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue(holds());
+  accountBalances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue(
+    holdingBalances(),
+  );
 });
 afterEach(() => {
   restoreCalCache();
   accountBalances.mockRestore();
   fixture.keychain.readError = undefined;
 });
-
-function holds(...tokens: CalToken[]): AccountBalances {
-  const native = { kind: "native", assetId: "native", balance: "1" };
-  const held = tokens.map(token => ({
-    kind: "token",
-    assetId: token.id,
-    balance: "1",
-    token: {
-      id: token.id,
-      ticker: token.ticker,
-      name: token.name,
-      contractAddress: token.address,
-      parentCurrencyId: token.network,
-      tokenType: token.network === "ethereum" ? "erc20" : "spl",
-      decimals: token.decimals,
-      unit: { name: token.ticker, code: token.ticker, magnitude: token.decimals },
-    },
-  }));
-  return { balances: [native, ...held].map(b => BalanceSchema.parse(b)), skippedTokenIds: [] };
-}
 
 function send(...args: string[]) {
   return runCli(["agent-intent", "send", "--profile", "bot", ...args], env);
@@ -399,7 +385,7 @@ describe("agent-intent send (CLI)", () => {
   describe("token from the --amount ticker, without --token", () => {
     it("takes the token the --account holds, checksummed, before any ticker search", async () => {
       accountBalances.mockResolvedValue({
-        ...holds({ ...PEPE, address: PEPE.address.toLowerCase() }),
+        ...holdingBalances({ ...PEPE, address: PEPE.address.toLowerCase() }),
         skippedTokenIds: ["ethereum/erc20/no_units"],
       });
 
@@ -419,7 +405,7 @@ describe("agent-intent send (CLI)", () => {
       ["the SPL token", [USDC_MINT], "25 USDC", USDC_MINT],
       ["the classic mint among two", [EURC_2022_MINT, EURC_MINT], "25 EURC", EURC_MINT],
     ])("takes %s a Solana --account holds", async (_, held, amount, expected) => {
-      accountBalances.mockResolvedValue(holds(...held));
+      accountBalances.mockResolvedValue(holdingBalances(...held));
 
       await send(...fromAccount("solana-1", SOL_RECIPIENT, amount));
 
@@ -457,8 +443,17 @@ describe("agent-intent send (CLI)", () => {
           `  ${PEPE.address} (Pepe)\n  ${PEPE_COPY.address} (Pepe_0xbe042e)\n` +
           "Pass the one to send with --token.",
       ],
+      [
+        "a held lowercase namesake of a lowercase ticker, listing it next to the real token",
+        "ethereum-1",
+        [USDC, USDC_NAMESAKE],
+        "5 usdc",
+        'Account "ethereum-1" holds several ERC-20 tokens with the ticker usdc:\n' +
+          `  ${USDC.address} (USD Coin)\n  ${USDC_NAMESAKE.address} (usdc)\n` +
+          "Pass the one to send with --token.",
+      ],
     ])("refuses %s rather than searching CAL", async (_, label, held, amount, message) => {
-      accountBalances.mockResolvedValue(holds(...held));
+      accountBalances.mockResolvedValue(holdingBalances(...held));
       const to = label === "ethereum-1" ? RECIPIENT : SOL_RECIPIENT;
 
       const { json, exitCode } = await sendJson(...fromAccount(label, to, amount));
@@ -478,7 +473,7 @@ describe("agent-intent send (CLI)", () => {
       ],
       [
         "holds no token with the ticker",
-        () => accountBalances.mockResolvedValue(holds(PEPE)),
+        () => accountBalances.mockResolvedValue(holdingBalances(PEPE)),
         "USDC is " + USDC.address + " (USD Coin), the only ERC-20 token",
       ],
     ])("searches CAL when the --account %s", async (_, setUp, notice) => {
@@ -508,6 +503,18 @@ describe("agent-intent send (CLI)", () => {
       expect(cal.tickerSearches).toEqual(["ethereum usdc", "ethereum USDC"]);
       expect(stderr).toContain(
         `USDC is ${USDC.address} (USD Coin), the only ERC-20 token with that ticker on Ethereum mainnet.`,
+      );
+    });
+
+    it("still sends the ERC-20 token CAL lists under another chain's coin ticker", async () => {
+      const { stderr } = await send(...fromEth("1 BTC"));
+
+      expect(intent()).toMatchObject({
+        asset: { type: "erc20", assetReference: onWire(BTC_NAMESAKE.address) },
+      });
+      expect(stderr).toContain(
+        `BTC is ${BTC_NAMESAKE.address} (BTC namesake), the only ERC-20 token with that ticker on ` +
+          "Ethereum mainnet.",
       );
     });
 
@@ -690,7 +697,7 @@ describe("agent-intent send (CLI)", () => {
       [
         "a ticker CAL doesn't list",
         fromEth("1 XYZ"),
-        "No ERC-20 token on Ethereum mainnet has the ticker XYZ in the Crypto Assets List, which matches tickers case-sensitively (e.g. USDe, stETH). Check the ticker, or pass the token's address with --token.",
+        "No ERC-20 token on Ethereum mainnet has the ticker XYZ in the Crypto Assets List. Check the ticker, or pass the token's address with --token.",
         ["ethereum XYZ"],
       ],
       [
