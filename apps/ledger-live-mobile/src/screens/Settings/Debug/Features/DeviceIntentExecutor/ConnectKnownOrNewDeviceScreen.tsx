@@ -57,7 +57,7 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <Box lx={{ flex: 1, padding: "s16", gap: "s12", backgroundColor: "canvas" }}>
       {!isAdding && (
         <Box lx={cardStyle}>
           <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -98,7 +98,7 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
           )}
         </ScrollView>
       </Box>
-    </View>
+    </Box>
   );
 }
 
@@ -124,6 +124,5 @@ const cardStyle = {
 } as const;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
   component: { flex: 2 },
 });
