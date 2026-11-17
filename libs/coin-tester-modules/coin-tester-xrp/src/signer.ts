@@ -8,14 +8,22 @@ import type { XrpSigner } from "@ledgerhq/live-common/families/xrp/types";
  */
 const TX_SIGN_PREFIX = "53545800";
 
-/**
- * Builds a deterministic software signer implementing `XrpSigner`.
- * Uses secp256k1 (the XRP default) regardless of the `ed25519` flag.
- */
-export function buildXrpSigner(): XrpSigner {
+/** A key pair that signs in-process, outside the coin module under test. */
+export type XrplWallet = { address: string; publicKey: string; privateKey: string };
+
+export function makeWallet(): XrplWallet {
   const seed = generateSeed({ algorithm: "ecdsa-secp256k1" });
   const { publicKey, privateKey } = deriveKeypair(seed);
-  const address = deriveAddress(publicKey);
+
+  return { publicKey, privateKey, address: deriveAddress(publicKey) };
+}
+
+/**
+ * Builds a deterministic software signer implementing `XrpSigner` for `wallet`.
+ * Uses secp256k1 (the XRP default) regardless of the `ed25519` flag.
+ */
+export function buildXrpSigner(wallet: XrplWallet = makeWallet()): XrpSigner {
+  const { publicKey, privateKey, address } = wallet;
 
   return {
     async getAddress(_path: string, _display?: boolean, _chainCode?: boolean, _ed25519?: boolean) {
