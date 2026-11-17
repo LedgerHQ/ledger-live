@@ -256,6 +256,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "hedera",
     supportedCoins: ["hedera", "hedera_testnet"],
     accountDescriptorType: "address",
+    derivesFromResolver: false,
     loadSetup: () => import("../families/hedera/setup"),
     loadAccountReceive: () => import("../families/hedera/accountReceive").then(m => m.default),
     loadAssetStatus: () => import("../families/hedera/assetStatus").then(m => m.default),

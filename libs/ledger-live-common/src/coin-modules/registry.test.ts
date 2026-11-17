@@ -3,6 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   registerCoinModules,
   getRegisteredFamilies,
+  derivesFromResolver,
   hasLocalApi,
   isCurrencySupported,
   listSupportedCurrencies,
@@ -47,6 +48,24 @@ describe("registerCoinModules / getRegisteredFamilies", () => {
     expect(getRegisteredFamilies()).toEqual(
       expect.arrayContaining(["__regtest_a__", "__regtest_b__"]),
     );
+  });
+});
+
+describe("derivesFromResolver", () => {
+  beforeEach(() => resetCoinModulesForTests());
+  afterEach(() => resetCoinModulesForTests());
+
+  it.each([
+    ["an address family", {}, true],
+    ["a family known by an xpub", { accountDescriptorType: "utxo" as const }, false],
+    [
+      "an address family whose resolver gives no descriptor key",
+      { derivesFromResolver: false as const },
+      false,
+    ],
+  ])("holds for %s: %s", (_, overrides, expected) => {
+    registerCoinModules([makeLoader("__regtest_derive__", overrides)]);
+    expect(derivesFromResolver("__regtest_derive__")).toBe(expected);
   });
 });
 

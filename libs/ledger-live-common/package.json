@@ -132,6 +132,7 @@
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
+    "@domain/entity-derivation": "workspace:^",
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-market-countervalues": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",

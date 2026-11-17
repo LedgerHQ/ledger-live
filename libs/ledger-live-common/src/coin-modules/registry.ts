@@ -80,6 +80,12 @@ export function getAccountDescriptorType(family: string): AccountDescriptor["typ
   return getLoader(family).accountDescriptorType;
 }
 
+/** Whether discovery can key an account on the address its resolver gives. */
+export function derivesFromResolver(family: string): boolean {
+  const loader = getLoader(family);
+  return loader.accountDescriptorType === "address" && loader.derivesFromResolver !== false;
+}
+
 export function isCurrencySupported(currency: CryptoCurrency): boolean {
   return getSupportedIds().has(currency.id);
 }
