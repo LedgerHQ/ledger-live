@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { ConnectKnownOrNewDevice } from "LLM/components/ConnectKnownOrNewDevice";
@@ -16,14 +17,15 @@ type LogEntry = {
 const MAX_LOG_ENTRIES = 50;
 
 /**
- * Shows ConnectKnownOrNewDevice the way My Wallet does: it stays on screen, and the rest of the
- * screen hides during the Add mode. The log keeps the callback calls.
+ * Shows ConnectKnownOrNewDevice the way My Wallet does. The isPaused switch and the log of the
+ * callback calls stay at the bottom: a caller can set the prop at any time.
  */
 export default function DebugConnectKnownOrNewDeviceScreen() {
   const logIdRef = useRef(0);
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
   const [isPaused, setIsPaused] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const log = useCallback((event: LogEvent, details?: string) => {
     setLogEntries(entries =>
@@ -35,7 +37,10 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
   }, []);
 
   const onConnected = useCallback(
-    (result: DeviceConnectionResult) => log("onConnected", formatConnectionResult(result)),
+    (result: DeviceConnectionResult) => {
+      log("onConnected", formatConnectionResult(result));
+      setIsPaused(true);
+    },
     [log],
   );
   const onAddModeChange = useCallback(
@@ -47,56 +52,58 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
   );
   const onDeviceNotFound = useCallback(() => log("onDeviceNotFound"), [log]);
 
-  const component = (
-    <ConnectKnownOrNewDevice
-      onConnected={onConnected}
-      onAddModeChange={onAddModeChange}
-      isPaused={isPaused}
-      onDeviceNotFound={onDeviceNotFound}
-    />
-  );
-
   return (
-    <Box lx={{ flex: 1, padding: "s16", gap: "s12", backgroundColor: "canvas" }}>
-      {!isAdding && (
-        <Box lx={cardStyle}>
-          <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <Text typography="body2" lx={{ color: "base" }}>
-              isPaused
-            </Text>
-            <Switch checked={isPaused} onCheckedChange={setIsPaused} />
-          </Box>
-        </Box>
-      )}
-
-      {isAdding ? (
-        <View style={styles.component}>{component}</View>
-      ) : (
-        <ScrollView style={styles.component}>{component}</ScrollView>
-      )}
-
-      <Box lx={{ ...cardStyle, flex: 1 }}>
-        <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text typography="body2SemiBold" lx={{ color: "base" }}>
-            Log
+    <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={isAdding ? styles.fill : undefined}>
+          <ConnectKnownOrNewDevice
+            onConnected={onConnected}
+            onAddModeChange={onAddModeChange}
+            isPaused={isPaused}
+            onDeviceNotFound={onDeviceNotFound}
+          />
+        </View>
+      </ScrollView>
+      <Box
+        lx={{ paddingHorizontal: "s16", paddingTop: "s12", gap: "s12" }}
+        style={{ paddingBottom: 16 + bottomInset }}
+      >
+        <Box
+          lx={{
+            ...cardStyle,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text typography="body2" lx={{ color: "base" }}>
+            isPaused
           </Text>
-          <Button appearance="gray" size="sm" onPress={() => setLogEntries([])}>
-            Clear
-          </Button>
+          <Switch checked={isPaused} onCheckedChange={setIsPaused} />
         </Box>
-        <ScrollView>
-          {logEntries.length === 0 ? (
-            <Text typography="body3" lx={{ color: "muted" }}>
-              Nothing logged yet.
+        <Box lx={cardStyle} style={styles.log}>
+          <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Text typography="body2SemiBold" lx={{ color: "base" }}>
+              Log
             </Text>
-          ) : (
-            logEntries.map(entry => (
-              <Text key={entry.id} typography="body3" lx={{ color: "base" }}>
-                {`${entry.time}  ${entry.event}${entry.details ? `  ${entry.details}` : ""}`}
+            <Button appearance="gray" size="sm" onPress={() => setLogEntries([])}>
+              Clear
+            </Button>
+          </Box>
+          <ScrollView style={styles.logEntries}>
+            {logEntries.length === 0 ? (
+              <Text typography="body3" lx={{ color: "muted" }}>
+                Nothing logged yet.
               </Text>
-            ))
-          )}
-        </ScrollView>
+            ) : (
+              logEntries.map(entry => (
+                <Text key={entry.id} typography="body3" lx={{ color: "base" }}>
+                  {`${entry.time}  ${entry.event}${entry.details ? `  ${entry.details}` : ""}`}
+                </Text>
+              ))
+            )}
+          </ScrollView>
+        </Box>
       </Box>
     </Box>
   );
@@ -124,5 +131,8 @@ const cardStyle = {
 } as const;
 
 const styles = StyleSheet.create({
-  component: { flex: 2 },
+  content: { flexGrow: 1, padding: 16, gap: 12 },
+  fill: { flex: 1 },
+  log: { maxHeight: 168 },
+  logEntries: { flexShrink: 1 },
 });
