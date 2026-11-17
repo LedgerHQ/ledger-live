@@ -5,12 +5,15 @@ import {
   TRONIFY_CREATE_RENT_RECORD_METHOD,
   TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  TRONIFY_UPLOAD_HASH_METHOD,
   type CreateTronifyRentRecordParams,
   type CreateTronifyRentRecordResult,
   type GetTronifyQuoteParams,
   type GetTronifyQuoteResult,
   type IsTronifyEnergyDeliveredParams,
   type IsTronifyEnergyDeliveredResult,
+  type UploadTronifyHashParams,
+  type UploadTronifyHashResult,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { buildGenericTransactionIntent } from "../../bridge/generic-coin-framework/buildIntent";
@@ -22,7 +25,9 @@ import {
 import type { GenericTransaction } from "../../bridge/generic-coin-framework/types";
 import {
   getPendingRent,
+  markPendingRentDelivered,
   PENDING_RENT_EXPIRY_MARGIN_MS,
+  recordPendingRent,
 } from "../../flows/send/sponsored/pendingRents";
 import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import { getAccountIdFromWalletAccountId } from "../converters";
@@ -32,12 +37,14 @@ import {
   createTronifyDisabled,
   createTronifyInsufficientBalance,
   createTronifyOrderFailed,
+  createTronifyOrderNotFound,
   createTronifyPriceAboveApproved,
   createTronifyQuoteFailed,
   createTronifyRentPending,
   createTronifyUnavailable,
   createTronifyUnsupportedAccount,
   createTronifyUnsupportedTransfer,
+  createTronifyUploadFailed,
   createWrongTronifyParams,
   ExchangeError,
   type ExchangeErrorData,
@@ -186,9 +193,11 @@ export type TronifyRentOrder = {
   /** The TRON account: energy and pending rents are per TRON account, not per token. */
   mainAccountId: string;
   payerAddress: string;
+  receiverAddress: string;
   transaction: unknown;
   paymentTxId: string;
   energyNeeded: bigint;
+  paymentExpiresAt: number;
   signableUntilMs: number;
 };
 
@@ -303,9 +312,11 @@ export async function createTronifyRentRecord(
     orderId: order.orderId,
     mainAccountId: sender.payer.id,
     payerAddress: request.payerAddress,
+    receiverAddress: request.receiverAddress,
     transaction: order.transaction,
     paymentTxId,
     energyNeeded: request.energy,
+    paymentExpiresAt: order.paymentExpiresAt,
     signableUntilMs,
   });
 
@@ -317,6 +328,104 @@ export async function createTronifyRentRecord(
     payCoinAmt: order.payCoinAmt,
     energyNeeded: request.energy.toString(),
   };
+}
+
+const HEX_BYTES = /^(?:[0-9a-fA-F]{2})+$/;
+
+function isUploadParams(
+  params: UploadTronifyHashParams | undefined,
+): params is UploadTronifyHashParams {
+  return (
+    !!params &&
+    typeof params.fromAccountId === "string" &&
+    typeof params.orderId === "string" &&
+    params.orderId !== "" &&
+    typeof params.signedTransactionHex === "string" &&
+    HEX_BYTES.test(params.signedTransactionHex)
+  );
+}
+
+/**
+ * `custom.exchange.tronify.uploadHash`: sends the signed rent payment of an order `createRentRecord`
+ * kept to Tronify, which broadcasts it. Each order is submitted at most once, even when the upload
+ * fails: the payment may have reached the chain, so the live app checks `isEnergyDelivered`.
+ */
+export async function uploadTronifyHash(
+  params: UploadTronifyHashParams | undefined,
+  { accounts, getFeature }: TronifyDeps,
+): Promise<UploadTronifyHashResult> {
+  if (!isUploadParams(params)) throw new ExchangeError(createWrongTronifyParams(params));
+  assertTronifyEnabled(getFeature);
+
+  const { payer } = resolveTronSender(params.fromAccountId, accounts);
+  const seam = await loadTronifySeam(payer);
+
+  // No await from here to the submit: a concurrent upload of the same order finds it gone.
+  const order = getTronifyRentOrder(params.orderId);
+  if (!order) throw new ExchangeError(createTronifyOrderNotFound(params.orderId));
+  if (order.mainAccountId !== payer.id) {
+    throw new ExchangeError(
+      createWrongTronifyParams({ fromAccountId: params.fromAccountId, orderId: params.orderId }),
+    );
+  }
+  if (getPendingRent(payer.id)) throw new ExchangeError(createTronifyRentPending());
+
+  let signedTransaction: unknown;
+  try {
+    // Rejects a signature over any other bytes than the order's payment.
+    signedTransaction = seam.buildSignedEnergyRentTransaction(
+      order.transaction,
+      params.signedTransactionHex,
+    );
+  } catch {
+    throw new ExchangeError(
+      createWrongTronifyParams({
+        orderId: params.orderId,
+        reason: "the signature is not over the order's payment",
+      }),
+    );
+  }
+
+  rentOrders.delete(order.orderId);
+  // Held before the submit, as the Send flow does, so neither flow pays for this energy again.
+  const holdRent = (submitting: boolean) =>
+    recordPendingRent(
+      {
+        mainAccountId: order.mainAccountId,
+        orderId: order.orderId,
+        payerAddress: order.payerAddress,
+        paymentTxId: order.paymentTxId,
+        receiverAddress: order.receiverAddress,
+        energyNeeded: order.energyNeeded,
+        submitting,
+      },
+      order.paymentExpiresAt,
+    );
+  holdRent(true);
+
+  await seam.submitEnergyRentPayment({ orderId: order.orderId, signedTransaction }).catch(error => {
+    // The payment may have landed anyway: keep the hold, and let a delivery check release it.
+    holdRent(false);
+    throw toTronifyError(error, createTronifyUploadFailed);
+  });
+  // The submit returned, so energy on-chain can now be this payment's delivery.
+  holdRent(false);
+  return { paymentTxId: order.paymentTxId };
+}
+
+/**
+ * The rent hold a delivered read of `energyNeeded` would prove landed. The Swap path has no delivery
+ * watcher like the Send flow's, so `isEnergyDelivered` releases it. A hold still submitting is not
+ * eligible: energy already on-chain is not its delivery.
+ */
+function rentHoldCoveredBy(payer: Account, energyNeeded: bigint): string | undefined {
+  const held = getPendingRent(payer.id);
+  return held &&
+    !held.submitting &&
+    held.receiverAddress === payer.freshAddress &&
+    energyNeeded >= held.energyNeeded
+    ? held.paymentTxId
+    : undefined;
 }
 
 /**
@@ -340,10 +449,14 @@ export async function isTronifyEnergyDelivered(
   const { payer } = resolveTronSender(params.fromAccountId, accounts);
   const seam = await loadTronifySeam(payer);
 
+  const energyNeeded = BigInt(params.energyNeeded);
+  // Captured before the read: a late response must not release a rent held after it started.
+  const heldPaymentTxId = rentHoldCoveredBy(payer, energyNeeded);
   const delivered = await seam.isEnergyDelivered({
     receiverAddress: payer.freshAddress,
-    energyNeeded: BigInt(params.energyNeeded),
+    energyNeeded,
   });
+  if (delivered && heldPaymentTxId) markPendingRentDelivered(payer.id, heldPaymentTxId);
   return { delivered };
 }
 
@@ -356,6 +469,9 @@ export const tronifyHandlers = (deps: TronifyDeps) =>
       CreateTronifyRentRecordParams,
       CreateTronifyRentRecordResult
     >(params => createTronifyRentRecord(params, deps)),
+    [TRONIFY_UPLOAD_HASH_METHOD]: customWrapper<UploadTronifyHashParams, UploadTronifyHashResult>(
+      params => uploadTronifyHash(params, deps),
+    ),
     [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: customWrapper<
       IsTronifyEnergyDeliveredParams,
       IsTronifyEnergyDeliveredResult
