@@ -24787,10 +24787,10 @@ importers:
         version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
+        version: 1.15.11(@swc/helpers@0.5.24)
       '@swc/jest':
         specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -24808,7 +24808,7 @@ importers:
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.90.0
+        version: 1.93.0
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
@@ -52946,6 +52946,23 @@ snapshots:
       '@swc/core-win32-x64-msvc': 1.15.11
       '@swc/helpers': 0.5.23
 
+  '@swc/core@1.15.11(@swc/helpers@0.5.24)':
+    dependencies:
+      '@swc/counter': 0.1.3
+      '@swc/types': 0.1.25
+    optionalDependencies:
+      '@swc/core-darwin-arm64': 1.15.11
+      '@swc/core-darwin-x64': 1.15.11
+      '@swc/core-linux-arm-gnueabihf': 1.15.11
+      '@swc/core-linux-arm64-gnu': 1.15.11
+      '@swc/core-linux-arm64-musl': 1.15.11
+      '@swc/core-linux-x64-gnu': 1.15.11
+      '@swc/core-linux-x64-musl': 1.15.11
+      '@swc/core-win32-arm64-msvc': 1.15.11
+      '@swc/core-win32-ia32-msvc': 1.15.11
+      '@swc/core-win32-x64-msvc': 1.15.11
+      '@swc/helpers': 0.5.24
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.23':
@@ -52958,6 +52975,13 @@ snapshots:
     dependencies:
       '@jest/create-cache-key-function': 30.5.1
       '@swc/core': 1.15.11(@swc/helpers@0.5.23)
+      '@swc/counter': 0.1.3
+      jsonc-parser: 3.2.1
+
+  '@swc/jest@0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))':
+    dependencies:
+      '@jest/create-cache-key-function': 30.5.1
+      '@swc/core': 1.15.11(@swc/helpers@0.5.24)
       '@swc/counter': 0.1.3
       jsonc-parser: 3.2.1
 
