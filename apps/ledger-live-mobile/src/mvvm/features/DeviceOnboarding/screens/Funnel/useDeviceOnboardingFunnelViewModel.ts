@@ -582,7 +582,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareVersion: readString(onboarding.context?.firmwareVersion),
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
     device: onboarding.liveDevice,
+    connectionError: onboarding.error,
     suspendSheets,
+    reconnect: reconnectToLiveDevice,
     send,
     onQuit: requestQuit,
   });

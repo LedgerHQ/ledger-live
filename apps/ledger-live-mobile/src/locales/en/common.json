@@ -2787,6 +2787,18 @@
       "restore": {
         "title": "Restore access",
         "recoveryPhraseDescription": "Secret Recovery Phrase"
+      },
+      "connection": {
+        "reconnecting": {
+          "title": "Reconnecting to your {{productName}}",
+          "description": "Keep your {{productName}} on, unlocked and close to your phone."
+        },
+        "failed": {
+          "title": "Couldn't connect to {{productName}}",
+          "description": "Make sure your {{productName}} is on, unlocked and close to your phone, then try again.",
+          "retryCta": "Try again",
+          "helpCta": "Get help"
+        }
       }
     },
     "connection": {

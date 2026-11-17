@@ -255,6 +255,7 @@ features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
 features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
+features/flow/device-onboarding-reconnect/               @ledgerhq/engagement
 shared/ui-glow/                                          @ledgerhq/engagement
 shared/ui-karaoke/                                       @ledgerhq/engagement
 
