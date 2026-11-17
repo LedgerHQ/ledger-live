@@ -195,6 +195,7 @@ export type Features = CurrencyFeatures & {
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
   recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
+  recoverDetailedDrawerOnboarding: DefaultFeature;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;

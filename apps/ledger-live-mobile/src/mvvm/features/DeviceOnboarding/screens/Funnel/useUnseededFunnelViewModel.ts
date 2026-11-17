@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { OnboardingStep, type HostOnboardingEvent } from "@features/platform-device-onboarding";
+import {
+  OnboardingStep,
+  SeedPath,
+  type HostOnboardingEvent,
+} from "@features/platform-device-onboarding";
 import {
   toChecksError,
   toChecksScreenState,
@@ -16,11 +20,16 @@ const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
 
+const doneState = "done";
+
 export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
   onboardedOnEntry: boolean | null;
   currentStep: string | null;
+  seedPath: string | null;
+  /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
+  pastRecover: boolean;
   checksPaused: boolean;
   genuineFailureKind: string | null;
   deviceNotGenuine: boolean;
@@ -35,9 +44,12 @@ export type UnseededFunnelInput = {
   onQuit: () => void;
 };
 
-export function useUnseededFunnelViewModel(
-  input: UnseededFunnelInput,
-): { status: "setup"; setup: SetupScreenProps } | null {
+export type UnseededFunnelModel =
+  | { status: "setup"; setup: SetupScreenProps }
+  | { status: "recoverNewSeed" }
+  | { status: "success"; sawRecoverPitch: boolean };
+
+export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const [heldStage, setHeldStage] = useState<SetupStage | null>(null);
   const continuedChecks = useRef(false);
   const device = input.device;
@@ -81,6 +93,12 @@ export function useUnseededFunnelViewModel(
     continuedChecks.current = true;
     send({ type: "CONTINUE" });
   }, [liveMachineState, send, unseeded]);
+
+  if (unseeded && machineState === doneState) {
+    const sawRecoverPitch = input.seedPath === SeedPath.NewSeed;
+    if (sawRecoverPitch && !input.pastRecover) return { status: "recoverNewSeed" };
+    return { status: "success", sawRecoverPitch };
+  }
 
   if (!unseeded || !visibleStage || !device || !machineState) return null;
 

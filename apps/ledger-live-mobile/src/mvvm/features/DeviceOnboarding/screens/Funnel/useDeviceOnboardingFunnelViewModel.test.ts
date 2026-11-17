@@ -1,4 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
+import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { SeedPath } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
@@ -15,6 +16,7 @@ import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelV
 
 const goBack = jest.fn();
 const resetNavigation = jest.fn();
+const navigate = jest.fn();
 type RemovalEvent = {
   preventDefault: () => void;
   data: { action: { type: string } };
@@ -28,6 +30,7 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
     goBack,
+    navigate,
     reset: resetNavigation,
     getParent: () => undefined,
     addListener: (event: string, handler: (event: RemovalEvent) => void) => {
@@ -36,6 +39,7 @@ jest.mock("@react-navigation/native", () => ({
     },
   }),
   useRoute: () => ({ params: mockRouteParams }),
+  useIsFocused: jest.fn(() => true),
 }));
 
 jest.mock("../../hooks/DeviceOnboardingProvider", () => {
@@ -77,6 +81,17 @@ const device = {
   wired: false,
 };
 
+function doneWithSeed(seedPath: string): DeviceOnboardingSession {
+  return session({
+    state: "done",
+    context: {
+      onboardedOnEntry: false,
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"],
+    snapshot: { context: { seedPath } } as DeviceOnboardingSession["snapshot"],
+  });
+}
+
 function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboardingSession {
   return {
     status: "running",
@@ -113,6 +128,16 @@ function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) 
 function setupOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   if (model.status !== "setup") throw new Error(model.status);
   return model.setup;
+}
+
+function recoverOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "recoverNewSeed") throw new Error(model.status);
+  return model.recoverNewSeed;
+}
+
+function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "success") throw new Error(model.status);
+  return model.success;
 }
 
 function useFunnelViewModel(props: void) {
@@ -1850,7 +1875,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
-  it("should keep the success screen when a new seed reaches done", () => {
+  it("should keep Recover when a new seed reaches done", () => {
     useSession.mockReturnValue(
       session({
         state: "done",
@@ -1866,8 +1891,88 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(checksOf(result.current).state).toBe("succeeded");
-    expect(result.current.status).not.toBe("connecting");
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should show Recover when an unseeded device reaches done on a new seed", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should move to the success karaoke when Recover is skipped", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => recoverOf(result.current).onSkip());
+
+    expect(result.current.status).toBe("success");
+  });
+
+  it("should add the recover action and show success when the user asks to be reminded", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => recoverOf(result.current).onRemindLater());
+
+    expect(result.current.status).toBe("success");
+    expect(store.getState().postOnboarding.actionsToComplete).toContain("recover");
+  });
+
+  it("should open Recover without completing onboarding", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => recoverOf(result.current).onOpenLiveApp());
+
+    expect(navigate).toHaveBeenCalledWith("Base", {
+      screen: "DeviceOnboardingRecover",
+      params: { platform: "protect-simu", device },
+    });
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should show the success karaoke when the funnel is focused again after Recover", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => recoverOf(result.current).onOpenLiveApp());
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    expect(result.current.status).toBe("recoverNewSeed");
+
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+    expect(result.current.status).toBe("success");
+  });
+
+  it("should complete onboarding on the success tap after the pitch", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => recoverOf(result.current).onSkip());
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
+    expect(resetNavigation).toHaveBeenCalled();
+  });
+
+  it("should show the success karaoke when an unseeded restore reaches done", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should leave a finished unseeded device without completing onboarding", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => result.current.quitConfirmation?.onLeave());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).toHaveBeenCalled();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
   });
 
   it("should close a not genuine sheet with CLOSE on an unseeded device", () => {

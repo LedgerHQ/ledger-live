@@ -2716,10 +2716,39 @@
         "setUp": "Let’s set it up.",
         "cta": "Check your device"
       },
+      "recover": {
+        "tooManyBackups": "There’s no such thing as too many backups.",
+        "encryptedBackup": "Especially an encrypted digital backup.",
+        "thereWhenYouNeedIt": "A digital backup that’s there when you need it.",
+        "title": "Protect access to your wallet with Ledger Recover.",
+        "description": "Physical recovery sheets get lost or damaged. Ledger Recover keeps an encrypted backup linked to your identity.",
+        "price": "First month free then start at $9,99/month. Cancel anytime. T&Cs apply",
+        "protect": "Protect my wallet",
+        "skip": "Skip for now",
+        "sheet": {
+          "title": "How does Ledger Recover work?",
+          "identity": {
+            "title": "Protected by your identity",
+            "description": "Your face and ID are the key to unlock a restore."
+          },
+          "security": {
+            "title": "Enhanced digital security",
+            "description": "Encrypted, fragmented and never stored in one place."
+          },
+          "legacy": {
+            "title": "Futureproof your digital legacy",
+            "description": "Add someone you trust to help secure your backup."
+          },
+          "start": "Get started now (~10min)",
+          "remindLater": "Remind me later"
+        }
+      },
       "success": {
         "allSet": "You’re all set",
         "timeToExplore": "Time to explore",
-        "cta": "Explore now"
+        "cta": "Explore now",
+        "ready": "You’re all set.",
+        "walletReady": "Your wallet is ready."
       }
     },
     "checks": {
