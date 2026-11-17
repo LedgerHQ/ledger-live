@@ -1,5 +1,5 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type BigNumber from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
@@ -8,6 +8,9 @@ import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/familie
 import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
+
+// The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
+export const OWNER_RESERVE = new BigNumber(200_000);
 
 // An IOU fee steps in billionths: 7 decimals of a percentage
 const MAX_FEE_PERCENT_DECIMALS = 7;

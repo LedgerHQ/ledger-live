@@ -35,12 +35,8 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import {
-  OWNER_RESERVE,
-  type Props,
-  useIssuerFeeText,
-  useManageTokenViewModel,
-} from "./useManageTokenViewModel";
+import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
+import { OWNER_RESERVE } from "../utils";
 
 function Row(
   props: Readonly<{

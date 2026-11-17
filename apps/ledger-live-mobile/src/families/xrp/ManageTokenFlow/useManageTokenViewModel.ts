@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { useQuery } from "@tanstack/react-query";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getIssuerFeeForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -8,9 +7,6 @@ import { ScreenName } from "~/const";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { formatIssuerFee, getManageableTokenAccounts } from "../utils";
 import type { XrpManageTokenFlowParamList } from "./types";
-
-// The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
-export const OWNER_RESERVE = new BigNumber(200_000);
 
 export type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenManage>
