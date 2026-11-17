@@ -10,6 +10,7 @@ import {
   formatSignedAmount,
   formatTransactionDetailDateTime,
 } from "../ListItem/formatCardTransactionItem";
+import { categoryLabelKey, statusLabelKey } from "../../../copy/cardTransactionLabelKeys";
 import type {
   CardTransactionDetailProps,
   CardTransactionDetailRow,
@@ -37,7 +38,7 @@ export function useCardTransactionDetailViewModel({
     {
       id: "status",
       label: t("payTab.cardTransactions.detail.status"),
-      value: t(`payTab.cardTransactions.detail.statusValues.${transaction.status}`),
+      value: t(statusLabelKey(transaction.status)),
       statusAppearance: STATUS_APPEARANCE[transaction.status],
     },
   ];
@@ -94,7 +95,7 @@ export function useCardTransactionDetailViewModel({
   return {
     merchant: formatMerchantName(transaction.merchantNameLocation),
     category: transaction.mccCategory,
-    categoryLabel: t(`payTab.cardTransactions.categories.${transaction.mccCategory}`),
+    categoryLabel: t(categoryLabelKey(transaction.mccCategory)),
     dateLabel: formatTransactionDetailDateTime(
       transaction.dateTime,
       (key, options) => t(`payTab.cardTransactions.detail.${key}`, options),
