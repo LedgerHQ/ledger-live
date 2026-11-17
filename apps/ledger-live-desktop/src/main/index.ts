@@ -15,6 +15,7 @@ import db from "./db";
 import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemptThrottle";
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
+import { setupFlushOnQuit } from "./flushOnQuit";
 import debounce from "lodash/debounce";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
@@ -100,6 +101,7 @@ app.on("ready", async () => {
   });
   await userDataCleanup.cleanup();
   db.init(userDataDirectory);
+  setupFlushOnQuit(window, db.flush);
 
   // Defer extension installation to not block startup
   if (__DEV__) {

@@ -4,6 +4,7 @@ import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
 import { CHANNELS } from "~/bridge/contract";
+import { flushBeforeQuit } from "~/main/flushOnQuit";
 
 export type UpdateStatus =
   | "idle"
@@ -73,7 +74,8 @@ export const init = () => {
     autoUpdater.channel = __CHANNEL__;
   }
 };
-const quitAndInstall = () => {
+const quitAndInstall = async () => {
+  await flushBeforeQuit();
   const browserWindows = BrowserWindow.getAllWindows();
 
   // Fixes quitAndInstall not quitting on macOS, as suggested on

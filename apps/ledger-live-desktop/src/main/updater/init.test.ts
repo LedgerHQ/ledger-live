@@ -1,9 +1,11 @@
+import { app, BrowserWindow } from "electron";
 import { autoUpdater } from "electron-updater";
 import { CHANNELS } from "~/bridge/contract";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
+import { flushBeforeQuit } from "~/main/flushOnQuit";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
-import { init } from "./init";
+import updater, { init } from "./init";
 
 type BuildGlobals = { __PRODUCTION__: boolean; __CHANNEL__: string | null };
 
@@ -24,7 +26,10 @@ const PRERELEASE_SIGNATURES_FEED = "https://lw-prerelease-sigs.s3.eu-west-1.amaz
 const CHANNEL = "nightly";
 const LEDGER_PUBKEY_LINE = "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEN7qcsG6bogi1nkD3jnMWS813wWguYEcI";
 
+// The jest "electron" mapping also matches "electron-updater": both resolve to this one mock.
 jest.mock("electron-updater", () => ({
+  app: { removeAllListeners: jest.fn() },
+  BrowserWindow: { getAllWindows: jest.fn(() => []) },
   autoUpdater: {
     on: jest.fn(),
     checkForUpdates: jest.fn(),
@@ -34,6 +39,10 @@ jest.mock("electron-updater", () => ({
     autoDownload: false,
     channel: "",
   },
+}));
+
+jest.mock("~/main/flushOnQuit", () => ({
+  flushBeforeQuit: jest.fn(),
 }));
 
 jest.mock("~/helpers/distributionChannel", () => ({
@@ -235,3 +244,22 @@ async function downloadUpdate() {
   )!;
   await (listener as (info: unknown) => Promise<void>)({ version: "9.9.9" });
 }
+
+describe("updater quitAndInstall", () => {
+  it("should install only after the pending writes are flushed", async () => {
+    let finishFlush: (() => void) | undefined;
+    jest
+      .mocked(flushBeforeQuit)
+      .mockReturnValue(new Promise<void>(resolve => (finishFlush = resolve)));
+
+    const installing = updater.quitAndInstall();
+    await Promise.resolve();
+    expect(mockedAutoUpdater.quitAndInstall).not.toHaveBeenCalled();
+
+    finishFlush?.();
+    await installing;
+    expect(app.removeAllListeners).toHaveBeenCalledWith("window-all-closed");
+    expect(BrowserWindow.getAllWindows).toHaveBeenCalled();
+    expect(mockedAutoUpdater.quitAndInstall).toHaveBeenCalledTimes(1);
+  });
+});

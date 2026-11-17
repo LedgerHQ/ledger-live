@@ -194,12 +194,26 @@ async function ensureNSLoaded(ns: string) {
   }
 }
 
+let reloading: Promise<void> = Promise.resolve();
+
 /**
  * In the event of a user refreshing the app we need to reload the data
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
-  if (DBPath) init(DBPath);
+  // A pending save would write the values of the previous session after the reload.
+  reloading = flush().then(() => {
+    if (DBPath) init(DBPath);
+  });
+  await reloading;
+}
+
+/**
+ * The memory holds the decrypted data of the previous session until a reload ends.
+ * The saves do not wait for it, so the reload flush can end.
+ */
+function waitForReload(): Promise<void> {
+  return reloading;
 }
 
 /**
@@ -273,6 +287,7 @@ async function setEncryptionKey(
   encryptionKey: string,
   currentEncryptionKey?: string,
 ): Promise<boolean> {
+  await waitForReload();
   if (typeof encryptionKey !== "string" || !encryptionKey) throw new DBWrongPassword();
   const replacesHeldKey = assertHeldKey(currentEncryptionKey);
 
@@ -310,6 +325,7 @@ async function setEncryptionKey(
   return replacesHeldKey || decrypted.length > 0;
 }
 async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boolean> {
+  await waitForReload();
   const removesHeldKey = assertHeldKey(currentEncryptionKey);
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
@@ -338,6 +354,7 @@ async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boole
  * Set a key in the given namespace
  */
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  await waitForReload();
   if (ns === "app") {
     assertAppNamespaceSetKeyAllowed(keyPath);
   }
@@ -359,6 +376,7 @@ async function getKey<V>(
   keyPath: string,
   defaultValue?: V,
 ): Promise<V | Record<string, V> | undefined> {
+  await waitForReload();
   await ensureNSLoaded(ns);
   if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
   return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
@@ -451,6 +469,7 @@ async function cleanCache() {
   await save("app");
 }
 async function resetAll() {
+  await waitForReload();
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data

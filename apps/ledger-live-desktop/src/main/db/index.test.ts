@@ -436,4 +436,59 @@ describe("db flush", () => {
     expect(writtenFile("app")).toBeUndefined();
     await expect(db.getKey("app", "settings")).resolves.toBeUndefined();
   });
+
+  it("writes a pending save before reload clears the memory", async () => {
+    jest.useFakeTimers();
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await jest.advanceTimersByTimeAsync(0);
+
+    await db.reload();
+
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
+
+  it("does not serve the memory of the previous session while a reload saves it", async () => {
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "disk" } })));
+    await db.setKey("app", "settings", "memory");
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "pending");
+    await waitMs(0);
+
+    const reloaded = db.reload();
+    let read: unknown;
+    const reading = db.getKey("app", "settings").then(value => (read = value));
+    await waitMs(50);
+    expect(writeFileMock).toHaveBeenCalledTimes(2);
+    expect(read).toBeUndefined();
+
+    finishWrite();
+    await reloaded;
+    await reading;
+    expect(read).toBe("disk");
+  });
+
+  it.each([
+    ["setKey", (d: typeof db) => d.setKey("app", "settings", "new")],
+    ["setEncryptionKey", (d: typeof db) => d.setEncryptionKey("password")],
+    ["removeEncryptionKey", (d: typeof db) => d.removeEncryptionKey()],
+    ["resetAll", (d: typeof db) => d.resetAll()],
+  ])("waits for the reload before %s", async (_name, call) => {
+    await db.setKey("app", "settings", "memory");
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "pending");
+    await waitMs(0);
+    const reloaded = db.reload();
+
+    let done = false;
+    const calling = call(db)
+      .catch(() => undefined)
+      .then(() => (done = true));
+    await waitMs(50);
+    expect(done).toBe(false);
+
+    finishWrite();
+    await reloaded;
+    await calling;
+    expect(done).toBe(true);
+  });
 });
