@@ -32,11 +32,13 @@ export default class SendPage {
   // The fee strategy rows have no testID.
   private readonly feeStrategy = (fee: string) => byText(fee);
 
-  @Step("Navigate to send screen {{{0.accountName}}}")
+  @Step("Navigate to send screen")
   async navigateToSendScreen(accountToDebit: Account, accountName?: string) {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(accountName || accountToDebit.accountName);
-    await app.account.tapSend(accountToDebit.currency.id);
+    // Some tokens carry the id of their chain, which names the native row of the picker, not theirs.
+    const namesChainOnly = accountToDebit.currency.id === accountToDebit.parentAccount?.currency.id;
+    await app.account.tapSend(namesChainOnly ? undefined : accountToDebit.currency.id);
   }
 
   @Step("Open send via deeplink")
