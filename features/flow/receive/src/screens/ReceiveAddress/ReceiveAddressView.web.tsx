@@ -6,6 +6,8 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { MemoPanel } from "./components/MemoPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
@@ -23,6 +25,7 @@ export function ReceiveAddressView({
   serviceWarning,
   serviceStatus,
   memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -49,7 +52,14 @@ export function ReceiveAddressView({
           <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
         ) : null}
         <DialogBackgroundToneProvider>
-          {serviceStatus ? (
+          {memoPanel ? (
+            <>
+              <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
+              <DialogBody>
+                <MemoPanel memoPanel={memoPanel} />
+              </DialogBody>
+            </>
+          ) : serviceStatus ? (
             <>
               <DialogHeader
                 density="expanded"
@@ -111,7 +121,8 @@ export function ReceiveAddressView({
                     <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
                   </>
                 )}
-                <ZonePlaceholder zone="extras" label={memoCard?.title} />
+                <ReceiveAddressExtras memoCard={memoCard} />
+                <ZonePlaceholder zone="extras" />
               </DialogBody>
             </>
           )}

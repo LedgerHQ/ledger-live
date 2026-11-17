@@ -150,6 +150,30 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 
+  it("offers no memo card for an address without memo", async () => {
+    renderScreen();
+
+    await screen.findByTestId("receive-address-summary");
+    expect(screen.queryByTestId("receive-address-memo-card")).toBeNull();
+  });
+
+  it("opens the memo panel from its card, then goes back to the address", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { onOpenUrl });
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toHaveTextContent(
+      "You might need a Tag/Memo",
+    );
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.memoTag);
+
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
