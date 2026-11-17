@@ -2805,7 +2805,8 @@
           },
           "restore": {
             "title": "Restore from backup",
-            "description": "Restore using an existing backup: Secret Recovery Phrase, Recovery Key, or Ledger Recover."
+            "description": "Restore using an existing backup: Secret Recovery Phrase, Recovery Key, or Ledger Recover.",
+            "descriptionWithoutRecoveryKey": "Restore using an existing backup: Secret Recovery Phrase or Ledger Recover."
           }
         },
         "recoveryPhrase": {

@@ -73,7 +73,11 @@ function sheetContent(
           },
           {
             title: t("deviceOnboarding.setup.info.setupChoice.restore.title"),
-            description: t("deviceOnboarding.setup.info.setupChoice.restore.description"),
+            description: t(
+              reportsRecoveryKey
+                ? "deviceOnboarding.setup.info.setupChoice.restore.description"
+                : "deviceOnboarding.setup.info.setupChoice.restore.descriptionWithoutRecoveryKey",
+            ),
           },
         ],
         paragraphs: [],

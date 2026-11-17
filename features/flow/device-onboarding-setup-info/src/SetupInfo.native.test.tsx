@@ -14,6 +14,10 @@ const COPY = {
       "deviceOnboarding.setup.info.cards.restoreRecoveryKey": "What’s a Secret Recovery Key?",
       "deviceOnboarding.setup.info.faq": "View complete FAQ",
       "deviceOnboarding.setup.info.setupChoice.newDevice.title": "Set up as a new Ledger device",
+      "deviceOnboarding.setup.info.setupChoice.restore.description":
+        "Restore: phrase, Recovery Key, or Recover.",
+      "deviceOnboarding.setup.info.setupChoice.restore.descriptionWithoutRecoveryKey":
+        "Restore: phrase or Recover.",
       "deviceOnboarding.setup.info.recoveryKey.learnHowToUse": "Learn how to use",
       "deviceOnboarding.setup.info.cards.restoreChoice": "Choose a backup to restore from",
       "deviceOnboarding.setup.info.restoreChoice.recoveryPhrase.title": "Secret Recovery Phrase",
@@ -96,6 +100,22 @@ describe("SetupInfo", () => {
     expect(screen.getByText("Secret Recovery Phrase")).toBeTruthy();
     expect(screen.queryByText("Ledger Recovery Key")).toBeNull();
     expect(screen.getByText("Ledger Recover subscription")).toBeTruthy();
+  });
+
+  it("should mention the Recovery Key among restore options when the device supports one", async () => {
+    const { user } = renderSetupInfo();
+
+    await user.press(screen.getByTestId(setupInfoTestIds.card));
+
+    expect(screen.getByText("Restore: phrase, Recovery Key, or Recover.")).toBeTruthy();
+  });
+
+  it("should leave the Recovery Key out of the restore options when the device has no Recovery Key", async () => {
+    const { user } = renderSetupInfo({ reportsRecoveryKey: false });
+
+    await user.press(screen.getByTestId(setupInfoTestIds.card));
+
+    expect(screen.getByText("Restore: phrase or Recover.")).toBeTruthy();
   });
 
   it("should hide an open sheet while sheets are suspended and bring it back after", async () => {
