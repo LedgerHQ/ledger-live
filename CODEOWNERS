@@ -186,6 +186,7 @@ devtools/account-portfolio/                              @ledgerhq/wallet-xp
 devtools/account-detail/                                 @ledgerhq/wallet-xp
 devtools/receive/                                        @ledgerhq/wallet-xp
 devtools/intent-wallet-sync/                             @ledgerhq/wallet-xp
+devtools/dev-settings/                                   @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
