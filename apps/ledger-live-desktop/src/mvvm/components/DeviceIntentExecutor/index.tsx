@@ -22,6 +22,7 @@ import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewM
 
 export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
+export type { InitializerConfig } from "./ContextInitializer";
 export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<

@@ -109,3 +109,7 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
     onError: error => logger.critical(error, "Account left out of the accounts slice"),
   });
 }
+
+/** Derives discovery candidates on the session of the Device Intent that runs the scan. */
+export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
+export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";

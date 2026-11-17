@@ -42,3 +42,15 @@ export type {
   IntentWalletSyncToolState,
   IntentWalletSyncToolStateParams,
 } from "./useIntentWalletSyncToolState";
+export {
+  accountDiscoveryIntentDefinition,
+  useAccountDiscoveryToolState,
+} from "./useAccountDiscoveryToolState";
+export type {
+  AccountDiscoveryInputs,
+  AccountDiscoveryIntent,
+  AccountDiscoveryIntentPlatformDefinition,
+  AccountDiscoveryJobState,
+  AccountDiscoveryRun,
+  AccountDiscoveryToolState,
+} from "./useAccountDiscoveryToolState";

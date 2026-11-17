@@ -8,6 +8,7 @@ import { useContextInitializerViewModel } from "./useContextInitializerViewModel
 export type InitializerConfig =
   | {
       dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
+      onInitializationFailed?: (error: unknown) => void;
     }
   | undefined;
 
@@ -20,6 +21,7 @@ const ContextInitializer: DeviceContextInitializerComponent<
     deviceInitializationInput,
     onContextInitialized,
     dependencies: config?.dependencies,
+    onInitializationFailed: config?.onInitializationFailed,
   });
 
   return <ContextInitializerView state={state} device={device} onCancel={onClose} />;

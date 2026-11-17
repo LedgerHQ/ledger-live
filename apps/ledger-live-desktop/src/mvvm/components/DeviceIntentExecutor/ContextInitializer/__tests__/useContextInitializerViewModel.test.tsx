@@ -7,6 +7,7 @@ import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {
+  BlockingStateType,
   DeviceInteractionRequiredType,
   FinalStateType,
   LoadingStateType,
@@ -43,9 +44,11 @@ function setupObservable() {
 
 function renderViewModel({
   onContextInitialized = jest.fn(),
+  onInitializationFailed,
   deprecationDoNotRemind = ["Ethereum"],
 }: {
   onContextInitialized?: jest.Mock;
+  onInitializationFailed?: jest.Mock;
   deprecationDoNotRemind?: string[];
 } = {}) {
   const store = createStore({
@@ -64,6 +67,7 @@ function renderViewModel({
         connectionResult,
         deviceInitializationInput,
         onContextInitialized,
+        onInitializationFailed,
       }),
     {
       wrapper: ({ children }) => <TestWrapper store={store}>{children}</TestWrapper>,
@@ -180,6 +184,76 @@ describe("useContextInitializerViewModel", () => {
       type: FinalStateType.Error,
       error,
     });
+  });
+
+  it("GIVEN an app the device cannot run WHEN observing the flow THEN it notifies the initialization failure", () => {
+    // GIVEN
+    const subject = setupObservable();
+    const onInitializationFailed = jest.fn();
+    renderViewModel({ onInitializationFailed });
+
+    // WHEN
+    act(() => {
+      subject.next({
+        type: BlockingStateType.UnsupportedApplication,
+        appName: "Bitcoin",
+        deviceModelId: DeviceModelId.nanoS,
+      });
+    });
+
+    // THEN
+    expect(onInitializationFailed).toHaveBeenCalledWith(
+      expect.objectContaining({ name: BlockingStateType.UnsupportedApplication }),
+    );
+  });
+
+  it("GIVEN a device out of storage WHEN observing the flow THEN it notifies the initialization failure", () => {
+    // GIVEN
+    const subject = setupObservable();
+    const onInitializationFailed = jest.fn();
+    renderViewModel({ onInitializationFailed });
+
+    // WHEN
+    act(() => {
+      subject.next({ type: BlockingStateType.DeviceOutOfStorageSpace, appNames: ["Bitcoin"] });
+    });
+
+    // THEN
+    expect(onInitializationFailed).toHaveBeenCalledWith(
+      expect.objectContaining({ name: BlockingStateType.DeviceOutOfStorageSpace }),
+    );
+  });
+
+  it("GIVEN a state the user can act on WHEN observing the flow THEN it does not notify a failure", () => {
+    // GIVEN
+    const subject = setupObservable();
+    const onInitializationFailed = jest.fn();
+    renderViewModel({ onInitializationFailed });
+
+    // WHEN
+    act(() => {
+      subject.next({ type: DeviceInteractionRequiredType.UnlockDevice });
+    });
+
+    // THEN
+    expect(onInitializationFailed).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN the use case errors WHEN observing the flow THEN it notifies the initialization failure", () => {
+    // GIVEN
+    const subject = setupObservable();
+    const onInitializationFailed = jest.fn();
+    renderViewModel({ onInitializationFailed });
+    const error = new Error("unexpected");
+
+    // WHEN
+    act(() => {
+      subject.error(error);
+    });
+
+    // THEN
+    expect(onInitializationFailed).toHaveBeenCalledTimes(1);
+    expect(onInitializationFailed).toHaveBeenCalledWith(error);
   });
 
   it("GIVEN the view model is subscribed WHEN unmounting THEN it unsubscribes from the use case", () => {

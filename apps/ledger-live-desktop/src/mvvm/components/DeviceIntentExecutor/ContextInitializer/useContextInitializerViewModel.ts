@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import type { ConnectAppInitSideEffects } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/types";
 import {
+  BlockingStateType,
   FinalStateType,
   getEnsureAppReadyFailure,
   LoadingStateType,
@@ -29,6 +30,7 @@ type UseContextInitializerViewModelParams = {
   deviceInitializationInput: InitializationInput;
   onContextInitialized: (context: DeviceExtractedContext) => void;
   dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
+  onInitializationFailed?: (error: unknown) => void;
 };
 
 type UseContextInitializerViewModelResult = {
@@ -38,11 +40,23 @@ type UseContextInitializerViewModelResult = {
 
 const LOADING_STATE: EnsureAppReadyState = { type: LoadingStateType.Loading };
 
+// Blocking states end the initialization; retryable and interaction states keep it running.
+const BLOCKING_STATES: ReadonlySet<string> = new Set(Object.values(BlockingStateType));
+
+function initializationFailureOf(state: EnsureAppReadyState): unknown {
+  if (state.type === FinalStateType.Error) return state.error;
+  if (!BLOCKING_STATES.has(state.type)) return undefined;
+  const error = new Error(`Device initialization blocked: ${state.type}`);
+  error.name = state.type;
+  return error;
+}
+
 export function useContextInitializerViewModel({
   connectionResult,
   deviceInitializationInput,
   onContextInitialized,
   dependencies,
+  onInitializationFailed,
 }: UseContextInitializerViewModelParams): UseContextInitializerViewModelResult {
   const dispatch = useDispatch();
   const deprecationDismissedCurrencyNames = useSelector(
@@ -82,6 +96,8 @@ export function useContextInitializerViewModel({
     const handleState = (nextState: EnsureAppReadyState) => {
       setState(nextState);
       reportFailure(getEnsureAppReadyFailure(nextState, trackingDevice));
+      const failure = initializationFailureOf(nextState);
+      if (failure) onInitializationFailed?.(failure);
     };
     completedRef.current = false;
     handleState(LOADING_STATE);
@@ -114,6 +130,7 @@ export function useContextInitializerViewModel({
     dependencies,
     deviceInitializationInput,
     onContextInitialized,
+    onInitializationFailed,
     reportFailure,
     sideEffects,
   ]);

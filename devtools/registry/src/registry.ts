@@ -16,6 +16,7 @@ export const tools = {
   "account-balance-history": walletXp.accountBalanceHistory,
   "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
+  "account-discovery": platform.accountDiscovery,
   "account-data": platform.accountData,
   "account-source-portfolio": platform.accountSourcePortfolio,
   "app-config": platform.appConfig,
@@ -70,4 +71,5 @@ export type DevToolConfig =
   | { id: "receive"; config: walletXp.ReceiveToolProps }
   | { id: "predictions"; config: ptx.PredictionsToolProps }
   | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps }
-  | { id: "app-toggles"; config: walletXp.AppTogglesToolProps };
+  | { id: "app-toggles"; config: walletXp.AppTogglesToolProps }
+  | { id: "account-discovery"; config: platform.AccountDiscoveryToolProps };
