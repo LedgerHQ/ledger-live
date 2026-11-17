@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Route, Routes } from "react-router";
 import {
   act,
@@ -111,6 +111,12 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => {
       );
     },
   };
+});
+
+// Loads the real family, unless a test holds its import back to unmount the player meanwhile.
+jest.mock("~/renderer/families", () => {
+  const families = jest.requireActual<typeof import("~/renderer/families")>("~/renderer/families");
+  return { ...families, importLLDCoinFamily: jest.fn(families.importLLDCoinFamily) };
 });
 
 const solana = getCryptoCurrencyById("solana");
@@ -277,6 +283,14 @@ const dialogIsClosed = () =>
 const isPending = (answer: Promise<unknown>) =>
   Promise.race([answer.then(() => false), new Promise(resolve => setTimeout(resolve, 50, true))]);
 
+function createDeferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(res => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 async function goToConfirmation(
   user: ReturnType<typeof setup>["user"],
   exit: "Deactivate to withdraw" | "Withdraw all",
@@ -410,6 +424,22 @@ describe("Stake position dialog", () => {
 
       await expect(answer).resolves.toEqual({ action: null });
       await dialogIsClosed();
+    });
+
+    it("should answer null, and open no dialog, when the player unmounts while the family loads", async () => {
+      const family = await importLLDCoinFamily(solana.family);
+      const familyImport = createDeferred<typeof family>();
+      jest.mocked(importLLDCoinFamily).mockReturnValueOnce(familyImport.promise);
+      const { open, closeLiveApp } = setup();
+      const shown = renderHook(() => useShownStakePosition());
+
+      const answer = open();
+      closeLiveApp();
+      await act(async () => familyImport.resolve(family));
+
+      expect(shown.result.current.request).toBeNull();
+      await expect(answer).resolves.toEqual({ action: null });
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
   });
 
@@ -809,6 +839,27 @@ describe("Stake position dialog", () => {
 
       await screen.findByRole("button", { name: "Sign on device" });
       expect(mockDeviceStepTransactions.at(-1)?.amount).toEqual(new BigNumber(1.75 * SOL));
+    });
+
+    it("should prepare the exit again when only the balance of the account grows", async () => {
+      const account = solanaAccount({
+        delegations: [],
+        unbondings: [deactivatedPosition()],
+        balance: 0.5 * SOL,
+      });
+      const { open, updateAccount, user } = setup({ account });
+
+      void open();
+      await findDialog();
+      await user.click(await screen.findByRole("button", { name: "Withdraw all" }));
+      expect(await screen.findByText("Sorry, insufficient funds")).toBeVisible();
+      // Funding an account below its reserve grows its balance, not its spendable balance.
+      updateAccount(current => ({ ...current, balance: new BigNumber(2 * SOL) }));
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "Withdraw all" })).toBeEnabled(),
+      );
+      expect(screen.queryByText("Sorry, insufficient funds")).not.toBeInTheDocument();
     });
 
     it("should go back to the details when the exit is no longer possible", async () => {

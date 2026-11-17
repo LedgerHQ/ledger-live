@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";

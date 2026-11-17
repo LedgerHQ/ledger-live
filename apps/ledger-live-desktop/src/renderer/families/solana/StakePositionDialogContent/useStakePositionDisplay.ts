@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSolanaValidators } from "@ledgerhq/live-common/families/solana/react";
 import type {

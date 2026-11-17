@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act, render, renderHook, waitFor } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

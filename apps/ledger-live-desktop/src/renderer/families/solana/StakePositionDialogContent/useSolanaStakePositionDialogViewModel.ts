@@ -120,9 +120,15 @@ function findRequestedPosition(
 function revisionOf(account: SolanaAccount, display: StakePositionDisplay | null): string {
   if (!display) return "";
   const { state, amount, withdrawableAmount, canStake, canWithdraw } = display.snapshot;
-  return [state, amount, withdrawableAmount, canStake, canWithdraw, account.spendableBalance].join(
-    ":",
-  );
+  return [
+    state,
+    amount,
+    withdrawableAmount,
+    canStake,
+    canWithdraw,
+    account.balance,
+    account.spendableBalance,
+  ].join(":");
 }
 
 function detailsContentOf({

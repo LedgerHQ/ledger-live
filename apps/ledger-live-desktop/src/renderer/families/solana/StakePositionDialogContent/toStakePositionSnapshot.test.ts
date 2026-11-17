@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { StakingDelegation, StakingUnbonding } from "@ledgerhq/types-live";
 import { toStakePositionSnapshot } from "./toStakePositionSnapshot";
 
