@@ -12,6 +12,7 @@ import {
   initialContext,
   type ExitOutput,
 } from "./context";
+import { isDeviceDisconnected } from "./device/errors";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { firmwareSettled, isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
@@ -47,6 +48,9 @@ function exitWith(reason: ExitOutput["reason"]) {
   } as const;
 }
 
+// Must outlast the BLE reconnection window (15s Android, 10s iOS), after which the session reports NOT_CONNECTED.
+const SESSION_SETTLE_TIMEOUT_MS = 20_000;
+
 export const deviceOnboardingMachine = setup({
   types: {
     context: {} as DeviceOnboardingContext,
@@ -61,6 +65,9 @@ export const deviceOnboardingMachine = setup({
     toggleEarlyCheck,
     seedPolling,
     unlockPolling,
+  },
+  delays: {
+    sessionSettle: SESSION_SETTLE_TIMEOUT_MS,
   },
   actions: {
     ...contextActions,
@@ -101,6 +108,11 @@ export const deviceOnboardingMachine = setup({
     isOnboarded: ({ context }) => context.isOnboarded,
     onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,
     offerSync: ({ context }) => context.offerSync,
+    genuineFailureIsDisconnect: ({ event }) =>
+      (event.type === "GENUINE_CHECK_FAILED" || event.type === "SECURE_CHANNEL_LOST") &&
+      isDeviceDisconnected(event.failure),
+    firmwareFailureIsDisconnect: ({ event }) =>
+      event.type === "FIRMWARE_CHECK_FAILED" && isDeviceDisconnected(event.output),
     deviceRestarted: ({ context, event }) =>
       event.type === "STEP_CHANGED" &&
       isWelcomeStep(event.state.currentOnboardingStep) &&
@@ -217,10 +229,29 @@ export const deviceOnboardingMachine = setup({
           on: {
             GENUINE_CHECK_PASSED: { target: "checksIdle", actions: "rememberGenuineChecked" },
             GENUINE_CHECK_REFUSED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
-            GENUINE_CHECK_FAILED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
-            SECURE_CHANNEL_LOST: { target: "genuineFailed", actions: "rememberGenuineFailure" },
+            GENUINE_CHECK_FAILED: [
+              {
+                guard: "genuineFailureIsDisconnect",
+                target: "genuineFailurePending",
+                actions: "rememberGenuineFailure",
+              },
+              { target: "genuineFailed", actions: "rememberGenuineFailure" },
+            ],
+            SECURE_CHANNEL_LOST: [
+              {
+                guard: "genuineFailureIsDisconnect",
+                target: "genuineFailurePending",
+                actions: "rememberGenuineFailure",
+              },
+              { target: "genuineFailed", actions: "rememberGenuineFailure" },
+            ],
             DEVICE_NOT_GENUINE: { target: "notGenuineSupport", actions: "rememberGenuineFailure" },
           },
+        },
+
+        genuineFailurePending: {
+          after: { sessionSettle: "genuineFailed" },
+          on: { SESSION_CHANGED: { target: "checksIdle", actions: "startNewSession" } },
         },
 
         genuineFailed: {
@@ -250,8 +281,16 @@ export const deviceOnboardingMachine = setup({
               target: "firmwareUpdateOffered",
               actions: "rememberAvailableUpdate",
             },
-            FIRMWARE_CHECK_FAILED: "firmwareCheckFailed",
+            FIRMWARE_CHECK_FAILED: [
+              { guard: "firmwareFailureIsDisconnect", target: "firmwareFailurePending" },
+              { target: "firmwareCheckFailed" },
+            ],
           },
+        },
+
+        firmwareFailurePending: {
+          after: { sessionSettle: "firmwareCheckFailed" },
+          on: { SESSION_CHANGED: { target: "checksIdle", actions: "startNewSession" } },
         },
 
         firmwareCheckFailed: {
@@ -406,6 +445,7 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
+        QUIT: "#deviceOnboarding.exitOnboarding",
       },
     },
     awaitingSessionAfterFirmwareUpdate: {
