@@ -5,6 +5,7 @@ import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
 import type { CoinFrameworkSigner } from "./types";
 import { postSync } from "./postSync";
+import { genericAccountBalances } from "./utils";
 
 export async function getCoinFrameworkCurrencyBridge(
   network: string,
@@ -21,6 +22,7 @@ export async function getCoinFrameworkCurrencyBridge(
         return bridgeApi.addressLookup;
       },
       postSync,
+      getAccountBalances: genericAccountBalances,
     }),
   };
 }

@@ -37,6 +37,7 @@ import {
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
 } from "../account/balanceHistoryCache";
+import { type AccountBalancesResult, withAccountBalances } from "../account/balances";
 import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
@@ -247,10 +248,13 @@ export const makeSync =
     getAccountShape,
     postSync = (_, a) => a,
     shouldMergeOps = true,
+    getAccountBalances,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean | ((account: A) => Promise<boolean>);
+    /** Family rows of the balance breakdown for the synced account, read after `postSync`. */
+    getAccountBalances?: (account: A) => AccountBalancesResult;
   }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
@@ -326,6 +330,8 @@ export const makeSync =
                   shouldRetainPendingOperation(a, op),
                 ),
               });
+
+              a = withAccountBalances(a, getAccountBalances?.(a));
 
               a = recalculateAccountBalanceHistories(a, acc);
 
@@ -422,12 +428,15 @@ export const makeScanAccounts =
     getAddressLookup,
     getAddressFn,
     postSync = (_, a) => a,
+    getAccountBalances,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressLookup?: (currency: CryptoCurrency) => Promise<AddressLookup | undefined>;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
+    /** Family rows of the balance breakdown for the scanned account, read after `postSync`. */
+    getAccountBalances?: (account: A) => AccountBalancesResult;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
@@ -520,7 +529,8 @@ export const makeScanAccounts =
           // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
           // Using the generic doesn't resolve correctly
           // oxlint-disable-next-line typescript/consistent-type-assertions
-          account = postSync(initialAccount as unknown as A, account as unknown as A);
+          const synced = postSync(initialAccount as unknown as A, account as unknown as A);
+          account = withAccountBalances(synced, getAccountBalances?.(synced));
 
           log("scanAccounts", "derivationsCache", res);
 

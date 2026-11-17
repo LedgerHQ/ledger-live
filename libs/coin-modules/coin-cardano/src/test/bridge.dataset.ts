@@ -24,6 +24,7 @@ export const dataset: DatasetTest<Transaction> = {
         "cardanoResources.delegation.rewards", // rewards will always be increasing
         "balance", // Rewards are included in balance, so this will too keep changing
         "spendableBalance", // changes with the live UTXO set
+        "balances", // derived from balance and spendableBalance
       ],
       scanAccounts: cardanoScanAccounts,
       accounts: [
