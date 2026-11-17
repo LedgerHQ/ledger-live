@@ -28,7 +28,7 @@ export const tools = {
   receive: walletXp.receive,
   predictions: ptx.predictions,
   "intent-wallet-sync": walletXp.intentWalletSync,
-  "dev-settings": walletXp.devSettings,
+  "app-toggles": walletXp.appToggles,
 } as const;
 
 /**
@@ -70,4 +70,4 @@ export type DevToolConfig =
   | { id: "receive"; config: walletXp.ReceiveToolProps }
   | { id: "predictions"; config: ptx.PredictionsToolProps }
   | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps }
-  | { id: "dev-settings"; config: walletXp.DevSettingsToolProps };
+  | { id: "app-toggles"; config: walletXp.AppTogglesToolProps };

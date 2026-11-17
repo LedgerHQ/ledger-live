@@ -1,5 +1,5 @@
 /** One app-wide switch the host owns: the tool only renders it. */
-export interface DevSettingsToggle {
+export interface AppToggle {
   readonly id: string;
   readonly label: string;
   readonly description: string;
@@ -9,6 +9,6 @@ export interface DevSettingsToggle {
   readonly onChange: (isOn: boolean) => void;
 }
 
-export interface DevSettingsToolProps {
-  readonly toggles: readonly DevSettingsToggle[];
+export interface AppTogglesToolProps {
+  readonly toggles: readonly AppToggle[];
 }

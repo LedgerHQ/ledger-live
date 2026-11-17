@@ -1,9 +1,9 @@
 import { Switch } from "@ledgerhq/lumen-ui-react";
 import { Lock } from "@ledgerhq/lumen-ui-react/symbols";
-import type { DevSettingsToggle, DevSettingsToolProps } from "../types";
+import type { AppToggle, AppTogglesToolProps } from "../types";
 import { copy } from "./copy";
 
-export function DevSettings({ toggles }: DevSettingsToolProps) {
+export function AppToggles({ toggles }: AppTogglesToolProps) {
   return (
     <div className="flex flex-col">
       <section className="flex flex-col gap-12 border-b border-muted-subtle px-16 py-12">
@@ -18,8 +18,8 @@ export function DevSettings({ toggles }: DevSettingsToolProps) {
   );
 }
 
-function ToggleRow({ toggle }: Readonly<{ toggle: DevSettingsToggle }>) {
-  const switchId = `dev-settings-${toggle.id}`;
+function ToggleRow({ toggle }: Readonly<{ toggle: AppToggle }>) {
+  const switchId = `app-toggles-${toggle.id}`;
   const isLocked = toggle.lockedReason !== null;
 
   return (

@@ -3,7 +3,7 @@ import { render, screen } from "tests/testSetup";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import NightlyLayer from "LLD/components/NightlyLayer";
 import { shouldShowNightlyLayer } from "LLD/components/NightlyLayer/utils/shouldShowNightlyLayer";
-import { useDevSettingsTool } from "../useDevSettingsTool";
+import { useAppTogglesTool } from "../useAppTogglesTool";
 
 jest.mock("LLD/components/NightlyLayer/utils/shouldShowNightlyLayer");
 
@@ -11,7 +11,7 @@ const mockShouldShowNightlyLayer = jest.mocked(shouldShowNightlyLayer);
 
 /** Stands in for the devtool, which only calls the toggle it receives. */
 function HideNightlyLayerToggle() {
-  const [toggle] = useDevSettingsTool().toggles;
+  const [toggle] = useAppTogglesTool().toggles;
 
   return (
     <>
@@ -36,7 +36,7 @@ const renderToggleWithOverlay = (hideNightlyLayer: boolean) =>
     { initialState: { settings: { ...SETTINGS_INITIAL_STATE, hideNightlyLayer } } },
   );
 
-describe("DevSettings — hide pre-release overlay", () => {
+describe("AppToggles — hide pre-release overlay", () => {
   beforeEach(() => {
     mockShouldShowNightlyLayer.mockReturnValue(true);
   });

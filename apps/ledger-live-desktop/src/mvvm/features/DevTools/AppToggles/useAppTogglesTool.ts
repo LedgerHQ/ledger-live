@@ -1,15 +1,16 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { shouldShowNightlyLayer } from "LLD/components/NightlyLayer/utils/shouldShowNightlyLayer";
 import { setHideNightlyLayer } from "~/renderer/actions/settings";
 import { hideNightlyLayerSelector } from "~/renderer/reducers/settings";
-import { copy } from "./copy";
 
-type DevSettingsToolProps = Extract<DevToolsConfig[number], { id: "dev-settings" }>["config"];
+type AppTogglesToolProps = Extract<DevToolsConfig[number], { id: "app-toggles" }>["config"];
 
-/** Binds the dev-settings devtool to the desktop settings it toggles. */
-export function useDevSettingsTool(): DevSettingsToolProps {
+/** Binds the app-toggles devtool to the desktop settings it toggles. */
+export function useAppTogglesTool(): AppTogglesToolProps {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const isNightlyLayerHidden = useSelector(hideNightlyLayerSelector);
   const isNightlyBuild = shouldShowNightlyLayer(__PRERELEASE__, __CHANNEL__);
@@ -26,14 +27,16 @@ export function useDevSettingsTool(): DevSettingsToolProps {
       toggles: [
         {
           id: "hide-nightly-layer",
-          label: copy.hideNightlyLayer.label,
-          description: copy.hideNightlyLayer.description,
+          label: t("settings.developer.devTools.appToggles.hideNightlyLayer.label"),
+          description: t("settings.developer.devTools.appToggles.hideNightlyLayer.description"),
           isOn: isNightlyLayerHidden,
-          lockedReason: isNightlyBuild ? null : copy.hideNightlyLayer.lockedReason,
+          lockedReason: isNightlyBuild
+            ? null
+            : t("settings.developer.devTools.appToggles.hideNightlyLayer.lockedReason"),
           onChange: onHideNightlyLayerChange,
         },
       ],
     }),
-    [isNightlyLayerHidden, isNightlyBuild, onHideNightlyLayerChange],
+    [t, isNightlyLayerHidden, isNightlyBuild, onHideNightlyLayerChange],
   );
 }

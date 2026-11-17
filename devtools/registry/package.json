@@ -40,7 +40,7 @@
     "@devtools/receive": "workspace:*",
     "@devtools/predictions": "workspace:*",
     "@devtools/intent-wallet-sync": "workspace:*",
-    "@devtools/dev-settings": "workspace:*"
+    "@devtools/app-toggles": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

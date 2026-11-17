@@ -5,4 +5,4 @@ export * from "./account-balance-history";
 export * from "./account-detail";
 export * from "./receive";
 export * from "./intent-wallet-sync";
-export * from "./dev-settings";
+export * from "./app-toggles";
