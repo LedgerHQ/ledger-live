@@ -602,6 +602,7 @@ export enum ScreenName {
   XrpAddTokenConnectDevice = "XrpAddTokenConnectDevice",
   XrpAddTokenValidationError = "XrpAddTokenValidationError",
   XrpAddTokenValidationSuccess = "XrpAddTokenValidationSuccess",
+  XrpManageTokenManage = "XrpManageTokenManage",
   HederaDelegationSummary = "HederaDelegationSummary",
   HederaDelegationSelectValidator = "HederaDelegationSelectValidator",
   HederaDelegationSelectDevice = "HederaDelegationSelectDevice",
@@ -828,6 +829,7 @@ export enum NavigatorName {
   NearWithdrawingFlow = "NearWithdrawingFlow",
   // Xrp
   XrpAddTokenFlow = "XrpAddTokenFlow",
+  XrpManageTokenFlow = "XrpManageTokenFlow",
   // Hedera
   HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
   HederaDelegationFlow = "HederaDelegationFlow",
