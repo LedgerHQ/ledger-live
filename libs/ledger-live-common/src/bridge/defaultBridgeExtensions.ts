@@ -45,21 +45,19 @@ export const defaultBridgeExtensions: Required<AccountBridgeExtensions> = {
   isEditableOperation: () => false,
   isStuckOperation: () => false,
   getStuckAccountAndOperation: () => undefined,
-  getEditTransactionPatch: async () => {
-    throw new Error("getEditTransactionPatch is not supported for this currency");
-  },
+  getEditTransactionPatch: () =>
+    Promise.reject(new Error("getEditTransactionPatch is not supported for this currency")),
   getEditTransactionStatus: () => {
     throw new Error("getEditTransactionStatus is not supported for this currency");
   },
   getFormattedFeeFields: () => {
     throw new Error("getFormattedFeeFields is not supported for this currency");
   },
-  hasMinimumFundsToCancel: async () => false,
-  hasMinimumFundsToSpeedUp: async () => false,
+  hasMinimumFundsToCancel: () => Promise.resolve(false),
+  hasMinimumFundsToSpeedUp: () => Promise.resolve(false),
   isStrategyDisabled: () => false,
-  isTransactionConfirmed: async () => {
-    throw new Error("isTransactionConfirmed is not supported for this currency");
-  },
+  isTransactionConfirmed: () =>
+    Promise.reject(new Error("isTransactionConfirmed is not supported for this currency")),
   getWalletApiSpendableBalance: account => account.spendableBalance,
   getAddressesToWatch: account =>
     Promise.resolve(account.freshAddress ? [account.freshAddress] : []),
