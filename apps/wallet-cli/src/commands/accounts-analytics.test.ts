@@ -14,7 +14,7 @@ describe("accounts analytics", () => {
     trackSpy.mockRestore();
   });
 
-  it("operation_viewed reports whether a cursor was used, never its value", () => {
+  it("operation_viewed sends a hasCursor flag and no cursor property", () => {
     trackOperationViewed({ network: "ethereum", limit: 5, hasCursor: true });
 
     expect(trackSpy.mock.calls).toEqual([
