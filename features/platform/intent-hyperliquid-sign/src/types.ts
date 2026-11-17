@@ -17,8 +17,10 @@ export type HyperliquidSignSession = Pick<
   "dmk" | "sessionId" | "connectedDevice"
 >;
 
+/** `signal` aborts when the job is torn down: the signer must not start or keep a device action. */
 export type SignHyperliquidActionsOnSession = (
   session: HyperliquidSignSession,
+  signal: AbortSignal,
 ) => Promise<HyperliquidSignature[]>;
 
 export type HyperliquidSignIntentInput = {

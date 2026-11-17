@@ -24,6 +24,7 @@ export type HyperliquidSignOrchestrationRequest = Readonly<{
   appOptions?: HyperliquidSignAppOptions;
   signOnSession: (
     session: HyperliquidSignSession,
+    signal: AbortSignal,
   ) => Promise<Readonly<{ signatures: HyperliquidSignature[] }>>;
   onSuccess: (result: { signatures: HyperliquidSignature[] }) => void;
   onError: (error: Error) => void;
@@ -126,8 +127,8 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
       intent: createIntent(
         platformDefinition,
         {
-          signOnSession: async session => {
-            const { signatures } = await signOnSession(session);
+          signOnSession: async (session, signal) => {
+            const { signatures } = await signOnSession(session, signal);
             return signatures;
           },
         },

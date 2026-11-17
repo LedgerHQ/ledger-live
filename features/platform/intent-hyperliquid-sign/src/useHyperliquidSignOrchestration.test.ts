@@ -96,17 +96,18 @@ describe("useHyperliquidSignOrchestration", () => {
     expect(latestOnSuccess).toHaveBeenCalledWith({ signatures: SIGNATURES });
   });
 
-  it("should forward the executor session to request.signOnSession and unwrap signatures", async () => {
+  it("should forward the executor session and abort signal to request.signOnSession and unwrap signatures", async () => {
     const { result, request } = await renderOrchestration();
     const session = {
       dmk: {} as never,
       sessionId: "session-1",
       connectedDevice: { modelId: DeviceModelId.STAX } as never,
     };
+    const { signal } = new AbortController();
 
-    const signatures = await result.current.intent.input.signOnSession(session);
+    const signatures = await result.current.intent.input.signOnSession(session, signal);
 
-    expect(request.signOnSession).toHaveBeenCalledWith(session);
+    expect(request.signOnSession).toHaveBeenCalledWith(session, signal);
     expect(signatures).toEqual(SIGNATURES);
   });
 

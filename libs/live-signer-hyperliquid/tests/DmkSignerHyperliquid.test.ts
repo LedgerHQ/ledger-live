@@ -1,8 +1,8 @@
-import { of, throwError } from "rxjs";
+import { NEVER, of, throwError } from "rxjs";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { SignerHyperliquidBuilder } from "@ledgerhq/device-signer-kit-hyperliquid";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
-import { DmkSignerHyperliquid, Action } from "../src/DmkSignerHyperliquid";
+import { DmkSignerHyperliquid, SignActionsAbortedError, Action } from "../src/DmkSignerHyperliquid";
 
 jest.mock("@ledgerhq/device-signer-kit-hyperliquid");
 
@@ -122,6 +122,55 @@ describe("DmkSignerHyperliquid", () => {
         ).rejects.toThrow(expectedError);
       },
     );
+
+    it("should not start the device action when the signal is already aborted", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      controller.abort();
+
+      // WHEN & THEN
+      await expect(
+        signer.signActions(path, certificate, signedMetadata, actions, {
+          signal: controller.signal,
+        }),
+      ).rejects.toBeInstanceOf(SignActionsAbortedError);
+      expect(mockSignActions).not.toHaveBeenCalled();
+    });
+
+    it("should cancel the device action when the signal aborts", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      const cancel = jest.fn();
+      mockSignActions.mockReturnValue({ observable: NEVER, cancel });
+      void signer
+        .signActions(path, certificate, signedMetadata, actions, { signal: controller.signal })
+        .catch(() => undefined);
+
+      // WHEN
+      controller.abort();
+
+      // THEN
+      expect(cancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not cancel the device action when the signal aborts after completion", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      const cancel = jest.fn();
+      mockSignActions.mockReturnValue({
+        observable: of({ status: DeviceActionStatus.Completed, output: [] }),
+        cancel,
+      });
+      await signer.signActions(path, certificate, signedMetadata, actions, {
+        signal: controller.signal,
+      });
+
+      // WHEN
+      controller.abort();
+
+      // THEN
+      expect(cancel).not.toHaveBeenCalled();
+    });
 
     it("should reject when the observable itself errors", async () => {
       // GIVEN

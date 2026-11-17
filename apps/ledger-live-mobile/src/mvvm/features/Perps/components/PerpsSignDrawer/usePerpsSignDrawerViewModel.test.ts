@@ -86,9 +86,11 @@ describe("usePerpsSignDrawerViewModel", () => {
       connectedDevice: { modelId: DeviceModelId.FLEX } as never,
     };
 
-    const signatures = await result.current.intent.input.signOnSession(session);
+    const { signal } = new AbortController();
 
-    expect(request.signOnSession).toHaveBeenCalledWith(session);
+    const signatures = await result.current.intent.input.signOnSession(session, signal);
+
+    expect(request.signOnSession).toHaveBeenCalledWith(session, signal);
     expect(signatures).toEqual(SIGNATURES);
   });
 

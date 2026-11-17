@@ -60,11 +60,19 @@ export default function PerpsSignRoot() {
   const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSign")?.enabled ?? false;
   const [pending, setPending] = useState<PendingSignRequest | null>(null);
   const lastIdRef = useRef(0);
-  const clearPending = useCallback(
-    (id: number) => setPending(current => (current?.id === id ? null : current)),
-    [],
-  );
-  const closeAll = useCallback(() => setPending(null), []);
+  // Tracked outside React state so a request replaced or closed before its dialog renders still
+  // gets an answer.
+  const pendingRef = useRef<PendingSignRequest | null>(null);
+
+  const clearPending = useCallback((id: number) => {
+    if (pendingRef.current?.id === id) pendingRef.current = null;
+    setPending(current => (current?.id === id ? null : current));
+  }, []);
+  const closeAll = useCallback(() => {
+    pendingRef.current?.request.onCancel();
+    pendingRef.current = null;
+    setPending(null);
+  }, []);
 
   const pendingId = pending?.id;
   const closeCurrent = useCallback(() => {
@@ -74,11 +82,16 @@ export default function PerpsSignRoot() {
   useEffect(
     () =>
       registerPerpsSignOpener((request, manifest) => {
+        pendingRef.current?.request.onCancel();
         lastIdRef.current += 1;
-        setPending({ id: lastIdRef.current, request, manifest });
+        const next = { id: lastIdRef.current, request, manifest };
+        pendingRef.current = next;
+        setPending(next);
       }),
     [],
   );
+
+  useEffect(() => () => pendingRef.current?.request.onCancel(), []);
 
   useOnNavigateAway(pending !== null, closeAll);
 

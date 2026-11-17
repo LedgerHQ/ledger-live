@@ -24,7 +24,10 @@ DMK session to a **host-injected** signer and reports one outcome:
 
 Each outcome is reported once through `onResult`, then the job completes. A refusal stays
 terminal: the live app decides whether to send the request again. A device disconnection escapes
-as an observable error, so the executor shows its reconnect screen and runs the job again.
+as an observable error, so the executor shows its reconnect screen and runs the job again. When the
+job is torn down before the signer settles (request replaced, executor closed), it aborts the
+`AbortSignal` handed to the signer: the signer must then not start, or must cancel, its device
+action, since the next request may reuse the same DMK session.
 
 A refusal is recognised by its `UserRefusedOnDevice` name, not with `instanceof`, which fails
 across duplicated error boundaries. A DMK `{ _tag }` error object becomes an `Error` whose message

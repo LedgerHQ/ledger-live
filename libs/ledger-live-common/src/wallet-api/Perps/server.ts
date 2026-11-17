@@ -2,7 +2,11 @@ import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-mana
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { DmkSignerHyperliquid, type SignActionsOptions } from "@ledgerhq/live-signer-hyperliquid";
+import {
+  DmkSignerHyperliquid,
+  SignActionsAbortedError,
+  type SignActionsOptions,
+} from "@ledgerhq/live-signer-hyperliquid";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
@@ -79,6 +83,7 @@ const PerpsWithdrawParamsSchema = z.object({
 export type PerpsSignSession = {
   dmk: DeviceManagementKit;
   sessionId: string;
+  /** Ledger Wallet model id, not the DMK one: it selects the CAL certificate. */
   deviceModelId: DeviceModelId;
 };
 
@@ -88,11 +93,16 @@ export type PerpsConnectedDeviceSession = {
   connectedDevice: Pick<ConnectedDevice, "modelId">;
 };
 
+/** `onSuccess`, `onError` and `onCancel` settle the same promise: only the first call counts. */
 export type PerpsSignRequest = {
   appName: string | undefined;
   appOptions?: AppOption;
   signFactory: (device: Device) => Promise<PerpsSignResult>;
-  signOnSession: (session: PerpsConnectedDeviceSession) => Promise<PerpsSignResult>;
+  /** Signs on a session where the caller already opened the Hyperliquid app. */
+  signOnSession: (
+    session: PerpsConnectedDeviceSession,
+    signal: AbortSignal,
+  ) => Promise<PerpsSignResult>;
   onSuccess: (result: PerpsSignResult) => void;
   onError: (error: Error) => void;
   onCancel: () => void;
@@ -137,6 +147,9 @@ export async function signActionsOnSession(
   options?: SignActionsOptions,
 ): Promise<PerpsSignResult> {
   const certificate = await calService.getCertificate(deviceModelId, "perps_data");
+  if (options?.signal?.aborted) {
+    throw new SignActionsAbortedError();
+  }
   const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
   const signatures = await hyperliquidSigner.signActions(
     derivationPath,
@@ -178,11 +191,10 @@ function createSignFactory(derivationPath: string, params: PerpsSignParams) {
 }
 
 function createSignOnSession(derivationPath: string, params: PerpsSignParams) {
-  return ({
-    dmk,
-    sessionId,
-    connectedDevice,
-  }: PerpsConnectedDeviceSession): Promise<PerpsSignResult> =>
+  return (
+    { dmk, sessionId, connectedDevice }: PerpsConnectedDeviceSession,
+    signal: AbortSignal,
+  ): Promise<PerpsSignResult> =>
     signActionsOnSession(
       {
         dmk,
@@ -191,7 +203,7 @@ function createSignOnSession(derivationPath: string, params: PerpsSignParams) {
       },
       derivationPath,
       params,
-      { skipOpenApp: true },
+      { skipOpenApp: true, signal },
     );
 }
 

@@ -45,6 +45,9 @@ jest.mock("@ledgerhq/ledger-cal-service", () => ({
 
 jest.mock("@ledgerhq/live-signer-hyperliquid", () => ({
   DmkSignerHyperliquid: jest.fn(),
+  SignActionsAbortedError: class SignActionsAbortedError extends Error {
+    override name = "SignActionsAbortedError";
+  },
 }));
 
 jest.mock("../converters", () => ({
@@ -268,11 +271,13 @@ describe("Perps handlers", () => {
         sessionId: "die-session",
         connectedDevice: { modelId: DeviceModelId.FLEX },
       };
+      let controller: AbortController;
 
       beforeEach(() => {
+        controller = new AbortController();
         mockUiSigningExecute.mockImplementation(async ({ signOnSession, onSuccess, onError }) => {
           try {
-            onSuccess(await signOnSession(session));
+            onSuccess(await signOnSession(session, controller.signal));
           } catch (err) {
             onError(err);
           }
@@ -317,8 +322,22 @@ describe("Perps handlers", () => {
           mockDeviceData,
           new Uint8Array(Buffer.from(baseParams.metadataWithSignature, "hex")),
           [{ type: "cancel", cancels: [{ a: 1, o: 42 }], nonce: 1 }],
-          { skipOpenApp: true },
+          { skipOpenApp: true, signal: controller.signal },
         );
+      });
+
+      it("should not start signing when aborted while the certificate is fetched", async () => {
+        // GIVEN
+        jest.mocked(calService.getCertificate).mockImplementation(async () => {
+          controller.abort();
+          return mockCertificate;
+        });
+
+        // WHEN & THEN
+        await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toMatchObject({
+          name: "SignActionsAbortedError",
+        });
+        expect(mockSignActions).not.toHaveBeenCalled();
       });
 
       it("should reject with the signer's error", async () => {

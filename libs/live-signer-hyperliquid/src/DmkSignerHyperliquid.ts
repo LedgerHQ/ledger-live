@@ -19,7 +19,13 @@ export type DAError = SignActionsDAError;
 export type SignActionsOptions = {
   /** Set when the caller already opened the Hyperliquid app on the session. */
   skipOpenApp?: boolean;
+  /** Cancels the device action, or prevents it from starting when already aborted. */
+  signal?: AbortSignal;
 };
+
+export class SignActionsAbortedError extends Error {
+  override name = "SignActionsAbortedError";
+}
 
 /**
  * DMK-based Hyperliquid signer using DMK signer-kit
@@ -65,27 +71,39 @@ export class DmkSignerHyperliquid {
     actions: Action[],
     options?: SignActionsOptions,
   ): Promise<Signatures> {
-    const { observable } = this.dmkSigner.signActions({
+    const signal = options?.signal;
+    if (signal?.aborted) {
+      throw new SignActionsAbortedError();
+    }
+
+    const { observable, cancel } = this.dmkSigner.signActions({
       derivationPath: path,
       certificate,
       signedMetadata,
       actions,
       skipOpenApp: options?.skipOpenApp,
     });
-    return firstValueFrom(
-      observable.pipe(
-        filter(
-          state =>
-            state.status === DeviceActionStatus.Completed ||
-            state.status === DeviceActionStatus.Error,
+    const onAbort = () => cancel();
+    signal?.addEventListener("abort", onAbort, { once: true });
+
+    try {
+      return await firstValueFrom(
+        observable.pipe(
+          filter(
+            state =>
+              state.status === DeviceActionStatus.Completed ||
+              state.status === DeviceActionStatus.Error,
+          ),
+          map(state => {
+            if (state.status === DeviceActionStatus.Error) {
+              throw this._mapError(state.error);
+            }
+            return state.output;
+          }),
         ),
-        map(state => {
-          if (state.status === DeviceActionStatus.Error) {
-            throw this._mapError(state.error);
-          }
-          return state.output;
-        }),
-      ),
-    );
+      );
+    } finally {
+      signal?.removeEventListener("abort", onAbort);
+    }
   }
 }

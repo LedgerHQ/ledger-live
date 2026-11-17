@@ -2,7 +2,7 @@ import React from "react";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
 import type { HyperliquidSignIntentJobState } from "@features/platform-intent-hyperliquid-sign";
-import { ContinueOnDevice } from "LLD/components/DeviceIntentExecutor";
+import { ContinueOnDevice } from "LLD/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 type Props = Readonly<{

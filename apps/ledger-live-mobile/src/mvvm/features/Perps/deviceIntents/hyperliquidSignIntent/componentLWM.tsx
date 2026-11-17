@@ -2,7 +2,7 @@ import React from "react";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { HyperliquidSignIntentJobState } from "@features/platform-intent-hyperliquid-sign";
-import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor";
+import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import ModalLock from "~/components/ModalLock";
 import PreventNativeBack from "~/components/PreventNativeBack";
 

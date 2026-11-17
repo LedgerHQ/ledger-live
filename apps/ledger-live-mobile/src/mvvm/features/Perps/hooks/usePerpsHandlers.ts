@@ -43,20 +43,49 @@ export type PerpsHandlers = Readonly<{
   clearSignRequest: (id: number) => void;
 }>;
 
+/**
+ * Kept outside React state so a request replaced before the drawer renders still gets an answer,
+ * and so ids never repeat: a reused id would keep the previous drawer mounted.
+ */
+function createPendingSignRequests() {
+  let current: PerpsPendingSignRequest | null = null;
+  let lastId = 0;
+  return {
+    replace(request: PerpsSignRequest): PerpsPendingSignRequest {
+      current?.request.onCancel();
+      lastId += 1;
+      current = { id: lastId, request };
+      return current;
+    },
+    clear(id: number) {
+      if (current?.id === id) current = null;
+    },
+    cancelCurrent() {
+      current?.request.onCancel();
+      current = null;
+    },
+  };
+}
+
 export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const openSelectDevice = useOpenSelectDevice();
   const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSignMobile")?.enabled ?? false;
   const [signRequest, setSignRequest] = useState<PerpsPendingSignRequest | null>(null);
+  const [pendingSignRequests] = useState(createPendingSignRequests);
+
   const clearSignRequest = useCallback(
-    (id: number) => setSignRequest(current => (current?.id === id ? null : current)),
-    [],
+    (id: number) => {
+      pendingSignRequests.clear(id);
+      setSignRequest(current => (current?.id === id ? null : current));
+    },
+    [pendingSignRequests],
   );
 
   const uiSigningExecute = useCallback(
     (request: PerpsSignRequest) => {
       if (deviceIntentSignEnabled) {
-        setSignRequest(previous => ({ id: (previous?.id ?? 0) + 1, request }));
+        setSignRequest(pendingSignRequests.replace(request));
         return;
       }
 
@@ -70,7 +99,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
         onCancel,
       });
     },
-    [navigation, deviceIntentSignEnabled],
+    [navigation, deviceIntentSignEnabled, pendingSignRequests],
   );
 
   const uiDepositExecute = useCallback(
@@ -93,6 +122,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
 
   useEffect(() => cancelDepositRequest, []);
   useEffect(() => cancelWithdrawRequest, []);
+  useEffect(() => pendingSignRequests.cancelCurrent, [pendingSignRequests]);
 
   // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
   // add account flow inline and hands back every added account, the server picks the matching one.
