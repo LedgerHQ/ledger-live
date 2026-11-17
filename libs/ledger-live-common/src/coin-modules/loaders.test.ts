@@ -5,7 +5,7 @@ import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { registerAllCoins } from "./load-all-coins";
-import { isCurrencySupported } from "./registry";
+import { hasLocalApi, isCurrencySupported, localApiServesAccountData } from "./registry";
 import { coinModuleLoaders } from "./loaders";
 
 describe("coinModuleLoaders smoke test", () => {
@@ -119,5 +119,15 @@ describe("alpen registration", () => {
     registerAllCoins();
 
     expect(getCryptoCurrencyById("alpen").family).toBe("evm");
+  });
+});
+
+describe("filecoin registration", () => {
+  it("ships a local api that the account data layer does not read", () => {
+    registerAllCoins();
+    const filecoin = getCryptoCurrencyById("filecoin");
+
+    expect(hasLocalApi(filecoin)).toBe(true);
+    expect(localApiServesAccountData(filecoin)).toBe(false);
   });
 });
