@@ -17,6 +17,7 @@ service-unavailable check will compose in later.
 | `AppAvailability` | Gate component. Available or pending renders children; unavailable renders the blocked view. |
 | `useAppAvailability` | Shared result for splash gates (`pending`, `available`, or `unavailable`). |
 | `useOfacGeoBlockCheck` | OFAC check mapped to the availability vocabulary. |
+| `selectAppAvailabilitySettled` | Store selector for code outside React: whether the check has left `pending`. |
 | `AppAvailabilityStatus` | Discriminated union: `pending`, `available`, `unavailable` with reason. |
 
 ## Usage
