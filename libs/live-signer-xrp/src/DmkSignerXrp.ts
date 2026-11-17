@@ -14,12 +14,14 @@ import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/e
 import type { XrpAddress, XrpSignature, XrpSigner } from "./types";
 
 type DAError = GetAddressDAError | SignTransactionDAError;
+type ContextModule = Parameters<SignerXrpBuilder["withContextModule"]>[0];
 
 export class DmkSignerXrp implements XrpSigner {
   private readonly signer: SignerXrp;
 
-  constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.signer = new SignerXrpBuilder({ dmk, sessionId }).build();
+  constructor(dmk: DeviceManagementKit, sessionId: string, contextModule?: ContextModule) {
+    const builder = new SignerXrpBuilder({ dmk, sessionId });
+    this.signer = (contextModule ? builder.withContextModule(contextModule) : builder).build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
@@ -27,7 +29,9 @@ export class DmkSignerXrp implements XrpSigner {
       return new Error(error._tag);
     }
 
-    switch (error.errorCode) {
+    // The MPT signer dropped "6982" from XrpErrorCodes; widen so the case still compiles
+    const errorCode: string | void = error.errorCode;
+    switch (errorCode) {
       case "5515":
         return new LockedDeviceError();
       case "6985":

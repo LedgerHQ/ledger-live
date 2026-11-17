@@ -7,6 +7,7 @@ import { XrpSigner } from "./types";
 import { CreateSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { isDmkTransport } from "../../hw/dmkUtils";
+import { mptDescriptorMock } from "./mptDescriptorMock";
 
 let _xrpLdmkFFEnabled: boolean = false;
 
@@ -18,7 +19,7 @@ export const setXrpLdmkEnabled = (enabled: boolean): void => {
 
 export const createSigner: CreateSigner<XrpSigner> = (transport: Transport) => {
   if (isDmkTransport(transport) && _xrpLdmkFFEnabled) {
-    return new DmkSignerXrp(transport.dmk, transport.sessionId);
+    return new DmkSignerXrp(transport.dmk, transport.sessionId, mptDescriptorMock);
   }
   return new LegacySignerXrp(transport);
 };
