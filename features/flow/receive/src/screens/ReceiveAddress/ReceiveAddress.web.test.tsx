@@ -10,6 +10,7 @@ import {
   testReceive,
 } from "../../__tests__/receiveTestStore";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 const renderScreen = (
@@ -123,12 +124,38 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
   });
 
+  it("shows the family's notices and links them to their support article", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+      onOpenUrl,
+    });
+
+    const notice = await screen.findByTestId("receive-address-notice-tronInactiveAccount");
+    expect(notice).toHaveTextContent("Send at least 0.1 TRX");
+    await userEvent.setup().click(screen.getByRole("button", { name: "Learn more" }));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("opens a service incident from its banner, then goes back to the address", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [{ title: "Ethereum degraded", description: "Investigating" }],
+    });
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole("button", { name: "See details" }));
+    expect(screen.getByTestId("receive-address-service-status")).toHaveTextContent("Investigating");
+
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(
       screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
-    ).toEqual(["receive-address-zone-notices", "receive-address-zone-extras"]);
+    ).toEqual(["receive-address-zone-extras"]);
   });
 });

@@ -6,6 +6,8 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -19,6 +21,7 @@ export function ReceiveAddressView({
   actions,
   notices,
   serviceWarning,
+  serviceStatus,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -45,7 +48,19 @@ export function ReceiveAddressView({
           <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
         ) : null}
         <DialogBackgroundToneProvider>
-          {addressSelection ? (
+          {serviceStatus ? (
+            <>
+              <DialogHeader
+                density="expanded"
+                title={serviceStatus.title}
+                onBack={serviceStatus.onClose}
+                onClose={closeDialog}
+              />
+              <DialogBody>
+                <ServiceStatusPanel serviceStatus={serviceStatus} />
+              </DialogBody>
+            </>
+          ) : addressSelection ? (
             <>
               <DialogHeader
                 density="expanded"
@@ -92,12 +107,7 @@ export function ReceiveAddressView({
                       <AddressSummary address={address} />
                     )}
                     <AddressActions actions={actions} />
-                    <ZonePlaceholder
-                      zone="notices"
-                      label={[serviceWarning?.title, ...notices.map(notice => notice.text)]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    />
+                    <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
                   </>
                 )}
                 <ZonePlaceholder zone="extras" />
