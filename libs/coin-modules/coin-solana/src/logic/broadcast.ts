@@ -2,9 +2,11 @@ import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/error
 import { log } from "@ledgerhq/logs";
 import {
   BlockhashWithExpiryBlockHeight,
+  SystemProgram,
   TransactionError,
   TransactionExpiredBlockheightExceededError,
   TransactionExpiredTimeoutError,
+  VersionedMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
 import type { ChainAPI } from "../network";
@@ -67,6 +69,22 @@ function simulate(api: ChainAPI, signedTx: VersionedTransaction) {
   });
 }
 
+// The node treats a transaction as durable-nonce when its first instruction is the System program's
+// AdvanceNonceAccount (4 as a little-endian u32). Its `recentBlockhash` then holds the nonce value,
+// which `isBlockhashValid` always reports as invalid: only the simulation can check it.
+const ADVANCE_NONCE_ACCOUNT = 4;
+
+function usesDurableNonce(message: VersionedMessage): boolean {
+  const [first] = message.compiledInstructions;
+  if (!first) return false;
+  const programId = message.staticAccountKeys[first.programIdIndex];
+  return (
+    !!programId?.equals(SystemProgram.programId) &&
+    first.data.length >= 4 &&
+    Buffer.from(first.data).readUInt32LE(0) === ADVANCE_NONCE_ACCOUNT
+  );
+}
+
 // Checked at `processed`, the node's latest view, so a blockhash not yet confirmed is not called expired.
 async function isBlockhashExpired(api: ChainAPI, blockhash: string): Promise<boolean> {
   try {
@@ -91,15 +109,18 @@ export async function broadcast(
 ): Promise<string> {
   const buffer = Buffer.from(tx, "base64");
   const signedTx = VersionedTransaction.deserialize(buffer);
+  const { message } = signedTx;
+
+  // An expired blockhash cannot pass the simulation, so it is not run.
+  if (!usesDurableNonce(message) && (await isBlockhashExpired(api, message.recentBlockhash))) {
+    throw new SolanaTxBlockhashExpired();
+  }
 
   let { value } = await simulate(api, signedTx);
 
   if (getTransactionErrorKey(value.err) === "BlockhashNotFound") {
-    log("solana", "blockhash not found", { logs: value.logs });
-    if (await isBlockhashExpired(api, signedTx.message.recentBlockhash)) {
-      throw new SolanaTxBlockhashExpired();
-    }
-    // Not expired, or the check failed: this node may not have confirmed the blockhash yet.
+    // Valid at `processed`, or not checked: this node may not have confirmed the blockhash yet.
+    log("solana", "blockhash not found, simulating again", { logs: value.logs });
     await new Promise(resolve => setTimeout(resolve, BLOCKHASH_RETRY_DELAY_MS));
     ({ value } = await simulate(api, signedTx));
   }

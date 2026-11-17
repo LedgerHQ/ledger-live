@@ -1,6 +1,9 @@
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   BlockhashWithExpiryBlockHeight,
+  Keypair,
+  PublicKey,
+  SystemProgram,
   TransactionError,
   VersionedTransaction,
   TransactionExpiredBlockheightExceededError,
@@ -12,11 +15,38 @@ import { broadcast } from "../broadcast";
 
 const RECENT_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
-jest
-  .spyOn(VersionedTransaction, "deserialize")
-  .mockImplementation(
-    () => ({ message: { recentBlockhash: RECENT_BLOCKHASH } }) as unknown as VersionedTransaction,
+jest.spyOn(VersionedTransaction, "deserialize").mockImplementation(
+  () =>
+    ({
+      message: {
+        recentBlockhash: RECENT_BLOCKHASH,
+        compiledInstructions: [],
+        staticAccountKeys: [],
+      },
+    }) as unknown as VersionedTransaction,
+);
+
+const OTHER_PROGRAM = Keypair.generate().publicKey;
+
+// The next deserialized transaction carries these instructions, each as [programId, data].
+function mockInstructions(...instructions: Array<[PublicKey, number[]]>) {
+  jest.mocked(VersionedTransaction.deserialize).mockImplementationOnce(
+    () =>
+      ({
+        message: {
+          recentBlockhash: RECENT_BLOCKHASH,
+          staticAccountKeys: [OTHER_PROGRAM, ...instructions.map(([programId]) => programId)],
+          compiledInstructions: instructions.map(([, data], i) => ({
+            programIdIndex: i + 1,
+            accountKeyIndexes: [0],
+            data: Uint8Array.from(data),
+          })),
+        },
+      }) as unknown as VersionedTransaction,
   );
+}
+
+const ADVANCE_NONCE = [4, 0, 0, 0];
 
 function buildApi({
   simulateValues,
@@ -64,14 +94,19 @@ describe("broadcast", () => {
 
   const txBase64 = Buffer.from("dummy-tx").toString("base64");
 
-  it("simulates with sigVerify and proceeds when err is null", async () => {
-    const { api, simulateTransaction, sendRawTransaction } = buildApi({
+  it("checks the blockhash at processed, then simulates with sigVerify and proceeds when err is null", async () => {
+    const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
       simulateValues: [{ err: null }],
     });
 
     const result = await broadcast(api, txBase64);
 
     expect(result).toBe("sig");
+    expect(isBlockhashValid).toHaveBeenCalledTimes(1);
+    expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
+    expect(isBlockhashValid.mock.invocationCallOrder[0]).toBeLessThan(
+      simulateTransaction.mock.invocationCallOrder[0],
+    );
     expect(simulateTransaction).toHaveBeenCalledTimes(1);
     expect(simulateTransaction).toHaveBeenCalledWith(expect.anything(), {
       sigVerify: true,
@@ -96,6 +131,74 @@ describe("broadcast", () => {
     );
   });
 
+  it("throws SolanaTxBlockhashExpired without simulating when the blockhash has expired", async () => {
+    const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
+      simulateValues: [],
+      blockhashStillValid: false,
+    });
+
+    await expect(broadcast(api, txBase64)).rejects.toBeInstanceOf(SolanaTxBlockhashExpired);
+    expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
+    expect(simulateTransaction).not.toHaveBeenCalled();
+    expect(sendRawTransaction).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["rejects", () => Promise.reject(new Error("node unreachable"))],
+    [
+      "throws",
+      () => {
+        throw new Error("node unreachable");
+      },
+    ],
+  ])("simulates and sends when the validity check %s", async (_label, check) => {
+    const { api, isBlockhashValid, simulateTransaction } = buildApi({
+      simulateValues: [{ err: null }],
+    });
+    isBlockhashValid.mockImplementationOnce(check);
+
+    await expect(broadcast(api, txBase64)).resolves.toBe("sig");
+    expect(simulateTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  describe("durable-nonce transactions", () => {
+    it("skips the expiry check, which always fails on a nonce value, and lets the simulation decide", async () => {
+      mockInstructions([SystemProgram.programId, ADVANCE_NONCE]);
+      const { api, isBlockhashValid, simulateTransaction } = buildApi({
+        simulateValues: [{ err: null }],
+        blockhashStillValid: false,
+      });
+
+      await expect(broadcast(api, txBase64)).resolves.toBe("sig");
+      expect(isBlockhashValid).not.toHaveBeenCalled();
+      expect(simulateTransaction).toHaveBeenCalledTimes(1);
+    });
+
+    it.each<[string, Array<[PublicKey, number[]]>]>([
+      ["another System instruction first", [[SystemProgram.programId, [2, 0, 0, 0]]]],
+      ["the same data from another program", [[OTHER_PROGRAM, ADVANCE_NONCE]]],
+      ["data shorter than an instruction index", [[SystemProgram.programId, [4]]]],
+      ["another index sharing the first byte", [[SystemProgram.programId, [4, 0, 0, 1]]]],
+      [
+        "AdvanceNonceAccount as the second instruction",
+        [
+          [SystemProgram.programId, [2, 0, 0, 0]],
+          [SystemProgram.programId, ADVANCE_NONCE],
+        ],
+      ],
+    ])("still checks the blockhash with %s", async (_label, instructions) => {
+      mockInstructions(...instructions);
+      const { api, isBlockhashValid, simulateTransaction } = buildApi({
+        simulateValues: [],
+        blockhashStillValid: false,
+      });
+
+      await expect(broadcast(api, txBase64)).rejects.toBeInstanceOf(SolanaTxBlockhashExpired);
+      expect(isBlockhashValid).toHaveBeenCalledTimes(1);
+      expect(simulateTransaction).not.toHaveBeenCalled();
+    });
+  });
+
   describe("when the simulation cannot find the blockhash", () => {
     beforeEach(() => {
       jest.useFakeTimers();
@@ -103,19 +206,6 @@ describe("broadcast", () => {
 
     afterEach(() => {
       jest.useRealTimers();
-    });
-
-    it("throws SolanaTxBlockhashExpired at once when the node no longer knows the blockhash", async () => {
-      const { api, simulateTransaction, sendRawTransaction, isBlockhashValid } = buildApi({
-        simulateValues: [{ err: "BlockhashNotFound" }],
-        blockhashStillValid: false,
-      });
-
-      // No timer is advanced: an expired blockhash must not wait for a retry.
-      await expect(broadcast(api, txBase64)).rejects.toBeInstanceOf(SolanaTxBlockhashExpired);
-      expect(isBlockhashValid).toHaveBeenCalledWith(RECENT_BLOCKHASH, "processed");
-      expect(simulateTransaction).toHaveBeenCalledTimes(1);
-      expect(sendRawTransaction).not.toHaveBeenCalled();
     });
 
     it("simulates again after 500 ms when the blockhash is still valid, and sends when the retry finds it", async () => {
@@ -155,28 +245,14 @@ describe("broadcast", () => {
       expect(sendRawTransaction).not.toHaveBeenCalled();
     });
 
-    it.each([
-      ["rejects", () => Promise.reject(new Error("node unreachable"))],
-      [
-        "throws",
-        () => {
-          throw new Error("node unreachable");
-        },
-      ],
-    ])("simulates again after 500 ms when the validity check %s", async (_label, check) => {
+    it("keeps Blockhash not found for a used durable nonce, without checking the blockhash", async () => {
+      mockInstructions([SystemProgram.programId, ADVANCE_NONCE]);
       const { api, isBlockhashValid, simulateTransaction, sendRawTransaction } = buildApi({
         simulateValues: [{ err: "BlockhashNotFound" }, { err: "BlockhashNotFound" }],
       });
-      isBlockhashValid.mockImplementationOnce(check);
 
-      const promise = broadcast(api, txBase64);
-      promise.catch(() => undefined);
-      await jest.advanceTimersByTimeAsync(499);
-      expect(simulateTransaction).toHaveBeenCalledTimes(1);
-      await jest.advanceTimersByTimeAsync(1);
-
-      await expectInvalidTransactionError(promise, "Blockhash not found");
-      expect(isBlockhashValid).toHaveBeenCalledTimes(1);
+      await expectInvalidTransactionError(settle(broadcast(api, txBase64)), "Blockhash not found");
+      expect(isBlockhashValid).not.toHaveBeenCalled();
       expect(simulateTransaction).toHaveBeenCalledTimes(2);
       expect(sendRawTransaction).not.toHaveBeenCalled();
     });
@@ -207,11 +283,11 @@ describe("broadcast", () => {
     { label: "a successful simulation", err: null },
     { label: "AccountInUse", err: "AccountInUse" },
     { label: "an InstructionError", err: { InstructionError: [0, "InsufficientFunds"] } },
-  ])("neither checks the blockhash nor simulates again on $label", async ({ err }) => {
+  ])("checks the blockhash once and does not simulate again on $label", async ({ err }) => {
     const { api, isBlockhashValid, simulateTransaction } = buildApi({ simulateValues: [{ err }] });
 
     await broadcast(api, txBase64).catch(() => undefined);
-    expect(isBlockhashValid).not.toHaveBeenCalled();
+    expect(isBlockhashValid).toHaveBeenCalledTimes(1);
     expect(simulateTransaction).toHaveBeenCalledTimes(1);
   });
 
