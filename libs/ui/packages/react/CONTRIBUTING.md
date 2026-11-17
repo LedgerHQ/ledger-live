@@ -37,19 +37,6 @@ To keep the dependencies short and the size small.
 
 ## Local development
 
-If you need to use the locally installed version of this package, you will need to perform the following steps.
-
-```sh
-## From the root of the monorepo:
-
-# Build the react components library and its dependencies.
-nx run @ledgerhq/react-ui:build
-```
-
-```sh
-## From the repository that consumes @ledgerhq/react-ui:
-
-# Replace [path/to/ui] with the relative path to the local ui repo.
-# You should be able use any package manager instead of pnpm here.
-pnpm add [path/to/ui]/packages/react/lib
-```
+This package is private and has no build. Its `exports` point at `src/`, so the apps of the monorepo
+read its current source. Add `exports` entries as the
+[package checklist](../../../../docs/new-library.md#package-checklist) says.
