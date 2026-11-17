@@ -2,6 +2,7 @@ import type {
   AccountInfo,
   AssetInfo,
   BalanceOptions,
+  BlockInfo,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { GetAddressResult } from "../derivation";
@@ -147,7 +148,11 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
+  adaptOperations?: (
+    address: string,
+    operations: LiveOperation[],
+    blockInfo: BlockInfo,
+  ) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
@@ -272,7 +277,8 @@ export type BridgeApi = {
   exactAssetMatch?: boolean;
   /**
    * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
-   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid. Left
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid and sent
+   * to the token's `assetOwner`. Left
    * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
    */
   tokenOptParentRow?: boolean;

@@ -6,6 +6,7 @@ import addAssetAction from "./addAssetAction";
 import sendAmountFields from "./SendAmountFields";
 import SendAmountFooterRow from "./SendAmountFooterRow";
 import sendRecipientFields from "./SendRecipientFields";
+import SendRecipientNotice from "./SendRecipientNotice";
 import operationDetails from "./operationDetails";
 import tokenList from "./TokenList";
 import type { XrpFamily } from "./types";
@@ -14,6 +15,7 @@ const family: XrpFamily = {
   operationDetails,
   sendRecipientFields,
   sendRecipientCanNext: status => !status.errors.transaction,
+  SendRecipientNotice,
   sendAmountFields,
   SendAmountFooterRow,
   tokenList,
