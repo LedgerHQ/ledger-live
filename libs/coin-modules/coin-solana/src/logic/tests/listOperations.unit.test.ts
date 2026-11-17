@@ -102,6 +102,22 @@ describe("listOperations", () => {
         token2022Ata().pubkey.toBase58(),
       ]);
     });
+
+    it("reads the token accounts fresh, never from a shared lookup", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: true }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS, {
+        fresh: true,
+      });
+      expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS, {
+        fresh: true,
+      });
+    });
   });
 
   it("should return empty list when no signatures found", async () => {

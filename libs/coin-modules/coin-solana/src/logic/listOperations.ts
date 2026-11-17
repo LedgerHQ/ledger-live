@@ -162,10 +162,12 @@ async function signatureSources(
   token2022Enabled: boolean,
 ): Promise<string[]> {
   const owner = new PublicKey(address);
+  // Fresh, not shared: the sync resumes from the newest operation it stores, so a token account
+  // created since a shared lookup would have its transfers below that point, and lost for good.
   const [splTokenAccounts, token2022Accounts] = await Promise.all([
-    api.getParsedTokenAccountsByOwner(address).then(res => res.value),
+    api.getParsedTokenAccountsByOwner(address, { fresh: true }).then(res => res.value),
     token2022Enabled
-      ? api.getParsedToken2022AccountsByOwner(address).then(res => res.value)
+      ? api.getParsedToken2022AccountsByOwner(address, { fresh: true }).then(res => res.value)
       : Promise.resolve([]),
   ]);
 
