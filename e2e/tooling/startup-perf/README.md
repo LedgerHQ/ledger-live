@@ -105,6 +105,11 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
+- **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
+  ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
+  them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
+  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
+  read from the log, ~40 s on the screen.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
   read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
   the simulator's `log show`), which the app writes as soon as the startup is over: a line per
