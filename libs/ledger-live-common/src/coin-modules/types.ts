@@ -156,6 +156,14 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
+/** The legacy fields a composed descriptor key stands for. */
+export type LegacyAddressFields = { freshAddress: string; customData?: string };
+
+export type AccountKeyCodec = {
+  compose(fields: LegacyAddressFields): string;
+  split(key: string): LegacyAddressFields;
+};
+
 export type CoinModuleLoader<
   T extends TransactionCommon = any,
   A extends Account = any,
@@ -171,6 +179,8 @@ export type CoinModuleLoader<
   supportedCoins: string[]; // TO BE REPLACED soon by branded id
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
+  /** Synchronous: for a family whose descriptor key holds more than the address, the legacy id's custom data (Aleo's view key). */
+  accountKey?: AccountKeyCodec;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
