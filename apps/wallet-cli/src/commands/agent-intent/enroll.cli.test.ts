@@ -21,6 +21,7 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import {
   _setTestSpawn,
+  _setTestStartupPollMs,
   _setTestStartupTimeoutMs,
   enrollListenerPaths,
   withEnrollListenerLock,
@@ -456,8 +457,17 @@ describe("agent-intent enroll (CLI)", () => {
   });
 
   it("leaves the profile pending when the link expires unanswered", async () => {
+    // The relay host gets the link's validity, but this test only waits 10 ms of it.
+    let relayTimeouts: unknown;
+    _setTestRelayChannelHost(options => {
+      relayTimeouts = options.timeouts;
+      const timeouts = { candidateTimeoutMs: 10, completionTimeoutMs: 10 };
+      return relay.createHost({ ...options, timeouts });
+    });
+
     const { lines, exitCode } = await enrollJson("--expires-in", "1s");
 
+    expect(relayTimeouts).toEqual({ candidateTimeoutMs: 1_000, completionTimeoutMs: 1_000 });
     expect(exitCode).toBe(1);
     expect(lines[1].error.message).toMatch(
       /^Enrollment did not complete \(Enrollment .*timed out.*\)\. Profile "bot" stays pending/,
@@ -958,10 +968,13 @@ describe("agent-intent enroll --detach (CLI)", () => {
     spawner.lines = [pendingLine];
     spawner.exitCode = undefined;
     _setTestSpawn(spawner.spawn);
+    // The fake listener logs at once; a listener that exits is seen on the next read.
+    _setTestStartupPollMs(0);
   });
   afterEach(() => {
     _setTestSpawn(null);
     _setTestStartupTimeoutMs(null);
+    _setTestStartupPollMs(null);
   });
 
   /** The listener's argv after the CLI's own entry point. */
@@ -1063,7 +1076,7 @@ describe("agent-intent enroll --detach (CLI)", () => {
 
   it("hands a listener still starting at the startup timeout over to wait, without stopping it", async () => {
     spawner.lines = [];
-    _setTestStartupTimeoutMs(50);
+    _setTestStartupTimeoutMs(0);
 
     const { lines } = await enrollJson("--detach");
     const { stdout } = await enroll("--detach");
@@ -1175,7 +1188,7 @@ describe("agent-intent enroll --detach (CLI)", () => {
     const release = await holdLock(fn => withEnrollStartLock("bot", fn));
 
     const run = enrollJson("--detach");
-    await Bun.sleep(300);
+    await Bun.sleep(100);
     expect(spawner.started).toEqual([]);
     await release();
 

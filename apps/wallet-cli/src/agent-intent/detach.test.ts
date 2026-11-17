@@ -8,6 +8,7 @@ import { FakeListenerSpawner } from "../testing/fake-detach";
 import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 import {
   _setTestSpawn,
+  _setTestStartupPollMs,
   _setTestStartupTimeoutMs,
   enrollListenerPaths,
   readFirstLogJsonLine,
@@ -29,10 +30,13 @@ beforeEach(() => {
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-detach-test-"));
   restoreStateHome = pointStateHomeAt(stateHome);
   children = [];
+  // Picks up the listener's first line as soon as it lands, not up to 100 ms later.
+  _setTestStartupPollMs(5);
 });
 
 afterEach(async () => {
   await Promise.all(children.map(stopChild));
+  _setTestStartupPollMs(null);
   restoreStateHome();
   rmSync(stateHome, { recursive: true, force: true });
 });
@@ -281,8 +285,8 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     const { logPath } = enrollListenerPaths("my-agent");
     const child = startChild("setInterval(() => {}, 1000);", logPath);
 
-    expect(await readFirstLogJsonLine(child, logPath, 300)).toBeUndefined();
-    await Bun.sleep(100); // room for a stop signal to land
+    expect(await readFirstLogJsonLine(child, logPath, 50)).toBeUndefined();
+    await Bun.sleep(50); // room for a stop signal to land
     expect(child.killed).toBe(false);
     expect(child.exitCode).toBeNull();
     expect(child.signalCode).toBeNull();

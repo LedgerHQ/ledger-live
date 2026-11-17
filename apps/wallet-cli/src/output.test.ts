@@ -9,6 +9,7 @@ import {
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { DEVICE_EXIT_CODES } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { createCommandOutput } from "./output";
 import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
@@ -932,44 +933,48 @@ describe.each(["human", "json"] as const)("%s proposal warnings", format => {
   });
 });
 
+/** A fresh process, as this one has loaded every module already. */
+function loadOutputInFreshProcess(): Promise<[number, string]> {
+  const proc = Bun.spawn(
+    [
+      "bun",
+      "--cwd",
+      path.resolve(import.meta.dir, ".."),
+      path.resolve(import.meta.dir, "./testing/output-loads-solana-sdk.ts"),
+    ],
+    { stdin: "ignore", stdout: "pipe", stderr: "pipe" },
+  );
+  return Promise.all([proc.exited, new Response(proc.stdout).text()]);
+}
+
+// Started at load, so the child runs alongside the in-process tests.
+const outputLoadedInFreshProcess = loadOutputInFreshProcess();
+
 describe("output command handling", () => {
-  const ROOT = path.resolve(import.meta.dir, "..");
-  const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
-    import.meta.dir,
-    "./testing/human-device-error-exit.ts",
-  );
-  const OUTPUT_LOADS_SOLANA_SDK = path.resolve(
-    import.meta.dir,
-    "./testing/output-loads-solana-sdk.ts",
-  );
-
   it("loads no Solana SDK, which every command would pay for at startup", async () => {
-    const proc = Bun.spawn(["bun", "--cwd", ROOT, OUTPUT_LOADS_SOLANA_SDK], {
-      stdin: "ignore",
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+    const [exitCode, stdout] = await outputLoadedInFreshProcess;
 
-    expect(await proc.exited).toBe(0);
-    expect((await new Response(proc.stdout).text()).trim()).toBe("not loaded");
+    expect(exitCode).toBe(0);
+    expect(stdout.trim()).toBe("not loaded");
   });
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
-    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
-      env: {
-        ...process.env,
-        CLAUDECODE: "1",
-        NO_COLOR: "1",
-      },
-      stdin: "ignore",
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+    let stderr = "";
+    const restoreStderr = installOutputCapture({ stderr: text => (stderr += text) });
+    try {
+      const out = createCommandOutput("human", {
+        command: "test-human-device-error-exit",
+        network: "ethereum",
+      });
 
-    const exitCode = await proc.exited;
-    expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
-    expect(await new Response(proc.stderr).text()).toContain(
-      new WalletCliDeviceError({ code: "timeout" }).message,
-    );
+      const exitCode = await out
+        .run(() => Promise.reject(new WalletCliDeviceError({ code: "timeout" })))
+        .then(() => 0, getCliProcessExitCode);
+
+      expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
+    } finally {
+      restoreStderr();
+    }
+    expect(stderr).toContain(new WalletCliDeviceError({ code: "timeout" }).message);
   });
 });

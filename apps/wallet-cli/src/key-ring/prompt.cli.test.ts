@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -18,8 +18,9 @@ let env: Record<string, string>;
 let plainFile: string;
 let encFile: string;
 
-// A password-protected ring, so every `ring encrypt` asks for the password.
-beforeEach(async () => {
+// A password-protected ring, so every `ring encrypt` asks for the password. Encrypting leaves the
+// ring as it is, so the tests share one.
+beforeAll(async () => {
   delete process.env.WALLET_PASS;
   dir = mkdtempSync(join(tmpdir(), "wallet-cli-prompt-test-"));
   env = { XDG_STATE_HOME: dir, WALLET_CLI_MOCK: "1" };
@@ -34,8 +35,11 @@ beforeEach(async () => {
   expect(init.exitCode, `init failed: ${init.stderr}`).toBe(0);
 });
 afterEach(() => {
-  if (shellPassword !== undefined) process.env.WALLET_PASS = shellPassword;
   _setTestControllingTtyPath(null);
+  rmSync(encFile, { force: true });
+});
+afterAll(() => {
+  if (shellPassword !== undefined) process.env.WALLET_PASS = shellPassword;
   rmSync(dir, { recursive: true, force: true });
 });
 
