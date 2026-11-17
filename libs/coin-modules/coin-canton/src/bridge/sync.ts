@@ -254,13 +254,14 @@ export function makeGetAccountShape(
           existing.lockedBalance += balance.value;
         } else {
           existing.unlockedBalance += balance.value;
+          existing.utxoCount += balance.utxoCount;
         }
-        existing.utxoCount += balance.utxoCount;
       } else {
         aggregatedBalances.set(balanceKey, {
           unlockedBalance: balance.locked ? 0n : balance.value,
           lockedBalance: balance.locked ? balance.value : 0n,
-          utxoCount: balance.utxoCount,
+          // The gateway picks transfer inputs from unlocked holdings only.
+          utxoCount: balance.locked ? 0 : balance.utxoCount,
           token,
           adminId: balance.adminId,
         });
