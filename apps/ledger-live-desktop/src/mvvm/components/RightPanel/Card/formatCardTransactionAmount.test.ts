@@ -56,4 +56,13 @@ describe("formatCardTransactionAmount", () => {
       }),
     ).toContain("***");
   });
+
+  it.each(["", "abc", "1_000", "NaN"])(
+    "shows a placeholder for the unreadable amount %p",
+    value => {
+      expect(
+        formatCardTransactionAmount({ value, currency: "EUR", kind: "fiat", locale: "en-US" }),
+      ).toBe("—");
+    },
+  );
 });
