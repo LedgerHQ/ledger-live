@@ -79,7 +79,7 @@ export class Currency {
     Network.POLKADOT,
   ]);
   static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
-  static readonly XRP = new Currency("XRP", "XRP", "ripple", AppInfos.RIPPLE, [Network.XRP]);
+  static readonly XRP = new Currency("XRPL", "XRP", "ripple", AppInfos.RIPPLE, [Network.XRP]);
   static readonly ADA = new Currency("Cardano", "ADA", "cardano", AppInfos.CARDANO, [
     Network.CARDANO,
   ]);

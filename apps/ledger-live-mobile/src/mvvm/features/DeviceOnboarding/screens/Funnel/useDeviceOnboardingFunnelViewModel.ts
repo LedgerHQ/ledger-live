@@ -22,11 +22,13 @@ import {
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
+import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import { isDeviceOffDuringChecks } from "LLM/features/DeviceOnboarding/utils/deviceOff";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
 import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
@@ -49,6 +51,8 @@ export type UnlockSheetModel = Readonly<{
   deviceName: string;
 }>;
 
+export type PowerOnSheetModel = UnlockSheetModel & Readonly<{ onQuit: () => void }>;
+
 export type DeviceOnboardingFunnelModel = (
   | {
       status: "unseededIntroKaraoke";
@@ -56,7 +60,12 @@ export type DeviceOnboardingFunnelModel = (
       unlockSheet: UnlockSheetModel | null;
     }
   | { status: "unseededSuccessKaraoke"; unseededSuccessKaraoke: UnseededSuccessKaraokeScreenProps }
-  | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
+  | {
+      status: "checks";
+      checks: ChecksScreenProps;
+      unlockSheet: UnlockSheetModel | null;
+      powerOnSheet: PowerOnSheetModel | null;
+    }
   | { status: "setup"; setup: SetupScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
@@ -90,6 +99,10 @@ type LeaveActions = {
   leaveFinishedSetup: () => void;
 };
 
+function isRunning({ status, state }: LeaveActions) {
+  return status === "running" || state === "awaitingSession";
+}
+
 function blockBack(event: BackEvent, actions: LeaveActions) {
   if (actions.allowLeave) return;
   const action = event.data.action.type;
@@ -103,7 +116,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
     actions.leaveFirmwareReconnect();
     return;
   }
-  if (actions.status === "running" && actions.state) {
+  if (isRunning(actions) && actions.state) {
     if (actions.confirmsQuit && actions.quitConfirmationOpen) actions.continueSetup();
     else if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
     else if (actions.confirmsQuit) actions.requestQuit();
@@ -114,7 +127,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
 }
 
 function quitOrLeaveSession(actions: LeaveActions) {
-  if (actions.status === "running" && actions.state) {
+  if (isRunning(actions) && actions.state) {
     if (actions.confirmsQuit) {
       actions.requestQuit();
       return;
@@ -310,6 +323,21 @@ function withUnlockSheet(
   return built;
 }
 
+function checksWhileDeviceOff(
+  built: DeviceOnboardingFunnelModel,
+  deviceOff: boolean,
+  device: ScreenActions["device"],
+  onQuit: () => void,
+): DeviceOnboardingFunnelModel {
+  if (!deviceOff || built.status !== "checks") return built;
+  return {
+    ...built,
+    powerOnSheet: device
+      ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "", onQuit }
+      : null,
+  };
+}
+
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   const device = actions.device;
   const screenState = actions.screenState;
@@ -334,6 +362,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     status: "checks",
     quitConfirmation: actions.quitConfirmation,
     unlockSheet: null,
+    powerOnSheet: null,
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
@@ -538,7 +567,22 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const machineState = onboarding.state;
   const locked = machineState === "deviceLocked";
   const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
-  const shownState = holdingLockedScreen ? (heldState?.state ?? machineState) : machineState;
+  const deviceOffDuringChecks = isDeviceOffDuringChecks({
+    machineState,
+    heldMachineState: heldState?.state ?? null,
+    onboardedOnEntry,
+    hasLiveDevice: onboarding.liveDevice !== null,
+  });
+  const { connect } = onboarding;
+  const liveDeviceId = onboarding.liveDevice?.deviceId;
+  const reconnectToLiveDevice = useCallback(() => connect(liveDeviceId), [connect, liveDeviceId]);
+  useReconnectWhileDeviceOff({
+    deviceOff: deviceOffDuringChecks,
+    error: onboarding.error,
+    connect: reconnectToLiveDevice,
+  });
+  const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
+  const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
   const phase = phaseOf(shownState, onboardedOnEntry);
   const screenState = checksScreenForPhase(
     phase,
@@ -559,7 +603,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     leaveWithoutSaving,
   );
   const leaveFromHeader = confirmsQuit ? requestQuit : quitMachine;
-  const suspendSheets = holdingLockedScreen || quitConfirmation?.isOpen === true;
+  const suspendSheets =
+    holdingLockedScreen || deviceOffDuringChecks || quitConfirmation?.isOpen === true;
   const unseededSetup = useUnseededFunnelViewModel({
     machineState: shownState,
     liveMachineState: machineState,
@@ -622,14 +667,19 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const nextHeld = nextHeldState(
     heldState,
     machineState,
-    holdingLockedScreen,
+    holdingPreviousScreen,
     built.status === "checks" ||
       built.status === "setup" ||
       built.status === "unseededIntroKaraoke",
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return withUnlockSheet(built, holdingLockedScreen, locked, device);
+  return checksWhileDeviceOff(
+    withUnlockSheet(built, holdingLockedScreen, locked, device),
+    deviceOffDuringChecks,
+    quitConfirmation?.isOpen ? null : device,
+    leaveFromHeader,
+  );
 }
 
 function readString(value: unknown): string | null {

@@ -104,7 +104,7 @@
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
-    "color": "^4.0.0",
+    "color": "^5.0.3",
     "embla-carousel-autoplay": "8.4.0",
     "embla-carousel-react": "8.0.0-rc17",
     "framer-motion": "^11.3.28",
@@ -121,7 +121,6 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "@types/color": "3.0.6",
     "@types/hoist-non-react-statics": "3.3.5",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
