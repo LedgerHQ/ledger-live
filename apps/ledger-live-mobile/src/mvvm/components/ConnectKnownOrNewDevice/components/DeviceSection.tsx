@@ -77,6 +77,7 @@ export function DeviceSection({
           <Link
             appearance={disabled ? "gray" : "accent"}
             size="md"
+            underline={false}
             icon={PlusCircleFill}
             onPress={onAddNewDevice}
           >
