@@ -442,7 +442,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       );
     });
 
-    it("GIVEN a connected device, WHEN it is tapped, THEN it should stop discovery and stay in Discovering", () => {
+    it("GIVEN a connected device, WHEN it is tapped, THEN it should stay in Discovering with discovery running", () => {
       // GIVEN
       const setup = setupTest();
       setup.machine.start();
@@ -452,7 +452,8 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       setup.row(NANO_X_KEY).connect();
 
       // THEN
-      expect(setup.deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+      expect(setup.deviceDiscoveryService.stop).not.toHaveBeenCalled();
+      expect(setup.deviceDiscoveryService.isRunning).toBe(true);
       expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering)).toBeDefined();
     });
 
@@ -584,7 +585,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       expect(setup.connect).not.toHaveBeenCalled();
     });
 
-    it("GIVEN the machine waits for a device, WHEN the device gets a session, THEN it should stop discovery, call onConnected with that session and go back to the list", () => {
+    it("GIVEN the machine waits for a device, WHEN the device gets a session, THEN it should call onConnected with that session and go back to the list with discovery running", () => {
       // GIVEN
       const setup = setupTest();
       const connectedNanoX = makeConnectedDevice();
@@ -594,7 +595,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       setup.setConnectedDevices([connectedNanoX]);
 
       // THEN
-      expect(setup.deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+      expect(setup.deviceDiscoveryService.isRunning).toBe(true);
       expect(setup.onConnected).toHaveBeenCalledWith(
         expect.objectContaining({ sessionId: "nano-x-session", connectedDevice: connectedNanoX }),
       );
@@ -785,7 +786,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       );
     });
 
-    it("GIVEN an available known device, WHEN the connection to it succeeds, THEN it should go back to the list without starting discovery", async () => {
+    it("GIVEN an available known device, WHEN the connection to it succeeds, THEN it should go back to the list and start discovery again", async () => {
       // GIVEN
       const setup = setupTest();
 
@@ -794,7 +795,8 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
 
       // THEN
       expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering)).toBeDefined();
-      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
+      expect(setup.deviceDiscoveryService.isRunning).toBe(true);
     });
 
     it("GIVEN the machine is connecting, WHEN Connecting is closed, THEN it should go back to the list and start discovery again", () => {
@@ -1160,7 +1162,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       );
     });
 
-    it("GIVEN the Add mode shows a new device, WHEN the embedded flow connects it, THEN it should go back to the list without starting discovery", async () => {
+    it("GIVEN the Add mode shows a new device, WHEN the embedded flow connects it, THEN it should go back to the list with discovery running", async () => {
       // GIVEN
       const setup = setupTest({ connect: jest.fn().mockResolvedValue("new-nano-s-session") });
       openAddMode(setup);
@@ -1173,7 +1175,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
 
       // THEN
       expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering)).toBeDefined();
-      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+      expect(setup.deviceDiscoveryService.isRunning).toBe(true);
     });
 
     it("GIVEN the Add mode is open, WHEN it is closed, THEN it should go back to the list with discovery still running", () => {
@@ -1438,7 +1440,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       expect(setup.row(NANO_X_KEY).connect).toEqual(expect.any(Function));
     });
 
-    it("GIVEN a connected device, WHEN it is tapped, THEN it should emit the list as paused", () => {
+    it("GIVEN a connected device, WHEN it is tapped, THEN it should emit the list as not paused", () => {
       // GIVEN
       const setup = setupTest();
       setup.machine.start();
@@ -1448,10 +1450,10 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       setup.row(NANO_X_KEY).connect();
 
       // THEN
-      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering).isPaused).toBe(true);
+      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering).isPaused).toBe(false);
     });
 
-    it("GIVEN an available device, WHEN the connection to it succeeds, THEN it should emit the list as paused", async () => {
+    it("GIVEN an available device, WHEN the connection to it succeeds, THEN it should emit the list as not paused", async () => {
       // GIVEN
       const setup = setupTest();
 
@@ -1459,7 +1461,7 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       await connectToNanoX(setup);
 
       // THEN
-      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering).isPaused).toBe(true);
+      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering).isPaused).toBe(false);
     });
 
     it("GIVEN the device actions and Add of a list emitted before the pause, WHEN they are used while paused, THEN it should ignore them", () => {

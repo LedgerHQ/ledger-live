@@ -485,14 +485,10 @@ const createConnectKnownOrNewDeviceStateMachine = <
                   status: DeviceListItemStatuses.Connected,
                 }),
               },
-              actions: [
-                "pauseDiscovery",
-                "emitDiscovering",
-                {
-                  type: "onConnectedWithExistingSession",
-                  params: ({ event }) => ({ key: event.key }),
-                },
-              ],
+              actions: {
+                type: "onConnectedWithExistingSession",
+                params: ({ event }) => ({ key: event.key }),
+              },
             },
             {
               guard: {
@@ -547,13 +543,10 @@ const createConnectKnownOrNewDeviceStateMachine = <
           {
             guard: "selectedDeviceIsConnected",
             target: "Discovering",
-            actions: [
-              "pauseDiscovery",
-              {
-                type: "onConnectedWithExistingSession",
-                params: ({ context }) => ({ key: context.selectedEntry!.key }),
-              },
-            ],
+            actions: {
+              type: "onConnectedWithExistingSession",
+              params: ({ context }) => ({ key: context.selectedEntry!.key }),
+            },
           },
         ],
         on: {
@@ -592,13 +585,10 @@ const createConnectKnownOrNewDeviceStateMachine = <
           }),
           onDone: {
             target: "Discovering",
-            actions: [
-              "pauseDiscovery",
-              {
-                type: "onConnectedWithNewSession",
-                params: ({ event }) => ({ sessionId: event.output }),
-              },
-            ],
+            actions: {
+              type: "onConnectedWithNewSession",
+              params: ({ event }) => ({ sessionId: event.output }),
+            },
           },
           onError: {
             target: "ConnectionError",
@@ -728,10 +718,10 @@ const createConnectKnownOrNewDeviceStateMachine = <
           },
           [EventTypes.NewDeviceConnected]: {
             target: "Discovering",
-            actions: [
-              "pauseDiscovery",
-              { type: "onNewDeviceConnected", params: ({ event }) => ({ result: event.result }) },
-            ],
+            actions: {
+              type: "onNewDeviceConnected",
+              params: ({ event }) => ({ result: event.result }),
+            },
           },
           [EventTypes.ConnectNewDeviceFailed]: {
             actions: {

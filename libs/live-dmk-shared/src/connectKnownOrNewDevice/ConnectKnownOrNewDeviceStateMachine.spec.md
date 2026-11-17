@@ -108,7 +108,9 @@ stateDiagram-v2
   Discovery does not stop at these transitions. The embedded machine shows the
   discovery errors, and the parent ignores them. Its `Done` calls
   `onConnected`. The embedded delays come from `delays.connectNewDevice`.
-- Every `onConnected` stops discovery and pauses the machine.
+- `onConnected` does not pause the machine. After it, `Discovering` starts
+  discovery again, unless the machine is paused. A caller that uses the device
+  after `onConnected` calls `pause()`.
 
 ## Pause and resume
 
@@ -117,7 +119,6 @@ stateDiagram-v2
   In the other states, discovery starts again when the machine goes back to
   the list.
 - `isPaused: true` starts the machine paused.
-- After `onConnected`, the machine stays paused until `resume()`.
 - While paused, `Discovering` emits `isPaused: true`: the rows have no actions
   and there is no `addNewDevice`. The view still shows the rows and the Add
   button, greyed out.
