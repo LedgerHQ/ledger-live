@@ -110,6 +110,7 @@ describe("operations command — empty history", () => {
     expect(data.network).toBe("ethereum");
     expect(Array.isArray(data.operations)).toBe(true);
     expect(data.operations.length).toBe(0);
+    expect(data.nextCursor).toBeNull();
   });
 });
 
@@ -142,5 +143,68 @@ describe("operations command — one OUT transaction", () => {
     expect(op.type).toBe("OUT");
     expect(op.hash).toBe(POINT_ONE_ETH_OUT_TX.hash);
     expect(op.senders).toContain(ETH_ADDRESS);
+  });
+});
+
+function outTx(nonce: number, time: string) {
+  const hash = `0x${String(nonce).padStart(64, "0")}`;
+  return {
+    ...POINT_ONE_ETH_OUT_TX,
+    hash,
+    nonce: `0x${nonce.toString(16)}`,
+    nonce_value: nonce,
+    received_at: time,
+    block: { hash: `0xblock${hash.slice(2)}`, height: 19_000_000 + nonce, time },
+  };
+}
+
+describe("operations command — history longer than --limit", () => {
+  const txs = [
+    outTx(3, "2024-06-03T12:00:00.000Z"),
+    outTx(2, "2024-06-02T12:00:00.000Z"),
+    outTx(1, "2024-06-01T12:00:00.000Z"),
+  ];
+  const server = new MockServer(baseRoutes({ data: txs, token: null }));
+
+  let sessionCleanup: (() => void) | undefined;
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
+
+  async function operationsJson(extraArgs: string[]) {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const result = await runCli(
+      ["operations", "--account", "ethereum-1", "--output", "json", ...extraArgs],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    sessionCleanup();
+    sessionCleanup = undefined;
+    return { ...result, data: JSON.parse(result.stdout) };
+  }
+
+  it("json output: pages through the history with nextCursor, ending on null", async () => {
+    const first = await operationsJson(["--limit", "2"]);
+    expect(first.exitCode, `stderr: ${first.stderr}`).toBe(0);
+    expect(first.data.operations.map((op: { hash: string }) => op.hash)).toEqual([
+      txs[0].hash,
+      txs[1].hash,
+    ]);
+    expect(first.data.nextCursor).toEqual(expect.any(String));
+
+    const second = await operationsJson(["--limit", "2", "--cursor", first.data.nextCursor]);
+    expect(second.exitCode, `stderr: ${second.stderr}`).toBe(0);
+    expect(second.data.operations.map((op: { hash: string }) => op.hash)).toEqual([txs[2].hash]);
+    expect(second.data.nextCursor).toBeNull();
+  });
+
+  it("json output: an unknown cursor exits with code 1", async () => {
+    const { exitCode, data } = await operationsJson(["--limit", "2", "--cursor", "not-a-cursor"]);
+    expect(exitCode).toBe(1);
+    expect(data.ok).toBe(false);
+    expect(data.error.code).toBe("InvalidOperationsCursorError");
   });
 });
