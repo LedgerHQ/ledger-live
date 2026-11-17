@@ -86,6 +86,8 @@ type SetupTestOptions = {
   readonly transportIds?: Array<TransportIdentifier>;
   readonly connect?: jest.Mock;
   readonly connectedDevice?: ConnectedDevice;
+  /** Returned by `dmk.listConnectedDevices`. */
+  readonly openSessions?: Array<ConnectedDevice>;
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
   readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
   readonly filterListedDevices?: ConnectNewDeviceFilterListedDevices;
@@ -103,6 +105,7 @@ const setupTest = ({
   transportIds = [bleTransport, usbTransport],
   connect = jest.fn().mockResolvedValue("session-id"),
   connectedDevice = makeConnectedDevice(),
+  openSessions = [],
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   getDiscoveredDeviceKey = getDeviceKeyById,
   filterListedDevices,
@@ -120,7 +123,7 @@ const setupTest = ({
     connect,
     getConnectedDevice: jest.fn(() => connectedDevice),
     disconnect: jest.fn().mockResolvedValue(undefined),
-    listConnectedDevices: jest.fn(() => []),
+    listConnectedDevices: jest.fn(() => openSessions),
   } as unknown as DeviceManagementKit;
   const onConnected = jest.fn();
   const onClose = jest.fn();
@@ -602,6 +605,35 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       expect(connect).toHaveBeenCalledTimes(1);
       expect(lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
+    });
+
+    it("GIVEN the selected device already has a session, WHEN the user selects it, THEN it should reuse that session and start disconnecting the other sessions", async () => {
+      // GIVEN
+      const setup = setupTest({
+        openSessions: [
+          makeConnectedDevice({ id: nanoX.id, sessionId: "nano-x-ble-session" }),
+          makeConnectedDevice({
+            id: nanoX.id,
+            transport: usbTransport,
+            sessionId: "nano-x-usb-session",
+          }),
+          makeConnectedDevice({ id: stax.id, sessionId: "stax-session" }),
+        ],
+      });
+
+      // WHEN
+      await connectToNanoX(setup);
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      // THEN
+      expect(setup.connect).not.toHaveBeenCalled();
+      expect(setup.onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({ sessionId: "nano-x-ble-session" }),
+      );
+      expect(jest.mocked(setup.dmk.disconnect).mock.calls).toEqual([
+        [{ sessionId: "nano-x-usb-session" }],
+        [{ sessionId: "stax-session" }],
+      ]);
     });
   });
 
