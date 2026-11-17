@@ -3,7 +3,7 @@ import type { LogEvent } from "./logEvent";
 import { setTransactionObserver } from "./observer";
 
 export type TxLifecyclePlatform = "desktop" | "mobile";
-export type TxLifecyclePath = "native" | "dapp";
+export type TxLifecyclePath = "native" | "dapp" | "borrow";
 export type TxLifecycleFailureClass =
   | "user_cancel"
   | "device_error"
@@ -184,12 +184,20 @@ type PendingAttempt = { product: TxLifecycleProduct; base: TxLifecyclePayloadBas
 
 const pendingLifecycle = new Map<string, PendingAttempt>();
 
+/**
+ * Every path but `native` runs in a webview, so its attempt is keyed by manifest and not by path:
+ * a claim that moves between products mid-attempt still closes the attempt it opened.
+ */
+function isManifestPath(path: TxLifecyclePath): boolean {
+  return path !== "native";
+}
+
 function lifecycleKey(
   payload: Pick<TxLifecyclePayloadBase, "path" | "platform">,
   manifestId?: string,
 ): string {
-  return payload.path === "dapp"
-    ? `${payload.platform}:${payload.path}:${manifestId ?? "unknown"}`
+  return isManifestPath(payload.path)
+    ? `${payload.platform}:manifest:${manifestId ?? "unknown"}`
     : `${payload.platform}:${payload.path}`;
 }
 
@@ -261,10 +269,11 @@ export function sendTxLifecycle(
   if (payload.event === "tx_intent") {
     const next = lifecycleBase(payload);
     const pending = pendingLifecycle.get(key)?.base;
-    const isDappPlaceholder = pending?.path === "dapp" && pending.currency_family === "other";
+    const isManifestPending = !!pending && isManifestPath(pending.path);
+    const isDappPlaceholder = isManifestPending && pending.currency_family === "other";
 
     // A dApp sign observable may resubscribe without representing another user attempt.
-    if (pending?.path === "dapp" && sameLifecycleBase(pending, next)) return;
+    if (isManifestPending && sameLifecycleBase(pending, next)) return;
 
     if (pending && !isDappPlaceholder) abandonPendingLifecycle(key, "superseded");
     pendingLifecycle.set(key, { product, base: next });

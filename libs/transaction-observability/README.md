@@ -148,8 +148,8 @@ The host deliberately reports **less** than it does for Earn. The contract has n
 Borrow action (supply / borrow / repay / withdraw), and the host cannot derive it: a sign request
 only carries call data. The Borrow live app knows the action, so it owns `tx_intent` and the
 success/failure `tx_terminal`. The host tracks Borrow attempts (manifest `borrow`, or the id
-`ptxBorrowLiveApp` configures) only to emit what the app cannot see: a `failure/abandoned`
-terminal when the Borrow screen is torn down with an attempt still pending. A sign modal the user
+`ptxBorrowLiveApp` configures) on path `borrow`, only to emit what the app cannot see: a
+`failure/abandoned` terminal when the Borrow screen is torn down with an attempt still pending. A sign modal the user
 closes also rejects the app's Wallet API request, so the app reports it (as a cancel) and the
 host only closes its pending attempt. An attempt superseded by a new intent is likewise closed
 without a post. `TxLifecycleProduct.reports` receives the payload's source (`event`,
@@ -160,9 +160,9 @@ attempts that screen started. `installBorrowLifecycleHost` wires the readers at 
 `startBorrowLifecycleMonitoring` is the body of each host's Borrow webview effect. Earn behaviour
 and its flag are unchanged.
 
-A kill-switch going off only drops the attempts of its own product. A dApp attempt is keyed by
-platform and manifest, not by product, so the products only touch each other's attempts on a
-manifest both claim, which Earn owns. There the Borrow screen drops Earn's pending attempt when it
+A kill-switch going off only drops the attempts of its own product. A webview attempt (`dapp` or
+`borrow`) is keyed by platform and manifest, not by product or path, so the products only touch
+each other's attempts on a manifest both claim, which Earn owns. There the Borrow screen drops Earn's pending attempt when it
 mounts, and closes it as `failure/abandoned` when it goes away. That abandon follows the attempt
 and posts to Earn's sink, never to Borrow's.
 

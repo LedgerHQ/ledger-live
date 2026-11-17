@@ -65,10 +65,10 @@ describe("borrow lifecycle", () => {
     expect(isBorrowApp("lido")).toBe(false);
   });
 
-  it("maps a borrow sign intent onto the dapp path", async () => {
+  it("maps a borrow sign intent onto the borrow path", async () => {
     expect(toTxLifecyclePayload(intent, "desktop")).toMatchObject({
       event: "tx_intent",
-      path: "dapp",
+      path: "borrow",
       currency_family: "ethereum",
     });
   });
@@ -92,7 +92,7 @@ describe("borrow lifecycle", () => {
           event: "tx_terminal",
           outcome: "failure",
           failure_class: "abandoned",
-          path: "dapp",
+          path: "borrow",
         }),
       },
     ]);
@@ -196,7 +196,7 @@ describe("borrow lifecycle", () => {
           event: "tx_terminal",
           outcome: "failure",
           failure_class: "abandoned",
-          path: "dapp",
+          path: "borrow",
         }),
       },
     ]);
