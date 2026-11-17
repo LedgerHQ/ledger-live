@@ -78,7 +78,7 @@ const { deviceInitializationInput, intent, onIntentJobComplete, onUserCancel } =
 | `useHyperliquidSignOrchestration`      | Shared React orchestration hook wiring `PerpsSignRequest` to DIE props.       |
 | `UseHyperliquidSignOrchestrationParams`| Input params for `useHyperliquidSignOrchestration`.                           |
 | `HyperliquidSignOrchestration`         | Executor props returned by `useHyperliquidSignOrchestration`.                 |
-| `HyperliquidSignOrchestrationRequest`  | Structural request shape (`appName`, `appOptions`, `signOnSession`, callbacks).|
+| `HyperliquidSignOrchestrationRequest`  | Structural request shape (`appOptions`, `signOnSession`, callbacks).          |
 | `HyperliquidSignAppOptions`            | Firmware/dependency flags forwarded to `buildDeviceInitializationInput`.      |
 | `HyperliquidSignAppRequest`            | `AppRequest` shape handed to `buildDeviceInitializationInput`.                |
 

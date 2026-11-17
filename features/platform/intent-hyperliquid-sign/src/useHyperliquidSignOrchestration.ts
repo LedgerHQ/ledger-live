@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createIntent } from "@features/platform-device-intent";
 import { HYPERLIQUID_APP_NAME } from "./intentDefinition";
 import type {
@@ -21,7 +21,6 @@ export type HyperliquidSignAppRequest = Readonly<{
 }>;
 
 export type HyperliquidSignOrchestrationRequest = Readonly<{
-  appName: string | undefined;
   appOptions?: HyperliquidSignAppOptions;
   signOnSession: (
     session: HyperliquidSignSession,
@@ -60,16 +59,33 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
   InitInput,
   ExtraProps
 > {
-  const { appName, appOptions, signOnSession, onSuccess, onError, onCancel } = request;
-  const resolvedAppName = appName ?? HYPERLIQUID_APP_NAME;
+  const { appOptions, signOnSession, onSuccess, onError, onCancel } = request;
   const requireLatestFirmware = appOptions?.requireLatestFirmware;
   const allowPartialDependencies = appOptions?.allowPartialDependencies;
 
   const [deviceInitializationInput, setDeviceInitializationInput] = useState<InitInput | null>(
     null,
   );
-  const resultRef = useRef<HyperliquidSignIntentResult | null>(null);
   const isSettledRef = useRef(false);
+
+  // A new deviceInitializationInput while the job runs is an executor invalidOperation, so the
+  // callbacks are read through a ref instead of re-running the init effect on identity changes.
+  const callbacksRef = useRef({
+    onSuccess,
+    onError,
+    onCancel,
+    onClose,
+    buildDeviceInitializationInput,
+  });
+  useLayoutEffect(() => {
+    callbacksRef.current = {
+      onSuccess,
+      onError,
+      onCancel,
+      onClose,
+      buildDeviceInitializationInput,
+    };
+  });
 
   const settle = useCallback((answer: () => void) => {
     if (isSettledRef.current) return;
@@ -80,73 +96,68 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
   useEffect(() => {
     let cancelled = false;
 
-    buildDeviceInitializationInput({
-      appRequest: {
-        appName: resolvedAppName,
-        requireLatestFirmware,
-        allowPartialDependencies,
-      },
-    })
+    callbacksRef.current
+      .buildDeviceInitializationInput({
+        appRequest: {
+          appName: HYPERLIQUID_APP_NAME,
+          requireLatestFirmware,
+          allowPartialDependencies,
+        },
+      })
       .then(input => {
         if (!cancelled) setDeviceInitializationInput(input);
       })
       .catch((error: unknown) => {
         if (cancelled) return;
-        settle(() => onError(normalizeError(error)));
-        onClose();
+        settle(() => callbacksRef.current.onError(normalizeError(error)));
+        callbacksRef.current.onClose();
       });
 
     return () => {
       cancelled = true;
     };
-  }, [
-    resolvedAppName,
-    requireLatestFirmware,
-    allowPartialDependencies,
-    buildDeviceInitializationInput,
-    settle,
-    onError,
-    onClose,
-  ]);
+  }, [requireLatestFirmware, allowPartialDependencies, settle]);
 
-  const onCancelRef = useRef(onCancel);
-  onCancelRef.current = onCancel;
+  useEffect(() => () => settle(() => callbacksRef.current.onCancel()), [settle]);
 
-  useEffect(() => () => settle(() => onCancelRef.current()), [settle]);
-
-  const [intent] = useState(() =>
-    createIntent(
-      platformDefinition,
-      {
-        signOnSession: async session => {
-          const { signatures } = await signOnSession(session);
-          return signatures;
+  const [{ intent, readResult }] = useState(() => {
+    let lastResult: HyperliquidSignIntentResult | null = null;
+    return {
+      intent: createIntent(
+        platformDefinition,
+        {
+          signOnSession: async session => {
+            const { signatures } = await signOnSession(session);
+            return signatures;
+          },
         },
-      },
-      {
-        onResult: result => {
-          resultRef.current = result;
+        {
+          onResult: result => {
+            lastResult = result;
+          },
         },
-      },
-    ),
-  );
+      ),
+      readResult: () => lastResult,
+    };
+  });
 
   const onIntentJobComplete = useCallback(() => {
-    const result = resultRef.current;
+    const result = readResult();
     if (!result) return;
 
+    const { onSuccess: answerSuccess, onError: answerError, onClose: close } = callbacksRef.current;
     settle(() =>
       result.type === "signed"
-        ? onSuccess({ signatures: result.signatures })
-        : onError(result.error),
+        ? answerSuccess({ signatures: result.signatures })
+        : answerError(result.error),
     );
-    onClose();
-  }, [settle, onSuccess, onError, onClose]);
+    close();
+  }, [settle, readResult]);
 
   const onUserCancel = useCallback(() => {
-    settle(onCancel);
-    onClose();
-  }, [settle, onCancel, onClose]);
+    settle(() => callbacksRef.current.onCancel());
+    callbacksRef.current.onClose();
+  }, [settle]);
 
   return {
     deviceInitializationInput,
