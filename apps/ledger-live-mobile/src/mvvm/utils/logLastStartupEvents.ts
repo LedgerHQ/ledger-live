@@ -12,6 +12,13 @@ export const LAST_STARTUP_EVENT_VALUES = [STARTUP_EVENTS.APP_STARTED, STARTUP_EV
 
 export const LAST_EVENTS_BUFFER = 10_000; // We want to make sure we capture any event that might happen right after the last startup event
 
+let resolveStartupLogged: () => void = () => {};
+
+/** Resolves once every value in {@link LAST_STARTUP_EVENT_VALUES} is logged: the root view is laid out. */
+export const startupLogged = new Promise<void>(resolve => {
+  resolveStartupLogged = resolve;
+});
+
 /**
  * Logs a startup event and conditionally sends the "app_startup_events" segment event once the startup is complete.
  *
@@ -33,6 +40,7 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
   if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {
     try {
       writeStartupToDeviceLog(eventName);
+      resolveStartupLogged();
       DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, { viewNamePredicate });
       const [storageState] = await Promise.all([
         summarizeStorageData(),
