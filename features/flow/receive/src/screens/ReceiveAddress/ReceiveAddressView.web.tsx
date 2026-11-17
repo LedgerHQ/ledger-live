@@ -22,6 +22,7 @@ export function ReceiveAddressView({
   notices,
   serviceWarning,
   serviceStatus,
+  memoCard,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -110,7 +111,7 @@ export function ReceiveAddressView({
                     <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
                   </>
                 )}
-                <ZonePlaceholder zone="extras" />
+                <ZonePlaceholder zone="extras" label={memoCard?.title} />
               </DialogBody>
             </>
           )}

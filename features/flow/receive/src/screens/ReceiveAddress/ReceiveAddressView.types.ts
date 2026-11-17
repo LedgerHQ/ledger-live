@@ -72,6 +72,18 @@ export type ReceiveServiceStatusView = Readonly<{
   onClose: () => void;
 }>;
 
+/** "Need a Tag/Memo?", when senders can attach one to the address shown. */
+export type ReceiveMemoCardView = Readonly<{ title: string; onPress: () => void }>;
+
+/** Why an exchange may need a memo, over the address. */
+export type ReceiveMemoPanelView = Readonly<{
+  title: string;
+  description: string;
+  gotItLabel: string;
+  learnMore?: ReceiveAddressAction;
+  onClose: () => void;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
@@ -84,6 +96,9 @@ export type ReceiveAddressViewProps = Readonly<{
   serviceWarning?: ReceiveServiceWarningView;
   /** Set while the incidents are open. */
   serviceStatus?: ReceiveServiceStatusView;
+  memoCard?: ReceiveMemoCardView;
+  /** Set while the memo panel is open. */
+  memoPanel?: ReceiveMemoPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

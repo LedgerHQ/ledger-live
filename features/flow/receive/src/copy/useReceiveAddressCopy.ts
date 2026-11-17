@@ -21,6 +21,8 @@ export type ReceiveAddressCopy = Readonly<{
   serviceWarningCta: string;
   serviceStatusTitle: string;
   gotItLabel: string;
+  memoTitle: string;
+  memoDescription: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -60,5 +62,7 @@ export function useReceiveAddressCopy({
     serviceWarningCta: t("receiveAddress.serviceStatus.cta"),
     serviceStatusTitle: t("receiveAddress.serviceStatus.title"),
     gotItLabel: t("receiveAddress.gotIt"),
+    memoTitle: t("receiveAddress.memoTag.title"),
+    memoDescription: t("receiveAddress.memoTag.description"),
   };
 }

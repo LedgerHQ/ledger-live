@@ -5,6 +5,7 @@ import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
@@ -63,6 +64,15 @@ export function useReceiveAddressViewModel({
     openServiceStatus: () => openPanel("serviceStatus"),
   });
 
+  const { memoCard, memoPanel } = useReceiveAddressMemo({
+    selected,
+    isOpen: panel === "memo",
+    copy,
+    onOpenUrl,
+    open: () => openPanel("memo"),
+    close: closePanel,
+  });
+
   const address = useMemo(
     () =>
       selected && header.data
@@ -107,6 +117,8 @@ export function useReceiveAddressViewModel({
             onClose: closePanel,
           }
         : undefined,
+    memoCard,
+    memoPanel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

@@ -30,6 +30,7 @@ export function ReceiveAddressView({
   notices,
   serviceWarning,
   serviceStatus,
+  memoCard,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -117,7 +118,7 @@ export function ReceiveAddressView({
             </>
           )}
           <Box {...dimmed}>
-            <ZonePlaceholder zone="extras" />
+            <ZonePlaceholder zone="extras" label={memoCard?.title} />
           </Box>
         </ScrollView>
       )}

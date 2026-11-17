@@ -98,6 +98,11 @@ const receiveTestResources = {
         },
         serviceStatus: { cta: "See details", title: "Service incident" },
         gotIt: "Got it",
+        memoTag: {
+          title: "Need a Tag/Memo?",
+          description:
+            "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        },
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",
