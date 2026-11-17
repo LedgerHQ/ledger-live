@@ -1,17 +1,19 @@
 import { findReceiveAccount, type ReceiveToolTrigger } from "@devtools/bindings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow, type OpenReceiveFlowData } from "LLD/features/Receive";
+import { closeModal } from "~/renderer/actions/modals";
 import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkHandler";
-import type { ModalData } from "~/renderer/modals/types";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { closeReceiveAddressDialog } from "~/renderer/reducers/receiveFlow";
 
 export function useReceiveDevToolTrigger(): ReceiveToolTrigger {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const { handler } = useDeepLinkHandler();
-  const reopenReceive = (data: ModalData["MODAL_RECEIVE"]) => {
+  const reopenReceive = (data: OpenReceiveFlowData) => {
     dispatch(closeModal("MODAL_RECEIVE"));
-    setTimeout(() => dispatch(openModal("MODAL_RECEIVE", data)));
+    dispatch(closeReceiveAddressDialog());
+    setTimeout(() => void dispatch(openReceiveFlow(data)));
   };
   return {
     onReceive: target => {

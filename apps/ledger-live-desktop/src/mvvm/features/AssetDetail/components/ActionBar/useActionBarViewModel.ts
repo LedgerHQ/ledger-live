@@ -15,7 +15,6 @@ import {
   type MarketCurrencyRampLedgerIds,
 } from "LLD/features/Market/utils/rampCatalogAvailability";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal } from "~/renderer/actions/modals";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { isAssetDetailPageLoading } from "LLD/features/AssetDetail/utils/isAssetDetailPageLoading";
@@ -27,6 +26,7 @@ import { useSwapNavigation } from "LLD/features/Market/hooks/useSwapNavigation";
 import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
 import { resolveRampLedgerIds } from "LLD/features/AssetDetail/utils/resolveRampLedgerIds";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 type UseActionBarViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
@@ -212,7 +212,7 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openReceiveFlow({
         sourcePage: ASSET_DETAIL_TRACKING_PAGE_NAME,
         ...(primaryAccount ? { account: primaryAccount, parentAccount: primaryParentAccount } : {}),
       }),

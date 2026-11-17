@@ -25,6 +25,7 @@ import {
 } from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
+import receiveFlow, { type ReceiveFlowState } from "./receiveFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
@@ -109,6 +110,7 @@ export type State = LLDRTKApiState & {
   modals: ModalsState;
   modularDialog: ModularDialogState;
   sendFlow: SendFlowState;
+  receiveFlow: ReceiveFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   predictions: PredictionsState;
@@ -163,6 +165,7 @@ const appReducer = combineReducers({
   modals,
   modularDialog,
   sendFlow,
+  receiveFlow,
   settings,
   UI,
   onboarding,
