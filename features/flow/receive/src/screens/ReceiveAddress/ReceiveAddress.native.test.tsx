@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
+import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -45,8 +46,28 @@ describe("ReceiveAddress (Native)", () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
-    expect(await screen.findByTestId("receive-address-zone-summary")).toBeTruthy();
+    expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+  });
+
+  it("shows the address with its first and last characters apart", async () => {
+    renderScreen();
+
+    expect(await screen.findByText("0x71C765")).toBeTruthy();
+    expect(screen.getByText("f6d8976F")).toBeTruthy();
+  });
+
+  it("lets a Zcash account pick its private address, then go back to the choice", async () => {
+    const shielded = "u1shieldedaddressexample0000000000000000000000000000";
+    const receive = jest.fn(async () => mockAccountReceive({ shielded: { address: shielded } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    fireEvent.press(await screen.findByTestId("receive-address-option-shielded"));
+
+    expect(screen.getByText("Private address")).toBeTruthy();
+    expect(screen.getByText(shielded.slice(0, 8))).toBeTruthy();
+    fireEvent.press(screen.getByTestId("receive-address-close"));
+    expect(screen.getByTestId("receive-address-options")).toBeTruthy();
   });
 
   it("offers Retry when the address cannot be read, then shows it", async () => {
@@ -58,17 +79,15 @@ describe("ReceiveAddress (Native)", () => {
 
     fireEvent.press(await screen.findByTestId("receive-address-retry"));
 
-    await waitFor(() => expect(screen.getByTestId("receive-address-zone-summary")).toBeTruthy());
+    expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(receive).toHaveBeenCalledTimes(2);
   });
 
   it("lays the zones out in screen order", async () => {
     renderScreen();
-    await screen.findByTestId("receive-address-zone-summary");
+    await screen.findByTestId("receive-address-summary");
 
     expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-summary",
-      "receive-address-zone-address",
       "receive-address-zone-actions",
       "receive-address-zone-notices",
       "receive-address-zone-extras",
