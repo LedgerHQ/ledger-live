@@ -2510,8 +2510,8 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))
       '@react-native-community/slider':
-        specifier: 5.2.0
-        version: 5.2.0
+        specifier: 5.2.2
+        version: 5.2.2
       '@react-native-firebase/app':
         specifier: 26.4.1
         version: 26.4.1(ad8cab2de0afcaf36fbaac4194936152)
@@ -29191,9 +29191,6 @@ packages:
   '@ledgerhq/coin-module-framework@11.0.1':
     resolution: {integrity: sha512-4yGzZioLhkCiEBqUDYj8DgYxqNZx8qw79Q9rUOP+pLwEY4yJmMZr8+xQJQ7GF8UVc5nUlpxszeOUrs7UvhnphQ==}
 
-  '@ledgerhq/coin-module-framework@11.3.0':
-    resolution: {integrity: sha512-nvJRgU1bh7bvAF7wID00X0rZl1Xu7QVOBFUf5m85j/je5lL7Lx6sWRCFONHDnJax6DfkSd48/qNDCpoLg/nyxw==}
-
   '@ledgerhq/coin-module-framework@11.4.0':
     resolution: {integrity: sha512-YgTPhXUSU9hz44BfdIxe0aa26pX6Mo+Z7auG0pgIAdPYNwdBZExICDJcEP7os4cfxs/1BN40fLbqJL7BI/7zkw==}
 
@@ -31435,8 +31432,8 @@ packages:
   '@react-native-community/slider@4.5.7':
     resolution: {integrity: sha512-WMDDZjNF2Bd8M8TrSqKf5xhM9ikdfCHtSPur64Ow3bB/OVrKufUQZ59NmYdNZNeGPvcHHTsafuYTY8zfZfbchQ==}
 
-  '@react-native-community/slider@5.2.0':
-    resolution: {integrity: sha512-484sH8aWEaSjxaZ7HT3YZ8CKDcNes2synko1vdEz5DFEdvKAduxKJTj22L/qBMD7rtIkfbX69DMzWDAGbOAV6w==}
+  '@react-native-community/slider@5.2.2':
+    resolution: {integrity: sha512-KdWURcFqHZ/nvQwt9S7P2PHBREl83GZeflWZU1VpR/qJ+lF/mdiOBZshJQztE2hBDgW5iBIrRb3RY9uAie5k/w==}
 
   '@react-native-firebase/app@26.4.1':
     resolution: {integrity: sha512-j9mMAldt0BpFhMCh4T8SB+n8qmpkNHHNuuIlIiFEPzCrADGZQsamMMwEq1GSFk17/F85D8jR64dpTzeLt9GW7A==}
@@ -47921,10 +47918,6 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-module-framework@11.3.0':
-    dependencies:
-      bignumber.js: 9.1.2
-
   '@ledgerhq/coin-module-framework@11.4.0':
     dependencies:
       bignumber.js: 9.1.2
@@ -50315,7 +50308,7 @@ snapshots:
 
   '@react-native-community/slider@4.5.7': {}
 
-  '@react-native-community/slider@5.2.0': {}
+  '@react-native-community/slider@5.2.2': {}
 
   '@react-native-firebase/app@26.4.1(ad8cab2de0afcaf36fbaac4194936152)':
     dependencies:
