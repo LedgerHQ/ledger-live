@@ -47,9 +47,64 @@ beforeEach(() => jest.clearAllMocks());
 
 describe("getDeviceLanguageTag", () => {
   it("returns the first preferred language", () => {
-    givenLocales({ languageTag: "fr-FR" }, { languageTag: "en-US" });
+    givenLocales(
+      { languageTag: "fr-FR", languageCode: "fr", languageRegionCode: "FR", regionCode: "FR" },
+      { languageTag: "en-US", languageCode: "en", languageRegionCode: "US", regionCode: "FR" },
+    );
 
     expect(getDeviceLanguageTag()).toBe("fr-FR");
+  });
+
+  it("adds the device region to a language without one", () => {
+    givenLocales({ languageTag: "en", languageCode: "en", regionCode: "FR" });
+
+    expect(getDeviceLanguageTag()).toBe("en-FR");
+  });
+
+  it("adds US when neither the language nor the device has a region", () => {
+    givenLocales({ languageTag: "en", languageCode: "en" });
+
+    expect(getDeviceLanguageTag()).toBe("en-US");
+  });
+
+  it("writes Latin America as UN", () => {
+    givenLocales({
+      languageTag: "es-419",
+      languageCode: "es",
+      languageRegionCode: "419",
+      regionCode: "MX",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("es-UN");
+  });
+
+  it("drops the Android regional preference extensions", () => {
+    givenLocales({
+      languageTag: "fr-FR-u-mu-celsius",
+      languageCode: "fr",
+      languageRegionCode: "FR",
+      regionCode: "FR",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("fr-FR");
+  });
+
+  it("keeps the script", () => {
+    givenLocales({
+      languageTag: "zh-Hant-TW",
+      languageCode: "zh",
+      languageScriptCode: "Hant",
+      languageRegionCode: "TW",
+      regionCode: "TW",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("zh-Hant-TW");
+  });
+
+  it("replaces the legacy Android language codes", () => {
+    givenLocales({ languageTag: "iw-IL", languageCode: "iw", languageRegionCode: "IL" });
+
+    expect(getDeviceLanguageTag()).toBe("he-IL");
   });
 
   it("returns undefined when the device reports no language", () => {
@@ -66,10 +121,10 @@ describe("getDeviceRegion", () => {
     expect(getDeviceRegion()).toBe("GB");
   });
 
-  it("returns undefined when the device has no region", () => {
+  it("returns US when the device has no region", () => {
     givenLocales({ languageTag: "en", regionCode: null });
 
-    expect(getDeviceRegion()).toBeUndefined();
+    expect(getDeviceRegion()).toBe("US");
   });
 });
 
@@ -134,6 +189,12 @@ describe("findBestAvailableLanguage", () => {
 
   it("ignores case and returns the supported entry as written", () => {
     givenLocales({ languageTag: "PT-br", languageCode: "pt", languageRegionCode: "BR" });
+
+    expect(findBestAvailableLanguage(supported)).toBe("pt-BR");
+  });
+
+  it("matches a language without region on the device region", () => {
+    givenLocales({ languageTag: "pt", languageCode: "pt", regionCode: "BR" });
 
     expect(findBestAvailableLanguage(supported)).toBe("pt-BR");
   });
