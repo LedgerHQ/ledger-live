@@ -23,11 +23,12 @@ For example, [apps/ledger-live-mobile/README.md](../apps/ledger-live-mobile/READ
 
 Private packages have no build: apps, tests and typecheck read their `src/`. Published packages
 build, and so do the private exceptions listed in
-[`source-only-debt.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs). Nx
-rebuilds them before a target that depends on them. To rebuild them by hand:
+[`source-only-debt.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs), some
+of which keep only a no-op `build` target. Nx runs these builds before a target that depends on
+them. To run them by hand:
 
 ```bash
-pnpm build:libs                     # every @ledgerhq package that has a build
+pnpm build:libs                     # the @ledgerhq packages, minus the ones the script excludes
 pnpm nx run <package-name>:build    # one package that has a build
 ```
 
