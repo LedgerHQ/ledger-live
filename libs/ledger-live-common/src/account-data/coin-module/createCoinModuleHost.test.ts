@@ -48,6 +48,11 @@ const loaders = [
     loadBridgeApi: async () => createStakingBridgeApi,
   }),
   loader("polkadot", { supportedCoins: ["polkadot"] }),
+  loader("filecoin", {
+    supportedCoins: ["filecoin"],
+    loadLocalApi: async () => createLocalApi,
+    localApiServesAccountData: false,
+  }),
 ];
 
 const apiOf = async (currencyId: string) => {
@@ -89,6 +94,10 @@ describe("createCoinModuleHost", () => {
       expect(isCurrencySupported("polkadot")).toBe(false);
       expect(isCurrencySupported("solana")).toBe(false);
       expect(isCurrencySupported("not_a_currency")).toBe(false);
+    });
+
+    it("is false for a coin module whose loader keeps its accounts on FullSync", () => {
+      expect(isCurrencySupported("filecoin")).toBe(false);
     });
   });
 

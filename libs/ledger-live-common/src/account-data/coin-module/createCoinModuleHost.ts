@@ -19,9 +19,9 @@ import {
 } from "../../bridge/generic-coin-framework/operationHistoryBound";
 import { getCurrencyConfiguration } from "../../config";
 import {
-  hasLocalApi,
   loadBridgeApiForFamily,
   loadLocalApiForFamily,
+  localApiServesAccountData,
 } from "../../coin-modules/registry";
 import { addressFromKey } from "../../account/accountDescriptor";
 
@@ -85,7 +85,7 @@ export function createCoinModuleHost({
       // Mock accounts keep their simulated balances: only FullSync routes them to the mock bridges.
       if (getEnv("MOCK")) return false;
       try {
-        return hasLocalApi(getCryptoCurrencyById(currencyId));
+        return localApiServesAccountData(getCryptoCurrencyById(currencyId));
       } catch {
         return false;
       }
