@@ -8,13 +8,14 @@ type ShowsReceiveOptionsParams = Readonly<{
   shouldUseReceiveOptions?: boolean;
   /** The asset of the account the receive starts from. */
   accountAssetId?: string;
-  /** The assets of the page the receive starts from (asset page). */
+  /** The assets of the page the receive starts from (asset page): they decide over the account. */
   pageAssetIds?: readonly string[];
 }>;
 
 /**
  * Whether the legacy receive modal first offers Noah's "crypto or bank transfer" choice: only for
- * an asset with a bank transfer option, or for any asset when the receive starts from nowhere.
+ * an asset with a bank transfer option (one of an asset page's assets, else the account's), or for
+ * any asset when the receive starts from nowhere.
  */
 export function showsReceiveOptions({
   noah,
@@ -24,7 +25,7 @@ export function showsReceiveOptions({
 }: ShowsReceiveOptionsParams): boolean {
   if (!noah?.enabled || shouldUseReceiveOptions === false) return false;
   const activeCurrencyIds = noah.params?.activeCurrencyIds ?? [];
-  if (accountAssetId) return activeCurrencyIds.includes(accountAssetId);
   if (pageAssetIds?.length) return pageAssetIds.some(id => activeCurrencyIds.includes(id));
+  if (accountAssetId) return activeCurrencyIds.includes(accountAssetId);
   return true;
 }

@@ -161,6 +161,54 @@ describe("openReceiveFlow", () => {
     expect(dispatch).toHaveBeenCalledWith(legacyModal({ account: ethAccount }));
   });
 
+  describe("after the Noah crypto choice (shouldUseReceiveOptions: false)", () => {
+    const noahState = () =>
+      makeState({
+        flags: {
+          newReceiveFlow: { enabled: true, params: { excludedFamilies: [] } },
+          noah: { enabled: true, params: { activeCurrencyIds: ["ethereum"] } },
+        },
+      });
+
+    it("opens the address dialog for a Noah asset account", async () => {
+      const dispatch = await run(
+        openReceiveFlow({ account: ethAccount, shouldUseReceiveOptions: false }),
+        noahState(),
+      );
+
+      expect(dispatch).toHaveBeenCalledWith(
+        openReceiveAddressDialog(expect.objectContaining({ accountUUID: entry.accountUUID })),
+      );
+    });
+
+    it("opens the asset dialog of a Noah asset page", async () => {
+      await run(
+        openReceiveFlow({
+          currencyIds: ["ethereum"],
+          legacyAccount: { account: ethAccount },
+          shouldUseReceiveOptions: false,
+        }),
+        noahState(),
+      );
+
+      expect(openAssetAndAccountDialog).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: ["ethereum"] }),
+        expect.any(Function),
+      );
+    });
+
+    it("keeps the options off when it falls back to the legacy modal", async () => {
+      const dispatch = await run(
+        openReceiveFlow({ account: unknownAccount, shouldUseReceiveOptions: false }),
+        noahState(),
+      );
+
+      expect(dispatch).toHaveBeenCalledWith(
+        legacyModal({ account: unknownAccount, shouldUseReceiveOptions: false }),
+      );
+    });
+  });
+
   describe("without an account", () => {
     it("opens the asset dialog, then routes the selected account", async () => {
       const dispatch = await run(openReceiveFlow({ sourcePage: "Portfolio" }));
@@ -197,6 +245,7 @@ describe("openReceiveFlow", () => {
       );
 
       expect(dispatch).toHaveBeenCalledWith(legacyModal({ account: ethAccount }));
+      expect(dispatch.mock.calls[0][0].payload.data).not.toHaveProperty("currencyIds");
     });
 
     it("opens the legacy modal on the account picked in token mode, out of token mode", async () => {
@@ -234,6 +283,23 @@ describe("openReceiveFlow", () => {
         expect.objectContaining({ currencies: ["bitcoin"], areCurrenciesFiltered: true }),
         expect.any(Function),
       );
+    });
+
+    it("shows the options of an asset page with a Noah asset, whatever account it preselects", async () => {
+      const state = makeState({
+        flags: {
+          newReceiveFlow: { enabled: true, params: { excludedFamilies: [] } },
+          noah: { enabled: true, params: { activeCurrencyIds: ["ethereum/erc20/usd__coin"] } },
+        },
+      });
+      const currencyIds = ["ethereum", "ethereum/erc20/usd__coin"];
+      const dispatch = await run(
+        openReceiveFlow({ currencyIds, legacyAccount: { account: ethAccount } }),
+        state,
+      );
+
+      expect(openAssetAndAccountDialog).not.toHaveBeenCalled();
+      expect(dispatch).toHaveBeenCalledWith(legacyModal({ currencyIds, account: ethAccount }));
     });
 
     it("keeps the legacy modal and its options on an asset page with a Noah asset", async () => {

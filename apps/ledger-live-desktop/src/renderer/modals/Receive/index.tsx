@@ -16,6 +16,7 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
 import { showsReceiveOptions } from "@features/flow-receive";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { GlobalModalData } from "../types";
 import {
   onboardingReceiveFlowSelector,
@@ -38,11 +39,13 @@ function getInitialState(showsOptions: boolean, isOnboardingFlow?: boolean): Sta
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const noahFeature = useFeature("noah");
+  const newReceiveFlow = useFeature("newReceiveFlow");
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const showsOptions = showsReceiveOptions({
     noah: noahFeature ?? undefined,
     shouldUseReceiveOptions: props?.shouldUseReceiveOptions,
     accountAssetId: props?.account ? getAccountCurrency(props.account).id : undefined,
+    pageAssetIds: props?.currencyIds,
   });
   const initialState = getInitialState(showsOptions, isOnboardingReceiveFlow);
   const [state, setState] = useState<State>(() => initialState);
@@ -131,11 +134,29 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
 
   if (!hasAccounts) return null;
 
+  // With the new receive flow, "crypto" goes back to its routing, without these options again.
+  const handleGoToCrypto = () => {
+    if (!newReceiveFlow?.enabled) {
+      setStepId("account");
+      return;
+    }
+    const { account, parentAccount, currencyIds, ...data } = props ?? {};
+    const preselected = account ? { account, parentAccount } : undefined;
+    dispatch(closeModal("MODAL_RECEIVE"));
+    void dispatch(
+      openReceiveFlow({
+        ...data,
+        shouldUseReceiveOptions: false,
+        ...(currencyIds ? { currencyIds, legacyAccount: preselected } : preselected),
+      }),
+    );
+  };
+
   if (stepId === "receiveOptions") {
     return (
       <ReceiveOptionsDialog
         onClose={() => handleClose(false)}
-        onGoToAccount={() => setStepId("account")}
+        onGoToAccount={handleGoToCrypto}
         sourcePage={props?.sourcePage}
       />
     );

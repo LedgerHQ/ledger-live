@@ -27,11 +27,12 @@ type SelectedAccount = Readonly<{
   fromAssetDialog?: boolean;
 }>;
 
-/** The `MODAL_RECEIVE` payload, plus what an asset page gives. */
+/**
+ * The `MODAL_RECEIVE` payload, plus the account an asset page preselects. An asset page's
+ * `currencyIds` limit the asset dialog, and the Noah options, to its assets.
+ */
 export type OpenReceiveFlowData = LegacyReceiveData &
   Readonly<{
-    /** Asset page: limits the asset dialog, and the Noah options, to its assets. */
-    currencyIds?: readonly string[];
     /** Asset page: the account the legacy modal preselects; the new flow lets the user pick. */
     legacyAccount?: Readonly<{ account: AccountLike; parentAccount?: Account | null }>;
   }>;
@@ -50,11 +51,12 @@ export const openReceiveFlow =
     const { currencyIds, legacyAccount, ...legacyData } = data;
     const state = getState();
     const flag = selectFeature(state, "newReceiveFlow");
-    const openLegacy = (selected?: SelectedAccount) => {
+    const openLegacy = (selected?: SelectedAccount, { withReceiveOptions = false } = {}) => {
       const preselected = selected ?? legacyAccount;
       dispatch(
         openModal("MODAL_RECEIVE", {
           ...legacyData,
+          ...(withReceiveOptions && { currencyIds }),
           ...(selected?.fromAssetDialog && { receiveTokenMode: false }),
           ...(preselected && {
             account: preselected.account,
@@ -64,8 +66,13 @@ export const openReceiveFlow =
       );
     };
 
-    if (!flag?.enabled || onboardingReceiveFlowSelector(state) || showsNoahOptions(state, data)) {
+    if (!flag?.enabled || onboardingReceiveFlowSelector(state)) {
       openLegacy();
+      return;
+    }
+
+    if (showsNoahOptions(state, data)) {
+      openLegacy(undefined, { withReceiveOptions: true });
       return;
     }
 
@@ -152,13 +159,12 @@ function findMainAccount(
 
 function showsNoahOptions(
   state: State,
-  { account, legacyAccount, currencyIds, shouldUseReceiveOptions }: OpenReceiveFlowData,
+  { account, currencyIds, shouldUseReceiveOptions }: OpenReceiveFlowData,
 ): boolean {
-  const preselected = account ?? legacyAccount?.account;
   return showsReceiveOptions({
     noah: selectFeature(state, "noah"),
     shouldUseReceiveOptions,
-    accountAssetId: preselected ? getAccountCurrency(preselected).id : undefined,
+    accountAssetId: account ? getAccountCurrency(account).id : undefined,
     pageAssetIds: currencyIds,
   });
 }

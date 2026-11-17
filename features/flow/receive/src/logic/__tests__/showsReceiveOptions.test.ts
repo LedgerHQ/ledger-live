@@ -23,6 +23,16 @@ describe("showsReceiveOptions", () => {
     expect(showsReceiveOptions({ noah, pageAssetIds: ["bitcoin"] })).toBe(false);
   });
 
+  it("follows the asset page's assets over the account preselected on it", () => {
+    expect(
+      showsReceiveOptions({
+        noah,
+        accountAssetId: "arbitrum/erc20/usd_coin",
+        pageAssetIds: ["ethereum/erc20/usd__coin", "arbitrum/erc20/usd_coin"],
+      }),
+    ).toBe(true);
+  });
+
   it("is on when the receive starts from nowhere", () => {
     expect(showsReceiveOptions({ noah })).toBe(true);
   });
