@@ -77,10 +77,6 @@ export function useReceiveAddressViewModel({
         onSelect: selection.select,
       }
     : undefined;
-  const actionsPlaceholderLabel = [actions.copy, actions.share, actions.verify]
-    .map(action => action?.label)
-    .filter(Boolean)
-    .join(" · ");
 
   return {
     isLoading: data.type === "loading",
@@ -88,7 +84,6 @@ export function useReceiveAddressViewModel({
     addressSelection,
     address,
     actions,
-    actionsPlaceholderLabel,
     isVerifying: verification !== undefined,
     verification,
     title: header.title,
