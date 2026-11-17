@@ -209,7 +209,7 @@ catalog:
   react-native-gesture-handler: 2.28.0
   react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.4
-  react-native-worklets: 0.8.1
+  react-native-worklets: 0.8.3
   react-native-safe-area-context: 5.7.0
   react-native-svg: 15.15.4
   react-redux: ^9.2.0
@@ -362,7 +362,7 @@ patchedDependencies:
   "@callstack/repack@5.4.2": "patches/@callstack__repack@5.4.2.patch"
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
   "usb@2.17.0": "patches/usb@2.17.0.patch"
-  "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+  "react-native-worklets@0.8.3": "patches/react-native-worklets@0.8.3.patch"
 
 allowBuilds:
   "@apollo/protobufjs": true
