@@ -1763,4 +1763,57 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     setupOf(result.current).checks?.onStart();
     expect(send).toHaveBeenCalledWith({ type: "RETRY" });
   });
+  describe("when an unseeded device disconnects during the setup", () => {
+    function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
+      const connect = jest.fn();
+      const unseeded = unseededContext({ currentOnboardingStep: "pin" });
+      useSession.mockReturnValue(session({ state: "deviceSetup.pin", context: unseeded, connect }));
+      const hook = renderFunnel();
+      const update = (overrides: Partial<DeviceOnboardingSession>) => {
+        useSession.mockReturnValue(session({ context: unseeded, connect, ...overrides }));
+        hook.rerender(undefined);
+      };
+      update({ state: "awaitingSession", ...afterDrop });
+
+      return { ...hook, connect, update };
+    }
+
+    it("should keep the stage, reconnect to the same device and show the reconnecting sheet", () => {
+      const { result, connect } = dropDuringPin();
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(connect).toHaveBeenCalledWith("device-id");
+    });
+
+    it("should show the failed sheet when the reconnection fails, and reconnect on retry", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "awaitingSession", error: "unknown-error" });
+      expect(setupOf(result.current).connection?.state).toBe("failed");
+
+      act(() => setupOf(result.current).connection?.retry());
+
+      expect(connect).toHaveBeenCalledTimes(2);
+      expect(connect).toHaveBeenLastCalledWith("device-id");
+    });
+
+    it("should close the sheet on the same stage once the session is back", () => {
+      const { result, update } = dropDuringPin();
+
+      update({ state: "readingState" });
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection).toBeNull();
+    });
+
+    it("should keep showing the connecting screen after a firmware update", () => {
+      const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
+
+      expect(result.current.status).toBe("connecting");
+    });
+  });
 });

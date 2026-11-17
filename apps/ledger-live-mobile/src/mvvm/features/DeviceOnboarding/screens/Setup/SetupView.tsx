@@ -18,6 +18,7 @@ import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { ConnectionSheet } from "./components/ConnectionSheet";
 import { SetupGlow } from "./components/SetupGlow";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
@@ -53,6 +54,7 @@ export function SetupView({
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  connectionSheet,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -141,6 +143,7 @@ export function SetupView({
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
       />
+      {connectionSheet ? <ConnectionSheet {...connectionSheet} /> : null}
     </Box>
   );
 }
