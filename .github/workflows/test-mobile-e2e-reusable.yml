@@ -937,6 +937,43 @@ jobs:
         timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
 
+      # Experiment (QAA-1840): hold Detox until trustd has finished its post-boot pinning database update.
+      - name: Wait for the trustd pinning update
+        continue-on-error: true
+        timeout-minutes: 12
+        run: |
+          out="$MOBILE_ARTIFACTS_ROOT/trust-logs"
+          mkdir -p "$out"
+          start=$(date +%s)
+          max_wait_for_start=240
+          max_total=600
+          pending=()
+          for i in $(seq 1 "${IOS_SIMULATOR_COUNT:-3}"); do pending+=("$i"); done
+          while [[ ${#pending[@]} -gt 0 ]]; do
+            elapsed=$(( $(date +%s) - start ))
+            still=()
+            for i in "${pending[@]}"; do
+              name="iOS Simulator"; [[ "$i" -gt 1 ]] && name="iOS Simulator $i"
+              lines=$(xcrun simctl spawn "$name" log show --last 30m --style compact \
+                --predicate 'process == "trustd" AND (eventMessage CONTAINS "Pinning database should update" OR eventMessage CONTAINS "SecPinningDb")' 2>/dev/null \
+                | grep -E "Pinning database should update|SecPinningDb" || true)
+              last=$(tail -n 1 <<<"$lines")
+              if [[ "$lines" == *"should update"* && "$last" == *SecPinningDb* ]]; then
+                echo "sim-$i finished elapsed=${elapsed}s start=$(grep 'should update' <<<"$lines" | tail -n 1 | cut -c1-23) end=${last:0:23}" | tee -a "$out/gate.txt"
+              elif [[ "$lines" != *"should update"* && $elapsed -ge $max_wait_for_start ]]; then
+                echo "sim-$i not-started elapsed=${elapsed}s" | tee -a "$out/gate.txt"
+              elif [[ $elapsed -ge $max_total ]]; then
+                echo "sim-$i timeout elapsed=${elapsed}s" | tee -a "$out/gate.txt"
+                echo "::warning::sim-$i: trustd pinning update still running after ${elapsed}s"
+              else
+                still+=("$i")
+              fi
+            done
+            pending=("${still[@]}")
+            if [[ ${#pending[@]} -gt 0 ]]; then sleep 5; fi
+          done
+          echo "gate-released $(date -u +%FT%TZ) waited=$(( $(date +%s) - start ))s" | tee -a "$out/gate.txt"
+
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
         uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
