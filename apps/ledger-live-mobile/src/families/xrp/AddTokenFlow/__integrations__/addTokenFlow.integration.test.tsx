@@ -165,8 +165,9 @@ describe("XRP AddTokenFlow (integration)", () => {
     await signFromReview(user);
 
     expect(
-      await screen.findByText(`${xrpIouToken.name} added`, {}, { timeout: 15000 }),
+      await screen.findByText(`Request to add ${xrpIouToken.name} sent`, {}, { timeout: 15000 }),
     ).toBeVisible();
+    expect(screen.getByText("It applies once the network confirms the transaction.")).toBeVisible();
     expect(getSignedTransaction()).toMatchObject({
       mode: "changeTrust",
       amount: MAX_TRUST_LIMIT,
@@ -183,7 +184,7 @@ describe("XRP AddTokenFlow (integration)", () => {
     await continueFromSettings(user);
     await screen.findByText("Trust Line (IOU)");
     await signFromReview(user);
-    await screen.findByText(`${xrpIouToken.name} added`, {}, { timeout: 15000 });
+    await screen.findByText(`Request to add ${xrpIouToken.name} sent`, {}, { timeout: 15000 });
 
     expect(getSignedTransaction().amount.toFixed()).toBe("1500");
   });
@@ -211,7 +212,7 @@ describe("XRP AddTokenFlow (integration)", () => {
 
     expect(await screen.findByText("On")).toBeVisible();
     await signFromReview(user);
-    await screen.findByText(`${xrpIouToken.name} added`, {}, { timeout: 15000 });
+    await screen.findByText(`Request to add ${xrpIouToken.name} sent`, {}, { timeout: 15000 });
 
     expect(getSignedTransaction()).toMatchObject({ noRipple: false });
   });

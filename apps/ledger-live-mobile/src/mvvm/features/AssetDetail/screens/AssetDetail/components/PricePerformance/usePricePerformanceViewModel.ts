@@ -121,5 +121,3 @@ export function usePricePerformanceViewModel({
     hasData: !!marketCurrency && records.length > 0,
   };
 }
-
-export type PricePerformanceViewModelResult = ReturnType<typeof usePricePerformanceViewModel>;

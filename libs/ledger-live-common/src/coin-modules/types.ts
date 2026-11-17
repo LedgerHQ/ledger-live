@@ -80,7 +80,10 @@ export type WalletApiAdapterModule<
 };
 
 export type PlatformAdapterModule = {
-  getPlatformTransactionSignFlowInfos: (tx: any) => {
+  getPlatformTransactionSignFlowInfos: (
+    tx: any,
+    account: AccountLike,
+  ) => {
     canEditFees: boolean;
     hasFeesProvided: boolean;
     liveTx: Partial<TransactionCommon>;

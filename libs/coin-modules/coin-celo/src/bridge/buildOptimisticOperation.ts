@@ -20,15 +20,21 @@ export const buildOptimisticOperation = (
   account: CeloAccount,
   transaction: Transaction,
   fee: BigNumber,
+  /** What was signed: only some modes carry `transaction.feeCurrency` into the tx. */
+  signed: { nonce: number; feeCurrency?: string | null | undefined },
 ): CeloOperation => {
+  const { nonce, feeCurrency } = signed;
   const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
+  // A CIP-64 fee is charged in the fee currency, so it is not CELO spent.
+  const isFeePaidInCelo = !isTokenTransaction && !feeCurrency;
+  const celoFee = isFeePaidInCelo ? fee : 0;
   const value =
     type === "OUT" || type === "LOCK"
-      ? new BigNumber(transaction.amount).plus(isTokenTransaction ? 0 : fee)
+      ? new BigNumber(transaction.amount).plus(celoFee)
       : new BigNumber(transaction.amount);
 
   const operation: CeloOperation = {
@@ -39,6 +45,8 @@ export const buildOptimisticOperation = (
     fee,
     blockHash: null,
     blockHeight: null,
+    // Lets the pending op clear as soon as a synced op carries the same nonce.
+    transactionSequenceNumber: new BigNumber(nonce),
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: isTokenTransaction ? tokenAccount.id : account.id,
@@ -53,9 +61,7 @@ export const buildOptimisticOperation = (
       // Mirror what the synced path will read back from `tx.feeCurrency`, so
       // optimistic and synced ops carry the same value (adapter address for
       // non-18-decimal tokens; adapter === contract for 18-decimal tokens).
-      ...(transaction.feeCurrency
-        ? { feeCurrencyAddress: transaction.feeCurrency.toLowerCase() }
-        : {}),
+      ...(feeCurrency ? { feeCurrencyAddress: feeCurrency.toLowerCase() } : {}),
     },
   };
 

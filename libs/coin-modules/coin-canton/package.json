@@ -116,7 +116,6 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "invariant": "^2.2.4",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -126,7 +125,6 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",

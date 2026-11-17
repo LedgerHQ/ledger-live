@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Account, FeatureId } from ".";
 
@@ -86,7 +87,7 @@ export type PostOnboardingAction = {
     size?: "XS" | "S" | "M" | "L" | "XL";
     color?: string;
     style?: object;
-  }) => React.ReactElement | null;
+  }) => ReactElement | null;
 
   /**
    * Title displayed for this action in the post onboarding hub.

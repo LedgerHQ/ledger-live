@@ -97,6 +97,7 @@ const commonConfig = {
     __DATADOG_CLIENT_TOKEN__: null,
     __DATADOG_SITE__: null,
     __DATADOG_ENV__: null,
+    __PRODUCTION__: false,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
     __BUILD_ENVS__: {},

@@ -1,5 +1,1 @@
-export {
-  openDeeplinkInstallAppDrawer,
-  closeDeeplinkInstallAppDrawer,
-  setSelectedDevice,
-} from "~/reducers/deeplinkInstallApp";
+export { openDeeplinkInstallAppDrawer } from "~/reducers/deeplinkInstallApp";

@@ -7,8 +7,6 @@ import {
   type SyncErrorBottomSheetContentProps,
 } from "./SyncErrorBottomSheetContent";
 
-export { SyncErrorBottomSheetContent } from "./SyncErrorBottomSheetContent";
-
 type SyncErrorBottomSheetProps = SyncErrorBottomSheetContentProps & {
   isOpen: boolean;
 };

@@ -5,17 +5,12 @@ import type { LineChartProps } from "./types";
 
 export { DEFAULT_LINE_CHART_HEIGHT } from "./constants";
 export { resolveLineChartColorFromPercentChange } from "./utils/resolveLineChartColor";
-export { getSeriesExtrema } from "./utils/getSeriesExtrema";
 export { getExtremaPointMarkers } from "./utils/getExtremaPointMarkers";
-export type { SeriesExtrema, SeriesExtremum } from "./utils/getSeriesExtrema";
 export type {
   LineChartColor,
   LineChartProps,
-  LineChartRangeOption,
   LineChartSeries,
   LineChartPointMarker,
-  LineChartPointTooltip,
-  LineChartPointLabelPosition,
   LineChartValueFormatter,
   LineChartTooltipTitle,
   LineChartScrubberPositionChange,

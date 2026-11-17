@@ -2,6 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { render, screen } from "tests/testSetup";
+import { HttpResponse, http, server } from "tests/server";
 import SendAmountFooterRow from "./SendAmountFooterRow";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT } from "./__mocks__/account.mock";
 
@@ -11,8 +12,21 @@ jest.mock("@features/platform-market-countervalues", () => ({
   useCalculateCountervalueCallback: () => mockCalculateCountervalue,
 }));
 
-const account = { ...XRP_ACCOUNT, subAccounts: [XRP_IOU_TOKEN_ACCOUNT] };
-const tokenTransaction = { family: "xrp", subAccountId: XRP_IOU_TOKEN_ACCOUNT.id } as Transaction;
+const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
+
+// coin-xrp caches each issuer's account root: this file's issuer has a 1% fee
+const feeToken = {
+  ...XRP_IOU_TOKEN_ACCOUNT.token,
+  contractAddress: "rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf",
+};
+const tokenAccount = { ...XRP_IOU_TOKEN_ACCOUNT, token: feeToken };
+
+const account = { ...XRP_ACCOUNT, subAccounts: [tokenAccount] };
+const tokenTransaction = {
+  family: "xrp",
+  subAccountId: tokenAccount.id,
+  amount: new BigNumber(100),
+} as Transaction;
 
 function makeStatus(amount: number, totalSpent: number) {
   return {
@@ -27,6 +41,87 @@ function makeStatus(amount: number, totalSpent: number) {
 describe("xrp SendAmountFooterRow", () => {
   beforeEach(() => {
     mockCalculateCountervalue.mockReturnValue(null);
+    server.use(
+      http.post(XRPL_TESTNET_NODE, () => {
+        const node = { LedgerEntryType: "AccountRoot", Flags: 0, TransferRate: 1_010_000_000 };
+
+        return HttpResponse.json({ result: { node, account_data: node, status: "success" } });
+      }),
+    );
+  });
+
+  it("holds the issuer fee row while the fee of a token with one is computed", async () => {
+    render(
+      <SendAmountFooterRow
+        account={account}
+        transaction={tokenTransaction}
+        status={makeStatus(100, 100)}
+        bridgePending
+      />,
+    );
+
+    expect(await screen.findByTestId("xrp-send-issuer-fee-loading")).toBeInTheDocument();
+    expect(screen.getByText("Issuer fee")).toBeVisible();
+  });
+
+  it("holds no issuer fee row while no amount is set", async () => {
+    const { rerender } = render(
+      <SendAmountFooterRow
+        account={account}
+        transaction={tokenTransaction}
+        status={makeStatus(100, 100)}
+        bridgePending
+      />,
+    );
+    await screen.findByTestId("xrp-send-issuer-fee-loading");
+
+    rerender(
+      <SendAmountFooterRow
+        account={account}
+        transaction={{ ...tokenTransaction, amount: new BigNumber(0) }}
+        status={makeStatus(0, 0)}
+        bridgePending
+      />,
+    );
+
+    expect(screen.queryByTestId("xrp-send-issuer-fee-row")).not.toBeInTheDocument();
+  });
+
+  it("holds the issuer fee row while Max is computed", async () => {
+    render(
+      <SendAmountFooterRow
+        account={account}
+        transaction={{ ...tokenTransaction, amount: new BigNumber(0), useAllAmount: true }}
+        status={makeStatus(0, 0)}
+        bridgePending
+      />,
+    );
+
+    expect(await screen.findByTestId("xrp-send-issuer-fee-loading")).toBeInTheDocument();
+  });
+
+  it("shows the computed issuer fee once the bridge is done", async () => {
+    const { rerender } = render(
+      <SendAmountFooterRow
+        account={account}
+        transaction={tokenTransaction}
+        status={makeStatus(100, 100)}
+        bridgePending
+      />,
+    );
+    await screen.findByTestId("xrp-send-issuer-fee-loading");
+
+    rerender(
+      <SendAmountFooterRow
+        account={account}
+        transaction={tokenTransaction}
+        status={makeStatus(100, 101)}
+        bridgePending={false}
+      />,
+    );
+
+    expect(screen.getByText("1 RLUSD")).toBeVisible();
+    expect(screen.queryByTestId("xrp-send-issuer-fee-loading")).not.toBeInTheDocument();
   });
 
   it("shows the issuer fee in the token's unit", () => {

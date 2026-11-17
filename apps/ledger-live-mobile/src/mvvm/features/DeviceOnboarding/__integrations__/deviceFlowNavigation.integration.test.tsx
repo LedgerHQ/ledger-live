@@ -18,7 +18,6 @@ import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { NavigatorName, ScreenName } from "~/const";
-import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
 import { DeviceOnboardingNavigator } from "../navigation/DeviceOnboardingNavigator";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
@@ -104,7 +103,6 @@ function OnboardingNavigator() {
         component={PostWelcomeSelection}
         initialParams={{ userHasDevice: true }}
       />
-      <Onboarding.Screen name={ScreenName.OnboardingWelcomeBack} component={AccessExistingWallet} />
       <Onboarding.Screen name={ScreenName.OnboardingDeviceSelection}>
         {({ route }) => (
           <BackScreen
@@ -354,7 +352,6 @@ describe("device onboarding flow navigation", () => {
 
     await user.press(await screen.findByLabelText("portfolio connect"));
     await user.press(await screen.findByTestId("onboarding-accessWallet"));
-    await user.press(await screen.findByTestId("Existing Wallet | Connect"));
     expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
     showStax(device);
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
@@ -363,7 +360,7 @@ describe("device onboarding flow navigation", () => {
     expectFlowClosed();
 
     await user.press(screen.getByLabelText("back from old touchscreen setup"));
-    expect(await screen.findByTestId("Existing Wallet | Connect")).toBeVisible();
+    expect(await screen.findByTestId("onboarding-accessWallet")).toBeVisible();
     expectFlowClosed();
   });
 

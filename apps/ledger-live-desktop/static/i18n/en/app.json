@@ -4344,7 +4344,8 @@
           "issuer": "Issuer",
           "issuerFee": "Issuer fee",
           "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
-          "issuerFeeUnavailable": "Not available",
+          "issuerFeeError": "Couldn't fetch issuer fee details.",
+          "notEnoughReserve": "You need at least {{minimumAmount}} available to add this token.",
           "receive": "Receive"
         },
         "connectDevice": {
@@ -4353,8 +4354,8 @@
         "confirmation": {
           "title": "Confirmation",
           "success": {
-            "title": "{{token}} token successfully added",
-            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "title": "Request to add {{token}} sent",
+            "text": "It applies once the network confirms the transaction.",
             "cta": "View details"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -4368,8 +4369,7 @@
       "steps": {
         "confirmation": {
           "success": {
-            "title": "{{token}} trust limit updated",
-            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+            "title": "Request to update {{token}} sent"
           }
         }
       }
@@ -4400,9 +4400,7 @@
         },
         "confirmation": {
           "success": {
-            "title": "{{token}} removed",
-            "text": "Your XRP account no longer holds <0>{{token}}</0>.",
-            "released": "{{amount}} are available again."
+            "title": "Request to remove {{token}} sent"
           }
         }
       }
@@ -8188,11 +8186,11 @@
       "description": "To stop holding this token, remove it instead."
     },
     "XrpTokenFrozen": {
-      "title": "You can't send this token",
+      "title": "Token is frozen",
       "description": "Its issuer froze it."
     },
     "XrpTokenNotAuthorized": {
-      "title": "You can't send this token",
+      "title": "Your account isn't approved",
       "description": "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive": {
@@ -8239,7 +8237,7 @@
       "description": "Ask them to add it first."
     },
     "XrpRecipientLimitTooLow": {
-      "title": "This recipient's limit is too low",
+      "title": "Recipient limit is too low",
       "description": "They can only receive up to {{maxAmount}} of this token."
     },
     "XrpSendToIssuer": {
@@ -8796,6 +8794,22 @@
     "SuiAddressBalanceAppUpdateRequired": {
       "title": "Update your Sui app",
       "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
+    },
+    "SuiRawTransactionInvalid": {
+      "title": "Unreadable Sui transaction",
+      "description": "The app sent a Sui transaction that Ledger Wallet can't read. Try again from the app, or contact its support."
+    },
+    "SuiRawTransactionSenderMismatch": {
+      "title": "Wrong Sui account",
+      "description": "This transaction was prepared for another Sui account. Select the account connected to the app and try again."
+    },
+    "SuiRawTransactionResolutionFailed": {
+      "title": "Sui transaction could not be prepared",
+      "description": "Check that the assets it uses still exist and that the account can pay the network fees, then try again from the app."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported": {
+      "title": "Sponsored Sui transaction",
+      "description": "This transaction's network fees are paid by a sponsor, so Ledger Wallet can't send it to the network. The app needs to send it itself. Contact the app's support if this keeps happening."
     },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",

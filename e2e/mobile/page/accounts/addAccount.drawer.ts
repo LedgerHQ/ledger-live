@@ -20,6 +20,9 @@ export default class AddAccountDrawer extends CommonPage {
   private readonly continueButton = byId("enabled-add-accounts-continue-button");
   private readonly accountOfCurrency = (currencyId: string) =>
     this.accountItem({ idPattern: `js:2:${currencyId}:.*` });
+  private readonly aleoViewKeyWarningScreen = byId("aleo-view-key-warning-screen");
+  private readonly aleoViewKeyAllowButton = byId("aleo-view-key-warning-allow-button");
+  private readonly aleoViewKeyApproveScreen = byId("aleo-view-key-approve-screen");
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
@@ -40,6 +43,17 @@ export default class AddAccountDrawer extends CommonPage {
     if (await this.modalButton.isVisible(IMPORT_PROMPT_TIMEOUT)) {
       await this.modalButton.tap();
     }
+  }
+
+  @Step("Allow sharing the Aleo view key")
+  async allowAleoViewKey() {
+    await this.aleoViewKeyWarningScreen.waitVisible();
+    await this.aleoViewKeyAllowButton.tap();
+  }
+
+  @Step("Wait for the Aleo view key approve screen")
+  async waitForAleoViewKeyApproveScreen() {
+    await this.aleoViewKeyApproveScreen.waitVisible();
   }
 
   @Step("Wait for accounts discovery")

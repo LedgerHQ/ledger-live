@@ -2,6 +2,8 @@ import type BigNumber from "bignumber.js";
 
 export type NearAccountDetails = {
   amount: string;
+  locked?: string;
+  code_hash?: string;
   storage_usage: number;
   block_height: number;
 };

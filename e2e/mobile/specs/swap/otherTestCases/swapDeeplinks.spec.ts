@@ -121,7 +121,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("BTC");
-    jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("0.01");
+    await app.swapLiveApp.expectAmountToSend("0.01");
   });
 
   it("Swap deeplink - ETH to BTC with an invalid amountFrom leaves the amount empty", async () => {
@@ -131,7 +131,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("BTC");
-    jestExpect(await app.swapLiveApp.getAmountToSend()).toMatch(/^(0\.?0*|)$/);
+    await app.swapLiveApp.expectAmountToSend(/^(0\.?0*|)$/);
   });
 
   // ─── With accountIds — no drawer expected ────────────────────────────
@@ -144,7 +144,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(usdtAccount);
     await app.swapLiveApp.checkAssetToMatchesAccount(btcAccount);
-    jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("20");
+    await app.swapLiveApp.expectAmountToSend("20");
   });
 
   it("Swap deeplink - accountIds only resolve without token params, no drawer", async () => {
