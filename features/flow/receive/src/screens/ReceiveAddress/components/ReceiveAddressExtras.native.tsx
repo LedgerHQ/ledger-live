@@ -33,16 +33,25 @@ function NavigationCard({
 }
 
 /** The cards at the bottom of the screen, each opening its bottom sheet. */
-export function ReceiveAddressExtras({ memoCard }: ReceiveAddressExtrasProps) {
-  if (!memoCard) return null;
+export function ReceiveAddressExtras({ memoCard, helpCard }: ReceiveAddressExtrasProps) {
+  if (!memoCard && !helpCard) return null;
 
   return (
     <Box lx={{ gap: "s8" }} testID="receive-address-extras">
-      <NavigationCard
-        title={memoCard.title}
-        onPress={memoCard.onPress}
-        testID="receive-address-memo-card"
-      />
+      {memoCard ? (
+        <NavigationCard
+          title={memoCard.title}
+          onPress={memoCard.onPress}
+          testID="receive-address-memo-card"
+        />
+      ) : null}
+      {helpCard ? (
+        <NavigationCard
+          title={helpCard.title}
+          onPress={helpCard.onPress}
+          testID="receive-address-help-card"
+        />
+      ) : null}
     </Box>
   );
 }

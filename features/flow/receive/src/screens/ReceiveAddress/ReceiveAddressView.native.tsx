@@ -9,13 +9,13 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { HelpPanel } from "./components/HelpPanel";
 import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { dimmedWhile } from "./components/dimmedWhile";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 const CONTENT_BOTTOM_SPACING = 16;
@@ -35,6 +35,7 @@ export function ReceiveAddressView({
   memoCard,
   memoPanel,
   helpCard,
+  helpPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -122,13 +123,13 @@ export function ReceiveAddressView({
             </>
           )}
           <Box {...dimmed}>
-            <ReceiveAddressExtras memoCard={memoCard} />
-            <ZonePlaceholder zone="extras" label={helpCard?.title} />
+            <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
           </Box>
         </ScrollView>
       )}
       {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
       {memoPanel ? <MemoPanel memoPanel={memoPanel} /> : null}
+      {helpPanel ? <HelpPanel helpPanel={helpPanel} /> : null}
     </Box>
   );
 }

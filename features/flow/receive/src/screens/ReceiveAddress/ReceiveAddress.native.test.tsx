@@ -197,12 +197,13 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
   });
 
-  it("lays the zones out in screen order", async () => {
-    renderScreen();
-    await screen.findByTestId("receive-address-summary");
+  it("opens the help bottom sheet from its card, each question opening its article", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onOpenUrl });
 
-    expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-extras",
-    ]);
+    fireEvent.press(await screen.findByTestId("receive-address-help-card"));
+    fireEvent.press(screen.getByTestId("receive-address-help-receiveFromExchange"));
+
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.receiveFromExchange);
   });
 });
