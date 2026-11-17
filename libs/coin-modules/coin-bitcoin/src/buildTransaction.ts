@@ -147,7 +147,7 @@ export const buildTransaction = async (
     transaction.replaceTxId,
   );
 
-  transaction.rbf = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest"].includes(
+  transaction.rbf = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest", "bitcoin_signet"].includes(
     walletAccount.params.currency,
   )
     ? true

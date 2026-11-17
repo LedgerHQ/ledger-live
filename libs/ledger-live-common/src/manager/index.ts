@@ -14,6 +14,7 @@ import type {
 export { getProviderId };
 const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
+  bitcoin_signet: "bitcoin",
 };
 const oldAppsInstallDisabled = [
   "Crypto.com Chain",
