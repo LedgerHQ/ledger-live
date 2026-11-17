@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import type { StakingDelegation, StakingUnbonding } from "@ledgerhq/types-live";

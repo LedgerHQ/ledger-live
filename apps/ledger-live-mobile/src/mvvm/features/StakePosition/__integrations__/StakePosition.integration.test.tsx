@@ -1,6 +1,6 @@
 import React, { useEffect, useSyncExternalStore } from "react";
 import { BackHandler, Pressable } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { ParamListBase } from "@react-navigation/native";
 import {
   createNativeStackNavigator,

@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";

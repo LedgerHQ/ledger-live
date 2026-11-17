@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";

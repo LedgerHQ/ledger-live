@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useNavigation } from "@react-navigation/native";
 import {
   findSolanaStakingPosition,
