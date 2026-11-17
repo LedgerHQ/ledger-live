@@ -2,6 +2,7 @@ import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
+import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
@@ -19,15 +20,28 @@ export function ReceiveAddressView({
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
-  // The close button, Escape and a click outside all leave through here.
+  const isHintOpen = !!actions.verifyHint;
+  // The close button, Escape and a click outside all leave through here, once the hint is answered.
   const handleOpenChange = (open: boolean) => {
-    if (!open) onClose();
+    if (!open && !isHintOpen) onClose();
+  };
+  const keepOpenWhileHint = (event: Event) => {
+    if (isHintOpen) event.preventDefault();
   };
   const closeDialog = () => handleOpenChange(false);
 
   return (
     <Dialog open onOpenChange={handleOpenChange} height="fit">
-      <DialogContent aria-describedby={undefined} data-testid="receive-address">
+      <DialogContent
+        aria-describedby={undefined}
+        data-testid="receive-address"
+        onPointerDownOutside={keepOpenWhileHint}
+        onInteractOutside={keepOpenWhileHint}
+      >
+        {isHintOpen ? (
+          // Everything but the hint and the tiles steps back while the hint is open.
+          <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
+        ) : null}
         <DialogBackgroundToneProvider>
           {addressSelection ? (
             <>
@@ -52,7 +66,9 @@ export function ReceiveAddressView({
                 onBack={onBack}
                 onClose={closeDialog}
               />
-              <DialogBody className="flex flex-col gap-24">
+              <DialogBody
+                className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
+              >
                 {error ? (
                   <InfoState
                     preset="error"
@@ -73,13 +89,7 @@ export function ReceiveAddressView({
                     ) : (
                       <AddressSummary address={address} />
                     )}
-                    <ZonePlaceholder
-                      zone="actions"
-                      label={[actions.copy, actions.share, actions.verify]
-                        .map(action => action?.label)
-                        .filter(Boolean)
-                        .join(" · ")}
-                    />
+                    <AddressActions actions={actions} />
                     <ZonePlaceholder zone="notices" />
                   </>
                 )}
