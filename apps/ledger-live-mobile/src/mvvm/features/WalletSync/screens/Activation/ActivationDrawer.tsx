@@ -31,6 +31,7 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
+  onModalHide,
   deviceIntentStepElement,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
@@ -44,6 +45,7 @@ function View({
         CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
         hasBackButton={canGoBack}
         onBack={goBackToPreviousStep}
+        onModalHide={onModalHide}
       >
         <Flex maxHeight={"90%"}>
           <ActivationFlow

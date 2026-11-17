@@ -335,9 +335,19 @@ function initialState({
 
 type RenderResult = ReturnType<typeof render>;
 
+// The drawer starts the device step from its onModalHide, which the press's own timers fire
+// outside act: pressing within act flushes the step it starts.
+async function pressDrawerHandOff(
+  user: RenderResult["user"],
+  element: Parameters<RenderResult["user"]["press"]>[0],
+) {
+  await act(() => user.press(element));
+}
+
 async function activateFromSettings(state = initialState({})): Promise<RenderResult> {
   const result = render(<SettingsEntry />, { overrideInitialState: state });
-  await result.user.press(
+  await pressDrawerHandOff(
+    result.user,
     await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
   );
   return result;
@@ -348,7 +358,7 @@ async function removeInstance(
 ): Promise<RenderResult> {
   const result = render(<ManageInstancesEntry />, { overrideInitialState: state });
   const instance = await screen.findByTestId(`walletSync-manage-instance-${MEMBER.id}`);
-  await result.user.press(within(instance).getByText("Remove"));
+  await pressDrawerHandOff(result.user, within(instance).getByText("Remove"));
   return result;
 }
 
@@ -464,7 +474,10 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
 
       const { user } = render(<AddAccountEntry />, { overrideInitialState: initialState({}) });
       await user.press(await screen.findByTestId("add-accounts-modal-wallet-sync-button"));
-      await user.press(await screen.findByTestId("walletsync-choose-sync-method-connect-device"));
+      await pressDrawerHandOff(
+        user,
+        await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
+      );
 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
       expectNoProcessScreen();

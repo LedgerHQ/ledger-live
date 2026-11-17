@@ -13,6 +13,7 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import { ScreenName } from "~/const";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { useManageInstancesDeviceIntentStep } from "./useManageInstancesDeviceIntentStep";
+import { useRunAfterDrawerHide } from "../Activation/useRunAfterDrawerHide";
 
 const messageLog = "Follow Steps on device";
 
@@ -33,6 +34,8 @@ export type HookResult = {
   scene: Scene;
   memberCredentials: MemberCredentials | null;
   checkInstances: () => void;
+  /** The drawer's `onModalHide`: starts the removal step `onClickInstance` asked for. */
+  onModalHide: () => void;
   /** Rendered by the screen outside the drawer: the step outlives it. */
   deviceIntentStepElement: React.ReactElement | null;
 };
@@ -47,6 +50,7 @@ export const useManageInstancesDrawer = (): HookResult => {
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const deviceIntentStep = useManageInstancesDeviceIntentStep();
+  const { runAfterHide, onModalHide } = useRunAfterDrawerHide();
 
   const openDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(true);
@@ -70,7 +74,7 @@ export const useManageInstancesDrawer = (): HookResult => {
     });
     if (deviceIntentStep.isEnabled) {
       setIsDrawerInstructionsVisible(false);
-      deviceIntentStep.start({ member: instance });
+      runAfterHide(() => deviceIntentStep.start({ member: instance }));
       return;
     }
     navigation.navigate(ScreenName.WalletSyncManageInstancesProcess, {
@@ -99,6 +103,7 @@ export const useManageInstancesDrawer = (): HookResult => {
     scene,
     memberCredentials,
     checkInstances,
+    onModalHide,
     deviceIntentStepElement: deviceIntentStep.element,
   };
 };

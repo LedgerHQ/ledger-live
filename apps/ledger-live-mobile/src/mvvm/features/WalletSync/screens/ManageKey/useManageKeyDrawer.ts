@@ -14,6 +14,7 @@ import { manageKeyDrawerSelector } from "~/reducers/walletSync";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { NavigationProps } from "~/screens/AccountSettings";
 import { useActivationDeviceIntentStep } from "../Activation/useActivationDeviceIntentStep";
+import { useRunAfterDrawerHide } from "../Activation/useRunAfterDrawerHide";
 
 const messageLog = "Follow Steps on device";
 
@@ -26,6 +27,8 @@ export type HookResult = {
   deleteMutation: UseMutationResult<void, Error, void, unknown>;
   handleCancel: () => void;
   onCreateKey: () => void;
+  /** The drawer's `onModalHide`: starts the device step `onCreateKey` asked for. */
+  onModalHide: () => void;
   /** Rendered by the screen outside the drawer: the step outlives it. */
   deviceIntentStepElement: React.ReactElement | null;
 };
@@ -51,6 +54,7 @@ export const useManageKeyDrawer = () => {
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const baseNavigation = useNavigation<NavigationProps["navigation"]>();
   const deviceIntentStep = useActivationDeviceIntentStep();
+  const { runAfterHide, onModalHide } = useRunAfterDrawerHide();
 
   const handleClose = () => {
     closeDrawer();
@@ -83,7 +87,7 @@ export const useManageKeyDrawer = () => {
   const onCreateKey = () => {
     if (deviceIntentStep.isEnabled) {
       closeDrawer();
-      deviceIntentStep.start();
+      runAfterHide(() => deviceIntentStep.start());
       return;
     }
     baseNavigation.navigate(NavigatorName.WalletSync, {
@@ -100,6 +104,7 @@ export const useManageKeyDrawer = () => {
     handleCancel,
     handleClose,
     onCreateKey,
+    onModalHide,
     deviceIntentStepElement: deviceIntentStep.element,
   };
 };

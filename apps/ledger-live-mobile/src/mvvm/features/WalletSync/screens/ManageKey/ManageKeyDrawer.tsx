@@ -17,6 +17,7 @@ const ManageKeyDrawer = ({
   onClickConfirm,
   handleCancel,
   onCreateKey,
+  onModalHide,
 }: HookResult) => {
   const getScene = () => {
     if (deleteMutation.error) {
@@ -50,7 +51,11 @@ const ManageKeyDrawer = ({
   };
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
+    <QueuedDrawer
+      isRequestingToBeOpened={isDrawerVisible}
+      onClose={handleClose}
+      onModalHide={onModalHide}
+    >
       {getScene()}
     </QueuedDrawer>
   );

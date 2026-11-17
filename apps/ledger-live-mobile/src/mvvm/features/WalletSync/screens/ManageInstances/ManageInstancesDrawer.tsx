@@ -18,6 +18,7 @@ const ManageInstancesDrawer = ({
   scene,
   changeScene,
   onClickInstance,
+  onModalHide,
 }: HookResult) => {
   const { error, isError, isLoading, data } = memberHook;
   const manageKeyHook = useManageKeyDrawer();
@@ -62,7 +63,11 @@ const ManageInstancesDrawer = ({
   };
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
+    <QueuedDrawer
+      isRequestingToBeOpened={isDrawerVisible}
+      onClose={handleClose}
+      onModalHide={onModalHide}
+    >
       {getScene()}
     </QueuedDrawer>
   );

@@ -19,6 +19,7 @@ import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
 import { closePostOnboardingHubDrawer } from "~/reducers/postOnboardingHubDrawer";
 import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 import { useActivationDeviceIntentStep } from "./useActivationDeviceIntentStep";
+import { useRunAfterDrawerHide } from "./useRunAfterDrawerHide";
 
 type Props = {
   isOpen: boolean;
@@ -44,6 +45,7 @@ const useActivationDrawerModel = ({
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const deviceIntentStep = useActivationDeviceIntentStep();
+  const { runAfterHide, onModalHide } = useRunAfterDrawerHide();
 
   useEffect(() => {
     setCurrentStep(startingStep);
@@ -96,12 +98,18 @@ const useActivationDrawerModel = ({
   const navigateToWalletSyncActivationProcess = () => {
     resetDrawer();
     handleNavigate();
-    closeAllBottomSheets();
-    dispatch(closePostOnboardingHubDrawer());
     if (deviceIntentStep.isEnabled) {
-      deviceIntentStep.start();
+      dispatch(closePostOnboardingHubDrawer());
+      // Closing every sheet now would drop this drawer without its close animation, and with it
+      // the onModalHide that starts the step.
+      runAfterHide(() => {
+        closeAllBottomSheets();
+        deviceIntentStep.start();
+      });
       return;
     }
+    closeAllBottomSheets();
+    dispatch(closePostOnboardingHubDrawer());
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
@@ -141,6 +149,7 @@ const useActivationDrawerModel = ({
     setCurrentOption,
     onCreateKey,
     navigateToWalletSyncActivationProcess,
+    onModalHide,
     deviceIntentStepElement: deviceIntentStep.element,
   };
 };
