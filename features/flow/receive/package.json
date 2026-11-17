@@ -71,6 +71,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
@@ -84,6 +85,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:"
   },
@@ -104,6 +106,9 @@
       "optional": true
     },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-reanimated": {
       "optional": true
     }
   }

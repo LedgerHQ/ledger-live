@@ -5,10 +5,12 @@ import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { InfoState } from "@shared/ui-info-state";
+import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
+import { dimmedWhile } from "./components/dimmedWhile";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -28,6 +30,8 @@ export function ReceiveAddressView({
 }: ReceiveAddressViewProps) {
   const { t } = useTranslation();
   const { top, bottom } = useSafeAreaInsets();
+  // While the verify hint is open, everything but the hint and the action tiles steps back.
+  const dimmed = dimmedWhile(!!actions.verifyHint);
 
   return (
     <Box
@@ -35,7 +39,7 @@ export function ReceiveAddressView({
       style={{ paddingTop: top }}
       testID="receive-address"
     >
-      <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }}>
+      <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }} {...dimmed}>
         <IconButton
           icon={onBack ? ArrowLeft : Close}
           appearance="no-background"
@@ -67,11 +71,13 @@ export function ReceiveAddressView({
             paddingBottom: CONTENT_BOTTOM_SPACING + bottom,
           }}
         >
-          <ReceiveAddressTitle
-            title={title}
-            networkLabel={networkLabel}
-            networkIcon={networkIcon}
-          />
+          <Box {...dimmed}>
+            <ReceiveAddressTitle
+              title={title}
+              networkLabel={networkLabel}
+              networkIcon={networkIcon}
+            />
+          </Box>
           {error ? (
             <InfoState
               preset="error"
@@ -87,22 +93,22 @@ export function ReceiveAddressView({
             />
           ) : (
             <>
-              {isLoading || !address ? (
-                <AddressSummarySkeleton />
-              ) : (
-                <AddressSummary address={address} />
-              )}
-              <ZonePlaceholder
-                zone="actions"
-                label={[actions.copy, actions.share, actions.verify]
-                  .map(action => action?.label)
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-              <ZonePlaceholder zone="notices" />
+              <Box {...dimmed}>
+                {isLoading || !address ? (
+                  <AddressSummarySkeleton />
+                ) : (
+                  <AddressSummary address={address} />
+                )}
+              </Box>
+              <AddressActions actions={actions} />
+              <Box {...dimmed}>
+                <ZonePlaceholder zone="notices" />
+              </Box>
             </>
           )}
-          <ZonePlaceholder zone="extras" />
+          <Box {...dimmed}>
+            <ZonePlaceholder zone="extras" />
+          </Box>
         </ScrollView>
       )}
     </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ComponentProps } from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
@@ -15,15 +15,25 @@ jest.mock("@ledgerhq/crypto-icons/native", () => {
   return ({ ledgerId }: { ledgerId: string }) => <Text>{`icon:${ledgerId}`}</Text>;
 });
 
-const renderScreen = (onClose = jest.fn(), store = makeReceiveTestStore()) =>
+const renderScreen = (
+  onClose = jest.fn(),
+  store = makeReceiveTestStore(),
+  ports: Partial<ComponentProps<typeof ReceiveAddress>> = {},
+) =>
   render(
     <ReceiveAddress
       accountUUID={testAccountUUID}
       assetId={CryptoOrTokenCurrencyIdSchema.parse("ethereum")}
       onClose={onClose}
+      {...ports}
     />,
     { wrapper: receiveTestWrapper(store) },
   );
+
+const VerifyAddressExecutor = () => {
+  const { Text } = jest.requireActual("react-native");
+  return <Text testID="verify-executor">verifying</Text>;
+};
 
 describe("ReceiveAddress (Native)", () => {
   it("names the asset and its network, with the network icon", () => {
@@ -83,12 +93,44 @@ describe("ReceiveAddress (Native)", () => {
     expect(receive).toHaveBeenCalledTimes(2);
   });
 
+  it("copies and shares the address", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    const onShareAddress = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress, onShareAddress });
+
+    await screen.findByTestId("receive-address-summary");
+    fireEvent.press(screen.getByTestId("receive-address-share"));
+    fireEvent.press(screen.getByTestId("receive-address-copy"));
+
+    expect(onShareAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(await screen.findByText("Copied")).toBeTruthy();
+  });
+
+  it("points at Verify until the hint is dismissed, then verifies on the device", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
+
+    expect(await screen.findByTestId("receive-address-verify-hint")).toBeTruthy();
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+
+    fireEvent.press(screen.getByTestId("receive-address-verify"));
+    expect(screen.getByTestId("verify-executor")).toBeTruthy();
+  });
+
+  it("disables Verify for an address the device cannot show", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ verification: undefined }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { VerifyAddressExecutor });
+
+    expect((await screen.findByTestId("receive-address-verify")).props.disabled).toBe(true);
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-actions",
       "receive-address-zone-notices",
       "receive-address-zone-extras",
     ]);
