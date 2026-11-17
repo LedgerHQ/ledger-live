@@ -26,6 +26,7 @@ jobs:
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
+      path_prefixes: ${{ steps.nx-affected.outputs.path_prefixes }}
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -78,7 +79,7 @@ jobs:
   build-desktop-external:
     name: "Build Desktop (External)"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
@@ -87,7 +88,7 @@ jobs:
   test-desktop-external:
     name: "Test Desktop (External)"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
@@ -96,7 +97,7 @@ jobs:
   build-mobile-external:
     name: "Build Mobile (External)"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}

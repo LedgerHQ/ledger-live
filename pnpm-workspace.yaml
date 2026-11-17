@@ -76,7 +76,7 @@ catalog:
   "@ledgerhq/evm-tools": 2.1.0
   "@ledgerhq/lumen-design-core": 0.1.35
   "@ledgerhq/lumen-lint-plugin": 0.1.3
-  "@ledgerhq/lumen-ui-react": 0.1.69
+  "@ledgerhq/lumen-ui-react": 0.1.73
   "@ledgerhq/lumen-ui-rnative": 0.1.74
   "@ledgerhq/lumen-utils-shared": 0.1.19
   # Wallet API
@@ -261,7 +261,7 @@ catalog:
   "@ledgerhq/coin-module-framework": 11.0.1
   "@ledgerhq/coin-stellar": 12.2.3
   "@ledgerhq/coin-tezos": 14.2.0
-  "@ledgerhq/coin-xrp": 13.8.0
+  "@ledgerhq/coin-xrp": 13.8.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:

@@ -1,5 +1,5 @@
 {
-  "unverifiable": 12,
+  "unverifiable": 0,
   "allowMissing": [
     "Mobile payTab.actions.pay",
     "Mobile payTab.cardLogin.beforeIntro.alreadyHaveCard"

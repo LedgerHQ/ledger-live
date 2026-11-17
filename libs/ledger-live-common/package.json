@@ -290,6 +290,7 @@
   },
   "devDependencies": {
     "@domain/entity-account": "workspace:^",
+    "@domain/entity-derivation": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",

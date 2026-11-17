@@ -18,6 +18,7 @@ import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
 import {
+  COMPACT_TAB_COUNT,
   getLabelKey,
   TRACKING_EXTRA_PROPS_MAP,
   TRACKING_LABEL_MAP,
@@ -29,7 +30,7 @@ type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigatio
 
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
-  "activeRouteName" | "tabItems" | "onTabPress"
+  "activeRouteName" | "tabItems" | "isCompact" | "onTabPress"
 >;
 
 type TabIconConfig = { icon: TabItemConfig["icon"]; activeIcon?: TabItemConfig["activeIcon"] };
@@ -113,5 +114,7 @@ export const useMainTabBarViewModel = ({
     [state.routes, activeRouteName, navigateToTab],
   );
 
-  return { activeRouteName, tabItems, onTabPress };
+  const isCompact = tabItems.length >= COMPACT_TAB_COUNT;
+
+  return { activeRouteName, tabItems, isCompact, onTabPress };
 };

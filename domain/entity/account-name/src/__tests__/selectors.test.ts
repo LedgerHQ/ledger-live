@@ -5,8 +5,8 @@ import {
   LegacyAccountEntrySchema,
 } from "@domain/entity-account";
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
-import { accountNamesSlice, setAccountName } from "../slice";
-import { accountNameWithDefaultSelector, selectAccountNameByUUID } from "../selectors";
+import { accountNamesSlice, accountNameWithDefaultSelector, setAccountName } from "../slice";
+import { selectAccountNameByUUID } from "../selectors";
 
 function makeStore() {
   return configureStore({ reducer: { accountNames: accountNamesSlice.reducer } });
