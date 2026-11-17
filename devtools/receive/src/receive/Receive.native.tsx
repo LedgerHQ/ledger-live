@@ -1,10 +1,22 @@
 import type { ReactNode } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Button, Switch, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
+import {
+  Box,
+  Button,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  Switch,
+  Text,
+  TextInput,
+} from "@ledgerhq/lumen-ui-rnative";
 import type { ReceiveToolProps } from "../types";
 import { copy } from "./copy";
-import { useReceiveToolViewModel } from "./useReceiveToolViewModel";
+import { type ReceiveRow, useReceiveToolViewModel } from "./useReceiveToolViewModel";
 
 const ROW_LX = {
   flexDirection: "row",
@@ -33,9 +45,22 @@ function Section({
   );
 }
 
+function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
+  return (
+    <ListItem onPress={row.onPress} accessibilityLabel={row.accessibilityLabel}>
+      <ListItemLeading>
+        <CryptoIcon {...row.icon} size={32} />
+        <ListItemContent>
+          <ListItemTitle>{row.title}</ListItemTitle>
+          <ListItemDescription>{row.description}</ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+    </ListItem>
+  );
+}
+
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excludedDraft, setExcludedDraft, applyExcludedFamilies } =
-    useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -60,14 +85,48 @@ export function Receive(props: ReceiveToolProps) {
         <TextInput
           label={copy.excludedFamilies}
           placeholder={copy.excludedFamiliesPlaceholder}
-          value={excludedDraft}
-          onChangeText={setExcludedDraft}
+          value={excluded.draft}
+          onChangeText={excluded.setDraft}
           autoCapitalize="none"
           autoCorrect={false}
         />
         <Box lx={{ alignItems: "flex-end" }}>
-          <Button appearance="gray" size="sm" onPress={applyExcludedFamilies}>
+          <Button appearance="gray" size="sm" onPress={excluded.apply}>
             {copy.apply}
+          </Button>
+        </Box>
+      </Section>
+      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
+        <Box lx={{ alignItems: "flex-start" }}>
+          <Button appearance="gray" size="sm" onPress={pickAsset}>
+            {copy.pickAsset}
+          </Button>
+        </Box>
+        {rows.length === 0 ? (
+          <Text typography="body3" lx={{ color: "muted" }}>
+            {copy.noAsset}
+          </Text>
+        ) : (
+          <Box>
+            {rows.map(row => (
+              <AssetRow key={row.key} row={row} />
+            ))}
+          </Box>
+        )}
+      </Section>
+      <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
+        <TextInput
+          label={copy.deeplinkLabel}
+          value={deeplink.draft}
+          onChangeText={deeplink.setDraft}
+          helperText={deeplink.error}
+          status={deeplink.error && "error"}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <Box lx={{ alignItems: "flex-end" }}>
+          <Button appearance="gray" size="sm" disabled={!deeplink.canOpen} onPress={deeplink.open}>
+            {copy.openDeeplink}
           </Button>
         </Box>
       </Section>
