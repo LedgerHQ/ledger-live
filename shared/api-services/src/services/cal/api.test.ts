@@ -177,3 +177,71 @@ describe("calBaseQuery timeout", () => {
     expect(probe).toHaveBeenCalledTimes(MAX_RETRIES + 1);
   });
 });
+
+// Runs one probe query through every retry, with fake timers on.
+async function probeThroughRetries() {
+  const { api, store } = probeStore(calApiExtra(valid));
+  const pending = store.dispatch(api.endpoints.probe.initiate());
+  await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+  return pending;
+}
+
+describe("calBaseQuery retry", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it.each([403, 407])("does not retry a %i, the way a proxy denies a host", async status => {
+    probe.mockImplementation(() => HttpResponse.json({}, { status }));
+
+    const result = await probeThroughRetries();
+
+    expect(result.error).toMatchObject({ status });
+    expect(probe).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([403, 407])("does not retry a %i whose body is not JSON", async status => {
+    probe.mockImplementation(
+      () => new HttpResponse("Forbidden", { status, headers: { "Content-Type": "text/plain" } }),
+    );
+
+    const result = await probeThroughRetries();
+
+    expect(result.error).toMatchObject({ status: "PARSING_ERROR", originalStatus: status });
+    expect(probe).toHaveBeenCalledTimes(1);
+  });
+
+  it("still retries a server error whose body is not JSON", async () => {
+    probe.mockImplementation(
+      () =>
+        new HttpResponse("Bad Gateway", { status: 502, headers: { "Content-Type": "text/html" } }),
+    );
+
+    const result = await probeThroughRetries();
+
+    expect(result.error).toMatchObject({ status: "PARSING_ERROR", originalStatus: 502 });
+    expect(probe).toHaveBeenCalledTimes(MAX_RETRIES + 1);
+  });
+
+  it("still retries a 429", async () => {
+    probe.mockImplementation(() => HttpResponse.json({}, { status: 429 }));
+
+    const result = await probeThroughRetries();
+
+    expect(result.error).toMatchObject({ status: 429 });
+    expect(probe).toHaveBeenCalledTimes(MAX_RETRIES + 1);
+  });
+
+  it("still retries a request that got no response", async () => {
+    probe.mockImplementation(() => HttpResponse.error());
+
+    const result = await probeThroughRetries();
+
+    expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
+    expect(probe).toHaveBeenCalledTimes(MAX_RETRIES + 1);
+  });
+});
