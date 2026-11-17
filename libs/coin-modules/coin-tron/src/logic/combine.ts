@@ -22,16 +22,20 @@ export function combine(tx: string, signature: string[]): string {
   return `${tx.length.toString(16).padStart(TX_LEN_PREFIX_HEX_WIDTH, "0")}${tx}${signature[0]}`;
 }
 
+// r || s || v, with a v java-tron accepts: 0/1 or 27/28. ethers would also recover a 64-byte compact
+// signature or an EIP-155 v, which the network rejects.
+const TRON_SIGNATURE = /^[0-9a-f]{128}(?:00|01|1b|1c)$/i;
+
 /** Inverse of {@link combine}: strips the length prefix and echoed tx to recover the raw signature. */
 export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
   const txLength = Number.parseInt(combinedSignature.slice(0, TX_LEN_PREFIX_HEX_WIDTH), 16);
   const txEnd = TX_LEN_PREFIX_HEX_WIDTH + rawDataHex.length;
   const signature = combinedSignature.slice(txEnd);
-  // A signature over other bytes must not be attached to this transaction.
+  // The echoed tx must be this one; who signed it is checked by the caller.
   if (
     txLength !== rawDataHex.length ||
     combinedSignature.slice(TX_LEN_PREFIX_HEX_WIDTH, txEnd) !== rawDataHex ||
-    signature.length === 0
+    !TRON_SIGNATURE.test(signature)
   ) {
     throw new InvalidRawDataHex("Combined signature does not match the transaction to sign");
   }
