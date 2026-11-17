@@ -20,11 +20,20 @@ import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/hooks/useO
 
 type LegacyReceiveData = NonNullable<ModalData["MODAL_RECEIVE"]>;
 
-/** The `MODAL_RECEIVE` payload, plus the assets an asset page receives. */
+type SelectedAccount = Readonly<{
+  account: AccountLike;
+  parentAccount?: Account | null;
+  /** Picked in the asset dialog: the legacy modal opens on it, not in token mode. */
+  fromAssetDialog?: boolean;
+}>;
+
+/** The `MODAL_RECEIVE` payload, plus what an asset page gives. */
 export type OpenReceiveFlowData = LegacyReceiveData &
   Readonly<{
     /** Asset page: limits the asset dialog, and the Noah options, to its assets. */
     currencyIds?: readonly string[];
+    /** Asset page: the account the legacy modal preselects; the new flow lets the user pick. */
+    legacyAccount?: Readonly<{ account: AccountLike; parentAccount?: Account | null }>;
   }>;
 
 /**
@@ -33,23 +42,43 @@ export type OpenReceiveFlowData = LegacyReceiveData &
  * - an account: the receive address dialog, or `MODAL_RECEIVE` when the account model doesn't know
  *   the account or its family is not supported;
  * - no account, or a token to pick on an account's network: the asset dialog, then the same.
+ * A failure while routing falls back to `MODAL_RECEIVE`.
  */
 export const openReceiveFlow =
   (data: OpenReceiveFlowData = {}): ThunkResult<Promise<void>> =>
   async (dispatch, getState) => {
-    const { currencyIds, ...legacyData } = data;
+    const { currencyIds, legacyAccount, ...legacyData } = data;
     const state = getState();
     const flag = selectFeature(state, "newReceiveFlow");
-    const openLegacy = (account = data.account, parentAccount = data.parentAccount) => {
-      dispatch(openModal("MODAL_RECEIVE", { ...legacyData, account, parentAccount }));
+    const openLegacy = (selected?: SelectedAccount) => {
+      const preselected = selected ?? legacyAccount;
+      dispatch(
+        openModal("MODAL_RECEIVE", {
+          ...legacyData,
+          ...(selected?.fromAssetDialog && { receiveTokenMode: false }),
+          ...(preselected && {
+            account: preselected.account,
+            parentAccount: preselected.parentAccount,
+          }),
+        }),
+      );
     };
 
-    if (!flag.enabled || onboardingReceiveFlowSelector(state) || showsNoahOptions(state, data)) {
+    if (!flag?.enabled || onboardingReceiveFlowSelector(state) || showsNoahOptions(state, data)) {
       openLegacy();
       return;
     }
 
-    const openForAccount = async (account: AccountLike, parentAccount?: Account | null) => {
+    const openForAccount = async (selected: SelectedAccount) => {
+      try {
+        await routeAccount(selected);
+      } catch {
+        openLegacy(selected);
+      }
+    };
+
+    const routeAccount = async (selected: SelectedAccount) => {
+      const { account, parentAccount } = selected;
       const mainAccount = findMainAccount(getState(), account, parentAccount);
       const asset = getAccountCurrency(account);
       const assetId = CryptoOrTokenCurrencyIdSchema.safeParse(asset.id);
@@ -58,7 +87,7 @@ export const openReceiveFlow =
         assetId.success &&
         toReceiveTarget(getState().accountEntries, mainAccount.id, assetId.data);
       if (!mainAccount || !target) {
-        openLegacy(account, parentAccount);
+        openLegacy(selected);
         return;
       }
 
@@ -75,7 +104,7 @@ export const openReceiveFlow =
         excludedFamilies: flag.params?.excludedFamilies ?? [],
       });
       if (!isSupported) {
-        openLegacy(account, parentAccount);
+        openLegacy(selected);
         return;
       }
 
@@ -94,7 +123,7 @@ export const openReceiveFlow =
         : undefined;
 
     if (data.account && !tokenNetworkId) {
-      await openForAccount(data.account, data.parentAccount);
+      await openForAccount({ account: data.account, parentAccount: data.parentAccount });
       return;
     }
 
@@ -105,7 +134,8 @@ export const openReceiveFlow =
         networkIds: tokenNetworkId ? [tokenNetworkId] : undefined,
         flow: ModularDrawerLocation.RECEIVE_FLOW,
         source: data.sourcePage,
-        onSuccess: (account, parentAccount) => void openForAccount(account, parentAccount),
+        onSuccess: (account, parentAccount) =>
+          void openForAccount({ account, parentAccount, fromAssetDialog: true }),
       },
       dispatch,
     );
@@ -122,12 +152,13 @@ function findMainAccount(
 
 function showsNoahOptions(
   state: State,
-  { account, currencyIds, shouldUseReceiveOptions }: OpenReceiveFlowData,
+  { account, legacyAccount, currencyIds, shouldUseReceiveOptions }: OpenReceiveFlowData,
 ): boolean {
+  const preselected = account ?? legacyAccount?.account;
   return showsReceiveOptions({
     noah: selectFeature(state, "noah"),
     shouldUseReceiveOptions,
-    accountAssetId: account ? getAccountCurrency(account).id : undefined,
+    accountAssetId: preselected ? getAccountCurrency(preselected).id : undefined,
     pageAssetIds: currencyIds,
   });
 }

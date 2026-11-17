@@ -215,7 +215,9 @@ export function useActionBarViewModel({
       openReceiveFlow({
         sourcePage: ASSET_DETAIL_TRACKING_PAGE_NAME,
         currencyIds: assetCurrencyIds,
-        ...(primaryAccount ? { account: primaryAccount, parentAccount: primaryParentAccount } : {}),
+        legacyAccount: primaryAccount
+          ? { account: primaryAccount, parentAccount: primaryParentAccount }
+          : undefined,
       }),
     );
   }, [assetCurrencyIds, dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);

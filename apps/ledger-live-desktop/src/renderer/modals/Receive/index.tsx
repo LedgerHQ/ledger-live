@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
@@ -16,6 +15,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
+import { showsReceiveOptions } from "@features/flow-receive";
 import { GlobalModalData } from "../types";
 import {
   onboardingReceiveFlowSelector,
@@ -28,20 +28,9 @@ type State = {
   verifyAddressError: Error | undefined | null;
 };
 
-function getInitialState(
-  isNoahActive: boolean,
-  account: AccountLike | null | undefined,
-  isOnboardingFlow?: boolean,
-  activeCurrencyIds?: string[],
-): State {
-  const accountCurrency = account ? getAccountCurrency(account) : null;
-  const isValidAccount =
-    activeCurrencyIds && accountCurrency?.id
-      ? activeCurrencyIds.includes(accountCurrency.id)
-      : false;
-  const shouldUseReceiveOptions = isNoahActive && (!account || isValidAccount);
+function getInitialState(showsOptions: boolean, isOnboardingFlow?: boolean): State {
   return {
-    stepId: !isOnboardingFlow && shouldUseReceiveOptions ? "receiveOptions" : "account",
+    stepId: !isOnboardingFlow && showsOptions ? "receiveOptions" : "account",
     isAddressVerified: null,
     verifyAddressError: null,
   };
@@ -50,13 +39,12 @@ function getInitialState(
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const noahFeature = useFeature("noah");
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
-  const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
-  const initialState = getInitialState(
-    isNoahActive,
-    props?.account,
-    isOnboardingReceiveFlow,
-    noahFeature?.params?.activeCurrencyIds,
-  );
+  const showsOptions = showsReceiveOptions({
+    noah: noahFeature ?? undefined,
+    shouldUseReceiveOptions: props?.shouldUseReceiveOptions,
+    accountAssetId: props?.account ? getAccountCurrency(props.account).id : undefined,
+  });
+  const initialState = getInitialState(showsOptions, isOnboardingReceiveFlow);
   const [state, setState] = useState<State>(() => initialState);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;

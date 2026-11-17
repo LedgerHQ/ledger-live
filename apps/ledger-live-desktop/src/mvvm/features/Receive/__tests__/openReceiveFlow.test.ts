@@ -154,6 +154,13 @@ describe("openReceiveFlow", () => {
     });
   });
 
+  it("falls back to the legacy modal when routing fails", async () => {
+    jest.mocked(importLLDCoinFamily).mockRejectedValue(new Error("chunk load failed"));
+    const dispatch = await run(openReceiveFlow({ account: ethAccount }));
+
+    expect(dispatch).toHaveBeenCalledWith(legacyModal({ account: ethAccount }));
+  });
+
   describe("without an account", () => {
     it("opens the asset dialog, then routes the selected account", async () => {
       const dispatch = await run(openReceiveFlow({ sourcePage: "Portfolio" }));
@@ -165,6 +172,43 @@ describe("openReceiveFlow", () => {
       await new Promise(resolve => setImmediate(resolve));
       expect(dispatch).toHaveBeenCalledWith(
         openReceiveAddressDialog(expect.objectContaining({ accountUUID: entry.accountUUID })),
+      );
+    });
+
+    it("lets the user pick on an asset page, the legacy modal keeping its account", async () => {
+      const dispatch = await run(
+        openReceiveFlow({ currencyIds: ["ethereum"], legacyAccount: { account: ethAccount } }),
+      );
+
+      expect(openAssetAndAccountDialog).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: ["ethereum"], areCurrenciesFiltered: true }),
+        expect.any(Function),
+      );
+      expect(dispatch).not.toHaveBeenCalledWith(legacyModal({}));
+    });
+
+    it("preselects the asset page account in the legacy modal when the flag is off", async () => {
+      const state = makeState({
+        flags: { newReceiveFlow: { enabled: false, params: { excludedFamilies: [] } } },
+      });
+      const dispatch = await run(
+        openReceiveFlow({ currencyIds: ["ethereum"], legacyAccount: { account: ethAccount } }),
+        state,
+      );
+
+      expect(dispatch).toHaveBeenCalledWith(legacyModal({ account: ethAccount }));
+    });
+
+    it("opens the legacy modal on the account picked in token mode, out of token mode", async () => {
+      const dispatch = await run(
+        openReceiveFlow({ account: ethAccount, parentAccount: null, receiveTokenMode: true }),
+      );
+      const [params] = jest.mocked(openAssetAndAccountDialog).mock.calls[0];
+
+      params.onSuccess?.(unknownAccount);
+      await new Promise(resolve => setImmediate(resolve));
+      expect(dispatch).toHaveBeenCalledWith(
+        legacyModal({ account: unknownAccount, parentAccount: undefined, receiveTokenMode: false }),
       );
     });
 
