@@ -21,12 +21,7 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
-  private readonly transferDrawer = byId("transfer-drawer");
-  private readonly transferDrawerAction = (action: string) => byId(`transfer-action-${action}`);
-  private readonly sendAssetPicker = byId("transfer-asset-picker-list");
   private readonly sendRecipientInput = byId("recipient-input");
-  private readonly sendAssetPickerRow = (currencyId: string) =>
-    byId(`transfer-asset-picker-${currencyId}`);
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
   private readonly operationRowWithType = (operationType: string) =>
@@ -62,28 +57,24 @@ export default class AccountDetailPage {
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
     await this.openTransferDrawer();
-    await this.transferDrawerAction("receive").expectVisible();
-    await this.transferDrawerAction("send").expectVisible();
-    await this.transferDrawer.swipe("down");
-    await this.transferDrawer.waitNotVisible();
+    await app.transferDrawer.expectReceiveVisible();
+    await app.transferDrawer.expectSendVisible();
+    await app.transferDrawer.close();
   }
 
   @Step("Tap on receive")
   async tapReceive() {
     await this.openTransferDrawer();
-    await this.transferDrawerAction("receive").tap();
+    await app.transferDrawer.tapReceive();
   }
 
   @Step("Tap on send {{{0}}}")
   async tapSend(currencyId?: string) {
     await this.openTransferDrawer();
-    await this.transferDrawerAction("send").tap();
+    await app.transferDrawer.tapSend();
     if (await this.sendOpensAssetPicker()) {
       if (!currencyId) throw new Error("Send asks which asset to send: pass the currency to pick");
-      await this.sendAssetPicker.waitFullyVisible();
-      // The rows are sorted by value: the asset can sit below the visible ones.
-      await this.sendAssetPickerRow(currencyId).scrollTo(this.sendAssetPicker);
-      await this.sendAssetPickerRow(currencyId).tap();
+      await app.transferDrawer.pickAsset(currencyId);
     }
   }
 
@@ -94,7 +85,7 @@ export default class AccountDetailPage {
   private async sendOpensAssetPicker() {
     const deadline = Date.now() + TIMEOUT.xxlarge;
     while (Date.now() < deadline) {
-      if (await this.sendAssetPicker.isVisible(TIMEOUT.xxxsmall)) return true;
+      if (await app.transferDrawer.isAssetPickerVisible(TIMEOUT.xxxsmall)) return true;
       if (await this.sendRecipientInput.isVisible(TIMEOUT.xxxsmall)) return false;
     }
     throw new Error("Send opened neither the asset picker nor the recipient screen");
@@ -102,8 +93,7 @@ export default class AccountDetailPage {
 
   private async openTransferDrawer() {
     await this.heroAction("transfer").tap();
-    // Anchor on the container: the actions are matchable while the sheet still slides.
-    await this.transferDrawer.waitFullyVisible();
+    await app.transferDrawer.waitSettled();
   }
 
   @Step("Expect operation history to be visible")
