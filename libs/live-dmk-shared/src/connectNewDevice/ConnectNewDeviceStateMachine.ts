@@ -27,14 +27,6 @@ type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDisc
 
 const LOG_TYPE = "ConnectNewDeviceStateMachine";
 
-const disconnectUnclaimedSession = (dmk: DeviceManagementKit, sessionId: string): void => {
-  dmk.disconnect({ sessionId }).catch(error => {
-    log(LOG_TYPE, "failed to disconnect a session that was never handed to onConnected", {
-      error,
-    });
-  });
-};
-
 const createConnectNewDeviceStateMachine = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
   TConnectionError extends BaseConnectionError = BaseConnectionError,
@@ -56,17 +48,10 @@ const createConnectNewDeviceStateMachine = <
     actors: {
       connectDevice: fromPromise(
         async ({
-          input,
-          signal,
+          input: { dmk, discoveredDevice },
         }: {
-          input: {
-            dmk: DeviceManagementKit;
-            discoveredDevice: DiscoveredDevice;
-            disconnectsUnclaimedSession: boolean;
-          };
-          signal: AbortSignal;
-        }): Promise<{ sessionId: string; isSessionReused: boolean }> => {
-          const { dmk, discoveredDevice } = input;
+          input: { dmk: DeviceManagementKit; discoveredDevice: DiscoveredDevice };
+        }): Promise<string> => {
           disconnectOtherSessions(dmk, discoveredDevice);
           const openSessionOfDevice = dmk
             .listConnectedDevices()
@@ -75,18 +60,13 @@ const createConnectNewDeviceStateMachine = <
                 id === discoveredDevice.id && transport === discoveredDevice.transport,
             );
           if (openSessionOfDevice) {
-            return { sessionId: openSessionOfDevice.sessionId, isSessionReused: true };
+            return openSessionOfDevice.sessionId;
           }
 
-          const sessionId = await dmk.connect({
+          return dmk.connect({
             device: discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
-          const machineStoppedWhileConnecting = signal.aborted;
-          if (machineStoppedWhileConnecting && input.disconnectsUnclaimedSession) {
-            disconnectUnclaimedSession(dmk, sessionId);
-          }
-          return { sessionId, isSessionReused: false };
         },
       ),
       retryDiscovery: fromPromise<true | BaseDiscoveryError, BaseDiscoveryError>(
@@ -148,7 +128,9 @@ const createConnectNewDeviceStateMachine = <
       clearConnectionError: assign({
         connectionError: () => null,
       }),
-      assignSession: assign((_, params: { sessionId: string; isSessionReused: boolean }) => params),
+      assignSessionId: assign({
+        sessionId: (_, params: { sessionId: string }) => params.sessionId,
+      }),
       showDeviceNotFound: assign({
         showDeviceNotFound: () => true,
       }),
@@ -270,7 +252,6 @@ const createConnectNewDeviceStateMachine = <
       listedDevices: [],
       selectedDevice: null,
       sessionId: null,
-      isSessionReused: false,
       showDeviceNotFound: false,
       discoveryError: null,
       connectionError: null,
@@ -381,13 +362,12 @@ const createConnectNewDeviceStateMachine = <
           input: ({ context }) => ({
             dmk: context.dmk,
             discoveredDevice: context.selectedDevice!,
-            disconnectsUnclaimedSession: !context.embedded,
           }),
           onDone: {
             target: "Connected",
             actions: {
-              type: "assignSession",
-              params: ({ event }) => event.output,
+              type: "assignSessionId",
+              params: ({ event }) => ({ sessionId: event.output }),
             },
           },
           onError: {
@@ -523,19 +503,13 @@ export class DefaultConnectNewDeviceStateMachine<
       return;
     }
 
-    const { embedded, sessionId, isSessionReused } = snapshot.context;
-    // The parent keeps scanning, and lists the unclaimed session as a connected device.
-    if (embedded) {
+    // The parent keeps scanning.
+    if (snapshot.context.embedded) {
       return;
     }
 
     if (this.deviceDiscoveryService.isRunning) {
       this.deviceDiscoveryService.stop();
-    }
-
-    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
-    if (stoppedDuringSuccessDelay && sessionId !== null && !isSessionReused) {
-      disconnectUnclaimedSession(this.dmk, sessionId);
     }
   }
 }
