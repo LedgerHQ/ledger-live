@@ -56,7 +56,11 @@ function cardTitle(t: Translate, card: SetupInfoCard) {
   return t(`deviceOnboarding.setup.info.cards.${card}`);
 }
 
-function sheetContent(t: Translate, sheet: InfoSheetKind): InfoSheetContent {
+function sheetContent(
+  t: Translate,
+  sheet: InfoSheetKind,
+  reportsRecoveryKey: boolean,
+): InfoSheetContent {
   const faqLabel = t("deviceOnboarding.setup.info.faq");
   switch (sheet) {
     case "setupChoice":
@@ -90,10 +94,16 @@ function sheetContent(t: Translate, sheet: InfoSheetKind): InfoSheetContent {
             title: t("deviceOnboarding.setup.info.restoreChoice.recoveryPhrase.title"),
             description: t("deviceOnboarding.setup.info.restoreChoice.recoveryPhrase.description"),
           },
-          {
-            title: t("deviceOnboarding.setup.info.restoreChoice.recoveryKey.title"),
-            description: t("deviceOnboarding.setup.info.restoreChoice.recoveryKey.description"),
-          },
+          ...(reportsRecoveryKey
+            ? [
+                {
+                  title: t("deviceOnboarding.setup.info.restoreChoice.recoveryKey.title"),
+                  description: t(
+                    "deviceOnboarding.setup.info.restoreChoice.recoveryKey.description",
+                  ),
+                },
+              ]
+            : []),
           {
             title: t("deviceOnboarding.setup.info.restoreChoice.recover.title"),
             description: t("deviceOnboarding.setup.info.restoreChoice.recover.description"),
@@ -120,7 +130,11 @@ function openUrl(url: string) {
   Linking.openURL(url).catch(() => undefined);
 }
 
-export function useSetupInfoViewModel({ card, suspendSheets }: SetupInfoProps): SetupInfoViewProps {
+export function useSetupInfoViewModel({
+  card,
+  suspendSheets,
+  reportsRecoveryKey,
+}: SetupInfoProps): SetupInfoViewProps {
   const { t } = useTranslation();
   const [openedCard, setOpenedCard] = useState<SetupInfoCard | null>(null);
   const [shownCard, setShownCard] = useState(card);
@@ -137,7 +151,7 @@ export function useSetupInfoViewModel({ card, suspendSheets }: SetupInfoProps): 
   return {
     infoCard: { title: cardTitle(t, card), onPress: () => setOpenedCard(card) },
     infoSheet: {
-      ...sheetContent(t, sheet),
+      ...sheetContent(t, sheet, reportsRecoveryKey),
       isOpen: openedCard === card && !suspendSheets,
       onOpenLink: () => openUrl(linkBySheet[sheet]),
       onClose: () => {

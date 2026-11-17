@@ -10,4 +10,6 @@ export type SetupInfoProps = Readonly<{
   card: SetupInfoCard | undefined;
   /** Another sheet (device locked, quit confirmation) takes the screen: hide the info sheet. */
   suspendSheets: boolean;
+  /** The device can back up to and restore from a Recovery Key. */
+  reportsRecoveryKey: boolean;
 }>;

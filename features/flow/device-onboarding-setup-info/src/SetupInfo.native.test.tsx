@@ -15,12 +15,21 @@ const COPY = {
       "deviceOnboarding.setup.info.faq": "View complete FAQ",
       "deviceOnboarding.setup.info.setupChoice.newDevice.title": "Set up as a new Ledger device",
       "deviceOnboarding.setup.info.recoveryKey.learnHowToUse": "Learn how to use",
+      "deviceOnboarding.setup.info.cards.restoreChoice": "Choose a backup to restore from",
+      "deviceOnboarding.setup.info.restoreChoice.recoveryPhrase.title": "Secret Recovery Phrase",
+      "deviceOnboarding.setup.info.restoreChoice.recoveryKey.title": "Ledger Recovery Key",
+      "deviceOnboarding.setup.info.restoreChoice.recover.title": "Ledger Recover subscription",
     },
   },
 };
 
 function renderSetupInfo(props: Partial<SetupInfoProps> = {}) {
-  const allProps: SetupInfoProps = { card: "setupChoice", suspendSheets: false, ...props };
+  const allProps: SetupInfoProps = {
+    card: "setupChoice",
+    suspendSheets: false,
+    reportsRecoveryKey: true,
+    ...props,
+  };
   const view = render(
     <I18nTestProvider resources={COPY}>
       <SetupInfo {...allProps} />
@@ -67,6 +76,26 @@ describe("SetupInfo", () => {
 
     expect(sheet()).toHaveProp("accessibilityState", { expanded: true });
     expect(screen.getByText("Learn how to use")).toBeTruthy();
+  });
+
+  it("should list the Recovery Key among the backups when the device supports one", async () => {
+    const { user } = renderSetupInfo({ card: "restoreChoice" });
+
+    await user.press(screen.getByTestId(setupInfoTestIds.card));
+
+    expect(screen.getByText("Secret Recovery Phrase")).toBeTruthy();
+    expect(screen.getByText("Ledger Recovery Key")).toBeTruthy();
+    expect(screen.getByText("Ledger Recover subscription")).toBeTruthy();
+  });
+
+  it("should leave the Recovery Key out of the backups when the device has no Recovery Key", async () => {
+    const { user } = renderSetupInfo({ card: "restoreChoice", reportsRecoveryKey: false });
+
+    await user.press(screen.getByTestId(setupInfoTestIds.card));
+
+    expect(screen.getByText("Secret Recovery Phrase")).toBeTruthy();
+    expect(screen.queryByText("Ledger Recovery Key")).toBeNull();
+    expect(screen.getByText("Ledger Recover subscription")).toBeTruthy();
   });
 
   it("should hide an open sheet while sheets are suspended and bring it back after", async () => {

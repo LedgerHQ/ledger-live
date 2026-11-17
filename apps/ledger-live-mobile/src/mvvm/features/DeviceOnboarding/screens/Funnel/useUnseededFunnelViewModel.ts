@@ -84,6 +84,7 @@ export function useUnseededFunnelViewModel(
       device,
       stage: visibleStage,
       suspendSheets: input.suspendSheets,
+      reportsRecoveryKey: input.reportsRecoveryKey,
       checks: checksState
         ? {
             state: checksState,

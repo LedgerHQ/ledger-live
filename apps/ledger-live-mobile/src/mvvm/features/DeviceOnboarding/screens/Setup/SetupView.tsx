@@ -56,6 +56,7 @@ export function SetupView({
   notGenuineDrawer,
   infoCard,
   suspendInfoSheet,
+  reportsRecoveryKey,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -119,7 +120,11 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
-        <SetupInfo card={infoCard} suspendSheets={suspendInfoSheet} />
+        <SetupInfo
+          card={infoCard}
+          suspendSheets={suspendInfoSheet}
+          reportsRecoveryKey={reportsRecoveryKey}
+        />
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>

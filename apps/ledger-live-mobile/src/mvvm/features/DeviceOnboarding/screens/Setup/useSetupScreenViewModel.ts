@@ -15,6 +15,7 @@ export type SetupViewProps = ChecksDrawerProps &
   Readonly<{
     infoCard: SetupInfoCard | undefined;
     suspendInfoSheet: boolean;
+    reportsRecoveryKey: boolean;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
@@ -78,6 +79,7 @@ export function useSetupScreenViewModel({
   checks,
   onQuit,
   suspendSheets = false,
+  reportsRecoveryKey = false,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
   const checksIdle = checks?.state === "idle";
@@ -109,6 +111,7 @@ export function useSetupScreenViewModel({
   return {
     infoCard: stage.infoCard,
     suspendInfoSheet: suspendSheets,
+    reportsRecoveryKey,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),
