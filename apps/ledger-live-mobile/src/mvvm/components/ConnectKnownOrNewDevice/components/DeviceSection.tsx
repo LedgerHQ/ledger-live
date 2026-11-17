@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LayoutAnimationConfig,
+  LinearTransition,
+} from "react-native-reanimated";
 import {
   Box,
   Button,
@@ -10,12 +16,17 @@ import {
   Spot,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Plus, PlusCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { DeviceMenuSheet } from "./DeviceMenuSheet";
 import { DeviceRow, hasMenuActions, type DeviceRowItem } from "./DeviceRow";
 
 const COLLAPSED_DEVICE_COUNT = 3;
+const ANIMATION_DURATION_MS = 200;
+const layoutTransition = LinearTransition.duration(ANIMATION_DURATION_MS);
+const rowEntering = FadeIn.duration(ANIMATION_DURATION_MS);
+const rowExiting = FadeOut.duration(ANIMATION_DURATION_MS);
 
 type DeviceSectionProps = {
   /** Only the rows of `Discovering` have actions. */
@@ -59,6 +70,20 @@ export function DeviceSection({
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuDeviceKey, setMenuDeviceKey] = useState<string | null>(null);
+  const styles = useStyleSheet(
+    theme => ({
+      card: {
+        backgroundColor: theme.colors.bg.surface,
+        borderRadius: theme.borderRadius.md,
+        padding: theme.spacings.s4,
+        gap: theme.spacings.s4,
+      },
+      showAll: {
+        padding: theme.spacings.s8,
+      },
+    }),
+    [],
+  );
 
   const isEmpty = devices.length === 0;
   const isCollapsible = devices.length > COLLAPSED_DEVICE_COUNT;
@@ -85,32 +110,42 @@ export function DeviceSection({
           </Link>
         )}
       </Box>
-      <Box lx={{ backgroundColor: "surface", borderRadius: "md", padding: "s4", gap: "s4" }}>
-        {isEmpty ? (
-          <AddDeviceRow onAddNewDevice={onAddNewDevice} disabled={disabled} />
-        ) : (
-          shownDevices.map(item => (
-            <DeviceRow
-              key={item.key}
-              item={item}
-              disabled={disabled}
-              onOpenMenu={() => setMenuDeviceKey(item.key)}
-            />
-          ))
-        )}
-        {isCollapsible && (
-          <Button
-            appearance="gray"
-            size="md"
-            isFull
-            onPress={() => setIsExpanded(expanded => !expanded)}
-          >
-            {isExpanded
-              ? t("connectKnownOrNewDevice.showLess")
-              : t("connectKnownOrNewDevice.showAll", { count: devices.length })}
-          </Button>
-        )}
-      </Box>
+      <LayoutAnimationConfig skipEntering>
+        <Animated.View layout={layoutTransition} style={styles.card}>
+          {isEmpty ? (
+            <AddDeviceRow onAddNewDevice={onAddNewDevice} disabled={disabled} />
+          ) : (
+            shownDevices.map(item => (
+              <Animated.View
+                key={item.key}
+                entering={rowEntering}
+                exiting={rowExiting}
+                layout={layoutTransition}
+              >
+                <DeviceRow
+                  item={item}
+                  disabled={disabled}
+                  onOpenMenu={() => setMenuDeviceKey(item.key)}
+                />
+              </Animated.View>
+            ))
+          )}
+          {isCollapsible && (
+            <Animated.View layout={layoutTransition} style={styles.showAll}>
+              <Button
+                appearance="transparent"
+                size="sm"
+                isFull
+                onPress={() => setIsExpanded(expanded => !expanded)}
+              >
+                {isExpanded
+                  ? t("connectKnownOrNewDevice.showLess")
+                  : t("connectKnownOrNewDevice.showAll", { count: devices.length })}
+              </Button>
+            </Animated.View>
+          )}
+        </Animated.View>
+      </LayoutAnimationConfig>
       {children}
       <DeviceMenuSheet item={menuDevice} onClose={() => setMenuDeviceKey(null)} />
     </Box>
