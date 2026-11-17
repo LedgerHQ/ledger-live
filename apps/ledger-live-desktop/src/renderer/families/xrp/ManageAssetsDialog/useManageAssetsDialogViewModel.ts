@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getManagedTokenAccounts } from "../utils";
@@ -15,6 +15,13 @@ export function useManageAssetsDialogViewModel(account: Account) {
     setSelectedAsset(null);
     dispatch(closeManageAssets());
   }, [dispatch]);
+
+  useEffect(
+    () => () => {
+      dispatch(closeManageAssets());
+    },
+    [dispatch],
+  );
 
   const onBackToList = useCallback(() => setSelectedAsset(null), []);
 

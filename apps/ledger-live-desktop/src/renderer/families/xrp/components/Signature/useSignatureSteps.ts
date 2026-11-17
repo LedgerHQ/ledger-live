@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createIntent } from "@features/platform-device-intent";
+import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type { SignatureRequest } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
@@ -45,7 +46,7 @@ export function useSignatureSteps(
     if (!request) return;
 
     let cancelled = false;
-    buildDeviceInitializationInput({ appRequest: { account } })
+    buildDeviceInitializationInput({ appRequest: { account }, flow: FlowName.send })
       .then(input => {
         if (!cancelled) setDeviceInitializationInput(input);
       })
@@ -85,6 +86,7 @@ export function useSignatureSteps(
   const onIntentJobComplete = useCallback(() => {
     const signedOperation = signedOperationRef.current;
     if (!signedOperation) return;
+    signedOperationRef.current = null;
 
     setPhase("broadcasting");
     broadcast(signedOperation)
@@ -98,6 +100,13 @@ export function useSignatureSteps(
       })
       .catch(showError);
   }, [account.id, broadcast, dispatch, showError]);
+
+  const onExecutorStateChanged = useCallback(
+    (executorState: ExecutorState) => {
+      if (executorState.type === "deviceDisconnected") onIntentJobComplete();
+    },
+    [onIntentJobComplete],
+  );
 
   const onReset = useCallback(() => {
     signedOperationRef.current = null;
@@ -116,6 +125,7 @@ export function useSignatureSteps(
     onStart,
     onReset,
     onIntentJobComplete,
+    onExecutorStateChanged,
     extraProps: SIGNATURE_EXTRA_PROPS,
   };
 }

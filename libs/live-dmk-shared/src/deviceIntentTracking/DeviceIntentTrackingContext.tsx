@@ -17,6 +17,7 @@ export type SourceFlow =
   | "onboarding"
   | "contacts"
   | "ledger_sync"
+  | "manage_assets"
   | "debug";
 
 type ReservedDeviceIntentTrackingProperties = {

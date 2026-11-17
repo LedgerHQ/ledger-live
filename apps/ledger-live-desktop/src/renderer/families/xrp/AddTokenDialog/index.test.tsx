@@ -237,6 +237,14 @@ describe("xrp AddTokenDialog", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("closes when the account page unmounts, so the next account page opens without it", () => {
+    const { store, unmount } = renderDialog();
+
+    unmount();
+
+    expect(store.getState().dialogs.XRP_ADD_TOKEN).toBe(false);
+  });
+
   it("shows a failed add with its reason, and Try again goes back to the review", async () => {
     mockStatus.errors = {
       amount: Object.assign(new Error(), { name: "XrpTrustLimitTooHigh" }),

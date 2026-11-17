@@ -53,12 +53,13 @@ export function SignatureSteps({
           SignedOperation
         >
           enabled
-          sourceFlow="send"
+          sourceFlow="manage_assets"
           deviceConnectionParams={DEVICE_CONNECTION_PARAMS}
           deviceInitializationInput={signature.deviceInitializationInput}
           intent={signature.signatureIntent}
           intentComponentExtraProps={signature.extraProps}
           onIntentJobComplete={signature.onIntentJobComplete}
+          onExecutorStateChanged={signature.onExecutorStateChanged}
           cancelIntentRequestId={undefined}
           onUserCancel={signature.onReset}
         />

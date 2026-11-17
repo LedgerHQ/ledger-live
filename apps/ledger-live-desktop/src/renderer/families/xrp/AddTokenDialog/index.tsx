@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
@@ -18,6 +18,13 @@ function AddTokenDialogContent({ account }: Readonly<{ account: Account }>) {
     setToken(null);
     dispatch(closeAddToken());
   }, [dispatch]);
+
+  useEffect(
+    () => () => {
+      dispatch(closeAddToken());
+    },
+    [dispatch],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>

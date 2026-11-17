@@ -64,6 +64,14 @@ describe("xrp ManageAssetsDialog", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("closes when the account page unmounts, so the next account page opens without it", () => {
+    const { store, unmount } = renderDialog();
+
+    unmount();
+
+    expect(store.getState().dialogs.XRP_MANAGE_ASSETS).toBe(false);
+  });
+
   it("lists the held tokens, not the removed one", () => {
     renderDialog();
 
