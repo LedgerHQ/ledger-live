@@ -35,8 +35,12 @@ export default class SendPage {
   @Step("Navigate to send screen {{{0.accountName}}}")
   async navigateToSendScreen(accountToDebit: Account, accountName?: string) {
     await app.account.openViaDeeplink();
-    await app.account.goToAccountByName(accountName || accountToDebit.accountName);
-    await app.account.tapSend(accountToDebit.currency.id);
+    const heldAccountName = accountName || accountToDebit.accountName;
+    await app.account.goToAccountByName(heldAccountName);
+    // Send asks which asset to send once the account holds its native coin and a token.
+    const hasAssetPicker =
+      accountToDebit.parentAccount !== undefined || app.heldAssetCount(heldAccountName) > 1;
+    await app.account.tapSend(hasAssetPicker ? accountToDebit.currency.id : undefined);
   }
 
   @Step("Open send via deeplink")

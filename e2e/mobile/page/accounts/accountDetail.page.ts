@@ -69,21 +69,16 @@ export default class AccountDetailPage {
 
   @Step("Tap on receive")
   async tapReceive() {
-    // A currency that can't send gets a Receive tile instead of Transfer.
-    if (await this.heroAction("receive").isVisible(TIMEOUT.xxsmall)) {
-      await this.heroAction("receive").tap();
-      return;
-    }
     await this.openTransferDrawer();
     await this.transferDrawerAction("receive").tap();
   }
 
+  /** Pass `currencyId` when the account holds several assets: Send then asks which one to send. */
   @Step("Tap on send {{{0}}}")
   async tapSend(currencyId?: string) {
     await this.openTransferDrawer();
     await this.transferDrawerAction("send").tap();
-    // An account holding several assets asks which one to send first.
-    if (currencyId && (await this.sendAssetPicker.isVisible(TIMEOUT.xsmall))) {
+    if (currencyId) {
       await this.sendAssetPicker.waitFullyVisible();
       // The rows are sorted by value: the asset can sit below the visible ones.
       await this.sendAssetPickerRow(currencyId).scrollTo(this.sendAssetPicker);
