@@ -250,7 +250,7 @@
     "@ledgerhq/wallet-pnl": "workspace:^",
     "@lottiefiles/dotlottie-react": "0.20.0",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-community/slider": "5.2.0",
+    "@react-native-community/slider": "5.2.2",
     "@react-native-firebase/app": "26.4.1",
     "@react-native-firebase/messaging": "26.4.1",
     "@react-native-firebase/remote-config": "26.4.1",
