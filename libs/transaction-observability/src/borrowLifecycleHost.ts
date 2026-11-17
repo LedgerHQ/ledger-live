@@ -58,7 +58,7 @@ function isTeardownAbandon(payload: TxLifecyclePayload, source: TxLifecycleSourc
 
 export const borrowLifecycleProduct: TxLifecycleProduct = {
   id: "borrow",
-  pathOf: event => (isBorrowApp(event.manifestId) ? "dapp" : undefined),
+  pathOf: event => (isBorrowApp(event.manifestId) ? "borrow" : undefined),
   isEnabled: isBorrowTxLifecycleMonitoringEnabled,
   baseUrl: () => borrowApiBaseUrl,
   reports: isTeardownAbandon,
