@@ -120,6 +120,7 @@ const setupTest = ({
     connect,
     getConnectedDevice: jest.fn(() => connectedDevice),
     disconnect: jest.fn().mockResolvedValue(undefined),
+    listConnectedDevices: jest.fn(() => []),
   } as unknown as DeviceManagementKit;
   const onConnected = jest.fn();
   const onClose = jest.fn();

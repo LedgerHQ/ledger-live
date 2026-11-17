@@ -19,6 +19,7 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
 
 type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
   | TDiscoveryError
@@ -65,6 +66,7 @@ const createConnectNewDeviceStateMachine = <
           };
           signal: AbortSignal;
         }): Promise<string> => {
+          disconnectOtherSessions(input.dmk, input.discoveredDevice);
           const sessionId = await input.dmk.connect({
             device: input.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
