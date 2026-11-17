@@ -1,6 +1,7 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -41,8 +42,31 @@ describe("ReceiveAddress (Web)", () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
-    await waitFor(() => expect(screen.queryByTestId("receive-address-skeleton")).toBeNull());
-    expect(screen.getByTestId("receive-address-zone-summary")).toBeVisible();
+    expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+  });
+
+  it("shows the address with its first and last characters apart", async () => {
+    renderScreen();
+
+    const text = await screen.findByTestId("receive-address-text");
+    expect(text).toHaveTextContent(testReceive.address);
+    expect(screen.getByText("0x71C765")).toBeVisible();
+    expect(screen.getByText("f6d8976F")).toBeVisible();
+  });
+
+  it("lets a Zcash account pick its private address, then go back to the choice", async () => {
+    const shielded = "u1shieldedaddressexample0000000000000000000000000000";
+    const receive = jest.fn(async () => mockAccountReceive({ shielded: { address: shielded } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByTestId("receive-address-option-shielded"));
+
+    expect(screen.getByText("Private address")).toBeVisible();
+    expect(screen.getByTestId("receive-address-text")).toHaveTextContent(shielded);
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+    expect(screen.getByTestId("receive-address-options")).toBeVisible();
   });
 
   it("offers Retry when the address cannot be read, then shows it", async () => {
@@ -54,20 +78,18 @@ describe("ReceiveAddress (Web)", () => {
 
     await userEvent.setup().click(await screen.findByTestId("receive-address-retry"));
 
-    await waitFor(() => expect(screen.getByTestId("receive-address-zone-summary")).toBeVisible());
+    expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
     expect(screen.queryByTestId("receive-address-error")).toBeNull();
     expect(receive).toHaveBeenCalledTimes(2);
   });
 
   it("lays the zones out in screen order", async () => {
     renderScreen();
-    await waitFor(() => expect(screen.queryByTestId("receive-address-skeleton")).toBeNull());
+    await screen.findByTestId("receive-address-summary");
 
     expect(
       screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
     ).toEqual([
-      "receive-address-zone-summary",
-      "receive-address-zone-address",
       "receive-address-zone-actions",
       "receive-address-zone-notices",
       "receive-address-zone-extras",
