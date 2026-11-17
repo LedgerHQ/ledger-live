@@ -252,6 +252,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-filecoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-filecoin/deviceTransactionConfig").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/filecoin/coinModuleApi").then(m => m.createLocalFilecoinApi),
   },
   {
     family: "hedera",
