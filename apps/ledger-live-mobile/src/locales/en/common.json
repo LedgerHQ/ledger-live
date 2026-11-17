@@ -2810,12 +2810,12 @@
         },
         "recoveryPhrase": {
           "title": "Secret Recovery Phrase",
-          "description": "Your Secret Recovery Phrase is a unique list of 24 words generated securely by your Ledger device. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
         },
         "restoreChoice": {
           "recoveryPhrase": {
             "title": "Secret Recovery Phrase",
-            "description": "Use the 24 words you saved when setting up your Ledger device."
+            "description": "Use the 12, 18 or 24 words you saved when setting up your wallet."
           },
           "recoveryKey": {
             "title": "Ledger Recovery Key",
