@@ -2437,6 +2437,13 @@
       "title": "We couldn't load this address",
       "description": "Check your internet connection, then try again.",
       "retry": "Retry"
+    },
+    "selectAddress": {
+      "title": "Select address"
+    },
+    "addressOptions": {
+      "transparent": "Public address",
+      "shielded": "Private address"
     }
   },
   "ratings": {

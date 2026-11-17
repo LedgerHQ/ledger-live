@@ -79,6 +79,8 @@ const receiveTestResources = {
           description: "Check your internet connection, then try again.",
           retry: "Retry",
         },
+        selectAddress: { title: "Select address" },
+        addressOptions: { transparent: "Public address", shielded: "Private address" },
       },
     },
   },

@@ -18,6 +18,8 @@ export function ReceiveAddressView({
   networkIcon,
   isLoading,
   error,
+  addressSelection,
+  address,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -71,8 +73,8 @@ export function ReceiveAddressView({
               <AddressSummarySkeleton />
             ) : (
               <>
-                <ZonePlaceholder zone="summary" />
-                <ZonePlaceholder zone="address" />
+                <ZonePlaceholder zone="summary" label={address?.value} />
+                <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
               </>
             )}
             <ZonePlaceholder zone="actions" />
