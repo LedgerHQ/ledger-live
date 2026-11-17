@@ -8,7 +8,7 @@ import {
 import { installOutputCapture } from "../../shared/ui";
 import { toChecksumAddress } from "../../agent-intent/evm";
 import { AgentIntentCorruptKeychainError } from "../../key-ring/agent-intent-keychain";
-import type { TokenCandidate } from "../../agent-intent/token-lookup";
+import { tokensWithTicker, type TokenCandidate } from "../../agent-intent/token-lookup";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -26,6 +26,8 @@ const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 // Two ERC-20s CAL lists under the PEPE ticker.
 const PEPE = toChecksumAddress("0x6982508145454ce325ddbe47a25d4ec3d2311933");
 const PEPE_COPY = toChecksumAddress("0xbe042e9d09cb588331ff911c2b46fd833a3e5bd6");
+const USDC_NAMESAKE = "0x0000000000000000000000000000000000000001";
+const BTC_NAMESAKE = "0x0000000000000000000000000000000000000003";
 
 // The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
 const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
@@ -86,21 +88,60 @@ let accountSkippedTokenIds: string[];
 let accountTokensError: Error | undefined;
 let accountLookups: number;
 
-const usdc = { ticker: "USDC", name: "USD Coin", address: USDC.toLowerCase() };
-const usdcMint = { ticker: "USDC", name: "USD Coin", address: USDC_MINT };
-const pyusdMint = { ticker: "PYUSD", name: "PayPal USD", address: PYUSD_MINT };
+const usdc = {
+  id: "ethereum/erc20/usd__coin",
+  ticker: "USDC",
+  name: "USD Coin",
+  address: USDC.toLowerCase(),
+};
+const usdcMint = {
+  id: `solana/spl/${USDC_MINT.toLowerCase()}`,
+  ticker: "USDC",
+  name: "USD Coin",
+  address: USDC_MINT,
+};
+const pyusdMint = {
+  id: `solana/spl/${PYUSD_MINT.toLowerCase()}`,
+  ticker: "PYUSD",
+  name: "PayPal USD",
+  address: PYUSD_MINT,
+};
 const token2022UsdcMint = {
+  id: `solana/spl/${TOKEN_2022_USDC_MINT.toLowerCase()}`,
   ticker: "USDC",
   name: "USD Coin (Token-2022)",
   address: TOKEN_2022_USDC_MINT,
 };
 const token2022UsdcCopyMint = {
+  id: `solana/spl/${TOKEN_2022_USDC_COPY_MINT.toLowerCase()}`,
   ticker: "USDC",
   name: "USD Coin copy (Token-2022)",
   address: TOKEN_2022_USDC_COPY_MINT,
 };
-const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE.toLowerCase() };
-const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toLowerCase() };
+const btcNamesake = {
+  id: "ethereum/erc20/btc_namesake",
+  ticker: "BTC",
+  name: "BTC namesake",
+  address: BTC_NAMESAKE,
+};
+const usdcNamesake = {
+  id: "ethereum/erc20/usdc_namesake",
+  ticker: "usdc",
+  name: "usdc",
+  address: USDC_NAMESAKE,
+};
+const pepe = {
+  id: "ethereum/erc20/pepe",
+  ticker: "PEPE",
+  name: "Pepe",
+  address: PEPE.toLowerCase(),
+};
+const pepeCopy = {
+  id: "ethereum/erc20/pepe_0xbe042e",
+  ticker: "PEPE",
+  name: "Pepe_0xbe042e",
+  address: PEPE_COPY.toLowerCase(),
+};
 
 beforeAll(() =>
   activateAgentIntentMocks({
@@ -132,7 +173,7 @@ beforeAll(() =>
     },
     tokenLookup: {
       findEthereumToken: async (contract: string) =>
-        [usdc, pepe, pepeCopy]
+        [usdc, pepe, pepeCopy, btcNamesake]
           .filter(token => token.address.toLowerCase() === contract.toLowerCase())
           .map(token => ({ ticker: token.ticker, decimals: 6, contract: token.address }))[0] ??
         null,
@@ -143,12 +184,9 @@ beforeAll(() =>
           [TOKEN_2022_USDC_MINT]: { ticker: "USDC", decimals: 6, mint: TOKEN_2022_USDC_MINT },
         })[mint] ?? null,
       findSolanaMintProgram: async (mint: string) => mintPrograms[mint],
-      // Like CAL: the ticker as typed or uppercase, matched case-sensitively.
       findTokensByTicker: async (network: string, ticker: string) => {
         tickerLookups.push(`${network} ${ticker}`);
-        return (calTokens[network] ?? []).filter(
-          token => token.ticker === ticker || token.ticker === ticker.toUpperCase(),
-        );
+        return { tokens: tokensWithTicker(calTokens[network] ?? [], ticker), complete: true };
       },
       findAccountTokens: async (account: { key: string }) => {
         if (accountTokensError) throw accountTokensError;
@@ -216,7 +254,10 @@ describe("agent-intent send", () => {
       [TOKEN_2022_USDC_MINT]: "spl-token-2022",
       [TOKEN_2022_USDC_COPY_MINT]: "spl-token-2022",
     };
-    calTokens = { ethereum: [usdc, pepe, pepeCopy], solana: [usdcMint, pyusdMint] };
+    calTokens = {
+      ethereum: [usdc, pepe, pepeCopy, btcNamesake],
+      solana: [usdcMint, pyusdMint],
+    };
     tickerLookups = [];
     accountTokens = {};
     accountSkippedTokenIds = [];
@@ -694,6 +735,18 @@ describe("agent-intent send", () => {
       expect(submittedIntents).toEqual([]);
     });
 
+    it("never sends a held lowercase namesake for a lowercase ticker, listing it next to the real token", async () => {
+      accountTokens = { [SENDER]: [usdc, usdcNamesake] };
+
+      await expect(
+        runSend({ from: undefined, account: "ethereum-1", amount: "5 usdc" }),
+      ).rejects.toThrow(
+        `Account "ethereum-1" holds several ERC-20 tokens with the ticker usdc:\n` +
+          `  ${USDC} (USD Coin)\n  ${USDC_NAMESAKE} (usdc)\nPass the one to send with --token.`,
+      );
+      expect(submittedIntents).toEqual([]);
+    });
+
     it("falls back to CAL when the --account holds no token with the ticker", async () => {
       accountTokens = { [SENDER]: [pepe] };
 
@@ -754,9 +807,8 @@ describe("agent-intent send", () => {
 
     it("refuses a ticker CAL doesn't list on the sender's network", async () => {
       await expect(runSend({ amount: "1 XYZ" })).rejects.toThrow(
-        "No ERC-20 token on Ethereum mainnet has the ticker XYZ in the Crypto Assets List, which " +
-          "matches tickers case-sensitively (e.g. USDe, stETH). Check the ticker, or pass the " +
-          "token's address with --token.",
+        "No ERC-20 token on Ethereum mainnet has the ticker XYZ in the Crypto Assets List. Check " +
+          "the ticker, or pass the token's address with --token.",
       );
     });
 
@@ -812,6 +864,18 @@ describe("agent-intent send", () => {
       await runSend({ amount: "25 USDC", token: USDC });
 
       expect(tickerLookups).toEqual([]);
+    });
+
+    it("still sends the ERC-20 token CAL lists under another chain's coin ticker", async () => {
+      await runSend({ amount: "1 BTC" });
+
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ asset: { type: "erc20", assetReference: BTC_NAMESAKE } }),
+      ]);
+      expect(stderrLines()).toContain(
+        `BTC is ${BTC_NAMESAKE} (BTC namesake), the only ERC-20 token with that ticker on ` +
+          "Ethereum mainnet.",
+      );
     });
   });
 
