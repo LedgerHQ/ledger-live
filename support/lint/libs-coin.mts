@@ -78,8 +78,6 @@ export default defineConfig({
       files: [
         "coin-cardano/src/api/getTransactions.ts",
         "coin-concordium/src/api/index.ts",
-        "coin-icon/src/api/index.ts",
-        "coin-icon/src/api/node.ts",
       ],
       rules: {
         "eslint/no-restricted-imports": [
