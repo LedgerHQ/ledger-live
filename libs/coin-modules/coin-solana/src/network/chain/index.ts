@@ -33,13 +33,7 @@ import {
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { paginatedProgramAccounts } from "./rpc/program-accounts";
-import {
-  clearSharedTokenAccounts,
-  sharedTokenAccounts,
-  type TokenAccountsLookupOptions,
-} from "./sharedTokenAccounts";
-
-export type { TokenAccountsLookupOptions } from "./sharedTokenAccounts";
+import { clearSharedTokenAccounts, sharedTokenAccounts } from "./sharedTokenAccounts";
 import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
 import {
@@ -68,16 +62,12 @@ export type ChainAPI = Readonly<{
 
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
-  /** `fresh` reads the chain even when a shared lookup is still valid, and shares the new one. */
   getParsedTokenAccountsByOwner: (
     address: string,
-    options?: TokenAccountsLookupOptions,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
 
-  /** `fresh` reads the chain even when a shared lookup is still valid, and shares the new one. */
   getParsedToken2022AccountsByOwner: (
     address: string,
-    options?: TokenAccountsLookupOptions,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
 
   getStakeAccountsByWithdrawAuth: (
@@ -262,16 +252,11 @@ export function getChainAPI(
   const getTokenAccountsByOwner = (
     address: string,
     programId: PublicKey,
-    options?: TokenAccountsLookupOptions,
   ): ReturnType<Connection["getParsedTokenAccountsByOwner"]> => {
     const callback = () =>
       connection.getParsedTokenAccountsByOwner(new PublicKey(address), { programId });
-    return sharedTokenAccounts(
-      config.endpoint,
-      programId.toBase58(),
-      address,
-      () => callback().catch(remapErrorsWithRetry(callback, retryPolicy)),
-      options,
+    return sharedTokenAccounts(config.endpoint, programId.toBase58(), address, () =>
+      callback().catch(remapErrorsWithRetry(callback, retryPolicy)),
     );
   };
 
@@ -288,11 +273,11 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
-    getParsedTokenAccountsByOwner: (address: string, options?: TokenAccountsLookupOptions) =>
-      getTokenAccountsByOwner(address, TOKEN_PROGRAM_ID, options),
+    getParsedTokenAccountsByOwner: (address: string) =>
+      getTokenAccountsByOwner(address, TOKEN_PROGRAM_ID),
 
-    getParsedToken2022AccountsByOwner: (address: string, options?: TokenAccountsLookupOptions) =>
-      getTokenAccountsByOwner(address, TOKEN_2022_PROGRAM_ID, options),
+    getParsedToken2022AccountsByOwner: (address: string) =>
+      getTokenAccountsByOwner(address, TOKEN_2022_PROGRAM_ID),
 
     getStakeAccountsByWithdrawAuth: (authAddr: string) => {
       const callback = () =>

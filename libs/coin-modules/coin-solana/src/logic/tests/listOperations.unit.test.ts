@@ -102,21 +102,141 @@ describe("listOperations", () => {
         token2022Ata().pubkey.toBase58(),
       ]);
     });
+  });
 
-    it("reads the token accounts fresh, never from a shared lookup", async () => {
-      mockGetSignaturesForAddress.mockResolvedValue([]);
+  describe("token account read slot", () => {
+    const encode = (payload: unknown) =>
+      Buffer.from(JSON.stringify(payload), "utf8").toString("base64");
+    const decode = (cursor: string | undefined) =>
+      JSON.parse(Buffer.from(cursor as string, "base64").toString("utf8"));
+
+    it("leaves the signatures above the token account read to the next sync", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+        { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("caps at the older of the two token program reads", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({
+        context: { slot: 95 },
+        value: [],
+      });
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "between", slot: 98, blockTime: 1700000000, err: null },
+        { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
 
       await listOperations(api, { ...TEST_CONFIG, token2022Enabled: true }, TEST_ADDRESS, {
         minHeight: 0,
         order: "desc",
       });
 
-      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS, {
-        fresh: true,
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("does not cap when a token account read reports no slot", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["newer"]]]);
+    });
+
+    it("keeps the cap of a capped cursor on the next page, without reading the token accounts", async () => {
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "prev"
+          ? [
+              { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+              { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+            ]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: encode({ v: 2, sources: { [TEST_ADDRESS]: "prev" }, maxSlot: 100 }),
       });
-      expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS, {
-        fresh: true,
+
+      expect(mockGetParsedTokenAccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("writes the cap back into the next cursor", async () => {
+      // A page that moves no cursor returns it as is: here, through the capped shape.
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "prev", slot: 90, blockTime: null, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        limit: 1,
+        cursor: encode({ v: 2, sources: { [TEST_ADDRESS]: "prev" }, maxSlot: 100 }),
       });
+
+      expect(decode(result.next)).toEqual({
+        v: 2,
+        sources: { [TEST_ADDRESS]: "prev" },
+        maxSlot: 100,
+      });
+    });
+
+    it("reads a plain source map cursor, from before the cap, without a cap", async () => {
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "prev"
+          ? [{ signature: "newer", slot: 10_000, blockTime: 1700000000, err: null }]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: encode({ [TEST_ADDRESS]: "prev" }),
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["newer"]]]);
+    });
+
+    it("reads a bare owner signature cursor, and caps from a new token account read", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "bareSig"
+          ? [
+              { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+              { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+            ]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: "bareSig",
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
     });
   });
 

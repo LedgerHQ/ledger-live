@@ -43,10 +43,23 @@ export async function listOperations(
   const batchSize = config.node?.batchSize ?? DEFAULT_NODE_BATCH_SIZE;
   const decoded = decodeCursor(cursor, address);
   let before = decoded.cursors;
-  let activeSources =
-    cursor && !decoded.legacy
-      ? Object.keys(before)
-      : await signatureSources(api, address, config.token2022Enabled);
+  let activeSources: string[];
+  // Highest slot the walk may return. The token account list comes from a lookup shared with
+  // `getBalance` and can predate this call: a token account created after its slot is not walked.
+  // The sync resumes above the newest operation it stores, so a newer operation stored now would
+  // skip that account's transfers for good. Capped, they are left to the next sync, which reads
+  // the list again. Carried in the cursor so every page of the walk keeps the same cap.
+  let maxSlot: number | undefined;
+  if (cursor && !decoded.legacy) {
+    activeSources = Object.keys(before);
+    maxSlot = decoded.maxSlot;
+  } else {
+    ({ sources: activeSources, maxSlot } = await signatureSources(
+      api,
+      address,
+      config.token2022Enabled,
+    ));
+  }
 
   const items: Operation[] = [];
 
@@ -83,10 +96,15 @@ export async function listOperations(
     sourced.sort((a, b) => b.signature.slot - a.signature.slot);
 
     const page = sourced.slice(0, rpcLimit);
-    // Before fetching: a signature already below `minHeight` would be downloaded only to be dropped.
+    // Before fetching: a signature already below `minHeight` would be downloaded only to be dropped,
+    // and one above `maxSlot` is left to the next sync.
     const signatures = page
       .map(entry => entry.signature)
-      .filter(signature => !(minHeight > 0 && signature.slot < minHeight));
+      .filter(
+        signature =>
+          !(minHeight > 0 && signature.slot < minHeight) &&
+          !(maxSlot !== undefined && signature.slot > maxSlot),
+      );
 
     const cut = new Set(
       sourced.slice(rpcLimit).map(entry => `${entry.source}|${entry.signature.signature}`),
@@ -147,7 +165,7 @@ export async function listOperations(
       Object.keys(nextCursors).length === Object.keys(before).length &&
       Object.entries(nextCursors).every(([source, sig]) => before[source] === sig);
     if (items.length > 0 || Object.keys(nextCursors).length === 0 || unchanged) {
-      return { items, next: encodeCursor(nextCursors) };
+      return { items, next: encodeCursor(nextCursors, maxSlot) };
     }
 
     before = nextCursors;
@@ -155,21 +173,26 @@ export async function listOperations(
   }
 }
 
-/** Canonical associated accounts only: `getBalance` reports no others. */
+/**
+ * Canonical associated accounts only: `getBalance` reports no others. `maxSlot` is the slot the
+ * token account list is known complete at, the lower one when two programs are read; `undefined`
+ * when a lookup reports no slot.
+ */
 async function signatureSources(
   api: ChainAPI,
   address: string,
   token2022Enabled: boolean,
-): Promise<string[]> {
+): Promise<{ sources: string[]; maxSlot: number | undefined }> {
   const owner = new PublicKey(address);
-  // Fresh, not shared: the sync resumes from the newest operation it stores, so a token account
-  // created since a shared lookup would have its transfers below that point, and lost for good.
-  const [splTokenAccounts, token2022Accounts] = await Promise.all([
-    api.getParsedTokenAccountsByOwner(address, { fresh: true }).then(res => res.value),
-    token2022Enabled
-      ? api.getParsedToken2022AccountsByOwner(address, { fresh: true }).then(res => res.value)
-      : Promise.resolve([]),
+  const lookups = await Promise.all([
+    api.getParsedTokenAccountsByOwner(address),
+    ...(token2022Enabled ? [api.getParsedToken2022AccountsByOwner(address)] : []),
   ]);
+  const [splTokenAccounts, token2022Accounts = []] = lookups.map(res => res.value);
+  const slots = lookups.map(res => res.context?.slot);
+  const maxSlot = slots.every(slot => typeof slot === "number")
+    ? Math.min(...(slots as number[]))
+    : undefined;
 
   const associated = [
     ...splTokenAccounts.map(account => ({ account, program: PARSED_PROGRAMS.SPL_TOKEN })),
@@ -185,27 +208,54 @@ async function signatureSources(
     return expected.equals(account.pubkey) ? [account.pubkey.toBase58()] : [];
   });
 
-  return [address, ...associated];
+  return { sources: [address, ...associated], maxSlot };
 }
 
-/** `legacy` marks a bare owner signature, minted before token streams existed. */
+/** Cursor shape carrying `maxSlot`. A plain source map holds only strings, so `v` tells them apart. */
+type CappedCursor = { v: 2; sources: Record<string, string>; maxSlot: number };
+
+function isCappedCursor(value: object): value is CappedCursor {
+  const candidate = value as Partial<CappedCursor>;
+  return (
+    candidate.v === 2 &&
+    typeof candidate.maxSlot === "number" &&
+    !!candidate.sources &&
+    typeof candidate.sources === "object" &&
+    !Array.isArray(candidate.sources)
+  );
+}
+
+/**
+ * Reads the three cursor shapes, oldest first: a bare owner signature (`legacy`, minted before
+ * token streams existed), a plain map of source to signature (no `maxSlot`), and a
+ * {@link CappedCursor}.
+ */
 function decodeCursor(
   cursor: string | undefined,
   address: string,
-): { cursors: Record<string, string>; legacy: boolean } {
+): { cursors: Record<string, string>; legacy: boolean; maxSlot?: number } {
   if (!cursor) return { cursors: {}, legacy: false };
   try {
     const parsed: unknown = JSON.parse(Buffer.from(cursor, "base64").toString("utf8"));
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      if (isCappedCursor(parsed)) {
+        return { cursors: parsed.sources, legacy: false, maxSlot: parsed.maxSlot };
+      }
       return { cursors: parsed as Record<string, string>, legacy: false };
     }
   } catch {}
   return { cursors: { [address]: cursor }, legacy: true };
 }
 
-function encodeCursor(cursors: Record<string, string>): string | undefined {
+/** Without a cap, the plain source map, as before {@link CappedCursor} existed. */
+function encodeCursor(
+  cursors: Record<string, string>,
+  maxSlot: number | undefined,
+): string | undefined {
   if (Object.keys(cursors).length === 0) return undefined;
-  return Buffer.from(JSON.stringify(cursors)).toString("base64");
+  const payload: Record<string, string> | CappedCursor =
+    maxSlot === undefined ? cursors : { v: 2, sources: cursors, maxSlot };
+  return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
 
 /** JSON-RPC batch responses are not order-guaranteed, so pairing by array position is unsafe. */

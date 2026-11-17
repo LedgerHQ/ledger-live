@@ -26,16 +26,6 @@ const lookups = makeLRUCache(
   { max: SHARED_TOKEN_ACCOUNTS_MAX, ttl: SHARED_TOKEN_ACCOUNTS_TTL_MS },
 );
 
-export type TokenAccountsLookupOptions = {
-  /**
-   * Read the chain even when a shared lookup is still valid, then share the new one. For a caller
-   * whose result must not predate its own call, such as the signature sources of `listOperations`:
-   * the history walk resumes from what it stores, so a token account missing from a stale list
-   * could lose a transfer for good.
-   */
-  fresh?: boolean;
-};
-
 /**
  * Shares one token account lookup per `endpoint`, token program and owner: callers get the same
  * promise for {@link SHARED_TOKEN_ACCOUNTS_TTL_MS}, in flight or resolved. A rejected lookup is not
@@ -46,10 +36,8 @@ export function sharedTokenAccounts<T>(
   programId: string,
   owner: string,
   fetch: () => Promise<T>,
-  options?: TokenAccountsLookupOptions,
 ): Promise<T> {
-  const lookup = options?.fresh ? lookups.force : lookups;
-  return lookup(endpoint, programId, owner, fetch) as Promise<T>;
+  return lookups(endpoint, programId, owner, fetch) as Promise<T>;
 }
 
 /**

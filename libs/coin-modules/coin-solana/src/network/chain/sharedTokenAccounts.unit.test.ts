@@ -107,17 +107,6 @@ describe("sharedTokenAccounts", () => {
     expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 2);
   });
 
-  it("reads again when asked for a fresh lookup, and shares that one", async () => {
-    const fetch = jest.fn().mockResolvedValueOnce("before").mockResolvedValueOnce("after");
-
-    await sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch);
-    await expect(sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch, { fresh: true })).resolves.toBe(
-      "after",
-    );
-    await expect(sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch)).resolves.toBe("after");
-    expect(fetch).toHaveBeenCalledTimes(2);
-  });
-
   it("reads again after a clear", async () => {
     const fetch = jest.fn().mockResolvedValueOnce("before").mockResolvedValueOnce("after");
 
