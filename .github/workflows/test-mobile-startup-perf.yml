@@ -115,11 +115,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
-  # Build A of a release tag, from the cache of an earlier run, so the build jobs leave it out. The
-  # cache is the mobile E2E builds' (S3): only runs from develop save to it, under develop/, which
-  # only develop's role writes, and every run restores from there (a branch role reads it), never a
-  # build a branch run made. Restoring and saving are jobs of their own: the cache's credentials
-  # never share a job with the code being built.
+  # Restores build A of a release tag from the mobile E2E builds' S3 cache (develop/, which only
+  # runs from develop write), so the build jobs leave it out. The cache credentials never share a
+  # job with the code being built. Outputs android_sides and ios_sides: the sides each build matrix
+  # still builds, [] when nothing is left, empty when this job did not run (then: every side).
   restore-builds:
     name: "Restore cached build A"
     needs: [plan]
@@ -292,20 +291,19 @@ jobs:
           ANDROID: ${{ steps.restored.outputs.android == 'true' && steps.android-upload.outcome == 'success' }}
           IOS: ${{ steps.restored.outputs.ios == 'true' && steps.ios-upload.outcome == 'success' }}
         run: |
-          left() {
-            node -e 'const [sides, restored] = process.argv.slice(1);
-              console.log(JSON.stringify(JSON.parse(sides).filter(s => restored !== "true" || s !== "a")));' "$SIDES" "$1"
-          }
-          echo "android=$(left "$ANDROID")" >> "$GITHUB_OUTPUT"
-          echo "ios=$(left "$IOS")" >> "$GITHUB_OUTPUT"
+          without_a=$(node -p 'JSON.stringify(JSON.parse(process.argv[1]).filter(side => side !== "a"))' "$SIDES")
+          echo "android=$([[ "$ANDROID" == true ]] && echo "$without_a" || echo "$SIDES")" >> "$GITHUB_OUTPUT"
+          echo "ios=$([[ "$IOS" == true ]] && echo "$without_a" || echo "$SIDES")" >> "$GITHUB_OUTPUT"
           if [[ "$ANDROID" == true ]]; then echo "- Android build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"; fi
           if [[ "$IOS" == true ]]; then echo "- iOS build A restored from the cache" >> "$GITHUB_STEP_SUMMARY"; fi
 
   build-android:
     name: "Android build ${{ matrix.side }}"
     needs: [plan, restore-builds]
-    # Every side when there is no restore job (A is not a release tag's) or it failed.
-    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'iOS Only' && needs.restore-builds.outputs.android_sides != '[]' }}
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'iOS Only' &&
+      needs.restore-builds.outputs.android_sides != '[]'
     permissions:
       id-token: write
       contents: read
@@ -408,7 +406,10 @@ jobs:
   build-ios:
     name: "iOS build ${{ matrix.side }}"
     needs: [plan, restore-builds]
-    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'Android Only' && needs.restore-builds.outputs.ios_sides != '[]' }}
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'Android Only' &&
+      needs.restore-builds.outputs.ios_sides != '[]'
     permissions:
       id-token: write
       contents: read
@@ -496,15 +497,17 @@ jobs:
           retention-days: 7
           overwrite: true
 
-  # Build A of a release tag, for the next runs (see restore-builds), from this run's artifacts. Only
-  # when B builds reviewed code (save_a, resolve-refs.mts): B's build job runs B's code, which could
-  # replace A's artifact.
+  # Caches the build A this run made, for the next runs (see restore-builds). Only when B builds
+  # reviewed code (save_a, resolve-refs.mts): B's build job could replace A's artifact.
   save-builds:
     name: "Cache build A"
     needs: [plan, restore-builds, build-android, build-ios]
     # Best-effort: a build that is not cached is built again by the next run.
     continue-on-error: true
-    if: ${{ !cancelled() && needs.plan.outputs.save_a == 'true' && needs.restore-builds.result == 'success' && (contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' || contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success') }}
+    if: >-
+      !cancelled() && needs.plan.outputs.save_a == 'true' && needs.restore-builds.result == 'success' &&
+      (contains(needs.restore-builds.outputs.android_sides, '"a"') && needs.build-android.result == 'success' ||
+      contains(needs.restore-builds.outputs.ios_sides, '"a"') && needs.build-ios.result == 'success')
     permissions:
       id-token: write
       contents: read
@@ -593,8 +596,11 @@ jobs:
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
     needs: [plan, restore-builds, build-android]
-    # With build A restored, build-android is skipped when it has no side left to build.
-    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'iOS Only' && (needs.build-android.result == 'success' || needs.build-android.result == 'skipped' && needs.restore-builds.outputs.android_sides == '[]') }}
+    # Built, or every side restored (build-android then skipped).
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'iOS Only' &&
+      (needs.build-android.result == 'success' || needs.restore-builds.outputs.android_sides == '[]')
     strategy:
       fail-fast: false
       matrix:
@@ -778,7 +784,10 @@ jobs:
   measure-ios:
     name: "iOS startup (2 simulators)"
     needs: [plan, restore-builds, build-ios]
-    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.platforms != 'Android Only' && (needs.build-ios.result == 'success' || needs.build-ios.result == 'skipped' && needs.restore-builds.outputs.ios_sides == '[]') }}
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'Android Only' &&
+      (needs.build-ios.result == 'success' || needs.restore-builds.outputs.ios_sides == '[]')
     # One iOS measurement at a time on the performance pool, so two never measure side by side;
     # queue: max keeps every waiting run instead of only the latest.
     concurrency:
@@ -918,10 +927,10 @@ jobs:
           LABEL_B: ${{ needs.plan.outputs.label_b }}
           SCENARIOS: ${{ needs.plan.outputs.scenarios }}
           PLAN: ${{ needs.plan.result }}
-          # A build job with no side left to build, all restored, counts as built.
-          ANDROID_BUILD: ${{ needs.build-android.result == 'skipped' && needs.restore-builds.outputs.android_sides == '[]' && 'success' || needs.build-android.result }}
+          # Every side restored counts as built.
+          ANDROID_BUILD: ${{ needs.restore-builds.outputs.android_sides == '[]' && 'success' || needs.build-android.result }}
           ANDROID_MEASURE: ${{ needs.measure-android.result }}
-          IOS_BUILD: ${{ needs.build-ios.result == 'skipped' && needs.restore-builds.outputs.ios_sides == '[]' && 'success' || needs.build-ios.result }}
+          IOS_BUILD: ${{ needs.restore-builds.outputs.ios_sides == '[]' && 'success' || needs.build-ios.result }}
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 

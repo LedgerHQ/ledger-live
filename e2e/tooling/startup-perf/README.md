@@ -72,15 +72,20 @@ Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
-take the branch. A run from develop, release or main builds only those branches and the
-`live-mobile@X.Y.Z` tags: its jobs get that branch's identity (OIDC), which the build jobs hold for
-JFrog and the caches trust. To measure another branch, run the workflow from it. No rule protects
-the tags, so such a run also checks, through the GitHub API, that a tag's commit is on main or the
-release bot's (`live-github-bot`), committed and signed by GitHub, as every release tag is.
-They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
-Debug value with react-native-startup-time.
+take the branch. Refs start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which
+still count the Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
+
+A run from develop, release or main gets that branch's identity (OIDC), which the build jobs hold
+for JFrog and the caches trust, so it builds only:
+
+- develop, release and main;
+- `live-mobile@X.Y.Z` tags whose commit is on main, or is the release bot's (`live-github-bot`),
+  committed and signed by GitHub, as every release tag is. No rule protects the tags, so the plan
+  checks this through the GitHub API.
+
+To measure another branch, run the workflow from that branch.
 
 ## The build
 
@@ -103,18 +108,24 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
+### Build A cache
+
 Build A of a `live-mobile@X.Y.Z` tag only changes on a release, so the mobile E2E builds' S3 cache
-keeps it, under `develop/`: only develop's role writes there, and every run restores from there,
-read only from another branch, so no run restores a build a branch run made. Its key is commit A, a
-hash of the workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`, and a version to bump
-by hand when something else the build depends on changes. The `restore-builds` job puts a cached
-build A in the run's artifacts, once its download succeeded and its commit and binary match, and the
-build matrices leave out each side whose artifact it published. `save-builds` caches a build A a run
-from develop made, only when B is develop, release or main (the branches only a pull request
-changes) or A itself: B's build job runs B's code, which could replace A's artifact before it is
-cached. Neither job runs the measured ref's code, and the build jobs get no cache credentials. Both
-continue on error and time out: a cache that cannot be read or written only means building A as
-before.
+keeps it:
+
+- **Key:** `develop/startup-perf-<platform>-<commit A>-<hash>-<version>`. The hash covers the
+  workflow, `prepare-build.mts`, `verify-build.mts` and `step.mts`. Bump the version by hand when
+  something else the build depends on changes.
+- **Restore (`restore-builds`):** every run reads `develop/`, which only develop's role writes, so
+  no run restores a build a branch run made. A cached build counts once its download succeeded and
+  its commit and binary match: the job publishes it as the run's artifact, and the build matrices
+  leave that side out.
+- **Save (`save-builds`):** only in a run from develop, and only when B is develop, release or main
+  (the branches only a pull request changes) or A itself. B's build job runs B's code, which could
+  replace A's artifact before it is cached.
+- **Isolation:** neither job runs the measured code, and the build jobs get no cache credentials.
+- **Best-effort:** both jobs continue on error and time out. A cache that cannot be read or written
+  only means building A as before.
 
 ## A launch
 

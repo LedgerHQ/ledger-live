@@ -39,18 +39,17 @@ interface Builds {
   labelA: string;
   labelB: string;
   warnings: string[];
-  /** Build A is a release tag's, which only changes on a release: the cache keeps it for later runs. */
-  cacheA: boolean;
-  /**
-   * And B builds only reviewed code: B's build job runs B's code, which could replace A's artifact
-   * before `save-builds` caches it.
-   */
-  saveA: boolean;
   /** The refs given as A or B. */
   refs: Resolved[];
+  /** Build A is a release tag's: it only changes on a release, so the cache keeps it. */
+  cacheA: boolean;
+  /** B builds only reviewed code, so B's build job cannot have replaced A's artifact. */
+  reviewedB: boolean;
 }
 
 export interface Plan extends Builds {
+  /** `save-builds` caches build A: a release tag's, next to a reviewed B, in a run from develop. */
+  saveA: boolean;
   /** The release tags a run from a reviewed branch builds, which `checkReleaseTags` vets. */
   tagsToCheck: Array<{ ref: string; sha: string }>;
   scenarios: string[];
@@ -128,7 +127,7 @@ function resolve(ref: string, lsRemote: LsRemote): Resolved {
  * which the build jobs hold for JFrog and the caches trust: it builds only those branches and the
  * release tags, and another branch is measured from a run of its own.
  */
-function resolveIn(inputs: PlanInputs, ref: string, lsRemote: LsRemote): Resolved {
+function resolveForRun(inputs: PlanInputs, ref: string, lsRemote: LsRemote): Resolved {
   const resolved = resolve(ref, lsRemote);
   const run = inputs.branchName;
   if (REVIEWED_BRANCHES.has(run) && !resolved.isReviewedBranch && !resolved.isReleaseTag) {
@@ -139,11 +138,21 @@ function resolveIn(inputs: PlanInputs, ref: string, lsRemote: LsRemote): Resolve
   return resolved;
 }
 
-/** What the cache may do with build A, given A's ref and whether B builds only reviewed code. */
-const cachingOf = (a: Resolved, reviewedB: boolean) => ({
-  cacheA: a.isReleaseTag,
-  saveA: a.isReleaseTag && reviewedB,
-});
+/** Builds A and B of two refs. */
+function twoRefs(inputs: PlanInputs, lsRemote: LsRemote, refA: string, refB: string): Builds {
+  const [a, b] = [resolveForRun(inputs, refA, lsRemote), resolveForRun(inputs, refB, lsRemote)];
+  return {
+    sides: ["a", "b"],
+    shaA: a.sha,
+    shaB: b.sha,
+    labelA: refA,
+    labelB: refB,
+    warnings: [],
+    refs: [a, b],
+    cacheA: a.isReleaseTag,
+    reviewedB: b.isReviewedBranch,
+  };
+}
 
 const versionOf = (tag: string) => (PROD_TAG.exec(tag) ?? []).slice(1).map(Number);
 const byVersion = (a: string, b: string) => {
@@ -165,18 +174,9 @@ export function latestProdTag(lsRemote: LsRemote): string {
 /** The latest prod tag (or ref_a) against `refB`. */
 function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Builds {
   const refA = inputs.refA || latestProdTag(lsRemote);
-  const [a, b] = [resolveIn(inputs, refA, lsRemote), resolveIn(inputs, refB, lsRemote)];
-  const warnings = a.sha === b.sha ? [`${refA} and ${refB} are the same commit`] : [];
-  return {
-    sides: ["a", "b"],
-    shaA: a.sha,
-    shaB: b.sha,
-    labelA: refA,
-    labelB: refB,
-    warnings,
-    ...cachingOf(a, b.isReviewedBranch),
-    refs: [a, b],
-  };
+  const builds = twoRefs(inputs, lsRemote, refA, refB);
+  if (builds.shaA === builds.shaB) builds.warnings.push(`${refA} and ${refB} are the same commit`);
+  return builds;
 }
 
 function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -188,33 +188,25 @@ function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
 
 function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   if (!inputs.refA || !inputs.refB) throw new StepFailure("custom needs both ref_a and ref_b");
-  const [a, b] = [
-    resolveIn(inputs, inputs.refA, lsRemote),
-    resolveIn(inputs, inputs.refB, lsRemote),
-  ];
-  return {
-    sides: ["a", "b"],
-    shaA: a.sha,
-    shaB: b.sha,
-    labelA: inputs.refA,
-    labelB: inputs.refB,
-    warnings: [],
-    ...cachingOf(a, b.isReviewedBranch),
-    refs: [a, b],
-  };
+  return twoRefs(inputs, lsRemote, inputs.refA, inputs.refB);
 }
 
 /**
  * One commit for both sides: ref_a, else the branch the workflow runs from. B builds A's code, with
  * at most this workflow's own edit.
  */
-function oneCommit(inputs: PlanInputs, lsRemote: LsRemote) {
-  if (!inputs.refA) {
-    const label = inputs.branchName;
-    return { sha: inputs.branchSha, label, cacheA: false, saveA: false, refs: [] };
-  }
-  const a = resolveIn(inputs, inputs.refA, lsRemote);
-  return { sha: a.sha, label: inputs.refA, ...cachingOf(a, true), refs: [a] };
+function oneCommit(inputs: PlanInputs, lsRemote: LsRemote): Omit<Builds, "sides" | "labelB"> {
+  const a = inputs.refA ? resolveForRun(inputs, inputs.refA, lsRemote) : undefined;
+  const sha = a?.sha ?? inputs.branchSha;
+  return {
+    shaA: sha,
+    shaB: sha,
+    labelA: inputs.refA || inputs.branchName,
+    warnings: [],
+    refs: a ? [a] : [],
+    cacheA: a?.isReleaseTag ?? false,
+    reviewedB: true,
+  };
 }
 
 function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -225,31 +217,12 @@ function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
       return againstProd(inputs, lsRemote, inputs.refB || "develop");
     case "custom":
       return custom(inputs, lsRemote);
-    case "aa-noise": {
-      const { sha, label, ...caching } = oneCommit(inputs, lsRemote);
-      return {
-        sides: ["a"],
-        shaA: sha,
-        shaB: sha,
-        labelA: label,
-        labelB: "the same binary",
-        warnings: [],
-        ...caching,
-      };
-    }
+    case "aa-noise":
+      return { ...oneCommit(inputs, lsRemote), sides: ["a"], labelB: "the same binary" };
     case "known-regression": {
       // Build B re-adds LIVE-36190 to the same commit (prepare-build.mts).
-      const { sha, label, ...caching } = oneCommit(inputs, lsRemote);
-      const labelB = `${label} with LIVE-36190 re-added`;
-      return {
-        sides: ["a", "b"],
-        shaA: sha,
-        shaB: sha,
-        labelA: label,
-        labelB,
-        warnings: [],
-        ...caching,
-      };
+      const builds = oneCommit(inputs, lsRemote);
+      return { ...builds, sides: ["a", "b"], labelB: `${builds.labelA} with LIVE-36190 re-added` };
     }
     default:
       throw new StepFailure(`unknown preset ${inputs.preset}`);
@@ -271,8 +244,8 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
-    // Every run restores what develop's runs saved, under develop/, which only develop's role writes.
-    saveA: builds.saveA && inputs.branchName === "develop",
+    // Every run restores from develop/, which only develop's role writes.
+    saveA: builds.cacheA && builds.reviewedB && inputs.branchName === "develop",
     tagsToCheck,
     scenarios: inputs.scenarios.split(","),
     settings: {
