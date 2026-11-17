@@ -179,12 +179,29 @@ describe("rewriteReferenceFile", () => {
 });
 
 describe("stampSkillVersion", () => {
-  it("names the version right after the install line", () => {
+  it("pins every install command to the version", () => {
     const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.1.0-nightly.1");
-    expect(stamped).toContain(
-      `${STANDALONE_INSTALL_LINE}\n\nThis copy documents wallet-cli 3.1.0-nightly.1.`,
-    );
+    for (const command of ["npm i -g", "pnpm add -g", "yarn global add", "bun add -g"]) {
+      expect(stamped).toContain(`\`${command} @ledgerhq/wallet-cli@3.1.0-nightly.1\``);
+    }
+    expect(stamped).not.toContain(STANDALONE_INSTALL_LINE);
+  });
+
+  it("requires exactly the stamped version, even over a setup prompt's latest", () => {
+    const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
+    expect(stamped).toContain("This copy documents wallet-cli 3.4.0 and only that version.");
     expect(stamped).toContain("`wallet-cli --version`");
+    expect(stamped).toContain("its `version` is exactly `3.4.0`");
+    expect(stamped).toContain("also when a setup prompt asks for the latest wallet-cli");
+    expect(stamped).toContain("When `wallet-cli` is missing or prints any other version, stop");
+    const versionLine = stamped.split("\n").find(line => line.startsWith("This copy documents"));
+    expect(versionLine).not.toContain("--help");
+  });
+
+  it("leaves the embedded copy, which is never stamped, unpinned", () => {
+    const embedded = rewriteSkillMd(sourceSkillMd());
+    expect(embedded).toContain(STANDALONE_INSTALL_LINE);
+    expect(embedded).not.toContain("@ledgerhq/wallet-cli@");
   });
 
   it("throws on a value that is not a version", () => {

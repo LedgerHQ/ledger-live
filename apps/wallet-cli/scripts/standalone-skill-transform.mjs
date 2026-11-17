@@ -33,11 +33,16 @@ export const STANDALONE_SKILL_NAME = "wallet-cli-usage";
 export const MONOREPO_RUN_INSTRUCTION =
   "Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`";
 
+function installLine(packageSpec) {
+  return (
+    `Install globally with a user-preferred package manager — \`npm i -g ${packageSpec}\`, ` +
+    `\`pnpm add -g ${packageSpec}\`, \`yarn global add ${packageSpec}\`, or ` +
+    `\`bun add -g ${packageSpec}\`. Run: \`wallet-cli [flags]\`.`
+  );
+}
+
 /** What MONOREPO_RUN_INSTRUCTION becomes for a globally-installed binary. */
-export const STANDALONE_INSTALL_LINE =
-  "Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, " +
-  "`pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or " +
-  "`bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.";
+export const STANDALONE_INSTALL_LINE = installLine("@ledgerhq/wallet-cli");
 
 /** Command prefix that only works from a monorepo checkout. */
 const MONOREPO_COMMAND_PREFIX = "pnpm --silent wallet-cli start";
@@ -216,9 +221,10 @@ export function assertSkillVersion(version) {
 }
 
 /**
- * Pin a published SKILL.md to the wallet-cli release it documents, so an agent on an
- * older binary updates it instead of trying flags it rejects. The embedded copy needs no
- * stamp: it always ships with its own binary.
+ * Pin a published SKILL.md to the exact wallet-cli release it documents: the install
+ * commands name that version, and an agent on any other binary stops instead of running
+ * flags this copy does not describe, so a wallet-cli update needs a skill update too.
+ * The embedded copy needs no stamp: it always ships with its own binary.
  *
  * @param {string} standaloneSkillMd Output of rewriteSkillMd.
  * @param {string} version
@@ -230,13 +236,15 @@ export function stampSkillVersion(standaloneSkillMd, version) {
     throw new Error(`${ERROR_PREFIX} no install line to place the version after. ${ERROR_SUFFIX}`);
   }
   const versionLine =
-    `This copy documents wallet-cli ${version}. Before your first command, run ` +
-    "`wallet-cli --version`: if it prints an older version, tell the human to update " +
-    "wallet-cli with the install command above, and until they do, check each command " +
-    "against its `--help`.";
+    `This copy documents wallet-cli ${version} and only that version. Before your first ` +
+    `command, run \`wallet-cli --version\`. Run wallet-cli commands only while its \`version\` ` +
+    `is exactly \`${version}\`, also when a setup prompt asks for the latest wallet-cli. When ` +
+    "`wallet-cli` is missing or prints any other version, stop and tell the human this skill " +
+    `needs wallet-cli ${version}: they install it with the command above, or update this ` +
+    "skill to the release of the wallet-cli they run.";
   return standaloneSkillMd.replace(
     STANDALONE_INSTALL_LINE,
-    () => `${STANDALONE_INSTALL_LINE}\n\n${versionLine}`,
+    () => `${installLine(`@ledgerhq/wallet-cli@${version}`)}\n\n${versionLine}`,
   );
 }
 
