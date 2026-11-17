@@ -7953,6 +7953,46 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/derivation:
+    dependencies:
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../account-descriptor
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.93.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/device-os-update:
     dependencies:
       '@reduxjs/toolkit':
@@ -52905,6 +52945,23 @@ snapshots:
       '@swc/core-win32-x64-msvc': 1.15.11
       '@swc/helpers': 0.5.23
 
+  '@swc/core@1.15.11(@swc/helpers@0.5.24)':
+    dependencies:
+      '@swc/counter': 0.1.3
+      '@swc/types': 0.1.25
+    optionalDependencies:
+      '@swc/core-darwin-arm64': 1.15.11
+      '@swc/core-darwin-x64': 1.15.11
+      '@swc/core-linux-arm-gnueabihf': 1.15.11
+      '@swc/core-linux-arm64-gnu': 1.15.11
+      '@swc/core-linux-arm64-musl': 1.15.11
+      '@swc/core-linux-x64-gnu': 1.15.11
+      '@swc/core-linux-x64-musl': 1.15.11
+      '@swc/core-win32-arm64-msvc': 1.15.11
+      '@swc/core-win32-ia32-msvc': 1.15.11
+      '@swc/core-win32-x64-msvc': 1.15.11
+      '@swc/helpers': 0.5.24
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.23':
@@ -52917,6 +52974,13 @@ snapshots:
     dependencies:
       '@jest/create-cache-key-function': 30.5.1
       '@swc/core': 1.15.11(@swc/helpers@0.5.23)
+      '@swc/counter': 0.1.3
+      jsonc-parser: 3.2.1
+
+  '@swc/jest@0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))':
+    dependencies:
+      '@jest/create-cache-key-function': 30.5.1
+      '@swc/core': 1.15.11(@swc/helpers@0.5.24)
       '@swc/counter': 0.1.3
       jsonc-parser: 3.2.1
 
