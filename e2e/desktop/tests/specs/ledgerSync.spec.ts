@@ -250,7 +250,10 @@ for (const { titleSuffix, onDie } of DEVICE_STEP_VARIANTS) {
         await app.ledgerSync.expectCLIMemberVisible();
 
         await app.ledgerSync.removeCLIMember();
-        if (onDie) await app.ledgerSync.expectDeviceIntentVisible();
+        if (onDie) {
+          await app.ledgerSync.expectDeviceIntentVisible();
+          await app.ledgerSync.expectRemoveInstanceDeviceStep();
+        }
         await app.speculos.removeMemberFromLedgerSync();
         if (onDie) await app.ledgerSync.expectDeviceIntentFinished();
         await app.ledgerSync.expectMemberRemoval();
@@ -346,7 +349,10 @@ for (const { titleSuffix, onDie } of DEVICE_STEP_VARIANTS) {
 
         await app.ledgerSync.clickTurnOnLedgerSync();
         await app.ledgerSync.clickConnectDevice();
-        if (onDie) await app.ledgerSync.expectDeviceIntentVisible();
+        if (onDie) {
+          await app.ledgerSync.expectDeviceIntentVisible();
+          await app.ledgerSync.expectActivationDeviceStep();
+        }
         await app.speculos.activateLedgerSync();
         if (onDie) await app.ledgerSync.expectDeviceIntentFinished();
         await app.ledgerSync.expectActivationSuccess();

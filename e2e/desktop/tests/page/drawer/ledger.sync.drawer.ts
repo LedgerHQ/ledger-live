@@ -29,6 +29,9 @@ export class LedgerSyncDrawer extends Drawer {
   );
   private readonly addMemberRejected = this.page.getByTestId("wallet-sync-add-member-rejected");
   private readonly addMemberRetryButton = this.page.getByTestId("wallet-sync-add-member-retry");
+  private readonly removeMemberDeviceStep = this.page.getByTestId(
+    "wallet-sync-remove-member-continue-on-device",
+  );
 
   private async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
@@ -74,6 +77,11 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Retry the activation in the device intent dialog")
   async retryActivation() {
     await this.addMemberRetryButton.click();
+  }
+
+  @step("Expect the remove instance device step in the device intent dialog")
+  async expectRemoveInstanceDeviceStep() {
+    await expect(this.removeMemberDeviceStep).toBeVisible();
   }
 
   @step("Expect the device intent dialog to be closed")
