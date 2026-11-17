@@ -41,6 +41,7 @@ import {
   trackSwapRejected,
   trackSwapStarted,
 } from "../../analytics/swap-analytics";
+import { createTestSeam } from "../../shared/test-seam";
 
 const EXCHANGE_SWAP: ExchangeTypes.Swap = 0x00;
 const RATE_FIXED: RateTypes = 0x00;
@@ -98,12 +99,17 @@ export type SwapPipelineDeps = {
   postSwapCancelled: typeof postSwapCancelled;
 };
 
-const defaultSwapPipelineDeps: SwapPipelineDeps = {
+// live-common's completeExchange waits 3 s after the device confirms, too long for a test run.
+const completeExchangeSeam = createTestSeam(completeExchange);
+
+/** @internal Test seam — replaces the Exchange app confirmation for runs through the CLI. */
+export const _setTestCompleteExchange = completeExchangeSeam.set;
+
+const defaultSwapPipelineDeps: Omit<SwapPipelineDeps, "completeExchange"> = {
   getAccountBridge,
   getDeviceModelId: getWalletCliDeviceModelId,
   withLedgerManagerAppSession,
   startExchange,
-  completeExchange,
   retrieveSwapPayload,
   decodeSwapPayload,
   setBroadcastTransaction,
@@ -314,7 +320,11 @@ export async function runFullSwapPipeline(
     toParentAccount: toParent,
     flowId,
   } = input;
-  const deps = { ...defaultSwapPipelineDeps, ...input.deps };
+  const deps: SwapPipelineDeps = {
+    ...defaultSwapPipelineDeps,
+    completeExchange: completeExchangeSeam.get(),
+    ...input.deps,
+  };
 
   const accounts: AccountLike[] = [fromAccount, toAccount, fromParent, toParent].filter(
     (a): a is AccountLike => a != null,

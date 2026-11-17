@@ -1,9 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
+import { describe, it, expect, afterEach, beforeEach } from "bun:test";
+import { resetTestSeams } from "../../shared/test-seam";
+import { useFreshCalCache } from "../../testing/cal-cache";
 import { MockServer } from "../../testing/mock-server";
-import type { Route } from "../../testing/mock-server";
-import { runCli } from "../../testing/cli-runner";
-import { makeSessionDir } from "../../testing/session-fixture";
-import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
 import {
   MOCK_ETH_DESCRIPTOR,
   MOCK_ETH_ADDRESS,
@@ -12,62 +10,26 @@ import {
   MOCK_SOL_ADDRESS,
   MOCK_BTC_DESCRIPTOR,
 } from "../../testing/constants";
+import {
+  calls,
+  earnResults,
+  FakeEarnApi,
+  FakeEvmNode,
+  jsonLines,
+  runEarn,
+  references,
+  SignedEvmEarn,
+  SignedSolanaEarn,
+  SOLANA_ACCOUNT,
+  SOLANA_STAKE,
+  VAULT,
+} from "../../testing/earn-vault";
 
-const VAULT = {
-  id: "usdc-vault",
-  chain: "eth",
-  chain_id: 1,
-  address: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-  vault: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-  asset: "0xcccccccccccccccccccccccccccccccccccccccc",
-  asset_symbol: "USDC",
-  asset_decimals: 6,
-};
+const ETH_ACCOUNT = { label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR };
+const SOL_ACCOUNT = { label: "solana-1", descriptor: MOCK_SOL_DESCRIPTOR };
+const WITHDRAW = ["withdraw", "--account", "ethereum-1", "--product", VAULT.id];
 
-// Backend-built redeem calldata, targeting the vault (the only allowlisted target for a withdraw).
-const WITHDRAW_TX = {
-  wallet: MOCK_ETH_ADDRESS,
-  to: VAULT.vault,
-  data: "0xba087652",
-  value: "0",
-  nonce: 0,
-  gas_limit: 200_000,
-  chain_id: 1,
-};
-
-// Routes prepareTransaction needs during the EVM dry-run (gas estimation, nonce, fee data) plus sync.
-// The balance route is placed first so it overrides ETH_SYNC_ROUTES' default zero-balance route — the
-// redeem intent carries 0 native value, so the 1 ETH balance just covers gas during prepare.
-const EVM_PREPARE_ROUTES: Route[] = [
-  {
-    method: "GET",
-    match: /\/address\/[^/]+\/balance$/,
-    response: { balance: "1000000000000000000" }, // 1 ETH
-  },
-  ...ETH_SYNC_ROUTES,
-  {
-    method: "GET",
-    match: /\/address\/[^/]+\/nonce$/,
-    response: { address: MOCK_ETH_ADDRESS, nonce: 0 },
-  },
-  {
-    method: "POST",
-    match: /\/tx\/estimate-gas-limit/,
-    response: { estimated_gas_limit: "21000" },
-  },
-  {
-    method: "GET",
-    match: /\/gastracker\/barometer/,
-    response: { low: "1", medium: "2", high: "3", next_base: "1" },
-  },
-];
-
-const WITHDRAW_ROUTES: Route[] = [
-  ...EVM_PREPARE_ROUTES,
-  { method: "GET", match: "/v1/defi/products", response: [VAULT] },
-  { method: "POST", match: "/v1/defi/withdraw", response: { data: WITHDRAW_TX } },
-];
-
+// Dry runs never sign, so the stock mock device is enough.
 const DMK_ENV = {
   WALLET_CLI_MOCK_DMK: "1",
   WALLET_CLI_MOCK_APP_RESULTS: JSON.stringify({
@@ -75,125 +37,181 @@ const DMK_ENV = {
   }),
 };
 
-type Tx = { kind: string; status?: string; to?: string };
+let stopServer: (() => void) | undefined;
 
-// The command emits exactly one terminal envelope: the withdraw result carrying `family`/`transactions`.
-// (The dry-run prepare no longer emits its own `sendDryRun` envelope — the caller owns the terminal one.)
-function parseEnvelopes(stdout: string): Record<string, unknown>[] {
-  return stdout
-    .split("\n")
-    .map(line => line.trim())
-    .filter(Boolean)
-    .map(line => JSON.parse(line) as Record<string, unknown>);
+afterEach(() => {
+  resetTestSeams();
+  stopServer?.();
+  stopServer = undefined;
+});
+
+function serve(routes: ConstructorParameters<typeof MockServer>[0] = []): Record<string, string> {
+  const server = new MockServer(routes);
+  server.start();
+  stopServer = () => server.stop();
+  return { WALLET_CLI_MOCK_PORT: String(server.port) };
 }
 
-function parseWithdrawResult(stdout: string): Record<string, unknown> {
-  const result = parseEnvelopes(stdout).find(line => line.family !== undefined);
-  if (!result) throw new Error(`No withdraw result envelope in stdout:\n${stdout}`);
-  return result;
+function signedEvm(hashes: string[]): { earn: SignedEvmEarn; env: Record<string, string> } {
+  const earn = new SignedEvmEarn(hashes);
+  const env = earn.start();
+  stopServer = () => earn.stop();
+  return { earn, env };
 }
 
 describe("earn withdraw --dry-run (EVM full exit)", () => {
-  const server = new MockServer(WITHDRAW_ROUTES);
-  let cleanup: (() => void) | undefined;
-  beforeAll(() => server.start());
-  afterAll(() => server.stop());
-  afterEach(() => {
-    cleanup?.();
-    cleanup = undefined;
+  it("json output: asks the backend for the max and labels the amount as the full balance", async () => {
+    const api = new FakeEarnApi();
+    const env = serve([...new FakeEvmNode([]).routes, ...api.routes]);
+
+    const { stdout, exitCode, stderr } = await runEarn(ETH_ACCOUNT, [...WITHDRAW, "--dry-run"], {
+      ...env,
+      ...DMK_ENV,
+    });
+
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    // The prepare step emits no envelope of its own.
+    const lines = jsonLines(stdout);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      command: "earn withdraw",
+      network: "ethereum",
+      family: "evm",
+      dryRun: true,
+      product: VAULT.id,
+      status: "dry-run",
+      amount: "max (full balance)",
+    });
+    expect(lines[0].transactions).toEqual([{ kind: "redeem", status: "dry-run", to: VAULT.vault }]);
+    // "max" lets the backend redeem the whole share balance, leaving no dust.
+    expect(api.posts).toEqual([
+      { path: "/v1/defi/withdraw", body: expect.objectContaining({ amount: "max" }) },
+    ]);
   });
+});
 
-  it("json output: exits 0 with a dry-run redeem envelope and a full-balance amount label", async () => {
-    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
-    cleanup = fixture.cleanup;
+describe("earn withdraw (EVM, signed on the device)", () => {
+  it("redeems a partial amount in asset base units and reports the confirmed redeem", async () => {
+    const { earn, env } = signedEvm(["0xredeem"]);
 
-    const { stdout, exitCode, stderr } = await runCli(
-      [
-        "earn",
-        "withdraw",
-        "--account",
-        "ethereum-1",
-        "--product",
-        VAULT.id,
-        "--dry-run",
-        "--output",
-        "json",
-      ],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...DMK_ENV, ...fixture.env },
+    const { stdout, exitCode, stderr } = await runEarn(
+      ETH_ACCOUNT,
+      [...WITHDRAW, "--amount", "50 USDC"],
+      env,
     );
 
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const results = earnResults(stdout);
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({ status: "success", amount: "50 USDC", dryRun: false });
+    expect(results[0].transactions).toEqual([
+      { kind: "redeem", hash: "0xredeem", to: VAULT.vault, status: "success" },
+    ]);
+    expect(earn.api.posts).toEqual([
+      { path: "/v1/defi/withdraw", body: expect.objectContaining({ amount: "50000000" }) },
+    ]);
+    expect(earn.node.broadcasts).toHaveLength(1);
+    expect(calls(earn.node.broadcasts[0], VAULT.vault)).toBe(true);
+    expect(earn.device.openedApps[0]).toMatchObject({ dependencies: [{ name: "Kiln" }] });
+  });
 
-    // Exactly one terminal envelope is emitted (no extra dry-run envelope from the prepare step).
-    const envelopes = parseEnvelopes(stdout);
-    expect(envelopes).toHaveLength(1);
-    expect(envelopes[0].command).toBe("earn withdraw");
+  it("fails when the redeem reverts on-chain instead of reporting success", async () => {
+    const { earn, env } = signedEvm(["0xredeem"]);
+    earn.api.statuses["0xredeem"] = ["error"];
 
-    const data = parseWithdrawResult(stdout);
-    expect(data.command).toBe("earn withdraw");
-    expect(data.network).toBe("ethereum");
-    expect(data.family).toBe("evm");
-    expect(data.dryRun).toBe(true);
-    expect(data.product).toBe(VAULT.id);
-    expect(data.status).toBe("dry-run");
-    // No --amount means a full exit: the backend redeems the whole share balance, so the command
-    // surfaces a clear label rather than a concrete asset figure.
-    expect(data.amount).toBe("max (full balance)");
+    const { stdout, exitCode } = await runEarn(
+      ETH_ACCOUNT,
+      [...WITHDRAW, "--amount", "50 USDC"],
+      env,
+    );
 
-    const txs = data.transactions as Tx[];
-    expect(txs).toEqual([{ kind: "redeem", status: "dry-run", to: VAULT.vault }]);
+    expect(exitCode).toBe(1);
+    expect(earnResults(stdout)[0].error?.message).toContain(
+      "Redeem transaction 0xredeem reverted on-chain",
+    );
+  });
+
+  it("rejects an amount in another ticker than the vault asset before building anything", async () => {
+    const { earn, env } = signedEvm([]);
+
+    const { stdout, exitCode } = await runEarn(
+      ETH_ACCOUNT,
+      [...WITHDRAW, "--amount", "50 DAI"],
+      env,
+    );
+
+    expect(exitCode).toBe(1);
+    expect(earnResults(stdout)[0].error?.message).toContain("does not match the vault asset");
+    expect(earn.api.posts).toEqual([]);
+    expect(earn.device.openedApps).toEqual([]);
+  });
+});
+
+describe("earn withdraw (Solana, signed on the device)", () => {
+  let restoreCalCache: () => void;
+  beforeEach(() => {
+    restoreCalCache = useFreshCalCache();
+  });
+  afterEach(() => restoreCalCache());
+
+  it("deactivates the whole stake account on the first run", async () => {
+    const earn = new SignedSolanaEarn();
+    const env = earn.start();
+    stopServer = () => earn.stop();
+
+    const { stdout, exitCode, stderr } = await runEarn(
+      SOLANA_ACCOUNT,
+      ["withdraw", "--account", "solana-1", "--stake-account", SOLANA_STAKE],
+      env,
+    );
+
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(earnResults(stdout)).toEqual([
+      expect.objectContaining({
+        family: "solana",
+        stakeAccount: SOLANA_STAKE,
+        finalize: false,
+        status: "broadcasted",
+        transactions: [
+          { kind: "stake.undelegate", hash: earn.node.signature, status: "broadcasted" },
+        ],
+      }),
+    ]);
+    expect(earn.node.sent).toHaveLength(1);
+    expect(references(earn.node.sent[0], SOLANA_STAKE)).toBe(true);
   });
 });
 
 describe("earn withdraw: dispatch + guard errors", () => {
-  const server = new MockServer(WITHDRAW_ROUTES);
-  let cleanup: (() => void) | undefined;
-  beforeAll(() => server.start());
-  afterAll(() => server.stop());
-  afterEach(() => {
-    cleanup?.();
-    cleanup = undefined;
-  });
-
   it("EVM: requires --product (thrown before any pipeline/HTTP call)", async () => {
-    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
-    cleanup = fixture.cleanup;
-
-    const { stdout, exitCode } = await runCli(
-      ["earn", "withdraw", "--account", "ethereum-1", "--dry-run", "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    const { stdout, exitCode } = await runEarn(
+      ETH_ACCOUNT,
+      ["withdraw", "--account", "ethereum-1", "--dry-run"],
+      serve(),
     );
 
     expect(exitCode).toBe(1);
-    const data = JSON.parse(stdout);
-    expect(data.ok).toBe(false);
-    expect(data.error.message).toContain("EVM withdraw requires --product");
+    expect(earnResults(stdout)[0].error?.message).toContain("EVM withdraw requires --product");
   });
 
   it("Solana: requires --stake-account (no HTTP)", async () => {
-    const fixture = makeSessionDir([{ label: "solana-1", descriptor: MOCK_SOL_DESCRIPTOR }]);
-    cleanup = fixture.cleanup;
-
-    const { stdout, exitCode } = await runCli(
-      ["earn", "withdraw", "--account", "solana-1", "--dry-run", "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    const { stdout, exitCode } = await runEarn(
+      SOL_ACCOUNT,
+      ["withdraw", "--account", "solana-1", "--dry-run"],
+      serve(),
     );
 
     expect(exitCode).toBe(1);
-    const data = JSON.parse(stdout);
-    expect(data.ok).toBe(false);
-    expect(data.error.message).toContain("Solana withdraw requires --stake-account");
+    expect(earnResults(stdout)[0].error?.message).toContain(
+      "Solana withdraw requires --stake-account",
+    );
   });
 
-  // Reaches withdrawSolana (proving solana family dispatch) and throws before prepareSend, so no
-  // Solana sync fixtures are needed.
+  // Reaches withdrawSolana (proving solana family dispatch) and throws before prepareSend.
   it("Solana: rejects a partial --amount withdraw", async () => {
-    const fixture = makeSessionDir([{ label: "solana-1", descriptor: MOCK_SOL_DESCRIPTOR }]);
-    cleanup = fixture.cleanup;
-
-    const { stdout, exitCode } = await runCli(
+    const { stdout, exitCode } = await runEarn(
+      SOL_ACCOUNT,
       [
-        "earn",
         "withdraw",
         "--account",
         "solana-1",
@@ -202,30 +220,26 @@ describe("earn withdraw: dispatch + guard errors", () => {
         "--amount",
         "1 SOL",
         "--dry-run",
-        "--output",
-        "json",
       ],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+      serve(),
     );
 
     expect(exitCode).toBe(1);
-    const data = JSON.parse(stdout);
-    expect(data.ok).toBe(false);
-    expect(data.error.message).toContain("Partial Solana withdraw is unsupported");
+    expect(earnResults(stdout)[0].error?.message).toContain(
+      "Partial Solana withdraw is unsupported",
+    );
   });
 
   it("rejects an unsupported family before any HTTP call", async () => {
-    const fixture = makeSessionDir([{ label: "bitcoin-1", descriptor: MOCK_BTC_DESCRIPTOR }]);
-    cleanup = fixture.cleanup;
-
-    const { stdout, exitCode } = await runCli(
-      ["earn", "withdraw", "--account", "bitcoin-1", "--dry-run", "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    const { stdout, exitCode } = await runEarn(
+      { label: "bitcoin-1", descriptor: MOCK_BTC_DESCRIPTOR },
+      ["withdraw", "--account", "bitcoin-1", "--dry-run"],
+      serve(),
     );
 
     expect(exitCode).toBe(1);
-    const data = JSON.parse(stdout);
-    expect(data.ok).toBe(false);
-    expect(data.error.message).toContain("Unsupported family for earn withdraw");
+    expect(earnResults(stdout)[0].error?.message).toContain(
+      "Unsupported family for earn withdraw: bitcoin. Supported: evm, solana.",
+    );
   });
 });

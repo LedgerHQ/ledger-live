@@ -1,7 +1,11 @@
 import { describe, it, expect, afterEach } from "bun:test";
 import {
   chmodSync,
+  existsSync,
+  type PathLike,
+  mkdirSync,
   mkdtempSync,
+  renameSync,
   readdirSync,
   rmSync,
   statSync,
@@ -10,13 +14,32 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { writeSecureFile } from "./secure-file";
+import { _setTestRename, writeSecureFile } from "./secure-file";
+import { overridePlatform } from "../testing/os-keychain";
 
 let dir: string | undefined;
+let restorePlatform: (() => void) | undefined;
 afterEach(() => {
-  if (dir) rmSync(dir, { recursive: true, force: true });
+  restorePlatform?.();
+  restorePlatform = undefined;
+  _setTestRename(null);
+  if (dir) {
+    chmodSync(dir, 0o700);
+    rmSync(dir, { recursive: true, force: true });
+  }
   dir = undefined;
 });
+
+/** Windows' rename, which refuses to replace an existing file or directory. */
+function renameAsWindows(from: PathLike, to: PathLike): void {
+  if (existsSync(to)) throw Object.assign(new Error(`EPERM: rename '${from}'`), { code: "EPERM" });
+  renameSync(from, to);
+}
+
+function onWindows(): void {
+  restorePlatform = overridePlatform("win32");
+  _setTestRename(renameAsWindows);
+}
 
 function makeDir(): string {
   dir = mkdtempSync(join(tmpdir(), "secure-file-test-"));
@@ -24,6 +47,8 @@ function makeDir(): string {
 }
 
 const isPosix = process.platform !== "win32";
+// Root writes through read-only permissions.
+const canBeDeniedWrites = isPosix && process.getuid?.() !== 0;
 const mode = (p: string) => statSync(p).mode & 0o777;
 
 describe("writeSecureFile", () => {
@@ -62,5 +87,80 @@ describe("writeSecureFile", () => {
     const dest = join(d, "secret");
     writeSecureFile(dest, Buffer.from("x"));
     expect(readdirSync(d)).toEqual(["secret"]);
+  });
+
+  it.skipIf(!canBeDeniedWrites)(
+    "keeps the old file when the directory is read-only, even on Windows",
+    () => {
+      const d = makeDir();
+      const dest = join(d, "secret");
+      writeFileSync(dest, "old");
+      chmodSync(d, 0o500);
+      onWindows();
+
+      expect(() => writeSecureFile(dest, Buffer.from("new"))).toThrow(
+        expect.objectContaining({ code: "EACCES" }),
+      );
+      expect(readFileSync(dest, "utf8")).toBe("old");
+      expect(readdirSync(d)).toEqual(["secret"]);
+    },
+  );
+
+  it("keeps a directory in the way and removes its temp file", () => {
+    const d = makeDir();
+    const dest = join(d, "secret");
+    mkdirSync(dest);
+    writeFileSync(join(dest, "inside"), "kept");
+
+    expect(() => writeSecureFile(dest, Buffer.from("new"))).toThrow();
+    expect(readdirSync(d)).toEqual(["secret"]);
+    expect(readFileSync(join(dest, "inside"), "utf8")).toBe("kept");
+  });
+
+  describe("on Windows, where rename won't replace a file", () => {
+    it("replaces the existing file", () => {
+      const d = makeDir();
+      const dest = join(d, "secret");
+      writeFileSync(dest, "old");
+      onWindows();
+
+      writeSecureFile(dest, Buffer.from("new"));
+
+      expect(readFileSync(dest, "utf8")).toBe("new");
+      expect(readdirSync(d)).toEqual(["secret"]);
+    });
+
+    it("reports why a directory in the way can't be removed, and keeps it", () => {
+      const d = makeDir();
+      const dest = join(d, "secret");
+      mkdirSync(dest);
+      onWindows();
+
+      expect(() => writeSecureFile(dest, Buffer.from("new"))).toThrow(
+        expect.objectContaining({ syscall: "unlink" }),
+      );
+      expect(readdirSync(d)).toEqual(["secret"]);
+      expect(existsSync(dest)).toBe(true);
+    });
+
+    it("writes the file when another process removed the old one first", () => {
+      const d = makeDir();
+      const dest = join(d, "secret");
+      writeFileSync(dest, "old");
+      onWindows();
+      let raced = false;
+      _setTestRename((from, to) => {
+        if (!raced) {
+          raced = true;
+          rmSync(to);
+          throw Object.assign(new Error("EACCES: file in use"), { code: "EACCES" });
+        }
+        renameAsWindows(from, to);
+      });
+
+      writeSecureFile(dest, Buffer.from("new"));
+
+      expect(readFileSync(dest, "utf8")).toBe("new");
+    });
   });
 });

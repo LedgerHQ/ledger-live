@@ -35,7 +35,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "pretest": "node ./scripts/generate-skills-manifest.mjs",
     "test": "bun test src/ scripts/",
-    "coverage": "bun test src/ scripts/ --coverage",
+    "coverage": "bun test src/ scripts/ --coverage --randomize",
     "lint": "oxlint .",
     "lint:ci": "oxlint . --quiet",
     "lint:fix": "oxfmt . && oxlint . --fix --quiet",

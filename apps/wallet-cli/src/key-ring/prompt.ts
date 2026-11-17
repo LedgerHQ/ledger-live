@@ -1,5 +1,12 @@
 import { openSync } from "node:fs";
 import { ReadStream } from "node:tty";
+import { createTestSeam } from "../shared/test-seam";
+import { writeStderr } from "../shared/ui";
+
+const controllingTtyPath = createTestSeam("/dev/tty");
+
+/** @internal Test seam — where the controlling terminal opens; `null` restores `/dev/tty`. */
+export const _setTestControllingTtyPath = controllingTtyPath.set;
 
 /**
  * Where a password came from, so `ring destroy` can tell a deliberate empty skip (typed at the tty)
@@ -43,7 +50,7 @@ function readRawHidden(stream: NodeJS.ReadStream, onClose: () => void): Promise<
       stream.setRawMode(false);
       stream.off("data", onData);
       onClose();
-      process.stderr.write("\n");
+      writeStderr("\n");
     };
 
     stream.on("data", onData);
@@ -57,7 +64,7 @@ function readRawHidden(stream: NodeJS.ReadStream, onClose: () => void): Promise<
 function openControllingTty(): { stream: NodeJS.ReadStream; close: () => void } | null {
   let fd: number;
   try {
-    fd = openSync("/dev/tty", "r");
+    fd = openSync(controllingTtyPath.get(), "r");
   } catch {
     return null;
   }
@@ -77,7 +84,7 @@ export async function promptHidden(label: string): Promise<PromptResult> {
   if (envPass !== undefined) return { source: "env", value: envPass };
 
   if (process.stdin.isTTY) {
-    process.stderr.write(label);
+    writeStderr(label);
     return readRawHidden(process.stdin, () => process.stdin.pause());
   }
 
@@ -86,7 +93,7 @@ export async function promptHidden(label: string): Promise<PromptResult> {
   // in CI; those must inject WALLET_PASS.
   const tty = openControllingTty();
   if (tty) {
-    process.stderr.write(label);
+    writeStderr(label);
     return readRawHidden(tty.stream, tty.close);
   }
 
