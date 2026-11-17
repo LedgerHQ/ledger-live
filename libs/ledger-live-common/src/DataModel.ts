@@ -53,7 +53,10 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         !supportedTokens ||
         (!supportedTokens.includes("erc721") && !supportedTokens.includes("erc1155"));
       if (nftUnsupported && Array.isArray(data.operations)) {
-        data.operations = data.operations.filter(tx => !("nftOperations" in tx));
+        const keptOperations = data.operations.filter(tx => !("nftOperations" in tx));
+        const historyIncludesRemovedOperations = keptOperations.length < data.operations.length;
+        if (historyIncludesRemovedOperations) data.balanceHistoryCache = undefined;
+        data.operations = keptOperations;
       }
     }
 

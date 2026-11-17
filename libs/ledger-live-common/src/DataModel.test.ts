@@ -1,4 +1,11 @@
-import { Account, AccountRaw, AccountUserData, Operation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountRaw,
+  AccountUserData,
+  Operation,
+  OperationType,
+} from "@ledgerhq/types-live";
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { APTOS_NON_HARDENED_DERIVATION_PATH } from "@ledgerhq/coin-aptos/constants";
 import { accountRawToAccountUserData } from "./account/serialization";
 import { createDataModel } from "./DataModel";
@@ -17,7 +24,10 @@ const opRetentionStategy =
 
 const schema = {
   migrations: [raw => raw],
-  decode: async (raw: AccountRaw) => [await fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: async (raw: AccountRaw): Promise<[Account, AccountUserData]> => [
+    await fromAccountRaw(raw),
+    accountRawToAccountUserData(raw),
+  ],
   encode: async ([account, userData]: [Account, AccountUserData]): Promise<AccountRaw> =>
     toAccountRaw(
       {
@@ -214,6 +224,43 @@ describe("DataModel", () => {
       const operations = await decodeEvmOperations();
       expect(operations).toHaveLength(1);
       expect(operations.some(op => "nftOperations" in op)).toBe(false);
+    });
+
+    it("rebuilds the balance history from the operations kept after stripping", async () => {
+      const [baseOperation] = evmAccount.data.operations;
+      const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString();
+      const operation = (id: string, type: OperationType, value: string, days: number) => ({
+        ...baseOperation,
+        id,
+        hash: id,
+        type,
+        value,
+        date: daysAgo(days),
+      });
+      const accountWithNftFees: { data: AccountRaw; version: number } = {
+        data: {
+          ...evmAccount.data,
+          balance: "1000",
+          operations: [
+            operation("op_in_recent", "IN", "100", 10),
+            {
+              ...operation("op_nft_fees", "FEES", "50", 20),
+              nftOperations: [operation("op_nft_out", "NFT_OUT", "1", 20)],
+            },
+            operation("op_in_first", "IN", "950", 30),
+          ],
+        },
+        version: 1,
+      };
+      const dataModel = createDataModel(schema);
+      setSupportedTokens(["erc721"]);
+      const saved = await dataModel.encode(await dataModel.decode(accountWithNftFees));
+
+      setSupportedTokens([]);
+      const [restored] = await dataModel.decode(saved);
+
+      expect(restored.operations.map(op => op.id)).toEqual(["op_in_recent", "op_in_first"]);
+      expect(restored.balanceHistoryCache).toEqual(generateHistoryFromOperations(restored));
     });
   });
 });
