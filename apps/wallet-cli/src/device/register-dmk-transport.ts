@@ -190,6 +190,11 @@ async function teardownPersistentDmk(
   persistentDmk = null;
 }
 
+const speculosConnectTimeoutMs = createTestSeam(SPECULOS_CONNECT_TIMEOUT_MS);
+
+/** @internal Test seam — bounds the Speculos connect; `null` restores the 10 s bound. */
+export const _setTestSpeculosConnectTimeoutMs = speculosConnectTimeoutMs.set;
+
 /**
  * The Speculos transport always discovers its device, so a dead emulator only shows on connect.
  * Its first APDU has no HTTP timeout, hence the bound; the cause stays in the message, since a
@@ -197,7 +202,7 @@ async function teardownPersistentDmk(
  */
 async function connectSpeculos(connecting: Promise<string>, speculos: SpeculosTarget) {
   try {
-    return await firstValueFrom(from(connecting).pipe(timeout(SPECULOS_CONNECT_TIMEOUT_MS)));
+    return await firstValueFrom(from(connecting).pipe(timeout(speculosConnectTimeoutMs.get())));
   } catch (error) {
     if (error instanceof TimeoutError) {
       throw new WalletCliDeviceError(

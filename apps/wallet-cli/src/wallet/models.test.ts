@@ -6,8 +6,11 @@ import {
   BalanceSchema,
   parseShortAccountDescriptor,
   parseAccountDescriptor,
+  toAccountBalances,
   toTokenInfo,
 } from "./models";
+import { BigNumberStrSchema } from "@shared/schema-primitives";
+import { USDT_TOKEN_CURRENCY, USDT_TOKEN_INFO } from "../testing/cal-fixtures";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
@@ -125,5 +128,27 @@ describe("BalanceSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+});
+
+// CAL refuses a token without units, so no CLI run can hand one to the adapters.
+describe("toAccountBalances", () => {
+  it("skips a held token without units and keeps the others", () => {
+    const native = BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "1" });
+    const noUnits = { ...USDT_TOKEN_CURRENCY, id: TokenCurrencyIdSchema.parse("ethereum/erc20/x") };
+    const balance = BigNumberStrSchema.parse("1500000");
+
+    expect(
+      toAccountBalances(native, [
+        { token: { ...noUnits, units: [] }, balance },
+        { token: USDT_TOKEN_CURRENCY, balance },
+      ]),
+    ).toEqual({
+      balances: [
+        native,
+        { kind: "token", assetId: USDT_TOKEN_INFO.id, balance, token: USDT_TOKEN_INFO },
+      ],
+      skippedTokenIds: ["ethereum/erc20/x"],
+    });
   });
 });

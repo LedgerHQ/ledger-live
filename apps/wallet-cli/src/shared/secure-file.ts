@@ -1,6 +1,12 @@
 import { chmodSync, mkdirSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { randomBytes } from "node:crypto";
+import { createTestSeam } from "./test-seam";
+
+const rename = createTestSeam(renameSync);
+
+/** @internal Test seam — replaces `renameSync`, e.g. with Windows' refusal to overwrite; `null` restores it. */
+export const _setTestRename = rename.set;
 
 /**
  * Write `data` to `dest` at 0600 without ever exposing it at looser permissions: write a fresh 0600
@@ -22,13 +28,13 @@ export function writeSecureFile(dest: string, data: Buffer | Uint8Array): void {
       chmodSync(tmp, 0o600);
     } catch {}
     try {
-      renameSync(tmp, dest);
+      rename.get()(tmp, dest);
     } catch (renameError) {
       // Windows can't rename over an existing file: delete + retry. Scoped to the rename alone so a
       // failed temp write (e.g. EACCES on a read-only dir) can never delete `dest` with no replacement.
       if (!isWindowsOverwriteError(renameError)) throw renameError;
       removeExistingDest(dest);
-      renameSync(tmp, dest);
+      rename.get()(tmp, dest);
     }
   } catch (e) {
     discardTmp(tmp);
