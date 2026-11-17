@@ -37,9 +37,11 @@ export const descriptorToAccount = ({
     // FIXME Dirty hack, since we have no way here to know if "xpubOrAddress" is one or the other.
     // Proposed fix: https://ledgerhq.atlassian.net/browse/LL-7437
     currency.family === "bitcoin" ||
+    currency.family === "zcash" ||
     currency.family === "cardano"
   ) {
-    // In bitcoin implementation, xpubOrAddress field always go in the xpub
+    // In bitcoin implementation (and Zcash's, which shares its account model), xpubOrAddress
+    // field always go in the xpub
     xpub = xpubOrAddress;
   } else {
     if (currency.family === "stacks") {

@@ -318,7 +318,7 @@ export default class SwapLiveAppPage {
     const NET_ROUNDING_TOLERANCE = 0.02;
 
     await retryUntilTimeout(async () => {
-      const quotes = [];
+      const quotes: Awaited<ReturnType<typeof this.getProviderQuote>>[] = [];
       for (const provider of providerList) {
         quotes.push(await this.getProviderQuote(provider));
       }
@@ -341,7 +341,7 @@ export default class SwapLiveAppPage {
     const feesMatch =
       networkFeesIndex >= 0 ? /\$\s*(\d[\d,.]*)/.exec(quoteText.slice(networkFeesIndex)) : null;
     const usdAmountRegex = /\$\s*(\d[\d,.]*)/g;
-    const usdAmounts = [];
+    const usdAmounts: string[] = [];
     let usdAmountMatch: RegExpExecArray | null;
 
     while ((usdAmountMatch = usdAmountRegex.exec(quoteText)) !== null) {
@@ -393,6 +393,15 @@ export default class SwapLiveAppPage {
   @Step("Retrieve send currency amount value")
   async getAmountToSend() {
     return await this.fromAmountInput.getValue();
+  }
+
+  @Step("Expect send amount {{{0}}}")
+  async expectAmountToSend(expected: string | RegExp) {
+    if (typeof expected === "string") {
+      await this.fromAmountInput.expectValue(expected);
+    } else {
+      await this.fromAmountInput.expectValueMatching(expected);
+    }
   }
 
   @Step("Retrieve receive currency amount value")

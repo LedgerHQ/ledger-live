@@ -15,13 +15,7 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-desktop",
-  "main": "./lib-es/index.js",
-  "types": "./lib-es/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib-es",
-    "build": "tsc --project tsconfig.prod.json",
-    "watch": "tsc --watch --project tsconfig.prod.json",
-    "watch:es": "pnpm watch",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
@@ -76,17 +70,8 @@
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:"
   },
   "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "require": "./lib-es/index.js",
-      "default": "./lib-es/index.js"
-    },
-    "./lib-es/*": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib-es/*.js",
-      "default": "./lib-es/*.js"
-    },
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
     "./package.json": "./package.json"
   }
 }

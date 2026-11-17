@@ -1,19 +1,32 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { createAccountNotFound, ServerError } from "@ledgerhq/wallet-api-core";
 import {
+  TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  type GetTronifyQuoteParams,
+  type GetTronifyQuoteResult,
   type IsTronifyEnergyDeliveredParams,
   type IsTronifyEnergyDeliveredResult,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
-import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
+import { buildGenericTransactionIntent } from "../../bridge/generic-coin-framework/buildIntent";
+import {
+  getSponsoredCoinApi,
+  type SponsoredCoinApi,
+  type SponsoredFeeAsset,
+} from "../../bridge/generic-coin-framework/sponsored";
+import type { GenericTransaction } from "../../bridge/generic-coin-framework/types";
+import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import {
   createAccounIdNotFound,
   createTronifyDisabled,
+  createTronifyQuoteFailed,
   createTronifyUnavailable,
   createTronifyUnsupportedAccount,
+  createTronifyUnsupportedTransfer,
   createWrongTronifyParams,
   ExchangeError,
 } from "./error";
@@ -23,10 +36,14 @@ type TronifyDeps = {
   getFeature?: GetFeatureFn;
 };
 
+const SEAM_KIND = "local";
+
 const POSITIVE_INTEGER = /^[1-9]\d*$/;
 
-/** The TRON account that holds the energy, resolved from the TRC-20 token account that sends. */
-function resolveTronPayer(fromAccountId: string, accounts: AccountLike[]): Account {
+type TronSender = { payer: Account; tokenAccount: TokenAccount };
+
+/** The TRC-20 token account that sends, and the TRON account behind it that holds the energy. */
+function resolveTronSender(fromAccountId: string, accounts: AccountLike[]): TronSender {
   const accountId = getAccountIdFromWalletAccountId(fromAccountId);
   if (!accountId) throw new ExchangeError(createAccounIdNotFound(fromAccountId));
 
@@ -48,7 +65,100 @@ function resolveTronPayer(fromAccountId: string, accounts: AccountLike[]): Accou
   ) {
     throw new ExchangeError(createTronifyUnsupportedAccount(fromAccountId));
   }
-  return parent;
+  return { payer: parent, tokenAccount: account };
+}
+
+function assertTronifyEnabled(getFeature: GetFeatureFn | undefined): void {
+  if (getFeature?.("gasSponsorship")?.enabled !== true) {
+    throw new ExchangeError(createTronifyDisabled());
+  }
+}
+
+async function loadTronifySeam(payer: Account): Promise<SponsoredCoinApi> {
+  const seam = await getSponsoredCoinApi(payer.currency.id, SEAM_KIND);
+  if (!seam) throw new ExchangeError(createTronifyUnavailable());
+  return seam;
+}
+
+function isTransferParams(
+  params: GetTronifyQuoteParams | undefined,
+): params is GetTronifyQuoteParams {
+  return (
+    !!params &&
+    typeof params.fromAccountId === "string" &&
+    typeof params.recipient === "string" &&
+    params.recipient !== "" &&
+    typeof params.amount === "string" &&
+    POSITIVE_INTEGER.test(params.amount)
+  );
+}
+
+/** The TRC-20 send intent the Send flow would build for the same transfer. */
+async function buildTransferIntent(
+  { payer, tokenAccount }: TronSender,
+  { recipient, amount }: GetTronifyQuoteParams,
+): Promise<unknown> {
+  // Checked locally: an invalid address otherwise surfaces as an opaque decode error mid-estimate.
+  const isValid = await genericValidateAddress(payer.currency.id, SEAM_KIND)(recipient, {});
+  if (!isValid) throw new ExchangeError(createWrongTronifyParams({ recipient }));
+
+  const transaction: GenericTransaction = {
+    family: payer.currency.family,
+    recipient,
+    amount: new BigNumber(amount),
+    useAllAmount: false,
+    subAccountId: tokenAccount.id,
+  };
+  return buildGenericTransactionIntent(payer.currency.family, SEAM_KIND, payer, transaction);
+}
+
+/** Every quote failure gets a code the live app can fall back on: no silent fallback (ADR-050). */
+function toQuoteError(error: unknown): ExchangeError {
+  const name = error instanceof Error ? error.name : undefined;
+  const reason = error instanceof Error ? error.message : String(error);
+  switch (name) {
+    case "EnergyRentUnsupportedIntent":
+      return new ExchangeError(createTronifyUnsupportedTransfer(reason));
+    case "EnergyRentProviderNotConfigured":
+      return new ExchangeError(createTronifyUnavailable());
+    default:
+      return new ExchangeError(createTronifyQuoteFailed(reason));
+  }
+}
+
+function toWireFeeAsset({ unit, ...asset }: SponsoredFeeAsset): GetTronifyQuoteResult["feeAsset"] {
+  return {
+    type: asset.type,
+    ...("assetReference" in asset && asset.assetReference
+      ? { assetReference: asset.assetReference }
+      : {}),
+    unit: { name: unit.name, code: unit.code, magnitude: unit.magnitude },
+  };
+}
+
+/**
+ * `custom.exchange.tronify.getQuote`: the Tronify rent for a TRC-20 transfer, next to the TRX burn
+ * it replaces. No order is created.
+ */
+export async function getTronifyQuote(
+  params: GetTronifyQuoteParams | undefined,
+  { accounts, getFeature }: TronifyDeps,
+): Promise<GetTronifyQuoteResult> {
+  if (!isTransferParams(params)) throw new ExchangeError(createWrongTronifyParams(params));
+  assertTronifyEnabled(getFeature);
+
+  const sender = resolveTronSender(params.fromAccountId, accounts);
+  const seam = await loadTronifySeam(sender.payer);
+  const intent = await buildTransferIntent(sender, params);
+
+  const quote = await seam.estimateSponsoredFeeQuote(intent).catch(error => {
+    throw toQuoteError(error);
+  });
+  return {
+    feeAsset: toWireFeeAsset(quote.feeAsset),
+    value: quote.value.toString(),
+    originalValue: quote.originalValue.toString(),
+  };
 }
 
 /**
@@ -67,14 +177,10 @@ export async function isTronifyEnergyDelivered(
   ) {
     throw new ExchangeError(createWrongTronifyParams(params));
   }
-  if (getFeature?.("gasSponsorship")?.enabled !== true) {
-    throw new ExchangeError(createTronifyDisabled());
-  }
+  assertTronifyEnabled(getFeature);
 
-  const payer = resolveTronPayer(params.fromAccountId, accounts);
-
-  const seam = await getSponsoredCoinApi(payer.currency.id, "local");
-  if (!seam) throw new ExchangeError(createTronifyUnavailable());
+  const { payer } = resolveTronSender(params.fromAccountId, accounts);
+  const seam = await loadTronifySeam(payer);
 
   const delivered = await seam.isEnergyDelivered({
     receiverAddress: payer.freshAddress,
@@ -85,6 +191,9 @@ export async function isTronifyEnergyDelivered(
 
 export const tronifyHandlers = (deps: TronifyDeps) =>
   ({
+    [TRONIFY_GET_QUOTE_METHOD]: customWrapper<GetTronifyQuoteParams, GetTronifyQuoteResult>(
+      params => getTronifyQuote(params, deps),
+    ),
     [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: customWrapper<
       IsTronifyEnergyDeliveredParams,
       IsTronifyEnergyDeliveredResult

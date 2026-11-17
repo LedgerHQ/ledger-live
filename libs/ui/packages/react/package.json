@@ -13,62 +13,86 @@
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react",
   "license": "MIT",
-  "types": "index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "lib/*",
-        "lib/*/index.d.ts"
-      ]
-    }
-  },
   "exports": {
-    "./*": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "require": "./lib/cjs/*.js",
-      "default": "./lib/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "require": "./lib/cjs/*.js",
-      "default": "./lib/*.js"
-    },
-    "./*.woff2": {
-      "require": "./lib/cjs/*.woff2",
-      "default": "./lib/*.woff2"
-    },
-    "./assets/fonts/HMAlphaMono-Medium.woff2": "./lib/assets/fonts/HMAlphaMono-Medium.woff2",
-    "./assets/fonts/Inter-Bold.woff2": "./lib/assets/fonts/Inter-Bold.woff2",
-    "./assets/fonts/Inter-ExtraBold.woff2": "./lib/assets/fonts/Inter-ExtraBold.woff2",
-    "./assets/fonts/Inter-ExtraLight-BETA.woff2": "./lib/assets/fonts/Inter-ExtraLight-BETA.woff2",
-    "./assets/fonts/Inter-Light-BETA.woff2": "./lib/assets/fonts/Inter-Light-BETA.woff2",
-    "./assets/fonts/Inter-Medium.woff2": "./lib/assets/fonts/Inter-Medium.woff2",
-    "./assets/fonts/Inter-Regular.woff2": "./lib/assets/fonts/Inter-Regular.woff2",
-    "./assets/fonts/Inter-SemiBold.woff2": "./lib/assets/fonts/Inter-SemiBold.woff2",
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "require": "./lib/cjs/index.js",
-      "default": "./lib/index.js"
-    },
+    "./assets/logos/LedgerLiveAltRegular": "./src/assets/logos/LedgerLiveAltRegular.tsx",
+    "./assets/logos/LedgerLiveRegular": "./src/assets/logos/LedgerLiveRegular.tsx",
+    "./components/asorted/Divider/index": "./src/components/asorted/Divider/index.tsx",
+    "./components/asorted/Icon/BoxedIcon": "./src/components/asorted/Icon/BoxedIcon.tsx",
+    "./components/asorted/Icon/Icon": "./src/components/asorted/Icon/Icon.tsx",
+    "./components/asorted/Icon/index": "./src/components/asorted/Icon/index.tsx",
+    "./components/asorted/Icon/NotificationIcon": "./src/components/asorted/Icon/NotificationIcon.tsx",
+    "./components/asorted/Text/index": "./src/components/asorted/Text/index.tsx",
+    "./components/cta/Button/index": "./src/components/cta/Button/index.tsx",
+    "./components/cta/Link/index": "./src/components/cta/Link/index.tsx",
+    "./components/form/BaseInput/index": "./src/components/form/BaseInput/index.tsx",
+    "./components/form/Dropdown/index": "./src/components/form/Dropdown/index.tsx",
+    "./components/form/Radio/index": "./src/components/form/Radio/index.tsx",
+    "./components/form/Radio/RadioElement": "./src/components/form/Radio/RadioElement.tsx",
+    "./components/form/Radio/RadioListElement": "./src/components/form/Radio/RadioListElement.tsx",
+    "./components/form/SearchInput/index": "./src/components/form/SearchInput/index.tsx",
+    "./components/form/SelectInput/Control": "./src/components/form/SelectInput/Control.tsx",
+    "./components/form/SelectInput/DropdownIndicator": "./src/components/form/SelectInput/DropdownIndicator.tsx",
+    "./components/form/SelectInput/index": "./src/components/form/SelectInput/index.tsx",
+    "./components/form/SelectInput/IndicatorsContainer": "./src/components/form/SelectInput/IndicatorsContainer.tsx",
+    "./components/form/SelectInput/MenuList": "./src/components/form/SelectInput/MenuList.tsx",
+    "./components/form/SelectInput/Option": "./src/components/form/SelectInput/Option.tsx",
+    "./components/form/SelectInput/ValueContainer": "./src/components/form/SelectInput/ValueContainer.tsx",
+    "./components/form/Switch/Switch": "./src/components/form/Switch/Switch.tsx",
+    "./components/form/TabSelector/index": "./src/components/form/TabSelector/index.tsx",
+    "./components/layout/Banner/BannerCard/index": "./src/components/layout/Banner/BannerCard/index.tsx",
+    "./components/layout/Banner/NotificationCard/index": "./src/components/layout/Banner/NotificationCard/index.tsx",
+    "./components/layout/Carousel/ChevronArrow": "./src/components/layout/Carousel/ChevronArrow.tsx",
+    "./components/layout/Carousel/Footer/index": "./src/components/layout/Carousel/Footer/index.tsx",
+    "./components/layout/Carousel/Footer/Pagination/bullets": "./src/components/layout/Carousel/Footer/Pagination/bullets.tsx",
+    "./components/layout/Carousel/Footer/Pagination/index": "./src/components/layout/Carousel/Footer/Pagination/index.tsx",
+    "./components/layout/Carousel/Footer/variantContentCard": "./src/components/layout/Carousel/Footer/variantContentCard.tsx",
+    "./components/layout/Carousel/Footer/variantDefault": "./src/components/layout/Carousel/Footer/variantDefault.tsx",
+    "./components/layout/Carousel/index": "./src/components/layout/Carousel/index.tsx",
+    "./components/layout/ContentCard/PortfolioContentCard/index": "./src/components/layout/ContentCard/PortfolioContentCard/index.tsx",
+    "./components/layout/Drawer/index": "./src/components/layout/Drawer/index.tsx",
+    "./components/layout/List/NumberedList/index": "./src/components/layout/List/NumberedList/index.tsx",
+    "./components/layout/List/VerticalTimeline/index": "./src/components/layout/List/VerticalTimeline/index.tsx",
+    "./components/layout/List/VerticalTimeline/TimelineIndicator": "./src/components/layout/List/VerticalTimeline/TimelineIndicator.tsx",
+    "./components/layout/List/VerticalTimeline/TimelineItem": "./src/components/layout/List/VerticalTimeline/TimelineItem.tsx",
+    "./components/layout/Popin/index": "./src/components/layout/Popin/index.tsx",
+    "./components/loaders/InfiniteLoader/index": "./src/components/loaders/InfiniteLoader/index.tsx",
+    "./components/loaders/ProgressLoader/index": "./src/components/loaders/ProgressLoader/index.tsx",
+    "./components/message/Alert/index": "./src/components/message/Alert/index.tsx",
+    "./components/message/ContinueOnDevice/index": "./src/components/message/ContinueOnDevice/index.tsx",
+    "./components/message/Log/Brackets": "./src/components/message/Log/Brackets.tsx",
+    "./components/message/Log/index": "./src/components/message/Log/index.tsx",
+    "./components/message/Tooltip/index": "./src/components/message/Tooltip/index.tsx",
+    "./components/navigation/FlowStepper/index": "./src/components/navigation/FlowStepper/index.tsx",
+    "./components/navigation/Header/index": "./src/components/navigation/Header/index.tsx",
+    "./components/navigation/progress/ProgressBar/Onboarding": "./src/components/navigation/progress/ProgressBar/Onboarding.tsx",
+    "./components/navigation/progress/Stepper/index": "./src/components/navigation/progress/Stepper/index.tsx",
+    "./components/tabs/Bar/index": "./src/components/tabs/Bar/index.tsx",
+    "./components/tabs/Chip/index": "./src/components/tabs/Chip/index.tsx",
+    "./components/Tag/index": "./src/components/Tag/index.tsx",
+    "./components/transitions/TransitionInOut": "./src/components/transitions/TransitionInOut.tsx",
+    "./components/transitions/TransitionScale": "./src/components/transitions/TransitionScale.tsx",
+    "./components/transitions/TransitionSlide": "./src/components/transitions/TransitionSlide.tsx",
+    "./styles/InvertTheme": "./src/styles/InvertTheme.tsx",
+    "./styles/StyleProvider": "./src/styles/StyleProvider.tsx",
+    "./*": "./src/*.ts",
+    "./*.js": "./src/*.ts",
+    "./*.woff2": "./src/*.woff2",
+    "./assets/fonts/HMAlphaMono-Medium.woff2": "./src/assets/fonts/HMAlphaMono-Medium.woff2",
+    "./assets/fonts/Inter-Bold.woff2": "./src/assets/fonts/Inter-Bold.woff2",
+    "./assets/fonts/Inter-ExtraBold.woff2": "./src/assets/fonts/Inter-ExtraBold.woff2",
+    "./assets/fonts/Inter-ExtraLight-BETA.woff2": "./src/assets/fonts/Inter-ExtraLight-BETA.woff2",
+    "./assets/fonts/Inter-Light-BETA.woff2": "./src/assets/fonts/Inter-Light-BETA.woff2",
+    "./assets/fonts/Inter-Medium.woff2": "./src/assets/fonts/Inter-Medium.woff2",
+    "./assets/fonts/Inter-Regular.woff2": "./src/assets/fonts/Inter-Regular.woff2",
+    "./assets/fonts/Inter-SemiBold.woff2": "./src/assets/fonts/Inter-SemiBold.woff2",
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.woff2",
-    "lib/assets/fonts.js"
-  ],
-  "files": [
-    "lib/**/*"
+    "./src/assets/fonts.ts"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
-    "watch": "tsc -p tsconfig.prod.json --watch",
-    "clean": "rimraf lib",
     "lint": "oxlint -c ../../.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",

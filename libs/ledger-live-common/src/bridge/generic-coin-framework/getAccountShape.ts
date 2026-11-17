@@ -251,6 +251,17 @@ function parentOpsFromNativeOps(
 
 const TOKEN_OPT_TYPES = new Set<OperationType>(["OPT_IN", "OPT_OUT", "OPT_EDIT"]);
 
+function getParentRecipients(referenceOp: OperationCommon, keepsOptType: boolean): string[] {
+  // An opt row's counterparty is the token issuer: its asset code is no address
+  const issuer = referenceOp.extra?.assetOwner;
+  if (keepsOptType && typeof issuer === "string" && issuer.length > 0) return [issuer];
+
+  // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
+  // is why we need to extract this information from the operation details.
+  const contract = getTokenContract(referenceOp);
+  return contract === undefined ? (referenceOp.recipients ?? []) : [contract];
+}
+
 /** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
 function syntheticParentForTokenOnlyTx(
   referenceOp: OperationCommon,
@@ -271,10 +282,7 @@ function syntheticParentForTokenOnlyTx(
   const feeType = paysFee ? "FEES" : "NONE";
   const parentType = keepsOptType ? referenceOp.type : feeType;
   const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
-  // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
-  // is why we need to extract this information from the operation details.
-  const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract === undefined ? (referenceOp.recipients ?? []) : [contract];
+  const parentRecipients = getParentRecipients(referenceOp, keepsOptType);
   const parentSenders = referenceOp.senders ?? [];
   return cleanedOperation({
     id: encodeOperationId(accountId, referenceOp.hash, parentType),
@@ -1110,7 +1118,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     }
 
     if (bridgeApi.adaptOperations) {
-      newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
+      newOps = bridgeApi.adaptOperations(address, newOps, blockInfo) as OperationCommon[];
     }
 
     // A bounded round is treated the same way a from-scratch sync already is for both merges

@@ -911,8 +911,6 @@ export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-export const swapSelectableCurrenciesSelector = (state: State) =>
-  state.settings.swap.selectableCurrencies;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 

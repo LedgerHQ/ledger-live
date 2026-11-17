@@ -25,8 +25,10 @@ type RenderWithWrapper = (
   options: { wrapper: ComponentType<{ children: ReactNode }> },
 ) => unknown;
 
-export function renderManageAgentsCard(render: RenderWithWrapper) {
+export function renderManageAgentsCard(render: RenderWithWrapper, showNewBadge = true) {
   const onOpen = jest.fn();
-  render(<ManageAgentsCard onOpen={onOpen} />, { wrapper: I18nWrapper });
+  render(<ManageAgentsCard onOpen={onOpen} showNewBadge={showNewBadge} />, {
+    wrapper: I18nWrapper,
+  });
   return { onOpen };
 }

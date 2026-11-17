@@ -95,11 +95,11 @@ export function createApi() {
     ): Promise<TransactionValidation> =>
       validateIntent(context, transactionIntent, balances, options?.customFees),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-    validateAddress: async (
+    validateAddress: (
       _context: NearContext,
       address: string,
       _parameters: Partial<AddressValidationCurrencyParameters>,
-    ): Promise<boolean> => isValidAddress(address),
+    ): Promise<boolean> => Promise.resolve(isValidAddress(address)),
 
     // --- Staking ---
     getStakes: (

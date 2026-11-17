@@ -24,7 +24,6 @@
     "android:gradleClean": "cd android && ./gradlew clean",
     "android:bundleInDebug": "ANDROID_BUNDLE_IN_DEBUG=true pnpm android",
     "gen-metafile": "zx ./scripts/gen-metafile.mjs",
-    "e2e:ci": "pnpm run e2e:build",
     "e2e:build": "DETOX=1 zx ./scripts/e2e-build.mjs",
     "prebeta": "bundle install",
     "ios:staging": "ENVFILE=.env.ios.staging react-native run-ios --mode Staging",

@@ -227,7 +227,7 @@
     "jest-sonar": "0.2.16",
     "knip": "6.32.2",
     "nx": "catalog:",
-    "nyc": "15.1.0",
+    "nyc": "18.0.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",

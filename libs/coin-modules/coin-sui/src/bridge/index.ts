@@ -21,6 +21,7 @@ import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
+import { buildSignRawOperation } from "./signRawOperation";
 import { getAccountShape, sync } from "./synchronisation";
 import { validateAddress } from "./validateAddress";
 
@@ -57,9 +58,7 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
-    signRawOperation: () => {
-      throw new Error("signRawOperation is not supported");
-    },
+    signRawOperation: buildSignRawOperation(signerContext),
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,

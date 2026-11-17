@@ -8,7 +8,7 @@ import { AgentIntentNavigator, AgentIntentTabNavigator } from "../Navigator";
 
 const Stack = createNativeStackNavigator();
 
-function renderFromMyWallet(profile: boolean) {
+function renderFromMyWallet(profile: boolean, newBadge = false) {
   return render(
     <Stack.Navigator>
       <Stack.Screen name={ScreenName.MyWallet} component={ManageAgentsButton} />
@@ -16,7 +16,7 @@ function renderFromMyWallet(profile: boolean) {
     </Stack.Navigator>,
     {
       overrideInitialState: withFlagOverrides({
-        agentIntent: { enabled: true, params: { navBar: false, profile } },
+        agentIntent: { enabled: true, params: { navBar: false, profile, newBadge } },
       }),
     },
   );
@@ -38,6 +38,22 @@ describe("Agent Intent entry points", () => {
       expect.objectContaining({ button: "agent_intent", source: "profile" }),
     );
   });
+
+  it.each([true, false])(
+    "should show the new badge and track it when the flag newBadge is %s",
+    async newBadge => {
+      const { user } = renderFromMyWallet(true, newBadge);
+
+      expect(screen.queryByTestId("manage-agents-card-new-badge") !== null).toBe(newBadge);
+
+      await user.press(screen.getByText("Manage your agents"));
+
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "agent_intent", newBadge }),
+      );
+    },
+  );
 
   it("should hide the My Wallet card when the profile entry point is off", () => {
     renderFromMyWallet(false);

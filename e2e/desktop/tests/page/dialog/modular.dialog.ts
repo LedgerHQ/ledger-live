@@ -22,10 +22,6 @@ export class ModularDialog extends Dialog {
   }
 
   // Asset selector
-  async isVisible(): Promise<boolean> {
-    return await this.isModularAssetsDialogVisible();
-  }
-
   async validateItems() {
     return await this.validateAssetsDialogItems();
   }
@@ -43,10 +39,6 @@ export class ModularDialog extends Dialog {
   }
 
   // ===== Original methods (kept for backward compatibility) =====
-  async isModularAssetsDialogVisible(): Promise<boolean> {
-    return await this.assetDialog.isModularAssetDialogVisible();
-  }
-
   async validateAssetsDialogItems() {
     return await this.assetDialog.validateAssetDialogItems();
   }

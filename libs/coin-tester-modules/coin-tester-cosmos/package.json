@@ -20,43 +20,14 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-cosmos",
-  "typesVersions": {
-    "*": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    "./scenarii/Babylon": {
-      "@ledgerhq/source": "./src/scenarii/Babylon.ts",
-      "require": "./lib/scenarii/Babylon.js",
-      "default": "./lib-es/scenarii/Babylon.js"
-    },
-    "./scenarii/Cosmos": {
-      "@ledgerhq/source": "./src/scenarii/Cosmos.ts",
-      "require": "./lib/scenarii/Cosmos.js",
-      "default": "./lib-es/scenarii/Cosmos.js"
-    },
-    "./scenarii/Gonka": {
-      "@ledgerhq/source": "./src/scenarii/Gonka.ts",
-      "require": "./lib/scenarii/Gonka.js",
-      "default": "./lib-es/scenarii/Gonka.js"
-    },
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
+    "./scenarii/Babylon": "./src/scenarii/Babylon.ts",
+    "./scenarii/Cosmos": "./src/scenarii/Cosmos.ts",
+    "./scenarii/Gonka": "./src/scenarii/Gonka.ts",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "format": "oxfmt src",
@@ -90,5 +61,12 @@
     "oxlint": "catalog:",
     "rimraf": "5.0.10",
     "typescript": "catalog:"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "nx:noop"
+      }
+    }
   }
 }

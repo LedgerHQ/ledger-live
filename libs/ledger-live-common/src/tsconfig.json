@@ -7,7 +7,6 @@
     "declarationMap": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "isolatedModules": false,
     "jsx": "react",
     "lib": ["es2022", "dom"],
     "types": ["node", "jest"],

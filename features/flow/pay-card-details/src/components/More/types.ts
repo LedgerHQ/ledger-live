@@ -12,13 +12,6 @@ export type MoreRow = Readonly<{
   onPress: () => void;
 }>;
 
-export type MoreSheetProps = Readonly<{
-  isOpen: boolean;
-  title: string;
-  rows: readonly MoreRow[];
-  onClose: () => void;
-}>;
-
 export type MoreViewProps = Readonly<{
   moreLabel: string;
   sheetTitle: string;

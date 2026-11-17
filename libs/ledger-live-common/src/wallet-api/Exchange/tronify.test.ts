@@ -1,16 +1,29 @@
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { deserializeError, serializeError } from "@ledgerhq/wallet-api-core";
+import { buildGenericTransactionIntent } from "../../bridge/generic-coin-framework/buildIntent";
 import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
+import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
-import { isTronifyEnergyDelivered, tronifyHandlers } from "./tronify";
+import { getTronifyQuote, isTronifyEnergyDelivered, tronifyHandlers } from "./tronify";
 
 jest.mock("../../bridge/generic-coin-framework/sponsored", () => ({
   getSponsoredCoinApi: jest.fn(),
 }));
+jest.mock("../../bridge/generic-coin-framework/buildIntent", () => ({
+  buildGenericTransactionIntent: jest.fn(),
+}));
+jest.mock("../../bridge/generic-coin-framework/validateAddress", () => ({
+  genericValidateAddress: jest.fn(),
+}));
 
 const mockGetSponsoredCoinApi = jest.mocked(getSponsoredCoinApi);
+const mockBuildIntent = jest.mocked(buildGenericTransactionIntent);
+const mockGenericValidateAddress = jest.mocked(genericValidateAddress);
 const isEnergyDelivered = jest.fn();
+const estimateSponsoredFeeQuote = jest.fn();
+const validateAddress = jest.fn();
 
 const TRON_ADDRESS = "TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3";
 
@@ -178,9 +191,156 @@ describe("isTronifyEnergyDelivered", () => {
   });
 });
 
+function quote(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
+  return getTronifyQuote(params as never, { accounts, getFeature });
+}
+
+function expectNoQuote() {
+  expect(estimateSponsoredFeeQuote).not.toHaveBeenCalled();
+}
+
+describe("getTronifyQuote", () => {
+  const RECIPIENT = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+  const INTENT = { type: "send", asset: { type: "trc20" } };
+  const quoteParams = (overrides: Record<string, unknown> = {}) => ({
+    fromAccountId: walletId(usdtAccount),
+    recipient: RECIPIENT,
+    amount: "1000000",
+    ...overrides,
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetSponsoredCoinApi.mockResolvedValue({ estimateSponsoredFeeQuote } as never);
+    mockGenericValidateAddress.mockReturnValue(validateAddress);
+    validateAddress.mockResolvedValue(true);
+    mockBuildIntent.mockResolvedValue(INTENT as never);
+    estimateSponsoredFeeQuote.mockResolvedValue({
+      feeAsset: {
+        type: "trc20",
+        assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        unit: { name: "Tether USD", code: "USDT", magnitude: 6, showAllDigits: false },
+      },
+      value: 2_310_000n,
+      originalValue: 13_500_000n,
+    });
+  });
+
+  it("returns the seam's quote with bigints as decimal strings", async () => {
+    await expect(quote(quoteParams())).resolves.toEqual({
+      feeAsset: {
+        type: "trc20",
+        assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        unit: { name: "Tether USD", code: "USDT", magnitude: 6 },
+      },
+      value: "2310000",
+      originalValue: "13500000",
+    });
+    expect(estimateSponsoredFeeQuote).toHaveBeenCalledWith(INTENT);
+  });
+
+  it("builds the TRC-20 send intent on the TRON account, as the Send flow does", async () => {
+    await quote(quoteParams());
+
+    expect(mockGetSponsoredCoinApi).toHaveBeenCalledWith("tron", "local");
+    expect(mockGenericValidateAddress).toHaveBeenCalledWith("tron", "local");
+    expect(validateAddress).toHaveBeenCalledWith(RECIPIENT, {});
+    expect(mockBuildIntent).toHaveBeenCalledWith("tron", "local", tronAccount, {
+      family: "tron",
+      recipient: RECIPIENT,
+      amount: new BigNumber("1000000"),
+      useAllAmount: false,
+      subAccountId: usdtAccount.id,
+    });
+  });
+
+  it.each([
+    ["no params", undefined],
+    ["no account id", quoteParams({ fromAccountId: undefined })],
+    ["no recipient", quoteParams({ recipient: undefined })],
+    ["an empty recipient", quoteParams({ recipient: "" })],
+    ["a zero amount", quoteParams({ amount: "0" })],
+    ["a negative amount", quoteParams({ amount: "-1" })],
+    ["a fractional amount", quoteParams({ amount: "1.5" })],
+    ["a numeric amount", quoteParams({ amount: 1_000_000 })],
+  ])("rejects %s before any network call", async (_label, params) => {
+    await expect(quote(params)).rejects.toMatchObject({ cause: "WRONG_TRONIFY_PARAMS" });
+    expect(mockGetSponsoredCoinApi).not.toHaveBeenCalled();
+    expectNoQuote();
+  });
+
+  it("rejects an invalid TRON recipient before building the intent", async () => {
+    validateAddress.mockResolvedValue(false);
+
+    await expect(quote(quoteParams({ recipient: "not-an-address" }))).rejects.toMatchObject({
+      cause: "WRONG_TRONIFY_PARAMS",
+    });
+    expect(mockBuildIntent).not.toHaveBeenCalled();
+    expectNoQuote();
+  });
+
+  it("rejects when the gasSponsorship flag is off", async () => {
+    await expect(quote(quoteParams(), flagOff)).rejects.toMatchObject({
+      cause: "TRONIFY_DISABLED",
+    });
+    expectNoQuote();
+  });
+
+  it("rejects a wallet API id the wallet does not know", async () => {
+    await expect(quote(quoteParams({ fromAccountId: "unknown-uuid" }))).rejects.toMatchObject({
+      cause: "ACCOUNT_ID_NOT_FOUND",
+    });
+    expectNoQuote();
+  });
+
+  it.each([
+    ["a native TRX account", tronAccount],
+    ["a TRC-10 account", trc10Account],
+    ["an ERC-20 account", erc20Account],
+  ])("rejects %s", async (_label, account) => {
+    await expect(quote(quoteParams({ fromAccountId: walletId(account) }))).rejects.toMatchObject({
+      cause: "TRONIFY_UNSUPPORTED_ACCOUNT",
+    });
+    expectNoQuote();
+  });
+
+  it("rejects when the wallet has no TRON sponsored seam", async () => {
+    mockGetSponsoredCoinApi.mockResolvedValue(null);
+
+    await expect(quote(quoteParams())).rejects.toMatchObject({ cause: "TRONIFY_UNAVAILABLE" });
+  });
+
+  it.each([
+    ["EnergyRentUnsupportedIntent", "TRONIFY_UNSUPPORTED_TRANSFER"],
+    ["EnergyRentProviderNotConfigured", "TRONIFY_UNAVAILABLE"],
+    ["TronifyApiError", "TRONIFY_QUOTE_FAILED"],
+    ["Error", "TRONIFY_QUOTE_FAILED"],
+  ])("maps a %s from the quote to %s", async (name, cause) => {
+    const error = new Error("boom");
+    error.name = name;
+    estimateSponsoredFeeQuote.mockRejectedValue(error);
+
+    await expect(quote(quoteParams())).rejects.toMatchObject({ name: "ExchangeError", cause });
+  });
+
+  it("keeps the quote failure code across the wallet API wire", async () => {
+    estimateSponsoredFeeQuote.mockRejectedValue(new Error("ECONNRESET"));
+    const error = await quote(quoteParams()).catch(e => e);
+
+    const onTheWire = JSON.parse(JSON.stringify(serializeError(error)));
+
+    expect(deserializeError(onTheWire)).toMatchObject({
+      name: "ExchangeError",
+      message: "tronify quote failed: ECONNRESET",
+      cause: "TRONIFY_QUOTE_FAILED",
+    });
+  });
+});
+
 describe("tronifyHandlers", () => {
-  it("exposes the method id the exchange-module client calls", () => {
+  it("exposes the method ids the exchange-module client calls", () => {
     expect(Object.keys(tronifyHandlers({ accounts, getFeature: flagOn }))).toEqual([
+      "custom.exchange.tronify.getQuote",
       "custom.exchange.tronify.isEnergyDelivered",
     ]);
   });

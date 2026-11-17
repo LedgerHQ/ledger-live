@@ -22,7 +22,6 @@ export const INITIAL_STATE: TransferDrawerState = {
 };
 
 export const transferDrawerStateSelector = (state: State) => state.transferDrawer;
-export const transferDrawerIsOpenSelector = (state: State) => state.transferDrawer.isOpen;
 
 const transferDrawerSlice = createSlice({
   name: "transferDrawer",

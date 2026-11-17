@@ -6,7 +6,6 @@ import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 // The other presets inherit this override, where its globs (entity/..., api/...) match no package.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "domain/api/account-data",
-  "domain/entity/account-alias",
   "domain/entity/account-balance",
   "domain/entity/account-balance-history",
   "domain/entity/account-name",

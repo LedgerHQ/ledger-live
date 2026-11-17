@@ -6,8 +6,11 @@ import {
   setGenericPassword,
   type SetOptions,
 } from "react-native-keychain";
-import { PKCE_ATTEMPT_KEY, parseAttempt, serializeAttempt } from "./internals/attemptPayload";
+import { parseAttempt, serializeAttempt } from "./internals/attemptPayload";
 import type { PayCardStoredAttempt } from "./types";
+
+/** One key holds one attempt: the PKCE verifier the token exchange presents. */
+const PKCE_ATTEMPT_KEY = "payCard.pkce.attempt";
 
 /**
  * The library pairs a username with a password, and the attempt key has to go somewhere. `service`

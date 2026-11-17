@@ -17,8 +17,10 @@ const contextMenuValue = {
   goBack: jest.fn(),
 };
 
-function withAgentIntent(navBar: boolean, profile: boolean) {
-  return withFlagOverrides({ agentIntent: { enabled: true, params: { navBar, profile } } });
+function withAgentIntent(navBar: boolean, profile: boolean, newBadge = false) {
+  return withFlagOverrides({
+    agentIntent: { enabled: true, params: { navBar, profile, newBadge } },
+  });
 }
 
 function renderApp(initialState: ReturnType<typeof withFlagOverrides>, initialRoute = "/") {
@@ -52,6 +54,24 @@ describe("Agent Intent entry points", () => {
     expect(mockClose).toHaveBeenCalled();
     trackSpy.mockRestore();
   });
+
+  it.each([true, false])(
+    "should show the new badge and track it when the flag newBadge is %s",
+    async newBadge => {
+      const trackSpy = jest.spyOn(analytics, "track");
+      const { user } = renderApp(withAgentIntent(false, true, newBadge));
+
+      expect(screen.queryByTestId("manage-agents-card-new-badge") !== null).toBe(newBadge);
+
+      await user.click(screen.getByText("Manage your agents"));
+
+      expect(trackSpy).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "agent_intent", newBadge }),
+      );
+      trackSpy.mockRestore();
+    },
+  );
 
   it("should hide the My Wallet card when the profile entry point is off", () => {
     renderApp(withAgentIntent(true, false));
