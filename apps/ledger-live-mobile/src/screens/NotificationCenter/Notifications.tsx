@@ -292,9 +292,7 @@ export default function NotificationCenter() {
           keyExtractor={({ id }) => id}
           renderItem={elem => ListItem(elem.item)}
           ListHeaderComponent={<LNUpsellBanner location="notification_center" mx={6} my={5} />}
-          ItemSeparatorComponent={() => (
-            <Box height={1} width="100%" backgroundColor="neutral.c30" />
-          )}
+          ItemSeparatorComponent={NotificationSeparator}
           viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
           onViewableItemsChanged={handleViewableItemsChanged}
           ListEmptyComponent={isLNUpsellBannerShown ? null : <EmptyComponent />}
@@ -302,6 +300,10 @@ export default function NotificationCenter() {
       </View>
     </Container>
   );
+}
+
+function NotificationSeparator() {
+  return <Box height={1} width="100%" backgroundColor="neutral.c30" />;
 }
 
 function EmptyComponent() {
