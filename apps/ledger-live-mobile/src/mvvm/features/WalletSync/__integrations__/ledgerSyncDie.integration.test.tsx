@@ -6,7 +6,10 @@ import { track } from "@shared/analytics";
 import { act, render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
 import type { ExecutorState } from "@features/platform-device-intent";
 import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
-import { setMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  resetTrustchainStore,
+  setMemberCredentials,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   NoTrustchainInitialized,
   TrustchainAlreadyInitialized,
@@ -86,6 +89,9 @@ type FakeExecutorProps = Readonly<{
   onIntentJobStateChanged?: (jobState: LedgerSyncJobState) => void;
 }>;
 
+// The intent the fake executor last mounted, to deliver a result of another job invocation.
+const mockMountedIntent: { current: FakeExecutorProps["intent"] | null } = { current: null };
+
 // Runs the real job and renderer on a fake session, in place of the connection and the app setup.
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const ReactActual = jest.requireActual<typeof React>("react");
@@ -101,6 +107,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
     onIntentJobStateChanged,
   }: FakeExecutorProps) {
     const [jobState, setJobState] = ReactActual.useState<LedgerSyncJobState | undefined>();
+    mockMountedIntent.current = intent;
 
     ReactActual.useEffect(() => {
       const connectionResult = buildDeviceConnection("session-1");
@@ -381,6 +388,15 @@ function awaitConfirmationForever(
   return new Promise(() => {});
 }
 
+// A device call the test settles once the user closed the step.
+function deviceAnswer<T>() {
+  let settle: (value: T) => void = () => {};
+  const promise = new Promise<T>(resolve => {
+    settle = resolve;
+  });
+  return { promise, settle };
+}
+
 function namedError(ErrorClass: new (message?: string) => Error): Error {
   return new ErrorClass("from the SDK");
 }
@@ -604,6 +620,74 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
     });
 
+    it("should store a result that arrives after the step closed, without navigating", async () => {
+      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
+      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+
+      const { store } = await activateFromSettings();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+
+      await act(async () => {
+        answer.settle({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      });
+
+      await waitFor(() => expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN));
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncLoading/)).toBeNull();
+    });
+
+    it("should store both results of a disconnected run and its retry but track one activation", async () => {
+      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
+      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+
+      const { store } = await activateFromSettings();
+      await screen.findByTestId("device-intent-sheet");
+      act(() =>
+        mockMountedIntent.current?.onResult?.({
+          type: TrustchainResultType.created,
+          trustchain: TRUSTCHAIN,
+        }),
+      );
+      await act(async () => {
+        answer.settle({ type: TrustchainResultType.restored, trustchain: ROTATED_TRUSTCHAIN });
+      });
+
+      expect(await screen.findByText(loadingScreen(false))).toBeVisible();
+      expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TRUSTCHAIN);
+      expect(
+        jest
+          .mocked(track)
+          .mock.calls.filter(([event]) => event === AnalyticsEvents.LedgerSyncActivated),
+      ).toHaveLength(1);
+    });
+
+    it("should drop a result that arrives after Ledger Sync was reset", async () => {
+      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
+      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+
+      const { store } = await activateFromSettings();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+      act(() => {
+        store.dispatch(resetTrustchainStore());
+      });
+
+      await act(async () => {
+        answer.settle({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      });
+
+      expect(store.getState().trustchain.trustchain).toBeNull();
+      expect(track).not.toHaveBeenCalledWith(
+        AnalyticsEvents.LedgerSyncActivated,
+        expect.anything(),
+      );
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncLoading/)).toBeNull();
+    });
+
     it("should navigate to the activation screen when the flag is off", async () => {
       await activateFromSettings(initialState({ ledgerSyncDie: false }));
 
@@ -661,6 +745,47 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
         MEMBER,
         expect.any(Object),
       );
+    });
+
+    it("should store a rotated trustchain that arrives after the step closed, without navigating", async () => {
+      const answer = deviceAnswer<Trustchain>();
+      mockRemoveMember.mockReturnValue(answer.promise);
+
+      const { store } = await removeInstance();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+
+      await act(async () => {
+        answer.settle(ROTATED_TRUSTCHAIN);
+      });
+
+      await waitFor(() =>
+        expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TRUSTCHAIN),
+      );
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncManageInstancesSuccess/)).toBeNull();
+    });
+
+    it("should drop a rotated trustchain that arrives after Ledger Sync was reset", async () => {
+      const answer = deviceAnswer<Trustchain>();
+      mockRemoveMember.mockReturnValue(answer.promise);
+
+      const { store } = await removeInstance();
+      await screen.findByTestId("device-intent-sheet");
+      pressBack();
+      await waitForEntryScreen();
+      act(() => {
+        store.dispatch(resetTrustchainStore());
+      });
+
+      await act(async () => {
+        answer.settle(ROTATED_TRUSTCHAIN);
+      });
+
+      expect(store.getState().trustchain.trustchain).toBeNull();
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expect(screen.queryByText(/reached WalletSyncManageInstancesSuccess/)).toBeNull();
     });
 
     it("should stay on the entry screen when the error of a run that could not start is closed", async () => {

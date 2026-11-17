@@ -33,7 +33,10 @@ export function getExitAmount(
   return action === "deactivate" ? amount : withdrawableAmount;
 }
 
-/** Says why the position offers no exit, so the view never reaches a dead end. */
+/**
+ * Says why the position offers no exit, so the view never reaches a dead end. The host also clears
+ * `canWithdraw` while a lockup is in force, so the authority notice names both causes.
+ */
 export function getPositionNotice({
   state,
   canStake,

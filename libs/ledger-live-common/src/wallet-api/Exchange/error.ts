@@ -1,4 +1,4 @@
-type ExchangeErrorData = {
+export type ExchangeErrorData = {
   code: string;
   message: string;
   data?: Record<string, unknown>;
@@ -85,6 +85,34 @@ export function createTronifyQuoteFailed(reason: string): ExchangeErrorData {
   return {
     code: "TRONIFY_QUOTE_FAILED",
     message: `tronify quote failed: ${reason}`,
+  };
+}
+
+export function createTronifyInsufficientBalance(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_INSUFFICIENT_BALANCE",
+    message: "tronify energy rental needs a balance that covers the transfer plus the rent",
+  };
+}
+
+export function createTronifyPriceAboveApproved(offeredBaseUnits: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_PRICE_ABOVE_APPROVED",
+    message: `tronify rent of ${offeredBaseUnits} base units is above the approved fee`,
+  };
+}
+
+export function createTronifyRentPending(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_RENT_PENDING",
+    message: "tronify energy rented for this account has not landed yet",
+  };
+}
+
+export function createTronifyOrderFailed(reason: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_ORDER_FAILED",
+    message: `tronify rent order failed: ${reason}`,
   };
 }
 

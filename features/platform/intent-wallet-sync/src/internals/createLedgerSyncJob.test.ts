@@ -1,7 +1,8 @@
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
+import { config, lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
+import { createLedgerSyncResultOrder, type LedgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -14,11 +15,18 @@ import {
   completeJob,
   createDeviceCallbacks,
   createLedgerSyncJob,
+  deliverLateResult,
   failJob,
   handleCallError,
   tryCreateSessionSdk,
 } from "./createLedgerSyncJob";
-import { failedState, fakeTrustchainSdk, namedError } from "./ledgerSyncJobTestKit";
+import {
+  createDeferred,
+  failedState,
+  fakeTrustchainSdk,
+  namedError,
+  recordJob,
+} from "./ledgerSyncJobTestKit";
 
 const CONNECTION = {
   dmk: {} as never,
@@ -49,6 +57,24 @@ function fakeSubscriber() {
   }).subscribe(observer);
   if (!captured) throw new Error("The observable did not hand over its subscriber");
   return { ...observer, asSubscriber: captured };
+}
+
+// Lets the job's promise handlers run after the test settled the device call.
+const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
+
+function startJob(
+  call: () => Promise<string>,
+  onResult: (result: string) => void,
+  resultOrder: LedgerSyncResultOrder = createLedgerSyncResultOrder(),
+) {
+  return recordJob(
+    createLedgerSyncJob(call)({
+      deviceConnectionResult: CONNECTION,
+      deviceExtractedContext: {} as never,
+      input: { createSessionSdk: () => SDK, resultOrder },
+      onResult,
+    }),
+  );
 }
 
 describe("failJob", () => {
@@ -96,6 +122,34 @@ describe("completeJob", () => {
     expect(subscriber.error).toHaveBeenCalledWith(hostError);
     expect(subscriber.next).not.toHaveBeenCalled();
     expect(subscriber.complete).not.toHaveBeenCalled();
+  });
+});
+
+describe("deliverLateResult", () => {
+  it("should call onResult once with the result", () => {
+    const onResult = jest.fn();
+
+    deliverLateResult(onResult, "late result");
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith("late result");
+  });
+
+  it("should log a throw from onResult instead of throwing", () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    const hostError = new Error("host failed");
+    const onResult = jest.fn(() => {
+      throw hostError;
+    });
+
+    try {
+      expect(() => deliverLateResult(onResult, "late result")).not.toThrow();
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      expect(consoleError).toHaveBeenCalledWith(expect.any(String), hostError);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 });
 
@@ -204,7 +258,11 @@ describe("createLedgerSyncJob", () => {
   it("should call the device call with the session SDK, the compat device id, the input and the callbacks", async () => {
     const call = jest.fn(async () => "result");
     const onResult = jest.fn();
-    const input = { createSessionSdk: () => SDK, value: 42 };
+    const input = {
+      createSessionSdk: () => SDK,
+      resultOrder: createLedgerSyncResultOrder(),
+      value: 42,
+    };
 
     const states = await lastValueFrom(
       createLedgerSyncJob(call)({
@@ -226,5 +284,147 @@ describe("createLedgerSyncJob", () => {
     });
     expect(onResult).toHaveBeenCalledWith("result");
     expect(states).toEqual([PENDING, COMPLETED]);
+  });
+
+  describe("once the executor unsubscribed", () => {
+    const onStoppedNotification = jest.fn();
+
+    beforeEach(() => {
+      config.onStoppedNotification = onStoppedNotification;
+    });
+
+    afterEach(() => {
+      config.onStoppedNotification = null;
+      onStoppedNotification.mockReset();
+    });
+
+    it("should still report the result of the latest run, without emitting a state", async () => {
+      const device = createDeferred<string>();
+      const onResult = jest.fn();
+      const job = startJob(() => device.promise, onResult);
+
+      job.subscription.unsubscribe();
+      device.resolve("late result");
+      await flushPromises();
+
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(onResult).toHaveBeenCalledWith("late result");
+      expect(job.states).toEqual([PENDING]);
+      expect(onStoppedNotification).not.toHaveBeenCalled();
+    });
+
+    it("should report the result of the run a Retry started, and ignore a Retry once unsubscribed", async () => {
+      const retried = createDeferred<string>();
+      const call = jest
+        .fn<Promise<string>, []>()
+        .mockRejectedValueOnce(namedError("UserRefusedOnDevice"))
+        .mockReturnValueOnce(retried.promise);
+      const onResult = jest.fn();
+      const job = startJob(call, onResult);
+
+      const rejected = await job.waitFor("device-rejected");
+      rejected.retry();
+      job.subscription.unsubscribe();
+      rejected.retry();
+      retried.resolve("retried result");
+      await flushPromises();
+
+      expect(call).toHaveBeenCalledTimes(2);
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(onResult).toHaveBeenCalledWith("retried result");
+      expect(job.states).toEqual([PENDING, rejected, PENDING]);
+    });
+
+    it.each([
+      ["a failure", new TrustchainNotAllowed()],
+      ["a refusal", namedError("UserRefusedOnDevice")],
+      [
+        "a disconnection",
+        Object.assign(new Error("unplugged"), { _tag: "DeviceDisconnectedWhileSendingError" }),
+      ],
+    ])("should ignore %s", async (_label, error) => {
+      const device = createDeferred<string>();
+      const onResult = jest.fn();
+      const job = startJob(() => device.promise, onResult);
+
+      job.subscription.unsubscribe();
+      device.reject(error);
+      await flushPromises();
+
+      expect(onResult).not.toHaveBeenCalled();
+      expect(job.states).toEqual([PENDING]);
+      expect(onStoppedNotification).not.toHaveBeenCalled();
+    });
+
+    it("should not report a throw from onResult through the closed subscriber", async () => {
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+      const device = createDeferred<string>();
+      const onResult = jest.fn(() => {
+        throw new Error("host failed");
+      });
+      const job = startJob(() => device.promise, onResult);
+
+      job.subscription.unsubscribe();
+      device.resolve("late result");
+      await flushPromises();
+
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(job.states).toEqual([PENDING]);
+      expect(onStoppedNotification).not.toHaveBeenCalled();
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      consoleError.mockRestore();
+    });
+
+    it("should ignore the late result of a disconnected job once the job that replaced it delivered", async () => {
+      const disconnectedDevice = createDeferred<string>();
+      const onDisconnectedResult = jest.fn();
+      const resultOrder = createLedgerSyncResultOrder();
+      const disconnected = startJob(
+        () => disconnectedDevice.promise,
+        onDisconnectedResult,
+        resultOrder,
+      );
+      disconnected.subscription.unsubscribe();
+
+      const onReplacementResult = jest.fn();
+      const replacement = startJob(
+        () => Promise.resolve("newer result"),
+        onReplacementResult,
+        resultOrder,
+      );
+      await replacement.waitFor("completed");
+      disconnectedDevice.resolve("older result");
+      await flushPromises();
+
+      expect(onReplacementResult).toHaveBeenCalledWith("newer result");
+      expect(onDisconnectedResult).not.toHaveBeenCalled();
+    });
+
+    it("should keep the late result of a disconnected job when the job that replaced it has not delivered", async () => {
+      const disconnectedDevice = createDeferred<string>();
+      const onDisconnectedResult = jest.fn();
+      const resultOrder = createLedgerSyncResultOrder();
+      const disconnected = startJob(
+        () => disconnectedDevice.promise,
+        onDisconnectedResult,
+        resultOrder,
+      );
+      disconnected.subscription.unsubscribe();
+
+      const replacementDevice = createDeferred<string>();
+      const onReplacementResult = jest.fn();
+      const replacement = startJob(
+        () => replacementDevice.promise,
+        onReplacementResult,
+        resultOrder,
+      );
+      disconnectedDevice.resolve("older result");
+      await flushPromises();
+      replacementDevice.resolve("newer result");
+      await replacement.waitFor("completed");
+
+      expect(onDisconnectedResult).toHaveBeenCalledWith("older result");
+      expect(onReplacementResult).toHaveBeenCalledWith("newer result");
+    });
   });
 });

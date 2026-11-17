@@ -27,7 +27,7 @@ export const STAKE_POSITION_COPY = {
   notice: {
     deactivating: "Deactivation in progress. You can withdraw your {{ticker}} once it is complete.",
     missingAuthority:
-      "Another wallet controls this position, so you can't change it from this account.",
+      "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
   },
   confirm: {
     deactivate: {

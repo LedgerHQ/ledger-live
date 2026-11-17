@@ -12,6 +12,7 @@ export const quitConfirmationTestIds = {
 
 export const funnelTestIds = {
   unlockSheet: "device-onboarding-unlock-sheet",
+  powerOnSheet: "device-onboarding-power-on-sheet",
 } as const;
 
 export const checksTestIds = {

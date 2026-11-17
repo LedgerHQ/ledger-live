@@ -4,7 +4,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import type { StepProps } from "../types";
 import StepConfirmation, { StepConfirmationFooter } from "./StepConfirmation";
 import { makeStepProps } from "../../__mocks__/stepProps.mock";
-import { makeStatus, xrpOperation, reserveRelease } from "../../__mocks__/transaction.mock";
+import { xrpOperation } from "../../__mocks__/transaction.mock";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   SyncOneAccountOnMount: () => null,
@@ -34,7 +34,8 @@ describe("StepConfirmation", () => {
   it("confirms an added token and opens its operation", () => {
     const { onClose, account } = renderConfirmation({ optimisticOperation: xrpOperation });
 
-    expect(screen.getByText("RLUSD token successfully added")).toBeVisible();
+    expect(screen.getByText("Request to add RLUSD sent")).toBeVisible();
+    expect(screen.getByText("It applies once the network confirms the transaction.")).toBeVisible();
     fireEvent.click(screen.getByText("View details"));
 
     expect(onClose).toHaveBeenCalled();
@@ -46,19 +47,18 @@ describe("StepConfirmation", () => {
     expect(screen.queryByText("Retry")).toBeNull();
   });
 
-  it("confirms an edited trust limit", () => {
+  it("confirms a sent settings update", () => {
     renderConfirmation({ optimisticOperation: xrpOperation, action: "edit" });
 
-    expect(screen.getByText("RLUSD trust limit updated")).toBeVisible();
+    expect(screen.getByText("Request to update RLUSD sent")).toBeVisible();
+    expect(screen.getByText("It applies once the network confirms the transaction.")).toBeVisible();
   });
 
-  it("confirms a removal with the XRP it unlocked", () => {
-    const status = makeStatus({}, { reserve: reserveRelease });
+  it("confirms a sent removal", () => {
+    renderConfirmation({ optimisticOperation: xrpOperation, action: "remove" });
 
-    renderConfirmation({ optimisticOperation: xrpOperation, action: "remove", status });
-
-    expect(screen.getByText("RLUSD removed")).toBeVisible();
-    expect(screen.getByText("0.2 XRP are available again.")).toBeVisible();
+    expect(screen.getByText("Request to remove RLUSD sent")).toBeVisible();
+    expect(screen.getByText("It applies once the network confirms the transaction.")).toBeVisible();
   });
 
   it("offers a retry after an error", () => {

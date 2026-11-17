@@ -175,6 +175,7 @@ domain/api/ofac/                                         @ledgerhq/wallet-xp
 
 # Wallet — shared UI
 /shared/ui-animated-height/                              @ledgerhq/wallet-xp
+/shared/ui-animated-qr-code/                             @ledgerhq/wallet-xp
 /shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 /shared/ui-app-unavailable/                              @ledgerhq/wallet-xp

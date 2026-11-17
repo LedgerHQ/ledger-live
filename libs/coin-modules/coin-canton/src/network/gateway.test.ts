@@ -293,15 +293,19 @@ describe("isTopologyChangeRequired", () => {
 
 describe("isTopologyChangeRequiredCached", () => {
   const mockConfig = createTestNodeConfig();
+  const gatewayA = { ...mockConfig, gatewayUrl: "https://gateway-a.example.com" };
+  const gatewayB = { ...mockConfig, gatewayUrl: "https://gateway-b.example.com" };
   const pubKey = "test-pub-key";
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    clearIsTopologyChangeRequiredCache(mockConfig, pubKey);
+    [mockConfig, gatewayA, gatewayB].forEach(config =>
+      clearIsTopologyChangeRequiredCache(config, pubKey),
+    );
   });
 
-  it("caches result per pubKey and nodeId", async () => {
+  it("caches result per gateway, node and pubKey", async () => {
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
     await expect(isTopologyChangeRequiredCached(mockConfig, pubKey)).resolves.toBe(true);
@@ -320,6 +324,31 @@ describe("isTopologyChangeRequiredCached", () => {
 
     await isTopologyChangeRequiredCached(mockConfig, pubKey);
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reuse a verdict cached for another gateway with the same node id", async () => {
+    mockNetwork
+      .mockRejectedValueOnce(new Error("Party already exists"))
+      .mockResolvedValueOnce({ data: createMockOnboardingPrepareResponse(), status: 200 });
+
+    await expect(isTopologyChangeRequiredCached(gatewayA, pubKey)).resolves.toBe(false);
+    await expect(isTopologyChangeRequiredCached(gatewayB, pubKey)).resolves.toBe(true);
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears only the entry of the gateway it is given", async () => {
+    mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
+    await isTopologyChangeRequiredCached(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayB, pubKey);
+
+    clearIsTopologyChangeRequiredCache(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayB, pubKey);
+
+    expect(mockNetwork).toHaveBeenCalledTimes(3);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining(gatewayA.gatewayUrl) }),
+    );
   });
 });
 
@@ -868,13 +897,14 @@ describe("getEnabledInstruments", () => {
 
 describe("getEnabledInstrumentsCached", () => {
   const mockConfig = createTestNodeConfig();
+  const gatewayA = { ...mockConfig, gatewayUrl: "https://gateway-a.example.com" };
+  const gatewayB = { ...mockConfig, gatewayUrl: "https://gateway-b.example.com" };
 
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Clear cache before each test
-    clearEnabledInstrumentsCache(mockConfig);
+    [mockConfig, gatewayA, gatewayB].forEach(clearEnabledInstrumentsCache);
   });
 
   it("should cache results and return cached value on subsequent calls", async () => {
@@ -926,5 +956,34 @@ describe("getEnabledInstrumentsCached", () => {
     const result2 = await getEnabledInstrumentsCached(mockConfig);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0xnewtoken____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reuse instruments cached for another gateway with the same node id", async () => {
+    mockNetwork
+      .mockResolvedValueOnce({ data: [{ id: "TokenA", admin: "admin-a" }], status: 200 })
+      .mockResolvedValueOnce({ data: [{ id: "TokenB", admin: "admin-b" }], status: 200 });
+
+    await expect(getEnabledInstrumentsCached(gatewayA)).resolves.toEqual(
+      new Set(["TokenA____admin-a"]),
+    );
+    await expect(getEnabledInstrumentsCached(gatewayB)).resolves.toEqual(
+      new Set(["TokenB____admin-b"]),
+    );
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears only the entry of the gateway it is given", async () => {
+    mockNetwork.mockResolvedValue({ data: [{ id: "Amulet", admin: "admin1" }], status: 200 });
+    await getEnabledInstrumentsCached(gatewayA);
+    await getEnabledInstrumentsCached(gatewayB);
+
+    clearEnabledInstrumentsCache(gatewayA);
+    await getEnabledInstrumentsCached(gatewayA);
+    await getEnabledInstrumentsCached(gatewayB);
+
+    expect(mockNetwork).toHaveBeenCalledTimes(3);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining(gatewayA.gatewayUrl) }),
+    );
   });
 });
