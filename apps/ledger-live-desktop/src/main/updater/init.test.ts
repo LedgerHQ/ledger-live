@@ -150,6 +150,18 @@ describe("update check", () => {
     );
   });
 
+  it("should keep the update available while checking it", async () => {
+    mockedCreateElectronAppUpdater.mockReturnValue({ verify: jest.fn() } as never);
+
+    init();
+    await emitUpdaterEvent("update-available", UPDATE_INFO);
+
+    expect(send).toHaveBeenLastCalledWith(
+      CHANNELS.updater,
+      expect.objectContaining({ status: "update-available" }),
+    );
+  });
+
   it("should not download an update when its check fails", async () => {
     mockedCreateElectronAppUpdater.mockReturnValue({
       verify: jest.fn().mockRejectedValue(new Error("Invalid signature")),
