@@ -68,8 +68,9 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
       const cachedItem = apiCache[cacheKey];
       if (cachedItem && new Date().getTime() - cachedItem.timestamp < staleTimeout) {
         // The cached item is still fresh, so we use it
-        setData(cachedItem.data as T);
-        onSuccess?.(cachedItem.data as T);
+        const cachedData = cachedItem.data as T;
+        setData(cachedData);
+        onSuccess?.(cachedData);
         setIsLoading(false);
       } else {
         // The cached item is stale or doesn't exist, so we fetch fresh data

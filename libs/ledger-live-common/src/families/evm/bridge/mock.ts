@@ -27,7 +27,7 @@ import { validateAddress } from "../../../bridge/validateAddress";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
-const defaultGetFees = (_a: Account, t: any) => {
+const defaultGetFees = (_a: Account, t: Transaction) => {
   const gasLimit = getGasLimit(t);
   if (t.type === 2 && t.maxFeePerGas) {
     return t.maxFeePerGas.times(gasLimit);

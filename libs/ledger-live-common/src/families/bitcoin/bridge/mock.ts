@@ -31,7 +31,8 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a: Account, t: any) => (t.feePerByte || new BigNumber(0)).times(250);
+const defaultGetFees = (a: Account, t: Transaction) =>
+  (t.feePerByte || new BigNumber(0)).times(250);
 
 const createTransaction = (): Transaction => ({
   family: "bitcoin",

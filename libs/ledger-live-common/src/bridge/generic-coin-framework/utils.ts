@@ -103,15 +103,15 @@ export function addAccountToBuyLinks(
 ): Record<string, Error> {
   for (const error of Object.values(errors)) {
     const holder = error as { links?: unknown };
-    if (!Array.isArray(holder.links)) continue;
+    const originalLinks = holder.links;
+    if (!Array.isArray(originalLinks)) continue;
 
-    const links = holder.links.map(link =>
+    const links = originalLinks.map(link =>
       typeof link === "string" ? withBuyAccount(link, accountId) : link,
     );
     // Assigned only when something changed, and as a new array either way: a coin module is free to
     // hand back a module-level constant, which must not be rewritten under it.
-    if (links.some((link, index) => link !== (holder.links as unknown[])[index]))
-      holder.links = links;
+    if (links.some((link, index) => link !== originalLinks[index])) holder.links = links;
   }
 
   return errors;

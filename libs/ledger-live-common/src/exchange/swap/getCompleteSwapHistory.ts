@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { AccountLike, Operation, SwapOperation, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";
@@ -81,10 +81,13 @@ const getSwapOperationMap =
         if (token && toAccount.type === "Account") {
           toParentAccount = toAccount;
           // Enhance the account with the given token in case we don't have funds yet.
-          toAccount = (accountWithMandatoryTokens(toAccount, [token]).subAccounts || []).find(
-            a => getAccountCurrency(a).id === tokenId,
-          );
-          toExists = (toParentAccount.subAccounts || []).includes(toAccount as TokenAccount);
+          const tokenAccount = (
+            accountWithMandatoryTokens(toAccount, [token]).subAccounts || []
+          ).find(a => getAccountCurrency(a).id === tokenId);
+          toAccount = tokenAccount;
+          toExists =
+            tokenAccount !== undefined &&
+            (toParentAccount.subAccounts || []).includes(tokenAccount);
         }
       }
 

@@ -44,10 +44,10 @@ const createTransaction = (): CardanoTransaction => {
   };
 };
 
-const estimateMaxSpendable: AccountBridge<CardanoTransaction>["estimateMaxSpendable"] = ({
+const estimateMaxSpendable: AccountBridge<CardanoTransaction>["estimateMaxSpendable"] = async ({
   account,
 }) => {
-  return account.balance as unknown as Promise<BigNumber>;
+  return account.balance;
 };
 
 const isValidAddress = (address: string) => {

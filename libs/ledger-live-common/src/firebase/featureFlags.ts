@@ -27,11 +27,13 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
         return undefined;
     }
   })();
+  const appVersion = LiveConfig.instance.appVersion;
   if (
     featureSpecificVersion &&
-    !semver.satisfies(LiveConfig.instance.appVersion!, featureSpecificVersion, {
-      includePrerelease: true,
-    })
+    (appVersion === undefined ||
+      !semver.satisfies(appVersion, featureSpecificVersion, {
+        includePrerelease: true,
+      }))
   ) {
     return {
       enabledOverriddenForCurrentVersion: true,

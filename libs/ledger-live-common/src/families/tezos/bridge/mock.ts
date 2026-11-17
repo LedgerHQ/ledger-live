@@ -10,7 +10,7 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { NotSupportedLegacyAddress, RecommendSubAccountsToEmpty } from "../../../errors";
-import type { TezosAccount, Transaction } from "../types";
+import type { NetworkInfo, TezosAccount, Transaction } from "../types";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { TEZOS_DUMMY_ADDRESS } from "@ledgerhq/coin-tezos/constants";
 import { getMainAccount } from "../../../account";
@@ -42,7 +42,7 @@ const estimateGasLimitAndStorage = () => {
   };
 };
 
-const defaultGetFees = (a: Account, t: any) =>
+const defaultGetFees = (a: Account, t: Transaction) =>
   (t.fees || new BigNumber(0)).times(t.gasLimit || new BigNumber(0));
 
 const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
@@ -162,11 +162,11 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
   });
 };
 
-const prepareTransaction = async (a: Account, t: any) => {
+const prepareTransaction = async (a: Account, t: Transaction) => {
   let networkInfo = t.networkInfo;
 
   if (!networkInfo) {
-    const ni = {
+    const ni: NetworkInfo = {
       family: "tezos",
       fees: t.fees || new BigNumber(0),
     };
