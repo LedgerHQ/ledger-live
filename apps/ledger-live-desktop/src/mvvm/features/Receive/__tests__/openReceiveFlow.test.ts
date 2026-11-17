@@ -9,7 +9,7 @@ import {
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { importLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
-import { openReceiveAddressDialog } from "~/renderer/reducers/receiveFlow";
+import { openReceiveAddressDialog } from "@features/flow-receive/state";
 import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { openModalWithReceiveFlow, openReceiveFlow } from "../openReceiveFlow";
 

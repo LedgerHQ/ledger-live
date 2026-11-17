@@ -25,7 +25,6 @@ import {
 } from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
-import receiveFlow, { type ReceiveFlowState } from "./receiveFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
@@ -59,7 +58,12 @@ import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
-import { receiveVerifyHintSlice, type ReceiveVerifyHintState } from "@features/flow-receive/state";
+import {
+  receiveAddressDialogSlice,
+  receiveVerifyHintSlice,
+  type ReceiveAddressDialogState,
+  type ReceiveVerifyHintState,
+} from "@features/flow-receive/state";
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
@@ -110,7 +114,6 @@ export type State = LLDRTKApiState & {
   modals: ModalsState;
   modularDialog: ModularDialogState;
   sendFlow: SendFlowState;
-  receiveFlow: ReceiveFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   predictions: PredictionsState;
@@ -146,6 +149,7 @@ export type State = LLDRTKApiState & {
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
   receiveVerifyHint: ReceiveVerifyHintState;
+  receiveAddressDialog: ReceiveAddressDialogState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -165,7 +169,6 @@ const appReducer = combineReducers({
   modals,
   modularDialog,
   sendFlow,
-  receiveFlow,
   settings,
   UI,
   onboarding,
@@ -203,6 +206,7 @@ const appReducer = combineReducers({
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   receiveVerifyHint: receiveVerifyHintSlice.reducer,
+  receiveAddressDialog: receiveAddressDialogSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

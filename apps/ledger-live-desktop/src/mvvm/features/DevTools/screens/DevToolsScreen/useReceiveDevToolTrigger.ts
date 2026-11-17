@@ -4,7 +4,7 @@ import { openReceiveFlow, type OpenReceiveFlowData } from "LLD/features/Receive"
 import { closeModal } from "~/renderer/actions/modals";
 import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkHandler";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeReceiveAddressDialog } from "~/renderer/reducers/receiveFlow";
+import { closeReceiveAddressDialog } from "@features/flow-receive/state";
 
 export function useReceiveDevToolTrigger(): ReceiveToolTrigger {
   const dispatch = useDispatch();

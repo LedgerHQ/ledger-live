@@ -9,7 +9,7 @@ import { importLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
-import { openReceiveAddressDialog } from "~/renderer/reducers/receiveFlow";
+import { openReceiveAddressDialog } from "@features/flow-receive/state";
 import type { ModalData } from "~/renderer/modals/types";
 import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 

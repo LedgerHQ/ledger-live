@@ -1,10 +1,13 @@
 import { useCallback } from "react";
+import {
+  closeReceiveAddressDialog,
+  selectReceiveAddressDialogTarget,
+} from "@features/flow-receive/state";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { closeReceiveAddressDialog, receiveFlowSelector } from "~/renderer/reducers/receiveFlow";
 
 export function useReceiveAddressDialogViewModel() {
   const dispatch = useDispatch();
-  const target = useSelector(receiveFlowSelector);
+  const target = useSelector(selectReceiveAddressDialogTarget);
   const onClose = useCallback(() => dispatch(closeReceiveAddressDialog()), [dispatch]);
   return { isOpen: target !== null, onClose };
 }
