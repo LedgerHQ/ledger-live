@@ -4,13 +4,31 @@ import path from "node:path";
 const USERDATA_DIR = path.resolve(__dirname, "../userdata");
 
 type RawTokenAccount = { id: string; tokenId?: string };
-type RawAccount = { id: string; currencyId: string; subAccounts?: RawTokenAccount[] };
+type RawAccount = {
+  id: string;
+  currencyId: string;
+  name?: string;
+  subAccounts?: RawTokenAccount[];
+};
 
-const readAccounts = (fixture: string): RawAccount[] => {
-  const file = path.join(USERDATA_DIR, `${fixture}.json`);
+const readAccountsFile = (file: string): RawAccount[] => {
   const raw = JSON.parse(fs.readFileSync(file, "utf-8"));
   return (raw?.data?.accounts ?? []).map((entry: { data: RawAccount }) => entry.data);
 };
+
+const readAccounts = (fixture: string): RawAccount[] =>
+  readAccountsFile(path.join(USERDATA_DIR, `${fixture}.json`));
+
+/**
+ * Count the assets each account of a userdata file holds, by account name: its native coin plus
+ * every token sub-account, which is what decides whether Send asks to pick an asset first.
+ */
+export const readHeldAssetCounts = (userdataPath: string): Map<string, number> =>
+  new Map(
+    readAccountsFile(userdataPath).flatMap(({ name, subAccounts }) =>
+      name ? [[name, 1 + (subAccounts?.length ?? 0)] as const] : [],
+    ),
+  );
 
 /**
  * Resolve a parent account id from a userdata fixture by its ledger currency id,
