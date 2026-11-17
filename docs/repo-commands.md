@@ -21,12 +21,14 @@ For example, [apps/ledger-live-mobile/README.md](../apps/ledger-live-mobile/READ
 
 ### Building
 
-Private packages have no build: apps, tests and typecheck read their `src/`. Only published packages
-build, and Nx rebuilds them before a target that depends on them. To rebuild them by hand:
+Private packages have no build: apps, tests and typecheck read their `src/`. Published packages
+build, and so do the private exceptions listed in
+[`source-only-debt.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs). Nx
+rebuilds them before a target that depends on them. To rebuild them by hand:
 
 ```bash
-pnpm build:libs                     # the published @ledgerhq packages
-pnpm nx run <package-name>:build    # one published package
+pnpm build:libs                     # every @ledgerhq package that has a build
+pnpm nx run <package-name>:build    # one package that has a build
 ```
 
 ### Linting & typechecking
@@ -90,7 +92,7 @@ Prefer `nx` over a raw `--filter` because:
 - configs like `dependsOn` (being rolled out across the monorepo) keep dependencies up to date
 - flags like `affected`, `base` and `include` enable advanced filtering
 
-In the following example published dependencies will be built and tests run on affected files.
+In the following example dependencies that have a build will be built and tests run on affected files.
 
 ```bash
 pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
@@ -98,7 +100,7 @@ pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
 
 #### ✅ Good
 
-Nx builds the published packages a project depends on before running the target:
+Nx builds the dependencies of a project that have a build before running the target:
 
 ```bash
 pnpm nx test @domain/entity-client-identity
@@ -106,7 +108,7 @@ pnpm nx test @domain/entity-client-identity
 
 #### ❌ Bad
 
-⚠️ Skipping `nx` risks reading a stale build of a published dependency:
+⚠️ Skipping `nx` risks reading a stale build of a dependency:
 
 ```bash
 pnpm --filter @domain/entity-client-identity test

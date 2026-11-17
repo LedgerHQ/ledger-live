@@ -1,19 +1,22 @@
 ---
 name: rebuild-to-fix-lib-import-errors
-description: Rebuild a published monorepo lib when typecheck fails on an import from it, and tell that case apart from a private lib read from source. Read when a typecheck reports an import error from a monorepo lib.
+description: Rebuild a monorepo lib that has a build when typecheck fails on an import from it, and tell that case apart from a private lib read from source. Read when a typecheck reports an import error from a monorepo lib.
 ---
 
-Only published packages (no `"private": true` in their `package.json`) build. Their consumers read the
-built `lib/` and `lib-es/`, which go stale when the package's source changes. Private packages have no
-build: their `exports` point at `src/`, so consumers always read the current source.
+A lib builds when it is published (no `"private": true` in its `package.json`), or when it is a
+private package with a `no-build` exception in
+[`source-only-debt.mjs`](../../../tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs),
+whose entry says what its build produces. Its consumers read that output, which goes stale when the
+source changes. Any other private package has no build: its `exports` point at `src/`, so consumers
+always read the current source.
 
-## Published lib: rebuild it
+## Lib with a build: rebuild it
 
 ```shell
 nx run @ledgerhq/name_of_lib_here:build
 ```
 
-When several are stale, `pnpm build:libs` rebuilds all the published `@ledgerhq` packages.
+When several are stale, `pnpm build:libs` rebuilds every `@ledgerhq` package that has a build.
 
 ### Example: `ledger-wallet-framework` changed and the import in `live-common` errors
 
@@ -25,7 +28,7 @@ When several are stale, `pnpm build:libs` rebuilds all the published `@ledgerhq`
 nx run @ledgerhq/ledger-wallet-framework:build
 ```
 
-## Private lib: no build to refresh
+## Source-only lib: no build to refresh
 
 The error is in the source or the `exports` map, and a rebuild cannot fix it. Check that:
 

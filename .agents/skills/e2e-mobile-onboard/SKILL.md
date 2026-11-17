@@ -253,8 +253,8 @@ pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mo
 pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 ```
 
-It builds the published packages the app and the suite depend on, `@ledgerhq/live-cli` included.
-Private libraries are read from source and need no build.
+It builds the dependencies of the app and the suite that have a build, `@ledgerhq/live-cli` included.
+Other private libraries are read from source and need no build.
 
 ### 4c. Platform-specific build
 
