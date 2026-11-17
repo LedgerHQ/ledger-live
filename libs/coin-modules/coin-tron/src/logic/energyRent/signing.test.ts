@@ -26,14 +26,66 @@ describe("getEnergyRentSignaturePayload", () => {
 });
 
 describe("buildSignedEnergyRentTransaction", () => {
-  it("rebuilds the signed payload from the device's combined signature", () => {
-    const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
-    const combined = combine(unsigned.raw_data_hex, [signature]);
+  // A USDT transfer owned by the address of private key 0x11…11, signed by that key with tronweb.
+  const payment: EnergyRentUnsignedTransaction = {
+    visible: false,
+    txID: "c48d532e273e188b85d6d2e83cfc57e38f1982c1466d5a1d2a4d34dc61a20b4b",
+    raw_data: {},
+    raw_data_hex:
+      "0a020ee522082e5fc67747a428af40f0e2ace4d3325aad01081f12a8010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412730a154119e7e376e7c213b7e7e7e46cc70a5dd086daff2a121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2243a9059cbb000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000000000000000000000000000000000000f424070fd9ca9e4d33290018087a70e",
+  };
+  const RS =
+    "b012c72290538ab3e61c3c22fb3662f85f9c87f1ec4cc0d686b42dcf5fb48e580035b3c7d44563a1bd34c366769b3960e9da6695ee38702130297f7cdef693d3";
+  // The same transaction signed by private key 0x22…22.
+  const OTHER_KEY_SIGNATURE =
+    "267b81f7c0b37f346dc223a5fb2b70b2bf69cc60fb80a5a2776f6b11e0a8b9bf350ce81efdeeb787e1bd93bee9d704e5dc19ac243a3ca205c84bc5d4b9d8e0a11b";
+  const signedWith = (signature: string) => combine(payment.raw_data_hex, [signature]);
 
-    expect(buildSignedEnergyRentTransaction(unsigned, combined)).toEqual({
-      ...unsigned,
+  it.each([
+    ["v = 28, as tronweb signs", `${RS}1c`],
+    ["v = 1, the 0/1 form", `${RS}01`],
+  ])("attaches the owner's signature with %s, unchanged", (_label, signature) => {
+    expect(buildSignedEnergyRentTransaction(payment, signedWith(signature))).toEqual({
+      ...payment,
       signature: [signature],
     });
+  });
+
+  it.each([
+    ["another key", OTHER_KEY_SIGNATURE],
+    ["the other recovery id", `${RS}00`],
+  ])("rejects a signature by %s", (_label, signature) => {
+    expect(() => buildSignedEnergyRentTransaction(payment, signedWith(signature))).toThrow(
+      expect.objectContaining({ name: "EnergyRentSignatureMismatch" }),
+    );
+  });
+
+  it("checks the hash of the signed bytes, not the provider's txID", () => {
+    const relabelled = { ...payment, txID: "ab".repeat(32) };
+
+    expect(buildSignedEnergyRentTransaction(relabelled, signedWith(`${RS}1c`))).toMatchObject({
+      signature: [`${RS}1c`],
+    });
+  });
+
+  it("rejects a payment whose bytes carry no single owner", () => {
+    const signature = `${RS}1c`;
+
+    expect(() =>
+      buildSignedEnergyRentTransaction(unsigned, combine(unsigned.raw_data_hex, [signature])),
+    ).toThrow(expect.objectContaining({ name: "EnergyRentSignatureMismatch" }));
+  });
+
+  it.each([
+    ["a 64-byte compact signature", RS],
+    ["a trailing byte", `${RS}1c00`],
+    ["an EIP-155 v", `${RS}24`],
+    ["v = 2", `${RS}02`],
+    ["non-hex characters", `${RS.slice(0, 126)}zz1c`],
+  ])("rejects %s before recovering the signer", (_label, signature) => {
+    expect(() => buildSignedEnergyRentTransaction(payment, signedWith(signature))).toThrow(
+      expect.objectContaining({ name: "InvalidRawDataHex" }),
+    );
   });
 });
 

@@ -130,6 +130,17 @@ export const bitcoinDefaults = {
     unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
     explorer: { url: "http://localhost:9876" },
   },
+  bitcoin_signet: {
+    transaction: { version: 2, signalsRbf: true },
+    explorerId: "btc_signet",
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Bitcoin Signet",
+    unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+    explorer: { url: "https://explorers.api.live.ledger.com" },
+  },
   bitcoin_testnet: {
     transaction: { version: 2, signalsRbf: true },
     explorerId: "btc_testnet",

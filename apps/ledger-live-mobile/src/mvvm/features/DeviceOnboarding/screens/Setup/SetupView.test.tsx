@@ -470,3 +470,21 @@ describe("SetupView", () => {
     }
   });
 });
+
+describe("SetupView connection sheets", () => {
+  const pinStage = { index: 2, total: 5, kind: "pin", indicator: "none" } as const;
+
+  it("should show the reconnecting sheet over the current stage", () => {
+    renderSetup({ stage: pinStage, connection: { state: "reconnecting", retry: jest.fn() } });
+
+    expect(screen.getByText("PIN creation")).toBeVisible();
+    expect(screen.getByText("Reconnecting to your Ledger Stax")).toBeVisible();
+  });
+
+  it("should show no connection sheet while the session is up", () => {
+    renderSetup({ stage: pinStage, connection: null });
+
+    expect(screen.queryByText("Reconnecting to your Ledger Stax")).toBeNull();
+    expect(screen.queryByText("Couldn't connect to Ledger Stax")).toBeNull();
+  });
+});

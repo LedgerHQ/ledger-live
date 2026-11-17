@@ -82,6 +82,8 @@ describe("getDerivationModesForCurrency", () => {
     ["ethereum_classic", ["ethM", "ethMM", "etcM", ""]], // test for fixing missing legacy derivation
     ["polygon", [""]], // test absence of impact on other EVMs
     ["bitcoin", ["native_segwit", "taproot", "segwit", ""]], // supportsSegwit + supportsNativeSegwit + taproot + segwit
+    ["bitcoin_testnet", ["native_segwit", "taproot", "segwit", ""]],
+    ["bitcoin_signet", ["native_segwit", "taproot", "segwit", ""]], // same modes as bitcoin_testnet
     ["bitcoin_cash", ["unsplit", ""]], // forkedFrom
     ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
     ["tezos", ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"]], // disableBIP44

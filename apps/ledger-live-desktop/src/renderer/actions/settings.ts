@@ -96,6 +96,11 @@ export const setAllowDebugApps = (allowDebugApps: boolean) =>
     allowDebugApps,
   });
 
+export const setHideNightlyLayer = (hideNightlyLayer: boolean) =>
+  saveSettings({
+    hideNightlyLayer,
+  });
+
 export const setAllowDebugReactQuery = (allowReactQueryDebug: boolean) =>
   saveSettings({
     allowReactQueryDebug,

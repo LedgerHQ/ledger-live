@@ -1,5 +1,6 @@
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
+import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import {
   useChecksDrawers,
   type ChecksDrawerProps,
@@ -16,6 +17,9 @@ export type SetupViewProps = ChecksDrawerProps &
     infoCard: SetupInfoCard | undefined;
     suspendInfoSheet: boolean;
     reportsRecoveryKey: boolean;
+    connection: SessionReconnect | null;
+    productName: string;
+    suspendSheets: boolean;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
@@ -80,8 +84,10 @@ export function useSetupScreenViewModel({
   onQuit,
   suspendSheets = false,
   reportsRecoveryKey = false,
+  connection = null,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
+
   const checksIdle = checks?.state === "idle";
   const pausedNotGenuine = checksIdle && checks.deviceNotGenuine;
   const status = stageStatus(stage, checksIdle);
@@ -112,6 +118,9 @@ export function useSetupScreenViewModel({
     infoCard: stage.infoCard,
     suspendInfoSheet: suspendSheets,
     reportsRecoveryKey,
+    connection,
+    productName,
+    suspendSheets,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),

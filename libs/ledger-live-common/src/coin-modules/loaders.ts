@@ -50,6 +50,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "zencash",
       "bitcoin_testnet",
       "bitcoin_regtest",
+      "bitcoin_signet",
     ],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),

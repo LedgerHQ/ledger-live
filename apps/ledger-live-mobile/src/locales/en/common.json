@@ -2833,6 +2833,18 @@
           "inTheBox": "A Recovery Key is included in the box of your device.",
           "learnHowToUse": "Learn how to use"
         }
+      },
+      "connection": {
+        "reconnecting": {
+          "title": "Reconnecting to your {{productName}}",
+          "description": "Keep your {{productName}} on, unlocked and close to your phone."
+        },
+        "failed": {
+          "title": "Couldn't connect to {{productName}}",
+          "description": "Make sure your {{productName}} is on, unlocked and close to your phone, then try again.",
+          "retryCta": "Try again",
+          "helpCta": "Get help"
+        }
       }
     },
     "connection": {

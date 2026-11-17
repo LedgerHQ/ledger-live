@@ -106,6 +106,19 @@ export async function addressFromKey(currencyId: string, key: string): Promise<A
   return AddressSchema.parse(derive(key));
 }
 
+/** The key of a derived account's descriptor: its public key for a family keyed on it, else its address. */
+export function keyOfDerivedAccount(
+  currencyId: string,
+  { address, publicKey }: { address: string; publicKey: string },
+): string {
+  if (!PUBLIC_KEY_FAMILIES.has(getCryptoCurrencyById(currencyId).family)) return address;
+  assertPublicKey(publicKey, currencyId);
+  return publicKey.toLowerCase();
+}
+
+/** `m/44h/60h/0h/0/0` -> `44'/60'/0'/0/0`, the spelling of the legacy resolvers. */
+export const toLegacyPath = (path: string) => path.replace(/^m\//, "").replaceAll("h", "'");
+
 /** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
 export const toDescriptorPath = (path: string) =>
   `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;

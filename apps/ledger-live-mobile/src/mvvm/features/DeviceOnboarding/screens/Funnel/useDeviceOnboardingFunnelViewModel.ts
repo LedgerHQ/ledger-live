@@ -587,7 +587,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       readString(onboarding.context?.firmwareVersion) ?? "",
     ),
     device: onboarding.liveDevice,
+    connectionError: onboarding.error,
     suspendSheets,
+    reconnect: reconnectToLiveDevice,
     send,
     onQuit: requestQuit,
   });

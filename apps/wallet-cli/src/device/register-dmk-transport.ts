@@ -15,6 +15,7 @@ import {
 } from "./interrupt-scope";
 import { createTestSeam } from "../shared/test-seam";
 import { restoreTerminalCursor } from "../shared/ui";
+import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./usb-session-open-error";
 
 /** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
 export const WALLET_CLI_DMK_DEVICE_ID = "wallet-cli-dmk";
@@ -32,7 +33,6 @@ const DISPOSE_DISCONNECT_TIMEOUT_MS = 1_000;
 const DISPOSE_DESTROY_TIMEOUT_MS = 1_000;
 
 const MODULE_ID = "wallet-cli-dmk-webusb";
-const NO_LEDGER_DEVICE_FOUND_MESSAGE = "No Ledger device found. Unlock the device and try again.";
 const INITIAL_SESSION_BUSY_MESSAGE =
   "[wallet-cli] The Ledger device did not respond to the initial ping. " +
   "Please run the command again — the retry usually succeeds.";
@@ -227,19 +227,23 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
       filter((list: DiscoveredDevice[]) => list.length > 0),
       timeout(CONNECT_TIMEOUT_MS),
     ),
-  ).catch(() => {
-    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
+  ).catch((cause: unknown) => {
+    throw new DeviceDiscoveryFailedError(cause);
   });
   const device = discovered[0];
   if (!device) {
-    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
+    throw new DeviceDiscoveryFailedError();
   }
   const connecting = dmk.connect({
     device,
     sessionRefresherOptions: { isRefresherDisabled: true },
   });
   const speculos = getActiveSpeculosTarget();
-  const sessionId = speculos ? await connectSpeculos(connecting, speculos) : await connecting;
+  const sessionId = speculos
+    ? await connectSpeculos(connecting, speculos)
+    : await connecting.catch((cause: unknown) => {
+        throw new DeviceConnectionFailedError(cause);
+      });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,

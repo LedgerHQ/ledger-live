@@ -6,12 +6,14 @@ import {
   toChecksScreenState,
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
-const statesThatKeepTheStage = new Set(["deviceLocked", "readingState"]);
+const droppedState = "awaitingSession";
+const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
 
 export type UnseededFunnelInput = {
   machineState: string | null;
@@ -25,7 +27,9 @@ export type UnseededFunnelInput = {
   availableFirmwareVersion: string | null;
   reportsRecoveryKey: boolean;
   device: Device | null;
+  connectionError: string | null;
   suspendSheets: boolean;
+  reconnect: () => void;
   send: (event: HostOnboardingEvent) => void;
   onQuit: () => void;
 };
@@ -59,6 +63,11 @@ export function useUnseededFunnelViewModel(
 
   const visibleStage = stage ?? (holdsPrevious ? heldStage : null);
   const send = input.send;
+  const connection = useSessionReconnect({
+    dropped: unseeded && input.liveMachineState === droppedState && visibleStage !== null,
+    error: input.connectionError,
+    connect: input.reconnect,
+  });
 
   const liveMachineState = input.liveMachineState;
 
@@ -85,6 +94,7 @@ export function useUnseededFunnelViewModel(
       stage: visibleStage,
       suspendSheets: input.suspendSheets,
       reportsRecoveryKey: input.reportsRecoveryKey,
+      connection,
       checks: checksState
         ? {
             state: checksState,

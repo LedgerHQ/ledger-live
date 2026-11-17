@@ -1,3 +1,4 @@
+import type Transport from "@ledgerhq/hw-transport";
 import { from, Observable, of, throwError } from "rxjs";
 import { catchError, concatMap } from "rxjs/operators";
 import appSupportsQuitApp from "../appSupportsQuitApp";
@@ -14,7 +15,7 @@ export type AttemptToQuitAppEvent =
   | { type: "appQuitted" };
 
 const attemptToQuitApp = (
-  transport,
+  transport: Transport,
   appAndVersion?: AppAndVersion,
 ): Observable<AttemptToQuitAppEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)

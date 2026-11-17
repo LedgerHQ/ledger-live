@@ -1,16 +1,126 @@
-import { useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  cryptoAssetsApi,
+  extractTokensFromState,
+  type WithCryptoAssetsApi,
+} from "@domain/api-currency-token";
+import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import type { WithAccountBalances } from "@domain/entity-account-balance";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import { selectAccountNameByUUID, type AccountNamesState } from "@domain/entity-account-name";
+import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { setOverride } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 
 type ReceiveToolProps = Extract<DevToolsConfig[number], { id: "receive" }>["config"];
+type ReceiveToolAsset = ReceiveToolProps["trigger"]["assets"][number];
+
+/** Opening receive is app routing: the host passes its own receive openers. */
+export type ReceiveToolTrigger = Omit<ReceiveToolProps["trigger"], "assets">;
+
+/** Both apps mount the accounts slice at `accountEntries` and the names at `wallet.accountNames`. */
+type State = WithAccountBalances &
+  WithCryptoAssetsApi & {
+    accountEntries: AccountsState;
+    wallet: { accountNames: AccountNamesState };
+  };
+
+const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+
+/** The tokens CAL already resolved, by id or by address, without requesting the others. */
+const selectCachedTokens = createSelector(
+  [(state: State) => state[cryptoAssetsApi.reducerPath]],
+  (cal): Record<string, { name: string; ticker: string } | undefined> =>
+    Object.fromEntries(
+      extractTokensFromState({ [cryptoAssetsApi.reducerPath]: cal }).map(({ data }) => [
+        data.id,
+        data,
+      ]),
+    ),
+);
+
+const warnDeeplinkFailure = (error: unknown) =>
+  console.warn("Receive DevTools: the host could not open the deeplink", error);
+
+/** Catches a host opener that throws or returns a rejected promise. */
+function openDeeplinkSafely(open: () => unknown) {
+  try {
+    Promise.resolve(open()).catch(warnDeeplinkFailure);
+  } catch (error) {
+    warnDeeplinkFailure(error);
+  }
+}
 
 const NO_FAMILIES: readonly string[] = [];
 
-export function useReceiveToolProps(): ReceiveToolProps {
+/** Stable openers that call the host's latest ones, so the host need not memoize its trigger. */
+function useLatestTrigger(trigger: ReceiveToolTrigger): ReceiveToolTrigger {
+  const latest = useRef(trigger);
+  useLayoutEffect(() => {
+    latest.current = trigger;
+  });
+  return useMemo(
+    () => ({
+      onReceive: target => latest.current.onReceive(target),
+      onPickAsset: () => latest.current.onPickAsset(),
+      onOpenDeeplink: url => openDeeplinkSafely(() => latest.current.onOpenDeeplink(url)),
+    }),
+    [],
+  );
+}
+
+/** Each account with a legacy id, then each token its balances hold. */
+function useReceiveAssets(): readonly ReceiveToolAsset[] {
+  const entries = useSelector(selectAccountEntries);
+  const accounts = useSelector((state: State) => state.accountEntries);
+  const accountNames = useSelector((state: State) => state.wallet.accountNames);
+  const balances = useSelector((state: State) => state.accountBalances);
+  const tokens = useSelector(selectCachedTokens, shallowEqual);
+
+  return useMemo(
+    () =>
+      entries.flatMap(({ accountUUID, descriptor, legacyId }) => {
+        const currency = CRYPTO_CURRENCIES_REGISTRY[descriptor.network];
+        if (!legacyId || !currency) return [];
+        const coinId = currencyIdFromNetwork(descriptor.network);
+        const name = selectAccountNameByUUID(accountNames, accounts, accountUUID) ?? currency.name;
+        const tokenIds = (balances[accountUUID] ?? [])
+          .map(row => row.assetId)
+          .filter(assetId => assetId !== coinId);
+        return [
+          {
+            id: `${accountUUID}:${coinId}`,
+            legacyAccountId: legacyId,
+            assetId: coinId,
+            label: name,
+            ticker: currency.ticker,
+            currencyId: coinId,
+            network: currency.name,
+          },
+          ...tokenIds.map(assetId => ({
+            id: `${accountUUID}:${assetId}`,
+            legacyAccountId: legacyId,
+            assetId,
+            label: `${tokens[assetId]?.name ?? assetId} · ${name}`,
+            ticker: tokens[assetId]?.ticker ?? assetId,
+            currencyId: assetId,
+            network: currency.name,
+            networkId: coinId,
+          })),
+        ];
+      }),
+    [entries, accounts, accountNames, balances, tokens],
+  );
+}
+
+export function useReceiveToolProps(trigger: ReceiveToolTrigger): ReceiveToolProps {
   const dispatch = useDispatch();
   const flag = useFeature("newReceiveFlow");
+  const assets = useReceiveAssets();
+  const openers = useLatestTrigger(trigger);
 
   const enabled = !!flag?.enabled;
   const excludedFamilies = flag?.params?.excludedFamilies ?? NO_FAMILIES;
@@ -38,7 +148,10 @@ export function useReceiveToolProps(): ReceiveToolProps {
   );
 
   return useMemo(
-    () => ({ flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies } }),
-    [enabled, excludedFamilies, setEnabled, setExcludedFamilies],
+    () => ({
+      flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies },
+      trigger: { ...openers, assets },
+    }),
+    [enabled, excludedFamilies, setEnabled, setExcludedFamilies, openers, assets],
   );
 }

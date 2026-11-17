@@ -151,6 +151,10 @@ Two measures, both ending at "App startup time":
 
 `analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
 
+Each results artifact holds the rows as `summary.json` and the run they come from as `run.json`
+(preset, threshold, planned pairs, labels A and B), so a reader of the artifact alone, such as the
+QAA KPI dashboard, knows what was compared.
+
 ## Checks
 
 ```bash

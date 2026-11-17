@@ -16,15 +16,7 @@ describe("createApi", () => {
   // together, and covers `call` and `register`, which had none.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi("cardano"), mockCtx)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getNextSequence",
-        "getRewards",
-        "register",
-      ],
+      supported: ["getStakes", "getValidators", "validateAddress", "validateIntent"],
       inconsistent: [],
     });
   });

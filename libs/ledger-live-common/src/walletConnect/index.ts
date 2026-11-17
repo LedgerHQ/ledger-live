@@ -45,6 +45,7 @@ export const testnetAndDevnetCurrenciesSupportedOnWalletConnect = [
   "ethereum_sepolia",
   "base_sepolia",
   "bitcoin_testnet",
+  "bitcoin_signet",
   "solana_testnet",
   "solana_devnet",
   "monad_testnet",

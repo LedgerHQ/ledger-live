@@ -2,6 +2,7 @@ import { Currency, CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency"
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 import type { PartialFeatures } from "@shared/feature-flags";
 
 const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
@@ -11,7 +12,7 @@ const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
 const PRUNED_HISTORY_CURRENCIES = new Set([Currency.BABY.id]);
 
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
-  describe("Add account", () => {
+  describeIfNanoSSupports(currency.id)("Add account", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",

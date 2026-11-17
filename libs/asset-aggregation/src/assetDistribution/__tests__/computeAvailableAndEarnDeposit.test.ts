@@ -1,5 +1,11 @@
 import BigNumber from "bignumber.js";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  Account,
+  StakingDelegation,
+  StakingResources,
+  StakingUnbonding,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { computeAvailableAndEarnDeposit } from "../computeAvailableAndEarnDeposit";
@@ -15,6 +21,25 @@ function makeAccount(balance: number | string, spendable: number | string, magni
     spendableBalance: new BigNumber(spendable),
     currency: makeCurrency(magnitude),
   } as unknown as Account;
+}
+
+function makeStakingAccount(
+  balance: number,
+  spendable: number,
+  {
+    delegations = [],
+    unbondings = [],
+  }: { delegations?: Partial<StakingDelegation>[]; unbondings?: Partial<StakingUnbonding>[] },
+): Account {
+  const stakingResources = {
+    delegations,
+    redelegations: [],
+    unbondings,
+    delegatedBalance: new BigNumber(0),
+    pendingRewardsBalance: new BigNumber(0),
+    unbondingBalance: new BigNumber(0),
+  } as unknown as StakingResources;
+  return { ...makeAccount(balance, spendable, 9), stakingResources } as unknown as Account;
 }
 
 function makeTokenAccount(
@@ -113,5 +138,69 @@ describe("computeAvailableAndEarnDeposit", () => {
 
     expect(availableBalance.toNumber()).toBe(3e18);
     expect(earnDeposit.toNumber()).toBe(2e18);
+  });
+
+  describe("accounts exposing staking resources", () => {
+    it("shows no earn deposit for a Solana account that never staked (LIVE-41674)", () => {
+      // The 650_240 lamports gap is the rent-exempt reserve, not staked funds.
+      const { availableBalance, earnDeposit } = computeAvailableAndEarnDeposit(
+        [makeStakingAccount(5_912_818_223, 5_912_167_983, {})],
+        9,
+      );
+
+      expect(earnDeposit.toNumber()).toBe(0);
+      expect(availableBalance.toNumber()).toBe(5_912_818_223);
+    });
+
+    it("counts staked positions but leaves out the account's own reserve", () => {
+      const delegation = {
+        amount: new BigNumber(1_000_000_000),
+        lockedReserve: new BigNumber(2_282_880),
+      };
+      const unbonding = { amount: new BigNumber(500_000_000) };
+      const stakes = 1_502_282_880;
+      const rentReserve = 650_240;
+      const balance = 10_000_000_000;
+
+      const { availableBalance, earnDeposit } = computeAvailableAndEarnDeposit(
+        [
+          makeStakingAccount(balance, balance - stakes - rentReserve, {
+            delegations: [delegation],
+            unbondings: [unbonding],
+          }),
+        ],
+        9,
+      );
+
+      expect(earnDeposit.toNumber()).toBe(stakes);
+      expect(availableBalance.toNumber()).toBe(balance - stakes);
+    });
+
+    it("uses active and inactive amounts when the position reports both", () => {
+      const delegation = {
+        amount: new BigNumber(900),
+        activeAmount: new BigNumber(900),
+        inactiveAmount: new BigNumber(100),
+        lockedReserve: new BigNumber(10),
+      };
+
+      const { earnDeposit } = computeAvailableAndEarnDeposit(
+        [makeStakingAccount(5_000, 3_000, { delegations: [delegation] })],
+        9,
+      );
+
+      expect(earnDeposit.toNumber()).toBe(1_010);
+    });
+
+    it("never reports more than the non-spendable balance", () => {
+      // Delegating without locking funds (e.g. Hedera) keeps the whole balance spendable.
+      const { availableBalance, earnDeposit } = computeAvailableAndEarnDeposit(
+        [makeStakingAccount(1_000, 1_000, { delegations: [{ amount: new BigNumber(1_000) }] })],
+        9,
+      );
+
+      expect(earnDeposit.toNumber()).toBe(0);
+      expect(availableBalance.toNumber()).toBe(1_000);
+    });
   });
 });
