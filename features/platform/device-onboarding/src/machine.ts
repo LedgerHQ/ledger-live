@@ -48,7 +48,8 @@ function exitWith(reason: ExitOutput["reason"]) {
   } as const;
 }
 
-const sessionSettleMs = 20_000;
+// Must outlast the BLE reconnection window (15s Android, 10s iOS), after which the session reports NOT_CONNECTED.
+const SESSION_SETTLE_TIMEOUT_MS = 20_000;
 
 export const deviceOnboardingMachine = setup({
   types: {
@@ -66,7 +67,7 @@ export const deviceOnboardingMachine = setup({
     unlockPolling,
   },
   delays: {
-    sessionSettle: sessionSettleMs,
+    sessionSettle: SESSION_SETTLE_TIMEOUT_MS,
   },
   actions: {
     ...contextActions,
