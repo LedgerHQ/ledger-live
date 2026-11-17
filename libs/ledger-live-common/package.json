@@ -138,6 +138,7 @@
     "@domain/entity-recent-addresses": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
+    "@features/platform-account-discovery": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-coin-observability": "workspace:^",
     "@features/platform-device-intent": "workspace:^",
