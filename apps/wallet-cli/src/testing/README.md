@@ -24,6 +24,7 @@ binary.
 | `fake-relay` | The enrollment and recovery channel for `_setTestRelayChannelHost`: the SDK's real relay host on in-memory sockets, with the web app's side played by the SDK (`FakeRelay`) |
 | `fake-ledger-sync` | Ledger Sync as an agent sees it, for `_setTestAgentLedgerSyncSdk`: restores the Trustchain or fails, grants a permission (`grant`), and serves encrypted Cloud Sync accounts (`FakeLedgerSync`, `syncedDocument`) |
 | `fake-detach` | Listener starter for `_setTestSpawn`: writes scripted lines to the real log, records argv and env, exits or keeps running (`FakeListenerSpawner`) |
+| `fast-password-kdf` | Runs the ring password's PBKDF2 with one iteration instead of 600,000, recording the counts the CLI asked for (`useFastPasswordKdf`) |
 | `cal-cache` | A fresh CAL token cache for each test, so tokens other files resolved don't leak in (`useFreshCalCache`) |
 | `sigint` | Runs a CLI run the test interrupts with Ctrl+C without firing other files' SIGINT listeners (`withOwnSigint`) |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |

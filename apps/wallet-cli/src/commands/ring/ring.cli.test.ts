@@ -19,6 +19,7 @@ import { pipedStdin, terminalTyping, withStdin } from "../../testing/fake-stdin"
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
+import { useFastPasswordKdf } from "../../testing/fast-password-kdf";
 import { resetTestSeams } from "../../shared/test-seam";
 
 function runCliWithStdin(
@@ -39,8 +40,15 @@ function runCliWithStdin(
 // Fake OS keychain so tests never touch macOS Keychain / libsecret.
 const keychain = new InMemoryKeychain();
 const _store = keychain.entries;
-beforeAll(() => _setTestKeychain(keychain.open));
-afterAll(resetTestSeams);
+let kdf: ReturnType<typeof useFastPasswordKdf>;
+beforeAll(() => {
+  kdf = useFastPasswordKdf();
+  _setTestKeychain(keychain.open);
+});
+afterAll(() => {
+  resetTestSeams();
+  kdf.restore();
+});
 // A test that fakes LKRP SDK methods hands the next one back the real (WALLET_CLI_MOCK) SDK.
 afterEach(() => _setTestLkrpSdk(null));
 
@@ -245,6 +253,24 @@ describe("ring init — password", () => {
     });
     expect(r.exitCode).toBe(1);
     expect(r.stdout).toMatch(/must not be empty/i);
+  });
+});
+
+describe("ring init — password strength", () => {
+  const { env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("derives the key wrapping the ring from the password with 600,000 PBKDF2 iterations", async () => {
+    const before = kdf.requestedIterations.length;
+
+    const r = await runCli(["ring", "init", "--name", "pw-member"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "correct horse",
+    });
+
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(kdf.requestedIterations.slice(before)).toEqual([600_000]);
   });
 });
 
