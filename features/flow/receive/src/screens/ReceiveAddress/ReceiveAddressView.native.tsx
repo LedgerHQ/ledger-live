@@ -9,7 +9,9 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { dimmedWhile } from "./components/dimmedWhile";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
@@ -27,6 +29,7 @@ export function ReceiveAddressView({
   actions,
   notices,
   serviceWarning,
+  serviceStatus,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -109,12 +112,7 @@ export function ReceiveAddressView({
               </Box>
               <AddressActions actions={actions} />
               <Box {...dimmed}>
-                <ZonePlaceholder
-                  zone="notices"
-                  label={[serviceWarning?.title, ...notices.map(notice => notice.text)]
-                    .filter(Boolean)
-                    .join(" · ")}
-                />
+                <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
               </Box>
             </>
           )}
@@ -123,6 +121,7 @@ export function ReceiveAddressView({
           </Box>
         </ScrollView>
       )}
+      {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
     </Box>
   );
 }

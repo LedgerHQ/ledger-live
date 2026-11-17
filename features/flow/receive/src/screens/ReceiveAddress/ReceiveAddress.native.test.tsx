@@ -8,6 +8,7 @@ import {
   testAccountUUID,
   testReceive,
 } from "../../__tests__/receiveTestStore";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 jest.mock("@ledgerhq/crypto-icons/native", () => {
@@ -161,12 +162,35 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
   });
 
+  it("shows the family's notices and links them to their support article", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+      onOpenUrl,
+    });
+
+    expect(await screen.findByTestId("receive-address-notice-tronInactiveAccount")).toBeTruthy();
+    fireEvent.press(screen.getByText("Learn more"));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("opens a service incident in a bottom sheet from its banner", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [{ title: "Ethereum degraded", description: "Investigating" }],
+    });
+
+    fireEvent.press(await screen.findByText("See details"));
+    expect(screen.getByText("Investigating")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-notices",
       "receive-address-zone-extras",
     ]);
   });

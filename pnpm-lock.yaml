@@ -13515,6 +13515,9 @@ importers:
       '@shared/ui-qr-code':
         specifier: workspace:*
         version: link:../../../shared/ui-qr-code
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@domain/api-account-data':
         specifier: workspace:*
