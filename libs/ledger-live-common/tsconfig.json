@@ -11,7 +11,6 @@
       "dom"
     ],
     "composite": true, // required on the dependency project for references to work
-    "isolatedModules": false,
     "paths": {
       "*": ["./*"],
       "react": ["../../node_modules/@types/react"],

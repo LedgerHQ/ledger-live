@@ -20586,15 +20586,24 @@ importers:
       '@types/lodash':
         specifier: 'catalog:'
         version: 4.17.21
+      '@types/minimatch':
+        specifier: 5.1.2
+        version: 5.1.2
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/numeral':
+        specifier: 2.0.5
+        version: 2.0.5
       '@types/qs':
         specifier: ^6.9.7
         version: 6.9.14
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -34103,6 +34112,9 @@ packages:
   '@types/mdurl@2.0.0':
     resolution: {integrity: sha512-RGdgjQUZba5p6QEFAVx2OGb8rQDL/cPRG7GiedRzMcJ1tYnUANBncjbSB1NRGwbvjcPeikRABz2nshyPk1bhWg==}
 
+  '@types/minimatch@5.1.2':
+    resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
 
@@ -34123,6 +34135,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/numeral@2.0.5':
+    resolution: {integrity: sha512-kH8I7OSSwQu9DS9JYdFWbuvhVzvFRoCPCkGxNwoGgaPeDfEPJlcxNvEOypZhQ3XXHsGbfIuYcxcJxKUfJHnRfw==}
 
   '@types/object-hash@2.2.1':
     resolution: {integrity: sha512-i/rtaJFCsPljrZvP/akBqEwUP2y5cZLOmvO+JaYnz01aPknrQ+hB5MRcO7iqCUsFaYfTG8kGfKUyboA07xeDHQ==}
@@ -53640,6 +53655,8 @@ snapshots:
 
   '@types/mdurl@2.0.0': {}
 
+  '@types/minimatch@5.1.2': {}
+
   '@types/minimist@1.2.5': {}
 
   '@types/ms@0.7.34': {}
@@ -53659,6 +53676,8 @@ snapshots:
       undici-types: 7.16.0
 
   '@types/normalize-package-data@2.4.4': {}
+
+  '@types/numeral@2.0.5': {}
 
   '@types/object-hash@2.2.1': {}
 

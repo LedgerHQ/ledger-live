@@ -12,7 +12,7 @@ import type {
   OsuFirmware,
 } from "@ledgerhq/types-live";
 export { getProviderId };
-const ICONS_FALLBACK = {
+const ICONS_FALLBACK: Record<string, string> = {
   bitcoin_testnet: "bitcoin",
   bitcoin_signet: "bitcoin",
 };

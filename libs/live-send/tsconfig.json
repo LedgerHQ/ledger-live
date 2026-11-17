@@ -1,7 +1,6 @@
 {
   "extends": "@support/tsconfig/lib-node",
   "compilerOptions": {
-    "noImplicitAny": false,
     "types": ["node", "jest"]
   }
 }

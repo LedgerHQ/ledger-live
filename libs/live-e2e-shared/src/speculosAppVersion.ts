@@ -49,7 +49,7 @@ export function isTouchDevice(): boolean {
 }
 
 function getDeviceTargetId(device: DeviceModelId): number {
-  const modelToTargetIdMap = {
+  const modelToTargetIdMap: Record<string, number> = {
     [DeviceModelId.nanoS]: CryptoWallet.LNS.targetId,
     [DeviceModelId.nanoX]: CryptoWallet.LNX.targetId,
     [DeviceModelId.nanoSP]: CryptoWallet.LNSP.targetId,

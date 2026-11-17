@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noImplicitAny": false,
     "noEmit": true,
     "rootDir": ".",
     "types": ["node", "bun-types", "w3c-web-usb"],
