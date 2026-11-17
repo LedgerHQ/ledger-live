@@ -13,7 +13,7 @@ import type { CardLoginViewProps } from "./types";
 
 type CardLoginNativeViewProps = Omit<
   CardLoginViewProps,
-  "alreadyHaveCardLabel" | "onAlreadyHaveCardPress"
+  "showAlreadyHaveCard" | "onAlreadyHaveCardPress"
 >;
 
 export function CardLoginView({

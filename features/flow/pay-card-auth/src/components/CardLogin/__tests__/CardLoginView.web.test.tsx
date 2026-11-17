@@ -1,8 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { CardLoginView } from "../CardLoginView";
 import type { CardAuthErrorCopy, CardLoginIntroViewProps } from "../types";
+import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
 
 const intro: CardLoginIntroViewProps = {
   isOpen: false,
@@ -30,7 +32,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   headline: "Get your crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
-  alreadyHaveCardLabel: null,
+  showAlreadyHaveCard: false,
   isLoading: false,
   isResolving: false,
   error: null,
@@ -41,9 +43,11 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
 
 function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {
   return render(
-    <StyleProvider colorScheme="dark">
-      <CardLoginView {...defaultProps} {...props} />
-    </StyleProvider>,
+    <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>
+      <StyleProvider colorScheme="dark">
+        <CardLoginView {...defaultProps} {...props} />
+      </StyleProvider>
+    </I18nTestProvider>,
   );
 }
 
@@ -75,12 +79,9 @@ describe("CardLoginView (Web)", () => {
     },
   );
 
-  it("should render the login link when the copy carries one", () => {
+  it("should render the login link when the view model shows it", () => {
     const onAlreadyHaveCardPress = jest.fn();
-    renderCardLoginView({
-      alreadyHaveCardLabel: "I already have a card",
-      onAlreadyHaveCardPress,
-    });
+    renderCardLoginView({ showAlreadyHaveCard: true, onAlreadyHaveCardPress });
 
     const link = screen.getByRole("button", { name: "I already have a card" });
     fireEvent.click(link);
@@ -88,7 +89,7 @@ describe("CardLoginView (Web)", () => {
     expect(onAlreadyHaveCardPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should render no login link when the copy carries none", () => {
+  it("should render no login link when the view model hides it", () => {
     renderCardLoginView();
 
     expect(screen.queryByRole("button", { name: "I already have a card" })).toBeNull();
