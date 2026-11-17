@@ -47,6 +47,7 @@ function createMockDMK(): DeviceManagementKit {
     connect: jest.fn(),
     sendApdu: jest.fn(),
     disconnect: jest.fn(),
+    listConnectedDevices: jest.fn(() => []),
   } as unknown as DeviceManagementKit;
 }
 

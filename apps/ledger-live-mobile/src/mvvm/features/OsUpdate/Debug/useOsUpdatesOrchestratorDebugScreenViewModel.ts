@@ -18,6 +18,7 @@ import {
   useDeviceManagementKit,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { disconnectOtherSessions } from "@ledgerhq/live-dmk-shared";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { deviceBackupStorage } from "../storage/deviceBackupStorage";
 import type {
@@ -205,6 +206,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
       }
       setConnectingDeviceId(deviceId);
       setConnectError(null);
+      disconnectOtherSessions(dmk, match.discoveredDevice);
       dmk
         // Same options as every reconnection the OS update performs: a session refresher polling
         // the device would send commands in the middle of an install.
