@@ -2804,6 +2804,16 @@
     "addressOptions": {
       "transparent": "Public address",
       "shielded": "Private address"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
     }
   },
   "send": {
