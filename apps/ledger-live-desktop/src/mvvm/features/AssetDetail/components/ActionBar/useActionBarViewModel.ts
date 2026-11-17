@@ -161,7 +161,7 @@ export function useActionBarViewModel({
     ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
   const rampNavigationCurrencyIds =
     rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
-  const sendCurrencyIds = useMemo(() => {
+  const assetCurrencyIds = useMemo(() => {
     if (ledgerIds && ledgerIds.length > 0) return ledgerIds;
     if (trackingCurrencyId) return [trackingCurrencyId];
     return undefined;
@@ -201,9 +201,9 @@ export function useActionBarViewModel({
     });
     openSendFlow({
       source: ASSET_DETAIL_TRACKING_PAGE_NAME,
-      currencyIds: sendCurrencyIds,
+      currencyIds: assetCurrencyIds,
     });
-  }, [openSendFlow, sendCurrencyIds, trackingCurrencyId]);
+  }, [openSendFlow, assetCurrencyIds, trackingCurrencyId]);
 
   const onReceive = useCallback(() => {
     track("button_clicked", {
@@ -214,10 +214,11 @@ export function useActionBarViewModel({
     dispatch(
       openReceiveFlow({
         sourcePage: ASSET_DETAIL_TRACKING_PAGE_NAME,
+        currencyIds: assetCurrencyIds,
         ...(primaryAccount ? { account: primaryAccount, parentAccount: primaryParentAccount } : {}),
       }),
     );
-  }, [dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
+  }, [assetCurrencyIds, dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
 
   const onSwap = useCallback(() => {
     if (!ledgerCurrency) return;

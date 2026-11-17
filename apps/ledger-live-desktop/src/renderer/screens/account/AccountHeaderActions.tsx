@@ -202,12 +202,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
     useNewSendFlowFeature();
 
-  const manage = specific?.accountHeaderManageActions;
-  let manageList: ManageAction[] = [];
-  if (manage) {
-    const familyManageActions = manage({ account, parentAccount });
-    manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-  }
+  const manageList: ManageAction[] =
+    specific?.accountHeaderManageActions?.({ account, parentAccount }) ?? [];
 
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;

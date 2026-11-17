@@ -3,7 +3,10 @@ import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import type { ReceiveAddressDialogViewProps } from "./useReceiveAddressDialogViewModel";
 
 /** Empty for now: the address screen fills it (LIVE-40948). */
-export function ReceiveAddressDialogView({ isOpen, onClose }: ReceiveAddressDialogViewProps) {
+export function ReceiveAddressDialogView({
+  isOpen,
+  onClose,
+}: Readonly<ReceiveAddressDialogViewProps>) {
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
   };

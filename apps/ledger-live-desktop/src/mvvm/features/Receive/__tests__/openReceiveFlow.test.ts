@@ -159,7 +159,7 @@ describe("openReceiveFlow", () => {
       const dispatch = await run(openReceiveFlow({ sourcePage: "Portfolio" }));
 
       const [params] = jest.mocked(openAssetAndAccountDialog).mock.calls[0];
-      expect(params).toMatchObject({ currencies: [], flow: "receive", source: "Portfolio" });
+      expect(params).toMatchObject({ currencies: [], flow: "receive_flow", source: "Portfolio" });
 
       params.onSuccess?.(ethAccount);
       await new Promise(resolve => setImmediate(resolve));

@@ -1,8 +1,13 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { selectFeature } from "@shared/feature-flags";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { resolveReceiveFamilyConfig, toReceiveTarget } from "@features/flow-receive";
+import {
+  resolveReceiveFamilyConfig,
+  showsReceiveOptions,
+  toReceiveTarget,
+} from "@features/flow-receive";
 import { openModal } from "~/renderer/actions/modals";
 import type { ThunkResult } from "~/renderer/actions/types";
 import { importLLDCoinFamily } from "~/renderer/families";
@@ -98,7 +103,7 @@ export const openReceiveFlow =
         currencies: currencyIds ? [...currencyIds] : [],
         areCurrenciesFiltered: Boolean(currencyIds?.length),
         networkIds: tokenNetworkId ? [tokenNetworkId] : undefined,
-        flow: "receive",
+        flow: ModularDrawerLocation.RECEIVE_FLOW,
         source: data.sourcePage,
         onSuccess: (account, parentAccount) => void openForAccount(account, parentAccount),
       },
@@ -115,17 +120,16 @@ function findMainAccount(
   return parentAccount ?? accountsSelector(state).find(({ id }) => id === account.parentId);
 }
 
-/** Same rule as the legacy modal's first step: Noah's "crypto or bank transfer" choice. */
 function showsNoahOptions(
   state: State,
   { account, currencyIds, shouldUseReceiveOptions }: OpenReceiveFlowData,
 ): boolean {
-  const noah = selectFeature(state, "noah");
-  if (!noah?.enabled || shouldUseReceiveOptions === false) return false;
-  const activeCurrencyIds = noah.params?.activeCurrencyIds ?? [];
-  if (account) return activeCurrencyIds.includes(getAccountCurrency(account).id);
-  if (currencyIds?.length) return currencyIds.some(id => activeCurrencyIds.includes(id));
-  return true;
+  return showsReceiveOptions({
+    noah: selectFeature(state, "noah"),
+    shouldUseReceiveOptions,
+    accountAssetId: account ? getAccountCurrency(account).id : undefined,
+    pageAssetIds: currencyIds,
+  });
 }
 
 /** `openModal` for openers given any modal name: `MODAL_RECEIVE` goes through `openReceiveFlow`. */
