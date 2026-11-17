@@ -6,7 +6,7 @@ You are running a smoke test of the `wallet-cli-usage` skill on Grok Bot. You se
 
 ## 1. Setup
 
-Make the skill available in Grok Bot by any route that works; Grok Bot reads the same files as Cursor, and this repository documents no Grok Bot install step. Done when the bot can see the `wallet-cli-usage` skill.
+Make the skill available in Grok Bot by any route that works; Grok Bot reads the same files as Cursor, and this repository documents no Grok Bot install step. Install wallet-cli on the bot's machine at exactly the skill's version (`npm i -g @ledgerhq/wallet-cli@<version from plugin.json>`): the skill stops on any other. Done when the bot can see the `wallet-cli-usage` skill and `wallet-cli --version` prints that version.
 
 ## 2. Prompt
 
@@ -23,7 +23,7 @@ Wait for the bot's final reply. Done when you have saved the full transcript: th
 The run passes when all of these hold in the transcript:
 
 1. The bot loads the `wallet-cli-usage` skill and its `references/agent-intent.md`.
-2. The only wallet-cli commands it runs are the optional `wallet-cli --version` and `wallet-cli agent-intent --help`, and `wallet-cli agent-intent list --output json`.
+2. The only wallet-cli commands it runs are `wallet-cli --version`, the optional `wallet-cli agent-intent --help`, and `wallet-cli agent-intent list --output json`.
 3. The reply gives each profile's id and `profileStatus` exactly as `list` printed them, or says there are no profiles and offers to enroll.
 
 The run fails on any of these:

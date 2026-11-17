@@ -40,9 +40,16 @@ The host machine cannot be trusted: malware can swap a clipboard, intercept the 
 
 ---
 
-## Sandbox bypass
+## Host sandbox
 
-The Claude Code sandbox blocks USB syscalls by default, so any wallet-cli command that needs the device hardware can't reach it from inside the sandbox - that's why device-touching commands require `dangerouslyDisableSandbox: true`. Commands that only hit Ledger's backend don't need USB and don't need the bypass.
+A host's command sandbox hides what the host-access commands (SKILL.md, Host sandbox) need: the USB HID device, the OS keychain, the state dir and other processes' PIDs. Their failures inside it rarely say "sandbox", so neither the agent nor the host's own retry recognises them:
+
+- a device command fails with a generic device error; on macOS the cause, `IOHIDDevice … not permitted`, is only in the DMK error's `originalError`;
+- on Linux, `enroll` reports `keychain_unavailable`, which leads to the plaintext key consent question (agent-intent.md, step 2) although a working keychain exists;
+- `agent-intent wait` sees a live listener as exited, and the agent gives up an enrollment that was still waiting;
+- `account discover` exits 0 without saving the accounts.
+
+So the skill names these commands up front and asks the human once per conversation, instead of letting the sandbox fail first. The human's yes grants the access, not the skill: commands that only reach Ledger's services stay in the sandbox.
 
 wallet-cli cannot tell that it runs inside a sandbox, but it reports how opening the Ledger failed. On Linux the Claude Code sandbox leaves sysfs readable and has no `/dev/bus/usb`, so libusb lists the Ledger and then fails to open it with `LIBUSB_ERROR_NO_DEVICE`. Discovery then stops at once, without the 60 s wait, with `No Ledger device found.` and `usb_access_error: "LIBUSB_ERROR_NO_DEVICE"`. A sandbox can also refuse with `LIBUSB_ERROR_ACCESS`, which outside a sandbox means missing udev rules or permissions, or, on macOS and Windows, another process holding the Ledger. `LIBUSB_ERROR_BUSY` means another process holds the device, and the bypass does not help with it. A sandbox that hides the Ledger from the listing leaves no error to report, so a missing `usb_access_error` does not rule the sandbox out.
 
