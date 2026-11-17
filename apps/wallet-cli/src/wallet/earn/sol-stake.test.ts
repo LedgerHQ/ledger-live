@@ -1,9 +1,13 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it } from "bun:test";
+import { EMPTY } from "rxjs";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import type { WalletAdapter } from "../index";
 import type { AccountDescriptor } from "../models";
 import type { TransactionIntent } from "../intents";
 import type { CommandOutput } from "../../output";
+import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
+import { resetTestSeams } from "../../shared/test-seam";
+import { SigningDevice } from "../../testing/earn-vault";
 import { SolanaStakeAmountError } from "./errors";
 import type { SolanaStakeLimits } from "./types";
 import { depositSolana, describeStakeAmountError, withdrawSolana } from "./sol-stake";
@@ -87,6 +91,22 @@ describe("depositSolana", () => {
         out: makeOut(),
       }),
     ).rejects.toThrow(/validator/i);
+  });
+
+  // The earn commands always pass a device when signing; this guards other callers.
+  it("refuses to sign without a device context", async () => {
+    const { wallet } = makeWallet();
+    await expect(
+      depositSolana({
+        descriptor: DESCRIPTOR,
+        network: "solana",
+        validator: "voteAcc123",
+        amount: "1.5 SOL",
+        dryRun: false,
+        wallet,
+        out: makeOut(),
+      }),
+    ).rejects.toThrow(/Device context is required/);
   });
 });
 
@@ -348,4 +368,28 @@ describe("withdrawSolana", () => {
       expect(intents).toHaveLength(0);
     },
   );
+});
+
+describe("stake intents signed on the device", () => {
+  afterEach(() => resetTestSeams());
+
+  // The bridge always reports a broadcast hash; a wallet that reports none reaches the guard.
+  it("fails instead of reporting a stake or unstake no broadcast hash came back for", async () => {
+    new SigningDevice().plugIn();
+    const signing = {
+      descriptor: DESCRIPTOR,
+      network: "solana",
+      dryRun: false,
+      wallet: { send: () => EMPTY } as unknown as WalletAdapter,
+      out: makeOut(),
+      device: { deviceId: WALLET_CLI_DMK_DEVICE_ID, managerAppName: "Solana" },
+    };
+
+    await expect(
+      depositSolana({ ...signing, validator: "voteAcc123", amount: "1.5 SOL" }),
+    ).rejects.toThrow("Solana stake.createAccount transaction was signed but no broadcast hash");
+    await expect(
+      withdrawSolana({ ...signing, stakeAccount: "stakeAcc456", finalize: false }),
+    ).rejects.toThrow("Solana stake.undelegate transaction was signed but no broadcast hash");
+  });
 });

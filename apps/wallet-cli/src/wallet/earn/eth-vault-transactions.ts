@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { walletCliDebug } from "../../shared/log";
+import { createTestSeam } from "../../shared/test-seam";
 import { EvmTransactionIntentSchema } from "../intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../sign-and-broadcast";
 
@@ -24,6 +25,11 @@ const TERMINAL_TX_STATUSES = new Set<EthTxStatus>(["success", "error"]);
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const pollSleep = createTestSeam<(ms: number) => Promise<unknown>>(sleep);
+
+/** @internal Test seam — replaces the wait between two tx status polls. */
+export const _setTestEarnPollSleep = pollSleep.set;
 
 function zeroNativeAmount(currencyId: string): string {
   return `0 ${getCryptoCurrencyById(currencyId).ticker}`;
@@ -105,7 +111,7 @@ export async function pollEthTransactionStatus(
       walletCliDebug(`earn-api: polling ${txHash} failed (${String(error)}); retrying`);
       lastStatus = "pending_confirmation";
     }
-    if (attempt < attempts - 1) await sleep(intervalMs);
+    if (attempt < attempts - 1) await pollSleep.get()(intervalMs);
   }
   return lastStatus;
 }
