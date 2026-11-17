@@ -53,14 +53,14 @@ const createConnectNewDeviceStateMachine = <
           input: { dmk: DeviceManagementKit; discoveredDevice: DiscoveredDevice };
         }): Promise<string> => {
           disconnectOtherSessions(dmk, discoveredDevice);
-          const openSessionOfDevice = dmk
+          const existingSession = dmk
             .listConnectedDevices()
             .find(
               ({ id, transport }) =>
                 id === discoveredDevice.id && transport === discoveredDevice.transport,
             );
-          if (openSessionOfDevice) {
-            return openSessionOfDevice.sessionId;
+          if (existingSession) {
+            return existingSession.sessionId;
           }
 
           return dmk.connect({
