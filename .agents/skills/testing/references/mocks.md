@@ -19,6 +19,20 @@ jest.spyOn(UseMyViewModel, "useMyViewModel").mockImplementation(() => ({
 }));
 ```
 
+## Spying on a package read from source
+
+Private packages are served from `src/`, and the transpiler compiles their exports to getters that
+`jest.spyOn` cannot redefine. Mock the module with a plain copy first, and keep `__esModule: true`:
+without it the spy is silently inert.
+
+```typescript
+jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/wallet-pnl/hooks"),
+}));
+jest.spyOn(walletPnlHooks, "usePortfolioPnL").mockReturnValue(mockPnl);
+```
+
 ## Shared app resources: search here first
 
 Before creating anything, check these locations:

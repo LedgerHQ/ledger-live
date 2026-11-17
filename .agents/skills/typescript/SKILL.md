@@ -38,6 +38,19 @@ description: TypeScript + React typing conventions for Ledger Wallet. Read when 
   3. Types
 - Avoid default exports.
 
+## Packages read from source
+
+Private packages have no build: a consumer compiles their `src/` with its own compiler options, and
+apps run them through per-file transpilers (SWC, Babel, rspack, Bun).
+
+- A consumer must compile its dependencies' sources: it can be no stricter than them, and it needs the
+  settings their files require. A relaxation it needs for them goes in
+  [`tsconfig-debt.mjs`](../../../tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs).
+- Keep `isolatedModules` on. Every file must compile alone.
+- Export a type with `export type` or `export { type X }`, never as a plain re-export.
+- Never read a `const enum` from another package: a per-file transpiler cannot inline it. Use an object
+  of values (`EXCHANGE_TYPE.swap`, not `ExchangeTypes.Swap`).
+
 ## Error Handling
 
 - Use custom error classes with `code` and optional context.

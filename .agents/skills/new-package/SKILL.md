@@ -34,6 +34,15 @@ source-only package has no `build` target, and Nx `^build` reaches its dependenc
 Tooling details live in [support-config](../support-config/SKILL.md); change them only when the
 generated preset is wrong for the package.
 
+Consumers read the package from `src/`, so keep its `exports` that way when you add entries:
+
+- a `.tsx` subpath needs its own explicit entry, as a `./*` wildcard to `./src/*.ts` never reaches it;
+- React code goes behind a dedicated entry point such as `"./react"`, so the root barrel reaches no
+  `.tsx` file and consumers without `jsx` still compile it;
+- no `build` script or target, and no entry into `lib/` or `lib-es/`. The source-only rule of
+  `pnpm lint:tool-config` enforces this on private `libs/` packages
+  ([`source-only.mjs`](../../../tools/nx-plugins/enforce-tool-config/rules/source-only.mjs)).
+
 ## 2. README and status marker
 
 Replace the generator's one-line description with a short scope: problem solved, main exports, who

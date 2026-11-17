@@ -58,8 +58,8 @@ pnpm e2e:mobile build:android
 pnpm e2e:mobile build:ios:debug
 ```
 
-> `build-e2e-deps` builds the libraries the mobile app
-> and the E2E suite depend on, including @ledgerhq/live-cli.
+> `build-e2e-deps` builds the published packages the mobile app and the E2E suite depend on,
+> including @ledgerhq/live-cli. Private libraries are read from source and need no build.
 
 > **Why release for Android?** Android debug builds are broken locally due to a known
 > Detox/Espresso reflection bug (`NoSuchFieldException: eventInjector`). Only release
@@ -157,7 +157,7 @@ To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and 
 
 ## Typecheck
 
-Run `pnpm nx typecheck ledger-live-mobile-e2e-tests` to typecheck building workspace libraries first. `pnpm typecheck` in this directory checks the built `lib/` and reports false errors when `libs/live-e2e-shared/src` is newer than that build.
+Run `pnpm nx typecheck ledger-live-mobile-e2e-tests`, which builds the published packages the suite reads first. Private libraries such as `libs/live-e2e-shared` are read from `src/` and need no build.
 
 ## Before committing a test change
 

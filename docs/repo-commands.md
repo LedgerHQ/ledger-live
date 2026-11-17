@@ -21,13 +21,13 @@ For example, [apps/ledger-live-mobile/README.md](../apps/ledger-live-mobile/READ
 
 ### Building
 
-If a specific dependency isn't rebuilding automatically\*, you can try this:
+Private packages have no build: apps, tests and typecheck read their `src/`. Only published packages
+build, and Nx rebuilds them before a target that depends on them. To rebuild them by hand:
 
 ```bash
-pnpm nx run <package-name>:build
+pnpm build:libs                     # the published @ledgerhq packages
+pnpm nx run <package-name>:build    # one published package
 ```
-
-_\*If you're running commands through Nx dependencies should be rebuilt automatically._
 
 ### Linting & typechecking
 
@@ -90,7 +90,7 @@ Prefer `nx` over a raw `--filter` because:
 - configs like `dependsOn` (being rolled out across the monorepo) keep dependencies up to date
 - flags like `affected`, `base` and `include` enable advanced filtering
 
-In the following example dependencies will be built and tests run on affected files.
+In the following example published dependencies will be built and tests run on affected files.
 
 ```bash
 pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
@@ -98,8 +98,7 @@ pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
 
 #### ✅ Good
 
-Nx builds a project's dependencies before running the target, so
-`@domain/entity-client-identity` is built before its `test` target runs:
+Nx builds the published packages a project depends on before running the target:
 
 ```bash
 pnpm nx test @domain/entity-client-identity
@@ -107,7 +106,7 @@ pnpm nx test @domain/entity-client-identity
 
 #### ❌ Bad
 
-⚠️ Skipping `nx` risks dependencies being out of date:
+⚠️ Skipping `nx` risks reading a stale build of a published dependency:
 
 ```bash
 pnpm --filter @domain/entity-client-identity test

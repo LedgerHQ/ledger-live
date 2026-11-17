@@ -33,7 +33,9 @@ Use it to review an existing package. `pnpm lint:tool-config` checks the items o
 **`package.json` fields**
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
-- [ ] `"main"`, `"types"`, `"exports"` — source-only packages (domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; private libs/ packages point at `src/` the same way; only published libs/ packages build, with the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
+- [ ] `"main"`, `"types"`, `"exports"`: every private package (domain/, features/, shared/ and private libs/) points them at `src/` and exposes `"./package.json"`, with no `build` script or target; only published libs/ packages build, with the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries. Copy from a neighbouring package of the same type. `pnpm lint:tool-config` checks this split on `libs/` with [`rules/source-only.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only.mjs)
+- [ ] A `.tsx` subpath has its own `exports` entry: a `"./*": "./src/*.ts"` wildcard never reaches it
+- [ ] React code goes behind a dedicated entry point (`"./react"`), so the root barrel reaches no `.tsx` file: a consumer compiles the sources it imports with its own options, and one without `jsx` cannot compile a `.tsx` file
 - [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `@typescript/native` (for `tsc`), and `rimraf`, `zx` or `nx` when a script runs them; `@support/jest` with `workspace:*` when the package has tests (see [ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553) and [`rules/tool-dependency.mjs`](../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs))
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
