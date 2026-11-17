@@ -2,10 +2,20 @@ import { ipcRenderer } from "electron";
 import { CHANNELS } from "~/bridge/contract";
 import { db } from "./db";
 
-jest.mock("electron", () => ({ ipcRenderer: { invoke: jest.fn() } }));
+jest.mock("electron", () => ({
+  ipcRenderer: { invoke: jest.fn(), on: jest.fn(), removeListener: jest.fn(), send: jest.fn() },
+}));
+
+function receiveFlushRequest() {
+  const [channel, listener] = jest.mocked(ipcRenderer.on).mock.calls[0];
+  expect(channel).toBe(CHANNELS.flushWrites);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  (listener as () => void)();
+  return listener;
+}
 
 describe("preload db bridge", () => {
-  beforeEach(() => jest.mocked(ipcRenderer.invoke).mockReset());
+  beforeEach(() => jest.clearAllMocks());
 
   it.each([
     [
@@ -47,4 +57,35 @@ describe("preload db bridge", () => {
       expect(ipcRenderer.invoke).toHaveBeenCalledWith(CHANNELS[channel], ...args);
     },
   );
+
+  it("answers a flush request once the callback settles", async () => {
+    let finish: (() => void) | undefined;
+    db.onFlushRequest(() => new Promise<void>(resolve => (finish = resolve)));
+
+    receiveFlushRequest();
+    await new Promise(process.nextTick);
+    expect(ipcRenderer.send).not.toHaveBeenCalled();
+
+    finish?.();
+    await new Promise(process.nextTick);
+    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone);
+  });
+
+  it("answers a flush request when the callback fails", async () => {
+    db.onFlushRequest(() => Promise.reject(new Error("store gone")));
+
+    receiveFlushRequest();
+    await new Promise(process.nextTick);
+
+    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone);
+  });
+
+  it("stops the flush requests on unsubscribe", () => {
+    const unsubscribe = db.onFlushRequest(async () => {});
+    const [, listener] = jest.mocked(ipcRenderer.on).mock.calls[0];
+
+    unsubscribe();
+
+    expect(ipcRenderer.removeListener).toHaveBeenCalledWith(CHANNELS.flushWrites, listener);
+  });
 });

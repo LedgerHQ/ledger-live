@@ -46,6 +46,7 @@ export const db: jest.Mocked<DbBridge> = {
   resetAll: jest.fn().mockResolvedValue(undefined),
   reload: jest.fn().mockResolvedValue(undefined),
   cleanCache: jest.fn().mockResolvedValue(undefined),
+  onFlushRequest: jest.fn((_callback: () => Promise<void>) => () => {}),
 };
 
 // `on*` must return an unsubscribe closure.
