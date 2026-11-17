@@ -27,8 +27,11 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  TRONIFY_CREATE_RENT_RECORD_METHOD,
   TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  type CreateTronifyRentRecordParams,
+  type CreateTronifyRentRecordResult,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
   type GetTronifyQuoteParams,
@@ -84,6 +87,10 @@ type Handlers = {
     GetTransactionStatusWireArgs
   >;
   [TRONIFY_GET_QUOTE_METHOD]: RPCHandler<GetTronifyQuoteResult, GetTronifyQuoteParams>;
+  [TRONIFY_CREATE_RENT_RECORD_METHOD]: RPCHandler<
+    CreateTronifyRentRecordResult,
+    CreateTronifyRentRecordParams
+  >;
   [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: RPCHandler<
     IsTronifyEnergyDeliveredResult,
     IsTronifyEnergyDeliveredParams

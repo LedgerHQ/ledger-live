@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Observable, type Subscriber } from "rxjs";
 import type { CreateSessionSdk } from "../session";
+import type { LedgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../failure";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
@@ -51,6 +52,19 @@ export function completeJob<Result>(
   }
   subscriber.next(COMPLETED);
   subscriber.complete();
+}
+
+// The device part is done, so the app must still store the result once nobody watches the job.
+export function deliverLateResult<Result>(
+  onResult: (result: Result) => void,
+  result: Result,
+): void {
+  try {
+    onResult(result);
+  } catch (error) {
+    // The subscriber is closed, so the throw cannot end the job: only the log reports it.
+    console.error("Ledger Sync: storing a late result failed", error);
+  }
 }
 
 export function tryCreateSessionSdk(
@@ -108,8 +122,13 @@ export function handleCallError(
   failJob(subscriber, error);
 }
 
+type LedgerSyncJobInput = Readonly<{
+  createSessionSdk: CreateSessionSdk;
+  resultOrder: LedgerSyncResultOrder;
+}>;
+
 // Builds the SDK once per run, so a retry after a refusal reuses it and its JWT.
-export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSessionSdk }, Result>(
+export function createLedgerSyncJob<Input extends LedgerSyncJobInput, Result>(
   call: LedgerSyncDeviceCall<Input, Result>,
 ): Job<LedgerSyncJobState, Input, Result> {
   return ({ deviceConnectionResult, input, onResult }) =>
@@ -121,7 +140,9 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
 
       const run = () => {
         const token = ++runToken;
-        const isCurrentRun = () => !subscriber.closed && token === runToken;
+        const ticket = input.resultOrder.take();
+        const isLatestRun = () => token === runToken;
+        const isCurrentRun = () => !subscriber.closed && isLatestRun();
         const retry = () => {
           if (isCurrentRun()) run();
         };
@@ -131,7 +152,15 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
         (async () =>
           call({ sdk, deviceId: deviceConnectionResult.compatDeviceId, input, callbacks }))().then(
           result => {
-            if (isCurrentRun()) completeJob(subscriber, onResult, result);
+            if (!isLatestRun()) return;
+            if (subscriber.closed) {
+              if (input.resultOrder.isStale(ticket)) return;
+              input.resultOrder.markDelivered(ticket);
+              deliverLateResult(onResult, result);
+              return;
+            }
+            input.resultOrder.markDelivered(ticket);
+            completeJob(subscriber, onResult, result);
           },
           (error: unknown) => {
             if (isCurrentRun()) handleCallError(subscriber, error, retry);
@@ -140,9 +169,5 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
       };
 
       run();
-
-      return () => {
-        runToken += 1;
-      };
     });
 }

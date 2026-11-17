@@ -1165,7 +1165,7 @@
           "xpub": "03753520fd86e1f0b64eaacc8cb3e8fa493cafa5e1086da72362e9130b3014ad67",
           "subAccounts": [],
           "swapHistory": [],
-          "name": "XRP 1"
+          "name": "XRPL 1"
         },
         "version": 1
       },
@@ -1204,7 +1204,7 @@
           "xpub": "0235bc91467a2d4d9abbf2cb878e4487dd418f90e62220b507665c7fd6ef5ffa42",
           "subAccounts": [],
           "swapHistory": [],
-          "name": "XRP 2"
+          "name": "XRPL 2"
         },
         "version": 1
       }
