@@ -116,6 +116,55 @@ describe("validateIntent", () => {
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
   });
 
+  it("uses the token balance for a token transfer and the native balance for its fee", async () => {
+    const tokenAsset = { type: "token" as const, assetReference: "SP_CONTRACT.token-x::token-x" };
+    const result = await validateIntent(
+      transferIntent({ amount: 1_000n, asset: tokenAsset }),
+      [
+        { value: 900n, asset: { type: "native" } },
+        { value: 1_500n, locked: 500n, asset: tokenAsset },
+      ],
+      { value: 900n },
+    );
+
+    expect(result).toMatchObject({
+      errors: {},
+      amount: 1_000n,
+      totalSpent: 1_000n,
+      estimatedFees: 900n,
+    });
+  });
+
+  it("resolves useAllAmount to the spendable token balance", async () => {
+    const tokenAsset = { type: "token" as const, assetReference: "SP_CONTRACT.token-x::token-x" };
+    const result = await validateIntent(
+      transferIntent({ useAllAmount: true, amount: 0n, asset: tokenAsset }),
+      [
+        { value: 900n, asset: { type: "native" } },
+        { value: 1_500n, locked: 500n, asset: tokenAsset },
+      ],
+      { value: 900n },
+    );
+
+    expect(result.errors).toEqual({});
+    expect(result.amount).toBe(1_000n);
+    expect(result.totalSpent).toBe(1_000n);
+  });
+
+  it("flags a token transfer exceeding its spendable balance", async () => {
+    const tokenAsset = { type: "token" as const, assetReference: "SP_CONTRACT.token-x::token-x" };
+    const { errors } = await validateIntent(
+      transferIntent({ amount: 1_001n, asset: tokenAsset }),
+      [
+        { value: 900n, asset: { type: "native" } },
+        { value: 1_500n, locked: 500n, asset: tokenAsset },
+      ],
+      { value: 900n },
+    );
+
+    expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
   it("flags a token transfer when the fee exceeds the native balance", async () => {
     const balances: Balance[] = [
       { value: 500n, asset: { type: "native" } },
