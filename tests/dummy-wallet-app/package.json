@@ -37,7 +37,6 @@
   "devDependencies": {
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
-    "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

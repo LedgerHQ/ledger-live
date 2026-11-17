@@ -85,11 +85,11 @@ catalog:
   "@ledgerhq/wallet-api-core": 2.3.0
   "@ledgerhq/wallet-api-server": 3.6.1
   "@ledgerhq/wallet-api-simulator": 2.4.2
-  "@ledgerhq/zcash-utils": 2.9.0
-  "@ledgerhq/zcash-utils-darwin-arm64": 2.9.0
-  "@ledgerhq/zcash-utils-darwin-x64": 2.9.0
-  "@ledgerhq/zcash-utils-linux-x64-gnu": 2.9.0
-  "@ledgerhq/zcash-utils-win32-x64-msvc": 2.9.0
+  "@ledgerhq/zcash-utils": 2.10.0
+  "@ledgerhq/zcash-utils-darwin-arm64": 2.10.0
+  "@ledgerhq/zcash-utils-darwin-x64": 2.10.0
+  "@ledgerhq/zcash-utils-linux-x64-gnu": 2.10.0
+  "@ledgerhq/zcash-utils-win32-x64-msvc": 2.10.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -225,7 +225,7 @@ catalog:
   tsx: 4.20.6
   ws: 8.22.0
   qrcode: 1.5.4
-  "@types/qrcode": 1.5.5
+  "@types/qrcode": 1.5.6
   otpauth: 9.5.1
   zod: 4.6.7
   semver: 7.8.5

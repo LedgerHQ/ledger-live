@@ -70,6 +70,7 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": [],
       "inputs": [
         "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/**/*"
       ],

@@ -47,6 +47,15 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   lwmLedgerSyncOptimisation: { enabled: true },
 };
 
+/**
+ * `lwmLedgerSyncDie` runs the device steps on the Device Intent Executor, opened over the entry
+ * screen. Set either way so the legacy variant keeps covering the process screens once the remote
+ * default flips.
+ */
+export function withLedgerSyncDie(flags: PartialFeatures, onDie: boolean): PartialFeatures {
+  return { ...flags, lwmLedgerSyncDie: { enabled: onDie } };
+}
+
 const ENVIRONMENT_READ_TIMEOUT_MS = TIMEOUT.xlarge;
 const ENVIRONMENT_READ_POLL_MS = INTERVAL.medium;
 
