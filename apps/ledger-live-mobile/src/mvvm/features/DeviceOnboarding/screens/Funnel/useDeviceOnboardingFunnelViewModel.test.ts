@@ -1190,6 +1190,33 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
   });
 
+  it("should ask before Android back leaves a new seed's done screen", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "done",
+        status: "running",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).not.toHaveBeenCalled();
+  });
+
   it("should release the error sheet while Android back asks to leave a seeded device", () => {
     useSession.mockReturnValue(
       session({
