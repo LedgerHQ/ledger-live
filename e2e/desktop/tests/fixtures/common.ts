@@ -88,7 +88,6 @@ type TestFixtures = {
     hostnamePrefix: string;
     entries: (context: { userdataFile: string }) => Promise<Record<string, string>>;
   };
-  webviewStorageSeed: void;
   /** Coin-config keys merged over the default and remote config, as Developer settings would. */
   coinConfigOverrides?: Record<string, unknown>;
   teamOwner?: Team;
@@ -364,29 +363,35 @@ export const test = base.extend<TestFixtures>({
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
   },
-  // Runs after the app starts, so a failure here still closes the app.
-  webviewStorageSeed: [
-    async ({ electronApp, webviewLocalStorage, userdataFile }, use) => {
-      if (webviewLocalStorage) {
-        const { hostnamePrefix, entries } = webviewLocalStorage;
-        await electronApp.context().addInitScript(
-          ({ hostnamePrefix, entries }) => {
-            if (!location.hostname.startsWith(hostnamePrefix)) return;
-            for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
-          },
-          { hostnamePrefix, entries: await entries({ userdataFile }) },
-        );
-      }
-      await use();
-    },
-    { auto: true },
-  ],
   webviewCollector: async ({ electronApp }, use) => {
     const webviewCollector = new PageLogCollector();
     webviewCollector.attachWebview(electronApp, await electronApp.firstWindow());
     await use(webviewCollector);
   },
-  page: async ({ electronApp, speculos, cliCommandsOnApp, webviewCollector }, use, testInfo) => {
+  page: async (
+    {
+      electronApp,
+      speculos,
+      cliCommandsOnApp,
+      webviewCollector,
+      webviewLocalStorage,
+      userdataFile,
+    },
+    use,
+    testInfo,
+  ) => {
+    // The app is already running, so a failure here still closes it.
+    if (webviewLocalStorage) {
+      const { hostnamePrefix, entries } = webviewLocalStorage;
+      await electronApp.context().addInitScript(
+        ({ hostnamePrefix, entries }) => {
+          if (!location.hostname.startsWith(hostnamePrefix)) return;
+          for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
+        },
+        { hostnamePrefix, entries: await entries({ userdataFile }) },
+      );
+    }
+
     // app is ready
     const page = await electronApp.firstWindow();
     page.setDefaultTimeout(TIMEOUT.xlarge);

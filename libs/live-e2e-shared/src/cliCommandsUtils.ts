@@ -94,7 +94,7 @@ export const liveDataCommand = (
   const cmd = async (userdataPath?: string) => {
     if (!applyGeneratedUserdata(account, userdataPath)) {
       await runCliLiveData({
-        currency: options?.currency ?? account.currency.speculosApp.name,
+        currency: options?.currency ?? account.currency.cliKeyword,
         index: account.index,
         ...(options?.useScheme && account.derivationMode !== undefined
           ? { scheme: account.derivationMode }

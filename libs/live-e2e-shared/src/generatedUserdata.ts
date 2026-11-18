@@ -44,7 +44,11 @@ function matchEntry(
   accounts: AccountRawEntry[],
   account: Account | TokenAccount,
 ): AccountRawEntry | undefined {
-  const sameIndex = accounts.filter(e => e.data.index === account.index);
+  const sameIndex = accounts.filter(
+    e =>
+      e.data.index === account.index &&
+      (e.data.currencyId === undefined || e.data.currencyId === account.currency.id),
+  );
   if (sameIndex.length <= 1 || account.derivationMode == null) return sameIndex[0];
   return (
     sameIndex.find(e => (e.data.derivationMode ?? "") === account.derivationMode) ?? sameIndex[0]

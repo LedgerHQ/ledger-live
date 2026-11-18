@@ -28,6 +28,11 @@ export class Currency {
     return CURRENCY_TEST_LABELS.get(this) ?? this.ticker;
   }
 
+  /** Name the CLI resolves to this currency; the Speculos app name when it has no entry. */
+  get cliKeyword(): string {
+    return CLI_CURRENCY_KEYWORDS.get(this) ?? this.speculosApp.name;
+  }
+
   static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, [Network.CELO]);
 
   static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE, [
@@ -47,7 +52,7 @@ export class Currency {
   // Addresses derive through the Ethereum app.
   static readonly HYPERCORE = new Currency(
     "Hyperliquid",
-    "HYPE",
+    "USDC",
     "hypercore",
     AppInfos.ETHEREUM,
     [],
@@ -281,6 +286,9 @@ export class Currency {
     Network.SEI,
   ]);
 }
+
+// Currencies that derive through another coin's app, so the app name is not their CLI name.
+const CLI_CURRENCY_KEYWORDS = new Map<Currency, string>([[Currency.HYPERCORE, "hypercore"]]);
 
 const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.BASE, "ETH (Base)"],

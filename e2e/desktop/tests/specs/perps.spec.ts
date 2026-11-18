@@ -15,7 +15,7 @@ test.describe("Perps", () => {
     teamOwner: Team.PERPS,
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account, { currency: account.currency.id })],
+    cliCommands: [liveDataCommand(account)],
     webviewLocalStorage: {
       hostnamePrefix: "perps.",
       entries: getPerpsLiveAppStorage(account),
