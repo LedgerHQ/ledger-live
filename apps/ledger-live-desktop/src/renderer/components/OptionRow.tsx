@@ -30,5 +30,3 @@ export const OptionRowDesc = styled(Box).attrs(() => ({
   grow: true,
   pl: 2,
 }))``;
-
-export default OptionRow;

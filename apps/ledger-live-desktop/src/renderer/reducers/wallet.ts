@@ -23,8 +23,6 @@ export {
   walletStateExportShouldDiffer,
   importWalletState,
   initialState,
-  updateRecentAddresses,
-  bulkSetAccountNames,
 } from "./wallet.core";
 
 export const walletSelector = (state: State): WalletState => state.wallet;

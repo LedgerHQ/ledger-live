@@ -4,7 +4,7 @@ import { PnLinfoDetail } from "./PnLinfoDetail";
 import { TrackScreen } from "@shared/analytics-react";
 import type { PnlDetailProps } from "./types";
 
-export type { PnlDetailItem, PnlDetailProps } from "./types";
+export type { PnlDetailProps } from "./types";
 
 export const PnlDetail = ({
   title,

@@ -1,6 +1,6 @@
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import {
-  getPriceChangeKeyForRange,
+  resolveRangePriceChange,
   resolveTrendPercentAndVariant,
 } from "../utils/marketPriceDerivation";
 
@@ -56,13 +56,46 @@ describe("resolveTrendPercentAndVariant", () => {
   });
 });
 
-describe("getPriceChangeKeyForRange", () => {
-  it("extends the shared base mapping with desktop-only ranges", () => {
-    expect(getPriceChangeKeyForRange("6m")).toBe(KeysPriceChange.sixMonths);
-    expect(getPriceChangeKeyForRange("5y")).toBe(KeysPriceChange.year);
+describe("resolveRangePriceChange", () => {
+  const priceChangePercentage: Record<KeysPriceChange, number> = {
+    [KeysPriceChange.hour]: 1,
+    [KeysPriceChange.day]: 2,
+    [KeysPriceChange.week]: 3,
+    [KeysPriceChange.month]: 4,
+    [KeysPriceChange.sixMonths]: 25,
+    [KeysPriceChange.year]: 100,
+  };
+
+  it("reads the six months price change for the 6m range", () => {
+    expect(
+      resolveRangePriceChange({
+        selectedRange: "6m",
+        chartPrices: [],
+        price: 125,
+        priceChangePercentage,
+      }),
+    ).toEqual({ percentage: 25, variationFiat: 25 });
   });
 
-  it("returns undefined for chart-derived ranges", () => {
-    expect(getPriceChangeKeyForRange("all")).toBeUndefined();
+  it("reads the one year price change for the 5y range", () => {
+    expect(
+      resolveRangePriceChange({
+        selectedRange: "5y",
+        chartPrices: [],
+        price: 200,
+        priceChangePercentage,
+      }),
+    ).toEqual({ percentage: 100, variationFiat: 100 });
+  });
+
+  it("derives the all range from the chart prices instead of the market price changes", () => {
+    expect(
+      resolveRangePriceChange({
+        selectedRange: "all",
+        chartPrices: [100, 150],
+        price: 200,
+        priceChangePercentage,
+      }),
+    ).toEqual({ percentage: 50, variationFiat: 50 });
   });
 });
