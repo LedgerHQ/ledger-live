@@ -1,14 +1,19 @@
 import { TypedDataEncoder, Wallet } from "ethers";
 import { from, lastValueFrom, throwError, toArray, type Observable } from "rxjs";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
+import {
+  PLACE_ORDER_SIGNED_AT_MS,
+  PLACE_ORDER_TYPED_DATA,
+} from "../__fixtures__/placeOrderTypedData";
 import { getBindingTypedData } from "../binding";
 import {
   predictionsSigningJob,
   type PredictionsSigningEvent,
+  type PredictionsSigningIntentInput,
   type PredictionsSigningJobState,
 } from "../signingIntent";
 import type { PredictionsTypedData } from "../typedData";
-import { PredictionsBindingSignerMismatch } from "../errors";
+import { PredictionsBindingSignerMismatch, PredictionsOrderExpired } from "../errors";
 
 const wallet = new Wallet(`0x${"11".repeat(32)}`);
 const connection = {
@@ -27,19 +32,27 @@ function signatureBy(signer: Wallet, { domain, types, message }: PredictionsType
   return signer.signingKey.sign(TypedDataEncoder.hash(domain, messageTypes, message)).serialized;
 }
 
+const ORDER_TYPED_DATA: PredictionsTypedData = {
+  ...PLACE_ORDER_TYPED_DATA,
+  domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 },
+};
+
 function run(
   signTypedData: (typedData: PredictionsTypedData) => Observable<PredictionsSigningEvent>,
-  typedData = getBindingTypedData(wallet.address),
+  { purpose, typedData }: Pick<PredictionsSigningIntentInput, "purpose" | "typedData"> = {
+    purpose: "binding",
+    typedData: getBindingTypedData(wallet.address),
+  },
 ) {
   const onResult = jest.fn();
   const job = predictionsSigningJob({
     deviceConnectionResult: connection,
     deviceExtractedContext: {} as never,
     input: {
-      purpose: "binding",
+      purpose,
       address: wallet.address,
       typedData,
-      signTypedData: (_connection, requested) => signTypedData(requested),
+      signTypedData: (_connection, typedData) => signTypedData(typedData),
     },
     onResult,
   });
@@ -79,7 +92,7 @@ describe("predictionsSigningJob", () => {
     const binding = getBindingTypedData(wallet.address);
     const typedData = { ...binding, message: { ...binding.message, notice: "Another notice" } };
     const signTypedData = jest.fn(deviceSigning(wallet));
-    const { job, onResult } = run(signTypedData, typedData);
+    const { job, onResult } = run(signTypedData, { purpose: "binding", typedData });
 
     await lastValueFrom(job.pipe(toArray()));
 
@@ -131,6 +144,34 @@ describe("predictionsSigningJob", () => {
     expect(states.at(-1)).toEqual(signingState(true));
     expect(signTypedData).toHaveBeenCalledTimes(2);
     expect(onResult).toHaveBeenCalledWith(expect.objectContaining({ type: "signed" }));
+  });
+
+  it("ends without asking the device when the order expired before a retry", async () => {
+    const now = jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS);
+    const signTypedData = jest
+      .fn<Observable<PredictionsSigningEvent>, [PredictionsTypedData]>()
+      .mockReturnValue(throwError(() => new Error("Bluetooth lost")));
+    const { job, onResult } = run(signTypedData, {
+      purpose: "order",
+      typedData: ORDER_TYPED_DATA,
+    });
+    const states: PredictionsSigningJobState[] = [];
+    const done = new Promise<void>(resolve => {
+      job.subscribe({ next: state => states.push(state), complete: resolve });
+    });
+    const error = states.at(-1);
+    if (error?.type !== "error") throw new Error("Expected an error state");
+
+    now.mockReturnValue(PLACE_ORDER_SIGNED_AT_MS + 2 * 60 * 1000);
+    error.retry();
+    await done;
+
+    expect(signTypedData).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith({
+      type: "expired",
+      error: expect.any(PredictionsOrderExpired),
+    });
+    now.mockRestore();
   });
 
   it("leaves a lost connection to the executor", async () => {

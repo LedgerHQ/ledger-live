@@ -1,4 +1,14 @@
+import {
+  PLACE_ORDER_SIGNED_AT_MS,
+  PLACE_ORDER_TYPED_DATA,
+} from "../__fixtures__/placeOrderTypedData";
 import type { PredictionsBindingAnswer } from "../binding";
+import type {
+  PredictionsOrderAction,
+  PredictionsOrderAnswer,
+  PredictionsOrderReport,
+} from "../order";
+import type { PredictionsTypedData } from "../typedData";
 import { handlers, type PredictionsSheet, type PredictionsUiHooks } from "../server";
 
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -33,6 +43,12 @@ function setup({ hasSeenIntro = false } = {}) {
       Promise.resolve(BINDING_ANSWER),
     ),
     "binding.reportSetup": jest.fn(),
+    "order.sign": jest.fn<Promise<PredictionsOrderAnswer>, [string, PredictionsTypedData]>(() =>
+      Promise.resolve({ signature: "0x5678", walletOrderId: "7" }),
+    ),
+    "order.report": jest.fn<Promise<PredictionsOrderAction>, [string, PredictionsOrderReport]>(() =>
+      Promise.resolve("retry"),
+    ),
   };
   const serverHandlers = handlers({ uiHooks }) as unknown as MockedHandlers;
   const onboard = (params?: unknown) => serverHandlers["custom.predictions.onboard"](params);
@@ -40,6 +56,9 @@ function setup({ hasSeenIntro = false } = {}) {
     serverHandlers["custom.predictions.bindAccount"](params);
   const reportSetup = (params?: unknown) =>
     serverHandlers["custom.predictions.reportSetup"](params);
+  const signOrder = (params?: unknown) => serverHandlers["custom.predictions.signOrder"](params);
+  const reportOrder = (params?: unknown) =>
+    serverHandlers["custom.predictions.reportOrder"](params);
   const getOpenSheet = () => {
     if (openSheet === null) throw new Error("No sheet is open");
     return openSheet;
@@ -55,6 +74,8 @@ function setup({ hasSeenIntro = false } = {}) {
     onboard,
     bindAccount,
     reportSetup,
+    signOrder,
+    reportOrder,
     getOpenSheet,
     acceptAllSteps,
   };
@@ -246,6 +267,89 @@ describe("Predictions Wallet API handlers", () => {
         expect(uiHooks["binding.reportSetup"]).not.toHaveBeenCalled();
       },
     );
+  });
+
+  describe("custom.predictions.signOrder", () => {
+    beforeEach(() => jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS));
+    afterEach(() => jest.restoreAllMocks());
+
+    const params = {
+      accountId: "wallet-account-id",
+      typedData: JSON.stringify(PLACE_ORDER_TYPED_DATA),
+    };
+
+    it("signs the order with the account and answers its signature", async () => {
+      const { signOrder, uiHooks } = setup();
+
+      await expect(signOrder(params)).resolves.toEqual({ signature: "0x5678", walletOrderId: "7" });
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith("wallet-account-id", {
+        ...PLACE_ORDER_TYPED_DATA,
+        domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 },
+      });
+    });
+
+    it("rejects when the user declines", async () => {
+      const { signOrder, uiHooks } = setup();
+      const refusal = Object.assign(new Error("declined"), { name: "UserRefusedOnDevice" });
+      uiHooks["order.sign"].mockRejectedValueOnce(refusal);
+
+      await expect(signOrder(params)).rejects.toBe(refusal);
+    });
+
+    it.each([
+      undefined,
+      {},
+      { ...params, accountId: "" },
+      { accountId: "wallet-account-id" },
+      { ...params, typedData: PLACE_ORDER_TYPED_DATA },
+      {
+        ...params,
+        typedData: JSON.stringify({ ...PLACE_ORDER_TYPED_DATA, primaryType: "Withdraw" }),
+      },
+      { ...params, extra: true },
+    ])("rejects invalid params without showing the prompt (%p)", async invalidParams => {
+      const { signOrder, uiHooks } = setup();
+
+      await expect(signOrder(invalidParams)).rejects.toMatchObject({ name: "ZodError" });
+      expect(uiHooks["order.sign"]).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("custom.predictions.reportOrder", () => {
+    it.each([
+      { status: "filled", shares: 3.7, price: 0.54 },
+      { status: "filled" },
+      { status: "not-filled" },
+      { status: "rejected", reason: "expired-signature" },
+      { status: "rejected", reason: "market-closed" },
+      { status: "unconfirmed" },
+    ])("shows how the order ended and answers the user's pick (%p)", async report => {
+      const { reportOrder, uiHooks } = setup();
+
+      await expect(reportOrder({ walletOrderId: "7", ...report })).resolves.toEqual({
+        action: "retry",
+      });
+      expect(uiHooks["order.report"]).toHaveBeenCalledWith("7", report);
+    });
+
+    it.each([
+      undefined,
+      {},
+      { walletOrderId: "7" },
+      { walletOrderId: "7", status: "filled", shares: 3.7 },
+      { walletOrderId: "7", status: "filled", shares: 0, price: 0.54 },
+      { walletOrderId: "7", status: "rejected" },
+      { walletOrderId: "7", status: "rejected", reason: "lost" },
+      { walletOrderId: "7", status: "not-filled", reason: "market-closed" },
+      { walletOrderId: "7", status: "cancelled" },
+      { status: "not-filled" },
+      { walletOrderId: "", status: "not-filled" },
+    ])("rejects an invalid report (%p)", async params => {
+      const { reportOrder, uiHooks } = setup();
+
+      await expect(reportOrder(params)).rejects.toMatchObject({ name: "ZodError" });
+      expect(uiHooks["order.report"]).not.toHaveBeenCalled();
+    });
   });
 
   describe("custom.predictions.close", () => {

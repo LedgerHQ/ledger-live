@@ -13,19 +13,21 @@ type ResultRequest<Result, Answer> = {
   reportedResult: Result | null;
   /** What the sheet shows: null while loading. */
   result: Result | null;
+  isTimedOut: boolean;
+  timeoutTimer: ReturnType<typeof setTimeout> | undefined;
   closed: Promise<Answer>;
   resolveClosed: (answer: Answer) => void;
 };
 
 /** What the sheet shows. `key` changes with every request and result. */
-export type ShownResult<Result> = Readonly<{ key: string; result: Result | null }>;
+export type ShownResult<Result> = Readonly<{ id: number; key: string; result: Result | null }>;
 
 export type PendingResultStore<Result, Answer> = Readonly<{
   /** Replaces any open request, so whoever waits for it can go on. Returns the request's id. */
   start: () => number;
   /**
-   * Resolves once the user closes the sheet, or right away when `id` isn't open. Only the first
-   * result shows, once the loading has been on screen long enough.
+   * Resolves once the user closes the sheet, or right away when `id` isn't open or timed out. Only
+   * the first result shows, once the loading has been on screen long enough.
    */
   report: (id: number, result: Result) => Promise<Answer>;
   /** The open request came on screen: its minimum loading time starts now. */
@@ -33,6 +35,8 @@ export type PendingResultStore<Result, Answer> = Readonly<{
   /** Closes the sheet and answers whoever waits for it. */
   close: (answer: Answer) => void;
   dismiss: () => void;
+  /** Closes the sheet with `answer` when `id` is still the open request. */
+  closeIfShown: (id: number, answer: Answer) => void;
   dismissIfShown: (id: number) => void;
   /** Once closed, the last state stays rendered so the sheet doesn't animate out empty. */
   useShownResult: () => Readonly<{ isOpen: boolean; shownResult: ShownResult<Result> | null }>;
@@ -45,8 +49,10 @@ export type PendingResultStore<Result, Answer> = Readonly<{
  */
 export function createPendingResultStore<Result, Answer>({
   dismissedAnswer,
+  timeout,
 }: Readonly<{
   dismissedAnswer: Answer;
+  timeout?: Readonly<{ ms: number; result: Result }>;
 }>): PendingResultStore<Result, Answer> {
   let currentRequest: ResultRequest<Result, Answer> | null = null;
   let lastRequestId = 0;
@@ -80,10 +86,20 @@ export function createPendingResultStore<Result, Answer>({
     }, remainingMs);
   };
 
+  const timeOut = (id: number, result: Result) => {
+    const request = currentRequest;
+    if (request?.id !== id || request.reportedResult !== null) return;
+
+    const timedOutRequest = { ...request, reportedResult: result, isTimedOut: true };
+    setCurrentRequest(timedOutRequest);
+    showResultOnceSeenLongEnough(timedOutRequest);
+  };
+
   const close = (answer: Answer) => {
     const request = currentRequest;
     if (!request) return;
 
+    clearTimeout(request.timeoutTimer);
     setCurrentRequest(null);
     request.resolveClosed(answer);
   };
@@ -98,20 +114,26 @@ export function createPendingResultStore<Result, Answer>({
         resolveClosed = resolve;
       });
       lastRequestId += 1;
+      const id = lastRequestId;
       setCurrentRequest({
-        id: lastRequestId,
+        id,
         presentedAt: null,
         reportedResult: null,
         result: null,
+        isTimedOut: false,
+        timeoutTimer: timeout && setTimeout(() => timeOut(id, timeout.result), timeout.ms),
         closed,
         resolveClosed,
       });
-      displacedRequest?.resolveClosed(dismissedAnswer);
-      return lastRequestId;
+      if (displacedRequest) {
+        clearTimeout(displacedRequest.timeoutTimer);
+        displacedRequest.resolveClosed(dismissedAnswer);
+      }
+      return id;
     },
     report: (id, result) => {
       const request = currentRequest;
-      if (request?.id !== id) return Promise.resolve(dismissedAnswer);
+      if (request?.id !== id || request.isTimedOut) return Promise.resolve(dismissedAnswer);
 
       if (request.reportedResult === null) {
         const reportedRequest = { ...request, reportedResult: result };
@@ -130,6 +152,9 @@ export function createPendingResultStore<Result, Answer>({
     },
     close,
     dismiss,
+    closeIfShown: (id, answer) => {
+      if (currentRequest?.id === id) close(answer);
+    },
     dismissIfShown: id => {
       if (currentRequest?.id === id) dismiss();
     },
@@ -139,6 +164,7 @@ export function createPendingResultStore<Result, Answer>({
         request === null
           ? null
           : {
+              id: request.id,
               key: `${request.id}-${request.result === null ? "loading" : "result"}`,
               result: request.result,
             };

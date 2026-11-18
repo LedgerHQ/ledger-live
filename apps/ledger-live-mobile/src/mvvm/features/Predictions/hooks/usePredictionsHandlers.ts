@@ -9,18 +9,24 @@ import {
 } from "@features/platform-predictions";
 import { useStore } from "~/context/hooks";
 import { selectHasSeenIntro, markPredictionsIntroSeen } from "@domain/entity-predictions";
-import { usePredictionsSetupHooks, usePredictionsSheetHooks } from "@features/flow-predictions";
+import {
+  usePredictionsOrderHooks,
+  usePredictionsSetupHooks,
+  usePredictionsSheetHooks,
+} from "@features/flow-predictions";
 import { accountsSelector } from "~/reducers/accounts";
 import {
   findPredictionsAccount,
   predictionsSigningRequests,
 } from "../signingIntent/signingRequests";
+import { useOpenPredictionsOrderResult } from "./useOpenPredictionsOrderResult";
 
 export function usePredictionsHandlers(): WalletAPICustomHandlers {
   const navigation = useNavigation();
   const store = useStore();
   const sheetHooks = usePredictionsSheetHooks();
   const setupHooks = usePredictionsSetupHooks();
+  const orderHooks = usePredictionsOrderHooks();
   const bindingSigner = useMemo(
     () =>
       createPredictionsSigner({
@@ -33,8 +39,21 @@ export function usePredictionsHandlers(): WalletAPICustomHandlers {
       }),
     [store, setupHooks],
   );
+  const orderSigner = useMemo(
+    () =>
+      createPredictionsSigner({
+        requests: predictionsSigningRequests,
+        purpose: "order",
+        findAccount: walletAccountId =>
+          findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
+        refusal: () => new UserRefusedOnDevice(),
+      }),
+    [store],
+  );
 
+  useOpenPredictionsOrderResult(orderHooks.ownsOrder);
   useEffect(() => bindingSigner.cancelOpened, [bindingSigner]);
+  useEffect(() => orderSigner.cancelOpened, [orderSigner]);
 
   return useMemo<WalletAPICustomHandlers>(
     () =>
@@ -49,8 +68,13 @@ export function usePredictionsHandlers(): WalletAPICustomHandlers {
               getBindingTypedData(account.freshAddress),
             ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
+          "order.sign": async (walletAccountId, typedData) => {
+            const { signature } = await orderSigner.sign(walletAccountId, () => typedData);
+            return { signature, walletOrderId: orderHooks.startOrder() };
+          },
+          "order.report": orderHooks["order.report"],
         },
       }),
-    [navigation, sheetHooks, setupHooks, store, bindingSigner],
+    [navigation, sheetHooks, setupHooks, orderHooks, store, bindingSigner, orderSigner],
   );
 }

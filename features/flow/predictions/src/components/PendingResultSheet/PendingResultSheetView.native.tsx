@@ -19,21 +19,30 @@ function SheetBody({ children }: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
+type PendingResultSheetViewNativeProps = PendingResultSheetViewProps &
+  Readonly<{ onHidden?: () => void }>;
+
+// Taken, so the Android back doesn't reach the screen behind a locked sheet.
+const ignoreBack = () => {};
+
 export function PendingResultSheetView({
   isOpen,
   contentKey,
+  isLocked = false,
+  onHidden,
   onPresented,
   onDismiss,
   testID,
   children,
-}: PendingResultSheetViewProps) {
+}: PendingResultSheetViewNativeProps) {
   // Open isn't on screen: it can wait behind another sheet or be hidden. Only a sheet the user sees
   // takes the Android back or starts its loading time.
   const [isPresented, setIsPresented] = useState(false);
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset } = useSafeAreaInsets();
 
-  useDismissOnAndroidBack(isOpen && isPresented, onDismiss);
+  // A locked sheet keeps taking it while it leaves, until it's hidden.
+  useDismissOnAndroidBack(isPresented && (isOpen || isLocked), isLocked ? ignoreBack : onDismiss);
 
   // Also when a new request replaces the one on screen, which doesn't open the sheet again.
   useEffect(() => {
@@ -43,10 +52,13 @@ export function PendingResultSheetView({
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onHeaderClosePressed={onDismiss}
-      onBackdropPress={onDismiss}
+      onHeaderClosePressed={isLocked ? undefined : onDismiss}
+      onBackdropPress={isLocked ? undefined : onDismiss}
       onOpened={() => setIsPresented(true)}
-      onModalHide={() => setIsPresented(false)}
+      onModalHide={() => {
+        setIsPresented(false);
+        onHidden?.();
+      }}
       enablePanDownToClose={false}
       // The live app waits for the user to close it, so it comes back after a lock or another
       // screen.
@@ -55,6 +67,9 @@ export function PendingResultSheetView({
       // Lumen's static preset can force Android dynamic sheets full height.
       maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset}
       contentHasBottomSpace
+      noCloseButton={isLocked}
+      hideHandle={isLocked}
+      preventBackdropClick={isLocked}
       testID={testID}
     >
       {contentKey === undefined ? null : <SheetBody key={contentKey}>{children}</SheetBody>}

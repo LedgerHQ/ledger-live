@@ -9,7 +9,6 @@ import type {
   PredictionsSigningPrompt,
   PredictionsSigningPurpose,
 } from "@features/platform-predictions";
-import { SIGNING_PURPOSES } from "@features/platform-predictions";
 import { InfoState } from "@shared/ui-info-state";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DeviceActionContent } from "LLD/components/DeviceActionContent";
@@ -62,8 +61,6 @@ function Step({
   onClose: () => void;
 }>) {
   const { t } = useTranslation();
-  const keys = SIGNING_PURPOSES[purpose].promptKeys;
-
   const closeCta = {
     label: t("common.close"),
     onPress: onClose,
@@ -73,7 +70,12 @@ function Step({
   switch (jobState.type) {
     case "signing": {
       if (!jobState.isAwaitingConfirmation) {
-        return <LoadingContent title={t(keys.preparing)} testID="predictions-signing-preparing" />;
+        return (
+          <LoadingContent
+            title={t(`predictions.${purpose}.preparing`)}
+            testID="predictions-signing-preparing"
+          />
+        );
       }
       const deviceModelId = dmkToLedgerDeviceIdMap[jobState.deviceModelId];
       return (
@@ -84,8 +86,10 @@ function Step({
             action="continue"
             deviceModelId={deviceModelId}
             deviceName={jobState.deviceName}
-            title={t(keys.title, { productName: getProductName(deviceModelId) })}
-            description={t(keys.description)}
+            title={t(`predictions.${purpose}.title`, {
+              productName: getProductName(deviceModelId),
+            })}
+            description={t(`predictions.${purpose}.description`)}
             testID="predictions-signing-confirm"
           />
         </>
@@ -126,8 +130,8 @@ function Step({
         <InfoState
           preset="error"
           size="hug"
-          title={t(keys.mismatchTitle)}
-          description={t(keys.mismatchDescription)}
+          title={t(`predictions.${purpose}.mismatch.title`)}
+          description={t(`predictions.${purpose}.mismatch.description`)}
           primaryCta={closeCta}
           testID="predictions-signing-mismatch"
         />

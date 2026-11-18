@@ -126,6 +126,7 @@ export enum ScreenName {
   PerpsDeposit = "PerpsDeposit",
   PerpsWithdraw = "PerpsWithdraw",
   PerpsTransactionSigned = "PerpsTransactionSigned",
+  PredictionsOrderResult = "PredictionsOrderResult",
   EditAccountName = "EditAccountName",
   EditDeviceName = "EditDeviceName",
   Card = "Card",

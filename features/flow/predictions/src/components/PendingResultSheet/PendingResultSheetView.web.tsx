@@ -7,6 +7,7 @@ export function PendingResultSheetView({
   isOpen,
   contentKey,
   title,
+  isLocked = false,
   onPresented,
   onDismiss,
   testID,
@@ -29,10 +30,17 @@ export function PendingResultSheetView({
         aria-labelledby={undefined}
         aria-label={title}
         onInteractOutside={e => e.preventDefault()}
+        onEscapeKeyDown={e => {
+          if (isLocked) e.preventDefault();
+        }}
         data-testid={testID}
       >
         <DialogBackgroundToneProvider>
-          <DialogHeader density="compact" className="mb-0" />
+          {/* Hidden rather than left out: the header also registers the dialog's title. */}
+          <div hidden={isLocked}>
+            <DialogHeader density="compact" className="mb-0" />
+          </div>
+          {isLocked ? <div className="h-64" /> : null}
           <DialogBody className="mb-0 px-24">
             {contentKey === undefined ? null : (
               <div key={contentKey} className="flex animate-fade-in flex-col">
