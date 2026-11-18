@@ -15,7 +15,7 @@ import {
 } from "../usePerpsWithdrawSignViewModel";
 
 const mockIsBroadcastDisabled = jest.fn();
-jest.mock("../../../../../utils/isBroadcastDisabled", () => ({
+jest.mock("LLM/features/Perps/utils/isBroadcastDisabled", () => ({
   isBroadcastDisabled: () => mockIsBroadcastDisabled(),
 }));
 

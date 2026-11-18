@@ -387,15 +387,17 @@ describe("usePerpsDepositExecution", () => {
     );
   });
 
-  it("does not record the swap when transaction broadcast is disabled", async () => {
-    await signWith({ signedOperation: { operation } }, true);
+  it("does not record the swap or report its id to the live app when broadcast is disabled", async () => {
+    const request = beginDepositRequest();
+
+    const { onDone } = await signWith({ signedOperation: { operation } }, true);
 
     expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
+    await expect(request).resolves.toEqual({ swapId: undefined, amountTo: "0.019" });
+    expect(onDone).toHaveBeenCalledWith({ swapId: undefined });
   });
 
   it("still hands the provider swap id to executeSwap when broadcast is disabled", async () => {
-    mockSwapSuccess.mockClear();
-
     await signWith({ signedOperation: { operation } }, true);
 
     expect(mockSwapSuccess).toHaveBeenCalledWith(expect.objectContaining({ swapId: "swap-1" }));
