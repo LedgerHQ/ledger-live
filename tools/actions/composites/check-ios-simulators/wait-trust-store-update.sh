@@ -49,8 +49,17 @@ to_epoch() {
   date -j -f "%Y-%m-%d %H:%M:%S" "${1:0:19}" +%s 2>/dev/null
 }
 
+remaining() {
+  echo $((WAIT_STARTED_AT + MAX_WAIT - $(date +%s)))
+}
+
+# The query timeout never runs past the wait's deadline.
 trust_logs() {
-  with_timeout "$LOG_SHOW_TIMEOUT" "$SIMCTL" spawn "$1" log show --last 20m --style compact \
+  local timeout
+  timeout="$(remaining)"
+  ((timeout < LOG_SHOW_TIMEOUT)) || timeout=$LOG_SHOW_TIMEOUT
+  ((timeout > 0)) || return 0
+  with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 20m --style compact \
     --predicate "(process == \"trustd\" AND (eventMessage CONTAINS \"$TRUSTD_START_MARKER\" OR eventMessage CONTAINS \"$START_MARKER\" OR eventMessage CONTAINS \"SecPinningDb\")) OR eventMessage CONTAINS \"trustd returned\"" \
     2>/dev/null | grep -E "^[0-9]{4}-" || true
 }
@@ -84,18 +93,21 @@ WAIT_STARTED_AT="$(date +%s)"
 pending=()
 for ((i = 1; i <= N; i++)); do pending+=("$i"); done
 
-while ((${#pending[@]} > 0)); do
-  waited=$(($(date +%s) - WAIT_STARTED_AT))
-  if ((waited >= MAX_WAIT)); then
-    for i in "${pending[@]}"; do
-      echo "::warning::$(sim_name "$i") had not finished its trust store update after ${waited}s: its first TLS connections may fail"
-    done
-    exit 0
-  fi
+warn_and_exit() {
+  local waited=$(($(date +%s) - WAIT_STARTED_AT))
+  for i in "$@"; do
+    echo "::warning::$(sim_name "$i") had not finished its trust store update after ${waited}s: its first TLS connections may fail"
+  done
+  exit 0
+}
 
+while ((${#pending[@]} > 0)); do
   still_pending=()
   for i in "${pending[@]}"; do
+    # Checked before each simulator: one slow log query must not push the wait past its deadline.
+    if (($(remaining) <= 0)); then still_pending+=("$i"); continue; fi
     name="$(sim_name "$i")"
+    waited=$(($(date +%s) - WAIT_STARTED_AT))
     case "$(update_state "$name")" in
       finished) echo "✅ $name finished its trust store update (waited ${waited}s)" ;;
       not-started) echo "✅ $name has no trust store update to apply (waited ${waited}s)" ;;
@@ -103,5 +115,10 @@ while ((${#pending[@]} > 0)); do
     esac
   done
   pending=(${still_pending[@]+"${still_pending[@]}"})
-  if ((${#pending[@]} > 0)); then sleep "$POLL_INTERVAL"; fi
+  ((${#pending[@]} > 0)) || break
+
+  left="$(remaining)"
+  ((left > 0)) || warn_and_exit "${pending[@]}"
+  ((left < POLL_INTERVAL)) || left=$POLL_INTERVAL
+  sleep "$left"
 done
