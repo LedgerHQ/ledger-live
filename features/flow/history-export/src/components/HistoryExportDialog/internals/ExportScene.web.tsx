@@ -7,12 +7,12 @@ import {
   DialogBody,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import type { ExportAccount } from "../../../useHistoryExportViewModel";
+import type { HistoryExportAccount } from "../../../model/ports";
 import { ExportDescription } from "./ExportDescription";
 import { ExportAccountList } from "./ExportAccountList";
 
 type ExportSceneProps = Readonly<{
-  accounts: readonly ExportAccount[];
+  accounts: readonly HistoryExportAccount[];
   checkedIds: string[];
   allSelected: boolean;
   disabled: boolean;

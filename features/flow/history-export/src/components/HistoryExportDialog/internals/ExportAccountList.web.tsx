@@ -1,10 +1,10 @@
 import React from "react";
-import type { ExportAccount } from "../../../useHistoryExportViewModel";
+import type { HistoryExportAccount } from "../../../model/ports";
 import { ExportAccountsHeader } from "./ExportAccountsHeader";
 import { ExportAccountListItem } from "./ExportAccountListItem";
 
 type ExportAccountListProps = Readonly<{
-  accounts: readonly ExportAccount[];
+  accounts: readonly HistoryExportAccount[];
   checkedIds: string[];
   allSelected: boolean;
   toggleAccount: (id: string) => void;

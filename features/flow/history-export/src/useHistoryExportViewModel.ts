@@ -7,10 +7,8 @@ import {
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
 } from "./constants";
 
-export type ExportAccount = HistoryExportAccount;
-
 export type HistoryExportViewModel = {
-  accounts: readonly ExportAccount[];
+  accounts: readonly HistoryExportAccount[];
   checkedIds: string[];
   allSelected: boolean;
   disabled: boolean;

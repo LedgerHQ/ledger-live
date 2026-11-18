@@ -8,10 +8,10 @@ import {
   Checkbox,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { ExportAccount } from "../../../useHistoryExportViewModel";
+import type { HistoryExportAccount } from "../../../model/ports";
 
 type ExportAccountListItemProps = Readonly<{
-  account: ExportAccount;
+  account: HistoryExportAccount;
   checked: boolean;
   onToggle: () => void;
 }>;
