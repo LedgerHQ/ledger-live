@@ -16,7 +16,6 @@ import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemp
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
 import { flushThen, setupFlushOnQuit } from "./flushOnQuit";
-import debounce from "lodash/debounce";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -180,28 +179,16 @@ app.on("ready", async () => {
   await applyWindowParams(windowParams, settings);
 
   // Setup window event handlers
-  window.on(
-    "resize",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [width, height] = window.getSize();
-      db.setKey("windowParams", `${window.name}.dimensions`, {
-        width,
-        height,
-      });
-    }, 300),
-  );
-  window.on(
-    "move",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [x, y] = window.getPosition();
-      db.setKey("windowParams", `${window.name}.positions`, {
-        x,
-        y,
-      });
-    }, 300),
-  );
+  window.on("resize", () => {
+    if (!window || window.isDestroyed()) return;
+    const [width, height] = window.getSize();
+    void db.setKey("windowParams", `${window.name}.dimensions`, { width, height });
+  });
+  window.on("move", () => {
+    if (!window || window.isDestroyed()) return;
+    const [x, y] = window.getPosition();
+    void db.setKey("windowParams", `${window.name}.positions`, { x, y });
+  });
 
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps

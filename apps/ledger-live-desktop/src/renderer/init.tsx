@@ -40,7 +40,7 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import dbMiddleware from "~/renderer/middlewares/db";
+import dbMiddleware, { flushCryptoAssetsCache } from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
@@ -112,7 +112,10 @@ async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
 
-  db.onFlushRequest(flushPendingWrites);
+  db.onFlushRequest(() => {
+    flushCryptoAssetsCache();
+    return flushPendingWrites();
+  });
 
   const logVerbose = getEnv("VERBOSE");
 
