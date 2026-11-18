@@ -109,7 +109,13 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
   them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
   43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
-  read from the log, ~40 s on the screen.
+  read from the log, ~40 s on the screen. Both builds are installed first, then warmed up in turn
+  like the rounds, on iOS too (not measured there). When each build warmed up right after its
+  install, the first one idled ~2 min through the other's install and warm-ups, and its round 0 was
+  ~60 ms slower than its later rounds, the second's no slower beyond noise (median of 30 Android A/A
+  runs, e.g. 44243454200). Warmed up in turn, it is ~15 ms faster than its later rounds, against
+  ~60 ms slower for the old order in the same wave (10 runs against 6, e.g. 44281313344 against
+  44281225038), with about the same A/A spread.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
   read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
   the simulator's `log show`), which the app writes as soon as the startup is over: a line per

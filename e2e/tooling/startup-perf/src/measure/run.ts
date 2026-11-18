@@ -295,6 +295,19 @@ async function installAndInject({
   screenReadSinceLaunch = false;
 }
 
+/** Launches each build once on its device, in the phase's order: a warm-up round or a measured one. */
+async function launchEach({
+  scenario,
+  phase,
+  round,
+  warmup,
+}: Pick<SampleMeta, "scenario" | "phase" | "round" | "warmup">): Promise<void> {
+  const { placement, order } = layout(phase);
+  for (const side of order) {
+    await sample({ scenario, phase, round, side, device: placement[side], warmup });
+  }
+}
+
 async function measureScenario(scenario: string): Promise<void> {
   const userdata = await loadUserdata({
     dir: insideWorkingDir(opts["userdata-dir"]),
@@ -307,16 +320,14 @@ async function measureScenario(scenario: string): Promise<void> {
     // A measured launch never follows one on the same device; a warm-up after a check can.
     const { placement, order } = layout(phase);
     for (const side of order) {
-      const device = placement[side];
-      await installAndInject({ scenario, side, device, userdata });
-      for (let w = 0; w < WARMUPS; w++) {
-        await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
-      }
+      await installAndInject({ scenario, side, device: placement[side], userdata });
+    }
+    // In turn, like the rounds: no build starts round 0 after idling through the other's warm-ups.
+    for (let w = 0; w < WARMUPS; w++) {
+      await launchEach({ scenario, phase, round: -1 - w, warmup: true });
     }
     for (let round = 0; round < PAIRS / 2; round++) {
-      for (const side of order) {
-        await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
-      }
+      await launchEach({ scenario, phase, round, warmup: false });
     }
     // After the rounds, so both builds' warm-ups match, and on iOS the slower launch that follows a
     // screen read is the next injection. Each build is checked once per scenario.
