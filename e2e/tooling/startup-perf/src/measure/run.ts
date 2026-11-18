@@ -90,8 +90,7 @@ const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
 let screenReadSinceLaunch = false;
 // Becomes "screen" for the rest of a scenario once a build not known to write startup lines in it
-// writes none (a build before #24576): both builds are then read on the screen, so every pair stays
-// even.
+// writes none: both builds are then read on the screen, so every pair stays even.
 let read = READ;
 const lineWriters = createStartupLineWriters();
 

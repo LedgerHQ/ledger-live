@@ -6,10 +6,14 @@ import {
   gateBridgeOnWsPort,
   JS_START_LINE,
   logJsStartEpoch,
+  logStartupForMeasurement,
+  logsStartupLikeHarness,
   prodLikeEnv,
   readdLive36190,
   realBlur,
   RSPACK_LINE,
+  STARTUP_END_LINE,
+  STARTUP_TRY_LINE,
 } from "./prepare-build.mts";
 import { linesOf, textOf } from "./step.mts";
 
@@ -126,6 +130,59 @@ describe("logJsStartEpoch", () => {
       'const startupPerfJsStart = logStartupEvent("Before js imports");',
       "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
     ]);
+  });
+});
+
+describe("logStartupForMeasurement", () => {
+  const TRACKING = "      DdRumReactNavigationTracking.startTrackingViews(navigationRef.current);";
+
+  it("logs the startup as soon as it is over, first in the try as the app does", () => {
+    const lines = linesOf(
+      logStartupForMeasurement(textOf([STARTUP_END_LINE, STARTUP_TRY_LINE, TRACKING])),
+    );
+    assert.deepEqual(lines.slice(0, 2), [STARTUP_END_LINE, STARTUP_TRY_LINE]);
+    assert.equal(lines.at(-1), TRACKING);
+    const added = lines.slice(2, -1);
+    assert.ok(added.every(line => line.startsWith("      ")));
+    assert.match(added.join("\n"), /const startupPerfEvents = resolveStartupEvents\(\);/);
+    assert.match(
+      added.join("\n"),
+      /startupPerfTime = startupPerfEvents\.find\(e => e\.event === eventName\)\?\.time \?\? 0;/,
+    );
+    assert.match(
+      added.join("\n"),
+      /startupPerfHook\?\.\(`\[startup\] \$\{e\.event\} \(x\$\{e\.count\}\): \$\{e\.time\} ms`, 3\);/,
+    );
+    assert.match(
+      added.at(-1) ?? "",
+      /startupPerfHook\?\.\(`\[startup\] App startup time: \$\{startupPerfLast\}`, 3\);$/,
+    );
+  });
+
+  it("adds nothing without the try that follows the startup end", () => {
+    const source = textOf([STARTUP_END_LINE, TRACKING]);
+    assert.equal(logStartupForMeasurement(source), source);
+  });
+});
+
+describe("logsStartupLikeHarness", () => {
+  // The app's writeStartupToDeviceLog.ts, from #24576 on.
+  const HELPER = textOf([
+    'export const STARTUP_LOG_PREFIX = "[startup]";',
+    "  const lines = [",
+    "    ...events.map(({ event, time, count }) => `${event} (x${count}): ${time} ms`),",
+    "    `App startup time: ${appStartupTime} ms, ${events.length} events`,",
+    "  ];",
+  ]);
+
+  it("accepts the lines the harness parses", () => {
+    assert.equal(logsStartupLikeHarness(HELPER), true);
+  });
+
+  it("rejects another prefix, event line or last line", () => {
+    assert.equal(logsStartupLikeHarness(HELPER.replace('"[startup]"', '"[boot]"')), false);
+    assert.equal(logsStartupLikeHarness(HELPER.replace(" (x${count})", "")), false);
+    assert.equal(logsStartupLikeHarness(HELPER.replace("App startup time", "Startup")), false);
   });
 });
 

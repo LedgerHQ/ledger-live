@@ -44,7 +44,7 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
   const notes: string[] = [];
   if (reads.noLogLine.length) {
     notes.push(
-      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log (built before #24576?), so from then on both builds were read from the Debug screen.**`,
+      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log, so from then on both builds were read from the Debug screen.**`,
     );
   }
   const fallbacks = reads.fallbacks.A + reads.fallbacks.B;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
@@ -14,8 +14,11 @@ const PREPARED_FILES = [
   "rspack.config.mjs",
   "src/index.tsx",
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
+  "src/mvvm/utils/logLastStartupEvents.ts",
   "src/components/DBSave.ts",
 ];
+// Only in the apps that log the startup themselves.
+const APP_STARTUP_LOG = "src/mvvm/utils/writeStartupToDeviceLog.ts";
 const TRUSTCHAIN_SAVED_AT_START = /lense: trustchainStoreSelector,\n\s*saveAtStart: true,/;
 
 const read = (root: string, file: string) => readFileSync(path.join(root, file), "utf8");
@@ -27,7 +30,8 @@ function prepare(env: Record<string, string>, check: (app: string) => void): voi
   const dir = mkdtempSync(path.join(tmpdir(), "startup-perf-"));
   const app = path.join(dir, "app");
   try {
-    for (const file of PREPARED_FILES) {
+    for (const file of [...PREPARED_FILES, APP_STARTUP_LOG]) {
+      if (file === APP_STARTUP_LOG && !existsSync(path.join(APP, file))) continue;
       mkdirSync(path.dirname(path.join(app, file)), { recursive: true });
       copyFileSync(path.join(APP, file), path.join(app, file));
     }
@@ -74,6 +78,10 @@ describe("the mobile app of this checkout", () => {
       assert.match(read(app, "src/index.tsx"), /LaunchArguments\.value\(\)\["wsPort"\]/);
       assert.doesNotMatch(read(app, ".env.mock.prerelease"), /^(MOCK|DETOX)=/m);
       assert.match(read(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"), /JS start epoch/);
+      assert.match(
+        read(app, "src/mvvm/utils/logLastStartupEvents.ts"),
+        /\[startup\] App startup time|writeStartupToDeviceLog\(eventName\)/,
+      );
       assert.match(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
     });
   });
