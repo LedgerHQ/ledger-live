@@ -27,6 +27,7 @@ import { dismissedContentCardsSelector } from "~/reducers/settings";
 import { getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { clearDismissedContentCards } from "~/actions/settings";
 import { replaceBrazeGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
+import { markBrazePublish } from "LLM/utils/logStartup/logBrazePublish";
 
 const EMPTY_DISMISSED_CONTENT_CARDS = {};
 
@@ -74,6 +75,12 @@ export const useDynamicContentLogic = () => {
         filterByPage(mobileContentCards, ContentCardLocation.GenericAwarenessModal),
       );
 
+      markBrazePublish(
+        `built (${mobileContentCards.length} mobile, ${walletCards.length} wallet, ` +
+          `${assetCards.length} asset, ${notificationCards.length} notification, ` +
+          `${categoriesCards.length} category, ${landingPageStickyCtaCards.length} sticky, ` +
+          `${genericAwarenessModalContentCards.length} modal)`,
+      );
       dispatch(setDynamicContentCategoriesCards(categoriesCards));
       dispatch(setDynamicContentMobileCards(mobileContentCards));
       dispatch(setDynamicContentWalletCards(walletCards));

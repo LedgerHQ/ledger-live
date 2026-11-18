@@ -11,6 +11,11 @@ import {
   filterEligibleContentCards,
   type ContentCardEligibilityEvaluation,
 } from "LLM/features/DynamicContent/utils/filterEligibleContentCards";
+import {
+  endBrazePublish,
+  markBrazePublish,
+  startBrazePublish,
+} from "LLM/utils/logStartup/logBrazePublish";
 
 export function useBrazeContentCardsProviderViewModel() {
   const { updateDynamicContent, clearOldDismissedContentCards, setDynamicContentLoading } =
@@ -37,13 +42,16 @@ export function useBrazeContentCardsProviderViewModel() {
     eligibilityContextRef.current = eligibilityContext;
   }, [eligibilityContext]);
 
-  const publishEligibleCards = useCallback((cards: ContentCard[]) => {
+  const publishEligibleCards = useCallback((cards: ContentCard[], reason = "cards") => {
+    startBrazePublish(reason, cards.length);
     const { eligibleCards, evaluations } = filterEligibleContentCards(
       cards,
       eligibilityContextRef.current,
     );
+    markBrazePublish(`filtered (${eligibleCards.length} eligible)`);
     setEligibilityEvaluations(evaluations);
     updateDynamicContentRef.current(eligibleCards);
+    endBrazePublish();
   }, []);
 
   const handleContentCardsUpdated = useCallback(
@@ -134,7 +142,7 @@ export function useBrazeContentCardsProviderViewModel() {
   useEffect(() => {
     const cards = lastFetchedCardsRef.current;
     if (!cards) return;
-    publishEligibleCards(cards);
+    publishEligibleCards(cards, "eligibility");
   }, [eligibilityContext, publishEligibleCards]);
 
   return {
