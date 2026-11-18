@@ -43,6 +43,7 @@ import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-prediction
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
+import { useSanctionSimulation } from "../../../Receive/hooks/useSanctionSimulation";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useAppTogglesTool } from "../../AppToggles/useAppTogglesTool";
@@ -144,7 +145,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountStatusToolProps = useAccountStatusToolProps();
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
-  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger());
+  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger(), useSanctionSimulation());
   const predictionsSetupHooks = usePredictionsSetupHooks();
   const predictionsSetup = useMemo<PredictionsSetup>(
     () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),

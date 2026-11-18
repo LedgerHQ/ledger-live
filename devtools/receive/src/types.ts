@@ -30,8 +30,16 @@ export interface ReceiveTriggerSectionProps {
   readonly onOpenDeeplink: (url: string) => void;
 }
 
+/** Held by the host for the session: its receive screen reads it in place of the sanctions list. */
+export interface ReceiveSanctionsSectionProps {
+  /** Every address the receive screen shows counts as sanctioned. */
+  readonly isSimulated: boolean;
+  readonly setSimulated: (isSimulated: boolean) => void;
+}
+
 /** One key per section, so a new receive control adds a key without touching the others. */
 export interface ReceiveToolProps {
   readonly flag: ReceiveFlagSectionProps;
   readonly trigger: ReceiveTriggerSectionProps;
+  readonly sanctions: ReceiveSanctionsSectionProps;
 }

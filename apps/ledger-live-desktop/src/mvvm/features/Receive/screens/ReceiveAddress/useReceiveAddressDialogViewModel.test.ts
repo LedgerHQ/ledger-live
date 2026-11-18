@@ -9,9 +9,10 @@ import {
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
+import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
 import { useReceiveAddressDialogViewModel } from "./useReceiveAddressDialogViewModel";
 
 jest.mock("~/renderer/families", () => ({ useLLDCoinFamily: jest.fn() }));
@@ -61,5 +62,15 @@ describe("useReceiveAddressDialogViewModel", () => {
     expect(receiveAddressConfig).toHaveBeenCalledWith(
       expect.objectContaining({ descriptor, asset, legacyAccount: ethAccount }),
     );
+  });
+
+  it("treats every address as sanctioned while DevTools simulates it", async () => {
+    jest.mocked(useLLDCoinFamily).mockReturnValue({});
+    const { result } = renderViewModel();
+    const tool = renderHook(() => useSanctionSimulation());
+
+    act(() => tool.result.current.setSimulated(true));
+    await expect(result.current.checkAddressSanctioned?.("0xabc")).resolves.toBe(true);
+    act(() => tool.result.current.setSimulated(false));
   });
 });

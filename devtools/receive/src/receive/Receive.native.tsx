@@ -60,7 +60,7 @@ function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset, sanctions } = useReceiveToolViewModel(props);
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -113,6 +113,18 @@ export function Receive(props: ReceiveToolProps) {
             ))}
           </Box>
         )}
+      </Section>
+      <Section title={copy.sanctionsTitle} description={copy.sanctionsDescription}>
+        <Box lx={ROW_LX}>
+          <Text typography="body2" lx={{ color: "base" }} style={{ flexShrink: 1 }}>
+            {copy.sanctionsSimulated}
+          </Text>
+          <Switch
+            accessibilityLabel={copy.sanctionsSimulated}
+            checked={sanctions.isSimulated}
+            onCheckedChange={sanctions.setSimulated}
+          />
+        </Box>
       </Section>
       <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
         <TextInput

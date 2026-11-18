@@ -18,7 +18,10 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
 import { openURL } from "~/renderer/linking";
 import { accountSelector } from "~/renderer/reducers/accounts";
+import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
+
+const simulateSanctionedAddress = async () => true;
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
@@ -45,10 +48,11 @@ export function useReceiveAddressDialogViewModel({
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(() => toReceiveServiceIncidents(incidents), [incidents]);
-  const checkAddressSanctioned = useMemo(
-    () => network && ((address: string) => isAddressSanctioned(network, address)),
-    [network],
-  );
+  const { isSimulated: isSanctionSimulated } = useSanctionSimulation();
+  const checkAddressSanctioned = useMemo(() => {
+    if (isSanctionSimulated) return simulateSanctionedAddress;
+    return network && ((address: string) => isAddressSanctioned(network, address));
+  }, [isSanctionSimulated, network]);
   const featureFlags = useFeatureFlags();
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(

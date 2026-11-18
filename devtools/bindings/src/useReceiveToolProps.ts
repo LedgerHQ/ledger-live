@@ -116,7 +116,13 @@ function useReceiveAssets(): readonly ReceiveToolAsset[] {
   );
 }
 
-export function useReceiveToolProps(trigger: ReceiveToolTrigger): ReceiveToolProps {
+/** Simulating a sanctioned address is the host's: its receive screen reads the switch. */
+export type ReceiveToolSanctions = ReceiveToolProps["sanctions"];
+
+export function useReceiveToolProps(
+  trigger: ReceiveToolTrigger,
+  sanctions: ReceiveToolSanctions,
+): ReceiveToolProps {
   const dispatch = useDispatch();
   const flag = useFeature("newReceiveFlow");
   const assets = useReceiveAssets();
@@ -151,7 +157,8 @@ export function useReceiveToolProps(trigger: ReceiveToolTrigger): ReceiveToolPro
     () => ({
       flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies },
       trigger: { ...openers, assets },
+      sanctions,
     }),
-    [enabled, excludedFamilies, setEnabled, setExcludedFamilies, openers, assets],
+    [enabled, excludedFamilies, setEnabled, setExcludedFamilies, openers, assets, sanctions],
   );
 }

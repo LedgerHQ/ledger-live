@@ -36,11 +36,19 @@ const renderTool = ({
     onPickAsset: jest.fn(),
     onOpenDeeplink: jest.fn(),
   };
-  render(<Receive flag={flag} trigger={trigger} />);
-  return { flag, trigger };
+  const sanctions = { isSimulated: false, setSimulated: jest.fn() };
+  render(<Receive flag={flag} trigger={trigger} sanctions={sanctions} />);
+  return { flag, trigger, sanctions };
 };
 
 describe("Receive", () => {
+  it("simulates a sanctioned address", async () => {
+    const { sanctions } = renderTool();
+
+    await userEvent.click(screen.getByRole("switch", { name: "Simulate a sanctioned address" }));
+    expect(sanctions.setSimulated).toHaveBeenCalledWith(true);
+  });
+
   it("turns the flag on", async () => {
     const { flag } = renderTool();
 

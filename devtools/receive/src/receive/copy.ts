@@ -14,6 +14,10 @@ export const copy = {
   deeplinkLabel: "URL",
   openDeeplink: "Open",
   invalidDeeplink: "Not a valid URL.",
+  sanctionsTitle: "Sanctioned address",
+  sanctionsDescription:
+    "Treats every receive address as sanctioned, to show the blocked screen. Off again on restart.",
+  sanctionsSimulated: "Simulate a sanctioned address",
 } as const;
 
 export const DEFAULT_RECEIVE_DEEPLINK = "ledgerwallet://receive?currency=ethereum";

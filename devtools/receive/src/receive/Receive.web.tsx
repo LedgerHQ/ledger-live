@@ -45,7 +45,7 @@ function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset, sanctions } = useReceiveToolViewModel(props);
 
   return (
     <div className="flex flex-col">
@@ -81,6 +81,16 @@ export function Receive(props: ReceiveToolProps) {
             ))}
           </div>
         )}
+      </Section>
+      <Section title={copy.sanctionsTitle} description={copy.sanctionsDescription}>
+        <div className="flex items-center justify-between gap-12">
+          <span className="body-2 text-base">{copy.sanctionsSimulated}</span>
+          <Switch
+            aria-label={copy.sanctionsSimulated}
+            selected={sanctions.isSimulated}
+            onChange={sanctions.setSimulated}
+          />
+        </div>
       </Section>
       <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
         <TextInput

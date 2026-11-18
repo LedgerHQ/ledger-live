@@ -20,12 +20,15 @@ import receiveAddressConfigs from "~/generated/ReceiveAddressConfig";
 import { accountSelector } from "~/reducers/accounts";
 import type { State } from "~/reducers/types";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
+import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 
 // Each family's config reads its own account type; the screen gives it the account of its family.
 const familyConfigs = receiveAddressConfigs as Partial<
   Record<string, GetReceiveFamilyConfig<Account>>
 >;
+
+const simulateSanctionedAddress = async () => true;
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
@@ -56,10 +59,11 @@ export function useReceiveAddressScreenViewModel({
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(() => toReceiveServiceIncidents(incidents), [incidents]);
-  const checkAddressSanctioned = useMemo(
-    () => network && ((address: string) => isAddressSanctioned(network, address)),
-    [network],
-  );
+  const { isSimulated: isSanctionSimulated } = useSanctionSimulation();
+  const checkAddressSanctioned = useMemo(() => {
+    if (isSanctionSimulated) return simulateSanctionedAddress;
+    return network && ((address: string) => isAddressSanctioned(network, address));
+  }, [isSanctionSimulated, network]);
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
     () => familyConfig && (input => familyConfig({ ...input, featureFlags, legacyAccount })),

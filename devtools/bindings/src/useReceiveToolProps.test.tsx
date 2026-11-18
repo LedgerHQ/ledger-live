@@ -74,6 +74,8 @@ function buildStore() {
   return store;
 }
 
+const sanctions = { isSimulated: false, setSimulated: jest.fn() };
+
 function mockTrigger(): ReceiveToolTrigger {
   return { onReceive: jest.fn(), onPickAsset: jest.fn(), onOpenDeeplink: jest.fn() };
 }
@@ -84,13 +86,20 @@ function renderTool(trigger: ReceiveToolTrigger = mockTrigger()) {
     <Provider store={store}>{children}</Provider>
   );
   const { result, rerender } = renderHook(
-    ({ hostTrigger }: { hostTrigger: ReceiveToolTrigger }) => useReceiveToolProps(hostTrigger),
+    ({ hostTrigger }: { hostTrigger: ReceiveToolTrigger }) =>
+      useReceiveToolProps(hostTrigger, sanctions),
     { wrapper, initialProps: { hostTrigger: trigger } },
   );
   return { store, result, rerender };
 }
 
 describe("useReceiveToolProps", () => {
+  it("passes the host's sanctioned address switch through", () => {
+    const { result } = renderTool();
+
+    expect(result.current.sanctions).toBe(sanctions);
+  });
+
   it("reads the flag off with no excluded family by default", () => {
     const { result } = renderTool();
 
