@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { OfferedUpdate, UpdateOfferSheetsProps } from "./UpdateOfferSheets.types";
 
@@ -45,9 +45,14 @@ export function useUpdateOfferSheetsViewModel({
   const { t } = useTranslation();
   const key = updateKey(update);
   const [answer, setAnswer] = useState<OfferAnswer | null>(null);
+  const skippedKey = useRef<string | null>(null);
   const [shownUpdate, setShownUpdate] = useState(update);
   if (key === null && answer !== null) setAnswer(null);
   if (update && key !== updateKey(shownUpdate)) setShownUpdate(update);
+
+  useEffect(() => {
+    if (key === null) skippedKey.current = null;
+  }, [key]);
 
   const startPhase: OfferPhase = confirmSkip ? "confirmSkip" : "offer";
   const phase = key !== null && answer?.key === key ? answer.phase : startPhase;
@@ -60,7 +65,8 @@ export function useUpdateOfferSheetsViewModel({
     onUpdate();
   };
   const skip = () => {
-    if (key === null || phase !== "confirmSkip") return;
+    if (key === null || phase !== "confirmSkip" || skippedKey.current === key) return;
+    skippedKey.current = key;
     answerWith("answered");
     onSkip();
   };

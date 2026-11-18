@@ -15,8 +15,9 @@ device OS is out of date.
   - **Skip anyway**, the close button and a swipe down call `onSkip`.
   - `confirmSkip` opens the confirmation first. `suspendSheets` hides both sheets while another
     sheet takes the screen.
-- `useConfirmSkipAfterUpdateScreen({ updateScreenOpen, recheckingUpdate })`: true after the user
-  leaves the update screen without updating, until the re-offered update is answered.
+- `useConfirmSkipAfterUpdateScreen({ returnsWithoutUpdate, recheckingUpdate })`: true once the
+  count of returns from the update screen without updating goes up, until the re-offered update is
+  answered.
 - `UpdateOfferSheetsProps`, `OfferedUpdate`, `UpdateScreenReturnInput`: the types.
 
 The copy lives under `deviceOnboarding.setup.updateOffer` in the mobile catalog.

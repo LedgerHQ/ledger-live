@@ -56,11 +56,12 @@ jest.mock("../../hooks/useFirmwareUpdateHandover", () => {
     ...actual,
     useFirmwareUpdateHandover: (input: unknown) => {
       firmwareUpdateHandover(input);
-      return { close: closeFirmwareHandover };
+      return { close: closeFirmwareHandover, returnsWithoutUpdate: mockReturnsWithoutUpdate };
     },
   };
 });
 
+let mockReturnsWithoutUpdate = 0;
 const closeFirmwareHandover = jest.fn();
 const firmwareUpdateHandover = jest.fn();
 const useSession = jest.mocked(useDeviceOnboardingSession);
@@ -150,6 +151,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     listeners.clear();
     mockRouteParams = { wasReadOnlyAtEntry: true };
     recorded.host = null;
+    mockReturnsWithoutUpdate = 0;
   });
 
   it.each([
@@ -1588,6 +1590,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
 
     moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
     moveTo("readingState");
     moveTo("checks.genuineCheck.running");
     moveTo("checks.firmwareUpdateOffered");
@@ -1595,6 +1598,27 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
 
     moveTo("checks.firmwareUpdateDelegated");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it("should not ask to confirm the skip when the release notes never opened", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
 
     expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
   });

@@ -466,7 +466,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "QUIT" });
   }, [send]);
 
-  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
+  const { close: closeFirmwareHandover, returnsWithoutUpdate } = useFirmwareUpdateHandover({
     device: onboarding.liveDevice,
     isDeviceOnboarded: onboarding.context?.isOnboarded ?? false,
     machineState: onboarding.state,
@@ -632,6 +632,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareVersion: readString(onboarding.context?.firmwareVersion),
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
     firmwareDeclined: onboarding.snapshot?.context.firmware?.kind === "declined",
+    returnsWithoutUpdate,
     reportsRecoveryKey: deviceReportsRecoveryKey(
       onboarding.context?.deviceModelId,
       readString(onboarding.context?.firmwareVersion) ?? "",

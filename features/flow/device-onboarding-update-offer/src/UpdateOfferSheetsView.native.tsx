@@ -68,7 +68,6 @@ export function UpdateOfferSheetsView({ offer, skip }: UpdateOfferSheetsViewProp
       <UpdateSheet
         isOpen={skip.isOpen}
         testID={updateOfferTestIds.skipSheet}
-        onHeaderClosePressed={skip.onSkip}
         onDismiss={skip.onDismiss}
         canSwipeToClose
       >

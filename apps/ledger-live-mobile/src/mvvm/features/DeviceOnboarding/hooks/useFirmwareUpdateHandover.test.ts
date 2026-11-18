@@ -262,6 +262,36 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("should count a return from the update screen without updating", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+
+    const params = mockPush.mock.calls[0][1] as { onBackFromUpdate: () => void };
+    act(() => params.onBackFromUpdate());
+
+    expect(result.current.returnsWithoutUpdate).toBe(1);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" }),
+    );
+  });
+
+  it("should not count a return when the firmware metadata fails", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("error");
+    rerender({ machineState: delegated });
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+  });
+
   it("does not open the updater when the user closes before its effect runs", () => {
     const send = jest.fn();
     const closeOnLayout = { current: false };

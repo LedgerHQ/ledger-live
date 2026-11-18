@@ -15,9 +15,8 @@ const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
-const updateScreenState = "checks.firmwareUpdateDelegated";
 const statesThatAnswerTheUpdate = new Set([
-  updateScreenState,
+  "checks.firmwareUpdateDelegated",
   "checks.checksDone",
   "checks.leavingEarlyCheckScreen",
   checksSucceededState,
@@ -43,6 +42,8 @@ export type UnseededFunnelInput = {
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
   firmwareDeclined: boolean;
+  /** How many times the user came back from the update screen without updating. */
+  returnsWithoutUpdate: number;
   reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
@@ -89,7 +90,7 @@ export function useUnseededFunnelViewModel(
 
   const liveMachineState = input.liveMachineState;
   const confirmSkipUpdate = useConfirmSkipAfterUpdateScreen({
-    updateScreenOpen: unseeded && liveMachineState === updateScreenState,
+    returnsWithoutUpdate: input.returnsWithoutUpdate,
     recheckingUpdate: unseeded && rechecksTheUpdate(liveMachineState),
   });
 

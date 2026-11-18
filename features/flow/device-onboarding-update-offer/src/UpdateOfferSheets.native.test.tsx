@@ -1,6 +1,6 @@
 import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { UpdateOfferSheets } from "./UpdateOfferSheets";
 import type { UpdateOfferSheetsProps } from "./UpdateOfferSheets.types";
 import { updateOfferTestIds } from "./internals";
@@ -53,8 +53,7 @@ function expanded(testID: string) {
 }
 
 const closeOffer = `${updateOfferTestIds.offerSheet}-header-close`;
-const closeSkip = `${updateOfferTestIds.skipSheet}-header-close`;
-const swipeSkip = `${updateOfferTestIds.skipSheet}-dismiss`;
+const dismissSkip = `${updateOfferTestIds.skipSheet}-dismiss`;
 
 describe("UpdateOfferSheets", () => {
   it("should offer the update with both OS versions", () => {
@@ -98,8 +97,7 @@ describe("UpdateOfferSheets", () => {
 
   it.each([
     ["Skip anyway", updateOfferTestIds.skipConfirm],
-    ["the close button", closeSkip],
-    ["a swipe down", swipeSkip],
+    ["the close button or a swipe down", dismissSkip],
   ])("should skip the update with %s", async (_, testID) => {
     const { user, onUpdate, onSkip } = renderSheets();
 
@@ -108,6 +106,19 @@ describe("UpdateOfferSheets", () => {
 
     expect(onSkip).toHaveBeenCalledTimes(1);
     expect(onUpdate).not.toHaveBeenCalled();
+  });
+
+  it("should skip once when the close button reports the close twice in a row", async () => {
+    const { user, onSkip } = renderSheets();
+
+    await user.press(screen.getByTestId(closeOffer));
+    const dismiss = screen.getByTestId(dismissSkip);
+    act(() => {
+      fireEvent.press(dismiss);
+      fireEvent.press(dismiss);
+    });
+
+    expect(onSkip).toHaveBeenCalledTimes(1);
   });
 
   it("should open on the skip confirmation after the release notes closed", () => {
@@ -124,7 +135,7 @@ describe("UpdateOfferSheets", () => {
     rerender({ suspendSheets: true });
 
     expect(expanded(updateOfferTestIds.skipSheet)).toBe(false);
-    expect(screen.queryByTestId(swipeSkip)).toBeNull();
+    expect(screen.queryByTestId(dismissSkip)).toBeNull();
     expect(onSkip).not.toHaveBeenCalled();
 
     rerender({ suspendSheets: false });

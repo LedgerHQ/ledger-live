@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 export type UpdateScreenReturnInput = Readonly<{
-  updateScreenOpen: boolean;
+  /** How many times the user came back from the update screen without updating. */
+  returnsWithoutUpdate: number;
   recheckingUpdate: boolean;
 }>;
 
@@ -10,17 +11,21 @@ export type UpdateScreenReturnInput = Readonly<{
  * offered again and answered, so the next offer opens on the skip confirmation.
  */
 export function useConfirmSkipAfterUpdateScreen({
-  updateScreenOpen,
+  returnsWithoutUpdate,
   recheckingUpdate,
 }: UpdateScreenReturnInput): boolean {
-  const [wasOpen, setWasOpen] = useState(updateScreenOpen);
+  const [seenReturns, setSeenReturns] = useState(returnsWithoutUpdate);
+  const [wasRechecking, setWasRechecking] = useState(recheckingUpdate);
   const [confirmSkip, setConfirmSkip] = useState(false);
 
-  if (wasOpen !== updateScreenOpen) {
-    setWasOpen(updateScreenOpen);
-    if (wasOpen && recheckingUpdate) setConfirmSkip(true);
+  if (seenReturns !== returnsWithoutUpdate) {
+    setSeenReturns(returnsWithoutUpdate);
+    setConfirmSkip(true);
   }
-  if (confirmSkip && !recheckingUpdate) setConfirmSkip(false);
+  if (wasRechecking !== recheckingUpdate) {
+    setWasRechecking(recheckingUpdate);
+    if (wasRechecking && confirmSkip) setConfirmSkip(false);
+  }
 
   return confirmSkip;
 }
