@@ -9,7 +9,6 @@ import {
 import { Question } from "@ledgerhq/lumen-ui-react/symbols";
 import type { HelpPanelProps } from "./HelpPanel.types";
 
-/** The support questions, in the dialog: each one opens its article. */
 export function HelpPanel({ helpPanel }: HelpPanelProps) {
   return (
     <div className="-mx-8 flex flex-col" data-testid="receive-address-help-panel">

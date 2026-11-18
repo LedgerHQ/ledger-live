@@ -10,7 +10,6 @@ import type { ReceiveNoticeView, ReceiveServiceWarningView } from "./ReceiveAddr
 
 type Params = Readonly<{
   familyConfig: ReceiveFamilyConfig;
-  /** Absent until the address is shown: the notices are about it. */
   selected: ReceiveAddressOption | undefined;
   serviceIncidents: readonly ReceiveServiceIncident[] | undefined;
   copy: ReceiveAddressCopy;
@@ -24,10 +23,6 @@ export type ReceiveAddressNotices = Readonly<{
   serviceWarning: ReceiveServiceWarningView | undefined;
 }>;
 
-/**
- * The banners under the actions, in order: a service incident on the network, the family's
- * notices, then whether the device cannot show the address.
- */
 export function useReceiveAddressNotices({
   familyConfig,
   selected,

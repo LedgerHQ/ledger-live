@@ -1,6 +1,5 @@
 import { track } from "@shared/analytics";
 
-/** The properties every event of the address screen carries; `source` is the entry point. */
 export type ReceiveAddressTracking = Readonly<{
   page: "Receive - Confirmation";
   flow: "receive";

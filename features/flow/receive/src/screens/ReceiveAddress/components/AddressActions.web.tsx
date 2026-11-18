@@ -31,7 +31,6 @@ function VerifyHintPopover({
   );
 }
 
-/** Copy and Verify tiles side by side; the verify hint points at Verify. */
 export function AddressActions({ actions }: AddressActionsProps) {
   const { disabled, copy, verify, verifyHint } = actions;
 

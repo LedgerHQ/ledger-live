@@ -16,7 +16,6 @@ const OPTION_ICON: Readonly<Record<ReceiveAddressOptionId, typeof UserCheck>> = 
   shielded: UserLock,
 };
 
-/** One row per address the account receives on (Zcash: public, private). */
 export function AddressOptionList({ options, onSelect }: AddressOptionListProps) {
   return (
     <Box lx={{ marginHorizontal: "-s8" }} testID="receive-address-options">

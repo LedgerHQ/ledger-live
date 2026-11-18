@@ -13,7 +13,6 @@ import { Question } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { HelpPanelProps } from "./HelpPanel.types";
 
-/** The support questions, in a bottom sheet: each one opens its article. */
 export function HelpPanel({ helpPanel }: HelpPanelProps) {
   return (
     <QueuedBottomSheet

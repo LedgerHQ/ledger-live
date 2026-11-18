@@ -5,7 +5,6 @@ import { trackPage } from "@shared/analytics";
 import type { ReceiveAddressTracking } from "./receiveAddressTracking";
 
 type Params = Readonly<{
-  /** The address shown, or the token to activate first: absent while neither is known. */
   shownKey: string | undefined;
   assetId: CryptoOrTokenCurrencyId;
   descriptor: AccountDescriptor | undefined;
@@ -16,7 +15,6 @@ type Params = Readonly<{
   tracking: ReceiveAddressTracking;
 }>;
 
-/** "Receive - Confirmation", each time the screen shows an address or the token to activate. */
 export function useReceiveAddressPageEvent({
   shownKey,
   assetId,

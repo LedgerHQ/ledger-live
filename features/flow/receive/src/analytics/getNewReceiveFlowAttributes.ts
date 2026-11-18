@@ -7,7 +7,6 @@ export type NewReceiveFlowAttributes = Readonly<{
   params: NewReceiveFlowParams | undefined;
 }>;
 
-/** The `newReceiveFlow` flag, as a user property and on every event. */
 export function getNewReceiveFlowAttributes(
   flag: Feature<NewReceiveFlowParams> | null | undefined,
 ): NewReceiveFlowAttributes {

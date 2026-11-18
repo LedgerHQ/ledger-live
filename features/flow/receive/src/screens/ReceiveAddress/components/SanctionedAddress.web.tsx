@@ -3,7 +3,6 @@ import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import { InfoState } from "@shared/ui-info-state";
 import type { SanctionedAddressProps } from "./SanctionedAddress.types";
 
-/** In place of the QR code and the actions: the address can't be used. */
 export function SanctionedAddress({ sanctioned }: SanctionedAddressProps) {
   return (
     <InfoState

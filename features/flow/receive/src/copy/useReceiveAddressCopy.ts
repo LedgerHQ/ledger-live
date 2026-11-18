@@ -4,7 +4,6 @@ import { useTranslation } from "@shared/i18n";
 import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind } from "../logic/toReceiveNotices";
 
-/** The support questions the help lists, in order. */
 export const RECEIVE_HELP_QUESTIONS = ["receiveFromExchange", "receiveSecurely"] as const;
 
 export type ReceiveHelpQuestionId = (typeof RECEIVE_HELP_QUESTIONS)[number];
@@ -44,7 +43,6 @@ export type ReceiveAddressCopy = Readonly<{
   continueLabel: string;
 }>;
 
-/** The labels of the address screen, under the `receiveAddress` namespace. */
 export function useReceiveAddressCopy({
   assetTicker,
   networkName,

@@ -9,7 +9,6 @@ const QR_CENTER_ICON_SIZE = 48;
 // The card is white in both themes: the modules stay dark.
 const QR_MODULES_COLOR = ledgerLiveThemes.light.colors.text.black;
 
-/** The QR card, the asset icon in its middle, then the address with its edges standing out. */
 export function AddressSummary({ address }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
 

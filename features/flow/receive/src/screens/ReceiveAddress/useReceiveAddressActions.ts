@@ -17,7 +17,6 @@ const COPIED_FEEDBACK_MS = 3000;
 type Params = Readonly<{
   accountUUID: AccountUUID;
   assetId: CryptoOrTokenCurrencyId;
-  /** Absent until the address is shown. */
   selected: ReceiveAddressOption | undefined;
   familyConfig: ReceiveFamilyConfig;
   copy: ReceiveAddressCopy;
@@ -30,16 +29,10 @@ type Params = Readonly<{
 
 export type ReceiveAddressActions = Readonly<{
   actions: ReceiveAddressActionsView;
-  /** The device confirmed the address shown. */
   isVerified: boolean;
-  /** The device verification to mount, while one runs. */
   verification: UseVerifyAddressExecutorViewModelParams | undefined;
 }>;
 
-/**
- * Copy, Share and Verify for the address shown. Verify is disabled when the device cannot show
- * that address, and invites the user once with a hint, until they verify or dismiss it.
- */
 export function useReceiveAddressActions({
   accountUUID,
   assetId,

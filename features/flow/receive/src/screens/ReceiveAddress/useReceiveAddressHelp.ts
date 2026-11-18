@@ -20,7 +20,6 @@ export type ReceiveAddressHelp = Readonly<{
   helpPanel: ReceiveHelpPanelView | undefined;
 }>;
 
-/** "Need support? Get help", and its support questions, each opening its article. */
 export function useReceiveAddressHelp({
   isOpen,
   copy,

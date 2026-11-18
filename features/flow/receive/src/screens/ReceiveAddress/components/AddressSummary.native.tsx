@@ -13,7 +13,6 @@ const QR_CENTER_ICON_SIZE = 48;
 // The loading shimmer hands over to the code with a short fade.
 const QR_FADE_IN_MS = 400;
 
-/** The QR card, the asset icon in its middle, then the address on two lines, edges standing out. */
 export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
   const [middleFirstLine, middleSecondLine] = splitMiddleForTwoLines(address.parts);

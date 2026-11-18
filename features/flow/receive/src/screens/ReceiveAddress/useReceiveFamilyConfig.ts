@@ -14,7 +14,6 @@ type Params = Readonly<{
   accountStatus: AccountStatus | undefined;
 }>;
 
-/** The family's config over the defaults, read again as the account data arrives. */
 export function useReceiveFamilyConfig({
   getFamilyConfig,
   descriptor,

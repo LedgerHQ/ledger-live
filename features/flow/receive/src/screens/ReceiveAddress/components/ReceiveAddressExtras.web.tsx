@@ -31,7 +31,6 @@ function NavigationCard({
   );
 }
 
-/** The cards at the bottom of the screen, each opening its panel. */
 export function ReceiveAddressExtras({ memoCard, helpCard }: ReceiveAddressExtrasProps) {
   if (!memoCard && !helpCard) return null;
 

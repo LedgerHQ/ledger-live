@@ -17,7 +17,6 @@ type Tile = Readonly<{
   disabled: boolean;
 }>;
 
-/** Share, Copy and Verify tiles; the verify hint points at Verify and dims the other tiles. */
 export function AddressActions({ actions }: AddressActionsProps) {
   const { disabled, share, copy, verify, verifyHint } = actions;
   const isHintOpen = !!verifyHint;

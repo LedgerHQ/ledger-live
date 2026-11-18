@@ -2,7 +2,6 @@ import React from "react";
 import { Banner, Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { ReceiveAddressNoticesProps } from "./ReceiveAddressNotices.types";
 
-/** The service incident first, then one banner per notice. */
 export function ReceiveAddressNotices({ notices, serviceWarning }: ReceiveAddressNoticesProps) {
   if (!serviceWarning && notices.length === 0) return null;
 

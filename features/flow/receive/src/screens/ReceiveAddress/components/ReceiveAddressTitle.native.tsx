@@ -11,7 +11,6 @@ type Props = Readonly<{
   networkIcon?: ReceiveIcon;
 }>;
 
-/** "Receive USDC", then the network with its icon, centered. */
 export function ReceiveAddressTitle({ title, networkLabel, networkIcon }: Props) {
   return (
     <Box lx={{ alignItems: "center", gap: "s8" }}>

@@ -3,7 +3,6 @@ import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ServiceStatusPanelProps } from "./ServiceStatusPanel.types";
 
-/** The open incidents on the network, in a bottom sheet. */
 export function ServiceStatusPanel({ serviceStatus }: ServiceStatusPanelProps) {
   return (
     <QueuedBottomSheet

@@ -3,7 +3,6 @@ import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import { InfoState } from "@shared/ui-info-state";
 import type { MemoPanelProps } from "./MemoPanel.types";
 
-/** Why an exchange may need a memo. The `info` preset tints the dialog. */
 export function MemoPanel({ memoPanel }: MemoPanelProps) {
   return (
     <InfoState

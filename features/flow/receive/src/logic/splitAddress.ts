@@ -1,6 +1,5 @@
 const DEFAULT_EDGE = 8;
 
-/** The address cut for display: `start` and `end` stand out, for the user to compare them. */
 export type AddressParts = Readonly<{
   start: string;
   middle: string;

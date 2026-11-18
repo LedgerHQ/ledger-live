@@ -5,7 +5,6 @@ import { InfoState } from "@shared/ui-info-state";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { MemoPanelProps } from "./MemoPanel.types";
 
-/** Why an exchange may need a memo, in a bottom sheet the `info` preset tints. */
 export function MemoPanel({ memoPanel }: MemoPanelProps) {
   return (
     <QueuedBottomSheet

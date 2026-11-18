@@ -2,7 +2,6 @@ import React from "react";
 import { InfoState } from "@shared/ui-info-state";
 import type { BlockedReceiveProps } from "./BlockedReceive.types";
 
-/** In place of the QR code and the actions, until the account can receive here. */
 export function BlockedReceive({ blocked }: BlockedReceiveProps) {
   return (
     <InfoState

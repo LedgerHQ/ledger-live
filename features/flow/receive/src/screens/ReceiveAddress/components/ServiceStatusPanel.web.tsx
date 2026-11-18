@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import type { ServiceStatusPanelProps } from "./ServiceStatusPanel.types";
 
-/** The open incidents on the network, in the dialog. */
 export function ServiceStatusPanel({ serviceStatus }: ServiceStatusPanelProps) {
   return (
     <div className="flex flex-col gap-24" data-testid="receive-address-service-status">

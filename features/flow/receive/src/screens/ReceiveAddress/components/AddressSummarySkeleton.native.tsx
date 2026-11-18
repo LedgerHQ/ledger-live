@@ -8,7 +8,6 @@ const QR_SIZE = 208;
 const QR_CENTER_ICON_SIZE = 48;
 const LINE_HEIGHT = 20;
 
-/** The QR card shimmers from its center while the address loads. */
 export function AddressSummarySkeleton() {
   return (
     <Box lx={{ alignItems: "center", gap: "s16" }} testID="receive-address-skeleton">

@@ -7,7 +7,6 @@ import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiv
 import type { ReceiveMemoCardView, ReceiveMemoPanelView } from "./ReceiveAddressView.types";
 
 type Params = Readonly<{
-  /** Absent until the address is shown. */
   selected: ReceiveAddressOption | undefined;
   isOpen: boolean;
   copy: ReceiveAddressCopy;
@@ -22,10 +21,6 @@ export type ReceiveAddressMemo = Readonly<{
   memoPanel: ReceiveMemoPanelView | undefined;
 }>;
 
-/**
- * "Need a Tag/Memo?" when senders can attach a memo to the address shown: exchanges may need one.
- * Its panel says so, the same for every asset.
- */
 export function useReceiveAddressMemo({
   selected,
   isOpen,

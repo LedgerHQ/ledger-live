@@ -32,7 +32,6 @@ function NavigationCard({
   );
 }
 
-/** The cards at the bottom of the screen, each opening its bottom sheet. */
 export function ReceiveAddressExtras({ memoCard, helpCard }: ReceiveAddressExtrasProps) {
   if (!memoCard && !helpCard) return null;
 

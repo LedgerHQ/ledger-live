@@ -33,7 +33,6 @@ export type ReceiveScreenData =
 export type UseReceiveScreenDataResult = Readonly<{
   descriptor: AccountDescriptor | undefined;
   data: ReceiveScreenData;
-  /** Absent until it is read. */
   accountStatus: AccountStatus | undefined;
 }>;
 

@@ -1,7 +1,6 @@
 import { RECEIVE_URLS } from "../urls";
 import type { ReceiveNoticeId } from "../types";
 
-/** A family notice, or `unverifiableAddress`: the device cannot show the address shown. */
 export type ReceiveNoticeKind = ReceiveNoticeId | "unverifiableAddress";
 
 export type ReceiveNotice = Readonly<{
