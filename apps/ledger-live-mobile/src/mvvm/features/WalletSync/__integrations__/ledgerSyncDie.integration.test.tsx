@@ -262,6 +262,21 @@ const SettingsEntry = withEntry(function SettingsEntryScreen() {
   );
 });
 
+// Ledger Sync settings open this drawer on the activation step when Ledger Sync is off.
+const ActivationEntry = withEntry(function ActivationEntryScreen() {
+  const [isOpen, setIsOpen] = useState(true);
+  return (
+    <View>
+      <Text>entry screen</Text>
+      <ActivationDrawer
+        startingStep={Steps.Activation}
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+      />
+    </View>
+  );
+});
+
 const AddAccountEntry = withEntry(function AddAccountEntryScreen() {
   const [isOpen, setIsOpen] = useState(true);
   return (
@@ -826,6 +841,24 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
         ),
       );
       expect(track).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("entry screen")).toBeVisible();
+    });
+
+    it("should close the activation drawer on the sync method step reached from the activation step", async () => {
+      const { user } = render(<ActivationEntry />, { overrideInitialState: initialState({}) });
+      await user.press(await screen.findByText("I already turned it on"));
+      await screen.findByTestId("walletsync-choose-sync-method-connect-device");
+
+      pressBack();
+
+      await waitFor(() =>
+        expect(
+          screen
+            .UNSAFE_getAllByType(QueuedBottomSheet)
+            .find(sheet => sheet.props.testID === "wallet-sync-activation-sheet")?.props
+            .isRequestingToBeOpened,
+        ).toBe(false),
+      );
       expect(screen.getByText("entry screen")).toBeVisible();
     });
 

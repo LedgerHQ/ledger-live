@@ -33,12 +33,13 @@ export function LedgerSyncBottomSheet({
   children,
 }: Props) {
   const hasCustomHeader = customHeader !== undefined;
-  // Back closes the sheet like its close button: the sheet then reports it once through `onClose`.
+  // Back closes the sheet like its close button, even on a step with a back button, as the legacy
+  // drawer's modal did: the sheet then reports it once through `onClose`.
   const [isClosedByBack, setIsClosedByBack] = useState(false);
   if (!isOpen && isClosedByBack) setIsClosedByBack(false);
   const isRequestingToBeOpened = isOpen && !isClosedByBack;
   const closeSheet = useCallback(() => setIsClosedByBack(true), []);
-  useHardwareBackWhileOpen(isRequestingToBeOpened, hasBackButton ? onBack : closeSheet);
+  useHardwareBackWhileOpen(isRequestingToBeOpened, closeSheet);
 
   return (
     <QueuedBottomSheet
