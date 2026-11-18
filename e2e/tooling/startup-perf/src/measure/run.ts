@@ -329,6 +329,18 @@ async function installAndInject({
   });
 }
 
+// Test branch (arm W): after both installs' warm-ups, both emulators keep the app open together, so
+// the syncs it starts can finish before round 0.
+const LINGER_MS = 60_000;
+
+async function linger(devices: string[]): Promise<void> {
+  log(`lingering ${LINGER_MS / 1000} s with the app open on ${devices.join(", ")}`);
+  for (const device of devices) await P.stop(device);
+  for (const device of devices) await P.launch(device);
+  await sleep(LINGER_MS);
+  for (const device of devices) await P.stop(device);
+}
+
 async function measureScenario(scenario: string): Promise<void> {
   const userdata = await loadUserdata({
     dir: insideWorkingDir(opts["userdata-dir"]),
@@ -347,6 +359,7 @@ async function measureScenario(scenario: string): Promise<void> {
         await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
     }
+    await linger(order.map(side => placement[side]));
     for (let round = 0; round < PAIRS / 2; round++) {
       for (const side of order) {
         await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
