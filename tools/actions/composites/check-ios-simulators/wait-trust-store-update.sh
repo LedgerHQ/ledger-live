@@ -4,8 +4,7 @@
 # simulator waits until it is done (up to two minutes). An evaluation that waits ~15 s fails with
 # NSURLErrorDomain -1200, so an app launched then starts on compiled-default feature flags (QAA-1840).
 #
-# Waits until each simulator has finished that update, has skipped the check that starts it, or has
-# run long enough without starting one.
+# Waits until each simulator has finished that update, or has run long enough without starting one.
 # Never fails the job: at worst Detox starts as it did before this wait existed.
 #
 # Reads IOS_SIMULATOR_COUNT, exported to the job by boot-ios-simulators-background.
@@ -19,6 +18,8 @@ START_DEADLINE=240
 MAX_WAIT=360
 POLL_INTERVAL=5
 LOG_SHOW_TIMEOUT=60
+# After skipping its check, the same trustd still started the update up to 66 s later on CI.
+SKIP_GRACE=120
 
 # Undocumented trustd log lines. When no simulator of the shard logs START_MARKER, a notice says so:
 # a rewording by a new runtime would otherwise turn this wait into a silent 240 s sleep.
@@ -31,7 +32,7 @@ ANSWERED_MARKER="trustd returned"
 END_MARKERS="$FAILED_UPDATE_MARKER|$ANSWERED_MARKER"
 TRUSTD_START_MARKER="Opening db with version"
 # The runner image leaves one simulator without trustd's AutoAsset.plist, so its first trustd exits
-# ~15 s after boot and the next one usually skips the update check as too recent: no update follows.
+# ~15 s after boot and the next one skips the update check as too recent, yet often updates anyway.
 SKIPPED_CHECK_MARKER="PKITrustSupplementals too recent, skipping check"
 
 if ((N < 1)); then
@@ -72,7 +73,7 @@ trust_logs() {
   timeout="$(remaining)"
   ((timeout < LOG_SHOW_TIMEOUT)) || timeout=$LOG_SHOW_TIMEOUT
   ((timeout > 0)) || return 1
-  with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 20m --style compact \
+  with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 60m --style compact \
     --predicate "(process == \"trustd\" AND (eventMessage CONTAINS \"$TRUSTD_START_MARKER\" OR eventMessage CONTAINS \"$START_MARKER\" OR eventMessage CONTAINS \"$FAILED_UPDATE_MARKER\" OR eventMessage CONTAINS \"$SKIPPED_CHECK_MARKER\")) OR eventMessage CONTAINS \"$ANSWERED_MARKER\"" \
     >"$LOGS_FILE" 2>/dev/null
   status=$?
@@ -94,10 +95,10 @@ last_version() {
 #   finished <seconds from trustd start to update start, or nothing when unknown>
 #   up-to-date <version>     trustd restarted on the version an earlier update moved to
 #   pending update           an update is under way
-#   skipped                  trustd skipped the check that starts an update
+#   skipped                  trustd skipped its update check SKIP_GRACE ago and started no update
 #   pending | not-started | query-failed
 update_state() {
-  local logs since_trustd_start since_update trustd_started_at update_started_at opened target
+  local logs since_trustd_start since_update trustd_started_at update_started_at opened target skipped_at
   if ! logs="$(trust_logs "$1")"; then
     echo query-failed
     return
@@ -131,8 +132,9 @@ update_state() {
     return
   fi
 
-  if grep -q "$SKIPPED_CHECK_MARKER" <<<"$since_trustd_start"; then
-    echo skipped
+  skipped_at="$(to_epoch "$(grep "$SKIPPED_CHECK_MARKER" <<<"$since_trustd_start" | tail -n 1)")"
+  if [[ -n "$skipped_at" ]]; then
+    if (($(date +%s) - skipped_at < SKIP_GRACE)); then echo pending; else echo skipped; fi
     return
   fi
 
@@ -146,11 +148,13 @@ update_state() {
 WAIT_STARTED_AT="$(date +%s)"
 pending=()
 logs_read=()
-any_update_seen=0
+start_marker_seen=0
+# Set when a simulator was held until a deadline for lack of START_MARKER.
+held_for_start_marker=0
 for ((i = 1; i <= N; i++)); do pending+=("$i"); done
 
 finish() {
-  if ((any_update_seen == 0)); then
+  if ((start_marker_seen == 0 && held_for_start_marker == 1)); then
     echo "::notice::No simulator logged \"$START_MARKER\": either this runtime needs no trust store update, or trustd reworded its log lines and this wait no longer works"
   fi
   exit 0
@@ -162,6 +166,7 @@ warn_and_finish() {
     if [[ -z "${logs_read[i]:-}" ]]; then
       echo "::warning::$(sim_name "$i")'s trustd logs could not be read within ${waited}s: its first TLS connections may fail"
     else
+      held_for_start_marker=1
       echo "::warning::$(sim_name "$i") had not finished its trust store update after ${waited}s: its first TLS connections may fail"
     fi
   done
@@ -174,10 +179,10 @@ while ((${#pending[@]} > 0)); do
     # Checked before each simulator: one slow log query must not push the wait past its deadline.
     if (($(remaining) <= 0)); then still_pending+=("$i"); continue; fi
     name="$(sim_name "$i")"
-    waited=$(($(date +%s) - WAIT_STARTED_AT))
     read -r state detail <<<"$(update_state "$name")"
+    waited=$(($(date +%s) - WAIT_STARTED_AT))
     [[ "$state" == query-failed ]] || logs_read[i]=1
-    [[ "$state" != finished && "$state" != up-to-date && "$detail" != update ]] || any_update_seen=1
+    [[ "$state" != finished && "$state" != up-to-date && "$detail" != update ]] || start_marker_seen=1
     case "$state" in
       finished)
         if [[ -n "$detail" ]]; then
@@ -190,9 +195,10 @@ while ((${#pending[@]} > 0)); do
         echo "✅ $name's trust store is already at version $detail (waited ${waited}s)"
         ;;
       skipped)
-        echo "✅ $name's trustd skipped its trust store update check (waited ${waited}s)"
+        echo "✅ $name's trustd skipped its trust store update check and started none within ${SKIP_GRACE}s (waited ${waited}s)"
         ;;
       not-started)
+        held_for_start_marker=1
         echo "✅ $name has no trust store update to apply (waited ${waited}s)"
         ;;
       *) still_pending+=("$i") ;;
