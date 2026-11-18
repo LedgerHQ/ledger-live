@@ -416,6 +416,9 @@
       "title" : "此账户有一个待处理的操作",
       "description" : "请等待操作完成。"
     },
+    "TokenNonTransferable" : {
+      "title" : "此代币无法发送。其智能合约不允许转账。"
+    },
     "AccountNameRequired" : {
       "title" : "需要一个账户名",
       "description" : "请输入账户名。"
@@ -1272,6 +1275,14 @@
       "title" : "抱歉，连接失败",
       "description" : "请改善网络连接并再次尝试 (websocket 错误)"
     },
+    "WithdrawApiError" : {
+      "title" : "您的提取未能发送",
+      "description" : "您的永续合约 (Perps) 余额未扣除任何资金。关闭并使用新报价重试。"
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "我们无法确认您的提取",
+      "description" : "该提取可能仍会通过。请在您重试前查看互换历史记录。"
+    },
     "WrongDeviceForAccount" : {
       "title" : "出错了",
       "description" : "请检查您的 Ledger 设备是否设置了与所选账户关联的恢复短语或密码短语。"
@@ -1597,6 +1608,48 @@
     "XrpDestinationTagRequired" : {
       "title" : "此接收方需要填写目标标签"
     },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "暂不支持该代币类型"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "数额的位数过多",
+      "description" : "XRP Ledger 代币最多接受 16 位有效数字。"
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "额度必须大于 0",
+      "description" : "如要停止持有该代币，请改为将其移除。"
+    },
+    "XrpTokenFrozen" : {
+      "title" : "您无法发送此代币",
+      "description" : "该代币的发行方已将其冻结。"
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "您无法发送此代币",
+      "description" : "该代币的发行方尚未批准您的账户持有该代币。"
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "此接收方无法接收此代币",
+      "description" : "接收者可能需要先添加该代币，或者发行方不允许此项转账。"
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "无法交付此数额",
+      "description" : "接收者的限额或发行方的转账费用不允许进行该交易。请尝试较小的金额。"
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "发行方拒绝了此请求",
+      "description" : "发行方不接受该代币的新持有者，或者该代币不存在。"
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "此交易将会失败",
+      "description" : "XRP Ledger 因 {{code}} 拒绝了该交易。"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "不支持此交易"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "在添加此代币时，您的账户中的 {{amount}} 将被锁定。",
+      "description" : "您将在移除该代币时将其取回。"
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "备忘标签长度无效，最大允许 100 个字符"
     },
@@ -1707,10 +1760,10 @@
       "description" : "要同步您的应用程序，请确保两个应用程序都已更新至最新版本。"
     },
     "AppManifestUnknownError" : {
-      "title" : "未找到 Swap Live 应用程序"
+      "title" : "未找到 Ledger Wallet 应用程序"
     },
     "AppManifestNotFoundError" : {
-      "title" : "无法加载 Swap Live 应用程序"
+      "title" : "无法加载 Ledger Wallet 应用程序"
     },
     "InvalidMemoMina" : {
       "title" : "备忘标签文本不可超过 32 个字符"
@@ -2292,6 +2345,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "地址已安全显示",
+      "description" : "请验证粘贴或分享后的地址与您的 Ledger 设备上的地址一致。",
+      "gotItCta" : "知道了"
+    }
+  },
   "ratings" : {
     "init" : {
       "title" : "您觉得我们的应用程序怎么样？",
@@ -2386,13 +2446,13 @@
       "continue" : "继续操作，风险自担"
     },
     "info" : {
-      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Wallet™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Wallet 服务提供商并优化客户服务",
       "reminder" : "不再提醒"
     },
     "error" : {
       "title" : "{{device}}™ 不支持此功能",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Wallet 功能。"
     },
     "update" : "探索您的升级计划",
     "learnMore" : "了解更多",
@@ -2569,6 +2629,16 @@
     }
   },
   "deviceOnboarding" : {
+    "karaoke" : {
+      "tapToContinue" : "点按以继续",
+      "intro" : {
+        "takeControl" : "您即将掌控一切。",
+        "keysStayWithYou" : "您的密钥始终由您保管。",
+        "nothingMoves" : "未经您的许可，任何资产都无法转移。",
+        "setUp" : "开始设置。",
+        "cta" : "检查您的设备"
+      }
+    },
     "checks" : {
       "close" : "关闭",
       "synchronizing" : {
@@ -2584,10 +2654,36 @@
         "description" : "正在确认您的 Ledger 签署设备可安全使用且已更新至最新版本。",
         "cta" : "正在检查…"
       },
+      "updating" : {
+        "title" : "Ledger OS 有可用更新",
+        "description" : "立即安装最新版本的 Ledger OS 操作系统，或跳过并完成对您设备的检查。",
+        "installCta" : "安装 Ledger OS 操作系统更新",
+        "skipCta" : "跳过 Ledger OS 操作系统更新"
+      },
       "succeeded" : {
         "title" : "设备为正品，且已更新至最新版本",
         "genuineTitle" : "设备为正品",
         "cta" : "继续"
+      },
+      "network" : {
+        "title" : "网络错误",
+        "description" : "请检查您的互联网连接。如果仍有问题，请联系 Ledger 客服。"
+      }
+    },
+    "quitConfirmation" : {
+      "title" : "是否暂时暂停设置？",
+      "description" : "此步骤中任何未保存的进度都将丢失。",
+      "restart" : "下次您需要从 {{step}} 重新开始。",
+      "leave" : "不保存并离开",
+      "continue" : "继续设置",
+      "steps" : {
+        "intro" : "简介",
+        "checks" : "正品与操作系统检查",
+        "name" : "设备名称",
+        "pin" : "PIN 识别码",
+        "setupChoice" : "设置选项",
+        "security" : "安全设置",
+        "restore" : "恢复访问权限"
       }
     },
     "syncOffer" : {
@@ -2595,7 +2691,11 @@
       "description" : "在您换用手机或使用电脑时，保持您的余额和资产组合同步。",
       "learnMore" : "了解更多",
       "activate" : "激活",
-      "skip" : "暂时跳过"
+      "skip" : "暂时跳过",
+      "success" : {
+        "title" : "同步完成",
+        "cta" : "继续"
+      }
     },
     "connection" : {
       "connecting" : "正在连接您的设备",
@@ -3648,6 +3748,10 @@
     "borrow" : {
       "title" : "贷款",
       "description" : "借入稳定币"
+    },
+    "predictions" : {
+      "title" : "预测",
+      "description" : "布局未来"
     }
   },
   "addAccountsModal" : {
@@ -3739,6 +3843,7 @@
       "TRANSFER_WITHDRAWN" : "转账已撤回",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
+      "OPT_EDIT" : "代币已更新",
       "CLOSE_ACCOUNT" : "关闭账户",
       "APPROVE" : "已启用",
       "BOND" : "绑定",
@@ -3916,6 +4021,11 @@
         "addTokens" : "添加资产",
         "howTo" : "您可以将资产添加到 Stellar（恒星）账户。",
         "addAsset" : "添加资产"
+      },
+      "xrp" : {
+        "seeMore" : "查看更多代币",
+        "seeLess" : "显示更少代币",
+        "howTo" : "您可以向您的 XRP 账户添加代币。"
       }
     },
     "subaccounts" : {
@@ -5447,11 +5557,14 @@
         "paidIn" : "已用 {{currency}} 支付",
         "nudge" : "使用 {{provider}}，您可节省 {{amount}}",
         "saved" : "已通过 {{provider}} 节省",
+        "rentArriving" : "您的能量租赁仍在处理中。网络费用将在其到账后更新。",
         "confirm" : "确认",
         "disclaimer" : "通过第三方能量提供商 {{provider}}，费用以 {{feeCurrency}} 支付。",
         "insufficientFunds" : "您没有足够的 {{feeCurrency}} 支付数额以及 {{provider}} 能量租赁费用。"
       },
       "sponsoredRentSignature" : {
+        "title" : "批准网络费用赞助",
+        "terms" : "签署此交易，即表示您同意 <0>{{provider}} 的条款与条件</0>。",
         "crafting" : "正在准备能量租赁…",
         "strategy" : "能量租赁 - {{provider}}",
         "fee" : "租赁费用：{{amount}}",
@@ -5460,9 +5573,12 @@
           "description" : "您已拒绝支付租赁费用。您的资金不会受到影响。"
         }
       },
+      "sponsoredTransferSignature" : {
+        "title" : "确认转账"
+      },
       "sponsoredPolling" : {
-        "title" : "正在等待能量交付",
-        "waiting" : "{{provider}} 正在交付租用的能量。此过程可能需要片刻。",
+        "title" : "您的能量正在交付中",
+        "waiting" : "通常最多需要 30 秒。",
         "elapsed" : "已用时间：{{time}}"
       },
       "sponsoredFailure" : {
@@ -5944,9 +6060,9 @@
       "cancel" : "取消"
     },
     "actions" : {
-      "retry" : "重试",
-      "cancel" : "取消",
-      "close" : "关闭"
+      "cancelOsUpdate" : "取消操作系统更新",
+      "close" : "关闭",
+      "finish" : "完成"
     },
     "closeConfirmation" : {
       "title" : "正在更新操作系统",
@@ -5967,17 +6083,24 @@
     },
     "progress" : {
       "updatingTitle" : "更新 {{index}}/{{count}}",
-      "restoringTitle" : "正在重新安装您的设置…",
-      "updatingDescription" : "您的 {{productName}} 将自动重启多次，在安装过程中，系统会要求您使用 PIN 识别码解锁该设备。",
-      "restoringDescription" : "即将完成。正在您的 {{productName}} 上重新安装设置。"
+      "restoringTitle" : "正在重新安装您的应用程序和设置…",
+      "updatingDescription" : "您的 {{productName}} 将自动重启，在安装过程中，系统会要求您使用 PIN 识别码解锁该设备。\n\n停留在此界面，直至更新完成。",
+      "whyUpdatesTitle" : "为什么需要进行 {{count}} 个更新？",
+      "whyUpdatesDescription" : "您的设备需要先安装较早版本的 Ledger OS 操作系统，然后才能安装最新版本。下一次更新将在此次更新后立即进行。",
+      "restoringDescription" : "即将完成。正在您的 {{productName}} 上重新安装您的语言、锁屏图片和应用程序。",
+      "stayOnScreen" : "停留在此界面，直至更新完成。"
     },
     "applied" : {
-      "title" : "更新完成",
-      "description" : "您的 {{productName}} 已是最新版本。"
+      "title" : "您的 {{productName}} 现已是最新版本",
+      "version" : "OS 操作系统版本：{{version}}"
     },
     "restored" : {
-      "title" : "备份已恢复",
-      "description" : "您的应用程序和设置已恢复到您的 {{productName}} 上。"
+      "title" : "已在您的 {{productName}} 上重新安装应用程序和设置",
+      "description" : "锁屏界面、语言和应用程序。"
+    },
+    "restoreResult" : {
+      "partial" : "您未重新安装您的应用程序和锁屏界面。您的加密货币安全无虞。您可以随时重新安装应用程序和锁屏界面。",
+      "outOfMemory" : "重新安装您的应用程序和锁屏界面时，可用存储空间不足。您的加密货币安全无虞。随时重新安装应用程序和锁屏界面。"
     },
     "continueOnDevice" : {
       "title" : "继续在您的 {{productName}} 上操作",
@@ -5987,34 +6110,42 @@
       "title" : "解锁您的 {{productName}}"
     },
     "deviceDisconnected" : {
-      "title" : "设备已断开",
-      "description" : "重新连接您的 Ledger 设备以继续。更新将自动恢复。"
+      "title" : "将您的 {{productName}} 开机并解锁"
+    },
+    "connectionTimedOut" : {
+      "title" : "连接超时",
+      "description" : "重启更新。",
+      "restart" : "重新启动操作系统更新"
     },
     "unexpectedError" : {
       "title" : "出错了",
-      "description" : "操作系统更新无法继续。如果问题仍然存在，请联系 Ledger 客服。"
+      "description" : "操作系统更新无法继续。如果问题仍然存在，请联系 <supportLink>Ledger 客服</supportLink>。"
     },
     "batteryTooLow" : {
-      "title" : "为您的 {{productName}} 充电",
-      "description" : "您的设备电量为 {{percentage}}%。请连接电源或将其充电至 20% 以上以继续。"
+      "title" : "连接您的 {{productName}} 以继续",
+      "description" : "当您的 {{productName}} 已连接电源或已充电至至少 20% 时，将开始安装。",
+      "batteryLevel" : "电池电量：{{percentage}}%",
+      "cancel" : "取消操作系统更新"
     },
     "backupSelection" : {
-      "title" : "使用您现有的备份？",
-      "description" : "您最近的备份已超过 24 小时。您可以继续使用，或创建一个新的将其替换。Security Key 安全密钥凭据是备份的一部分。",
-      "useExisting" : "使用现有备份",
-      "createNew" : "创建新备份"
+      "title" : "此前保存的设置",
+      "description" : "我们发现了在先前更新期间保存的应用程序及设置。选择您想在更新后恢复到 {{productName}} 上的内容。",
+      "useExisting" : "使用此前的设置",
+      "createNew" : "保留当前设置",
+      "lastSave" : "上次保存",
+      "lastSaveDate" : "{{date}}, {{time}}"
     },
     "secureConnectionRefused" : {
-      "title" : "安全连接被拒绝",
-      "description" : "您拒绝了设备上的安全连接。重试以继续。"
+      "title" : "取消安全连接？",
+      "description" : "必须使用安全连接才能继续更新您的 {{productName}}。",
+      "retry" : "重试安全连接",
+      "cancel" : "取消安全连接"
     },
     "installFirmwareRefused" : {
-      "title" : "已拒绝安装",
-      "description" : "已在您的设备上拒绝安装，因此更新无法继续。"
-    },
-    "outOfMemory" : {
-      "title" : "您的设备上空间不足",
-      "description" : "您的设备内存不足，无法继续。请释放空间并重试。"
+      "title" : "已在 {{productName}} 上取消安装 OS 操作系统更新",
+      "description" : "如果是误操作，请重新启动更新。",
+      "restart" : "重新启动操作系统更新",
+      "cancel" : "取消操作系统更新"
     }
   },
   "deviceIntentExecutor" : {
@@ -6494,6 +6625,7 @@
       "buyDeviceCTA" : "<0>需要新的 Ledger 设备？</0><1>立即购买</1>",
       "item" : {
         "usb" : "通过 USB 连接",
+        "mocked" : "已模拟",
         "available" : "可用。点按以连接",
         "unavailable" : "未连接"
       }
@@ -8209,6 +8341,66 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "xrp" : {
+    "token" : "代币",
+    "addToken" : {
+      "cta" : "添加代币",
+      "title" : "添加代币",
+      "receiveAlert" : "在接收此代币前，请将其添加至您的账户。",
+      "receive" : "接收",
+      "steps" : {
+        "token" : {
+          "title" : "选择代币",
+          "alreadyAddedTag" : "已添加",
+          "alreadyAdded" : "您已添加此代币。打开其页面以查看或编辑其设置。",
+          "openTokenPage" : "打开代币页面",
+          "empty" : "此账户没有可用的代币。",
+          "loadError" : "无法加载代币列表。"
+        },
+        "settings" : {
+          "title" : "设置",
+          "limitInfo" : "信任上限是您的账户所能接受持有的最大 {{token}} 数量。"
+        },
+        "review" : {
+          "title" : "核对",
+          "tokenType" : "代币类型",
+          "tokenTypeIou" : "信任线 (IOU)",
+          "tokenTypeMpt" : "多用途代币",
+          "account" : "账户地址",
+          "tokenName" : "代币名称",
+          "issuer" : "发行方",
+          "networkFees" : "网络费用"
+        },
+        "selectDevice" : {
+          "title" : "选择设备"
+        },
+        "connectDevice" : {
+          "title" : "连接设备"
+        }
+      },
+      "errors" : {
+        "notEnoughXrp" : "您需要至少有 {{minimumAmount}} 可用才能添加此代币。",
+        "notEnoughXrpLocked" : "您的账户中的 {{amount}} 将被锁定。",
+        "limitZero" : "信任额度必须大于 0。"
+      },
+      "success" : {
+        "title" : "{{token}} 已添加",
+        "text" : "在下次同步后，其将显示在您的账户中，余额为 0。"
+      }
+    },
+    "tokenSettings" : {
+      "limit" : "信任额度",
+      "maxLimit" : "最大信任额度",
+      "maxLimitInfo" : "信任额度是您的账户所能接受持有的最大 {{token}} 数量。允许的最大信任额度为 <amount/>。",
+      "maximum" : "最大"
+    },
+    "rippling" : {
+      "label" : "余额流转",
+      "on" : "开启",
+      "off" : "关闭",
+      "warning" : "开启此功能将允许其他用户的付款在具有相同货币代码的代币之间转移您的余额。仅在充分了解其作用和风险时开启此功能。"
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -9552,6 +9744,15 @@
     }
   },
   "ApplicationVersion" : "{{version}}版本",
+  "accountAnalytics" : {
+    "assets" : "资产筛选",
+    "accounts" : "账户筛选",
+    "allAssets" : "所有资产",
+    "allAccounts" : "所有账户",
+    "error" : "无法加载分析数据。请重试。",
+    "unavailable" : "该选择无可用数据。",
+    "noResults" : "无结果"
+  },
   "analytics" : {
     "title" : "数据分析",
     "operations" : {
@@ -10506,6 +10707,9 @@
         "swapBuy" : "请先通过“互换”或“买入”添加资金。"
       }
     },
+    "assetPicker" : {
+      "title" : "选择资产"
+    },
     "actions" : {
       "transfer" : "转账",
       "receive" : "接收",
@@ -10539,6 +10743,12 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "在寻找您的账户表现吗？",
+      "description" : "您的所有表现数据现在都位于“数据分析”页面。",
+      "cta" : "前往“数据分析”",
+      "dismiss" : "忽略“数据分析”介绍"
+    },
     "assets" : {
       "title" : "资产",
       "add" : "添加"
@@ -10556,9 +10766,6 @@
       "label" : "地址名称",
       "submit" : "修改名称"
     }
-  },
-  "accountAssetPicker" : {
-    "title" : "选择资产"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10846,9 +11053,20 @@
     "depositDetailTitle" : "存入详情",
     "depositAmountLabel" : "存入数额",
     "depositReceiveLabel" : "接收账户",
-    "depositCTA" : "存入"
+    "depositCTA" : "存入",
+    "withdrawTitle" : "通过 SwapKit 提取",
+    "withdrawSubtitle" : "我们的服务提供商 SwapKit 在单笔交易中管理您的互换和提取——全部由您的 Ledger 设备保障安全。",
+    "withdrawDetailTitle" : "提取详情",
+    "withdrawReceiveLabel" : "接收账户",
+    "networkFeesLabel" : "网络费用",
+    "totalDebitedLabel" : "扣款总额",
+    "withdrawCTA" : "提取"
   },
   "perpsDepositSign" : {
+    "genericError" : {
+      "title" : "出错了",
+      "description" : "请稍后重试或选择其他资产。"
+    },
     "terms" : "签署此交易即表示我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -10858,6 +11076,7 @@
   },
   "perpsTransactionStatus" : {
     "title" : "为永续合约提供资金",
+    "withdrawTitle" : "提取",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}",
     "returnToPerps" : "返回永续合约 (Perps)"
   },
@@ -10870,9 +11089,33 @@
     "selectCurrencyNoAccount" : "无账户",
     "review" : "审核",
     "keypadDelete" : "删除末位数字",
+    "learnMore" : "了解更多",
     "formErrors" : {
+      "offline" : "互联网连接问题。",
       "amountExceedsBalance" : "余额不足",
+      "feeAccountEmpty" : "您需要更多 {{ticker}} 以支付网络费用。",
+      "notEnoughFees" : "您需要 {{fees}} {{ticker}} 作为网络费用。",
+      "amountTooLow" : "请输入至少 {{amount}} {{ticker}} 并重试。",
+      "amountTooHigh" : "进入 {{amount}} {{ticker}} 或更少并重试。",
+      "feeEstimationFailed" : "目前无法计算费用。您的加密货币账户可能未同步。重启 Ledger Wallet 应用程序并重试。",
+      "accountNotReady" : "该账户尚未准备好发送。 在您的账户中将其打开，然后重试。",
+      "seiEvmUnlinked" : "在进行互换前，必须先关联 SEI EVM 账户",
+      "aleoPrivateBalance" : "互换仅适用于公开的 {{ticker}}。您的资金目前处于私密状态，无法进行互换。",
+      "tezosUnrevealed" : "您的 Tezos 账户尚未激活。请在互换前发送小额 XTZ。",
+      "dotMinimumBalance" : "请在互换后保留最低 {{minValue}} DOT 的余额。",
+      "xlmMinimumBalance" : "请在互换后保留最低 {{minValue}} XLM 的余额。",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} 不足",
+        "description" : "您的账户 {{account}} 余额不足以支付网络费用。"
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} 的最低要求",
+        "description" : "报价所需的最低价值为 {{amount}} {{ticker}}"
+      },
+      "buy" : "买入 {{ticker}}"
     }
   },
   "perpsWithdraw" : {
@@ -11221,7 +11464,15 @@
     "earn" : "赚取",
     "yield" : "收益率",
     "card" : "卡",
-    "paytab" : "付款"
+    "paytab" : "付款",
+    "agents" : "智能体"
+  },
+  "agentIntent" : {
+    "title" : "智能体",
+    "manageAgents" : {
+      "title" : "管理您的智能体",
+      "description" : "让 AI 智能体管理您的资产。"
+    }
   },
   "payTab" : {
     "disclaimer" : "由 Monavate Onchain 提供",
@@ -12165,6 +12416,74 @@
           "title" : "在您的 Ledger 设备间保持私密",
           "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
         }
+      }
+    }
+  },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "正在准备签署",
+      "title" : "在您的 {{productName}} 上确认账户所有权",
+      "description" : "按照安全屏幕上的说明进行操作。",
+      "settingUp" : {
+        "title" : "设置您的交易账户"
+      },
+      "setUp" : {
+        "created" : "交易账户已创建",
+        "found" : "已找到交易账户",
+        "description" : "您的交易账户已准备就绪，可以开始使用。",
+        "continue" : "继续"
+      },
+      "mismatch" : {
+        "title" : "此签署与该账户不一致",
+        "description" : "连接保存此账户的 Ledger 设备，如果您使用了密码短语，请使用相同的密码短语，然后重试。"
+      },
+      "setupFailed" : {
+        "title" : "无法设置您的交易账户",
+        "failed-deploy" : "MoonPay 无法部署您的交易钱包。",
+        "failed-permission" : "MoonPay 无法设置您的交易钱包权限。",
+        "timeout" : "设置耗时过长。",
+        "unavailable" : "无法连接到 MoonPay。",
+        "unknown" : "设置时出现问题。"
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "Trade on future events",
+        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items" : {
+          "polymarket" : {
+            "title" : "Access Polymarket in Ledger Wallet",
+            "subtitle" : "Now available in Ledger Wallet"
+          },
+          "markets" : {
+            "title" : "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle" : "And more, discover all markets"
+          },
+          "clearSign" : {
+            "title" : "Clear sign all",
+            "subtitle" : "You define and clear sign the amount to trade"
+          }
+        },
+        "discover" : "Discover predictions",
+        "learnMore" : "Learn more"
+      },
+      "terms" : {
+        "title" : "Terms & Conditions",
+        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta" : "Agree and Continue"
+      },
+      "consent" : {
+        "title" : "Clear signed trade on Polymarket via MoonPay",
+        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets" : {
+          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta" : "Continue",
+        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
       }
     }
   }

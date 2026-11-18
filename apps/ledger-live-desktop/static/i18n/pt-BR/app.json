@@ -187,6 +187,7 @@
       "FEES" : "Taxas",
       "OPT_IN" : "Aderir",
       "OPT_OUT" : "Não Aderir",
+      "OPT_EDIT" : "Token atualizar",
       "CLOSE_ACCOUNT" : "Fechar Conta",
       "BOND" : "Vincular",
       "UNBOND" : "Desvincular",
@@ -340,7 +341,15 @@
     "home" : "Início",
     "refer" : "Indicar",
     "catalog" : "Explorar",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "Agentes"
+  },
+  "agentIntent" : {
+    "title" : "Agentes",
+    "manageAgents" : {
+      "title" : "Gerenciar seus agentes",
+      "description" : "Deixa que agentes AI gerenciem seus ativos."
+    }
   },
   "stars" : {
     "tooltip" : "Favoritar Conta"
@@ -1950,13 +1959,13 @@
       "continue" : "Prossiga por sua própria conta e risco"
     },
     "info" : {
-      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Wallet™ será encerrado",
       "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
       "reminder" : "Não me lembre de novo"
     },
     "error" : {
       "title" : "A {{device}}™ não é compatível com este recurso",
-      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os novos recursos da Ledger Wallet."
     },
     "update" : "Descubra o programa de upgrade",
     "learnMore" : "Saiba mais",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "Endereço exibido com segurança",
+      "description" : "Verifique se o endereço, uma vez colado ou compartilhado, corresponde ao do seu dispositivo Ledger.",
+      "gotItCta" : "Entendi"
+    }
+  },
   "send" : {
     "title" : "Enviar",
     "totalSpent" : "Total a debitar",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "A sua transação está sendo processada",
     "sign" : {
       "title" : "Continue na sua Ledger {{wording}}",
-      "description" : "Siga as instruções exibidas na sua Tela Touch Segura."
+      "description" : "Siga as instruções exibidas na sua Tela Touch Segura.",
+      "cancelled" : {
+        "title" : "Transação cancelada",
+        "description" : "Você rejeitou a transação. Seus fundos não serão afetados.",
+        "close" : "Fechar",
+        "retry" : "Tentar novamente"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "Não foi possível atualizar as taxas de rede",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "Configurações de token",
+      "currentLimitZero" : "Seu limite é 0: não é possível receber este token.",
+      "limitBelowBalance" : "Seu saldo ({{balance}}) está acima deste limite. Não será possível receber este token até que seu saldo esteja abaixo deste limite.",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "validador que receberá as recompensas",
       "compoundReward" : "validador que receberá as recompensas",
       "optIn" : "destinatário",
+      "changeTrust" : "destinatário",
       "tokenAssociate" : "destinatário",
       "nominate" : "validador",
       "stake" : "validador",
@@ -8089,11 +8114,15 @@
       "description" : "Para deixar de manter este token, remova-o em vez disso."
     },
     "XrpTokenFrozen" : {
-      "title" : "Não é possível enviar este token para este destinatário",
-      "description" : "O emissor o freeze, ou não aprovou sua conta para mantê-lo. Um token congelado ainda pode retornar ao seu emissor."
+      "title" : "Não é possível enviar este token",
+      "description" : "O emissor o freeze."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "Não é possível enviar este token",
+      "description" : "O emissor não aprovou sua conta para mantê-lo."
     },
     "XrpTokenCannotReceive" : {
-      "title" : "Este destinatário não pode receber {{assetCode}}",
+      "title" : "Este destinatário não pode receber este token",
       "description" : "O destinatário pode precisar adicionar este token primeiro, ou o emissor não permite esta transferência."
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -9773,42 +9802,42 @@
     },
     "onboarding" : {
       "intro" : {
-        "title" : "Trade on future events",
-        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "title" : "Faça trade de eventos futuros",
+        "subtitle" : "Agora é possível acessar o maior mercado de previsões do mundo, onde se pode negociar resultados de eventos. Oferecido pela MoonPay.",
         "items" : {
           "polymarket" : {
-            "title" : "Access Polymarket in Ledger Wallet",
-            "subtitle" : "Now available in Ledger Wallet"
+            "title" : "Acessar o Polymarket na Ledger Wallet",
+            "subtitle" : "Agora disponível na Ledger Wallet"
           },
           "markets" : {
-            "title" : "Sports, Tech, Crypto, Weather, Politics",
-            "subtitle" : "And more, discover all markets"
+            "title" : "Esportes, tecnologia, cripto, clima, política",
+            "subtitle" : "E mais, descubra todos os mercados"
           },
           "clearSign" : {
-            "title" : "Clear sign all",
-            "subtitle" : "You define and clear sign the amount to trade"
+            "title" : "Assinar tudo de forma transparente",
+            "subtitle" : "Defina e assine de forma transparente a quantia a negociar"
           }
         },
-        "discover" : "Discover predictions",
-        "learnMore" : "Learn more"
+        "discover" : "Explorar previsões",
+        "learnMore" : "Saiba mais"
       },
       "terms" : {
-        "title" : "Terms & Conditions",
-        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
-        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
-        "cta" : "Agree and Continue"
+        "title" : "Termos e condições",
+        "body" : "Os mercados de previsão são especulativos, envolvem riscos substanciais e podem não ser adequados para todos os usuários. O trading nesses mercados envolve riscos significativos, incluindo: perda total de fundos (uma posição pode perder todo o seu valor); risco de mercado e de resolução (os resultados são liquidados sob as regras de cada mercado, as quais podem diferir das suas expectativas); risco de liquidez (pode não ser possível vender uma posição pelo preço desejado, ou mesmo vendê-la); e risco de contrato inteligente (vulnerabilidades de código). Avalie cuidadosamente estes riscos e compreenda como funciona cada mercado antes de prosseguir. Consulte os <termsLink>Termos de Uso</termsLink> para obter mais informações.",
+        "checkbox" : "O usuário reconhece que leu e compreendeu o aviso legal acima e aceita os riscos de realizar trading em mercados de previsão.",
+        "cta" : "Concordar e continuar"
       },
       "consent" : {
-        "title" : "Clear signed trade on Polymarket via MoonPay",
-        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "title" : "Negociação com assinatura transparente no Polymarket via MoonPay",
+        "description" : "Selecione um endereço da Ledger Wallet para assinar suas negociações e para sacar seu saldo de Predictions.",
         "bullets" : {
-          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
-          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
-          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+          "dedicatedWallet" : "Carteira de trading dedicada: o MoonPay Trade cria uma carteira especificamente para a sua atividade na Polymarket. Deposite apenas o que planeja negociar. Não há suporte para login direto na Polymarket.",
+          "secureSigning" : "Assinatura segura: cada instrução de negociação é assinada de forma clara utilizando o endereço selecionado da Ledger Wallet.",
+          "withdraw" : "Saque a qualquer momento: transfira o seu saldo de trading de volta para a sua Ledger Wallet™ quando desejar."
         },
-        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
-        "cta" : "Continue",
-        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+        "checkbox" : "Ao continuar, concorda em criar um endereço de carteira MoonPay Trade e autoriza o endereço selecionado da Ledger Wallet a assinar instruções de trading e a receber seus fundos quando realizar saques.",
+        "cta" : "Continuar",
+        "footer" : "Os serviços de transações cripto são oferecidos pelo provedor externo MoonPay. A Ledger não fornece conselhos nem recomendações."
       }
     }
   },
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "Nenhuma conta",
     "review" : "Avaliação",
+    "learnMore" : "Saiba Mais",
     "formErrors" : {
+      "offline" : "Problema de conexão com a internet.",
       "amountExceedsBalance" : "Saldo insuficiente",
+      "feeAccountEmpty" : "É necessário mais {{ticker}} para as taxas de rede.",
+      "notEnoughFees" : "É necessário {{fees}} {{ticker}} para as taxas de rede.",
+      "amountTooLow" : "Insira pelo menos {{amount}} {{ticker}} e tente novamente.",
+      "amountTooHigh" : "Insira {{amount}} {{ticker}} ou menos e tente novamente.",
+      "feeEstimationFailed" : "Não foi possível calcular as taxas no momento. Suas contas cripto podem estar fora de sincronia. Reinicie o aplicativo Ledger Wallet e tente novamente.",
+      "accountNotReady" : "Esta conta ainda não está pronta para enviar. Abra-a em suas contas e tente novamente.",
+      "seiEvmUnlinked" : "As contas SEI EVM devem ser vinculadas antes da troca",
+      "aleoPrivateBalance" : "As trocas estão disponíveis apenas para {{ticker}} públicos. Seus fundos estão atualmente privados e não podem ser trocados.",
+      "tezosUnrevealed" : "Sua conta Tezos ainda não está ativada. Por favor, envie uma pequena quantia de XTZ antes de realizar a troca.",
+      "dotMinimumBalance" : "Mantenha o saldo mínimo de {{minValue}} DOT após a troca.",
+      "xlmMinimumBalance" : "Mantenha o saldo mínimo de {{minValue}} XLM após a troca.",
       "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}SwapKit. Tente com um ativo diferente ou volte mais tarde."
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} insuficiente",
+        "description" : "Sua conta {{account}} não possui saldo suficiente para cobrir as taxas de rede."
+      },
+      "amountTooLow" : {
+        "title" : "Mínimo necessário para {{ticker}}",
+        "description" : "É necessário um valor mínimo de {{amount}} {{ticker}} para cotações"
+      },
+      "buy" : "Comprar {{ticker}}"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Assinatura de depósito",
+    "genericError" : {
+      "title" : "Algo deu errado",
+      "description" : "Por gentileza, tente novamente mais tarde ou selecione um ativo diferente."
+    },
     "terms" : "Ao assinar esta transação, aceito os <termsLink>T&C do SwapKit by NEAR Intents</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "Detalhes da transação",
     "title" : "Fundos Perpétuos",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "Sacar",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "Voltar aos perpétuos"
   },
   "accountAnalytics" : {
     "assets" : "Filtro de ativos",
@@ -11451,6 +11510,7 @@
     "allAssets" : "Todos os ativos",
     "allAccounts" : "Todas as contas",
     "error" : "Não foi possível carregar as métricas. Tente novamente.",
-    "unavailable" : "Os dados não estão disponíveis para esta seleção."
+    "unavailable" : "Os dados não estão disponíveis para esta seleção.",
+    "noResults" : "Nenhum resultado"
   }
 }
