@@ -785,6 +785,26 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
   });
 
   describe("Android Back", () => {
+    it("should close the open Ledger Sync drawer and stay on the entry screen", async () => {
+      render(<ManageInstancesEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+      await screen.findByTestId(`walletSync-manage-instance-${MEMBER.id}`);
+
+      jest.mocked(track).mockClear();
+
+      pressBack();
+
+      await waitFor(() =>
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          expect.objectContaining({ button: "Close" }),
+        ),
+      );
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("entry screen")).toBeVisible();
+    });
+
     it("should close the device step when it is dismissable", async () => {
       mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
 
