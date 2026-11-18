@@ -93,6 +93,11 @@ export function hasLocalApi(currency: CryptoCurrency): boolean {
   );
 }
 
+/** Whether the account data layer may read the currency from its local api: it has one, and its loader does not opt out. */
+export function localApiServesAccountData(currency: CryptoCurrency): boolean {
+  return hasLocalApi(currency) && loaders.get(currency.family)?.localApiServesAccountData !== false;
+}
+
 export function listSupportedCurrencies(): CryptoCurrency[] {
   if (!supportedCurrencies) {
     supportedCurrencies = [...getSupportedIds()].map(id => getCryptoCurrencyById(id));
