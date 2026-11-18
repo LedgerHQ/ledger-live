@@ -55,6 +55,17 @@ describe("getSendTransactionStatus", () => {
     expect(status.errors.amount?.name).toBe("CardanoNotEnoughFunds");
   });
 
+  it("returns CardanoMinAmountError for a 0.1 ADA send to a testnet address", async () => {
+    mockedBuildTransaction.mockResolvedValueOnce({} as never);
+
+    const status = await getSendTransactionStatus(account, {
+      ...buildTransactionInput(),
+      amount: new BigNumber("0.1"),
+    });
+
+    expect(status.errors.amount).toBeInstanceOf(CardanoMinAmountError);
+  });
+
   it("maps a thrown CardanoMinAmountError to an amount error instead of re-throwing", async () => {
     mockedBuildTransaction.mockRejectedValueOnce(new CardanoMinAmountError("", { amount: "1" }));
 
