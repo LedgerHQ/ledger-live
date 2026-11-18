@@ -3,14 +3,18 @@ import { useNavigation } from "@react-navigation/native";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
-  createBindingSigner,
+  createPredictionsSigner,
+  getBindingTypedData,
   handlers as predictionsHandlers,
 } from "@features/platform-predictions";
 import { useStore } from "~/context/hooks";
 import { selectHasSeenIntro, markPredictionsIntroSeen } from "@domain/entity-predictions";
 import { usePredictionsSetupHooks, usePredictionsSheetHooks } from "@features/flow-predictions";
 import { accountsSelector } from "~/reducers/accounts";
-import { findBindingAccount, predictionsBindingRequests } from "../bindingIntent/bindingRequests";
+import {
+  findPredictionsAccount,
+  predictionsSigningRequests,
+} from "../signingIntent/signingRequests";
 
 export function usePredictionsHandlers(): WalletAPICustomHandlers {
   const navigation = useNavigation();
@@ -19,10 +23,11 @@ export function usePredictionsHandlers(): WalletAPICustomHandlers {
   const setupHooks = usePredictionsSetupHooks();
   const bindingSigner = useMemo(
     () =>
-      createBindingSigner({
-        requests: predictionsBindingRequests,
+      createPredictionsSigner({
+        requests: predictionsSigningRequests,
+        purpose: "binding",
         findAccount: walletAccountId =>
-          findBindingAccount(accountsSelector(store.getState()), walletAccountId),
+          findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
         onSigned: setupHooks.startSetup,
         refusal: () => new UserRefusedOnDevice(),
       }),
@@ -39,7 +44,10 @@ export function usePredictionsHandlers(): WalletAPICustomHandlers {
           "app.close": () => navigation.goBack(),
           "intro.isSeen": () => selectHasSeenIntro(store.getState()),
           "intro.markSeen": () => store.dispatch(markPredictionsIntroSeen()),
-          "binding.sign": bindingSigner.sign,
+          "binding.sign": walletAccountId =>
+            bindingSigner.sign(walletAccountId, account =>
+              getBindingTypedData(account.freshAddress),
+            ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
         },
       }),

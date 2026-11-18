@@ -12,7 +12,7 @@ import {
   type SignTypedDataEvmRunState,
 } from "@ledgerhq/live-common/wallet-api/Exchange/intents/shared/signTypedDataEvm";
 import { PredictionsSetupSheet } from "@features/flow-predictions";
-import PredictionsBindingRoot from "../bindingIntent/PredictionsBindingRoot";
+import PredictionsSigningRoot from "../signingIntent/PredictionsSigningRoot";
 import { usePredictionsHandlers } from "../hooks/usePredictionsHandlers";
 
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -79,7 +79,7 @@ function setup() {
   setWalletApiIdForAccountId(account.id);
   const view = render(
     <>
-      <PredictionsBindingRoot />
+      <PredictionsSigningRoot />
       <PredictionsSetupSheet />
     </>,
     { initialState: { accounts: [account] } },
@@ -257,7 +257,7 @@ describe("Predictions account binding", () => {
     const { bindAccount } = setup();
 
     await expect(bindAccount("unknown")).rejects.toMatchObject({
-      name: "PredictionsBindingAccountNotFound",
+      name: "PredictionsAccountNotFound",
     });
     expect(queryExecutor()).not.toBeInTheDocument();
   });

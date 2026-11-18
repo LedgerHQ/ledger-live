@@ -1,5 +1,6 @@
 import {
-  createBindingSigner,
+  createPredictionsSigner,
+  getBindingTypedData,
   handlers as predictionsHandlers,
 } from "@features/platform-predictions";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -9,7 +10,10 @@ import { useStore } from "LLD/hooks/redux";
 import { selectHasSeenIntro, markPredictionsIntroSeen } from "@domain/entity-predictions";
 import { usePredictionsSetupHooks, usePredictionsSheetHooks } from "@features/flow-predictions";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { findBindingAccount, predictionsBindingRequests } from "../bindingIntent/bindingRequests";
+import {
+  findPredictionsAccount,
+  predictionsSigningRequests,
+} from "../signingIntent/signingRequests";
 
 export function usePredictionsHandlers(onClose?: () => void) {
   const store = useStore();
@@ -17,10 +21,11 @@ export function usePredictionsHandlers(onClose?: () => void) {
   const setupHooks = usePredictionsSetupHooks();
   const bindingSigner = useMemo(
     () =>
-      createBindingSigner({
-        requests: predictionsBindingRequests,
+      createPredictionsSigner({
+        requests: predictionsSigningRequests,
+        purpose: "binding",
         findAccount: walletAccountId =>
-          findBindingAccount(accountsSelector(store.getState()), walletAccountId),
+          findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
         onSigned: setupHooks.startSetup,
         refusal: () => new UserRefusedOnDevice(),
       }),
@@ -37,7 +42,10 @@ export function usePredictionsHandlers(onClose?: () => void) {
           "app.close": () => onClose?.(),
           "intro.isSeen": () => selectHasSeenIntro(store.getState()),
           "intro.markSeen": () => store.dispatch(markPredictionsIntroSeen()),
-          "binding.sign": bindingSigner.sign,
+          "binding.sign": walletAccountId =>
+            bindingSigner.sign(walletAccountId, account =>
+              getBindingTypedData(account.freshAddress),
+            ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
         },
       }),
