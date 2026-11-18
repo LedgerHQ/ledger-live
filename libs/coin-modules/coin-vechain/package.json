@@ -102,13 +102,12 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest --passWithNoTests",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "catalog:",
     "@vechain/sdk-core": "2.0.0",
@@ -129,7 +128,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "dotenv": "16.4.7",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
