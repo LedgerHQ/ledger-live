@@ -20,6 +20,12 @@ This document guides you through adding or updating E2E tests for ledger-live-de
 
 ---
 
+## Before writing
+
+Read the product code behind each path the test takes, the page objects of the same client that may already declare your test ids, and the source of each helper you call, including one a review suggests. The rules: [product branches](../../docs/e2e-conventions.md#a-product-branch-must-follow-the-products-own-rule), [test-data ids](../../docs/e2e-conventions.md#test-data-ids-must-match-the-product-ids-they-select), [selectors](../../docs/e2e-conventions.md#selectors-must-live-on-the-page-object-that-renders-the-screen), [helpers](../../docs/e2e-conventions.md#a-helper-call-must-match-what-the-helper-does).
+
+---
+
 ## Adding New Coin E2E Test
 
 When the user wants to add e2e tests for a new coin, follow these steps and **ask for required information at each step**:
@@ -220,6 +226,8 @@ test.use({
 ## Finishing
 
 Follow [validate-before-finishing](../../../docs/validate-before-finishing.md), then:
+
+- Review the diff against the [shared](../../docs/e2e-conventions.md) and [desktop](e2e-desktop-conventions.md) conventions, the ones Copilot applies.
 
 Dispatch filtered desktop CI (`/run-e2e-ci`) and read Allure, not just the green check. A retry hides a failed first attempt.
 

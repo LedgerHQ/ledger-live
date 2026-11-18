@@ -8,6 +8,14 @@ Rules for desktop and mobile E2E tests. MUST and MUST NOT are required. SHOULD i
 
 Tests MUST seed dismissed introductions, onboarding, and settings through fixtures and feature flags. Tests MUST NOT branch the flow on whether something is visible.
 
+### A product branch MUST follow the product's own rule
+
+When the app picks between paths (a picker that opens only for some accounts, a tile that replaces another), the test's branch MUST match the product's condition and MUST be derived from data the test owns: the account, the currency, the fixture, the flags. It MUST NOT be decided by probing the screen for a short timeout. A branch for a state the product cannot reach MUST NOT be written: it costs a failed wait on every run and documents behaviour that does not exist. A claim about the product in a ticket or PR description is not evidence: the product source is.
+
+### Test-data ids MUST match the product ids they select
+
+An id from a [`live-e2e-shared`](../../libs/live-e2e-shared/src/enum) enum used to build a test id MUST be checked against the product's test id for every value the test can receive, not only the one it was run with. For example, some `Currency` tokens carry their chain's id, so `transfer-asset-picker-${currency.id}` names the native coin's row.
+
 ### Feature Flags
 
 Set `E2E_FEATURE_FLAGS_JSON` to inject feature flags for a Desktop or Mobile run. The value MUST be a JSON object of flag keys. An empty value is ignored. Arrays, scalars, `null`, and invalid JSON MUST be rejected.
@@ -46,7 +54,11 @@ Shared data, types, and utility functions MUST be declared in `libs/live-e2e-sha
 
 ### Selectors MUST live on the page object that renders the screen
 
-Specs MUST NOT repeat selector or test-id string literals.
+Specs MUST NOT repeat selector or test-id string literals. Within one client (`e2e/desktop` or `e2e/mobile`), a test id MUST be declared by one page object: when another page object of that client already declares it, that owner MUST be reused or the selector moved, not copied. The same id declared once by a desktop and once by a mobile page object is expected. An id rendered by a shared component on several screens, such as a navigation header's back button, belongs on the common page object, or gets a host prefix (mobile: the component's `testIDPrefix`).
+
+### A helper call MUST match what the helper does
+
+A page object MUST rely on what a helper does in its source, not on what its name suggests. A scroll helper may scroll past a row that was already visible, and a visibility check may pass at 75% while a sheet still slides. This holds for a helper suggested in a review comment too.
 
 ### Selectors MUST be non-public and readonly
 
@@ -59,6 +71,10 @@ A spec MUST describe only the scenario.
 ### A page object MUST keep one assertion-method prefix
 
 The prefix MUST be one of `expect*`, `check*`, or `verify*`, and that page object MUST keep it.
+
+### A step label MUST name what the step acts on
+
+An Allure step label MUST name the entity the method acts on. When a caller can override it, such as an `accountName` that opens another account than `accountToDebit`, the label MUST use the value actually opened. An optional parameter MUST NOT be a placeholder: when it is omitted, the mobile label renders an empty value and the desktop label renders `undefined`.
 
 ### Cross-page workflows MUST live in a util, builder, or flow
 
@@ -85,6 +101,10 @@ Desktop and mobile reports share one tree: Team › Folder › test, and Team �
 - A title MUST read `` `[${currency.testLabel}] - Action - qualifier` ``, or `Action - qualifier` for a test not about one currency, and MUST be unique within its folder or scenario, since the tree shows nothing else there.
 
 See [Desktop](../desktop/docs/e2e-desktop-conventions.md#every-describe-must-declare-its-team) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#the-test-function-must-call-tmslink) for how each client declares them.
+
+### An assertion MUST fail when the feature does not produce the value
+
+An assertion MUST fail when the feature under test does nothing or produces the wrong value: a Max amount check that also passes when Max is not applied, or an error check matching any text, proves nothing. A partial match, such as `containing` or a regex, MAY be used only for a value with a variable part, and the method or parameter name MUST say which part varies, such as `expectDateStartsWith(day)`.
 
 ### Tests MUST NOT hide an interaction failure
 
