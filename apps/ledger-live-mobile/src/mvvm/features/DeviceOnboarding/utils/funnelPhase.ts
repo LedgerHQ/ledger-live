@@ -1,7 +1,7 @@
 import type { ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
 import { toChecksScreenState } from "./checksPhase";
 
-export type FunnelPhase = "connecting" | "failed" | "checks" | "synchronizing";
+export type FunnelPhase = "connecting" | "failed" | "checks" | "resumingChecks" | "synchronizing";
 
 const topLevel = {
   readingState: "synchronizing",
@@ -23,11 +23,29 @@ const topLevel = {
 
 const seededSuccessExits = new Set(["syncOffer", "done"]);
 
+const statesBeforeChecksResume = new Set([
+  "awaitingSessionAfterFirmwareUpdate",
+  "readingState",
+  "routing",
+]);
+
+export function isResumingChecksState(machineState: string): boolean {
+  return statesBeforeChecksResume.has(machineState);
+}
+
 export function phaseOf(
   machineState: string | null,
   onboardedOnEntry: boolean | null = null,
+  returningFromFirmwareUpdate = false,
 ): FunnelPhase | null {
   if (machineState === null) return "connecting";
+  if (
+    returningFromFirmwareUpdate &&
+    onboardedOnEntry === true &&
+    isResumingChecksState(machineState)
+  ) {
+    return "resumingChecks";
+  }
   if (machineState.startsWith("checks.")) return "checks";
   if (machineState.startsWith("deviceSetup.")) return "synchronizing";
   if (onboardedOnEntry === true && seededSuccessExits.has(machineState)) return "checks";
@@ -43,6 +61,7 @@ export function checksScreenForPhase(
   onboardedOnEntry: boolean,
 ): ChecksScreenState | null {
   if (phase === "connecting" || phase === "failed") return null;
+  if (phase === "resumingChecks") return "checking";
   if (phase === "checks") {
     return toChecksScreenState(machineState, checksPaused, onboardedOnEntry) ?? "synchronizing";
   }

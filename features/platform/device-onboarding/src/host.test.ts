@@ -49,6 +49,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     checksPaused: false,
     successAcknowledgedOnSession: null,
     firmware: null,
+    returningFromFirmwareUpdate: false,
     currentSetupStep: null,
     seedPath: null,
     ...overrides,
@@ -89,6 +90,15 @@ describe("flattenDeviceOnboardingContext", () => {
     expect(matching.verdictMatchesSession).toBe(true);
     expect(moved.verdictMatchesSession).toBe(false);
   });
+
+  it.each([true, false])(
+    "should report whether the device is returning from an OS update when it is %s",
+    returningFromFirmwareUpdate => {
+      const flattened = flattenDeviceOnboardingContext(snapshot({ returningFromFirmwareUpdate }));
+
+      expect(flattened.returningFromFirmwareUpdate).toBe(returningFromFirmwareUpdate);
+    },
+  );
 
   it("should read the offered firmware and the secure connection prompt", () => {
     const update = { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate;

@@ -27,10 +27,11 @@ import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
-import { isRebootedDevice } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { matchesPairedDevice, selectPairedKnownDevices } from "../utils/pairedDevice";
 import { createDeviceOnboardingPorts } from "../utils/ports";
+import { isRebootedDevice } from "../utils/rebootedDevice";
+import { selectKnownDevicesToReconnect } from "../utils/reconnectDevices";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -387,7 +388,9 @@ export function useDeviceOnboarding({
       connectionRef.current?.unsubscribe();
       connectionRef.current = connectDevice({
         dmk,
-        knownDevices: selectPairedKnownDevices(knownDevices, pairedDeviceId),
+        knownDevices: waitingAfterUpdateRef.current
+          ? selectKnownDevicesToReconnect(knownDevices, expectedDeviceRef.current)
+          : selectPairedKnownDevices(knownDevices, pairedDeviceId),
         isMockServerEnabled,
         onConnected: result => {
           void adoptConnection(result);
@@ -439,6 +442,7 @@ export function useDeviceOnboarding({
     portsRef.current = null;
     void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
+    waitingAfterUpdateRef.current = false;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);

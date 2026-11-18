@@ -179,10 +179,12 @@ export const deviceOnboardingMachine = setup({
     },
 
     awaitingStart: {
+      entry: "finishReturningFromFirmwareUpdate",
       on: { CONTINUE: { target: "routing", actions: "rememberStart" } },
     },
 
     checks: {
+      entry: "finishReturningFromFirmwareUpdate",
       initial: "checksIdle",
       states: {
         enteringEarlyCheckScreen: {
@@ -316,11 +318,19 @@ export const deviceOnboardingMachine = setup({
             SESSION_CHANGED: stopsHere,
             FIRMWARE_UPDATE_RECONNECT_REQUIRED: {
               target: "#deviceOnboarding.awaitingSessionAfterFirmwareUpdate",
-              actions: ["forgetFirmwareCheck", "clearGenuineVerdict"],
+              actions: [
+                "forgetFirmwareCheck",
+                "clearGenuineVerdict",
+                "startReturningFromFirmwareUpdate",
+              ],
             },
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
-              actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],
+              actions: [
+                "forgetFirmwareCheck",
+                "forgetAttestationAfterUpdate",
+                "startReturningFromFirmwareUpdate",
+              ],
             },
           },
         },

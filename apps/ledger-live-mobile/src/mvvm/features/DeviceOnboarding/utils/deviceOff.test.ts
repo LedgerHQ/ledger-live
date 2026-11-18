@@ -6,6 +6,7 @@ describe("isDeviceOffDuringChecks", () => {
     heldMachineState: "checks.genuineCheck.running",
     onboardedOnEntry: true,
     hasLiveDevice: true,
+    returningFromFirmwareUpdate: false,
   };
 
   it("should hold the checks while the session is awaited", () => {
@@ -14,6 +15,31 @@ describe("isDeviceOffDuringChecks", () => {
 
   it("should hold the checks while it is not known yet whether the device was onboarded", () => {
     expect(isDeviceOffDuringChecks({ ...holding, onboardedOnEntry: null })).toBe(true);
+  });
+
+  it.each(["readingState", "routing"])(
+    "should hold the checks when the device switches off in %s while returning from an OS update",
+    heldMachineState => {
+      expect(
+        isDeviceOffDuringChecks({
+          ...holding,
+          heldMachineState,
+          returningFromFirmwareUpdate: true,
+        }),
+      ).toBe(true);
+    },
+  );
+
+  it.each([
+    ["the device is not returning from an OS update", { returningFromFirmwareUpdate: false }],
+    [
+      "the device is not known to be onboarded",
+      { returningFromFirmwareUpdate: true, onboardedOnEntry: null },
+    ],
+  ])("should not hold the reading of the device when %s", (_, change) => {
+    expect(
+      isDeviceOffDuringChecks({ ...holding, heldMachineState: "readingState", ...change }),
+    ).toBe(false);
   });
 
   it.each([

@@ -1,6 +1,9 @@
 import { DeviceModelId, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { OnboardingStep } from "@features/platform-device-onboarding";
+import * as liveDmkMobile from "@ledgerhq/live-dmk-mobile";
 import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { useDeviceOnboardingToolSession } from "../../DevTools/DeviceOnboarding/useDeviceOnboardingTool";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
@@ -22,6 +25,13 @@ jest.mock("./useFirmwareUpdateHandover", () => ({
   ),
   useFirmwareUpdateHandover: (props: HandoverProps) => mockUseFirmwareUpdateHandover(props),
 }));
+
+jest.mock("@ledgerhq/live-dmk-mobile", () => {
+  const actual = jest.requireActual<typeof import("@ledgerhq/live-dmk-mobile")>(
+    "@ledgerhq/live-dmk-mobile",
+  );
+  return { ...actual, connectDevice: jest.fn(actual.connectDevice) };
+});
 
 jest.mock("./useLeaveOnboarding", () => ({
   useLeaveOnboarding: () => jest.fn(),
@@ -72,6 +82,79 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
     const lostAt = result.current.log.findIndex(row => row.event?.type === "TRANSPORT_LOST");
     expect(readyAt).toBeGreaterThanOrEqual(0);
     expect(readyAt).toBeLessThan(lostAt);
+  });
+
+  it("reconnects to the updated device only, not to another known device", async () => {
+    const device = createScriptedTestDevice();
+    const otherKnownDevice: KnownDevice = {
+      id: "other-id",
+      name: "Ledger Nano X",
+      transport: rnBleTransportIdentifier,
+      deviceModelId: LedgerDeviceModelId.nanoX,
+    };
+    const { result, rerender } = renderHook(
+      () =>
+        useOnboardingWithTool({
+          dmk: device.dmk,
+          knownDevices: [otherKnownDevice, knownStax],
+          offerSync: false,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+        }),
+      },
+    );
+    await connectStax(result, device);
+    const connectDevice = jest.mocked(liveDmkMobile.connectDevice);
+    connectDevice.mockClear();
+
+    device.dmk.disconnect = jest.fn(async () => undefined) as DeviceManagementKit["disconnect"];
+    device.dmk.listConnectedDevices = (() => []) as DeviceManagementKit["listConnectedDevices"];
+    device.setSession("session-2");
+    device.show();
+    act(() => {
+      mockUseFirmwareUpdateHandover.latest?.onReconnectRequired();
+    });
+    rerender(undefined as never);
+
+    await waitFor(() => expect(connectDevice).toHaveBeenCalled());
+    expect(connectDevice.mock.calls[0][0].knownDevices).toEqual([knownStax]);
+  });
+
+  it("stops restricting the connection to the updated device once the onboarding is reset", async () => {
+    const device = createScriptedTestDevice();
+    const otherKnownDevice: KnownDevice = {
+      id: "other-id",
+      name: "Ledger Nano X",
+      transport: rnBleTransportIdentifier,
+      deviceModelId: LedgerDeviceModelId.nanoX,
+    };
+    const knownDevices = [otherKnownDevice, knownStax];
+    const { result, rerender } = renderHook(
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices, offerSync: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+        }),
+      },
+    );
+    await connectStax(result, device);
+    const connectDevice = jest.mocked(liveDmkMobile.connectDevice);
+
+    device.dmk.disconnect = jest.fn(
+      () => new Promise<void>(() => undefined),
+    ) as DeviceManagementKit["disconnect"];
+    act(() => {
+      mockUseFirmwareUpdateHandover.latest?.onReconnectRequired();
+    });
+    rerender(undefined as never);
+
+    act(() => result.current.reset());
+    connectDevice.mockClear();
+    act(() => result.current.connect());
+
+    expect(connectDevice.mock.calls[0][0].knownDevices).toEqual(knownDevices);
   });
 
   it("shows an error when the original session is still the only connected device", async () => {

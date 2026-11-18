@@ -144,6 +144,25 @@ function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
   return { ...hook, connect, update };
 }
 
+const seededContext = {
+  onboardedOnEntry: true,
+  checksPaused: false,
+} as DeviceOnboardingSession["context"];
+
+const returningContext = {
+  onboardedOnEntry: true,
+  checksPaused: false,
+  returningFromFirmwareUpdate: true,
+} as DeviceOnboardingSession["context"];
+
+function waitingSession(extra: Partial<DeviceOnboardingSession> = {}) {
+  return session({
+    state: "awaitingSessionAfterFirmwareUpdate",
+    context: returningContext,
+    ...extra,
+  });
+}
+
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -389,6 +408,221 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
     expect(goBack).not.toHaveBeenCalled();
     expect(closeFirmwareHandover).not.toHaveBeenCalled();
+  });
+
+  it("should keep the checks screen up while returning from an OS update", () => {
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateDelegated", context: seededContext }),
+    );
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("checking");
+
+    for (const state of ["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+      expect(result.current.status).toBe("checks");
+      expect(checksOf(result.current).state).toBe("checking");
+    }
+
+    useSession.mockReturnValue(
+      session({ state: "checks.checksSucceeded", context: seededContext }),
+    );
+    rerender(undefined);
+
+    expect(checksOf(result.current).state).toBe("succeeded");
+  });
+
+  it("should keep the checks screen up when the device locks and unlocks while returning from an OS update", () => {
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+      expect(result.current.status).toBe("checks");
+      expect(checksOf(result.current).state).toBe("checking");
+      expect(checksModel(result.current).unlockSheet !== null).toBe(state === "deviceLocked");
+    }
+  });
+
+  it("should not close the firmware handover from the checks screen once the device unlocks after an OS update", () => {
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+    }
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+  });
+
+  it("should abort the firmware reconnect from the checks screen", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        context: returningContext,
+        abortFirmwareReconnect,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    checksOf(result.current).onQuit?.();
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+  });
+
+  it("should quit through the confirmation, not abort the reconnect, once a locked device is read again", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(waitingSession({ abortFirmwareReconnect }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState"]) {
+      useSession.mockReturnValue(
+        session({ state, context: returningContext, abortFirmwareReconnect }),
+      );
+      rerender(undefined);
+    }
+    act(() => checksOf(result.current).onQuit?.());
+    useSession.mockReturnValue(
+      session({ state: "routing", context: returningContext, abortFirmwareReconnect }),
+    );
+    rerender(undefined);
+
+    expect(abortFirmwareReconnect).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should abort the firmware reconnect when back is pressed on the checks screen", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        context: returningContext,
+        abortFirmwareReconnect,
+      }),
+    );
+
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+  });
+
+  it("should show the connection failure when returning from an OS update fails", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        error: "Unable to connect to the device",
+        context: returningContext,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("failed");
+  });
+
+  it("should keep the checks, ask to power on and reconnect when the device switches off right after returning from an OS update", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const error of [null, "connection-error"]) {
+      useSession.mockReturnValue(
+        session({
+          state: "awaitingSession",
+          status: "connecting",
+          error,
+          connect,
+          context: returningContext,
+        }),
+      );
+      rerender(undefined);
+
+      const switchedOff = checksModel(result.current);
+      expect(switchedOff.checks.state).toBe("checking");
+      expect(switchedOff.powerOnSheet).not.toBeNull();
+    }
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledWith("device-id");
+
+    act(() => {
+      jest.advanceTimersByTime(2_000);
+    });
+
+    expect(connect).toHaveBeenCalledTimes(2);
+  });
+
+  describe("when the updated device takes long to come back", () => {
+    it("should keep the checks screen without a sheet during the first 20 seconds", () => {
+      useSession.mockReturnValue(waitingSession());
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(19_999));
+
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+      expect(checksOf(result.current).state).toBe("checking");
+    });
+
+    it("should ask to power on and unlock over the checks after 20 seconds, and abort the reconnect on quit", () => {
+      const abortFirmwareReconnect = jest.fn();
+      useSession.mockReturnValue(waitingSession({ abortFirmwareReconnect }));
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(20_000));
+
+      const waiting = checksModel(result.current);
+      expect(waiting.checks.state).toBe("checking");
+      expect(waiting.checks.suspendSheets).toBe(true);
+      expect(waiting.powerOnSheet).toEqual({
+        deviceModelId: DeviceModelId.stax,
+        deviceName: "Ledger Stax",
+        onQuit: expect.any(Function),
+      });
+
+      act(() => waiting.powerOnSheet?.onQuit());
+
+      expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should drop the sheet once the device is read again", () => {
+      useSession.mockReturnValue(waitingSession());
+      const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      act(() => jest.advanceTimersByTime(20_000));
+
+      useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+      rerender(undefined as never);
+
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+    });
+
+    it("should not ask to power on in the unseeded flow", () => {
+      useSession.mockReturnValue(
+        session({
+          state: "awaitingSessionAfterFirmwareUpdate",
+          context: unseededContext({ returningFromFirmwareUpdate: true }),
+        }),
+      );
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(20_000));
+
+      expect(result.current.status).toBe("connecting");
+    });
   });
 
   it("should close the firmware handover from the waiting screen", () => {

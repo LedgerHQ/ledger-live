@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useLayoutEffect } from "react";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName, BASE_NAVIGATOR_ID } from "~/const";
-import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 
 const mockPush = jest.fn();
@@ -358,21 +358,6 @@ function renderDelegated(
     },
   };
 }
-
-describe("isRebootedDevice", () => {
-  it("recognises the same touchscreen after its BLE address and advertised name change", () => {
-    const before = { ...device, deviceName: "Ledger Stax 1A2B" };
-    const after = { ...device, deviceId: "new-ble-address", deviceName: "1A2B" };
-
-    expect(isRebootedDevice(before, after)).toBe(true);
-  });
-
-  it("rejects a different model", () => {
-    expect(
-      isRebootedDevice(device, { ...device, modelId: DeviceModelId.nanoX, deviceName: "Nano X" }),
-    ).toBe(false);
-  });
-});
 
 function reportFirmware(
   status: "idle" | "ongoing" | "error" | "no-available-firmware" | "available-firmware",

@@ -2,7 +2,6 @@ const funnelScreens = new Set([
   "awaitingStart",
   "awaitingSession",
   "awaitingSessionAfterFirmwareUpdate",
-  "deviceLocked",
 ]);
 
 export function shouldRevealFunnel(state: string | null, error: string | null): boolean {

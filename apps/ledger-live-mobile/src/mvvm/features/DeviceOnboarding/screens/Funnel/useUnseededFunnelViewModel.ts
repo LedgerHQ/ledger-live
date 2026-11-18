@@ -7,13 +7,14 @@ import {
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
-const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
+const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
 
 export type UnseededFunnelInput = {
   machineState: string | null;

@@ -68,6 +68,10 @@ The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOS
 session that can still be read. `FIRMWARE_UPDATE_RECONNECT_REQUIRED` means that flow returned after
 the device rebooted: the machine waits, and the host opens the next session.
 
+Both events set `context.returningFromFirmwareUpdate`, and entering `awaitingStart` or `checks`
+clears it. While it is set, the waiting states between the update and the checks are not a new
+screen, so a screen can keep showing the checks.
+
 ### The session
 
 `context.sessionId` is the session the machine talks to. Only 3 events change it:

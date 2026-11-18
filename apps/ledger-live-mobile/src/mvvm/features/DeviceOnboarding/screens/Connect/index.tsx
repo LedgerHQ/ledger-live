@@ -3,11 +3,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
 import { DeviceOnboardingCloseBar } from "../../components/CloseBar";
+import { DeviceUnlockSheet } from "../../components/DeviceUnlockSheet";
 import { useDeviceOnboardingConnectViewModel } from "./useDeviceOnboardingConnectViewModel";
 
 export function DeviceOnboardingConnect() {
   const { bottom } = useSafeAreaInsets();
-  const { closeLabel, showDeviceList, onConnected, onClose, onDeviceNotFound } =
+  const { closeLabel, showDeviceList, unlockSheet, onConnected, onClose, onDeviceNotFound } =
     useDeviceOnboardingConnectViewModel();
 
   return (
@@ -26,6 +27,7 @@ export function DeviceOnboardingConnect() {
           />
         ) : null}
       </Box>
+      {unlockSheet ? <DeviceUnlockSheet {...unlockSheet} /> : null}
     </Box>
   );
 }
