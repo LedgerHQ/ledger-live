@@ -1,13 +1,7 @@
 name: "Mobile E2E plan"
 description: |
-  Decides what the mobile e2e workflow (test-mobile-e2e-reusable.yml) builds and runs: Speculos devices,
-  test filter, shard matrices and timeouts, the native/JS/AVD cache keys and whether each is already cached.
-  Writes everything to one `plan` output, a JSON object of strings, so a caller can compute it once and
-  hand it to the e2e workflow through its `build_plan` input.
-
-  Needs a checkout with apps/ledger-live-mobile, e2e/mobile, e2e/tooling/filter and pnpm-workspace.yaml,
-  Node on the PATH, and AWS credentials for the cache bucket in the environment (setup-caches, or
-  configure-nx-remote-cache-profile + configure-aws-credentials), NX_CACHE_KEY_PREFIX included.
+  Plans the mobile e2e builds and shards as one `plan` JSON output (test-mobile-e2e-reusable.yml build_plan).
+  Needs a checkout of the mobile app and e2e files, Node, and cache-bucket AWS credentials (setup-caches).
 inputs:
   ref:
     description: "Branch the tests run for, used to size the shards (release and hotfix get more)"
@@ -89,9 +83,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>. Branches also look in develop/,
-    # read only: the hash covers every input, so the same hash is the same bundle, and a freshly rebased
-    # branch finds the one develop already built. Both platforms are looked up at the same time.
+    # Branches also look in develop/ (read only): same hash, same bundle.
     - name: Check if JS bundles exist in the Nx cache
       id: check-js
       shell: bash
@@ -220,7 +212,6 @@ runs:
           --runner detox \
           --github-output >> "$GITHUB_OUTPUT"
 
-    # With a single shard there is nothing to balance, so the timing data is not downloaded.
     - name: Generate shards matrix and test files
       id: generate-shards
       uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
@@ -252,8 +243,6 @@ runs:
         use-fallback: false
         lookup-only: true
 
-    # The iOS native build runs `pod install --deployment`, which fails on an out-of-date Podfile.lock. Only
-    # a cached native build skips that, so only then does the e2e workflow check the lockfile on its own.
     - name: Check if pod lockfile has been validated
       id: check-lockfile-status
       if: ${{ inputs.tests_type != 'Android Only' && steps.check-ios-native.outputs.cache-hit == 'true' }}
@@ -294,8 +283,7 @@ runs:
         endpoint: ${{ inputs.r2_endpoint }}
         region: auto
 
-    # Same keys and string values as the determine-builds job outputs it replaces, so the e2e workflow
-    # reads either one the same way: fromJSON(plan).<key>.
+    # Same keys as the determine-builds outputs it replaces.
     - name: Write the plan
       id: plan
       shell: bash

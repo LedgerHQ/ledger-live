@@ -199,7 +199,7 @@ on:
         type: number
         default: 0
       check_pod_lockfile:
-        description: "Validate the iOS Pod lockfile when the native build comes from cache (a native build validates it itself)"
+        description: "Validate the iOS Pod lockfile when the native build is cached"
         required: false
         type: boolean
         default: false
@@ -224,7 +224,7 @@ on:
         type: string
         default: ""
       build_plan:
-        description: "Plan from the mobile-e2e-plan action, computed by the caller (the PR affected job). When set, the determine-builds job is skipped and the plan is read from here."
+        description: "Plan from the mobile-e2e-plan action; skips determine-builds when set"
         required: false
         type: string
         default: ""
@@ -515,7 +515,7 @@ jobs:
       contents: read
     runs-on: [macOS, ARM64]
     needs: [determine-builds]
-    # The native build runs `pod install --deployment`, which validates the lockfile, so check it only when that build is skipped
+    # A native build validates the lockfile itself (pod install --deployment)
     if: ${{ !cancelled() && !failure() && inputs.check_pod_lockfile && inputs.tests_type != 'Android Only' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).test_files_for_sharding != '' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_native_exists == 'true' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).pod_lockfile_validated != 'true' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
