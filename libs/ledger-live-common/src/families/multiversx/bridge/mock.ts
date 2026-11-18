@@ -8,7 +8,7 @@ import {
   FeeTooHigh,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { MultiversXAccount, Transaction } from "@ledgerhq/coin-multiversx/types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { MULTIVERSX_DUMMY_ADDRESS } from "@ledgerhq/coin-multiversx/constants";
 import {
   makeAccountBridgeReceive,
@@ -29,7 +29,7 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a, t) => t.fees || new BigNumber(0);
+const defaultGetFees = (a: Account, t: Transaction) => t.fees || new BigNumber(0);
 
 const createTransaction = (): Transaction => ({
   family: "multiversx",
@@ -41,7 +41,11 @@ const createTransaction = (): Transaction => ({
   gasLimit: 0,
 });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -88,7 +92,7 @@ const getTransactionStatus = (account: MultiversXAccount, transaction: Transacti
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: Account, t: Transaction) => {
   if (!t.fees) {
     return { ...t, fees: new BigNumber(500) };
   }

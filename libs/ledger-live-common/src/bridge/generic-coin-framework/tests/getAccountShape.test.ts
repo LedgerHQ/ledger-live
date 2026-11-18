@@ -1084,7 +1084,7 @@ describe("genericGetAccountShape", () => {
           fee: new BigNumber(12),
           value: new BigNumber(0),
           senders: [address],
-          recipients: ["rIssuer"],
+          recipients: [],
           date: new Date("2024-01-15"),
           hasFailed,
           extra: { assetReference: "USD", assetOwner: "rIssuer", feePayer: address },
@@ -1117,6 +1117,21 @@ describe("genericGetAccountShape", () => {
           expect(parent.value?.toFixed()).toBe("12");
         },
       );
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])(
+        "sends a token-only %s parent row to the token issuer",
+        async type => {
+          const [parent] = await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+          expect(parent.recipients).toEqual(["rIssuer"]);
+        },
+      );
+
+      it("sends a FEES parent row to the asset code for a family that does not opt in", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {});
+
+        expect(parent.recipients).toEqual(["USD"]);
+      });
 
       it("keeps a failed opt-in a failed OPT_IN", async () => {
         const [parent] = await syncTokenOnlyTx("OPT_IN", {
@@ -3695,9 +3710,11 @@ describe("genericGetAccountShape", () => {
       const result = await runGetShape("address1");
 
       expect(adaptOperationsMock).toHaveBeenCalledTimes(1);
-      expect(adaptOperationsMock).toHaveBeenCalledWith("address1", [
-        expect.objectContaining({ type: "REWARD" }),
-      ]);
+      expect(adaptOperationsMock).toHaveBeenCalledWith(
+        "address1",
+        [expect.objectContaining({ type: "REWARD" })],
+        { height: 100 },
+      );
       expect(result.operations?.map(op => op.type)).toEqual(["REWARD", "FEES"]);
     });
   });

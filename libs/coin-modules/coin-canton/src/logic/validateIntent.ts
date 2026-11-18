@@ -23,7 +23,12 @@ import {
   TO_MANY_UTXOS_CRITICAL_COUNT,
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "../constants";
-import { getBalance, getPartyByIdCached, isTopologyChangeRequiredCached } from "../network/gateway";
+import {
+  getBalance,
+  getNativeInstrument,
+  getPartyByIdCached,
+  isTopologyChangeRequiredCached,
+} from "../network/gateway";
 import { TooManyUtxosCritical, TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
 import type { CantonMemo } from "../types/transaction";
 import { assetInstrument, type Instrument, instrumentOf, isInstrument } from "./asset";
@@ -119,9 +124,13 @@ async function utxoWarning(
   target: Instrument,
 ): Promise<Error | undefined> {
   if (!countsUtxos(intent)) return undefined;
-  const rows = await getBalance(config, intent.sender).catch(() => []);
+  const [rows, counted] = await Promise.all([
+    getBalance(config, intent.sender).catch(() => []),
+    intent.asset.type === "native" ? getNativeInstrument(config).catch(() => undefined) : target,
+  ]);
+  if (!counted) return undefined;
   const count = rows
-    .filter(row => isInstrument(target, row.instrument_id, row.admin_id))
+    .filter(row => isInstrument(counted, row.instrument_id, row.admin_id))
     .reduce((sum, row) => sum + row.utxo_count, 0);
   if (count > TO_MANY_UTXOS_CRITICAL_COUNT) return new TooManyUtxosCritical();
   if (count > TO_MANY_UTXOS_WARNING_COUNT) {

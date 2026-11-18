@@ -1,4 +1,5 @@
 import { Observable, type Subscription } from "rxjs";
+import { isDeviceDisconnectedError } from "@features/platform-device-intent";
 import type {
   ScanAccountsIntentJobState,
   ScanAccountsIntentResult,
@@ -42,6 +43,18 @@ export function scanAccountsIntentJob<Item>({
       subscriber.complete();
     };
 
+    const fail = (error: unknown) => {
+      // A disconnect fails the job so the executor shows its Disconnected screen and retries the scan.
+      if (isDeviceDisconnectedError(error)) {
+        if (settled) return;
+        settled = true;
+        inner?.unsubscribe();
+        if (!subscriber.closed) subscriber.error(error);
+        return;
+      }
+      finish(found => ({ type: "error", error: toScanError(error), items: found }), false);
+    };
+
     const stop = () => {
       finish(found => ({ type: "done", items: found }), true);
     };
@@ -64,15 +77,13 @@ export function scanAccountsIntentJob<Item>({
           items.push(item);
           subscriber.next({ type: "scanning", items: [...items], stop });
         },
-        error: error => {
-          finish(found => ({ type: "error", error: toScanError(error), items: found }), false);
-        },
+        error: fail,
         complete: () => {
           finish(found => ({ type: "done", items: found }), true);
         },
       });
     } catch (error) {
-      finish(found => ({ type: "error", error: toScanError(error), items: found }), false);
+      fail(error);
     }
 
     if (settled) inner?.unsubscribe();

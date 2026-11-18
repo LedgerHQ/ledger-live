@@ -3,7 +3,13 @@ import {
   TokenCurrencyIdSchema,
   CryptoCurrencyIdSchema,
 } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Operation } from "@ledgerhq/types-live";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  generateHistoryFromOperations,
+  recalculateAccountBalanceHistories,
+} from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { TransferProposal } from "../network/gateway";
 import { buildSubAccounts, CantonTokenAccount } from "./buildSubAccounts";
@@ -58,6 +64,9 @@ const makeProposal = (overrides: Partial<TransferProposal> = {}): TransferPropos
     update_id: overrides.update_id ?? "test-update-id",
   };
 };
+
+const parentOf = (subAccounts: TokenAccount[]) =>
+  ({ balanceHistoryCache: createEmptyHistoryCache(), subAccounts }) as unknown as Account;
 
 describe("buildSubAccounts", () => {
   const accountId = "js:2:canton_network:party123:";
@@ -121,5 +130,120 @@ describe("buildSubAccounts", () => {
 
     expect(sub.cantonResources.pendingTransferProposals).toHaveLength(1);
     expect(sub.cantonResources.pendingTransferProposals[0].contract_id).toBe("token-proposal");
+  });
+
+  describe("with saved sub-accounts", () => {
+    const token = makeTokenCurrency();
+    const calTokens = new Map([[token.id, "TOKEN_A"]]);
+    const savedUnder = (
+      adminId: string,
+      hash: string,
+      balance: bigint,
+      savedToken = token,
+    ): CantonTokenAccount => {
+      const [saved] = buildSubAccounts({
+        accountId,
+        tokenBalances: [
+          { adminId, totalBalance: balance, spendableBalance: balance, token: savedToken },
+        ],
+        existingSubAccounts: [],
+        allOperations: [
+          makeOperation({
+            hash,
+            date: new Date("2026-01-01T00:00:00Z"),
+            extra: { instrumentId: "TOKEN_A", instrumentAdmin: adminId },
+          }),
+        ],
+        pendingTransferProposals: [],
+        calTokens: new Map([[savedToken.id, "TOKEN_A"]]),
+      });
+      return { ...saved, balanceHistoryCache: generateHistoryFromOperations(saved) };
+    };
+    const rebuild = (existingSubAccounts: TokenAccount[]) =>
+      buildSubAccounts({
+        accountId,
+        tokenBalances: [
+          { adminId: "admin-TOKEN_A", totalBalance: 500n, spendableBalance: 500n, token },
+        ],
+        existingSubAccounts,
+        allOperations: [],
+        pendingTransferProposals: [],
+        calTokens,
+      });
+
+    const savedOwn = savedUnder("admin-TOKEN_A", "own-old-op", 1n);
+    const savedForeign = savedUnder("impostor-admin", "foreign-op", 900n);
+
+    it.each([
+      { order: "own first", saved: [savedOwn, savedForeign] },
+      { order: "foreign first", saved: [savedForeign, savedOwn] },
+    ])(
+      "keeps only the CAL admin's saved history and regenerates its chart, $order",
+      ({ saved }) => {
+        const [sub] = rebuild(saved);
+
+        expect(sub.operations.map(op => op.hash)).toEqual(["own-old-op"]);
+        expect(sub.balanceHistoryCache).toBe(saved[0].balanceHistoryCache);
+        const [recalculated] =
+          recalculateAccountBalanceHistories(parentOf([sub]), parentOf(saved)).subAccounts ?? [];
+        expect(recalculated.balanceHistoryCache.HOUR.balances.at(-1)).toBe(500);
+      },
+    );
+
+    it("keeps each same-ticker token's own pending operations and chart", () => {
+      const tokenB = makeTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("canton_network/cip56/TOKEN_A_B"),
+        contractAddress: "admin-B",
+      });
+      const savedA = {
+        ...savedUnder("admin-TOKEN_A", "a-op", 1n),
+        pendingOperations: [makeOperation({ hash: "a-pending" })],
+      };
+      const savedB = {
+        ...savedUnder("admin-B", "b-op", 900n, tokenB),
+        pendingOperations: [makeOperation({ hash: "b-pending" })],
+      };
+
+      const [subA, subB] = buildSubAccounts({
+        accountId,
+        tokenBalances: [
+          { adminId: "admin-TOKEN_A", totalBalance: 1n, spendableBalance: 1n, token },
+          { adminId: "admin-B", totalBalance: 900n, spendableBalance: 900n, token: tokenB },
+        ],
+        existingSubAccounts: [savedA, savedB],
+        allOperations: [],
+        pendingTransferProposals: [],
+        calTokens: new Map([
+          [token.id, "TOKEN_A"],
+          [tokenB.id, "TOKEN_A"],
+        ]),
+      });
+
+      expect(subA.operations.map(op => op.hash)).toEqual(["a-op"]);
+      expect(subA.pendingOperations.map(op => op.hash)).toEqual(["a-pending"]);
+      expect(subA.balanceHistoryCache).toBe(savedA.balanceHistoryCache);
+      expect(subB.operations.map(op => op.hash)).toEqual(["b-op"]);
+      expect(subB.pendingOperations.map(op => op.hash)).toEqual(["b-pending"]);
+      expect(subB.balanceHistoryCache).toBe(savedB.balanceHistoryCache);
+    });
+
+    it("moves history saved under a former token id into the current sub-account, once", () => {
+      const formerToken = makeTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("canton_network/cip56/former_token_a"),
+      });
+
+      const [sub] = rebuild([
+        savedUnder("admin-TOKEN_A", "old-op", 1n, formerToken),
+        savedUnder("admin-TOKEN_A", "old-op", 1n),
+      ]);
+
+      expect(sub.operations).toEqual([
+        expect.objectContaining({
+          hash: "old-op",
+          id: encodeOperationId(sub.id, "old-op", "OUT"),
+          accountId: sub.id,
+        }),
+      ]);
+    });
   });
 });

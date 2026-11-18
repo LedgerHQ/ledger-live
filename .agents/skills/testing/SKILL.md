@@ -142,8 +142,9 @@ render(<MyScreen />, {
 
 ## Mocking Patterns
 
-What to `jest.mock` and when, the shared app mocks to search first, and the anti-patterns that make
-parallel runs flaky: [references/mocks.md](references/mocks.md).
+What to `jest.mock` and when, how to spy on a package read from source, the shared app mocks to
+search first, and the anti-patterns that make parallel runs flaky:
+[references/mocks.md](references/mocks.md).
 
 ## Packages in the Layers
 

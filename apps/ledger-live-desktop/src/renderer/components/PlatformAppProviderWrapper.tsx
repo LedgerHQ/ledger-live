@@ -9,11 +9,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { useDB } from "../storage";
-import {
-  DISCOVER_STORE_KEY,
-  INITIAL_PLATFORM_STATE,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { useDiscoverDB } from "../discoverDB";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 
 type PlatformAppProviderWrapperProps = {
@@ -54,5 +50,5 @@ function selectLocalLiveAppDB(state: DiscoverDB) {
 }
 
 function useLocalLiveAppDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, selectLocalLiveAppDB);
+  return useDiscoverDB(selectLocalLiveAppDB);
 }

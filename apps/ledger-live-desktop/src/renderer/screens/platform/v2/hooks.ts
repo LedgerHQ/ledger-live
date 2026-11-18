@@ -1,8 +1,6 @@
 import {
-  INITIAL_PLATFORM_STATE,
   DAPP_DISCLAIMER_ID,
   BROWSE_SEARCH_OPTIONS,
-  DISCOVER_STORE_KEY,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import {
   useDisclaimerRaw,
@@ -15,7 +13,7 @@ import {
 import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { AppManifest, DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useDB } from "~/renderer/storage";
+import { useDiscoverDB } from "~/renderer/discoverDB";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import { dismissBanner } from "~/renderer/actions/settings";
 import { useCallback, useMemo } from "react";
@@ -65,7 +63,7 @@ function selectRecentlyUsedDB(state: DiscoverDB) {
 }
 
 export function useRecentlyUsedDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, selectRecentlyUsedDB);
+  return useDiscoverDB(selectRecentlyUsedDB);
 }
 
 function selectCurrentAccountHistDB(state: DiscoverDB) {
@@ -73,7 +71,7 @@ function selectCurrentAccountHistDB(state: DiscoverDB) {
 }
 
 export function useCurrentAccountHistDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, selectCurrentAccountHistDB);
+  return useDiscoverDB(selectCurrentAccountHistDB);
 }
 
 export type Disclaimer = DisclaimerRaw;

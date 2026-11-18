@@ -50,6 +50,7 @@ import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFea
 import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
+import { useOpenReceiveFlow } from "LLD/features/Receive";
 type RenderActionParams = {
   label: React.ReactNode;
   onClick: () => void;
@@ -187,7 +188,8 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 
 const pageName = "Page Account";
 
-const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
+const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+  const openReceiveFlow = useOpenReceiveFlow();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -200,12 +202,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
     useNewSendFlowFeature();
 
-  const manage = specific?.accountHeaderManageActions;
-  let manageList: ManageAction[] = [];
-  if (manage) {
-    const familyManageActions = manage({ account, parentAccount });
-    manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-  }
+  const manageList: ManageAction[] =
+    specific?.accountHeaderManageActions?.({ account, parentAccount }) ?? [];
 
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
@@ -352,12 +350,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "receive",
       ...buttonSharedTrackingFields,
     });
-    openModal("MODAL_RECEIVE", {
+    openReceiveFlow({
       parentAccount,
       account,
       sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
     });
-  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+  }, [openReceiveFlow, parentAccount, account, buttonSharedTrackingFields]);
 
   const manageActions: RenderActionParams[] = manageList
     .filter(item => (canOnlyStakeUsingLedgerLive && item.key === "Stake") || item.key !== "Stake")

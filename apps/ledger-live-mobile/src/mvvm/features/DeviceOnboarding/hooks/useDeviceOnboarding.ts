@@ -29,6 +29,7 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
 import { isRebootedDevice } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
+import { matchesPairedDevice, selectPairedKnownDevices } from "../utils/pairedDevice";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 
 type UseDeviceOnboardingInput = {
@@ -66,7 +67,7 @@ export type DeviceOnboardingSession = Pick<
   device: DeviceOnboardingDevice | null;
   /** Set when the host failed to connect a device or to start the flow. */
   error: string | null;
-  connect: () => void;
+  connect: (pairedDeviceId?: string) => void;
   adopt: (result: DeviceConnectionResult) => void;
   discard: () => void;
   reset: () => void;
@@ -119,6 +120,7 @@ export function useDeviceOnboarding({
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
   const retryRef = useRef<(() => void) | null>(null);
+  const pairedDeviceRef = useRef<string | undefined>(undefined);
   const selectedDevices = useRef(new Set<string>());
   const adoptGeneration = useRef(0);
   const onEventRef = useRef<(event: OnboardingEvent) => void>(() => undefined);
@@ -206,6 +208,15 @@ export function useDeviceOnboarding({
 
   const adoptConnection = useCallback(
     async (result: DeviceConnectionResult) => {
+      if (
+        pairedDeviceRef.current &&
+        !matchesPairedDevice(result.compatDeviceId, pairedDeviceRef.current)
+      ) {
+        await result.dmk.disconnect({ sessionId: result.sessionId }).catch(() => undefined);
+        setError("Unable to reconnect to the device");
+        setStatus(statusWithActor(actorRef.current));
+        return;
+      }
       const generation = ++adoptGeneration.current;
       const nextPorts = createDeviceOnboardingPorts({
         dmk: result.dmk,
@@ -354,42 +365,47 @@ export function useDeviceOnboarding({
     [actorRef],
   );
 
-  const connect = useCallback(() => {
-    if (!dmk) {
-      setError("Device Management Kit is unavailable");
-      return;
-    }
+  const connect = useCallback(
+    (pairedDeviceId?: string) => {
+      if (!dmk) {
+        setError("Device Management Kit is unavailable");
+        return;
+      }
 
-    setError(null);
-    setStatus("connecting");
-    selectedDevices.current.clear();
+      pairedDeviceRef.current = pairedDeviceId;
+      setError(null);
+      setStatus("connecting");
+      selectedDevices.current.clear();
 
-    if (retryRef.current) {
-      const retry = retryRef.current;
-      retryRef.current = null;
-      retry();
-      return;
-    }
+      if (retryRef.current) {
+        const retry = retryRef.current;
+        retryRef.current = null;
+        retry();
+        return;
+      }
 
-    connectionRef.current?.unsubscribe();
-    connectionRef.current = connectDevice({
-      dmk,
-      knownDevices,
-      isMockServerEnabled,
-      onConnected: result => {
-        void adoptConnection(result);
-      },
-    }).subscribe({
-      next: handleConnectionState,
-      error: () => {
-        setError("Unable to connect to the device");
-        setStatus(statusWithActor(actorRef.current));
-      },
-    });
-  }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices, isMockServerEnabled]);
+      connectionRef.current?.unsubscribe();
+      connectionRef.current = connectDevice({
+        dmk,
+        knownDevices: selectPairedKnownDevices(knownDevices, pairedDeviceId),
+        isMockServerEnabled,
+        onConnected: result => {
+          void adoptConnection(result);
+        },
+      }).subscribe({
+        next: handleConnectionState,
+        error: () => {
+          setError("Unable to connect to the device");
+          setStatus(statusWithActor(actorRef.current));
+        },
+      });
+    },
+    [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices, isMockServerEnabled],
+  );
 
   const adopt = useCallback(
     (result: DeviceConnectionResult) => {
+      pairedDeviceRef.current = undefined;
       void adoptConnection(result);
     },
     [adoptConnection],

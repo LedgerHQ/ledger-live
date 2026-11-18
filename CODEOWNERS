@@ -175,6 +175,7 @@ domain/api/ofac/                                         @ledgerhq/wallet-xp
 
 # Wallet — shared UI
 /shared/ui-animated-height/                              @ledgerhq/wallet-xp
+/shared/ui-animated-qr-code/                             @ledgerhq/wallet-xp
 /shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 /shared/ui-app-unavailable/                              @ledgerhq/wallet-xp
@@ -186,6 +187,7 @@ devtools/account-portfolio/                              @ledgerhq/wallet-xp
 devtools/account-detail/                                 @ledgerhq/wallet-xp
 devtools/receive/                                        @ledgerhq/wallet-xp
 devtools/intent-wallet-sync/                             @ledgerhq/wallet-xp
+devtools/app-toggles/                                    @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -253,6 +255,8 @@ features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
 features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
+features/flow/device-onboarding-reconnect/               @ledgerhq/engagement
+shared/ui-glow/                                          @ledgerhq/engagement
 shared/ui-karaoke/                                       @ledgerhq/engagement
 
 ### ... market indices => @ledgerhq/wallet-xp ... ###

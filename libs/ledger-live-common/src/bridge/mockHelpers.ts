@@ -11,7 +11,7 @@ import { delay } from "../promise";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 const MOCK_DATA_SEED = "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
-const syncTimeouts = {};
+const syncTimeouts: Record<string, ReturnType<typeof setTimeout> | null> = {};
 
 export const sync: AccountBridge<any>["sync"] = initialAccount =>
   new Observable(o => {
@@ -45,7 +45,7 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
     syncTimeouts[accountId] = setTimeout(() => sync().catch(e => o.error(e)), 500);
 
     return () => {
-      clearTimeout(syncTimeouts[accountId]);
+      clearTimeout(syncTimeouts[accountId] ?? undefined);
       syncTimeouts[accountId] = null;
     };
   });
@@ -112,7 +112,7 @@ export const signOperation: AccountBridge<any>["signOperation"] = ({ account, tr
 
 export { isInvalidRecipient } from "./validateAddress";
 
-const subtractOneYear = date =>
+const subtractOneYear = (date: Date) =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
 export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>

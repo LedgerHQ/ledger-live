@@ -36,9 +36,9 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (minVersion) {
     // necessary when using test versions on other providers that often end up on -dev
     const appVersionCoerced = semver.coerce(appVersion);
-    return !semver.gte(appVersionCoerced || "", minVersion, {
-      includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
-    });
+    // this will allow pre-release tags for higher versions than the minimum one
+    const options: semver.RangeOptions = { includePrerelease: true };
+    return !semver.gte(appVersionCoerced || "", minVersion, options);
   }
   return false;
 }

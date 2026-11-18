@@ -111,6 +111,7 @@ export type SettingsState = {
   allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
   enablePlatformDevTools: boolean;
+  hideNightlyLayer: boolean;
   catalogProvider: string;
   USBTroubleshootingIndex?: number;
   enableLearnPageStagingUrl?: boolean;
@@ -215,6 +216,7 @@ export const INITIAL_STATE: SettingsState = {
   allowReactQueryDebug: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
+  hideNightlyLayer: false,
   catalogProvider: "production",
   enableLearnPageStagingUrl: false,
   USBTroubleshootingIndex: undefined,
@@ -820,6 +822,7 @@ export const allowDebugReactQuerySelector = (state: State) => state.settings.all
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
+export const hideNightlyLayerSelector = (state: State) => state.settings.hideNightlyLayer;
 export const catalogProviderSelector = (state: State) => state.settings.catalogProvider;
 export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;

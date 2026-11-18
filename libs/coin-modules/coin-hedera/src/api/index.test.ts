@@ -60,7 +60,15 @@ describe("createApi", () => {
   // `toEqual` on purpose: the list of unsupported capabilities is exhaustive.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(mockCurrency.id), mockContext)).resolves.toEqual({
-      unsupported: ["call", "craftRawTransaction", "getNextSequence", "register"],
+      supported: [
+        "getBlock",
+        "getBlockInfo",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "validateAddress",
+        "validateIntent",
+      ],
       inconsistent: [],
     });
   });

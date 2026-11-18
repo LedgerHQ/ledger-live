@@ -125,6 +125,20 @@ function unseededContext(
   } as DeviceOnboardingSession["context"];
 }
 
+function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
+  const connect = jest.fn();
+  const unseeded = unseededContext({ currentOnboardingStep: "pin" });
+  useSession.mockReturnValue(session({ state: "deviceSetup.pin", context: unseeded, connect }));
+  const hook = renderFunnel();
+  const update = (overrides: Partial<DeviceOnboardingSession>) => {
+    useSession.mockReturnValue(session({ context: unseeded, connect, ...overrides }));
+    hook.rerender(undefined);
+  };
+  update({ state: "awaitingSession", ...afterDrop });
+
+  return { ...hook, connect, update };
+}
+
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -424,6 +438,137 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(checksOf(result.current).state).toBe("succeeded");
     expect(checksModel(result.current).unlockSheet).toBeNull();
+  });
+
+  describe("when the device switches off during checks", () => {
+    const confirmingContext = {
+      onboardedOnEntry: true,
+      verdictMatchesSession: false,
+    } as DeviceOnboardingSession["context"];
+
+    function switchOff(afterSwitchOff: Partial<DeviceOnboardingSession> = {}) {
+      const connect = afterSwitchOff.connect ?? jest.fn();
+      useSession.mockReturnValue(session({ state: "checks.genuineCheck.running" }));
+      const hook = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      const poweredOff = (error: string | null = null) => {
+        useSession.mockReturnValue(
+          session({
+            state: "awaitingSession",
+            status: "connecting",
+            connect,
+            error,
+            ...afterSwitchOff,
+          }),
+        );
+        hook.rerender(undefined as never);
+      };
+      poweredOff();
+
+      return { ...hook, connect, poweredOff };
+    }
+
+    it("should show power on and unlock over the checks and reconnect once to the same device", () => {
+      const { result, rerender, connect } = switchOff();
+      rerender(undefined as never);
+
+      const poweredOff = checksModel(result.current);
+      expect(poweredOff.powerOnSheet).toEqual({
+        deviceModelId: DeviceModelId.stax,
+        deviceName: "Ledger Stax",
+        onQuit: expect.any(Function),
+      });
+      expect(poweredOff.unlockSheet).toBeNull();
+      expect(poweredOff.checks.suspendSheets).toBe(true);
+      expect(poweredOff.checks.state).toBe("checking");
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(connect).toHaveBeenCalledWith("device-id");
+    });
+
+    it("should keep the checks and retry the connection when it fails", () => {
+      const { result, connect, poweredOff } = switchOff();
+
+      poweredOff("connection-error");
+      expect(connect).toHaveBeenCalledTimes(1);
+      act(() => {
+        jest.advanceTimersByTime(2_000);
+      });
+
+      expect(connect).toHaveBeenCalledTimes(2);
+      expect(result.current.status).toBe("checks");
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+    });
+
+    it("should wait for the user instead of retrying an error that opens a system prompt", () => {
+      const { result, connect, poweredOff } = switchOff();
+
+      poweredOff("bluetooth-disabled-promptable");
+      act(() => {
+        jest.advanceTimersByTime(10_000);
+      });
+
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(result.current.status).toBe("checks");
+    });
+
+    it("should not show the failed screen when the device switches off a second time", () => {
+      const { result, connect, poweredOff } = switchOff();
+      poweredOff("connection-error");
+
+      poweredOff();
+
+      expect(result.current.status).toBe("checks");
+      expect(connect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not hold the checks when the device is being set up", () => {
+      const connect = jest.fn();
+      const { result } = switchOff({ context: unseededContext(), connect });
+
+      expect(result.current.status).toBe("failed");
+      expect(connect).not.toHaveBeenCalled();
+    });
+
+    it("should ask to confirm leaving instead of showing the power on sheet", () => {
+      const { result } = switchOff({ context: confirmingContext });
+      const preventDefault = jest.fn();
+
+      act(() => {
+        listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+      });
+
+      expect(preventDefault).toHaveBeenCalledTimes(1);
+      expect(goBack).not.toHaveBeenCalled();
+      expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+    });
+
+    it("should quit the machine from the power on sheet close action", () => {
+      const { result } = switchOff();
+
+      act(() => checksModel(result.current).powerOnSheet?.onQuit());
+
+      expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    });
+
+    it("should ask to confirm from the power on sheet close action when leaving needs confirmation", () => {
+      const { result } = switchOff({ context: confirmingContext });
+
+      act(() => checksModel(result.current).powerOnSheet?.onQuit());
+
+      expect(send).not.toHaveBeenCalled();
+      expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+    });
+
+    it("should quit the machine when Android back leaves without confirmation", () => {
+      switchOff();
+      const preventDefault = jest.fn();
+
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+      expect(preventDefault).toHaveBeenCalledTimes(1);
+      expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    });
   });
 
   it("should drop the locked screen when the connection is lost", () => {
@@ -1631,5 +1776,58 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.state).toBe("idle");
     setupOf(result.current).checks?.onStart();
     expect(send).toHaveBeenCalledWith({ type: "RETRY" });
+  });
+  describe("when an unseeded device disconnects during the setup", () => {
+    it("should keep the stage, reconnect to the same device and show the reconnecting sheet", () => {
+      const { result, connect } = dropDuringPin();
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(connect).toHaveBeenCalledWith("device-id");
+    });
+
+    it("should show the failed sheet when the reconnection fails, and reconnect on retry", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "awaitingSession", error: "unknown-error" });
+      expect(setupOf(result.current).connection?.state).toBe("failed");
+
+      act(() => setupOf(result.current).connection?.retry());
+
+      expect(connect).toHaveBeenCalledTimes(2);
+      expect(connect).toHaveBeenLastCalledWith("device-id");
+    });
+
+    it("should close the sheet on the same stage once the session is back", () => {
+      const { result, update } = dropDuringPin();
+
+      update({ state: "readingState" });
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection).toBeNull();
+    });
+
+    it("should reconnect again on a second drop after reconnecting to a locked device", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "deviceLocked" });
+      const locked = setupOf(result.current);
+      expect(locked.stage.kind).toBe("pin");
+      expect(locked.connection).toBeNull();
+
+      update({ state: "awaitingSession" });
+
+      expect(setupOf(result.current).connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(2);
+    });
+
+    it("should keep showing the connecting screen after a firmware update", () => {
+      const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
+
+      expect(result.current.status).toBe("connecting");
+    });
   });
 });

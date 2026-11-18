@@ -87,15 +87,7 @@ describe("createApi", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(api, context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getNextSequence",
-        "getRewards",
-        "validateIntent",
-      ],
+      supported: ["getStakes", "getValidators", "register", "validateAddress"],
       inconsistent: [],
     });
   });

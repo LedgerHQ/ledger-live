@@ -187,16 +187,12 @@ class Bitcoin extends Base {
   }
 
   isTaprootAddress(address: string): boolean {
-    // This prefix check is to avoid returning false in cases where a valid base58 address also happens
-    // to be a valid bech32(m) string (but invalid segwit address).
-    if (address.toLowerCase().startsWith(`${this.network.bech32}1`)) {
-      try {
-        bjs.address.fromBech32(address);
-      } catch {
-        return true;
-      }
+    try {
+      const { prefix, version, data } = bjs.address.fromBech32(address);
+      return prefix === this.network.bech32 && version === 1 && data.length === 32;
+    } catch {
+      return false;
     }
-    return false;
   }
 }
 

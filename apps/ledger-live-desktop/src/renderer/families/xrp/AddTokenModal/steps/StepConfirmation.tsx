@@ -12,7 +12,6 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getReleasedReserve } from "../../utils";
 import { ACTION_I18N, StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -30,12 +29,8 @@ export default function StepConfirmation({
   signed,
   token,
   action,
-  status,
 }: StepProps) {
   invariant(account, "xrp: account required");
-  const successKey = `${ACTION_I18N[action]}.steps.confirmation.success`;
-
-  const releasedReserve = getReleasedReserve(status);
 
   if (optimisticOperation) {
     return (
@@ -47,17 +42,13 @@ export default function StepConfirmation({
           accountId={optimisticOperation.accountId}
         />
         <SuccessDisplay
-          title={<Trans i18nKey={`${successKey}.title`} values={{ token: token?.name }} />}
-          description={
-            <div>
-              <Trans
-                i18nKey={releasedReserve ? `${successKey}.released` : `${successKey}.text`}
-                values={{ token: token?.name, amount: releasedReserve }}
-              >
-                <b></b>
-              </Trans>
-            </div>
+          title={
+            <Trans
+              i18nKey={`${ACTION_I18N[action]}.steps.confirmation.success.title`}
+              values={{ token: token?.name }}
+            />
           }
+          description={<Trans i18nKey="xrp.addToken.steps.confirmation.success.text" />}
         />
       </Container>
     );

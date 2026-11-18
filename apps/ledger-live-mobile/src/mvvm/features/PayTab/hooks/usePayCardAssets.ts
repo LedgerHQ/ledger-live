@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
@@ -49,7 +49,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
 
       // `parseCurrencyUnit` answers zero for a string it cannot read, which would sink into a
       // total as a real balance.
-      if (!new BigNumber(balance.replaceAll(",", ".")).isFinite()) return null;
+      if (!parseFiniteBigNumber(balance.replaceAll(",", "."))) return null;
 
       const countervalue = calculateCountervalue(currency, parseCurrencyUnit(unit, balance));
       return countervalue?.isFinite() ? countervalue.toNumber() : null;

@@ -5,7 +5,7 @@ import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { getXrpEnabledTokenStandards } from "../config";
 import type { XrpTokenAccount } from "../types";
 import BigNumber from "bignumber.js";
-import type { Account, SyncConfig } from "@ledgerhq/types-live";
+import type { Account, Operation, SyncConfig } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
 import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
 import {
@@ -13,6 +13,7 @@ import {
   transactionToIntent,
 } from "../../../bridge/generic-coin-framework/utils";
 import xrpBridgeApi, {
+  adaptOperations,
   buildIntentData,
   buildTokenAccountShapes,
   describeOptimisticOperation,
@@ -276,13 +277,32 @@ describe("buildIntentData", () => {
   });
 });
 
+describe("adaptOperations", () => {
+  it("leaves an operation above the balance ledger to the next sync", () => {
+    const block = { height: 64, hash: "0xblock", time: new Date("2024-01-15") };
+    const operations = [
+      { hash: "after", blockHeight: 65 },
+      { hash: "at", blockHeight: 64 },
+    ];
+
+    const adapted = adaptOperations("rAddress", operations as Operation[], block);
+
+    expect(adapted.map(op => op.hash)).toEqual(["at"]);
+  });
+});
+
 describe("xrpBridgeApi", () => {
-  it("sets no syncVersion while no standard is enabled", () => {
+  it("sets no syncVersion and keeps every synced operation while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
     const bridgeApi = xrpBridgeApi(ripple);
 
     expect(bridgeApi).not.toHaveProperty("syncVersion");
+    expect(bridgeApi).not.toHaveProperty("adaptOperations");
+  });
+
+  it("leaves operations above the balance ledger to the next sync while a standard is enabled", () => {
+    expect(xrpBridgeApi(ripple).adaptOperations).toBe(adaptOperations);
   });
 
   it("puts the enabled standards in syncVersion", () => {
