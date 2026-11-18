@@ -373,8 +373,13 @@ export function estimatePlaywrightSpecCount({
       )
     : specFiles;
 
+  // Mirrors resolveE2eSelection: only a team turns @smoke and the filter into an AND; without
+  // one the runner greps "@smoke|<filter>", an OR.
+  const conjuncts = hasTeam
+    ? [smokeTests ? "@smoke" : "", baseFilter]
+    : [applySmokeFilter(baseFilter, smokeTests)];
   const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
-  for (const conjunct of [smokeTests ? "@smoke" : "", baseFilter]) {
+  for (const conjunct of conjuncts) {
     if (!conjunct || splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
     let matcher;
     try {
