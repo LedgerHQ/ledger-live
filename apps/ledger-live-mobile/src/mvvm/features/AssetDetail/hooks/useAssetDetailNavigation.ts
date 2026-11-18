@@ -31,15 +31,12 @@ export function useAssetDetailNavigation() {
 
   const openFromAsset = useCallback(
     ({ currency, source, marketId }: OpenFromAssetParams) => {
-      navigateInChain({
-        name: NavigatorName.AssetDetail,
+      navigateInChain(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
         params: {
-          screen: ScreenName.AssetDetail,
-          params: {
-            currencyId: currency.id,
-            source,
-            ...(marketId && { marketState: { id: marketId, ledgerIds: [currency.id] } }),
-          },
+          currencyId: currency.id,
+          source,
+          ...(marketId && { marketState: { id: marketId, ledgerIds: [currency.id] } }),
         },
       });
     },

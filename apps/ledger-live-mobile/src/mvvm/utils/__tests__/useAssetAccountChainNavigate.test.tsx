@@ -3,12 +3,14 @@ import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { useAssetAccountChainNavigate } from "../assetAccountChain";
 
+const Root = createNativeStackNavigator<RootStackParamList>();
 const Base = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 const AssetStack = createNativeStackNavigator<AssetDetailNavigatorParamsList>();
 const AccountsStack = createNativeStackNavigator<AccountsNavigatorParamList>();
@@ -43,9 +45,9 @@ function AssetScreen({
       <Pressable
         testID={`hop-${page}`}
         onPress={() =>
-          navigateInChain({
-            name: NavigatorName.Accounts,
-            params: { screen: ScreenName.Account, params: { accountId: String(page + 1) } },
+          navigateInChain(NavigatorName.Accounts, {
+            screen: ScreenName.Account,
+            params: { accountId: String(page + 1) },
           })
         }
       />
@@ -66,9 +68,9 @@ function AccountScreen({
       <Pressable
         testID={`hop-${page}`}
         onPress={() =>
-          navigateInChain({
-            name: NavigatorName.AssetDetail,
-            params: { screen: ScreenName.AssetDetail, params: { currencyId: String(page + 1) } },
+          navigateInChain(NavigatorName.AssetDetail, {
+            screen: ScreenName.AssetDetail,
+            params: { currencyId: String(page + 1) },
           })
         }
       />
@@ -89,13 +91,20 @@ const AccountsNavigator = () => (
   </AccountsStack.Navigator>
 );
 
+const BaseNavigator = () => (
+  <Base.Navigator id={BASE_NAVIGATOR_ID} screenOptions={{ headerShown: false }}>
+    <Base.Screen name={ScreenName.PortfolioOperationHistory} component={EntryScreen} />
+    <Base.Screen name={NavigatorName.AssetDetail} component={AssetNavigator} />
+    <Base.Screen name={NavigatorName.Accounts} component={AccountsNavigator} />
+  </Base.Navigator>
+);
+
+/** Same hierarchy as the app: the detail pages live in the Base stack, under the Root one. */
 function renderChain() {
   return render(
-    <Base.Navigator id={BASE_NAVIGATOR_ID} screenOptions={{ headerShown: false }}>
-      <Base.Screen name={ScreenName.PortfolioOperationHistory} component={EntryScreen} />
-      <Base.Screen name={NavigatorName.AssetDetail} component={AssetNavigator} />
-      <Base.Screen name={NavigatorName.Accounts} component={AccountsNavigator} />
-    </Base.Navigator>,
+    <Root.Navigator screenOptions={{ headerShown: false }}>
+      <Root.Screen name={NavigatorName.Base} component={BaseNavigator} />
+    </Root.Navigator>,
   );
 }
 

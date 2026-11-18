@@ -1,5 +1,5 @@
 import { NavigatorName, ScreenName } from "~/const";
-import { countTrailingAssetAccountRoutes } from "../assetAccountChain";
+import { countTrailingAssetAccountRoutes, findAssetAccountStack } from "../assetAccountChain";
 
 const entry = { name: NavigatorName.Main };
 const asset = {
@@ -50,5 +50,28 @@ describe("countTrailingAssetAccountRoutes", () => {
   it("counts from the focused route", () => {
     const routes = [entry, asset, account];
     expect(countTrailingAssetAccountRoutes({ index: 0, routes })).toBe(0);
+  });
+});
+
+describe("findAssetAccountStack", () => {
+  it("finds the Base stack nested under the Root stack", () => {
+    const base = { key: "base", index: 3, routes: [entry, asset, account, asset] };
+    const root = { key: "root", index: 0, routes: [{ name: NavigatorName.Base, state: base }] };
+
+    expect(findAssetAccountStack(root)).toBe(base);
+    expect(countTrailingAssetAccountRoutes(base)).toBe(3);
+  });
+
+  it("returns the stack itself when its focused route is an asset or account page", () => {
+    const stack = { index: 1, routes: [entry, asset] };
+    expect(findAssetAccountStack(stack)).toBe(stack);
+  });
+
+  it("returns undefined when no asset or account page is focused", () => {
+    const root = {
+      index: 0,
+      routes: [{ name: NavigatorName.Base, state: { index: 0, routes: [entry] } }],
+    };
+    expect(findAssetAccountStack(root)).toBeUndefined();
   });
 });

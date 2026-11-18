@@ -134,10 +134,7 @@ export function useAddressesViewModel(
               accountId: balanceAccount.id,
             }
           : { accountId: account.id };
-      navigateInChain({
-        name: NavigatorName.Accounts,
-        params: { screen: ScreenName.Account, params },
-      });
+      navigateInChain(NavigatorName.Accounts, { screen: ScreenName.Account, params });
     },
     [navigateInChain, currency],
   );

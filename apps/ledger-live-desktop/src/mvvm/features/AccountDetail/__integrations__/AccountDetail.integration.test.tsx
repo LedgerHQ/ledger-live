@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useLocation } from "react-router";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
@@ -7,6 +7,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
+import { ASSET_ACCOUNT_CHAIN_DEPTH_STATE_KEY } from "LLD/utils/assetAccountChain";
 import AccountDetailRoute from "../AccountDetailRoute";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
@@ -101,6 +102,48 @@ describe("AccountDetail routing", () => {
     expect(await screen.findByTestId("account-detail-layout")).toBeVisible();
     expect(screen.getByTestId("current-path")).toHaveTextContent(
       getAccountUrl(ethAccountWithToken.id),
+    );
+  });
+
+  it("keeps the Asset and Account chain state when redirecting a token sub-account", async () => {
+    const chainState = { accountBackPath: "/asset/usdc", [ASSET_ACCOUNT_CHAIN_DEPTH_STATE_KEY]: 3 };
+    const LocationProbe = () => {
+      const { pathname, state } = useLocation();
+      return (
+        <>
+          <div data-testid="current-path">{pathname}</div>
+          <output data-testid="location-state">{JSON.stringify(state)}</output>
+        </>
+      );
+    };
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          { pathname: getAccountUrl(usdcAccount.id, ethAccountWithToken.id), state: chainState },
+        ]}
+      >
+        <Routes>
+          <Route path="/account/:parentId/:id/*" element={<AccountDetailRoute />} />
+          <Route path="/account/:id/*" element={<AccountDetailRoute />} />
+        </Routes>
+        <LocationProbe />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({ accountDetail: { enabled: true } }),
+          accounts: [btcAccount, ethAccountWithToken],
+        },
+      },
+    );
+
+    expect(await screen.findByTestId("account-detail-layout")).toBeVisible();
+    expect(screen.getByTestId("current-path")).toHaveTextContent(
+      getAccountUrl(ethAccountWithToken.id),
+    );
+    expect(JSON.parse(screen.getByTestId("location-state").textContent ?? "null")).toEqual(
+      chainState,
     );
   });
 

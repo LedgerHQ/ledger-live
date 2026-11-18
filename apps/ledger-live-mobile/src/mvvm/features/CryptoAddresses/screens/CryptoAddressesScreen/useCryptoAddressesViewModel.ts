@@ -82,7 +82,7 @@ export default function useCryptoAddressesViewModel(
         currency: account.currency.name,
         page: ScreenName.Accounts,
       });
-      navigateInChain({ name: ScreenName.Account, params: { accountId: account.id } });
+      navigateInChain(ScreenName.Account, { accountId: account.id });
     },
     [navigateInChain],
   );
