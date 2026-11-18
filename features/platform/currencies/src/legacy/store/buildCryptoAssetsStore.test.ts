@@ -157,4 +157,42 @@ describe("remapRtkQueryError", () => {
     expect(err).toBeInstanceOf(Error);
     expect(err.message).toBe("boom");
   });
+
+  it.each([
+    [{ status: 403, data: {} }, LedgerAPI4xx, 403],
+    [{ status: 404, data: "Currency not found: x" }, LedgerAPI4xx, 404],
+    [{ status: 503, data: {} }, LedgerAPI5xx, 503],
+    [
+      { status: "PARSING_ERROR", originalStatus: 403, data: "Forbidden", error: "SyntaxError" },
+      LedgerAPI4xx,
+      403,
+    ],
+    [
+      { status: "PARSING_ERROR", originalStatus: 502, data: "<html>", error: "SyntaxError" },
+      LedgerAPI5xx,
+      502,
+    ],
+  ] as const)("keeps the HTTP status of %p", (error, ErrorClass, status) => {
+    const err = remapRtkQueryError(error);
+    expect(err).toBeInstanceOf(ErrorClass);
+    expect(err).toMatchObject({ status });
+  });
+
+  it.each([
+    [{ status: "FETCH_ERROR", error: "TypeError: Failed to fetch" }, NetworkDown],
+    [{ status: 302, data: {} }, NetworkDown],
+  ] as const)("maps %p to NetworkDown", (error, ErrorClass) => {
+    expect(remapRtkQueryError(error)).toBeInstanceOf(ErrorClass);
+  });
+
+  it("surfaces the message of a 2xx body that is not JSON", () => {
+    const err = remapRtkQueryError({
+      status: "PARSING_ERROR",
+      originalStatus: 200,
+      data: "x",
+      error: "X-Ledger-Commit header not found in response",
+    });
+    expect(err.constructor).toBe(Error);
+    expect(err.message).toBe("X-Ledger-Commit header not found in response");
+  });
 });

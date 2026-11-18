@@ -13,8 +13,20 @@ export class NetworkDown extends Error {
 
 export class LedgerAPI4xx extends Error {
   override name = "LedgerAPI4xx";
+  readonly status: number | undefined;
+
+  constructor(status?: number) {
+    super();
+    this.status = status;
+  }
 }
 
 export class LedgerAPI5xx extends Error {
   override name = "LedgerAPI5xx";
+  readonly status: number | undefined;
+
+  constructor(status?: number) {
+    super();
+    this.status = status;
+  }
 }
