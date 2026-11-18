@@ -4,4 +4,4 @@
 "@shared/feature-flags": minor
 ---
 
-Pitch Ledger Recover after an unseeded new seed
+Pitch Ledger Recover after an unseeded new seed and offer Ledger Sync before the unseeded success karaoke

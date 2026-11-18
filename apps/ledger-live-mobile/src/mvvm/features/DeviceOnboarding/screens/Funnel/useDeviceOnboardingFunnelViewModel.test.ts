@@ -1,10 +1,10 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { SeedPath } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
@@ -139,6 +139,16 @@ function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>)
   if (model.status !== "success") throw new Error(model.status);
   return model.success;
 }
+
+function renderFunnelWithSyncOffer() {
+  return renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+    overrideInitialState: withFlagOverrides({
+      deviceOnboarding: { enabled: true, params: { offerLedgerSync: true } },
+    }),
+  });
+}
+
+const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true };
 
 function useFunnelViewModel(props: void) {
   void props;
@@ -1962,6 +1972,77 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(result.current.status).toBe("unseededSuccessKaraoke");
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should not open Ledger Sync on a restore when the flag is off", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("should offer Ledger Sync before the success karaoke of a restore", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { result, store } = renderFunnelWithSyncOffer();
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(resetNavigation).not.toHaveBeenCalled();
+  });
+
+  it("should offer Ledger Sync before the success karaoke of a new seed, after Recover is skipped", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer();
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(result.current.status).toBe("recoverNewSeed");
+
+    act(() => recoverOf(result.current).onSkip());
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+    expect(result.current.status).toBe("success");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should complete a new seed on the success tap after Ledger Sync", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer();
+    act(() => recoverOf(result.current).onSkip());
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
+    expect(resetNavigation).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should open Ledger Sync once when the funnel regains focus", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { rerender } = renderFunnelWithSyncOffer();
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not open Ledger Sync later when the device is gone at the success screen", () => {
+    useSession.mockReturnValue({ ...doneWithSeed("restorePhrase"), liveDevice: null });
+    const { result, rerender } = renderFunnelWithSyncOffer();
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(navigate).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    rerender(undefined);
+
+    expect(navigate).not.toHaveBeenCalled();
   });
 
   it("should leave a finished unseeded device without completing onboarding", () => {

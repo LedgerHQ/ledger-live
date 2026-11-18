@@ -739,6 +739,21 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
   );
 
+  const syncOfferDecided = useRef(false);
+  const liveDevice = onboarding.liveDevice;
+  const readyForKaraoke =
+    unseeded && machineState === "done" && (seedPath !== SeedPath.NewSeed || pastRecover);
+  useEffect(() => {
+    if (!focused || !readyForKaraoke || syncOfferDecided.current) return;
+    syncOfferDecided.current = true;
+    if (!offerSync || !liveDevice) return;
+    navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
+      device: liveDevice,
+      wasReadOnlyAtEntry,
+      unseeded: true,
+    });
+  }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
+
   const openRecover = useCallback(() => {
     awaitingRecoverReturn.current = true;
     navigation.navigate(NavigatorName.Base, {
