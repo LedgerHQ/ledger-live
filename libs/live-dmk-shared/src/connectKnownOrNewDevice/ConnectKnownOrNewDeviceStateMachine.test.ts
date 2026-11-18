@@ -219,6 +219,7 @@ const setupTest = ({
     deviceDiscoveryService,
     disconnect,
     discoverDevices: (devices: Array<DiscoveredDevice>) => discoveredDevices.next(devices),
+    discoveredDevices,
     dmk,
     emitDiscoveryError: (error: UnknownDiscoveryError) => errors.next(error),
     knownDevices$,
@@ -1758,6 +1759,32 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       // THEN
       expect(setup.observer.error).toHaveBeenCalledWith(failure);
       expect(setup.deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN connected devices that already failed, WHEN the machine starts, THEN it should send the error to the observer without starting discovery", () => {
+      // GIVEN
+      const failure = new Error("session state failed");
+      const setup = setupTest();
+      setup.connectedDevices$.error(failure);
+
+      // WHEN
+      setup.machine.start();
+
+      // THEN
+      expect(setup.observer.error).toHaveBeenCalledWith(failure);
+      expect(setup.deviceDiscoveryService.start).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN connected devices that already failed, WHEN the machine starts, THEN it should keep no subscription to the discovered devices", () => {
+      // GIVEN
+      const setup = setupTest();
+      setup.connectedDevices$.error(new Error("session state failed"));
+
+      // WHEN
+      setup.machine.start();
+
+      // THEN
+      expect(setup.discoveredDevices.observed).toBe(false);
     });
   });
 });

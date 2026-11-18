@@ -775,6 +775,8 @@ export class DefaultConnectKnownOrNewDeviceStateMachine<
 
   private subscriptions: Array<Unsubscribable> = [];
 
+  private hasFailed = false;
+
   constructor(
     input: ConnectKnownOrNewDeviceStateMachineInput<
       MachineDiscoveryError<TDiscoveryError>,
@@ -795,30 +797,41 @@ export class DefaultConnectKnownOrNewDeviceStateMachine<
   start(): void {
     const { deviceDiscoveryService } = this;
     const fail = (error: unknown) => this.fail(error);
-
-    this.subscriptions.push(
-      this.knownDevices$.subscribe({
-        next: knownDevices =>
-          this.actor.send({ type: EventTypes.KnownDevicesChanged, knownDevices }),
-        error: fail,
-      }),
-      this.connectedDevices$.subscribe({
-        next: connectedDevices =>
-          this.actor.send({ type: EventTypes.ConnectedDevicesChanged, connectedDevices }),
-        error: fail,
-      }),
-      deviceDiscoveryService.discoveredDevices.subscribe(discoveredDevices => {
-        const keepsTheLastScanWhileStopped = !deviceDiscoveryService.isRunning;
-        if (!keepsTheLastScanWhileStopped) {
-          this.actor.send({ type: EventTypes.DevicesDiscovered, discoveredDevices });
-        }
-      }),
-      deviceDiscoveryService.errors.subscribe(error => {
-        this.actor.send({ type: EventTypes.DiscoveryError, error });
-      }),
+    const subscribers: Array<() => Unsubscribable> = [
+      () =>
+        this.knownDevices$.subscribe({
+          next: knownDevices =>
+            this.actor.send({ type: EventTypes.KnownDevicesChanged, knownDevices }),
+          error: fail,
+        }),
+      () =>
+        this.connectedDevices$.subscribe({
+          next: connectedDevices =>
+            this.actor.send({ type: EventTypes.ConnectedDevicesChanged, connectedDevices }),
+          error: fail,
+        }),
+      () =>
+        deviceDiscoveryService.discoveredDevices.subscribe(discoveredDevices => {
+          const keepsTheLastScanWhileStopped = !deviceDiscoveryService.isRunning;
+          if (!keepsTheLastScanWhileStopped) {
+            this.actor.send({ type: EventTypes.DevicesDiscovered, discoveredDevices });
+          }
+        }),
+      () =>
+        deviceDiscoveryService.errors.subscribe(error => {
+          this.actor.send({ type: EventTypes.DiscoveryError, error });
+        }),
       // Without an error observer, XState rethrows the error outside the use case.
-      this.actor.subscribe({ error: fail }),
-    );
+      () => this.actor.subscribe({ error: fail }),
+    ];
+
+    for (const subscribe of subscribers) {
+      const subscription = subscribe();
+      this.subscriptions.push(subscription);
+      if (this.hasFailed) {
+        return;
+      }
+    }
     this.actor.start();
   }
 
@@ -840,6 +853,7 @@ export class DefaultConnectKnownOrNewDeviceStateMachine<
   }
 
   private fail(error: unknown): void {
+    this.hasFailed = true;
     this.unsubscribe();
     this.actor.stop();
     try {
