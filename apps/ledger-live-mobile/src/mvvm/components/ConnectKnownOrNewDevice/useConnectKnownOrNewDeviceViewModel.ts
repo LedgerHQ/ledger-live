@@ -218,16 +218,24 @@ export function useConnectKnownOrNewDeviceViewModel({
     }
   }, [isAdding]);
 
+  const closeAddModeRef = useRef<() => void>(() => undefined);
   useEffect(() => {
-    if (state.type !== ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
+    if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
+      closeAddModeRef.current = state.close;
+    }
+  });
+
+  const handlesBackPress = isAdding && isFocused;
+  useEffect(() => {
+    if (!handlesBackPress) {
       return;
     }
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-      state.close();
+      closeAddModeRef.current();
       return true;
     });
     return () => subscription.remove();
-  }, [state]);
+  }, [handlesBackPress]);
 
   const onCloseErrorSheet = useCallback(() => {
     switch (state.type) {
