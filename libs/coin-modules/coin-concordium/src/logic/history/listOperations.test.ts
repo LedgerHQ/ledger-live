@@ -163,6 +163,35 @@ describe("parseTransaction", () => {
     });
   });
 
+  it("reads a sponsored cost off the sponsor when the proxy reports no transaction cost", () => {
+    const sponsored = {
+      sponsor: { sponsor: SPONSOR, cost: "800" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    } as const;
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const senderView: WalletProxyTransaction = { ...baseTx, ...sponsored, cost: "0" };
+    const recipientView: WalletProxyTransaction = {
+      ...withoutCost,
+      ...sponsored,
+      origin: { type: "account", address: VALID_ADDRESS },
+    };
+
+    expect(parseTransaction(senderView, VALID_ADDRESS)).toMatchObject({
+      fee: "0",
+      transactionFee: "800",
+    });
+    expect(parseTransaction(recipientView, VALID_ADDRESS_2)).toMatchObject({
+      fee: "0",
+      transactionFee: "800",
+    });
+  });
+
   it("names no fee payer when the origin carries no address", () => {
     const tx = {
       ...baseTx,

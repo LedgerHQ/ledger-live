@@ -38,9 +38,10 @@ function transactionFields(
     blockHash: tx.blockHash || null,
     blockHeight: tx.blockHeight,
     id: tx.id,
-    // `cost` is only the queried account's share. A proxy older than 0.51.0
-    // omits `transactionCost`, and then only the payer's view knows the cost.
-    transactionFee: String(tx.transactionCost ?? tx.cost ?? 0),
+    // `cost` is only the queried account's share, and 0 for a sponsored sender.
+    // A proxy older than 0.51.0 omits `transactionCost` but sends `sponsor` on
+    // every row; without either, only the payer's view knows the cost.
+    transactionFee: String(tx.transactionCost ?? tx.sponsor?.cost ?? tx.cost ?? 0),
     ...(feesPayer ? { feesPayer } : {}),
   };
 }
