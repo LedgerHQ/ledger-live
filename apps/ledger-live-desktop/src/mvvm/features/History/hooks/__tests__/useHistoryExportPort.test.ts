@@ -1,4 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
+import { AccountIdSchema } from "@domain/entity-account";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { files } from "~/renderer/bridge";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -54,7 +55,7 @@ describe("useHistoryExportPort", () => {
 
     let outcome: string | undefined;
     await act(async () => {
-      outcome = await result.current.exportCsv([ETH_ACCOUNT.id]);
+      outcome = await result.current.exportCsv([AccountIdSchema.parse(ETH_ACCOUNT.id)]);
     });
 
     expect(outcome).toBe("canceled");
@@ -66,6 +67,6 @@ describe("useHistoryExportPort", () => {
   it("reports the requested accounts as not syncing when no sync is pending", () => {
     const { result } = renderPort();
 
-    expect(result.current.isSyncing([BTC_ACCOUNT.id])).toBe(false);
+    expect(result.current.isSyncing([AccountIdSchema.parse(BTC_ACCOUNT.id)])).toBe(false);
   });
 });

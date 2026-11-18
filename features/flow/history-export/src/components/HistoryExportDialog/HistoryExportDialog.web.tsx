@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Dialog, DialogTrigger } from "@ledgerhq/lumen-ui-react";
+import { Dialog } from "@ledgerhq/lumen-ui-react";
 import type { HistoryExportPort } from "../../model/ports";
 import { useHistoryExportViewModel } from "../../useHistoryExportViewModel";
 import { HistoryExportDialogView } from "./HistoryExportDialogView";
@@ -13,30 +13,19 @@ function HistoryExportDialogContent({
   return <HistoryExportDialogView {...vm} />;
 }
 
-export function HistoryExportDialog({
-  children,
-  open: controlledOpen,
-  onOpenChange,
-  port,
-}: HistoryExportDialogProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+export function HistoryExportDialog({ open, onOpenChange, port }: HistoryExportDialogProps) {
   const [dialogHeight, setDialogHeight] = useState<"fixed" | "fit">("fixed");
-  const open = controlledOpen ?? uncontrolledOpen;
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
-      if (controlledOpen === undefined) {
-        setUncontrolledOpen(next);
-      }
-      onOpenChange?.(next);
+      onOpenChange(next);
       if (!next) setDialogHeight("fixed");
     },
-    [controlledOpen, onOpenChange],
+    [onOpenChange],
   );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange} height={dialogHeight}>
-      {children ? <DialogTrigger asChild>{children}</DialogTrigger> : null}
       {open ? <HistoryExportDialogContent port={port} setDialogHeight={setDialogHeight} /> : null}
     </Dialog>
   );

@@ -7,17 +7,18 @@ import {
   DialogBody,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
+import type { AccountId } from "@domain/entity-account";
 import type { HistoryExportAccount } from "../../../model/ports";
 import { ExportDescription } from "./ExportDescription";
 import { ExportAccountList } from "./ExportAccountList";
 
 type ExportSceneProps = Readonly<{
   accounts: readonly HistoryExportAccount[];
-  checkedIds: string[];
+  checkedIds: AccountId[];
   allSelected: boolean;
   disabled: boolean;
   isLoading: boolean;
-  toggleAccount: (id: string) => void;
+  toggleAccount: (id: AccountId) => void;
   onSelectAllToggle: () => void;
   exportCsv: () => void;
 }>;

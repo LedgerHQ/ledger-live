@@ -1,4 +1,6 @@
 import { useCallback, useMemo } from "react";
+import { AccountIdSchema, type AccountId } from "@domain/entity-account";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { HistoryExportAccount, HistoryExportPort } from "@features/flow-history-export";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
@@ -17,21 +19,26 @@ export function useHistoryExportPort(): HistoryExportPort {
   const accounts = useMemo<HistoryExportAccount[]>(
     () =>
       rawAccounts.map((account, index) => ({
-        id: account.id,
+        id: AccountIdSchema.parse(account.id),
         name: names[index] ?? account.id,
         formattedBalance: formatCurrencyUnit(account.currency.units[0], account.balance, {
           showCode: true,
           locale,
           discreet,
         }),
-        currency: { id: account.currency.id, ticker: account.currency.ticker },
+        currency: {
+          id: CryptoOrTokenCurrencyIdSchema.parse(account.currency.id),
+          ticker: account.currency.ticker,
+        },
       })),
     [rawAccounts, names, locale, discreet],
   );
 
   const findAccounts = useCallback(
-    (accountIds: readonly string[]) =>
-      rawAccounts.filter(account => accountIds.includes(account.id)),
+    (accountIds: readonly AccountId[]) => {
+      const requestedIds = new Set<string>(accountIds);
+      return rawAccounts.filter(account => requestedIds.has(account.id));
+    },
     [rawAccounts],
   );
 

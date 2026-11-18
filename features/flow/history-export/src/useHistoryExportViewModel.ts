@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import type { AccountId } from "@domain/entity-account";
 import { track } from "@shared/analytics";
 import type { HistoryExportAccount, HistoryExportPort } from "./model/ports";
 import {
@@ -9,13 +10,13 @@ import {
 
 export type HistoryExportViewModel = {
   accounts: readonly HistoryExportAccount[];
-  checkedIds: string[];
+  checkedIds: AccountId[];
   allSelected: boolean;
   disabled: boolean;
   success: boolean;
   error: boolean;
   isLoading: boolean;
-  toggleAccount: (id: string) => void;
+  toggleAccount: (id: AccountId) => void;
   onSelectAllToggle: () => void;
   exportCsv: () => Promise<void>;
   onDoneClick: () => void;
@@ -32,7 +33,7 @@ export function useHistoryExportViewModel({
   setDialogHeight,
 }: UseHistoryExportViewModelArgs): HistoryExportViewModel {
   const { accounts, syncAccounts, isSyncing, exportCsv: exportAccountsCsv } = port;
-  const [checkedIds, setCheckedIds] = useState<string[]>([]);
+  const [checkedIds, setCheckedIds] = useState<AccountId[]>([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
@@ -49,7 +50,7 @@ export function useHistoryExportViewModel({
   const disabled = checkedIds.length === 0;
   const isLoading = checkedIds.length > 0 && isSyncing(checkedIds);
 
-  const toggleAccount = useCallback((id: string) => {
+  const toggleAccount = useCallback((id: AccountId) => {
     setCheckedIds(prev => (prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]));
   }, []);
 

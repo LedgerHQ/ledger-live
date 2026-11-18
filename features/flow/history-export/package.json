@@ -20,6 +20,8 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/analytics": "workspace:*",
     "@shared/analytics-react": "workspace:*",

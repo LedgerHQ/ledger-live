@@ -11439,6 +11439,12 @@ importers:
 
   features/flow/history-export:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.7(c32e40ecc26dc641bed309ca003041d9)

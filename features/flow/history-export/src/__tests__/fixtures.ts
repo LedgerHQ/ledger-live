@@ -1,17 +1,19 @@
+import { AccountIdSchema } from "@domain/entity-account";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { HistoryExportAccount, HistoryExportPort } from "../model/ports";
 
 export const BITCOIN_ACCOUNT: HistoryExportAccount = {
-  id: "bitcoin-1",
+  id: AccountIdSchema.parse("bitcoin-1"),
   name: "Bitcoin 1",
   formattedBalance: "0.5 BTC",
-  currency: { id: "bitcoin", ticker: "BTC" },
+  currency: { id: CryptoOrTokenCurrencyIdSchema.parse("bitcoin"), ticker: "BTC" },
 };
 
 export const ETHEREUM_ACCOUNT: HistoryExportAccount = {
-  id: "ethereum-1",
+  id: AccountIdSchema.parse("ethereum-1"),
   name: "Ethereum 1",
   formattedBalance: "2 ETH",
-  currency: { id: "ethereum", ticker: "ETH" },
+  currency: { id: CryptoOrTokenCurrencyIdSchema.parse("ethereum"), ticker: "ETH" },
 };
 
 export function createFakePort(overrides: Partial<HistoryExportPort> = {}): HistoryExportPort {
