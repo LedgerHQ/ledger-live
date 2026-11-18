@@ -104,8 +104,8 @@ describe("useFeePresetValuesCore", () => {
     );
 
     expect(result.current).toEqual({
-      slow: { fiat: "USD_1", crypto: "BTC_1" },
-      fast: { fiat: "USD_3", crypto: "BTC_3" },
+      slow: { amount: new BigNumber(1), fiat: "USD_1", crypto: "BTC_1" },
+      fast: { amount: new BigNumber(3), fiat: "USD_3", crypto: "BTC_3" },
     });
   });
 
@@ -131,9 +131,9 @@ describe("useFeePresetValuesCore", () => {
     const { result } = renderHook(() => useFeePresetValuesCore(defaultParams));
 
     expect(result.current).toEqual({
-      slow: { fiat: null, crypto: "BTC_1000" },
-      medium: { fiat: null, crypto: "BTC_2000" },
-      fast: { fiat: null, crypto: "BTC_3000" },
+      slow: { amount: new BigNumber(1000), fiat: null, crypto: "BTC_1000" },
+      medium: { amount: new BigNumber(2000), fiat: null, crypto: "BTC_2000" },
+      fast: { amount: new BigNumber(3000), fiat: null, crypto: "BTC_3000" },
     });
   });
 
@@ -198,9 +198,9 @@ describe("useFeePresetValuesCore", () => {
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        slow: { fiat: "USD_1", crypto: "BTC_1" },
-        medium: { fiat: "USD_2", crypto: "BTC_2" },
-        fast: { fiat: "USD_3", crypto: "BTC_3" },
+        slow: { amount: new BigNumber(1), fiat: "USD_1", crypto: "BTC_1" },
+        medium: { amount: new BigNumber(2), fiat: "USD_2", crypto: "BTC_2" },
+        fast: { amount: new BigNumber(3), fiat: "USD_3", crypto: "BTC_3" },
       });
     });
   });
@@ -267,9 +267,9 @@ describe("useFeePresetValuesCore", () => {
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        slow: { fiat: "USD_1", crypto: "BTC_1" },
-        medium: { fiat: "USD_2", crypto: "BTC_2" },
-        fast: { fiat: "USD_3", crypto: "BTC_3" },
+        slow: { amount: new BigNumber(1), fiat: "USD_1", crypto: "BTC_1" },
+        medium: { amount: new BigNumber(2), fiat: "USD_2", crypto: "BTC_2" },
+        fast: { amount: new BigNumber(3), fiat: "USD_3", crypto: "BTC_3" },
       });
     });
   });
@@ -297,9 +297,9 @@ describe("useFeePresetValuesCore", () => {
     await waitFor(() => {
       expect(mockedGetAccountBridge).toHaveBeenCalledTimes(2);
       expect(result.current).toEqual({
-        slow: { fiat: "USD_1000", crypto: "BTC_1000" },
-        medium: { fiat: "USD_1000", crypto: "BTC_1000" },
-        fast: { fiat: "USD_1000", crypto: "BTC_1000" },
+        slow: { amount: new BigNumber(1000), fiat: "USD_1000", crypto: "BTC_1000" },
+        medium: { amount: new BigNumber(1000), fiat: "USD_1000", crypto: "BTC_1000" },
+        fast: { amount: new BigNumber(1000), fiat: "USD_1000", crypto: "BTC_1000" },
       });
     });
   });

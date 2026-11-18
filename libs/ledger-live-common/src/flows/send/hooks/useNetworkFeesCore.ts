@@ -63,10 +63,11 @@ function findSingleFeeLevelPresetId(
   valuesByPreset: FeePresetValueMap,
 ): string | null {
   if (presetIds.length < 2) return null;
-  const estimates = presetIds.map(id => valuesByPreset[id]?.crypto ?? null);
+  const estimates = presetIds.map(id => valuesByPreset[id]?.amount);
   const [firstEstimate] = estimates;
   const allEstimatedAndEqual =
-    firstEstimate !== null && estimates.every(estimate => estimate === firstEstimate);
+    firstEstimate !== undefined &&
+    estimates.every(estimate => estimate !== undefined && estimate.isEqualTo(firstEstimate));
   if (!allEstimatedAndEqual) return null;
   return presetIds.includes("medium") ? "medium" : presetIds[0];
 }

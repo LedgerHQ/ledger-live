@@ -17,9 +17,9 @@ jest.mock("../../../../bridge/descriptor/send/features");
 jest.mock("../../../../bridge/useAccountBridge");
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit");
 const distinctPresetValues = {
-  slow: { fiat: "$1.00", crypto: "0.00001 BTC" },
-  medium: { fiat: "$2.00", crypto: "0.00002 BTC" },
-  fast: { fiat: "$3.00", crypto: "0.00003 BTC" },
+  slow: { amount: new BigNumber(1_000), fiat: "$1.00", crypto: "0.00001 BTC" },
+  medium: { amount: new BigNumber(2_000), fiat: "$2.00", crypto: "0.00002 BTC" },
+  fast: { amount: new BigNumber(3_000), fiat: "$3.00", crypto: "0.00003 BTC" },
 };
 
 jest.mock("../useFeePresetValuesCore", () => ({
@@ -391,7 +391,7 @@ describe("useNetworkFeesCore", () => {
     });
 
     describe("when the bridge estimates every fallback preset at the same fee", () => {
-      const sameFee = { fiat: "$0.01", crypto: "0.00000004 BTC" };
+      const sameFee = { amount: new BigNumber(4), fiat: "$0.01", crypto: "0.00000004 BTC" };
 
       beforeEach(() => {
         mockedSendFeatures.getFeePresetOptions.mockReturnValue([]);
@@ -453,11 +453,27 @@ describe("useNetworkFeesCore", () => {
         ]);
       });
 
+      it("keeps every preset when different estimates round to the same label", () => {
+        mockedUseFeePresetValuesCore.mockReturnValue({
+          slow: sameFee,
+          medium: sameFee,
+          fast: { ...sameFee, amount: new BigNumber(4.4) },
+        });
+
+        const { result } = renderCore();
+
+        expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual([
+          "slow",
+          "medium",
+          "fast",
+        ]);
+      });
+
       it("keeps every preset when one estimate differs", () => {
         mockedUseFeePresetValuesCore.mockReturnValue({
           slow: sameFee,
           medium: sameFee,
-          fast: { fiat: "$0.02", crypto: "0.00000008 BTC" },
+          fast: { amount: new BigNumber(8), fiat: "$0.02", crypto: "0.00000008 BTC" },
         });
 
         const { result } = renderCore();
@@ -471,7 +487,7 @@ describe("useNetworkFeesCore", () => {
     });
 
     it("keeps identical presets the coin supplies itself", () => {
-      const sameFee = { fiat: "$0.01", crypto: "0.00000004 BTC" };
+      const sameFee = { amount: new BigNumber(4), fiat: "$0.01", crypto: "0.00000004 BTC" };
       mockedUseFeePresetValuesCore.mockReturnValue({
         slow: sameFee,
         medium: sameFee,
