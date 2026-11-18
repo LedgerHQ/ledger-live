@@ -39,13 +39,14 @@ export async function startAutoUpgrade(
   // A download left by an earlier run would be reused, and look staged before the app checks it.
   clearUpdaterCache();
   // The builds embed no key, so the app trusts only this one.
-  const app = openApp(installedApp, {
-    UPDATE_FEED_URL: feedUrl,
-    UPDATE_CHECK_FEED: feedUrl,
-    UPDATE_CHECK_PUBKEY: getPub(trustedKey),
-  });
+  const openInstalledApp = () =>
+    openApp(installedApp, {
+      UPDATE_FEED_URL: feedUrl,
+      UPDATE_CHECK_FEED: feedUrl,
+      UPDATE_CHECK_PUBKEY: getPub(trustedKey),
+    });
 
-  return { base, update, app };
+  return { base, update, app: openInstalledApp(), openInstalledApp };
 }
 
 function parseDownloadSpeed(value: string | undefined) {

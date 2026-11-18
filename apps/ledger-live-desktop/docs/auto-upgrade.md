@@ -7,6 +7,10 @@ it upgrades. From `apps/ledger-live-desktop`:
 node tools/testing/autoupgrade.mts   # restart or quit the app to install, Ctrl+C when done
 ```
 
+When the app quits, `autoupgrade.mts` waits for Return to open it again with the same feed, for
+example to check the installed version. After a restart to install, the updater reopens the app
+itself: Return then only focuses it.
+
 | Option                    | Effect                                                                 |
 | ------------------------- | ---------------------------------------------------------------------- |
 | `--update-from-feed`      | Rebuild the base only, reuse the update from `dist/feed`               |
