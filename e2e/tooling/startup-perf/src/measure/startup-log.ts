@@ -46,10 +46,13 @@ export function createStartupLogReader(P: Platform) {
     timeoutMs: number,
   ): Promise<PerformanceRead | null> {
     const deadline = Date.now() + timeoutMs;
+    // A timer can end a millisecond before Date.now() reaches the deadline: the last wait ends it.
+    let lastWait = false;
     for (;;) {
       const read = parseStartupLog(await P.jsLog(device, pid, STARTUP_LOG_MARKER));
       const left = deadline - Date.now();
-      if (read || left <= 0) return read;
+      if (read || lastWait || left <= 0) return read;
+      lastWait = left <= POLL_MS;
       await sleep(Math.min(POLL_MS, left));
     }
   };

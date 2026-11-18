@@ -96,6 +96,14 @@ describe("readStartupLog", () => {
     assert.equal(asked.length, 2);
   });
 
+  it("reads only once after the last wait, even when the clock still shows time left", async t => {
+    const { platform, asked } = platformLogging([]);
+    const clock = [0, 0, 199, 400];
+    t.mock.method(Date, "now", () => clock.shift() ?? 400);
+    assert.equal(await createStartupLogReader(platform)("emulator-5554", 4242, 200), null);
+    assert.equal(asked.length, 2);
+  });
+
   it("keeps the lines of a query that ends after the time is over", async () => {
     const slowPlatform = {
       async jsLog() {
