@@ -26,8 +26,6 @@ describe("xrp accountActions.getMainActions", () => {
     const [action] = accountActions.getMainActions({ account: XRP_ACCOUNT_WITH_TOKEN });
 
     expect(action.id).toBe("manage_token");
-    // FabActions tracks button_clicked from the id: an event of its own would count each tap twice
-    expect(action).not.toHaveProperty("event");
     expect(action.navigationParams).toEqual([
       NavigatorName.XrpManageTokenFlow,
       {
@@ -35,6 +33,12 @@ describe("xrp accountActions.getMainActions", () => {
         params: { accountId: XRP_ACCOUNT_WITH_TOKEN.id },
       },
     ]);
+  });
+
+  it("has no event of its own, as FabActions tracks button_clicked from the id and would count each tap twice", () => {
+    const [action] = accountActions.getMainActions({ account: XRP_ACCOUNT_WITH_TOKEN });
+
+    expect(action).not.toHaveProperty("event");
   });
 
   it("shows Manage on an account holding only an MPT token", () => {

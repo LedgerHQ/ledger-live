@@ -9,6 +9,7 @@ import { type Props, useBalanceLimitViewModel } from "./useBalanceLimitViewModel
 export default function BalanceLimit(props: Props) {
   const { t } = useTranslation();
   const viewModel = useBalanceLimitViewModel(props);
+  const balanceLimitLabel = t("xrp.tokenSettings.balanceLimit");
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
@@ -19,14 +20,14 @@ export default function BalanceLimit(props: Props) {
       >
         <Box lx={{ gap: "s8" }}>
           <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-            {t("xrp.tokenSettings.balanceLimit")}
+            {balanceLimitLabel}
           </Text>
           <Text typography="body2" lx={{ color: "muted" }}>
             {t("xrp.tokenSettings.balanceLimitDescription")}
           </Text>
         </Box>
         <TextInput
-          label={t("xrp.tokenSettings.balanceLimit")}
+          label={balanceLimitLabel}
           value={viewModel.inputText}
           onChangeText={viewModel.onChangeLimitText}
           onClear={viewModel.onClear}

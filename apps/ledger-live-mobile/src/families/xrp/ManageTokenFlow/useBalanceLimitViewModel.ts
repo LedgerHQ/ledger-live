@@ -68,13 +68,18 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
   const onConfirm = useCallback(() => {
     navigation.popTo(
       ScreenName.XrpManageTokenSettings,
-      { accountId, parentId, balanceLimit: { limit: limit.toFixed(), isMaximum } },
+      {
+        accountId,
+        parentId,
+        balanceLimit: { limit: limit.toFixed(), isMaximum },
+      },
       { merge: true },
     );
   }, [accountId, isMaximum, limit, navigation, parentId]);
 
   const isLimitZero = hasTypedLimit && typedLimit.isZero();
-  const isCustomLimit = !isMaximum && limit.gt(0);
+  const isLimitPositive = limit.gt(0);
+  const isCustomLimit = !isMaximum && isLimitPositive;
   const isBelowBalance = isCustomLimit && limit.lt(tokenAccount.balance);
 
   const errorText = (() => {
@@ -93,8 +98,8 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
     onClear,
     onSetMaximum,
     onConfirm,
-    inputText: isMaximum ? maximumText : inputText,
     errorText,
-    isConfirmDisabled: !limit.gt(0) || isBelowBalance,
+    inputText: isMaximum ? maximumText : inputText,
+    isConfirmDisabled: !isLimitPositive || isBelowBalance,
   };
 }

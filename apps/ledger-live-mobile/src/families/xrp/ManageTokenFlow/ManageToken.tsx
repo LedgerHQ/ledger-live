@@ -37,7 +37,7 @@ import { InfoTooltip } from "../components/InfoTooltip";
 import { OWNER_RESERVE } from "../utils";
 import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
 
-function Row(
+function TokenDetailRow(
   props: Readonly<{
     label: string;
     children: React.ReactNode;
@@ -61,8 +61,8 @@ function Row(
 function TokenIcon(
   props: Readonly<{ token: TokenCurrency; networkId: string; networkTicker: string }>,
 ) {
-  const styles = useStyleSheet(
-    theme => ({
+  const styles = useStyleSheet(theme => {
+    return {
       badge: {
         position: "absolute",
         right: -3,
@@ -73,9 +73,8 @@ function TokenIcon(
         borderColor: theme.colors.border.baseInverted,
         backgroundColor: theme.colors.bg.muted,
       },
-    }),
-    [],
-  );
+    };
+  }, []);
 
   return (
     <Box lx={{ position: "relative" }}>
@@ -165,41 +164,47 @@ function TokenCard(
       </CardHeader>
       <CardFooter>
         <Box lx={{ gap: "s12" }}>
-          <Row label={t("xrp.manageAssets.tokenType")} info={t("xrp.manageAssets.tokenTypeInfo")}>
+          <TokenDetailRow
+            label={t("xrp.manageAssets.tokenType")}
+            info={t("xrp.manageAssets.tokenTypeInfo")}
+          >
             {isIou ? t("xrp.manageAssets.iou") : t("xrp.manageAssets.mpt")}
-          </Row>
-          <Row label={t("xrp.manageAssets.issuer")}>
+          </TokenDetailRow>
+          <TokenDetailRow label={t("xrp.manageAssets.issuer")}>
             {shortAddressPreview(token.contractAddress)}
-          </Row>
+          </TokenDetailRow>
           {issuerFeeText ? (
-            <Row
+            <TokenDetailRow
               label={t("xrp.manageAssets.transferFee")}
               info={t("xrp.manageAssets.transferFeeInfo")}
             >
               {issuerFeeText}
-            </Row>
+            </TokenDetailRow>
           ) : null}
-          <Row label={t("xrp.manageAssets.lockedAmount")}>
+          <TokenDetailRow label={t("xrp.manageAssets.lockedAmount")}>
             <Text typography="body3" lx={{ color: "muted" }}>
               <CurrencyUnitValue unit={currency.units[0]} value={OWNER_RESERVE} showCode />
             </Text>
             <CounterValue currency={currency} value={OWNER_RESERVE} Wrapper={WithSeparator} />
-          </Row>
+          </TokenDetailRow>
           {isIou && limit ? (
-            <Row label={t("xrp.tokenSettings.balanceLimit")}>
+            <TokenDetailRow label={t("xrp.tokenSettings.balanceLimit")}>
               {isMaxTrustLimit(limit) ? (
                 t("xrp.tokenSettings.maximum")
               ) : (
                 <CurrencyUnitValue unit={token.units[0]} value={limit} showCode />
               )}
-            </Row>
+            </TokenDetailRow>
           ) : null}
           {isIou ? (
-            <Row label={t("xrp.rippling.label")} info={t("xrp.manageAssets.ripplingInfo")}>
+            <TokenDetailRow
+              label={t("xrp.rippling.label")}
+              info={t("xrp.manageAssets.ripplingInfo")}
+            >
               {xrpResources?.isRippling
                 ? t("xrp.rippling.activated")
                 : t("xrp.rippling.deactivated")}
-            </Row>
+            </TokenDetailRow>
           ) : null}
         </Box>
         <CardFooterActions>

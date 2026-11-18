@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import {
   XRP_ACCOUNT,
@@ -6,7 +7,6 @@ import {
   XRP_MPT_TOKEN_ACCOUNT,
   XRP_REMOVED_TOKEN_ACCOUNT,
 } from "../__mocks__/account.mock";
-import BigNumber from "bignumber.js";
 import {
   applyTrustLineEdit,
   formatIssuerFee,

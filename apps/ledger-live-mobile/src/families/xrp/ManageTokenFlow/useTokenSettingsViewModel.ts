@@ -17,6 +17,8 @@ export type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenSettings>
 >;
 
+const ZERO_LIMIT = new BigNumber(0);
+
 export function useTokenSettingsViewModel({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account: tokenAccount, parentAccount } = useAccountScreen(route);
@@ -38,18 +40,19 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
       bridge,
       parentAccount,
       token,
-      storedLimit ?? new BigNumber(0),
+      storedLimit ?? ZERO_LIMIT,
       !storedIsRippling,
     ),
   }));
   const { transaction, updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
 
-  // Balance limit hands its confirmed value back through the route params
-  const confirmedLimit = route.params.balanceLimit;
-  const isMaximum = confirmedLimit ? confirmedLimit.isMaximum : storedIsMaximum;
+  const confirmedBalanceLimit = route.params.balanceLimit;
+  const isMaximum = confirmedBalanceLimit ? confirmedBalanceLimit.isMaximum : storedIsMaximum;
   const limit = useMemo(() => {
-    return confirmedLimit ? new BigNumber(confirmedLimit.limit) : (storedLimit ?? new BigNumber(0));
-  }, [confirmedLimit, storedLimit]);
+    return confirmedBalanceLimit
+      ? new BigNumber(confirmedBalanceLimit.limit)
+      : (storedLimit ?? ZERO_LIMIT);
+  }, [confirmedBalanceLimit, storedLimit]);
 
   const [isRippling, setIsRippling] = useState(storedIsRippling);
   const [isRipplingSheetOpen, setIsRipplingSheetOpen] = useState(false);
@@ -78,11 +81,11 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
     if (!transaction) return;
 
     navigation.navigate(ScreenName.XrpManageTokenSelectDevice, {
-      accountId: tokenAccount.id,
-      parentId: parentAccount.id,
       token,
       transaction,
       status,
+      accountId: tokenAccount.id,
+      parentId: parentAccount.id,
     });
   }, [navigation, parentAccount.id, status, token, tokenAccount.id, transaction]);
 
@@ -90,8 +93,10 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   const isRipplingChanged = isRippling !== storedIsRippling;
   const hasChanged = isLimitChanged || isRipplingChanged;
 
-  const isTransactionInSync =
-    !!transaction && transaction.amount.eq(limit) && transaction.noRipple === !isRippling;
+  const isLimitInTransaction = !!transaction?.amount.eq(limit);
+  const isRipplingInTransaction = transaction?.noRipple === !isRippling;
+  const isTransactionInSync = isLimitInTransaction && isRipplingInTransaction;
+
   // The status describes an older transaction until the bridge answers for the edited one
   const isStatusCurrent = isTransactionInSync && !bridgePending;
 
@@ -104,7 +109,7 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
     : currentStatusErrors.filter(error => error.name !== "XrpTrustSetUnchanged");
 
   const hasNothingToSign = !hasChanged || !isTransactionInSync;
-  const isStatusPending = bridgePending || hasStatusError;
+  const isStatusPendingOrFailed = bridgePending || hasStatusError;
 
   return {
     isRippling,
@@ -117,7 +122,7 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
     errors: [...(bridgeError ? [bridgeError] : []), ...shownStatusErrors],
     ripplingText: t(isRippling ? "xrp.rippling.activated" : "xrp.rippling.deactivated"),
     isCurrentLimitZero: !!storedLimit?.isZero(),
-    isContinueDisabled: hasNothingToSign || isStatusPending,
+    isContinueDisabled: hasNothingToSign || isStatusPendingOrFailed,
     isContinueLoading: bridgePending,
     limitText: isMaximum
       ? t("xrp.tokenSettings.maximum")

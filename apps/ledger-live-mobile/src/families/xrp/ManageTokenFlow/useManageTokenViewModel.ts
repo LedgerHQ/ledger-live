@@ -39,7 +39,17 @@ export function useManageTokenViewModel({ navigation, route }: Props) {
     [account, navigation],
   );
 
-  if (account?.type !== "Account") return { account: undefined, tokenAccounts: [], onEdit };
+  if (account?.type !== "Account") {
+    return {
+      onEdit,
+      account: undefined,
+      tokenAccounts: [],
+    };
+  }
 
-  return { account, tokenAccounts: getManageableTokenAccounts(account), onEdit };
+  return {
+    onEdit,
+    account,
+    tokenAccounts: getManageableTokenAccounts(account),
+  };
 }

@@ -63,11 +63,11 @@ function getNumberSeparators(locale: string) {
 
 export function formatLimitText(text: string, locale: string): string {
   const { group, decimal } = getNumberSeparators(locale);
+
   const digitsAndSeparators = text.replace(/\s/g, "").replaceAll(group, "");
-  const [integer = "", fraction] = digitsAndSeparators
-    .replace(/[.,]/g, ".")
-    .replace(/[^\d.]/g, "")
-    .split(".");
+  const digitsAndDots = digitsAndSeparators.replace(/[.,]/g, ".").replace(/[^\d.]/g, "");
+  const [integer = "", fraction] = digitsAndDots.split(".");
+
   const groupedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, group);
 
   return typeof fraction === "string" ? `${groupedInteger}${decimal}${fraction}` : groupedInteger;
@@ -79,6 +79,7 @@ export function readLimitInput(text: string, limitText: string, ticker: string):
   if (limitText === "" || text.includes(suffix)) return text.replace(suffix, "");
 
   const display = `${limitText}${suffix}`;
+
   return text === display.slice(0, -1) ? limitText.slice(0, -1) : text;
 }
 

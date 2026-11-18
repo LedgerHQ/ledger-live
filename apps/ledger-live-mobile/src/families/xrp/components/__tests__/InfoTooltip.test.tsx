@@ -15,6 +15,8 @@ describe("InfoTooltip", () => {
     expect(screen.queryByText("What rippling does")).toBeNull();
     await user.press(screen.getByLabelText("Rippling"));
 
-    expect(await screen.findByText("What rippling does")).toBeVisible();
+    const info = await screen.findByText("What rippling does");
+
+    expect(info).toBeVisible();
   });
 });

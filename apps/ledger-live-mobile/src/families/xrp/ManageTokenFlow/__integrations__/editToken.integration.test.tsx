@@ -61,20 +61,22 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
 const mockAccountBridge = makeMockAccountBridge();
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const {
-    makeResolvedAccountBridge,
-    resolvedCurrencyBridge,
-  } = require("../../__mocks__/bridge.mock");
+  const bridgeMock = require("../../__mocks__/bridge.mock");
+
   return {
     __esModule: true,
-    getAccountBridge: () => makeResolvedAccountBridge(mockAccountBridge),
-    getCurrencyBridge: () => resolvedCurrencyBridge,
+    getAccountBridge: () => bridgeMock.makeResolvedAccountBridge(mockAccountBridge),
+    getCurrencyBridge: () => bridgeMock.resolvedCurrencyBridge,
   };
 });
 
 const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
 
-const EDIT_BUTTON = `xrp-manage-asset-edit-${xrpIouToken.id}`;
+const EDIT_BUTTON_TEST_ID = `xrp-manage-asset-edit-${xrpIouToken.id}`;
+
+const ZERO_AMOUNT = new BigNumber(0);
+
+const TOKEN_BALANCE = new BigNumber(500);
 
 const STORED_RESOURCES = {
   isLocked: false,
@@ -102,7 +104,7 @@ function ManageTokenFlowHarness() {
 }
 
 function makeAccountWithToken(overrides: Partial<XrpTokenAccount>): Account {
-  const tokenAccount = { ...XRP_IOU_TOKEN_ACCOUNT, balance: new BigNumber(0), ...overrides };
+  const tokenAccount = { ...XRP_IOU_TOKEN_ACCOUNT, balance: ZERO_AMOUNT, ...overrides };
 
   return { ...XRP_ACCOUNT, subAccounts: [tokenAccount] };
 }
@@ -128,7 +130,8 @@ function renderManageAssets(account: Account) {
 async function renderEditDetails(overrides: Partial<XrpTokenAccount> = {}) {
   const view = renderManageAssets(makeAccountWithToken(overrides));
 
-  await view.user.press(await screen.findByTestId(EDIT_BUTTON));
+  const editButton = await screen.findByTestId(EDIT_BUTTON_TEST_ID);
+  await view.user.press(editButton);
   await screen.findByTestId("xrp-settings-continue");
 
   return view;
@@ -143,7 +146,8 @@ function getLimitInput() {
 }
 
 async function openBalanceLimit(user: UserEvents) {
-  await user.press(await screen.findByTestId("xrp-settings-limit-row"));
+  const limitRow = await screen.findByTestId("xrp-settings-limit-row");
+  await user.press(limitRow);
   await screen.findByTestId("xrp-limit-input");
 }
 
@@ -156,11 +160,13 @@ async function replaceLimit(user: UserEvents, text: string) {
 }
 
 async function chooseRippling(user: UserEvents, option: "activated" | "deactivated") {
-  await user.press(await screen.findByTestId("xrp-settings-rippling-row"));
-  await user.press(await screen.findByTestId(`xrp-rippling-option-${option}`));
+  const ripplingRow = await screen.findByTestId("xrp-settings-rippling-row");
+  await user.press(ripplingRow);
+
+  const ripplingOption = await screen.findByTestId(`xrp-rippling-option-${option}`);
+  await user.press(ripplingOption);
 }
 
-// The status of the last edit must be in before asserting on Continue
 async function waitForBridgeToSettle(limit: string) {
   await waitFor(() => {
     const lastCall = mockAccountBridge.getTransactionStatus.mock.calls.at(-1);
@@ -200,9 +206,7 @@ describe("XRP edit token flow (integration)", () => {
 
   describe("Entry", () => {
     it("opens Edit details from the Edit button of an IOU card", async () => {
-      await renderEditDetails({
-        xrpResources: STORED_RESOURCES,
-      });
+      await renderEditDetails({ xrpResources: STORED_RESOURCES });
 
       expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/1\D?000 RLUSD/);
     });
@@ -218,9 +222,7 @@ describe("XRP edit token flow (integration)", () => {
 
   describe("Edit details", () => {
     it("prefills the stored limit and rippling, with Continue disabled", async () => {
-      await renderEditDetails({
-        xrpResources: STORED_RESOURCES,
-      });
+      await renderEditDetails({ xrpResources: STORED_RESOURCES });
 
       expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/1\D?000 RLUSD/);
       expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
@@ -271,7 +273,7 @@ describe("XRP edit token flow (integration)", () => {
         xrpResources: {
           isLocked: false,
           isRippling: false,
-          limit: new BigNumber(0),
+          limit: ZERO_AMOUNT,
         },
       });
 
@@ -308,7 +310,9 @@ describe("XRP edit token flow (integration)", () => {
 
       await replaceLimit(user, "2000");
 
-      expect(await screen.findByText("The limit is above the maximum")).toBeVisible();
+      const statusMessage = await screen.findByText("The limit is above the maximum");
+
+      expect(statusMessage).toBeVisible();
       expect(getContinueButton()).toBeDisabled();
     });
 
@@ -318,7 +322,9 @@ describe("XRP edit token flow (integration)", () => {
 
       await replaceLimit(user, "2000");
 
-      expect(await screen.findByText("rpc down")).toBeVisible();
+      const failureMessage = await screen.findByText("rpc down");
+
+      expect(failureMessage).toBeVisible();
       expect(getContinueButton()).toBeDisabled();
     });
   });
@@ -359,27 +365,29 @@ describe("XRP edit token flow (integration)", () => {
       await user.clear(getLimitInput());
       await user.type(getLimitInput(), "0");
 
-      expect(await screen.findByText("The limit must be above 0")).toBeVisible();
+      const limitZeroMessage = await screen.findByText("The limit must be above 0");
+
+      expect(limitZeroMessage).toBeVisible();
       expect(screen.getByTestId("xrp-limit-confirm")).toBeDisabled();
     });
 
     it("warns and disables Confirm for a limit below the balance", async () => {
-      const { user } = await renderEditDetails({ balance: new BigNumber(500) });
+      const { user } = await renderEditDetails({ balance: TOKEN_BALANCE });
       await openBalanceLimit(user);
 
       await user.clear(getLimitInput());
       await user.type(getLimitInput(), "100");
 
-      expect(
-        await screen.findByText(
-          "Your balance (500 RLUSD) is above this limit. You won't be able to receive this token.",
-        ),
-      ).toBeVisible();
+      const belowBalanceMessage = await screen.findByText(
+        "Your balance (500 RLUSD) is above this limit. You won't be able to receive this token.",
+      );
+
+      expect(belowBalanceMessage).toBeVisible();
       expect(screen.getByTestId("xrp-limit-confirm")).toBeDisabled();
     });
 
     it("keeps Confirm enabled for a limit equal to the balance", async () => {
-      const { user } = await renderEditDetails({ balance: new BigNumber(500) });
+      const { user } = await renderEditDetails({ balance: TOKEN_BALANCE });
       await openBalanceLimit(user);
 
       await user.clear(getLimitInput());
@@ -389,7 +397,7 @@ describe("XRP edit token flow (integration)", () => {
     });
 
     it("sets the maximum, shown as Maximum in the field and on Edit details", async () => {
-      const { user } = await renderEditDetails({ balance: new BigNumber(500) });
+      const { user } = await renderEditDetails({ balance: TOKEN_BALANCE });
       await openBalanceLimit(user);
 
       await user.press(screen.getByTestId("xrp-limit-set-maximum"));
@@ -398,7 +406,9 @@ describe("XRP edit token flow (integration)", () => {
 
       await user.press(screen.getByTestId("xrp-limit-confirm"));
 
-      expect(await screen.findByTestId("xrp-settings-limit-value")).toHaveTextContent("Maximum");
+      const limitValue = await screen.findByTestId("xrp-settings-limit-value");
+
+      expect(limitValue).toHaveTextContent("Maximum");
     });
 
     it("replaces the maximum by what is typed next", async () => {
@@ -417,8 +427,10 @@ describe("XRP edit token flow (integration)", () => {
     it("checks the current value, and choosing Activated updates the row and enables Continue", async () => {
       const { user } = await renderEditDetails();
 
-      await user.press(await screen.findByTestId("xrp-settings-rippling-row"));
-      expect(await screen.findByTestId("xrp-rippling-option-deactivated")).toBeVisible();
+      const ripplingRow = await screen.findByTestId("xrp-settings-rippling-row");
+      await user.press(ripplingRow);
+      const deactivatedOption = await screen.findByTestId("xrp-rippling-option-deactivated");
+      expect(deactivatedOption).toBeVisible();
       expect(screen.queryByTestId("xrp-rippling-warning")).toBeNull();
       await user.press(screen.getByTestId("xrp-rippling-option-activated"));
 
@@ -436,34 +448,41 @@ describe("XRP edit token flow (integration)", () => {
 
       await signFromEditDetails(user);
 
-      expect(
-        await screen.findByText("Token settings updated", {}, { timeout: 15000 }),
-      ).toBeVisible();
-      expect(getSignedTransaction()).toMatchObject({
+      const successTitle = await screen.findByText(
+        "Token settings updated",
+        {},
+        { timeout: 15000 },
+      );
+      const signedTransaction = getSignedTransaction();
+
+      expect(successTitle).toBeVisible();
+      expect(signedTransaction).toMatchObject({
         mode: "changeTrust",
         assetReference: xrpIouToken.tokenIdentifier,
         assetOwner: xrpIouToken.contractAddress,
         noRipple: false,
       });
-      expect(getSignedTransaction().amount.toFixed()).toBe("2000");
-      expect(getSignedTransaction()).not.toHaveProperty("subAccountId");
+      expect(signedTransaction.amount.toFixed()).toBe("2000");
+      expect(signedTransaction).not.toHaveProperty("subAccountId");
 
       await user.press(screen.getByText("View details"));
 
-      expect(await screen.findByTestId("operation-details")).toBeVisible();
+      const operationDetails = await screen.findByTestId("operation-details");
+
+      expect(operationDetails).toBeVisible();
     });
 
     it("signs noRipple when rippling is deactivated", async () => {
-      const { user } = await renderEditDetails({
-        xrpResources: STORED_RESOURCES,
-      });
+      const { user } = await renderEditDetails({ xrpResources: STORED_RESOURCES });
       await chooseRippling(user, "deactivated");
 
       await signFromEditDetails(user);
 
       await screen.findByText("Token settings updated", {}, { timeout: 15000 });
-      expect(getSignedTransaction().noRipple).toBe(true);
-      expect(getSignedTransaction().amount.toFixed()).toBe("1000");
+      const signedTransaction = getSignedTransaction();
+
+      expect(signedTransaction.noRipple).toBe(true);
+      expect(signedTransaction.amount.toFixed()).toBe("1000");
     });
 
     it("returns to the Manage assets list from the success screen", async () => {
@@ -474,7 +493,9 @@ describe("XRP edit token flow (integration)", () => {
 
       await user.press(screen.getByText("Close"));
 
-      expect(await screen.findByText("Manage assets")).toBeVisible();
+      const manageAssetsTitle = await screen.findByText("Manage assets");
+
+      expect(manageAssetsTitle).toBeVisible();
     });
 
     it("shows the signed limit and rippling on the Manage assets card right after success", async () => {
@@ -486,7 +507,9 @@ describe("XRP edit token flow (integration)", () => {
 
       await user.press(screen.getByText("Close"));
 
-      expect(await screen.findByText(/2\D?000 RLUSD/)).toBeVisible();
+      const signedLimit = await screen.findByText(/2\D?000 RLUSD/);
+
+      expect(signedLimit).toBeVisible();
       expect(screen.getByText("Activated")).toBeVisible();
     });
 
@@ -500,20 +523,19 @@ describe("XRP edit token flow (integration)", () => {
 
       await user.press(screen.getAllByTestId("navigation-header-back-button").at(-1)!);
 
-      expect(await screen.findByTestId("xrp-settings-limit-value")).toHaveTextContent(
-        /2\D?000 RLUSD/,
-      );
+      const limitValue = await screen.findByTestId("xrp-settings-limit-value");
+
+      expect(limitValue).toHaveTextContent(/2\D?000 RLUSD/);
       expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
     });
 
     it("lands on the error screen with Retry when signing fails", async () => {
-      mockAccountBridge.signOperation.mockImplementationOnce(
-        () =>
-          new Observable<SignOperationEvent>(subscriber => {
-            subscriber.next({ type: "device-signature-requested" });
-            subscriber.error(new Error("UserRefusedOnDevice"));
-          }),
-      );
+      mockAccountBridge.signOperation.mockImplementationOnce(() => {
+        return new Observable<SignOperationEvent>(subscriber => {
+          subscriber.next({ type: "device-signature-requested" });
+          subscriber.error(new Error("UserRefusedOnDevice"));
+        });
+      });
       const { user } = await renderEditDetails();
       await replaceLimit(user, "2000");
 
@@ -529,9 +551,13 @@ describe("XRP edit token flow (integration)", () => {
 
       await signFromEditDetails(user);
 
-      expect(
-        await screen.findByText("Transaction Broadcast Unsuccessfull", {}, { timeout: 15000 }),
-      ).toBeVisible();
+      const broadcastNotice = await screen.findByText(
+        "Transaction Broadcast Unsuccessfull",
+        {},
+        { timeout: 15000 },
+      );
+
+      expect(broadcastNotice).toBeVisible();
     });
   });
 });

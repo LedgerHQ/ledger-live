@@ -27,8 +27,8 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
   };
 });
 
-const EDIT_BUTTON = `xrp-manage-asset-edit-${xrpIouToken.id}`;
-const DELETE_BUTTON = `xrp-manage-asset-delete-${xrpIouToken.id}`;
+const EDIT_BUTTON_TEST_ID = `xrp-manage-asset-edit-${xrpIouToken.id}`;
+const DELETE_BUTTON_TEST_ID = `xrp-manage-asset-delete-${xrpIouToken.id}`;
 
 const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
 
@@ -38,7 +38,11 @@ const endpoints = { node: jest.fn<Response, [{ request: Request }]>() };
 
 function mockTransferRate(transferRate?: number) {
   endpoints.node.mockImplementation(() => {
-    const node = { LedgerEntryType: "AccountRoot", Flags: 0, TransferRate: transferRate };
+    const node = {
+      LedgerEntryType: "AccountRoot",
+      Flags: 0,
+      TransferRate: transferRate,
+    };
 
     return HttpResponse.json({ result: { node, account_data: node, status: "success" } });
   });
@@ -105,9 +109,9 @@ describe("XRP Manage assets", () => {
     endpoints.node.mockImplementation(() => HttpResponse.error());
     renderManageToken(makeAccountWithIssuer("rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf"));
 
-    const feeError = await screen.findByText("Not available");
+    const unavailableFee = await screen.findByText("Not available");
 
-    expect(feeError).toBeVisible();
+    expect(unavailableFee).toBeVisible();
   });
 
   it("shows Maximum for a limit at the maximum", async () => {
@@ -135,13 +139,14 @@ describe("XRP Manage assets", () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
     const { user } = renderManageToken({ ...XRP_ACCOUNT, subAccounts: [frozen] });
 
-    expect(await screen.findByText("Your RLUSD asset has been frozen")).toBeVisible();
+    const frozenWarning = await screen.findByText("Your RLUSD asset has been frozen");
+    expect(frozenWarning).toBeVisible();
     expect(screen.getByText("Frozen")).toBeVisible();
     await user.press(screen.getByText("Learn more"));
 
     expect(openURL).toHaveBeenCalledTimes(1);
     expect(openURL).toHaveBeenCalledWith(urls.errors.XrpTokenFrozen);
-    expect(screen.getByTestId(EDIT_BUTTON)).toBeEnabled();
+    expect(screen.getByTestId(EDIT_BUTTON_TEST_ID)).toBeEnabled();
   });
 
   it("puts the frozen warning right above the card of the frozen token", async () => {
@@ -153,9 +158,8 @@ describe("XRP Manage assets", () => {
 
     await screen.findByText("Your Test MPT asset has been frozen");
 
-    const order = screen
-      .getAllByTestId(/^xrp-(frozen-banner|manage-asset)-ripple/)
-      .map(element => element.props.testID);
+    const elements = screen.getAllByTestId(/^xrp-(frozen-banner|manage-asset)-ripple/);
+    const order = elements.map(element => element.props.testID);
     expect(order).toEqual([
       `xrp-manage-asset-${xrpIouToken.id}`,
       `xrp-frozen-banner-${xrpMptToken.id}`,
@@ -175,16 +179,17 @@ describe("XRP Manage assets", () => {
   it("shows Edit enabled and Delete disabled on an IOU card", async () => {
     renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
 
-    const editButton = await screen.findByTestId(EDIT_BUTTON);
+    const editButton = await screen.findByTestId(EDIT_BUTTON_TEST_ID);
 
     expect(editButton).toBeEnabled();
-    expect(screen.getByTestId(DELETE_BUTTON)).toBeDisabled();
+    expect(screen.getByTestId(DELETE_BUTTON_TEST_ID)).toBeDisabled();
   });
 
   it("opens Edit details for the token account on Edit", async () => {
     const { user } = renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
 
-    await user.press(await screen.findByTestId(EDIT_BUTTON));
+    const editButton = await screen.findByTestId(EDIT_BUTTON_TEST_ID);
+    await user.press(editButton);
 
     const params = await screen.findByTestId("edit-details-params");
     expect(JSON.parse(params.props.children)).toEqual({
@@ -210,6 +215,6 @@ describe("XRP Manage assets", () => {
     const emptyMessage = await screen.findByText("This account has no tokens yet.");
 
     expect(emptyMessage).toBeVisible();
-    expect(screen.queryByTestId(EDIT_BUTTON)).toBeNull();
+    expect(screen.queryByTestId(EDIT_BUTTON_TEST_ID)).toBeNull();
   });
 });
