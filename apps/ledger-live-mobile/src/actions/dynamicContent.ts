@@ -19,7 +19,12 @@ import {
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
   DynamicContentMarkLocalCardsViewedPayload,
+  DynamicContentSetBrazeCardsPayload,
 } from "./types";
+
+export const setDynamicContentBrazeCards = createAction<DynamicContentSetBrazeCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_BRAZE_CARDS,
+);
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
   DynamicContentActionTypes.DYNAMIC_CONTENT_SET_WALLET_CARDS,

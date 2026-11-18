@@ -1,5 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { type Action, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { type GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
+import {
+  DynamicContentActionTypes,
+  type DynamicContentSetBrazeCardsPayload,
+} from "../actions/types";
 
 export type GenericAwarenessModalMobileContentCard = GenericAwarenessModalContentCard & {
   isLocal?: boolean;
@@ -18,6 +22,11 @@ type OpenGenericAwarenessModalDrawerPayload = {
 type MarkGenericAwarenessModalContentCardAsReadPayload = {
   id: string;
 };
+
+const isSetBrazeCards = (
+  action: Action,
+): action is PayloadAction<DynamicContentSetBrazeCardsPayload> =>
+  action.type === DynamicContentActionTypes.DYNAMIC_CONTENT_SET_BRAZE_CARDS;
 
 const initialState: GenericAwarenessModalState = {
   isOpen: false,
@@ -74,6 +83,14 @@ const genericAwarenessModalSlice = createSlice({
     ) => {
       state.contentCards = state.contentCards.filter(card => card.id !== action.payload.id);
     },
+  },
+  extraReducers: builder => {
+    builder.addMatcher(isSetBrazeCards, (state, action) => {
+      const brazeCards = action.payload.genericAwarenessModalCards;
+      if (!brazeCards) return;
+      const localCards = state.contentCards.filter(card => card.isLocal);
+      state.contentCards = [...localCards, ...brazeCards];
+    });
   },
   selectors: {
     selectIsGenericAwarenessModalOpen: state => state.isOpen,

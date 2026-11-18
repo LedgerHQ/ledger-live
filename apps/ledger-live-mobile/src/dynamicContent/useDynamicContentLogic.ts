@@ -1,15 +1,7 @@
 import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import {
-  setDynamicContentWalletCards,
-  setDynamicContentAssetsCards,
-  setDynamicContentNotificationCards,
-  setDynamicContentCategoriesCards,
-  setDynamicContentMobileCards,
-  setIsDynamicContentLoading,
-  setDynamicContentLandingPageStickyCtaCards,
-} from "../actions/dynamicContent";
+import { setDynamicContentBrazeCards, setIsDynamicContentLoading } from "../actions/dynamicContent";
 import {
   filterByPage,
   filterByType,
@@ -26,7 +18,6 @@ import { ContentCardLocation, ContentCardsType, BrazeContentCard } from "./types
 import { dismissedContentCardsSelector } from "~/reducers/settings";
 import { getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { clearDismissedContentCards } from "~/actions/settings";
-import { replaceBrazeGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
 import { markBrazePublish } from "LLM/utils/logStartup/logBrazePublish";
 
 const EMPTY_DISMISSED_CONTENT_CARDS = {};
@@ -81,14 +72,17 @@ export const useDynamicContentLogic = () => {
           `${categoriesCards.length} category, ${landingPageStickyCtaCards.length} sticky, ` +
           `${genericAwarenessModalContentCards.length} modal)`,
       );
-      dispatch(setDynamicContentCategoriesCards(categoriesCards));
-      dispatch(setDynamicContentMobileCards(mobileContentCards));
-      dispatch(setDynamicContentWalletCards(walletCards));
-      dispatch(setDynamicContentAssetsCards(assetCards));
-      dispatch(setDynamicContentNotificationCards(notificationCards));
-      dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
-      dispatch(replaceBrazeGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
-      dispatch(setIsDynamicContentLoading(false));
+      dispatch(
+        setDynamicContentBrazeCards({
+          categoriesCards,
+          mobileCards: mobileContentCards,
+          walletCards,
+          assetsCards: assetCards,
+          notificationCards,
+          landingPageStickyCtaCards,
+          genericAwarenessModalCards: genericAwarenessModalContentCards,
+        }),
+      );
     },
     [dismissedContentCards, dispatch],
   );
