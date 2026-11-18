@@ -307,9 +307,12 @@ async function measureScenario(scenario: string): Promise<void> {
     // A measured launch never follows one on the same device; a warm-up after a check can.
     const { placement, order } = layout(phase);
     for (const side of order) {
-      const device = placement[side];
-      await installAndInject({ scenario, side, device, userdata });
-      for (let w = 0; w < WARMUPS; w++) {
+      await installAndInject({ scenario, side, device: placement[side], userdata });
+    }
+    // In turn, like the rounds: no build starts round 0 after idling through the other's warm-ups.
+    for (let w = 0; w < WARMUPS; w++) {
+      for (const side of order) {
+        const device = placement[side];
         await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
     }
