@@ -309,7 +309,6 @@ jobs:
           REPEAT_EACH: ${{ inputs.repeat_each }}
         run: |
           MAX_SHARDS=4
-          # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
           SHARD_WORKERS=8
           SHARD_TOTAL=$MAX_SHARDS
           if [[ "$TEST_COUNT" =~ ^[1-9][0-9]*$ ]]; then
@@ -364,7 +363,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICES"
-            echo "- **Shards per device:** $SHARD_TOTAL${TEST_COUNT:+ ($TEST_COUNT matching test(s))}"
+            echo "- **Shards per device:** $SHARD_TOTAL${TEST_COUNT:+ (up to $TEST_COUNT matching test(s))}"
             echo "- **Also on macOS:** $RUN_ON_MACOS"
             echo "- **Also on Windows:** $RUN_ON_WINDOWS"
             echo "- **Speculos:** Speculinho (remote)"
@@ -402,6 +401,7 @@ jobs:
       # The runner has no Docker daemon, so Speculos runs remotely on Speculinho.
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
+      # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
       E2E_WORKERS: ${{ needs.prepare-devices.outputs.shard_workers }}
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache

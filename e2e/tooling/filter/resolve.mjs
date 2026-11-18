@@ -14,7 +14,7 @@ import {
 } from "./escaping.mjs";
 import { isRuntimeGeneratedTag } from "./generatedTags.mjs";
 import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
-import { TEAM_SLUGS, createTeamExpander } from "./teamSpecs.mjs";
+import { TEAM_SLUGS, createTeamExpander, readLocalImports } from "./teamSpecs.mjs";
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
@@ -340,19 +340,40 @@ export function resolveE2eSelection({
   return { filter, runner_filter: runnerFilter, ok, notes };
 }
 
+// Titles and tags can come from imported helpers, so their text counts as the spec's own.
 function matchesFile(filePath, matcher) {
-  return matcher.test(filePath) || matcher.test(fs.readFileSync(filePath, "utf8"));
+  const texts = [filePath, fs.readFileSync(filePath, "utf8"), ...readLocalImports(filePath)];
+  return texts.some(text => matcher.test(text));
 }
 
-const TEST_CALL = /\btest(?:\.(?:only|skip|fixme|fail))?\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
-const TEST_IN_LOOP = /(?:\bfor\s*\(|\.forEach\(|\.map\()[\s\S]*\btest(?:\.\w+)?\(/;
+const TEST_CALL = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail))?\s*\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
+const DECLARES_TESTS = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail|describe))?\s*\(/;
+const REPEATS_CODE = /\b(?:for|while)\s*\(|\.(?:forEach|map|flatMap|reduce)\(|\bArray\.from\(/;
+const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*[;,)\n]/;
+// A named function can declare tests and be called more than once.
+const NAMED_FUNCTION =
+  /\bfunction\s*\*?\s*\w+\s*\(|\b(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|\w+\s*=>)/;
 
-// null when the file builds a title at runtime, loops over tests or registers them in a helper.
+const withoutComments = text => text.replace(/\/\*[^]*?\*\/|\/\/[^\n]*/g, "");
+
+// null unless every test() in the file has a literal title and runs exactly once.
 function countLiteralTests(filePath) {
-  const source = fs.readFileSync(filePath, "utf8");
+  const source = withoutComments(fs.readFileSync(filePath, "utf8"));
   const firstArgs = [...source.matchAll(TEST_CALL)].map(match => match[1]);
   const hasRuntimeTitle = firstArgs.some(arg => /^[A-Za-z_$]/.test(arg) || arg.includes("${"));
-  if (firstArgs.length === 0 || hasRuntimeTitle || TEST_IN_LOOP.test(source)) return null;
+  const helperDeclaresTests = readLocalImports(filePath).some(text =>
+    DECLARES_TESTS.test(withoutComments(text)),
+  );
+  if (
+    firstArgs.length === 0 ||
+    hasRuntimeTitle ||
+    helperDeclaresTests ||
+    REPEATS_CODE.test(source) ||
+    ALIASES_TEST.test(source) ||
+    NAMED_FUNCTION.test(source)
+  ) {
+    return null;
+  }
   return firstArgs.length;
 }
 
@@ -363,7 +384,8 @@ export function estimatePlaywrightTestCount(options = {}) {
     if (!files || files.length === 0) return null;
     const counts = files.map(countLiteralTests);
     return counts.includes(null) ? null : counts.reduce((sum, count) => sum + count, 0);
-  } catch {
+  } catch (error) {
+    console.warn(`::notice title=Shard estimate failed::keeping the full shard count: ${error}`);
     return null;
   }
 }
