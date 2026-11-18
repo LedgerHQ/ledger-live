@@ -11,14 +11,15 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import { useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
+import type { AccountId } from "@domain/entity-account";
 import type { HistoryExportAccount } from "../../../model/ports";
 import { ExportAccountListItem } from "./ExportAccountListItem";
 
 type ExportSceneProps = Readonly<{
   accounts: readonly HistoryExportAccount[];
-  checkedIds: string[];
+  checkedIds: AccountId[];
   allSelected: boolean;
-  toggleAccount: (id: string) => void;
+  toggleAccount: (id: AccountId) => void;
   onSelectAllToggle: () => void;
 }>;
 

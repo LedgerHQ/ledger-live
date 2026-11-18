@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
+import Config from "react-native-config";
 import Share from "react-native-share";
 import type { Account } from "@ledgerhq/types-live";
+import { AccountIdSchema, type AccountId } from "@domain/entity-account";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type {
   HistoryExportAccount,
   HistoryExportOutcome,
@@ -10,19 +13,17 @@ import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
-import { getEnv } from "@shared/env";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { sendFile } from "~/e2e/bridge/client";
 import logger from "~/logger";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { useBatchMaybeAccountName, walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
-/** iOS rejects a cancelled "Save to Files" picker with `CANCELLED`; older versions used `ECANCELLED500`. */
+/** iOS rejects a cancelled "Save to Files" picker with this code; Android resolves `dismissedAction`. */
 const PICKER_CANCELED_CODE = "CANCELLED";
-const LEGACY_SHARE_CANCELED_CODE = "ECANCELLED500";
 
 const pad = (value: number) => String(value).padStart(2, "0");
 
@@ -30,19 +31,15 @@ const pad = (value: number) => String(value).padStart(2, "0");
 export const getExportFileName = (date: Date) =>
   `ledgerwallet-operations-${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}`;
 
-const isShareCanceled = (error: unknown) => {
-  const shareError = error as { code?: string; error?: { code?: string } } | undefined;
-  return (
-    shareError?.code === PICKER_CANCELED_CODE ||
-    shareError?.error?.code === LEGACY_SHARE_CANCELED_CODE
-  );
-};
+const isPickerCanceled = (error: unknown) =>
+  error instanceof Error && "code" in error && error.code === PICKER_CANCELED_CODE;
+
+const toError = (error: unknown) => (error instanceof Error ? error : new Error(String(error)));
 
 export function useHistoryExportPort(): HistoryExportPort {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const rawAccounts = useSelector(accountsSelector);
-  const names = useBatchMaybeAccountName(rawAccounts);
   const discreet = useSelector(discreetModeSelector);
   const countervalueCurrency = useSelector(counterValueCurrencySelector);
   const walletState = useSelector(walletSelector);
@@ -52,27 +49,32 @@ export function useHistoryExportPort(): HistoryExportPort {
 
   const accounts = useMemo<HistoryExportAccount[]>(
     () =>
-      rawAccounts.map((account, index) => ({
-        id: account.id,
-        name: names[index] ?? account.id,
+      rawAccounts.map(account => ({
+        id: AccountIdSchema.parse(account.id),
+        name: accountNameWithDefaultSelector(walletState, account),
         formattedBalance: formatCurrencyUnit(account.currency.units[0], account.balance, {
           showCode: true,
           locale,
           discreet,
         }),
-        currency: { id: account.currency.id, ticker: account.currency.ticker },
+        currency: {
+          id: CryptoOrTokenCurrencyIdSchema.parse(account.currency.id),
+          ticker: account.currency.ticker,
+        },
       })),
-    [rawAccounts, names, locale, discreet],
+    [rawAccounts, walletState, locale, discreet],
   );
 
   const findAccounts = useCallback(
-    (accountIds: readonly string[]): Account[] =>
-      rawAccounts.filter(account => accountIds.includes(account.id)),
+    (accountIds: readonly AccountId[]): Account[] => {
+      const requestedIds = new Set<string>(accountIds);
+      return rawAccounts.filter(account => requestedIds.has(account.id));
+    },
     [rawAccounts],
   );
 
   const syncAccounts = useCallback(
-    (accountIds: readonly string[]) => {
+    (accountIds: readonly AccountId[]) => {
       sync({
         type: "SYNC_SOME_ACCOUNTS",
         accountIds: [...accountIds],
@@ -84,7 +86,7 @@ export function useHistoryExportPort(): HistoryExportPort {
   );
 
   const isSyncing = useCallback(
-    (accountIds: readonly string[]) =>
+    (accountIds: readonly AccountId[]) =>
       findAccounts(accountIds).some(
         account =>
           syncState[account.id]?.pending ||
@@ -94,7 +96,7 @@ export function useHistoryExportPort(): HistoryExportPort {
   );
 
   const exportCsv = useCallback(
-    async (accountIds: readonly string[]): Promise<HistoryExportOutcome> => {
+    async (accountIds: readonly AccountId[]): Promise<HistoryExportOutcome> => {
       try {
         const csv = accountsOpToCSV(
           findAccounts(accountIds),
@@ -104,7 +106,7 @@ export function useHistoryExportPort(): HistoryExportPort {
         );
         const fileName = getExportFileName(new Date());
 
-        if (getEnv("DETOX")) {
+        if (Config.DETOX) {
           sendFile({ fileName: `${fileName}.csv`, fileContent: csv });
           return "saved";
         }
@@ -121,12 +123,12 @@ export function useHistoryExportPort(): HistoryExportPort {
         );
         return result.dismissedAction ? "canceled" : "saved";
       } catch (error) {
-        if (isShareCanceled(error)) return "canceled";
-        logger.critical(error as Error);
+        if (isPickerCanceled(error)) return "canceled";
+        logger.critical(toError(error));
         return "failed";
       }
     },
-    [countervalueCurrency, countervalueState, findAccounts, t, walletState.accountNames],
+    [countervalueCurrency, countervalueState, findAccounts, t, walletState],
   );
 
   return useMemo(
