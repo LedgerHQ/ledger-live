@@ -1280,6 +1280,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-history-export':
+        specifier: workspace:^
+        version: link:../../features/flow/history-export
       '@features/flow-large-screen-upsell':
         specifier: workspace:^
         version: link:../../features/flow/large-screen-upsell

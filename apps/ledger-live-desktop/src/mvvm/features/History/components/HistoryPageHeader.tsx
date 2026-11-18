@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PageHeader from "LLD/components/PageHeader";
 import { useTranslation } from "react-i18next";
 import type { Contact } from "@domain/entity-contact";
-import { HistoryExportDialog } from "./HistoryExportDialog";
+import { HistoryExport } from "./HistoryExport";
 import { HistoryContactScope } from "./HistoryContactScope";
 import { ActionsMenu } from "./HistoryPageHeader/ActionsMenu";
 
@@ -37,7 +37,7 @@ export default function HistoryPageHeader({
 
   return (
     <>
-      <HistoryExportDialog open={isExportDialogOpen} onOpenChange={setExportDialogOpen} />
+      <HistoryExport isOpen={isExportDialogOpen} onOpenChange={setExportDialogOpen} />
       <PageHeader
         title={t("history.title")}
         extra={cardScope ?? (contact ? <HistoryContactScope contact={contact} /> : undefined)}
