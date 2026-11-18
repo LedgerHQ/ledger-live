@@ -48,6 +48,7 @@ Use it to review an existing package. `pnpm lint:tool-config` checks the items o
 - [ ] `tsconfig.json` (and platform configs when dual): pick the archetype in [support-config](../.agents/skills/support-config/SKILL.md)
 - [ ] `jest.config.js`: one line calling the layer's `@support/jest` factory (see [support-config](../.agents/skills/support-config/SKILL.md))
 - [ ] No `project.json` and no `build` target for source-only packages: Nx `^build` reaches a package's dependencies through projects that have no `build` target. Add a `project.json` only for a target the package needs
+- [ ] Exception for private packages that CI builds by name: they are listed in [`rules/source-only-entry-points.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only-entry-points.mjs), and `CHECKS["no-build"]` in [`rules/source-only.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only.mjs) says what their `build` target may be. It exists so that Nx `^build` reaches their published dependencies.
 - [ ] `src/errors.ts` — if the package throws custom errors, define them here as plain `class extends Error`
 
 ## TypeScript configuration

@@ -1,7 +1,8 @@
 // Private libraries under libs/ have no build: their exports point at src, and apps, tests and
 // tooling read them from source. Published packages (not `private: true`) keep their build. This
 // rule keeps that split from drifting back. CHECKS describes each check under its name, which is
-// how source-only-debt.mjs lists a package that cannot pass it yet.
+// how source-only-debt.mjs lists a package that cannot pass it yet. See CHECKS["no-build"] for the
+// one "build" target a private library may keep.
 //
 // published-deps reads the privacy of a dependency from its own manifest, which is not a cache
 // input of this package: a dependency turning private is reported once this package's manifest
@@ -11,13 +12,19 @@ import fs from "node:fs";
 import path from "node:path";
 import { maskSource } from "./jest.mjs";
 import { SOURCE_ONLY_DEBT } from "./source-only-debt.mjs";
+import { SOURCE_ONLY_ENTRY_POINTS } from "./source-only-entry-points.mjs";
 
 const DEBT_FILE = "tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs";
+const ENTRY_POINTS_FILE = "tools/nx-plugins/enforce-tool-config/rules/source-only-entry-points.mjs";
 
 const SOURCE_CONDITION = "@ledgerhq/source";
 
+const NOOP_RELAY = 'an "nx:noop" relay without outputs';
+
 export const CHECKS = {
-  "no-build": 'a private package under libs/ has no "build" script or "build" target',
+  "no-build":
+    'a private package under libs/ has no "build" script or "build" target, except ' +
+    `${NOOP_RELAY} on a package a CI job runs "build" on, listed in ${ENTRY_POINTS_FILE}`,
   "exports-to-src": "a private package under libs/ points its entry points at src",
   "published-deps": "a published package has no private workspace package in its dependencies",
   "no-source-condition": `no Jest, rspack or Re.Pack config sets the ${SOURCE_CONDITION} condition`,
@@ -140,24 +147,69 @@ function exportsShapes(value, at) {
 }
 
 /**
+ * A "build" target that produces nothing and only lets nx run `^build` on the dependencies, in a
+ * package with no "build" script.
+ *
+ * @param {any} manifest
+ * @param {any} target
+ * @returns {boolean}
+ */
+function isNoopRelay(manifest, target) {
+  return (
+    manifest.scripts?.build === undefined &&
+    target?.executor === "nx:noop" &&
+    target.outputs === undefined
+  );
+}
+
+/**
+ * @param {string} projectRoot
  * @param {any} manifest
  * @param {string} manifestFile
  * @param {any} projectJson
  * @param {string} projectJsonFile
+ * @param {Record<string, string>} entryPoints
  * @returns {Finding[]}
  */
-function buildFindings(manifest, manifestFile, projectJson, projectJsonFile) {
+function buildFindings(
+  projectRoot,
+  manifest,
+  manifestFile,
+  projectJson,
+  projectJsonFile,
+  entryPoints,
+) {
   const fix = "the package is read from src, so delete it";
+  const hasScript = manifest.scripts?.build !== undefined;
+
+  /**
+   * @param {any} target
+   * @param {string} file
+   * @param {string} problem
+   * @returns {Finding[]}
+   */
+  const targetFindings = (target, file, problem) => {
+    if (target === undefined) return [];
+    if (!isNoopRelay(manifest, target)) return [finding("no-build", file, problem, fix)];
+    if (Object.hasOwn(entryPoints, projectRoot)) return [];
+    return [
+      finding(
+        "no-build",
+        file,
+        `${problem}, ${NOOP_RELAY}, and the package is not listed`,
+        "list it, or delete the target",
+      ),
+    ];
+  };
+
   return [
-    ...(manifest.scripts?.build === undefined
-      ? []
-      : [finding("no-build", manifestFile, 'it has a "build" script', fix)]),
-    ...(manifest.nx?.targets?.build === undefined
-      ? []
-      : [finding("no-build", manifestFile, 'it has a "build" target under "nx"', fix)]),
-    ...(projectJson?.targets?.build === undefined
-      ? []
-      : [finding("no-build", projectJsonFile, 'it has a "build" target', fix)]),
+    ...(hasScript ? [finding("no-build", manifestFile, 'it has a "build" script', fix)] : []),
+    ...targetFindings(
+      manifest.nx?.targets?.build,
+      manifestFile,
+      'it has a "build" target under "nx"',
+    ),
+    ...targetFindings(projectJson?.targets?.build, projectJsonFile, 'it has a "build" target'),
   ];
 }
 
@@ -253,39 +305,59 @@ function sourceConditionFindings(workspaceRoot, projectRoot) {
 /**
  * @param {string} workspaceRoot
  * @param {string} projectRoot
- * @returns {Finding[]}
+ * @param {Record<string, string>} entryPoints
+ * @returns {{ found: Finding[], relay: boolean }} relay: whether the package is a private library
+ *   with a "build" target the entry-point list can accept
  */
-function findings(workspaceRoot, projectRoot) {
+function findings(workspaceRoot, projectRoot, entryPoints) {
   const manifestFile = `${projectRoot}/package.json`;
   const manifest = readJson(path.join(workspaceRoot, manifestFile));
   const found = sourceConditionFindings(workspaceRoot, projectRoot);
-  if (!manifest) return found;
+  if (!manifest) return { found, relay: false };
 
   if (manifest.private !== true) {
-    return [...publishedDepsFindings(workspaceRoot, projectRoot, manifest, manifestFile), ...found];
+    return {
+      found: [
+        ...publishedDepsFindings(workspaceRoot, projectRoot, manifest, manifestFile),
+        ...found,
+      ],
+      relay: false,
+    };
   }
-  if (!projectRoot.startsWith("libs/")) return found;
+  if (!projectRoot.startsWith("libs/")) return { found, relay: false };
 
   const projectJsonFile = `${projectRoot}/project.json`;
-  return [
-    ...buildFindings(
-      manifest,
-      manifestFile,
-      readJson(path.join(workspaceRoot, projectJsonFile)),
-      projectJsonFile,
+  const projectJson = readJson(path.join(workspaceRoot, projectJsonFile));
+  return {
+    found: [
+      ...buildFindings(
+        projectRoot,
+        manifest,
+        manifestFile,
+        projectJson,
+        projectJsonFile,
+        entryPoints,
+      ),
+      ...exportsFindings(manifest, manifestFile),
+      ...found,
+    ],
+    relay: [manifest.nx?.targets?.build, projectJson?.targets?.build].some(target =>
+      isNoopRelay(manifest, target),
     ),
-    ...exportsFindings(manifest, manifestFile),
-    ...found,
-  ];
+  };
 }
 
 /**
  * @param {import("./index.mjs").RuleContext} context
- * @param {{ debt?: typeof SOURCE_ONLY_DEBT }} [overrides] for tests
+ * @param {{ debt?: typeof SOURCE_ONLY_DEBT, entryPoints?: Record<string, string> }} [overrides]
+ *   for tests
  * @returns {import("./index.mjs").Violation[]}
  */
-export function check({ workspaceRoot, projectRoot }, { debt = SOURCE_ONLY_DEBT } = {}) {
-  const found = findings(workspaceRoot, projectRoot);
+export function check(
+  { workspaceRoot, projectRoot },
+  { debt = SOURCE_ONLY_DEBT, entryPoints = SOURCE_ONLY_ENTRY_POINTS } = {},
+) {
+  const { found, relay } = findings(workspaceRoot, projectRoot, entryPoints);
   const listed = debt[projectRoot]?.checks ?? [];
 
   return [
@@ -298,6 +370,14 @@ export function check({ workspaceRoot, projectRoot }, { debt = SOURCE_ONLY_DEBT 
         file: DEBT_FILE,
         message: `lists "${name}" for ${projectRoot}, which the package now passes; remove it`,
       })),
+    ...(Object.hasOwn(entryPoints, projectRoot) && !relay
+      ? [
+          {
+            file: ENTRY_POINTS_FILE,
+            message: `lists ${projectRoot}, which is not a private library with ${NOOP_RELAY} as its "build"; remove it`,
+          },
+        ]
+      : []),
   ];
 }
 

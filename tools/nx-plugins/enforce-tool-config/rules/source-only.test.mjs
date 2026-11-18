@@ -6,8 +6,10 @@ import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
 import sourceOnly, { CHECKS, check, sourceConditionOption } from "./source-only.mjs";
 import { SOURCE_ONLY_DEBT } from "./source-only-debt.mjs";
+import { SOURCE_ONLY_ENTRY_POINTS } from "./source-only-entry-points.mjs";
 
 const WORKSPACE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
+const ENTRY_POINTS_FILE = "tools/nx-plugins/enforce-tool-config/rules/source-only-entry-points.mjs";
 
 const PRIVATE_LIB = {
   name: "@ledgerhq/pkg",
@@ -53,12 +55,15 @@ function workspace(files) {
 
 /**
  * @param {Record<string, string | object>} files
- * @param {{ projectRoot?: string, debt?: object }} [options]
+ * @param {{ projectRoot?: string, debt?: object, entryPoints?: Record<string, string> }} [options]
  * @returns {Array<{ file: string, message: string }>}
  */
-function violations(files, { projectRoot = "libs/pkg", debt = {} } = {}) {
-  return check({ workspaceRoot: workspace(files), projectRoot }, { debt });
+function violations(files, { projectRoot = "libs/pkg", debt = {}, entryPoints = {} } = {}) {
+  return check({ workspaceRoot: workspace(files), projectRoot }, { debt, entryPoints });
 }
+
+const RELAY = { executor: "nx:noop" };
+const LISTED = { "libs/pkg": "called by a CI job" };
 
 /**
  * @param {Array<{ message: string }>} found
@@ -98,6 +103,71 @@ test("no-build: a private package outside libs/ and a published library may buil
     violations({ "libs/pkg/package.json": { ...manifest, private: undefined } }),
     [],
   );
+});
+
+test("no-build: a listed CI entry point may keep an nx:noop build relay", () => {
+  assert.deepEqual(
+    violations(
+      { "libs/pkg/package.json": { ...PRIVATE_LIB, nx: { targets: { build: RELAY } } } },
+      { entryPoints: LISTED },
+    ),
+    [],
+  );
+  assert.deepEqual(
+    violations(
+      {
+        "libs/pkg/package.json": PRIVATE_LIB,
+        "libs/pkg/project.json": { targets: { build: RELAY } },
+      },
+      { entryPoints: LISTED },
+    ),
+    [],
+  );
+});
+
+test("no-build: an nx:noop build relay on an unlisted package fails", () => {
+  assert.deepEqual(
+    problems(
+      violations({
+        "libs/pkg/project.json": { targets: { build: RELAY } },
+        "libs/pkg/package.json": PRIVATE_LIB,
+      }),
+    ),
+    [
+      'it has a "build" target, an "nx:noop" relay without outputs, and the package is not ' +
+        "listed: list it, or delete the target",
+    ],
+  );
+});
+
+test("no-build: a listed entry point fails with outputs, another executor or a build script", () => {
+  const fails = [
+    { nx: { targets: { build: { ...RELAY, outputs: ["{projectRoot}/lib"] } } } },
+    { nx: { targets: { build: { executor: "nx:run-commands" } } } },
+    { nx: { targets: { build: RELAY } }, scripts: { build: "tsc" } },
+  ];
+  for (const fields of fails) {
+    const found = violations(
+      { "libs/pkg/package.json": { ...PRIVATE_LIB, ...fields } },
+      { entryPoints: LISTED },
+    ).filter(({ file }) => file === "libs/pkg/package.json");
+    assert.ok(found.length > 0, JSON.stringify(fields));
+    for (const { message } of found) {
+      assert.ok(message.startsWith(CHECKS["no-build"]), message);
+      assert.ok(message.endsWith("the package is read from src, so delete it"), message);
+    }
+  }
+});
+
+test("no-build: an entry point the package no longer needs is reported", () => {
+  assert.deepEqual(violations({ "libs/pkg/package.json": PRIVATE_LIB }, { entryPoints: LISTED }), [
+    {
+      file: ENTRY_POINTS_FILE,
+      message:
+        'lists libs/pkg, which is not a private library with an "nx:noop" relay without outputs ' +
+        'as its "build"; remove it',
+    },
+  ]);
 });
 
 test("exports-to-src: exports and entry fields pointing at lib/ or lib-es/ fail", () => {
@@ -315,6 +385,22 @@ test("every debt entry names a known check and says when it goes", () => {
     assert.ok(checks.length > 0, projectRoot);
     for (const name of checks) assert.ok(name in CHECKS, `${projectRoot}: ${name}`);
     assert.match(reason, /Exit condition: /, projectRoot);
+  }
+});
+
+test("every entry point names the CI job that calls it and is still a relay here", () => {
+  for (const [projectRoot, reason] of Object.entries(SOURCE_ONLY_ENTRY_POINTS)) {
+    assert.ok(reason.trim().length > 0, projectRoot);
+    assert.deepEqual(
+      sourceOnly
+        .check({ workspaceRoot: WORKSPACE_ROOT, projectRoot })
+        .filter(
+          ({ file, message }) =>
+            file === ENTRY_POINTS_FILE || message.startsWith(CHECKS["no-build"]),
+        ),
+      [],
+      projectRoot,
+    );
   }
 });
 
