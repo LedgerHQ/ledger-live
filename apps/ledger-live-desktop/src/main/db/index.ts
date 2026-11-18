@@ -94,10 +94,12 @@ function flush(): Promise<void> {
 }
 
 async function flushSavers(): Promise<boolean> {
+  await Promise.allSettled(settingKeys);
   const savers = Array.from(saversByNamespace.values());
   const writes = savers.map(saver => saver.flush());
   await Promise.all(writes);
   return (
+    settingKeys.size > 0 ||
     saversByNamespace.size !== savers.length ||
     savers.some((saver, i) => saver.pending() || saver.inFlight() !== writes[i])
   );
@@ -356,8 +358,22 @@ async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boole
 /**
  * Set a key in the given namespace
  */
+/** The setKey calls that wait for a namespace read and have not queued their save yet. */
+const settingKeys = new Set<Promise<void>>();
+
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  // A reload flushes first, so a setKey that waits for the reload must not hold that flush.
   await waitForReload();
+  const setting = setKeyAndSave(ns, keyPath, value);
+  settingKeys.add(setting);
+  try {
+    await setting;
+  } finally {
+    settingKeys.delete(setting);
+  }
+}
+
+async function setKeyAndSave<K>(ns: string, keyPath: string, value: K): Promise<void> {
   if (ns === "app") {
     assertAppNamespaceSetKeyAllowed(keyPath);
   }

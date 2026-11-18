@@ -470,6 +470,22 @@ describe("db flush", () => {
     expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
   });
 
+  it("writes a setKey that still waits for its namespace read", async () => {
+    let finishRead: (value: Buffer) => void = () => undefined;
+    readFileMock.mockReturnValueOnce(new Promise<Buffer>(resolve => (finishRead = resolve)));
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await waitMs(0);
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await waitMs(0);
+    expect(flushed).toBe(false);
+
+    finishRead(Buffer.from(JSON.stringify({ data: {} })));
+    await flushing;
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
+
   it("does not deadlock on a save that was pending at reset", async () => {
     void db.setKey("app", "settings", { theme: "dark" });
     await waitMs(0);
