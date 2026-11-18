@@ -1,0 +1,111 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "theme": null,
+      "region": null,
+      "locale": "en-US",
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": false,
+      "sharePersonalizedRecommandations": false,
+      "analyticsConsentInfo": {
+        "consentDate": "2099-01-01T00:00:00.000Z",
+        "privacyPolicyVersion": 1
+      },
+      "hasSeenAnalyticsOptInPrompt": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoSP",
+      "hasInstalledApps": true,
+      "hasAcceptedSwapKYC": false,
+      "lastSeenDevice": null,
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviderIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "swapProviders": [],
+      "showClearCacheBanner": false,
+      "starredAccountIds": [],
+      "hasPassword": false
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "js:2:arbitrum:0x0000000000000000000000000000000000000000:",
+          "seedIdentifier": "04535dc8c95acc1793651b99c37c7bd80dc0a260b3dd36c7a457ea528287e8dfe48121b0528ecb2e93227346d3b38b13629e8245ae8b66b802133ec7de3901e922",
+          "used": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x0000000000000000000000000000000000000000",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 0,
+          "creationDate": "2026-09-02T08:49:59.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "arbitrum",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {},
+          "xpub": "04c674d69ee40d9acca4e025e0367b9f5fa12be405610ff8e7ed6622d1c31a4580ac7fb86592ba05e1276b1b9f322bfeb4f2390b1424ea93fb80540b3361d8ae6d",
+          "subAccounts": [],
+          "swapHistory": [],
+          "name": "Arbitrum 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:hypercore:0x0000000000000000000000000000000000000000:",
+          "seedIdentifier": "04535dc8c95acc1793651b99c37c7bd80dc0a260b3dd36c7a457ea528287e8dfe48121b0528ecb2e93227346d3b38b13629e8245ae8b66b802133ec7de3901e922",
+          "used": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x0000000000000000000000000000000000000000",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 0,
+          "creationDate": "2026-09-02T08:49:59.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "hypercore",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {},
+          "xpub": "04c674d69ee40d9acca4e025e0367b9f5fa12be405610ff8e7ed6622d1c31a4580ac7fb86592ba05e1276b1b9f322bfeb4f2390b1424ea93fb80540b3361d8ae6d",
+          "subAccounts": [],
+          "swapHistory": [],
+          "name": "Hyperliquid 1",
+          "starred": false
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {}
+  }
+}

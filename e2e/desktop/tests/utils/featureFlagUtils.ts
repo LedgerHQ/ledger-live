@@ -85,6 +85,14 @@ export const FF_BORROW_DESKTOP = {
   },
 } satisfies PartialFeatures;
 
+export const FF_PERPS_DESKTOP = {
+  ptxPerpsLiveApp: {
+    enabled: true,
+    params: { manifest_id: process.env.PERPS_LIVE_APP_MANIFEST_ID || "perps-live-app-stg" },
+  },
+  currencyHypercore: { enabled: true },
+} satisfies PartialFeatures;
+
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
     ptxEarnLiveApp: {

@@ -83,6 +83,8 @@ type TestFixtures = {
     cmd: CliCommand;
   }[];
   localManifestOverride?: LiveAppManifest[];
+  /** Entries written to localStorage of webviews on hosts starting with `hostnamePrefix`, before they load. */
+  webviewLocalStorage?: { hostnamePrefix: string; entries: Record<string, string> };
   /** Coin-config keys merged over the default and remote config, as Developer settings would. */
   coinConfigOverrides?: Record<string, unknown>;
   teamOwner?: Team;
@@ -114,6 +116,7 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
   localManifestOverride: undefined,
+  webviewLocalStorage: undefined,
   coinConfigOverrides: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
@@ -271,7 +274,16 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
+    {
+      lang,
+      theme,
+      userdataDestinationPath,
+      env,
+      featureFlags,
+      simulateCamera,
+      speculos,
+      webviewLocalStorage,
+    },
     use,
     testInfo,
   ) => {
@@ -325,6 +337,13 @@ export const test = base.extend<TestFixtures>({
       windowSize,
       recordVideo: isRetryOfFailedTest && isLastRetry(testInfo),
     });
+
+    if (webviewLocalStorage) {
+      await electronApp.context().addInitScript(({ hostnamePrefix, entries }) => {
+        if (!location.hostname.startsWith(hostnamePrefix)) return;
+        for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
+      }, webviewLocalStorage);
+    }
 
     await use(electronApp);
 
