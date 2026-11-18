@@ -130,6 +130,7 @@ let mockTransaction: Transaction = createMinimalEvmTransaction();
 let mockStatus: MockTransactionStatus = createResolvedStatus();
 let mockBridgePending = false;
 let mockStatusResolver: ((transaction: Transaction) => MockTransactionStatus) | null = null;
+let mockBridgeStatusResolver: ((transaction: Transaction) => MockTransactionStatus) | null = null;
 
 const getResolvedStatus = (transaction: Transaction) =>
   mockStatusResolver ? mockStatusResolver(transaction) : mockStatus;
@@ -139,6 +140,7 @@ export const resetBridgeState = (family: SupportedMockFamily) => {
   mockStatus = createResolvedStatus();
   mockBridgePending = false;
   mockStatusResolver = null;
+  mockBridgeStatusResolver = null;
 };
 
 export const setMockTransaction = (transaction: Transaction) => {
@@ -153,6 +155,12 @@ export const setMockStatusResolver = (
   resolver: ((transaction: Transaction) => MockTransactionStatus) | null,
 ) => {
   mockStatusResolver = resolver;
+};
+
+export const setMockBridgeStatusResolver = (
+  resolver: ((transaction: Transaction) => MockTransactionStatus) | null,
+) => {
+  mockBridgeStatusResolver = resolver;
 };
 
 export const setMockBridgeRecipientValidation = (
@@ -342,7 +350,9 @@ const mockBridgeUpdateTransaction = jest.fn(
   }),
 );
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: Transaction) => Promise.resolve(tx));
-const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
+const mockGetTransactionStatus = jest.fn((_account: unknown, transaction: Transaction) =>
+  Promise.resolve(mockBridgeStatusResolver ? mockBridgeStatusResolver(transaction) : mockStatus),
+);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(() => {
