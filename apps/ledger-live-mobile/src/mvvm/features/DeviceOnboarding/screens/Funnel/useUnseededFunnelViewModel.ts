@@ -9,7 +9,7 @@ import {
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
-import type { SetupScreenProps } from "../Setup/types";
+import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
@@ -106,10 +106,6 @@ export function useUnseededFunnelViewModel(
 
   if (!unseeded || !visibleStage || !device || !machineState) return null;
 
-  const checksState = machineState.startsWith("checks.")
-    ? toChecksScreenState(machineState, input.checksPaused, false)
-    : null;
-
   return {
     status: "setup",
     setup: {
@@ -119,23 +115,34 @@ export function useUnseededFunnelViewModel(
       reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
       firmwareDeclined: input.firmwareDeclined,
-      checks: checksState
-        ? {
-            state: checksState,
-            error: toChecksError(machineState, input.genuineFailureKind),
-            deviceNotGenuine: input.deviceNotGenuine,
-            update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
-            confirmSkipUpdate,
-            onStart: () =>
-              send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
-            onRetry: () => send({ type: "RETRY" }),
-            onCloseSheet: () => send({ type: "CLOSE" }),
-            onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
-            onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
-          }
-        : null,
+      checks: toSetupChecks(machineState, input, confirmSkipUpdate),
       onQuit: input.onQuit,
     },
+  };
+}
+
+function toSetupChecks(
+  machineState: string,
+  input: UnseededFunnelInput,
+  confirmSkipUpdate: boolean,
+): SetupChecksProps | null {
+  if (!machineState.startsWith("checks.")) return null;
+  const state = toChecksScreenState(machineState, input.checksPaused, false);
+  if (!state) return null;
+  const send = input.send;
+  const restartEvent = machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE";
+
+  return {
+    state,
+    error: toChecksError(machineState, input.genuineFailureKind),
+    deviceNotGenuine: input.deviceNotGenuine,
+    update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
+    confirmSkipUpdate,
+    onStart: () => send({ type: restartEvent }),
+    onRetry: () => send({ type: "RETRY" }),
+    onCloseSheet: () => send({ type: "CLOSE" }),
+    onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
+    onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
   };
 }
 
