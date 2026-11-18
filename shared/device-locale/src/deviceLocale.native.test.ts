@@ -101,6 +101,39 @@ describe("getDeviceLanguageTag", () => {
     expect(getDeviceLanguageTag()).toBe("zh-Hant-TW");
   });
 
+  it("drops the script iOS infers when the tag has none", () => {
+    givenLocales({
+      languageTag: "fr-FR",
+      languageCode: "fr",
+      languageScriptCode: "Latn",
+      languageRegionCode: "FR",
+      regionCode: "FR",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("fr-FR");
+
+    givenLocales({
+      languageTag: "es-419",
+      languageCode: "es",
+      languageScriptCode: "Latn",
+      languageRegionCode: "419",
+      regionCode: "MX",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("es-UN");
+  });
+
+  it("keeps a script written in a tag with an underscore", () => {
+    givenLocales({
+      languageTag: "zh_Hans_CN",
+      languageCode: "zh",
+      languageScriptCode: "Hans",
+      languageRegionCode: "CN",
+    });
+
+    expect(getDeviceLanguageTag()).toBe("zh-Hans-CN");
+  });
+
   it("replaces the legacy Android language codes", () => {
     givenLocales({ languageTag: "iw-IL", languageCode: "iw", languageRegionCode: "IL" });
 
@@ -191,6 +224,17 @@ describe("findBestAvailableLanguage", () => {
     givenLocales({ languageTag: "PT-br", languageCode: "pt", languageRegionCode: "BR" });
 
     expect(findBestAvailableLanguage(supported)).toBe("pt-BR");
+  });
+
+  it("does not match on a script iOS inferred", () => {
+    givenLocales({
+      languageTag: "zh-TW",
+      languageCode: "zh",
+      languageScriptCode: "Hant",
+      languageRegionCode: "TW",
+    });
+
+    expect(findBestAvailableLanguage(["zh-Hant", "zh"])).toBe("zh");
   });
 
   it("matches a language without region on the device region", () => {
