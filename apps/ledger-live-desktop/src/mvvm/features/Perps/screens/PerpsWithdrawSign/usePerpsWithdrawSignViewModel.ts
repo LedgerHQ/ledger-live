@@ -123,23 +123,26 @@ export function usePerpsWithdrawSignViewModel(
           dispatch(updateAccountWithUpdater(accountId, updater));
         }
         // Stays on the submitting step until the balance shows the withdraw, so the next
-        // withdraw never offers money that already left.
-        await waitForWithdrawBalanceReflected({
-          targetBalance: getWithdrawTargetBalance(
-            sourceAccount,
-            balanceBeforeWithdraw,
-            quoteParams.amount,
-          ),
-          getBalance: () => sourceBalanceRef.current,
-          syncAccount: () =>
-            sync({
-              type: "SYNC_ONE_ACCOUNT",
-              accountId: sourceAccount.id,
-              priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
-              reason: "perps-withdraw",
-            }),
-          isCancelled: () => closedRef.current,
-        });
+        // withdraw never offers money that already left. Nothing to wait for when the
+        // withdraw was not submitted (broadcast disabled).
+        if (result.swapId) {
+          await waitForWithdrawBalanceReflected({
+            targetBalance: getWithdrawTargetBalance(
+              sourceAccount,
+              balanceBeforeWithdraw,
+              quoteParams.amount,
+            ),
+            getBalance: () => sourceBalanceRef.current,
+            syncAccount: () =>
+              sync({
+                type: "SYNC_ONE_ACCOUNT",
+                accountId: sourceAccount.id,
+                priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
+                reason: "perps-withdraw",
+              }),
+            isCancelled: () => closedRef.current,
+          });
+        }
         if (closedRef.current) return;
         openPerpsTransactionSigned({
           receiveCurrencyTicker: getAccountCurrency(destinationAccount).ticker,

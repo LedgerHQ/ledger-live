@@ -174,6 +174,7 @@ describe("usePerpsWithdrawSignViewModel", () => {
       .getState()
       .accounts.active.find(account => account.id === destinationAccount.id);
     expect(receiver?.swapHistory ?? []).toEqual([]);
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
   });
 
   it("should wait for the balance to show the withdraw before handing the swap id over", async () => {

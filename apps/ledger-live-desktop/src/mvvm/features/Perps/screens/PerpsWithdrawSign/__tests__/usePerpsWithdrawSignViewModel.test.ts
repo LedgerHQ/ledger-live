@@ -186,6 +186,7 @@ describe("usePerpsWithdrawSignViewModel", () => {
     });
     const receiver = store.getState().accounts.find(a => a.id === destinationAccount.id);
     expect(receiver?.swapHistory ?? []).toEqual([]);
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
   });
 
   it("should wait for the balance to show the withdraw before the transaction signed screen", async () => {
