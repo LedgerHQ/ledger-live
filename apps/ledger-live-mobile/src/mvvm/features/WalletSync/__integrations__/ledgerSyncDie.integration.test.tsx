@@ -34,6 +34,8 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import ActivationDrawer from "../screens/Activation/ActivationDrawer";
 import ManageInstancesDrawer from "../screens/ManageInstances/ManageInstancesDrawer";
 import { useManageInstancesDrawer } from "../screens/ManageInstances/useManageInstanceDrawer";
+import ManageKeyDrawer from "../screens/ManageKey/ManageKeyDrawer";
+import { useManageKeyDrawer } from "../screens/ManageKey/useManageKeyDrawer";
 import { Steps } from "../types/Activation";
 import { AnalyticsEvents } from "../Analytics/enums";
 
@@ -47,8 +49,13 @@ jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
   }),
 }));
 
+// The error of the last key deletion, which the manage key drawer shows.
+const mockDeleteError: { current: Error | null } = { current: null };
+
 jest.mock("../hooks/useDestroyTrustchain", () => ({
-  useDestroyTrustchain: () => ({ deleteMutation: { mutateAsync: jest.fn() } }),
+  useDestroyTrustchain: () => ({
+    deleteMutation: { mutateAsync: jest.fn(), error: mockDeleteError.current },
+  }),
 }));
 
 // The tests create the member credentials themselves.
@@ -277,6 +284,19 @@ const ManageInstancesEntry = withLedgerSyncSettingsEntry(function ManageInstance
   );
 });
 
+const ManageKeyEntry = withLedgerSyncSettingsEntry(function ManageKeyEntryScreen() {
+  const manageKey = useManageKeyDrawer();
+  const { openDrawer } = manageKey;
+  React.useEffect(openDrawer, [openDrawer]);
+  return (
+    <View>
+      <Text>entry screen</Text>
+      <ManageKeyDrawer {...manageKey} />
+      {manageKey.deviceIntentStepElement}
+    </View>
+  );
+});
+
 // The onboarding companion step: it marks the activation as coming from the onboarding.
 const CompanionEntry = withEntry(function CompanionEntryScreen() {
   const companion = useLedgerSyncActivationStepViewModel({
@@ -404,6 +424,72 @@ function namedError(ErrorClass: new (message?: string) => Error): Error {
 describe("Ledger Sync device steps on DIE, opened over the entry screen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDeleteError.current = null;
+  });
+
+  describe("Ledger Sync drawers", () => {
+    const LEGACY_DRAWER = "drawer-backdrop";
+
+    it("should open the activation drawer on the Lumen sheet", async () => {
+      render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      expect(
+        await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
+      ).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-activation-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should open the manage instances drawer on the Lumen sheet", async () => {
+      render(<ManageInstancesEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+
+      expect(await screen.findByTestId(`walletSync-manage-instance-${MEMBER.id}`)).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-manage-instances-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should open the manage key drawer on the Lumen sheet", async () => {
+      render(<ManageKeyEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+
+      expect(await screen.findByTestId("delete-trustchain")).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-manage-key-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should start the activation step from the manage key error", async () => {
+      mockDeleteError.current = new Error("No such trustchain");
+      mockGetOrCreateTrustchain.mockImplementation(awaitConfirmationForever);
+
+      const { user } = render(<ManageKeyEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+      await user.press(await screen.findByText("Turn on Ledger Sync"));
+
+      expect(await screen.findByTestId("wallet-sync-add-member-continue-on-device")).toBeVisible();
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expectNoProcessScreen();
+    });
+
+    it.each([
+      ["activation", SettingsEntry, "walletsync-choose-sync-method-connect-device"],
+      ["manage instances", ManageInstancesEntry, `walletSync-manage-instance-${MEMBER.id}`],
+      ["manage key", ManageKeyEntry, "delete-trustchain"],
+    ])(
+      "should keep the %s drawer on the legacy drawer when the flag is off",
+      async (_, Entry, content) => {
+        render(<Entry />, {
+          overrideInitialState: initialState({ ledgerSyncDie: false, trustchain: TRUSTCHAIN }),
+        });
+
+        expect(await screen.findByTestId(content)).toBeVisible();
+        expect(screen.getByTestId(LEGACY_DRAWER)).toBeOnTheScreen();
+        expect(screen.queryByTestId(/^wallet-sync-.*-sheet-content$/)).toBeNull();
+      },
+    );
   });
 
   describe("activation", () => {

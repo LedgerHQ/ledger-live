@@ -5,6 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { NativeSyntheticEvent, TextInput, TextInputKeyPressEventData } from "react-native";
+import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 
 type Props = {
   handleSendDigits: (input: string) => void;
@@ -92,6 +93,8 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
     const inputRef = useRef<TextInput>(null);
 
     useImperativeHandle(forwardedRef, () => inputRef.current!);
+    // Lifts the Lumen sheet over the keyboard; does nothing in a legacy drawer.
+    const sheetKeyboard = useBottomSheetKeyboardAwareInput(inputRef);
 
     const handleChange = (text: string) => {
       if (text.length <= 1 && /^\d*$/.test(text)) {
@@ -107,8 +110,14 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
         keyboardType="numeric"
         maxLength={1}
         autoFocus={index === 0}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={event => {
+          setIsFocused(true);
+          sheetKeyboard.onFocus(event);
+        }}
+        onBlur={event => {
+          setIsFocused(false);
+          sheetKeyboard.onBlur(event);
+        }}
         isFocused={isFocused}
         onKeyPress={e => onKeyPress(e, index)}
         textAlign="center"
