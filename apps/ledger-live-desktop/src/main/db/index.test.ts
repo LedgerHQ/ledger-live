@@ -389,6 +389,19 @@ describe("db flush", () => {
     consoleError.mockRestore();
   });
 
+  it("logs a failed save once for all the setKey calls it holds", async () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    writeFileMock.mockRejectedValueOnce(new Error("disk full"));
+
+    await db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await db.setKey("windowParams", "MainWindow.positions", { x: 3, y: 4 });
+    await db.setKey("windowParams", "MainWindow.positions", { x: 5, y: 6 });
+    await db.flush();
+
+    expect(consoleError).toHaveBeenCalledTimes(1);
+    consoleError.mockRestore();
+  });
+
   it("waits for a save that is already in progress", async () => {
     const finishWrite = blockNextWrite();
     const saved = db.setKey("app", "settings", { theme: "dark" });

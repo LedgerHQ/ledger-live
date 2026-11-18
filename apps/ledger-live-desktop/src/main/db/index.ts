@@ -69,7 +69,12 @@ let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined>
 let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
-const createSaver = () => debounce(saveToDisk, DEBOUNCE_MS);
+const saveAndLog = (ns: string) =>
+  saveToDisk(ns).catch(error => {
+    console.error(`[db] ${ns}.json save failed`, error);
+    throw error;
+  });
+const createSaver = () => debounce(saveAndLog, DEBOUNCE_MS);
 const saversByNamespace = new Map<string, ReturnType<typeof createSaver>>();
 
 function save(ns: string) {
@@ -363,7 +368,8 @@ async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
     saveTriggers.set(ns, new Set());
   }
   saveTriggers.get(ns)!.add(keyPath);
-  save(ns).catch(error => console.error(`[db] ${ns}.json save failed`, error));
+  // saveAndLog logs the failure once for all the setKey calls that the save holds.
+  save(ns).catch(() => undefined);
 }
 
 /**
