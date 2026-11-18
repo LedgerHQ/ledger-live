@@ -275,9 +275,11 @@ sequenceDiagram
 
 ## Design rules
 
-The DIE is the one way to run a device flow in Ledger Wallet. These rules keep
-it simple and keep the device UX the same in every flow. They apply to the
-callers, to the app wrappers and to the package itself.
+The DIE is the main way to run a device flow in Ledger Wallet, such as signing
+flows. Device management flows, such as My Ledger and onboarding, have their
+own. These rules keep the DIE simple and keep the device UX the same in every
+flow that uses it. They apply to the callers, to the app wrappers and to the
+package itself.
 
 ### Principles
 
