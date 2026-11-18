@@ -490,6 +490,19 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
     });
 
+    it("should lift the password lock block when the QR code step is dismissed", async () => {
+      const { user, store } = render(<SettingsEntry />, {
+        overrideInitialState: initialState({}),
+      });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(true);
+
+      act(() => activationSheet()?.props.onClose?.());
+
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(false);
+    });
+
     it("should let the content drag the sheet outside the QR code step", async () => {
       render(<SettingsEntry />, { overrideInitialState: initialState({}) });
 

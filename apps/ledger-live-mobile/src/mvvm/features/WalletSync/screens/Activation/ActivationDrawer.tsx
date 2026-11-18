@@ -58,7 +58,7 @@ function View({
         <TrackScreen />
         <LedgerSyncBottomSheet
           isOpen={isOpen}
-          onClose={hasCustomHeader ? handleClose : onCloseDrawer}
+          onClose={onCloseDrawer}
           customHeader={hasCustomHeader ? <DrawerHeader onClose={handleClose} /> : undefined}
           hasBackButton={canGoBack}
           onBack={goBackToPreviousStep}
