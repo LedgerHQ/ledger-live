@@ -50,6 +50,7 @@ export function toOperation(partyId: string, row: OperationView): Operation {
     tx: {
       hash: row.transaction_hash,
       fees: BigInt(row.fee.value),
+      feesAsset: operationAsset(row.fee.asset),
       ...(feesPayer === undefined ? {} : { feesPayer }),
       date: new Date(row.transaction_timestamp),
       block: {
