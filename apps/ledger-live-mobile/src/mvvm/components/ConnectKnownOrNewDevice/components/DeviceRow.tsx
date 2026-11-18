@@ -10,7 +10,11 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { MoreVertical } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { DeviceListItem, SelectableDeviceListItem } from "@ledgerhq/live-dmk-mobile";
+import {
+  DeviceListItemStatuses,
+  type DeviceListItem,
+  type SelectableDeviceListItem,
+} from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import { DevicePackshot } from "./DevicePackshot";
 import { DeviceStatusTag } from "./DeviceStatusTag";
@@ -21,7 +25,8 @@ export const isSelectable = (item: DeviceRowItem): item is SelectableDeviceListI
   "connect" in item;
 
 export const hasMenuActions = (item: DeviceRowItem): item is SelectableDeviceListItem =>
-  isSelectable(item) && ("disconnect" in item || item.remove !== undefined);
+  isSelectable(item) &&
+  (item.status === DeviceListItemStatuses.Connected || item.remove !== undefined);
 
 export const getDeviceName = ({ device }: DeviceRowItem): string =>
   device.name ?? getDeviceModel(device.deviceModelId).productName;

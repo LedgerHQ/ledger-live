@@ -8,7 +8,7 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Trash, Unlink } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { SelectableDeviceListItem } from "@ledgerhq/live-dmk-mobile";
+import { DeviceListItemStatuses, type SelectableDeviceListItem } from "@ledgerhq/live-dmk-mobile";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
@@ -28,7 +28,8 @@ export function DeviceMenuSheet({
 }: Readonly<DeviceMenuSheetProps>): React.JSX.Element {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const disconnect = item && "disconnect" in item ? item.disconnect : undefined;
+  const disconnect =
+    item?.status === DeviceListItemStatuses.Connected ? item.disconnect : undefined;
   const remove = item?.remove;
 
   const runAndClose = (action: () => void) => () => {
