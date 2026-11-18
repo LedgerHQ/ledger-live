@@ -26,8 +26,8 @@ const PerpsDepositSignRoot = lazy(
 const PerpsTransactionSignedRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog"),
 );
-const PredictionsBindingRoot = lazy(
-  () => import("LLD/features/Predictions/bindingIntent/PredictionsBindingRoot"),
+const PredictionsSigningRoot = lazy(
+  () => import("LLD/features/Predictions/signingIntent/PredictionsSigningRoot"),
 );
 const PredictionsDialogRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSheet })),
@@ -88,7 +88,7 @@ const GlobalDialogs = () => (
       <PredictionsDialogRoot />
     </Suspense>
     <Suspense fallback={null}>
-      <PredictionsBindingRoot />
+      <PredictionsSigningRoot />
     </Suspense>
     <Suspense fallback={null}>
       <PredictionsSetupRoot />
