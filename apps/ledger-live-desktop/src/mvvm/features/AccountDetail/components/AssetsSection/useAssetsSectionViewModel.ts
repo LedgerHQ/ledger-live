@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { useNavigate } from "react-router";
 import type { Row, Table } from "@tanstack/react-table";
 import type { Account } from "@ledgerhq/types-live";
 import {
@@ -21,6 +20,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { ASSETS_PRICE_REFRESH_INTERVAL_MS } from "LLD/features/Assets/constants";
 import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { useAssetAccountChainNavigate } from "LLD/utils/assetAccountChain";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import {
   blacklistedTokenIdsSelector,
@@ -35,7 +35,7 @@ export type AssetsSectionViewModel = Readonly<{
 }>;
 
 export function useAssetsSectionViewModel(account: Account): AssetsSectionViewModel {
-  const navigate = useNavigate();
+  const navigate = useAssetAccountChainNavigate();
   const hideEmptyTokenAccounts = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();

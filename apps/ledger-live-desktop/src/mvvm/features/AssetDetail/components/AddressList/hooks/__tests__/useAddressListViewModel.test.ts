@@ -128,7 +128,9 @@ describe("useAddressListViewModel", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id),
-      expect.objectContaining({ state: { accountBackPath: "/asset/bitcoin" } }),
+      expect.objectContaining({
+        state: { accountBackPath: "/asset/bitcoin", assetAccountChainDepth: 2 },
+      }),
     );
   });
 

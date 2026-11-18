@@ -1,6 +1,5 @@
 import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
@@ -13,6 +12,7 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenAddAccountDrawer } from "LLM/features/Accounts/hooks/useOpenAddAccountDrawer";
 import { getAccountTag } from "LLM/utils/getAccountTag";
+import { useAssetAccountChainNavigate } from "LLM/utils/assetAccountChain";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 export const MAX_PREVIEW_ADDRESSES = 5;
@@ -38,7 +38,7 @@ export function useAddressesViewModel(
   distributionItem: DistributionItem | undefined,
   ledgerIds?: string[],
 ) {
-  const navigation = useNavigation();
+  const navigateInChain = useAssetAccountChainNavigate();
   const walletState = useSelector(walletSelector);
   const allAccounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -134,12 +134,12 @@ export function useAddressesViewModel(
               accountId: balanceAccount.id,
             }
           : { accountId: account.id };
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Account,
-        params,
+      navigateInChain({
+        name: NavigatorName.Accounts,
+        params: { screen: ScreenName.Account, params },
       });
     },
-    [navigation, currency],
+    [navigateInChain, currency],
   );
 
   return {

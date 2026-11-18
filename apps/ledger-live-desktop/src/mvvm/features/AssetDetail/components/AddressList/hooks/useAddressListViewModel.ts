@@ -16,6 +16,7 @@ import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDi
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { useAssetAccountChainNavigate } from "LLD/utils/assetAccountChain";
 import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
 
@@ -27,6 +28,7 @@ const getAccountFiatEntry = (account: AccountLike) => ({
 export function useAddressListViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const navigateInChain = useAssetAccountChainNavigate();
   const { pathname: assetDetailPath } = useLocation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nestedAccounts = useSelector(accountsSelector);
@@ -108,9 +110,9 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
       navigate(ACCOUNTS_SIDEBAR_PATH);
       return;
     }
-    navigate(
+    navigateInChain(
       getAccountUrl(account.id, account.type === "TokenAccount" ? parentAccount?.id : undefined),
-      buildNavigationBackState("accountBackPath", assetDetailPath),
+      buildNavigationBackState("accountBackPath", assetDetailPath).state,
     );
   };
 

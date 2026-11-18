@@ -1,16 +1,12 @@
 import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
-import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import { useFocusEffect } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { accountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { useAssetAccountChainNavigate } from "LLM/utils/assetAccountChain";
 import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
@@ -23,17 +19,13 @@ import {
   type CalculateCountervalue,
 } from "@ledgerhq/asset-aggregation/index";
 
-type NavigationProp = BaseNavigationComposite<
-  StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.CryptoAddresses>
->;
-
 export default function useCryptoAddressesViewModel(
   sourceScreenName?: ScreenName,
   accountIds?: string[],
   hideAddAccount?: boolean,
 ) {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp>();
+  const navigateInChain = useAssetAccountChainNavigate();
   const countervalueState = useCountervaluesCache();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const allAccounts = useSelector(accountsSelector, isEqual);
@@ -90,11 +82,9 @@ export default function useCryptoAddressesViewModel(
         currency: account.currency.name,
         page: ScreenName.Accounts,
       });
-      navigation.navigate(ScreenName.Account, {
-        accountId: account.id,
-      });
+      navigateInChain({ name: ScreenName.Account, params: { accountId: account.id } });
     },
-    [navigation],
+    [navigateInChain],
   );
 
   return {
