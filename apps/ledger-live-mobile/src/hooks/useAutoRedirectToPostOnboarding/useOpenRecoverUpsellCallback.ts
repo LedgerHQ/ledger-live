@@ -17,7 +17,7 @@ import { lastConnectedDeviceSelector, onboardingTypeSelector } from "~/reducers/
 import { OnboardingType } from "~/reducers/types";
 
 /**
- * Returns a callback to open the Ledger Recover upsell, resolving to whether it opened
+ * Returns a callback to open the Ledger Recover upsell
  * */
 export function useOpenRecoverUpsellCallback() {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -40,36 +40,27 @@ export function useOpenRecoverUpsellCallback() {
     }
   }, [redirectionStarted, isFocused, dispatch]);
 
-  return useCallback(async (): Promise<boolean> => {
+  return useCallback(async () => {
     const internetConnected = await internetReachable();
-    if (!internetConnected || !recoverFeature?.enabled) return false;
-
-    const redirect = async (url: string) => {
-      try {
-        await Linking.openURL(url);
-      } catch {
-        return false;
+    if (internetConnected && recoverFeature?.enabled) {
+      const redirect = (url: string) => {
+        Linking.openURL(url);
+        setRedirectionStarted(true);
+      };
+      if (
+        lastConnectedDevice &&
+        touchScreenURI &&
+        [DeviceModelId.stax, DeviceModelId.europa].includes(lastConnectedDevice.modelId)
+      ) {
+        redirect(touchScreenURI);
+      } else if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
+        redirect(recoverPostOnboardingURI);
+      } else if (recoverHomeURI && onboardingType === OnboardingType.setupNew) {
+        redirect(recoverHomeURI);
+      } else if (recoverAlreadyOnboardedURI) {
+        redirect(recoverAlreadyOnboardedURI);
       }
-      setRedirectionStarted(true);
-      return true;
-    };
-    if (
-      lastConnectedDevice &&
-      touchScreenURI &&
-      [DeviceModelId.stax, DeviceModelId.europa].includes(lastConnectedDevice.modelId)
-    ) {
-      return redirect(touchScreenURI);
     }
-    if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
-      return redirect(recoverPostOnboardingURI);
-    }
-    if (recoverHomeURI && onboardingType === OnboardingType.setupNew) {
-      return redirect(recoverHomeURI);
-    }
-    if (recoverAlreadyOnboardedURI) {
-      return redirect(recoverAlreadyOnboardedURI);
-    }
-    return false;
   }, [
     lastConnectedDevice,
     onboardingType,

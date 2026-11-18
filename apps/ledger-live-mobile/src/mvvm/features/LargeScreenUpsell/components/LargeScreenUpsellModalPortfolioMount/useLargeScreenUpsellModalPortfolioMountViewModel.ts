@@ -7,11 +7,13 @@ import {
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
-import type { PostOnboardingRedirectStatus } from "~/hooks/useAutoRedirectToPostOnboarding";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
+import {
+  onboardingCompletionDateSelector,
+  personalizedRecommendationsEnabledSelector,
+} from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { useLargeScreenUpsellEligibility } from "../../hooks/useLargeScreenUpsellEligibility";
 import { useCompetingAppStartModalsPresent } from "../../hooks/useCompetingAppStartModalsPresent";
@@ -32,9 +34,11 @@ const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
 const LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING = 20;
 
 let hasAutoOpenedThisSession = false;
+let sessionStartedAt = Date.now();
 
 export const __resetLargeScreenUpsellAutoOpenForTests = () => {
   hasAutoOpenedThisSession = false;
+  sessionStartedAt = Date.now();
 };
 
 type LargeScreenUpsellModalPortfolioMountViewModel = Readonly<{
@@ -45,9 +49,7 @@ type LargeScreenUpsellModalPortfolioMountViewModel = Readonly<{
   bottomInset: number;
 }>;
 
-export function useLargeScreenUpsellModalPortfolioMountViewModel(
-  postOnboardingRedirectStatus: PostOnboardingRedirectStatus,
-): LargeScreenUpsellModalPortfolioMountViewModel | null {
+export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenUpsellModalPortfolioMountViewModel | null {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
@@ -59,12 +61,13 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(
   );
   const retries = useSelector((state: State) => state.largeScreenUpsellModal.retries);
   const lastSeenAt = useSelector((state: State) => state.largeScreenUpsellModal.lastSeenAt);
+  const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasSeenCompetingAppStartModalRef = useRef(hasCompetingAppStartModal);
   const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
   const hasHandledCurrentModalInteractionRef = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (hasCompetingAppStartModal || postOnboardingRedirectStatus === "redirected") {
+  if (hasCompetingAppStartModal) {
     hasSeenCompetingAppStartModalRef.current = true;
   }
 
@@ -92,9 +95,11 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(
   const isEligible = Boolean(
     hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
   );
+  const hasCompletedOnboardingThisSession =
+    onboardingCompletionDate !== null && Date.parse(onboardingCompletionDate) >= sessionStartedAt;
   const shouldAttemptAutoOpen =
     isEligible &&
-    postOnboardingRedirectStatus !== "pending" &&
+    !hasCompletedOnboardingThisSession &&
     !hasSeenCompetingAppStartModalRef.current &&
     !hasAutoOpenedThisSession;
 
