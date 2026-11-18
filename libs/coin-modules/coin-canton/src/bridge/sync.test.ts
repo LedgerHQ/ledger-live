@@ -1,3 +1,8 @@
+import {
+  emptyHistoryCache,
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -6,10 +11,17 @@ import * as instrumentBalances from "./instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
-import { createMockCantonCurrency, createMockCoinConfigValue } from "../test/fixtures";
-import { CantonAccount } from "../types";
+import { lastValueFrom } from "rxjs";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  createMockCoinConfigValue,
+} from "../test/fixtures";
+import { createBridges } from "./index";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import { CantonAccount, CantonSigner } from "../types";
 import * as onboard from "./onboard";
-import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
+import { makeGetAccountShape, filterDisabledTokenAccounts, SYNC_HASH } from "./sync";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
@@ -151,6 +163,92 @@ const createMockCantonAccountShapeInfo = (
     initialAccount: undefined,
     ...overrides,
   };
+};
+
+const tokenOperationView = (
+  instrument: { instrumentId: string; instrumentAdmin: string },
+  txHash: string,
+  overrides: Partial<OperationInfo> = {},
+): OperationInfo => ({
+  ...createMockOperationView({ txHash, ...instrument }),
+  asset: { type: "token", ...instrument },
+  ...overrides,
+});
+
+/** A send row of a token transaction, with its transfer's memo. */
+const tokenRowWithMemo = (
+  instrument: { instrumentId: string; instrumentAdmin: string },
+  uid: string,
+  reason: string | undefined,
+): OperationInfo =>
+  tokenOperationView(instrument, "memo-tx", {
+    uid,
+    transfers: [
+      {
+        address: "party123",
+        type: "Send",
+        value: "100",
+        asset: instrument.instrumentId,
+        details: { operationType: "transfer", metadata: { reason } },
+      },
+    ],
+  } as Partial<OperationInfo>);
+
+const rowAtHeight = (txHash: string, height: number): OperationInfo => ({
+  ...createMockOperationView({ txHash }),
+  block: { height, time: "" },
+});
+
+const fees = (shape: Partial<CantonAccount>) =>
+  (shape.operations ?? []).filter(op => op.type === "FEES");
+
+const storedOperation = (height: number, value = 1) =>
+  ({
+    id: `stored-${height}`,
+    hash: `stored-${height}`,
+    type: "OUT",
+    value: BigNumber(value),
+    fee: BigNumber(0),
+    blockHeight: height,
+    date: new Date(height),
+    senders: [],
+    recipients: [],
+    extra: { instrumentId: "Amulet" },
+  }) as unknown as CantonAccount["operations"][number];
+
+const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
+
+const syncFrom = (initialAccount: Partial<CantonAccount>) =>
+  makeGetAccountShape({} as SignerContext<CantonSigner>, fakeContext)(
+    createMockCantonAccountShapeInfo({
+      initialAccount: {
+        xpub: "party123",
+        operations: [],
+        subAccounts: [],
+        cantonResources: { isOnboarded: true, publicKey: "key" },
+        ...initialAccount,
+      } as unknown as CantonAccount,
+    }),
+    { paginationConfig: {} },
+  );
+
+/** A full sync through the account bridge, from an account holding one stale operation. */
+const syncAccount = async (
+  syncHash: string | undefined,
+  overrides: Partial<CantonAccount> = {},
+) => {
+  const initial = {
+    ...createMockCantonAccount(),
+    xpub: "party123",
+    syncHash,
+    operations: [storedOperation(5, 999)],
+    operationsCount: 1,
+    cantonResources: { isOnboarded: true, publicKey: "key", pendingTransferProposals: [] },
+    ...overrides,
+  } as unknown as CantonAccount;
+  const { accountBridge } = createBridges({} as SignerContext<CantonSigner>, fakeContext);
+  const updater = await lastValueFrom(accountBridge.sync(initial, { paginationConfig: {} }));
+  return updater(initial);
 };
 
 describe("makeGetAccountShape", () => {
@@ -849,6 +947,241 @@ describe("makeGetAccountShape", () => {
       const shape = await sync();
 
       expect(shape.balance).toEqual(BigNumber(1000));
+    });
+
+    describe("fee asset", () => {
+      const usdcxInstrument = { instrumentId, instrumentAdmin: calAdmin };
+
+      beforeEach(() => {
+        mockedGetBalance.mockResolvedValue([
+          createMockNativeBalance("1000"),
+          tokenBalance(calAdmin, "500"),
+        ]);
+      });
+
+      it("keeps the CC fee of a token send out of the token, and charges it on the main account", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [tokenOperationView(usdcxInstrument, "token-tx")],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ type: "OUT", value: BigNumber(100), fee: BigNumber(0) }),
+        ]);
+        expect(fees(shape)).toEqual([
+          expect.objectContaining({
+            hash: "token-tx",
+            value: BigNumber(5),
+            fee: BigNumber(5),
+            senders: ["party123"],
+            extra: expect.objectContaining({ instrumentId: "Amulet" }),
+          }),
+        ]);
+      });
+
+      it("charges the CC fee of a token send on the CC send of the same transaction", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "mixed-tx"),
+            createMockOperationView({ txHash: "mixed-tx" }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.operations).toEqual([
+          expect.objectContaining({ type: "OUT", value: BigNumber(110), fee: BigNumber(10) }),
+        ]);
+      });
+
+      it("keeps one operation per asset for a send to several receivers, with every fee", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "split-tx", { uid: "uid-1", recipients: ["bob"] }),
+            tokenOperationView(usdcxInstrument, "split-tx", {
+              uid: "uid-2",
+              recipients: ["carol"],
+            }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ value: BigNumber(200), recipients: ["bob", "carol"] }),
+        ]);
+        expect(fees(shape)).toEqual([expect.objectContaining({ value: BigNumber(10) })]);
+      });
+
+      it.each([
+        ["keeps the memo the rows share", "lunch", "lunch", "lunch"],
+        ["keeps the memo of the only row with one", "lunch", undefined, "lunch"],
+        ["leaves no memo when the rows disagree", "lunch", "rent", undefined],
+      ])("%s", async (_, firstMemo, secondMemo, expected) => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenRowWithMemo(usdcxInstrument, "uid-1", firstMemo),
+            tokenRowWithMemo(usdcxInstrument, "uid-2", secondMemo),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations[0].extra).toEqual(
+          expect.objectContaining({ memo: expected }),
+        );
+      });
+
+      it("rebuilds a token sub-account without its stale operations, keeping its pending operations and regenerating its chart", async () => {
+        const staleChart = { HOUR: { latestDate: 1, balances: [42] } };
+        const pendingOperations = [{ id: "pending" }];
+        mockedGetOperations.mockResolvedValue({
+          operations: [tokenOperationView(usdcxInstrument, "fresh-token")],
+          next: -1,
+        });
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: sampleCurrency.id,
+          xpubOrAddress: "party123",
+          derivationMode: "canton",
+        });
+
+        const account = await syncAccount(undefined, {
+          id: accountId,
+          subAccounts: [
+            {
+              type: "TokenAccount",
+              id: encodeTokenAccountId(accountId, usdcx as TokenAccount["token"]),
+              parentId: accountId,
+              token: usdcx,
+              balance: BigNumber(500),
+              spendableBalance: BigNumber(500),
+              creationDate: new Date(0),
+              operations: [{ ...storedOperation(9), id: "stale-token" }],
+              operationsCount: 1,
+              pendingOperations,
+              balanceHistoryCache: staleChart,
+              swapHistory: [],
+            },
+          ] as unknown as TokenAccount[],
+        });
+
+        const [subAccount] = account.subAccounts ?? [];
+        expect(subAccount.operations.map(op => op.hash)).toEqual(["fresh-token"]);
+        expect(subAccount.pendingOperations).toBe(pendingOperations);
+        expect(subAccount.balanceHistoryCache).not.toEqual(staleChart);
+        expect(subAccount.balanceHistoryCache).not.toEqual(emptyHistoryCache);
+      });
+
+      it("charges no fee for a token the account received", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "in-tx", { type: "Receive", senders: ["alice"] }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ type: "IN", value: BigNumber(100) }),
+        ]);
+        expect(shape.operations).toEqual([]);
+      });
+    });
+  });
+
+  describe("history reading", () => {
+    beforeEach(() => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetOperations.mockResolvedValue({ operations: [], next: -1 });
+    });
+
+    it("reads past the newest stored operation of any account, up to the ledger end", async () => {
+      const shape = await syncFrom({
+        syncHash: SYNC_HASH,
+        operations: [storedOperation(5)],
+        subAccounts: [{ operations: [storedOperation(9)] }] as unknown as TokenAccount[],
+      });
+
+      expect(readFrom()).toEqual([{ minOffset: 10, maxOffset: 12345, limit: 100 }]);
+      expect(shape.operations).toEqual([storedOperation(5)]);
+      expect(shape.syncHash).toBe(SYNC_HASH);
+    });
+
+    it("reads nothing when the account is at the ledger end", async () => {
+      await syncFrom({ syncHash: SYNC_HASH, operations: [storedOperation(12345)] });
+
+      expect(mockedGetOperations).not.toHaveBeenCalled();
+    });
+
+    it("reads every page, resuming after the last row served rather than at the gateway's next", async () => {
+      mockedGetOperations
+        .mockResolvedValueOnce({ operations: [rowAtHeight("first", 1)], next: 5 })
+        .mockResolvedValueOnce({ operations: [], next: 9 })
+        .mockResolvedValueOnce({ operations: [rowAtHeight("second", 8)], next: -1 });
+
+      const shape = await syncFrom({ syncHash: SYNC_HASH });
+
+      expect(readFrom()).toEqual([
+        { minOffset: 0, maxOffset: 12345, limit: 100 },
+        { minOffset: 0, maxOffset: 12345, cursor: 2, limit: 100 },
+        { minOffset: 0, maxOffset: 12345, cursor: 8, limit: 100 },
+      ]);
+      expect(shape.operations?.map(op => op.hash).sort()).toEqual(["first", "second"]);
+    });
+
+    it("stops at the ledger end read before the walk", async () => {
+      mockedGetOperations.mockResolvedValueOnce({
+        operations: [{ ...createMockOperationView(), block: { height: 12345, time: "" } }],
+        next: 12347,
+      });
+
+      await syncFrom({ syncHash: SYNC_HASH });
+
+      expect(mockedGetOperations).toHaveBeenCalledTimes(1);
+    });
+
+    it("rebuilds the history from offset 0 when the sync hash changed", async () => {
+      const balanceHistoryCache = { HOUR: { latestDate: 1, balances: [] } };
+      mockedGetOperations.mockResolvedValue({
+        operations: [createMockOperationView({ txHash: "fresh" })],
+        next: -1,
+      });
+
+      const shape = await syncFrom({
+        syncHash: undefined,
+        operations: [storedOperation(5, 999)],
+        subAccounts: [
+          { id: "sub", operations: [storedOperation(9)], balanceHistoryCache },
+        ] as unknown as TokenAccount[],
+      });
+
+      expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 100 }]);
+      expect(shape.operations?.map(op => op.hash)).toEqual(["fresh"]);
+    });
+
+    describe("through the account bridge", () => {
+      beforeEach(() => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [createMockOperationView({ txHash: "fresh" })],
+          next: -1,
+        });
+      });
+
+      it("drops the stale stored operations after a sync hash change", async () => {
+        const account = await syncAccount(undefined);
+
+        expect(account.operations.map(op => op.hash)).toEqual(["fresh"]);
+        expect(account.syncHash).toBe(SYNC_HASH);
+      });
+
+      it("keeps the stored operations on an incremental sync", async () => {
+        const account = await syncAccount(SYNC_HASH);
+
+        expect(account.operations.map(op => op.hash)).toEqual(["fresh", "stored-5"]);
+      });
     });
   });
 

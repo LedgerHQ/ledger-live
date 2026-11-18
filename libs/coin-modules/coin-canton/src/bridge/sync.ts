@@ -4,13 +4,15 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import { getInstrumentBalances } from "./instrumentBalances";
 import { isInstrument, type NativeInstrument } from "../logic/asset";
+import { resumeOffset } from "../logic/listOperations";
 import { determineOperationType } from "../logic/operationType";
+import type { AssetView } from "../types/gateway";
 import {
   getCalTokensCached,
   getEnabledInstrumentsCached,
@@ -53,61 +55,148 @@ function isValidOperation(txInfo: OperationInfo): txInfo is ValidOperationInfo {
   );
 }
 
-const txInfoToOperationAdapter =
-  (accountId: string, partyId: string) =>
-  (txInfo: ValidOperationInfo): Operation => {
-    const {
-      asset: { instrumentId, instrumentAdmin },
-      transaction_hash,
-      uid,
-      block: { height, hash },
-      senders,
-      recipients,
-      transaction_timestamp,
-      fee: { value: fee },
-      transfers: [{ value: transferValue, details }],
-    } = txInfo;
+/**
+ * Bumped whenever stored operations go stale, so that every account syncs again from scratch:
+ * 1: fees in their own asset (ADR-068) — a token operation no longer carries the CC fee, which the
+ * main account charges.
+ */
+export const SYNC_HASH = "1";
 
+const GATEWAY_PAGE_SIZE = 100;
+
+/** Operation types whose fee the account paid, so their value includes it. */
+const CHARGED_TYPES: ReadonlySet<OperationType> = new Set(["OUT", "FEES"]);
+
+type Instrument = { instrumentId: string; instrumentAdmin: string };
+
+const instrumentOf = (asset: AssetView | undefined): Instrument | undefined =>
+  asset && "instrumentId" in asset
+    ? { instrumentId: asset.instrumentId, instrumentAdmin: asset.instrumentAdmin }
+    : undefined;
+
+// Exact: the gateway gives every Amulet asset, of a row or of a fee, the same placeholder admin.
+const isSameInstrument = (a: Instrument, b: Instrument): boolean =>
+  a.instrumentId === b.instrumentId && a.instrumentAdmin === b.instrumentAdmin;
+
+/** One operation of an asset in a transaction: the gateway gives a row per receiver. */
+type OperationGroup = {
+  row: ValidOperationInfo;
+  instrument: Instrument;
+  type: OperationType;
+  transferValue: BigNumber;
+  fee: BigNumber;
+  senders: Set<string>;
+  recipients: Set<string>;
+  memos: Set<string>;
+};
+
+const groupKey = (hash: string, { instrumentId, instrumentAdmin }: Instrument, type: string) =>
+  [hash, instrumentId, instrumentAdmin, type].join("\n");
+
+/**
+ * Charges each fee in its own asset (ADR-068). A row's fee is that of its own transfer, and the
+ * gateway sets it on the sender's row only. A fee in the row's asset joins the row's value; a fee
+ * in another asset, in practice the CC fee of a token transfer, joins the transaction's operation
+ * that the account paid in that asset, or a FEES operation of its own.
+ */
+function toOperations(rows: ValidOperationInfo[], accountId: string, partyId: string): Operation[] {
+  const groups = new Map<string, OperationGroup>();
+  const foreignFees = new Map<
+    string,
+    { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber }
+  >();
+
+  for (const row of rows) {
+    const [{ value: transferValue, details }] = row.transfers;
     const type = determineOperationType(
       details?.operationType,
-      txInfo.type,
+      row.type,
       transferValue,
-      senders,
+      row.senders,
       partyId,
     );
+    const instrument = {
+      instrumentId: row.asset.instrumentId,
+      instrumentAdmin: row.asset.instrumentAdmin,
+    };
+    const feeInstrument = instrumentOf(row.fee.asset);
+    const fee = new BigNumber(row.fee.value);
+    const isOwnFee = feeInstrument !== undefined && isSameInstrument(feeInstrument, instrument);
 
-    let value = new BigNumber(transferValue);
-
-    if (type === "OUT" || type === "FEES") {
-      value = value.plus(fee);
-    }
-
-    const feeValue = new BigNumber(fee);
+    const key = groupKey(row.transaction_hash, instrument, type);
+    const group = groups.get(key) ?? {
+      row,
+      instrument,
+      type,
+      transferValue: new BigNumber(0),
+      fee: new BigNumber(0),
+      senders: new Set<string>(),
+      recipients: new Set<string>(),
+      memos: new Set<string>(),
+    };
+    group.transferValue = group.transferValue.plus(transferValue);
     const memo = details?.metadata?.reason;
+    if (memo !== undefined) group.memos.add(memo);
+    if (isOwnFee) group.fee = group.fee.plus(fee);
+    row.senders.forEach(sender => group.senders.add(sender));
+    row.recipients.forEach(recipient => group.recipients.add(recipient));
+    groups.set(key, group);
 
-    const op: Operation = {
-      id: encodeOperationId(accountId, transaction_hash, type),
-      hash: transaction_hash,
+    if (!isOwnFee && feeInstrument && CHARGED_TYPES.has(type) && fee.gt(0)) {
+      const feeKey = groupKey(row.transaction_hash, feeInstrument, "");
+      const foreign = foreignFees.get(feeKey) ?? {
+        row,
+        instrument: feeInstrument,
+        fee: new BigNumber(0),
+      };
+      foreign.fee = foreign.fee.plus(fee);
+      foreignFees.set(feeKey, foreign);
+    }
+  }
+
+  for (const { row, instrument, fee } of foreignFees.values()) {
+    const payer = [...CHARGED_TYPES]
+      .map(type => groups.get(groupKey(row.transaction_hash, instrument, type)))
+      .find(group => group !== undefined);
+    if (payer) {
+      payer.fee = payer.fee.plus(fee);
+      continue;
+    }
+    groups.set(groupKey(row.transaction_hash, instrument, "FEES"), {
+      row,
+      instrument,
+      type: "FEES",
+      transferValue: new BigNumber(0),
+      fee,
+      senders: new Set([partyId]),
+      recipients: new Set(),
+      memos: new Set(),
+    });
+  }
+
+  return [...groups.values()].map(
+    ({ row, instrument, type, transferValue, fee, senders, recipients, memos }) => ({
+      id: encodeOperationId(accountId, row.transaction_hash, type),
+      hash: row.transaction_hash,
       accountId,
       type,
-      value,
-      fee: feeValue,
-      blockHash: hash ?? "",
-      blockHeight: height,
-      senders,
-      recipients,
-      date: new Date(transaction_timestamp),
-      transactionSequenceNumber: new BigNumber(height),
+      value: CHARGED_TYPES.has(type) ? transferValue.plus(fee) : transferValue,
+      fee,
+      blockHash: row.block.hash ?? "",
+      blockHeight: row.block.height,
+      senders: [...senders],
+      recipients: [...recipients],
+      date: new Date(row.transaction_timestamp),
+      transactionSequenceNumber: new BigNumber(row.block.height),
       extra: {
-        uid,
-        memo,
-        instrumentId,
-        instrumentAdmin,
+        uid: row.uid,
+        // Rows that disagree leave no memo rather than one that holds for some of them only.
+        memo: memos.size === 1 ? [...memos][0] : undefined,
+        ...instrument,
       },
-    };
-
-    return op;
-  };
+    }),
+  );
+}
 
 const filterOperations = (
   transactions: OperationInfo[],
@@ -117,11 +206,48 @@ const filterOperations = (
 ): Operation[] => {
   const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
 
-  return transactions
-    .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
-    .filter(isValidOperation)
-    .map(txInfoToOperationAdapter(accountId, partyId));
+  return toOperations(
+    transactions
+      .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
+      .filter(isValidOperation),
+    accountId,
+    partyId,
+  );
 };
+
+/** Every row from `start` to `end`, the ledger end read before the walk so it does not chase new activity. */
+async function readOperations(
+  config: CantonCoinConfig,
+  partyId: string,
+  start: number,
+  end: number,
+): Promise<OperationInfo[]> {
+  const rows: OperationInfo[] = [];
+  if (start > end) return rows;
+  let cursor: number | undefined;
+  for (;;) {
+    const { operations, next } = await getOperations(config, partyId, {
+      minOffset: start,
+      maxOffset: end,
+      cursor,
+      limit: GATEWAY_PAGE_SIZE,
+    });
+    rows.push(...operations);
+    if (next === undefined || next < 0) return rows;
+    const resume = resumeOffset(cursor ?? start, operations, next);
+    if (resume > end) return rows;
+    cursor = resume;
+  }
+}
+
+const highestBlockHeight = (operations: Operation[]): number | undefined =>
+  operations.reduce<number | undefined>(
+    (highest, { blockHeight }) =>
+      typeof blockHeight === "number" && (highest === undefined || blockHeight > highest)
+        ? blockHeight
+        : highest,
+    undefined,
+  );
 
 export async function filterDisabledTokenAccounts(
   config: CantonCoinConfig,
@@ -318,37 +444,47 @@ export function makeGetAccountShape(
         adminId,
       }));
 
-    let operations: Operation[] = [];
-    if (xpubOrAddress) {
-      const oldOperations = initialAccount?.operations || [];
-      const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-      const transactionData = await getOperations(config, xpubOrAddress, {
-        cursor: startAt,
-        limit: 100,
-      });
-      const newOperations = filterOperations(
-        transactionData.operations,
-        accountId,
-        xpubOrAddress,
-        pendingTransferProposals,
-      );
+    // A stale sync hash rebuilds the history from offset 0, without the stored operations.
+    const isRebuild = initialAccount !== undefined && initialAccount.syncHash !== SYNC_HASH;
+    const storedOperations = isRebuild ? [] : (initialAccount?.operations ?? []);
+    const storedSubAccounts = (initialAccount?.subAccounts ?? []).map(subAccount =>
+      isRebuild ? { ...subAccount, operations: [], operationsCount: 0 } : subAccount,
+    );
 
-      operations = mergeOps(oldOperations, newOperations);
+    // Main account operations: the native instrument only. By id alone: the gateway gives every
+    // Amulet operation the same placeholder admin.
+    const isMainAccountOperation = (op: Operation) =>
+      (op.extra as { instrumentId?: string })?.instrumentId === nativeInstrumentId;
+
+    const blockHeight = await getLedgerEnd(config);
+    let newOperations: Operation[] = [];
+    if (xpubOrAddress) {
+      // Token operations count too, or a run of them would be read again on every sync.
+      const lastSyncedHeight = highestBlockHeight([
+        ...storedOperations,
+        ...storedSubAccounts.flatMap(subAccount => subAccount.operations),
+      ]);
+      const rows = await readOperations(
+        config,
+        xpubOrAddress,
+        lastSyncedHeight === undefined ? 0 : lastSyncedHeight + 1,
+        blockHeight,
+      );
+      newOperations = filterOperations(rows, accountId, xpubOrAddress, pendingTransferProposals);
     }
 
-    // Filter main account operations (native instrument only). By id alone: the gateway gives every
-    // Amulet operation the same placeholder admin.
-    const mainAccountOperations = operations.filter(op => {
-      const extra = op.extra as { instrumentId?: string };
-      return extra?.instrumentId === nativeInstrumentId;
-    });
+    // Merged per account: operations of several assets in one transaction share an id.
+    const mainAccountOperations = mergeOps(
+      storedOperations,
+      newOperations.filter(isMainAccountOperation),
+    );
 
     // Build sub-accounts for tokens with their filtered operations
     const subAccounts = buildSubAccounts({
       accountId,
       tokenBalances,
-      existingSubAccounts: initialAccount?.subAccounts ?? [],
-      allOperations: operations,
+      existingSubAccounts: storedSubAccounts,
+      allOperations: newOperations.filter(op => !isMainAccountOperation(op)),
       pendingTransferProposals,
       calTokens,
     });
@@ -371,8 +507,6 @@ export function makeGetAccountShape(
       cantonResources,
     });
 
-    const blockHeight = await getLedgerEnd(config);
-
     const creationDate =
       mainAccountOperations.length > 0
         ? new Date(Math.min(...mainAccountOperations.map(op => op.date.getTime())))
@@ -394,6 +528,7 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
       used,
       cantonResources,
+      syncHash: SYNC_HASH,
     };
 
     return shape;
