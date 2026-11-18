@@ -3,7 +3,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import {
-  fetchTronAccountTxsNextPage,
+  fetchTronAccountTxsEndpointPage,
   fetchTronAccountTxsPage,
   getBlock,
   TxEndpoint,
@@ -24,7 +24,7 @@ import {
   stepPast,
   walksBefore,
 } from "./cursor";
-import { TronEmptyPage } from "../types/errors";
+import { TronEmptyPage, TronPageServedTwice } from "../types/errors";
 
 // Native and TRC20 records come from two TronGrid endpoints paged independently. A page is cut
 // only between timestamps: all records of one transaction share its block timestamp, so a
@@ -124,10 +124,10 @@ async function readGroup(
     if (page.timestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
     if (page.next === undefined || page.timestamps.length === 0) return { txs, hasMore: false };
     if (followed.has(page.next)) {
-      throw new Error(`TronGrid served the ${endpoint} page ${page.next} twice`);
+      throw new TronPageServedTwice(`TronGrid served the ${endpoint} page ${page.next} twice`);
     }
     followed.add(page.next);
-    page = await fetchTronAccountTxsNextPage(logger, config, endpoint, page.next);
+    page = await fetchTronAccountTxsEndpointPage(logger, config, endpoint, page.next);
   }
 }
 

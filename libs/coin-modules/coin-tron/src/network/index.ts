@@ -774,7 +774,6 @@ export const defaultFetchParams: FetchParams = {
 
 export type TxEndpoint = "native" | "trc20";
 
-/** One page of one TronGrid endpoint. */
 export type TxEndpointPage = {
   /** `block_timestamp` of every record the endpoint returned, before any filter. */
   timestamps: number[];
@@ -842,13 +841,13 @@ export async function fetchTronAccountTxsPage(
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
   const [native, trc20] = await Promise.all([
-    fetchTronAccountTxsNextPage(
+    fetchTronAccountTxsEndpointPage(
       logger,
       config,
       "native",
       `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions?${queryParams}`,
     ),
-    fetchTronAccountTxsNextPage(
+    fetchTronAccountTxsEndpointPage(
       logger,
       config,
       "trc20",
@@ -859,7 +858,7 @@ export async function fetchTronAccountTxsPage(
 }
 
 /** Fetches the endpoint page at `url`, a first-page query or a `next` link of an earlier page. */
-export async function fetchTronAccountTxsNextPage(
+export async function fetchTronAccountTxsEndpointPage(
   logger: Logger,
   config: TronCoinConfig,
   endpoint: TxEndpoint,

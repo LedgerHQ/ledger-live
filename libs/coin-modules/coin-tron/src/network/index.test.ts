@@ -15,7 +15,7 @@ import {
   fetchTronAccountOrEmpty,
   fetchTronAccountOrFail,
   fetchTronAccountTxs,
-  fetchTronAccountTxsNextPage,
+  fetchTronAccountTxsEndpointPage,
   fetchTronAccountTxsPage,
   fetchTronContract,
   findBlock,
@@ -1014,7 +1014,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     );
   });
 
-  it("fetchTronAccountTxsNextPage reads the page a next link points to, per endpoint", async () => {
+  it("fetchTronAccountTxsEndpointPage reads the page a next link points to, per endpoint", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         mockResponse({
@@ -1024,13 +1024,13 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       )
       .mockResolvedValueOnce(mockResponse({ data: [validNativeTx], meta: {} }));
 
-    const trc20 = await fetchTronAccountTxsNextPage(
+    const trc20 = await fetchTronAccountTxsEndpointPage(
       mockLogger,
       mockConfig,
       "trc20",
       `${TRON_BASE_URL}/v1/page-2`,
     );
-    const native = await fetchTronAccountTxsNextPage(
+    const native = await fetchTronAccountTxsEndpointPage(
       mockLogger,
       mockConfig,
       "native",

@@ -2,7 +2,7 @@ import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
-  fetchTronAccountTxsNextPage,
+  fetchTronAccountTxsEndpointPage,
   fetchTronAccountTxsPage,
   FetchTxsPageParams,
   getBlock,
@@ -11,12 +11,12 @@ import {
 } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TrongridTxInfo } from "../types";
-import { TronEmptyPage } from "../types/errors";
+import { TronEmptyPage, TronPageServedTwice } from "../types/errors";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 
 jest.mock("../network", () => ({
   fetchTronAccountTxsPage: jest.fn(),
-  fetchTronAccountTxsNextPage: jest.fn(),
+  fetchTronAccountTxsEndpointPage: jest.fn(),
   getBlock: jest.fn(),
 }));
 
@@ -81,7 +81,7 @@ function fakeTronGrid(records: FakeRecord[]) {
       trc20: pageOf({ ...params, endpoint: "trc20", offset: 0 }),
     }),
   );
-  (fetchTronAccountTxsNextPage as jest.Mock).mockImplementation(
+  (fetchTronAccountTxsEndpointPage as jest.Mock).mockImplementation(
     async (_logger, _config, endpoint: TxEndpoint, url: string) => {
       const query: FakeQuery = JSON.parse(url);
       expect(query.endpoint).toBe(endpoint);
@@ -368,6 +368,19 @@ describe("listOperations", () => {
         cursor: "5000",
       }),
     ).rejects.toThrow(TronEmptyPage);
+  });
+
+  it("throws TronPageServedTwice when a next link leads back to an already read page", async () => {
+    const loop: TxEndpointPage = { timestamps: [5000], txs: [], next: "page-2" };
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      native: loop,
+      trc20: { timestamps: [], txs: [] },
+    });
+    (fetchTronAccountTxsEndpointPage as jest.Mock).mockResolvedValue(loop);
+
+    await expect(
+      listOperations(logger, config, address, { limit: 1, minTimestamp: 0, order: "desc" }),
+    ).rejects.toThrow(TronPageServedTwice);
   });
 
   it("throws on an invalid cursor", async () => {
