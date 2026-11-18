@@ -3,7 +3,6 @@ import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useTranslation } from "@shared/i18n";
 import { InfoState } from "@shared/ui-info-state";
 import { AddressActions } from "./components/AddressActions";
 import { BlockedReceive } from "./components/BlockedReceive";
@@ -19,8 +18,6 @@ import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { Dimmed } from "./components/Dimmed";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
-
-const CONTENT_BOTTOM_SPACING = 16;
 
 export function ReceiveAddressView({
   title,
@@ -40,10 +37,11 @@ export function ReceiveAddressView({
   memoPanel,
   helpCard,
   helpPanel,
+  closeLabel,
+  backLabel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
-  const { t } = useTranslation();
   const { top, bottom } = useSafeAreaInsets();
   // While the verify hint is open, everything but the hint and the action tiles steps back.
   const isHintOpen = !!actions.verifyHint;
@@ -61,7 +59,7 @@ export function ReceiveAddressView({
             appearance="no-background"
             size="md"
             onPress={onBack ?? onClose}
-            accessibilityLabel={onBack ? t("receiveAddress.back") : t("receiveAddress.close")}
+            accessibilityLabel={onBack ? backLabel : closeLabel}
             testID="receive-address-close"
           />
         </Box>
@@ -80,61 +78,58 @@ export function ReceiveAddressView({
         <ScrollView
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            gap: 24,
-            paddingHorizontal: 16,
-            // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
-            paddingBottom: CONTENT_BOTTOM_SPACING + bottom,
-          }}
+          // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
         >
-          <Dimmed isDimmed={isHintOpen}>
-            <ReceiveAddressTitle
-              title={title}
-              networkLabel={networkLabel}
-              networkIcon={networkIcon}
-            />
-          </Dimmed>
-          {blocked ? (
-            <BlockedReceive blocked={blocked} />
-          ) : sanctioned ? (
-            <SanctionedAddress sanctioned={sanctioned} />
-          ) : error ? (
-            <InfoState
-              preset="error"
-              size="hug"
-              title={error.title}
-              description={error.description}
-              primaryCta={{
-                label: error.retryLabel,
-                onPress: error.onRetry,
-                testID: "receive-address-retry",
-              }}
-              testID="receive-address-error"
-            />
-          ) : (
-            <>
-              <Dimmed isDimmed={isHintOpen}>
-                {isLoading || !address ? (
-                  <AddressSummarySkeleton />
-                ) : (
-                  <AddressSummary
-                    address={address}
-                    onCopy={actions.copy?.onPressCode}
-                    copyLabel={actions.copy?.label}
-                    copyKey={actions.copy?.buttonPresses}
-                  />
-                )}
-              </Dimmed>
-              <AddressActions actions={actions} />
-              <Dimmed isDimmed={isHintOpen}>
-                <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
-              </Dimmed>
-            </>
-          )}
-          <Dimmed isDimmed={isHintOpen}>
-            <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
-          </Dimmed>
+          <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+            <Dimmed isDimmed={isHintOpen}>
+              <ReceiveAddressTitle
+                title={title}
+                networkLabel={networkLabel}
+                networkIcon={networkIcon}
+              />
+            </Dimmed>
+            {blocked ? (
+              <BlockedReceive blocked={blocked} />
+            ) : sanctioned ? (
+              <SanctionedAddress sanctioned={sanctioned} />
+            ) : error ? (
+              <InfoState
+                preset="error"
+                size="hug"
+                title={error.title}
+                description={error.description}
+                primaryCta={{
+                  label: error.retryLabel,
+                  onPress: error.onRetry,
+                  testID: "receive-address-retry",
+                }}
+                testID="receive-address-error"
+              />
+            ) : (
+              <>
+                <Dimmed isDimmed={isHintOpen}>
+                  {isLoading || !address ? (
+                    <AddressSummarySkeleton />
+                  ) : (
+                    <AddressSummary
+                      address={address}
+                      onCopy={actions.copy?.onPressCode}
+                      copyLabel={actions.copy?.label}
+                      copyKey={actions.copy?.buttonPresses}
+                    />
+                  )}
+                </Dimmed>
+                <AddressActions actions={actions} />
+                <Dimmed isDimmed={isHintOpen}>
+                  <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
+                </Dimmed>
+              </>
+            )}
+            <Dimmed isDimmed={isHintOpen}>
+              <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
+            </Dimmed>
+          </Box>
         </ScrollView>
       )}
       {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}

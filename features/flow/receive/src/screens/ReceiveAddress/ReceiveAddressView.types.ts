@@ -140,4 +140,6 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Set when the user picked this address among several (Zcash): back to that choice. */
   onBack?: () => void;
   onClose: () => void;
+  closeLabel: string;
+  backLabel: string;
 }>;

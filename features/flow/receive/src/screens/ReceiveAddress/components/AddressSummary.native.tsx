@@ -2,8 +2,7 @@ import React from "react";
 import Animated, { FadeIn } from "react-native-reanimated";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { Box, Text, ThemeProvider, type SupportedLocale } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "@shared/i18n";
+import { Box, Text, ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
 import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
 import { splitMiddleForTwoLines } from "../../../logic/splitMiddleForTwoLines";
 import type { AddressSummaryProps } from "./AddressSummary.types";
@@ -16,7 +15,6 @@ const QR_FADE_IN_MS = 400;
 
 /** The QR card, the asset icon in its middle, then the address on two lines, edges standing out. */
 export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
-  const { i18n } = useTranslation();
   const { start, middle, end } = address.parts;
   const [middleFirstLine, middleSecondLine] = splitMiddleForTwoLines(address.parts);
 
@@ -47,11 +45,7 @@ export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressS
             testID="receive-address-qr-code"
             centerContent={
               // The card is white in both themes: the network badge border stays light too.
-              <ThemeProvider
-                themes={ledgerLiveThemes}
-                colorScheme="light"
-                locale={i18n.language as SupportedLocale}
-              >
+              <ThemeProvider themes={ledgerLiveThemes} colorScheme="light">
                 <CryptoIcon
                   ledgerId={address.assetIcon.ledgerId}
                   ticker={address.assetIcon.ticker}

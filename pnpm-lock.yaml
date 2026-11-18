@@ -13467,9 +13467,6 @@ importers:
       '@domain/entity-account':
         specifier: workspace:*
         version: link:../../../domain/entity/account
-      '@domain/entity-account-data':
-        specifier: workspace:*
-        version: link:../../../domain/entity/account-data
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
@@ -13525,6 +13522,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../../domain/api/currency-token
+      '@domain/entity-account-data':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-data
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.7(c32e40ecc26dc641bed309ca003041d9)

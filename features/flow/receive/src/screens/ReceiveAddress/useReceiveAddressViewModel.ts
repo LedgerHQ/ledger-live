@@ -77,13 +77,16 @@ export function useReceiveAddressViewModel({
     trackReceiveAddressButton("close", tracking);
     closeOpenPanel();
   }, [tracking, closeOpenPanel]);
+  const openServiceStatus = useCallback(() => openPanel("serviceStatus"), [openPanel]);
+  const openMemo = useCallback(() => openPanel("memo"), [openPanel]);
+  const openHelp = useCallback(() => openPanel("help"), [openPanel]);
   const { notices, serviceWarning } = useReceiveAddressNotices({
     familyConfig,
     selected,
     serviceIncidents,
     copy,
     onOpenUrl,
-    openServiceStatus: () => openPanel("serviceStatus"),
+    openServiceStatus,
     tracking,
   });
 
@@ -92,7 +95,7 @@ export function useReceiveAddressViewModel({
     isOpen: panel === "memo",
     copy,
     onOpenUrl,
-    open: () => openPanel("memo"),
+    open: openMemo,
     close: closePanel,
     tracking,
   });
@@ -101,7 +104,7 @@ export function useReceiveAddressViewModel({
     isOpen: panel === "help",
     copy,
     onOpenUrl,
-    open: () => openPanel("help"),
+    open: openHelp,
     close: closePanel,
     tracking,
   });
@@ -205,5 +208,7 @@ export function useReceiveAddressViewModel({
     networkIcon: header.data?.networkIcon,
     onBack: selection.backToSelection,
     onClose: closeFlow,
+    closeLabel: copy.closeLabel,
+    backLabel: copy.backLabel,
   };
 }

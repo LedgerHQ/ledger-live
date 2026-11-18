@@ -55,7 +55,7 @@ export function ReceiveAddressView({
       >
         {isHintOpen ? (
           // Everything but the hint and the tiles steps back while the hint is open.
-          <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
+          <div aria-hidden className="absolute inset-0 z-dialog-overlay bg-canvas-overlay" />
         ) : null}
         <DialogBackgroundToneProvider>
           {helpPanel ? (

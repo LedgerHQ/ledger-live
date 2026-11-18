@@ -1,4 +1,5 @@
 import type { AssetActivationMethod } from "@domain/entity-account-status";
+import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind } from "../logic/toReceiveNotices";
@@ -35,6 +36,7 @@ export type ReceiveAddressCopy = Readonly<{
   sanctionedTitle: string;
   sanctionedDescription: (address: string) => string;
   closeLabel: string;
+  backLabel: string;
   onboardingTitle: string;
   onboardingDescription: string;
   activationTitle: string;
@@ -49,56 +51,60 @@ export function useReceiveAddressCopy({
 }: Readonly<{ assetTicker: string; networkName: string }>): ReceiveAddressCopy {
   const { t } = useTranslation();
 
-  return {
-    title: t("receiveAddress.title", { asset: assetTicker }),
-    networkLabel: t("receiveAddress.networkLabel", { network: networkName }),
-    errorTitle: t("receiveAddress.error.title"),
-    errorDescription: t("receiveAddress.error.description"),
-    retryLabel: t("receiveAddress.error.retry"),
-    selectAddressTitle: t("receiveAddress.selectAddress.title"),
-    addressOptionLabels: {
-      transparent: t("receiveAddress.addressOptions.transparent"),
-      shielded: t("receiveAddress.addressOptions.shielded"),
-    },
-    copyLabel: t("receiveAddress.actions.copy"),
-    copiedLabel: t("receiveAddress.actions.copied"),
-    shareLabel: t("receiveAddress.actions.share"),
-    verifyLabel: t("receiveAddress.actions.verify"),
-    verifyHintMessage: t("receiveAddress.verifyHint.message"),
-    verifyHintGotIt: t("receiveAddress.verifyHint.gotIt"),
-    noticeTexts: {
-      utxo: t("receiveAddress.notices.utxo"),
-      taproot: t("receiveAddress.notices.taproot"),
-      dashStaking: t("receiveAddress.notices.dashStaking"),
-      tronInactiveAccount: t("receiveAddress.notices.tronInactiveAccount"),
-      tezosDelegation: t("receiveAddress.notices.tezosDelegation"),
-      zcashPrivateNotEnabled: t("receiveAddress.notices.zcashPrivateNotEnabled"),
-      unverifiableAddress: t("receiveAddress.notices.unverifiableAddress"),
-    },
-    learnMoreLabel: t("receiveAddress.notices.learnMore"),
-    serviceWarningCta: t("receiveAddress.serviceStatus.cta"),
-    serviceStatusTitle: t("receiveAddress.serviceStatus.title"),
-    gotItLabel: t("receiveAddress.gotIt"),
-    memoTitle: t("receiveAddress.memoTag.title"),
-    memoDescription: t("receiveAddress.memoTag.description"),
-    helpCardTitle: t("receiveAddress.help.cardTitle"),
-    helpTitle: t("receiveAddress.help.title"),
-    helpQuestions: {
-      receiveFromExchange: t("receiveAddress.help.receiveFromExchange"),
-      receiveSecurely: t("receiveAddress.help.receiveSecurely"),
-    },
-    sanctionedTitle: t("receiveAddress.sanctioned.title"),
-    sanctionedDescription: address => t("receiveAddress.sanctioned.description", { address }),
-    closeLabel: t("receiveAddress.close"),
-    onboardingTitle: t("receiveAddress.onboarding.title"),
-    onboardingDescription: t("receiveAddress.onboarding.description"),
-    activationTitle: t("receiveAddress.activation.title"),
-    activationDescriptions: {
-      association: t("receiveAddress.activation.association"),
-      optIn: t("receiveAddress.activation.optIn"),
-      trustline: t("receiveAddress.activation.trustline"),
-      authorize: t("receiveAddress.activation.authorize"),
-    },
-    continueLabel: t("receiveAddress.continue"),
-  };
+  return useMemo(
+    () => ({
+      title: t("receiveAddress.title", { asset: assetTicker }),
+      networkLabel: t("receiveAddress.networkLabel", { network: networkName }),
+      errorTitle: t("receiveAddress.error.title"),
+      errorDescription: t("receiveAddress.error.description"),
+      retryLabel: t("receiveAddress.error.retry"),
+      selectAddressTitle: t("receiveAddress.selectAddress.title"),
+      addressOptionLabels: {
+        transparent: t("receiveAddress.addressOptions.transparent"),
+        shielded: t("receiveAddress.addressOptions.shielded"),
+      },
+      copyLabel: t("receiveAddress.actions.copy"),
+      copiedLabel: t("receiveAddress.actions.copied"),
+      shareLabel: t("receiveAddress.actions.share"),
+      verifyLabel: t("receiveAddress.actions.verify"),
+      verifyHintMessage: t("receiveAddress.verifyHint.message"),
+      verifyHintGotIt: t("receiveAddress.verifyHint.gotIt"),
+      noticeTexts: {
+        utxo: t("receiveAddress.notices.utxo"),
+        taproot: t("receiveAddress.notices.taproot"),
+        dashStaking: t("receiveAddress.notices.dashStaking"),
+        tronInactiveAccount: t("receiveAddress.notices.tronInactiveAccount"),
+        tezosDelegation: t("receiveAddress.notices.tezosDelegation"),
+        zcashPrivateNotEnabled: t("receiveAddress.notices.zcashPrivateNotEnabled"),
+        unverifiableAddress: t("receiveAddress.notices.unverifiableAddress"),
+      },
+      learnMoreLabel: t("receiveAddress.notices.learnMore"),
+      serviceWarningCta: t("receiveAddress.serviceStatus.cta"),
+      serviceStatusTitle: t("receiveAddress.serviceStatus.title"),
+      gotItLabel: t("receiveAddress.gotIt"),
+      memoTitle: t("receiveAddress.memoTag.title"),
+      memoDescription: t("receiveAddress.memoTag.description"),
+      helpCardTitle: t("receiveAddress.help.cardTitle"),
+      helpTitle: t("receiveAddress.help.title"),
+      helpQuestions: {
+        receiveFromExchange: t("receiveAddress.help.receiveFromExchange"),
+        receiveSecurely: t("receiveAddress.help.receiveSecurely"),
+      },
+      sanctionedTitle: t("receiveAddress.sanctioned.title"),
+      sanctionedDescription: address => t("receiveAddress.sanctioned.description", { address }),
+      closeLabel: t("receiveAddress.close"),
+      backLabel: t("receiveAddress.back"),
+      onboardingTitle: t("receiveAddress.onboarding.title"),
+      onboardingDescription: t("receiveAddress.onboarding.description"),
+      activationTitle: t("receiveAddress.activation.title"),
+      activationDescriptions: {
+        association: t("receiveAddress.activation.association"),
+        optIn: t("receiveAddress.activation.optIn"),
+        trustline: t("receiveAddress.activation.trustline"),
+        authorize: t("receiveAddress.activation.authorize"),
+      },
+      continueLabel: t("receiveAddress.continue"),
+    }),
+    [t, assetTicker, networkName],
+  );
 }
