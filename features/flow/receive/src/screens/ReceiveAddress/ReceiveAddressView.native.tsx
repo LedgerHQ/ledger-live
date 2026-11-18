@@ -16,7 +16,7 @@ import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
-import { dimmedWhile } from "./components/dimmedWhile";
+import { Dimmed } from "./components/Dimmed";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 const CONTENT_BOTTOM_SPACING = 16;
@@ -44,7 +44,7 @@ export function ReceiveAddressView({
   const { t } = useTranslation();
   const { top, bottom } = useSafeAreaInsets();
   // While the verify hint is open, everything but the hint and the action tiles steps back.
-  const dimmed = dimmedWhile(!!actions.verifyHint);
+  const isHintOpen = !!actions.verifyHint;
 
   return (
     <Box
@@ -52,16 +52,18 @@ export function ReceiveAddressView({
       style={{ paddingTop: top }}
       testID="receive-address"
     >
-      <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }} {...dimmed}>
-        <IconButton
-          icon={onBack ? ArrowLeft : Close}
-          appearance="no-background"
-          size="md"
-          onPress={onBack ?? onClose}
-          accessibilityLabel={onBack ? t("receiveAddress.back") : t("receiveAddress.close")}
-          testID="receive-address-close"
-        />
-      </Box>
+      <Dimmed isDimmed={isHintOpen}>
+        <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }}>
+          <IconButton
+            icon={onBack ? ArrowLeft : Close}
+            appearance="no-background"
+            size="md"
+            onPress={onBack ?? onClose}
+            accessibilityLabel={onBack ? t("receiveAddress.back") : t("receiveAddress.close")}
+            testID="receive-address-close"
+          />
+        </Box>
+      </Dimmed>
       {addressSelection ? (
         <Box lx={{ gap: "s16", padding: "s16" }}>
           <Text typography="heading2SemiBold" lx={{ color: "base" }}>
@@ -84,13 +86,13 @@ export function ReceiveAddressView({
             paddingBottom: CONTENT_BOTTOM_SPACING + bottom,
           }}
         >
-          <Box {...dimmed}>
+          <Dimmed isDimmed={isHintOpen}>
             <ReceiveAddressTitle
               title={title}
               networkLabel={networkLabel}
               networkIcon={networkIcon}
             />
-          </Box>
+          </Dimmed>
           {sanctioned ? (
             <SanctionedAddress sanctioned={sanctioned} />
           ) : error ? (
@@ -108,7 +110,7 @@ export function ReceiveAddressView({
             />
           ) : (
             <>
-              <Box {...dimmed}>
+              <Dimmed isDimmed={isHintOpen}>
                 {isLoading || !address ? (
                   <AddressSummarySkeleton />
                 ) : (
@@ -119,16 +121,16 @@ export function ReceiveAddressView({
                     copyKey={actions.copy?.buttonPresses}
                   />
                 )}
-              </Box>
+              </Dimmed>
               <AddressActions actions={actions} />
-              <Box {...dimmed}>
+              <Dimmed isDimmed={isHintOpen}>
                 <ReceiveAddressNotices notices={notices} serviceWarning={serviceWarning} />
-              </Box>
+              </Dimmed>
             </>
           )}
-          <Box {...dimmed}>
+          <Dimmed isDimmed={isHintOpen}>
             <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
-          </Box>
+          </Dimmed>
         </ScrollView>
       )}
       {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
