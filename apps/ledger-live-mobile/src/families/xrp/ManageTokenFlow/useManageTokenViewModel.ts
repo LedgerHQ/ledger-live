@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -22,9 +24,22 @@ export function useIssuerFeeText(token: TokenCurrency): string | undefined {
   return formatIssuerFee(issuerFee.data, locale);
 }
 
-export function useManageTokenViewModel(props: Props) {
-  const { account } = useAccountScreen(props.route);
-  if (account?.type !== "Account") return { account: undefined, tokenAccounts: [] };
+export function useManageTokenViewModel({ navigation, route }: Props) {
+  const { account } = useAccountScreen(route);
 
-  return { account, tokenAccounts: getManageableTokenAccounts(account) };
+  const onEdit = useCallback(
+    (tokenAccount: XrpTokenAccount) => {
+      if (account?.type !== "Account") return;
+
+      navigation.navigate(ScreenName.XrpManageTokenSettings, {
+        accountId: tokenAccount.id,
+        parentId: account.id,
+      });
+    },
+    [account, navigation],
+  );
+
+  if (account?.type !== "Account") return { account: undefined, tokenAccounts: [], onEdit };
+
+  return { account, tokenAccounts: getManageableTokenAccounts(account), onEdit };
 }

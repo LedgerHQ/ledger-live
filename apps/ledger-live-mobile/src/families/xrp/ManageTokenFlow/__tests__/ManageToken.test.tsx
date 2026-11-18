@@ -1,4 +1,5 @@
 import React from "react";
+import { Linking, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
@@ -6,6 +7,7 @@ import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic"
 import { HttpResponse, http, server } from "@tests/server";
 import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
 import ManageToken from "../ManageToken";
 import type { XrpManageTokenFlowParamList } from "../types";
 import {
@@ -52,6 +54,10 @@ function makeAccountWithIssuer(contractAddress: string): Account {
   return { ...XRP_ACCOUNT, subAccounts: [tokenAccount] };
 }
 
+function EditDetailsStub(props: Readonly<{ route: { params: object } }>) {
+  return <Text testID="edit-details-params">{JSON.stringify(props.route.params)}</Text>;
+}
+
 function renderManageToken(account: Account) {
   return render(
     <Stack.Navigator>
@@ -60,6 +66,7 @@ function renderManageToken(account: Account) {
         component={ManageToken}
         initialParams={{ accountId: account.id }}
       />
+      <Stack.Screen name={ScreenName.XrpManageTokenSettings} component={EditDetailsStub} />
     </Stack.Navigator>,
     { overrideInitialState: overrideWithAccounts(account) },
   );
@@ -79,7 +86,7 @@ describe("XRP Manage assets", () => {
     const tokenName = await screen.findByText("RLUSD");
 
     expect(tokenName).toBeVisible();
-    expect(screen.getByText("Trust Line (IOU)")).toBeVisible();
+    expect(screen.getByText("Trust Line")).toBeVisible();
     expect(screen.getByText("1,000 RLUSD")).toBeVisible();
     expect(screen.getByText("Deactivated")).toBeVisible();
   });
@@ -120,13 +127,70 @@ describe("XRP Manage assets", () => {
     expect(screen.getByText("Activated")).toBeVisible();
   });
 
-  it("shows Edit and Delete disabled on an IOU card", async () => {
+  it("warns about a frozen token, tags its card and links to the support article", async () => {
+    const frozen = {
+      ...XRP_IOU_TOKEN_ACCOUNT,
+      xrpResources: { ...XRP_IOU_TOKEN_ACCOUNT.xrpResources, isLocked: true },
+    };
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { user } = renderManageToken({ ...XRP_ACCOUNT, subAccounts: [frozen] });
+
+    expect(await screen.findByText("Your RLUSD asset has been frozen")).toBeVisible();
+    expect(screen.getByText("Frozen")).toBeVisible();
+    await user.press(screen.getByText("Learn more"));
+
+    expect(openURL).toHaveBeenCalledTimes(1);
+    expect(openURL).toHaveBeenCalledWith(urls.errors.XrpTokenFrozen);
+    expect(screen.getByTestId(EDIT_BUTTON)).toBeEnabled();
+  });
+
+  it("puts the frozen warning right above the card of the frozen token", async () => {
+    const frozenMpt = {
+      ...XRP_MPT_TOKEN_ACCOUNT,
+      xrpResources: { isLocked: true },
+    };
+    renderManageToken({ ...XRP_ACCOUNT, subAccounts: [XRP_IOU_TOKEN_ACCOUNT, frozenMpt] });
+
+    await screen.findByText("Your Test MPT asset has been frozen");
+
+    const order = screen
+      .getAllByTestId(/^xrp-(frozen-banner|manage-asset)-ripple/)
+      .map(element => element.props.testID);
+    expect(order).toEqual([
+      `xrp-manage-asset-${xrpIouToken.id}`,
+      `xrp-frozen-banner-${xrpMptToken.id}`,
+      `xrp-manage-asset-${xrpMptToken.id}`,
+    ]);
+  });
+
+  it("shows no frozen warning or tag on a token that is not frozen", async () => {
+    renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
+
+    await screen.findByText("RLUSD");
+
+    expect(screen.queryByText("Your RLUSD asset has been frozen")).toBeNull();
+    expect(screen.queryByText("Frozen")).toBeNull();
+  });
+
+  it("shows Edit enabled and Delete disabled on an IOU card", async () => {
     renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
 
     const editButton = await screen.findByTestId(EDIT_BUTTON);
 
-    expect(editButton).toBeDisabled();
+    expect(editButton).toBeEnabled();
     expect(screen.getByTestId(DELETE_BUTTON)).toBeDisabled();
+  });
+
+  it("opens Edit details for the token account on Edit", async () => {
+    const { user } = renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
+
+    await user.press(await screen.findByTestId(EDIT_BUTTON));
+
+    const params = await screen.findByTestId("edit-details-params");
+    expect(JSON.parse(params.props.children)).toEqual({
+      accountId: XRP_IOU_TOKEN_ACCOUNT.id,
+      parentId: XRP_ACCOUNT_WITH_TOKEN.id,
+    });
   });
 
   it("lists an MPT token with Delete only, without limit, rippling or Edit", async () => {

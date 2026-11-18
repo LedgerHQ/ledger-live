@@ -1,5 +1,51 @@
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
+
+type TokenAccountParams = {
+  accountId: string;
+  parentId: string;
+};
+
+// The limit is a base-units string: route params must stay serializable, a BigNumber is not
+type BalanceLimit = Readonly<{ limit: string; isMaximum: boolean }>;
 
 export type XrpManageTokenFlowParamList = {
   [ScreenName.XrpManageTokenList]: { accountId: string };
+  [ScreenName.XrpManageTokenSettings]: TokenAccountParams & {
+    balanceLimit?: BalanceLimit;
+  };
+  [ScreenName.XrpManageTokenBalanceLimit]: TokenAccountParams & {
+    balanceLimit: BalanceLimit;
+  };
+  [ScreenName.XrpManageTokenSelectDevice]: TokenAccountParams & {
+    token: TokenCurrency;
+    transaction: Transaction;
+    status: TransactionStatus;
+  };
+  [ScreenName.XrpManageTokenConnectDevice]: TokenAccountParams & {
+    device: Device;
+    token: TokenCurrency;
+    transaction: Transaction;
+    status: TransactionStatus;
+    appName?: string;
+    selectDeviceLink?: boolean;
+    onSuccess?: (payload: unknown) => void;
+    onError?: (error: Error) => void;
+    analyticsPropertyFlow?: string;
+    forceSelectDevice?: boolean;
+  };
+  [ScreenName.XrpManageTokenValidationError]: TokenAccountParams & {
+    deviceId: string;
+    transaction: Transaction;
+    error: Error;
+  };
+  [ScreenName.XrpManageTokenValidationSuccess]: TokenAccountParams & {
+    deviceId: string;
+    token: TokenCurrency;
+    transaction: Transaction;
+    result: Operation;
+  };
 };

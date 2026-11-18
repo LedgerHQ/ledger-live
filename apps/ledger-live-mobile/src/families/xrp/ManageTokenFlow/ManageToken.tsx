@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import {
+  Banner,
   Box,
   Button,
   Card,
@@ -16,13 +17,9 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
-  InteractiveIcon,
+  Tag,
   Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -35,6 +32,8 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
+import { urls } from "~/utils/urls";
+import { InfoTooltip } from "../components/InfoTooltip";
 import { OWNER_RESERVE } from "../utils";
 import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
 
@@ -49,26 +48,7 @@ function Row(
     <DescriptionItem size="sm">
       <DescriptionItemLeading>
         <DescriptionItemLabel>{props.label}</DescriptionItemLabel>
-        {props.info ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <InteractiveIcon
-                icon={Information}
-                size={16}
-                iconType="stroked"
-                accessibilityLabel={props.label}
-              />
-            </TooltipTrigger>
-            <TooltipContent
-              title={props.label}
-              content={
-                <Text typography="body1" lx={{ color: "base" }}>
-                  {props.info}
-                </Text>
-              }
-            />
-          </Tooltip>
-        ) : null}
+        {props.info ? <InfoTooltip title={props.label} info={props.info} /> : null}
       </DescriptionItemLeading>
       <DescriptionItemTrailing>
         <DescriptionItemValue>{props.children}</DescriptionItemValue>
@@ -121,7 +101,35 @@ function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
-function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAccount }>) {
+function FrozenBanner(props: Readonly<{ token: TokenCurrency }>) {
+  const { t } = useTranslation();
+
+  return (
+    <Banner
+      appearance="warning"
+      title={t("xrp.manageAssets.frozenTitle", { token: props.token.name })}
+      description={t("errors.XrpTokenFrozen.description")}
+      primaryAction={
+        <Button
+          appearance="transparent"
+          size="sm"
+          onPress={() => Linking.openURL(urls.errors.XrpTokenFrozen)}
+        >
+          {t("common.learnMore")}
+        </Button>
+      }
+      testID={`xrp-frozen-banner-${props.token.id}`}
+    />
+  );
+}
+
+function TokenCard(
+  props: Readonly<{
+    account: Account;
+    tokenAccount: XrpTokenAccount;
+    onEdit: (tokenAccount: XrpTokenAccount) => void;
+  }>,
+) {
   const { t } = useTranslation();
 
   const { token, xrpResources } = props.tokenAccount;
@@ -143,7 +151,12 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
         <CardLeading>
           <TokenIcon token={token} networkId={networkId} networkTicker={currency.ticker} />
           <CardContent>
-            <CardContentTitle>{token.name}</CardContentTitle>
+            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
+              <CardContentTitle>{token.name}</CardContentTitle>
+              {xrpResources?.isLocked ? (
+                <Tag size="sm" appearance="gray" label={t("xrp.manageAssets.frozen")} />
+              ) : null}
+            </Box>
             <CardContentDescription>
               {shortAddressPreview(props.account.freshAddress)}
             </CardContentDescription>
@@ -195,7 +208,7 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
               appearance="gray"
               size="sm"
               lx={{ flex: 1 }}
-              disabled
+              onPress={() => props.onEdit(props.tokenAccount)}
               testID={`xrp-manage-asset-edit-${token.id}`}
             >
               {t("xrp.manageAssets.edit")}
@@ -224,7 +237,7 @@ export default function ManageToken(props: Props) {
     [],
   );
 
-  const { account, tokenAccounts } = useManageTokenViewModel(props);
+  const { account, tokenAccounts, onEdit } = useManageTokenViewModel(props);
   if (!account) return null;
 
   return (
@@ -240,7 +253,12 @@ export default function ManageToken(props: Props) {
           </Text>
         ) : (
           tokenAccounts.map(tokenAccount => (
-            <TokenCard key={tokenAccount.id} account={account} tokenAccount={tokenAccount} />
+            <Box key={tokenAccount.id} lx={{ gap: "s12" }}>
+              {tokenAccount.xrpResources?.isLocked ? (
+                <FrozenBanner token={tokenAccount.token} />
+              ) : null}
+              <TokenCard account={account} tokenAccount={tokenAccount} onEdit={onEdit} />
+            </Box>
           ))
         )}
       </ScrollView>

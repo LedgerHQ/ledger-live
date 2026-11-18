@@ -1,6 +1,8 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
 import {
   enabledXrpTokenStandards,
@@ -35,6 +37,56 @@ export function getManageableTokenAccounts(account: Account): XrpTokenAccount[] 
 
     return isHeld && isStandardEnabled;
   });
+}
+
+export function applyTrustLineEdit(
+  account: Account,
+  tokenAccountId: string,
+  edit: Readonly<{ limit: BigNumber; isRippling: boolean }>,
+): Account {
+  const subAccounts = account.subAccounts?.map(subAccount => {
+    const { xrpResources } = subAccount as XrpTokenAccount;
+    if (subAccount.id !== tokenAccountId || !xrpResources) return subAccount;
+
+    return { ...subAccount, xrpResources: { ...xrpResources, ...edit } };
+  });
+
+  return { ...account, subAccounts };
+}
+
+function getNumberSeparators(locale: string) {
+  const sample = new Intl.NumberFormat(locale).format(1000000.1);
+  const match = sample.match(/^1(\D)000\D000(\D)1$/);
+
+  return { group: match?.[1] ?? ",", decimal: match?.[2] ?? "." };
+}
+
+export function formatLimitText(text: string, locale: string): string {
+  const { group, decimal } = getNumberSeparators(locale);
+  const digitsAndSeparators = text.replace(/\s/g, "").replaceAll(group, "");
+  const [integer = "", fraction] = digitsAndSeparators
+    .replace(/[.,]/g, ".")
+    .replace(/[^\d.]/g, "")
+    .split(".");
+  const groupedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, group);
+
+  return typeof fraction === "string" ? `${groupedInteger}${decimal}${fraction}` : groupedInteger;
+}
+
+// The field shows the ticker after the number: what is typed beside or into it is not a digit
+export function readLimitInput(text: string, limitText: string, ticker: string): string {
+  const suffix = ` ${ticker}`;
+  if (limitText === "" || text.includes(suffix)) return text.replace(suffix, "");
+
+  const display = `${limitText}${suffix}`;
+  return text === display.slice(0, -1) ? limitText.slice(0, -1) : text;
+}
+
+export function parseLimitText(unit: Unit, text: string, locale: string): BigNumber {
+  const { group, decimal } = getNumberSeparators(locale);
+  const plainText = text.replace(/\s/g, "").replaceAll(group, "").replace(decimal, ".");
+
+  return parseCurrencyUnit(unit, plainText);
 }
 
 export function formatIssuerFee(fee: string, locale: string): string {
