@@ -1744,6 +1744,64 @@ describe("coin-framework utils", () => {
       });
     });
 
+    describe("fee asset", () => {
+      const usdt = { type: "erc20", assetReference: "0xUsdt" };
+      const paidIn = (feesAsset: CoreOperation["tx"]["feesAsset"], failed = false) =>
+        adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          tx: { ...baseOp.tx, failed, feesAsset, feesPayer: "sender1" },
+        });
+
+      it.each([
+        ["native", { type: "native" as const }],
+        ["absent", undefined],
+      ])("keeps the native fee when the fee asset is %s", (_case, feesAsset) => {
+        const result = paidIn(feesAsset);
+
+        expect(result.value).toEqual(new BigNumber(110));
+        expect(result.fee).toEqual(new BigNumber(10));
+        expect(result.extra).not.toHaveProperty("feeAsset");
+        expect(result.extra).not.toHaveProperty("feeAmount");
+      });
+
+      it("leaves a fee paid in a token out of the native value and fee, and keeps it in extra", () => {
+        const result = paidIn(usdt);
+
+        expect(result.value).toEqual(new BigNumber(100));
+        expect(result.fee).toEqual(new BigNumber(0));
+        expect(result.extra).toEqual({
+          feePayer: "sender1",
+          feeAsset: { type: "erc20", assetReference: "0xUsdt" },
+          feeAmount: "10",
+        });
+      });
+
+      it("gives a failed transaction paid in a token a zero value and no token amount", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          asset: { type: "erc20", assetReference: "0xDai", assetOwner: "sender1" },
+          details: { assetAmount: "500" },
+          tx: { ...baseOp.tx, failed: true, feesAsset: usdt, feesPayer: "sender1" },
+        });
+
+        expect(result.value).toEqual(new BigNumber(0));
+        expect(result.fee).toEqual(new BigNumber(0));
+        expect(result.extra).not.toHaveProperty("assetAmount");
+        expect(result.extra).toMatchObject({ feeAsset: usdt, feeAmount: "10" });
+      });
+
+      it("keeps the token amount of a failed transaction paid in the native coin", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          asset: { type: "erc20", assetReference: "0xDai", assetOwner: "sender1" },
+          details: { assetAmount: "500" },
+          tx: { ...baseOp.tx, failed: true },
+        });
+
+        expect(result.extra).toMatchObject({ assetAmount: "500" });
+      });
+    });
+
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
         ...baseOp,
