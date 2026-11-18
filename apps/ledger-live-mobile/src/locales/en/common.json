@@ -8545,8 +8545,26 @@
         "text": "It applies once the network confirms the transaction."
       }
     },
+    "manageAssets": {
+      "cta": "Manage",
+      "title": "Manage assets",
+      "empty": "This account has no tokens yet.",
+      "tokenType": "Token type",
+      "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "iou": "Trust Line (IOU)",
+      "mpt": "Multi Purpose Token",
+      "issuer": "Issuer",
+      "transferFee": "Transfer fee",
+      "transferFeeInfo": "The share of each transfer between holders that the issuer takes.",
+      "transferFeeUnavailable": "Not available",
+      "lockedAmount": "Locked amount",
+      "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "tokenSettings": {
       "limit": "Trust limit",
+      "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum"
@@ -8556,6 +8574,8 @@
     },
     "rippling": {
       "label": "Rippling",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
       "on": "On",
       "off": "Off",
       "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
