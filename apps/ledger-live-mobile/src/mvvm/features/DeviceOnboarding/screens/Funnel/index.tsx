@@ -10,6 +10,7 @@ import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitC
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
 import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
+import { UnseededSuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import {
   useDeviceOnboardingFunnelViewModel,
@@ -26,6 +27,9 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );
+  }
+  if (screen.status === "unseededSuccessKaraoke") {
+    return <UnseededSuccessKaraokeScreen {...screen.unseededSuccessKaraoke} />;
   }
   if (screen.status === "checks") {
     return (

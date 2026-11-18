@@ -12,6 +12,7 @@ export function Glow({
   showTop = true,
   showBottom = false,
   delayMs = 0,
+  canvasColor = "#000000",
   params,
   fallback,
   testID,
@@ -48,6 +49,7 @@ export function Glow({
       showTop={showTop}
       showBottom={showBottom}
       delayMs={delayMs}
+      canvasColor={canvasColor}
       onShaderError={event => {
         console.warn(`[Glow] ${event.nativeEvent.message}`);
         setHasFailed(true);

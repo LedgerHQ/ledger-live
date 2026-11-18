@@ -6,6 +6,8 @@ import { Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { SyncOfferScreen } from "LLM/features/DeviceOnboarding/screens/SyncOffer";
+import { UnseededSuccessKaraokeView } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
+import { useTranslation } from "~/context/Locale";
 import { RecoverKaraokePreview } from "./RecoverKaraokePreview";
 import type { SyncOfferScreenProps } from "LLM/features/DeviceOnboarding/screens/SyncOffer/useSyncOfferScreenViewModel";
 import type {
@@ -25,7 +27,7 @@ const checkPreviews: readonly ChecksScreenState[] = [
 
 const syncPreviews = ["offer"] as const;
 
-const karaokePreviews = ["unseededIntro", "recoverCopy1", "recoverCopy2"] as const;
+const karaokePreviews = ["unseededIntro", "unseededOutro", "recoverCopy1", "recoverCopy2"] as const;
 
 const errorPreviews: readonly GenuineErrorKind[] = [
   "declined",
@@ -71,6 +73,10 @@ export function DeviceOnboardingDebugView({
         onClose={onClosePreview}
       />
     );
+  }
+
+  if (isScreenOpen && preview === "unseededOutro") {
+    return <UnseededOutroPreview onClose={onClosePreview} />;
   }
 
   if (isScreenOpen && preview === "recoverCopy1") {
@@ -125,6 +131,21 @@ export function DeviceOnboardingDebugView({
         />
       </Box>
     </SafeAreaView>
+  );
+}
+
+function UnseededOutroPreview({ onClose }: Readonly<{ onClose: () => void }>) {
+  const { t } = useTranslation();
+  return (
+    <UnseededSuccessKaraokeView
+      phrases={[
+        t("deviceOnboarding.karaoke.success.allSet"),
+        t("deviceOnboarding.karaoke.success.timeToExplore"),
+      ]}
+      tapLabel={t("deviceOnboarding.karaoke.tapToContinue")}
+      actionLabel={t("deviceOnboarding.karaoke.success.cta")}
+      onAction={onClose}
+    />
   );
 }
 

@@ -38,6 +38,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
 
 const seedPathByStep = new Map<OnboardingStep, SeedPath>([
   [OnboardingStep.NewDevice, SeedPath.NewSeed],
+  [OnboardingStep.NewDeviceConfirming, SeedPath.NewSeed],
   [OnboardingStep.RestoreSeed, SeedPath.RestorePhrase],
   [OnboardingStep.RecoverRestore, SeedPath.Recover],
   [OnboardingStep.RestoreCharon, SeedPath.RecoveryKey],

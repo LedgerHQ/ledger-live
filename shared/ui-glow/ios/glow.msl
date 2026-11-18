@@ -33,7 +33,9 @@ struct Uniforms {
   float balance;
   float contrast;
   float topReach;
-  float pad2[3];
+  float canvasR;
+  float canvasG;
+  float canvasB;
 };
 
 #define P_INTENSITY   u.intensity
@@ -188,6 +190,18 @@ static float3 glowColor(constant Uniforms &u, VertexOut in, float2 uv, float h, 
   return col;
 }
 
+constant float3 LUMA = float3(0.299, 0.587, 0.114);
+constant float3 LIGHT_TINT = float3(0.831, 0.627, 1.0);
+constant float LIGHT_GAIN = 3.0;
+constant float LIGHT_MAX = 0.25;
+
+static float3 onCanvas(constant Uniforms &u, float3 glow) {
+  float3 canvas = float3(u.canvasR, u.canvasG, u.canvasB);
+  if (dot(canvas, LUMA) < 0.5) return canvas + glow;
+  float amount = clamp(dot(glow, LUMA) * LIGHT_GAIN, 0.0, LIGHT_MAX);
+  return canvas * mix(float3(1.0), LIGHT_TINT, amount);
+}
+
 fragment float4 glow_fragment(VertexOut in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {
   float2 fragCoord = in.position.xy;
   float2 uv = fragCoord / u.res;
@@ -199,5 +213,5 @@ fragment float4 glow_fragment(VertexOut in [[stage_in]], constant Uniforms &u [[
   if (u.fadeBottom > 0.0) col += glowColor(u, in, uv, 1.0 - uv.y, px, t, 1.0) * smoothstep(0.0, 1.0, u.fadeBottom);
   col += (hash21(fragCoord * 0.39) - 0.5) * 0.009;
   col *= u.fade;
-  return float4(clamp(col, float3(0.0), float3(1.0)), 1.0);
+  return float4(clamp(onCanvas(u, col), float3(0.0), float3(1.0)), 1.0);
 }

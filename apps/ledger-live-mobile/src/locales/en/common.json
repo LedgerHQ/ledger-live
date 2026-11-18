@@ -2705,6 +2705,11 @@
         "nothingMoves": "Nothing moves without your say.",
         "setUp": "Let’s set it up.",
         "cta": "Check your device"
+      },
+      "success": {
+        "allSet": "You’re all set",
+        "timeToExplore": "Time to explore",
+        "cta": "Explore now"
       }
     },
     "checks": {
