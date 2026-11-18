@@ -188,12 +188,10 @@ pay-card-auth/
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test
     │   ├── hostTypes.ts                    # Types the host app passes in or reads back
-    │   ├── loginIntroSelectors.ts          # Login intro selectors, and its persistence lens
-    │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag
+    │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag, its selectors and persistence lens
     │   ├── machine.ts                      # States, guards and transitions
     │   ├── restoreCardAuthStatus.ts        # Signs in at boot from a stored session
-    │   ├── selectors.ts                    # Auth selectors
-    │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`)
+    │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`) and its selectors
     │   ├── store.ts                        # Public state subpath
     │   └── types.ts                        # Ports, machine types, Redux state
     ├── utils/                              # Flow-local helpers

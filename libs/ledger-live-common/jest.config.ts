@@ -29,7 +29,6 @@ const weeklyIntegrationTests = [
   "src/families/cosmos/datasets/cosmos.integration.test.ts",
   "src/families/cosmos/datasets/persistence.integration.test.ts",
   "src/families/cosmos/datasets/xion.integration.test.ts",
-  "src/families/mina/bridge.integration.test.ts",
 ];
 
 const weeklyIntegrationTestsRegex = weeklyIntegrationTests.map(

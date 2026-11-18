@@ -1457,6 +1457,10 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
+    "SolanaTxBlockhashExpired": {
+      "title": "Transaction has expired",
+      "description": "The network no longer accepts this transaction. Please try again to create a new one."
+    },
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
@@ -2701,6 +2705,11 @@
         "nothingMoves": "Nothing moves without your say.",
         "setUp": "Let’s set it up.",
         "cta": "Check your device"
+      },
+      "success": {
+        "allSet": "You’re all set",
+        "timeToExplore": "Time to explore",
+        "cta": "Explore now"
       }
     },
     "checks": {
@@ -2787,6 +2796,52 @@
       "restore": {
         "title": "Restore access",
         "recoveryPhraseDescription": "Secret Recovery Phrase"
+      },
+      "info": {
+        "cards": {
+          "setupChoice": "Which setup method?",
+          "recoveryPhrase": "What’s a Secret Recovery Phrase?",
+          "restoreChoice": "Choose a backup to restore from",
+          "recoveryKey": "What’s a Recovery Key?",
+          "restoreRecoveryKey": "What’s a Secret Recovery Key?"
+        },
+        "faq": "View complete FAQ",
+        "setupChoice": {
+          "title": "Set up or restore?",
+          "newDevice": {
+            "title": "Set up as a new Ledger device",
+            "description": "It generates your Secret Recovery Phrase. Choose if you don’t already have one."
+          },
+          "restore": {
+            "title": "Restore from backup",
+            "description": "Restore using an existing backup: Secret Recovery Phrase, Recovery Key, or Ledger Recover.",
+            "descriptionWithoutRecoveryKey": "Restore using an existing backup: Secret Recovery Phrase or Ledger Recover."
+          }
+        },
+        "recoveryPhrase": {
+          "title": "Secret Recovery Phrase",
+          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+        },
+        "restoreChoice": {
+          "recoveryPhrase": {
+            "title": "Secret Recovery Phrase",
+            "description": "Use the 12, 18 or 24 words you saved when setting up your wallet."
+          },
+          "recoveryKey": {
+            "title": "Ledger Recovery Key",
+            "description": "Use your offline, PIN-protected card to restore with a tap."
+          },
+          "recover": {
+            "title": "Ledger Recover subscription",
+            "description": "Verify your identity through your active subscription to restore access."
+          }
+        },
+        "recoveryKey": {
+          "title": "Recovery Key",
+          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost or replaced.",
+          "inTheBox": "A Recovery Key is included in the box of your device.",
+          "learnHowToUse": "Learn how to use"
+        }
       },
       "connection": {
         "reconnecting": {
@@ -8490,8 +8545,26 @@
         "text": "It applies once the network confirms the transaction."
       }
     },
+    "manageAssets": {
+      "cta": "Manage",
+      "title": "Manage assets",
+      "empty": "This account has no tokens yet.",
+      "tokenType": "Token type",
+      "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "iou": "Trust Line (IOU)",
+      "mpt": "Multi Purpose Token",
+      "issuer": "Issuer",
+      "transferFee": "Transfer fee",
+      "transferFeeInfo": "The share of each transfer between holders that the issuer takes.",
+      "transferFeeUnavailable": "Not available",
+      "lockedAmount": "Locked amount",
+      "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "tokenSettings": {
       "limit": "Trust limit",
+      "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum"
@@ -8501,6 +8574,8 @@
     },
     "rippling": {
       "label": "Rippling",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
       "on": "On",
       "off": "Off",
       "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."

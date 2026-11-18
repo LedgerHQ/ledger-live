@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { RecoveryKeyStatus } from "../types";
 import { ReadOnboardingVersionCommand } from "./onboardingVersionCommand";
-import { readRecoveryKeyStatus } from "./recoveryKeyStatus";
+import { deviceReportsRecoveryKey, readRecoveryKeyStatus } from "./recoveryKeyStatus";
 
 const flexBackupChoice = bytes(
   "33300004" +
@@ -141,6 +141,21 @@ describe("ReadOnboardingVersionCommand", () => {
 
     expect(result.data.secureElementFlags.onboardingState).toBe("device-is-ready");
     expect(result.data.recoveryKeyStatus).toBe(RecoveryKeyStatus.Choice);
+  });
+});
+
+describe("deviceReportsRecoveryKey", () => {
+  it.each([
+    [DeviceModelId.NANO_X, "2.4.0", false],
+    [DeviceModelId.NANO_SP, "1.3.0", false],
+    [DeviceModelId.STAX, "1.6.9", false],
+    [DeviceModelId.STAX, "1.7.0", true],
+    [DeviceModelId.FLEX, "1.2.9", false],
+    [DeviceModelId.FLEX, "1.3.0", true],
+    [DeviceModelId.STAX, "", false],
+    [undefined, "1.7.0", false],
+  ] as const)("should report %s on %s as %s", (model, version, expected) => {
+    expect(deviceReportsRecoveryKey(model, version)).toBe(expected);
   });
 });
 

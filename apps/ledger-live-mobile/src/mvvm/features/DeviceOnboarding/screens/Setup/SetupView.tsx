@@ -19,6 +19,7 @@ import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDr
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupGlow } from "./components/SetupGlow";
+import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
 import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
@@ -37,6 +38,7 @@ export function SetupView({
   stageTitle,
   stageDescription,
   currentStep,
+  completedSteps,
   totalSteps,
   status,
   closeLabel,
@@ -49,11 +51,13 @@ export function SetupView({
   onReopenFirmwareOffer,
   skipUpdateLabel,
   onSkipUpdate,
-  allowSheet,
   firmwareUpdate,
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  infoCard,
+  suspendInfoSheet,
+  reportsRecoveryKey,
   connection,
   productName,
   suspendSheets,
@@ -120,10 +124,19 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
+        <SetupInfo
+          card={infoCard}
+          suspendSheets={suspendInfoSheet}
+          reportsRecoveryKey={reportsRecoveryKey}
+        />
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>
-              <Stepper currentStep={currentStep} totalSteps={totalSteps} />
+              <Stepper
+                currentStep={completedSteps}
+                totalSteps={totalSteps}
+                label={`${currentStep}/${totalSteps}`}
+              />
               <CardContent>
                 <CardContentTitle>{stageTitle}</CardContentTitle>
                 {stageDescription ? (
@@ -138,7 +151,6 @@ export function SetupView({
         </Card>
       </Box>
       <ChecksDrawers
-        allowSheet={allowSheet}
         testIds={setupTestIds}
         firmwareUpdate={firmwareUpdate}
         unsupportedUpdate={unsupportedUpdate}

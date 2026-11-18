@@ -8,5 +8,3 @@ function SideBar() {
 }
 
 export default SideBar;
-export { useSideBarViewModel } from "./useSideBarViewModel";
-export type { SideBarViewModel } from "./types";

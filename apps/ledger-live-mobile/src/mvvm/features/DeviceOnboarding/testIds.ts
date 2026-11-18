@@ -4,6 +4,11 @@ export const unseededIntroKaraokeTestIds = {
   action: "device-onboarding-karaoke-action",
 } as const;
 
+export const unseededSuccessKaraokeTestIds = {
+  screen: "device-onboarding-success-karaoke",
+  action: "device-onboarding-success-karaoke-action",
+} as const;
+
 export const quitConfirmationTestIds = {
   sheet: "device-onboarding-quit-confirmation",
   continue: "device-onboarding-quit-confirmation-continue",

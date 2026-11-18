@@ -25,6 +25,7 @@ export type UnseededFunnelInput = {
   deviceNotGenuine: boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
+  reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
   suspendSheets: boolean;
@@ -47,6 +48,7 @@ export function useUnseededFunnelViewModel(
           machineState,
           currentStep: input.currentStep,
           modelId: device.modelId,
+          reportsRecoveryKey: input.reportsRecoveryKey,
         })
       : null;
   const holdsDuringSafetyWarning =
@@ -91,6 +93,7 @@ export function useUnseededFunnelViewModel(
       device,
       stage: visibleStage,
       suspendSheets: input.suspendSheets,
+      reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
       checks: checksState
         ? {
@@ -118,6 +121,7 @@ function sameStage(next: SetupStage, held: SetupStage | null) {
     held.index === next.index &&
     held.total === next.total &&
     held.indicator === next.indicator &&
-    held.detail === next.detail
+    held.detail === next.detail &&
+    held.infoCard === next.infoCard
   );
 }

@@ -296,6 +296,16 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  /**
+   * Dialog mounted once in GlobalDialogs, opened with `openFamilyDialog`, unmounted on close.
+   */
+  AccountDialog?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+    params: unknown;
+    onClose: () => void;
+  }>;
+
   AccountFooter?: React.ComponentType<{
     account: A | TokenAccount;
     parentAccount?: A | undefined | null;

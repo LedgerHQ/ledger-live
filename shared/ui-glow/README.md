@@ -21,6 +21,7 @@ import { Glow } from "@shared/ui-glow/native";
 ```
 
 - `showTop` / `showBottom`: the glow at each edge (default: top only). A change waits `delayMs`, then takes 1 s. Both glows fade (ease in and out) at the same time, so a swap is a crossfade.
+- `canvasColor`: the screen color behind the glow (default black). Pass the theme canvas (Lumen `bg.canvas`). On a dark canvas the glow is added as light. On a light canvas it tints the canvas with lavender (`#D4A0FF`, at most 25%, so it stays light), as in the light mode design.
 - `params`: overrides of `GLOW_DEFAULTS`, the knobs from the designer's playground (`GlowParams`).
 - `fallback`: a static glow, shown only if the shader cannot run.
 

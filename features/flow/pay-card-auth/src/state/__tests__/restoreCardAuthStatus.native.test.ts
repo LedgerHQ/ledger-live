@@ -1,8 +1,7 @@
 import { getCardSessionToken } from "@features/platform-card";
 import { configureStore } from "@reduxjs/toolkit";
 import { restoreCardAuthStatus } from "../restoreCardAuthStatus";
-import { selectCardAuthStatus } from "../selectors";
-import { payCardAuthSlice, setSignedIn } from "../slice";
+import { payCardAuthSlice, selectCardAuthStatus, setSignedIn } from "../slice";
 
 jest.mock("@features/platform-card", () => ({
   getCardSessionToken: jest.fn(async () => "at_token"),

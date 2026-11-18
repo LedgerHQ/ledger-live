@@ -12,6 +12,7 @@
 #import "RCTGlowView.h"
 
 #import <MetalKit/MetalKit.h>
+#import <React/RCTConversions.h>
 
 #import <react/renderer/components/SharedUiGlowSpec/ComponentDescriptors.h>
 #import <react/renderer/components/SharedUiGlowSpec/EventEmitters.h>
@@ -53,7 +54,9 @@ typedef struct {
   float balance;
   float contrast;
   float topReach;
-  float pad2[3];
+  float canvasR;
+  float canvasG;
+  float canvasB;
 } GlowUniforms;
 static_assert(sizeof(GlowUniforms) == 96, "must match `Uniforms` in glow.msl");
 
@@ -269,6 +272,7 @@ struct GlowFade {
 {
   const auto &newProps = *std::static_pointer_cast<GlowViewProps const>(props);
   [self copyDesignParams:newProps];
+  [self setCanvasColor:RCTUIColorFromSharedColor(newProps.canvasColor)];
   [self showTop:newProps.showTop bottom:newProps.showBottom afterMs:newProps.delayMs];
   [super updateProps:props oldProps:oldProps];
   [self loadPipelineOnce];
@@ -289,6 +293,17 @@ struct GlowFade {
   _params.balance = newProps.glowBalance;
   _params.contrast = newProps.glowContrast;
   _params.topReach = newProps.glowTopReach;
+}
+
+- (void)setCanvasColor:(UIColor *)color
+{
+  CGFloat red = 0, green = 0, blue = 0, alpha = 1;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  _params.canvasR = (float)red;
+  _params.canvasG = (float)green;
+  _params.canvasB = (float)blue;
+  _mtkView.clearColor = MTLClearColorMake(red, green, blue, 1);
+  _mtkView.paused = NO;
 }
 
 // The first props show at once. A later change waits `delayMs`, then fades.
@@ -374,7 +389,7 @@ struct GlowFade {
     return;
   }
   id<MTLCommandBuffer> commands = [_queue commandBuffer];
-  id<MTLRenderCommandEncoder> encoder = [commands renderCommandEncoderWithDescriptor:pass]; // clears to black
+  id<MTLRenderCommandEncoder> encoder = [commands renderCommandEncoderWithDescriptor:pass]; // clears to the canvas color
   if (_pipeline) {
     GlowUniforms uniforms = [self uniformsFor:view now:now isReduceMotion:isReduceMotion];
     [encoder setRenderPipelineState:_pipeline];

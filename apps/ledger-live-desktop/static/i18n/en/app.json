@@ -8402,6 +8402,10 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
+    "SolanaTxBlockhashExpired": {
+      "title": "Transaction has expired",
+      "description": "The network no longer accepts this transaction. Please try again to create a new one."
+    },
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
