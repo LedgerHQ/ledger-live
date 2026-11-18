@@ -37,6 +37,7 @@ test.describe("Operations history", () => {
       await app.operationDrawer.expectOperationDetailsVisible(clickedRow);
       await app.operationDrawer.closeDrawer();
 
+      await app.layout.waitForSyncButtonToBeEnabled({ slowSync: true });
       await app.history.clickExportCsv();
       await app.history.selectFirstAccountForExport();
       await app.history.expectExportButtonEnabled();
