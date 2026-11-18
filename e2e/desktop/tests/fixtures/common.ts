@@ -84,7 +84,10 @@ type TestFixtures = {
   }[];
   localManifestOverride?: LiveAppManifest[];
   /** Entries written to localStorage of webviews on hosts starting with `hostnamePrefix`, before they load. */
-  webviewLocalStorage?: { hostnamePrefix: string; entries: Record<string, string> };
+  webviewLocalStorage?: {
+    hostnamePrefix: string;
+    entries: Record<string, string> | (() => Promise<Record<string, string>>);
+  };
   /** Coin-config keys merged over the default and remote config, as Developer settings would. */
   coinConfigOverrides?: Record<string, unknown>;
   teamOwner?: Team;
@@ -339,10 +342,14 @@ export const test = base.extend<TestFixtures>({
     });
 
     if (webviewLocalStorage) {
-      await electronApp.context().addInitScript(({ hostnamePrefix, entries }) => {
-        if (!location.hostname.startsWith(hostnamePrefix)) return;
-        for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
-      }, webviewLocalStorage);
+      const { hostnamePrefix, entries } = webviewLocalStorage;
+      await electronApp.context().addInitScript(
+        ({ hostnamePrefix, entries }) => {
+          if (!location.hostname.startsWith(hostnamePrefix)) return;
+          for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
+        },
+        { hostnamePrefix, entries: typeof entries === "function" ? await entries() : entries },
+      );
     }
 
     await use(electronApp);

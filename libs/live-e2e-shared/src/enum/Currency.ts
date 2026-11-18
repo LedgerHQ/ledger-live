@@ -44,6 +44,14 @@ export class Currency {
 
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
+  // Addresses derive through the Ethereum app.
+  static readonly HYPERCORE = new Currency(
+    "Hyperliquid",
+    "HYPE",
+    "hypercore",
+    AppInfos.ETHEREUM,
+    [],
+  );
   static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
     Network.HEDERA,
   ]);
