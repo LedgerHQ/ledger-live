@@ -4,7 +4,7 @@ Debug controls for the new receive flow, one section per concern:
 
 - **Feature flag**: turns `newReceiveFlow` on or off, and sets the families that keep the legacy receive flow (`excludedFamilies`).
 - **Verify hint**: a switch for whether the popover pointing at Verify shows on the next receive; on again, the hint shows again.
-- **Sanctioned address**: makes the receive screen treat every address as sanctioned, to show its blocked state. The host holds the switch for the session.
+- **Sanctioned address**: makes the receive screen treat every address as sanctioned, to show its blocked state. The switch lives in the `receiveSimulation` slice of `@features/flow-receive/state`, which the apps register but don't persist: it is off again on restart.
 - **Deeplink**: fires a receive deeplink (`ledgerwallet://receive?currency=ethereum` by default) as the OS would. **Open** stays disabled until the input holds a valid URL.
 - **Receive list**: opens receive on any account's coin or token in one tap, or from the asset selection step.
 

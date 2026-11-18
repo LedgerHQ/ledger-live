@@ -5,6 +5,7 @@ import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import {
   closeReceiveAddressDialog,
+  selectIsSanctionSimulated,
   toReceiveServiceIncidents,
   type ReceiveAddressProps,
   type ReceiveAddressDialogTarget,
@@ -21,7 +22,6 @@ import type { State } from "~/renderer/reducers";
 import { openModal } from "~/renderer/actions/modals";
 import { openURL } from "~/renderer/linking";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 
 const simulateSanctionedAddress = async () => true;
@@ -51,7 +51,7 @@ export function useReceiveAddressDialogViewModel({
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(() => toReceiveServiceIncidents(incidents), [incidents]);
-  const { isSimulated: isSanctionSimulated } = useSanctionSimulation();
+  const isSanctionSimulated = useSelector(selectIsSanctionSimulated);
   const checkAddressSanctioned = useMemo(() => {
     if (isSanctionSimulated) return simulateSanctionedAddress;
     return network && ((address: string) => isAddressSanctioned(network, address));

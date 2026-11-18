@@ -16,6 +16,8 @@ import {
   markReceiveVerifyHintSeen,
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
+  selectIsSanctionSimulated,
+  setSanctionSimulated,
 } from "@features/flow-receive/state";
 import { setOverride } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
@@ -121,13 +123,7 @@ function useReceiveAssets(): readonly ReceiveToolAsset[] {
   );
 }
 
-/** Simulating a sanctioned address is the host's: its receive screen reads the switch. */
-export type ReceiveToolSanctions = ReceiveToolProps["sanctions"];
-
-export function useReceiveToolProps(
-  trigger: ReceiveToolTrigger,
-  sanctions: ReceiveToolSanctions,
-): ReceiveToolProps {
+export function useReceiveToolProps(trigger: ReceiveToolTrigger): ReceiveToolProps {
   const dispatch = useDispatch();
   const flag = useFeature("newReceiveFlow");
   const assets = useReceiveAssets();
@@ -136,6 +132,12 @@ export function useReceiveToolProps(
   const enabled = !!flag?.enabled;
   const excludedFamilies = flag?.params?.excludedFamilies ?? NO_FAMILIES;
   const hasSeenVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
+  const isSanctionSimulated = useSelector(selectIsSanctionSimulated);
+
+  const setSimulated = useCallback(
+    (isSimulated: boolean) => dispatch(setSanctionSimulated(isSimulated)),
+    [dispatch],
+  );
 
   const setHasSeenVerifyHint = useCallback(
     (hasSeen: boolean) =>
@@ -170,7 +172,7 @@ export function useReceiveToolProps(
       flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies },
       trigger: { ...openers, assets },
       verifyHint: { hasSeen: hasSeenVerifyHint, setHasSeen: setHasSeenVerifyHint },
-      sanctions,
+      sanctions: { isSimulated: isSanctionSimulated, setSimulated },
     }),
     [
       enabled,
@@ -181,7 +183,8 @@ export function useReceiveToolProps(
       assets,
       hasSeenVerifyHint,
       setHasSeenVerifyHint,
-      sanctions,
+      isSanctionSimulated,
+      setSimulated,
     ],
   );
 }

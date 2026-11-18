@@ -52,7 +52,7 @@ import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
-import { receiveVerifyHintSlice } from "@features/flow-receive/state";
+import { receiveSimulationSlice, receiveVerifyHintSlice } from "@features/flow-receive/state";
 import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { accountAnalyticsIntroductionSlice } from "@features/flow-account-detail-analytics-notice/state";
@@ -114,6 +114,7 @@ const appReducer = combineReducers({
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   receiveVerifyHint: receiveVerifyHintSlice.reducer,
+  receiveSimulation: receiveSimulationSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   mockServerOverlay: mockServerOverlaySlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,

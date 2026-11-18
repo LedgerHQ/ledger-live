@@ -38,7 +38,6 @@ import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletS
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
-import { useSanctionSimulation } from "../../../Receive/hooks/useSanctionSimulation";
 import { getStoreValue, setStoreValue } from "~/store";
 
 const LIVE_APP_STORE: LiveAppStore = { get: getStoreValue, set: setStoreValue };
@@ -125,7 +124,7 @@ export function useDevToolsScreenViewModel() {
     getDefaultValueByKey: getLiveConfigDefaultValue,
   });
   const accountDetailToolProps = useAccountDetailToolProps();
-  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger(), useSanctionSimulation());
+  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger());
   const predictionsSetupHooks = usePredictionsSetupHooks();
   const predictionsSetup = useMemo<PredictionsSetup>(
     () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),

@@ -60,6 +60,8 @@ import {
 } from "@features/flow-pay-feature-tour/state";
 import {
   receiveAddressDialogSlice,
+  receiveSimulationSlice,
+  type ReceiveSimulationState,
   receiveVerifyHintSlice,
   type ReceiveAddressDialogState,
   type ReceiveVerifyHintState,
@@ -150,6 +152,7 @@ export type State = LLDRTKApiState & {
   payCardFeatureTour: PayCardFeatureTourState;
   receiveVerifyHint: ReceiveVerifyHintState;
   receiveAddressDialog: ReceiveAddressDialogState;
+  receiveSimulation: ReceiveSimulationState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -207,6 +210,7 @@ const appReducer = combineReducers({
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   receiveVerifyHint: receiveVerifyHintSlice.reducer,
   receiveAddressDialog: receiveAddressDialogSlice.reducer,
+  receiveSimulation: receiveSimulationSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

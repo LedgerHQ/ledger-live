@@ -8,7 +8,7 @@ import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { mockAccountAssetBalance } from "@domain/entity-account-balance/schema.mock";
 import { accountNamesSlice, setAccountName } from "@domain/entity-account-name";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { receiveVerifyHintSlice } from "@features/flow-receive/state";
+import { receiveSimulationSlice, receiveVerifyHintSlice } from "@features/flow-receive/state";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -49,6 +49,7 @@ function buildStore() {
       accountBalances: accountBalancesSlice.reducer,
       wallet: combineReducers({ accountNames: accountNamesSlice.reducer }),
       receiveVerifyHint: receiveVerifyHintSlice.reducer,
+      receiveSimulation: receiveSimulationSlice.reducer,
       [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
     },
     preloadedState: {
@@ -76,8 +77,6 @@ function buildStore() {
   return store;
 }
 
-const sanctions = { isSimulated: false, setSimulated: jest.fn() };
-
 function mockTrigger(): ReceiveToolTrigger {
   return { onReceive: jest.fn(), onPickAsset: jest.fn(), onOpenDeeplink: jest.fn() };
 }
@@ -88,8 +87,7 @@ function renderTool(trigger: ReceiveToolTrigger = mockTrigger()) {
     <Provider store={store}>{children}</Provider>
   );
   const { result, rerender } = renderHook(
-    ({ hostTrigger }: { hostTrigger: ReceiveToolTrigger }) =>
-      useReceiveToolProps(hostTrigger, sanctions),
+    ({ hostTrigger }: { hostTrigger: ReceiveToolTrigger }) => useReceiveToolProps(hostTrigger),
     { wrapper, initialProps: { hostTrigger: trigger } },
   );
   return { store, result, rerender };
@@ -108,10 +106,13 @@ describe("useReceiveToolProps", () => {
     expect(result.current.verifyHint.hasSeen).toBe(false);
   });
 
-  it("passes the host's sanctioned address switch through", () => {
-    const { result } = renderTool();
+  it("should simulate a sanctioned address for the receive screen when switched on", () => {
+    const { result, store } = renderTool();
 
-    expect(result.current.sanctions).toBe(sanctions);
+    act(() => result.current.sanctions.setSimulated(true));
+
+    expect(store.getState().receiveSimulation.isSanctionSimulated).toBe(true);
+    expect(result.current.sanctions.isSimulated).toBe(true);
   });
 
   it("reads the flag off with no excluded family by default", () => {

@@ -12,7 +12,7 @@ import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock"
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
-import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
+import { setSanctionSimulated } from "@features/flow-receive/state";
 import { useReceiveAddressDialogViewModel } from "./useReceiveAddressDialogViewModel";
 
 jest.mock("~/renderer/families", () => ({ useLLDCoinFamily: jest.fn() }));
@@ -64,14 +64,15 @@ describe("useReceiveAddressDialogViewModel", () => {
     );
   });
 
-  it("treats every address as sanctioned while DevTools simulates it", async () => {
+  it("should treat every address as sanctioned when DevTools simulates it", async () => {
     jest.mocked(useLLDCoinFamily).mockReturnValue({});
-    const { result } = renderViewModel();
-    const tool = renderHook(() => useSanctionSimulation());
+    const { result, store } = renderViewModel();
 
-    act(() => tool.result.current.setSimulated(true));
+    act(() => {
+      store.dispatch(setSanctionSimulated(true));
+    });
+
     await expect(result.current.checkAddressSanctioned?.("0xabc")).resolves.toBe(true);
-    act(() => tool.result.current.setSimulated(false));
   });
 
   it("should open the legacy receive modal on the account when it hands over", async () => {

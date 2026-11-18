@@ -36,7 +36,7 @@ export interface ReceiveVerifyHintSectionProps {
   readonly setHasSeen: (hasSeen: boolean) => void;
 }
 
-/** Held by the host for the session: its receive screen reads it in place of the sanctions list. */
+/** For the session only: the receive screen reads it in place of the sanctions list. */
 export interface ReceiveSanctionsSectionProps {
   /** Every address the receive screen shows counts as sanctioned. */
   readonly isSimulated: boolean;
