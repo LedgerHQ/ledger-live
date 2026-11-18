@@ -58,7 +58,7 @@ function gatewayFor(party: string, topologyChangeRequired: boolean) {
   server.use(
     http.get(`${partyUrl}/balance`, ({ params }) =>
       params.party === party
-        ? HttpResponse.json(createMockInstrumentBalances(1, { utxo_count: 11 }))
+        ? HttpResponse.json(createMockInstrumentBalances(1, { utxo_count: 7 }))
         : unknownRequest(),
     ),
     http.get(partyUrl, ({ params }) =>
