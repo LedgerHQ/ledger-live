@@ -44,14 +44,14 @@ const renderTool = ({
 };
 
 describe("Receive", () => {
-  it("simulates a sanctioned address", async () => {
+  it("should simulate a sanctioned address", async () => {
     const { sanctions } = renderTool();
 
     await userEvent.click(screen.getByRole("switch", { name: "Simulate a sanctioned address" }));
     expect(sanctions.setSimulated).toHaveBeenCalledWith(true);
   });
 
-  it("marks the verify hint as seen", async () => {
+  it("should mark the verify hint as seen", async () => {
     const { verifyHint } = renderTool();
 
     const toggle = screen.getByRole("switch", { name: "Show the hint on the next receive" });
@@ -60,7 +60,7 @@ describe("Receive", () => {
     expect(verifyHint.setHasSeen).toHaveBeenCalledWith(true);
   });
 
-  it("shows the verify hint again", async () => {
+  it("should show the verify hint again", async () => {
     const { verifyHint } = renderTool({ hasSeen: true });
 
     await userEvent.click(
@@ -69,7 +69,7 @@ describe("Receive", () => {
     expect(verifyHint.setHasSeen).toHaveBeenCalledWith(false);
   });
 
-  it("puts the receive list last", () => {
+  it("should put the receive list last", () => {
     renderTool();
 
     expect(screen.getAllByRole("heading").map(heading => heading.textContent)).toEqual([
@@ -81,7 +81,7 @@ describe("Receive", () => {
     ]);
   });
 
-  it("turns the flag on", async () => {
+  it("should turn the flag on", async () => {
     const { flag } = renderTool();
 
     expect(screen.getByRole("heading", { name: "Feature flag" })).toBeVisible();
@@ -89,7 +89,7 @@ describe("Receive", () => {
     expect(flag.setEnabled).toHaveBeenCalledWith(true);
   });
 
-  it("applies the excluded families typed in the input", async () => {
+  it("should apply the excluded families typed in the input", async () => {
     const { flag } = renderTool({ enabled: true, excludedFamilies: ["tron"] });
 
     const input = screen.getByDisplayValue("tron");
@@ -99,7 +99,7 @@ describe("Receive", () => {
     expect(flag.setExcludedFamilies).toHaveBeenCalledWith(["bitcoin", "tezos"]);
   });
 
-  it("lists every asset with its network", () => {
+  it("should list every asset with its network", () => {
     renderTool();
 
     expect(screen.getByText("Ethereum 1")).toBeVisible();
@@ -107,7 +107,7 @@ describe("Receive", () => {
     expect(screen.getAllByText("Ethereum")).toHaveLength(2);
   });
 
-  it("opens receive on the tapped asset", async () => {
+  it("should open receive on the tapped asset", async () => {
     const { trigger } = renderTool();
 
     await userEvent.click(screen.getByRole("button", { name: "USD Coin, Ethereum" }));
@@ -117,27 +117,27 @@ describe("Receive", () => {
     });
   });
 
-  it("opens receive from the asset selection", async () => {
+  it("should open receive from the asset selection", async () => {
     const { trigger } = renderTool();
 
     await userEvent.click(screen.getByRole("button", { name: "Pick an asset" }));
     expect(trigger.onPickAsset).toHaveBeenCalledTimes(1);
   });
 
-  it("tells there is no account when the list is empty", () => {
+  it("should tell there is no account when the list is empty", () => {
     renderTool({ assets: [] });
 
     expect(screen.getByText("No account yet: pick an asset to add one.")).toBeVisible();
   });
 
-  it("opens the prefilled receive deeplink", async () => {
+  it("should open the prefilled receive deeplink", async () => {
     const { trigger } = renderTool();
 
     await userEvent.click(screen.getByRole("button", { name: "Open" }));
     expect(trigger.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive?currency=ethereum");
   });
 
-  it("opens the deeplink typed in the input", async () => {
+  it("should open the deeplink typed in the input", async () => {
     const { trigger } = renderTool();
 
     const input = screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum");
@@ -147,7 +147,7 @@ describe("Receive", () => {
     expect(trigger.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive?currency=bitcoin");
   });
 
-  it.each(["", "not-a-url"])("does not open the invalid deeplink %p", async url => {
+  it.each(["", "not-a-url"])("should do not open the invalid deeplink %p", async url => {
     const { trigger } = renderTool();
 
     const input = screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum");

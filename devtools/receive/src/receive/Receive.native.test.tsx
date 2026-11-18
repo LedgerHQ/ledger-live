@@ -43,28 +43,28 @@ const renderTool = ({
 };
 
 describe("Receive", () => {
-  it("simulates a sanctioned address", () => {
+  it("should simulate a sanctioned address", () => {
     const { sanctions } = renderTool();
 
     fireEvent(screen.getByLabelText("Simulate a sanctioned address"), "onCheckedChange", true);
     expect(sanctions.setSimulated).toHaveBeenCalledWith(true);
   });
 
-  it("marks the verify hint as seen", () => {
+  it("should mark the verify hint as seen", () => {
     const { verifyHint } = renderTool();
 
     fireEvent(screen.getByLabelText("Show the hint on the next receive"), "onCheckedChange", false);
     expect(verifyHint.setHasSeen).toHaveBeenCalledWith(true);
   });
 
-  it("shows the verify hint again", () => {
+  it("should show the verify hint again", () => {
     const { verifyHint } = renderTool({ hasSeen: true });
 
     fireEvent(screen.getByLabelText("Show the hint on the next receive"), "onCheckedChange", true);
     expect(verifyHint.setHasSeen).toHaveBeenCalledWith(false);
   });
 
-  it("turns the flag on", () => {
+  it("should turn the flag on", () => {
     const { flag } = renderTool();
 
     expect(screen.getByText("Feature flag")).toBeOnTheScreen();
@@ -72,7 +72,7 @@ describe("Receive", () => {
     expect(flag.setEnabled).toHaveBeenCalledWith(true);
   });
 
-  it("applies the excluded families typed in the input", () => {
+  it("should apply the excluded families typed in the input", () => {
     const { flag } = renderTool({ enabled: true, excludedFamilies: ["tron"] });
 
     fireEvent.changeText(screen.getByDisplayValue("tron"), " bitcoin, , tezos ");
@@ -80,7 +80,7 @@ describe("Receive", () => {
     expect(flag.setExcludedFamilies).toHaveBeenCalledWith(["bitcoin", "tezos"]);
   });
 
-  it("lists every asset with its network", () => {
+  it("should list every asset with its network", () => {
     renderTool();
 
     expect(screen.getByText("Ethereum 1")).toBeOnTheScreen();
@@ -88,7 +88,7 @@ describe("Receive", () => {
     expect(screen.getAllByText("Ethereum")).toHaveLength(2);
   });
 
-  it("opens receive on the tapped asset", () => {
+  it("should open receive on the tapped asset", () => {
     const { trigger } = renderTool();
 
     fireEvent.press(screen.getByLabelText("USD Coin, Ethereum"));
@@ -98,20 +98,20 @@ describe("Receive", () => {
     });
   });
 
-  it("opens receive from the asset selection", () => {
+  it("should open receive from the asset selection", () => {
     const { trigger } = renderTool();
 
     fireEvent.press(screen.getByText("Pick an asset"));
     expect(trigger.onPickAsset).toHaveBeenCalledTimes(1);
   });
 
-  it("tells there is no account when the list is empty", () => {
+  it("should tell there is no account when the list is empty", () => {
     renderTool({ assets: [] });
 
     expect(screen.getByText("No account yet: pick an asset to add one.")).toBeOnTheScreen();
   });
 
-  it("opens the deeplink typed in the input", () => {
+  it("should open the deeplink typed in the input", () => {
     const { trigger } = renderTool();
 
     fireEvent.changeText(
@@ -122,7 +122,7 @@ describe("Receive", () => {
     expect(trigger.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive?currency=bitcoin");
   });
 
-  it.each(["", "not-a-url"])("does not open the invalid deeplink %p", url => {
+  it.each(["", "not-a-url"])("should do not open the invalid deeplink %p", url => {
     const { trigger } = renderTool();
 
     fireEvent.changeText(screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum"), url);

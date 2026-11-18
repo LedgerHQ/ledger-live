@@ -30,7 +30,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressHelp>[0]> =
 describe("useReceiveAddressHelp", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("opens the help from its card", () => {
+  it("should open the help from its card", () => {
     const { result, open } = setup();
 
     expect(result.current.helpCard?.title).toBe("Need support? Get help");
@@ -42,7 +42,7 @@ describe("useReceiveAddressHelp", () => {
     );
   });
 
-  it("lists the support questions, each opening its article", () => {
+  it("should list the support questions, each opening its article", () => {
     const { result, onOpenUrl } = setup({ isOpen: true });
 
     expect(trackPage).toHaveBeenCalledWith(expect.objectContaining({ category: "Receive - Help" }));
@@ -58,7 +58,7 @@ describe("useReceiveAddressHelp", () => {
     );
   });
 
-  it("offers no help where the app opens no link", () => {
+  it("should offer no help where the app opens no link", () => {
     const { result } = setup({ onOpenUrl: undefined, isOpen: true });
 
     expect(result.current).toEqual({ helpCard: undefined, helpPanel: undefined });

@@ -50,7 +50,7 @@ const renderViewModel = (entry = tronEntry) =>
   );
 
 describe("useReceiveAddressScreenViewModel", () => {
-  it("gives the screen the mobile verification, clipboard and share sheet", () => {
+  it("should give the screen the mobile verification, clipboard and share sheet", () => {
     const { result } = renderViewModel();
 
     expect(result.current).toEqual(
@@ -62,7 +62,7 @@ describe("useReceiveAddressScreenViewModel", () => {
     );
   });
 
-  it("shares the address through the system share sheet", () => {
+  it("should share the address through the system share sheet", () => {
     const { result } = renderViewModel();
 
     result.current.onShareAddress?.("TXYZ");
@@ -70,7 +70,7 @@ describe("useReceiveAddressScreenViewModel", () => {
     expect(Share.open).toHaveBeenCalledWith({ message: "TXYZ", failOnCancel: false });
   });
 
-  it("reads the account's family config", () => {
+  it("should read the account's family config", () => {
     const { result } = renderViewModel();
 
     expect(

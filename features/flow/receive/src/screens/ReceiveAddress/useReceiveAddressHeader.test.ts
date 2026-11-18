@@ -12,7 +12,11 @@ describe("useReceiveAddressHeader", () => {
     });
 
     expect(result.current).toEqual(
-      expect.objectContaining({ title: "Receive ETH", networkLabel: "Ethereum network" }),
+      expect.objectContaining({
+        title: "Receive ETH",
+        networkLabel: "Ethereum network",
+        asset: expect.objectContaining({ id: "ethereum", type: "CryptoCurrency" }),
+      }),
     );
     expect(result.current.data?.networkIcon).toEqual({ ledgerId: "ethereum", ticker: "ETH" });
   });

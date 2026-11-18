@@ -37,7 +37,7 @@ const VerifyAddressExecutor = ({ selection }: UseVerifyAddressExecutorViewModelP
 );
 
 describe("ReceiveAddress (Web)", () => {
-  it("opens as a dialog that closes from its header", async () => {
+  it("should open as a dialog that closes from its header", async () => {
     const onClose = jest.fn();
     renderScreen(onClose, makeReceiveTestStore(), { source: "Account Page" });
 
@@ -52,14 +52,14 @@ describe("ReceiveAddress (Web)", () => {
     });
   });
 
-  it("names the asset and its network in the header", () => {
+  it("should name the asset and its network in the header", () => {
     renderScreen();
 
     expect(screen.getByText("Receive ETH")).toBeVisible();
     expect(screen.getByText("Ethereum network")).toBeVisible();
   });
 
-  it("holds the place of the address with skeletons until it is read", async () => {
+  it("should hold the place of the address with skeletons until it is read", async () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
@@ -67,7 +67,7 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
   });
 
-  it("shows the address with its first and last characters apart", async () => {
+  it("should show the address with its first and last characters apart", async () => {
     renderScreen();
 
     const text = await screen.findByTestId("receive-address-text");
@@ -76,7 +76,7 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByText("f6d8976F")).toBeVisible();
   });
 
-  it("lets a Zcash account pick its private address, then go back to the choice", async () => {
+  it("should let a Zcash account pick its private address, then go back to the choice", async () => {
     const shielded = "u1shieldedaddressexample0000000000000000000000000000";
     const receive = jest.fn(async () => mockAccountReceive({ shielded: { address: shielded } }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
@@ -90,21 +90,21 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-options")).toBeVisible();
   });
 
-  it("offers Retry when the address cannot be read, then shows it", async () => {
+  it("should offer Retry when the address cannot be read, then show it", async () => {
     const receive = jest
       .fn()
       .mockRejectedValueOnce(new Error("sync failed"))
       .mockResolvedValue(testReceive);
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
 
-    await userEvent.setup().click(await screen.findByTestId("receive-address-retry"));
+    await userEvent.setup().click(await screen.findByRole("button", { name: "Retry" }));
 
     expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
     expect(screen.queryByTestId("receive-address-error")).toBeNull();
     expect(receive).toHaveBeenCalledTimes(2);
   });
 
-  it("never shows an address on the sanctions list", async () => {
+  it("should never show an address on the sanctions list", async () => {
     const onClose = jest.fn();
     const onOpenUrl = jest.fn();
     const checkAddressSanctioned = jest.fn(async () => true);
@@ -128,7 +128,7 @@ describe("ReceiveAddress (Web)", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("keeps the skeletons while the sanctions check runs", async () => {
+  it("should keep the skeletons while the sanctions check runs", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       checkAddressSanctioned: () => new Promise<boolean>(() => {}),
     });
@@ -153,17 +153,17 @@ describe("ReceiveAddress (Web)", () => {
     expect(onUseLegacyFlow).toHaveBeenCalled();
   });
 
-  it("copies the address from the Copy tile", async () => {
+  it("should copy the address from the Copy tile", async () => {
     const onCopyAddress = jest.fn(async () => true);
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
 
-    await userEvent.setup().click(await screen.findByTestId("receive-address-copy"));
+    await userEvent.setup().click(await screen.findByRole("button", { name: "Copy" }));
 
     expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
-    expect(screen.getByTestId("receive-address-copy")).toHaveTextContent("Copied");
+    expect(screen.getByRole("button", { name: "Copied" })).toBeVisible();
   });
 
-  it("points at Verify until the hint is dismissed, then verifies on the device", async () => {
+  it("should point at Verify until the hint is dismissed, then verify on the device", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
     const user = userEvent.setup();
 
@@ -171,19 +171,19 @@ describe("ReceiveAddress (Web)", () => {
     await user.click(screen.getByRole("button", { name: "Got it" }));
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
 
-    await user.click(screen.getByTestId("receive-address-verify"));
+    await user.click(screen.getByRole("button", { name: "Verify" }));
     expect(screen.getByTestId("verify-executor")).toHaveTextContent(testReceive.verification!.path);
   });
 
-  it("disables Verify for an address the device cannot show", async () => {
+  it("should disable Verify for an address the device cannot show", async () => {
     const receive = jest.fn(async () => mockAccountReceive({ verification: undefined }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { VerifyAddressExecutor });
 
-    expect(await screen.findByTestId("receive-address-verify")).toBeDisabled();
+    expect(await screen.findByRole("button", { name: "Verify" })).toBeDisabled();
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
   });
 
-  it("shows the family's notices and links them to their support article", async () => {
+  it("should show the family's notices and link them to their support article", async () => {
     const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
@@ -196,7 +196,7 @@ describe("ReceiveAddress (Web)", () => {
     expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
   });
 
-  it("opens a service incident from its banner, then goes back to the address", async () => {
+  it("should open a service incident from its banner, then go back to the address", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       serviceIncidents: [{ title: "Ethereum degraded", description: "Investigating" }],
     });
@@ -209,14 +209,14 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 
-  it("offers no memo card for an address without memo", async () => {
+  it("should offer no memo card for an address without memo", async () => {
     renderScreen();
 
     await screen.findByTestId("receive-address-summary");
     expect(screen.queryByTestId("receive-address-memo-card")).toBeNull();
   });
 
-  it("opens the memo panel from its card, then goes back to the address", async () => {
+  it("should open the memo panel from its card, then go back to the address", async () => {
     const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
     const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { onOpenUrl });
@@ -233,7 +233,7 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 
-  it("opens the help from its card, each question opening its article", async () => {
+  it("should open the help from its card, each question opening its article", async () => {
     const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), { onOpenUrl });
     const user = userEvent.setup();

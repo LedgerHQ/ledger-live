@@ -5,7 +5,7 @@ const T_ADDR = "t1Rv4exT7bqhZqi2j7xz8bUHDMxwosrjADU";
 const Z_ADDR = "u1shieldedaddressexample0000000000000000000000000000";
 
 describe("toReceiveAddressOptions", () => {
-  it("offers the account's address alone", () => {
+  it("should offer the account's address alone", () => {
     const receive = mockAccountReceive();
 
     expect(toReceiveAddressOptions(receive)).toEqual([
@@ -13,7 +13,7 @@ describe("toReceiveAddressOptions", () => {
     ]);
   });
 
-  it("offers the shielded address after the account's, each with its own memo", () => {
+  it("should offer the shielded address after the account's, each with its own memo", () => {
     const receive = mockAccountReceive({
       address: T_ADDR,
       verification: undefined,

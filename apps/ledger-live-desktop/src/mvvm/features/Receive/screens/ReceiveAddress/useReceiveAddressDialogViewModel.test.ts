@@ -36,7 +36,7 @@ const renderViewModel = () =>
   });
 
 describe("useReceiveAddressDialogViewModel", () => {
-  it("gives the screen the desktop verification and clipboard", () => {
+  it("should give the screen the desktop verification and clipboard", () => {
     jest.mocked(useLLDCoinFamily).mockReturnValue({});
     const { result } = renderViewModel();
 
@@ -51,7 +51,7 @@ describe("useReceiveAddressDialogViewModel", () => {
     expect(result.current.onShareAddress).toBeUndefined();
   });
 
-  it("reads the family config with the legacy account the family still needs", () => {
+  it("should read the family config with the legacy account the family still needs", () => {
     const receiveAddressConfig = jest.fn(() => ({ notices: ["utxo" as const] }));
     jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveAddressConfig });
     const { result } = renderViewModel();

@@ -59,7 +59,7 @@ const VerifyAddressExecutor = () => {
 };
 
 describe("ReceiveAddress (Native)", () => {
-  it("names the asset and its network, with the network icon", () => {
+  it("should name the asset and its network, with the network icon", () => {
     renderScreen();
 
     expect(screen.getByText("Receive ETH")).toBeTruthy();
@@ -67,7 +67,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByText("icon:ethereum")).toBeTruthy();
   });
 
-  it("closes from the top bar", () => {
+  it("should close from the top bar", () => {
     const onClose = jest.fn();
     renderScreen(onClose);
 
@@ -75,7 +75,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("holds the place of the address with skeletons until it is read", async () => {
+  it("should hold the place of the address with skeletons until it is read", async () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
@@ -84,14 +84,14 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
   });
 
-  it("shows the address with its first and last characters apart", async () => {
+  it("should show the address with its first and last characters apart", async () => {
     renderScreen();
 
     expect(await screen.findByText("0x71C765")).toBeTruthy();
     expect(screen.getByText("f6d8976F")).toBeTruthy();
   });
 
-  it("lets a Zcash account pick its private address, then go back to the choice", async () => {
+  it("should let a Zcash account pick its private address, then go back to the choice", async () => {
     const shielded = "u1shieldedaddressexample0000000000000000000000000000";
     const receive = jest.fn(async () => mockAccountReceive({ shielded: { address: shielded } }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
@@ -104,7 +104,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByTestId("receive-address-options")).toBeTruthy();
   });
 
-  it("offers Retry when the address cannot be read, then shows it", async () => {
+  it("should offer Retry when the address cannot be read, then show it", async () => {
     const receive = jest
       .fn()
       .mockRejectedValueOnce(new Error("sync failed"))
@@ -117,7 +117,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(receive).toHaveBeenCalledTimes(2);
   });
 
-  it("never shows an address on the sanctions list", async () => {
+  it("should never show an address on the sanctions list", async () => {
     const onClose = jest.fn();
     renderScreen(onClose, makeReceiveTestStore(), {
       checkAddressSanctioned: async () => true,
@@ -148,7 +148,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(onUseLegacyFlow).toHaveBeenCalled();
   });
 
-  it("copies and shares the address", async () => {
+  it("should copy and share the address", async () => {
     const onCopyAddress = jest.fn(async () => true);
     const onShareAddress = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress, onShareAddress });
@@ -162,7 +162,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(await screen.findByText("Copied")).toBeTruthy();
   });
 
-  it("copies from a press on the QR code, and replays its animation from the Copy button", async () => {
+  it("should copy from a press on the QR code, and replay its animation from the Copy button", async () => {
     const onCopyAddress = jest.fn(async () => true);
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
 
@@ -175,7 +175,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(onCopyAddress).toHaveBeenCalledTimes(2);
   });
 
-  it("points at Verify until the hint is dismissed, then verifies on the device", async () => {
+  it("should point at Verify until the hint is dismissed, then verify on the device", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
 
     expect(await screen.findByTestId("receive-address-verify-hint")).toBeTruthy();
@@ -186,7 +186,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByTestId("verify-executor")).toBeTruthy();
   });
 
-  it("disables Verify for an address the device cannot show", async () => {
+  it("should disable Verify for an address the device cannot show", async () => {
     const receive = jest.fn(async () => mockAccountReceive({ verification: undefined }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { VerifyAddressExecutor });
 
@@ -194,7 +194,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
   });
 
-  it("shows the family's notices and links them to their support article", async () => {
+  it("should show the family's notices and link them to their support article", async () => {
     const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
@@ -206,7 +206,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
   });
 
-  it("opens a service incident in a bottom sheet from its banner", async () => {
+  it("should open a service incident in a bottom sheet from its banner", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       serviceIncidents: [{ title: "Ethereum degraded", description: "Investigating" }],
     });
@@ -218,7 +218,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
   });
 
-  it("opens the memo bottom sheet from its card", async () => {
+  it("should open the memo bottom sheet from its card", async () => {
     const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
 
@@ -229,7 +229,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
   });
 
-  it("opens the help bottom sheet from its card, each question opening its article", async () => {
+  it("should open the help bottom sheet from its card, each question opening its article", async () => {
     const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), { onOpenUrl });
 

@@ -48,7 +48,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressMemo>[0]> =
 describe("useReceiveAddressMemo", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("offers the memo card for an address senders can tag, and opens its panel", () => {
+  it("should offer the memo card for an address senders can tag, and open its panel", () => {
     const { result, open } = setup();
 
     expect(result.current.memoCard?.title).toBe("Need a Tag/Memo?");
@@ -60,16 +60,16 @@ describe("useReceiveAddressMemo", () => {
     );
   });
 
-  it("offers no memo card for an address without memo", () => {
+  it("should offer no memo card for an address without memo", () => {
     expect(setup({ selected: withoutMemo }).result.current.memoCard).toBeUndefined();
   });
 
-  it("follows the Zcash address shown: the private one only", () => {
+  it("should follow the Zcash address shown: the private one only", () => {
     expect(setup({ selected: transparent }).result.current.memoCard).toBeUndefined();
     expect(setup({ selected: shielded }).result.current.memoCard).toBeDefined();
   });
 
-  it("explains the memo in its panel, with the support article", () => {
+  it("should explain the memo in its panel, with the support article", () => {
     const { result, onOpenUrl, close } = setup({ isOpen: true });
 
     expect(trackPage).toHaveBeenCalledWith(

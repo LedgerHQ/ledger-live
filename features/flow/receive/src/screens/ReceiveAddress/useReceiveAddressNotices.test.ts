@@ -37,7 +37,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressNotices>[0]
 describe("useReceiveAddressNotices", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("shows the family's notices, with their support link", () => {
+  it("should show the family's notices, with their support link", () => {
     const { result, onOpenUrl } = setup();
 
     expect(result.current.notices).toEqual([
@@ -47,7 +47,7 @@ describe("useReceiveAddressNotices", () => {
     expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
   });
 
-  it("tells the device cannot show the address shown", () => {
+  it("should tell the device cannot show the address shown", () => {
     const { result } = setup({ selected: unverifiable });
 
     expect(result.current.notices.map(({ id }) => id)).toEqual([
@@ -56,13 +56,13 @@ describe("useReceiveAddressNotices", () => {
     ]);
   });
 
-  it("shows no notice before the address is shown", () => {
+  it("should show no notice before the address is shown", () => {
     const { result } = setup({ selected: undefined });
 
     expect(result.current.notices).toEqual([]);
   });
 
-  it("warns about a service incident, and opens it from its banner", () => {
+  it("should warn about a service incident, and open it from its banner", () => {
     const { result, openServiceStatus } = setup({
       serviceIncidents: [{ title: "Tron network degraded" }],
     });

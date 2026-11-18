@@ -94,7 +94,7 @@ function renderTool(trigger: ReceiveToolTrigger = mockTrigger()) {
 }
 
 describe("useReceiveToolProps", () => {
-  it("shows the verify hint again, then marks it as seen", () => {
+  it("should show the verify hint again, then mark it as seen", () => {
     const { result, store } = renderTool();
 
     expect(result.current.verifyHint.hasSeen).toBe(false);
@@ -115,14 +115,14 @@ describe("useReceiveToolProps", () => {
     expect(result.current.sanctions.isSimulated).toBe(true);
   });
 
-  it("reads the flag off with no excluded family by default", () => {
+  it("should read the flag off with no excluded family by default", () => {
     const { result } = renderTool();
 
     expect(result.current.flag.enabled).toBe(false);
     expect(result.current.flag.excludedFamilies).toEqual([]);
   });
 
-  it("turns the flag on and keeps the excluded families", () => {
+  it("should turn the flag on and keep the excluded families", () => {
     const { store, result } = renderTool();
 
     act(() => result.current.flag.setExcludedFamilies(["tron"]));
@@ -135,7 +135,7 @@ describe("useReceiveToolProps", () => {
     expect(result.current.flag).toMatchObject({ enabled: true, excludedFamilies: ["tron"] });
   });
 
-  it("lists each account by its name, or its coin name when it has none", () => {
+  it("should list each account by its name, or its coin name when it has none", () => {
     const { result } = renderTool();
 
     const coinRows = result.current.trigger.assets.filter(asset => !asset.networkId);
@@ -161,7 +161,7 @@ describe("useReceiveToolProps", () => {
     ]);
   });
 
-  it("lists each token of an account's balances, by its CAL name once CAL resolved it", async () => {
+  it("should list each token of an account's balances, by its CAL name once CAL resolved it", async () => {
     const { store, result } = renderTool();
 
     act(() => {
@@ -194,7 +194,7 @@ describe("useReceiveToolProps", () => {
     ]);
   });
 
-  it("names a token CAL resolved by its address", async () => {
+  it("should name a token CAL resolved by its address", async () => {
     const { store, result } = renderTool();
 
     act(() => {
@@ -231,7 +231,7 @@ describe("useReceiveToolProps", () => {
     warn.mockRestore();
   });
 
-  it("calls the host's latest openers through a stable trigger", () => {
+  it("should call the host's latest openers through a stable trigger", () => {
     const first = mockTrigger();
     const latest = mockTrigger();
     const { result, rerender } = renderTool(first);

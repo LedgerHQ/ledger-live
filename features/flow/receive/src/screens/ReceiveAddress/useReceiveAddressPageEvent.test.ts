@@ -20,7 +20,7 @@ const params = {
 describe("useReceiveAddressPageEvent", () => {
   beforeEach(() => jest.mocked(trackPage).mockClear());
 
-  it("sends the page once the address is shown, with the screen's state and its entry point", () => {
+  it("should send the page once the address is shown, with the screen's state and its entry point", () => {
     const { rerender } = renderHook(
       ({ shownKey }: { shownKey?: string }) => useReceiveAddressPageEvent({ ...params, shownKey }),
       { initialProps: {} },
@@ -47,7 +47,7 @@ describe("useReceiveAddressPageEvent", () => {
     });
   });
 
-  it("sends the page again for another address", () => {
+  it("should send the page again for another address", () => {
     const { rerender } = renderHook(
       ({ shownKey }: { shownKey?: string }) => useReceiveAddressPageEvent({ ...params, shownKey }),
       { initialProps: { shownKey: "t1transparent" } },

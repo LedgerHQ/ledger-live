@@ -13,7 +13,7 @@ const Z_ADDR = "u1shieldedaddressexample0000000000000000000000000000";
 describe("useReceiveAddressSelection", () => {
   beforeEach(() => jest.mocked(track).mockClear());
 
-  it("shows the only address right away", () => {
+  it("should show the only address right away", () => {
     const receive = mockAccountReceive();
     const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 
@@ -22,7 +22,7 @@ describe("useReceiveAddressSelection", () => {
     expect(result.current.backToSelection).toBeUndefined();
   });
 
-  it("selects nothing before the receive is read", () => {
+  it("should select nothing before the receive is read", () => {
     const { result } = renderHook(() => useReceiveAddressSelection(undefined, tracking));
 
     expect(result.current).toEqual(
@@ -30,7 +30,7 @@ describe("useReceiveAddressSelection", () => {
     );
   });
 
-  it("lets the user pick the shielded address of a Zcash account, then go back", () => {
+  it("should let the user pick the shielded address of a Zcash account, then go back", () => {
     const receive = mockAccountReceive({ shielded: { address: Z_ADDR } });
     const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 
@@ -52,7 +52,7 @@ describe("useReceiveAddressSelection", () => {
     expect(result.current.isSelecting).toBe(true);
   });
 
-  it("tracks the public address choice", () => {
+  it("should track the public address choice", () => {
     const receive = mockAccountReceive({ shielded: { address: Z_ADDR } });
     const { result } = renderHook(() => useReceiveAddressSelection(receive, tracking));
 

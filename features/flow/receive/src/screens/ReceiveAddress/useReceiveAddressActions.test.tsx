@@ -51,7 +51,7 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressActions>[0]
 describe("useReceiveAddressActions", () => {
   beforeEach(() => jest.mocked(track).mockClear());
 
-  it("copies the address, then tells it was copied", async () => {
+  it("should copy the address, then tell it was copied", async () => {
     const { result, onCopyAddress } = setup();
 
     await act(() => result.current.actions.copy!.onPress());
@@ -66,7 +66,7 @@ describe("useReceiveAddressActions", () => {
     );
   });
 
-  it("shares the address", () => {
+  it("should share the address", () => {
     const { result, onShareAddress } = setup();
 
     act(() => result.current.actions.share!.onPress());
@@ -78,7 +78,7 @@ describe("useReceiveAddressActions", () => {
     );
   });
 
-  it("offers no Share without a share sheet, no Verify without an executor", () => {
+  it("should offer no Share without a share sheet, no Verify without an executor", () => {
     const { result } = setup({ onShareAddress: undefined, hasVerifyExecutor: false });
 
     expect(result.current.actions.share).toBeUndefined();
@@ -86,7 +86,7 @@ describe("useReceiveAddressActions", () => {
     expect(result.current.actions.verifyHint).toBeUndefined();
   });
 
-  it("starts the device verification of the address shown, with the family's device models", () => {
+  it("should start the device verification of the address shown, with the family's device models", () => {
     const { result, store } = setup();
 
     act(() => result.current.actions.verify!.onPress());
@@ -104,7 +104,7 @@ describe("useReceiveAddressActions", () => {
     );
   });
 
-  it("disables Verify, with no hint, when the device cannot show the address", () => {
+  it("should disable Verify, with no hint, when the device cannot show the address", () => {
     const { result } = setup({ selected: unverifiable });
 
     expect(result.current.actions.verify?.disabled).toBe(true);
@@ -113,7 +113,7 @@ describe("useReceiveAddressActions", () => {
     expect(result.current.verification).toBeUndefined();
   });
 
-  it("invites the user to verify until they dismiss the hint once", () => {
+  it("should invite the user to verify until they dismiss the hint once", () => {
     const { result, store } = setup();
 
     expect(result.current.actions.verifyHint).toBeDefined();
@@ -127,7 +127,7 @@ describe("useReceiveAddressActions", () => {
     );
   });
 
-  it("does nothing before the address is shown", () => {
+  it("should do nothing before the address is shown", () => {
     const { result } = setup({ selected: undefined });
 
     expect(result.current.actions.disabled).toBe(true);

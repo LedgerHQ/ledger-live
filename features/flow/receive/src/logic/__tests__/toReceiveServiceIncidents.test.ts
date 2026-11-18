@@ -1,7 +1,7 @@
 import { toReceiveServiceIncidents } from "../toReceiveServiceIncidents";
 
 describe("toReceiveServiceIncidents", () => {
-  it("keeps the incidents on a component, with their latest update", () => {
+  it("should keep the incidents on a component, with their latest update", () => {
     expect(
       toReceiveServiceIncidents([
         {
