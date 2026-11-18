@@ -57,6 +57,8 @@ const nextQuit = () =>
 
 const settle = () => new Promise(process.nextTick);
 
+const nextImmediate = () => new Promise(setImmediate);
+
 describe("flushOnQuit", () => {
   beforeEach(() => {
     app.removeAllListeners();
@@ -64,8 +66,10 @@ describe("flushOnQuit", () => {
     jest.mocked(app.quit).mockReset();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.useRealTimers();
+    // The release of the last flush ends in a setImmediate.
+    await nextImmediate();
   });
 
   it("holds the quit until the renderer and then main have flushed", async () => {
@@ -98,6 +102,24 @@ describe("flushOnQuit", () => {
     );
 
     app.emit("before-quit", preventableEvent());
+    await quit;
+
+    expect(releasedEvent.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it("lets through the quit that the action starts in a setImmediate", async () => {
+    setupFlushOnQuit(asBrowserWindow(createWindow()), async () => {});
+    const releasedEvent = preventableEvent();
+    let quit: Promise<void> = Promise.resolve();
+
+    await flushThen(() => {
+      quit = new Promise<void>(resolve =>
+        setImmediate(() => {
+          app.emit("before-quit", releasedEvent);
+          resolve();
+        }),
+      );
+    });
     await quit;
 
     expect(releasedEvent.preventDefault).not.toHaveBeenCalled();
@@ -143,6 +165,7 @@ describe("flushOnQuit", () => {
     const flushMain = jest.fn(async () => {});
     setupFlushOnQuit(asBrowserWindow(createWindow()), flushMain);
     await flushThen(() => {});
+    await nextImmediate();
 
     const event = preventableEvent();
     const quit = nextQuit();
@@ -196,6 +219,7 @@ describe("flushOnQuit", () => {
     setupFlushOnQuit(asBrowserWindow(window), flushMain);
     window.emit("close", preventableEvent());
     await settle();
+    await nextImmediate();
 
     const quit = nextQuit();
     app.emit("before-quit", preventableEvent());
@@ -213,6 +237,7 @@ describe("flushOnQuit", () => {
     app.emit("before-quit", preventableEvent());
     await jest.advanceTimersByTimeAsync(RENDERER_FLUSH_TIMEOUT_MS);
     await quit;
+    await jest.runOnlyPendingTimersAsync();
 
     expect(flushMain).toHaveBeenCalled();
     expect(ipcMain.listenerCount(CHANNELS.flushWritesDone)).toBe(0);
@@ -259,6 +284,7 @@ describe("flushOnQuit with the database on disk", () => {
   });
 
   afterEach(async () => {
+    await nextImmediate();
     await fs.rm(dir, { recursive: true, force: true });
   });
 

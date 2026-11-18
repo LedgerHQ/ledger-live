@@ -43,7 +43,8 @@ let flushWrites: () => Promise<void> = () => Promise.resolve();
 let releasing = false;
 
 /**
- * Write the pending writes, then run `action`. The close and quit that `action` starts go through.
+ * Write the pending writes, then run `action`. The close and quit that `action` starts go through,
+ * also when it starts them in a `setImmediate`, as electron-updater `quitAndInstall` does.
  */
 export async function flushThen(action: () => void): Promise<void> {
   await flushWrites();
@@ -51,7 +52,9 @@ export async function flushThen(action: () => void): Promise<void> {
   try {
     action();
   } finally {
-    releasing = false;
+    setImmediate(() => {
+      releasing = false;
+    });
   }
 }
 
