@@ -11,11 +11,10 @@ import {
 import { CheckmarkCircleFill, DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 import { TrackScreen } from "@shared/analytics-react";
-import { HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME } from "../../../constants";
-
-const HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE = {
-  name: "successfully",
-} as const;
+import {
+  HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
+  HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
+} from "../../../constants";
 
 const VARIANTS = {
   success: {

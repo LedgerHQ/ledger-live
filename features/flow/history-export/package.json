@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -25,7 +26,9 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/analytics": "workspace:*",
     "@shared/analytics-react": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
@@ -51,6 +54,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
@@ -59,7 +63,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -72,6 +77,9 @@
       "optional": true
     },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     }
   }
