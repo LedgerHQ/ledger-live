@@ -201,12 +201,11 @@ export function useOperationsListViewModel(
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
 
   const openExport = useCallback(() => {
-    if (!isHistoryExportEnabled) return;
-
     closeOptionsSheet();
     track("ExportAccountOperations");
     setExportOpen(true);
-  }, [closeOptionsSheet, isHistoryExportEnabled]);
+  }, [closeOptionsSheet]);
+  const onExport = isHistoryExportEnabled ? openExport : undefined;
   const closeExport = useCallback(() => setExportOpen(false), []);
   const onHistoryTabChange = useCallback(
     (tab: HistoryTab) => {
@@ -248,10 +247,9 @@ export function useOperationsListViewModel(
     closeOptionsSheet,
     hideSmallValueTokenOperations: isDustFilterFeatureEnabled && userHideSmallValueTokenOperations,
     isDustFilterFeatureEnabled,
-    isHistoryExportEnabled,
     hasHistoryOptions,
+    onExport,
     isExportOpen,
-    openExport,
     closeExport,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,

@@ -48,9 +48,8 @@ export function OperationsListView({
     isOptionsSheetOpen,
     closeOptionsSheet,
     hasHistoryOptions,
-    isHistoryExportEnabled,
+    onExport,
     isExportOpen,
-    openExport,
     closeExport,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
@@ -154,7 +153,7 @@ export function OperationsListView({
           dustFilterOption={dustFilterOption}
           onClose={closeOptionsSheet}
           onToggle={onToggleHideSmallValueTokenOperations}
-          onExport={isHistoryExportEnabled ? openExport : undefined}
+          onExport={onExport}
         />
       ) : null}
       <HistoryExport isOpen={isExportOpen} onClose={closeExport} />

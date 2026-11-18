@@ -233,18 +233,16 @@ describe("useOperationsListViewModel", () => {
   });
 
   describe("history export", () => {
-    it("keeps the options sheet and the export closed when no history option flag is enabled", () => {
+    it("offers no export and keeps the options sheet closed when no history option flag is enabled", () => {
       const { result } = renderHook(() => useOperationsListViewModel());
 
-      expect(result.current.isHistoryExportEnabled).toBe(false);
+      expect(result.current.onExport).toBeUndefined();
       expect(result.current.hasHistoryOptions).toBe(false);
 
       act(() => result.current.openOptionsSheet());
-      act(() => result.current.openExport());
 
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.isExportOpen).toBe(false);
-      expect(mockedTrack).not.toHaveBeenCalledWith("ExportAccountOperations");
     });
 
     it("opens the options sheet with only the export flag enabled", () => {
@@ -266,7 +264,7 @@ describe("useOperationsListViewModel", () => {
       });
 
       act(() => result.current.openOptionsSheet());
-      act(() => result.current.openExport());
+      act(() => result.current.onExport?.());
 
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.isExportOpen).toBe(true);
