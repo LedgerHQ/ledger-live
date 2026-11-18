@@ -30,6 +30,10 @@ export type DeviceConnectionComponent = React.ComponentType<{
  * (installing/opening an app, performing derivation, etc.).
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
+ *
+ * The component is expected to show its own failures (e.g. unsupported app or
+ * firmware, initialization errors) with their actions: they never surface to
+ * the executor. The caller only learns that the user closed the executor.
  */
 export type DeviceContextInitializerComponent<
   InitInput = void,
@@ -38,6 +42,7 @@ export type DeviceContextInitializerComponent<
   connectionResult: DeviceConnectionResult;
   deviceInitializationInput: InitInput;
   onContextInitialized: (context: DeviceExtractedContext) => void;
+  /** Dependencies of the initializer (e.g. injected in tests). Lifecycle events are callback props, not config fields. */
   config?: InitializerConfig;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
