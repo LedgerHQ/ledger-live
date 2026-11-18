@@ -13,6 +13,11 @@ import {
   type PerpsWithdrawSignData,
 } from "../usePerpsWithdrawSignViewModel";
 
+const mockIsBroadcastDisabled = jest.fn();
+jest.mock("LLD/features/Perps/utils/isBroadcastDisabled", () => ({
+  isBroadcastDisabled: () => mockIsBroadcastDisabled(),
+}));
+
 const mockExecute = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute"),
@@ -78,7 +83,10 @@ function renderViewModel() {
 }
 
 describe("usePerpsWithdrawSignViewModel", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsBroadcastDisabled.mockReturnValue(false);
+  });
 
   it("should connect to the Ethereum app first", () => {
     const { result } = renderViewModel();
@@ -132,6 +140,39 @@ describe("usePerpsWithdrawSignViewModel", () => {
         operationId: "",
       }),
     ]);
+  });
+
+  it.each([true, false])(
+    "should pass the app's broadcast setting (%s) to the withdraw",
+    async disabled => {
+      mockIsBroadcastDisabled.mockReturnValue(disabled);
+      mockExecute.mockResolvedValue({ swapId: "swap-1" });
+      const { result, onClose } = renderViewModel();
+
+      act(() => result.current.handleDeviceResult(appResult));
+
+      await waitFor(() => expect(onClose).toHaveBeenCalled());
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ broadcastDisabled: disabled }),
+      );
+    },
+  );
+
+  it("should open the transaction signed screen without a swap id when nothing was submitted", async () => {
+    mockIsBroadcastDisabled.mockReturnValue(true);
+    mockExecute.mockResolvedValue({});
+    const { result, store, onClose } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
+      receiveCurrencyTicker: "ETH",
+      swapId: undefined,
+      provider: "swapkit_hyperliquid",
+    });
+    const receiver = store.getState().accounts.find(a => a.id === destinationAccount.id);
+    expect(receiver?.swapHistory ?? []).toEqual([]);
   });
 
   it("should reopen the summary when the withdrawal is declined on the device", async () => {

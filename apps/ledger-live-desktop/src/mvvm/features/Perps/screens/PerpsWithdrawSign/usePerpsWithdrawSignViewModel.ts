@@ -19,6 +19,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
+import { isBroadcastDisabled } from "LLD/features/Perps/utils/isBroadcastDisabled";
 import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import type { PerpsWithdrawSummaryData } from "../PerpsWithdrawSummary/usePerpsWithdrawSummaryViewModel";
@@ -87,6 +88,7 @@ export function usePerpsWithdrawSignViewModel(
           },
           targetCurrency: getAccountCurrency(destinationAccount).ticker,
           track,
+          broadcastDisabled: isBroadcastDisabled(),
           onSigned: () => {
             if (!closedRef.current) setStep({ kind: "submitting" });
           },

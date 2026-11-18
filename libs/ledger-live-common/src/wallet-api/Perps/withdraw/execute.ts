@@ -32,6 +32,8 @@ export type PerpsWithdrawExecutionParams = Readonly<{
   /** The destination ticker, for analytics. */
   targetCurrency: string;
   track: WithdrawTrack;
+  /** Signs but never submits, as the submit moves real funds. */
+  broadcastDisabled: boolean;
 }>;
 
 /**
@@ -48,6 +50,7 @@ export async function executePerpsWithdraw({
   onSigned,
   targetCurrency,
   track,
+  broadcastDisabled,
 }: PerpsWithdrawExecutionParams): Promise<PerpsWithdrawResult> {
   if (sourceAccount.type !== "Account") {
     throw new WithdrawUnsupportedRouteError("The withdraw source must be a main account");
@@ -72,6 +75,10 @@ export async function executePerpsWithdraw({
   onSigned?.();
   // The user may have left while the device was signing: then nothing is submitted.
   if (!markWithdrawRequestCommitted(requestId)) throw new UserRefusedOnDevice();
+  if (broadcastDisabled) {
+    settleWithdrawRequest(requestId, result);
+    return result;
+  }
   let swapId: string;
   try {
     track("Perps withdraw submitted", properties);

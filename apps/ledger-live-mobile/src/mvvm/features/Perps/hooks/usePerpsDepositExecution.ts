@@ -17,6 +17,7 @@ import {
   useTransactionDeviceAction,
 } from "~/hooks/deviceActions";
 import { broadcastLogger } from "~/datadog";
+import { isBroadcastDisabled } from "../utils/isBroadcastDisabled";
 
 export type {
   PerpsDepositDeviceStep,
@@ -50,5 +51,6 @@ export function usePerpsDepositExecution(
     updateAccount,
     broadcastLogger,
     track,
+    broadcastDisabled: isBroadcastDisabled(),
   });
 }

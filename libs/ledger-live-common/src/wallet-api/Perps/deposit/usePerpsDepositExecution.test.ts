@@ -77,6 +77,7 @@ function depsWith(accounts: AccountLike[] = []): PerpsDepositExecutionDeps {
     } as unknown as PerpsDepositExecutionDeps["deviceActions"],
     updateAccount,
     track,
+    broadcastDisabled: false,
   };
 }
 
@@ -89,11 +90,13 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
   });
 }
 
-function renderExecution() {
+const mockSwapSuccess = jest.fn();
+
+function renderExecution(broadcastDisabled = false) {
   const onDone = jest.fn();
   const onRefused = jest.fn();
   const onReturnToForm = jest.fn();
-  const deps = depsWith();
+  const deps = { ...depsWith(), broadcastDisabled };
   const { result } = renderHook(() =>
     usePerpsDepositExecution(params, { onDone, onRefused, onReturnToForm }, deps),
   );
@@ -101,18 +104,21 @@ function renderExecution() {
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
-async function signWith(signResult: unknown) {
+async function signWith(signResult: unknown, broadcastDisabled = false) {
   mockExecuteSwap.mockImplementation(async deps => {
     await new Promise<void>((resolve, reject) => {
       deps.uiHooks["custom.exchange.swap"]({
         exchangeParams: swapUiRequest,
-        onSuccess: () => resolve(),
+        onSuccess: (result: unknown) => {
+          mockSwapSuccess(result);
+          resolve();
+        },
         onCancel: reject,
       });
     });
   });
 
-  const execution = renderExecution();
+  const execution = renderExecution(broadcastDisabled);
   act(() => {
     void execution.result.current.executeDeposit();
   });
@@ -379,6 +385,22 @@ describe("usePerpsDepositExecution", () => {
     expect(mockGetUpdateAccountWithUpdaterParams).toHaveBeenCalledWith(
       expect.objectContaining({ magnitudeAwareRate: new BigNumber("0.95") }),
     );
+  });
+
+  it("does not record the swap or report its id to the live app when broadcast is disabled", async () => {
+    const request = beginDepositRequest();
+
+    const { onDone } = await signWith({ signedOperation: { operation } }, true);
+
+    expect(mockGetUpdateAccountWithUpdaterParams).not.toHaveBeenCalled();
+    await expect(request).resolves.toEqual({ swapId: undefined, amountTo: "0.019" });
+    expect(onDone).toHaveBeenCalledWith({ swapId: undefined });
+  });
+
+  it("still hands the provider swap id to executeSwap when broadcast is disabled", async () => {
+    await signWith({ signedOperation: { operation } }, true);
+
+    expect(mockSwapSuccess).toHaveBeenCalledWith(expect.objectContaining({ swapId: "swap-1" }));
   });
 
   it("settles the live app's deposit request with the swap and quoted amount", async () => {

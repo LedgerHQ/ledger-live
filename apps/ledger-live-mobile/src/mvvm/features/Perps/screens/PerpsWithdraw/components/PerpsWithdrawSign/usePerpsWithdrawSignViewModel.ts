@@ -17,6 +17,7 @@ import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
+import { isBroadcastDisabled } from "LLM/features/Perps/utils/isBroadcastDisabled";
 import type { PerpsWithdrawSummaryParams } from "../PerpsWithdrawSummary";
 
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
@@ -104,6 +105,7 @@ export function usePerpsWithdrawSignViewModel({
           },
           targetCurrency: getAccountCurrency(destinationAccount).ticker,
           track,
+          broadcastDisabled: isBroadcastDisabled(),
           onSigned: () => {
             if (!isLeavingRef.current) setStep({ kind: "submitting" });
           },
