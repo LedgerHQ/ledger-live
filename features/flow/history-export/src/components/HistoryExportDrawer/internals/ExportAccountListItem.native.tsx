@@ -21,7 +21,7 @@ export function ExportAccountListItem({ account, checked, onToggle }: ExportAcco
     <ListItem onPress={onToggle} testID={`history-export-account-${account.id}`}>
       <ListItemLeading>
         <Checkbox checked={checked} onCheckedChange={onToggle} />
-        <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size={40} />
+        <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size={32} />
         <ListItemContent>
           <ListItemTitle>{account.name}</ListItemTitle>
         </ListItemContent>
