@@ -89,7 +89,7 @@ function isWalletConnectLink(url: string) {
 }
 
 // DeepLinking
-const linkingOptions = () => ({
+export const linkingOptions = () => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -235,11 +235,7 @@ const linkingOptions = () => ({
             },
           },
 
-          [NavigatorName.WalletSync]: {
-            screens: {
-              [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
-            },
-          },
+          [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
         },
       },
     },
