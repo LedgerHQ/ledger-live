@@ -132,10 +132,12 @@ function useContinueChecks(
   }, [liveMachineState, send, unseeded]);
 }
 
-function toDoneModel(input: Pick<UnseededFunnelInput, "seedPath" | "pastRecover">) {
-  const sawRecoverPitch = input.seedPath === SeedPath.NewSeed;
-  if (sawRecoverPitch && !input.pastRecover) return { status: "recoverNewSeed" as const };
-  return { status: "success" as const, sawRecoverPitch };
+function toDoneModel(
+  input: Pick<UnseededFunnelInput, "seedPath" | "pastRecover">,
+): UnseededFunnelModel | null {
+  if (input.seedPath !== SeedPath.NewSeed) return null;
+  if (!input.pastRecover) return { status: "recoverNewSeed" };
+  return { status: "success", sawRecoverPitch: true };
 }
 
 function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecksProps | null {
