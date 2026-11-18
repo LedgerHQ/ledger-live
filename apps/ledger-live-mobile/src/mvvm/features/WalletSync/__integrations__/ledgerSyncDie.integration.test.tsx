@@ -490,18 +490,18 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
     });
 
-    it("should keep the scan tab's layout on the show QR code tab", async () => {
+    it("should grow the show QR code tab's instructions up into the scan tab's frame and caption room", async () => {
       const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
       await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
       await screen.findByTestId("ws-scan-camera");
       expect(screen.getByTestId("ws-qr-caption")).toBeVisible();
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveStyle({ maxHeight: 220 });
 
       await user.press(screen.getAllByText(/show qr/i)[0]);
 
-      expect(screen.getByTestId("ws-qr-code-frame")).toHaveStyle({ width: 288, height: 288 });
-      expect(
-        screen.getByTestId("ws-qr-caption-placeholder", { includeHiddenElements: true }),
-      ).toHaveStyle({ opacity: 0 });
+      expect(screen.queryByTestId("ws-qr-caption", { includeHiddenElements: true })).toBeNull();
+      // 220 plus the frame's extra 8, the 24 caption row and one 24 row gap.
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveStyle({ maxHeight: 276 });
       const qrCode = screen.getByTestId("ws-qr-code-displayed");
       expect(qrCode).toHaveStyle({ width: 280, height: 280 });
       expect(qrCode).not.toHaveStyle({ maxHeight: 280 });

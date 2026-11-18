@@ -2,15 +2,16 @@ import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 
-/** Side of the square frame holding the camera or the QR code, so both tabs keep one layout. */
+/** Side of the square frame holding the camera on the scan tab. */
 export const QR_CODE_TAB_FRAME_SIZE = 288;
 
-type Props = Readonly<{
-  /** Keeps the caption's height without showing it, so the tab without one does not move. */
-  isHidden?: boolean;
-}>;
+/** Gap between the rows of a QR code tab. */
+export const QR_CODE_TAB_ROW_GAP = 24;
 
-export function QrCodeTabCaption({ isHidden = false }: Props) {
+/** Height of the caption row, set by its icon. */
+export const QR_CODE_TAB_CAPTION_HEIGHT = 24;
+
+export function QrCodeTabCaption() {
   const { t } = useTranslation();
 
   return (
@@ -18,13 +19,11 @@ export function QrCodeTabCaption({ isHidden = false }: Props) {
       flexDirection={"row"}
       alignItems={"center"}
       columnGap={8}
-      opacity={isHidden ? 0 : 1}
-      accessibilityElementsHidden={isHidden}
-      importantForAccessibility={isHidden ? "no-hide-descendants" : "auto"}
-      testID={isHidden ? "ws-qr-caption-placeholder" : "ws-qr-caption"}
+      minHeight={QR_CODE_TAB_CAPTION_HEIGHT}
+      testID="ws-qr-caption"
     >
       <Text variant="bodyLineHeight">{t("walletSync.synchronize.qrCode.scan.description")}</Text>
-      <Icons.QrCode />
+      <Icons.QrCode size="M" />
     </Flex>
   );
 }

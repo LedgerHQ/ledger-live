@@ -5,7 +5,7 @@ import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
 import { Camera } from "react-native-vision-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
-import { QR_CODE_TAB_FRAME_SIZE, QrCodeTabCaption } from "./QrCodeTabCaption";
+import { QR_CODE_TAB_FRAME_SIZE, QR_CODE_TAB_ROW_GAP, QrCodeTabCaption } from "./QrCodeTabCaption";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 import { useQRScanner } from "LLM/hooks/useQRScanner";
@@ -66,7 +66,7 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
       minHeight={400}
       justifyContent={"center"}
       alignItems={"center"}
-      rowGap={24}
+      rowGap={QR_CODE_TAB_ROW_GAP}
       testID={"ws-scan-camera"}
     >
       <RequiresCameraPermissions optimisticallyMountChildren fallBackHasNoBackground>
