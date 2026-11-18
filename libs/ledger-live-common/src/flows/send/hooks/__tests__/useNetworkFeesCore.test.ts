@@ -16,12 +16,14 @@ import type { SendFlowUiConfig } from "../../types";
 jest.mock("../../../../bridge/descriptor/send/features");
 jest.mock("../../../../bridge/useAccountBridge");
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit");
+const distinctPresetValues = {
+  slow: { fiat: "$1.00", crypto: "0.00001 BTC" },
+  medium: { fiat: "$2.00", crypto: "0.00002 BTC" },
+  fast: { fiat: "$3.00", crypto: "0.00003 BTC" },
+};
+
 jest.mock("../useFeePresetValuesCore", () => ({
-  useFeePresetValuesCore: jest.fn(() => ({
-    slow: { fiat: "$1.00", crypto: "0.00001 BTC" },
-    medium: { fiat: "$2.00", crypto: "0.00002 BTC" },
-    fast: { fiat: "$3.00", crypto: "0.00003 BTC" },
-  })),
+  useFeePresetValuesCore: jest.fn(),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getMainAccount: jest.fn((acc: AccountLike) => acc),
@@ -92,6 +94,7 @@ describe("useNetworkFeesCore", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseFeePresetValuesCore.mockReturnValue(distinctPresetValues);
     mockedUseAccountBridge.mockReturnValue({
       updateTransaction: bridgeUpdateTransaction,
     } as never);
@@ -383,6 +386,99 @@ describe("useNetworkFeesCore", () => {
       mockedSendFeatures.shouldEstimateFeePresetsWithBridge.mockReturnValue(true);
 
       const { result } = renderCore({ uiConfig: { hasFeePresets: true } });
+
+      expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
+    });
+
+    describe("when the bridge estimates every fallback preset at the same fee", () => {
+      const sameFee = { fiat: "$0.01", crypto: "0.00000004 BTC" };
+
+      beforeEach(() => {
+        mockedSendFeatures.getFeePresetOptions.mockReturnValue([]);
+        mockedSendFeatures.getFeePresetFallbackIds.mockReturnValue(["slow", "medium", "fast"]);
+        mockedSendFeatures.shouldEstimateFeePresetsWithBridge.mockReturnValue(true);
+        mockedUseFeePresetValuesCore.mockReturnValue({
+          slow: sameFee,
+          medium: sameFee,
+          fast: sameFee,
+        });
+      });
+
+      it("shows a single default option carrying that fee", () => {
+        const { result } = renderCore();
+
+        expect(result.current.feeStrategyOptions).toEqual([
+          {
+            id: "default",
+            kind: "default",
+            sublabelFiat: "$0.01",
+            sublabelCrypto: "0.00000004 BTC",
+            sublabelLegend: null,
+          },
+        ]);
+        expect(result.current.selectedFeeStrategyId).toBe("default");
+      });
+
+      it("selects the medium strategy when the single option is picked", () => {
+        const { result } = renderCore({ transaction: { feesStrategy: "custom" } });
+
+        act(() => {
+          result.current.onSelectFeeStrategyId("default");
+        });
+
+        expect(mockedSendFeatures.getDefaultStrategyPatch).not.toHaveBeenCalled();
+        expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+          feesStrategy: "medium",
+        });
+      });
+
+      it("keeps the custom strategy selected", () => {
+        const { result } = renderCore({
+          transaction: { feesStrategy: "custom" },
+          uiConfig: { hasCustomFees: true },
+        });
+
+        expect(result.current.selectedFeeStrategyId).toBe("custom");
+      });
+
+      it("keeps every preset while one estimate is still missing", () => {
+        mockedUseFeePresetValuesCore.mockReturnValue({ slow: sameFee, medium: sameFee });
+
+        const { result } = renderCore();
+
+        expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual([
+          "slow",
+          "medium",
+          "fast",
+        ]);
+      });
+
+      it("keeps every preset when one estimate differs", () => {
+        mockedUseFeePresetValuesCore.mockReturnValue({
+          slow: sameFee,
+          medium: sameFee,
+          fast: { fiat: "$0.02", crypto: "0.00000008 BTC" },
+        });
+
+        const { result } = renderCore();
+
+        expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual([
+          "slow",
+          "medium",
+          "fast",
+        ]);
+      });
+    });
+
+    it("keeps identical presets the coin supplies itself", () => {
+      const sameFee = { fiat: "$0.01", crypto: "0.00000004 BTC" };
+      mockedUseFeePresetValuesCore.mockReturnValue({
+        slow: sameFee,
+        medium: sameFee,
+        fast: sameFee,
+      });
+
+      const { result } = renderCore();
 
       expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
     });
