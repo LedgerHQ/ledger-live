@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Track } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
@@ -11,16 +10,9 @@ import DropDownSelector, {
 } from "~/renderer/components/DropDownSelector";
 import Switch from "~/renderer/components/Switch";
 import Tooltip from "~/renderer/components/Tooltip";
-import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { Icons } from "@ledgerhq/react-ui";
 
-const Separator = styled.div`
-  background-color: ${p => p.theme.colors.neutral.c40};
-  height: 1px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-`;
 const Item = styled(DropDownItem)<{ disableHover?: boolean }>`
   width: 230px;
   cursor: pointer;
@@ -29,33 +21,13 @@ const Item = styled(DropDownItem)<{ disableHover?: boolean }>`
   align-items: center;
 `;
 type ItemType = DropDownItemType & {
-  icon?: React.JSX.Element;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  type?: "separator";
 };
 const OptionsButton = () => {
-  const dispatch = useDispatch();
   const [hideEmptyTokenAccounts, setHideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
-  const onOpenModal = useCallback(
-    (modal: "MODAL_EXPORT_OPERATIONS") => {
-      dispatch(openModal(modal, undefined));
-    },
-    [dispatch],
-  );
   const { t } = useTranslation();
 
   const items: ItemType[] = [
-    {
-      key: "exportOperations",
-      label: t("accounts.optionsMenu.exportOperations"),
-      icon: <Icons.Download size="S" />,
-      onClick: () => onOpenModal("MODAL_EXPORT_OPERATIONS"),
-    },
-    {
-      key: "sep1",
-      type: "separator",
-      label: "",
-    },
     {
       key: "hideEmpty",
       label: t("settings.accounts.hideEmptyTokens.title"),
@@ -67,9 +39,6 @@ const OptionsButton = () => {
     },
   ];
   const renderItem = ({ item }: { item: ItemType }) => {
-    if (item.type === "separator") {
-      return <Separator />;
-    }
     return (
       <Item
         id={`accounts-button-${item.key}`}
@@ -91,8 +60,6 @@ const OptionsButton = () => {
             />
             <Switch isChecked={hideEmptyTokenAccounts} onChange={setHideEmptyTokenAccounts} />
           </Box>
-        ) : item.icon ? (
-          <Box mr={4}>{item.icon}</Box>
         ) : null}
         {item.label}
       </Item>
