@@ -1,10 +1,11 @@
 import React from "react";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
 import { Camera } from "react-native-vision-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
+import { QR_CODE_TAB_FRAME_SIZE, QrCodeTabCaption } from "./QrCodeTabCaption";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 import { useQRScanner } from "LLM/hooks/useQRScanner";
@@ -73,8 +74,8 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           borderRadius={36}
           overflow={"hidden"}
           position={"relative"}
-          width={288}
-          height={288}
+          width={QR_CODE_TAB_FRAME_SIZE}
+          height={QR_CODE_TAB_FRAME_SIZE}
           justifyContent={"center"}
           alignItems={"center"}
         >
@@ -96,12 +97,7 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />
         </Flex>
-        <Flex flexDirection={"row"} alignItems={"center"} columnGap={8}>
-          <Text variant="bodyLineHeight">
-            {t("walletSync.synchronize.qrCode.scan.description")}
-          </Text>
-          <Icons.QrCode />
-        </Flex>
+        <QrCodeTabCaption />
         <BottomContainer steps={steps} />
       </RequiresCameraPermissions>
     </Flex>

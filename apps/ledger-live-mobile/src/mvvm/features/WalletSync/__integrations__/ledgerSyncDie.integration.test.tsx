@@ -490,6 +490,23 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
     });
 
+    it("should keep the scan tab's layout on the show QR code tab", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+      expect(screen.getByTestId("ws-qr-caption")).toBeVisible();
+
+      await user.press(screen.getAllByText(/show qr/i)[0]);
+
+      expect(screen.getByTestId("ws-qr-code-frame")).toHaveStyle({ width: 288, height: 288 });
+      expect(
+        screen.getByTestId("ws-qr-caption-placeholder", { includeHiddenElements: true }),
+      ).toHaveStyle({ opacity: 0 });
+      const qrCode = screen.getByTestId("ws-qr-code-displayed");
+      expect(qrCode).toHaveStyle({ width: 280, height: 280 });
+      expect(qrCode).not.toHaveStyle({ maxHeight: 280 });
+    });
+
     it("should lift the password lock block when the QR code step is dismissed", async () => {
       const { user, store } = render(<SettingsEntry />, {
         overrideInitialState: initialState({}),

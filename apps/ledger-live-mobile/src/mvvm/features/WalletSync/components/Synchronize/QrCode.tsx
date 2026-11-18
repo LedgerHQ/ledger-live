@@ -6,6 +6,7 @@ import { QrCode as StyledQrCode } from "@shared/ui-qr-code";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Trans, useTranslation } from "~/context/Locale";
 import BottomContainer from "./BottomContainer";
+import { QR_CODE_TAB_FRAME_SIZE, QrCodeTabCaption } from "./QrCodeTabCaption";
 
 const Italic = styled(Text)`
   font-style: italic;
@@ -28,7 +29,8 @@ const QrCode = ({ qrCodeValue }: Props) => {
   const backgroundSize = 280;
   const distanceBetweenQRCodeAndScreenBorder = 48;
 
-  const QRSize = Math.round(width - distanceBetweenQRCodeAndScreenBorder);
+  // An explicit size rather than a height capped by maxHeight, which the sheet measured uncapped.
+  const QRSize = Math.min(Math.round(width - distanceBetweenQRCodeAndScreenBorder), backgroundSize);
   const maxQRCodeSize = backgroundSize - backgroundPadding * 2;
   const QRCodeSize = Math.min(QRSize - backgroundPadding, maxQRCodeSize);
 
@@ -70,35 +72,42 @@ const QrCode = ({ qrCodeValue }: Props) => {
   ];
 
   return (
-    <Flex flexDirection={"column"} rowGap={24} alignItems={"center"} width={"100%"}>
+    <Flex minHeight={400} justifyContent={"center"} alignItems={"center"} rowGap={24}>
       <Flex
-        alignItems={"center"}
-        width={QRSize}
-        height={QRSize}
-        maxWidth={backgroundSize}
-        maxHeight={backgroundSize}
-        borderRadius={backgroundBorderRadius}
-        background={colors.constant.white}
+        width={QR_CODE_TAB_FRAME_SIZE}
+        height={QR_CODE_TAB_FRAME_SIZE}
         justifyContent={"center"}
-        testID="ws-qr-code-displayed"
+        alignItems={"center"}
+        testID="ws-qr-code-frame"
       >
-        {qrCodeValue ? (
-          <StyledQrCode
-            value={qrCodeValue}
-            size={QRCodeSize}
-            foregroundColor={colors.constant.black}
-            testID="ws-qr-code"
-            centerContent={
-              <Image
-                source={require("~/images/bigSquareLogo.webp")}
-                style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
-              />
-            }
-          />
-        ) : (
-          <InfiniteLoader size={65} />
-        )}
+        <Flex
+          alignItems={"center"}
+          width={QRSize}
+          height={QRSize}
+          borderRadius={backgroundBorderRadius}
+          background={colors.constant.white}
+          justifyContent={"center"}
+          testID="ws-qr-code-displayed"
+        >
+          {qrCodeValue ? (
+            <StyledQrCode
+              value={qrCodeValue}
+              size={QRCodeSize}
+              foregroundColor={colors.constant.black}
+              testID="ws-qr-code"
+              centerContent={
+                <Image
+                  source={require("~/images/bigSquareLogo.webp")}
+                  style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
+                />
+              }
+            />
+          ) : (
+            <InfiniteLoader size={65} />
+          )}
+        </Flex>
       </Flex>
+      <QrCodeTabCaption isHidden />
       <BottomContainer steps={steps} />
     </Flex>
   );
