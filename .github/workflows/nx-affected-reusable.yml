@@ -109,12 +109,18 @@ jobs:
           fi
 
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
-      # ones the repo pins. This also writes nx.cache-config.json.
+      # ones the repo pins. This also writes nx.cache-config.json and, when the caller passes the
+      # AWS secrets, logs in to the cache bucket the mobile e2e plan looks the builds up in.
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
 
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
@@ -184,29 +190,9 @@ jobs:
       # The mobile e2e plan is what test-mobile-e2e-reusable.yml's determine-builds job would compute, done here
       # so the mobile builds start as soon as this job ends instead of after one more job. Without a plan the
       # e2e workflow runs determine-builds itself, so a failure here must not fail the affected job.
-      - name: Resolve the cache profile for the mobile e2e plan
-        id: mobile-e2e-cache-profile
-        if: ${{ inputs.mobile_e2e_plan && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
-        continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
-        with:
-          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          legacy-account-id: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          legacy-role-name: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-
-      - name: Configure AWS credentials for the mobile e2e plan
-        id: mobile-e2e-aws
-        if: ${{ steps.mobile-e2e-cache-profile.outcome == 'success' }}
-        continue-on-error: true
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
-        with:
-          role-to-assume: ${{ steps.mobile-e2e-cache-profile.outputs.role-arn }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - name: Plan the mobile e2e builds and shards
         id: mobile-e2e-plan
-        if: ${{ steps.mobile-e2e-aws.outcome == 'success' }}
+        if: ${{ inputs.mobile_e2e_plan && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
         continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@study/determine-builds
         with:
@@ -226,5 +212,5 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
       - name: Warn when the mobile e2e plan is missing
-        if: ${{ steps.mobile-e2e-cache-profile.outcome == 'failure' || steps.mobile-e2e-aws.outcome == 'failure' || steps.mobile-e2e-plan.outcome == 'failure' }}
+        if: ${{ steps.mobile-e2e-plan.outcome == 'failure' }}
         run: echo "::warning::Mobile e2e plan failed, the e2e workflow runs its own determine-builds job"
