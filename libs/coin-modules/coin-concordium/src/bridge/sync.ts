@@ -92,7 +92,16 @@ export async function getBalance(
 /** The proxy's documented ceiling; anything larger is silently clamped to it. */
 const PAGE_SIZE = 1000;
 
-const TOKENS_OFF_SYNC_HASH = "tokens=off";
+/**
+ * Bumped when the parser starts keeping or revaluing rows it read differently,
+ * so every stored history is re-read once. 2: aliases of the account matched.
+ *
+ * A token whose CAL unit, decimals or balance cannot be trusted during that
+ * re-read keeps its stored rows, and nothing re-reads them later: LIVE-41804.
+ */
+const HISTORY_VERSION = "history=2";
+
+const TOKENS_OFF_SYNC_HASH = `tokens=off:${HISTORY_VERSION}`;
 
 /**
  * Stored by a sync that fetched PLT transfers it could not attribute, so the
@@ -123,7 +132,7 @@ async function computeSyncHash(
   if (!enableTokens) return TOKENS_OFF_SYNC_HASH;
 
   try {
-    return `${await getSyncHash(currencyId, blacklistedTokenIds)}:tokens=on`;
+    return `${await getSyncHash(currencyId, blacklistedTokenIds)}:tokens=on:${HISTORY_VERSION}`;
   } catch (error) {
     log("concordium-sync", "Could not read the CAL sync hash, keeping the stored one", { error });
     return previous ?? TOKENS_OFF_SYNC_HASH;
