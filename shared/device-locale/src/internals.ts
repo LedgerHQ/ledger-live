@@ -40,6 +40,18 @@ function normalizeLanguageCode({ languageCode, languageTag }: PreferredLocale): 
   return LEGACY_TO_CURRENT_LANGUAGE_CODES[code] ?? code;
 }
 
+// iOS 16+ infers a script for every language (`fr-FR` gives `Latn`); keep it only when the tag
+// spells it out, as react-native-localize did.
+function explicitScriptCode({ languageTag, languageScriptCode }: PreferredLocale) {
+  if (!languageScriptCode) {
+    return null;
+  }
+
+  const subtags = languageTag.toLowerCase().split(/[-_]/);
+
+  return subtags.includes(languageScriptCode.toLowerCase()) ? languageScriptCode : null;
+}
+
 export function deviceRegionOf(preferredLocales: readonly PreferredLocale[]): string {
   return normalizeRegion(preferredLocales[0]?.regionCode ?? null) ?? FALLBACK_REGION;
 }
@@ -49,7 +61,7 @@ export function toLegacyLocales(preferredLocales: readonly PreferredLocale[]): L
 
   return preferredLocales.map(locale => {
     const languageCode = normalizeLanguageCode(locale);
-    const scriptCode = locale.languageScriptCode || null;
+    const scriptCode = explicitScriptCode(locale);
     const countryCode = normalizeRegion(locale.languageRegionCode) ?? deviceRegion;
     const languageWithScript = scriptCode ? `${languageCode}-${scriptCode}` : languageCode;
 
