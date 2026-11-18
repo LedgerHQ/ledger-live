@@ -10,7 +10,7 @@ function receiveFlushRequest() {
   const [channel, listener] = jest.mocked(ipcRenderer.on).mock.calls[0];
   expect(channel).toBe(CHANNELS.flushWrites);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  (listener as () => void)();
+  (listener as (event: unknown, requestId: number) => void)({}, 7);
   return listener;
 }
 
@@ -68,7 +68,7 @@ describe("preload db bridge", () => {
 
     finish?.();
     await new Promise(process.nextTick);
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone);
+    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone, 7);
   });
 
   it("answers a flush request when the callback fails", async () => {
@@ -77,7 +77,7 @@ describe("preload db bridge", () => {
     receiveFlushRequest();
     await new Promise(process.nextTick);
 
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone);
+    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.flushWritesDone, 7);
   });
 
   it("stops the flush requests on unsubscribe", () => {

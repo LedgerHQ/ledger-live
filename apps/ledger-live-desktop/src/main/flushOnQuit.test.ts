@@ -29,10 +29,10 @@ type FakeWindow = EventEmitter & {
 function createWindow(onFlushRequest: () => Promise<void> = async () => {}): FakeWindow {
   const webContents = {
     isDestroyed: () => false,
-    send: jest.fn((channel: string) => {
+    send: jest.fn((channel: string, requestId: number) => {
       if (channel !== CHANNELS.flushWrites) return;
       void onFlushRequest().then(() =>
-        ipcMain.emit(CHANNELS.flushWritesDone, { sender: webContents }),
+        ipcMain.emit(CHANNELS.flushWritesDone, { sender: webContents }, requestId),
       );
     }),
   };
@@ -259,14 +259,32 @@ describe("flushOnQuit", () => {
     const window = createWindow(() => new Promise(() => {}));
     let answered = false;
     void requestRendererFlush(asBrowserWindow(window), 1000).then(() => (answered = true));
+    const [, requestId] = window.webContents.send.mock.calls[0];
 
-    ipcMain.emit(CHANNELS.flushWritesDone, { sender: {} });
+    ipcMain.emit(CHANNELS.flushWritesDone, { sender: {} }, requestId);
     await settle();
     expect(answered).toBe(false);
 
-    ipcMain.emit(CHANNELS.flushWritesDone, { sender: window.webContents });
+    ipcMain.emit(CHANNELS.flushWritesDone, { sender: window.webContents }, requestId);
     await settle();
     expect(answered).toBe(true);
+  });
+
+  it("ignores a late answer to a request that timed out", async () => {
+    jest.useFakeTimers();
+    const window = createWindow(() => new Promise(() => {}));
+    const timedOut = requestRendererFlush(asBrowserWindow(window), 1000);
+    await jest.advanceTimersByTimeAsync(1000);
+    await timedOut;
+    const [, lateId] = window.webContents.send.mock.calls[0];
+
+    let answered = false;
+    void requestRendererFlush(asBrowserWindow(window), 1000).then(() => (answered = true));
+    ipcMain.emit(CHANNELS.flushWritesDone, { sender: window.webContents }, lateId);
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(answered).toBe(false);
+    await jest.advanceTimersByTimeAsync(1000);
   });
 });
 

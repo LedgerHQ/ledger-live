@@ -3,6 +3,8 @@ import { CHANNELS } from "~/bridge/contract";
 
 export const RENDERER_FLUSH_TIMEOUT_MS = 3000;
 
+let lastRequestId = 0;
+
 /**
  * Ask the renderer to send its debounced `setKey` calls to main, and wait for its answer.
  * A renderer that does not answer in time does not block the quit.
@@ -13,18 +15,20 @@ export function requestRendererFlush(
 ): Promise<void> {
   if (window.isDestroyed() || window.webContents.isDestroyed()) return Promise.resolve();
   const { webContents } = window;
+  // A late answer to a request that timed out must not end this wait.
+  const requestId = ++lastRequestId;
   return new Promise(resolve => {
     const done = () => {
       clearTimeout(timeout);
       ipcMain.removeListener(CHANNELS.flushWritesDone, onDone);
       resolve();
     };
-    const onDone = (event: IpcMainEvent) => {
-      if (event.sender === webContents) done();
+    const onDone = (event: IpcMainEvent, answeredId: unknown) => {
+      if (event.sender === webContents && answeredId === requestId) done();
     };
     const timeout = setTimeout(done, timeoutMs);
     ipcMain.on(CHANNELS.flushWritesDone, onDone);
-    webContents.send(CHANNELS.flushWrites);
+    webContents.send(CHANNELS.flushWrites, requestId);
   });
 }
 
@@ -62,7 +66,6 @@ export async function flushThen(action: () => void): Promise<void> {
  * Hold the main window close and the app quit until the pending writes are on disk.
  */
 export function setupFlushOnQuit(window: BrowserWindow, flushMain: () => Promise<void>): void {
-  // The renderer answer has no id, so 1 answer must end only 1 wait.
   let lastFlush = Promise.resolve();
   flushWrites = () =>
     (lastFlush = lastFlush.then(() =>
