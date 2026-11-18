@@ -31,9 +31,9 @@ export function useAutoRedirectToPostOnboarding(): PostOnboardingRedirectStatus 
         .catch(() => false)
         .then(hasRedirected => setAttemptOutcome(hasRedirected ? "redirected" : "skipped"));
     if (shouldRedirectToRecoverUpsell) {
-      recordOutcome(openRecoverUpsell());
+      void recordOutcome(openRecoverUpsell());
     } else if (shouldRedirectToPostOnboarding && lastConnectedDevice) {
-      recordOutcome(openPostOnboarding(lastConnectedDevice.modelId));
+      void recordOutcome(openPostOnboarding(lastConnectedDevice.modelId));
     }
   }, [
     lastConnectedDevice,
