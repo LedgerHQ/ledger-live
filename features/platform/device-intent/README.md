@@ -19,6 +19,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 ### What's covered
 
 - **Concepts** — what a Device Intent is, what the Device Intent Executor (DIE) is, and how they fit together.
+- **Design rules** — the principles that keep the DIE simple and the device UX consistent, and the rules for changing it.
 - **Usage guide** — implementation checklist, mounting the executor, building the `deviceInitializationInput`, defining and structuring intents, orchestrating multi-step (and context-switching) flows.
 - **Runtime contracts and observability** — completion, intent/context co-changes, cancellation, callbacks, interactive jobs, idle state.
 - **Pitfalls and common mistakes** when integrating.
@@ -36,6 +37,9 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [Anatomy of an Intent](#anatomy-of-an-intent)
 - [What is the Device Intent Executor?](#what-is-the-device-intent-executor)
   - [High-level flow](#high-level-flow)
+- [Design rules](#design-rules)
+  - [Principles](#principles)
+  - [Rules for changes](#rules-for-changes)
 - [Exports](#exports)
   - [Core types](#core-types-srccorets)
   - [Executor types](#executor-types-srcexecutorts)
@@ -268,6 +272,49 @@ sequenceDiagram
         Note over DIE,Dev: Re-run Phase 2 → Phase 3<br/>(Phase 1 connection preserved)
     end
 ```
+
+## Design rules
+
+The DIE is the one way to run a device flow in Ledger Wallet. These rules keep
+it simple and keep the device UX the same in every flow. They apply to the
+callers, to the app wrappers and to the package itself.
+
+### Principles
+
+1. **Change the DIE only for a product need that flows share.** Each option
+   added to the DIE is one more way to use it. A change needs a need that
+   several flows share, agreed with the device team (`@ledgerhq/live-devices`).
+   A single flow or a devtool adapts to the DIE, not the other way round.
+2. **Let the DIE handle device states and errors.** The DIE shows each device
+   state and error (device locked, unsupported firmware, no storage left,
+   disconnection…) with the right screen and actions, and the user closes it
+   (`onUserCancel`). Do not close or unmount the executor because of a device
+   state, and do not rebuild error handling on top of it: each copy drifts from
+   the others and from the device UX. If the DIE handles a case badly, improve
+   the DIE (principle 1).
+3. **Follow the existing architecture.** Add to the DIE the way its existing
+   parts were added. The rules below apply this to the common cases.
+
+### Rules for changes
+
+- **Configuration carries dependencies, not events.** `initializerConfig`
+  injects the initializer's dependencies, for example in tests. Lifecycle
+  events are callbacks: on `DeviceIntentExecutorProps` (like
+  `onIntentJobError`) and on the platform component props (like
+  `onContextInitialized`). Add a missing callback next to them, and list it in
+  [Observability: callbacks](#observability-callbacks).
+- **The contract lives in the package, and both wrappers stay in sync.** Change
+  the contract in `@features/platform-device-intent`. A change to the LWM or
+  LWD wrapper (`apps/*/src/mvvm/components/DeviceIntentExecutor/`) comes with
+  the same change in the other wrapper, in the same PR.
+- **A new callback identity never restarts device work.** Keep callbacks in
+  refs (see [Callback refs for freshness](#callback-refs-for-freshness)), not
+  in the dependencies of an effect that runs device work. Otherwise a
+  re-render can open the app on the device again.
+- **Device states are classified in one place.** The rules that classify
+  `EnsureAppReady` states (retryable, blocking, failure) live in
+  `@ledgerhq/live-dmk-shared`, as exhaustive `switch` statements. The apps use
+  them and do not write their own.
 
 ## Exports
 
