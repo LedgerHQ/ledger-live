@@ -103,11 +103,20 @@ export type ReceiveSanctionedView = Readonly<{
   learnMore?: ReceiveAddressAction;
 }>;
 
+/** The account can't receive here yet: it must be onboarded, or the token activated. */
+export type ReceiveBlockedView = Readonly<{
+  title: string;
+  description: string;
+  /** Hands over to the legacy receive flow, which still does both. */
+  continueAction?: ReceiveAddressAction;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
   error?: ReceiveAddressError;
   sanctioned?: ReceiveSanctionedView;
+  blocked?: ReceiveBlockedView;
   addressSelection?: ReceiveAddressSelectionView;
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;

@@ -11,11 +11,14 @@ import {
   type ReceiveFamilyConfigPort,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
+import { openModal } from "~/renderer/actions/modals";
 import { openURL } from "~/renderer/linking";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
@@ -55,6 +58,31 @@ export function useReceiveAddressDialogViewModel({
   }, [isSanctionSimulated, network]);
   const featureFlags = useFeatureFlags();
 
+  // The legacy modal on the account, or on its token account, empty when it holds none yet.
+  const onUseLegacyFlow = useCallback(() => {
+    if (!legacyAccount) return;
+    const openLegacyReceive = async () => {
+      const token =
+        assetId === legacyAccount.currency.id
+          ? undefined
+          : await getCryptoAssetsStore().findTokenById(assetId);
+      const tokenAccount =
+        token &&
+        (legacyAccount.subAccounts?.find(sub => sub.token.id === token.id) ??
+          makeEmptyTokenAccount(legacyAccount, token));
+      dispatch(closeReceiveAddressDialog());
+      dispatch(
+        openModal(
+          "MODAL_RECEIVE",
+          tokenAccount
+            ? { account: tokenAccount, parentAccount: legacyAccount }
+            : { account: legacyAccount },
+        ),
+      );
+    };
+    void openLegacyReceive();
+  }, [legacyAccount, assetId, dispatch]);
+
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
     () =>
       receiveAddressConfig &&
@@ -72,6 +100,7 @@ export function useReceiveAddressDialogViewModel({
     getFamilyConfig,
     serviceIncidents,
     checkAddressSanctioned,
+    onUseLegacyFlow: legacyAccount ? onUseLegacyFlow : undefined,
     onOpenUrl: openURL,
   };
 }

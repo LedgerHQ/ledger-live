@@ -6,6 +6,7 @@ import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { InfoState } from "@shared/ui-info-state";
 import { AddressActions } from "./components/AddressActions";
+import { BlockedReceive } from "./components/BlockedReceive";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
@@ -28,6 +29,7 @@ export function ReceiveAddressView({
   isLoading,
   error,
   sanctioned,
+  blocked,
   addressSelection,
   address,
   actions,
@@ -93,7 +95,9 @@ export function ReceiveAddressView({
               networkIcon={networkIcon}
             />
           </Dimmed>
-          {sanctioned ? (
+          {blocked ? (
+            <BlockedReceive blocked={blocked} />
+          ) : sanctioned ? (
             <SanctionedAddress sanctioned={sanctioned} />
           ) : error ? (
             <InfoState

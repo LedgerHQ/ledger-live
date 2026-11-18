@@ -9,7 +9,7 @@ import {
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook, waitFor } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
@@ -72,5 +72,18 @@ describe("useReceiveAddressDialogViewModel", () => {
     act(() => tool.result.current.setSimulated(true));
     await expect(result.current.checkAddressSanctioned?.("0xabc")).resolves.toBe(true);
     act(() => tool.result.current.setSimulated(false));
+  });
+
+  it("should open the legacy receive modal on the account when it hands over", async () => {
+    jest.mocked(useLLDCoinFamily).mockReturnValue({});
+    const { result, store } = renderViewModel();
+
+    act(() => result.current.onUseLegacyFlow?.());
+
+    await waitFor(() =>
+      expect(store.getState().modals.MODAL_RECEIVE).toEqual(
+        expect.objectContaining({ isOpened: true, data: { account: ethAccount } }),
+      ),
+    );
   });
 });

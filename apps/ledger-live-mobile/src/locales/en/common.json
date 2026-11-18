@@ -2483,7 +2483,19 @@
     "sanctioned": {
       "title": "Keeping you safe",
       "description": "This address is on a sanctions list and can't be used to receive funds.\n{{address}}"
-    }
+    },
+    "onboarding": {
+      "title": "Set up this account first",
+      "description": "This account must be registered on its network before it can receive funds. Continue to set it up."
+    },
+    "activation": {
+      "title": "Activate this token first",
+      "association": "Hedera accounts must associate a token before receiving it. It's a small network transaction you approve on your Ledger.",
+      "optIn": "Algorand accounts must opt in to an asset before receiving it. It's a small network transaction you approve on your Ledger.",
+      "trustline": "Your account must add a trustline for this asset before receiving it. It's a small network transaction you approve on your Ledger.",
+      "authorize": "Your account must authorize this token before receiving it. It's a small network transaction you approve on your Ledger."
+    },
+    "continue": "Continue"
   },
   "ratings": {
     "init": {

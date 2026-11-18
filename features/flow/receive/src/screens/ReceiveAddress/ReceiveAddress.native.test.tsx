@@ -1,6 +1,7 @@
 import React, { type ComponentProps } from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -129,6 +130,22 @@ describe("ReceiveAddress (Native)", () => {
 
     fireEvent.press(screen.getByTestId("receive-address-sanctioned-close"));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("should hand over to the legacy flow when the account must be onboarded", async () => {
+    const onUseLegacyFlow = jest.fn();
+    renderScreen(
+      jest.fn(),
+      makeReceiveTestStore({
+        accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+      }),
+      { onUseLegacyFlow },
+    );
+
+    expect(await screen.findByText("Set up this account first")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+    fireEvent.press(screen.getByText("Continue"));
+    expect(onUseLegacyFlow).toHaveBeenCalled();
   });
 
   it("copies and shares the address", async () => {

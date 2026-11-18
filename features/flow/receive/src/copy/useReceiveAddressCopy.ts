@@ -1,3 +1,4 @@
+import type { AssetActivationMethod } from "@domain/entity-account-status";
 import { useTranslation } from "@shared/i18n";
 import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind } from "../logic/toReceiveNotices";
@@ -34,6 +35,11 @@ export type ReceiveAddressCopy = Readonly<{
   sanctionedTitle: string;
   sanctionedDescription: (address: string) => string;
   closeLabel: string;
+  onboardingTitle: string;
+  onboardingDescription: string;
+  activationTitle: string;
+  activationDescriptions: Readonly<Record<AssetActivationMethod, string>>;
+  continueLabel: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -84,5 +90,15 @@ export function useReceiveAddressCopy({
     sanctionedTitle: t("receiveAddress.sanctioned.title"),
     sanctionedDescription: address => t("receiveAddress.sanctioned.description", { address }),
     closeLabel: t("receiveAddress.close"),
+    onboardingTitle: t("receiveAddress.onboarding.title"),
+    onboardingDescription: t("receiveAddress.onboarding.description"),
+    activationTitle: t("receiveAddress.activation.title"),
+    activationDescriptions: {
+      association: t("receiveAddress.activation.association"),
+      optIn: t("receiveAddress.activation.optIn"),
+      trustline: t("receiveAddress.activation.trustline"),
+      authorize: t("receiveAddress.activation.authorize"),
+    },
+    continueLabel: t("receiveAddress.continue"),
   };
 }

@@ -10,7 +10,7 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import Share from "react-native-share";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 import { useReceiveAddressScreenViewModel } from "./useReceiveAddressScreenViewModel";
@@ -29,6 +29,8 @@ const tronAccount: Account = {
   id: tronEntry.legacyId,
 };
 
+const openLegacyReceive = jest.fn();
+
 const renderViewModel = (entry = tronEntry) =>
   renderHook(
     () =>
@@ -36,6 +38,7 @@ const renderViewModel = (entry = tronEntry) =>
         accountUUID: entry.accountUUID,
         assetId: CryptoOrTokenCurrencyIdSchema.parse("tron"),
         onClose: jest.fn(),
+        openLegacyReceive,
       }),
     {
       overrideInitialState: state => ({
@@ -77,5 +80,15 @@ describe("useReceiveAddressScreenViewModel", () => {
         accountStatus: mockAccountStatus({ used: false }),
       }),
     ).toEqual({ notices: ["tronInactiveAccount"] });
+  });
+
+  it("should open the legacy receive screen on the account when it hands over", async () => {
+    const { result } = renderViewModel();
+
+    result.current.onUseLegacyFlow?.();
+
+    await waitFor(() =>
+      expect(openLegacyReceive).toHaveBeenCalledWith({ accountId: tronAccount.id }),
+    );
   });
 });

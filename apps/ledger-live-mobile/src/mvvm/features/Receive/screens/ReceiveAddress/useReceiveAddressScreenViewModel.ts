@@ -14,6 +14,7 @@ import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/Se
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import type { Account } from "@ledgerhq/types-live";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { copyToClipboard } from "@shared/clipboard";
 import { useSelector } from "~/context/hooks";
 import receiveAddressConfigs from "~/generated/ReceiveAddressConfig";
@@ -21,6 +22,7 @@ import { accountSelector } from "~/reducers/accounts";
 import type { State } from "~/reducers/types";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 import { useSanctionSimulation } from "../../hooks/useSanctionSimulation";
+import type { ReceiveConfirmationParams } from "../../utils/getReceiveRoute";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 
 // Each family's config reads its own account type; the screen gives it the account of its family.
@@ -37,13 +39,15 @@ const shareAddress = (address: string) =>
 
 const openUrl = (url: string) => void Linking.openURL(url);
 
-type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
+type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose"> &
+  Readonly<{ openLegacyReceive: (params: ReceiveConfirmationParams) => void }>;
 
 /** What only the mobile app gives the receive address screen. */
 export function useReceiveAddressScreenViewModel({
   accountUUID,
   assetId,
   onClose,
+  openLegacyReceive,
 }: Params): ReceiveAddressProps {
   const entry = useSelector(state => selectAccountEntry(state, accountUUID));
   const legacyAccount = useSelector(state =>
@@ -69,6 +73,27 @@ export function useReceiveAddressScreenViewModel({
     () => familyConfig && (input => familyConfig({ ...input, featureFlags, legacyAccount })),
     [familyConfig, featureFlags, legacyAccount],
   );
+  // The legacy screen on the account; for a token, it adds the token account it lacks.
+  const onUseLegacyFlow = useCallback(() => {
+    if (!legacyAccount) return;
+    const handOver = async () => {
+      const token =
+        assetId === legacyAccount.currency.id
+          ? undefined
+          : await getCryptoAssetsStore().findTokenById(assetId);
+      openLegacyReceive(
+        token
+          ? {
+              accountId: legacyAccount.id,
+              parentId: legacyAccount.id,
+              currency: token,
+              createTokenAccount: true,
+            }
+          : { accountId: legacyAccount.id },
+      );
+    };
+    void handOver();
+  }, [legacyAccount, assetId, openLegacyReceive]);
   const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
 
   return {
@@ -81,6 +106,7 @@ export function useReceiveAddressScreenViewModel({
     getFamilyConfig,
     serviceIncidents,
     checkAddressSanctioned,
+    onUseLegacyFlow: legacyAccount ? onUseLegacyFlow : undefined,
     onOpenUrl: openUrl,
   };
 }

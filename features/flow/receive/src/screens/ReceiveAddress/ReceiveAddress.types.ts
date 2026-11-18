@@ -25,6 +25,11 @@ export type ReceiveAddressProps = Readonly<{
    * it, no check.
    */
   checkAddressSanctioned?: (address: string) => Promise<boolean>;
+  /**
+   * Hands the account over to the legacy receive flow, which still onboards accounts and
+   * activates tokens. Without it, those states offer no way forward.
+   */
+  onUseLegacyFlow?: () => void;
   /** Opens a support link outside the app. Without it, no Learn more. */
   onOpenUrl?: (url: string) => void;
 }>;

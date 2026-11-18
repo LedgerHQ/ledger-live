@@ -35,6 +35,7 @@ export function useReceiveAddressViewModel({
   serviceIncidents,
   onOpenUrl,
   checkAddressSanctioned,
+  onUseLegacyFlow,
   source,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const tracking = useMemo(() => toReceiveAddressTracking(source), [source]);
@@ -129,7 +130,26 @@ export function useReceiveAddressViewModel({
     [selected, header.data, selection.options.length, copy.addressOptionLabels],
   );
 
+  const continueAction = onUseLegacyFlow && {
+    label: copy.continueLabel,
+    onPress: () => {
+      trackReceiveAddressButton("continue in legacy flow", tracking);
+      onUseLegacyFlow();
+    },
+  };
+  const blocked =
+    data.type === "onboardingRequired"
+      ? { title: copy.onboardingTitle, description: copy.onboardingDescription, continueAction }
+      : data.type === "activationRequired"
+        ? {
+            title: copy.activationTitle,
+            description: copy.activationDescriptions[data.method],
+            continueAction,
+          }
+        : undefined;
+
   return {
+    blocked,
     isLoading: data.type === "loading" || (!!picked && sanctionStatus === "checking"),
     sanctioned:
       picked && sanctionStatus === "sanctioned"

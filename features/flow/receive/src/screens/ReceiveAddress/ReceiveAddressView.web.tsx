@@ -3,6 +3,7 @@ import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen
 import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AddressActions } from "./components/AddressActions";
+import { BlockedReceive } from "./components/BlockedReceive";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
@@ -20,6 +21,7 @@ export function ReceiveAddressView({
   isLoading,
   error,
   sanctioned,
+  blocked,
   addressSelection,
   address,
   actions,
@@ -113,7 +115,9 @@ export function ReceiveAddressView({
               <DialogBody
                 className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
               >
-                {sanctioned ? (
+                {blocked ? (
+                  <BlockedReceive blocked={blocked} />
+                ) : sanctioned ? (
                   <SanctionedAddress sanctioned={sanctioned} />
                 ) : error ? (
                   <InfoState

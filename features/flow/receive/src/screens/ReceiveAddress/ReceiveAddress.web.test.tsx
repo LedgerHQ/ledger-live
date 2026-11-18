@@ -2,6 +2,7 @@ import React, { type ComponentProps } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { track } from "@shared/analytics";
 import {
@@ -134,6 +135,22 @@ describe("ReceiveAddress (Web)", () => {
 
     await waitFor(() => expect(screen.queryByTestId("receive-address-summary")).toBeNull());
     expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
+  });
+
+  it("should hand over to the legacy flow when the account must be onboarded", async () => {
+    const onUseLegacyFlow = jest.fn();
+    renderScreen(
+      jest.fn(),
+      makeReceiveTestStore({
+        accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+      }),
+      { onUseLegacyFlow },
+    );
+
+    expect(await screen.findByText("Set up this account first")).toBeVisible();
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
+    expect(onUseLegacyFlow).toHaveBeenCalled();
   });
 
   it("copies the address from the Copy tile", async () => {
