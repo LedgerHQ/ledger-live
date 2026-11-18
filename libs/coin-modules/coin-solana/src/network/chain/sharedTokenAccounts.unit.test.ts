@@ -1,3 +1,5 @@
+import { PublicKey } from "@solana/web3.js";
+import { parseTokenAccountInfo } from "./account/parser";
 import {
   clearSharedTokenAccounts,
   SHARED_TOKEN_ACCOUNTS_MAX,
@@ -105,6 +107,49 @@ describe("sharedTokenAccounts", () => {
     expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 2);
     await sharedTokenAccounts(ENDPOINT, SPL, `owner-${SHARED_TOKEN_ACCOUNTS_MAX}`, fetch);
     expect(fetch).toHaveBeenCalledTimes(SHARED_TOKEN_ACCOUNTS_MAX + 2);
+  });
+
+  it("gives each caller its own copy, so parsing one does not change the others", async () => {
+    const pubkey = new PublicKey(OWNER);
+    const response = {
+      context: { slot: 1 },
+      value: [
+        {
+          pubkey,
+          account: {
+            owner: pubkey,
+            data: {
+              parsed: {
+                info: {
+                  mint: SPL,
+                  owner: OWNER,
+                  isNative: false,
+                  state: "initialized",
+                  tokenAmount: {
+                    amount: "1",
+                    decimals: 6,
+                    uiAmount: 0.000001,
+                    uiAmountString: "0.000001",
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+    const fetch = jest.fn((): Promise<typeof response> => Promise.resolve(response));
+
+    const first = await sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch);
+    // What superstruct `create` does to the response in `parseTokenAccountInfo`.
+    parseTokenAccountInfo(first.value[0].account.data.parsed.info);
+    expect(first.value[0].account.data.parsed.info.mint).toBeInstanceOf(PublicKey);
+
+    const second = await sharedTokenAccounts(ENDPOINT, SPL, OWNER, fetch);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(second.value[0].account.data.parsed.info.mint).toBe(SPL);
+    expect(second.value[0].pubkey).toBe(pubkey);
+    expect(second).toEqual(response);
   });
 
   it("reads again after a clear", async () => {

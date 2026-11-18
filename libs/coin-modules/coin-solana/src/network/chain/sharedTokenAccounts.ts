@@ -27,9 +27,30 @@ const lookups = makeLRUCache(
 );
 
 /**
- * Shares one token account lookup per `endpoint`, token program and owner: callers get the same
- * promise for {@link SHARED_TOKEN_ACCOUNTS_TTL_MS}, in flight or resolved. A rejected lookup is not
+ * Copies plain objects and arrays, and keeps other values (`PublicKey`, `Buffer`, primitives) as
+ * they are: those are not changed in place by the callers.
+ */
+function copyPlainData<T>(value: T): T {
+  if (Array.isArray(value)) return value.map(copyPlainData) as T;
+  if (value !== null && typeof value === "object") {
+    const proto = Object.getPrototypeOf(value);
+    if (proto === Object.prototype || proto === null) {
+      const copy: Record<string, unknown> = {};
+      for (const [key, entry] of Object.entries(value)) copy[key] = copyPlainData(entry);
+      return copy as T;
+    }
+  }
+  return value;
+}
+
+/**
+ * Shares one token account lookup per `endpoint`, token program and owner: callers share the same
+ * request for {@link SHARED_TOKEN_ACCOUNTS_TTL_MS}, in flight or resolved. A rejected lookup is not
  * kept, so the next caller retries. At most {@link SHARED_TOKEN_ACCOUNTS_MAX} lookups are kept.
+ *
+ * Each caller gets its own copy of the response: parsing it with superstruct `create` changes it in
+ * place (`TokenAccountInfo` turns `parsed.info.mint` into a `PublicKey`), so a shared object would
+ * reach the next caller already changed.
  */
 export function sharedTokenAccounts<T>(
   endpoint: string,
@@ -37,7 +58,7 @@ export function sharedTokenAccounts<T>(
   owner: string,
   fetch: () => Promise<T>,
 ): Promise<T> {
-  return lookups(endpoint, programId, owner, fetch) as Promise<T>;
+  return (lookups(endpoint, programId, owner, fetch) as Promise<T>).then(copyPlainData);
 }
 
 /**
