@@ -64,7 +64,6 @@ export async function listOperations(
   }
 
   const { txs, next } = await cutPage(logger, config, order, { native, trc20 });
-  // A page holds every record of its transactions, so a sum is never split across pages.
   const summedTxs = aggregateTrc20Transfers(txs, address);
   return { items: await toOperations(logger, config, address, summedTxs), next };
 }

@@ -62,9 +62,7 @@ export type TrongridTxInfo = {
   feesPayer?: string;
   /** Decoded UTF-8 memo carried in the transaction's `raw_data.data`, when present. */
   memo?: string;
-  /** Set when several TRC20 transfers are summed into this record: every `from`, sorted. */
   senders?: string[];
-  /** Set when several TRC20 transfers are summed into this record: every `to`, sorted. */
   recipients?: string[];
 };
 

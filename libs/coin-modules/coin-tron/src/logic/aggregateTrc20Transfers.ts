@@ -4,11 +4,6 @@ import { TrongridTxInfo } from "../types";
 
 const SUMMED_TYPES = new Set(["IN", "OUT"]);
 
-/**
- * Sums the TRC20 transfers of one token in one direction within a transaction into one record:
- * their token operations would share one id. The fee is not summed, every record repeats it.
- * Approvals, transfers of no clear direction and records without a token address pass through.
- */
 export function aggregateTrc20Transfers(
   txs: TrongridTxInfo[],
   userAddress: string,
