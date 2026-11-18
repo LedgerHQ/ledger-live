@@ -18,13 +18,13 @@ type EarlyOutcome = Extract<VerifyAddressOutcome, "unsupported" | "failed">;
 
 const VERIFICATION_PAGE = { page: "Receive Address Verification", flow: "receive" } as const;
 
-const OUTCOME_EVENT: Record<TrackedOutcome, string> = {
+const OUTCOME_EVENT = {
   verified: "receive_verification_complete",
   cancelled: "receive_verification_cancelled",
   mismatch: "receive_verification_mismatch",
   unsupported: "receive_verification_unsupported",
   dismissed: "receive_verification_dismiss",
-};
+} as const satisfies Record<TrackedOutcome, string>;
 
 const RESULT_OUTCOME: Record<VerifyAddressIntentResult["type"], ResultOutcome> = {
   verified: "verified",

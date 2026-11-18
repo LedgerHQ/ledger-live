@@ -54,7 +54,7 @@ describe("useReceiveAddressHelp", () => {
     expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.receiveSecurely);
     expect(track).toHaveBeenCalledWith(
       "faq_clicked",
-      expect.objectContaining({ faq: "How to receive securely?" }),
+      expect.objectContaining({ faq: "receiveSecurely" }),
     );
   });
 

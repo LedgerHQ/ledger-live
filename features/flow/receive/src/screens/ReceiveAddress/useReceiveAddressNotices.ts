@@ -8,8 +8,6 @@ import type { ReceiveFamilyConfig, ReceiveServiceIncident } from "../../types";
 import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
 import type { ReceiveNoticeView, ReceiveServiceWarningView } from "./ReceiveAddressView.types";
 
-const SERVICE_WARNING_CTA_BUTTON = "service incident details";
-
 type Params = Readonly<{
   familyConfig: ReceiveFamilyConfig;
   /** Absent until the address is shown: the notices are about it. */
@@ -75,7 +73,7 @@ export function useReceiveAddressNotices({
           title: incident.title,
           ctaLabel: copy.serviceWarningCta,
           onPress: () => {
-            trackReceiveAddressButton(SERVICE_WARNING_CTA_BUTTON, tracking);
+            trackReceiveAddressButton("service incident details", tracking);
             openServiceStatus();
           },
         }

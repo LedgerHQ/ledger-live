@@ -46,7 +46,7 @@ export function useReceiveAddressHelp({
             id,
             label: copy.helpQuestions[id],
             onPress: () => {
-              track("faq_clicked", { faq: copy.helpQuestions[id], ...tracking });
+              track("faq_clicked", { faq: id, ...tracking });
               onOpenUrl(RECEIVE_URLS[id]);
             },
           }))

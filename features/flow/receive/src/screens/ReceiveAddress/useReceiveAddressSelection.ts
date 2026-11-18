@@ -5,9 +5,13 @@ import {
   type ReceiveAddressOption,
   type ReceiveAddressOptionId,
 } from "../../logic/toReceiveAddressOptions";
-import { trackReceiveAddressButton, type ReceiveAddressTracking } from "./receiveAddressTracking";
+import {
+  trackReceiveAddressButton,
+  type ReceiveAddressButton,
+  type ReceiveAddressTracking,
+} from "./receiveAddressTracking";
 
-const OPTION_BUTTON: Readonly<Record<ReceiveAddressOptionId, string>> = {
+const OPTION_BUTTON: Readonly<Record<ReceiveAddressOptionId, ReceiveAddressButton>> = {
   transparent: "public address",
   shielded: "private address",
 };
