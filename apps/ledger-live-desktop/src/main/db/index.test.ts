@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import fs from "fs/promises";
 
 const readFileMock = jest.fn<(path: string) => Promise<Buffer>>();
 const writeFileMock = jest.fn<(path: string, data: string) => Promise<void>>();
@@ -467,6 +468,23 @@ describe("db flush", () => {
 
     expect(writtenFile("app")).toBeUndefined();
     await expect(db.getKey("app", "settings")).resolves.toBeUndefined();
+  });
+
+  it("deletes app.json after the save that is already in progress", async () => {
+    const unlink = jest.spyOn(fs, "unlink");
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+
+    const resetting = db.resetAll();
+    await waitMs(0);
+    expect(unlink).not.toHaveBeenCalled();
+
+    finishWrite();
+    await resetting;
+    expect(unlink).toHaveBeenCalledWith(`${testDir}/app.json`);
+    unlink.mockRestore();
   });
 
   it("writes a pending save before reload clears the memory", async () => {

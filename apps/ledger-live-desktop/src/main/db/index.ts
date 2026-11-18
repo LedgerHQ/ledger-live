@@ -471,6 +471,8 @@ async function resetAll() {
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
+  // A write already in progress would put the old data back after the unlink.
+  await saversByNamespace.get("app")?.inFlight();
   await fs.unlink(path.resolve(DBPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
     if (e.code !== "ENOENT") throw e;
   });
