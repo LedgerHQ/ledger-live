@@ -1,9 +1,9 @@
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
 import { useTranslation } from "@shared/i18n";
 import { InfoState } from "@shared/ui-info-state";
+import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import {
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
@@ -29,11 +29,11 @@ type Props = Readonly<{
 
 export function ExportResultScene({ variant, onButtonClick }: Props) {
   const { t } = useTranslation();
-  const { bottom } = useSafeAreaInsets();
+  const bottomInset = useBottomSheetBottomInset();
   const config = VARIANTS[variant];
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottom + 24 }}>
+    <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
       {variant === "success" ? (
         <TrackScreen
           category={HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME}
@@ -42,7 +42,7 @@ export function ExportResultScene({ variant, onButtonClick }: Props) {
         />
       ) : null}
       <BottomSheetHeader />
-      <Box lx={{ paddingHorizontal: "s16" }} testID={`history-export-${variant}-title`}>
+      <Box lx={{ paddingHorizontal: "s16" }} testID={`history-export-${variant}`}>
         <InfoState
           preset={variant}
           size="hug"
