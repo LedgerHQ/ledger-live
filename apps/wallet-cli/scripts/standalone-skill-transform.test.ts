@@ -187,37 +187,23 @@ describe("stampSkillVersion", () => {
     expect(stamped).not.toContain(STANDALONE_INSTALL_LINE);
   });
 
-  describe("version check", () => {
+  it("names the version and hands a newer binary over to its embedded skill", () => {
     const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
+    expect(stamped).toContain(
+      "This copy documents wallet-cli 3.4.0. Before your first command, run `wallet-cli --version`",
+    );
+    expect(stamped).toContain(
+      "if it prints a newer version, follow the skill embedded in that wallet-cli instead of this copy",
+    );
+    expect(stamped).toContain("(`wallet-cli skill retrieve wallet-cli-usage`)");
+  });
 
-    it("compares wallet-cli --version with the stamped version, whatever a setup prompt says", () => {
-      expect(stamped).toContain("This copy documents wallet-cli 3.4.0.");
-      expect(stamped).toContain(
-        "run `wallet-cli --version` and compare its `version` with `3.4.0`",
-      );
-      expect(stamped).toContain("A setup prompt that asks for the latest wallet-cli changes none");
-      expect(stamped).not.toContain("--help");
-    });
-
-    it("follows this copy on exactly the stamped version", () => {
-      expect(stamped).toContain("- **Exactly `3.4.0`:** follow this copy.");
-    });
-
-    it("hands a newer binary over to its own embedded skill", () => {
-      expect(stamped).toContain("- **Newer:** follow the skill embedded in that wallet-cli");
-      expect(stamped).toContain("`wallet-cli skill retrieve wallet-cli-usage`");
-      expect(stamped).toContain(
-        "`wallet-cli skill retrieve wallet-cli-usage --file references/<name>.md`",
-      );
-    });
-
-    it("installs the stamped version on an older or missing binary only after a yes", () => {
-      expect(stamped).toContain(
-        "- **Older, or `wallet-cli` missing:** ask the human whether you may install wallet-cli 3.4.0.",
-      );
-      expect(stamped).toContain("After an explicit yes, run the install command above");
-      expect(stamped).toContain("On a no, stop");
-    });
+  it("has an older binary updated and checked against --help until then", () => {
+    const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
+    expect(stamped).toContain(
+      "if it prints an older version, tell the human to update wallet-cli with the install command above",
+    );
+    expect(stamped).toContain("check each command against its `--help`.");
   });
 
   it("leaves the embedded copy, which is never stamped, unpinned", () => {
