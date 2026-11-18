@@ -2,12 +2,14 @@ import { useCallback, useState, useEffect, useMemo } from "react";
 import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
-import type { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
+import { getCalTokensCached } from "@ledgerhq/coin-canton/network/gateway";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
-import { getCurrencyConfiguration } from "../../config";
+import { instrumentKey, nativeInstrumentMatcher, type InstrumentTokens } from "./proposalSorting";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
   currency: CryptoCurrency;
@@ -120,6 +122,7 @@ type TransferProposal = {
   amount: string;
   expires_at_micros: number;
   instrument_id: string;
+  instrument_admin: string;
 };
 
 type CantonTokenAccountLike = AccountLike & {
@@ -134,6 +137,62 @@ const hasCantonResources = (
   }
 
   return "cantonResources" in account && !!account.cantonResources;
+};
+
+const NO_TOKENS: InstrumentTokens = new Map();
+
+// Exact order: localeCompare ties canonically equal ids, making the key order-dependent.
+const byCodeUnit = (a: string, b: string): number => (a < b ? -1 : Number(a > b));
+
+async function findOfferTokens(
+  currencyId: string,
+  instrumentIds: readonly string[],
+): Promise<InstrumentTokens> {
+  const wanted = new Set(instrumentIds);
+  const calTokens = await getCalTokensCached(currencyId);
+  const matches = [...calTokens].filter(([, tokenIdentifier]) => wanted.has(tokenIdentifier));
+  const found = await Promise.all(
+    matches.map(async ([tokenId, tokenIdentifier]) => ({
+      tokenIdentifier,
+      token: await getCryptoAssetsStore().findTokenById(tokenId),
+    })),
+  );
+  const tokens = new Map<string, TokenCurrency>();
+  for (const { tokenIdentifier, token } of found) {
+    if (token?.contractAddress) {
+      tokens.set(instrumentKey(tokenIdentifier, token.contractAddress), token);
+    }
+  }
+  return tokens;
+}
+
+/**
+ * The CAL tokens of a Canton account's offers, keyed by instrument id and admin, so an offer
+ * resolves even when its token sub-account is missing. Empty while loading or when CAL fails.
+ */
+export const useCantonOfferTokens = (account: Account): InstrumentTokens => {
+  const proposals = isCantonAccount(account)
+    ? (account.cantonResources?.pendingTransferProposals ?? [])
+    : [];
+  const instrumentIds = [...new Set(proposals.map(p => p.instrument_id))].sort(byCodeUnit);
+  const key = JSON.stringify([account.currency.id, instrumentIds]);
+  const [loaded, setLoaded] = useState<{ key: string; tokens: InstrumentTokens } | null>(null);
+
+  useEffect(() => {
+    const [currencyId, ids]: [string, string[]] = JSON.parse(key);
+    if (ids.length === 0) return;
+    let isStale = false;
+    const settle = (tokens: InstrumentTokens) => {
+      if (!isStale) setLoaded({ key, tokens });
+    };
+    findOfferTokens(currencyId, ids).then(settle, () => settle(NO_TOKENS));
+    return () => {
+      isStale = true;
+    };
+  }, [key]);
+
+  // A map loaded for other offers or another currency must not price these.
+  return loaded?.key === key ? loaded.tokens : NO_TOKENS;
 };
 
 /**
@@ -157,24 +216,20 @@ export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]
     const accountXpub = "xpub" in mainAccount ? ((mainAccount.xpub as string) ?? "") : "";
     const currentTime = Date.now();
 
-    // Restrict to the instrument this account renders amounts in: native for the
-    // parent Canton account, the token's instrument_id for a token sub-account.
-    const isParent = account.type === "Account";
-    const nativeInstrumentId = isParent
-      ? getCurrencyConfiguration<CantonCoinConfig>(mainAccount.currency.id).nativeInstrumentId
-      : undefined;
-    const matchesAccountInstrument = (instrumentId: string): boolean => {
-      if (isParent) return instrumentId === nativeInstrumentId;
-      // Token sub-account: its cantonResources is already filtered per-token at
-      // sync time (see buildSubAccounts), so any proposal that landed here is
-      // for the right instrument.
-      return true;
-    };
+    // Restrict to the instrument this account renders amounts in: native CC (id and DSO admin)
+    // for the parent Canton account. A token sub-account's cantonResources is already
+    // filtered per token at sync time (see buildSubAccounts).
+    const matchesAccountInstrument =
+      account.type === "Account" ? nativeInstrumentMatcher(account) : () => true;
 
     return proposals.reduce((sum, proposal) => {
       const isOutgoing = proposal.sender === accountXpub;
       const isExpired = currentTime > proposal.expires_at_micros / 1000;
-      if (isOutgoing && isExpired && matchesAccountInstrument(proposal.instrument_id)) {
+      if (
+        isOutgoing &&
+        isExpired &&
+        matchesAccountInstrument(proposal.instrument_id, proposal.instrument_admin)
+      ) {
         return sum.plus(new BigNumber(proposal.amount));
       }
       return sum;

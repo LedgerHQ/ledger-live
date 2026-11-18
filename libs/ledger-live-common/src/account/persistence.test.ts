@@ -185,6 +185,24 @@ describe("account persistence predicates", () => {
       };
       expect(accountPersistedStateChanged(prev, next)).toBe(false);
     });
+
+    it("returns true when sync first stores the Canton DSO party, false once it is unchanged", () => {
+      const base = genAccount("seed", { currency: Ethereum });
+      const resources = {
+        isOnboarded: true,
+        instrumentUtxoCounts: {},
+        pendingTransferProposals: [],
+      };
+      const before = { ...base, cantonResources: resources };
+      const after = {
+        ...base,
+        cantonResources: { ...resources, nativeInstrumentAdmin: "DSO::1220" },
+      };
+      const resynced = { ...after, cantonResources: { ...after.cantonResources } };
+
+      expect(accountPersistedStateChanged(before, after)).toBe(true);
+      expect(accountPersistedStateChanged(after, resynced)).toBe(false);
+    });
   });
 
   describe("accountsPersistedStateChanged", () => {

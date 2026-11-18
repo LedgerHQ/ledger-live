@@ -2,13 +2,17 @@ import { isCantonAccount, TransferOfferExpiredError } from "@ledgerhq/coin-canto
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  buildUnitResolver,
+  buildInstrumentResolver,
   byTokenAndDate,
 } from "@ledgerhq/live-common/families/canton/proposalSorting";
-import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
+import {
+  useCantonAcceptOrRejectOffer,
+  useCantonOfferTokens,
+} from "@ledgerhq/live-common/families/canton/react";
 import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -53,9 +57,12 @@ export function usePendingTransferProposalsViewModel(
   account: Account,
   parentAccount: Account,
 ): PendingTransferProposalsViewModel {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const unit = useAccountUnit(account);
+  const offerTokens = useCantonOfferTokens(parentAccount);
+  const unknownCode = t("families.canton.pendingTransactions.unknownToken");
   const sync = useBridgeSync();
   const lldModularDrawer = useFeature("lldModularDrawer");
   const useModularDrawer = !!lldModularDrawer?.enabled;
@@ -77,7 +84,7 @@ export function usePendingTransferProposalsViewModel(
       const { incoming, outgoing } = processTransferProposals(
         pendingTransferProposals,
         accountXpub,
-        buildUnitResolver(parentAccount),
+        buildInstrumentResolver(parentAccount, unknownCode, offerTokens),
       );
 
       incoming.sort(byTokenAndDate);
@@ -90,7 +97,7 @@ export function usePendingTransferProposalsViewModel(
         outgoingCount: outgoing.length,
         allProposals: [...incoming, ...outgoing],
       };
-    }, [account, accountXpub, parentAccount]);
+    }, [account, accountXpub, parentAccount, unknownCode, offerTokens]);
 
   const onOpenModal = useCallback((contractId: string, action: TransferProposalAction) => {
     setModal({ isOpen: true, action, contractId });
