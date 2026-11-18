@@ -5684,7 +5684,14 @@
       },
       "devTools": {
         "rowTitle": "DevTools",
-        "rowDesc": "Open the DevTools shell (feature flags and dev tools panel)."
+        "rowDesc": "Open the DevTools shell (feature flags and dev tools panel).",
+        "appToggles": {
+          "hideNightlyLayer": {
+            "label": "Hide pre-release overlay",
+            "description": "Hide the PRERELEASE watermark shown on nightly builds, for example to take clean screenshots.",
+            "lockedReason": "The overlay only shows on nightly builds."
+          }
+        }
       },
       "brazeTools": {
         "title": "Braze Tools",

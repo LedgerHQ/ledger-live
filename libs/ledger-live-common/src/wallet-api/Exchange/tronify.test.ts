@@ -1,10 +1,13 @@
 import BigNumber from "bignumber.js";
+import { createSponsoredSendApi } from "@ledgerhq/coin-tron/api/index";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { deserializeError, serializeError } from "@ledgerhq/wallet-api-core";
 import { buildGenericTransactionIntent } from "../../bridge/generic-coin-framework/buildIntent";
 import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
 import { genericValidateAddress } from "../../bridge/generic-coin-framework/validateAddress";
 import {
+  getPendingRent,
+  getRentDelivery,
   recordPendingRent,
   resetPendingRentsForTests,
 } from "../../flows/send/sponsored/pendingRents";
@@ -16,6 +19,7 @@ import {
   getTronifyRentOrder,
   isTronifyEnergyDelivered,
   tronifyHandlers,
+  uploadTronifyHash,
 } from "./tronify";
 
 jest.mock("../../bridge/generic-coin-framework/sponsored", () => ({
@@ -82,8 +86,75 @@ function check(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
 describe("isTronifyEnergyDelivered", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetPendingRentsForTests();
     mockGetSponsoredCoinApi.mockResolvedValue({ isEnergyDelivered } as never);
     isEnergyDelivered.mockResolvedValue(true);
+  });
+
+  const holdRent = (
+    rent: { paymentTxId?: string; energyNeeded?: bigint; submitting?: boolean } = {},
+  ) =>
+    recordPendingRent(
+      {
+        mainAccountId: tronAccount.id,
+        orderId: "order",
+        payerAddress: TRON_ADDRESS,
+        paymentTxId: "ab12",
+        receiverAddress: TRON_ADDRESS,
+        energyNeeded: 31_895n,
+        ...rent,
+      },
+      Date.now() + 60_000,
+    );
+  const deliveredParams = { fromAccountId: walletId(usdtAccount), energyNeeded: "31895" };
+
+  it("releases the account's rent hold once its energy is on-chain", async () => {
+    holdRent();
+
+    await check(deliveredParams);
+
+    expect(getPendingRent(tronAccount.id)).toBeNull();
+    expect(getRentDelivery(tronAccount.id)).toMatchObject({ paymentTxId: "ab12" });
+  });
+
+  it("keeps a rent held after the read started, even when the read reports delivery", async () => {
+    let resolveRead: (delivered: boolean) => void = () => {};
+    isEnergyDelivered.mockImplementationOnce(() => new Promise(resolve => (resolveRead = resolve)));
+    holdRent({ paymentTxId: "old" });
+    const read = check(deliveredParams);
+    await new Promise(setImmediate);
+    holdRent({ paymentTxId: "new" });
+
+    resolveRead(true);
+    await read;
+
+    expect(getPendingRent(tronAccount.id)).toMatchObject({ paymentTxId: "new" });
+  });
+
+  it("releases nothing when no rent was held as the read started", async () => {
+    let resolveRead: (delivered: boolean) => void = () => {};
+    isEnergyDelivered.mockImplementationOnce(() => new Promise(resolve => (resolveRead = resolve)));
+    const read = check(deliveredParams);
+    await new Promise(setImmediate);
+    holdRent();
+
+    resolveRead(true);
+    await read;
+
+    expect(getPendingRent(tronAccount.id)).toMatchObject({ paymentTxId: "ab12" });
+  });
+
+  it.each([
+    ["the energy has not arrived", {}, false],
+    ["the rent is still submitting", { submitting: true }, true],
+    ["the rent needs more energy than was checked", { energyNeeded: 31_896n }, true],
+  ])("keeps the rent hold when %s", async (_label, rent, delivered) => {
+    holdRent(rent);
+    isEnergyDelivered.mockResolvedValue(delivered);
+
+    await check(deliveredParams);
+
+    expect(getPendingRent(tronAccount.id)).toMatchObject({ paymentTxId: "ab12" });
   });
 
   it("reads the energy on the TRON account behind a TRC-20 token account", async () => {
@@ -460,9 +531,11 @@ describe("createTronifyRentRecord", () => {
       orderId,
       mainAccountId: tronAccount.id,
       payerAddress: TRON_ADDRESS,
+      receiverAddress: TRON_ADDRESS,
       transaction: TRANSACTION,
       paymentTxId: result.paymentTxId,
       energyNeeded: 64_285n,
+      paymentExpiresAt,
       signableUntilMs: paymentExpiresAt - 30_000,
     });
   });
@@ -729,11 +802,288 @@ describe("createTronifyRentRecord", () => {
   });
 });
 
+function upload(params: unknown, getFeature: GetFeatureFn | undefined = flagOn) {
+  return uploadTronifyHash(params as never, { accounts, getFeature });
+}
+
+describe("uploadTronifyHash", () => {
+  // A USDT transfer owned by the address of private key 0x11…11, and that key's signature over it.
+  const TRANSACTION = {
+    txID: "ab12",
+    raw_data_hex:
+      "0a020ee522082e5fc67747a428af40f0e2ace4d3325aad01081f12a8010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412730a154119e7e376e7c213b7e7e7e46cc70a5dd086daff2a121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2243a9059cbb000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000000000000000000000000000000000000f424070fd9ca9e4d33290018087a70e",
+  };
+  const SIGNATURE =
+    "b012c72290538ab3e61c3c22fb3662f85f9c87f1ec4cc0d686b42dcf5fb48e580035b3c7d44563a1bd34c366769b3960e9da6695ee38702130297f7cdef693d31c";
+  // The same transaction signed by private key 0x22…22.
+  const OTHER_KEY_SIGNATURE =
+    "267b81f7c0b37f346dc223a5fb2b70b2bf69cc60fb80a5a2776f6b11e0a8b9bf350ce81efdeeb787e1bd93bee9d704e5dc19ac243a3ca205c84bc5d4b9d8e0a11b";
+  // The `transaction.signRaw` output: 4-hex-char length prefix, echoed raw tx, signature.
+  const lengthPrefix = (rawDataHex: string) => rawDataHex.length.toString(16).padStart(4, "0");
+  const SIGNED_HEX = `${lengthPrefix(TRANSACTION.raw_data_hex)}${TRANSACTION.raw_data_hex}${SIGNATURE}`;
+  const SIGNED_TRANSACTION = { ...TRANSACTION, signature: [SIGNATURE] };
+  const ENERGY_NEEDED = 64_285n;
+
+  // coin-tron's own builder, so the signature checks run for real.
+  const tronSeam = createSponsoredSendApi({
+    logger: jest.fn(),
+    config: jest.fn(),
+  } as unknown as Parameters<typeof createSponsoredSendApi>[0]);
+  const buildSignedEnergyRentTransaction = jest.fn();
+  const submitEnergyRentPayment = jest.fn();
+
+  let orderSeq = 0;
+  let orderId: string;
+  let paymentExpiresAt: number;
+
+  const uploadParams = (overrides: Record<string, unknown> = {}) => ({
+    fromAccountId: walletId(usdtAccount),
+    orderId,
+    signedTransactionHex: SIGNED_HEX,
+    ...overrides,
+  });
+
+  async function createOrder() {
+    await createRecord({
+      fromAccountId: walletId(usdtAccount),
+      recipient: "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
+      amount: "1000000",
+      approvedFee: "2310000",
+    });
+  }
+
+  function expectNoSubmit() {
+    expect(submitEnergyRentPayment).not.toHaveBeenCalled();
+    expect(getPendingRent(tronAccount.id)).toBeNull();
+  }
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    resetPendingRentsForTests();
+    orderId = `upload-order-${++orderSeq}`;
+    paymentExpiresAt = Date.now() + 60_000;
+    mockGetSponsoredCoinApi.mockResolvedValue({
+      feeOptionId: "tronify",
+      listFeeOptions: async () => [{ id: "tronify" }],
+      buildEnergyRentRequest: async () => ({
+        payerAddress: TRON_ADDRESS,
+        receiverAddress: TRON_ADDRESS,
+        energy: ENERGY_NEEDED,
+        durationSeconds: 3600,
+      }),
+      craftEnergyRentTransaction: async () => ({
+        orderId,
+        transaction: TRANSACTION,
+        payCoinCode: "USDT",
+        payCoinAmt: "2.31",
+        paymentExpiresAt,
+      }),
+      classifyRentOrderError: () => null,
+      getEnergyRentSignaturePayload: (tx: typeof TRANSACTION) => ({
+        toSign: tx.raw_data_hex,
+        paymentTxId: tx.txID,
+      }),
+      buildSignedEnergyRentTransaction,
+      submitEnergyRentPayment,
+    } as never);
+    mockGenericValidateAddress.mockReturnValue(validateAddress);
+    validateAddress.mockResolvedValue(true);
+    mockBuildIntent.mockResolvedValue({ type: "send" } as never);
+    buildSignedEnergyRentTransaction.mockImplementation(tronSeam.buildSignedEnergyRentTransaction);
+    submitEnergyRentPayment.mockResolvedValue(undefined);
+    await createOrder();
+  });
+
+  it("submits the order's payment with the device signature, once", async () => {
+    await expect(upload(uploadParams())).resolves.toEqual({ paymentTxId: "ab12" });
+
+    expect(buildSignedEnergyRentTransaction).toHaveBeenCalledWith(TRANSACTION, SIGNED_HEX);
+    expect(submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+    expect(submitEnergyRentPayment).toHaveBeenCalledWith({
+      orderId,
+      signedTransaction: SIGNED_TRANSACTION,
+    });
+  });
+
+  it("holds the account until the rented energy lands, as the Send flow does", async () => {
+    await upload(uploadParams());
+
+    expect(getPendingRent(tronAccount.id)).toEqual({
+      mainAccountId: tronAccount.id,
+      orderId,
+      payerAddress: TRON_ADDRESS,
+      paymentTxId: "ab12",
+      receiverAddress: TRON_ADDRESS,
+      energyNeeded: ENERGY_NEEDED,
+      submitting: false,
+      expiresAt: expect.any(Number),
+    });
+    await expect(createOrder()).rejects.toMatchObject({ cause: "TRONIFY_RENT_PENDING" });
+  });
+
+  it("holds the account while the submit is in flight", async () => {
+    let held: unknown;
+    submitEnergyRentPayment.mockImplementation(async () => {
+      held = getPendingRent(tronAccount.id);
+    });
+
+    await upload(uploadParams());
+
+    expect(held).toMatchObject({ paymentTxId: "ab12", submitting: true });
+  });
+
+  it("rejects a replayed order without a second submit", async () => {
+    await upload(uploadParams());
+
+    await expect(upload(uploadParams())).rejects.toMatchObject({
+      cause: "TRONIFY_ORDER_NOT_FOUND",
+    });
+    expect(submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+  });
+
+  it("submits once when the same order is uploaded twice concurrently", async () => {
+    const results = await Promise.allSettled([upload(uploadParams()), upload(uploadParams())]);
+
+    expect(results.map(result => result.status).sort()).toEqual(["fulfilled", "rejected"]);
+    expect(submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects an unknown order before any Tronify call", async () => {
+    await expect(upload(uploadParams({ orderId: "unknown" }))).rejects.toMatchObject({
+      cause: "TRONIFY_ORDER_NOT_FOUND",
+    });
+    expect(buildSignedEnergyRentTransaction).not.toHaveBeenCalled();
+    expectNoSubmit();
+  });
+
+  it("rejects an order whose payment can no longer be signed", async () => {
+    jest.useFakeTimers({ now: paymentExpiresAt - 30_000 });
+    try {
+      await expect(upload(uploadParams())).rejects.toMatchObject({
+        cause: "TRONIFY_ORDER_NOT_FOUND",
+      });
+    } finally {
+      jest.useRealTimers();
+    }
+    expectNoSubmit();
+  });
+
+  it("rejects an account that is not the order's payer", async () => {
+    const otherTron = {
+      ...tronAccount,
+      id: "js:2:tron:TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1:",
+    } as Account;
+    const otherUsdt = { ...usdtAccount, id: `${otherTron.id}+usdt`, parentId: otherTron.id };
+    setWalletApiIdForAccountId(otherUsdt.id);
+
+    await expect(
+      uploadTronifyHash(uploadParams({ fromAccountId: walletId(otherUsdt) }), {
+        accounts: [...accounts, otherTron, otherUsdt],
+        getFeature: flagOn,
+      }),
+    ).rejects.toMatchObject({ cause: "WRONG_TRONIFY_PARAMS" });
+    expectNoSubmit();
+    expect(getTronifyRentOrder(orderId)).toMatchObject({ orderId });
+  });
+
+  it.each([
+    ["a signature by another key", SIGNED_HEX.replace(SIGNATURE, OTHER_KEY_SIGNATURE)],
+    ["a signature over other bytes", `0008deadbeef${SIGNATURE}`],
+    ["a wrong length prefix", `0000${SIGNED_HEX.slice(4)}`],
+    ["a missing signature", SIGNED_HEX.replace(SIGNATURE, "")],
+  ])("rejects %s and keeps the order for a new signature", async (_label, signedTransactionHex) => {
+    await expect(upload(uploadParams({ signedTransactionHex }))).rejects.toMatchObject({
+      cause: "WRONG_TRONIFY_PARAMS",
+    });
+    expectNoSubmit();
+
+    await expect(upload(uploadParams())).resolves.toEqual({ paymentTxId: "ab12" });
+  });
+
+  it("rejects while another rent of the account has not landed", async () => {
+    recordPendingRent(
+      {
+        mainAccountId: tronAccount.id,
+        orderId: "send-order",
+        payerAddress: TRON_ADDRESS,
+        paymentTxId: "cd34",
+        receiverAddress: TRON_ADDRESS,
+        energyNeeded: ENERGY_NEEDED,
+      },
+      Date.now() + 60_000,
+    );
+
+    await expect(upload(uploadParams())).rejects.toMatchObject({
+      cause: "TRONIFY_RENT_PENDING",
+    });
+    expect(submitEnergyRentPayment).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["no params", undefined],
+    ["no order id", { orderId: undefined }],
+    ["an empty order id", { orderId: "" }],
+    ["no signed transaction", { signedTransactionHex: undefined }],
+    ["a non-hex signed transaction", { signedTransactionHex: "0x0a02" }],
+    ["an odd-length signed transaction", { signedTransactionHex: "0a0" }],
+  ])("rejects %s before any network call", async (_label, overrides) => {
+    mockGetSponsoredCoinApi.mockClear();
+    const params = overrides === undefined ? undefined : uploadParams(overrides);
+
+    await expect(upload(params)).rejects.toMatchObject({ cause: "WRONG_TRONIFY_PARAMS" });
+    expect(mockGetSponsoredCoinApi).not.toHaveBeenCalled();
+    expectNoSubmit();
+  });
+
+  it("rejects when the gasSponsorship flag is off", async () => {
+    await expect(upload(uploadParams(), flagOff)).rejects.toMatchObject({
+      cause: "TRONIFY_DISABLED",
+    });
+    expectNoSubmit();
+  });
+
+  it("rejects a native TRX account", async () => {
+    await expect(
+      upload(uploadParams({ fromAccountId: walletId(tronAccount) })),
+    ).rejects.toMatchObject({ cause: "TRONIFY_UNSUPPORTED_ACCOUNT" });
+    expectNoSubmit();
+  });
+
+  it("fails with an explicit code, keeps the hold and drops the order when the submit fails", async () => {
+    submitEnergyRentPayment.mockRejectedValue(new Error("timeout"));
+
+    await expect(upload(uploadParams())).rejects.toMatchObject({
+      name: "ExchangeError",
+      message: "tronify rent payment upload failed: timeout",
+      cause: "TRONIFY_UPLOAD_FAILED",
+    });
+    // Not submitting any more, so a delivery check can still release it if the payment landed.
+    expect(getPendingRent(tronAccount.id)).toMatchObject({
+      paymentTxId: "ab12",
+      submitting: false,
+    });
+    expect(getTronifyRentOrder(orderId)).toBeUndefined();
+  });
+
+  it("keeps the upload failure code across the wallet API wire", async () => {
+    submitEnergyRentPayment.mockRejectedValue(new Error("timeout"));
+    const error = await upload(uploadParams()).catch(e => e);
+
+    const onTheWire = JSON.parse(JSON.stringify(serializeError(error)));
+
+    expect(deserializeError(onTheWire)).toMatchObject({
+      name: "ExchangeError",
+      cause: "TRONIFY_UPLOAD_FAILED",
+    });
+  });
+});
+
 describe("tronifyHandlers", () => {
   it("exposes the method ids the exchange-module client calls", () => {
     expect(Object.keys(tronifyHandlers({ accounts, getFeature: flagOn }))).toEqual([
       "custom.exchange.tronify.getQuote",
       "custom.exchange.tronify.createRentRecord",
+      "custom.exchange.tronify.uploadHash",
       "custom.exchange.tronify.isEnergyDelivered",
     ]);
   });

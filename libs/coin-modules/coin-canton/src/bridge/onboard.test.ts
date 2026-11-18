@@ -8,7 +8,7 @@ import {
   createMockCoinConfigValue,
   createMockContext,
 } from "../test/fixtures";
-import type { CantonSigner, CantonSignature } from "../types";
+import type { CantonAccount, CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
@@ -127,10 +127,31 @@ describe("onboard", () => {
       expect(mockedSignTransaction.signTransaction).not.toHaveBeenCalled();
     });
 
+    it("onboards an account that has no cantonResources yet", async () => {
+      const { cantonResources: _none, ...account } = createMockCantonAccount();
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: mockPartyId,
+        public_key: mockPublicKey,
+      });
+
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
+      const values = await firstValueFrom(
+        onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
+      );
+
+      const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).toEqual({
+        isOnboarded: true,
+      });
+    });
+
     it("should proceed with submission when account has xpub (re-onboarding scenario)", async () => {
       // GIVEN - account already has xpub (re-onboarding)
       const existingPartyId = "existing-party-id";
-      const account = createMockCantonAccount({ xpub: existingPartyId });
+      const account = createMockCantonAccount(
+        { xpub: existingPartyId },
+        { nativeInstrumentAdmin: "DSO::before-reset" },
+      );
       const newPartyId = "new-party-id";
 
       mockedGateway.getPartyByPubKey.mockResolvedValue({
@@ -185,6 +206,11 @@ describe("onboard", () => {
           cantonResources: expect.objectContaining({ isOnboarded: true }),
         }),
       });
+      // A reset replaces the DSO party, so sync must not use the one saved or cached before it.
+      expect(mockedGateway.clearDsoPartyIdCache).toHaveBeenCalledWith(mockConfig);
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "nativeInstrumentAdmin",
+      );
     });
 
     it("links the existing party (no submit) when prepareOnboarding reports it already exists", async () => {

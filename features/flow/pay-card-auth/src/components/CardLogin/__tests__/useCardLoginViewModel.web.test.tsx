@@ -29,7 +29,7 @@ const copy: CardLoginCopy = {
   title: "Crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
-  alreadyHaveCardLabel: null,
+  showAlreadyHaveCard: false,
 };
 
 const intro: CardLoginIntroViewProps = {
@@ -334,7 +334,7 @@ describe("useCardLoginViewModel intro", () => {
   it("offers the login link to a card holder who has one already", async () => {
     const { result } = await renderIdleLogin(store);
 
-    expect(result.current?.alreadyHaveCardLabel).toBe("I already have a card");
+    expect(result.current?.showAlreadyHaveCard).toBe(true);
   });
 
   it("starts the login from that link, and skips the intro", async () => {
@@ -364,7 +364,7 @@ describe("useCardLoginViewModel intro", () => {
     store.dispatch(markPayCardLoginIntroSeen());
     const { result } = await renderIdleLogin(store);
 
-    expect(result.current?.alreadyHaveCardLabel).toBeNull();
+    expect(result.current?.showAlreadyHaveCard).toBe(false);
   });
 
   it("offers a login once the intro has been seen", async () => {

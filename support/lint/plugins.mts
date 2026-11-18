@@ -7,3 +7,8 @@ export const SUFFIX_IMPORTS_PLUGIN = fileURLToPath(
 
 /** Absolute path of the `redux-slices` oxlint JS plugin, for a config's `jsPlugins`. */
 export const REDUX_SLICES_PLUGIN = fileURLToPath(new URL("./src/redux-slices.js", import.meta.url));
+
+/** Absolute path of the `derivation-mirror` oxlint JS plugin, for a config's `jsPlugins`. */
+export const DERIVATION_MIRROR_PLUGIN = fileURLToPath(
+  new URL("./src/derivation-mirror.js", import.meta.url),
+);

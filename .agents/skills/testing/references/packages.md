@@ -27,7 +27,7 @@ there when the package needs more, and don't copy them into docs, the factory AP
 factory call. Most `domain/*` packages still carry a hand-written config from before the presets; a
 new package starts from the factory.
 
-Run a package's tests with `pnpm nx run <package-name>:test`, which builds its dependencies first
+Run a package's tests with `pnpm nx run <package-name>:test`, which first builds its dependencies that have a build
 ([repo commands](../../../../docs/repo-commands.md)).
 
 ## Web and native projects

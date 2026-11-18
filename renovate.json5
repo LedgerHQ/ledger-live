@@ -45,8 +45,9 @@
       "matchPackageNames": ["!/^LedgerHQ/.*/", "!/^ledgerhq/.*/"]
     },
     {
-      "description": "Lumen linked updates",
+      "description": "Lumen linked updates: off, the Lumen upgrade plan (.koda/plans/lumen-upgrade.ts) opens them",
       "matchPackageNames": ["@ledgerhq/lumen-*"],
+      "enabled": false,
       "groupName": "lumen",
       "commitMessagePrefix": "chore:",
       "labels": ["dependencies", "ui", "lumen"],

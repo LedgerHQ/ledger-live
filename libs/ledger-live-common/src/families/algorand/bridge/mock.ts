@@ -12,7 +12,7 @@ import type {
   AlgorandTransaction,
   Transaction,
 } from "@ledgerhq/coin-algorand/types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { ALGORAND_DUMMY_ADDRESS } from "@ledgerhq/coin-algorand/constants";
 import {
   makeAccountBridgeReceive,
@@ -34,7 +34,7 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a, t) => t.fees || new BigNumber(0);
+const defaultGetFees = (a: Account, t: Transaction) => t.fees || new BigNumber(0);
 
 const createTransaction = (): AlgorandTransaction => ({
   family: "algorand",
@@ -47,7 +47,11 @@ const createTransaction = (): AlgorandTransaction => ({
   assetId: null,
 });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<AlgorandTransaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -94,7 +98,7 @@ const getTransactionStatus = (account: AlgorandAccount, transaction: Transaction
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: Account, t: AlgorandTransaction) => {
   if (!t.fees) {
     return { ...t, fees: new BigNumber(500) };
   }

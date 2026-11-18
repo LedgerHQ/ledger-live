@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { Link, Telegram, Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import { useTranslation } from "@shared/i18n";
 import type { ComponentProps } from "react";
 import type { ActionTileId, ActionTilesViewProps } from "./types";
 
@@ -13,6 +14,8 @@ const ICONS: Record<ActionTileId, TileIcon> = {
 };
 
 export function ActionTilesView({ tiles }: ActionTilesViewProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-wrap gap-8" data-testid="action-tiles">
       {tiles.map(tile => (
@@ -25,7 +28,7 @@ export function ActionTilesView({ tiles }: ActionTilesViewProps) {
           size="sm"
           className="shrink-0"
         >
-          {tile.label}
+          {t(`payTab.actions.${tile.id}`)}
         </Button>
       ))}
     </div>

@@ -9,6 +9,7 @@ export type TabItemConfig = Pick<
 export interface MainTabBarViewProps {
   readonly activeRouteName: string;
   readonly tabItems: readonly TabItemConfig[];
+  readonly isCompact: boolean;
   readonly onTabPress: (value: string) => void;
   readonly hideTabBar: boolean;
   readonly bottomInset: number;

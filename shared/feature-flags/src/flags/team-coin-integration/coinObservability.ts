@@ -6,8 +6,9 @@ import { flagWith } from "../../define";
  * `tx_broadcast` (one per broadcast outcome, every family and route). Off by default; a rollout
  * turns it on remotely, and turning it off is the kill switch.
  *
- * Each coin-module method belongs to a tier, defaulted in `@features/platform-coin-observability`
- * (`DEFAULT_METHOD_TIERS`):
+ * Each observed coin-module method belongs to a tier, defaulted in
+ * `@features/platform-coin-observability` (`DEFAULT_METHOD_TIERS`, a whitelist: an unlisted
+ * method is `off`):
  * - `transaction` (`craftTransaction`, `craftRawTransaction`, `combine`, `broadcast`): always sent;
  * - `preparation` (`craftTransactionData`, `estimateFees`, `validateIntent`, …), called on every
  *   edit of a transaction: successes sampled with `preparationSampleRate`;

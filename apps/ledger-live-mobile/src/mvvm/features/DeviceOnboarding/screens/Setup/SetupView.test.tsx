@@ -456,4 +456,81 @@ describe("SetupView", () => {
     expect(screen.getByText("Restore access")).toBeVisible();
     expect(screen.getByText("Secret Recovery Phrase")).toBeVisible();
   });
+
+  it("should show no info card while the genuine check runs", () => {
+    renderSetup();
+
+    expect(screen.queryByText("Which setup method?")).toBeNull();
+  });
+
+  it("should open the stage's info card without touching the device", async () => {
+    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
+      renderSetup({
+        stage: {
+          index: 3,
+          total: 5,
+          kind: "setupChoice",
+          indicator: "none",
+          infoCard: "setupChoice",
+        },
+      });
+
+    await user.press(screen.getByText("Which setup method?"));
+
+    expect(screen.getByText("Set up or restore?")).toBeVisible();
+    for (const callback of [
+      onQuit,
+      onStart,
+      onRetry,
+      onCloseSheet,
+      onAcceptUpdate,
+      onDeclineUpdate,
+    ]) {
+      expect(callback).not.toHaveBeenCalled();
+    }
+  });
+});
+
+function sheetOpen(text: string) {
+  let node = screen.getByText(text).parent;
+  while (node && node.props.accessibilityState?.expanded === undefined) node = node.parent;
+  return node?.props.accessibilityState?.expanded;
+}
+
+describe("SetupView connection sheets", () => {
+  const pinStage = { index: 2, total: 5, kind: "pin", indicator: "none" } as const;
+
+  it("should hide an open info sheet while the connection sheet shows, and bring it back after", async () => {
+    const stage = {
+      index: 3,
+      total: 5,
+      kind: "setupChoice",
+      indicator: "none",
+      infoCard: "setupChoice",
+    } as const;
+    const { user, rerender, props } = renderSetup({ stage });
+    await user.press(screen.getByText("Which setup method?"));
+    expect(sheetOpen("Set up or restore?")).toBe(true);
+
+    rerender(<SetupScreen {...props} connection={{ state: "reconnecting", retry: jest.fn() }} />);
+    expect(sheetOpen("Set up or restore?")).toBe(false);
+    expect(sheetOpen("Reconnecting to your Ledger Stax")).toBe(true);
+
+    rerender(<SetupScreen {...props} connection={null} />);
+    expect(sheetOpen("Set up or restore?")).toBe(true);
+  });
+
+  it("should show the reconnecting sheet over the current stage", () => {
+    renderSetup({ stage: pinStage, connection: { state: "reconnecting", retry: jest.fn() } });
+
+    expect(screen.getByText("PIN creation")).toBeVisible();
+    expect(screen.getByText("Reconnecting to your Ledger Stax")).toBeVisible();
+  });
+
+  it("should show no connection sheet while the session is up", () => {
+    renderSetup({ stage: pinStage, connection: null });
+
+    expect(screen.queryByText("Reconnecting to your Ledger Stax")).toBeNull();
+    expect(screen.queryByText("Couldn't connect to Ledger Stax")).toBeNull();
+  });
 });

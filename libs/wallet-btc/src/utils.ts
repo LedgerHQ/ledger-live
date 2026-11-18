@@ -205,7 +205,11 @@ export function isValidAddress(address: string, currency?: Currency): boolean {
 export function isTaprootAddress(address: string, currency?: Currency): boolean {
   if (currency === "bitcoin") {
     return cryptoFactory("bitcoin").isTaprootAddress(address);
-  } else if (currency === "bitcoin_testnet" || currency === "bitcoin_regtest") {
+  } else if (
+    currency === "bitcoin_testnet" ||
+    currency === "bitcoin_regtest" ||
+    currency === "bitcoin_signet"
+  ) {
     return cryptoFactory(currency).isTaprootAddress(address);
   } else {
     return false;
