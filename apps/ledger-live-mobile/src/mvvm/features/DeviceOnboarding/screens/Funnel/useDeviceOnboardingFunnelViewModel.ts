@@ -631,6 +631,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onboarding.context?.genuineFailureKind === "DEVICE_NOT_GENUINE",
     firmwareVersion: readString(onboarding.context?.firmwareVersion),
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
+    firmwareDeclined: onboarding.snapshot?.context.firmware?.kind === "declined",
     reportsRecoveryKey: deviceReportsRecoveryKey(
       onboarding.context?.deviceModelId,
       readString(onboarding.context?.firmwareVersion) ?? "",

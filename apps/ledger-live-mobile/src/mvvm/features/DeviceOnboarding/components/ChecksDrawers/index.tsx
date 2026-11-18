@@ -19,9 +19,10 @@ export type ChecksDrawerTestIds = Readonly<{
   notGenuineSheet: string;
 }>;
 
-type ChecksDrawersProps = Omit<ChecksDrawerProps, "allowSheet"> &
+type ChecksDrawersProps = Omit<ChecksDrawerProps, "allowSheet" | "firmwareUpdate"> &
   Readonly<{
     allowSheet?: ChecksDrawerProps["allowSheet"];
+    firmwareUpdate?: ChecksDrawerProps["firmwareUpdate"];
     testIds: ChecksDrawerTestIds;
   }>;
 
@@ -231,7 +232,7 @@ export function ChecksDrawers({
           }}
         />
       ) : null}
-      <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
+      {firmwareUpdate ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
       {unsupportedUpdate.mounted ? (
         <UnsupportedUpdateDrawer
           isOpen={unsupportedUpdate.isOpen}

@@ -7,6 +7,7 @@ import {
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupScreenProps } from "../Setup/types";
 
@@ -14,6 +15,22 @@ const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
+const updateScreenState = "checks.firmwareUpdateDelegated";
+const statesThatAnswerTheUpdate = new Set([
+  updateScreenState,
+  "checks.checksDone",
+  "checks.leavingEarlyCheckScreen",
+  checksSucceededState,
+]);
+
+function rechecksTheUpdate(liveMachineState: string | null) {
+  if (liveMachineState === null || statesThatAnswerTheUpdate.has(liveMachineState)) return false;
+  return (
+    liveMachineState.startsWith("checks.") ||
+    liveMachineState === "routing" ||
+    statesThatKeepTheStage.has(liveMachineState)
+  );
+}
 
 export type UnseededFunnelInput = {
   machineState: string | null;
@@ -25,6 +42,7 @@ export type UnseededFunnelInput = {
   deviceNotGenuine: boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
+  firmwareDeclined: boolean;
   reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
@@ -70,6 +88,10 @@ export function useUnseededFunnelViewModel(
   });
 
   const liveMachineState = input.liveMachineState;
+  const confirmSkipUpdate = useConfirmSkipAfterUpdateScreen({
+    updateScreenOpen: unseeded && liveMachineState === updateScreenState,
+    recheckingUpdate: unseeded && rechecksTheUpdate(liveMachineState),
+  });
 
   useEffect(() => {
     if (!unseeded || liveMachineState !== checksSucceededState) {
@@ -95,12 +117,14 @@ export function useUnseededFunnelViewModel(
       suspendSheets: input.suspendSheets,
       reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
+      firmwareDeclined: input.firmwareDeclined,
       checks: checksState
         ? {
             state: checksState,
             error: toChecksError(machineState, input.genuineFailureKind),
             deviceNotGenuine: input.deviceNotGenuine,
             update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
+            confirmSkipUpdate,
             onStart: () =>
               send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
             onRetry: () => send({ type: "RETRY" }),

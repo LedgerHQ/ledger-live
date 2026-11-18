@@ -88,6 +88,7 @@ function checks(overrides: Partial<SetupChecksProps> = {}): SetupChecksProps {
     onCloseSheet: jest.fn(),
     onAcceptUpdate: jest.fn(),
     onDeclineUpdate: jest.fn(),
+    confirmSkipUpdate: false,
     ...overrides,
   };
 }
@@ -119,6 +120,17 @@ function renderSetup({
     onDeclineUpdate: checkProps.onDeclineUpdate,
     props,
   };
+}
+
+const updateOfferTestIds = {
+  offerSheet: "device-onboarding-update-offer-sheet",
+  offerUpdate: "device-onboarding-update-offer-update",
+  skipSheet: "device-onboarding-update-skip-sheet",
+  skipConfirm: "device-onboarding-update-skip-confirm",
+};
+
+function expanded(testID: string) {
+  return screen.getByTestId(testID).props.accessibilityState?.expanded;
 }
 
 function UNSAFE_getStepper() {
@@ -195,130 +207,85 @@ describe("SetupView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
-  it("should keep a dismissed firmware offer hidden on the next check until Update now is pressed", async () => {
-    const { user, rerender, props } = renderSetup({
-      checks: {
-        state: "updating",
-        update: { current: "1.0.0", available: "1.1.0" },
-      },
+  it("should offer the OS update in a sheet instead of footer buttons", () => {
+    renderSetup({
+      checks: { state: "updating", update: { current: "1.0.0", available: "1.1.0" } },
     });
-    const checks = props.checks;
-    if (!checks) throw new Error("checks are required");
 
-    await user.press(screen.getByTestId("modal-close-button"));
-
+    expect(expanded(updateOfferTestIds.offerSheet)).toBe(true);
+    expect(screen.getByText(/OS 1\.0\.0 → OS 1\.1\.0/)).toBeVisible();
+    expect(screen.queryByText("Skip Ledger OS update")).toBeNull();
     expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
-    expect(screen.getByRole("button", { name: "Update now" })).toBeVisible();
-
-    rerender(<SetupScreen {...props} checks={{ ...checks, state: "idle", update: null }} />);
-    rerender(
-      <SetupScreen
-        {...props}
-        checks={{
-          ...checks,
-          state: "updating",
-          update: { current: "1.0.0", available: "1.1.0" },
-        }}
-      />,
-    );
-
-    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
-    expect(screen.getByRole("button", { name: "Update now" })).toBeVisible();
-
-    await user.press(screen.getByRole("button", { name: "Update now" }));
-
-    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
-    expect(screen.queryByTestId(setupTestIds.reopenUpdate)).toBeNull();
-
-    await user.press(screen.getByTestId("modal-close-button"));
-
-    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
-    expect(props.checks?.onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it("should skip a dismissed firmware offer", async () => {
-    const { user, onDeclineUpdate, onAcceptUpdate } = renderSetup({
-      checks: {
-        state: "updating",
-        update: { current: "1.0.0", available: "1.1.0" },
-      },
+  it("should accept an eligible OS update from the sheet", async () => {
+    const { user, onQuit, onAcceptUpdate } = renderSetup({
+      device: nanoX,
+      checks: { state: "updating", update: { current: "2.4.0", available: "2.5.0" } },
     });
 
-    await user.press(screen.getByTestId("modal-close-button"));
-    await user.press(screen.getByTestId(setupTestIds.skipUpdate));
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+
+    await user.press(screen.getByTestId(updateOfferTestIds.offerUpdate));
+
+    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should skip the OS update only once the skip is confirmed", async () => {
+    const { user, onDeclineUpdate, onAcceptUpdate } = renderSetup({
+      checks: { state: "updating", update: { current: "1.0.0", available: "1.1.0" } },
+    });
+
+    await user.press(screen.getByTestId(`${updateOfferTestIds.offerSheet}-header-close`));
+
+    expect(expanded(updateOfferTestIds.skipSheet)).toBe(true);
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+
+    await user.press(screen.getByTestId(updateOfferTestIds.skipConfirm));
 
     expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
     expect(onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it("should close the firmware offer once the update has been accepted", () => {
+  it("should ask to confirm the skip right away after the release notes closed", () => {
+    renderSetup({
+      checks: {
+        state: "updating",
+        update: { current: "1.0.0", available: "1.1.0" },
+        confirmSkipUpdate: true,
+      },
+    });
+
+    expect(expanded(updateOfferTestIds.offerSheet)).toBe(false);
+    expect(expanded(updateOfferTestIds.skipSheet)).toBe(true);
+  });
+
+  it("should hide the OS update sheets while setup sheets are suspended", () => {
+    const { rerender, props } = renderSetup({
+      checks: { state: "updating", update: { current: "1.0.0", available: "1.1.0" } },
+    });
+
+    rerender(<SetupScreen {...props} suspendSheets />);
+
+    expect(expanded(updateOfferTestIds.offerSheet)).toBe(false);
+
+    rerender(<SetupScreen {...props} suspendSheets={false} />);
+
+    expect(expanded(updateOfferTestIds.offerSheet)).toBe(true);
+  });
+
+  it("should close the OS update sheet once the update has been accepted", () => {
     const { rerender, props } = renderSetup({
       checks: { state: "updating", update: { current: "1.0.0", available: "1.1.0" } },
     });
     const checks = props.checks;
     if (!checks) throw new Error("checks are required");
 
-    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
-
     rerender(<SetupScreen {...props} checks={{ ...checks, state: "checking" }} />);
 
-    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
-    expect(screen.queryByTestId(setupTestIds.reopenUpdate)).toBeNull();
-    expect(screen.queryByTestId(setupTestIds.skipUpdate)).toBeNull();
-  });
-
-  it("should reopen a dismissed firmware offer without accepting it", async () => {
-    const onAcceptUpdate = jest.fn();
-    const { user } = renderSetup({
-      checks: {
-        state: "updating",
-        update: { current: "1.0.0", available: "1.1.0" },
-        onAcceptUpdate,
-      },
-    });
-
-    await user.press(screen.getByTestId("modal-close-button"));
-    await user.press(screen.getByTestId(setupTestIds.reopenUpdate));
-
-    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
-    expect(onAcceptUpdate).not.toHaveBeenCalled();
-  });
-
-  it("should hide a firmware offer while setup sheets are suspended", () => {
-    const { rerender, props } = renderSetup({
-      checks: {
-        state: "updating",
-        update: { current: "1.0.0", available: "1.1.0" },
-      },
-    });
-
-    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
-
-    rerender(<SetupScreen {...props} suspendSheets />);
-
-    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
-    expect(screen.queryByTestId(setupTestIds.reopenUpdate)).toBeNull();
-
-    rerender(<SetupScreen {...props} suspendSheets={false} />);
-
-    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
-  });
-
-  it("should accept an eligible firmware update", async () => {
-    const { user, onQuit, onAcceptUpdate } = renderSetup({
-      device: nanoX,
-      checks: {
-        state: "updating",
-        update: { current: "2.4.0", available: "2.5.0" },
-      },
-    });
-
-    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
-
-    await user.press(screen.getByText("Update now"));
-
-    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
-    expect(onQuit).not.toHaveBeenCalled();
+    expect(expanded(updateOfferTestIds.offerSheet)).toBe(false);
+    expect(expanded(updateOfferTestIds.skipSheet)).toBe(false);
   });
 
   it("should offer support instead of a retry once the device is not genuine", async () => {
@@ -375,6 +342,16 @@ describe("SetupView", () => {
     expect(screen.getByText("Your device is genuine and safe to use")).toBeVisible();
     expect(screen.getByTestId(setupTestIds.stageSuccess)).toBeVisible();
     expect(screen.queryByTestId(setupTestIds.stageLoading)).toBeNull();
+  });
+
+  it("should tell the device is not up-to-date once the OS update was skipped", () => {
+    renderSetup({
+      stage: { index: 0, total: 5, kind: "checks", indicator: "success" },
+      firmwareDeclined: true,
+    });
+
+    expect(screen.getByText("Your device is not up-to-date")).toBeVisible();
+    expect(screen.queryByText("Your device is genuine and safe to use")).toBeNull();
   });
 
   it("should name the device model in the device name stage", () => {

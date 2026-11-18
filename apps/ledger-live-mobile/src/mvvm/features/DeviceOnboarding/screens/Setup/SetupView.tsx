@@ -21,6 +21,7 @@ import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupGlow } from "./components/SetupGlow";
 import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
 import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
+import { UpdateOfferSheets } from "@features/flow-device-onboarding-update-offer";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
 function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
@@ -47,11 +48,6 @@ export function SetupView({
   onStart,
   supportLabel,
   onContactSupport,
-  reopenLabel,
-  onReopenFirmwareOffer,
-  skipUpdateLabel,
-  onSkipUpdate,
-  firmwareUpdate,
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
@@ -59,6 +55,7 @@ export function SetupView({
   suspendInfoSheet,
   reportsRecoveryKey,
   connection,
+  updateOffer,
   productName,
   suspendSheets,
 }: SetupViewProps) {
@@ -84,30 +81,6 @@ export function SetupView({
         lx={{ gap: "s16", paddingHorizontal: "s16", paddingTop: "s16" }}
         style={{ paddingBottom: bottomInset + 24 }}
       >
-        {reopenLabel && onReopenFirmwareOffer ? (
-          <Box lx={{ gap: "s8" }}>
-            <Button
-              appearance="base"
-              size="lg"
-              isFull
-              testID={setupTestIds.reopenUpdate}
-              onPress={onReopenFirmwareOffer}
-            >
-              {reopenLabel}
-            </Button>
-            {skipUpdateLabel && onSkipUpdate ? (
-              <Button
-                appearance="transparent"
-                size="lg"
-                isFull
-                testID={setupTestIds.skipUpdate}
-                onPress={onSkipUpdate}
-              >
-                {skipUpdateLabel}
-              </Button>
-            ) : null}
-          </Box>
-        ) : null}
         {startLabel && onStart ? (
           <Button appearance="base" size="lg" isFull testID={setupTestIds.start} onPress={onStart}>
             {startLabel}
@@ -152,7 +125,6 @@ export function SetupView({
       </Box>
       <ChecksDrawers
         testIds={setupTestIds}
-        firmwareUpdate={firmwareUpdate}
         unsupportedUpdate={unsupportedUpdate}
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
@@ -162,6 +134,7 @@ export function SetupView({
         productName={productName}
         suspendSheets={suspendSheets}
       />
+      <UpdateOfferSheets {...updateOffer} />
     </Box>
   );
 }

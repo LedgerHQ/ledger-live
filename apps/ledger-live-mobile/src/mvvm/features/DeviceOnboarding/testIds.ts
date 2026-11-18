@@ -40,8 +40,6 @@ export const setupTestIds = {
   close: "device-onboarding-setup-close",
   start: "device-onboarding-setup-start",
   contactSupport: "device-onboarding-setup-contact-support",
-  reopenUpdate: "device-onboarding-setup-reopen-update",
-  skipUpdate: "device-onboarding-setup-skip-update",
   stepper: "device-onboarding-setup-stepper",
   stageLoading: "device-onboarding-setup-stage-loading",
   stageSuccess: "device-onboarding-setup-stage-success",

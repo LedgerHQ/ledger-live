@@ -1571,6 +1571,62 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should ask to confirm the skip when the OS update comes back after the release notes closed", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+
+    moveTo("checks.firmwareUpdateDelegated");
+    moveTo("readingState");
+    moveTo("checks.genuineCheck.running");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+
+    moveTo("checks.firmwareUpdateDelegated");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it("should not ask to confirm the skip when the OS update is first offered", () => {
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseededContext() }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it.each([
+    ["declined", true],
+    ["upToDate", false],
+    ["skipped", false],
+  ])("should report a firmware answer of %s as declined: %s", (kind, declined) => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: unseededContext(),
+        snapshot: { context: { firmware: { kind } } } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).firmwareDeclined).toBe(declined);
+  });
+
   it("should continue once each time an unseeded device reaches the end of the checks", () => {
     const unseeded = unseededContext();
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded", context: unseeded }));

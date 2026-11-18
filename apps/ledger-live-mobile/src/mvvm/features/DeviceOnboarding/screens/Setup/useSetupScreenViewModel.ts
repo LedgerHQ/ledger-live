@@ -1,6 +1,7 @@
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
 import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import type { UpdateOfferSheetsProps } from "@features/flow-device-onboarding-update-offer";
 import {
   useChecksDrawers,
   type ChecksDrawerProps,
@@ -12,12 +13,13 @@ import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info"
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
-export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet"> &
+export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet" | "firmwareUpdate"> &
   Readonly<{
     infoCard: SetupInfoCard | undefined;
     suspendInfoSheet: boolean;
     reportsRecoveryKey: boolean;
     connection: SessionReconnect | null;
+    updateOffer: UpdateOfferSheetsProps;
     productName: string;
     suspendSheets: boolean;
     deviceModelId: Device["modelId"];
@@ -35,10 +37,6 @@ export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet"> &
     onStart?: () => void;
     supportLabel?: string;
     onContactSupport?: () => void;
-    reopenLabel?: string;
-    onReopenFirmwareOffer?: () => void;
-    skipUpdateLabel?: string;
-    onSkipUpdate?: () => void;
   }>;
 
 const stageTitleKeys = {
@@ -55,12 +53,21 @@ function stageStatus(stage: SetupStage, checksIdle: boolean): SetupStageStatus {
   return stage.indicator;
 }
 
-function stageDescriptionKey(stage: SetupStage, status: SetupStageStatus) {
+function checksDescriptionKey(status: SetupStageStatus, firmwareDeclined: boolean) {
+  if (status !== "success") return "deviceOnboarding.setup.checks.description";
+  return firmwareDeclined
+    ? "deviceOnboarding.setup.checks.notUpToDateDescription"
+    : "deviceOnboarding.setup.checks.successDescription";
+}
+
+function stageDescriptionKey(
+  stage: SetupStage,
+  status: SetupStageStatus,
+  firmwareDeclined: boolean,
+) {
   switch (stage.kind) {
     case "checks":
-      return status === "success"
-        ? "deviceOnboarding.setup.checks.successDescription"
-        : "deviceOnboarding.setup.checks.description";
+      return checksDescriptionKey(status, firmwareDeclined);
     case "naming":
       return "deviceOnboarding.setup.naming.description";
     case "pin":
@@ -86,6 +93,7 @@ export function useSetupScreenViewModel({
   suspendSheets = false,
   reportsRecoveryKey = false,
   connection = null,
+  firmwareDeclined = false,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
 
@@ -94,7 +102,7 @@ export function useSetupScreenViewModel({
   const status = stageStatus(stage, checksIdle);
   const descriptionKey = pausedNotGenuine
     ? "earlySecurityCheck.genuineCheckNonGenuineDrawer.title"
-    : stageDescriptionKey(stage, status);
+    : stageDescriptionKey(stage, status, firmwareDeclined);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const closeSheet = () => checks?.onCloseSheet();
   const quitAfterClosingError = () => {
@@ -103,8 +111,9 @@ export function useSetupScreenViewModel({
   };
   const {
     headerQuitHidden,
-    reopenFirmwareOffer,
+    reopenFirmwareOffer: _reopenFirmwareOffer,
     allowSheet: _allowSheet,
+    firmwareUpdate,
     ...drawers
   } = useChecksDrawers({
     device,
@@ -125,6 +134,13 @@ export function useSetupScreenViewModel({
     suspendInfoSheet: suspendSheets || connection !== null,
     reportsRecoveryKey,
     connection,
+    updateOffer: {
+      update: checks?.state === "updating" ? checks.update : null,
+      confirmSkip: checks?.confirmSkipUpdate === true,
+      suspendSheets: suspendSheets || connection !== null || drawers.unsupportedUpdate.mounted,
+      onUpdate: firmwareUpdate.onUpdate,
+      onSkip: () => checks?.onDeclineUpdate(),
+    },
     productName,
     suspendSheets,
     deviceModelId: device.modelId,
@@ -145,17 +161,6 @@ export function useSetupScreenViewModel({
       ? {
           supportLabel: t("earlySecurityCheck.genuineCheckNonGenuineDrawer.supportCta"),
           onContactSupport: drawers.notGenuineDrawer.onContactSupport,
-        }
-      : {}),
-    ...(checks?.state === "updating" &&
-    checks.update &&
-    !headerQuitHidden &&
-    !drawers.unsupportedUpdate.mounted
-      ? {
-          reopenLabel: t("earlySecurityCheck.firmwareUpdateAvailableDrawer.updateCta"),
-          onReopenFirmwareOffer: reopenFirmwareOffer,
-          skipUpdateLabel: t("deviceOnboarding.checks.updating.skipCta"),
-          onSkipUpdate: checks.onDeclineUpdate,
         }
       : {}),
     ...drawers,
