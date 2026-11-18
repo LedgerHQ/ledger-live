@@ -772,9 +772,16 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
-export type TxPageResult = {
+export type TxEndpoint = "native" | "trc20";
+
+/** One page of one TronGrid endpoint. */
+export type TxEndpointPage = {
+  /** `block_timestamp` of every record the endpoint returned, before any filter. */
+  timestamps: number[];
+  /** The records left to emit: malformed entries and successful TriggerSmartContract dropped. */
   txs: TrongridTxInfo[];
-  hasNextPage: boolean;
+  /** TronGrid's `links.next`, which carries the fingerprint of the next page. */
+  next?: string;
 };
 
 export type FetchTxsPageParams = {
@@ -784,23 +791,44 @@ export type FetchTxsPageParams = {
   order: "asc" | "desc";
 };
 
-export type FetchTxsPageResult = {
-  nativeTxs: TxPageResult;
-  trc20Txs: TxPageResult;
-};
+export type FetchTxsPageResult = Record<TxEndpoint, TxEndpointPage>;
 
-async function fetchSinglePage<T>(
+async function toNativePage(
   logger: Logger,
   config: TronCoinConfig,
-  url: string,
-  getTxs: (
-    logger: Logger,
-    config: TronCoinConfig,
-    url: string,
-  ) => Promise<{ results: Array<T>; nextUrl?: string }>,
-): Promise<{ results: Array<T>; hasNextPage: boolean }> {
-  const { results, nextUrl } = await getTxs(logger, config, url);
-  return { results, hasNextPage: !!nextUrl };
+  results: Array<TransactionTronAPI | MalformedTransactionTronAPI>,
+  next: string | undefined,
+): Promise<TxEndpointPage> {
+  const formatted = await Promise.all(
+    results
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx =>
+        formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
+      ),
+  );
+  return {
+    timestamps: results.map(tx => tx.block_timestamp),
+    txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
+    next,
+  };
+}
+
+async function toTrc20Page(
+  logger: Logger,
+  config: TronCoinConfig,
+  results: Trc20API[],
+  next: string | undefined,
+): Promise<TxEndpointPage> {
+  return {
+    timestamps: results.map(tx => tx.block_timestamp),
+    txs: await resolveMissingTokenAddresses(
+      logger,
+      config,
+      compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
+    ),
+    next,
+  };
 }
 
 export async function fetchTronAccountTxsPage(
@@ -813,44 +841,36 @@ export async function fetchTronAccountTxsPage(
     params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
-  const [nativeResult, trc20Result] = await Promise.all([
-    fetchSinglePage<TransactionTronAPI | MalformedTransactionTronAPI>(
+  const [native, trc20] = await Promise.all([
+    fetchTronAccountTxsNextPage(
       logger,
       config,
+      "native",
       `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions?${queryParams}`,
-      getTransactions,
     ),
-    fetchSinglePage<Trc20API>(
+    fetchTronAccountTxsNextPage(
       logger,
       config,
+      "trc20",
       `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
-      getTrc20,
     ),
   ]);
+  return { native, trc20 };
+}
 
-  const nativeTxsFormatted = await Promise.all(
-    nativeResult.results
-      .filter(isTransactionTronAPI)
-      .filter(isValidNativeTx)
-      .map(tx =>
-        formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
-      ),
-  );
-
-  const trc20TxsFormatted = await resolveMissingTokenAddresses(
-    logger,
-    config,
-    compact(trc20Result.results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
-  );
-  const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
-  const nativeDeduped = compact(nativeTxsFormatted)
-    .filter(tx => !trc20TxIds.has(tx.txID))
-    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
-
-  return {
-    nativeTxs: { txs: nativeDeduped, hasNextPage: nativeResult.hasNextPage },
-    trc20Txs: { txs: trc20TxsFormatted, hasNextPage: trc20Result.hasNextPage },
-  };
+/** Fetches the endpoint page at `url`, a first-page query or a `next` link of an earlier page. */
+export async function fetchTronAccountTxsNextPage(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  url: string,
+): Promise<TxEndpointPage> {
+  if (endpoint === "native") {
+    const { results, nextUrl } = await getTransactions(logger, config, url);
+    return toNativePage(logger, config, results, nextUrl);
+  }
+  const { results, nextUrl } = await getTrc20(logger, config, url);
+  return toTrc20Page(logger, config, results, nextUrl);
 }
 
 export async function fetchTronAccountTxs(

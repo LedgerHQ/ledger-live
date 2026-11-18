@@ -15,6 +15,7 @@ import {
   fetchTronAccountOrEmpty,
   fetchTronAccountOrFail,
   fetchTronAccountTxs,
+  fetchTronAccountTxsNextPage,
   fetchTronAccountTxsPage,
   fetchTronContract,
   findBlock,
@@ -757,7 +758,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       order: "desc",
     });
 
-    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-smart-failed"]);
+    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-smart-failed"]);
   });
 
   it("fetchTronAccountTxsPage falls back to [] when data field is missing on native page", async () => {
@@ -769,10 +770,10 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       minTimestamp: 0,
       order: "desc",
     });
-    expect(result.nativeTxs.txs).toEqual([]);
+    expect(result.native.txs).toEqual([]);
   });
 
-  it("fetchTronAccountTxsPage returns native + trc20 results, dedupes successful smart contract", async () => {
+  it("fetchTronAccountTxsPage drops malformed and successful smart contract native records", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         mockResponse({ data: [validNativeTx, malformedTx, successfulSmartContract], meta: {} }),
@@ -790,9 +791,12 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       order: "desc",
     });
 
-    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-native"]);
-    expect(result.trc20Txs.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
-    expect(result.trc20Txs.hasNextPage).toBe(true);
+    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-native"]);
+    // The page boundary is cut on raw records, so the filtered ones still count.
+    expect(result.native.timestamps).toHaveLength(3);
+    expect(result.native.next).toBeUndefined();
+    expect(result.trc20.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
+    expect(result.trc20.next).toBe(`${TRON_BASE_URL}/next`);
   });
 
   // Regression — tx 4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399, a TRC20
@@ -871,8 +875,8 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs).toHaveLength(1);
-      expect(result.trc20Txs.txs[0]).toMatchObject({
+      expect(result.trc20.txs).toHaveLength(1);
+      expect(result.trc20.txs[0]).toMatchObject({
         txID,
         tokenType: "trc20",
         tokenAddress: trc20Base58,
@@ -913,7 +917,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBe(trc20Base58);
+      expect(result.trc20.txs[0].tokenAddress).toBe(trc20Base58);
     });
 
     it("leaves the token address unset when only an Approval names a token", async () => {
@@ -932,7 +936,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("leaves the token address unset when the logs do not name one token", async () => {
@@ -948,7 +952,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("does not fall back to the created contract address when the receipt has no logs", async () => {
@@ -960,7 +964,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("leaves the token address unset when the receipt cannot be read", async () => {
@@ -975,7 +979,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("does not look up a receipt when the token address is already known", async () => {
@@ -1008,6 +1012,41 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         url: expect.stringMatching(/max_timestamp=999/),
       }),
     );
+  });
+
+  it("fetchTronAccountTxsNextPage reads the page a next link points to, per endpoint", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        mockResponse({
+          data: [validTrc20Tx],
+          meta: { links: { next: "https://api.trongrid.io/v1/page-3" } },
+        }),
+      )
+      .mockResolvedValueOnce(mockResponse({ data: [validNativeTx], meta: {} }));
+
+    const trc20 = await fetchTronAccountTxsNextPage(
+      mockLogger,
+      mockConfig,
+      "trc20",
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+    const native = await fetchTronAccountTxsNextPage(
+      mockLogger,
+      mockConfig,
+      "native",
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+
+    expect(trc20).toMatchObject({
+      timestamps: [validTrc20Tx.block_timestamp],
+      txs: [{ txID: "tx-trc20", tokenType: "trc20" }],
+      next: `${TRON_BASE_URL}/v1/page-3`,
+    });
+    expect(native).toMatchObject({
+      timestamps: [validNativeTx.block_timestamp],
+      txs: [{ txID: "tx-native" }],
+      next: undefined,
+    });
   });
 
   it("fetchTronAccountTxs follows native pagination via meta.links.next", async () => {
