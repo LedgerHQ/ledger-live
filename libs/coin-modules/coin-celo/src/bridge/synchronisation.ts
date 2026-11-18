@@ -2,7 +2,7 @@ import { electionABI, lockedGoldABI } from "@celo/abis";
 import { createApi } from "@ledgerhq/coin-evm/api";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCoinConfig } from "../config";
-import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
+import type { AssetInfo, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 
 type EvmContext = Context<EvmConfigInfo>;
@@ -14,31 +14,28 @@ import {
   emptyHistoryCache,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { log } from "@ledgerhq/logs";
 
 import type {
   GetAccountShape,
   AccountShapeInfo,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import type {
   AccountLike,
   Operation as OperationLive,
+  OperationType as OperationTypeLive,
   TokenAccount,
   SyncConfig,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
 import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
-import {
-  getAccountRegistrationStatus,
-  getCeloTransactionFeeCurrency,
-  getPendingWithdrawals,
-  getVotes,
-} from "../network/sdk";
-import { CeloAccount, isCeloOperationExtra } from "../types/types";
+import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
+import { CeloAccount, CeloOperationExtra } from "../types/types";
 import { getTokenFromAsset } from "./getTokenFromAsset";
 
 const buildEvmContext = (currencyId: string): EvmContext => ({
@@ -120,44 +117,87 @@ const isSentByAccount = (item: Operation, address: string): boolean => {
   );
 };
 
-/** eth_getTransactionByHash is a cheap read, so a higher fan-out is safe. */
-const FEE_CURRENCY_ENRICH_CONCURRENCY = 10;
+/** The lower-case contract of the token that paid a fee, when it is not CELO. */
+const readFeeAsset = (feesAsset: AssetInfo | undefined): string | undefined =>
+  feesAsset && feesAsset.type !== "native" && "assetReference" in feesAsset
+    ? feesAsset.assetReference?.toLowerCase()
+    : undefined;
 
-const readFeeCurrencyAddress = (extra: unknown): string | undefined =>
-  isCeloOperationExtra(extra) ? extra.feeCurrencyAddress : undefined;
+/** Celo addresses are hexadecimal, so they compare in any case. */
+const isSameAddress = (a: string | undefined, b: string): boolean =>
+  a?.toLowerCase() === b.toLowerCase();
+
+type SyncedOperation = {
+  id: string;
+  hash: string;
+  type: OperationTypeLive;
+  value: BigNumber;
+  senders: string[];
+  recipients: string[];
+  blockHeight: number;
+  blockHash: string;
+  accountId: string;
+  date: Date;
+  hasFailed: boolean;
+  fee: BigNumber;
+  transactionSequenceNumber: BigNumber | undefined;
+  extra: CeloOperationExtra;
+  token?: TokenCurrency;
+  isSubAccount: boolean;
+};
 
 /**
- * NATIVE sentinels inside the reorg-safe window are excluded so they get
- * re-fetched — a wrongly-persisted sentinel self-heals once the block settles.
- * Past the reorg window the marker is trusted permanently.
+ * One FEES operation of the fee token for each transaction whose fee the account paid in a token
+ * (ADR-068): coin-evm leaves the fee out of the token's transfers, so the token history records it
+ * here. A token missing from the crypto-assets store gets no operation, as for its transfers.
  */
-const collectKnownFeeCurrencies = (
-  account: CeloAccount | undefined,
-  currentBlockHeight: number,
-): Map<string, string> => {
-  const map = new Map<string, string>();
-  if (!account) return map;
-  const reorgCutoff = currentBlockHeight - SAFE_REORG_THRESHOLD;
-  const add = (
-    ops: { hash: string; extra?: unknown; blockHeight: number | null | undefined }[],
-  ) => {
-    for (const op of ops) {
-      const stored = readFeeCurrencyAddress(op.extra);
-      if (!stored) continue;
-      // Re-validate NATIVE sentinels while the op is still in the reorg window.
-      if (
-        stored === NATIVE_FEE_CURRENCY_MARKER &&
-        typeof op.blockHeight === "number" &&
-        op.blockHeight > reorgCutoff
-      ) {
-        continue;
+const buildTokenFeeOperations = async (
+  rawOperations: Operation[],
+  operations: SyncedOperation[],
+  {
+    address,
+    currency,
+    accountId,
+  }: { address: string; currency: CryptoCurrency; accountId: string },
+): Promise<SyncedOperation[]> => {
+  const sources = new Map<string, { item: Operation; feeAsset: string }>();
+  for (const item of rawOperations) {
+    const feeAsset = readFeeAsset(item.tx.feesAsset);
+    if (sources.has(item.tx.hash) || !feeAsset) continue;
+    if (isSameAddress(item.tx.feesPayer, address)) sources.set(item.tx.hash, { item, feeAsset });
+  }
+
+  const result = await Promise.all(
+    [...sources].map(async ([hash, { item, feeAsset }]): Promise<SyncedOperation | undefined> => {
+      const token = await getTokenFromAsset(currency, { type: "erc20", assetReference: feeAsset });
+      if (!token) {
+        log("celo", "fee token not found, its fee is not recorded", { hash });
+        return undefined;
       }
-      map.set(op.hash, stored);
-    }
-  };
-  add(account.operations);
-  for (const sub of account.subAccounts ?? []) add(sub.operations);
-  return map;
+      const tokenAccountId = encodeTokenAccountId(accountId, token);
+      const fee = new BigNumber(item.tx.fees.toString());
+      return {
+        id: encodeOperationId(tokenAccountId, hash, "FEES"),
+        hash,
+        type: "FEES",
+        value: fee,
+        senders: [address],
+        recipients: [],
+        blockHeight: item.tx.block.height,
+        blockHash: item.tx.block.hash,
+        accountId: tokenAccountId,
+        date: item.tx.date,
+        hasFailed: item.tx.failed,
+        fee,
+        transactionSequenceNumber: operations.find(op => op.hash === hash)
+          ?.transactionSequenceNumber,
+        extra: { feeAsset },
+        token,
+        isSubAccount: true,
+      };
+    }),
+  );
+  return result.filter((op): op is SyncedOperation => op !== undefined);
 };
 
 const getOperationsList = async ({
@@ -166,7 +206,6 @@ const getOperationsList = async ({
   accountId,
   contracts,
   api,
-  currentBlockHeight,
 }: {
   info: AccountShapeInfo<CeloAccount>;
   config: SyncConfig;
@@ -176,8 +215,7 @@ const getOperationsList = async ({
     election: string;
   };
   api: ReturnType<typeof createApi>;
-  currentBlockHeight: number;
-}) => {
+}): Promise<SyncedOperation[]> => {
   const { address, currency, initialAccount } = info;
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
 
@@ -195,11 +233,12 @@ const getOperationsList = async ({
     ).items;
 
   const operationsList = await Promise.all(
-    rawOperationsList.map(async item => {
+    rawOperationsList.map(async (item): Promise<SyncedOperation> => {
       const token = await getTokenFromAsset(currency, item.asset);
       const type = getTypeFromString(item.type);
       const tokenAccountId = token ? encodeTokenAccountId(accountId, token) : accountId;
       const isSubAccount = token?.ticker !== "CELO" && item.asset.type !== "native";
+      const feeAsset = readFeeAsset(item.tx.feesAsset);
 
       const operation = {
         id: item.id,
@@ -224,7 +263,8 @@ const getOperationsList = async ({
         transactionSequenceNumber: isSentByAccount(item, address)
           ? toSequenceNumber(item.details?.sequence)
           : undefined,
-        extra: {},
+        // `fee` is in the fee token's units when the fee is not paid in CELO
+        extra: feeAsset ? { feeAsset } : {},
         ...(token ? { token } : undefined),
         isSubAccount,
       };
@@ -233,32 +273,12 @@ const getOperationsList = async ({
     }),
   );
 
-  // The explorer doesn't expose `feeCurrency`, so we hit the RPC once per
-  // unseen tx hash. The map is returned alongside the operations so the caller
-  // can re-apply it after `mergeOps`, which ignores `extra`.
-  const knownByHash = collectKnownFeeCurrencies(initialAccount, currentBlockHeight);
-  const uniqueHashes = Array.from(new Set(operationsList.map(o => o.hash)));
-  const hashesToFetch = uniqueHashes.filter(h => !knownByHash.has(h));
-
-  // Per-hash failure resolves to `undefined` so a single bad RPC doesn't poison
-  // the whole batch; the missing hash retries on the next sync.
-  const results = await promiseAllBatched(
-    FEE_CURRENCY_ENRICH_CONCURRENCY,
-    hashesToFetch,
-    (h: string) => getCeloTransactionFeeCurrency(h).catch(() => undefined),
-  );
-  const fetched = new Map<string, string>();
-  hashesToFetch.forEach((h, idx) => {
-    const r = results[idx];
-    if (r === undefined) return; // RPC error — leave unmarked so we retry
-    // null = confirmed not CIP-64; persist the sentinel so future syncs skip.
-    fetched.set(h, r ?? NATIVE_FEE_CURRENCY_MARKER);
+  const tokenFeeOperations = await buildTokenFeeOperations(rawOperationsList, operationsList, {
+    address,
+    currency,
+    accountId,
   });
-
-  const feeCurrencyByHash = new Map<string, string>(knownByHash);
-  for (const [h, v] of fetched) feeCurrencyByHash.set(h, v);
-
-  return { operations: operationsList, feeCurrencyByHash };
+  return [...operationsList, ...tokenFeeOperations];
 };
 
 const getSubAccounts = async ({
@@ -267,7 +287,7 @@ const getSubAccounts = async ({
   accountId,
   info,
 }: {
-  list: Awaited<ReturnType<typeof getOperationsList>>["operations"];
+  list: SyncedOperation[];
   blacklistedTokenIds: string[];
   accountId: string;
   info: Parameters<GetAccountShape<CeloAccount>>[0];
@@ -313,7 +333,11 @@ const getSubAccounts = async ({
   const evmCtx = buildEvmContext(info.currency.id);
   const config = await evmCtx.config();
   const nodeApi = getNodeApi(config, evmCtx.logger);
-  const tokensList = Object.values(tokensByKeys);
+  // The FEES operations come after the transfers: newest first, as every history
+  const tokensList = Object.values(tokensByKeys).map(item => ({
+    ...item,
+    operations: [...item.operations].sort((a, b) => b.date.getTime() - a.date.getTime()),
+  }));
   const tokensListWithBalance = await Promise.all(
     tokensList.map(async item => {
       const balance = await nodeApi.getTokenBalance(info.address, item.token.contractAddress);
@@ -327,6 +351,22 @@ const getSubAccounts = async ({
   );
 
   return tokensListWithBalance;
+};
+
+/**
+ * A sub-account rebuilt from scratch keeps what the chain cannot give back. Its stored balance
+ * history reference is kept too: the framework regenerates the history only when the reference is
+ * unchanged, so a fresh empty one would stay empty.
+ */
+const keepStoredState = (rebuilt: TokenAccount, stored: TokenAccount[] = []): TokenAccount => {
+  const previous = stored.find(sub => sub.id === rebuilt.id);
+  return previous
+    ? {
+        ...rebuilt,
+        pendingOperations: previous.pendingOperations,
+        balanceHistoryCache: previous.balanceHistoryCache,
+      }
+    : rebuilt;
 };
 
 export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config) => {
@@ -388,32 +428,19 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
 
   const isTokensEnabled = getEnv("ENABLE_CELO_TOKENS");
 
-  const { operations: operationsList, feeCurrencyByHash } = await getOperationsList({
+  const operationsList = await getOperationsList({
     info,
     config,
     accountId,
     contracts: { locked: lockedGoldAddress, election: electionAddress },
     api,
-    currentBlockHeight: blockInfo.height || 0,
   });
 
   const nativeOperations = operationsList.filter(({ isSubAccount }) => !isSubAccount);
 
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
-  const mergedOperations = mergeOps(shouldSyncFromScratch ? [] : oldOperations, nativeOperations);
-
-  // Back-fill `feeCurrencyAddress` post-merge: `mergeOps` ignores `extra` when
-  // deduping. The map is authoritative (a freshly fetched value overrides any
-  // stale stored NATIVE sentinel that was excluded for re-validation).
-  const applyFeeCurrencyBackfill = <T extends { hash: string; extra?: unknown }>(op: T): T => {
-    const fresh = feeCurrencyByHash.get(op.hash);
-    if (!fresh) return op;
-    if (readFeeCurrencyAddress(op.extra) === fresh) return op;
-    const base = typeof op.extra === "object" && op.extra !== null ? op.extra : {};
-    return { ...op, extra: { ...base, feeCurrencyAddress: fresh } };
-  };
-  const operations = mergedOperations.map(applyFeeCurrencyBackfill);
+  const operations = mergeOps(shouldSyncFromScratch ? [] : oldOperations, nativeOperations);
 
   let subAccounts: TokenAccount[] = [];
   if (isTokensEnabled) {
@@ -428,9 +455,9 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
       return item.token.ticker !== "CELO";
     });
 
-    const mergedSubAccounts =
+    subAccounts =
       shouldSyncFromScratch && initialAccount?.subAccounts
-        ? subAccountsList
+        ? subAccountsList.map(sub => keepStoredState(sub, initialAccount.subAccounts))
         : (mergeSubAccounts(
             {
               ...initialAccount,
@@ -438,12 +465,6 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
             } as CeloAccount,
             subAccountsList,
           ) as TokenAccount[]);
-
-    // mergeSubAccounts runs `mergeOps` internally, so the same backfill applies.
-    subAccounts = mergedSubAccounts.map(sub => ({
-      ...sub,
-      operations: sub.operations.map(applyFeeCurrencyBackfill),
-    }));
   }
 
   const shape: Partial<CeloAccount> = {
@@ -474,16 +495,27 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
  * `makeSync` filters only the parent's pending ops, and against the pre-sync account. Filtering
  * against the synced one clears a confirmed op on the sync that brings it in, and token sends
  * with their own nonce no longer replace each other, so their pending ops are pruned here too.
+ *
+ * `current` is the account when the sync result applies. Its sub-accounts' pending ops are the
+ * latest: the synced ones date from the start of the sync, so they miss a token send added or
+ * replaced during it.
  */
-export const postSync = (_initial: CeloAccount, synced: CeloAccount): CeloAccount => {
-  // `shouldRetainPendingOperation` reads only the latest op from the sender, which a nonce-less
-  // row (someone else's `transferFrom`) would hide.
-  const withNonces = {
-    ...synced,
-    operations: synced.operations.filter(o => o.transactionSequenceNumber !== undefined),
-  };
+export const postSync = (current: CeloAccount, synced: CeloAccount): CeloAccount => {
+  // `shouldRetainPendingOperation` reads only the first op from the sender, so it gets the op with
+  // the highest nonce. A token-only transaction has no parent op, so sub-account ops count too.
+  const latestNonceOperation = [
+    ...synced.operations,
+    ...(synced.subAccounts ?? []).flatMap(sub => sub.operations),
+  ]
+    .filter(o => o.transactionSequenceNumber !== undefined)
+    .sort((a, b) => b.transactionSequenceNumber!.comparedTo(a.transactionSequenceNumber!) ?? 0)
+    .slice(0, 1);
+  const withNonces = { ...synced, operations: latestNonceOperation };
   const isPending = (owner: AccountLike, op: OperationLive) =>
     !owner.operations.some(o => o.hash === op.hash) && shouldRetainPendingOperation(withNonces, op);
+
+  const latestPending = (sub: TokenAccount): OperationLive[] =>
+    current.subAccounts?.find(s => s.id === sub.id)?.pendingOperations ?? sub.pendingOperations;
 
   return {
     ...synced,
@@ -491,13 +523,13 @@ export const postSync = (_initial: CeloAccount, synced: CeloAccount): CeloAccoun
     ...(synced.subAccounts && {
       subAccounts: synced.subAccounts.map(sub => ({
         ...sub,
-        pendingOperations: sub.pendingOperations.filter(op => isPending(sub, op)),
+        pendingOperations: latestPending(sub).filter(op => isPending(sub, op)),
       })),
     }),
   };
 };
 
-// `shouldMergeOps: false`: the outer mergeOps in makeSync would re-dedupe via
-// `sameOp` (which ignores `extra`) and strip the feeCurrencyAddress backfill
-// that getAccountShape just applied.
+// `shouldMergeOps: false`: getAccountShape already merges with the stored operations, or drops
+// them when the sync hash changes. The outer mergeOps in makeSync would merge the stored ones back,
+// and `sameOp` ignores `extra`, so a rebuilt operation would keep its stored extra.
 export const sync = makeSync({ getAccountShape, postSync, shouldMergeOps: false });

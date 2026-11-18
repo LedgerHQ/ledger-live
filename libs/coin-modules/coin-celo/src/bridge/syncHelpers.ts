@@ -90,6 +90,13 @@ export const mergeSubAccounts = (
  * This can be fixed by simply removing the account
  * and adding it again, now syncing from block 0.
  */
+/**
+ * Bumped whenever stored operations go stale, so that every account syncs again from scratch:
+ * 1: fees in their own asset (ADR-068) — token units and `extra.feeAsset`, a FEES operation per
+ * token-paid fee, no fee-transfer operations.
+ */
+const SYNC_VERSION = "1";
+
 export const getSyncHash = async (
   currency: CryptoCurrency,
   blacklistedTokenIds: string[] = [],
@@ -100,8 +107,9 @@ export const getSyncHash = async (
   const config = getCoinConfig(currency.id).info;
   const { node = {}, explorer = {} } = config;
 
-  const stringToHash = syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);
-  return `0x${murmurhash(stringToHash).result().toString(16)}`;
+  const stringToHash =
+    syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer) + SYNC_VERSION;
+  return `0x${murmurhash(stringToHash).result().toString(16).padStart(8, "0")}`;
 };
 
 /**
