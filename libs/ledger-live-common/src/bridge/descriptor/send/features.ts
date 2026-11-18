@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type BigNumber from "bignumber.js";
 import { getSendDescriptor } from "../registry";
 import type {
   BalanceTypeConfig,
@@ -107,6 +108,10 @@ export const sendFeatures = {
     return allowZeroAmount ?? false;
   },
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
+  roundAmount: (currency: CryptoOrTokenCurrency | undefined, amount: BigNumber): BigNumber => {
+    const roundAmount = getSendDescriptor(currency)?.amount?.roundAmount;
+    return currency && roundAmount ? roundAmount(amount, currency) : amount;
+  },
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

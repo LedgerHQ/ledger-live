@@ -4,8 +4,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray } from "rxjs";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   TEST_TOKEN_PROGRAM_ID,
   testnetAddress,
@@ -66,7 +65,7 @@ function makePrivateSyncArgs(provableApi: AleoResources["provableApi"] = null) {
 }
 
 beforeAll(() => {
-  aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+  aleoConfig.setCoinConfig(() => aleoDefaults.aleo_testnet);
   setupCalStore();
 });
 
@@ -197,7 +196,7 @@ describe("private-only sync — deep-frozen account migrating to private tokens"
     const args = makePrivateSyncArgs();
     tokensOffSync = await performPrivateSync(args);
 
-    aleoConfig.setCoinConfig(() => ({ ...getTestnetIntegConfig(), enableTokens: true }));
+    aleoConfig.setCoinConfig(() => ({ ...aleoDefaults.aleo_testnet, enableTokens: true }));
     frozenAccount = deepFreezeLikeImmer({
       ...args.info.initialAccount,
       ...tokensOffSync,
@@ -211,7 +210,7 @@ describe("private-only sync — deep-frozen account migrating to private tokens"
   });
 
   afterAll(() => {
-    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+    aleoConfig.setCoinConfig(() => aleoDefaults.aleo_testnet);
   });
 
   it("seeds the frozen account with a tokens-off private sync", () => {

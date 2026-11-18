@@ -187,6 +187,7 @@
       "FEES": "Fees",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
+      "OPT_EDIT": "Token updated",
       "CLOSE_ACCOUNT": "Close account",
       "BOND": "Bond",
       "UNBOND": "Unbond",
@@ -340,7 +341,15 @@
     "home": "Home",
     "refer": "Refer a friend",
     "catalog": "Discover",
-    "recover": "[L] Recover"
+    "recover": "[L] Recover",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "stars": {
     "tooltip": "Star account"
@@ -1950,13 +1959,13 @@
       "continue": "Proceed at your own risk"
     },
     "info": {
-      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder": "Do not remind me again"
     },
     "error": {
       "title": "{{device}}™ does not support this feature",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update": "Discover your Upgrade Program",
     "learnMore": "Learn more",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress": {
+    "addressDisplayed": {
+      "title": "Address securely displayed",
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
@@ -2991,7 +3007,13 @@
     "processingTransaction": "Your transaction is being processed",
     "sign": {
       "title": "Continue on your Ledger {{wording}}",
-      "description": "Follow the instructions displayed on your Secure Touchscreen."
+      "description": "Follow the instructions displayed on your Secure Touchscreen.",
+      "cancelled": {
+        "title": "Transaction canceled",
+        "description": "You rejected the transaction. Your funds won't be affected.",
+        "close": "Close",
+        "retry": "Try again"
+      }
     },
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
@@ -4336,6 +4358,8 @@
     },
     "tokenSettings": {
       "title": "Token settings",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
       "steps": {
         "confirmation": {
           "success": {
@@ -6983,6 +7007,7 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
+      "changeTrust": "recipient",
       "tokenAssociate": "recipient",
       "nominate": "validator",
       "stake": "validator",
@@ -8123,11 +8148,15 @@
       "description": "To stop holding this token, remove it instead."
     },
     "XrpTokenFrozen": {
-      "title": "You can't send this token to this recipient",
-      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
+      "title": "You can't send this token",
+      "description": "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized": {
+      "title": "You can't send this token",
+      "description": "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive": {
-      "title": "This recipient can't receive {{assetCode}}",
+      "title": "This recipient can't receive this token",
       "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
     },
     "XrpTokenAmountNotDeliverable": {
@@ -11439,9 +11468,33 @@
     "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount": "No account",
     "review": "Review",
+    "learnMore": "Learn More",
     "formErrors": {
+      "offline": "Internet connection problem.",
       "amountExceedsBalance": "Insufficient balance",
+      "feeAccountEmpty": "You need more {{ticker}} for the network fees.",
+      "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
+      "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
+      "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
+      "feeEstimationFailed": "We were unable to calculate fees at this time. Your crypto accounts could be out of sync. Restart Ledger Wallet app and try again.",
+      "accountNotReady": "This account isn't ready to send yet. Open it in your accounts, then try again.",
+      "seiEvmUnlinked": "SEI EVM accounts must be linked before swapping",
+      "aleoPrivateBalance": "Swaps are only available for public {{ticker}}. Your funds are currently private and can't be swapped.",
+      "tezosUnrevealed": "Your Tezos account isn't activated yet. Please send a small amount of XTZ before swapping.",
+      "dotMinimumBalance": "Keep {{minValue}} DOT minimum balance after the swap.",
+      "xlmMinimumBalance": "Keep {{minValue}} XLM minimum balance after the swap.",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    },
+    "details": {
+      "notEnoughFees": {
+        "title": "Not enough {{ticker}}",
+        "description": "Your account {{account}} doesn't have enough balance to cover the network fees."
+      },
+      "amountTooLow": {
+        "title": "Minimum required for {{ticker}}",
+        "description": "A minimum value of {{amount}} {{ticker}} is required for quotes"
+      },
+      "buy": "Buy {{ticker}}"
     }
   },
   "actionMenuDialog": {
@@ -11470,6 +11523,10 @@
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",
+    "genericError": {
+      "title": "Something went wrong",
+      "description": "Please try again later or select a different asset."
+    },
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
   },
   "perpsTransactionSigned": {
@@ -11480,7 +11537,9 @@
   "perpsTransactionStatus": {
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
-    "currencies": "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle": "Withdraw",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
   },
   "accountAnalytics": {
     "assets": "Asset filter",
@@ -11488,6 +11547,7 @@
     "allAssets": "All assets",
     "allAccounts": "All accounts",
     "error": "Unable to load analytics. Please try again.",
-    "unavailable": "Data is not available for this selection."
+    "unavailable": "Data is not available for this selection.",
+    "noResults": "No results"
   }
 }

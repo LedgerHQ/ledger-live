@@ -525,6 +525,7 @@ const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
   "APPROVE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "LOCK",
   "UNLOCK",
   "WITHDRAW",

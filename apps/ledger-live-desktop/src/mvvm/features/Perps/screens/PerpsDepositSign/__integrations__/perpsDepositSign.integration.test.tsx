@@ -1,6 +1,7 @@
 import React from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { PayloadStepError } from "@ledgerhq/live-common/wallet-api/Exchange/SwapError";
 import { act, render, screen } from "tests/testSetup";
 import PerpsDepositSignRoot, { openPerpsDepositSign } from "../PerpsDepositSignDialog";
 import type { PerpsDepositSignData } from "../usePerpsDepositSignViewModel";
@@ -8,6 +9,11 @@ import type { PerpsDepositSignData } from "../usePerpsDepositSignViewModel";
 const mockExecuteSwap = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({
   executeSwap: (deps: unknown, params: unknown) => mockExecuteSwap(deps, params),
+}));
+
+const mockOpenPerpsDeposit = jest.fn();
+jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
+  openPerpsDeposit: (data: unknown) => mockOpenPerpsDeposit(data),
 }));
 
 const mockOpenPerpsReview = jest.fn();
@@ -83,5 +89,22 @@ describe("PerpsDepositSign integration", () => {
     await user.click(await screen.findByTestId("perps-deposit-sign-retry"));
 
     expect(mockExecuteSwap).toHaveBeenCalledTimes(2);
+  });
+
+  it("should hide a payload failure behind the generic copy, and reopen the form on retry", async () => {
+    mockExecuteSwap.mockRejectedValueOnce(new PayloadStepError(new Error("swap api 500")));
+    const { user } = render(<PerpsDepositSignRoot />);
+
+    act(() => openPerpsDepositSign(signData));
+
+    expect(await screen.findByText("Something went wrong")).toBeVisible();
+    expect(screen.getByText("Please try again later or select a different asset.")).toBeVisible();
+    expect(screen.queryByText(/swap api 500|PayloadStepError/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("perps-deposit-sign-retry"));
+
+    expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: signData.draft });
+    expect(mockExecuteSwap).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
   });
 });

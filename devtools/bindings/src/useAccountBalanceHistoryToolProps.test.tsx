@@ -20,7 +20,7 @@ const ethereumUUID = computeAccountUUID(ethereum);
 const bitcoinUUID = computeAccountUUID(bitcoin);
 
 function setup({ fail = false } = {}) {
-  const reads: { accountUUID: string; range?: string }[] = [];
+  const reads: { accountUUID: string; range?: string; countervalue?: string }[] = [];
   const store = configureStore({
     reducer: {
       accountEntries: accountsSlice.reducer,
@@ -36,7 +36,11 @@ function setup({ fail = false } = {}) {
               supports: () => true,
               read: {
                 balanceHistory: async ({ accountUUID }, query) => {
-                  reads.push({ accountUUID, range: query?.range });
+                  reads.push({
+                    accountUUID,
+                    range: query?.range,
+                    ...(query?.countervalue ? { countervalue: query.countervalue } : {}),
+                  });
                   if (fail) throw new Error("down");
                   return {
                     range: query?.range ?? "month",
@@ -44,7 +48,13 @@ function setup({ fail = false } = {}) {
                       mockAssetBalanceHistory({
                         points: [
                           { date: "2026-01-01T00:00:00.000Z", balance: "0" },
-                          { date: "2026-01-02T00:00:00.000Z", balance: "1500000000000000000" },
+                          {
+                            date: "2026-01-02T00:00:00.000Z",
+                            balance: "1500000000000000000",
+                            ...(query?.countervalue
+                              ? { countervalues: { [query.countervalue]: "450000" } }
+                              : {}),
+                          },
                         ],
                       }),
                     ],
@@ -65,7 +75,7 @@ function setup({ fail = false } = {}) {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useAccountBalanceHistoryToolProps(), { wrapper });
+  const { result } = renderHook(() => useAccountBalanceHistoryToolProps("USD"), { wrapper });
   return { result, reads };
 }
 
@@ -111,6 +121,22 @@ describe("useAccountBalanceHistoryToolProps", () => {
     await waitFor(() => expect(result.current.accounts[0].series).toBeDefined());
     act(() => result.current.onRangeChange("year"));
     expect(result.current.accounts[0].series).toBeUndefined();
+  });
+
+  it("reads in the app's fiat when countervalue is checked and shows the valued points", async () => {
+    const { result, reads } = setup();
+    expect(result.current).toEqual(expect.objectContaining({ fiat: "USD", countervalue: false }));
+    act(() => result.current.onCountervalueChange(true));
+    act(() => result.current.onRead(ethereumUUID));
+    await waitFor(() => expect(result.current.accounts[0].series).toBeDefined());
+    expect(reads).toEqual([{ accountUUID: ethereumUUID, range: "month", countervalue: "USD" }]);
+    expect(result.current.accounts[0].series?.[0]).toEqual(
+      expect.objectContaining({
+        valuedCount: 1,
+        lastCountervalue: expect.stringMatching(/4,500/),
+        countervalues: [450000],
+      }),
+    );
   });
 
   it("ignores a range it does not know", () => {

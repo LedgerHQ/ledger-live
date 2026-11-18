@@ -7,7 +7,7 @@ What Ledger Wallet remembers about the Predictions live app, shared by desktop a
 
 ## Exports
 
-- `predictionsSlice`, with `markPredictionsIntroSeen` and `restorePredictionsState` (parses the persisted value, falls back to the initial state)
+- `predictionsSlice`, with `markPredictionsIntroSeen`, `resetPredictionsIntroSeen` (the Predictions DevTool) and `restorePredictionsState` (parses the persisted value, falls back to the initial state)
 - `selectHasSeenIntro`, nested in the slice so it reads the app's root state
 - `PredictionsStateSchema`, `PredictionsState`, `initialPredictionsState`
 

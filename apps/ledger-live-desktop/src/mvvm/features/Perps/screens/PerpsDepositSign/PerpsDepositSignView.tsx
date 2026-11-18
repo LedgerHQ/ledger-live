@@ -30,8 +30,20 @@ export function PerpsDepositSignView({
           <InfoState
             preset="error"
             size="hug"
-            title={<TranslatedError error={deviceStep.error} field="title" />}
-            description={<TranslatedError error={deviceStep.error} field="description" />}
+            title={
+              deviceStep.isGeneric ? (
+                t("perpsDepositSign.genericError.title")
+              ) : (
+                <TranslatedError error={deviceStep.error} field="title" />
+              )
+            }
+            description={
+              deviceStep.isGeneric ? (
+                t("perpsDepositSign.genericError.description")
+              ) : (
+                <TranslatedError error={deviceStep.error} field="description" />
+              )
+            }
             primaryCta={{
               label: t("common.retry"),
               onPress: retry,

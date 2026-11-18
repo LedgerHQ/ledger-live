@@ -1,6 +1,6 @@
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import { createSuiGrpcClient } from "../network/grpc/client";
 import { withoutBuildSimulation } from "../network/sdk.grpc";
 import { fetchForeignOwnedSuiGasPayment } from "../test/testUtils";
@@ -9,14 +9,9 @@ import { broadcast } from "./broadcast";
 describe("Broadcast", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
+      ...suiDefaults.sui,
       status: { type: "active" },
-      node: {
-        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: "https://sui.coin.ledger.com",
-      },
       features: { transport: "grpc" },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

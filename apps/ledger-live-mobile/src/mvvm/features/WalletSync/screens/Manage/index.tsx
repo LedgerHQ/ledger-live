@@ -188,6 +188,8 @@ const WalletSyncManage = () => {
           <ManageInstanceDrawer {...manageInstancesHook} />
         </>
       )}
+      {manageKeyHook.deviceIntentStepElement}
+      {manageInstancesHook.deviceIntentStepElement}
     </Box>
   );
 };

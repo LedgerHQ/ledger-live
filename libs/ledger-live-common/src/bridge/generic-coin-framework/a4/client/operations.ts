@@ -12,6 +12,7 @@ import { toA4HttpError } from "./errors";
 import { logA4 } from "../log";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
+import { normalizeAccountKey } from "./utils";
 import type { A4Client } from "./index";
 
 export function parseA4Asset(assetPath: string, owner: string): AssetInfo {
@@ -30,6 +31,12 @@ export function parseA4Asset(assetPath: string, owner: string): AssetInfo {
   }
 
   return { type };
+}
+
+const NFT_ASSET_TYPES: ReadonlySet<string> = new Set(["erc721", "erc1155"]);
+
+function isNftAsset(assetPath: string): boolean {
+  return NFT_ASSET_TYPES.has(assetPath.split(".")[0]);
 }
 
 function deriveType(delta: BigNumber, ledgerOpType: string | undefined): OperationType {
@@ -150,8 +157,14 @@ function buildOpsFromParts(
   makeOp: MakeOp,
 ): Operation[] {
   const results: Operation[] = [];
+  const accountKey = normalizeAccountKey(address);
   for (const part of parts) {
-    if (part.address !== address || part.type === "event" || part.type === "fee") {
+    if (
+      normalizeAccountKey(part.address) !== accountKey ||
+      part.type === "event" ||
+      part.type === "fee" ||
+      isNftAsset(part.asset)
+    ) {
       continue;
     }
     const delta = new BigNumber(part.amount);
@@ -185,6 +198,9 @@ function buildOpsFromAssets(
 ): Operation[] {
   const results: Operation[] = [];
   for (const [assetPath, deltaStr] of Object.entries(assets)) {
+    if (isNftAsset(assetPath)) {
+      continue;
+    }
     const delta = new BigNumber(deltaStr);
     const type = deriveType(delta, ledgerOpType);
     if (failed && type === "IN") {

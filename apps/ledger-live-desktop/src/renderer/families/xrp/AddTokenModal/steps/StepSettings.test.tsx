@@ -42,6 +42,18 @@ function renderStepSettings(overrides: Partial<StepProps> = {}) {
   return { getUpdatedAmount, transitionTo, onChangeRippling };
 }
 
+function makeHeldTokenAccount(limit: number) {
+  return {
+    type: "TokenAccount",
+    balance: new BigNumber(0),
+    xrpResources: {
+      isLocked: false,
+      isRippling: false,
+      limit: new BigNumber(limit),
+    },
+  } as unknown as TokenAccount;
+}
+
 describe("StepSettings", () => {
   it("shows the limit the transaction holds", () => {
     renderStepSettings();
@@ -79,14 +91,22 @@ describe("StepSettings", () => {
     expect(transitionTo).not.toHaveBeenCalled();
   });
 
-  it("accepts a limit below the balance with no warning, and continues to the review", () => {
+  it("warns when the limit is below the balance, and still continues to the review", () => {
     const { transitionTo } = renderStepSettings({
       tokenAccount: { balance: new BigNumber(2000) } as TokenAccount,
     });
 
-    expect(screen.queryByText(/balance/i)).toBeNull();
+    expect(screen.getByText(/Your balance .* is above this limit/)).toBeVisible();
     fireEvent.click(screen.getByText("Continue"));
     expect(transitionTo).toHaveBeenCalledWith("review");
+  });
+
+  it("shows no balance warning when the limit is at or above the balance", () => {
+    renderStepSettings({
+      tokenAccount: { balance: new BigNumber(1000) } as TokenAccount,
+    });
+
+    expect(screen.queryByText(/Your balance .* is above this limit/)).toBeNull();
   });
 
   it("shows a transaction preparation error", () => {
@@ -114,5 +134,29 @@ describe("StepSettings", () => {
     renderStepSettings({ isRippling: true });
 
     expect(screen.getByText(/Only turn it on if you know what you're doing/)).toBeVisible();
+  });
+});
+
+describe("StepSettings, editing a held token", () => {
+  it("says a current limit of 0 lets no token in, instead of the limit error", () => {
+    const { transitionTo } = renderStepSettings({
+      tokenAccount: makeHeldTokenAccount(0),
+      transaction: { amount: new BigNumber(0) } as Transaction,
+      status: {
+        errors: { amount: new XrpTrustLimitZero() },
+        warnings: {},
+      } as unknown as TransactionStatus,
+    });
+
+    expect(screen.getByText("Your limit is 0: you can't receive this token.")).toBeVisible();
+    expect(screen.queryByText("The limit must be above 0")).toBeNull();
+    fireEvent.click(screen.getByText("Continue"));
+    expect(transitionTo).not.toHaveBeenCalled();
+  });
+
+  it("shows no limit 0 message when the new limit is above 0", () => {
+    renderStepSettings({ tokenAccount: makeHeldTokenAccount(0) });
+
+    expect(screen.queryByText("Your limit is 0: you can't receive this token.")).toBeNull();
   });
 });

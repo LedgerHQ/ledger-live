@@ -8,21 +8,32 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import type { CantonCoinConfig, CantonContext } from "../config";
 import * as gateway from "../network/gateway";
 import { createMockCantonAccount } from "../test/fixtures";
 import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import {
-  getTransactionStatus,
+  getTransactionStatus as getTransactionStatusWithContext,
   TO_MANY_UTXOS_CRITICAL_COUNT,
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "./getTransactionStatus";
 
-jest.mock("../config", () => ({ getCoinConfig: jest.fn() }));
 jest.mock("../network/gateway");
-const mockCoinConfig = jest.mocked(coinConfig);
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
+
+const defaultConfig: CantonCoinConfig = {
+  minReserve: 100,
+  networkType: "mainnet",
+  status: { type: "active" },
+  name: "Canton Network",
+  unit: { name: "cc", code: "CC", magnitude: 38 },
+  nativeInstrumentId: "Amulet",
+};
+let mockConfig: CantonCoinConfig = defaultConfig;
+const mockContext: CantonContext = { config: async () => mockConfig, logger: () => {} };
+const getTransactionStatus = (account: CantonAccount, transaction: Transaction) =>
+  getTransactionStatusWithContext(mockContext, account, transaction);
 
 describe("getTransactionStatus", () => {
   const mockAccount: CantonAccount = {
@@ -44,14 +55,7 @@ describe("getTransactionStatus", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCoinConfig.getCoinConfig.mockReturnValue({
-      minReserve: 100,
-      networkType: "mainnet",
-      status: { type: "active" },
-      name: "Canton Network",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-      nativeInstrumentId: "Amulet",
-    });
+    mockConfig = defaultConfig;
     mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
   });
 
@@ -122,7 +126,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: mockAccount.balance
-          .minus(new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)))
+          .minus(new BigNumber(String(mockConfig.minReserve ?? 0)))
           .plus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
@@ -137,7 +141,7 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)).minus(1),
+        amount: new BigNumber(String(mockConfig.minReserve ?? 0)).minus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -223,14 +227,7 @@ describe("getTransactionStatus", () => {
 
   describe("amount validation", () => {
     it("should return AmountRequired error when amount is zero", async () => {
-      mockCoinConfig.getCoinConfig.mockReturnValue({
-        minReserve: 0,
-        networkType: "mainnet",
-        status: { type: "active" },
-        name: "Canton Network",
-        unit: { name: "cc", code: "CC", magnitude: 38 },
-        nativeInstrumentId: "Amulet",
-      });
+      mockConfig = { ...defaultConfig, minReserve: 0 };
 
       const transaction: Transaction = {
         family: "canton",
@@ -419,7 +416,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockConfig,
         "test-public-key",
       );
     });
@@ -446,7 +443,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockConfig,
         "test-public-key",
       );
     });
@@ -473,7 +470,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockConfig,
         "test-public-key",
       );
     });

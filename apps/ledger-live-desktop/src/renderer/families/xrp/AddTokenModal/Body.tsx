@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -102,13 +102,8 @@ function toAssetFields(token: TokenCurrency) {
   return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
 }
 
-async function fetchMaxLimit(token: TokenCurrency): Promise<BigNumber | null> {
-  try {
-    return await getMaxTrustLimitForToken(token);
-  } catch (error) {
-    logger.warn("xrp: max trust limit unavailable", error);
-    return null;
-  }
+function getMaxLimit(token: TokenCurrency | undefined): BigNumber | null {
+  return token?.tokenType === "iou" ? getMaxTrustLimitForToken() : null;
 }
 
 export function makeChangeTrustTransaction(
@@ -134,12 +129,10 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
   const [token, setToken] = useState<TokenCurrency | undefined>(
     tokenAccount?.token ?? params.token,
   );
-  const [maxLimit, setMaxLimit] = useState<BigNumber | null>(null);
   const [isRippling, setIsRippling] = useState(getXrpResources(tokenAccount)?.isRippling ?? false);
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | undefined>();
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
-  const tokenRequest = useRef(0);
 
   const bridge = useAccountBridge<Transaction>(params.account, undefined);
   const {
@@ -159,21 +152,13 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
   });
 
   const applyToken = useCallback(
-    async (picked: TokenCurrency) => {
-      tokenRequest.current += 1;
-      const request = tokenRequest.current;
-      updateTransaction(tx => {
-        return bridge.updateTransaction(tx, { assetReference: undefined, assetOwner: undefined });
-      });
-
-      const max = picked.tokenType === "iou" ? await fetchMaxLimit(picked) : null;
-      if (tokenRequest.current !== request) return;
-
-      setMaxLimit(max);
+    (picked: TokenCurrency) => {
       updateTransaction(tx => {
         return bridge.updateTransaction(tx, {
+          assetReference: undefined,
+          assetOwner: undefined,
           ...toAssetFields(picked),
-          amount: max ?? new BigNumber(0),
+          amount: getMaxLimit(picked) ?? new BigNumber(0),
         });
       });
     },
@@ -184,21 +169,15 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     (picked: TokenCurrency | undefined | null) => {
       if (!picked) return;
       setToken(picked);
-      setMaxLimit(null);
-      void applyToken(picked);
+      applyToken(picked);
     },
     [applyToken],
   );
 
   useEffect(() => {
-    if (tokenAccount) {
-      void fetchMaxLimit(tokenAccount.token).then(setMaxLimit);
-      return;
-    }
+    if (tokenAccount) return;
 
-    if (params.token) {
-      void applyToken(params.token);
-    }
+    if (params.token) applyToken(params.token);
   }, [tokenAccount, params.token, applyToken]);
 
   const handleRetry = useCallback(() => {
@@ -248,7 +227,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
     action,
     token,
     onChangeToken,
-    maxLimit,
+    maxLimit: getMaxLimit(token),
     isRippling,
     tokenAccount,
     onChangeRippling: setIsRippling,

@@ -1,1 +1,1 @@
-export * from "./clipboard.native";
+export * from "./clipboard";

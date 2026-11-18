@@ -52,13 +52,14 @@ import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
-import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { accountAnalyticsIntroductionSlice } from "@features/flow-account-detail-analytics-notice/state";
 import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
+import { accountReceivesSlice } from "@domain/entity-account-receive";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
@@ -111,7 +112,7 @@ const appReducer = combineReducers({
   sendFlow,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
-  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  receiveVerifyHint: receiveVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   mockServerOverlay: mockServerOverlaySlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
@@ -129,6 +130,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountReceives: accountReceivesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

@@ -67,23 +67,6 @@ const stepper = () => mockStepper.mock.lastCall![0];
 const pick = (token: TokenCurrency) => act(() => stepper().onChangeToken(token));
 
 const rlusd = xrpIouToken;
-const usd = {
-  ...xrpIouToken,
-  id: "ripple_testnet/iou/usd",
-  tokenIdentifier: "USD",
-} as TokenCurrency;
-
-function deferMaxLimits() {
-  const resolvers: Array<(limit: BigNumber) => void> = [];
-  mockGetMaxTrustLimit.mockImplementation(
-    () => new Promise<BigNumber>(resolve => resolvers.push(resolve)),
-  );
-
-  return (call: number, limit: number) =>
-    act(async () => {
-      resolvers[call](new BigNumber(limit));
-    });
-}
 
 function renderBody(params: Partial<Data> = {}, stepId: StepId = "token") {
   const onChangeStepId = jest.fn<void, [StepId]>();
@@ -102,12 +85,11 @@ function renderBody(params: Partial<Data> = {}, stepId: StepId = "token") {
 describe("xrp AddTokenModal Body", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(logger, "warn").mockImplementation(() => {});
     jest.spyOn(logger, "critical").mockImplementation(() => {});
   });
 
   it("puts the picked token and its Max in the transaction", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
+    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
     renderBody();
 
     await pick(rlusd);
@@ -120,49 +102,6 @@ describe("xrp AddTokenModal Body", () => {
     });
   });
 
-  it("drops the previous token while the next one's Max loads", async () => {
-    const resolveMax = deferMaxLimits();
-    renderBody();
-
-    await pick(rlusd);
-    await resolveMax(0, 100);
-    await pick(usd);
-
-    expect(stepper().token).toBe(usd);
-    expect(stepper().transaction?.assetReference).toBeUndefined();
-  });
-
-  it("keeps only the Max of the latest pick when the user picks A, B, then A again", async () => {
-    const resolveMax = deferMaxLimits();
-    renderBody();
-
-    await pick(rlusd);
-    await pick(usd);
-    await pick(rlusd);
-    await resolveMax(0, 100);
-
-    expect(stepper().transaction?.assetReference).toBeUndefined();
-
-    await resolveMax(2, 300);
-    await resolveMax(1, 200);
-
-    expect(stepper().transaction).toMatchObject({
-      assetReference: rlusd.tokenIdentifier,
-      amount: new BigNumber(300),
-    });
-  });
-
-  it("starts the limit at 0 when the Max can't load", async () => {
-    mockGetMaxTrustLimit.mockRejectedValue(new Error("network down"));
-    renderBody();
-
-    await pick(rlusd);
-
-    expect(logger.warn).toHaveBeenCalled();
-    expect(stepper().maxLimit).toBeNull();
-    expect(stepper().transaction?.amount).toEqual(new BigNumber(0));
-  });
-
   it("asks no Max for an MPT", async () => {
     renderBody();
 
@@ -173,7 +112,7 @@ describe("xrp AddTokenModal Body", () => {
   });
 
   it("applies a preselected token on open", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
+    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
     renderBody({ token: rlusd });
 
     await act(async () => {});
@@ -182,8 +121,8 @@ describe("xrp AddTokenModal Body", () => {
     expect(stepper().transaction?.assetReference).toBe(rlusd.tokenIdentifier);
   });
 
-  it("keeps the current limit of an edited token and loads its Max", async () => {
-    mockGetMaxTrustLimit.mockResolvedValue(new BigNumber(5000));
+  it("keeps the current limit of an edited token and shows its Max", async () => {
+    mockGetMaxTrustLimit.mockReturnValue(new BigNumber(5000));
     renderBody({ tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
 
     await act(async () => {});

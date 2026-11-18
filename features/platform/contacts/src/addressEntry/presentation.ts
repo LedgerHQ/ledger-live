@@ -1,3 +1,4 @@
+import { hasEnsDisclaimer } from "./state";
 import type { ContactsAddressEntryState } from "./types";
 
 export type ContactsAddressValidationLabels = Readonly<{
@@ -20,6 +21,8 @@ export function resolveAddressInputPresentation(
   addressEntry: ContactsAddressEntryState,
   labels: ContactsAddressValidationLabels,
 ): ContactsAddressInputPresentation {
+  const showEnsDisclaimer = hasEnsDisclaimer(addressEntry);
+
   switch (addressEntry.status) {
     case "empty":
       return { inputStatus: undefined, helperText: undefined, showEnsDisclaimer: false };
@@ -27,13 +30,13 @@ export function resolveAddressInputPresentation(
       return {
         inputStatus: undefined,
         helperText: labels.validatingAddress,
-        showEnsDisclaimer: false,
+        showEnsDisclaimer,
       };
     case "valid":
       return {
         inputStatus: "success",
         helperText: labels.validAddress,
-        showEnsDisclaimer: addressEntry.inputMethod === "ens",
+        showEnsDisclaimer,
       };
     case "invalid": {
       let helperText = labels.invalidAddress;
@@ -48,7 +51,7 @@ export function resolveAddressInputPresentation(
       return {
         inputStatus: "error",
         helperText,
-        showEnsDisclaimer: addressEntry.inputMethod === "ens",
+        showEnsDisclaimer,
       };
     }
     case "unavailable":

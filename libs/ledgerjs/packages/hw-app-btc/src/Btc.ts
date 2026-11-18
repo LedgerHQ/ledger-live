@@ -347,6 +347,10 @@ export default class Btc {
         case "Bitcoin Recovery":
           // Bitcoin Recovery app is not legacy
           return false;
+        case "Hashi":
+        case "Hashi Test":
+          // apps derived from the Bitcoin app only implement the new protocol, whatever their version
+          return false;
         case "Bitcoin Legacy":
         case "Bitcoin Test Legacy":
           // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version

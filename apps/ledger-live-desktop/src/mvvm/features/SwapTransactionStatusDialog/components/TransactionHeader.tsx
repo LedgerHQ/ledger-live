@@ -13,10 +13,13 @@ type TransactionHeaderProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  /** Replaces the default title, with the swapped pair on its own line. */
+  title?: string;
 }>;
 
 type HeaderTitleProps = Readonly<{
   origin?: SwapTransactionStatusOrigin;
+  customTitle?: string;
   sendTicker: string;
   receiveTicker: string;
 }>;
@@ -34,17 +37,20 @@ function HeaderCurrencyIcon({
   );
 }
 
-/** Perps leads with the deposit it is funding, and keeps the swapped pair on its own line. */
-function HeaderTitle({ origin, sendTicker, receiveTicker }: HeaderTitleProps) {
+/**
+ * Perps leads with the deposit it is funding, and a custom title replaces the default one;
+ * both keep the swapped pair on its own line.
+ */
+function HeaderTitle({ origin, customTitle, sendTicker, receiveTicker }: HeaderTitleProps) {
   const { t } = useTranslation();
 
-  if (origin === "perps") {
+  if (origin === "perps" || customTitle !== undefined) {
     return (
       <h2
         data-testid="swap-transaction-title"
         className="heading-4-semi-bold text-base text-center"
       >
-        <span className="block">{t("perpsTransactionStatus.title")}</span>
+        <span className="block">{customTitle ?? t("perpsTransactionStatus.title")}</span>
         <span className="block">
           {t("perpsTransactionStatus.currencies", { sendTicker, receiveTicker })}
         </span>
@@ -65,6 +71,7 @@ export function TransactionHeader({
   createdAt,
   locale,
   origin,
+  title,
 }: TransactionHeaderProps) {
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
 
@@ -86,6 +93,7 @@ export function TransactionHeader({
       {hasCurrencies ? (
         <HeaderTitle
           origin={origin}
+          customTitle={title}
           sendTicker={sendCurrency.ticker}
           receiveTicker={receiveCurrency.ticker}
         />

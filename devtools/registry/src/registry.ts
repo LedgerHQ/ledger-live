@@ -1,6 +1,7 @@
 import * as coinIntegration from "./metadata/coin-integration";
 import * as engagement from "./metadata/engagement";
 import * as platform from "./metadata/platform";
+import * as ptx from "./metadata/ptx";
 import * as walletXp from "./metadata/wallet-xp";
 
 export const tools = {
@@ -16,11 +17,16 @@ export const tools = {
   "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
   "account-data": platform.accountData,
+  "account-source-portfolio": platform.accountSourcePortfolio,
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
+  "account-receive": platform.accountReceive,
   "mock-accounts": platform.mockAccounts,
   "account-detail": walletXp.accountDetail,
   "coin-config": coinIntegration.coinConfig,
+  receive: walletXp.receive,
+  predictions: ptx.predictions,
+  "intent-wallet-sync": walletXp.intentWalletSync,
 } as const;
 
 /**
@@ -51,8 +57,13 @@ export type DevToolConfig =
   | { id: "account-portfolio"; config: platform.AccountPortfolioToolProps }
   | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
   | { id: "account-data"; config: platform.AccountDataToolProps }
+  | { id: "account-source-portfolio"; config: platform.PortfolioSourceToolProps }
   | { id: "app-config"; config: platform.AppConfigToolProps }
   | { id: "account-name"; config: platform.AccountNameToolProps }
+  | { id: "account-receive"; config: platform.AccountReceiveToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
-  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps };
+  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
+  | { id: "receive"; config: walletXp.ReceiveToolProps }
+  | { id: "predictions"; config: ptx.PredictionsToolProps }
+  | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps };

@@ -141,6 +141,7 @@ const mockValidator = (v: {
   selfBonded: new BigNumber(v.selfBonded),
   isElected: true,
   isOversubscribed: false,
+  isBlocked: false,
 });
 
 const mockPreloadData: PolkadotPreloadData = {

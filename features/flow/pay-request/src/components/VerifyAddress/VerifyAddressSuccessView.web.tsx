@@ -1,7 +1,7 @@
 import React from "react";
 import { SpotNumber } from "@ledgerhq/lumen-ui-react";
 import { ShieldLock } from "@ledgerhq/lumen-ui-react/symbols";
-import { VerifyAddressDialog } from "./VerifyAddressDialog.web";
+import { VerifyAddressDialog } from "./VerifyAddressDialog";
 import type { VerifyAddressSuccessViewProps } from "../../types";
 
 export function VerifyAddressSuccessView({

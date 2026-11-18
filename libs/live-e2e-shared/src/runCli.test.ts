@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "no
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { runCliCommand } from "./runCli";
+import { isRetryableError, runCliCommand } from "./runCli";
 
 const isRunning = (pid: number) => {
   try {
@@ -53,3 +53,51 @@ setInterval(() => {}, 1_000);
     }
   },
 );
+
+const cliFailure = (command: string, cliError: string) =>
+  [
+    "❌ Failed to execute CLI command",
+    `🔍 Command: ${command}`,
+    "🔢 Exit Code: 1",
+    `🧾 CLI Error : ${cliError}`,
+  ].join("\n");
+
+test("retries a CLI failure caused by an HTTP 503 from Speculos", () => {
+  const message = cliFailure(
+    "getAddress+--currency+Ethereum+--path+44'/60'/0'/0/0",
+    "GeneralDmkError: HTTP error 503 Service Unavailable",
+  );
+
+  assert.equal(isRetryableError(message), true);
+});
+
+test("retries a CLI failure caused by a dropped DMK session", () => {
+  const message = cliFailure(
+    "getAddress+--currency+Ethereum+--path+44'/60'/0'/0/0",
+    "DeviceSessionNotFound: Device session not found",
+  );
+
+  assert.equal(isRetryableError(message), true);
+});
+
+test("does not retry because a 503 appears inside a UUID of the command", () => {
+  const message = cliFailure(
+    "liveData+--currency+Base+--appjson+/userdata/2657b5f2-9999-4ab6-948f-5503d7b8486c/app.json",
+    "Invalid address",
+  );
+
+  assert.equal(isRetryableError(message), false);
+});
+
+test("does not retry a CLI failure because the command holds a 503", () => {
+  const message = cliFailure(
+    "tokenApproval+--currency+Ethereum+--approveAmount+12.503",
+    "insufficient funds",
+  );
+
+  assert.equal(isRetryableError(message), false);
+});
+
+test("retries a message that does not come from the CLI when it reports a 503", () => {
+  assert.equal(isRetryableError("Request failed with status code 503"), true);
+});

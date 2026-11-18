@@ -21,8 +21,6 @@ export type ChecksScreenProps = {
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
   onCloseSheet: () => void;
-  onCloseNotGenuine?: () => void;
-  onCloseFirmwareOffer?: () => void;
   /** Missing while the success screen is shown but the machine is not waiting on it yet. */
   onContinue?: () => void;
   /** Missing while the machine cannot be left, so the close button is hidden. */

@@ -1,7 +1,7 @@
 # @domain/api-market-index-fear-and-greed
 
-> [!CAUTION]
-> **Status: UNSTABLE** - Under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Domain API client for the CoinMarketCap **Crypto Fear & Greed Index**, typed on the canonical
 `@domain/entity-market-index-fear-and-greed` entity. It adds one endpoint to the shared

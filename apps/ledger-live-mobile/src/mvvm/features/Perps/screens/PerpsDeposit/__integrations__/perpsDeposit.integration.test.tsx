@@ -7,6 +7,13 @@ import { act, render, screen } from "@tests/test-renderer";
 import PerpsDepositScreen from "../PerpsDepositScreen";
 
 const mockOpenDrawer = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) => ({
+    balance: account?.spendableBalance,
+    isRefreshing: false,
+  }),
+}));
+
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
@@ -25,7 +32,7 @@ jest.mock("@domain/entity-market-countervalues", () => ({
 }));
 
 const mockUsePerpsDepositQuote = jest.fn();
-jest.mock("../usePerpsDepositQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
@@ -60,9 +67,8 @@ describe("PerpsDeposit integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      result: { quote: { amountTo: new BigNumber(42), errors: [] }, errors: [] },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -123,9 +129,8 @@ describe("PerpsDeposit integration", () => {
 
   it("should tell the user when the provider has no quote for the pair", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { user } = renderDeposit();
 
@@ -144,11 +149,35 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
 
+  it("should explain a minimum amount in a sheet with a Buy button", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
+    });
+    const { user } = renderDeposit();
+
+    await user.press(screen.getByTestId("perps-deposit-select-currency"));
+    const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
+    act(() => onAccountSelected(fundingAccount));
+    await user.press(screen.getByTestId("perps-deposit-key-2"));
+
+    expect(screen.getByTestId("perps-deposit-form-error")).toHaveTextContent(
+      "Enter at least 0.004 ETH and try again.",
+    );
+
+    await user.press(screen.getByTestId("perps-deposit-learn-more"));
+
+    expect(await screen.findByText("Minimum required for ETH")).toBeOnTheScreen();
+    expect(
+      screen.getByText("A minimum value of 0.004 ETH is required for quotes"),
+    ).toBeOnTheScreen();
+    expect(screen.getByTestId("perps-deposit-details-buy")).toHaveTextContent("Buy ETH");
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: undefined,
       isLoading: true,
-      isUnavailable: false,
     });
     const { user } = renderDeposit();
 

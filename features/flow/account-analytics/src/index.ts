@@ -8,7 +8,6 @@ export * from "./logic/selection/createAnalyticsQueryKeys";
 export * from "./logic/selection/parseAnalyticsEntryState";
 export * from "./logic/positions/resolveAnalyticsPositions";
 export * from "./logic/settings/analyticsPeriod";
-export * from "./logic/settings/resolveAnalyticsFiatCurrencyId";
 export * from "./hooks/catalog/useAnalyticsCatalog";
 export * from "./hooks/balance/useAnalyticsBalancePort";
 export * from "./hooks/balance/useAnalyticsBalanceSummary";

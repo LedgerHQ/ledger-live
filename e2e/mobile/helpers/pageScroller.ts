@@ -84,7 +84,7 @@ export class PageScroller {
    * (e.g. hidden behind a sticky footer) before interacting with it.
    */
   async scrollByPixels(
-    scrollViewId: string | RegExp | undefined,
+    scrollViewId: string | RegExp | ScrollTarget | undefined,
     pixels: number,
     direction: Direction = "down",
   ): Promise<void> {

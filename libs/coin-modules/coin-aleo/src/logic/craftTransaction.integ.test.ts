@@ -1,4 +1,4 @@
-import aleoConfig from "../config";
+import aleoConfig, { aleoDefaults } from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
 import {
   mockTxIntentConvertTokenPrivateToPublicReal,
@@ -14,12 +14,11 @@ import {
   mockTxIntentTransferTokenPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { FeeConfiguration, PreparedRequestResponse } from "../types";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import { craftTransaction } from "./craftTransaction";
 import { fromHex } from "./utils";
 
 describe("craftTransaction", () => {
-  const config = getTestnetIntegConfig();
+  const config = aleoDefaults.aleo_testnet;
 
   const publicFeeConfiguration: FeeConfiguration = {
     function_name: "fee_public",

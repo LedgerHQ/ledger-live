@@ -109,7 +109,10 @@ test.describe("Swap - entry points", () => {
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(accountToDebit));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(
+        () => app.account.navigateToSwap(),
+        await app.account.swapSurface(),
+      );
       await app.swap.checkAssetToContains(currency.ticker);
       await app.swap.checkAssetToAccountNameContains(accountName);
       await app.swap.clearSwapState();

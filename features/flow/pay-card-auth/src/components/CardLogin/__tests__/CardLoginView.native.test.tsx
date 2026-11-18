@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardLoginView } from "../CardLoginView.native";
+import { CardLoginView } from "../CardLoginView";
 import type { CardAuthErrorCopy, CardLoginIntroViewProps } from "../types";
 
 jest.mock("@shared/ui-info-state", () => ({

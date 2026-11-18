@@ -2,11 +2,18 @@ import React from "react";
 import { View } from "react-native";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { AccountAnalyticsView } from "./AccountAnalyticsView";
 import { analyticsCatalog } from "./analytics.mock";
 import type { AccountAnalyticsViewProps } from "./AccountAnalytics.types";
 
 jest.mock("@ledgerhq/crypto-icons/native", () => () => null);
+
+function renderAnalytics(ui: React.ReactElement) {
+  return render(ui, {
+    wrapper: ({ children }) => <I18nTestProvider resources={{}}>{children}</I18nTestProvider>,
+  });
+}
 
 const scope = {
   assetId: "eth",
@@ -58,7 +65,7 @@ function createProps(
 describe("AccountAnalyticsView (native)", () => {
   it("should hand the filters and the selection status to the host renderers", async () => {
     const props = createProps();
-    render(<AccountAnalyticsView {...props} />);
+    renderAnalytics(<AccountAnalyticsView {...props} />);
 
     expect(screen.getByTestId("account-analytics-filters")).toBeVisible();
     expect(screen.getByTestId("analytics-account-filter")).toBeVisible();
@@ -71,7 +78,9 @@ describe("AccountAnalyticsView (native)", () => {
 
   it("should pass the PnL scope and catalog status to the PnL renderer", () => {
     const renderPnl = jest.fn(() => null);
-    render(<AccountAnalyticsView {...createProps({ renderPnl, catalogStatus: "loading" })} />);
+    renderAnalytics(
+      <AccountAnalyticsView {...createProps({ renderPnl, catalogStatus: "loading" })} />,
+    );
     expect(renderPnl).toHaveBeenCalledWith(
       expect.objectContaining({ scope, catalogStatus: "loading" }),
     );

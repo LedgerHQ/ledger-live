@@ -151,6 +151,80 @@ describe("ScanDeviceAccounts (common coins)", () => {
     expect(result.current.selectedIds).toEqual([rescannedAccount.id]);
   });
 
+  it("keeps other Bitcoin address types selectable when an empty native segwit account is already imported", async () => {
+    setRouteParams("bitcoin");
+    const nativeSegwit = createAccount({
+      id: "js:2:bitcoin:xpub-native_segwit:native_segwit",
+      derivationMode: "native_segwit",
+      freshAddress: "bc1qempty",
+      freshAddressPath: "84'/0'/0'",
+      used: false,
+      balance: new BigNumber(0),
+    });
+    const taproot = createAccount({
+      id: "js:2:bitcoin:xpub-taproot:taproot",
+      derivationMode: "taproot",
+      freshAddress: "bc1pnew",
+      freshAddressPath: "86'/0'/0'",
+      used: false,
+      balance: new BigNumber(0),
+    });
+
+    setScanObservable(
+      new Observable<ScanAccountEvent>(subscriber => {
+        subscriber.next(makeDiscoveredEvent(nativeSegwit));
+        setTimeout(() => {
+          subscriber.next(makeDiscoveredEvent(taproot));
+          subscriber.complete();
+        }, 0);
+      }),
+    );
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [nativeSegwit],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(2));
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(replace).not.toHaveBeenCalled();
+    expect(result.current.newAccountSchemes).toEqual(["taproot"]);
+    expect(
+      result.current.sections
+        .find(section => section.id === "creatable")
+        ?.data.map(account => account.id),
+    ).toContain(taproot.id);
+  });
+
+  it("opens the empty-account warning when the only scanned Bitcoin account is already an empty import", async () => {
+    setRouteParams("bitcoin");
+    const nativeSegwit = createAccount({
+      id: "js:2:bitcoin:xpub-native_segwit:native_segwit",
+      derivationMode: "native_segwit",
+      freshAddress: "bc1qempty",
+      freshAddressPath: "84'/0'/0'",
+      used: false,
+      balance: new BigNumber(0),
+    });
+    setScanObservable(of(makeDiscoveredEvent(nativeSegwit)));
+
+    renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [nativeSegwit],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith(ScreenName.AddAccountsWarning, expect.anything()),
+    );
+  });
+
   it("does not navigate to NoAssociatedAccounts when no accounts found for ETH", async () => {
     setScanObservable(EMPTY);
 

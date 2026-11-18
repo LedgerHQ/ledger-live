@@ -60,7 +60,8 @@ function makeSwapOperation(overrides: Partial<MappedSwapOperation> = {}): Mapped
     provider: "lifi",
     swapId: "swap-1",
     status: "pending",
-    fromAccount: makeAccount("from"),
+    // The swap operation is the sender's own, as in the swap history.
+    fromAccount: makeAccountWithOperation(operation),
     toAccount: makeAccount("to"),
     toExists: true,
     operation,
@@ -274,6 +275,148 @@ describe("getTransactionStatus", () => {
       status: "unknown",
       sendStatus: "refunded",
       receiveStatus: "refunded",
+    });
+  });
+
+  it("shows the fees of the swap history entry, not of a payout the sender did not make (perps withdraw)", async () => {
+    // The payout lands on the receiving account, so the sender has no operation of its own.
+    mockedGetCompleteSwapHistory.mockResolvedValueOnce([
+      {
+        day: new Date("2026-01-02"),
+        data: [
+          makeSwapOperation({
+            provider: "swapkit_hyperliquid",
+            fromAccount: makeAccount("from"),
+            feesAmount: "1000000",
+            payoutFeesAmount: "400000000000000",
+          }),
+        ],
+      },
+    ]);
+    mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+
+    const response = await getTransactionStatus(
+      { swapId: "swap-1" },
+      { accounts: [makeAccount("from")] },
+    );
+
+    expect(response).toMatchObject({ feesAmount: "1000000", payoutFeesAmount: "400000000000000" });
+    expect(response.operationHash).toBe("0xhash");
+  });
+
+  describe("a perps withdraw not anchored to its payout yet", () => {
+    // Held by the receiving account, with the HyperCore account as its sender.
+    const receiverWithEntry = (): Account => ({
+      ...makeAccount("to"),
+      swapHistory: [
+        {
+          provider: "swapkit_hyperliquid",
+          swapId: "withdraw-1",
+          status: "pending",
+          receiverAccountId: "to",
+          fromAccountId: "from",
+          operationId: "",
+          fromAmount: new BigNumber("5000000"),
+          toAmount: new BigNumber("190000"),
+          feesAmount: "1000000",
+          payoutFeesAmount: "3500",
+          createdAt: 1_767_323_045_000,
+        },
+      ],
+    });
+
+    beforeEach(() => mockedGetCompleteSwapHistory.mockResolvedValueOnce([]));
+
+    it("shows its details from the entry, e.g. right after signing", async () => {
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "pending",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), receiverWithEntry()] },
+      );
+
+      expect(response).toMatchObject({
+        provider: "swapkit_hyperliquid",
+        status: "pending",
+        fromAccountId: "from",
+        toAccountId: "to",
+        sentAmount: "5000000",
+        receivedAmount: "190000",
+        feesAmount: "1000000",
+        payoutFeesAmount: "3500",
+        createdAt: 1_767_323_045_000,
+      });
+      expect(response.operationHash).toBeUndefined();
+    });
+
+    it("takes the payout tx hash and final amount from the swap status once finished", async () => {
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "finished",
+        finalAmount: "0.0019",
+        txHash: "0xpayout",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), receiverWithEntry()] },
+      );
+
+      expect(response).toMatchObject({
+        status: "finished",
+        finalAmount: "190000",
+        receivedAmount: "190000",
+        operationHash: "0xpayout",
+      });
+    });
+
+    it("keeps its details once anchored, until the payout operation is synced", async () => {
+      const anchored = receiverWithEntry();
+      anchored.swapHistory[0] = { ...anchored.swapHistory[0], operationId: "0xpayout" };
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "finished",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), anchored] },
+      );
+
+      expect(response).toMatchObject({
+        fromAccountId: "from",
+        toAccountId: "to",
+        sentAmount: "5000000",
+        operationHash: "0xpayout",
+      });
+    });
+
+    it("uses the final amount stored on the entry when the swap status has none", async () => {
+      const finished = receiverWithEntry();
+      finished.swapHistory[0] = {
+        ...finished.swapHistory[0],
+        status: "finished",
+        operationId: "0xpayout",
+        finalAmount: new BigNumber("0.0019"),
+      };
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), finished] },
+      );
+
+      expect(response).toMatchObject({
+        status: "finished",
+        finalAmount: "190000",
+        receivedAmount: "190000",
+      });
     });
   });
 });

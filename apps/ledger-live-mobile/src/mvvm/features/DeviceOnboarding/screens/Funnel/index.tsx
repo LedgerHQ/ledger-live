@@ -5,7 +5,7 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
 import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
-import { KaraokeScreen } from "LLM/features/DeviceOnboarding/screens/Karaoke";
+import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import {
   useDeviceOnboardingFunnelViewModel,
@@ -14,8 +14,13 @@ import {
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
-  if (screen.status === "karaoke") {
-    return <KaraokeScreen onClose={screen.onClose} />;
+  if (screen.status === "unseededIntroKaraoke") {
+    return (
+      <>
+        <UnseededIntroKaraokeScreen {...screen.unseededIntroKaraoke} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
   }
   if (screen.status === "checks") {
     return (

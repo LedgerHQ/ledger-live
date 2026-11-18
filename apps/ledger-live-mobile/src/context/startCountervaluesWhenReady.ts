@@ -2,6 +2,7 @@ import type { Store } from "redux";
 import type { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { startCountervaluesSync } from "@features/platform-market-countervalues";
 import { selectRemoteFlagsReady, type WithFeatureFlags } from "@shared/feature-flags";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 /**
  * Starts the countervalues loop when the app is let through `WaitForAppReady`: currencies hydrated
@@ -22,6 +23,7 @@ export function startCountervaluesWhenReady(
   currenciesHydrated: Promise<unknown>,
 ): Promise<void> {
   return whenAppReady(store, currenciesHydrated).then(() => {
+    logStartupEvent("Countervalues sync started");
     store.dispatch(startCountervaluesSync({ savedState }));
   });
 }

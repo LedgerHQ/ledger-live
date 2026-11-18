@@ -1,7 +1,7 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
-import { useRequestReceiveActions } from "./useRequestReceiveActions.web";
-import { RequestReceiveVerifyHint } from "./RequestReceiveVerifyHint.web";
+import { useRequestReceiveActions } from "./useRequestReceiveActions";
+import { RequestReceiveVerifyHint } from "./RequestReceiveVerifyHint";
 import type {
   RequestReceiveActionId,
   RequestReceiveVerifyHint as RequestReceiveVerifyHintProps,

@@ -1,9 +1,21 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { Account } from "@ledgerhq/types-live";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import BigNumber from "bignumber.js";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
+import type { Account, SwapOperation } from "@ledgerhq/types-live";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";
 
 const Ethereum = getCryptoCurrencyById("ethereum");
+const usdcToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
+  name: "USD Coin",
+  ticker: "USDC",
+  contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
+  tokenType: "erc20",
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+};
 type PrivateInfoTestShape = {
   ufvk: string;
   balance: Account["balance"];
@@ -79,6 +91,56 @@ describe("account persistence predicates", () => {
         subAccounts: [...(account.subAccounts ?? []), { ...account, id: account.id + "+token" }],
       };
       expect(accountPersistedStateChanged(withOneSub, withExtraSub as Account)).toBe(true);
+    });
+
+    it("returns true when a token account's swap history grew (e.g. a perps withdraw)", () => {
+      const parent = genAccount("seed-swap", { currency: Ethereum, operationsSize: 0 });
+      const token = genTokenAccount(0, parent, usdcToken);
+      const account: Account = { ...parent, subAccounts: [token] };
+      const swap: SwapOperation = {
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "pending",
+        receiverAccountId: token.id,
+        operationId: "",
+        fromAmount: new BigNumber(5_000_000),
+        toAmount: new BigNumber(4_000_000),
+      };
+      const withSwap: Account = {
+        ...account,
+        subAccounts: [{ ...token, swapHistory: [...token.swapHistory, swap] }],
+      };
+
+      expect(accountPersistedStateChanged(account, withSwap)).toBe(true);
+    });
+
+    it("returns true when an existing swap got anchored or changed status, false otherwise", () => {
+      const swap: SwapOperation = {
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "pending",
+        receiverAccountId: "receiver",
+        operationId: "",
+        fromAmount: new BigNumber(5_000_000),
+        toAmount: new BigNumber(4_000_000),
+      };
+      const account: Account = {
+        ...genAccount("seed-anchor", { currency: Ethereum, operationsSize: 0 }),
+        swapHistory: [swap],
+      };
+      const withSwap = (changes: Partial<SwapOperation>): Account => ({
+        ...account,
+        swapHistory: [{ ...swap, ...changes }],
+      });
+
+      expect(accountPersistedStateChanged(account, withSwap({ operationId: "0xpayout" }))).toBe(
+        true,
+      );
+      expect(accountPersistedStateChanged(account, withSwap({ status: "finished" }))).toBe(true);
+      expect(
+        accountPersistedStateChanged(account, withSwap({ finalAmount: new BigNumber("0.0019") })),
+      ).toBe(true);
+      expect(accountPersistedStateChanged(account, withSwap({}))).toBe(false);
     });
 
     it("returns false when same account (reference equality)", () => {

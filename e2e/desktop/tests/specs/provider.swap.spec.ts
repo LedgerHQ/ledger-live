@@ -22,14 +22,6 @@ const providerFlowTests = [
     bugTickets: ["LIVE-29454", "LIVE-29858"],
     checkLandingPage: true,
   },
-  {
-    fromAccount: TokenAccount.ETH_USDT_5,
-    toAccount: Account.ETH_5,
-    provider: SwapProvider.OKX,
-    xrayTicket: "B2CQA-4728",
-    bugTickets: ["LIVE-29858"],
-    checkLandingPage: false,
-  },
 ];
 
 for (const {

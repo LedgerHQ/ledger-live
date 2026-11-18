@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import {
   type SwapTransactionStatusParams,
@@ -18,8 +19,9 @@ export function useSwapTransactionStatusViewModel(params: SwapTransactionStatusP
   const accounts = useSelector(accountsSelector);
   const locale = useSelector(localeSelector);
   const flattenedAccounts = useMemo(() => flattenAccounts(accounts), [accounts]);
+  const { t } = useTranslation();
 
-  return useSwapTransactionStatusDisplayViewModel({
+  const viewModel = useSwapTransactionStatusDisplayViewModel({
     params,
     transactionStatus,
     accounts: flattenedAccounts,
@@ -27,6 +29,11 @@ export function useSwapTransactionStatusViewModel(params: SwapTransactionStatusP
     useReceiveAccountName: useMaybeAccountName,
     useTransactionExplorerBuilder: useDesktopTransactionExplorerBuilder,
   });
+
+  // A withdraw is titled as such wherever it is opened from, Swap History included.
+  const title = viewModel.isPerpsWithdraw ? t("perpsTransactionStatus.withdrawTitle") : undefined;
+
+  return { ...viewModel, title };
 }
 
 export type SwapTransactionStatusViewModel = ReturnType<typeof useSwapTransactionStatusViewModel>;

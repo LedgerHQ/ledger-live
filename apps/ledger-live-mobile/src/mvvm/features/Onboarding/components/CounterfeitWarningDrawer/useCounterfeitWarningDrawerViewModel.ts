@@ -10,6 +10,8 @@ type CloseSource = "external" | "internal";
 
 export type CounterfeitWarningDrawerContainerProps = Readonly<{
   isOpen: boolean;
+  /** True while another sheet hides the drawer: its close is not the user's, so it is not tracked. */
+  isSuspended?: boolean;
   deviceModelId: DeviceModelId;
   onProceed: () => void;
   onDismiss: () => void;
@@ -35,6 +37,7 @@ const eventProperties = (deviceModelId: DeviceModelId, properties: Record<string
 
 export const useCounterfeitWarningDrawerViewModel = ({
   isOpen,
+  isSuspended = false,
   deviceModelId,
   onProceed,
   onDismiss,
@@ -88,7 +91,7 @@ export const useCounterfeitWarningDrawerViewModel = ({
   }, []);
 
   const handleDismiss = useCallback(() => {
-    if (closeSourceRef.current === "external") {
+    if (closeSourceRef.current === "external" && !isSuspended) {
       track(
         "button_clicked",
         eventProperties(deviceModelId, {
@@ -99,7 +102,7 @@ export const useCounterfeitWarningDrawerViewModel = ({
     }
     closeSourceRef.current = "external";
     onDismiss();
-  }, [deviceModelId, onDismiss]);
+  }, [deviceModelId, isSuspended, onDismiss]);
 
   return {
     isOpen,

@@ -40,9 +40,12 @@ stateDiagram-v2
 
 ## Notes
 
-- `Discovering` starts the discovery service and emits the device list.
-  `scanningTransports` is the discovery service `transportIds` without the
-  skipped transports.
+- The discovery service is the source of truth for the discovery state: the
+  machine reads `isRunning` and `ignoredTransportIds` from it.
+- `Discovering` starts the discovery service, if it is not running, with the
+  transports that its last start ignored, and emits the device list.
+  `scanningTransports` is the discovery service `transportIds` without its
+  `ignoredTransportIds`.
 - The device list keeps the order in which the devices were first discovered,
   so that a device does not move under the user's finger. When discovery no
   longer reports a device, the device stays at its position with
@@ -60,9 +63,9 @@ stateDiagram-v2
   `Discovering` is emitted again with `showDeviceNotFound: true`. Leaving
   `Discovering` cancels the delay.
 - Discovery errors stop discovery. `retry` is only set when the error has a
-  resolution that is not `"none"`. Ignoring a discovery error adds its
-  `transportId` to `skipTransportIds`, then starts discovery again without that
-  transport. A successful retry starts discovery again. A failed retry emits
+  resolution that is not `"none"`. Ignoring a discovery error starts discovery
+  again without the transports that the discovery service ignored and without
+  the error `transportId`. A successful retry starts discovery again. A failed retry emits
   the returned error, or an unknown discovery error if the retry throws.
 - The discovery error state has a `close` action for when the user closes its
   sheet. It moves to `Terminated`, also while a retry runs: the retry result is
@@ -72,7 +75,7 @@ stateDiagram-v2
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
   and `ignore`. Retry connects again to the same device. Ignore goes back to
-  `Discovering`, with the skipped transports kept, so that the user can select
+  `Discovering`, with the ignored transports kept, so that the user can select
   another device. Its `close` action does the same as ignore.
 - Only the error states handle `close`. A late `close` from a sheet that closes
   after a retry or an ignore does nothing.
@@ -86,4 +89,8 @@ stateDiagram-v2
   `onClose`. If a connection succeeds after `stop()`, or if `stop()` runs during
   the success delay, the machine disconnects that session, because no caller
   received it.
+- When an action fails, the machine stops discovery, disconnects a session that
+  waits for the success delay, and sends the error to `observer.error`. The use
+  case then emits the unknown error. A failure of this cleanup is logged, and
+  the error is still sent.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.

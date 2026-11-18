@@ -1,11 +1,10 @@
-import aleoConfig from "../config";
+import aleoConfig, { aleoDefaults } from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import { getPristineAccount } from "../__tests__/helpers/account";
 import { register } from "./register";
 
 describe("register", () => {
-  const config = getTestnetIntegConfig();
+  const config = aleoDefaults.aleo_testnet;
 
   beforeAll(() => {
     aleoConfig.setCoinConfig(() => config);

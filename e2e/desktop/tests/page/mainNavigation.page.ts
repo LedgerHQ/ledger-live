@@ -6,6 +6,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { MyWalletPage } from "tests/page/myWallet.page";
 import { sendDeepLink } from "tests/utils/deeplink";
+import { matchesAppPath } from "tests/utils/urlUtils";
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly selector: Locator;
@@ -40,11 +41,7 @@ export class MainNavigationPage extends AppPage {
   });
 
   private async expectPath(expectedPath: RegExp) {
-    await expect(this.page).toHaveURL(url => {
-      const hashPath = url.hash.replace(/^#/, "");
-      const currentPath = hashPath.startsWith("/") ? hashPath : `${url.pathname}${url.search}`;
-      return expectedPath.test(currentPath);
-    });
+    await expect(this.page).toHaveURL(matchesAppPath(expectedPath));
   }
 
   private getSidebarTargets(): Readonly<Record<SidebarTargetName, NavigationTarget>> {
@@ -99,7 +96,9 @@ export class MainNavigationPage extends AppPage {
   @step("Expect $0 to be disabled in main navigation")
   async expectTargetDisabled(target: SidebarTargetName) {
     const { selector } = this.getSidebarTargets()[target];
-    await expect(selector).toBeDisabled();
+    await this.softExpect(async soft => {
+      await soft(selector).toBeDisabled();
+    });
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")

@@ -177,6 +177,7 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "UNDELEGATE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "SLASH",
   "LOCK",
   "BURN",

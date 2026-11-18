@@ -76,7 +76,7 @@ export const convertNumberDecimals = (number: BigNumber, targetDecimals: number)
   }
 
   // Convert from 18 decimals to target decimals
-  // e.g., for 6 decimals: divide by 10^(18-6) = 10^12
+  // e.g., for 6 decimals: shift by -(18-6) = -12 decimal places
   const decimalDifference = 18 - targetDecimals;
-  return number.dividedToIntegerBy(new BigNumber(10).pow(decimalDifference));
+  return number.shiftedBy(-decimalDifference).integerValue(BigNumber.ROUND_DOWN);
 };

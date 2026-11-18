@@ -6,13 +6,39 @@ import {
   DialogBody,
   DialogFooter,
   DialogHeader,
+  Link,
 } from "@ledgerhq/lumen-ui-react";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { PerpsAccountSelector } from "LLD/features/Perps/components/PerpsAccountSelector";
 import { PerpsAmountStatus } from "LLD/features/Perps/components/PerpsAmountStatus";
 import { RatioPicker } from "LLD/features/Perps/components/RatioPicker";
 import { PERPS_DEPOSIT_PROVIDER_ID } from "LLD/features/Perps/constants/depositFunding";
+import type { DepositErrorDetails } from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
+
+function PerpsDepositDetailsView({
+  details,
+  onBack,
+  onBuy,
+}: Readonly<{ details: DepositErrorDetails; onBack: () => void; onBuy: () => void }>) {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <DialogHeader density="compact" title={t(details.titleKey, details.values)} onBack={onBack} />
+      <DialogBody>
+        <p className="body-2 text-center text-muted" data-testid="perps-deposit-details">
+          {t(details.descriptionKey, details.values)}
+        </p>
+      </DialogBody>
+      <DialogFooter>
+        <Button className="w-full" onClick={onBuy} data-testid="perps-deposit-details-buy">
+          {t("perpsDeposit.details.buy", { ticker: details.buyTicker })}
+        </Button>
+      </DialogFooter>
+    </>
+  );
+}
 
 export function PerpsDepositView({
   headerDescription,
@@ -32,6 +58,12 @@ export function PerpsDepositView({
   maxBuffer,
   selectMax,
   statusError,
+  canLearnMore,
+  isDetailsOpen,
+  details,
+  openDetails,
+  closeDetails,
+  buyFromDetails,
   canReview,
   exceedsBalance,
   missingAccount,
@@ -40,6 +72,12 @@ export function PerpsDepositView({
 }: Readonly<PerpsDepositViewModel>) {
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
+
+  if (isDetailsOpen && details) {
+    return (
+      <PerpsDepositDetailsView details={details} onBack={closeDetails} onBuy={buyFromDetails} />
+    );
+  }
 
   return (
     <>
@@ -66,7 +104,18 @@ export function PerpsDepositView({
           }
           isQuoteLoading={isQuoteLoading}
           notice={depositAmount > 0 ? t("perpsDeposit.inputSubText", { provider }) : null}
-          errorMessage={statusError ? t(statusError.labelKey, { provider }) : null}
+          errorMessage={
+            statusError ? t(statusError.labelKey, { provider, ...statusError.values }) : null
+          }
+          errorAction={
+            canLearnMore ? (
+              <Link appearance="base" size="sm" asChild>
+                <button type="button" onClick={openDetails} data-testid="perps-deposit-learn-more">
+                  {t("perpsDeposit.learnMore")}
+                </button>
+              </Link>
+            ) : null
+          }
           testIdPrefix="perps-deposit"
         />
 

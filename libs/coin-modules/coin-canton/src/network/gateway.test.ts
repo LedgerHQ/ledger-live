@@ -1,13 +1,12 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
-import coinConfig from "../config";
+import type { CantonCoinConfig } from "../config";
 import {
   createMockCantonCurrency,
+  createMockCoinConfigValue,
   createMockInstrumentBalances,
   createMockOnboardingPrepareResponse,
   createMockPendingTransferProposal,
-  setupMockCoinConfig,
 } from "../test/fixtures";
 import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
 import type { GetBalanceResponse } from "../types/gateway";
@@ -53,6 +52,11 @@ jest.mock("@ledgerhq/live-env", () => ({
     return undefined;
   }),
 }));
+
+const createTestNodeConfig = (): CantonCoinConfig => ({
+  ...createMockCoinConfigValue(),
+  nodeId: "test-node-id",
+});
 
 const mockBalances = createMockInstrumentBalances(2, [
   {
@@ -135,12 +139,8 @@ describe("isTransferOfferExpired", () => {
 });
 
 describe("getPartyById and getPartyByPubKey", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -150,7 +150,7 @@ describe("getPartyById and getPartyByPubKey", () => {
     const party = { party_id: "p1", public_key: "pk1" };
     mockNetwork.mockResolvedValue({ data: party, status: 200 });
 
-    const result = await getPartyById(mockCurrency, "p1");
+    const result = await getPartyById(mockConfig, "p1");
 
     expect(result).toEqual(party);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -165,7 +165,7 @@ describe("getPartyById and getPartyByPubKey", () => {
     const party = { party_id: "p1", public_key: "abc123" };
     mockNetwork.mockResolvedValue({ data: party, status: 200 });
 
-    const result = await getPartyByPubKey(mockCurrency, "abc123");
+    const result = await getPartyByPubKey(mockConfig, "abc123");
 
     expect(result).toEqual(party);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -179,17 +179,13 @@ describe("getPartyById and getPartyByPubKey", () => {
   it("throws TopologyChangeError when party is not found", async () => {
     mockNetwork.mockRejectedValue(new Error("Party not found"));
 
-    await expect(getPartyById(mockCurrency, "missing")).rejects.toThrow(TopologyChangeError);
+    await expect(getPartyById(mockConfig, "missing")).rejects.toThrow(TopologyChangeError);
   });
 });
 
 describe("prepareOnboarding", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -199,7 +195,7 @@ describe("prepareOnboarding", () => {
     const prepared = createMockOnboardingPrepareResponse();
     mockNetwork.mockResolvedValue({ data: prepared, status: 200 });
 
-    const result = await prepareOnboarding(mockCurrency, "pk-hex");
+    const result = await prepareOnboarding(mockConfig, "pk-hex");
 
     expect(result).toEqual(prepared);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -217,18 +213,14 @@ describe("prepareOnboarding", () => {
   it("rethrows errors that are not party already exists", async () => {
     mockNetwork.mockRejectedValue(new Error("Gateway down"));
 
-    await expect(prepareOnboarding(mockCurrency, "pk")).rejects.toThrow("Gateway down");
+    await expect(prepareOnboarding(mockConfig, "pk")).rejects.toThrow("Gateway down");
   });
 });
 
 describe("submitOnboarding", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
   const prepareResponse = createMockOnboardingPrepareResponse();
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -240,7 +232,7 @@ describe("submitOnboarding", () => {
     };
     mockNetwork.mockResolvedValue({ data: submitResponse, status: 200 });
 
-    const result = await submitOnboarding(mockCurrency, "pk", prepareResponse, {
+    const result = await submitOnboarding(mockConfig, "pk", prepareResponse, {
       signature: "sig",
     });
 
@@ -255,7 +247,7 @@ describe("submitOnboarding", () => {
     };
     mockNetwork.mockResolvedValue({ data: submitResponse, status: 200 });
 
-    await submitOnboarding(mockCurrency, "pk", prepareResponse, {
+    await submitOnboarding(mockConfig, "pk", prepareResponse, {
       signature: "sig",
       applicationSignature: "app-sig",
     });
@@ -266,12 +258,8 @@ describe("submitOnboarding", () => {
 });
 
 describe("isTopologyChangeRequired", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -280,73 +268,63 @@ describe("isTopologyChangeRequired", () => {
   it("returns true when prepareOnboarding returns a response", async () => {
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
-    await expect(isTopologyChangeRequired(mockCurrency, "pk")).resolves.toBe(true);
+    await expect(isTopologyChangeRequired(mockConfig, "pk")).resolves.toBe(true);
   });
 
   it("returns false when prepare response is falsy", async () => {
     mockNetwork.mockResolvedValue({ data: undefined, status: 200 });
 
-    await expect(isTopologyChangeRequired(mockCurrency, "pk")).resolves.toBe(false);
+    await expect(isTopologyChangeRequired(mockConfig, "pk")).resolves.toBe(false);
   });
 
   it("returns false on party already exists", async () => {
     mockNetwork.mockRejectedValue(new Error("Party already exists"));
 
-    await expect(isTopologyChangeRequired(mockCurrency, "pk")).resolves.toBe(false);
+    await expect(isTopologyChangeRequired(mockConfig, "pk")).resolves.toBe(false);
   });
 
   it("rethrows other errors", async () => {
     mockNetwork.mockRejectedValue(new Error("Service unavailable"));
 
-    await expect(isTopologyChangeRequired(mockCurrency, "pk")).rejects.toThrow(
-      "Service unavailable",
-    );
+    await expect(isTopologyChangeRequired(mockConfig, "pk")).rejects.toThrow("Service unavailable");
   });
 });
 
 describe("isTopologyChangeRequiredCached", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const pubKey = "test-pub-key";
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
-    clearIsTopologyChangeRequiredCache(mockCurrency, pubKey);
+    clearIsTopologyChangeRequiredCache(mockConfig, pubKey);
   });
 
   it("caches result per pubKey and nodeId", async () => {
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
-    await expect(isTopologyChangeRequiredCached(mockCurrency, pubKey)).resolves.toBe(true);
-    await expect(isTopologyChangeRequiredCached(mockCurrency, pubKey)).resolves.toBe(true);
+    await expect(isTopologyChangeRequiredCached(mockConfig, pubKey)).resolves.toBe(true);
+    await expect(isTopologyChangeRequiredCached(mockConfig, pubKey)).resolves.toBe(true);
     expect(mockNetwork).toHaveBeenCalledTimes(1);
   });
 
   it("fetches again after clearIsTopologyChangeRequiredCache", async () => {
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
-    await isTopologyChangeRequiredCached(mockCurrency, pubKey);
+    await isTopologyChangeRequiredCached(mockConfig, pubKey);
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
-    clearIsTopologyChangeRequiredCache(mockCurrency, pubKey);
+    clearIsTopologyChangeRequiredCache(mockConfig, pubKey);
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
-    await isTopologyChangeRequiredCached(mockCurrency, pubKey);
+    await isTopologyChangeRequiredCached(mockConfig, pubKey);
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 });
 
 describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferPreApproval", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -355,7 +333,7 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
   it("getLedgerEnd returns numeric ledger end", async () => {
     mockNetwork.mockResolvedValue({ data: 42, status: 200 });
 
-    await expect(getLedgerEnd(mockCurrency)).resolves.toBe(42);
+    await expect(getLedgerEnd(mockConfig)).resolves.toBe(42);
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "GET",
@@ -368,7 +346,7 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
     const payload = { next: 1, operations: [] };
     mockNetwork.mockResolvedValue({ data: payload, status: 200 });
 
-    const result = await getOperations(mockCurrency, "party-1", { cursor: 1, limit: 10 });
+    const result = await getOperations(mockConfig, "party-1", { cursor: 1, limit: 10 });
 
     expect(result).toEqual(payload);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -384,7 +362,7 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
     const proposals = [createMockPendingTransferProposal()];
     mockNetwork.mockResolvedValue({ data: proposals, status: 200 });
 
-    const result = await getPendingTransferProposals(mockCurrency, "party-1");
+    const result = await getPendingTransferProposals(mockConfig, "party-1");
 
     expect(result).toEqual(proposals);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -406,7 +384,7 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
     };
     mockNetwork.mockResolvedValue({ data: preApproval, status: 200 });
 
-    const result = await getTransferPreApproval(mockCurrency, "party-1");
+    const result = await getTransferPreApproval(mockConfig, "party-1");
 
     expect(result).toEqual(preApproval);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -419,12 +397,8 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
 });
 
 describe("prepare and submit transaction helpers", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createTestNodeConfig();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -448,7 +422,7 @@ describe("prepare and submit transaction helpers", () => {
       execute_before_secs: 3600,
     };
 
-    const result = await prepare(mockCurrency, "party-1", params);
+    const result = await prepare(mockConfig, "party-1", params);
 
     expect(result).toEqual(prepareResponse);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -471,7 +445,7 @@ describe("prepare and submit transaction helpers", () => {
       execute_before_secs: 3600,
     };
 
-    await prepareTransferRequest(mockCurrency, "party-1", params);
+    await prepareTransferRequest(mockConfig, "party-1", params);
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -488,7 +462,7 @@ describe("prepare and submit transaction helpers", () => {
       contract_id: "cid",
     };
 
-    await prepareTransferInstruction(mockCurrency, "party-1", params);
+    await prepareTransferInstruction(mockConfig, "party-1", params);
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -501,7 +475,7 @@ describe("prepare and submit transaction helpers", () => {
     mockNetwork.mockRejectedValue(new LedgerAPI4xx("transfer offer has expired", { status: 400 }));
 
     await expect(
-      prepareTransferInstruction(mockCurrency, "party-1", {
+      prepareTransferInstruction(mockConfig, "party-1", {
         type: "accept-transfer-instruction",
         contract_id: "cid",
       }),
@@ -513,7 +487,7 @@ describe("prepare and submit transaction helpers", () => {
     mockNetwork.mockRejectedValue(serverError);
 
     await expect(
-      prepareTransferInstruction(mockCurrency, "party-1", {
+      prepareTransferInstruction(mockConfig, "party-1", {
         type: "accept-transfer-instruction",
         contract_id: "cid",
       }),
@@ -528,7 +502,7 @@ describe("prepare and submit transaction helpers", () => {
     };
     mockNetwork.mockResolvedValue({ data: preApprovalPrepare, status: 200 });
 
-    const result = await preparePreApprovalTransaction(mockCurrency, "party-1");
+    const result = await preparePreApprovalTransaction(mockConfig, "party-1");
 
     expect(result).toEqual(preApprovalPrepare);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -551,7 +525,7 @@ describe("prepare and submit transaction helpers", () => {
     };
     mockNetwork.mockResolvedValue({ data: tapPrepare, status: 200 });
 
-    const result = await prepareTapRequest(mockCurrency, { partyId: "party-1" });
+    const result = await prepareTapRequest(mockConfig, { partyId: "party-1" });
 
     expect(result).toEqual(tapPrepare);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -573,7 +547,7 @@ describe("prepare and submit transaction helpers", () => {
     };
     mockNetwork.mockResolvedValue({ data: tapPrepare, status: 200 });
 
-    await prepareTapRequest(mockCurrency, { partyId: "party-1", amount: "1000" });
+    await prepareTapRequest(mockConfig, { partyId: "party-1", amount: "1000" });
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -594,7 +568,7 @@ describe("prepare and submit transaction helpers", () => {
     };
     mockNetwork.mockResolvedValue({ data: tapPrepare, status: 200 });
 
-    await prepareTapRequest(mockCurrency, { partyId: "party-1", amount: "0" });
+    await prepareTapRequest(mockConfig, { partyId: "party-1", amount: "0" });
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -610,7 +584,7 @@ describe("prepare and submit transaction helpers", () => {
     const submitResponse = { submission_id: "sub", update_id: "upd" };
     mockNetwork.mockResolvedValue({ data: submitResponse, status: 200 });
 
-    const result = await submit(mockCurrency, "party-1", "ser-hex", "sig-hex");
+    const result = await submit(mockConfig, "party-1", "ser-hex", "sig-hex");
 
     expect(result).toEqual(submitResponse);
     expect(mockNetwork).toHaveBeenCalledWith(
@@ -626,7 +600,7 @@ describe("prepare and submit transaction helpers", () => {
     const submitResponse = { submission_id: "sub", update_id: "upd" };
     mockNetwork.mockResolvedValue({ data: submitResponse, status: 200 });
 
-    const result = await submitTransferInstruction(mockCurrency, "party-1", "ser", "sig");
+    const result = await submitTransferInstruction(mockConfig, "party-1", "ser", "sig");
 
     expect(result).toEqual(submitResponse);
     expect(mockNetwork).toHaveBeenCalledTimes(1);
@@ -637,7 +611,7 @@ describe("prepare and submit transaction helpers", () => {
     mockNetwork.mockResolvedValue({ data: submitResponse, status: 200 });
 
     const result = await submitPreApprovalTransaction(
-      mockCurrency,
+      mockConfig,
       "party-1",
       { serialized: "ser", json: {}, hash: "h" },
       "sig",
@@ -654,7 +628,7 @@ describe("prepare and submit transaction helpers", () => {
     const tapSubmit = { submission_id: "s", update_id: "u" };
     mockNetwork.mockResolvedValue({ data: tapSubmit, status: 200 });
 
-    const result = await submitTapRequest(mockCurrency, {
+    const result = await submitTapRequest(mockConfig, {
       partyId: "party-1",
       serialized: "ser",
       signature: "sig",
@@ -675,10 +649,6 @@ describe("getCalTokensCached", () => {
   const mockCurrency = createMockCantonCurrency();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
-  beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
     getCalTokensCached.clear(mockCurrency.id);
@@ -697,8 +667,8 @@ describe("getCalTokensCached", () => {
     ];
     mockNetwork.mockResolvedValue({ data: calTokens, status: 200 });
 
-    const map1 = await getCalTokensCached(mockCurrency);
-    const map2 = await getCalTokensCached(mockCurrency);
+    const map1 = await getCalTokensCached(mockCurrency.id);
+    const map2 = await getCalTokensCached(mockCurrency.id);
 
     expect(map1.get("tok1")).toBe("ident1");
     expect(map2.get("tok1")).toBe("ident1");
@@ -724,26 +694,22 @@ describe("getCalTokensCached", () => {
     ];
     mockNetwork.mockResolvedValue({ data: calTokens, status: 200 });
 
-    await getCalTokensCached(mockCurrency);
+    await getCalTokensCached(mockCurrency.id);
     getCalTokensCached.clear(mockCurrency.id);
     mockNetwork.mockResolvedValue({
       data: [{ ...calTokens[0], token_identifier: "ident2" }],
       status: 200,
     });
 
-    const map = await getCalTokensCached(mockCurrency);
+    const map = await getCalTokensCached(mockCurrency.id);
     expect(map.get("tok1")).toBe("ident2");
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 });
 
 describe("getBalance", () => {
-  const mockCurrency = createMockCantonCurrency();
+  const mockConfig = createMockCoinConfigValue();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    setupMockCoinConfig();
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -751,7 +717,7 @@ describe("getBalance", () => {
 
   it("should return an array of balances (backwards compatibility)", async () => {
     mockNetwork.mockResolvedValue({ data: mockBalances, status: 200 });
-    const result = await getBalance(mockCurrency, "test-party-id");
+    const result = await getBalance(mockConfig, "test-party-id");
 
     expect(result).toEqual(mockBalances);
   });
@@ -763,7 +729,7 @@ describe("getBalance", () => {
     };
 
     mockNetwork.mockResolvedValue({ data: mockResponse, status: 200 });
-    const result = await getBalance(mockCurrency, "test-party-id");
+    const result = await getBalance(mockConfig, "test-party-id");
 
     expect(result).toEqual(mockResponse.balances);
   });
@@ -780,7 +746,7 @@ describe("getBalance", () => {
 
     mockNetwork.mockRejectedValue(error);
 
-    const result = await submitOnboarding(mockCurrency, mockPublicKey, mockPrepareResponse, {
+    const result = await submitOnboarding(mockConfig, mockPublicKey, mockPrepareResponse, {
       signature: "test-signature",
     });
 
@@ -796,31 +762,14 @@ describe("getBalance", () => {
     });
     mockNetwork.mockRejectedValue(partyNotFoundError);
 
-    await expect(getBalance(mockCurrency, "test-party-id")).rejects.toThrow(TopologyChangeError);
+    await expect(getBalance(mockConfig, "test-party-id")).rejects.toThrow(TopologyChangeError);
   });
 });
 
 describe("getEnabledInstruments", () => {
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
+  const mockConfig = createTestNodeConfig();
 
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      nodeId: "test-node-id",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -835,7 +784,7 @@ describe("getEnabledInstruments", () => {
 
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
-    const result = await getEnabledInstruments(mockCurrency);
+    const result = await getEnabledInstruments(mockConfig);
 
     expect(result).toEqual(
       new Set(["Amulet____admin1", "0x1234567890abcdef____admin2", "0xabcdef1234567890____admin3"]),
@@ -852,7 +801,7 @@ describe("getEnabledInstruments", () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
     mockNetwork.mockRejectedValue(new Error("Network error"));
 
-    const result = await getEnabledInstruments(mockCurrency);
+    const result = await getEnabledInstruments(mockConfig);
 
     expect(result).toEqual(new Set());
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -868,7 +817,7 @@ describe("getEnabledInstruments", () => {
 
     mockNetwork.mockResolvedValue({ data: mockEmptyResponse, status: 200 });
 
-    const result = await getEnabledInstruments(mockCurrency);
+    const result = await getEnabledInstruments(mockConfig);
 
     expect(result).toEqual(new Set());
   });
@@ -878,7 +827,7 @@ describe("getEnabledInstruments", () => {
     // API returns data that is not an array
     mockNetwork.mockResolvedValue({ data: { invalid: "response" }, status: 200 });
 
-    const result = await getEnabledInstruments(mockCurrency);
+    const result = await getEnabledInstruments(mockConfig);
 
     expect(result).toEqual(new Set());
     expect(consoleErrorSpy).toHaveBeenCalled();
@@ -888,31 +837,14 @@ describe("getEnabledInstruments", () => {
 });
 
 describe("getEnabledInstrumentsCached", () => {
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
+  const mockConfig = createTestNodeConfig();
 
   const mockNetwork = network as jest.MockedFunction<typeof network>;
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      nodeId: "test-node-id",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
     // Clear cache before each test
-    clearEnabledInstrumentsCache(mockCurrency);
+    clearEnabledInstrumentsCache(mockConfig);
   });
 
   it("should cache results and return cached value on subsequent calls", async () => {
@@ -924,17 +856,17 @@ describe("getEnabledInstrumentsCached", () => {
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
     // First call - should fetch from API
-    const result1 = await getEnabledInstrumentsCached(mockCurrency);
+    const result1 = await getEnabledInstrumentsCached(mockConfig);
     expect(result1).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
     // Second call - should return cached value
-    const result2 = await getEnabledInstrumentsCached(mockCurrency);
+    const result2 = await getEnabledInstrumentsCached(mockConfig);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
 
     // Third call - should still return cached value
-    const result3 = await getEnabledInstrumentsCached(mockCurrency);
+    const result3 = await getEnabledInstrumentsCached(mockConfig);
     expect(result3).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
   });
@@ -950,18 +882,18 @@ describe("getEnabledInstrumentsCached", () => {
     mockNetwork.mockResolvedValueOnce({ data: mockResponse1, status: 200 });
 
     // First call
-    const result1 = await getEnabledInstrumentsCached(mockCurrency);
+    const result1 = await getEnabledInstrumentsCached(mockConfig);
     expect(result1).toEqual(new Set(["Amulet____admin1"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
     // Clear cache
-    clearEnabledInstrumentsCache(mockCurrency);
+    clearEnabledInstrumentsCache(mockConfig);
 
     // Set up new response
     mockNetwork.mockResolvedValueOnce({ data: mockResponse2, status: 200 });
 
     // Second call after clear - should fetch fresh data
-    const result2 = await getEnabledInstrumentsCached(mockCurrency);
+    const result2 = await getEnabledInstrumentsCached(mockConfig);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0xnewtoken____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });

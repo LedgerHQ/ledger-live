@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
-import { CardLoginIntroView } from "../CardLoginIntroView.web";
+import { CardLoginIntroView } from "../CardLoginIntroView";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),

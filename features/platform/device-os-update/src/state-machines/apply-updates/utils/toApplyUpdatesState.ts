@@ -1,0 +1,20 @@
+import { ApplyUpdatesStateType, type ApplyUpdatesState } from "../../../types/ApplyUpdatesState";
+import { DeviceSituation, type DeviceSituationUpdate } from "../../shared/types";
+
+export const toApplyUpdatesState = (
+  update: DeviceSituationUpdate,
+  cancel: () => void,
+): ApplyUpdatesState => {
+  switch (update.situation) {
+    case DeviceSituation.LOCKED:
+      return { type: ApplyUpdatesStateType.DEVICE_LOCKED };
+    case DeviceSituation.DISCONNECTED:
+      return { type: ApplyUpdatesStateType.DEVICE_DISCONNECTED };
+    case DeviceSituation.CONNECTION_TIMED_OUT:
+      return { type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: update.retry, cancel };
+    default: {
+      const unhandled: never = update;
+      return unhandled;
+    }
+  }
+};

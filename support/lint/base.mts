@@ -1,5 +1,5 @@
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "oxlint";
+import { SUFFIX_IMPORTS_PLUGIN } from "./plugins.mts";
 import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline
@@ -11,12 +11,12 @@ import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 // break. Every layer that lints today had already reached that conclusion on its own; collecting
 // the decisions here is what lets a previously-unlinted layer switch lint on without going red.
 //
-// `jsPlugins` is resolved from this file's own URL, so a consumer at any depth inherits a working
-// absolute path and never names the plugin itself.
+// `jsPlugins` is an absolute path resolved in `plugins.mts`, so a consumer at any depth inherits a
+// working path and never names the plugin itself.
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [fileURLToPath(new URL("./src/suffix-imports.js", import.meta.url))],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
     // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is

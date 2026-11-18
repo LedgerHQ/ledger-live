@@ -69,22 +69,25 @@ describe("CoinFrameworkAdapter.getBalances", () => {
   };
 
   it("carries the token's metadata on each token balance", async () => {
-    expect(await balancesHolding(erc20Asset(USDT_CONTRACT, 1_500_000n))).toEqual([
-      NATIVE_BALANCE,
-      USDT_BALANCE,
-    ]);
+    expect(await balancesHolding(erc20Asset(USDT_CONTRACT, 1_500_000n))).toEqual({
+      balances: [NATIVE_BALANCE, USDT_BALANCE],
+      skippedTokenIds: [],
+    });
   });
 
   it("returns no balance for a token CAL doesn't list", async () => {
-    expect(await balancesHolding(erc20Asset(UNLISTED_CONTRACT, 1n))).toEqual([NATIVE_BALANCE]);
+    expect(await balancesHolding(erc20Asset(UNLISTED_CONTRACT, 1n))).toEqual({
+      balances: [NATIVE_BALANCE],
+      skippedTokenIds: [],
+    });
   });
 
-  it("skips a token without units and keeps the other balances", async () => {
+  it("reports a token without units as skipped and keeps the other balances", async () => {
     expect(
       await balancesHolding(
         erc20Asset(NO_UNITS_CONTRACT, 1n),
         erc20Asset(USDT_CONTRACT, 1_500_000n),
       ),
-    ).toEqual([NATIVE_BALANCE, USDT_BALANCE]);
+    ).toEqual({ balances: [NATIVE_BALANCE, USDT_BALANCE], skippedTokenIds: [NO_UNITS_TOKEN.id] });
   });
 });

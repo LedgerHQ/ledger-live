@@ -54,6 +54,7 @@ import {
   type TransactionInput,
 } from "@ledgerhq/asset-detail";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
+import { ASSET_DETAIL_CHART_HEIGHT } from "./constants";
 
 // Upper bound on operations pulled for the chart's transaction dots. The chart only
 // marks operations inside the visible window, so this just caps the lookback; raise it
@@ -67,13 +68,11 @@ const MIN_X_AXIS_TICKS_1D = 8;
 const HOVER_RANGE_WITH_TIME_AND_DATE: ReadonlySet<string> = new Set(["1w", "1m", "6m"]);
 
 /**
- * Asymmetric padding added to the y-axis domain (as a ratio of the value range).
- * Most of it sits at the bottom to lift the lowest point off the x-axis so its
- * "below" label clears the x-axis tick labels, while the top stays nearly tight
- * so the line keeps its amplitude and does not look flat.
+ * Room left in the y-axis domain below the min and above the max, so their labels stay
+ * inside the drawing area and the scrubber overlay covers them whole.
  */
-const Y_AXIS_PADDING_BOTTOM_RATIO = 0.12;
-const Y_AXIS_PADDING_TOP_RATIO = 0.04;
+const Y_AXIS_PADDING_BOTTOM_PX = 32;
+const Y_AXIS_PADDING_TOP_PX = 24;
 
 /**
  * Returns evenly spaced data indices (always including the first and last point)
@@ -431,9 +430,12 @@ export function useBalanceGraphViewModel({
     () => ({
       domain: ({ min, max }) => {
         const valueRange = max - min || Math.abs(max) || 1;
+        const valuePerPx =
+          valueRange /
+          (ASSET_DETAIL_CHART_HEIGHT - Y_AXIS_PADDING_TOP_PX - Y_AXIS_PADDING_BOTTOM_PX);
         return {
-          min: min - valueRange * Y_AXIS_PADDING_BOTTOM_RATIO,
-          max: max + valueRange * Y_AXIS_PADDING_TOP_RATIO,
+          min: min - Y_AXIS_PADDING_BOTTOM_PX * valuePerPx,
+          max: max + Y_AXIS_PADDING_TOP_PX * valuePerPx,
         };
       },
     }),

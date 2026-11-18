@@ -2,7 +2,7 @@ import { AssetBalanceHistorySchema, type AssetBalanceHistory } from "./schema";
 
 type AssetBalanceHistoryInput = {
   assetId: string;
-  points: { date: string; balance: string }[];
+  points: { date: string; balance: string; countervalues?: Record<string, string> }[];
 };
 
 export function mockAssetBalanceHistory(
