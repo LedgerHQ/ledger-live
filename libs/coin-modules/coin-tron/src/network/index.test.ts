@@ -792,8 +792,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     });
 
     expect(result.native.txs.map(t => t.txID)).toEqual(["tx-native"]);
-    // The page boundary is cut on raw records, so the filtered ones still count.
-    expect(result.native.timestamps).toHaveLength(3);
+    expect(result.native.rawTimestamps).toHaveLength(3);
     expect(result.native.next).toBeUndefined();
     expect(result.trc20.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
     expect(result.trc20.next).toBe(`${TRON_BASE_URL}/next`);
@@ -1038,12 +1037,12 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     );
 
     expect(trc20).toMatchObject({
-      timestamps: [validTrc20Tx.block_timestamp],
+      rawTimestamps: [validTrc20Tx.block_timestamp],
       txs: [{ txID: "tx-trc20", tokenType: "trc20" }],
       next: `${TRON_BASE_URL}/v1/page-3`,
     });
     expect(native).toMatchObject({
-      timestamps: [validNativeTx.block_timestamp],
+      rawTimestamps: [validNativeTx.block_timestamp],
       txs: [{ txID: "tx-native" }],
       next: undefined,
     });

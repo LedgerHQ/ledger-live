@@ -9,8 +9,8 @@ import {
   walksBefore,
 } from "./cursor";
 
-const page = (timestamps: number[], next?: string): TxEndpointPage => ({
-  timestamps,
+const page = (rawTimestamps: number[], next?: string): TxEndpointPage => ({
+  rawTimestamps,
   txs: [],
   next,
 });

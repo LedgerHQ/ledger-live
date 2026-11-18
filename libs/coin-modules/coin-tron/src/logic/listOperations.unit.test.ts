@@ -30,11 +30,7 @@ const address = "tronExampleAddress";
 const config = {} as TronCoinConfig;
 const logger: Logger = (..._args: unknown[]) => {};
 
-/**
- * One record of a TronGrid endpoint. `kept: false` stands for a record the network layer filters
- * out before emission (malformed, successful TriggerSmartContract): it still takes room on a page.
- */
-type FakeRecord = { id: string; ts: number; endpoint: TxEndpoint; kept?: boolean };
+type FakeRecord = { id: string; ts: number; endpoint: TxEndpoint; filteredOut?: boolean };
 
 type FakeQuery = FetchTxsPageParams & { endpoint: TxEndpoint; offset: number };
 
@@ -51,11 +47,9 @@ function toTxInfo(record: FakeRecord): TrongridTxInfo {
   };
 }
 
-/**
- * In-memory TronGrid for both endpoints: inclusive `min_timestamp`/`max_timestamp`, a stable order
- * inside one timestamp, and a `next` link on every full page, even when nothing follows (TronGrid
- * does this, so a walk must survive a `next` that leads to an empty page).
- */
+const isFullPageEvenIfNothingFollows = (slice: FakeRecord[], query: FakeQuery) =>
+  slice.length === query.limit;
+
 function fakeTronGrid(records: FakeRecord[]) {
   const pageOf = (query: FakeQuery): TxEndpointPage => {
     const sign = query.order === "asc" ? 1 : -1;
@@ -66,12 +60,11 @@ function fakeTronGrid(records: FakeRecord[]) {
       .sort((a, b) => sign * (a.ts - b.ts));
     const slice = matching.slice(query.offset, query.offset + query.limit);
     return {
-      timestamps: slice.map(r => r.ts),
-      txs: slice.filter(r => r.kept !== false).map(toTxInfo),
-      next:
-        slice.length === query.limit
-          ? JSON.stringify({ ...query, offset: query.offset + query.limit })
-          : undefined,
+      rawTimestamps: slice.map(r => r.ts),
+      txs: slice.filter(r => !r.filteredOut).map(toTxInfo),
+      next: isFullPageEvenIfNothingFollows(slice, query)
+        ? JSON.stringify({ ...query, offset: query.offset + query.limit })
+        : undefined,
     };
   };
 
@@ -94,12 +87,13 @@ const native = (id: string, ts: number, kept = true): FakeRecord => ({
   id,
   ts,
   endpoint: "native",
-  kept,
+  filteredOut: !kept,
 });
 const trc20 = (id: string, ts: number): FakeRecord => ({ id, ts, endpoint: "trc20" });
 
-/** Follows the cursor the way the generic framework does, refusing a cursor served twice. */
-async function walk(options: Partial<ListOperationsOptions>): Promise<string[]> {
+async function walkLikePaginateOperations(
+  options: Partial<ListOperationsOptions>,
+): Promise<string[]> {
   const ids: string[] = [];
   const seen = new Set<string>();
   let cursor: string | undefined;
@@ -128,7 +122,6 @@ describe("listOperations", () => {
       hash: `block-${height}`,
       time: new Date(height),
     }));
-    // The suffix tells which endpoint's record the operation was built from.
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx: TrongridTxInfo) => ({
       id: tx.tokenType === "trc20" ? `${tx.txID}:trc20` : tx.txID,
     }));
@@ -148,7 +141,7 @@ describe("listOperations", () => {
         trc20("t6", 6000),
       ]);
 
-      expect(await walk({ order: "desc" })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual([
         "n9",
         "t8:trc20",
         "n7",
@@ -173,7 +166,7 @@ describe("listOperations", () => {
         native("n6", 6000),
       ]);
 
-      expect(await walk({ order: "desc" })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual([
         "t9:trc20",
         "n8",
         "t7:trc20",
@@ -197,7 +190,7 @@ describe("listOperations", () => {
         trc20("t6", 6000),
       ]);
 
-      expect(await walk({ order: "asc" })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "asc" })).toEqual([
         "n1",
         "n2",
         "n3",
@@ -212,14 +205,24 @@ describe("listOperations", () => {
     it("stops at minTimestamp", async () => {
       fakeTronGrid([native("n3", 3000), native("n2", 2000), native("n1", 1000)]);
 
-      expect(await walk({ order: "desc", limit: 1, minTimestamp: 2000 })).toEqual(["n3", "n2"]);
+      expect(
+        await walkLikePaginateOperations({ order: "desc", limit: 1, minTimestamp: 2000 }),
+      ).toEqual(["n3", "n2"]);
     });
 
     it("ends without error when a full last page links to an empty one", async () => {
       fakeTronGrid([native("n3", 3000), native("n2", 2000), native("n1", 1000)]);
 
-      expect(await walk({ order: "desc", limit: 3 })).toEqual(["n3", "n2", "n1"]);
-      expect(await walk({ order: "desc", limit: 1 })).toEqual(["n3", "n2", "n1"]);
+      expect(await walkLikePaginateOperations({ order: "desc", limit: 3 })).toEqual([
+        "n3",
+        "n2",
+        "n1",
+      ]);
+      expect(await walkLikePaginateOperations({ order: "desc", limit: 1 })).toEqual([
+        "n3",
+        "n2",
+        "n1",
+      ]);
     });
   });
 
@@ -236,7 +239,7 @@ describe("listOperations", () => {
         trc20("t4", 4500),
       ]);
 
-      expect(await walk({ order: "desc", limit: 2 })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "desc", limit: 2 })).toEqual([
         "t7:trc20",
         "n6",
         "t4:trc20",
@@ -262,7 +265,7 @@ describe("listOperations", () => {
 
       expect(first.items).toEqual([]);
       expect(first.next).toBe("4000");
-      expect(await walk({ order: "desc" })).toEqual(["n3", "n2"]);
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual(["n3", "n2"]);
     });
   });
 
@@ -271,7 +274,7 @@ describe("listOperations", () => {
       const group = ["a", "b", "c", "d", "e", "f", "g"].map(id => native(id, 5000));
       fakeTronGrid([native("n9", 9000), ...group, native("n1", 1000)]);
 
-      expect(await walk({ order: "desc" })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual([
         "n9",
         "a",
         "b",
@@ -282,7 +285,17 @@ describe("listOperations", () => {
         "g",
         "n1",
       ]);
-      expect(await walk({ order: "asc" })).toEqual(["n1", "a", "b", "c", "d", "e", "f", "g", "n9"]);
+      expect(await walkLikePaginateOperations({ order: "asc" })).toEqual([
+        "n1",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "n9",
+      ]);
     });
 
     it("returns a group larger than a page on both endpoints at once", async () => {
@@ -293,7 +306,7 @@ describe("listOperations", () => {
         trc20("t1", 1000),
       ]);
 
-      const ids = await walk({ order: "desc" });
+      const ids = await walkLikePaginateOperations({ order: "desc" });
 
       expect(ids).toHaveLength(10);
       expect(new Set(ids)).toEqual(
@@ -334,7 +347,7 @@ describe("listOperations", () => {
     it("gives one operation, built from its TRC20 record", async () => {
       fakeTronGrid([native("n9", 9000), native("x", 5000), trc20("x", 5000), native("n1", 1000)]);
 
-      expect(await walk({ order: "desc" })).toEqual(["n9", "x:trc20", "n1"]);
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual(["n9", "x:trc20", "n1"]);
     });
 
     it("gives one operation when its two records sit at the end of different pages", async () => {
@@ -347,7 +360,7 @@ describe("listOperations", () => {
         trc20("x", 5000),
       ]);
 
-      expect(await walk({ order: "desc", limit: 2 })).toEqual([
+      expect(await walkLikePaginateOperations({ order: "desc", limit: 2 })).toEqual([
         "n9",
         "t8:trc20",
         "t7:trc20",
@@ -371,10 +384,10 @@ describe("listOperations", () => {
   });
 
   it("throws TronPageServedTwice when a next link leads back to an already read page", async () => {
-    const loop: TxEndpointPage = { timestamps: [5000], txs: [], next: "page-2" };
+    const loop: TxEndpointPage = { rawTimestamps: [5000], txs: [], next: "page-2" };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
       native: loop,
-      trc20: { timestamps: [], txs: [] },
+      trc20: { rawTimestamps: [], txs: [] },
     });
     (fetchTronAccountTxsEndpointPage as jest.Mock).mockResolvedValue(loop);
 
@@ -425,8 +438,6 @@ describe("listOperations", () => {
   });
 
   it("drops a token operation whose asset reference could not be resolved", async () => {
-    // A `trc10`/`trc20` asset with no `assetReference` names no token: consumers cannot resolve
-    // it, and typing it native would report a token amount as TRX.
     const tx = (txID: string, ts: number, extra: Partial<TrongridTxInfo>): TrongridTxInfo => ({
       ...toTxInfo(trc20(txID, ts)),
       ...extra,
@@ -437,8 +448,8 @@ describe("listOperations", () => {
       tx("tx-unresolved-trc10", 1000, { tokenType: "trc10", tokenAddress: undefined }),
     ];
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
-      native: { timestamps: [], txs: [] },
-      trc20: { timestamps: txs.map(t => t.date.getTime()), txs },
+      native: { rawTimestamps: [], txs: [] },
+      trc20: { rawTimestamps: txs.map(t => t.date.getTime()), txs },
     });
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(t => ({ id: t.txID }));
 
@@ -452,12 +463,10 @@ describe("listOperations", () => {
   });
 
   it("fetches no block for a page of only unresolvable token operations", async () => {
-    // Dropping happens before the block fan-out, so a page of transactions that are all dropped
-    // costs no block request — historical sync over spam airdrops stays cheap.
     const unresolved = { ...toTxInfo(trc20("tx-unresolved", 1000)), tokenAddress: undefined };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
-      native: { timestamps: [], txs: [] },
-      trc20: { timestamps: [1000], txs: [unresolved] },
+      native: { rawTimestamps: [], txs: [] },
+      trc20: { rawTimestamps: [1000], txs: [unresolved] },
     });
 
     const result = await listOperations(logger, config, address, {

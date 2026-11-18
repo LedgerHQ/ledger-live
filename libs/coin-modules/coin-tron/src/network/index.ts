@@ -775,11 +775,8 @@ export const defaultFetchParams: FetchParams = {
 export type TxEndpoint = "native" | "trc20";
 
 export type TxEndpointPage = {
-  /** `block_timestamp` of every record the endpoint returned, before any filter. */
-  timestamps: number[];
-  /** The records left to emit: malformed entries and successful TriggerSmartContract dropped. */
+  rawTimestamps: number[];
   txs: TrongridTxInfo[];
-  /** TronGrid's `links.next`, which carries the fingerprint of the next page. */
   next?: string;
 };
 
@@ -807,7 +804,7 @@ async function toNativePage(
       ),
   );
   return {
-    timestamps: results.map(tx => tx.block_timestamp),
+    rawTimestamps: results.map(tx => tx.block_timestamp),
     txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
     next,
   };
@@ -820,7 +817,7 @@ async function toTrc20Page(
   next: string | undefined,
 ): Promise<TxEndpointPage> {
   return {
-    timestamps: results.map(tx => tx.block_timestamp),
+    rawTimestamps: results.map(tx => tx.block_timestamp),
     txs: await resolveMissingTokenAddresses(
       logger,
       config,
@@ -857,7 +854,6 @@ export async function fetchTronAccountTxsPage(
   return { native, trc20 };
 }
 
-/** Fetches the endpoint page at `url`, a first-page query or a `next` link of an earlier page. */
 export async function fetchTronAccountTxsEndpointPage(
   logger: Logger,
   config: TronCoinConfig,

@@ -26,10 +26,7 @@ import {
 } from "./cursor";
 import { TronEmptyPage, TronPageServedTwice } from "../types/errors";
 
-// Native and TRC20 records come from two TronGrid endpoints paged independently. A page is cut
-// only between timestamps: all records of one transaction share its block timestamp, so a
-// transaction, with its native record and all its TRC20 records, is always emitted on one page.
-// The cursor is the timestamp the next page starts at, inclusive (see `pageBoundary`).
+// A page is cut only between block timestamps, so a transaction is never split across pages.
 
 export type ListOperationsOptions = {
   limit: number;
@@ -54,9 +51,9 @@ export async function listOperations(
     order,
   });
 
-  // A cursor is only issued over records TronGrid has already returned, so none at all is a
-  // transient TronGrid failure, not an end of history.
-  if (start !== null && native.timestamps.length === 0 && trc20.timestamps.length === 0) {
+  const cursorPageIsEmpty =
+    start !== null && native.rawTimestamps.length === 0 && trc20.rawTimestamps.length === 0;
+  if (cursorPageIsEmpty) {
     throw new TronEmptyPage(
       `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
     );
@@ -79,8 +76,8 @@ async function cutPage(
 
   const isBeforeBoundary = (ts: number) => walksBefore(order, ts, boundary);
   if (
-    pages.native.timestamps.some(isBeforeBoundary) ||
-    pages.trc20.timestamps.some(isBeforeBoundary)
+    pages.native.rawTimestamps.some(isBeforeBoundary) ||
+    pages.trc20.rawTimestamps.some(isBeforeBoundary)
   ) {
     const before = (txs: TrongridTxInfo[]) => txs.filter(tx => isBeforeBoundary(tx.date.getTime()));
     return {
@@ -89,11 +86,9 @@ async function cutPage(
     };
   }
 
-  // The page holds nothing before the boundary group: emit that group whole, however many pages
-  // it spans, and move past it.
   const [nativeGroup, trc20Group] = await Promise.all([
-    readGroup(logger, config, "native", pages.native, boundary),
-    readGroup(logger, config, "trc20", pages.trc20, boundary),
+    readWholeTimestampGroup(logger, config, "native", pages.native, boundary),
+    readWholeTimestampGroup(logger, config, "trc20", pages.trc20, boundary),
   ]);
   return {
     txs: mergeEndpoints(order, nativeGroup.txs, trc20Group.txs),
@@ -104,12 +99,7 @@ async function cutPage(
   };
 }
 
-/**
- * Every record of `endpoint` at `timestamp`, following TronGrid's `links.next` (the fingerprint)
- * while pages hold nothing else. `hasMore` is true only when a later record was actually seen: a
- * full last page still carries a `next` that leads to an empty page.
- */
-async function readGroup(
+async function readWholeTimestampGroup(
   logger: Logger,
   config: TronCoinConfig,
   endpoint: TxEndpoint,
@@ -121,8 +111,8 @@ async function readGroup(
   let page = firstPage;
   for (;;) {
     txs.push(...page.txs.filter(tx => tx.date.getTime() === timestamp));
-    if (page.timestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
-    if (page.next === undefined || page.timestamps.length === 0) return { txs, hasMore: false };
+    if (page.rawTimestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
+    if (page.next === undefined || page.rawTimestamps.length === 0) return { txs, hasMore: false };
     if (followed.has(page.next)) {
       throw new TronPageServedTwice(`TronGrid served the ${endpoint} page ${page.next} twice`);
     }
@@ -131,19 +121,14 @@ async function readGroup(
   }
 }
 
-/**
- * One list in walk order. A transaction returned by both endpoints keeps only its TRC20 records,
- * which carry the token transfer; TRC20 records are never merged with each other here.
- */
 function mergeEndpoints(
   order: Order,
   nativeTxs: TrongridTxInfo[],
   trc20Txs: TrongridTxInfo[],
 ): TrongridTxInfo[] {
   const trc20TxIds = new Set(trc20Txs.map(tx => tx.txID));
-  return [...nativeTxs.filter(tx => !trc20TxIds.has(tx.txID)), ...trc20Txs].sort(
-    compareTxsByTimestamp(order),
-  );
+  const nativeTxsWithoutTrc20Record = nativeTxs.filter(tx => !trc20TxIds.has(tx.txID));
+  return [...nativeTxsWithoutTrc20Record, ...trc20Txs].sort(compareTxsByTimestamp(order));
 }
 
 async function toOperations(
@@ -152,11 +137,6 @@ async function toOperations(
   address: string,
   txs: TrongridTxInfo[],
 ): Promise<Operation[]> {
-  // A token operation whose contract address could not be resolved is dropped: an asset with a
-  // `trc10`/`trc20` type and no `assetReference` is unidentifiable for consumers (and fatal for
-  // some), and re-typing it as native would report a token amount as TRX. Dropping happens after
-  // the page is cut, so pagination still advances over the transaction, but before the blocks are
-  // fetched, so a page of only-unresolvable transactions costs no block request.
   const emittableTxs = txs.filter(tx => {
     if (!hasUnresolvedTokenReference(tx)) return true;
     logger("tron-error", `dropping ${tx.tokenType} operation without asset reference`, {
