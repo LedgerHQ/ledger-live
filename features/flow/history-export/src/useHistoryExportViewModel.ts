@@ -1,25 +1,16 @@
-import { useState, useCallback, useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import type { Account } from "@ledgerhq/types-live";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { track } from "@shared/analytics";
+import type { HistoryExportAccount, HistoryExportPort } from "./model/ports";
 import {
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE_NAME,
   HISTORY_EXPORT_DIALOG_TRACKING_BUTTON,
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
 } from "./constants";
 
-export type ExportAccount = {
-  id: string;
-  name: string;
-  balance: Account["balance"];
-  currency: Account["currency"];
-};
+export type ExportAccount = HistoryExportAccount;
 
-export type HistoryExportDialogViewModel = {
-  accounts: ExportAccount[];
+export type HistoryExportViewModel = {
+  accounts: readonly ExportAccount[];
   checkedIds: string[];
   allSelected: boolean;
   disabled: boolean;
@@ -33,61 +24,59 @@ export type HistoryExportDialogViewModel = {
   resetState: () => void;
 };
 
-type UseHistoryExportDialogViewModelArgs = {
+type UseHistoryExportViewModelArgs = {
+  port: HistoryExportPort;
   setDialogHeight?: (h: "fixed" | "fit") => void;
 };
 
-export function useHistoryExportDialogViewModel({
+export function useHistoryExportViewModel({
+  port,
   setDialogHeight,
-}: UseHistoryExportDialogViewModelArgs = {}): HistoryExportDialogViewModel {
-  const rawAccounts = useSelector(accountsSelector);
-  const names = useBatchMaybeAccountName(rawAccounts);
+}: UseHistoryExportViewModelArgs): HistoryExportViewModel {
+  const { accounts, syncAccounts, isSyncing, exportCsv: exportAccountsCsv } = port;
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleResult = useCallback(() => setDialogHeight?.("fit"), [setDialogHeight]);
 
-  const {
-    success,
-    error,
-    isLoading,
-    exportCsv,
-    resetState: resetExportState,
-  } = useExportOperationsCsv({
-    accounts: rawAccounts,
-    checkedIds,
-    onSuccess: handleResult,
-    onError: handleResult,
-  });
-
-  const accounts: ExportAccount[] = useMemo(
-    () =>
-      rawAccounts.map((a, i) => ({
-        id: a.id,
-        name: names[i] ?? a.id,
-        balance: a.balance,
-        currency: a.currency,
-      })),
-    [rawAccounts, names],
-  );
+  const hasScheduledSync = useRef(false);
+  useEffect(() => {
+    if (accounts.length === 0 || hasScheduledSync.current) return;
+    hasScheduledSync.current = true;
+    syncAccounts(accounts.map(a => a.id));
+  }, [accounts, syncAccounts]);
 
   const allSelected = accounts.length > 0 && checkedIds.length === accounts.length;
   const disabled = checkedIds.length === 0;
+  const isLoading = checkedIds.length > 0 && isSyncing(checkedIds);
 
   const toggleAccount = useCallback((id: string) => {
     setCheckedIds(prev => (prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]));
   }, []);
 
   const onSelectAllToggle = useCallback(() => {
-    setCheckedIds(prev => (prev.length === rawAccounts.length ? [] : rawAccounts.map(a => a.id)));
-  }, [rawAccounts]);
+    setCheckedIds(prev => (prev.length === accounts.length ? [] : accounts.map(a => a.id)));
+  }, [accounts]);
 
   const handleExportCsv = useCallback(async () => {
     track("button_clicked", {
       button: HISTORY_EXPORT_DIALOG_TRACKING_BUTTON.export,
       page: HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
     });
-    await exportCsv();
-  }, [exportCsv]);
+    try {
+      const outcome = await exportAccountsCsv(checkedIds);
+      if (outcome === "canceled") return;
+      if (outcome === "saved") {
+        setSuccess(true);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    }
+    handleResult();
+  }, [checkedIds, exportAccountsCsv, handleResult]);
 
   const onDoneClick = useCallback(() => {
     track("button_clicked", {
@@ -97,10 +86,11 @@ export function useHistoryExportDialogViewModel({
   }, []);
 
   const resetState = useCallback(() => {
-    resetExportState();
+    setSuccess(false);
+    setError(false);
     setCheckedIds([]);
     setDialogHeight?.("fixed");
-  }, [resetExportState, setDialogHeight]);
+  }, [setDialogHeight]);
 
   return {
     accounts,

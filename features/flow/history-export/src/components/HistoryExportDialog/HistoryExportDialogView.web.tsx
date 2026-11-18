@@ -1,7 +1,7 @@
 import React from "react";
-import type { HistoryExportDialogViewModel } from "./useHistoryExportDialogViewModel";
-import { ExportResultScene } from "./components/ExportResultScene";
-import { ExportScene } from "./components/ExportScene";
+import type { HistoryExportViewModel } from "../../useHistoryExportViewModel";
+import { ExportResultScene } from "./internals/ExportResultScene";
+import { ExportScene } from "./internals/ExportScene";
 
 export function HistoryExportDialogView({
   success,
@@ -9,7 +9,7 @@ export function HistoryExportDialogView({
   resetState,
   onDoneClick,
   ...props
-}: Readonly<HistoryExportDialogViewModel>) {
+}: Readonly<HistoryExportViewModel>) {
   if (success) {
     return <ExportResultScene variant="success" onButtonClick={onDoneClick} />;
   }

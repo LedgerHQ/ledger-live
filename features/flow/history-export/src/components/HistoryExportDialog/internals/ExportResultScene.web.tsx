@@ -9,12 +9,12 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { CheckmarkCircleFill, DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@shared/i18n";
 import { TrackScreen } from "@shared/analytics-react";
 import {
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
-} from "../constants";
+} from "../../../constants";
 
 const VARIANTS = {
   success: {
