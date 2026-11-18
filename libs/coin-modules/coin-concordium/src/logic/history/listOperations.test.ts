@@ -133,9 +133,62 @@ describe("parseTransaction", () => {
     });
   });
 
+  it("should return a fee-only operation for a self-origin non-transfer", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      details: { type: "configureDelegation", outcome: "success" },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      sender: VALID_ADDRESS,
+      recipient: "",
+      amount: "0",
+      value: "500",
+      fee: "500",
+      feesPayer: VALID_ADDRESS,
+      failed: false,
+    });
+  });
+
+  it("should mark a rejected self-origin non-transfer as failed", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      details: { type: "configureBaker", outcome: "reject", rejectReason: "InvalidNonce" },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      value: "500",
+      fee: "500",
+      feesPayer: VALID_ADDRESS,
+      failed: true,
+    });
+  });
+
+  it("should return null for a non-transfer the account did not pay for", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      details: { type: "configureDelegation", outcome: "success" },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+  });
+
+  it("should return null for rewards", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      origin: { type: "reward" },
+      details: { type: "bakingReward", outcome: "success" },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+  });
+
   it("should return null for non-transfer transactions", () => {
     const tx: WalletProxyTransaction = {
       ...baseTx,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
       details: { type: "bakingReward", outcome: "success" },
     };
 

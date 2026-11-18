@@ -688,12 +688,13 @@ describe("getAccountShape with tokens disabled", () => {
     getConsensusInfo.mockResolvedValue({ lastFinalizedBlockHeight: 5000 });
   });
 
-  const shape = () =>
+  const shape = (initialAccount?: ConcordiumAccount) =>
     getAccountShape({
       currency: createFixtureCurrency(),
       derivationMode: "",
       derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
+      initialAccount,
       rest: { publicKey: PUBLIC_KEY },
     });
 
@@ -723,10 +724,10 @@ describe("getAccountShape with tokens disabled", () => {
     expect(result.subAccounts).toEqual([]);
   });
 
-  it("records a syncHash that names the off state", async () => {
+  it("records a syncHash that names the history parser and off state", async () => {
     const result = await shape();
 
-    expect(result.syncHash).toBe("tokens=off");
+    expect(result.syncHash).toBe("history=v2:tokens=off");
   });
 
   it("drops PLT transfers entirely when the flag is switched back off", async () => {
@@ -742,13 +743,13 @@ describe("getAccountShape with tokens disabled", () => {
       derivationMode: "",
       derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
-      initialAccount: storedAccount({ syncHash: "0xabc:tokens=on" }),
+      initialAccount: storedAccount({ syncHash: "history=v1:0xabc:tokens=on" }),
       rest: { publicKey: PUBLIC_KEY },
     });
 
     expect(result.operations).toEqual([]);
     expect(result.subAccounts).toEqual([]);
-    expect(result.syncHash).toBe("tokens=off");
+    expect(result.syncHash).toBe("history=v2:tokens=off");
   });
 
   it("re-reads the history from zero once the stored assumptions no longer hold", async () => {
@@ -795,10 +796,21 @@ describe("getAccountShape with tokens disabled", () => {
     );
   });
 
+  it("re-reads history from zero after a parser history version update", async () => {
+    await shape(storedAccount({ syncHash: "tokens=off" }));
+
+    expect(listOperations).toHaveBeenCalledWith(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 1000, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
   it("keeps the watermark when the stored assumptions still hold", async () => {
     const initialAccount = {
       operations: [createFixtureOperation({ blockHeight: 500 })],
-      syncHash: "tokens=off",
+      syncHash: "history=v2:tokens=off",
       concordiumResources: { publicKey: PUBLIC_KEY },
     } as unknown as ConcordiumAccount;
 
@@ -924,7 +936,7 @@ describe("getAccountShape with tokens enabled", () => {
   it("records a syncHash that names both the CAL and the on state", async () => {
     const result = await shape();
 
-    expect(result.syncHash).toMatch(/^0x[0-9a-f]+:tokens=on$/);
+    expect(result.syncHash).toMatch(/^history=v2:0x[0-9a-f]+:tokens=on$/);
   });
 
   it("gives two different blacklists two different syncHashes", async () => {
@@ -935,7 +947,7 @@ describe("getAccountShape with tokens enabled", () => {
   });
 
   it("re-reads from zero when the flag has just been turned on", async () => {
-    await shape(storedAccount({ syncHash: "tokens=off" }));
+    await shape(storedAccount({ syncHash: "history=v2:tokens=off" }));
 
     expect(listOperations).toHaveBeenCalledWith(
       tokensOnConfig,
@@ -969,7 +981,7 @@ describe("getAccountShape with tokens enabled", () => {
 
     const result = await shape();
 
-    expect(result.syncHash).toBe("tokens=off");
+    expect(result.syncHash).toBe("history=v2:tokens=off");
   });
 
   it("invalidates the syncHash when a balance failure leaves transfers unattributed", async () => {

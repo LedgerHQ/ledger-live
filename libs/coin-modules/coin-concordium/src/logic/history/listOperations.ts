@@ -195,11 +195,11 @@ export function parseTransaction(tx: WalletProxyTransaction, address: string): R
     return parseTokenUpdate(tx, address);
   }
 
-  if (tx.details.type !== "transfer" && tx.details.type !== "transferWithMemo") {
-    return null;
+  if (tx.details.type === "transfer" || tx.details.type === "transferWithMemo") {
+    return parseNativeTransfer(tx, address);
   }
 
-  return parseNativeTransfer(tx, address);
+  return isFeePayer(tx) ? feeOnlyOperation(tx, address, tx.details.outcome === "reject") : null;
 }
 
 /**
