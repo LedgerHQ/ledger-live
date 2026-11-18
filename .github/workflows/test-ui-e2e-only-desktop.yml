@@ -205,6 +205,7 @@ jobs:
       is_dual: ${{ steps.parse.outputs.is_dual }}
       e2e_matrix: ${{ steps.shards.outputs.e2e_matrix }}
       shard_total: ${{ steps.shards.outputs.shard_total }}
+      shard_workers: ${{ steps.shards.outputs.shard_workers }}
       runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
       extra_os_matrix: ${{ steps.extra-os.outputs.extra_os_matrix }}
     steps:
@@ -303,17 +304,21 @@ jobs:
         id: shards
         env:
           DEVICE_SPECS: ${{ steps.parse.outputs.device_specs }}
-          # Empty for the whole suite, an inverted filter, a runtime-only pattern, or a ref whose
-          # resolve.mjs predates spec_count: all keep the full shard count.
-          SPEC_COUNT: ${{ steps.test-filter.outputs.spec_count }}
+          # Empty when unknown, so the run keeps the full shard count.
+          TEST_COUNT: ${{ steps.test-filter.outputs.test_count }}
+          REPEAT_EACH: ${{ inputs.repeat_each }}
         run: |
           MAX_SHARDS=4
+          # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
+          SHARD_WORKERS=8
           SHARD_TOTAL=$MAX_SHARDS
-          # A shard with no matching spec still pays the full install, build and Speculos setup.
-          if [[ "$SPEC_COUNT" =~ ^[1-9][0-9]*$ ]] && [ "$SPEC_COUNT" -lt "$MAX_SHARDS" ]; then
-            SHARD_TOTAL=$SPEC_COUNT
+          if [[ "$TEST_COUNT" =~ ^[1-9][0-9]*$ ]]; then
+            [[ "$REPEAT_EACH" =~ ^[1-9][0-9]*$ ]] || REPEAT_EACH=1
+            NEEDED=$(( (TEST_COUNT * REPEAT_EACH + SHARD_WORKERS - 1) / SHARD_WORKERS ))
+            SHARD_TOTAL=$(( NEEDED < MAX_SHARDS ? NEEDED : MAX_SHARDS ))
           fi
           echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
+          echo "shard_workers=$SHARD_WORKERS" >> "$GITHUB_OUTPUT"
           entries=()
           for spec in $DEVICE_SPECS; do
             IFS=: read -r device is_primary artifact_suffix <<< "$spec"
@@ -337,7 +342,7 @@ jobs:
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           DEVICES: ${{ steps.parse.outputs.is_dual == 'true' && format('{0} + {1}', steps.parse.outputs.device_1, steps.parse.outputs.device_2) || steps.parse.outputs.device_1 }}
           SHARD_TOTAL: ${{ steps.shards.outputs.shard_total }}
-          SPEC_COUNT: ${{ steps.test-filter.outputs.spec_count }}
+          TEST_COUNT: ${{ steps.test-filter.outputs.test_count }}
           RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
           RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
@@ -359,7 +364,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICES"
-            echo "- **Shards per device:** $SHARD_TOTAL${SPEC_COUNT:+ ($SPEC_COUNT matching spec file(s))}"
+            echo "- **Shards per device:** $SHARD_TOTAL${TEST_COUNT:+ ($TEST_COUNT matching test(s))}"
             echo "- **Also on macOS:** $RUN_ON_MACOS"
             echo "- **Also on Windows:** $RUN_ON_WINDOWS"
             echo "- **Speculos:** Speculinho (remote)"
@@ -397,8 +402,7 @@ jobs:
       # The runner has no Docker daemon, so Speculos runs remotely on Speculinho.
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
-      # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
-      E2E_WORKERS: 8
+      E2E_WORKERS: ${{ needs.prepare-devices.outputs.shard_workers }}
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}

@@ -344,11 +344,31 @@ function matchesFile(filePath, matcher) {
   return matcher.test(filePath) || matcher.test(fs.readFileSync(filePath, "utf8"));
 }
 
-// How many desktop spec files the selection can reach, so the workflow sizes its shard matrix to
-// the work. null means "keep the full count": the whole suite, a smoke-only run, an inverted
-// filter, or a pattern only Playwright's own collection can resolve (runtime tags, rerun titles).
-// Undercounting only costs parallelism, never coverage: every matching test still runs.
-export function estimatePlaywrightSpecCount({
+const TEST_CALL = /\btest(?:\.(?:only|skip|fixme|fail))?\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
+const TEST_IN_LOOP = /(?:\bfor\s*\(|\.forEach\(|\.map\()[\s\S]*\btest(?:\.\w+)?\(/;
+
+// null when the file builds a title at runtime, loops over tests or registers them in a helper.
+function countLiteralTests(filePath) {
+  const source = fs.readFileSync(filePath, "utf8");
+  const firstArgs = [...source.matchAll(TEST_CALL)].map(match => match[1]);
+  const hasRuntimeTitle = firstArgs.some(arg => /^[A-Za-z_$]/.test(arg) || arg.includes("${"));
+  if (firstArgs.length === 0 || hasRuntimeTitle || TEST_IN_LOOP.test(source)) return null;
+  return firstArgs.length;
+}
+
+// Desktop tests the selection reaches, or null to keep the full shard count.
+export function estimatePlaywrightTestCount(options = {}) {
+  try {
+    const files = selectPlaywrightSpecs(options);
+    if (!files || files.length === 0) return null;
+    const counts = files.map(countLiteralTests);
+    return counts.includes(null) ? null : counts.reduce((sum, count) => sum + count, 0);
+  } catch {
+    return null;
+  }
+}
+
+function selectPlaywrightSpecs({
   input = "",
   smokeTests = false,
   checkDir = "",
@@ -373,24 +393,17 @@ export function estimatePlaywrightSpecCount({
       )
     : specFiles;
 
-  // Mirrors resolveE2eSelection: only a team turns @smoke and the filter into an AND; without
-  // one the runner greps "@smoke|<filter>", an OR.
+  // As in resolveE2eSelection, only a team ANDs @smoke with the filter.
   const conjuncts = hasTeam
     ? [smokeTests ? "@smoke" : "", baseFilter]
     : [applySmokeFilter(baseFilter, smokeTests)];
   const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
   for (const conjunct of conjuncts) {
     if (!conjunct || splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
-    let matcher;
-    try {
-      matcher = new RegExp(conjunct, "i");
-    } catch {
-      return null;
-    }
+    const matcher = new RegExp(conjunct, "i");
     selected = selected.filter(file => matchesFile(file, matcher));
   }
-
-  return selected.length > 0 ? selected.length : null;
+  return selected;
 }
 
 // Kept for callers that only want the pattern string (and for the default CLI output).
@@ -531,9 +544,8 @@ if (process.argv[1] === currentFile) {
       console.log(filter);
     } else {
       const outputs = { filter, runner_filter: runnerFilter };
-      // Empty when unknown: the desktop workflow then keeps its full shard count.
       if (options.runner === "playwright") {
-        outputs.spec_count = estimatePlaywrightSpecCount(options) ?? "";
+        outputs.test_count = estimatePlaywrightTestCount(options) ?? "";
       }
       console.log(formatGithubOutput(outputs));
     }
