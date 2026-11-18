@@ -25,7 +25,6 @@
     "@domain/entity-currency": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/analytics": "workspace:*",
-    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

@@ -10,11 +10,6 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CheckmarkCircleFill, DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
-import { TrackScreen } from "@shared/analytics-react";
-import {
-  HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
-  HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
-} from "../../../constants";
 
 const VARIANTS = {
   success: {
@@ -52,13 +47,6 @@ export function ExportResultScene({ variant, onButtonClick }: Props) {
 
   return (
     <DialogContent>
-      {variant === "success" ? (
-        <TrackScreen
-          category={HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME}
-          name={HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE.name}
-          refreshSource={false}
-        />
-      ) : null}
       <DialogHeader density="compact" className="relative" />
       <DialogBody>
         <div className="flex flex-col items-center gap-24">

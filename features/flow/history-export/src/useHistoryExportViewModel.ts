@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { AccountId } from "@domain/entity-account";
-import { track } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import type { HistoryExportAccount, HistoryExportPort } from "./model/ports";
 import {
+  HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE_NAME,
   HISTORY_EXPORT_DIALOG_TRACKING_BUTTON,
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
@@ -67,6 +68,13 @@ export function useHistoryExportViewModel({
       const outcome = await exportAccountsCsv(checkedIds);
       if (outcome === "canceled") return;
       if (outcome === "saved") {
+        trackPage(
+          {
+            category: HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
+            name: HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE.name,
+          },
+          { updateRoutes: true },
+        );
         setSuccess(true);
       } else {
         setError(true);

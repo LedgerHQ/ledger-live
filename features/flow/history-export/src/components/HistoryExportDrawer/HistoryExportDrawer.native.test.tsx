@@ -6,8 +6,7 @@ import { BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, createFakePort } from "../../__tests
 import type { HistoryExportPort } from "../../model/ports";
 import { HistoryExportDrawer } from "./HistoryExportDrawer";
 
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
-jest.mock("@shared/analytics-react", () => ({ TrackScreen: () => null }));
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
 function renderDrawer({ port = createFakePort() }: { port?: HistoryExportPort } = {}) {
   const onClose = jest.fn();

@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
-import { track } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import { useHistoryExportViewModel } from "./useHistoryExportViewModel";
 import { BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, createFakePort } from "./__tests__/fixtures";
 import type { HistoryExportPort } from "./model/ports";
 
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
 function renderViewModel(port: HistoryExportPort) {
   return renderHook(() => useHistoryExportViewModel({ port }));
@@ -83,6 +83,10 @@ describe("useHistoryExportViewModel", () => {
       button: "Export history",
       page: "Dialog Transaction History",
     });
+    expect(trackPage).toHaveBeenCalledWith(
+      { category: "Dialog Transaction History", name: "successfully" },
+      { updateRoutes: true },
+    );
     expect(result.current.success).toBe(true);
     expect(result.current.error).toBe(false);
   });
@@ -97,6 +101,7 @@ describe("useHistoryExportViewModel", () => {
     expect(result.current.success).toBe(false);
     expect(result.current.error).toBe(false);
     expect(result.current.checkedIds).toEqual([BITCOIN_ACCOUNT.id]);
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("shows the error when the save fails", async () => {
@@ -106,6 +111,7 @@ describe("useHistoryExportViewModel", () => {
     await act(() => result.current.exportCsv());
 
     expect(result.current.error).toBe(true);
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("shows the error when the export throws", async () => {
