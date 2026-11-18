@@ -129,7 +129,7 @@ const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction => {
       assetAmount: new BigNumber(info.amount),
       assetId: info["asset-id"].toString(),
       assetRecipientAddress: info.receiver,
-      assetSenderAddress: tx.sender,
+      assetSenderAddress: info.sender,
       assetCloseAmount:
         info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
       assetCloseToAddress: info["close-to"],
