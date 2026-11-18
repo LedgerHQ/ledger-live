@@ -20,15 +20,23 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { useBatchMaybeAccountName, walletSelector } from "~/reducers/wallet";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
-const SHARE_CANCELED_CODE = "ECANCELLED500";
+/** iOS rejects a cancelled "Save to Files" picker with `CANCELLED`; older versions used `ECANCELLED500`. */
+const PICKER_CANCELED_CODE = "CANCELLED";
+const LEGACY_SHARE_CANCELED_CODE = "ECANCELLED500";
 
 const pad = (value: number) => String(value).padStart(2, "0");
 
+/** Without extension: the share sheet adds `.csv` from the `text/csv` type. */
 export const getExportFileName = (date: Date) =>
-  `ledgerwallet-operations-${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}.csv`;
+  `ledgerwallet-operations-${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}`;
 
-const isShareCanceled = (error: unknown) =>
-  (error as { error?: { code?: string } } | undefined)?.error?.code === SHARE_CANCELED_CODE;
+const isShareCanceled = (error: unknown) => {
+  const shareError = error as { code?: string; error?: { code?: string } } | undefined;
+  return (
+    shareError?.code === PICKER_CANCELED_CODE ||
+    shareError?.error?.code === LEGACY_SHARE_CANCELED_CODE
+  );
+};
 
 export function useHistoryExportPort(): HistoryExportPort {
   const { t } = useTranslation();
@@ -97,7 +105,7 @@ export function useHistoryExportPort(): HistoryExportPort {
         const fileName = getExportFileName(new Date());
 
         if (getEnv("DETOX")) {
-          sendFile({ fileName, fileContent: csv });
+          sendFile({ fileName: `${fileName}.csv`, fileContent: csv });
           return "saved";
         }
 

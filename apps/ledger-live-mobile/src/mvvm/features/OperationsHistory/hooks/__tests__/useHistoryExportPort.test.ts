@@ -96,7 +96,15 @@ describe("useHistoryExportPort", () => {
     await expect(result.current.exportCsv([BTC_ACCOUNT.id])).resolves.toBe("canceled");
   });
 
-  it("reports canceled when the share is canceled with its error code", async () => {
+  it("reports canceled when the iOS save to files picker is canceled", async () => {
+    mockedShareOpen.mockRejectedValue(Object.assign(new Error("CANCELLED"), { code: "CANCELLED" }));
+    const { result } = renderPort();
+
+    await expect(result.current.exportCsv([BTC_ACCOUNT.id])).resolves.toBe("canceled");
+    expect(logger.critical).not.toHaveBeenCalled();
+  });
+
+  it("reports canceled when the share is canceled with the legacy error code", async () => {
     mockedShareOpen.mockRejectedValue({ error: { code: "ECANCELLED500" } });
     const { result } = renderPort();
 
@@ -120,7 +128,7 @@ describe("useHistoryExportPort", () => {
     await expect(result.current.exportCsv([BTC_ACCOUNT.id])).resolves.toBe("saved");
     expect(mockedShareOpen).not.toHaveBeenCalled();
     expect(sendFile).toHaveBeenCalledWith({
-      fileName: getExportFileName(new Date()),
+      fileName: `${getExportFileName(new Date())}.csv`,
       fileContent: expect.stringMatching(/^Operation Date,/),
     });
   });
@@ -131,7 +139,7 @@ describe("useHistoryExportPort", () => {
     expect(result.current.isSyncing([BTC_ACCOUNT.id])).toBe(false);
   });
 
-  it("names the file after the local date", () => {
-    expect(getExportFileName(new Date(2026, 0, 5))).toBe("ledgerwallet-operations-2026.01.05.csv");
+  it("names the file after the local date, without extension for the share sheet", () => {
+    expect(getExportFileName(new Date(2026, 0, 5))).toBe("ledgerwallet-operations-2026.01.05");
   });
 });
