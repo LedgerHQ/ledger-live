@@ -23,7 +23,6 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

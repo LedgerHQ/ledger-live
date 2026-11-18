@@ -32,4 +32,6 @@ The generic `balanceHistory` reader replays each asset's balance back through th
 
 The `receive` kind answers an `address` descriptor's key (a mock one is an address), or a seeded address of the family for a `utxo` account (the same on every read), the device showing it at the account's path.
 
+The `accountStatus` kind answers an account used once it holds an asset (its mock history has operations exactly then), never gated; `assetStatus` answers no gate for any asset.
+
 Imports no `@devtools/*` package, as any tool ([import boundaries](../../.claude/skills/devtools-import-boundary/SKILL.md)). Its props come from `useMockAccountsToolProps` in `@devtools/bindings`.

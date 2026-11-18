@@ -45,6 +45,7 @@ const transformIncludePatterns = [
   "@shopify/flash-list",
   "@ledgerhq/lumen-.*",
   "immer",
+  "color(-convert|-name|-string)?",
   "@features/.*",
   "@ronradtke",
   "@sbaiahmed1/react-native-blur",
@@ -76,6 +77,9 @@ module.exports = {
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
+    // libs/ packages are consumed from source. Babel keeps what their built outputs had: the
+    // worklets plugin and plain export assignments that mocks can spread mid-cycle.
+    "/libs/.+\\.tsx?$": "babel-jest",
     "^.+\\.(t)sx?$": [
       "@swc/jest",
       {

@@ -12,9 +12,13 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import { CANTON_UNSET_RECIPIENT } from "../constants";
+import {
+  CANTON_UNSET_RECIPIENT,
+  TO_MANY_UTXOS_CRITICAL_COUNT,
+  TO_MANY_UTXOS_WARNING_COUNT,
+} from "../constants";
 import { isRecipientValid } from "../logic/utils";
-import { isTopologyChangeRequiredCached } from "../network/gateway";
+import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
   TransactionStatus,
@@ -24,8 +28,7 @@ import {
 } from "../types";
 import { TopologyChangeError } from "../types/errors";
 
-export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
-export const TO_MANY_UTXOS_WARNING_COUNT = 10;
+export { TO_MANY_UTXOS_CRITICAL_COUNT, TO_MANY_UTXOS_WARNING_COUNT };
 
 export const getTransactionStatus = async (
   context: CantonContext,
@@ -147,7 +150,7 @@ function validateUtxoCount(account: CantonAccount, transaction: Transaction): Er
 
   const { instrumentUtxoCounts } = account.cantonResources;
   const instrumentKey = transaction.instrumentAdmin
-    ? `${transaction.tokenId}-${transaction.instrumentAdmin}`
+    ? getKey(transaction.tokenId, transaction.instrumentAdmin)
     : transaction.tokenId;
   const instrumentUtxoCount = instrumentUtxoCounts[instrumentKey] || 0;
 

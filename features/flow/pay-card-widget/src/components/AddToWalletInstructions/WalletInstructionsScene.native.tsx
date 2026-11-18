@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { InstructionRow } from "./InstructionRow.native";
-import type { AddToWalletInstructionsViewProps } from "./useAddToWalletInstructionsViewModel.native";
+import { InstructionRow } from "./InstructionRow";
+import type { AddToWalletInstructionsViewProps } from "./useAddToWalletInstructionsViewModel";
 
 type WalletInstructionsSceneProps = Extract<
   AddToWalletInstructionsViewProps,

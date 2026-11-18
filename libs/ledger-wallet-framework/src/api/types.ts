@@ -2,6 +2,7 @@ import type {
   AccountInfo,
   AssetInfo,
   BalanceOptions,
+  BlockInfo,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { GetAddressResult } from "../derivation";
@@ -147,7 +148,11 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
+  adaptOperations?: (
+    address: string,
+    operations: LiveOperation[],
+    blockInfo: BlockInfo,
+  ) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
@@ -260,6 +265,11 @@ export type BridgeApi = {
    */
   balanceListsEveryToken?: boolean;
   /**
+   * When true, a stored token missing from `getBalance` is no longer held: its sub-account goes at
+   * this sync. Left unset, a missing token is kept at 0 with its history.
+   */
+  dropsMissingTokens?: boolean;
+  /**
    * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair: on XRPL
    * `USD` and `usd` are two currencies, and so are `USD` from two issuers. Left unset, references
    * match in any case, as Stacks needs.
@@ -267,10 +277,18 @@ export type BridgeApi = {
   exactAssetMatch?: boolean;
   /**
    * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
-   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid. Left
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid and sent
+   * to the token's `assetOwner`. Left
    * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
    */
   tokenOptParentRow?: boolean;
+  /**
+   * When true, the coin module names the payer of every fee its account paid (ADR-016): a native
+   * operation's value leaves out a fee whose `feesPayer` is another account or is unset, as on a
+   * zkSync paymaster transaction. Left unset, the value holds the fee whoever paid it, and a family
+   * such as Hedera takes a sponsored fee out in its own `adaptOperations`.
+   */
+  excludesFeesPaidByOthers?: boolean;
   /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is

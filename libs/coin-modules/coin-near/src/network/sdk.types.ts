@@ -2,6 +2,8 @@ import type BigNumber from "bignumber.js";
 
 export type NearAccountDetails = {
   amount: string;
+  locked?: string;
+  code_hash?: string;
   storage_usage: number;
   block_height: number;
 };
@@ -32,6 +34,21 @@ export type NearTransaction = {
     action: string;
     method: string | null;
   }[];
+};
+
+type NearReceiptAction = {
+  action: string;
+  method: string | null;
+  args?: { deposit?: string; beneficiary_id?: string };
+};
+
+export type NearReceiptNode = {
+  predecessor_account_id: string;
+  receiver_account_id: string;
+  public_key?: string;
+  actions: NearReceiptAction[];
+  outcome: { status: boolean };
+  receipts?: NearReceiptNode[];
 };
 
 export type NearBlockHeader = {

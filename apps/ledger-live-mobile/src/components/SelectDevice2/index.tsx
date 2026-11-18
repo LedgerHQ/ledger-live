@@ -14,14 +14,11 @@ import { getEnv } from "@shared/env";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName, updateKnownBleDevice } from "~/actions/ble";
-import {
-  mapDiscoveredDeviceToKnownDevice,
-  saveKnownDeviceName,
-  updateKnownDevice,
-} from "~/reducers/knownDevices";
-import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
-import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
+import { saveBleDeviceName } from "~/actions/ble";
+import { mapDiscoveredDeviceToKnownDevice, saveKnownDeviceName } from "~/reducers/knownDevices";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
+import { setReadOnlyMode } from "~/actions/settings";
+import { useSaveDevice } from "LLM/components/DeviceConnection";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
@@ -153,6 +150,7 @@ export default function SelectDevice({
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
+  const saveDevice = useSaveDevice();
   const isFocused = useIsFocused();
   const { bottom } = useSafeAreaInsets();
 
@@ -230,22 +228,14 @@ export default function SelectDevice({
   const notifyDeviceSelected = useCallback(
     (device: Device, discoveredDevice: DiscoveredDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
-      dispatch(setLastConnectedDevice(device));
-      dispatch(setHasConnectedDevice(true));
+      saveDevice({
+        lastConnectedDevice: device,
+        knownDevice: mapDiscoveredDeviceToKnownDevice(discoveredDevice),
+      });
       onSelect(device, discoveredDevice);
       if (!keepReadOnlyMode) dispatch(setReadOnlyMode(false));
-      dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
-      if (!device.wired && !isMockServerCompatDeviceId(device.deviceId)) {
-        dispatch(
-          updateKnownBleDevice({
-            id: device.deviceId,
-            name: device.deviceName ?? "",
-            modelId: device.modelId,
-          }),
-        );
-      }
     },
-    [dispatch, keepReadOnlyMode, onSelect],
+    [dispatch, keepReadOnlyMode, onSelect, saveDevice],
   );
 
   const checkDeviceStatus = useCallback(

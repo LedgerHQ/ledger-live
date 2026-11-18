@@ -5,8 +5,6 @@ import Touchable from "../Touchable";
 import { usePostOnboardingActionPress } from "~/logic/postOnboarding/usePostOnboardingActionPress";
 import type { PostOnboardingActionRowProps } from "./PostOnboardingActionRow.types";
 
-export type { PostOnboardingActionRowProps } from "./PostOnboardingActionRow.types";
-
 const PostOnboardingActionRow: React.FC<PostOnboardingActionRowProps> = props => {
   const { Icon, title, titleCompleted, description, tagLabel, disabled, productName } = props;
   const { t } = useTranslation();

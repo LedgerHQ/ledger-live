@@ -14,9 +14,6 @@
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/wallet-pnl",
   "private": true,
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/entity-currency": "workspace:*",
@@ -57,11 +54,6 @@
     "rimraf": "catalog:"
   },
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm exec oxfmt ./src && oxlint ./src --fix --quiet",
     "format": "pnpm exec oxfmt ./src",
@@ -70,53 +62,12 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "@ledgerhq/source": "./src/index.ts",
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
-    "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./hooks": {
-      "@ledgerhq/source": "./src/hooks/index.ts",
-      "require": "./lib/hooks/index.js",
-      "default": "./lib-es/hooks/index.js"
-    },
-    "./scenarios": {
-      "@ledgerhq/source": "./src/scenarios/index.ts",
-      "require": "./lib/scenarios/index.js",
-      "default": "./lib-es/scenarios/index.js"
-    },
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./scenarios": "./src/scenarios/index.ts",
+    "./*": "./src/*.ts",
+    "./*.js": "./src/*.ts",
     "./package.json": "./package.json"
   }
 }

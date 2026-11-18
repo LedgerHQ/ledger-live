@@ -20,7 +20,10 @@ import {
 /**
  * A device the user has already connected to, as saved in the app's known devices.
  */
-export type KnownDevice = Device;
+export type KnownDevice = Device & {
+  /** Time of the last saved connection, in milliseconds since the epoch. */
+  lastUsedAt?: number;
+};
 
 export type MatchedDevice = {
   knownDevice: KnownDevice;

@@ -18,6 +18,9 @@ on:
       paths:
         description: "Newline-separated list of affected paths"
         value: ${{ jobs.nx-affected.outputs.paths }}
+      path_prefixes:
+        description: "JSON array of every leading segment run of the affected paths. Gate jobs with contains(fromJSON(...), '<path>'), which compares whole elements, not substrings"
+        value: ${{ jobs.nx-affected.outputs.path_prefixes }}
       mobile_js_hash_ios:
         description: "Nx hash of live-mobile:e2e:bundle:ios, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_js_hash_ios }}
@@ -44,6 +47,7 @@ jobs:
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
+      path_prefixes: ${{ steps.nx-affected.outputs.path_prefixes }}
       mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
       mobile_native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}
@@ -51,6 +55,17 @@ jobs:
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
+
+      # The base tip may have moved since the merge commit was built; diffing against it reverses those commits.
+      - name: Use the merge commit's first parent as base
+        id: merge-parent
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          if git rev-parse -q --verify HEAD^2 >/dev/null; then
+            echo "sha=$(git rev-parse HEAD^1)" | tee -a "$GITHUB_OUTPUT"
+          fi
 
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
       # ones the repo pins. This also writes nx.cache-config.json.
@@ -67,6 +82,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Fetch base branch
+        if: ${{ steps.merge-parent.outputs.sha == '' }}
         env:
           BASE_BRANCH: ${{ inputs.base_branch }}
         run: |
@@ -98,7 +114,7 @@ jobs:
         id: nx-affected
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
-          base: ${{ steps.clean-refs.outputs.base_ref }}
+          base: ${{ steps.merge-parent.outputs.sha || steps.clean-refs.outputs.base_ref }}
           head: HEAD
 
       # Reuses the project graph the affected step just built, so the mobile e2e workflow can look the

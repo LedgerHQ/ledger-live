@@ -111,7 +111,7 @@ export function mapPersistedKnownDeviceToKnownDevice(
   return null;
 }
 
-function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
+function upsertKnownDeviceById(state: KnownDevicesState, device: KnownDevice) {
   const existingDeviceIndex = state.knownDevices.findIndex(d => d.id === device.id);
 
   if (existingDeviceIndex === -1) {
@@ -128,14 +128,14 @@ const knownDevicesSlice = createSlice({
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
     addKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
-      upsertKnownDevice(state, action.payload);
+      upsertKnownDeviceById(state, action.payload);
     },
-    updateKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+    upsertKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
       const newDevice = action.payload;
       const deviceToUpdate = findMatchingDevice(newDevice, state.knownDevices);
 
       if (!deviceToUpdate) {
-        upsertKnownDevice(state, newDevice);
+        upsertKnownDeviceById(state, newDevice);
         return;
       }
 
@@ -175,7 +175,7 @@ const knownDevicesSlice = createSlice({
 export const {
   importKnownDevices,
   addKnownDevice,
-  updateKnownDevice,
+  upsertKnownDevice,
   removeKnownDevice,
   removeKnownDevices,
   saveKnownDeviceName,

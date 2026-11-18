@@ -121,5 +121,3 @@ export function useEarnBannerViewModel({
     onExplore,
   };
 }
-
-export type EarnBannerViewModel = ReturnType<typeof useEarnBannerViewModel>;

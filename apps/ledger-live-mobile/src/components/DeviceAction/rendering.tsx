@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect, useState, useCallback } from "react";
 import type { TFunction } from "i18next";
-import { Image, Linking, ScrollView } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -27,7 +27,6 @@ import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@domain/entity-currency-token";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
 import { NavigatorName, ScreenName } from "~/const";
@@ -1233,61 +1232,5 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
-  );
-};
-
-const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
-  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.webp"),
-};
-
-export const HardwareUpdate = ({
-  t,
-  device,
-  i18nKeyTitle,
-  i18nKeyDescription,
-  i18nKeyValues,
-}: {
-  t: RawProps["t"];
-  device: Device;
-  i18nKeyTitle: string;
-  i18nKeyDescription: string;
-  i18nKeyValues?: { [key: string]: string | number };
-}) => {
-  const openUrl = (url: string) => Linking.openURL(url);
-
-  return (
-    <Flex flex={1} justifyContent="center" minHeight="160px">
-      <AnimationContainer height="200px">
-        <Image
-          source={HARDWARE_UPDATE_ASSETS[device.modelId]}
-          style={{ height: 200, width: 200 }}
-          resizeMode={"contain"}
-        />
-      </AnimationContainer>
-      <Text variant="h4" fontWeight="semiBold">
-        {t(i18nKeyTitle, i18nKeyValues)}
-      </Text>
-      <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
-        {t(i18nKeyDescription, i18nKeyValues)}
-      </Text>
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => openUrl("https://shop.ledger.com/pages/hardware-wallet")}
-        mt={8}
-        alignSelf="stretch"
-      >
-        {t("transfer.swap2.incompatibility.explore_compatible_devices")}
-      </Button>
-      <Button
-        type="shade"
-        outline
-        onPress={() => openUrl("https://support.ledger.com")}
-        mt={4}
-        alignSelf="stretch"
-      >
-        {t("transfer.swap2.incompatibility.contact_support")}
-      </Button>
-    </Flex>
   );
 };

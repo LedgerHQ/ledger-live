@@ -20,6 +20,10 @@ export class MarketPage extends AppPage {
   private readonly actionsMenu = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-actions-menu`).first();
   private readonly listData = this.page.getByTestId("market-list-data");
+  private readonly listRows = this.listData.locator(
+    '[data-testid^="market-"][data-testid$="-row"]',
+  );
+  private readonly favoritesEmptyState = this.page.getByTestId("market-favorites-empty");
   private readonly buySellMenuItem = this.page.getByRole("menuitem", {
     name: "Buy/Sell",
   });
@@ -72,9 +76,16 @@ export class MarketPage extends AppPage {
 
   @step("Validate Market List")
   async validateMarketList() {
-    await expect(this.pageHeader.title).toHaveText("Market");
     await expect(this.coinRow("btc")).toBeVisible();
-    await expect(this.coinRow("eth")).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.pageHeader.title).toHaveText("Market");
+      await soft(this.coinRow("eth")).toBeVisible();
+    });
+  }
+
+  @step("Expect the Market route to be open")
+  async expectMarketRoute() {
+    await expect(this.page).toHaveURL(/\/market$/);
   }
 
   @step("Open coin page for $0")
@@ -105,11 +116,26 @@ export class MarketPage extends AppPage {
   @step("Select the Favorites (starred) market category")
   async selectStarredCategory() {
     await this.starredCategoryTab.click();
+    await expect(this.starredCategoryTab).toHaveAttribute("aria-checked", "true");
+  }
+
+  @step("Expect the starred market list to contain only $0")
+  async expectStarredListToContainOnly(tickers: string[]) {
+    await expect(this.listRows).toHaveCount(tickers.length);
+    for (const ticker of tickers) {
+      await expect(this.coinRow(ticker.toLowerCase())).toBeVisible();
+    }
+  }
+
+  @step("Expect the starred market list to be empty")
+  async expectStarredListEmpty() {
+    await expect(this.favoritesEmptyState).toBeVisible();
   }
 
   @step("Select the All market category")
   async selectAllCategory() {
     await this.allCategoryTab.click();
+    await expect(this.allCategoryTab).toHaveAttribute("aria-checked", "true");
   }
 
   @step("Star coin $0")
@@ -118,14 +144,11 @@ export class MarketPage extends AppPage {
     await this.addToFavoritesMenuItem.click();
   }
 
-  @step("Expect coin $0 to be visible")
-  async expectCoinToBeVisible(ticker: string) {
-    await expect(this.coinRow(ticker.toLowerCase())).toBeVisible();
-  }
-
   @step("Expect coin $0 to not be visible")
   async expectCoinToNotBeVisible(ticker: string) {
-    await expect(this.coinRow(ticker.toLowerCase())).not.toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.coinRow(ticker.toLowerCase())).not.toBeVisible();
+    });
   }
 
   @step("Expect Market page to be visible")
@@ -138,6 +161,8 @@ export class MarketPage extends AppPage {
 
   @step("Expect category tab $0 to be selected")
   async expectCategorySelected(value: string) {
-    await expect(this.categoryTab(value)).toHaveAttribute("aria-checked", "true");
+    await this.softExpect(async soft => {
+      await soft(this.categoryTab(value)).toHaveAttribute("aria-checked", "true");
+    });
   }
 }

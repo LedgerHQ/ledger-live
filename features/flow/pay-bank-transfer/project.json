@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-pay-bank-transfer",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

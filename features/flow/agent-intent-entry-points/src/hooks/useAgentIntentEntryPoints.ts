@@ -8,5 +8,6 @@ export function useAgentIntentEntryPoints(): AgentIntentEntryPoints {
   return {
     isNavBarEnabled: isEnabled && (feature?.params?.navBar ?? false),
     isProfileEnabled: isEnabled && (feature?.params?.profile ?? false),
+    showNewBadge: isEnabled && (feature?.params?.newBadge ?? false),
   };
 }

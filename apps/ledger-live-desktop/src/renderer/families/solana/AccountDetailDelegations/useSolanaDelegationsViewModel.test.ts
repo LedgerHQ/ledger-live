@@ -111,7 +111,14 @@ describe("useSolanaDelegationsViewModel", () => {
   });
 
   describe("rows", () => {
-    it("maps each stake with its validator, status, amounts and active share", () => {
+    it("shows the delegated and withdrawable amounts without an active share column", () => {
+      const { props } = getProps(accountWith({ delegations: [delegation()] }));
+
+      expect(props.columns.map(({ id }) => id)).toEqual(["delegated", "available"]);
+      expect(props.rows[0]?.cells).not.toHaveProperty("active");
+    });
+
+    it("maps each stake with its validator, status and amounts", () => {
       metaFor({ "vote-bonded": { name: "Ledger Validator", img: "https://img/ledger.png" } });
       const { props } = getProps(
         accountWith({
@@ -126,7 +133,6 @@ describe("useSolanaDelegationsViewModel", () => {
         status: { appearance: "success" },
         cells: {
           delegated: { value: "2\u00a0SOL", sensitive: true },
-          active: { value: "50.00 %" },
           available: { value: "0.5\u00a0SOL", sensitive: true },
         },
       });
@@ -143,20 +149,24 @@ describe("useSolanaDelegationsViewModel", () => {
       expect(props.rows.map(row => row.validator.name)).toEqual(["vote-bonded", "-"]);
     });
 
-    it("reports a zero active share for a stake without validator", () => {
-      const { props } = getProps(
-        accountWith({ unbondings: [unbonding({ validatorAddress: "" })] }),
-      );
-
-      expect(props.rows[0]?.cells["active"]).toEqual({ value: "0 %" });
-    });
-
     it("shows a zero available amount when the stake exposes none", () => {
       const { props } = getProps(
         accountWith({ delegations: [delegation({ withdrawableAmount: undefined })] }),
       );
 
       expect(props.rows[0]?.cells["available"]).toEqual({ value: "0\u00a0SOL", sensitive: true });
+    });
+
+    it("shows an amount below 0.0001 as <0.0001 with the exact amount in a tooltip", () => {
+      const { props } = getProps(
+        accountWith({ delegations: [delegation({ withdrawableAmount: SOL(0.000013492) })] }),
+      );
+
+      expect(props.rows[0]?.cells["available"]).toEqual({
+        value: "<0.0001 SOL",
+        tooltip: "0.000013492 SOL",
+        sensitive: true,
+      });
     });
 
     it("falls back to the row index when a stake has no position id", () => {

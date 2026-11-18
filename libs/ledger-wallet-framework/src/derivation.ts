@@ -1,5 +1,7 @@
+// The scan tables below are mirrored in @domain/entity-derivation: see domain/entity/derivation/README.md.
 import { getCurrenciesResolver } from "./currencies/resolver";
 import { getEnv } from "@ledgerhq/live-env";
+import { getKeychainObservableRange } from "./scanRules";
 import type { CryptoCurrency } from "./types";
 import { DerivationMode } from "@ledgerhq/types-live";
 
@@ -292,7 +294,7 @@ export const getMandatoryEmptyAccountSkip = (
   derivationMode: DerivationMode,
   currency: CryptoCurrency,
 ): number => {
-  const keychainObservableRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") ?? 0;
+  const keychainObservableRange = getKeychainObservableRange();
   const mandatoryEmptyAccountSkip = modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
   const currencyEmptyAccountSkip = mandatoryEmptyAccountSkipByCurrency[currency.id] ?? 0;
   return Math.max(mandatoryEmptyAccountSkip, currencyEmptyAccountSkip, keychainObservableRange);
@@ -523,7 +525,8 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     if (
       currency.id === "bitcoin" ||
       currency.id === "bitcoin_testnet" ||
-      currency.id === "bitcoin_regtest"
+      currency.id === "bitcoin_regtest" ||
+      currency.id === "bitcoin_signet"
     ) {
       all.push("taproot");
     }

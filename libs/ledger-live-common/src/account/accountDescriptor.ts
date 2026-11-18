@@ -20,7 +20,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */
 const PUBLIC_KEY_FAMILIES = new Set([
@@ -97,7 +96,7 @@ export class UnsupportedAddressFromKeyError extends Error {
 
 /** The address an account is read at: its key, or the address its family computes from its public key. */
 export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
-  const family = resolveFamily(getCryptoCurrencyById(currencyId));
+  const family = getCryptoCurrencyById(currencyId).family;
   if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
   assertPublicKey(key, currencyId);
   const derive = await loadAddressFromKeyForFamily(family);
@@ -106,6 +105,19 @@ export async function addressFromKey(currencyId: string, key: string): Promise<A
   }
   return AddressSchema.parse(derive(key));
 }
+
+/** The key of a derived account's descriptor: its public key for a family keyed on it, else its address. */
+export function keyOfDerivedAccount(
+  currencyId: string,
+  { address, publicKey }: { address: string; publicKey: string },
+): string {
+  if (!PUBLIC_KEY_FAMILIES.has(getCryptoCurrencyById(currencyId).family)) return address;
+  assertPublicKey(publicKey, currencyId);
+  return publicKey.toLowerCase();
+}
+
+/** `m/44h/60h/0h/0/0` -> `44'/60'/0'/0/0`, the spelling of the legacy resolvers. */
+export const toLegacyPath = (path: string) => path.replace(/^m\//, "").replaceAll("h", "'");
 
 /** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
 export const toDescriptorPath = (path: string) =>
@@ -154,7 +166,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
-  const family = resolveFamily(currency);
+  const family = currency.family;
 
   if (getAccountDescriptorType(family) === "utxo") {
     if (!account.xpub) {
@@ -190,7 +202,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const family = resolveFamily(currency);
+  const family = currency.family;
   const expectedType = getAccountDescriptorType(family);
   if (descriptor.type !== expectedType) {
     throw new UnsupportedDescriptorPathError(

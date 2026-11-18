@@ -932,6 +932,45 @@ describe.each(["human", "json"] as const)("%s proposal warnings", format => {
   });
 });
 
+describe("human device error with a failed USB open (LIVE-31394)", () => {
+  let stderrWrites: string[] = [];
+  let restore: () => void;
+
+  beforeEach(() => {
+    stderrWrites = [];
+    restore = installOutputCapture({ stderr: chunk => stderrWrites.push(chunk) });
+  });
+
+  afterEach(() => restore());
+
+  const stderrAfterFailing = (error: WalletCliDeviceError): string => {
+    const out = createCommandOutput("human", { command: "genuine-check", network: "all" });
+    expect(() => out.fail(error)).toThrow();
+    return stderrWrites.join("");
+  };
+
+  it("names the USB error and its likely fixes on one line under the message", () => {
+    const stderr = stderrAfterFailing(
+      new WalletCliDeviceError({
+        code: "unknown",
+        cause: new Error("No Ledger device found. Unlock the device and try again."),
+        usbAccess: { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" },
+      }),
+    );
+
+    expect(stderr).toContain("No Ledger device found. Unlock the device and try again.");
+    expect(stderr).toContain(
+      "USB access failed with LIBUSB_ERROR_ACCESS. The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).",
+    );
+  });
+
+  it("adds nothing when no USB open failed", () => {
+    const stderr = stderrAfterFailing(new WalletCliDeviceError({ code: "timeout" }));
+
+    expect(stderr).not.toContain("USB access failed");
+  });
+});
+
 describe("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(

@@ -8,13 +8,15 @@ import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
-import { getBalance } from "../logic/getBalance";
-import { determineOperationType } from "./operationType";
+import { getInstrumentBalances } from "./instrumentBalances";
+import { isInstrument, type NativeInstrument } from "../logic/asset";
+import { determineOperationType } from "../logic/operationType";
 import {
   getCalTokensCached,
   getEnabledInstrumentsCached,
   getKey,
   getLedgerEnd,
+  getNativeInstrument,
   getOperations,
   getPartyById,
   getPendingTransferProposals,
@@ -142,6 +144,21 @@ export async function filterDisabledTokenAccounts(
   });
 }
 
+// So a node info outage doesn't fail every sync of an account an earlier sync classified.
+async function getNativeInstrumentOrSaved(
+  context: CantonContext,
+  config: CantonCoinConfig,
+  savedAdmin: string | undefined,
+): Promise<NativeInstrument> {
+  try {
+    return await getNativeInstrument(config);
+  } catch (error) {
+    if (!savedAdmin) throw error;
+    context.logger("canton/sync", "DSO party read failed, using the saved one", { error });
+    return { instrumentId: config.nativeInstrumentId, instrumentAdmin: savedAdmin };
+  }
+}
+
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
   context: CantonContext,
@@ -190,8 +207,20 @@ export function makeGetAccountShape(
     });
 
     const { nativeInstrumentId } = config;
-    const balances = xpubOrAddress
-      ? await getBalance(getCurrencyContext(context, currency), xpubOrAddress)
+    // Without a party there is nothing to classify, so a fresh account scans without it.
+    const nativeInstrument = xpubOrAddress
+      ? await getNativeInstrumentOrSaved(
+          context,
+          config,
+          initialAccount?.cantonResources?.nativeInstrumentAdmin,
+        )
+      : undefined;
+    const balances = nativeInstrument
+      ? await getInstrumentBalances(
+          getCurrencyContext(context, currency),
+          xpubOrAddress,
+          nativeInstrument,
+        )
       : [];
     const pendingTransferProposals = xpubOrAddress
       ? await getPendingTransferProposals(config, xpubOrAddress)
@@ -229,21 +258,20 @@ export function makeGetAccountShape(
     }
 
     const calTokens = await getCalTokensCached(currency.id);
-    const tokenIdentifierToId = new Map<string, string>();
-    for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
-      tokenIdentifierToId.set(tokenIdentifier, tokenId);
-    }
-
+    const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
+    // Keyed by admin too: any party can issue an instrument under a CAL token's id.
     const tokensByKey = new Map<string, TokenCurrency>();
-    for await (const balance of balances) {
-      const tokenId = tokenIdentifierToId.get(balance.instrumentId) ?? "";
+    for (const [tokenId, instrumentId] of calTokens.entries()) {
+      if (!heldInstrumentIds.has(instrumentId)) continue;
       const token = await getCryptoAssetsStore().findTokenById(tokenId);
-      if (!token) continue;
-      tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
+      if (token?.contractAddress) {
+        tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
+      }
     }
 
     for await (const balance of balances) {
-      const isNative = balance.instrumentId === nativeInstrumentId;
+      const isNative =
+        !!nativeInstrument && isInstrument(nativeInstrument, balance.instrumentId, balance.adminId);
       // Use just instrumentId for native (no admin), composite key for tokens
       const balanceKey = isNative
         ? nativeInstrumentId
@@ -269,8 +297,7 @@ export function makeGetAccountShape(
       }
     }
 
-    // Find native balance (token is null for native)
-    const nativeBalance = Array.from(aggregatedBalances.values()).find(data => data.token === null);
+    const nativeBalance = aggregatedBalances.get(nativeInstrumentId);
     const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
     const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
     const totalBalance = unlockedAmount.plus(lockedAmount);
@@ -309,7 +336,8 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
-    // Filter main account operations (native instrument only)
+    // Filter main account operations (native instrument only). By id alone: the gateway gives every
+    // Amulet operation the same placeholder admin.
     const mainAccountOperations = operations.filter(op => {
       const extra = op.extra as { instrumentId?: string };
       return extra?.instrumentId === nativeInstrumentId;
@@ -329,6 +357,7 @@ export function makeGetAccountShape(
       isOnboarded,
       instrumentUtxoCounts,
       pendingTransferProposals,
+      ...(nativeInstrument ? { nativeInstrumentAdmin: nativeInstrument.instrumentAdmin } : {}),
       ...(publicKey ? { publicKey } : {}),
       xpub: xpubOrAddress,
     };

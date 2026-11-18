@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import type { AccountDelegationsProps } from "@features/flow-account-detail-delegations";
+import { delegationAmountCell } from "LLD/features/AccountDetail/utils/delegationAmountCell";
 import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
@@ -22,13 +22,6 @@ export const useCardanoDelegationsViewModel = (
   const discreet = useDiscreetMode();
   const unit = useAccountUnit(account);
   const delegation = account.cardanoResources.delegation;
-
-  const formatAmount = (amount: CardanoAccount["balance"]) =>
-    formatCurrencyUnit(unit, amount, {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    });
 
   const onSelectRowAction = useCallback(
     (_rowId: string, actionId: string) => {
@@ -63,8 +56,8 @@ export const useCardanoDelegationsViewModel = (
               : shortAddressPreview(delegation.poolId),
           },
           cells: {
-            amount: { value: formatAmount(account.balance), sensitive: true },
-            rewards: { value: formatAmount(delegation.rewards), sensitive: true },
+            amount: delegationAmountCell(unit, account.balance),
+            rewards: delegationAmountCell(unit, delegation.rewards),
           },
           actions: [
             { id: REDELEGATE, label: t("cardano.delegation.changeDelegation") },

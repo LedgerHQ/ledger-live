@@ -17,13 +17,15 @@ stateDiagram-v2
   Discovering --> DiscoveryError: DiscoveryError
 
   DiscoveryError --> Discovering: Ignore, skipping failed transport
+  DiscoveryError --> Discovering: Close in embedded mode, same as ignore
   DiscoveryError --> RetryDiscovery: Retry, when retry is available
-  DiscoveryError --> Terminated: Close
+  DiscoveryError --> Terminated: Close in standalone mode
 
   RetryDiscovery --> Discovering: retry succeeds
   RetryDiscovery --> Discovering: Ignore, skipping failed transport
+  RetryDiscovery --> Discovering: Close in embedded mode, same as ignore
   RetryDiscovery --> DiscoveryError: retry returns or throws an error
-  RetryDiscovery --> Terminated: Close, dropping the retry
+  RetryDiscovery --> Terminated: Close in standalone mode, dropping the retry
 
   Connecting --> Connected: DMK connect succeeds
   Connecting --> ConnectionError: DMK connect fails
@@ -68,9 +70,12 @@ stateDiagram-v2
   the error `transportId`. A successful retry starts discovery again. A failed retry emits
   the returned error, or an unknown discovery error if the retry throws.
 - The discovery error state has a `close` action for when the user closes its
-  sheet. It moves to `Terminated`, also while a retry runs: the retry result is
-  then dropped.
-- `Connecting` stops discovery, then calls `dmk.connect` with the selected
+  sheet. In standalone mode, it moves to `Terminated`, also while a retry runs:
+  the retry result is then dropped. In embedded mode, it does the same as ignore.
+- `Connecting` stops discovery and starts the disconnection of the other
+  devices' sessions without waiting for it (`disconnectOtherSessions`). If the
+  selected device already has an open DMK session (same id and transport), the
+  machine uses that session. Otherwise, it calls `dmk.connect` with the selected
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
@@ -86,11 +91,35 @@ stateDiagram-v2
   DMK session, the connected device and the legacy compatibility fields.
 - `Terminated` emits the `Terminated` UI state and calls `onClose` one time.
 - `stop()` stops discovery and the timers, and calls neither `onConnected` nor
-  `onClose`. If a connection succeeds after `stop()`, or if `stop()` runs during
-  the success delay, the machine disconnects that session, because no caller
-  received it.
-- When an action fails, the machine stops discovery, disconnects a session that
-  waits for the success delay, and sends the error to `observer.error`. The use
+  `onClose`. A session that opens after `stop()`, or that waits for the success
+  delay, stays open: the next connection uses it if it selects the same device,
+  or starts its disconnection otherwise.
+- When an action fails, the machine stops discovery and sends the error to
+  `observer.error`. The use
   case then emits the unknown error. A failure of this cleanup is logged, and
   the error is still sent.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.
+
+## Embedded mode
+
+![Standalone and embedded mode](./standalone-and-embedded-mode.svg)
+
+The diagram is an export of the "Standalone and embedded mode" section of the
+[connectNewDevice page in Lucid](https://lucid.app/lucidchart/2536447a-30cc-48ca-8607-643edd84d1f4/edit?page=n02LR2vHe3XN).
+
+With `embedded: true`, a parent machine gives its discovery service, already
+scanning, and ends the flow itself. The default, `embedded: false`, is the
+standalone mode that the notes above describe. In embedded mode:
+
+- `Discovering` does not start the discovery service again while it runs.
+- Closing a discovery error does the same as ignore. The machine never goes to
+  `Terminated` and never calls `onClose`: only the parent ends the flow.
+- `Connecting` stops discovery, as in standalone mode. The parent starts it
+  again.
+- `stop()` does not stop the discovery service. As in standalone mode, a
+  session that is still opening or that waits for the success delay stays open,
+  and the parent lists it as a connected device.
+- When an action fails, the machine sends the error to `observer.error`, and
+  stops neither the discovery service nor the session.
+- A parent shows the `EmbeddedConnectNewDeviceUIState` states: all the UI
+  states without `Done`, `Terminated` and `UnknownError`.

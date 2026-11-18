@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { createIntent } from "@features/platform-device-intent";
-import type {
-  RemoveMemberIntent,
-  RemoveMemberIntentInput,
+import {
+  acceptLedgerSyncResult,
+  type RemoveMemberIntent,
+  type RemoveMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
 import {
   memberCredentialsSelector,
@@ -10,11 +12,16 @@ import {
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import type { Trustchain, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type {
+  MemberCredentials,
+  Trustchain,
+  TrustchainMember,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { removeMemberIntentLWMDefinition } from "../../deviceIntents/removeMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
+import { ledgerSyncResultOrder } from "../../deviceIntents/ledgerSyncResultOrder";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -32,6 +39,8 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
   const memberCredentials = useSelector(memberCredentialsSelector);
   const createSessionSdk = useCreateSessionSdk();
 
+  const removedMemberRef = useRef<TrustchainMember | null>(null);
+
   const step = useLedgerSyncIntentStep<RemoveMemberIntent, RemoveInstanceStepInput>({
     input,
     onClose,
@@ -44,15 +53,27 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
         memberCredentials,
         member,
         createSessionSdk,
+        resultOrder: ledgerSyncResultOrder,
       };
       return createIntent(removeMemberIntentLWMDefinition, intentInput, {
-        onResult: newTrustchain => onResult(newTrustchain, member),
+        onResult: newTrustchain => onResult(newTrustchain, member, memberCredentials),
       });
     },
+    onCompleted,
   });
 
-  function onResult(newTrustchain: Trustchain, member: TrustchainMember) {
-    dispatch(setTrustchain(newTrustchain));
+  function onResult(
+    newTrustchain: Trustchain,
+    member: TrustchainMember,
+    runCredentials: MemberCredentials,
+  ) {
+    if (!dispatch(acceptLedgerSyncResult(setTrustchain(newTrustchain), runCredentials))) return;
+    removedMemberRef.current = member;
+  }
+
+  function onCompleted() {
+    const member = removedMemberRef.current;
+    if (!member) return;
     step.finish();
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncManageInstancesSuccess,

@@ -16,7 +16,7 @@ import { useDispatch } from "~/context/hooks";
 import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
+import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
 import type { PerpsWithdrawSummaryParams } from "../PerpsWithdrawSummary";
 
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;

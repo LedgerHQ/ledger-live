@@ -21,6 +21,7 @@ import {
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
+import * as secp256k1 from "./logic/secp256k1";
 import BigNumber from "bignumber.js";
 
 // The domain registry is the runtime source of truth for currency data.
@@ -63,8 +64,7 @@ setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 bridgeEnvToNetworkState();
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-setSecp256k1Instance(require("./logic/secp256k1"));
+setSecp256k1Instance(secp256k1);
 
 const BIG_NUMBER_DECIMAL_PLACES = 40;
 

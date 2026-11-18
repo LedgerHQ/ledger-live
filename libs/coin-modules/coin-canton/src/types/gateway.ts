@@ -66,6 +66,12 @@ export type OnboardingSubmitResponse = {
   party: Party;
 };
 
+/** `GET /v1/node/{node_preset_id}` — response 200 (`NodeInfo`), with only the fields read here. */
+export type NodeInfo = {
+  validator_id: string;
+  dso_id: string;
+};
+
 /** Client-side convenience shape for party-already-exists style conflicts during onboarding (not a named OpenAPI schema). */
 export type OnboardingSubmitError409 = {
   partyId: string;
@@ -110,12 +116,26 @@ export type OperationTypeView =
 
 /** `OperationView.details.operationType` (Canton-specific subtype). */
 export type OperationType =
+  | "burn"
+  | "fee"
+  | "merge-split"
+  | "mint"
   | "pre-approval"
   | "tap"
   | "transfer"
+  | "transfer-failed"
   | "transfer-proposal"
   | "transfer-rejected"
   | "transfer-withdrawn";
+
+/** `OperationView.details`, also carried by each `TransferView`. */
+export type OperationDetailsView = {
+  operationType?: OperationType;
+  memo?: string;
+  metadata?: {
+    reason?: string;
+  };
+};
 
 /** `OperationView.block`. */
 export type BlockView = {
@@ -158,7 +178,7 @@ export type TransferView = {
   address: string;
   type: OperationTypeView;
   value: string;
-  details: unknown;
+  details: OperationDetailsView;
   asset: string;
 };
 
@@ -175,12 +195,7 @@ export type OperationView = {
   block: BlockView;
   fee: FeesView;
   asset?: AssetView;
-  details: {
-    operationType?: OperationType;
-    metadata?: {
-      reason?: string;
-    };
-  };
+  details: OperationDetailsView;
 };
 
 /** `GET /v1/node/{node_preset_id}/party/{party_id}/transfer-proposals` — array item (`TransferProposal`). */

@@ -43,11 +43,8 @@ import { getProviderId } from "./provider";
 import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      _listInstalledApps_mock_result: any;
-    }
-  }
+  // eslint-disable-next-line no-var
+  var _listInstalledApps_mock_result: any;
 }
 
 const remapSocketError = (context?: string) =>

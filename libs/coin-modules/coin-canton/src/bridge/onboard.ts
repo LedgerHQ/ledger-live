@@ -20,6 +20,7 @@ import {
   submitPreApprovalTransaction,
   getTransferPreApproval,
   clearIsTopologyChangeRequiredCache,
+  clearDsoPartyIdCache,
 } from "../network/gateway";
 import resolver from "../signer";
 import type { CantonAccount, CantonSigner } from "../types";
@@ -70,10 +71,13 @@ const createOnboardedAccount = (
   currency: CryptoCurrency,
 ): CantonAccount => {
   const cantonAccount = account as CantonAccount;
+  const cantonResources = { ...cantonAccount.cantonResources, isOnboarded: true };
+  // Onboarding can follow a network reset, which replaces the DSO party, so the next sync reads it again.
+  delete cantonResources.nativeInstrumentAdmin;
   return {
     ...cantonAccount,
     xpub: partyId,
-    cantonResources: { ...cantonAccount.cantonResources, isOnboarded: true },
+    cantonResources,
     id: encodeAccountId({
       type: "js",
       version: "2",
@@ -96,6 +100,8 @@ export const buildOnboardAccount =
         o.next({ status: OnboardStatus.INIT });
 
         const config = await context.config(currency.id);
+        // Like the saved one (see createOnboardedAccount), the cached DSO party can predate a reset.
+        clearDsoPartyIdCache(config);
         const getAddress = resolver(signerContext);
         const { publicKey } = await getAddress(deviceId, {
           path: account.freshAddressPath,

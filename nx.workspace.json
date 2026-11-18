@@ -323,7 +323,9 @@
       "{workspaceRoot}/features/platform/style/tailwind.css",
       "{workspaceRoot}/features/platform/style/tailwind.config.ts",
       "{workspaceRoot}/*/oxlint.config.mts",
-      "{workspaceRoot}/*/*/oxlint.config.mts"
+      "{workspaceRoot}/*/*/oxlint.config.mts",
+      "{workspaceRoot}/libs/ledger-wallet-framework/src/derivation.ts",
+      "{workspaceRoot}/domain/entity/derivation/src/modes.internals.ts"
     ]
   },
   "pluginsConfig": {
@@ -385,7 +387,7 @@
       ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "^build"],
       "cache": true,
       "inputs": [
         "default",

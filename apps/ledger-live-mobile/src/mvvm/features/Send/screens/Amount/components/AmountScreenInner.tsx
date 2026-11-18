@@ -105,6 +105,7 @@ export function AmountScreenInner(props: AmountScreenInnerProps) {
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
+          status={status}
         />
       }
     />

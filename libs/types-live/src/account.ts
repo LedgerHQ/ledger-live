@@ -183,6 +183,8 @@ export type Account = {
   // On some blockchain, an account can have resources (gained, delegated, ...)
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
+  // Ids of operations broadcast by a sell flow; they cannot be sped up or cancelled
+  sellOperationIds?: string[];
   // Hash used to discard tx history on sync
   syncHash?: string | undefined;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
@@ -246,6 +248,7 @@ export type AccountRaw = {
   // Compressed format for storage optimization (backward compatible: accepts both formats)
   balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
+  sellOperationIds?: string[];
   syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
 };

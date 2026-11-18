@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import PerpsTransactionSignedScreen from "../PerpsTransactionSignedScreen";
-import type { PerpsTransactionSignedParams } from "../../../types";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 
 const mockNavigation = { goBack: jest.fn() };
 

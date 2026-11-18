@@ -116,8 +116,6 @@
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
-    "invariant": "^2.2.2",
-    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -128,9 +126,7 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "dotenv": "16.4.7",

@@ -4,6 +4,7 @@ type CheckQueryResult = {
   data?: boolean;
   isLoading: boolean;
   isError?: boolean;
+  error?: unknown;
 };
 
 export function mockOfacCheckQuery(

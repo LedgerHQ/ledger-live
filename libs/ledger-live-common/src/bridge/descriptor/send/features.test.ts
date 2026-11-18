@@ -44,8 +44,8 @@ describe("sendFeatures.hasDefaultStrategy / getDefaultStrategyPatch", () => {
 });
 
 describe("sendFeatures.getTrackingAttributes", () => {
-  // `resolveFamily` (bridge/zcashRouting) only resolves Zcash to its own descriptor when
-  // this flag is on; otherwise it falls back to the Bitcoin chain-adapter's descriptor.
+  // The registry hands Zcash its full descriptor only when this flag is on; otherwise it
+  // hands the transparent-only one (bridge/descriptor/registry.ts).
   const previousShieldedEnabled = isZcashShieldedEnabled();
 
   beforeEach(() => {
@@ -130,5 +130,23 @@ describe("sendFeatures.roundAmount", () => {
   it("keeps the amount of a family that declares no rounding", () => {
     expect(sendFeatures.roundAmount(ethereum, amount)).toBe(amount);
     expect(sendFeatures.roundAmount(undefined, amount)).toBe(amount);
+  });
+});
+
+describe("sendFeatures.canSendMax", () => {
+  it("offers Max on an XRP token, not on XRP itself", () => {
+    const xrpIou = { type: "TokenCurrency", tokenType: "iou", parentCurrencyId: "ripple" };
+    const xrpMpt = { type: "TokenCurrency", tokenType: "mpt", parentCurrencyId: "ripple" };
+
+    expect(sendFeatures.canSendMax(xrpIou as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(xrpMpt as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(getCryptoCurrencyById("ripple"))).toBe(false);
+  });
+
+  it("offers Max on a coin and its token when the family declares nothing", () => {
+    const erc20 = { type: "TokenCurrency", tokenType: "erc20", parentCurrencyId: "ethereum" };
+
+    expect(sendFeatures.canSendMax(erc20 as TokenCurrency)).toBe(true);
+    expect(sendFeatures.canSendMax(ethereum)).toBe(true);
   });
 });

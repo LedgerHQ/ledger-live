@@ -17,7 +17,10 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
   version: 2,
 };
 
-export const fetchAndMergeProviderData = async env => {
+export const fetchAndMergeProviderData = async (env: {
+  ledgerSignatureEnv?: "prod" | "test";
+  partnerSignatureEnv?: "prod" | "test";
+}) => {
   try {
     const sellProvidersData = await calService.getProvidersData({
       type: "sell",
@@ -33,6 +36,10 @@ export const getSellProvider = async ({
   providerId,
   ledgerSignatureEnv,
   partnerSignatureEnv,
+}: {
+  providerId: string;
+  ledgerSignatureEnv: "prod" | "test" | undefined;
+  partnerSignatureEnv: "prod" | "test" | undefined;
 }): Promise<ExchangeProviderNameAndSignature> => {
   if (ledgerSignatureEnv === "test") {
     return testSellProvider;

@@ -7,14 +7,21 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import { type UiHook, type useWalletAPIServerOptions, useDappSessionUiHook } from "./react";
+import {
+  type UiHook,
+  type useWalletAPIServerOptions,
+  useCacheBustedLiveApps,
+  useDappSessionUiHook,
+} from "./react";
+import { INITIAL_PLATFORM_STATE } from "./constants";
+import type { DiscoverDB } from "./types";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { AccountPublicKeyUnavailable, BridgeSessionClosed, SignPsbtAppNotAllowed } from "../errors";
 import { accountGetPublicKeyLogic, signRawTransactionLogic } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { BridgeSession } from "./bridgeSession";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import {
   getAccountIdFromWalletAccountId,
@@ -23,6 +30,8 @@ import {
 } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import openTransportAsSubject from "../hw/openTransportAsSubject";
+import { useDispatch } from "react-redux";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 
 const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
@@ -503,6 +512,49 @@ describe("currency.list handler — token lookup concurrency", () => {
     renderHook(() => useWalletAPIServer(createDefaultOptions()));
 
     await expect(getHandler()({ currencyIds: ["ethereum/erc20/usd__coin"] })).resolves.toEqual([]);
+  });
+});
+
+describe("currency.list handler — token categories", () => {
+  const stockToken = mockTokenCurrency({ categories: ["stocks"] });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("returns the categories of a token looked up by id", async () => {
+    jest.mocked(getCryptoAssetsStore).mockReturnValue({
+      findTokenById: jest.fn().mockResolvedValue(stockToken),
+    } as never);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: [stockToken.id],
+    });
+
+    expect(currencies).toEqual([expect.objectContaining({ categories: ["stocks"] })]);
+  });
+
+  it("returns the categories of a token listed by family", async () => {
+    const tokensPage = { pages: [{ tokens: [stockToken], pagination: {} }], pageParams: [] };
+    jest.mocked(useDispatch()).mockReturnValueOnce(
+      Object.assign(Promise.resolve({ data: tokensPage, hasNextPage: false }), {
+        unsubscribe: jest.fn(),
+      }) as never,
+    );
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: ["ethereum/**"],
+    });
+
+    expect(currencies).toContainEqual(
+      expect.objectContaining({ id: stockToken.id, categories: ["stocks"] }),
+    );
   });
 });
 
@@ -1002,5 +1054,26 @@ describe("useDappSessionUiHook", () => {
     jest.mocked(uiHook["transaction.sign"]).mock.calls[0][0].onSuccess({} as never);
 
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+});
+
+describe("useCacheBustedLiveApps", () => {
+  it("keeps both entries when edit is called twice before a new render", () => {
+    const { result } = renderHook(() => {
+      const [state, setState] = useState<DiscoverDB>({
+        ...INITIAL_PLATFORM_STATE,
+        cacheBustedLiveApps: { init: 1, "other-app": 5 },
+      });
+      return useCacheBustedLiveApps([state.cacheBustedLiveApps, setState, true]);
+    });
+
+    act(() => {
+      result.current.edit("app-a", 2);
+      result.current.edit("app-b", 3);
+    });
+
+    expect(result.current.getLatest("app-a")).toBe(2);
+    expect(result.current.getLatest("app-b")).toBe(3);
+    expect(result.current.getLatest("other-app")).toBe(5);
   });
 });

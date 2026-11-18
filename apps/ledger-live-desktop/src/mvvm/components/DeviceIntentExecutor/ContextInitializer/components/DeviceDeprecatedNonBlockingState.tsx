@@ -3,8 +3,8 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import {
   AppInteractionRequiredStateType,
   type EnsureAppReadyState,
-  useDeviceIntentTracking,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,

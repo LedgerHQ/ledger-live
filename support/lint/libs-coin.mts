@@ -1,6 +1,10 @@
 import { defineConfig } from "oxlint";
 import base from "./libs.mts";
-import { BIGNUMBER_NAMED_IMPORT, COIN_MODULE_CREATE_API } from "./restricted-imports.mts";
+import {
+  BIGNUMBER_NAMED_IMPORT,
+  COIN_MODULE_CREATE_API,
+  COIN_MODULE_LAYER_IMPORTS,
+} from "./restricted-imports.mts";
 
 // The coin modules, and wallet-btc beside them. They run the correctness rules as errors and the
 // suspicious ones as warnings, forbid import cycles, and keep the generic coin framework between
@@ -47,27 +51,13 @@ export default defineConfig({
   overrides: [
     {
       // The domain logic of a coin module depends on the framework, logs and network only.
-      files: ["**/src/api/**", "**/src/logic/**", "**/src/network/**"],
+      files: ["**/src/logic/**", "**/src/network/**"],
       rules: {
         "eslint/no-restricted-imports": [
           "warn",
           {
             paths: [BIGNUMBER_NAMED_IMPORT],
-            patterns: [
-              {
-                group: [
-                  "@ledgerhq/**",
-                  "!@ledgerhq/logs",
-                  "!@ledgerhq/logs/**",
-                  "!@ledgerhq/live-network",
-                  "!@ledgerhq/live-network/**",
-                  "!@ledgerhq/coin-module-framework",
-                  "!@ledgerhq/coin-module-framework/**",
-                  "!@ledgerhq/ledger-wallet-framework",
-                  "!@ledgerhq/ledger-wallet-framework/**",
-                ],
-              },
-            ],
+            patterns: [COIN_MODULE_LAYER_IMPORTS],
           },
         ],
       },
@@ -77,7 +67,22 @@ export default defineConfig({
       rules: {
         "eslint/no-restricted-imports": [
           "error",
-          { paths: [BIGNUMBER_NAMED_IMPORT], patterns: [COIN_MODULE_CREATE_API] },
+          {
+            paths: [BIGNUMBER_NAMED_IMPORT],
+            patterns: [COIN_MODULE_CREATE_API, COIN_MODULE_LAYER_IMPORTS],
+          },
+        ],
+      },
+    },
+    {
+      files: ["coin-cardano/src/api/getTransactions.ts", "coin-concordium/src/api/index.ts"],
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            paths: [BIGNUMBER_NAMED_IMPORT],
+            patterns: [COIN_MODULE_CREATE_API],
+          },
         ],
       },
     },
@@ -104,7 +109,9 @@ export default defineConfig({
     },
     {
       files: ["coin-celo/src/api/index.ts", "coin-celo/src/bridge/synchronisation.ts"],
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
+      },
     },
     {
       // coin-bitcoin and wallet-btc have import cycles they have not broken yet. The globs anchor

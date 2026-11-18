@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -58,6 +59,7 @@
   },
   "peerDependencies": {
     "react": ">=19",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   }

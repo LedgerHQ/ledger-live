@@ -25,10 +25,6 @@ export function filterToolsByQuery(categories: CategoryEntry[], query: string): 
   }, []);
 }
 
-export function toolsForCategory(categories: CategoryEntry[], category: Category): Tool[] {
-  return categories.find(c => c.category === category)?.tools ?? [];
-}
-
 export function findCategoryForToolId(
   categories: CategoryEntry[],
   toolId: ToolId | undefined,

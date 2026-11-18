@@ -17,6 +17,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/request", () => ({
   cancelDepositRequest: () => mockCancelDepositRequest(),
 }));
 
+const mockOpenPerpsTransactionSigned = jest.fn();
+jest.mock("../../PerpsTransactionSigned/PerpsTransactionSignedDialog", () => ({
+  openPerpsTransactionSigned: (data: unknown) => mockOpenPerpsTransactionSigned(data),
+}));
+
 const mockOpenPerpsReview = jest.fn();
 jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
   openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
@@ -134,12 +139,17 @@ describe("usePerpsDepositSignViewModel", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it("should close without reopening the review once the deposit goes through", () => {
+  it("should hand off to the signed dialog without reopening the review once the deposit goes through", () => {
     const onClose = jest.fn();
     renderHook(() => usePerpsDepositSignViewModel(data, onClose));
 
-    capturedCallbacks?.onDone();
+    capturedCallbacks?.onDone({ swapId: "swap-1" });
 
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
+      receiveCurrencyTicker: "ETH",
+      swapId: "swap-1",
+      provider: "swapkit_hyperliquid",
+    });
     expect(onClose).toHaveBeenCalled();
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
   });

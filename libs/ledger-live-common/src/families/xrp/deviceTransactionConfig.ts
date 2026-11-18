@@ -1,4 +1,4 @@
-import type BigNumber from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
@@ -40,7 +40,7 @@ function toIouAsset(assetReference: string | undefined, assetOwner: string | und
 }
 
 function getIouAsset(account: AccountLike, transaction: Transaction) {
-  if (transaction.mode === "changeTrust") {
+  if (transaction.mode === "changeTrust" || transaction.mode === "optOut") {
     return toIouAsset(transaction.assetReference, transaction.assetOwner);
   }
 
@@ -90,10 +90,24 @@ async function getDeviceTransactionConfig({
 
   const assetFields = getIouAssetFields(iou.assetReference, iou.assetOwner);
 
-  if (transaction.mode === "changeTrust") {
-    const limit = toDeviceIouAmount(transaction.amount, iou.assetReference);
+  // coin-xrp always removes with a 0 limit, and picks the flags from the account and the line,
+  // which Ledger Wallet does not store: listing them could contradict the device
+  if (transaction.mode === "optOut") {
+    const limit = toDeviceIouAmount(new BigNumber(0), iou.assetReference);
 
     return [{ type: "text", label: "Limit Amount", value: limit }, ...assetFields, ...feesFields];
+  }
+
+  if (transaction.mode === "changeTrust") {
+    const flags = transaction.noRipple === false ? "Clear No Ripple" : "Set No Ripple";
+    const limit = toDeviceIouAmount(transaction.amount, iou.assetReference);
+
+    return [
+      { type: "text", label: "Flags", value: flags },
+      { type: "text", label: "Limit Amount", value: limit },
+      ...assetFields,
+      ...feesFields,
+    ];
   }
 
   const sendMaxFields: CommonDeviceTransactionField[] =

@@ -180,7 +180,6 @@ export enum ScreenName {
   SendSummary = "SendSummary",
   SendBroadcastError = "SendBroadcastError",
   SendValidationError = "SendValidationError",
-  NewSendRecipient = "NewSendRecipient",
   SendFlowBalanceType = "SendFlowBalanceType",
   SendFlowRecipient = "SendFlowRecipient",
   SendFlowAmount = "SendFlowAmount",
@@ -196,9 +195,6 @@ export enum ScreenName {
   SignSelectDevice = "SignSelectDevice",
   SignSummary = "SignSummary",
   SignValidationError = "SignValidationError",
-  Swap = "Swap",
-  SwapSelectAccount = "SelectAccount",
-  SwapSelectCurrency = "SelectCurrency",
   SwapCustomError = "SwapCustomError",
   SwapForm = "SwapForm",
   SwapHistory = "SwapHistory",
@@ -206,7 +202,6 @@ export enum ScreenName {
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
   SwapSelectFees = "SelectFees",
-  SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
   PerpsTab = "PerpsTab",
   GlobalSearch = "GlobalSearch",
@@ -287,7 +282,6 @@ export enum ScreenName {
 
   // evm staking
   EvmDelegationStarted = "EvmDelegationStarted",
-  EvmDelegationValidatorSelect = "EvmDelegationValidatorSelect",
   EvmDelegationSelectDevice = "EvmDelegationSelectDevice",
   EvmDelegationConnectDevice = "EvmDelegationConnectDevice",
   EvmDelegationValidationError = "EvmDelegationValidationError",
@@ -650,30 +644,6 @@ export enum ScreenName {
   NearWithdrawingConnectDevice = "NearWithdrawingConnectDevice",
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
-  // Aptos
-  AptosStakingValidator = "AptosStakingValidator",
-  AptosStakingValidatorSelect = "AptosStakingValidatorSelect",
-  AptosStakingAmount = "AptosStakingAmount",
-  AptosStakingStarted = "AptosStakingStarted",
-  AptosStakingSelectDevice = "AptosStakingSelectDevice",
-  AptosStakingConnectDevice = "AptosStakingConnectDevice",
-  AptosStakingValidationError = "AptosStakingValidationError",
-  AptosStakingValidationSuccess = "AptosStakingValidationSuccess",
-  AptosRestakingAmount = "AptosRestakingAmount",
-  AptosRestakingSelectDevice = "AptosRestakingSelectDevice",
-  AptosRestakingConnectDevice = "AptosRestakingConnectDevice",
-  AptosRestakingValidationError = "AptosRestakingValidationError",
-  AptosRestakingValidationSuccess = "AptosRestakingValidationSuccess",
-  AptosUnstakingAmount = "AptosUnstakingAmount",
-  AptosUnstakingSelectDevice = "AptosUnstakingSelectDevice",
-  AptosUnstakingConnectDevice = "AptosUnstakingConnectDevice",
-  AptosUnstakingValidationError = "AptosUnstakingValidationError",
-  AptosUnstakingValidationSuccess = "AptosUnstakingValidationSuccess",
-  AptosWithdrawingAmount = "AptosWithdrawingAmount",
-  AptosWithdrawingSelectDevice = "AptosWithdrawingSelectDevice",
-  AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
-  AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
-  AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
   // Kaspa
   KaspaEditCustomFees = "KaspaEditCustomFees",
   // sui
@@ -791,7 +761,6 @@ export enum NavigatorName {
   PasswordModifyFlow = "PasswordModifyFlow",
   PlatformExchange = "PlatformExchange",
   ReceiveFunds = "ReceiveFunds",
-  ReceiveFundsOptions = "ReceiveFundsOptions",
   SendFunds = "SendFunds",
   SendFlow = "SendFlow",
   Settings = "Settings",
@@ -841,7 +810,6 @@ export enum NavigatorName {
   // Stellar
   StellarAddAssetFlow = "StellarAddAssetFlow",
   NotificationCenter = "NotificationCenter",
-  Market = "Market",
   // Celo
   CeloManageAssetsNavigator = "CeloManageAssetsNavigator",
   CeloRegistrationFlow = "CeloRegistrationFlow",
@@ -858,7 +826,6 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
-  // Aptos
   // Xrp
   XrpAddTokenFlow = "XrpAddTokenFlow",
   // Hedera
@@ -909,7 +876,6 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
-  ModularDrawer = "ModularDrawer",
   DeviceSelection = "DeviceSelection",
   AssetDetail = "AssetDetail",
   Assets = "Assets",

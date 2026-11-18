@@ -20,8 +20,8 @@ const TAB_ROUTE_NAMES = [
   NavigatorName.AgentIntentTab,
 ];
 
-function createState(activeIndex: number) {
-  const routes = TAB_ROUTE_NAMES.map((name, i) => ({ name, key: `tab-${i}` }));
+function createState(activeIndex: number, routeNames: readonly string[] = TAB_ROUTE_NAMES) {
+  const routes = routeNames.map((name, i) => ({ name, key: `tab-${i}` }));
   return { routes, index: activeIndex };
 }
 
@@ -32,8 +32,8 @@ function createNavigation() {
   };
 }
 
-function renderOnTab(activeIndex: number) {
-  const state = createState(activeIndex);
+function renderOnTab(activeIndex: number, routeNames?: readonly string[]) {
+  const state = createState(activeIndex, routeNames);
   const navigation = createNavigation();
   return renderHook(() =>
     useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
@@ -157,6 +157,22 @@ describe("useMainTabBarViewModel", () => {
       });
 
       expect(track).toHaveBeenCalledWith("menuentry_clicked", { entry: "Swap", page: "Wallet" });
+    });
+  });
+
+  describe("compact layout", () => {
+    it("should not be compact with four tabs", () => {
+      const fourTabs = TAB_ROUTE_NAMES.filter(name => name !== NavigatorName.AgentIntentTab);
+
+      const { result } = renderOnTab(0, fourTabs);
+
+      expect(result.current.isCompact).toBe(false);
+    });
+
+    it("should be compact with five tabs", () => {
+      const { result } = renderOnTab(0);
+
+      expect(result.current.isCompact).toBe(true);
     });
   });
 });

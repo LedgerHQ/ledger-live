@@ -14,9 +14,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/asset-detail",
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",
@@ -48,11 +45,6 @@
     "rimraf": "catalog:"
   },
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm exec oxfmt ./src && oxlint ./src --fix --quiet",
     "format": "pnpm exec oxfmt ./src",
@@ -61,42 +53,10 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
-    "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
+    "./*.js": "./src/*.ts",
     "./package.json": "./package.json"
   }
 }

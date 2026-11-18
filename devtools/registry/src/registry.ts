@@ -21,12 +21,14 @@ export const tools = {
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
   "account-receive": platform.accountReceive,
+  "account-status": platform.accountStatus,
   "mock-accounts": platform.mockAccounts,
   "account-detail": walletXp.accountDetail,
   "coin-config": coinIntegration.coinConfig,
   receive: walletXp.receive,
   predictions: ptx.predictions,
   "intent-wallet-sync": walletXp.intentWalletSync,
+  "app-toggles": walletXp.appToggles,
 } as const;
 
 /**
@@ -61,9 +63,11 @@ export type DevToolConfig =
   | { id: "app-config"; config: platform.AppConfigToolProps }
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "account-receive"; config: platform.AccountReceiveToolProps }
+  | { id: "account-status"; config: platform.AccountStatusToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
   | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
   | { id: "receive"; config: walletXp.ReceiveToolProps }
   | { id: "predictions"; config: ptx.PredictionsToolProps }
-  | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps };
+  | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps }
+  | { id: "app-toggles"; config: walletXp.AppTogglesToolProps };

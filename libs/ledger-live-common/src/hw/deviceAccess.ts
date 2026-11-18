@@ -1,4 +1,4 @@
-import { firstValueFrom, from, Observable, throwError, timer } from "rxjs";
+import { firstValueFrom, from, Observable, Subscription, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import { CantOpenDevice, TransportStatusError } from "@ledgerhq/hw-transport/errors";
@@ -30,7 +30,7 @@ const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   return throwError(() => mappedError);
 };
 
-let errorRemapping = e => throwError(() => e);
+let errorRemapping: (e: Error) => Observable<never> = e => throwError(() => e);
 
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
@@ -73,9 +73,10 @@ function transportFinally(cleanup: () => Promise<void>) {
   };
 }
 
-const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
+const identifyTransport = (t: Transport & { id?: unknown }) =>
+  typeof t.id === "string" ? t.id : "";
 
-const needsCleanup = {};
+const needsCleanup: Record<string, boolean> = {};
 // When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
 export const cancelDeviceAction = (transport: Transport): void => {
@@ -118,8 +119,8 @@ export const withDevice =
         }
       };
 
-      let unsubscribed;
-      let sub;
+      let unsubscribed: boolean | undefined;
+      let sub: Subscription | undefined;
 
       // Open the transport
       open(deviceId, options, tracer.getContext())
@@ -208,7 +209,7 @@ export const withDevice =
  * Provides a Transport instance to the given function fn
  * @see withDevice
  */
-export const withDevicePromise = <T>(deviceId: string, fn: (Transport) => Promise<T>) =>
+export const withDevicePromise = <T>(deviceId: string, fn: (transport: Transport) => Promise<T>) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 export const genericCanRetryOnError = (err: unknown): boolean => {

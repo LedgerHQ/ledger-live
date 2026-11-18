@@ -71,6 +71,32 @@ describe("canton account serialization", () => {
     expect((restored as CantonAccount).cantonResources.publicKey).toBe(PUBLIC_KEY);
   });
 
+  it("round-trips the native instrument admin through save and restore", () => {
+    const DSO = "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc";
+    const account = createMockCantonAccount({}, { nativeInstrumentAdmin: DSO }) as Account;
+
+    const accountRaw = { id: account.id } as AccountRaw;
+    assignToAccountRaw(account, accountRaw);
+    const restored = { id: account.id } as Account;
+    assignFromAccountRaw(accountRaw, restored);
+
+    expect((restored as CantonAccount).cantonResources.nativeInstrumentAdmin).toBe(DSO);
+  });
+
+  it("restores an account saved before the native instrument admin without one", () => {
+    const accountRaw = { id: "acc" } as CantonAccountRaw;
+    accountRaw.cantonResources = {
+      isOnboarded: true,
+      instrumentUtxoCounts: {},
+      pendingTransferProposals: [],
+    };
+    const account = { id: "acc" } as Account;
+
+    assignFromAccountRaw(accountRaw as AccountRaw, account);
+
+    expect("nativeInstrumentAdmin" in (account as CantonAccount).cantonResources).toBe(false);
+  });
+
   it("omits publicKey from the raw when it is empty", () => {
     const account = createMockCantonAccount({}, { isOnboarded: true }) as Account;
     const accountRaw = { id: account.id } as AccountRaw;

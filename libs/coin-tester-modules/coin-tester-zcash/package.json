@@ -20,31 +20,12 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-zcash",
-  "typesVersions": {
-    "*": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    "./scenarii/zcash": {
-      "@ledgerhq/source": "./src/scenarii/zcash.ts",
-      "require": "./lib/scenarii/zcash.js",
-      "default": "./lib-es/scenarii/zcash.js"
-    },
+    "./scenarii/zcash": "./src/scenarii/zcash.ts",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "format": "oxfmt src",
@@ -87,5 +68,12 @@
     "oxlint": "catalog:",
     "rimraf": "catalog:",
     "typescript": "catalog:"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "nx:noop"
+      }
+    }
   }
 }

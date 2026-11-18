@@ -1,5 +1,5 @@
 import type { Middleware } from "@reduxjs/toolkit";
-import { liveConfigOverridesSelector, type StateWithLiveConfigOverrides } from "./selectors";
+import { liveConfigOverridesSelector, type StateWithLiveConfigOverrides } from "./slice";
 
 export interface LiveConfigOverridesMiddlewareConfig {
   /** Hands the latest overrides map to the host's config, e.g. `LiveConfig.setAllOverrides`. */

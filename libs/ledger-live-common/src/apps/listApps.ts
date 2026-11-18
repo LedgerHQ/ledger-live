@@ -262,12 +262,12 @@ export const listApps = ({
       });
 
       // Abused somewhere else
-      const appByName = catalogForDevice.reduce((result, app) => {
+      const appByName = catalogForDevice.reduce<Record<string, App>>((result, app) => {
         result[app.name] = app;
         return result;
       }, {});
 
-      const installedAppNames = {};
+      const installedAppNames: Record<string, boolean> = {};
       // Polyfill more data on the app installed
       const installed = installedList.map(({ name, hash, bytes, version }) => {
         installedAppNames[name] = true;

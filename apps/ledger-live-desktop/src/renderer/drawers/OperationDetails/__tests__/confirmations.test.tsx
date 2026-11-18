@@ -14,7 +14,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 // Preload so useLLDCoinFamily resolves synchronously on first render instead of suspending.
 beforeAll(async () => {
-  await importLLDCoinFamily("bitcoin");
+  await Promise.all([importLLDCoinFamily("bitcoin"), importLLDCoinFamily("zcash")]);
 });
 
 const baseOperation = {

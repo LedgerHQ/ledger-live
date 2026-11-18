@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { initStarredFromIds, setAccountStarred, starredAccountsSlice } from "./slice";
-import { isStarredAccountSelector } from "./selectors";
+import {
+  initStarredFromIds,
+  isStarredAccountSelector,
+  setAccountStarred,
+  starredAccountsSlice,
+} from "./slice";
 
 function makeStore() {
   const store = configureStore({

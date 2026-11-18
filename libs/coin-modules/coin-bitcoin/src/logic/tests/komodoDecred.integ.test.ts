@@ -1,22 +1,12 @@
 import network from "@ledgerhq/live-network";
 import { createApi } from "../../api";
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import type { ExplorerTx } from "../../network/types";
-import { CURRENCY_FORMATS } from "./helpers/fixtures";
 
-const EXPLORER = "https://explorers.api.live.ledger.com";
-
-const context = (explorerId: string): BitcoinContext => ({
-  config: async currencyId => ({
-    ...CURRENCY_FORMATS[currencyId ?? ""],
-    status: { type: "active" },
-    name: explorerId,
-    unit: { name: explorerId, code: explorerId.toUpperCase(), magnitude: 8 },
-    explorer: { url: EXPLORER },
-    explorerId,
-  }),
+const context: BitcoinContext = {
+  config: async currencyId => bitcoinDefaults[currencyId as keyof typeof bitcoinDefaults],
   logger: () => {},
-});
+};
 
 /**
  * Komodo and Decred through the coin module API, on the live explorer: the formats the Ledger app
@@ -26,7 +16,6 @@ const context = (explorerId: string): BitcoinContext => ({
 describe.each([
   {
     currencyId: "komodo",
-    explorerId: "kmd",
     // An address with a short, settled history (2017).
     address: "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
     // A confirmed Sapling (v4) transaction.
@@ -36,25 +25,24 @@ describe.each([
   },
   {
     currencyId: "decred",
-    explorerId: "dcr",
     address: "DsVETTBzJSuzszSTiJLmrswY47GcCKCRu5E",
     confirmedTx: "2bcc5ae9d0561b2130b68bea696e834ec89e5e1a4ad1f65a57e8f3d6d583d732",
     alreadyKnown: "transaction already exists",
     garbage: "unsupported transaction type",
   },
-])("$currencyId (live explorer)", c => {
+] as const)("$currencyId (live explorer)", c => {
+  const { explorer, explorerId } = bitcoinDefaults[c.currencyId];
   const api = createApi(c.currencyId);
-  const ctx = context(c.explorerId);
 
   it("reads the chain tip and its block info", async () => {
-    const tip = await api.lastBlock(ctx);
+    const tip = await api.lastBlock(context);
     expect(tip.height).toBeGreaterThan(0);
-    const info = await api.getBlockInfo(ctx, tip.height);
+    const info = await api.getBlockInfo(context, tip.height);
     expect(info).toEqual(expect.objectContaining({ height: tip.height, hash: tip.hash }));
   });
 
   it("reads the confirmed balance of an address", async () => {
-    const [balance] = await api.getBalance(ctx, c.address);
+    const [balance] = await api.getBalance(context, c.address);
     expect(balance.asset).toEqual({ type: "native" });
     expect(typeof balance.value).toBe("bigint");
     expect(balance.value).toBeGreaterThanOrEqual(0n);
@@ -62,9 +50,9 @@ describe.each([
 
   it("lists one operation per confirmed transaction of an address", async () => {
     // Parity with the bridge's mapping: __tests__/integ/coinModuleApi.listOperations.parity.integ.test.ts.
-    const { items } = await api.listOperations(ctx, c.address, { minHeight: 0 });
+    const { items } = await api.listOperations(context, c.address, { minHeight: 0 });
     const { data } = await network<{ data: ExplorerTx[] }>({
-      url: `${EXPLORER}/blockchain/v4/${c.explorerId}/address/${c.address}/txs?batch_size=50`,
+      url: `${explorer.url}/blockchain/v4/${explorerId}/address/${c.address}/txs?batch_size=50`,
     });
     const confirmed = data.data.filter(tx => tx.block).map(tx => tx.hash);
     expect(items.length).toBeGreaterThan(0);
@@ -73,16 +61,16 @@ describe.each([
 
   it("broadcasts in the format the node decodes: it recognizes a transaction it already has", async () => {
     const { data } = await network<{ hex: string }>({
-      url: `${EXPLORER}/blockchain/v4/${c.explorerId}/tx/${c.confirmedTx}/hex`,
+      url: `${explorer.url}/blockchain/v4/${explorerId}/tx/${c.confirmedTx}/hex`,
     });
-    await expect(api.broadcast(ctx, data.hex)).rejects.toMatchObject({
+    await expect(api.broadcast(context, data.hex)).rejects.toMatchObject({
       name: "LedgerAPI4xx",
       message: expect.stringContaining(c.alreadyKnown),
     });
   });
 
   it("throws the node's rejection of garbage", async () => {
-    await expect(api.broadcast(ctx, "deadbeef")).rejects.toMatchObject({
+    await expect(api.broadcast(context, "deadbeef")).rejects.toMatchObject({
       name: "LedgerAPI4xx",
       message: expect.stringContaining(c.garbage),
     });
@@ -92,9 +80,8 @@ describe.each([
 describe("getBlock (live explorer)", () => {
   it("lists the transactions of a Komodo block", async () => {
     const api = createApi("komodo");
-    const ctx = context("kmd");
-    const tip = await api.lastBlock(ctx);
-    const block = await api.getBlock(ctx, tip.height - 10);
+    const tip = await api.lastBlock(context);
+    const block = await api.getBlock(context, tip.height - 10);
     expect(block.info.height).toBe(tip.height - 10);
     expect(block.transactions.length).toBeGreaterThan(0);
   });
@@ -104,9 +91,8 @@ describe("getBlock (live explorer)", () => {
   // than a partial block. To lift when the explorer serves them.
   it("surfaces the explorer's failure on a Decred block instead of a partial block", async () => {
     const api = createApi("decred");
-    const ctx = context("dcr");
-    const tip = await api.lastBlock(ctx);
-    await expect(api.getBlock(ctx, tip.height - 10)).rejects.toMatchObject({
+    const tip = await api.lastBlock(context);
+    await expect(api.getBlock(context, tip.height - 10)).rejects.toMatchObject({
       name: "LedgerAPI5xx",
     });
   });

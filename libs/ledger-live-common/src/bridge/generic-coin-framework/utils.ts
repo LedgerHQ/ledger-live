@@ -103,14 +103,15 @@ export function addAccountToBuyLinks(
 ): Record<string, Error> {
   for (const error of Object.values(errors)) {
     const holder = error as { links?: unknown };
-    if (!Array.isArray(holder.links)) continue;
+    const originalLinks = holder.links;
+    if (!Array.isArray(originalLinks)) continue;
 
-    const links = holder.links.map(link =>
+    const links = originalLinks.map(link =>
       typeof link === "string" ? withBuyAccount(link, accountId) : link,
     );
     // Assigned only when something changed, and as a new array either way: a coin module is free to
     // hand back a module-level constant, which must not be rewritten under it.
-    if (links.some((link, index) => link !== holder.links![index])) holder.links = links;
+    if (links.some((link, index) => link !== originalLinks[index])) holder.links = links;
   }
 
   return errors;
@@ -203,7 +204,7 @@ export function toTransferFeeFromUnknown(value: unknown): TransferFee | undefine
 }
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
-  const networksRemap = {
+  const networksRemap: Record<string, string> = {
     xrp: "ripple",
   };
   return findCryptoCurrencyById(networksRemap[network] ?? network);
@@ -817,13 +818,31 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   return extra;
 }
 
+/** Compare two addresses for equality, ignoring case. */
+export function isSameAddress(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/** Set for a family that opts in to `excludesFeesPaidByOthers`, for the account being synced. */
+export type FeesPayerRule = { accountAddress: string };
+
+export function isFeePaidByAccount(
+  feesPayer: string | undefined,
+  rule: FeesPayerRule | undefined,
+): boolean {
+  if (rule === undefined) return true;
+  return feesPayer !== undefined && isSameAddress(feesPayer, rule.accountAddress);
+}
+
 function computeOperationValue(
   op: CoreOperation,
   opType: OperationType,
   bnFees: BigNumber,
   hasFailed: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): BigNumber {
-  if (hasFailed) return bnFees;
+  const paidFees = isFeePaidByAccount(op.tx.feesPayer, feesPayerRule) ? bnFees : new BigNumber(0);
+  if (hasFailed) return paidFees;
   if (
     op.asset.type === "native" &&
     [
@@ -836,7 +855,7 @@ function computeOperationValue(
       "UPDATE_ACCOUNT",
     ].includes(opType)
   ) {
-    return new BigNumber(op.value.toString()).plus(bnFees);
+    return new BigNumber(op.value.toString()).plus(paidFees);
   }
   return new BigNumber(op.value.toString());
 }
@@ -845,13 +864,14 @@ export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation,
   reviveFamilyExtra?: (extraRaw: OperationExtraRaw) => OperationExtra,
+  feesPayerRule?: FeesPayerRule,
 ): Operation {
   const opType = op.type as OperationType;
   const extra = buildOperationExtra(op);
 
   const bnFees = new BigNumber(op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  const value = computeOperationValue(op, opType, bnFees, hasFailed);
+  const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
   // Landed flat beside the framework's own keys and revived through the family's
   // `fromOperationExtraRaw` — the same pair `accountRawAssign.ts` composes — so a family reads one
@@ -893,7 +913,7 @@ export function adaptCoreOperationToLiveOperation(
 function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (!transaction.mode) return "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
 
-  const modeRemap = {
+  const modeRemap: Record<string, string> = {
     delegate: "stake",
     undelegate: "unstake",
   };
@@ -902,6 +922,7 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (
     [
       "changeTrust",
+      "optOut",
       "send",
       "send-legacy",
       "send-eip1559",
@@ -1146,6 +1167,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "optOut":
+      return "OPT_OUT";
     case "tokenAssociate":
       return "ASSOCIATE_TOKEN";
     case "delegate":

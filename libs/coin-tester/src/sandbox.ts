@@ -61,8 +61,8 @@ async function request(
   try {
     const response = await fetch(new URL(path, base), {
       method,
-      body: body && JSON.stringify(body),
-      signal,
+      body: body ? JSON.stringify(body) : null,
+      signal: signal ?? null,
     });
     const json: unknown = await response.json().catch(() => undefined);
     signal?.throwIfAborted();

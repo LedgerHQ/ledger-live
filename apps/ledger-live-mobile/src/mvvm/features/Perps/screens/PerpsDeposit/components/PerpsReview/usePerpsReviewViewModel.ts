@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import {
+  getPerpsDepositReviewDetails,
+  type PerpsReviewDetailItem,
+} from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
-import type { PerpsReviewDetailItem } from "LLM/features/Perps/components/PerpsReviewSection";
 
 export type PerpsReviewParams = Readonly<PerpsDepositReviewParams>;
 
@@ -38,67 +39,19 @@ export function usePerpsReviewViewModel({
   const walletState = useSelector(walletSelector);
   const locale = useSelector(localeSelector);
 
-  const sentUnit = getAccountCurrency(depositAccount).units[0];
-  const receivedUnit = getAccountCurrency(receiverAccount).units[0];
+  const receiverAccountName = accountNameWithDefaultSelector(walletState, receiverAccount);
 
-  const formattedAmountSent = useMemo(
+  const { swapDetails, depositDetails } = useMemo(
     () =>
-      formatCurrencyUnit(sentUnit, parseCurrencyUnit(sentUnit, amountSent), {
-        showCode: true,
-        locale,
-      }),
-    [amountSent, sentUnit, locale],
-  );
-
-  const formattedAmountReceived = useMemo(
-    () =>
-      formatCurrencyUnit(receivedUnit, parseCurrencyUnit(receivedUnit, amountTo), {
-        showCode: true,
-        locale,
-      }),
-    [amountTo, receivedUnit, locale],
-  );
-
-  const approximateAmountReceived = useMemo(
-    () => t("perpsReview.approximateValue", { value: formattedAmountReceived }),
-    [formattedAmountReceived, t],
-  );
-
-  const receiverAccountLabel = useMemo(
-    () => accountNameWithDefaultSelector(walletState, receiverAccount),
-    [receiverAccount, walletState],
-  );
-
-  const swapDetails = useMemo<readonly PerpsReviewDetailItem[]>(
-    () => [
-      {
-        labelKey: "perpsReview.amountSendLabel",
-        value: formattedAmountSent,
-        testID: "perps-deposit-amount-sent",
-      },
-      {
-        labelKey: "perpsReview.amountReceiveLabel",
-        value: approximateAmountReceived,
-        testID: "perps-deposit-amount-received",
-      },
-    ],
-    [approximateAmountReceived, formattedAmountSent],
-  );
-
-  const depositDetails = useMemo<readonly PerpsReviewDetailItem[]>(
-    () => [
-      {
-        labelKey: "perpsReview.depositAmountLabel",
-        value: approximateAmountReceived,
-        testID: "perps-deposit-deposited-amount",
-      },
-      {
-        labelKey: "perpsReview.depositReceiveLabel",
-        value: receiverAccountLabel,
-        testID: "perps-deposit-receiver-account",
-      },
-    ],
-    [approximateAmountReceived, receiverAccountLabel],
+      getPerpsDepositReviewDetails(
+        { amountSent, amountTo, depositAccount, receiverAccount },
+        {
+          locale,
+          receiverAccountName,
+          formatApproximate: value => t("perpsReview.approximateValue", { value }),
+        },
+      ),
+    [amountSent, amountTo, depositAccount, receiverAccount, locale, receiverAccountName, t],
   );
 
   return {

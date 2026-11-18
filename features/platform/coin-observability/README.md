@@ -18,17 +18,26 @@ host needs to consume the events lives here, with no legacy import.
 - `setCoinModuleCallObserver` / `emitCoinModuleCall`: a global registry. The coin-module is resolved
   outside React, so a host registers its observers once at startup. A throwing observer never breaks
   the call it observes.
+- `DEFAULT_METHOD_TIERS` / `tierFor`: the coin-module methods that are observed, and their tier.
+  - `transaction` (`craftTransaction`, `craftRawTransaction`, `combine`, `broadcast`): always sent.
+  - `preparation` (`craftTransactionData`, `estimateFees`, `listFeeOptions`, `validateIntent`,
+    `validateAddress`), called on every edit of a transaction: successes sampled.
+  - `sync` (the reads, per account and sync cycle): successes sampled.
+  - `off`: nothing sent, failures included.
+
+  The flag's `methodTiers` param moves a method to another tier without a release, e.g.
+  `{ "craftTransactionData": "off" }`; an entry with an unknown tier is ignored. The table is a
+  whitelist: a method it does not list is `off`, so a framework release that adds a method sends
+  nothing for it until it is listed or the flag gives it a tier.
 - `createCoinModuleCallTransmitter`: the policy for a sink that leaves the process:
-  - transaction-path calls (`craftTransaction`, `craftRawTransaction`, `craftTransactionData`,
-    `combine`, `broadcast`) are always sent;
-  - preparation successes (`estimateFees`, `validateIntent`, called on every edit of a
-    transaction) and read-path successes are sampled per app session, each tier with its own rate:
-    a session sends all of them or none;
+  - preparation and sync successes are sampled per app session, each tier with its own rate: a
+    session sends all of them or none;
   - failures are capped per method, currency and error name, per hour;
-  - `includeSyncPath: false` drops the read path entirely, failures included;
-  - each sent call carries its tier's `sampleRate` and whether the session is `inSample`. Failures
-    come from every session and successes only from the sample, so a failure rate is computed on
-    `inSample` calls only, and a success count is divided by `sampleRate` to estimate the volume.
+  - `includeSyncPath: false` drops the `sync` tier entirely, failures included;
+  - each sent call carries its `tier`, the tier's `sampleRate` and whether the session is
+    `inSample`. Failures come from every session and successes only from the sample, so a failure
+    rate is computed on `inSample` calls only, and a success count is divided by `sampleRate` to
+    estimate the volume.
 - `setCoinObservabilityConfigReader` / `toCoinObservabilityConfig`: the host injects its
   `coinObservability` flag. Until it does, transmission stays off.
 

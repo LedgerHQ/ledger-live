@@ -170,11 +170,6 @@ export function useAreAccountsEmpty(): boolean {
   return accounts.every((a, i) => bridges[i].isAccountEmpty(a));
 }
 
-export const currenciesSelector = createSelector(accountsSelector, accounts =>
-  uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
-    a.name.localeCompare(b.name),
-  ),
-);
 export const cryptoCurrenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(accounts.map(a => a.currency)).sort((a, b) => a.name.localeCompare(b.name)),
 );

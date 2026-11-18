@@ -12,15 +12,20 @@ import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors"
 import type { GetBalanceResponse } from "../types/gateway";
 import { TransactionType } from "../types/gateway";
 import {
+  clearDsoPartyIdCache,
   clearEnabledInstrumentsCache,
   clearIsTopologyChangeRequiredCache,
   getBalance,
   getCalTokensCached,
+  getDsoPartyIdCached,
   getEnabledInstruments,
   getEnabledInstrumentsCached,
   getLedgerEnd,
+  getNativeInstrument,
+  getNodeInfo,
   getOperations,
   getPartyById,
+  getPartyByIdCached,
   getPartyByPubKey,
   getPendingTransferProposals,
   getTransferPreApproval,
@@ -292,15 +297,19 @@ describe("isTopologyChangeRequired", () => {
 
 describe("isTopologyChangeRequiredCached", () => {
   const mockConfig = createTestNodeConfig();
+  const gatewayA = { ...mockConfig, gatewayUrl: "https://gateway-a.example.com" };
+  const gatewayB = { ...mockConfig, gatewayUrl: "https://gateway-b.example.com" };
   const pubKey = "test-pub-key";
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    clearIsTopologyChangeRequiredCache(mockConfig, pubKey);
+    [mockConfig, gatewayA, gatewayB].forEach(config =>
+      clearIsTopologyChangeRequiredCache(config, pubKey),
+    );
   });
 
-  it("caches result per pubKey and nodeId", async () => {
+  it("caches result per gateway, node and pubKey", async () => {
     mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
 
     await expect(isTopologyChangeRequiredCached(mockConfig, pubKey)).resolves.toBe(true);
@@ -319,6 +328,129 @@ describe("isTopologyChangeRequiredCached", () => {
 
     await isTopologyChangeRequiredCached(mockConfig, pubKey);
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reuse a verdict cached for another gateway with the same node id", async () => {
+    mockNetwork
+      .mockRejectedValueOnce(new Error("Party already exists"))
+      .mockResolvedValueOnce({ data: createMockOnboardingPrepareResponse(), status: 200 });
+
+    await expect(isTopologyChangeRequiredCached(gatewayA, pubKey)).resolves.toBe(false);
+    await expect(isTopologyChangeRequiredCached(gatewayB, pubKey)).resolves.toBe(true);
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears only the entry of the gateway it is given", async () => {
+    mockNetwork.mockResolvedValue({ data: createMockOnboardingPrepareResponse(), status: 200 });
+    await isTopologyChangeRequiredCached(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayB, pubKey);
+
+    clearIsTopologyChangeRequiredCache(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayA, pubKey);
+    await isTopologyChangeRequiredCached(gatewayB, pubKey);
+
+    expect(mockNetwork).toHaveBeenCalledTimes(3);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining(gatewayA.gatewayUrl) }),
+    );
+  });
+});
+
+describe("getPartyByIdCached", () => {
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+  const party = { party_id: "cached-party", public_key: "pk" };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockNetwork.mockResolvedValue({ data: party, status: 200 });
+  });
+
+  it("caches the party per gateway, node and party id", async () => {
+    const config = { ...createTestNodeConfig(), gatewayUrl: "https://gateway-a.example.com" };
+
+    await expect(getPartyByIdCached(config, "cached-party")).resolves.toEqual(party);
+    await expect(getPartyByIdCached(config, "cached-party")).resolves.toEqual(party);
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not reuse a party cached for another gateway with the same node id", async () => {
+    const config = createTestNodeConfig();
+    await getPartyByIdCached({ ...config, gatewayUrl: "https://gateway-b.example.com" }, "p");
+    await getPartyByIdCached({ ...config, gatewayUrl: "https://gateway-c.example.com" }, "p");
+
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("https://gateway-c.example.com") }),
+    );
+  });
+});
+
+describe("getNodeInfo and getNativeInstrument", () => {
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+  const DSO = "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc";
+  const nodeInfo = { validator_id: "validator::1220", dso_id: DSO };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getDsoPartyIdCached.reset();
+    mockNetwork.mockResolvedValue({ data: nodeInfo, status: 200 });
+  });
+
+  it("reads the node info of the configured node", async () => {
+    const config = createTestNodeConfig();
+
+    await expect(getNodeInfo(config)).resolves.toEqual(nodeInfo);
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "GET",
+        url: `${config.gatewayUrl}/v1/node/test-node-id`,
+      }),
+    );
+  });
+
+  it("pairs the configured native instrument id with the node's DSO party", async () => {
+    await expect(getNativeInstrument(createTestNodeConfig())).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: DSO,
+    });
+  });
+
+  it("caches the DSO party per gateway and node", async () => {
+    const config = createTestNodeConfig();
+
+    await getNativeInstrument(config);
+    await getNativeInstrument(config);
+    await getNativeInstrument({ ...config, gatewayUrl: "https://gateway-b.example.com" });
+
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("reads the DSO party again after clearDsoPartyIdCache, for that gateway and node only", async () => {
+    const config = createTestNodeConfig();
+    const gatewayB = { ...config, gatewayUrl: "https://gateway-b.example.com" };
+    await getNativeInstrument(config);
+    await getNativeInstrument(gatewayB);
+    mockNetwork.mockResolvedValue({
+      data: { ...nodeInfo, dso_id: "DSO::after-reset" },
+      status: 200,
+    });
+
+    clearDsoPartyIdCache(config);
+
+    await expect(getNativeInstrument(config)).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: "DSO::after-reset",
+    });
+    await expect(getNativeInstrument(gatewayB)).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: DSO,
+    });
+  });
+
+  it("rejects node info without a DSO party instead of matching no native holding", async () => {
+    mockNetwork.mockResolvedValue({ data: { validator_id: "validator::1220" }, status: 200 });
+
+    await expect(getNativeInstrument(createTestNodeConfig())).rejects.toThrow("no DSO party");
   });
 });
 
@@ -838,13 +970,14 @@ describe("getEnabledInstruments", () => {
 
 describe("getEnabledInstrumentsCached", () => {
   const mockConfig = createTestNodeConfig();
+  const gatewayA = { ...mockConfig, gatewayUrl: "https://gateway-a.example.com" };
+  const gatewayB = { ...mockConfig, gatewayUrl: "https://gateway-b.example.com" };
 
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Clear cache before each test
-    clearEnabledInstrumentsCache(mockConfig);
+    [mockConfig, gatewayA, gatewayB].forEach(clearEnabledInstrumentsCache);
   });
 
   it("should cache results and return cached value on subsequent calls", async () => {
@@ -896,5 +1029,34 @@ describe("getEnabledInstrumentsCached", () => {
     const result2 = await getEnabledInstrumentsCached(mockConfig);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0xnewtoken____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reuse instruments cached for another gateway with the same node id", async () => {
+    mockNetwork
+      .mockResolvedValueOnce({ data: [{ id: "TokenA", admin: "admin-a" }], status: 200 })
+      .mockResolvedValueOnce({ data: [{ id: "TokenB", admin: "admin-b" }], status: 200 });
+
+    await expect(getEnabledInstrumentsCached(gatewayA)).resolves.toEqual(
+      new Set(["TokenA____admin-a"]),
+    );
+    await expect(getEnabledInstrumentsCached(gatewayB)).resolves.toEqual(
+      new Set(["TokenB____admin-b"]),
+    );
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears only the entry of the gateway it is given", async () => {
+    mockNetwork.mockResolvedValue({ data: [{ id: "Amulet", admin: "admin1" }], status: 200 });
+    await getEnabledInstrumentsCached(gatewayA);
+    await getEnabledInstrumentsCached(gatewayB);
+
+    clearEnabledInstrumentsCache(gatewayA);
+    await getEnabledInstrumentsCached(gatewayA);
+    await getEnabledInstrumentsCached(gatewayB);
+
+    expect(mockNetwork).toHaveBeenCalledTimes(3);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining(gatewayA.gatewayUrl) }),
+    );
   });
 });

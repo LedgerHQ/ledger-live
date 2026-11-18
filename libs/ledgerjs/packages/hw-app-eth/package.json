@@ -70,7 +70,6 @@
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
     "@ledgerhq/ledger-libs": "workspace:*",
-    "@types/react": "catalog:",
     "@ethersproject/bignumber": "5.8.0",
     "@ethersproject/constants": "5.8.0",
     "@ethersproject/units": "5.7.0",

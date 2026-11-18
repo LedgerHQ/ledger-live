@@ -4,7 +4,7 @@ import { render, screen } from "@tests/test-renderer";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
-import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { checksTestIds, funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { DeviceOnboardingFunnel } from "./index";
 
 jest.mock("@react-navigation/native", () => ({
@@ -112,5 +112,54 @@ describe("DeviceOnboardingFunnel", () => {
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-header-close`)).toBeNull();
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-dismiss`)).toBeNull();
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-backdrop`)).toBeNull();
+  });
+
+  describe("when the device switches off during checks", () => {
+    function renderSwitchedOff(initialState: string, context?: DeviceOnboardingSession["context"]) {
+      const send = jest.fn();
+      useSession.mockReturnValue({
+        ...session(initialState),
+        ...(context ? { context } : {}),
+      });
+      const view = render(<DeviceOnboardingFunnel />);
+
+      useSession.mockReturnValue({
+        ...session("awaitingSession"),
+        ...(context ? { context } : {}),
+        send,
+      });
+      view.rerender(<DeviceOnboardingFunnel />);
+
+      return { ...view, send };
+    }
+
+    it("should ask to power on instead of showing the connection failure", () => {
+      renderSwitchedOff("checks.genuineCheck.running");
+
+      expect(screen.getByText("Power on and unlock your Ledger Stax")).toBeVisible();
+      expect(screen.queryByText("Connection failed")).toBeNull();
+      expect(screen.getByTestId(funnelTestIds.powerOnSheet)).toBeVisible();
+      expect(screen.queryByTestId(funnelTestIds.unlockSheet)).toBeNull();
+    });
+
+    it("should let the user quit from the power on sheet", async () => {
+      const { user, send } = renderSwitchedOff("checks.genuineCheck.running");
+
+      await user.press(screen.getByTestId(`${funnelTestIds.powerOnSheet}-header-close`));
+
+      expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    });
+
+    it("should let the user quit from the header while a firmware offer is hidden", async () => {
+      const { user, send } = renderSwitchedOff("checks.firmwareUpdateOffered", {
+        firmwareVersion: "1.0.0",
+        availableFirmwareVersion: "1.1.0",
+        checksPaused: false,
+      } as DeviceOnboardingSession["context"]);
+
+      await user.press(screen.getByTestId(checksTestIds.quit));
+
+      expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    });
   });
 });

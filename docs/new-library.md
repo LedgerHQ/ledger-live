@@ -33,7 +33,9 @@ Use it to review an existing package. `pnpm lint:tool-config` checks the items o
 **`package.json` fields**
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
-- [ ] `"main"`, `"types"`, `"exports"` — source-only packages (domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; built/published libs/ packages use the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
+- [ ] `"main"`, `"types"`, `"exports"`: every private package (domain/, features/, shared/ and private libs/) points them at `src/` and exposes `"./package.json"`; only published libs/ packages build, with the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries. Copy from a neighbouring package of the same type. On `libs/`, the source-only rule of `pnpm lint:tool-config` checks this split with its `no-build` and `exports-to-src` checks (see `CHECKS` in [`rules/source-only.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only.mjs))
+- [ ] A `.tsx` subpath has its own `exports` entry: a `"./*": "./src/*.ts"` wildcard never reaches it
+- [ ] React code goes behind a dedicated entry point (`"./react"`), so the root barrel reaches no `.tsx` file and a consumer without `jsx` can still compile it (see [typescript](../.agents/skills/typescript/SKILL.md#packages-read-from-source))
 - [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `@typescript/native` (for `tsc`), and `rimraf`, `zx` or `nx` when a script runs them; `@support/jest` with `workspace:*` when the package has tests (see [ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553) and [`rules/tool-dependency.mjs`](../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs))
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
@@ -45,7 +47,7 @@ Use it to review an existing package. `pnpm lint:tool-config` checks the items o
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)
 - [ ] `tsconfig.json` (and platform configs when dual): pick the archetype in [support-config](../.agents/skills/support-config/SKILL.md)
 - [ ] `jest.config.js`: one line calling the layer's `@support/jest` factory (see [support-config](../.agents/skills/support-config/SKILL.md))
-- [ ] `project.json` — minimum `{ "targets": { "build": { "executor": "nx:noop" } } }` for source-only packages; required for Nx task graph
+- [ ] No `project.json` and no `build` target for source-only packages: Nx `^build` reaches a package's dependencies through projects that have no `build` target. Add a `project.json` only for a target the package needs
 - [ ] `src/errors.ts` — if the package throws custom errors, define them here as plain `class extends Error`
 
 ## TypeScript configuration

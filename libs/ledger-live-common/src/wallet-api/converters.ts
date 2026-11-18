@@ -8,7 +8,6 @@ import {
   type AccountNamesState,
 } from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
@@ -20,6 +19,9 @@ import {
   WalletAPISupportedCurrency,
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
+
+const familyLiveToWalletApi: Partial<Record<string, string>> = FAMILIES_MAPPING_LL_TO_WAPI;
+const familyWalletApiToLive: Partial<Record<string, string>> = FAMILIES_MAPPING_WAPI_TO_LL;
 
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
@@ -96,6 +98,7 @@ export function currencyToWalletAPICurrency(
       parent: currency.parentCurrencyId,
       color: getCryptoCurrencyById(currency.parentCurrencyId).color,
       decimals: currency.units[0].magnitude,
+      ...(currency.categories !== undefined ? { categories: currency.categories } : {}),
     };
   }
 
@@ -104,7 +107,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
+    family: familyLiveToWalletApi[currency.family] ?? currency.family,
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -121,16 +124,18 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 }> => {
-  // A live app names the currency's family ("bitcoin" for Zcash); the adapter is the one of
-  // the module that serves the account, which for Zcash is coin-zcash. A transaction of
-  // another family keeps its own adapter, so the family check that follows rejects it.
-  const incomingFamily =
-    FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
-  const mainCurrency = isTokenAccount(account) ? undefined : account.currency;
+  // A live app names a Wallet API family, which can stand for several Ledger Wallet ones
+  // ("bitcoin" for Zcash too). The adapter is the one of the family that serves the account,
+  // whenever the transaction's family is that family's Wallet API name.
+  const servedFamily =
+    isTokenAccount(account) || !account.currency ? undefined : account.currency.family;
+  const servedFamilyWapiName = servedFamily
+    ? (familyLiveToWalletApi[servedFamily] ?? servedFamily)
+    : undefined;
   const liveFamily =
-    mainCurrency && incomingFamily === mainCurrency.family
-      ? resolveFamily(mainCurrency)
-      : incomingFamily;
+    servedFamily && servedFamilyWapiName === walletApiTransaction.family
+      ? servedFamily
+      : (familyWalletApiToLive[walletApiTransaction.family] ?? walletApiTransaction.family);
 
   const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 

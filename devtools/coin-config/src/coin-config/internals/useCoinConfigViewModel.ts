@@ -66,5 +66,3 @@ export function useCoinConfigViewModel({
     clearSelection: useCallback(() => setSelectedKey(null), []),
   };
 }
-
-export type CoinConfigViewModel = ReturnType<typeof useCoinConfigViewModel>;

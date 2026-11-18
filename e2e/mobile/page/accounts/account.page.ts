@@ -61,6 +61,11 @@ export default class AccountPage {
     await this.accountTitle(accountName).expectVisible();
   }
 
+  @Step("Expect the account title {{{0}}} to be visible")
+  async expectAccountTitleVisible(accountName: string) {
+    await this.accountTitle(accountName).expectVisible();
+  }
+
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -103,11 +108,6 @@ export default class AccountPage {
   async expectAccountName(accountName: string, index = 0) {
     await this.accountNameAt(index).waitVisible();
     await this.accountNameAt(index).expectText(accountName);
-  }
-
-  @Step("Get the account name at index {{{0}}}")
-  async getAccountName(index = 0) {
-    return await this.accountNameAt(index).getText();
   }
 
   @Step("Open account settings")
@@ -195,20 +195,26 @@ export default class AccountPage {
     await this.accountBalance(accountId).expectVisible();
   }
 
-  @Step("Get visible account address label {{{0}}}")
-  async getVisibleAccountAddressLabel(accountId: string) {
+  /**
+   * Both labels keep the first and last 4 characters of the address: the account detail nav bar
+   * shortens it with `formatAddress` (`useAccountDetailViewModel`), the legacy tag holds it whole.
+   */
+  @Step("Expect the address label of {{{0.accountId}}} to show {{{0.address}}}")
+  async expectAccountAddressLabel({ accountId, address }: { accountId: string; address: string }) {
+    const shortenedAddress = new RegExp(`${address.slice(0, 4)}.*${address.slice(-4)}`, "i");
     if (isAccountDetailEnabled()) {
-      return await this.accountDetail.getVisibleAddressLabel();
+      await this.accountDetail.expectAddressLabelMatching(shortenedAddress);
+      return;
     }
-    await this.accountAddress(accountId).scrollTo(this.accountScreenScrollView);
-    await this.accountAddress(accountId).expectVisible();
-    return await this.accountAddress(accountId).getLabel();
+    const addressLabel = this.accountAddress(accountId);
+    await addressLabel.scrollTo(this.accountScreenScrollView);
+    await addressLabel.expectLabelMatching(shortenedAddress);
   }
 
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.expectTransferActionVisible();
+      await this.accountDetail.expectReceiveAndSendActionsVisible();
       return;
     }
     await this.receiveButton.scrollTo(this.accountScreenScrollView);
@@ -229,12 +235,20 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapReceive();
+      return;
+    }
     await this.receiveButton.revealForTap(this.accountScreenScrollView);
     await this.receiveButton.tap();
   }
 
   @Step("Tap on send button")
-  async tapSend() {
+  async tapSend(currencyId?: string, isToken = false) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapSend(currencyId, isToken);
+      return;
+    }
     await this.sendButton.revealForTap(this.accountScreenScrollView);
     await this.sendButton.tap();
   }

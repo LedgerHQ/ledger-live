@@ -1,6 +1,5 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { expect } from "@playwright/test";
 import type { ClickedHistoryOperationSnapshot } from "tests/page/history.page";
 
 export class OperationDrawer extends Drawer {
@@ -16,35 +15,33 @@ export class OperationDrawer extends Drawer {
   @step("Verify history operation details match clicked row")
   async expectOperationDetailsVisible(snapshot: ClickedHistoryOperationSnapshot) {
     await this.waitForDrawerToBeVisible();
-
-    await expect(this.transactionType).toHaveText(snapshot.typeLabel);
-
-    await expect(this.amountValue).toHaveText(snapshot.fiatAmountText);
-
-    await expect(this.transactionIdLabel).toBeVisible();
-    await expect(this.transactionIdValue).toHaveText(/\S{16,}/);
-
-    await expect(this.dateLabel).toBeVisible();
-    await expect(this.dateValue).toBeVisible();
-    await expect(this.dateValue).toHaveText(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/);
+    await this.softExpect(async soft => {
+      await soft(this.transactionType).toHaveText(snapshot.typeLabel);
+      await soft(this.amountValue).toHaveText(snapshot.fiatAmountText);
+      await soft(this.transactionIdLabel).toBeVisible();
+      await soft(this.transactionIdValue).toHaveText(/\S{16,}/);
+      await soft(this.dateLabel).toBeVisible();
+      await soft(this.dateValue).toBeVisible();
+      await soft(this.dateValue).toHaveText(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/);
+    });
   }
 
   @step("Verify drawer information")
   async expectDrawerInfos(accountName: string, status: string) {
     await this.waitForDrawerToBeVisible();
     const transactionType = await this.transactionType.textContent();
-    await expect(this.accountName).toHaveText(accountName);
-    await expect(this.dateLabel).toBeVisible();
-    expect(await this.dateValue.textContent()).toMatch(
-      /^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/,
-    );
-    await expect(this.transactionIdLabel).toBeVisible();
-    expect(await this.transactionIdValue.textContent()).toMatch(/^[a-zA-Z0-9+/=]{40,}$/);
-    if (transactionType !== "NFT Received" && status !== "Failed") {
-      await expect(this.amountLabel).toBeVisible();
-      expect(await this.amountValue.textContent()).toMatch(/^[+-]?\$\d+\.\d{2}$/);
-    } else {
-      await expect(this.amountValue).not.toBeVisible();
-    }
+    await this.softExpect(async soft => {
+      await soft(this.accountName).toHaveText(accountName);
+      await soft(this.dateLabel).toBeVisible();
+      await soft(this.dateValue).toHaveText(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/);
+      await soft(this.transactionIdLabel).toBeVisible();
+      await soft(this.transactionIdValue).toHaveText(/^[a-zA-Z0-9+/=]{40,}$/);
+      if (transactionType !== "NFT Received" && status !== "Failed") {
+        await soft(this.amountLabel).toBeVisible();
+        await soft(this.amountValue).toHaveText(/^[+-]?\$\d+\.\d{2}$/);
+      } else {
+        await soft(this.amountValue).not.toBeVisible();
+      }
+    });
   }
 }

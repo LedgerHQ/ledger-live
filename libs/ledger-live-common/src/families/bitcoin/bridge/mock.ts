@@ -31,7 +31,8 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a, t: any) => (t.feePerByte || new BigNumber(0)).times(250);
+const defaultGetFees = (a: Account, t: Transaction) =>
+  (t.feePerByte || new BigNumber(0)).times(250);
 
 const createTransaction = (): Transaction => ({
   family: "bitcoin",
@@ -47,7 +48,11 @@ const createTransaction = (): Transaction => ({
   },
 });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }): Promise<BigNumber> => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -55,7 +60,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }): Promise<
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account, t) => {
+const getTransactionStatus = (account: Account, t: Transaction) => {
   const errors: { [key: string]: any } = {};
   const warnings: { [key: string]: any } = {};
   const useAllAmount = !!t.useAllAmount;

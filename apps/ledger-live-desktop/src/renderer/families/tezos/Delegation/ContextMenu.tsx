@@ -15,6 +15,7 @@ import StopCircle from "~/renderer/icons/StopCircle";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -48,7 +49,7 @@ const ContextMenu = ({ account, stakingEnabled }: Props) => {
       icon: <ArrowDown size={16} />,
       onClick: () =>
         dispatch(
-          openModal("MODAL_RECEIVE", {
+          openReceiveFlow({
             account,
             eventType: "tezos",
             startWithWarning: receiveShouldWarnDelegation,

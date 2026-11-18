@@ -5,10 +5,11 @@ import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors"
 import { delay } from "../../../promise";
 import {
   createExchange,
-  ExchangeTypes,
+  type ExchangeTypes,
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
+import { EXCHANGE_TYPE } from "../../intents/exchangeTypes";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
@@ -32,8 +33,10 @@ import {
   toExchangeError,
 } from "../../error";
 
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
+const withDevicePromise = <T>(
+  deviceId: string | undefined,
+  fn: (transport: Transport) => Promise<T>,
+) => firstValueFrom(withDevice(deviceId as string)(transport => from(fn(transport))));
 
 export type ConfirmTransferExchangeInput = CompleteExchangeInputFund | CompleteExchangeInputSell;
 
@@ -292,7 +295,7 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
 
   const sigHex = Buffer.from(signature, "hex");
 
-  if (exchangeType === ExchangeTypes.Sell) return sigHex;
+  if (exchangeType === EXCHANGE_TYPE.sell) return sigHex;
 
   // Signature may arrive as hex (128 chars = 64 bytes) or as base64url from providers
   const sigBytes =

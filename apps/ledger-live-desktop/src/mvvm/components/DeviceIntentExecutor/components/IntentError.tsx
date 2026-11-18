@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { ErrorComponent } from "@features/platform-device-intent";
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "./TrackDIEScreen";

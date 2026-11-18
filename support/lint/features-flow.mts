@@ -9,7 +9,7 @@ import {
   LODASH,
   NAVIGATOR_CLIPBOARD,
 } from "./restricted-imports.mts";
-import { platformSuffixWaivers } from "./src/suffix-imports.js";
+import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 
 // Packages whose own config kept the React Compiler rules and `import/namespace` fatal. The rest
 // of the layer has them as warnings and violates them today, so they stay fatal here only. Globs
@@ -30,7 +30,16 @@ const FATAL_REACT_COMPILER = [
 // require. The rest of the layer had the rule fatal and keeps it.
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
-const PLATFORM_SUFFIX_WAIVERS = ["account-detail-hero", "pay-card-widget"];
+// Package directories from the repo root, unlike the names above.
+const SLICE_SELECTORS_WAIVERS: string[] = [
+  "features/flow/account-detail-analytics-notice",
+  "features/flow/device-mock-server",
+  "features/flow/pay-balance",
+  "features/flow/pay-card-auth",
+  "features/flow/pay-card-widget",
+  "features/flow/pay-feature-tour",
+  "features/flow/receive",
+];
 
 const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);
 
@@ -69,6 +78,7 @@ export default defineConfig({
     "jest/valid-describe-callback": "error",
     "jest/valid-expect": "error",
     "suffix-imports/no-platform-suffix": "error",
+    "redux-slices/selectors-in-slice": "error",
   },
   overrides: [
     {
@@ -93,7 +103,7 @@ export default defineConfig({
       ]),
       rules: { "react/no-children-prop": "off" },
     },
-    platformSuffixWaivers(PLATFORM_SUFFIX_WAIVERS),
+    sliceSelectorsWaivers(SLICE_SELECTORS_WAIVERS),
     {
       // Tailwind only runs on web; native styles go through Lumen's RN components.
       files: ["**/*.web.{ts,tsx}"],

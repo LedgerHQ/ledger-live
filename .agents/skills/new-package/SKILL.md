@@ -29,9 +29,13 @@ one line for `package.json` and the README title. Every option is defined in
 The generator creates a placeholder module and test, a pure `export *` barrel, an `internals.ts` stub
 per [package-public-api](../package-public-api/SKILL.md), explicit `exports` (no `./*` wildcard),
 README with an **UNSTABLE** status callout, tsconfig on the right `@support/tsconfig` archetype, a
-one-line jest config on the matching `@support/jest` factory, and `project.json` when the layer uses
-one. Tooling details live in [support-config](../support-config/SKILL.md); change them only when the
+one-line jest config on the matching `@support/jest` factory. It writes no `project.json`: a
+source-only package has no `build` target, and Nx `^build` reaches its dependencies without one.
+Tooling details live in [support-config](../support-config/SKILL.md); change them only when the
 generated preset is wrong for the package.
+
+Before adding an `exports` entry, read the `package.json` items of the
+[package checklist](../../../docs/new-library.md#package-checklist).
 
 ## 2. README and status marker
 

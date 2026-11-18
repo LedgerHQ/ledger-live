@@ -1,8 +1,0 @@
-{
-  "name": "@domain/entity-interest-rate",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

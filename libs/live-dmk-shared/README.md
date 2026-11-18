@@ -20,6 +20,17 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   header-override contract for platform-specific Device Intent Executor chrome
 - Centralises DMK configuration
 
+## Entry points
+
+- `@ledgerhq/live-dmk-shared` — everything that does not need React. It must not import `react`
+  or any `.tsx` file, so that non-React consumers (CLIs, coin testers) can read it from source.
+- `@ledgerhq/live-dmk-shared/react` — the React contexts, components and hooks:
+  `DeviceIntentTrackingProvider`, `useDeviceIntentTracking`,
+  `OverrideDeviceIntentExecutorHeader`, `DeviceIntentExecutorHeaderContext` and
+  `useDeviceIntentExecutorHeaderOverrideRequests`. Their types (`SourceFlow`,
+  `DeviceIntentTrackingProperties`, `DeviceIntentTrackingContextValue`,
+  `DeviceIntentExecutorHeaderContextValue`) stay exported from the root.
+
 ## Key exports / concepts
 
 - `deviceConnectivity/` — code shared by the device connection flows:
@@ -36,8 +47,14 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   - `SelectableDevice` — a device of the `Discovering` list. Its `key` stays the same while the list shows it: use it as the row key. Check `isAvailable` before you call `onSelect`: an available device has `isAvailable: true` and an `onSelect` callback. A device that discovery no longer reports has `isAvailable: false` and no `onSelect`.
   - `ConnectNewDeviceGetDiscoveredDeviceKey` — type of the `getDiscoveredDeviceKey` input. It returns the same key for the same device in every discovery update, so that the device list keeps its order.
   - `ConnectNewDeviceFilterListedDevices` — type of the optional `filterListedDevices` input. It selects the `ListedDevice`s that `Discovering` shows. A hidden device keeps its position in the list.
+  - `embedded` — optional input, `false` by default. `true` is the embedded mode, for a parent state machine that runs the flow with its own discovery service, already scanning, and ends it itself (see the [spec](src/connectNewDevice/ConnectNewDeviceStateMachine.spec.md#embedded-mode)).
+  - `EmbeddedConnectNewDeviceUIState` — the UI states that a parent shows in embedded mode: all the states without `Done`, `Terminated` and `UnknownError`.
 - `LedgerLiveLogger`, `LiveBlindSigningReporter`, `UserHashService` — shared services
 - `transport/` — shared transport interface definitions
+
+## Diagrams
+
+The Lucid document [LW device discovery and connectivity with DMK](https://lucid.app/lucidchart/2536447a-30cc-48ca-8607-643edd84d1f4/edit) has the architecture, the state machines and the screenshots of `connectDevice` and `connectNewDevice`, and the design of the My Wallet device list. The `*.spec.md` file next to each state machine is the source of its rules.
 
 ## Usage context
 

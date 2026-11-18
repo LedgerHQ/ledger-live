@@ -38,6 +38,7 @@ import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ContactsState } from "@domain/entity-contact";
 import type { AccountDataState } from "@domain/entity-account-data";
 import type { AccountReceivesState } from "@domain/entity-account-receive";
+import type { AccountStatusState } from "@domain/entity-account-status";
 import type { AccountBalancesState } from "@domain/entity-account-balance";
 import type { AccountOperationsState } from "@domain/entity-account-operation";
 import type { AccountBalanceHistoriesState } from "@domain/entity-account-balance-history";
@@ -45,7 +46,7 @@ import type { AccountsState as AccountEntriesState } from "@domain/entity-accoun
 import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
-import type { OsUpdateState } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import type { DeviceOsUpdateState } from "@domain/entity-device-os-update";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { CurrencyRegionRestrictedDrawerState } from "./currencyRegionRestrictedDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
@@ -494,7 +495,7 @@ export type State = LLMRTKApiState & {
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
-  osUpdate: OsUpdateState;
+  deviceOsUpdate: DeviceOsUpdateState;
   swapTransactionStatusDrawer: SwapTransactionStatusDrawerState;
   currencyRegionRestrictedDrawer: CurrencyRegionRestrictedDrawerState;
   notifications: NotificationsState;
@@ -526,6 +527,7 @@ export type State = LLMRTKApiState & {
   contacts: ContactsState;
   accountData: AccountDataState;
   accountReceives: AccountReceivesState;
+  accountStatus: AccountStatusState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;

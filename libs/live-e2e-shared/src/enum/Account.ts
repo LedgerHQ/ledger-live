@@ -513,19 +513,19 @@ export class Account {
 
   static readonly XRP_1 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 1",
+    accountName: "XRPL 1",
     index: 0,
     accountPath: "44'/144'/0'/0/0",
   });
   static readonly XRP_2 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 2",
+    accountName: "XRPL 2",
     index: 1,
     accountPath: "44'/144'/1'/0/0",
   });
   static readonly XRP_3 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 3",
+    accountName: "XRPL 3",
     index: 2,
     accountPath: "44'/144'/2'/0/0",
   });

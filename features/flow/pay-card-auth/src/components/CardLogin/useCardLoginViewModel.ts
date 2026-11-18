@@ -29,11 +29,11 @@ const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
 
-const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
+const INTRO_ROWS = [
   { icon: "CoinsAddPlus", key: "cashback" },
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
-];
+] as const satisfies readonly { icon: CardLoginIntroRowIcon; key: string }[];
 
 const PRESSABLE_LOGIN_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "idle",
@@ -291,9 +291,7 @@ export function useCardLoginViewModel({
       headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
-      alreadyHaveCardLabel: hasSeenLoginIntro
-        ? null
-        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
+      showAlreadyHaveCard: !hasSeenLoginIntro,
     };
   }, [t, hasSeenLoginIntro]);
 

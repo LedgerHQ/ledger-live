@@ -27,16 +27,24 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  TRONIFY_CREATE_RENT_RECORD_METHOD,
+  TRONIFY_GET_QUOTE_METHOD,
   TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  TRONIFY_UPLOAD_HASH_METHOD,
+  type CreateTronifyRentRecordParams,
+  type CreateTronifyRentRecordResult,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
+  type GetTronifyQuoteParams,
+  type GetTronifyQuoteResult,
   type IsTronifyEnergyDeliveredParams,
   type IsTronifyEnergyDeliveredResult,
+  type UploadTronifyHashParams,
+  type UploadTronifyHashResult,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import BigNumber from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
-import { resolveFamily } from "../../bridge/zcashRouting";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
@@ -81,6 +89,12 @@ type Handlers = {
     GetTransactionStatusResponse,
     GetTransactionStatusWireArgs
   >;
+  [TRONIFY_GET_QUOTE_METHOD]: RPCHandler<GetTronifyQuoteResult, GetTronifyQuoteParams>;
+  [TRONIFY_CREATE_RENT_RECORD_METHOD]: RPCHandler<
+    CreateTronifyRentRecordResult,
+    CreateTronifyRentRecordParams
+  >;
+  [TRONIFY_UPLOAD_HASH_METHOD]: RPCHandler<UploadTronifyHashResult, UploadTronifyHashParams>;
   [TRONIFY_IS_ENERGY_DELIVERED_METHOD]: RPCHandler<
     IsTronifyEnergyDeliveredResult,
     IsTronifyEnergyDeliveredParams
@@ -266,7 +280,7 @@ export const handlers = ({
         }
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-        const mainFromAccountFamily = resolveFamily(mainFromAccount.currency);
+        const mainFromAccountFamily = mainFromAccount.currency.family;
 
         const transaction = deserializeTransaction(params.rawTransaction);
 

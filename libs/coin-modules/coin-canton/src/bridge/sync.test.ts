@@ -2,7 +2,7 @@ import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import * as accountBalance from "../logic/getBalance";
+import * as instrumentBalances from "./instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
@@ -14,6 +14,7 @@ import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
   getLedgerEnd: jest.fn(),
+  getNativeInstrument: jest.fn(),
   getOperations: jest.fn(),
   getPartyById: jest.fn(),
   getPendingTransferProposals: jest.fn(),
@@ -22,7 +23,7 @@ jest.mock("../network/gateway", () => ({
 }));
 jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("../logic/getBalance");
+jest.mock("./instrumentBalances");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
@@ -33,8 +34,9 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   })),
 }));
 
-const mockedGetBalance = accountBalance.getBalance as jest.Mock;
+const mockedGetBalance = instrumentBalances.getInstrumentBalances as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
+const mockedGetNativeInstrument = gateway.getNativeInstrument as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
 const mockedGetPartyById = gateway.getPartyById as jest.Mock;
@@ -68,6 +70,12 @@ const createMockNativeBalance = (amount: string, locked = false): CantonBalance 
   utxoCount: 1,
   instrumentId: "Amulet",
   adminId: "native-admin",
+});
+
+const impostorAmulet = (value: string): CantonBalance => ({
+  ...createMockNativeBalance(value),
+  asset: { type: "token", assetReference: "Amulet" },
+  adminId: "impostor::1220dddd",
 });
 
 const createMockOperationView = (
@@ -157,6 +165,8 @@ describe("makeGetAccountShape", () => {
     index: 0,
     initialAccount: undefined,
   };
+  const sync = () =>
+    makeGetAccountShape(fakeSignerContext, fakeContext)(defaultInfo, { paginationConfig: {} });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -172,6 +182,10 @@ describe("makeGetAccountShape", () => {
 
     mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
+    mockedGetNativeInstrument.mockResolvedValue({
+      instrumentId: "Amulet",
+      instrumentAdmin: "native-admin",
+    });
     mockedGetPendingTransferProposals.mockResolvedValue([]);
     mockedGetPartyById.mockResolvedValue({ party_id: "test-party-id", public_key: "" });
     mockedGetCalTokensCached.mockResolvedValue(new Map());
@@ -655,6 +669,259 @@ describe("makeGetAccountShape", () => {
           }),
         }),
       ],
+    });
+  });
+
+  describe("token attribution by instrument admin", () => {
+    const instrumentId = "USDCx";
+    const calAdmin = "decentralized-usdc-interchain-rep::1220aaaa";
+    const otherAdmin = "impostor::1220bbbb";
+    const usdcx = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/usdcx",
+      contractAddress: calAdmin,
+      parentCurrencyId: "canton_network",
+      tokenType: "cip56",
+      name: "USDCx",
+      ticker: "USDCx",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "USDCx", code: "USDCx", magnitude: 10 }],
+    };
+    const tokenBalance = (adminId: string, value: string, id = instrumentId): CantonBalance => ({
+      value: BigInt(value),
+      locked: 0n,
+      asset: { type: "token", assetReference: id },
+      utxoCount: 1,
+      instrumentId: id,
+      adminId,
+    });
+    const proposalFrom = (adminId: string) => ({
+      contract_id: `offer-from-${adminId}`,
+      sender: "sender-party",
+      receiver: "test-party-id",
+      amount: "1",
+      instrument_id: instrumentId,
+      instrument_admin: adminId,
+      memo: "",
+      expires_at_micros: 4_102_444_800_000_000,
+      update_id: `update-from-${adminId}`,
+    });
+
+    beforeEach(() => {
+      mockedGetCalTokensCached.mockResolvedValue(new Map([[usdcx.id, instrumentId]]));
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        id === usdcx.id ? usdcx : undefined,
+      );
+      mockedGetEnabledInstrumentsCached.mockResolvedValue(
+        new Set([`${instrumentId}____${calAdmin}`]),
+      );
+      mockedGetOperations.mockResolvedValue({ operations: [] });
+    });
+
+    it("keeps only the CAL admin's balance and operations under the token", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+        tokenBalance(calAdmin, "500"),
+        { ...tokenBalance(calAdmin, "200"), locked: 200n },
+      ]);
+      mockedGetOperations.mockResolvedValue({
+        operations: [
+          createMockOperationView({ txHash: "own-tx", instrumentId, instrumentAdmin: calAdmin }),
+          createMockOperationView({
+            txHash: "foreign-tx",
+            instrumentId,
+            instrumentAdmin: otherAdmin,
+          }),
+        ],
+      });
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          balance: BigNumber(700),
+          spendableBalance: BigNumber(500),
+          operations: [expect.objectContaining({ hash: "own-tx" })],
+        }),
+      ]);
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 1,
+        [`${instrumentId}____${calAdmin}`]: 2,
+        [`${instrumentId}____${otherAdmin}`]: 1,
+      });
+    });
+
+    it("gives each admin's balance to its own CAL token when two share an instrument id", async () => {
+      const otherUsdcx = {
+        ...usdcx,
+        id: "canton_network/cip56/usdcx-other",
+        contractAddress: otherAdmin,
+      };
+      mockedGetCalTokensCached.mockResolvedValue(
+        new Map([
+          [usdcx.id, instrumentId],
+          [otherUsdcx.id, instrumentId],
+        ]),
+      );
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        [usdcx, otherUsdcx].find(token => token.id === id),
+      );
+      mockedGetEnabledInstrumentsCached.mockResolvedValue(
+        new Set([`${instrumentId}____${calAdmin}`, `${instrumentId}____${otherAdmin}`]),
+      );
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({ token: otherUsdcx, balance: BigNumber(900) }),
+        expect.objectContaining({ token: usdcx, balance: BigNumber(500) }),
+      ]);
+    });
+
+    it("creates no token sub-account for a CAL token without an admin", async () => {
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        id === usdcx.id ? { ...usdcx, contractAddress: "" } : undefined,
+      );
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("creates no token sub-account from another admin's balance", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("creates no token sub-account from another admin's proposal", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetPendingTransferProposals.mockResolvedValue([proposalFrom(otherAdmin)]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("keeps another admin's proposal off the token sub-account", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+      mockedGetPendingTransferProposals.mockResolvedValue([
+        proposalFrom(otherAdmin),
+        proposalFrom(calAdmin),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          cantonResources: { pendingTransferProposals: [proposalFrom(calAdmin)] },
+        }),
+      ]);
+    });
+
+    it("reads the native balance by its instrument id whatever row comes first", async () => {
+      mockedGetBalance.mockResolvedValue([
+        tokenBalance("unlisted-admin::1220cccc", "900", "UnlistedToken"),
+        createMockNativeBalance("1000"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.balance).toEqual(BigNumber(1000));
+    });
+  });
+
+  describe("native instrument admin", () => {
+    it("counts only the DSO's holdings of the native instrument id as CC", async () => {
+      mockedGetBalance.mockResolvedValue([
+        impostorAmulet("900"),
+        createMockNativeBalance("1000"),
+        createMockNativeBalance("50", true),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape).toMatchObject({
+        balance: BigNumber(1050),
+        spendableBalance: BigNumber(1000),
+        subAccounts: [],
+      });
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 2,
+        "Amulet____impostor::1220dddd": 1,
+      });
+    });
+
+    it("keeps the DSO party on the account for the offer list", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+
+      const shape = await sync();
+
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
+    });
+
+    it("scans an account without a party without reading the DSO party", async () => {
+      mockedIsOnboarded.mockResolvedValue({ isOnboarded: false });
+
+      const shape = await sync();
+
+      expect(mockedGetNativeInstrument).not.toHaveBeenCalled();
+      expect(shape.cantonResources).not.toHaveProperty("nativeInstrumentAdmin");
+    });
+
+    it("fails rather than guess the CC balance when the DSO party can't be read or was never saved", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+
+      await expect(sync()).rejects.toThrow("gateway down");
+    });
+
+    it("uses the DSO party saved by an earlier sync when it can't be read", async () => {
+      mockedGetBalance.mockResolvedValue([impostorAmulet("900"), createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+      const info = createMockCantonAccountShapeInfo({
+        initialAccount: {
+          xpub: "party123",
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+            nativeInstrumentAdmin: "native-admin",
+          },
+        } as unknown as CantonAccount,
+      });
+
+      const shape = await makeGetAccountShape(fakeSignerContext, fakeContext)(info, {
+        paginationConfig: {},
+      });
+
+      expect(mockedGetBalance).toHaveBeenCalledWith(expect.anything(), "party123", {
+        instrumentId: "Amulet",
+        instrumentAdmin: "native-admin",
+      });
+      expect(shape.balance).toEqual(BigNumber(1000));
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
     });
   });
 });

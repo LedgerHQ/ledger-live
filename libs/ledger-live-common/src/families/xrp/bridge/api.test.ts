@@ -3,11 +3,18 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { getXrpEnabledTokenStandards } from "../config";
+import type { XrpTokenAccount } from "../types";
 import BigNumber from "bignumber.js";
-import type { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, SyncConfig } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
-import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";
+import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
+import {
+  buildOptimisticOperation,
+  transactionToIntent,
+} from "../../../bridge/generic-coin-framework/utils";
 import xrpBridgeApi, {
+  adaptOperations,
+  buildIntentData,
   buildTokenAccountShapes,
   describeOptimisticOperation,
   getAssetFromToken,
@@ -78,6 +85,10 @@ function makeTrustSet(assetReference: string) {
     fees: new BigNumber(12),
     assetOwner: ISSUER,
   };
+}
+
+function makeOptOut(assetReference: string) {
+  return { ...makeTrustSet(assetReference), mode: "optOut" as const, amount: new BigNumber(0) };
 }
 
 beforeAll(() => {
@@ -248,13 +259,50 @@ describe("buildTokenAccountShapes", () => {
   });
 });
 
+describe("buildIntentData", () => {
+  it("lets rippling through a changeTrust only when noRipple is false", () => {
+    const intentData = buildIntentData({ mode: "changeTrust", noRipple: false });
+
+    expect(intentData).toEqual({ type: "changeTrust", noRipple: false });
+  });
+
+  it.each([true, undefined])("blocks rippling on a changeTrust when noRipple is %s", noRipple => {
+    const intentData = buildIntentData({ mode: "changeTrust", noRipple });
+
+    expect(intentData).toEqual({ type: "changeTrust", noRipple: true });
+  });
+
+  it.each([undefined, "send"])("carries no data for the mode %s", mode => {
+    expect(buildIntentData({ mode, noRipple: false })).toEqual({ type: "none" });
+  });
+});
+
+describe("adaptOperations", () => {
+  it("leaves an operation above the balance ledger to the next sync", () => {
+    const block = { height: 64, hash: "0xblock", time: new Date("2024-01-15") };
+    const operations = [
+      { hash: "after", blockHeight: 65 },
+      { hash: "at", blockHeight: 64 },
+    ];
+
+    const adapted = adaptOperations("rAddress", operations as Operation[], block);
+
+    expect(adapted.map(op => op.hash)).toEqual(["at"]);
+  });
+});
+
 describe("xrpBridgeApi", () => {
-  it("sets no syncVersion while no standard is enabled", () => {
+  it("sets no syncVersion and keeps every synced operation while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
     const bridgeApi = xrpBridgeApi(ripple);
 
     expect(bridgeApi).not.toHaveProperty("syncVersion");
+    expect(bridgeApi).not.toHaveProperty("adaptOperations");
+  });
+
+  it("leaves operations above the balance ledger to the next sync while a standard is enabled", () => {
+    expect(xrpBridgeApi(ripple).adaptOperations).toBe(adaptOperations);
   });
 
   it("puts the enabled standards in syncVersion", () => {
@@ -273,6 +321,10 @@ describe("xrpBridgeApi", () => {
     expect(xrpBridgeApi(ripple).tokenOptParentRow).toBe(true);
   });
 
+  it("drops a token missing from the balance", () => {
+    expect(xrpBridgeApi(ripple).dropsMissingTokens).toBe(true);
+  });
+
   it("keeps opt-ins as fee rows while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
@@ -282,7 +334,11 @@ describe("xrpBridgeApi", () => {
 
 describe("describeOptimisticOperation", () => {
   const usd = { tokenIdentifier: "USD", contractAddress: ISSUER } as TokenCurrency;
-  const usdAccount = { id: "usdAccount", token: usd } as TokenAccount;
+  const usdAccount = {
+    id: "usdAccount",
+    token: usd,
+    xrpResources: { isLocked: false, isRippling: false, limit: new BigNumber(1000) },
+  } as XrpTokenAccount;
   const account = {
     id: "xrpAccount",
     freshAddress: "rSender",
@@ -325,8 +381,54 @@ describe("describeOptimisticOperation", () => {
     expect(describeOptimisticOperation("changeTrust", account, transaction)?.type).toBe("OPT_IN");
   });
 
+  it("records a re-add of a removed token as OPT_IN", () => {
+    const removedAccount = {
+      ...account,
+      subAccounts: [{ id: "usdAccount", token: usd }],
+    } as Account;
+
+    expect(
+      describeOptimisticOperation("changeTrust", removedAccount, makeTrustSet("USD"))?.type,
+    ).toBe("OPT_IN");
+  });
+
+  it("records an opt-out as OPT_OUT with a 0 value and the token in its transaction", () => {
+    const operation = buildOptimisticOperation(
+      account,
+      makeOptOut("USD"),
+      undefined,
+      describeOptimisticOperation,
+    );
+
+    expect(operation).toMatchObject({ type: "OPT_OUT", accountId: "xrpAccount" });
+    expect(operation.value.toFixed()).toBe("0");
+    expect(operation.subOperations).toBeUndefined();
+    expect(operation.transactionRaw).toMatchObject({ assetReference: "USD", assetOwner: ISSUER });
+  });
+
   it("keeps the generic description of a send", () => {
     expect(describeOptimisticOperation("send", account, makeTrustSet("USD"))).toBeUndefined();
+  });
+});
+
+describe("opt-out intent", () => {
+  it.each([
+    ["USD", "IOU"],
+    [MPT_ID, "MPT"],
+  ])("sends the optOut intent for the token %s (%s), with no recipient or amount", reference => {
+    const account = { freshAddress: "rSender", subAccounts: [] } as unknown as Account;
+    const transaction = makeOptOut(reference) as GenericTransaction;
+
+    const intent = transactionToIntent(account, transaction, undefined, undefined, buildIntentData);
+
+    expect(intent).toMatchObject({
+      type: "optOut",
+      sender: "rSender",
+      recipient: "",
+      amount: 0n,
+      asset: { type: "token", assetReference: reference, assetOwner: ISSUER },
+      data: { type: "none" },
+    });
   });
 });
 

@@ -1,3 +1,3 @@
-export * from "./hero/AccountHero.web";
-export * from "./components/AccountAssetPicker/AccountAssetPicker.web";
-export * from "./components/AccountEmptyState/AccountEmptyState.web";
+export * from "./hero/AccountHero";
+export * from "./components/AccountAssetPicker/AccountAssetPicker";
+export * from "./components/AccountEmptyState/AccountEmptyState";

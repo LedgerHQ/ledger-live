@@ -7,8 +7,8 @@ import {
   LoadingStateType,
   RetryableStateType,
   type EnsureAppReadyState,
-  DeviceIntentTrackingProvider,
 } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";

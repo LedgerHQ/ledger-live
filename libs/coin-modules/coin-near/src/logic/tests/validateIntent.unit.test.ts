@@ -468,5 +468,82 @@ describe("validateIntent", () => {
 
       expect(result.warnings.amount?.name).toBe("NearUseAllAmountStakeWarning");
     });
+
+    it("rejects delegating the entire spendable balance when it cannot cover the fee", async () => {
+      const result = await validateIntent(
+        mockNearContext,
+        stakingIntent("delegate", { useAllAmount: true }),
+        [nativeBalance(15_332_000_000_000_000_000_000n)],
+        { value: 55_000_000_000_000_000_000_000n },
+      );
+
+      expect(result.errors.amount?.name).toBe("NotEnoughBalance");
+      expect(result.warnings).toEqual({});
+    });
+
+    it("rejects unstaking below the staking threshold", async () => {
+      const result = await validateIntent(
+        mockNearContext,
+        stakingIntent("undelegate", { amount: 1n }),
+        [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "active")],
+        FEES,
+      );
+
+      expect(result.errors.amount?.name).toBe("NearStakingThresholdNotMet");
+      expect((result.errors.amount as unknown as { threshold: string }).threshold).toMatch(/NEAR$/);
+    });
+
+    describe("when the intent only carries the framework type", () => {
+      it("rejects withdrawing more than has been released for type finalize_unstake", async () => {
+        const result = await validateIntent(
+          mockNearContext,
+          stakingIntent("withdraw", {
+            mode: undefined,
+            valAddress: undefined,
+            type: "finalize_unstake",
+            recipient: VALIDATOR,
+            amount: ABOVE_THRESHOLD * 5n,
+          }),
+          [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "withdrawable")],
+          FEES,
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughAvailable");
+      });
+
+      it("rejects unstaking more than is delegated for type unstake", async () => {
+        const result = await validateIntent(
+          mockNearContext,
+          stakingIntent("undelegate", {
+            mode: undefined,
+            valAddress: undefined,
+            type: "unstake",
+            recipient: VALIDATOR,
+            amount: ABOVE_THRESHOLD * 5n,
+          }),
+          [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "active")],
+          FEES,
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughStaked");
+      });
+
+      it("warns when staking the entire spendable balance for type stake", async () => {
+        const result = await validateIntent(
+          mockNearContext,
+          stakingIntent("delegate", {
+            mode: undefined,
+            valAddress: undefined,
+            type: "stake",
+            recipient: VALIDATOR,
+            useAllAmount: true,
+          }),
+          [nativeBalance(ONE_NEAR * 10n)],
+          FEES,
+        );
+
+        expect(result.warnings.amount?.name).toBe("NearUseAllAmountStakeWarning");
+      });
+    });
   });
 });
