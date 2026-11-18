@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/core";

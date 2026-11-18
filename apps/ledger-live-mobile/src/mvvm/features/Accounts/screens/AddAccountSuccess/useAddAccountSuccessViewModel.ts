@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/core";
 import { useCallback } from "react";
 import { useTheme } from "styled-components/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";

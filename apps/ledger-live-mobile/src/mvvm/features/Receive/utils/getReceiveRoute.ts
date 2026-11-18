@@ -26,7 +26,8 @@ export type ReceiveRoute =
  * `ReceiveConfirmation` params and navigates to the route returned here.
  * - `newReceiveFlow` on, account known to the account model and family supported: the `Receive`
  *   navigator on the account and the asset to receive;
- * - otherwise: `ReceiveFunds` > `ReceiveConfirmation`, unchanged.
+ * - otherwise, or when the entry asks to create the token account: `ReceiveFunds` >
+ *   `ReceiveConfirmation`, unchanged.
  */
 export function getReceiveRoute(params: ReceiveConfirmationParams, state: State): ReceiveRoute {
   const legacy: ReceiveRoute = [
@@ -34,7 +35,8 @@ export function getReceiveRoute(params: ReceiveConfirmationParams, state: State)
     { screen: ScreenName.ReceiveConfirmation, params },
   ];
   const flag = selectFeature(state, "newReceiveFlow");
-  if (!flag?.enabled) return legacy;
+  // The legacy screen adds the token account it is asked to create; the new flow stores none yet.
+  if (!flag?.enabled || params.createTokenAccount) return legacy;
 
   const accounts = accountsSelector(state);
   const mainAccount =

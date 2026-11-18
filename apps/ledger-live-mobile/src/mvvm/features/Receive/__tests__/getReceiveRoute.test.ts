@@ -88,6 +88,17 @@ describe("getReceiveRoute", () => {
       expect(getReceiveRoute(params, makeState({ enabled: false }))).toEqual(legacy(params));
     });
 
+    it("when the entry asks to create the token account", () => {
+      const params = {
+        accountId: usdcAccount.id,
+        parentId: ethAccount.id,
+        currency: usdcAccount.token,
+        createTokenAccount: true,
+      };
+
+      expect(getReceiveRoute(params, makeState())).toEqual(legacy(params));
+    });
+
     it("when the account is unknown to the wallet", () => {
       const params = { accountId: "js:2:ethereum:0xnope:" };
 
