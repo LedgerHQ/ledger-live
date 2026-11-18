@@ -15,6 +15,11 @@ export const xrpIouToken: TokenCurrency = {
   units: [{ name: "RLUSD", code: "RLUSD", magnitude: 0 }],
 };
 
+export const xrpIouAsset = {
+  assetReference: xrpIouToken.tokenIdentifier,
+  assetOwner: xrpIouToken.contractAddress,
+};
+
 export const xrpMptToken: TokenCurrency = {
   type: "TokenCurrency",
   id: TokenCurrencyIdSchema.parse("ripple_testnet/mpt/test"),
