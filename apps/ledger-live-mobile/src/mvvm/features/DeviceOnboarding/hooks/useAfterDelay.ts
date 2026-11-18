@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 
-/** True once `active` has stayed true for `delayMs`; back to false as soon as it turns false. */
-export function useAfterDelay(active: boolean, delayMs: number): boolean {
-  const [elapsed, setElapsed] = useState(false);
+/** True once `active` has stayed true for `delayMs`; back to false as soon as it turns false or `restartKey` changes. */
+export function useAfterDelay(active: boolean, delayMs: number, restartKey = 0): boolean {
+  const [elapsedFor, setElapsedFor] = useState<number | null>(null);
 
   useEffect(() => {
     if (!active) return;
-    const timer = setTimeout(() => setElapsed(true), delayMs);
+    const timer = setTimeout(() => setElapsedFor(restartKey), delayMs);
     return () => {
       clearTimeout(timer);
-      setElapsed(false);
+      setElapsedFor(null);
     };
-  }, [active, delayMs]);
+  }, [active, delayMs, restartKey]);
 
-  return active && elapsed;
+  return active && elapsedFor === restartKey;
 }

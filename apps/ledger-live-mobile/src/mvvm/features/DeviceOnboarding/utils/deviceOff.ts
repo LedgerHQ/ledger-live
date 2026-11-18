@@ -1,5 +1,6 @@
 import { ConnectionErrorTypes, DiscoveryErrorTypes } from "@ledgerhq/live-dmk-mobile";
-import { isResumingChecksState } from "./funnelPhase";
+import { reconnectTimeoutMs } from "@features/flow-device-onboarding-reconnect";
+import { isResumingChecks } from "./funnelPhase";
 
 const interactiveErrors = new Set<string>([
   ...Object.values(DiscoveryErrorTypes),
@@ -7,6 +8,7 @@ const interactiveErrors = new Set<string>([
 ]);
 
 export const powerOnAfterUpdateDelayMs = 20_000;
+export const giveUpAfterPowerOnMs = reconnectTimeoutMs;
 
 export function canRetryWithoutUser(error: string): boolean {
   return !interactiveErrors.has(error);
@@ -27,10 +29,11 @@ export function isDeviceOffDuringChecks({
 }>): boolean {
   const holdsChecks =
     heldMachineState?.startsWith("checks.") === true ||
-    (returningFromFirmwareUpdate &&
-      onboardedOnEntry === true &&
-      heldMachineState !== null &&
-      isResumingChecksState(heldMachineState));
+    isResumingChecks({
+      machineState: heldMachineState,
+      onboardedOnEntry,
+      returningFromFirmwareUpdate,
+    });
   return (
     machineState === "awaitingSession" && holdsChecks && onboardedOnEntry !== false && hasLiveDevice
   );

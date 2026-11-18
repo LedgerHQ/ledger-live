@@ -5,11 +5,16 @@ const delayMs = 20_000;
 
 function renderAfterDelay(initialActive: boolean) {
   let active = initialActive;
-  const hook = renderHook(() => useAfterDelay(active, delayMs));
+  let restartKey = 0;
+  const hook = renderHook(() => useAfterDelay(active, delayMs, restartKey));
   return {
     result: hook.result,
     setActive: (next: boolean) => {
       active = next;
+      hook.rerender(undefined);
+    },
+    restart: () => {
+      restartKey += 1;
       hook.rerender(undefined);
     },
   };
@@ -48,6 +53,18 @@ describe("useAfterDelay", () => {
     act(() => jest.advanceTimersByTime(delayMs - 1));
     expect(result.current).toBe(false);
     act(() => jest.advanceTimersByTime(1));
+    expect(result.current).toBe(true);
+  });
+
+  it("should count the delay again when the restart key changes", () => {
+    const { result, restart } = renderAfterDelay(true);
+    act(() => jest.advanceTimersByTime(delayMs));
+    expect(result.current).toBe(true);
+
+    restart();
+    expect(result.current).toBe(false);
+
+    act(() => jest.advanceTimersByTime(delayMs));
     expect(result.current).toBe(true);
   });
 });

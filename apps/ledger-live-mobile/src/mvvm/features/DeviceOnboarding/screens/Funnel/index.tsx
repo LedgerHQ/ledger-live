@@ -1,5 +1,6 @@
 import React from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
@@ -34,6 +35,7 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
       <>
         <ChecksScreen {...screen.checks} />
         {screen.powerOnSheet ? <PowerOnSheet {...screen.powerOnSheet} /> : null}
+        {screen.reconnectSheet ? <ReconnectSheet {...screen.reconnectSheet} /> : null}
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );

@@ -246,7 +246,7 @@ export function useDeviceOnboarding({
         const expectedDevice = expectedDeviceRef.current;
         const reusedSession = result.sessionId === releasedSessionRef.current;
         const differentDevice =
-          expectedDevice !== null && !isRebootedDevice(expectedDevice, incomingDevice);
+          expectedDevice === null || !isRebootedDevice(expectedDevice, incomingDevice);
         if (
           actorRef.current &&
           waitingAfterUpdateRef.current &&
@@ -281,6 +281,7 @@ export function useDeviceOnboarding({
             return;
           }
           waitingAfterUpdateRef.current = false;
+          expectedDeviceRef.current = null;
           startSessionListener(result, nextPorts.currentSessionId());
           setSessionReady(true);
           setStatus("running");
@@ -426,6 +427,7 @@ export function useDeviceOnboarding({
     void ports?.closeSession();
     retryRef.current = null;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -443,6 +445,7 @@ export function useDeviceOnboarding({
     void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -454,6 +457,7 @@ export function useDeviceOnboarding({
     if (!actor?.getSnapshot().can({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" })) return;
     waitingAfterUpdateRef.current = true;
     expectedDeviceRef.current = liveDeviceRef.current;
+    retryRef.current = null;
     releasedSessionRef.current = portsRef.current?.currentSessionId() ?? null;
     dropLostTransport();
     send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
@@ -468,6 +472,7 @@ export function useDeviceOnboarding({
   const abortFirmwareReconnect = useCallback(() => {
     adoptGeneration.current += 1;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
     sessionActorRef.current?.stop();

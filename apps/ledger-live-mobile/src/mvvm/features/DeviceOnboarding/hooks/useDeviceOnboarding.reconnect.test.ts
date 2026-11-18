@@ -1,7 +1,12 @@
 import { DeviceModelId, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { OnboardingStep } from "@features/platform-device-onboarding";
 import * as liveDmkMobile from "@ledgerhq/live-dmk-mobile";
-import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import {
+  ConnectDeviceUIStateTypes,
+  ConnectionErrorTypes,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/live-dmk-mobile";
+import { Observable } from "rxjs";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
@@ -155,6 +160,48 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
     act(() => result.current.connect());
 
     expect(connectDevice.mock.calls[0][0].knownDevices).toEqual(knownDevices);
+  });
+
+  it("opens a new connection after the update even when an earlier connection error left a retry behind", async () => {
+    const device = createScriptedTestDevice();
+    const { result, rerender } = renderHook(
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+        }),
+      },
+    );
+    await connectStax(result, device);
+    const connectDevice = jest.mocked(liveDmkMobile.connectDevice);
+    const staleRetry = jest.fn();
+    connectDevice.mockImplementationOnce(
+      () =>
+        new Observable(subscriber => {
+          subscriber.next({
+            type: ConnectDeviceUIStateTypes.ConnectionError,
+            error: { type: ConnectionErrorTypes.BlePairingRefused },
+            device: knownStax,
+            ignore: jest.fn(),
+            retry: staleRetry,
+          });
+        }),
+    );
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.error).toBe(ConnectionErrorTypes.BlePairingRefused));
+    connectDevice.mockClear();
+
+    device.dmk.disconnect = jest.fn(async () => undefined) as DeviceManagementKit["disconnect"];
+    device.dmk.listConnectedDevices = (() => []) as DeviceManagementKit["listConnectedDevices"];
+    device.setSession("session-2");
+    device.show();
+    act(() => {
+      mockUseFirmwareUpdateHandover.latest?.onReconnectRequired();
+    });
+    rerender(undefined as never);
+
+    await waitFor(() => expect(connectDevice).toHaveBeenCalled());
+    expect(staleRetry).not.toHaveBeenCalled();
   });
 
   it("shows an error when the original session is still the only connected device", async () => {

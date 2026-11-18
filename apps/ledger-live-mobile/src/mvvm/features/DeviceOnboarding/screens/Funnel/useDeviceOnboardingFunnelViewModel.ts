@@ -6,7 +6,9 @@ import {
   type ParamListBase,
   type RouteProp,
 } from "@react-navigation/native";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
 import { deviceReportsRecoveryKey, SeedPath } from "@features/platform-device-onboarding";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
@@ -32,6 +34,8 @@ import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboard
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import {
+  canRetryWithoutUser,
+  giveUpAfterPowerOnMs,
   isDeviceOffDuringChecks,
   powerOnAfterUpdateDelayMs,
 } from "LLM/features/DeviceOnboarding/utils/deviceOff";
@@ -70,6 +74,7 @@ export type DeviceOnboardingFunnelModel = (
       checks: ChecksScreenProps;
       unlockSheet: DeviceUnlockSheetProps | null;
       powerOnSheet: PowerOnSheetModel | null;
+      reconnectSheet: ReconnectSheetProps | null;
     }
   | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
@@ -348,16 +353,40 @@ function withUnlockSheet(
   return built;
 }
 
+function productNameOf(modelId: ChecksScreenProps["device"]["modelId"]) {
+  return getDeviceModel(modelId).productName || modelId;
+}
+
+type DeviceOffOverlay = Readonly<{
+  active: boolean;
+  device: ScreenActions["device"];
+  quitConfirmationOpen: boolean;
+  onQuit: () => void;
+  onRetry: (() => void) | null;
+}>;
+
 function checksWhileDeviceOff(
   built: DeviceOnboardingFunnelModel,
-  deviceOff: boolean,
-  device: ScreenActions["device"],
-  onQuit: () => void,
+  { active, device, quitConfirmationOpen, onQuit, onRetry }: DeviceOffOverlay,
 ): DeviceOnboardingFunnelModel {
-  if (!deviceOff || built.status !== "checks") return built;
+  if (!active || built.status !== "checks") return built;
+  if (onRetry) {
+    return {
+      ...built,
+      reconnectSheet: device
+        ? {
+            connection: { state: "failed", retry: onRetry },
+            productName: productNameOf(device.modelId),
+            suspendSheets: quitConfirmationOpen,
+            onQuit,
+          }
+        : null,
+    };
+  }
   return {
     ...built,
-    powerOnSheet: device ? { ...toDeviceUnlockSheetProps(device), onQuit } : null,
+    powerOnSheet:
+      device && !quitConfirmationOpen ? { ...toDeviceUnlockSheetProps(device), onQuit } : null,
   };
 }
 
@@ -386,6 +415,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     quitConfirmation: actions.quitConfirmation,
     unlockSheet: null,
     powerOnSheet: null,
+    reconnectSheet: null,
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
@@ -610,13 +640,26 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   });
   const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
   const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
-  const returningToChecks =
-    returningFromFirmwareUpdate && (onboarding.error === null || deviceOffDuringChecks);
-  const phase = phaseOf(shownState, onboardedOnEntry, returningToChecks);
+  const phase = phaseOf(shownState, onboardedOnEntry, returningFromFirmwareUpdate);
+  const waitingForUpdatedDevice =
+    phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState;
   const waitedLongForDeviceAfterUpdate = useAfterDelay(
-    phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState,
+    waitingForUpdatedDevice,
     powerOnAfterUpdateDelayMs,
   );
+  const [waitAttempt, setWaitAttempt] = useState(0);
+  const askingToPowerOn = waitedLongForDeviceAfterUpdate || deviceOffDuringChecks;
+  const gaveUpWaiting = useAfterDelay(askingToPowerOn, giveUpAfterPowerOnMs, waitAttempt);
+  const reconnectFailed =
+    gaveUpWaiting ||
+    (onboarding.error !== null &&
+      (waitingForUpdatedDevice ||
+        (deviceOffDuringChecks && !canRetryWithoutUser(onboarding.error))));
+  const retryAfterFailure = useCallback(() => {
+    setWaitAttempt(previous => previous + 1);
+    if (waitingForUpdatedDevice) reconnect();
+    else reconnectToLiveDevice();
+  }, [reconnect, reconnectToLiveDevice, waitingForUpdatedDevice]);
   const screenState = checksScreenForPhase(
     phase,
     shownState,
@@ -640,6 +683,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     holdingLockedScreen ||
     deviceOffDuringChecks ||
     waitedLongForDeviceAfterUpdate ||
+    reconnectFailed ||
     quitConfirmation?.isOpen === true;
   const unseededSetup = useUnseededFunnelViewModel({
     machineState: shownState,
@@ -717,12 +761,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return checksWhileDeviceOff(
-    withUnlockSheet(built, holdingLockedScreen, locked, device),
-    deviceOffDuringChecks || waitedLongForDeviceAfterUpdate,
-    quitConfirmation?.isOpen ? null : device,
-    waitedLongForDeviceAfterUpdate ? leaveFirmwareReconnect : leaveFromHeader,
-  );
+  return checksWhileDeviceOff(withUnlockSheet(built, holdingLockedScreen, locked, device), {
+    active: deviceOffDuringChecks || waitedLongForDeviceAfterUpdate || reconnectFailed,
+    device,
+    quitConfirmationOpen: quitConfirmation?.isOpen === true,
+    onQuit: waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
+    onRetry: reconnectFailed ? retryAfterFailure : null,
+  });
 }
 
 function readString(value: unknown): string | null {

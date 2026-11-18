@@ -29,8 +29,21 @@ const statesBeforeChecksResume = new Set([
   "routing",
 ]);
 
-export function isResumingChecksState(machineState: string): boolean {
-  return statesBeforeChecksResume.has(machineState);
+export function isResumingChecks({
+  machineState,
+  onboardedOnEntry,
+  returningFromFirmwareUpdate,
+}: Readonly<{
+  machineState: string | null;
+  onboardedOnEntry: boolean | null;
+  returningFromFirmwareUpdate: boolean;
+}>): boolean {
+  return (
+    returningFromFirmwareUpdate &&
+    onboardedOnEntry === true &&
+    machineState !== null &&
+    statesBeforeChecksResume.has(machineState)
+  );
 }
 
 export function phaseOf(
@@ -39,11 +52,7 @@ export function phaseOf(
   returningFromFirmwareUpdate = false,
 ): FunnelPhase | null {
   if (machineState === null) return "connecting";
-  if (
-    returningFromFirmwareUpdate &&
-    onboardedOnEntry === true &&
-    isResumingChecksState(machineState)
-  ) {
+  if (isResumingChecks({ machineState, onboardedOnEntry, returningFromFirmwareUpdate })) {
     return "resumingChecks";
   }
   if (machineState.startsWith("checks.")) return "checks";
