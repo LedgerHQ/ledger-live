@@ -1,13 +1,8 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { selectFeature } from "@shared/feature-flags";
-import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  resolveReceiveFamilyConfig,
-  toReceiveTarget,
-  type GetReceiveFamilyConfig,
-} from "@features/flow-receive";
+import { resolveReceiveRoute, type GetReceiveFamilyConfig } from "@features/flow-receive";
 import { NavigatorName, ScreenName } from "~/const";
 import receiveAddressConfigs from "~/generated/ReceiveAddressConfig";
 import type { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
@@ -53,23 +48,18 @@ export function getReceiveRoute(params: ReceiveConfirmationParams, state: State)
     params.currency?.type === "CryptoCurrency" || params.currency?.type === "TokenCurrency"
       ? params.currency
       : getAccountCurrency(tokenAccount ?? mainAccount);
-  const assetId = CryptoOrTokenCurrencyIdSchema.safeParse(asset.id);
-  const target =
-    assetId.success && toReceiveTarget(state.accountEntries, mainAccount.id, assetId.data);
-  if (!target) return legacy;
-
   const family = mainAccount.currency.family;
-  const { isSupported } = resolveReceiveFamilyConfig({
+  const target = resolveReceiveRoute({
+    flag,
+    accounts: state.accountEntries,
+    legacyAccountId: mainAccount.id,
+    asset,
     family,
-    familyConfig: familyConfigs[family]?.({
-      descriptor: target.descriptor,
-      asset,
-      featureFlags: state.featureFlags.resolved,
-      legacyAccount: mainAccount,
-    }),
-    excludedFamilies: flag.params?.excludedFamilies ?? [],
+    familyConfig: familyConfigs[family],
+    featureFlags: state.featureFlags.resolved,
+    legacyAccount: mainAccount,
   });
-  if (!isSupported) return legacy;
+  if (!target) return legacy;
 
   return [
     NavigatorName.Receive,

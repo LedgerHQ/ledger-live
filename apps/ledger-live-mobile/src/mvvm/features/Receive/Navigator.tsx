@@ -8,6 +8,7 @@ import {
 } from "LLM/components/Navigation";
 import type { ReceiveNavigatorParamList } from "~/components/RootNavigator/types/ReceiveNavigator";
 import { ScreenName } from "~/const";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import ReceiveAddressScreen from "./screens/ReceiveAddress";
 
 const Stack = createLumenNativeStackNavigator<ReceiveNavigatorParamList>();
@@ -17,6 +18,7 @@ export function ReceiveNavigator(): React.JSX.Element {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const onClose = useCallback(() => navigation.goBack(), [navigation]);
+  const { notifyFlowCompleted } = useNotificationsPrompt();
 
   const stackNavigationConfig = useMemo(
     () => getStackNavigationConfigV4(theme, "compact", true, onClose),
@@ -31,6 +33,8 @@ export function ReceiveNavigator(): React.JSX.Element {
         name={ScreenName.ReceiveAddress}
         component={ReceiveAddressScreen}
         options={{ title: "", headerLeft: () => null }}
+        // Every way out of receive offers the notifications prompt, as the legacy flow does.
+        listeners={{ beforeRemove: () => notifyFlowCompleted("receive") }}
       />
     </Stack.Navigator>
   );
