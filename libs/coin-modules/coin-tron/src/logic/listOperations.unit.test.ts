@@ -527,6 +527,120 @@ describe("listOperations", () => {
     expect(getBlock).not.toHaveBeenCalled();
   });
 
+  describe("several TRC20 transfers in one transaction", () => {
+    const USDT = TRC20_CONTRACT;
+    const WTRX = "TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR";
+    const POOL = "TPool";
+
+    const transfer = (overrides: Partial<TrongridTxInfo>): TrongridTxInfo => ({
+      txID: "swap",
+      date: new Date(5000),
+      blockHeight: 5000,
+      type: "TriggerSmartContract",
+      tokenType: "trc20",
+      tokenAddress: USDT,
+      from: POOL,
+      to: address,
+      value: new BigNumber(1),
+      hasFailed: false,
+      ...overrides,
+    });
+
+    const onePage = (nativeTxs: TrongridTxInfo[], trc20Txs: TrongridTxInfo[]) => {
+      const pageOf = (txs: TrongridTxInfo[]): TxEndpointPage => ({
+        rawTimestamps: txs.map(tx => tx.date.getTime()),
+        txs,
+        next: undefined,
+      });
+      (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+        native: pageOf(nativeTxs),
+        trc20: pageOf(trc20Txs),
+      });
+    };
+
+    const summary = (op: { id: string; token?: string; value?: string }) =>
+      `${op.id}:${op.token}:${op.value}`;
+
+    beforeEach(() => {
+      (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx: TrongridTxInfo) => ({
+        id: tx.txID,
+        token: tx.tokenAddress,
+        value: tx.value?.toString(),
+      }));
+    });
+
+    const list = async () =>
+      (
+        await listOperations(logger, config, address, {
+          limit: 200,
+          minTimestamp: 0,
+          order: "desc",
+        })
+      ).items as unknown as { id: string; token?: string; value?: string }[];
+
+    it("gives one operation per token when a transaction moves two tokens", async () => {
+      onePage(
+        [],
+        [
+          transfer({ tokenAddress: USDT, from: address, to: POOL, value: new BigNumber(10) }),
+          transfer({ tokenAddress: WTRX, from: POOL, to: address, value: new BigNumber(7) }),
+        ],
+      );
+
+      expect((await list()).map(summary)).toEqual([`swap:${USDT}:10`, `swap:${WTRX}:7`]);
+    });
+
+    it("sums transfers of one token in one direction, identically on every sync", async () => {
+      onePage(
+        [],
+        [
+          transfer({ from: POOL, value: new BigNumber(10) }),
+          transfer({ from: "TOtherPool", value: new BigNumber(5) }),
+        ],
+      );
+
+      const firstSync = await list();
+      const secondSync = await list();
+
+      expect(firstSync.map(summary)).toEqual([`swap:${USDT}:15`]);
+      expect(secondSync).toEqual(firstSync);
+    });
+
+    it("gives one operation for a native record also returned by the TRC20 endpoint", async () => {
+      onePage(
+        [transfer({ type: "TriggerSmartContract", tokenType: undefined, tokenAddress: undefined })],
+        [transfer({ value: new BigNumber(10) })],
+      );
+
+      expect((await list()).map(summary)).toEqual([`swap:${USDT}:10`]);
+    });
+
+    it("emits a transaction whose records straddle a page boundary once, whole", async () => {
+      fakeTronGrid([
+        trc20("t9", 9000),
+        trc20("multi", 5000),
+        trc20("multi", 5000),
+        trc20("multi", 5000),
+        trc20("t1", 1000),
+      ]);
+
+      const ops: { id: string; value?: string }[] = [];
+      let cursor: string | undefined;
+      do {
+        const result = await listOperations(logger, config, address, {
+          limit: 2,
+          minTimestamp: 0,
+          order: "desc",
+          cursor,
+        });
+        ops.push(...(result.items as unknown as { id: string; value?: string }[]));
+        cursor = result.next;
+      } while (cursor);
+
+      expect(ops.map(op => `${op.id}:${op.value}`)).toEqual(["t9:1", "multi:3", "t1:1"]);
+    });
+  });
+
   it("propagates a network error", async () => {
     (fetchTronAccountTxsPage as jest.Mock).mockRejectedValue(new Error("Network error!"));
 
