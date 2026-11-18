@@ -8,6 +8,7 @@ import { useDispatch } from "~/context/hooks";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import type { State } from "~/reducers/types";
+import { markAppSessionStart } from "~/appSessionStart";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { LargeScreenUpsellModalPortfolioMount } from "..";
 import { __resetLargeScreenUpsellAutoOpenForTests } from "../components/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
@@ -481,6 +482,14 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   });
 
   describe("after a device setup", () => {
+    const APP_SESSION_START = new Date("2026-06-01T11:50:00.000Z");
+
+    beforeEach(() => {
+      jest.setSystemTime(APP_SESSION_START);
+      markAppSessionStart();
+      jest.setSystemTime(NOW);
+    });
+
     const withOnboardingCompletedAt = (onboardingCompletionDate: string) =>
       withFlagOverrides(
         {
@@ -503,9 +512,9 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
         }),
       );
 
-    it("should not auto-open the upsell modal when the setup finished in this app session", async () => {
+    it("should not auto-open the upsell modal when the setup finished in this app session before Portfolio loaded", async () => {
       const { store } = render(<IntegrationNavigator />, {
-        overrideInitialState: withOnboardingCompletedAt(NOW.toISOString()),
+        overrideInitialState: withOnboardingCompletedAt("2026-06-01T11:55:00.000Z"),
       });
 
       expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();

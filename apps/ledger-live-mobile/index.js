@@ -32,6 +32,8 @@ import App from "./src";
 import logReport from "./src/log-report";
 import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
 import { SPLASH_SCREEN_FADE_MS } from "./src/mvvm/features/LaunchScreen/splashScreenVisibility";
+import { markAppSessionStart } from "./src/appSessionStart";
+markAppSessionStart();
 preventAutoHideAsync();
 setOptions({ fade: true, duration: SPLASH_SCREEN_FADE_MS });
 logReport.logReportInit();

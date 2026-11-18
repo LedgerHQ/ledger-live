@@ -8,6 +8,7 @@ import {
   resetUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
+import { getAppSessionStartedAt } from "~/appSessionStart";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
@@ -34,11 +35,9 @@ const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
 const LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING = 20;
 
 let hasAutoOpenedThisSession = false;
-let sessionStartedAt = Date.now();
 
 export const __resetLargeScreenUpsellAutoOpenForTests = () => {
   hasAutoOpenedThisSession = false;
-  sessionStartedAt = Date.now();
 };
 
 type LargeScreenUpsellModalPortfolioMountViewModel = Readonly<{
@@ -96,7 +95,8 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
     hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
   );
   const hasCompletedOnboardingThisSession =
-    onboardingCompletionDate !== null && Date.parse(onboardingCompletionDate) >= sessionStartedAt;
+    onboardingCompletionDate !== null &&
+    Date.parse(onboardingCompletionDate) >= getAppSessionStartedAt();
   const shouldAttemptAutoOpen =
     isEligible &&
     !hasCompletedOnboardingThisSession &&
