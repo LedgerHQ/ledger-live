@@ -123,7 +123,7 @@ export function useDeleteTokenViewModel(props: Props) {
 
     goTo("sign");
 
-    buildDeviceInitializationInput({ appRequest: { account }, flow: FlowName.unknown })
+    buildDeviceInitializationInput({ appRequest: { account }, flow: FlowName.manageAssets })
       .then(deviceInitializationInput => {
         const input: SignTransactionIntentInput = { account, transaction, parentAccount: null };
         const intent = createIntent(deleteTokenIntentLWMDefinition, input, {

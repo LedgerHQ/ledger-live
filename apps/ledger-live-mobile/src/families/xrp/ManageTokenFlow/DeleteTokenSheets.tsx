@@ -41,11 +41,10 @@ function useInfoState(viewModel: ReturnType<typeof useDeleteTokenViewModel>): In
         testID: "xrp-delete-token-blocked",
       };
     case "confirm": {
-      const description = t("xrp.manageAssets.deleteConfirm.description", {
-        accountName: viewModel.accountName,
-      });
-
-      const isIou = viewModel.token.tokenType === "iou";
+      const confirmKey =
+        viewModel.token.tokenType === "iou"
+          ? "xrp.manageAssets.deleteConfirm.descriptionIou"
+          : "xrp.manageAssets.deleteConfirm.description";
       const statusError = viewModel.statusError;
       const values = statusError && { ...statusError, message: statusError.message };
       const titleKey = `errors.${statusError?.name}.title`;
@@ -55,9 +54,7 @@ function useInfoState(viewModel: ReturnType<typeof useDeleteTokenViewModel>): In
         preset: "info",
         testID: "xrp-delete-token-confirm",
         title: t("xrp.manageAssets.deleteConfirm.title", { ticker }),
-        description: isIou
-          ? `${description} ${t("xrp.manageAssets.deleteConfirm.limitZero")}`
-          : description,
+        description: t(confirmKey, { accountName: viewModel.accountName }),
         banner: statusError && {
           appearance: "error",
           title: t(i18n.exists(titleKey) ? titleKey : "errors.generic.title", values),

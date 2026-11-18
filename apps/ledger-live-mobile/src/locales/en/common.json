@@ -8643,7 +8643,7 @@
       "deleteConfirm": {
         "title": "Are you sure you want to delete {{ticker}}?",
         "description": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account.",
-        "limitZero": "Your device will show a trust limit of 0. That's how the XRP Ledger removes a token."
+        "descriptionIou": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account. Your device will show a trust limit of 0. That's how the XRP Ledger removes a token."
       },
       "deleteSuccess": {
         "title": "{{ticker}} was successfully removed from your account",
