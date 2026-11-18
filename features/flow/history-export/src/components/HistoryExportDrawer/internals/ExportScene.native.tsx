@@ -35,10 +35,15 @@ export function ExportScene({
   const count = accounts.length;
 
   return (
-    <BottomSheetScrollView>
-      <Box style={{ paddingBottom: footerInset }} testID="history-export-dialog">
+    <BottomSheetScrollView
+      stickyHeaderIndices={[0]}
+      alwaysBounceVertical={false}
+      contentContainerStyle={{ paddingBottom: footerInset }}
+      testID="history-export-dialog"
+    >
+      <Box lx={{ backgroundColor: "canvasSheet" }}>
         <BottomSheetHeader density="expanded" title={t("history.exportDialog.title")} />
-        <Box lx={{ flexDirection: "column", gap: "s16" }}>
+        <Box lx={{ gap: "s16", paddingBottom: "s16" }}>
           <Banner appearance="warning" description={t("history.exportDialog.disclaimer")} />
           <Subheader>
             <SubheaderRow lx={{ justifyContent: "space-between" }}>
@@ -56,17 +61,17 @@ export function ExportScene({
               </Link>
             </SubheaderRow>
           </Subheader>
-          <Box>
-            {accounts.map(account => (
-              <ExportAccountListItem
-                key={account.id}
-                account={account}
-                checked={checkedIds.includes(account.id)}
-                onToggle={() => toggleAccount(account.id)}
-              />
-            ))}
-          </Box>
         </Box>
+      </Box>
+      <Box>
+        {accounts.map(account => (
+          <ExportAccountListItem
+            key={account.id}
+            account={account}
+            checked={checkedIds.includes(account.id)}
+            onToggle={() => toggleAccount(account.id)}
+          />
+        ))}
       </Box>
     </BottomSheetScrollView>
   );
