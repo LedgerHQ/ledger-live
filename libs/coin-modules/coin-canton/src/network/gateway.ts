@@ -7,6 +7,7 @@ import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors"
 import type {
   GetBalanceResponse,
   GetTransferPreApprovalResponse,
+  NodeInfo,
   OnboardingPrepareRequest,
   OnboardingPrepareResponse,
   OnboardingSubmitRequest,
@@ -93,6 +94,45 @@ const gatewayNetwork = async <T, U = unknown>(
     throw error;
   }
 };
+
+/*
+ * Nodes
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Nodes
+ */
+
+export async function getNodeInfo(config: CantonCoinConfig): Promise<NodeInfo> {
+  const { data } = await gatewayNetwork<NodeInfo>({
+    method: "GET",
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}`,
+  });
+  return data;
+}
+
+async function getDsoPartyId(config: CantonCoinConfig): Promise<string> {
+  const { dso_id } = await getNodeInfo(config);
+  if (!dso_id) throw new Error("canton: the gateway node info has no DSO party");
+  return dso_id;
+}
+
+const getDsoPartyIdCacheKey = (config: CantonCoinConfig) =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}`;
+
+// A DSO party cached before a network reset hides CC balances until node info is read again.
+export const getDsoPartyIdCached = makeLRUCache(getDsoPartyId, getDsoPartyIdCacheKey, minutes(15));
+
+export function clearDsoPartyIdCache(config: CantonCoinConfig): void {
+  getDsoPartyIdCached.clear(getDsoPartyIdCacheKey(config));
+}
+
+/** The native instrument: its id, issued by the network's DSO party. Any party can issue under the same id. */
+export async function getNativeInstrument(
+  config: CantonCoinConfig,
+): Promise<{ instrumentId: string; instrumentAdmin: string }> {
+  return {
+    instrumentId: config.nativeInstrumentId,
+    instrumentAdmin: await getDsoPartyIdCached(config),
+  };
+}
 
 /*
  * Parties

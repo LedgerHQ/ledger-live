@@ -76,6 +76,18 @@ describe("craftTransaction", () => {
     });
   });
 
+  it("should prepare another admin's instrument under the native id with that admin", async () => {
+    await craftTransaction(
+      context,
+      intent({ asset: { type: "token", assetReference: "Amulet", assetOwner: "impostor::1220" } }),
+    );
+
+    expect(preparedRequest()).toMatchObject({
+      instrument_id: "Amulet",
+      instrument_admin: "impostor::1220",
+    });
+  });
+
   it("should prepare a token transfer without an admin when the asset has no owner", async () => {
     await craftTransaction(context, intent({ asset: { type: "token", assetReference: "USDCx" } }));
 
@@ -128,6 +140,10 @@ describe("craftTransaction", () => {
     ["a non-transfer type", { type: "stake" }],
     ["a template asset", { asset: { type: "template", assetReference: "pkg:Module:Entity" } }],
     ["a token without an instrument id", { asset: { type: "token", assetOwner: "issuer::1220" } }],
+    [
+      "a token under the native id without an admin",
+      { asset: { type: "token", assetReference: "Amulet" } },
+    ],
     ["a memo of another kind", { memo: { type: "string", kind: "text", value: "hi" } }],
     ["no sender", { sender: "" }],
   ])("should reject %s before preparing", async (_, overrides) => {
