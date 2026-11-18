@@ -59,6 +59,7 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
       isRequestingToBeOpened={state !== null}
       onClose={() => state?.close()}
       enableDynamicSizing
+      contentHasBottomSpace
       testID="connect-known-or-new-device-state-sheet"
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>

@@ -24,6 +24,7 @@ export function ErrorBottomSheet({
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       enableDynamicSizing
+      contentHasBottomSpace
       testID={testID}
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
