@@ -11,6 +11,7 @@ import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
+import { useReceiveRoute } from "./hooks/useReceiveRoute";
 
 type Props = {
   currency?: CryptoOrTokenCurrency;
@@ -49,6 +50,7 @@ export function useOpenReceiveDrawer({
     fromMenu: fromMenu,
   });
 
+  const getReceiveRoute = useReceiveRoute();
   const openReceiveConfirmation = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       const accountCurrency = getAccountCurrency(account);
@@ -59,9 +61,8 @@ export function useOpenReceiveDrawer({
         accountId: (account.type !== "Account" && account?.parentId) || account.id,
       };
 
-      // Navigate to ReceiveFunds > ReceiveConfirmation
-      // If navigationOverride is provided (e.g., from onboarding), it can navigate to BaseOnboarding > ReceiveFunds
-      // Otherwise, use the default navigation context
+      // Onboarding (navigationOverride) keeps the legacy receive screen: its success step reads that
+      // screen's outcome. Every other entry goes through the receive route rule.
       if (navigationOverride) {
         navigationOverride.navigate(NavigatorName.BaseOnboarding, {
           screen: NavigatorName.ReceiveFunds,
@@ -71,16 +72,12 @@ export function useOpenReceiveDrawer({
           },
         });
       } else {
-        defaultNavigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            ...confirmationParams,
-            hideBackButton: hideBackButton ?? true,
-          },
-        });
+        defaultNavigation.navigate(
+          ...getReceiveRoute({ ...confirmationParams, hideBackButton: hideBackButton ?? true }),
+        );
       }
     },
-    [defaultNavigation, navigationOverride, hideBackButton],
+    [defaultNavigation, navigationOverride, hideBackButton, getReceiveRoute],
   );
 
   const handleOnclick = useCallback(

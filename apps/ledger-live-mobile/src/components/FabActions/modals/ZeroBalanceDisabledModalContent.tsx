@@ -21,6 +21,7 @@ import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { Currency } from "@domain/entity-currency";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -70,6 +71,7 @@ function ZeroBalanceDisabledModalContent({
     shouldUseLegacyRebornFlow,
   ]);
 
+  const getReceiveRoute = useReceiveRoute();
   const goToReceive = useCallback(() => {
     if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
       setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveFlow);
@@ -77,15 +79,14 @@ function ZeroBalanceDisabledModalContent({
       return;
     }
     if (account) {
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
+      navigation.navigate(
+        ...getReceiveRoute({
           currency: actionCurrency,
           accountId: account?.id || "",
           parentId:
             parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
-        },
-      });
+        }),
+      );
     } else {
       handleOpenReceiveDrawer();
     }
@@ -100,6 +101,7 @@ function ZeroBalanceDisabledModalContent({
     parentAccount?.id,
     handleOpenReceiveDrawer,
     shouldUseLegacyRebornFlow,
+    getReceiveRoute,
   ]);
 
   return (

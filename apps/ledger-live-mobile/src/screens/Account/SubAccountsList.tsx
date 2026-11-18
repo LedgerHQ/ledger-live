@@ -9,7 +9,6 @@ import useEnv from "@features/platform-env";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { NavigatorName, ScreenName } from "~/const";
 import SubAccountRow from "~/components/SubAccountRow";
 import Touchable from "~/components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
@@ -17,6 +16,7 @@ import perFamilySubAccountList from "../../generated/SubAccountList";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import Button from "~/components/Button";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 const keyExtractor = (item: TokenAccount): string => item.id;
 
@@ -81,14 +81,14 @@ export default function SubAccountsList({
     return tokenTypes.length > 0;
   }, [getTokenTypes, parentAccount]);
 
+  const getReceiveRoute = useReceiveRoute();
   const navigateToReceiveConnectDevice = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    navigation.navigate(
+      ...getReceiveRoute({
         accountId,
-      },
-    });
-  }, [accountId, navigation]);
+      }),
+    );
+  }, [getReceiveRoute, accountId, navigation]);
 
   const renderHeader = useCallback(
     () => (

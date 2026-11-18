@@ -1,0 +1,81 @@
+import type { NavigatorScreenParams } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { selectFeature } from "@shared/feature-flags";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import type { Account } from "@ledgerhq/types-live";
+import {
+  resolveReceiveFamilyConfig,
+  toReceiveTarget,
+  type GetReceiveFamilyConfig,
+} from "@features/flow-receive";
+import { NavigatorName, ScreenName } from "~/const";
+import receiveAddressConfigs from "~/generated/ReceiveAddressConfig";
+import type { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import type { ReceiveNavigatorParamList } from "~/components/RootNavigator/types/ReceiveNavigator";
+import { accountsSelector } from "~/reducers/accounts";
+import type { State } from "~/reducers/types";
+
+// Each family's config reads its own account type; the routing gives it the account of its family.
+const familyConfigs = receiveAddressConfigs as Partial<
+  Record<string, GetReceiveFamilyConfig<Account>>
+>;
+
+export type ReceiveConfirmationParams = ReceiveFundsStackParamList[ScreenName.ReceiveConfirmation];
+/** The navigator to open and its params, for `navigation.navigate(...route)`. */
+export type ReceiveRoute =
+  | [NavigatorName.ReceiveFunds, NavigatorScreenParams<ReceiveFundsStackParamList>]
+  | [NavigatorName.Receive, NavigatorScreenParams<ReceiveNavigatorParamList>];
+
+/**
+ * Single routing rule of the receive flow on mobile: every entry point builds the
+ * `ReceiveConfirmation` params and navigates to the route returned here.
+ * - `newReceiveFlow` on, account known to the account model and family supported: the `Receive`
+ *   navigator on the account and the asset to receive;
+ * - otherwise: `ReceiveFunds` > `ReceiveConfirmation`, unchanged.
+ */
+export function getReceiveRoute(params: ReceiveConfirmationParams, state: State): ReceiveRoute {
+  const legacy: ReceiveRoute = [
+    NavigatorName.ReceiveFunds,
+    { screen: ScreenName.ReceiveConfirmation, params },
+  ];
+  const flag = selectFeature(state, "newReceiveFlow");
+  if (!flag?.enabled) return legacy;
+
+  const accounts = accountsSelector(state);
+  const mainAccount =
+    accounts.find(({ id }) => id === params.parentId) ??
+    accounts.find(({ id }) => id === params.accountId) ??
+    accounts.find(({ subAccounts }) => subAccounts?.some(({ id }) => id === params.accountId));
+  if (!mainAccount) return legacy;
+
+  const tokenAccount = mainAccount.subAccounts?.find(({ id }) => id === params.accountId);
+  const asset =
+    params.currency?.type === "CryptoCurrency" || params.currency?.type === "TokenCurrency"
+      ? params.currency
+      : getAccountCurrency(tokenAccount ?? mainAccount);
+  const assetId = CryptoOrTokenCurrencyIdSchema.safeParse(asset.id);
+  const target =
+    assetId.success && toReceiveTarget(state.accountEntries, mainAccount.id, assetId.data);
+  if (!target) return legacy;
+
+  const family = mainAccount.currency.family;
+  const { isSupported } = resolveReceiveFamilyConfig({
+    family,
+    familyConfig: familyConfigs[family]?.({
+      descriptor: target.descriptor,
+      asset,
+      featureFlags: state.featureFlags.resolved,
+      legacyAccount: mainAccount,
+    }),
+    excludedFamilies: flag.params?.excludedFamilies ?? [],
+  });
+  if (!isSupported) return legacy;
+
+  return [
+    NavigatorName.Receive,
+    {
+      screen: ScreenName.ReceiveAddress,
+      params: { accountUUID: target.accountUUID, assetId: target.assetId },
+    },
+  ];
+}

@@ -8,6 +8,7 @@ import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import useAnalytics from "LLM/hooks/useAnalytics";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
@@ -22,6 +23,7 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
 
   const statusColor = colors.neutral.c100;
 
+  const getReceiveRoute = useReceiveRoute();
   const goToAccounts = useCallback(
     (accountId: string) => () => {
       if (context === AddAccountContexts.AddAccounts) {
@@ -29,19 +31,18 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
           accountId,
         });
       } else {
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
+        navigation.navigate(
+          ...getReceiveRoute({
             ...route.params,
             accountId,
-          },
-        });
+          }),
+        );
       }
 
       const clickMetadata = analyticsMetadata[ScreenName.AddAccountsSuccess]?.onSelectAccount;
       if (clickMetadata) track(clickMetadata.eventName, clickMetadata.payload);
     },
-    [navigation, route.params, context, analyticsMetadata],
+    [getReceiveRoute, navigation, route.params, context, analyticsMetadata],
   );
 
   return {

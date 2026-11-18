@@ -5,7 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { ScreenName, NavigatorName } from "~/const";
+import { ScreenName } from "~/const";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import ExternalLink from "~/components/ExternalLink";
@@ -15,6 +15,7 @@ import { urls } from "~/utils/urls";
 import Illustration from "~/images/illustration/Illustration";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 type Props = BaseComposite<
   StackNavigatorProps<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsInfo>
@@ -22,13 +23,11 @@ type Props = BaseComposite<
 
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const getReceiveRoute = useReceiveRoute();
   const onNext = useCallback(() => {
     navigation.pop();
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: route.params,
-    });
-  }, [navigation, route.params]);
+    navigation.navigate(...getReceiveRoute(route.params));
+  }, [getReceiveRoute, navigation, route.params]);
   const howClaimRewardsWorks = useCallback(() => {
     Linking.openURL(urls.algorandStaking);
   }, []);

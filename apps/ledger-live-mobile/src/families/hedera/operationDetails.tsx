@@ -10,10 +10,10 @@ import {
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
-import { NavigatorName, ScreenName } from "~/const";
 import Section from "~/screens/OperationDetails/Section";
 import { urls } from "~/utils/urls";
 import { useTokenByAddressInCurrency } from "@features/platform-currencies";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 interface OperationDetailsPostAccountSectionProps {
   operation: HederaOperation;
@@ -72,6 +72,7 @@ function OperationDetailsExtra({ operation }: Readonly<OperationDetailsExtraProp
 
 function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDetailsExtraProps>) {
   const navigation = useNavigation();
+  const getReceiveRoute = useReceiveRoute();
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
   const associatedTokenId = extra?.associatedTokenId;
   const { token } = useTokenByAddressInCurrency(associatedTokenId || "", "hedera");
@@ -89,12 +90,13 @@ function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDet
       a => a.token.contractAddress === token.contractAddress,
     );
 
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: subAccount
-        ? { currency: subAccount.token, accountId: subAccount.id, parentId: subAccount.parentId }
-        : { currency: token, accountId: account.id },
-    });
+    navigation.navigate(
+      ...getReceiveRoute(
+        subAccount
+          ? { currency: subAccount.token, accountId: subAccount.id, parentId: subAccount.parentId }
+          : { currency: token, accountId: account.id },
+      ),
+    );
   };
 
   return (

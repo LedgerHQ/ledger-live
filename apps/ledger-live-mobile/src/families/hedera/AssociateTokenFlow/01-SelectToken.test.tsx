@@ -1,5 +1,13 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import {
+  AccountIdSchema,
+  LegacyAccountEntrySchema,
+  accountsSlice,
+  legacyAccountsSynced,
+} from "@domain/entity-account";
+import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { useTokensData } from "@features/platform-currencies";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -108,6 +116,35 @@ describe("AssociateTokenFlow - select token", () => {
         accountId: HEDERA_ASSOCIATED_SUBACCOUNT.id,
         parentId: HEDERA_ASSOCIATED_SUBACCOUNT.parentId,
       },
+    });
+  });
+
+  it("should open the new receive screen when tapping an ERC-20 token with the new receive flow on", async () => {
+    const entry = LegacyAccountEntrySchema.parse(
+      mockAccountEntry({
+        descriptor: mockAddressAccountDescriptor({
+          network: "hedera",
+          path: "m/44h/3030h/0h/0h/0h",
+        }),
+        legacyId: AccountIdSchema.parse(HEDERA_ACCOUNT_1.id),
+      }),
+    );
+    const { user } = render(<SelectToken navigation={mockNavigation} route={mockRoute} />, {
+      overrideInitialState: withFlagOverrides(
+        { newReceiveFlow: { enabled: true, params: { excludedFamilies: [] } } },
+        (state: State): State => ({
+          ...state,
+          accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([entry])),
+          accounts: { ...state.accounts, active: [HEDERA_ACCOUNT_1] },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId(buildRowTestId(erc20Token.id)));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Receive, {
+      screen: ScreenName.ReceiveAddress,
+      params: { accountUUID: entry.accountUUID, assetId: erc20Token.id },
     });
   });
 });

@@ -16,6 +16,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 type Props = {
   account: AccountLike;
@@ -102,6 +103,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     });
   }, [account.id, currency, navigation]);
 
+  const getReceiveRoute = useReceiveRoute();
   const ctasSupported = useMemo(() => {
     const ctas = [];
     if (canBeBought) {
@@ -127,17 +129,12 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     }
     ctas.push({
       label: t("errors.NotEnoughBalanceForUnstaking.ctas.deposit"),
-      component: renderLink([
-        NavigatorName.ReceiveFunds,
-        {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            accountId: account.id,
-            parentId: parentAccount.id,
-            currency,
-          },
-        },
-      ]),
+      // The route is read on press: the flag or the account data may change after render.
+      component: renderTextLink(() =>
+        onNavigate(
+          getReceiveRoute({ accountId: account.id, parentId: parentAccount.id, currency }),
+        ),
+      ),
     });
     return ctas;
   }, [
@@ -149,6 +146,8 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     renderLink,
     renderTextLink,
     goToSwap,
+    getReceiveRoute,
+    onNavigate,
     t,
   ]);
 

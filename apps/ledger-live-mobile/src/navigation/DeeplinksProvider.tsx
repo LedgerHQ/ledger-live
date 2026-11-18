@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import React, { useMemo, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector, useDispatch, useStore } from "~/context/hooks";
 import { Linking, View, StyleSheet } from "react-native";
 import {
   getStateFromPath,
@@ -314,6 +314,7 @@ export const DeeplinksProvider = ({
   logStartupEvent("DeeplinksProvider render");
 
   const dispatch = useDispatch();
+  const store = useStore();
   const triggeredAppStartRef = useRef(true);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
@@ -690,7 +691,13 @@ export const DeeplinksProvider = ({
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
-            return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
+            return handleModularDrawerDeeplink(
+              hostname,
+              searchParams,
+              dispatch,
+              config,
+              store.getState,
+            );
           }
 
           if (hostname === "paytab" && !lwmPayTabFlag?.enabled) {
@@ -886,6 +893,7 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
+    store,
     liveAppProviderInitialized,
     manifests,
     localManifests,

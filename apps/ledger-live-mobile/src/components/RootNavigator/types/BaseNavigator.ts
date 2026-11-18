@@ -110,6 +110,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
+import type { ReceiveNavigatorParamList } from "./ReceiveNavigator";
 import type { GlobalSearchNavigatorParamList } from "LLM/features/GlobalSearch/types";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
@@ -234,6 +235,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
+  [NavigatorName.Receive]?: NavigatorScreenParams<ReceiveNavigatorParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SendFlow]: {
     onClose?: () => void;

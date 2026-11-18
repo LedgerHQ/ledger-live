@@ -26,7 +26,7 @@ import Touchable from "./Touchable";
 import { TransactionsPendingConfirmationWarningForAccount } from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { GraphPlaceholder } from "./Graph/Placeholder";
@@ -34,6 +34,7 @@ import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { getFreshAccountAddress } from "~/utils/address";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 const { width } = getWindowDimensions();
 
@@ -244,16 +245,16 @@ const GraphCardHeader = ({
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
+  const getReceiveRoute = useReceiveRoute();
   const openReceive = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    navigation.navigate(
+      ...getReceiveRoute({
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
-      },
-    });
-  }, [account.id, currency, navigation, parentAccount?.id]);
+      }),
+    );
+  }, [getReceiveRoute, account.id, currency, navigation, parentAccount?.id]);
 
   const accountName = useAccountName(account);
   const parentAccountName = useMaybeAccountName(parentAccount);

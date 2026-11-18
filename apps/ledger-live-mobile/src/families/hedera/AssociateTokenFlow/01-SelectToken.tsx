@@ -15,9 +15,11 @@ import BigCurrencyRow from "~/components/BigCurrencyRow";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 export type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSelectToken>
@@ -48,6 +50,7 @@ export default function SelectToken({ navigation, route }: Props) {
   }, [data?.tokens]);
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const getReceiveRoute = useReceiveRoute();
 
   const onPressItem = useCallback(
     (currency: CryptoOrTokenCurrency) => {
@@ -64,23 +67,16 @@ export default function SelectToken({ navigation, route }: Props) {
         isAlreadyAssociated,
       });
 
-      if (isAlreadyAssociated) {
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            currency,
-            accountId: subAccount.id,
-            parentId: subAccount.parentId,
-          },
-        });
-      } else if (currency.tokenType !== "hts") {
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            currency,
-            accountId: mainAccount.id,
-          },
-        });
+      if (isAlreadyAssociated || currency.tokenType !== "hts") {
+        const [navigator, params] = getReceiveRoute(
+          isAlreadyAssociated
+            ? { currency, accountId: subAccount.id, parentId: subAccount.parentId }
+            : { currency, accountId: mainAccount.id },
+        );
+        (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+          navigator,
+          params,
+        );
       } else {
         navigation.navigate(ScreenName.HederaAssociateTokenSummary, {
           accountId: mainAccount.id,
@@ -88,7 +84,7 @@ export default function SelectToken({ navigation, route }: Props) {
         });
       }
     },
-    [mainAccount, navigation],
+    [mainAccount, navigation, getReceiveRoute],
   );
 
   const renderList = useCallback(
