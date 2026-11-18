@@ -6,6 +6,7 @@ import { app, ipcMain, type BrowserWindow } from "electron";
 import { CHANNELS } from "~/bridge/contract";
 import db from "~/main/db";
 import {
+  MAIN_FLUSH_TIMEOUT_MS,
   RENDERER_FLUSH_TIMEOUT_MS,
   flushThen,
   requestRendererFlush,
@@ -250,6 +251,21 @@ describe("flushOnQuit", () => {
     const quit = nextQuit();
     app.emit("before-quit", preventableEvent());
     await quit;
+
+    expect(consoleError).toHaveBeenCalledWith("Database flush failed", expect.any(Error));
+    consoleError.mockRestore();
+  });
+
+  it("quits when the main flush does not end in time", async () => {
+    jest.useFakeTimers();
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    setupFlushOnQuit(asBrowserWindow(createWindow()), () => new Promise(() => {}));
+
+    const quit = nextQuit();
+    app.emit("before-quit", preventableEvent());
+    await jest.advanceTimersByTimeAsync(MAIN_FLUSH_TIMEOUT_MS);
+    await quit;
+    await jest.runOnlyPendingTimersAsync();
 
     expect(consoleError).toHaveBeenCalledWith("Database flush failed", expect.any(Error));
     consoleError.mockRestore();

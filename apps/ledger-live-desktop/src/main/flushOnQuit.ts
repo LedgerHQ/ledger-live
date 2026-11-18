@@ -2,6 +2,8 @@ import { app, ipcMain, type BrowserWindow, type IpcMainEvent } from "electron";
 import { CHANNELS } from "~/bridge/contract";
 
 export const RENDERER_FLUSH_TIMEOUT_MS = 3000;
+/** A disk that does not answer must not hold the quit. */
+export const MAIN_FLUSH_TIMEOUT_MS = 10000;
 
 let lastRequestId = 0;
 
@@ -34,13 +36,25 @@ export function requestRendererFlush(
 
 /**
  * The renderer writes go through main, so the renderer flushes first.
+ * The file writes are atomic: a quit after the main timeout keeps the previous file.
  */
 export async function flushPendingWrites(
   flushRenderer: () => Promise<void>,
   flushMain: () => Promise<void>,
+  mainTimeoutMs = MAIN_FLUSH_TIMEOUT_MS,
 ): Promise<void> {
   await flushRenderer().catch(error => console.warn("Renderer flush failed", error));
-  await flushMain().catch(error => console.error("Database flush failed", error));
+  await withTimeout(flushMain(), mainTimeoutMs).catch(error =>
+    console.error("Database flush failed", error),
+  );
+}
+
+function withTimeout(promise: Promise<void>, timeoutMs: number): Promise<void> {
+  let timeout: NodeJS.Timeout | undefined;
+  const timedOut = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => reject(new Error(`Timed out after ${timeoutMs}ms`)), timeoutMs);
+  });
+  return Promise.race([promise, timedOut]).finally(() => clearTimeout(timeout));
 }
 
 let flushWrites: () => Promise<void> = () => Promise.resolve();
