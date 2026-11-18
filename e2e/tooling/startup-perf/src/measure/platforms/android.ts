@@ -11,6 +11,22 @@ const DIALOG_RESTART_MS = 5000;
 const FLING_SETTLE_MS = 1500;
 const SWIPE_SETTLE_MS = 800;
 const DEFAULT_SCREEN_SIZE: [number, number] = [1080, 2400];
+// Between the runner reading its clock and the emulator running the date command.
+const CLOCK_SET_DELAY_MS = 40;
+
+/** The command that sets an emulator's clock, which "avd stop" stops, to the runner's. */
+export function clockSetCommand(runnerNow: number): string[] {
+  return ["su", "0", "date", `@${((runnerNow + CLOCK_SET_DELAY_MS) / 1000).toFixed(3)}`];
+}
+
+async function setClock(device: string): Promise<void> {
+  const { failed, stdout, stderr } = await run(
+    "adb",
+    ["-s", device, "shell", ...clockSetCommand(Date.now())],
+    { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
+  );
+  if (failed) log(`  could not set the clock of ${device}: ${(stderr || stdout).trim()}`);
+}
 
 async function stopDriver(device: string): Promise<void> {
   for (const pkg of ["dev.mobile.maestro", "dev.mobile.maestro.test"]) {
@@ -199,6 +215,8 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         timeoutMs: EMULATOR_PAUSE_TIMEOUT_MS,
       });
       if (!/^OK/m.test(stdout)) throw new Error(`avd start on ${device}: ${stdout.trim()}`);
+      // Else the app's clock falls ~7 s further behind the runner's at every launch on the other.
+      await setClock(device);
     },
     // On the runner's clock and on the emulator's, which the app's Date.now() uses.
     async processStart(device) {
