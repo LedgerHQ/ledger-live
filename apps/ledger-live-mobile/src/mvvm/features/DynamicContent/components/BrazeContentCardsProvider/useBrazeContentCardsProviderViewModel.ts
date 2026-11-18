@@ -1,4 +1,5 @@
 import Braze, { type ContentCard } from "@braze/react-native-sdk";
+import isEqual from "lodash/isEqual";
 import {
   armBrazePendingRefreshTimeout,
   createBrazePendingRefresh,
@@ -16,6 +17,9 @@ import {
   markBrazePublish,
   startBrazePublish,
 } from "LLM/utils/logStartup/logBrazePublish";
+
+// The context value changes with these states, so an equal array would re-render every reader.
+const keepIfEqual = <T>(previous: T, next: T): T => (isEqual(previous, next) ? previous : next);
 
 export function useBrazeContentCardsProviderViewModel() {
   const { updateDynamicContent, clearOldDismissedContentCards, setDynamicContentLoading } =
@@ -49,7 +53,7 @@ export function useBrazeContentCardsProviderViewModel() {
       eligibilityContextRef.current,
     );
     markBrazePublish(`filtered (${eligibleCards.length} eligible)`);
-    setEligibilityEvaluations(evaluations);
+    setEligibilityEvaluations(previous => keepIfEqual(previous, evaluations));
     updateDynamicContentRef.current(eligibleCards);
     endBrazePublish();
   }, []);
@@ -62,7 +66,7 @@ export function useBrazeContentCardsProviderViewModel() {
 
       try {
         lastFetchedCardsRef.current = event.cards;
-        setLastFetchedCards(event.cards);
+        setLastFetchedCards(previous => keepIfEqual(previous, event.cards));
         publishEligibleCards(event.cards);
         pendingRefresh?.resolve();
       } catch (error) {

@@ -1,6 +1,7 @@
 import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
+import isEqual from "lodash/isEqual";
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector, useDispatch, useStore } from "~/context/hooks";
 import {
   setDynamicContentWalletCards,
   setDynamicContentAssetsCards,
@@ -33,6 +34,7 @@ const EMPTY_DISMISSED_CONTENT_CARDS = {};
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
+  const store = useStore();
   const dismissedContentCards =
     useSelector(dismissedContentCardsSelector) ?? EMPTY_DISMISSED_CONTENT_CARDS;
 
@@ -81,16 +83,29 @@ export const useDynamicContentLogic = () => {
           `${categoriesCards.length} category, ${landingPageStickyCtaCards.length} sticky, ` +
           `${genericAwarenessModalContentCards.length} modal)`,
       );
-      dispatch(setDynamicContentCategoriesCards(categoriesCards));
-      dispatch(setDynamicContentMobileCards(mobileContentCards));
-      dispatch(setDynamicContentWalletCards(walletCards));
-      dispatch(setDynamicContentAssetsCards(assetCards));
-      dispatch(setDynamicContentNotificationCards(notificationCards));
-      dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
-      dispatch(replaceBrazeGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
-      dispatch(setIsDynamicContentLoading(false));
+      // A list equal to the stored one keeps its reference: a new one re-renders all its readers.
+      const { dynamicContent, genericAwarenessModal } = store.getState();
+      const modalCards = [
+        ...genericAwarenessModal.contentCards.filter(card => card.isLocal),
+        ...genericAwarenessModalContentCards,
+      ];
+      if (!isEqual(dynamicContent.categoriesCards, categoriesCards))
+        dispatch(setDynamicContentCategoriesCards(categoriesCards));
+      if (!isEqual(dynamicContent.mobileCards, mobileContentCards))
+        dispatch(setDynamicContentMobileCards(mobileContentCards));
+      if (!isEqual(dynamicContent.walletCards, walletCards))
+        dispatch(setDynamicContentWalletCards(walletCards));
+      if (!isEqual(dynamicContent.assetsCards, assetCards))
+        dispatch(setDynamicContentAssetsCards(assetCards));
+      if (!isEqual(dynamicContent.notificationCards, notificationCards))
+        dispatch(setDynamicContentNotificationCards(notificationCards));
+      if (!isEqual(dynamicContent.landingPageStickyCtaCards, landingPageStickyCtaCards))
+        dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
+      if (!isEqual(genericAwarenessModal.contentCards, modalCards))
+        dispatch(replaceBrazeGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
+      if (dynamicContent.isLoading) dispatch(setIsDynamicContentLoading(false));
     },
-    [dismissedContentCards, dispatch],
+    [dismissedContentCards, dispatch, store],
   );
 
   const clearOldDismissedContentCards = useCallback(() => {
@@ -101,8 +116,12 @@ export const useDynamicContentLogic = () => {
   }, [dismissedContentCards, dispatch]);
 
   const setDynamicContentLoading = useCallback(
-    (isLoading: boolean) => dispatch(setIsDynamicContentLoading(isLoading)),
-    [dispatch],
+    (isLoading: boolean) => {
+      if (store.getState().dynamicContent.isLoading !== isLoading) {
+        dispatch(setIsDynamicContentLoading(isLoading));
+      }
+    },
+    [dispatch, store],
   );
 
   return {
