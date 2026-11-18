@@ -45,7 +45,8 @@ function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excluded, deeplink, rows, pickAsset, sanctions } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset, verifyHint, sanctions } =
+    useReceiveToolViewModel(props);
 
   return (
     <div className="flex flex-col">
@@ -68,19 +69,15 @@ export function Receive(props: ReceiveToolProps) {
           {copy.apply}
         </Button>
       </Section>
-      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
-        <Button className="self-start" appearance="gray" size="sm" onClick={pickAsset}>
-          {copy.pickAsset}
-        </Button>
-        {rows.length === 0 ? (
-          <p className="body-3 text-muted">{copy.noAsset}</p>
-        ) : (
-          <div className="flex flex-col">
-            {rows.map(row => (
-              <AssetRow key={row.key} row={row} />
-            ))}
-          </div>
-        )}
+      <Section title={copy.verifyHintTitle} description={copy.verifyHintDescription}>
+        <div className="flex items-center justify-between gap-12">
+          <span className="body-2 text-base">{copy.verifyHintShown}</span>
+          <Switch
+            aria-label={copy.verifyHintShown}
+            selected={verifyHint.isShown}
+            onChange={verifyHint.setShown}
+          />
+        </div>
       </Section>
       <Section title={copy.sanctionsTitle} description={copy.sanctionsDescription}>
         <div className="flex items-center justify-between gap-12">
@@ -109,6 +106,20 @@ export function Receive(props: ReceiveToolProps) {
         >
           {copy.openDeeplink}
         </Button>
+      </Section>
+      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
+        <Button className="self-start" appearance="gray" size="sm" onClick={pickAsset}>
+          {copy.pickAsset}
+        </Button>
+        {rows.length === 0 ? (
+          <p className="body-3 text-muted">{copy.noAsset}</p>
+        ) : (
+          <div className="flex flex-col">
+            {rows.map(row => (
+              <AssetRow key={row.key} row={row} />
+            ))}
+          </div>
+        )}
       </Section>
     </div>
   );

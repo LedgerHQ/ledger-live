@@ -27,6 +27,7 @@ const renderTool = ({
   enabled = false,
   excludedFamilies = [] as readonly string[],
   assets = [ETHEREUM, USDC] as readonly ReceiveToolAsset[],
+  hasSeen = false,
 } = {}) => {
   const flag = { enabled, excludedFamilies, setEnabled: jest.fn(), setExcludedFamilies: jest.fn() };
   const trigger = {
@@ -36,8 +37,9 @@ const renderTool = ({
     onOpenDeeplink: jest.fn(),
   };
   const sanctions = { isSimulated: false, setSimulated: jest.fn() };
-  render(<Receive flag={flag} trigger={trigger} sanctions={sanctions} />);
-  return { flag, trigger, sanctions };
+  const verifyHint = { hasSeen, setHasSeen: jest.fn() };
+  render(<Receive flag={flag} trigger={trigger} verifyHint={verifyHint} sanctions={sanctions} />);
+  return { flag, trigger, verifyHint, sanctions };
 };
 
 describe("Receive", () => {
@@ -46,6 +48,20 @@ describe("Receive", () => {
 
     fireEvent(screen.getByLabelText("Simulate a sanctioned address"), "onCheckedChange", true);
     expect(sanctions.setSimulated).toHaveBeenCalledWith(true);
+  });
+
+  it("marks the verify hint as seen", () => {
+    const { verifyHint } = renderTool();
+
+    fireEvent(screen.getByLabelText("Show the hint on the next receive"), "onCheckedChange", false);
+    expect(verifyHint.setHasSeen).toHaveBeenCalledWith(true);
+  });
+
+  it("shows the verify hint again", () => {
+    const { verifyHint } = renderTool({ hasSeen: true });
+
+    fireEvent(screen.getByLabelText("Show the hint on the next receive"), "onCheckedChange", true);
+    expect(verifyHint.setHasSeen).toHaveBeenCalledWith(false);
   });
 
   it("turns the flag on", () => {

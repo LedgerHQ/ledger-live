@@ -12,6 +12,11 @@ import type { WithAccountBalances } from "@domain/entity-account-balance";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { selectAccountNameByUUID, type AccountNamesState } from "@domain/entity-account-name";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
+import {
+  markReceiveVerifyHintSeen,
+  resetReceiveVerifyHintSeen,
+  selectHasSeenReceiveVerifyHint,
+} from "@features/flow-receive/state";
 import { setOverride } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 
@@ -130,6 +135,13 @@ export function useReceiveToolProps(
 
   const enabled = !!flag?.enabled;
   const excludedFamilies = flag?.params?.excludedFamilies ?? NO_FAMILIES;
+  const hasSeenVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
+
+  const setHasSeenVerifyHint = useCallback(
+    (hasSeen: boolean) =>
+      dispatch(hasSeen ? markReceiveVerifyHintSeen() : resetReceiveVerifyHintSeen()),
+    [dispatch],
+  );
 
   const setEnabled = useCallback(
     (nextEnabled: boolean) =>
@@ -157,8 +169,19 @@ export function useReceiveToolProps(
     () => ({
       flag: { enabled, excludedFamilies, setEnabled, setExcludedFamilies },
       trigger: { ...openers, assets },
+      verifyHint: { hasSeen: hasSeenVerifyHint, setHasSeen: setHasSeenVerifyHint },
       sanctions,
     }),
-    [enabled, excludedFamilies, setEnabled, setExcludedFamilies, openers, assets, sanctions],
+    [
+      enabled,
+      excludedFamilies,
+      setEnabled,
+      setExcludedFamilies,
+      openers,
+      assets,
+      hasSeenVerifyHint,
+      setHasSeenVerifyHint,
+      sanctions,
+    ],
   );
 }

@@ -60,7 +60,8 @@ function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excluded, deeplink, rows, pickAsset, sanctions } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset, verifyHint, sanctions } =
+    useReceiveToolViewModel(props);
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -96,23 +97,17 @@ export function Receive(props: ReceiveToolProps) {
           </Button>
         </Box>
       </Section>
-      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
-        <Box lx={{ alignItems: "flex-start" }}>
-          <Button appearance="gray" size="sm" onPress={pickAsset}>
-            {copy.pickAsset}
-          </Button>
-        </Box>
-        {rows.length === 0 ? (
-          <Text typography="body3" lx={{ color: "muted" }}>
-            {copy.noAsset}
+      <Section title={copy.verifyHintTitle} description={copy.verifyHintDescription}>
+        <Box lx={ROW_LX}>
+          <Text typography="body2" lx={{ color: "base" }} style={{ flexShrink: 1 }}>
+            {copy.verifyHintShown}
           </Text>
-        ) : (
-          <Box>
-            {rows.map(row => (
-              <AssetRow key={row.key} row={row} />
-            ))}
-          </Box>
-        )}
+          <Switch
+            accessibilityLabel={copy.verifyHintShown}
+            checked={verifyHint.isShown}
+            onCheckedChange={verifyHint.setShown}
+          />
+        </Box>
       </Section>
       <Section title={copy.sanctionsTitle} description={copy.sanctionsDescription}>
         <Box lx={ROW_LX}>
@@ -141,6 +136,24 @@ export function Receive(props: ReceiveToolProps) {
             {copy.openDeeplink}
           </Button>
         </Box>
+      </Section>
+      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
+        <Box lx={{ alignItems: "flex-start" }}>
+          <Button appearance="gray" size="sm" onPress={pickAsset}>
+            {copy.pickAsset}
+          </Button>
+        </Box>
+        {rows.length === 0 ? (
+          <Text typography="body3" lx={{ color: "muted" }}>
+            {copy.noAsset}
+          </Text>
+        ) : (
+          <Box>
+            {rows.map(row => (
+              <AssetRow key={row.key} row={row} />
+            ))}
+          </Box>
+        )}
       </Section>
     </ScrollView>
   );

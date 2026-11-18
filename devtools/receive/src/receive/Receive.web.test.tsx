@@ -28,6 +28,7 @@ const renderTool = ({
   enabled = false,
   excludedFamilies = [] as readonly string[],
   assets = [ETHEREUM, USDC] as readonly ReceiveToolAsset[],
+  hasSeen = false,
 } = {}) => {
   const flag = { enabled, excludedFamilies, setEnabled: jest.fn(), setExcludedFamilies: jest.fn() };
   const trigger = {
@@ -37,8 +38,9 @@ const renderTool = ({
     onOpenDeeplink: jest.fn(),
   };
   const sanctions = { isSimulated: false, setSimulated: jest.fn() };
-  render(<Receive flag={flag} trigger={trigger} sanctions={sanctions} />);
-  return { flag, trigger, sanctions };
+  const verifyHint = { hasSeen, setHasSeen: jest.fn() };
+  render(<Receive flag={flag} trigger={trigger} verifyHint={verifyHint} sanctions={sanctions} />);
+  return { flag, trigger, verifyHint, sanctions };
 };
 
 describe("Receive", () => {
@@ -47,6 +49,36 @@ describe("Receive", () => {
 
     await userEvent.click(screen.getByRole("switch", { name: "Simulate a sanctioned address" }));
     expect(sanctions.setSimulated).toHaveBeenCalledWith(true);
+  });
+
+  it("marks the verify hint as seen", async () => {
+    const { verifyHint } = renderTool();
+
+    const toggle = screen.getByRole("switch", { name: "Show the hint on the next receive" });
+    expect(toggle).toBeChecked();
+    await userEvent.click(toggle);
+    expect(verifyHint.setHasSeen).toHaveBeenCalledWith(true);
+  });
+
+  it("shows the verify hint again", async () => {
+    const { verifyHint } = renderTool({ hasSeen: true });
+
+    await userEvent.click(
+      screen.getByRole("switch", { name: "Show the hint on the next receive" }),
+    );
+    expect(verifyHint.setHasSeen).toHaveBeenCalledWith(false);
+  });
+
+  it("puts the receive list last", () => {
+    renderTool();
+
+    expect(screen.getAllByRole("heading").map(heading => heading.textContent)).toEqual([
+      "Feature flag",
+      "Verify hint",
+      "Sanctioned address",
+      "Deeplink",
+      "Receive list",
+    ]);
   });
 
   it("turns the flag on", async () => {

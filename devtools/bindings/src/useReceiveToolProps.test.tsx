@@ -8,6 +8,7 @@ import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { mockAccountAssetBalance } from "@domain/entity-account-balance/schema.mock";
 import { accountNamesSlice, setAccountName } from "@domain/entity-account-name";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -47,6 +48,7 @@ function buildStore() {
       accountEntries: accountsSlice.reducer,
       accountBalances: accountBalancesSlice.reducer,
       wallet: combineReducers({ accountNames: accountNamesSlice.reducer }),
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
       [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
     },
     preloadedState: {
@@ -94,6 +96,18 @@ function renderTool(trigger: ReceiveToolTrigger = mockTrigger()) {
 }
 
 describe("useReceiveToolProps", () => {
+  it("shows the verify hint again, then marks it as seen", () => {
+    const { result, store } = renderTool();
+
+    expect(result.current.verifyHint.hasSeen).toBe(false);
+    act(() => result.current.verifyHint.setHasSeen(true));
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    expect(result.current.verifyHint.hasSeen).toBe(true);
+
+    act(() => result.current.verifyHint.setHasSeen(false));
+    expect(result.current.verifyHint.hasSeen).toBe(false);
+  });
+
   it("passes the host's sanctioned address switch through", () => {
     const { result } = renderTool();
 

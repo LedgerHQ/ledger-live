@@ -14,6 +14,10 @@ export const copy = {
   deeplinkLabel: "URL",
   openDeeplink: "Open",
   invalidDeeplink: "Not a valid URL.",
+  verifyHintTitle: "Verify hint",
+  verifyHintDescription:
+    "The popover pointing at Verify, shown once on the address screen. Off once the user dismissed it or verified.",
+  verifyHintShown: "Show the hint on the next receive",
   sanctionsTitle: "Sanctioned address",
   sanctionsDescription:
     "Treats every receive address as sanctioned, to show the blocked screen. Off again on restart.",
