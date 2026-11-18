@@ -1,9 +1,7 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import {
-  FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-  FF_PERPS_DESKTOP,
-} from "tests/utils/featureFlagUtils";
+import { FF_PERPS_DESKTOP } from "tests/utils/featureFlagUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -22,10 +20,7 @@ test.describe("Perps", () => {
       hostnamePrefix: "perps.",
       entries: getPerpsLiveAppStorage(account),
     },
-    featureFlags: {
-      ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-      ...FF_PERPS_DESKTOP,
-    },
+    featureFlags: FF_PERPS_DESKTOP,
   });
 
   test.beforeEach(async ({ app }) => {
@@ -35,7 +30,10 @@ test.describe("Perps", () => {
 
   test(
     "Open Perps home - account selected",
-    { annotation: { type: "TMS", description: xrayTicket } },
+    {
+      tag: buildTags({ skipLNS: true, extraTags: ["@smoke"] }),
+      annotation: { type: "TMS", description: xrayTicket },
+    },
     async ({ app }) => {
       await app.perps.expectHome();
     },
