@@ -28,7 +28,11 @@ export function ExportAccountListItem({ account, checked, onToggle }: ExportAcco
       </ListItemLeading>
       <ListItemTrailing>
         <ListItemContent>
-          <ListItemTitle>{account.formattedBalance}</ListItemTitle>
+          <ListItemTitle>
+            <span className="body-2 block w-full overflow-hidden text-ellipsis whitespace-pre">
+              {account.formattedBalance}
+            </span>
+          </ListItemTitle>
         </ListItemContent>
       </ListItemTrailing>
     </ListItem>
