@@ -663,9 +663,16 @@ const createConnectKnownOrNewDeviceStateMachine = <
             target: "DiscoveryError",
             actions: {
               type: "assignDiscoveryRetryError",
-              params: ({ event }) => ({
-                output: { type: BaseDiscoveryErrorTypes.Unknown, error: event.error },
-              }),
+              params: ({ context, event }) => {
+                const transportId = context.discoveryError?.transportId;
+                return {
+                  output: {
+                    type: BaseDiscoveryErrorTypes.Unknown,
+                    error: event.error,
+                    ...(transportId ? { transportId } : {}),
+                  },
+                };
+              },
             },
           },
         },
