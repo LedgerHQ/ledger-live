@@ -24,6 +24,7 @@ export enum OsUpdatePage {
   SECURE_CONNECTION_REFUSED = "OS Update - Secure Connection Refused",
   ERROR = "OS Update - Error",
   CLOSE_CONFIRMATION = "OS Update - Close Confirmation",
+  UPDATE_ON_DESKTOP = "OS Update - Update On Desktop",
 }
 
 export enum OsUpdateButton {
@@ -36,6 +37,7 @@ export enum OsUpdateButton {
   CREATE_NEW_BACKUP = "Create new backup",
   DELETE_BACKUP = "Delete backup",
   FINISH = "Finish",
+  GOT_IT = "Got it",
   LEDGER_SUPPORT = "Ledger support",
   RELEASE_NOTES = "Release notes",
   RESTART_OS_UPDATE = "Restart OS update",

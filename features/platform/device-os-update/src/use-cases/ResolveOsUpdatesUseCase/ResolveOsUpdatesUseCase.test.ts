@@ -68,18 +68,39 @@ describe("ResolveOsUpdatesUseCase", () => {
     expect(backupStorage.getBackup).toHaveBeenCalledWith(DeviceModelId.STAX);
   });
 
-  it.each([
-    ["the device is in bootloader mode", { isBootloader: true }],
-    ["the OS version is not supported", { osVersion: "0.9.0" }],
-    ["the model has no Bluetooth", { modelId: DeviceModelId.NANO_SP, wired: false }],
-  ])("resolves no update when %s, but still checks the backup", async (_label, overrides) => {
-    jest.mocked(backupStorage.getBackup).mockResolvedValue(backup);
+  it.each([["the device is in bootloader mode", { isBootloader: true }]])(
+    "resolves no update when %s, but still checks the backup",
+    async (_label, overrides) => {
+      jest.mocked(backupStorage.getBackup).mockResolvedValue(backup);
 
-    await expect(resolveOsUpdates(input(overrides))).resolves.toEqual({
-      osUpdates: [],
-      hasBackup: true,
+      await expect(resolveOsUpdates(input(overrides))).resolves.toEqual({
+        osUpdates: [],
+        hasBackup: true,
+      });
+      expect(mockExecute).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    [
+      "a Nano X on a Bluetooth-unsupported version",
+      { modelId: DeviceModelId.NANO_X, wired: false, osVersion: "2.2.3" },
+    ],
+    [
+      "a Nano S below its USB-supported version",
+      { modelId: DeviceModelId.NANO_S, wired: true, osVersion: "1.5.0" },
+    ],
+  ])("still resolves the update path for %s", async (_label, overrides) => {
+    listConnectedDevices.mockReturnValue([
+      {
+        sessionId: "session-1",
+        type: overrides.wired === false ? "BLE" : "USB",
+      } as ConnectedDevice,
+    ]);
+    await expect(resolveOsUpdates(input(overrides))).resolves.toMatchObject({
+      osUpdates: [osUpdate],
     });
-    expect(mockExecute).not.toHaveBeenCalled();
+    expect(mockExecute).toHaveBeenCalled();
   });
 
   it("resolves no update without a session on the connection", async () => {

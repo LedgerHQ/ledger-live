@@ -6139,6 +6139,11 @@
       "description": "Click on \"Continue\" to update it.",
       "continue": "Continue"
     },
+    "updateOnDesktop": {
+      "title": "Update on your computer",
+      "description": "Your {{productName}} needs a one-time update that can only be installed from Ledger Wallet on desktop.",
+      "gotIt": "Got it"
+    },
     "banner": {
       "wallet40": {
         "title": {

@@ -121,20 +121,22 @@ describe("useResolveOsUpdates", () => {
     expect(store.getState().deviceOsUpdate.osUpdates).toEqual([]);
   });
 
-  it.each([
-    ["an unsupported version", { deviceInfo: { version: "0.9.0", isBootloader: false } }],
-    ["a device in bootloader mode", { deviceInfo: { version: "1.5.0", isBootloader: true } }],
-    [
-      "a model without Bluetooth over BLE",
-      { device: { modelId: DeviceModelId.NANO_SP, wired: false } },
-    ],
-  ])("skips the resolve for %s", async (_label, params) => {
-    const { result, store } = render(params);
+  it("skips the resolve for a device in bootloader mode", async () => {
+    const { result, store } = render({ deviceInfo: { version: "1.5.0", isBootloader: true } });
 
     await waitFor(() => expect(result.current).toBe(false));
 
     expect(mockExecute).not.toHaveBeenCalled();
     expect(store.getState().deviceOsUpdate.osUpdates).toEqual([]);
+  });
+
+  it("still resolves the update for a version its transport cannot update, so the app can say so", async () => {
+    const { result, store } = render({ deviceInfo: { version: "0.9.0", isBootloader: false } });
+
+    await waitFor(() => expect(result.current).toBe(false));
+
+    expect(mockExecute).toHaveBeenCalledTimes(1);
+    expect(store.getState().deviceOsUpdate.osUpdates).toEqual([osUpdate]);
   });
 
   describe("backup", () => {

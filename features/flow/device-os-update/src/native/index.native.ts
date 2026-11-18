@@ -5,3 +5,4 @@ export * from "../components/OsUpdateBanner/OsUpdateBanner";
 export * from "../components/BackupBanner/BackupBanner";
 export * from "../components/BootloaderDiscovered/BootloaderDiscovered";
 export * from "../components/OsUpdateStep/OsUpdateStep";
+export * from "../components/UpdateOnDesktopSheet/UpdateOnDesktopSheet";
