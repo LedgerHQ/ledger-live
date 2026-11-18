@@ -21,6 +21,10 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     db.init(testDir);
   });
 
+  afterEach(async () => {
+    await db.flush();
+  });
+
   const wrongPassword = { name: "DBWrongPassword" };
 
   function appJson(data: Record<string, unknown>) {
@@ -62,6 +66,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(unknown).toBeUndefined();
 
     await db.setKey("app", "settings", { loaded: true });
+    await db.flush();
 
     const written = getWrittenData();
     expect(written.settings).toEqual({ loaded: true });
@@ -75,6 +80,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
       db.setKey("app", "settings", { saved: true }),
       db.setKey("windowParams", "MainWindow", { width: 800 }),
     ]);
+    await db.flush();
 
     const writtenPaths = writeFileMock.mock.calls.map(([path]) => path);
     expect(writtenPaths).toContain(`${testDir}/app.json`);
@@ -93,11 +99,13 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(user).toEqual({ id: "legacy-user-id" });
 
     await db.setKey("app", "settings", {});
+    await db.flush();
 
     let written = getWrittenData();
     expect(written.user).toEqual({ id: "legacy-user-id" });
 
     await db.setKey("app", "identities", { userId: "new-id" });
+    await db.flush();
 
     written = getWrittenData();
     expect(written.identities).toEqual({ userId: "new-id" });
@@ -125,6 +133,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     const dismissal = { hasDismissed: true };
 
     await db.setKey("app", "accountAnalyticsIntroduction", dismissal);
+    await db.flush();
 
     const persisted = getWrittenData();
     expect(persisted.accountAnalyticsIntroduction).toEqual(dismissal);
@@ -195,6 +204,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(db.hasEncryptionKey()).toBe(false);
 
     await db.setKey("app", "settings", { loaded: true, touched: true });
+    await db.flush();
     readFileMock.mockResolvedValueOnce(appJson(getWrittenData()));
     db.init(testDir);
     await db.load("app");
@@ -220,6 +230,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(db.hasEncryptionKey()).toBe(false);
 
     await db.setKey("app", "settings", { loaded: true, touched: true });
+    await db.flush();
     expect(getWrittenData().accounts).toBe(persisted.accounts);
   });
 
@@ -340,8 +351,9 @@ describe("db flush", () => {
     db.init(testDir);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.useRealTimers();
+    await db.flush();
   });
 
   it("writes a pending save at once", async () => {
@@ -354,6 +366,26 @@ describe("db flush", () => {
 
     expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
     await expect(saved).resolves.toBeUndefined();
+  });
+
+  it("resolves setKey before the disk write, and flush writes it", async () => {
+    await db.setKey("app", "settings", { theme: "dark" });
+    expect(writeFileMock).not.toHaveBeenCalled();
+    await expect(db.getKey("app", "settings")).resolves.toEqual({ theme: "dark" });
+
+    await db.flush();
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
+  });
+
+  it("logs a failed save, as setKey has already resolved", async () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    writeFileMock.mockRejectedValueOnce(new Error("disk full"));
+
+    await db.setKey("app", "settings", { theme: "dark" });
+    await db.flush();
+
+    expect(consoleError).toHaveBeenCalledWith("[db] app.json save failed", expect.any(Error));
+    consoleError.mockRestore();
   });
 
   it("waits for a save that is already in progress", async () => {
@@ -450,6 +482,7 @@ describe("db flush", () => {
   it("does not serve the memory of the previous session while a reload saves it", async () => {
     readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "disk" } })));
     await db.setKey("app", "settings", "memory");
+    await db.flush();
     const finishWrite = blockNextWrite();
     void db.setKey("app", "settings", "pending");
     await waitMs(0);
@@ -474,6 +507,7 @@ describe("db flush", () => {
     ["resetAll", (d: typeof db) => d.resetAll()],
   ])("waits for the reload before %s", async (_name, call) => {
     await db.setKey("app", "settings", "memory");
+    await db.flush();
     const finishWrite = blockNextWrite();
     void db.setKey("app", "settings", "pending");
     await waitMs(0);

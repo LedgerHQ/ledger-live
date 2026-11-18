@@ -365,7 +365,7 @@ async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
     saveTriggers.set(ns, new Set());
   }
   saveTriggers.get(ns)!.add(keyPath);
-  return save(ns);
+  save(ns).catch(error => console.error(`[db] ${ns}.json save failed`, error));
 }
 
 /**
