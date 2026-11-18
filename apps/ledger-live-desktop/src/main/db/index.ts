@@ -16,6 +16,7 @@ import { contactsInitialState } from "@domain/entity-contact";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
+import { flushInRounds } from "~/helpers/flushInRounds";
 
 const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
@@ -80,24 +81,21 @@ function save(ns: string) {
   return saveNamespace(ns);
 }
 
-/** Saves that keep coming must not hold the quit. */
-const MAX_FLUSH_ROUNDS = 5;
-
 /**
  * Write the pending saves of all namespaces now, before the app quits.
  */
 function flush(): Promise<void> {
-  return flushSavers(0);
+  return flushInRounds(flushSavers);
 }
 
-async function flushSavers(round: number): Promise<void> {
+async function flushSavers(): Promise<boolean> {
   const savers = Array.from(saversByNamespace.values());
   const writes = savers.map(saver => saver.flush());
   await Promise.all(writes);
-  const savedDuringFlush =
+  return (
     saversByNamespace.size !== savers.length ||
-    savers.some((saver, i) => saver.pending() || saver.inFlight() !== writes[i]);
-  if (savedDuringFlush && round + 1 < MAX_FLUSH_ROUNDS) return flushSavers(round + 1);
+    savers.some((saver, i) => saver.pending() || saver.inFlight() !== writes[i])
+  );
 }
 
 // Track which keyPaths triggered saves for each namespace

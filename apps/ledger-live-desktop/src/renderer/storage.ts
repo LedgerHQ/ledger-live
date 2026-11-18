@@ -6,6 +6,7 @@ import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
+import { flushInRounds } from "~/helpers/flushInRounds";
 import debounce from "lodash/debounce";
 
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
@@ -208,20 +209,16 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
   debouncedSetKey(value);
 };
 
-/** A store that keeps writing must not hold the quit. */
-const MAX_FLUSH_ROUNDS = 5;
-
 /**
  * Send the debounced `setKey` calls to main now, and wait until main has them.
  */
-export const flushPendingWrites = (): Promise<void> => flushDebouncedSetKeys(0);
+export const flushPendingWrites = (): Promise<void> => flushInRounds(flushDebouncedSetKeys);
 
-async function flushDebouncedSetKeys(round: number): Promise<void> {
-  if (round >= MAX_FLUSH_ROUNDS || debouncedSinceLastFlush.size === 0) return;
+async function flushDebouncedSetKeys(): Promise<boolean> {
   const toFlush = Array.from(debouncedSinceLastFlush);
   debouncedSinceLastFlush.clear();
   await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
-  return flushDebouncedSetKeys(round + 1);
+  return debouncedSinceLastFlush.size > 0;
 }
 
 export const setEncryptionKey = (encryptionKey: string, currentEncryptionKey?: string) =>
