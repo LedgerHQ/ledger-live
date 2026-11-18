@@ -32,7 +32,7 @@ export default function OperationsList({ route, navigation }: Props) {
     : undefined;
   const viewModel = useOperationsListViewModel(accountIds, route.params?.historyTab, cardAsset);
   const cardHistoryViewModel = useCardHistoryViewModel(navigation);
-  const showDustFilter = viewModel.isDustFilterFeatureEnabled && !viewModel.isCardTab;
+  const showHistoryOptions = viewModel.hasHistoryOptions && !viewModel.isCardTab;
 
   const renderTrailing = useCallback(
     (_props: NativeStackHeaderRightProps) => (
@@ -46,8 +46,8 @@ export default function OperationsList({ route, navigation }: Props) {
       lumenNavBar: {
         description: cardScopeLabel,
         navBarDescriptionProps: cardScopeLabel ? { testID: "card-history-asset-scope" } : undefined,
-        renderTrailing: showDustFilter ? renderTrailing : undefined,
-        navBarTrailingProps: showDustFilter
+        renderTrailing: showHistoryOptions ? renderTrailing : undefined,
+        navBarTrailingProps: showHistoryOptions
           ? {
               style: { marginRight: 16 },
             }
@@ -56,7 +56,7 @@ export default function OperationsList({ route, navigation }: Props) {
     };
 
     navigation.setOptions(opts);
-  }, [cardScopeLabel, navigation, renderTrailing, showDustFilter]);
+  }, [cardScopeLabel, navigation, renderTrailing, showHistoryOptions]);
 
   return (
     <OperationsListView

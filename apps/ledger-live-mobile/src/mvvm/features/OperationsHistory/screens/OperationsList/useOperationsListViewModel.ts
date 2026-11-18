@@ -51,6 +51,7 @@ export function useOperationsListViewModel(
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
+  const [isExportOpen, setExportOpen] = useState(false);
   const [historyTabSelection, setHistoryTabSelection] = useState<{
     initial: HistoryTab;
     selected: HistoryTab;
@@ -72,6 +73,8 @@ export function useOperationsListViewModel(
   const historyTab: HistoryTab = isCardTab ? HISTORY_TAB_CARD : HISTORY_TAB_CRYPTO;
   const showHistoryTypeSwitcher = showCardHistory && !accountIds?.length && !cardAsset;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
+  const isHistoryExportEnabled = useFeature("lwmHistoryCsvExport")?.enabled === true;
+  const hasHistoryOptions = isDustFilterFeatureEnabled || isHistoryExportEnabled;
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
   );
@@ -191,11 +194,20 @@ export function useOperationsListViewModel(
   }, [dustFilterThreshold, isDustFilterFeatureEnabled, userHideSmallValueTokenOperations, t]);
 
   const openOptionsSheet = useCallback(() => {
-    if (isDustFilterFeatureEnabled) {
+    if (hasHistoryOptions) {
       setOptionsSheetOpen(true);
     }
-  }, [isDustFilterFeatureEnabled]);
+  }, [hasHistoryOptions]);
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
+
+  const openExport = useCallback(() => {
+    if (!isHistoryExportEnabled) return;
+
+    closeOptionsSheet();
+    track("ExportAccountOperations");
+    setExportOpen(true);
+  }, [closeOptionsSheet, isHistoryExportEnabled]);
+  const closeExport = useCallback(() => setExportOpen(false), []);
   const onHistoryTabChange = useCallback(
     (tab: HistoryTab) => {
       track("button_clicked", {
@@ -236,6 +248,11 @@ export function useOperationsListViewModel(
     closeOptionsSheet,
     hideSmallValueTokenOperations: isDustFilterFeatureEnabled && userHideSmallValueTokenOperations,
     isDustFilterFeatureEnabled,
+    isHistoryExportEnabled,
+    hasHistoryOptions,
+    isExportOpen,
+    openExport,
+    closeExport,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,

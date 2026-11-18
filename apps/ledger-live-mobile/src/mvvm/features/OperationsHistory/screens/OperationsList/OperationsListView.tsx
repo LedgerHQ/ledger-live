@@ -7,6 +7,7 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import { CardArtwork } from "@features/flow-pay-card-details";
 import { CardTransactionHistory } from "@features/flow-pay-card-transactions";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
+import { HistoryExport } from "../../components/HistoryExport";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsHistoryOptionsSheet } from "./components/OperationsHistoryOptionsSheet";
@@ -46,7 +47,11 @@ export function OperationsListView({
     onEndReached,
     isOptionsSheetOpen,
     closeOptionsSheet,
-    isDustFilterFeatureEnabled,
+    hasHistoryOptions,
+    isHistoryExportEnabled,
+    isExportOpen,
+    openExport,
+    closeExport,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,
@@ -143,14 +148,16 @@ export function OperationsListView({
         />
       )}
       {!isCardTab && !isEmpty ? <BottomFadeGradient /> : null}
-      {!isCardTab && isDustFilterFeatureEnabled ? (
+      {!isCardTab && hasHistoryOptions ? (
         <OperationsHistoryOptionsSheet
           isOpen={isOptionsSheetOpen}
           dustFilterOption={dustFilterOption}
           onClose={closeOptionsSheet}
           onToggle={onToggleHideSmallValueTokenOperations}
+          onExport={isHistoryExportEnabled ? openExport : undefined}
         />
       ) : null}
+      <HistoryExport isOpen={isExportOpen} onClose={closeExport} />
     </Box>
   );
 }

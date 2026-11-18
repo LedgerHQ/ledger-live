@@ -10,7 +10,9 @@ import {
   ListItemTitle,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
+import { Csv } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { useTranslation } from "~/context/Locale";
 import type { OperationsHistoryDustFilterOption } from "../useOperationsListViewModel";
 
 type Props = Readonly<{
@@ -18,6 +20,7 @@ type Props = Readonly<{
   dustFilterOption: OperationsHistoryDustFilterOption | undefined;
   onClose: () => void;
   onToggle: () => void;
+  onExport?: () => void;
 }>;
 
 export function OperationsHistoryOptionsSheet({
@@ -25,11 +28,11 @@ export function OperationsHistoryOptionsSheet({
   dustFilterOption,
   onClose,
   onToggle,
+  onExport,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
-  if (!dustFilterOption) return null;
-
-  const { Icon, title, description } = dustFilterOption;
+  const { t } = useTranslation();
+  if (!dustFilterOption && !onExport) return null;
 
   return (
     <QueuedBottomSheet
@@ -40,15 +43,32 @@ export function OperationsHistoryOptionsSheet({
     >
       <BottomSheetView style={{ paddingBottom: bottom + 24 }}>
         <BottomSheetHeader />
-        <ListItem onPress={onToggle} testID="operations-history-toggle-dust-filter">
-          <ListItemLeading>
-            <Spot icon={Icon} />
-            <ListItemContent>
-              <ListItemTitle>{title}</ListItemTitle>
-              <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>
-            </ListItemContent>
-          </ListItemLeading>
-        </ListItem>
+        {onExport ? (
+          <ListItem onPress={onExport} testID="operations-history-export-csv">
+            <ListItemLeading>
+              <Spot icon={Csv} />
+              <ListItemContent>
+                <ListItemTitle>{t("operationsList.options.exportCsv.title")}</ListItemTitle>
+                <ListItemDescription numberOfLines={2}>
+                  {t("operationsList.options.exportCsv.description")}
+                </ListItemDescription>
+              </ListItemContent>
+            </ListItemLeading>
+          </ListItem>
+        ) : null}
+        {dustFilterOption ? (
+          <ListItem onPress={onToggle} testID="operations-history-toggle-dust-filter">
+            <ListItemLeading>
+              <Spot icon={dustFilterOption.Icon} />
+              <ListItemContent>
+                <ListItemTitle>{dustFilterOption.title}</ListItemTitle>
+                <ListItemDescription numberOfLines={2}>
+                  {dustFilterOption.description}
+                </ListItemDescription>
+              </ListItemContent>
+            </ListItemLeading>
+          </ListItem>
+        ) : null}
       </BottomSheetView>
     </QueuedBottomSheet>
   );

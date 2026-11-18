@@ -4031,6 +4031,20 @@
       "crypto": "Crypto",
       "card": "Card",
       "accessibilityLabel": "Transaction history type"
+    },
+    "exportDialog": {
+      "title": "Export transaction history",
+      "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
+      "accountsToInclude": "Accounts to include",
+      "selectAll": "Select all ({{count}})",
+      "deselectAll": "Deselect all ({{count}})",
+      "export": "Export history",
+      "successTitle": "Transaction history saved successfully",
+      "successDescription": "The CSV file of your transaction history was saved successfully in the selected folder",
+      "done": "Done",
+      "errorTitle": "Something went wrong",
+      "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
+      "tryAgain": "Try again"
     }
   },
   "operationsList": {
@@ -4042,7 +4056,11 @@
       "hideDustTransactions": "Hide dust transactions",
       "showDustTransactions": "Show dust transactions",
       "dustTransactionsHiddenDescription": "Transactions below {{threshold}} will be hidden.",
-      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed."
+      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed.",
+      "exportCsv": {
+        "title": "Export transaction history",
+        "description": "Save the transactions of your accounts as a CSV file."
+      }
     }
   },
   "operationDetails": {
