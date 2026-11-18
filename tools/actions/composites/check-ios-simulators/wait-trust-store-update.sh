@@ -22,9 +22,10 @@ LOG_SHOW_TIMEOUT=60
 # Undocumented trustd log lines: a simulator whose logs have none of them gets a notice, since a
 # rewording by a new runtime would otherwise turn this wait into a silent 240 s sleep.
 START_MARKER="Pinning database should update"
-# trustd logs SecPinningDb when the update fails, which it often does; otherwise the first evaluation
-# answered after the start marker shows that it is over.
-END_MARKERS="SecPinningDb|trustd returned"
+# trustd logs this SecPinningDb line when the update fails, which it often does; otherwise the first
+# evaluation answered after the start marker shows that it is over. Other SecPinningDb lines don't
+# count: an iOS 26.2 runtime logs "error querying DB" on nearly every trust check.
+END_MARKERS="SecPinningDb: unable to create pinning list|trustd returned"
 TRUSTD_START_MARKER="Opening db with version"
 
 if ((N < 1)); then

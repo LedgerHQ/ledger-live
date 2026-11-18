@@ -2,11 +2,13 @@
 
 # macOS has no `timeout`. The deadline covers the command's exit and the close of its stdout, which a
 # descendant can hold open after the command exits: a `$(...)` reading it waits for both. On timeout,
-# kills the command's whole process group and exits 142.
+# sends SIGALRM to the command's process group, which `simctl spawn` passes on to the process inside
+# the simulator, then SIGKILL after 2 s, and exits 142.
 with_timeout() {
   local seconds="$1"
   shift
   perl -e '
+    use POSIX ":sys_wait_h";
     my $seconds = shift;
     pipe(my $out, my $child_out) or die "pipe failed: $!\n";
     my $pid = fork() // die "fork failed: $!\n";
@@ -18,7 +20,15 @@ with_timeout() {
       exec @ARGV or die "exec failed: $!\n";
     }
     close $child_out;
-    $SIG{ALRM} = sub { kill "KILL", -$pid; exit 142 };
+    $SIG{ALRM} = sub {
+      kill "ALRM", -$pid;
+      for (1 .. 20) {
+        last if waitpid($pid, WNOHANG) != 0;
+        select(undef, undef, undef, 0.1);
+      }
+      kill "KILL", -$pid;
+      exit 142;
+    };
     alarm $seconds;
     while (sysread($out, my $chunk, 65536)) { syswrite(STDOUT, $chunk) }
     waitpid($pid, 0);
