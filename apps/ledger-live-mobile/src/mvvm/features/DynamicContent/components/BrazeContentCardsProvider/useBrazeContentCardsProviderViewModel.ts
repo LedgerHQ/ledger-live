@@ -11,6 +11,10 @@ import {
   filterEligibleContentCards,
   type ContentCardEligibilityEvaluation,
 } from "LLM/features/DynamicContent/utils/filterEligibleContentCards";
+import isEqual from "lodash/isEqual";
+
+// The context value changes with these states, so an equal array would re-render every reader.
+const keepIfEqual = <T>(previous: T, next: T): T => (isEqual(previous, next) ? previous : next);
 
 export function useBrazeContentCardsProviderViewModel() {
   const { updateDynamicContent, clearOldDismissedContentCards, setDynamicContentLoading } =
@@ -42,7 +46,7 @@ export function useBrazeContentCardsProviderViewModel() {
       cards,
       eligibilityContextRef.current,
     );
-    setEligibilityEvaluations(evaluations);
+    setEligibilityEvaluations(previous => keepIfEqual(previous, evaluations));
     updateDynamicContentRef.current(eligibleCards);
   }, []);
 
@@ -54,7 +58,7 @@ export function useBrazeContentCardsProviderViewModel() {
 
       try {
         lastFetchedCardsRef.current = event.cards;
-        setLastFetchedCards(event.cards);
+        setLastFetchedCards(previous => keepIfEqual(previous, event.cards));
         publishEligibleCards(event.cards);
         pendingRefresh?.resolve();
       } catch (error) {

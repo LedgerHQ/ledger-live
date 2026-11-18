@@ -2,10 +2,15 @@ import Braze, { type ContentCard } from "@braze/react-native-sdk";
 import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { GenericAwarenessModalLayout } from "@ledgerhq/live-common/genericAwarenessModal";
 import { act, render } from "@tests/test-renderer";
 import React, { useEffect } from "react";
 import { addOneAccount } from "~/actions/accounts";
+import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
 import { completeOnboarding, unsafe_setKnownDeviceModelIds } from "~/actions/settings";
+import { useSelector } from "~/context/hooks";
+import { walletCardsSelector } from "~/reducers/dynamicContent";
+import type { State } from "~/reducers/types";
 import {
   BrazeContentCardsProvider,
   useBrazeContentCards,
@@ -45,6 +50,52 @@ const contentCard: ContentCard = {
   cardDescription: "Wallet card description",
 };
 
+const notificationCard: ContentCard = {
+  ...contentCard,
+  id: "notification-card",
+  title: "Notification card",
+  extras: { location: "notification_center", platform: "mobile" },
+};
+
+const modalCard: ContentCard = {
+  ...contentCard,
+  id: "modal-card",
+  extras: {
+    platform: "mobile",
+    location: "generic_awareness_modal",
+    layout: GenericAwarenessModalLayout.Carousel,
+    campaignId: "modal-campaign",
+    index: "0",
+    slideCount: "1",
+    title: "Slide 1",
+    subtitle: "First",
+    imageUrlLight: "https://example.com/1.png",
+    imageUrlDark: "",
+    primaryButtonLabel: "Go",
+    primaryButtonLink: "https://example.com",
+    navigationButtonLabel: "Next",
+  },
+};
+
+const copyCards = (cards: ContentCard[]) =>
+  cards.map(card => ({ ...card, extras: { ...card.extras } }));
+
+const withLocalModalCard = (state: State): State => ({
+  ...state,
+  genericAwarenessModal: {
+    ...state.genericAwarenessModal,
+    contentCards: [
+      {
+        id: "local-modal",
+        layout: GenericAwarenessModalLayout.Carousel,
+        data: [],
+        isReady: true,
+        isLocal: true,
+      },
+    ],
+  },
+});
+
 function RefreshConsumer({
   onReady,
 }: {
@@ -56,6 +107,32 @@ function RefreshConsumer({
   }, [lifecycle, onReady]);
   return null;
 }
+
+function WalletCardsReader({ onRender }: { onRender: () => void }) {
+  useSelector(walletCardsSelector);
+  onRender();
+  return null;
+}
+
+function ContentCardsContextReader({ onRender }: { onRender: () => void }) {
+  useBrazeContentCards();
+  onRender();
+  return null;
+}
+
+const renderProvider = (
+  children: React.ReactNode = <RefreshConsumer onReady={jest.fn()} />,
+  options?: Parameters<typeof render>[1],
+) => render(<BrazeContentCardsProvider>{children}</BrazeContentCardsProvider>, options);
+
+const publish = async (cards: ContentCard[]) => {
+  const onContentCardsUpdated = mockedAddListener.mock.calls[0][1] as unknown as (
+    event: Braze.ContentCardsUpdatedEvent,
+  ) => void;
+  await act(async () => {
+    onContentCardsUpdated({ cards });
+  });
+};
 
 describe("BrazeContentCardsProvider", () => {
   beforeEach(() => {
@@ -362,5 +439,160 @@ describe("BrazeContentCardsProvider", () => {
     });
 
     expect(store.getState().dynamicContent.mobileCards).toEqual([fundsCard]);
+  });
+});
+
+describe("BrazeContentCardsProvider when Braze republishes", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it.each([
+    ["empty card list", [] as ContentCard[]],
+    ["cards", [contentCard, notificationCard, modalCard]],
+  ])("should leave the store untouched when Braze republishes the same %s", async (_, cards) => {
+    const { store } = renderProvider();
+    await publish(copyCards(cards));
+    const published = store.getState();
+    const onStoreChange = jest.fn();
+    const unsubscribe = store.subscribe(onStoreChange);
+
+    await publish(copyCards(cards));
+    unsubscribe();
+
+    expect(onStoreChange).not.toHaveBeenCalled();
+    expect(store.getState().dynamicContent).toBe(published.dynamicContent);
+    expect(store.getState().genericAwarenessModal).toBe(published.genericAwarenessModal);
+  });
+
+  it("should end loading and keep every list when Braze publishes no cards to an empty store", async () => {
+    const { store } = renderProvider();
+    const before = store.getState();
+
+    await publish([]);
+
+    const { dynamicContent, genericAwarenessModal } = store.getState();
+    expect(dynamicContent.isLoading).toBe(false);
+    expect(dynamicContent.categoriesCards).toBe(before.dynamicContent.categoriesCards);
+    expect(dynamicContent.mobileCards).toBe(before.dynamicContent.mobileCards);
+    expect(dynamicContent.walletCards).toBe(before.dynamicContent.walletCards);
+    expect(dynamicContent.assetsCards).toBe(before.dynamicContent.assetsCards);
+    expect(dynamicContent.notificationCards).toBe(before.dynamicContent.notificationCards);
+    expect(dynamicContent.landingPageStickyCtaCards).toBe(
+      before.dynamicContent.landingPageStickyCtaCards,
+    );
+    expect(genericAwarenessModal).toBe(before.genericAwarenessModal);
+  });
+
+  it("should end loading without replacing any list when a refresh brings back the same cards", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store } = renderProvider(
+      <RefreshConsumer
+        onReady={value => {
+          lifecycle = value;
+        }}
+      />,
+    );
+    await publish([contentCard, notificationCard]);
+    const stored = store.getState().dynamicContent;
+    let refresh = resolvedRefresh();
+    await act(async () => {
+      refresh = lifecycle.refreshContentCards();
+    });
+    expect(store.getState().dynamicContent.isLoading).toBe(true);
+
+    await publish(copyCards([contentCard, notificationCard]));
+    await refresh;
+
+    const refreshed = store.getState().dynamicContent;
+    expect(refreshed.isLoading).toBe(false);
+    expect(refreshed.walletCards).toBe(stored.walletCards);
+    expect(refreshed.notificationCards).toBe(stored.notificationCards);
+    expect(refreshed.mobileCards).toBe(stored.mobileCards);
+  });
+
+  it("should not re-render card readers when Braze republishes the same cards", async () => {
+    const onWalletCardsRender = jest.fn();
+    const onContextRender = jest.fn();
+    renderProvider(
+      <>
+        <WalletCardsReader onRender={onWalletCardsRender} />
+        <ContentCardsContextReader onRender={onContextRender} />
+      </>,
+    );
+    await publish([contentCard]);
+    onWalletCardsRender.mockClear();
+    onContextRender.mockClear();
+
+    await publish(copyCards([contentCard]));
+
+    expect(onWalletCardsRender).not.toHaveBeenCalled();
+    expect(onContextRender).not.toHaveBeenCalled();
+  });
+
+  it("should expose the new fetched cards when Braze changes a card", async () => {
+    let lifecycle = defaultLifecycle;
+    renderProvider(
+      <RefreshConsumer
+        onReady={value => {
+          lifecycle = value;
+        }}
+      />,
+    );
+    await publish([contentCard]);
+    const changedCards = [{ ...contentCard, title: "Updated wallet card" }];
+
+    await publish(changedCards);
+
+    expect(lifecycle.lastFetchedCards).toBe(changedCards);
+  });
+
+  it("should leave Braze lists untouched when an eligibility change keeps the same eligible cards", async () => {
+    const { store } = renderProvider();
+    await publish([contentCard]);
+    const published = store.getState();
+
+    await act(async () => {
+      store.dispatch(addOneAccount(FUNDED_ACCOUNT));
+    });
+
+    expect(store.getState().dynamicContent).toBe(published.dynamicContent);
+    expect(store.getState().genericAwarenessModal).toBe(published.genericAwarenessModal);
+  });
+
+  it("should keep local modal cards first when Braze publishes modal cards", async () => {
+    const { store } = renderProvider(undefined, { overrideInitialState: withLocalModalCard });
+
+    await publish([modalCard]);
+
+    expect(store.getState().genericAwarenessModal.contentCards.map(card => card.id)).toEqual([
+      "local-modal",
+      "modal-campaign",
+    ]);
+  });
+
+  it("should keep the modal card list when Braze republishes the same modal cards next to a local card", async () => {
+    const { store } = renderProvider(undefined, { overrideInitialState: withLocalModalCard });
+    await publish([modalCard]);
+    const published = store.getState().genericAwarenessModal;
+
+    await publish(copyCards([modalCard]));
+
+    expect(store.getState().genericAwarenessModal).toBe(published);
+  });
+
+  it("should restore the Braze notification list when Braze republishes the same cards after a local edit", async () => {
+    const { store } = renderProvider();
+    await publish([notificationCard]);
+    const published = store.getState().dynamicContent.notificationCards;
+    await act(async () => {
+      store.dispatch(
+        setDynamicContentNotificationCards(published.map(card => ({ ...card, viewed: true }))),
+      );
+    });
+
+    await publish(copyCards([notificationCard]));
+
+    expect(store.getState().dynamicContent.notificationCards).toEqual(published);
   });
 });
