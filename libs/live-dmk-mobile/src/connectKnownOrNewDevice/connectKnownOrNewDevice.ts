@@ -1,6 +1,5 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
-  connectedDevices$,
   connectKnownOrNewDeviceUseCase,
   DefaultDeviceDiscoveryService,
   type ConnectKnownOrNewDeviceDelays,
@@ -47,7 +46,7 @@ export function connectKnownOrNewDevice({
     deviceDiscoveryService: new DefaultDeviceDiscoveryService<MobileDiscoveryError>(
       buildDiscoverySources(dmk, Platform.OS, isMockServerEnabled),
     ),
-    connectedDevices$: connectedDevices$(dmk),
+    connectedDevices$: dmk.listenToConnectedDevices(),
     findMatchingDevice,
     getConnectivity: buildGetConnectivity(getMockServerDevices),
     mapConnectionError: createConnectionError,

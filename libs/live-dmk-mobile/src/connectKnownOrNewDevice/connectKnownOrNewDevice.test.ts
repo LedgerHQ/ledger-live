@@ -112,8 +112,7 @@ const knownMockBleDevice: KnownDevice = {
 
 const setupTest = (overrides: Partial<ConnectKnownOrNewDeviceInput> = {}) => {
   const dmk = {
-    listConnectedDevices: () => [],
-    listenToConnectedDevice: () => NEVER,
+    listenToConnectedDevices: () => NEVER.pipe(startWith([])),
   } as unknown as DeviceManagementKit;
   const input: ConnectKnownOrNewDeviceInput = {
     dmk,
