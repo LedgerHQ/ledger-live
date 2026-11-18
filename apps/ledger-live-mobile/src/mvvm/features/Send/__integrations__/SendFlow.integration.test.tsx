@@ -8,6 +8,8 @@ import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-c
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import rampCatalogApi from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/api/index";
 import {
   act,
   fireEvent,
@@ -176,19 +178,26 @@ describe("Send flow integration tests", () => {
       contacts: options.contacts ? { contacts: options.contacts } : state.contacts,
     });
 
-    return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
-      overrideInitialState: options.contactsEnabled
-        ? withFlagOverrides(
-            {
-              lwmContacts: {
-                enabled: true,
-                params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+    // Insufficient funds offers Get funds only for a currency the Buy catalog lists. Under MOCK the
+    // provider loads the catalog from its bundled mock data.
+    return renderWithReactQuery(
+      <RampCatalogProvider updateFrequency={999999}>
+        <SendPage initParams={{ account, ...initParams }} />
+      </RampCatalogProvider>,
+      {
+        overrideInitialState: options.contactsEnabled
+          ? withFlagOverrides(
+              {
+                lwmContacts: {
+                  enabled: true,
+                  params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+                },
               },
-            },
-            withAccount,
-          )
-        : withAccount,
-    });
+              withAccount,
+            )
+          : withAccount,
+      },
+    );
   }
 
   async function driveToAmount(
@@ -896,6 +905,26 @@ describe("Send flow integration tests", () => {
       }
 
       expect(await screen.findByText("Get BTC")).toBeOnTheScreen();
+    });
+
+    it("Bitcoin: an invalid amount keeps Review disabled when Buy does not support the currency", async () => {
+      const fetchRampCatalog = jest
+        .spyOn(rampCatalogApi, "fetchRampCatalog")
+        .mockResolvedValue({ onRamp: { moonpay: ["ethereum"] }, offRamp: {} });
+      const { user } = renderForAccount(accountBitcoin);
+      await driveToAmount(user, { recipient: VALID_BITCOIN_RECIPIENT });
+
+      await user.press(screen.getByLabelText("Toggle currency"));
+      for (const digit of "99") {
+        const matches = screen.getAllByText(digit);
+        await user.press(matches[matches.length - 1]);
+        await flushTimers();
+      }
+
+      expect(fetchRampCatalog).toHaveBeenCalled();
+      expect(await screen.findByRole("button", { name: "Review" })).toBeDisabled();
+      expect(screen.queryByText("Get BTC")).not.toBeOnTheScreen();
+      fetchRampCatalog.mockRestore();
     });
   });
 });

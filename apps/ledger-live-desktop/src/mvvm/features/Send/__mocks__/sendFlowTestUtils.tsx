@@ -564,6 +564,8 @@ export const renderSendFlow = (
       },
       ...(options?.flags ? withFlagOverrides(options.flags) : {}),
     },
+    // Insufficient funds offers Get funds only for a currency the Buy catalog (tests/handlers/buy.ts) lists.
+    withRampCatalog: true,
   });
 
 export async function navigateToAmountScreen(

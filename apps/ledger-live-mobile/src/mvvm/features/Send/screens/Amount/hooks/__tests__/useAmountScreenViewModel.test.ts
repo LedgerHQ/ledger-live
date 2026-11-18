@@ -140,6 +140,7 @@ describe("useAmountScreenViewModel", () => {
       reviewDisabled: false,
       amountComputationPending: false,
       hasInsufficientFundsError: false,
+      showGetFundsCta: false,
       hasRawAmount: true,
     });
 
@@ -302,6 +303,7 @@ describe("useAmountScreenViewModel", () => {
         (useSendFlowAmountReviewCore as jest.Mock).mockReturnValue({
           ...(useSendFlowAmountReviewCore as jest.Mock)(),
           hasInsufficientFundsError: true,
+          showGetFundsCta: true,
         });
 
         expect(renderReady().reviewButton.disabled).toBe(false);
@@ -369,6 +371,7 @@ describe("useAmountScreenViewModel", () => {
       (useSendFlowAmountReviewCore as jest.Mock).mockReturnValue({
         ...(useSendFlowAmountReviewCore as jest.Mock)(),
         hasInsufficientFundsError: true,
+        showGetFundsCta: true,
       });
 
       const { result } = renderViewModel(createBaseStatus());
@@ -376,6 +379,47 @@ describe("useAmountScreenViewModel", () => {
       if (!result.current.ready) throw new Error("view model should be ready");
       expect(result.current.reviewButton.disabled).toBe(false);
       expect(result.current.reviewButton.loading).toBe(false);
+    });
+  });
+
+  describe("insufficient funds CTA", () => {
+    const renderWithCore = (core: { showGetFundsCta: boolean }) => {
+      (useSendFlowAmountReviewCore as jest.Mock).mockReturnValue({
+        ...(useSendFlowAmountReviewCore as jest.Mock)(),
+        hasInsufficientFundsError: true,
+        ...core,
+      });
+      const onReview = jest.fn();
+      const onGetFunds = jest.fn();
+      const { result } = renderHook(() =>
+        useAmountScreenViewModel({
+          account: mockAccount,
+          parentAccount: null,
+          transaction: baseTransaction,
+          status: createBaseStatus(),
+          bridgePending: false,
+          bridgeError: null,
+          uiConfig: { hasFeePresets: false } as never,
+          transactionActions: { updateTransaction: jest.fn() } as never,
+          onReview,
+          onGetFunds,
+          onSelectCoinControl: jest.fn(),
+        }),
+      );
+      if (!result.current.ready) throw new Error("view model should be ready");
+      return { reviewButton: result.current.reviewButton, onReview, onGetFunds };
+    };
+
+    it("opens Get funds when Buy is available for the currency", () => {
+      const { reviewButton, onGetFunds } = renderWithCore({ showGetFundsCta: true });
+
+      expect(reviewButton.onPress).toBe(onGetFunds);
+    });
+
+    it("keeps Review as the action when Buy is unavailable for the currency", () => {
+      const { reviewButton, onReview } = renderWithCore({ showGetFundsCta: false });
+
+      expect(reviewButton.onPress).toBe(onReview);
     });
   });
 
