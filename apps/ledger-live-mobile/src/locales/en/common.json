@@ -2788,6 +2788,52 @@
         "title": "Restore access",
         "recoveryPhraseDescription": "Secret Recovery Phrase"
       },
+      "info": {
+        "cards": {
+          "setupChoice": "Which setup method?",
+          "recoveryPhrase": "What’s a Secret Recovery Phrase?",
+          "restoreChoice": "Choose a backup to restore from",
+          "recoveryKey": "What’s a Recovery Key?",
+          "restoreRecoveryKey": "What’s a Secret Recovery Key?"
+        },
+        "faq": "View complete FAQ",
+        "setupChoice": {
+          "title": "Set up or restore?",
+          "newDevice": {
+            "title": "Set up as a new Ledger device",
+            "description": "It generates your Secret Recovery Phrase. Choose if you don’t already have one."
+          },
+          "restore": {
+            "title": "Restore from backup",
+            "description": "Restore using an existing backup: Secret Recovery Phrase, Recovery Key, or Ledger Recover.",
+            "descriptionWithoutRecoveryKey": "Restore using an existing backup: Secret Recovery Phrase or Ledger Recover."
+          }
+        },
+        "recoveryPhrase": {
+          "title": "Secret Recovery Phrase",
+          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+        },
+        "restoreChoice": {
+          "recoveryPhrase": {
+            "title": "Secret Recovery Phrase",
+            "description": "Use the 12, 18 or 24 words you saved when setting up your wallet."
+          },
+          "recoveryKey": {
+            "title": "Ledger Recovery Key",
+            "description": "Use your offline, PIN-protected card to restore with a tap."
+          },
+          "recover": {
+            "title": "Ledger Recover subscription",
+            "description": "Verify your identity through your active subscription to restore access."
+          }
+        },
+        "recoveryKey": {
+          "title": "Recovery Key",
+          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost or replaced.",
+          "inTheBox": "A Recovery Key is included in the box of your device.",
+          "learnHowToUse": "Learn how to use"
+        }
+      },
       "connection": {
         "reconnecting": {
           "title": "Reconnecting to your {{productName}}",

@@ -19,6 +19,7 @@ import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDr
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupGlow } from "./components/SetupGlow";
+import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
 import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
@@ -54,6 +55,9 @@ export function SetupView({
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  infoCard,
+  suspendInfoSheet,
+  reportsRecoveryKey,
   connection,
   productName,
   suspendSheets,
@@ -120,6 +124,11 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
+        <SetupInfo
+          card={infoCard}
+          suspendSheets={suspendInfoSheet}
+          reportsRecoveryKey={reportsRecoveryKey}
+        />
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>

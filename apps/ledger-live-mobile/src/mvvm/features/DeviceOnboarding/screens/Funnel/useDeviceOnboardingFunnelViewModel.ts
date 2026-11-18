@@ -8,6 +8,7 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { deviceReportsRecoveryKey } from "@features/platform-device-onboarding";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
@@ -581,6 +582,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onboarding.context?.genuineFailureKind === "DEVICE_NOT_GENUINE",
     firmwareVersion: readString(onboarding.context?.firmwareVersion),
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
+    reportsRecoveryKey: deviceReportsRecoveryKey(
+      onboarding.context?.deviceModelId,
+      readString(onboarding.context?.firmwareVersion) ?? "",
+    ),
     device: onboarding.liveDevice,
     connectionError: onboarding.error,
     suspendSheets,

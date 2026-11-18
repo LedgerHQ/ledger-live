@@ -22,5 +22,6 @@ export type SetupScreenProps = {
   checks: SetupChecksProps | null;
   onQuit: () => void;
   suspendSheets?: boolean;
+  reportsRecoveryKey?: boolean;
   connection?: SessionReconnect | null;
 };
