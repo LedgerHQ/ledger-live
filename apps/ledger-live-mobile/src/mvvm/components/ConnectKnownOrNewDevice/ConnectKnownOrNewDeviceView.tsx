@@ -1,5 +1,8 @@
 import React from "react";
-import { ConnectKnownOrNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
+import {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  type DeviceListItem,
+} from "@ledgerhq/live-dmk-mobile";
 import {
   ConnectionErrorState,
   DiscoveryErrorState,
@@ -15,6 +18,13 @@ import type {
 } from "./types";
 import { assertNever } from "./utils/assertNever";
 import { isErrorState } from "./utils/isErrorState";
+
+const withoutActions = ({ key, device, connectivity, status }: DeviceListItem): DeviceListItem => ({
+  key,
+  device,
+  connectivity,
+  status,
+});
 
 function ErrorStateView({
   state,
@@ -69,7 +79,7 @@ export function ConnectKnownOrNewDeviceView({
   return (
     <>
       <DeviceSection
-        devices={isDiscovering ? state.devices : devices}
+        devices={isDiscovering ? state.devices : devices.map(withoutActions)}
         onAddNewDevice={isDiscovering && !state.isPaused ? state.addNewDevice : undefined}
         disabled={isDiscovering && state.isPaused}
       >
