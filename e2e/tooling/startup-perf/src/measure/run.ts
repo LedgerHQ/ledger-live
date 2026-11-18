@@ -340,10 +340,13 @@ async function measureScenario(scenario: string): Promise<void> {
     // Never the same device twice in a row, warm-ups included.
     const { placement, order } = layout(phase);
     for (const side of order) {
-      const device = placement[side];
-      await installAndInject({ scenario, side, device, userdata });
-      // Test branch: no Debug-screen check in warm-ups; its long Maestro session changes the next launch.
-      for (let w = 0; w < WARMUPS; w++) {
+      await installAndInject({ scenario, side, device: placement[side], userdata });
+    }
+    // Test branch: no Debug-screen check in warm-ups; its long Maestro session changes the next launch.
+    // In turn, like the rounds: no build starts round 0 after idling through the other's warm-ups.
+    for (let w = 0; w < WARMUPS; w++) {
+      for (const side of order) {
+        const device = placement[side];
         await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
     }
