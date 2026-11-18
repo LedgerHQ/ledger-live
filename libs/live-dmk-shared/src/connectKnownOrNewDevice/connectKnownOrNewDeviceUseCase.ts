@@ -31,7 +31,10 @@ export type ConnectKnownOrNewDeviceUseCaseOutput<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
   TConnectionError extends BaseConnectionError = BaseConnectionError,
 > = {
-  /** Each subscription starts a new state machine. The unsubscription stops it. */
+  /**
+   * Each subscription starts a new state machine, and the unsubscription stops it. Keep one
+   * subscription at a time: `pause` and `resume` control the latest one only.
+   */
   uiStates: Observable<
     ConnectKnownOrNewDeviceUIState<TDiscoveryError | UnknownDiscoveryError, TConnectionError>
   >;
