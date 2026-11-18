@@ -38,6 +38,8 @@ const BottomContainer = ({ steps }: Props) => {
       background={colors.opacityDefault.c05}
       borderRadius={24}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+      testID="ws-qr-instructions"
     >
       <Text variant="h4" fontSize={18} color={colors.neutral.c100} mb={24}>
         {t("walletSync.synchronize.qrCode.scan.explanation.title")}

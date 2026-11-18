@@ -21,6 +21,7 @@ type Props = {
 function View({
   isOpen,
   hasCustomHeader,
+  hasScrollableInstructions,
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
@@ -61,6 +62,7 @@ function View({
           customHeader={hasCustomHeader ? <DrawerHeader onClose={handleClose} /> : undefined}
           hasBackButton={canGoBack}
           onBack={goBackToPreviousStep}
+          enableContentPanningGesture={!hasScrollableInstructions}
           testID="wallet-sync-activation-sheet"
         >
           {flow}

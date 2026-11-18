@@ -12,6 +12,8 @@ type Props = Readonly<{
   onBack?: () => void;
   /** Replaces the sheet header and its close button. */
   customHeader?: React.ReactNode;
+  /** Off for content holding a scroll area of its own, so the sheet's drag does not take its scroll. */
+  enableContentPanningGesture?: boolean;
   testID: string;
   children: React.ReactNode;
 }>;
@@ -26,6 +28,7 @@ export function LedgerSyncBottomSheet({
   hasBackButton,
   onBack,
   customHeader,
+  enableContentPanningGesture,
   testID,
   children,
 }: Props) {
@@ -45,6 +48,7 @@ export function LedgerSyncBottomSheet({
       onBack={onBack}
       noCloseButton={hasCustomHeader}
       enableDynamicSizing
+      enableContentPanningGesture={enableContentPanningGesture}
       contentHasBottomSpace
       testID={testID}
     >

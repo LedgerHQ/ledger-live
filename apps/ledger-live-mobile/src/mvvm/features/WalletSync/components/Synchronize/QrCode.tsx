@@ -70,14 +70,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
   ];
 
   return (
-    <Flex
-      flexDirection={"column"}
-      rowGap={24}
-      alignItems={"center"}
-      marginBottom={20}
-      width={"100%"}
-      height={"100%"}
-    >
+    <Flex flexDirection={"column"} rowGap={24} alignItems={"center"} width={"100%"}>
       <Flex
         alignItems={"center"}
         width={QRSize}

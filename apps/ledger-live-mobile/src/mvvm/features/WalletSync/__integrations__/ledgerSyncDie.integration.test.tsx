@@ -36,6 +36,7 @@ import ManageInstancesDrawer from "../screens/ManageInstances/ManageInstancesDra
 import { useManageInstancesDrawer } from "../screens/ManageInstances/useManageInstanceDrawer";
 import ManageKeyDrawer from "../screens/ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../screens/ManageKey/useManageKeyDrawer";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Steps } from "../types/Activation";
 import { AnalyticsEvents } from "../Analytics/enums";
 
@@ -429,6 +430,10 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
 
   describe("Ledger Sync drawers", () => {
     const LEGACY_DRAWER = "drawer-backdrop";
+    const activationSheet = () =>
+      screen
+        .UNSAFE_getAllByType(QueuedBottomSheet)
+        .find(sheet => sheet.props.testID === "wallet-sync-activation-sheet");
 
     it("should open the activation drawer on the Lumen sheet", async () => {
       render(<SettingsEntry />, { overrideInitialState: initialState({}) });
@@ -458,6 +463,25 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(await screen.findByTestId("delete-trustchain")).toBeVisible();
       expect(screen.getByTestId("wallet-sync-manage-key-sheet-content")).toBeOnTheScreen();
       expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should leave the drag of the QR code step to its instructions", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+
+      expect(await screen.findByTestId("ws-scan-camera")).toBeVisible();
+      expect(activationSheet()?.props.enableContentPanningGesture).toBe(false);
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
+    });
+
+    it("should let the content drag the sheet outside the QR code step", async () => {
+      render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      expect(
+        await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
+      ).toBeVisible();
+      expect(activationSheet()?.props.enableContentPanningGesture).toBe(true);
     });
 
     it("should start the activation step from the manage key error", async () => {
