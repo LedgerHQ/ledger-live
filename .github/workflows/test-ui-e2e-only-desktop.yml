@@ -203,8 +203,8 @@ jobs:
       device_1: ${{ steps.parse.outputs.device_1 }}
       device_2: ${{ steps.parse.outputs.device_2 }}
       is_dual: ${{ steps.parse.outputs.is_dual }}
-      e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
-      shard_total: ${{ steps.parse.outputs.shard_total }}
+      e2e_matrix: ${{ steps.shards.outputs.e2e_matrix }}
+      shard_total: ${{ steps.shards.outputs.shard_total }}
       runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
       extra_os_matrix: ${{ steps.extra-os.outputs.extra_os_matrix }}
     steps:
@@ -226,20 +226,7 @@ jobs:
             [4]=stax                # Thursday   - Stax
             [5]=nanoS               # Friday     - LNS
           )
-          SHARD_TOTAL=4
-          echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
-          # Prints e2e_matrix with one entry per shard of each "<device>:<is_primary>:<artifact_suffix>".
-          e2e_matrix() {
-            local entries=() spec device is_primary artifact_suffix shard
-            for spec in "$@"; do
-              IFS=: read -r device is_primary artifact_suffix <<< "$spec"
-              for shard in $(seq 1 "$SHARD_TOTAL"); do
-                entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
-                  "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
-              done
-            done
-            (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}")
-          }
+          # Each "<device>:<is_primary>:<artifact_suffix>"; the shard matrix is built once the filter is resolved.
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
@@ -247,14 +234,14 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              e2e_matrix "$DEVICE:true:"
+              echo "device_specs=$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             {
               echo "device_1=nanoSP"
               echo "device_2=stax"
               echo "is_dual=true"
-              e2e_matrix "nanoSP:true:" "stax:false:-stax"
+              echo "device_specs=nanoSP:true: stax:false:-stax"
             } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
@@ -262,7 +249,7 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              e2e_matrix "$DEVICE:true:"
+              echo "device_specs=$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
@@ -312,6 +299,32 @@ jobs:
             --runner playwright \
             --github-output >> "$GITHUB_OUTPUT"
 
+      - name: Size the shard matrix to the selection
+        id: shards
+        env:
+          DEVICE_SPECS: ${{ steps.parse.outputs.device_specs }}
+          # Empty for the whole suite, an inverted filter, a runtime-only pattern, or a ref whose
+          # resolve.mjs predates spec_count: all keep the full shard count.
+          SPEC_COUNT: ${{ steps.test-filter.outputs.spec_count }}
+        run: |
+          MAX_SHARDS=4
+          SHARD_TOTAL=$MAX_SHARDS
+          # A shard with no matching spec still pays the full install, build and Speculos setup.
+          if [[ "$SPEC_COUNT" =~ ^[1-9][0-9]*$ ]] && [ "$SPEC_COUNT" -lt "$MAX_SHARDS" ]; then
+            SHARD_TOTAL=$SPEC_COUNT
+          fi
+          echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
+          entries=()
+          for spec in $DEVICE_SPECS; do
+            IFS=: read -r device is_primary artifact_suffix <<< "$spec"
+            for shard in $(seq 1 "$SHARD_TOTAL"); do
+              entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
+                "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
+            done
+          done
+          (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}") >> "$GITHUB_OUTPUT"
+        shell: bash
+
       - name: Write workflow context to GitHub Summary
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
@@ -323,7 +336,8 @@ jobs:
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           DEVICES: ${{ steps.parse.outputs.is_dual == 'true' && format('{0} + {1}', steps.parse.outputs.device_1, steps.parse.outputs.device_2) || steps.parse.outputs.device_1 }}
-          SHARD_TOTAL: ${{ steps.parse.outputs.shard_total }}
+          SHARD_TOTAL: ${{ steps.shards.outputs.shard_total }}
+          SPEC_COUNT: ${{ steps.test-filter.outputs.spec_count }}
           RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
           RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
@@ -345,7 +359,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICES"
-            echo "- **Shards per device:** $SHARD_TOTAL"
+            echo "- **Shards per device:** $SHARD_TOTAL${SPEC_COUNT:+ ($SPEC_COUNT matching spec file(s))}"
             echo "- **Also on macOS:** $RUN_ON_MACOS"
             echo "- **Also on Windows:** $RUN_ON_WINDOWS"
             echo "- **Speculos:** Speculinho (remote)"

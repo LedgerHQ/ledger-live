@@ -340,6 +340,54 @@ export function resolveE2eSelection({
   return { filter, runner_filter: runnerFilter, ok, notes };
 }
 
+function matchesFile(filePath, matcher) {
+  return matcher.test(filePath) || matcher.test(fs.readFileSync(filePath, "utf8"));
+}
+
+// How many desktop spec files the selection can reach, so the workflow sizes its shard matrix to
+// the work. null means "keep the full count": the whole suite, a smoke-only run, an inverted
+// filter, or a pattern only Playwright's own collection can resolve (runtime tags, rerun titles).
+// Undercounting only costs parallelism, never coverage: every matching test still runs.
+export function estimatePlaywrightSpecCount({
+  input = "",
+  smokeTests = false,
+  checkDir = "",
+  team = "",
+  invertFilter = false,
+} = {}) {
+  if (!checkDir || invertFilter) return null;
+  useRepoRootCwd();
+  const specFiles = findSpecFiles(checkDir);
+  if (specFiles.length === 0) return null;
+
+  const selectedTeam = String(team ?? "")
+    .trim()
+    .toLowerCase();
+  const hasTeam = Boolean(selectedTeam) && selectedTeam !== "all";
+  const baseFilter = normalizeAlternatives(resolveBaseFilter(input).filter);
+  if (!hasTeam && !baseFilter) return null;
+
+  let selected = hasTeam
+    ? createTeamExpander({ files: specFiles, specRoot: checkDir, runner: "playwright" }).specs(
+        selectedTeam,
+      )
+    : specFiles;
+
+  const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
+  for (const conjunct of [smokeTests ? "@smoke" : "", baseFilter]) {
+    if (!conjunct || splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
+    let matcher;
+    try {
+      matcher = new RegExp(conjunct, "i");
+    } catch {
+      return null;
+    }
+    selected = selected.filter(file => matchesFile(file, matcher));
+  }
+
+  return selected.length > 0 ? selected.length : null;
+}
+
 // Kept for callers that only want the pattern string (and for the default CLI output).
 export function resolveTestFilter(options = {}) {
   return resolveE2eSelection(options).filter;
@@ -474,8 +522,15 @@ if (process.argv[1] === currentFile) {
     const { filter, runner_filter: runnerFilter, ok } = resolveE2eSelection(options);
     // stdout must stay empty on failure so the workflow never captures a half-resolved value.
     if (!ok) process.exit(1);
-    console.log(
-      options.githubOutput ? formatGithubOutput({ filter, runner_filter: runnerFilter }) : filter,
-    );
+    if (!options.githubOutput) {
+      console.log(filter);
+    } else {
+      const outputs = { filter, runner_filter: runnerFilter };
+      // Empty when unknown: the desktop workflow then keeps its full shard count.
+      if (options.runner === "playwright") {
+        outputs.spec_count = estimatePlaywrightSpecCount(options) ?? "";
+      }
+      console.log(formatGithubOutput(outputs));
+    }
   }
 }
