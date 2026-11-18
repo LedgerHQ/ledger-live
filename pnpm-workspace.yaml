@@ -34,14 +34,14 @@ catalog:
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
   "@jest/globals": 30.5.2
-  "@ledgerhq/context-module": 2.8.0
+  "@ledgerhq/context-module": 2.9.0
   "@ledgerhq/crypto-icons": "2.0.7"
   "@ledgerhq/device-contacts-kit": 0.5.0
-  "@ledgerhq/device-management-kit": 1.11.1
+  "@ledgerhq/device-management-kit": 1.12.0
   "@ledgerhq/dmk-ledger-wallet": 0.9.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.5.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.18.2
+  "@ledgerhq/device-signer-kit-ethereum": 1.18.3
   "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
   "@ledgerhq/device-signer-kit-solana": 1.16.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
@@ -256,12 +256,12 @@ catalog:
   rimraf: 4.4.1
   zx: 8.8.5
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 16.8.1
-  "@ledgerhq/coin-hypercore": 4.1.1
-  "@ledgerhq/coin-module-framework": 12.0.0
-  "@ledgerhq/coin-stellar": 12.2.4
-  "@ledgerhq/coin-tezos": 14.2.1
-  "@ledgerhq/coin-xrp": 13.8.2
+  "@ledgerhq/coin-evm": 17.0.0
+  "@ledgerhq/coin-hypercore": 4.2.0
+  "@ledgerhq/coin-module-framework": 13.1.0
+  "@ledgerhq/coin-stellar": 12.3.0
+  "@ledgerhq/coin-tezos": 14.3.0
+  "@ledgerhq/coin-xrp": 13.9.0
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:

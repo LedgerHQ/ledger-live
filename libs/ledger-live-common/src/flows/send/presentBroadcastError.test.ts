@@ -129,6 +129,16 @@ describe("presentBroadcastError", () => {
     expect(presented).toMatchObject({ name: "InvalidTransactionError", message: "bad tx" });
   });
 
+  it("should keep an expired Solana blockhash error as is", () => {
+    const presented = presentBroadcastError(
+      { name: "SolanaTxBlockhashExpired", message: "SolanaTxBlockhashExpired" },
+      ethereumAccount,
+      null,
+    );
+
+    expect(presented).toMatchObject({ name: "SolanaTxBlockhashExpired" });
+  });
+
   it("should describe a rejection without a message", () => {
     expect(toBroadcastError({ code: 42 }).message).toBe('{"code":42}');
     expect(toBroadcastError("offline").message).toBe("offline");

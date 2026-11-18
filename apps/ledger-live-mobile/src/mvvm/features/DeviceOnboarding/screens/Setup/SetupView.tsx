@@ -40,6 +40,7 @@ export function SetupView({
   stageTitle,
   stageDescription,
   currentStep,
+  completedSteps,
   totalSteps,
   status,
   closeLabel,
@@ -52,7 +53,6 @@ export function SetupView({
   onReopenFirmwareOffer,
   skipUpdateLabel,
   onSkipUpdate,
-  allowSheet,
   firmwareUpdate,
   unsupportedUpdate,
   errorDrawer,
@@ -144,7 +144,11 @@ export function SetupView({
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>
-              <Stepper currentStep={currentStep} totalSteps={totalSteps} />
+              <Stepper
+                currentStep={completedSteps}
+                totalSteps={totalSteps}
+                label={`${currentStep}/${totalSteps}`}
+              />
               <CardContent>
                 <CardContentTitle>{stageTitle}</CardContentTitle>
                 {stageDescription ? (
@@ -159,7 +163,6 @@ export function SetupView({
         </Card>
       </Box>
       <ChecksDrawers
-        allowSheet={allowSheet}
         testIds={setupTestIds}
         firmwareUpdate={firmwareUpdate}
         unsupportedUpdate={unsupportedUpdate}

@@ -1,10 +1,11 @@
 import type { BitcoinCoinConfig } from "../config";
 import { fetchPendingUtxos, fetchTx, fetchUtxos } from "../network/explorer";
-import type { ExplorerTx, ExplorerUtxo } from "../network/types";
+import type { ExplorerPendingUtxos, ExplorerTx, ExplorerUtxo } from "../network/types";
 import { txidOf } from "../network/types";
 import { explorerAddress } from "./cashaddr";
 
-const outpoint = (hash: string, outputIndex: number) => `${hash}:${outputIndex}`;
+/** The `txid:vout` identifier of an output. */
+export const outpoint = (hash: string, outputIndex: number) => `${hash}:${outputIndex}`;
 
 /** Unconfirmed transactions fetched at once, so many pending transactions do not flood the explorer. */
 const PENDING_TX_CONCURRENCY = 8;
@@ -16,6 +17,41 @@ async function fetchTxs(config: BitcoinCoinConfig, txids: string[]): Promise<Exp
     txs.push(...(await Promise.all(batch.map(txid => fetchTx(config, txid)))));
   }
   return txs;
+}
+
+/** The outpoints an unconfirmed transaction spends. */
+export const mempoolSpent = (pending: ExplorerPendingUtxos): Set<string> =>
+  new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
+
+/**
+ * What the mempool says about an address: the outpoints an unconfirmed transaction spends, and the
+ * unconfirmed outputs that are the address's own change (see {@link getSpendableUtxos} for why that
+ * distinction matters).
+ */
+export async function fetchMempoolView(
+  config: BitcoinCoinConfig,
+  queriedAddress: string,
+): Promise<{ spent: Set<string>; ownChange: ExplorerUtxo[] }> {
+  const pending = await fetchPendingUtxos(config, queriedAddress);
+  const spent = mempoolSpent(pending);
+
+  const pendingTxids = [...new Set(pending.created.map(utxo => utxo.hash))];
+  const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, pendingTxids);
+  const ownTxids = new Set(
+    pendingTxs
+      .filter(tx =>
+        tx.inputs.some(input => {
+          const spentTxid = input.output_tx_id ?? input.output_hash;
+          return (
+            typeof spentTxid === "string" &&
+            typeof input.output_index === "number" &&
+            spent.has(outpoint(spentTxid, input.output_index))
+          );
+        }),
+      )
+      .map(txidOf),
+  );
+  return { spent, ownChange: pending.created.filter(utxo => ownTxids.has(utxo.hash)) };
 }
 
 /**
@@ -38,29 +74,10 @@ export async function getSpendableUtxos(
   address: string,
 ): Promise<ExplorerUtxo[]> {
   const queried = explorerAddress(config, address);
-  const [confirmed, pending] = await Promise.all([
+  const [confirmed, { spent, ownChange }] = await Promise.all([
     fetchUtxos(config, queried),
-    fetchPendingUtxos(config, queried),
+    fetchMempoolView(config, queried),
   ]);
-  const spent = new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
-
-  const pendingTxids = [...new Set(pending.created.map(utxo => utxo.hash))];
-  const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, pendingTxids);
-  const ownTxids = new Set(
-    pendingTxs
-      .filter(tx =>
-        tx.inputs.some(input => {
-          const spentTxid = input.output_tx_id ?? input.output_hash;
-          return (
-            typeof spentTxid === "string" &&
-            typeof input.output_index === "number" &&
-            spent.has(outpoint(spentTxid, input.output_index))
-          );
-        }),
-      )
-      .map(txidOf),
-  );
-  const ownChange = pending.created.filter(utxo => ownTxids.has(utxo.hash));
 
   const spendable = new Map<string, ExplorerUtxo>();
   for (const utxo of [...confirmed, ...ownChange]) {

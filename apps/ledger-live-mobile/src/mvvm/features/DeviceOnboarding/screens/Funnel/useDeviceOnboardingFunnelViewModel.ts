@@ -88,6 +88,7 @@ type LeaveActions = {
   state: string | null;
   status: string;
   unseeded: boolean;
+  seedPath: SeedPath | null;
   confirmsQuit: boolean;
   quitConfirmationOpen: boolean;
   leaveFirmwareReconnect: () => void;
@@ -99,6 +100,14 @@ type LeaveActions = {
   leaveFinishedSetup: () => void;
 };
 
+function showsUnseededSuccess({
+  unseeded,
+  state,
+  seedPath,
+}: Pick<LeaveActions, "unseeded" | "state" | "seedPath">) {
+  return unseeded && state === "done" && seedPath !== SeedPath.NewSeed;
+}
+
 function isRunning({ status, state }: LeaveActions) {
   return status === "running" || state === "awaitingSession";
 }
@@ -108,7 +117,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   const action = event.data.action.type;
   if (action !== "GO_BACK" && action !== "POP") return;
   event.preventDefault();
-  if (actions.unseeded && actions.state === "done") {
+  if (showsUnseededSuccess(actions)) {
     actions.leaveFinishedSetup();
     return;
   }
@@ -206,7 +215,7 @@ function connectingScreen(
 }
 
 function successScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null {
-  if (!actions.unseeded || actions.state !== "done" || actions.seedPath === SeedPath.NewSeed) {
+  if (!showsUnseededSuccess(actions)) {
     return null;
   }
   return {
@@ -484,6 +493,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const unseeded = onboardedOnEntry === false;
+  const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const confirmsQuit =
     unseeded || (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
@@ -494,6 +504,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       state: onboarding.state,
       status: onboarding.status,
       unseeded,
+      seedPath,
       confirmsQuit,
       quitConfirmationOpen,
       leaveFirmwareReconnect,
@@ -516,6 +527,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     quitMachine,
     requestQuit,
     confirmsQuit,
+    seedPath,
     unseeded,
   ]);
 
@@ -536,6 +548,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           state: onboarding.state,
           status: onboarding.status,
           unseeded,
+          seedPath,
           confirmsQuit,
           quitConfirmationOpen,
           leaveFirmwareReconnect,
@@ -560,6 +573,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       quitMachine,
       requestQuit,
       confirmsQuit,
+      seedPath,
       unseeded,
     ],
   );
@@ -636,7 +650,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     screenState,
     phase,
     unseeded,
-    seedPath: onboarding.snapshot?.context.seedPath ?? null,
+    seedPath,
     wasReadOnlyAtEntry,
     confirmsQuit,
     suspendSheets,

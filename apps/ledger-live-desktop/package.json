@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "4.28.0",
+  "version": "4.29.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main-rspack.mts",
@@ -127,6 +127,7 @@
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
+    "@features/flow-history-export": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",

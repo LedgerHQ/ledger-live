@@ -201,6 +201,12 @@ export type CoinModuleLoader<
    * none of, and `getCoinModuleApi` backfills them through `withDefaults`.
    */
   loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleImpl<any, any> & BridgeApi>;
+  /**
+   * `false` when the local api must not answer the app's account data: its `getBalance` misses
+   * assets the legacy sync shows (Filecoin's ERC-20 tokens). The account data layer then leaves the
+   * family's accounts to FullSync, while `loadLocalApi` stays reachable. Served when absent.
+   */
+  localApiServesAccountData?: boolean;
   /** Kept off `loadLocalApi` so the main coin-module api stays the generic `CoinModuleImpl` contract. */
   loadSponsoredApi?: () => Promise<(currencyId: string) => SponsoredCoinApi>;
 };

@@ -23,7 +23,6 @@ import { useSellNavigation } from "./useSellNavigation";
 
 export enum Page {
   Market = "Page Market",
-  MarketCoin = "Page Market Coin",
 }
 
 type MarketActionsProps = {

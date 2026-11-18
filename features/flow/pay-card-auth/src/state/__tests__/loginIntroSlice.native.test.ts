@@ -4,11 +4,9 @@ import {
   payCardLoginIntroSlice,
   resetPayCardLoginIntroSeen,
   restorePayCardLoginIntro,
-} from "../loginIntroSlice";
-import {
   payCardLoginIntroPersistedSelector,
   selectPayCardHasSeenLoginIntro,
-} from "../loginIntroSelectors";
+} from "../loginIntroSlice";
 
 const reducer = payCardLoginIntroSlice.reducer;
 const root = (state = payCardLoginIntroInitialState) => ({ payCardLoginIntro: state });
