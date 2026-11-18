@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { PayCardAuthStatus } from "./hostTypes";
 import type { PayCardAuthState } from "./types";
 
 export const payCardAuthInitialState: PayCardAuthState = {
@@ -30,7 +31,29 @@ export const payCardAuthSlice = createSlice({
       state.isSessionResolving = action.payload;
     },
   },
+  selectors: {
+    selectPayCardAuth: (state): PayCardAuthState => state,
+    selectHasCard: (state): boolean => state.hasCard,
+    selectPendingLoginType: (state): PayCardAuthState["pendingLoginType"] => state.pendingLoginType,
+    /**
+     * Where the Card session stands. Hosts that must tell "still resolving" from "signed out" read this;
+     * everything that only cares whether a session is live reads {@link selectIsSignedIn}.
+     */
+    selectCardAuthStatus: (state): PayCardAuthStatus => state.status,
+    selectIsCardSessionResolving: (state): boolean => state.isSessionResolving,
+    /** True while a Card session is live. `CardLogin` hides on it, and `More` shows on it. */
+    selectIsSignedIn: (state): boolean => state.status === "signedIn",
+  },
 });
 
 export const { setHasCard, setPendingLoginType, setSessionResolving, setSignedIn } =
   payCardAuthSlice.actions;
+
+export const {
+  selectPayCardAuth,
+  selectHasCard,
+  selectPendingLoginType,
+  selectCardAuthStatus,
+  selectIsCardSessionResolving,
+  selectIsSignedIn,
+} = payCardAuthSlice.selectors;

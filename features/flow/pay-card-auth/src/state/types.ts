@@ -142,6 +142,10 @@ export type PayCardAuthState = Readonly<{
   isSessionResolving: boolean;
 }>;
 
+export type PayCardAuthStateRoot = {
+  payCardAuth: PayCardAuthState;
+};
+
 export type PayCardLoginIntroState = Readonly<{
   hasSeenLoginIntro: boolean;
 }>;
