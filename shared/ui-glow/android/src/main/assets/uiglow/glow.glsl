@@ -7,15 +7,14 @@
 // One file for both stages: GlowView prepends "#define VERTEX" or "#define FRAGMENT". The 4 lobe
 // centers are the same for every pixel, so the vertex stage computes them.
 //
-// Uniforms: uRes (drawable px), uTime (seconds), uDpr (pixels per point, capped at 2), uFade (0..1,
-// entry fade), uFadeTop / uFadeBottom (0..1, each glow; 0 skips it), and the design params.
+// Uniforms: uRes (drawable px), uTime (seconds), uDpr (pixels per point, capped at 2),
+// uFadeTop / uFadeBottom (0..1, each glow; 0 skips it), and the design params.
 
 precision highp float;
 
 uniform vec2  uRes;
 uniform float uTime;
 uniform float uDpr;
-uniform float uFade;
 uniform float uFadeTop;
 uniform float uFadeBottom;
 uniform vec3  uCanvas;
@@ -201,7 +200,6 @@ void main() {
   if (uFadeTop > 0.0) col += glowColor(uv, uv.y, px, t, P_TOP_REACH) * smoothstep(0.0, 1.0, uFadeTop);
   if (uFadeBottom > 0.0) col += glowColor(uv, 1.0 - uv.y, px, t, 1.0) * smoothstep(0.0, 1.0, uFadeBottom);
   col += (hash21(gl_FragCoord.xy * 0.39) - 0.5) * 0.009;
-  col *= uFade;
   gl_FragColor = vec4(clamp(onCanvas(col), 0.0, 1.0), 1.0);
 }
 

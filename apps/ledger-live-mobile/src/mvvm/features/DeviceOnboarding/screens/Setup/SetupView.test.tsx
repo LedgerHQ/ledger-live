@@ -137,6 +137,26 @@ describe("SetupView", () => {
     expect(screen.getByTestId(setupTestIds.stageLoading)).toBeVisible();
   });
 
+  it("should keep the same bottom glow when the device moves to the next stage", () => {
+    const { rerender, props } = renderSetup();
+    const glow = screen.getByTestId(setupTestIds.glow);
+
+    expect(glow).toHaveProp("showBottom", true);
+    expect(glow).toHaveProp("showTop", false);
+    expect(glow).toHaveProp("pointerEvents", "none");
+
+    rerender(
+      <SetupScreen
+        {...props}
+        stage={{ index: 1, total: 5, kind: "naming", indicator: "none" }}
+        checks={null}
+      />,
+    );
+
+    expect(screen.getByText("Device name")).toBeVisible();
+    expect(screen.getByTestId(setupTestIds.glow)).toBe(glow);
+  });
+
   it("should ask to quit from the close bar", async () => {
     const { user, onQuit } = renderSetup();
 

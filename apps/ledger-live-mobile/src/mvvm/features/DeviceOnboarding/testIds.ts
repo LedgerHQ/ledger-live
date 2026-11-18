@@ -43,6 +43,7 @@ export const setupTestIds = {
   reopenUpdate: "device-onboarding-setup-reopen-update",
   skipUpdate: "device-onboarding-setup-skip-update",
   stepper: "device-onboarding-setup-stepper",
+  glow: "device-onboarding-setup-glow",
   stageLoading: "device-onboarding-setup-stage-loading",
   stageSuccess: "device-onboarding-setup-stage-success",
   allowSheet: "device-onboarding-setup-allow-sheet",

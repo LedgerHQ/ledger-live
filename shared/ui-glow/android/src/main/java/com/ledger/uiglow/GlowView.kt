@@ -23,8 +23,8 @@ import kotlin.math.roundToInt
  * - UI thread: GlowViewManager sets the props, then calls applyProps().
  * - GL thread: GlowRenderer draws each frame from the latest props. No JS runs per frame.
  *
- * The top and bottom glows fade in or out after `delayMs` (GlowFade). The whole glow fades in
- * once the shader is ready. Reduce motion (animations off in the OS) stops the clock and makes
+ * The top and bottom glows fade in or out after `delayMs` (GlowFade). The first display is
+ * instant, once the shader is ready. Reduce motion (animations off in the OS) stops the clock and makes
  * fades instant. Pixel ratio capped at 2.
  */
 class GlowView(context: Context) : GLSurfaceView(context) {
@@ -132,7 +132,6 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     private var hasFailed = false
     private var elapsedSeconds = 0.0 // the shader clock
     private var lastFrameNanos = 0L // 0 = no frame yet: the next one does not move the clock
-    private var readyNanos = 0L // when the shader was ready, for the entry fade
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
       program = 0 // a new GL context: the old program is gone
@@ -172,11 +171,9 @@ class GlowView(context: Context) : GLSurfaceView(context) {
 
     /** Sends this frame's values to the shader. */
     private fun setUniforms(u: GlowUniforms, now: Long) {
-      val entryFade = if (isReduceMotion) 1f else min(1f, ((now - readyNanos) / 1e9 / ENTRY_FADE_SECONDS).toFloat())
       GLES20.glUniform2f(u.uRes, width.toFloat(), height.toFloat())
       GLES20.glUniform1f(u.uTime, elapsedSeconds.toFloat())
       GLES20.glUniform1f(u.uDpr, dpr)
-      GLES20.glUniform1f(u.uFade, entryFade)
       GLES20.glUniform1f(u.uFadeTop, topFade.value)
       GLES20.glUniform1f(u.uFadeBottom, bottomFade.value)
       val color = canvasColor
@@ -199,7 +196,6 @@ class GlowView(context: Context) : GLSurfaceView(context) {
         return
       }
       uniforms = GlowUniforms(program)
-      readyNanos = System.nanoTime()
       GLES20.glUseProgram(program)
       GLES20.glEnableVertexAttribArray(GlowShader.POSITION_ATTRIBUTE)
       GLES20.glVertexAttribPointer(GlowShader.POSITION_ATTRIBUTE, 2, GLES20.GL_FLOAT, false, 0, TRIANGLE)
@@ -211,7 +207,6 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     val uRes = find("uRes")
     val uTime = find("uTime")
     val uDpr = find("uDpr")
-    val uFade = find("uFade")
     val uFadeTop = find("uFadeTop")
     val uFadeBottom = find("uFadeBottom")
     val uCanvas = find("uCanvas")
@@ -226,7 +221,6 @@ class GlowView(context: Context) : GLSurfaceView(context) {
   private companion object {
     const val TAG = "GlowView"
     const val MAX_PIXEL_RATIO = 2f
-    const val ENTRY_FADE_SECONDS = 0.6 // the first display, once the shader is ready
     /** A triangle bigger than the view, so it covers every pixel (cheaper than 2 triangles). */
     val TRIANGLE = ByteBuffer.allocateDirect(6 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
       put(floatArrayOf(-1f, -1f, 3f, -1f, -1f, 3f))
