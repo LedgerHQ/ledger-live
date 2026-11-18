@@ -1,9 +1,10 @@
-import { getMultipleStatus } from "../../swap/getStatus";
+import { getSwapStatuses } from "../../swap/fusionSwapStatus";
 import type { SwapStatus, SwapStatusRequest } from "../../swap/types";
 
 export async function fetchTransactionSwapStatus(
   request: SwapStatusRequest,
+  network?: string,
 ): Promise<SwapStatus | undefined> {
-  const [status] = await getMultipleStatus([request]);
+  const [status] = await getSwapStatuses([request], network);
   return status;
 }

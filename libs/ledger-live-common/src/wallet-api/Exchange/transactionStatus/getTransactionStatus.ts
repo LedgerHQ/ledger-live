@@ -3,6 +3,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
+import { getSwapStatusNetwork } from "../../../exchange/swap/fusionSwapStatus";
 import {
   fetchTransactionSwapStatus,
   getSwapTransactionLegStatusesFromAccounts,
@@ -49,6 +50,7 @@ export async function getTransactionStatus(
       swapId: args.swapId,
       swapOperation,
     }),
+    swapOperation && getSwapStatusNetwork(swapOperation.fromAccount),
   );
   const status =
     remoteStatus?.status ??
@@ -129,9 +131,10 @@ function buildSwapStatusRequest({
 
 async function fetchTransactionStatusSafely(
   request: SwapStatusRequest,
+  network: string | undefined,
 ): Promise<SwapStatus | undefined> {
   try {
-    return await fetchTransactionSwapStatus(request);
+    return await fetchTransactionSwapStatus(request, network);
   } catch {
     return undefined;
   }
