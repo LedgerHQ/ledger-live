@@ -7,7 +7,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 describe("ReceiveAddress (Native)", () => {
-  it("renders the screen", () => {
+  it("lays the zones out in screen order", () => {
     render(
       <ReceiveAddress
         accountUUID={computeAccountUUID(mockAddressAccountDescriptor())}
@@ -18,5 +18,13 @@ describe("ReceiveAddress (Native)", () => {
     );
 
     expect(screen.getByTestId("receive-address")).toBeTruthy();
+    expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
+      "receive-address-zone-header",
+      "receive-address-zone-summary",
+      "receive-address-zone-address",
+      "receive-address-zone-actions",
+      "receive-address-zone-notices",
+      "receive-address-zone-extras",
+    ]);
   });
 });
