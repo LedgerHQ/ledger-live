@@ -2,9 +2,11 @@ import { useCallback, useMemo } from "react";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { canVerifyOnDevice } from "../../logic/canVerifyOnDevice";
 import { splitAddress } from "../../logic/splitAddress";
+import { RECEIVE_URLS } from "../../urls";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { toReceiveAddressTracking, trackReceiveAddressButton } from "./receiveAddressTracking";
+import { useAddressSanctionCheck } from "./useAddressSanctionCheck";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
@@ -32,6 +34,7 @@ export function useReceiveAddressViewModel({
   getFamilyConfig,
   serviceIncidents,
   onOpenUrl,
+  checkAddressSanctioned,
   source,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const tracking = useMemo(() => toReceiveAddressTracking(source), [source]);
@@ -47,7 +50,10 @@ export function useReceiveAddressViewModel({
     accountStatus,
   });
   const { copy } = header;
-  const { selected } = selection;
+  const { selected: picked } = selection;
+  const sanctionStatus = useAddressSanctionCheck(picked?.address, checkAddressSanctioned);
+  // A listed address is never shown, copied or verified.
+  const selected = sanctionStatus === "clear" ? picked : undefined;
   const closeFlow = useCallback(() => {
     trackReceiveAddressButton("close", tracking);
     onClose();
@@ -124,7 +130,22 @@ export function useReceiveAddressViewModel({
   );
 
   return {
-    isLoading: data.type === "loading",
+    isLoading: data.type === "loading" || (!!picked && sanctionStatus === "checking"),
+    sanctioned:
+      picked && sanctionStatus === "sanctioned"
+        ? {
+            title: copy.sanctionedTitle,
+            description: copy.sanctionedDescription(picked.address),
+            closeLabel: copy.closeLabel,
+            onClose: closeFlow,
+            learnMore: onOpenUrl
+              ? {
+                  label: copy.learnMoreLabel,
+                  onPress: () => onOpenUrl(RECEIVE_URLS.sanctionedAddress),
+                }
+              : undefined,
+          }
+        : undefined,
     error:
       data.type === "error"
         ? {

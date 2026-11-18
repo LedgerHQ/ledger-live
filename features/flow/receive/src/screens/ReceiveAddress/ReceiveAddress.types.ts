@@ -20,6 +20,11 @@ export type ReceiveAddressProps = Readonly<{
   getFamilyConfig?: ReceiveFamilyConfigPort;
   /** Open incidents about the network received on, as status.ledger.com reports them. */
   serviceIncidents?: readonly ReceiveServiceIncident[];
+  /**
+   * Whether the address is on the sanctions list: the screen never shows a listed address. Without
+   * it, no check.
+   */
+  checkAddressSanctioned?: (address: string) => Promise<boolean>;
   /** Opens a support link outside the app. Without it, no Learn more. */
   onOpenUrl?: (url: string) => void;
 }>;

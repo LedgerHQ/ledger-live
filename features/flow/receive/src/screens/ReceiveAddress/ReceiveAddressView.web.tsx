@@ -10,6 +10,7 @@ import { HelpPanel } from "./components/HelpPanel";
 import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -18,6 +19,7 @@ export function ReceiveAddressView({
   networkLabel,
   isLoading,
   error,
+  sanctioned,
   addressSelection,
   address,
   actions,
@@ -111,7 +113,9 @@ export function ReceiveAddressView({
               <DialogBody
                 className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
               >
-                {error ? (
+                {sanctioned ? (
+                  <SanctionedAddress sanctioned={sanctioned} />
+                ) : error ? (
                   <InfoState
                     preset="error"
                     size="hug"

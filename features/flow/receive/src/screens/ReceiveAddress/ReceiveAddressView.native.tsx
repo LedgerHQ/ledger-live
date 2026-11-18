@@ -14,6 +14,7 @@ import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
+import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { dimmedWhile } from "./components/dimmedWhile";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
@@ -26,6 +27,7 @@ export function ReceiveAddressView({
   networkIcon,
   isLoading,
   error,
+  sanctioned,
   addressSelection,
   address,
   actions,
@@ -89,7 +91,9 @@ export function ReceiveAddressView({
               networkIcon={networkIcon}
             />
           </Box>
-          {error ? (
+          {sanctioned ? (
+            <SanctionedAddress sanctioned={sanctioned} />
+          ) : error ? (
             <InfoState
               preset="error"
               size="hug"

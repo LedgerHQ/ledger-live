@@ -11,6 +11,7 @@ import {
   type ReceiveFamilyConfigPort,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -44,6 +45,10 @@ export function useReceiveAddressDialogViewModel({
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(() => toReceiveServiceIncidents(incidents), [incidents]);
+  const checkAddressSanctioned = useMemo(
+    () => network && ((address: string) => isAddressSanctioned(network, address)),
+    [network],
+  );
   const featureFlags = useFeatureFlags();
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
@@ -62,6 +67,7 @@ export function useReceiveAddressDialogViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWD,
     getFamilyConfig,
     serviceIncidents,
+    checkAddressSanctioned,
     onOpenUrl: openURL,
   };
 }

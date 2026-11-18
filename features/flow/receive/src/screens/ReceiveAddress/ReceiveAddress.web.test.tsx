@@ -1,5 +1,5 @@
 import React, { type ComponentProps } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
@@ -101,6 +101,39 @@ describe("ReceiveAddress (Web)", () => {
     expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
     expect(screen.queryByTestId("receive-address-error")).toBeNull();
     expect(receive).toHaveBeenCalledTimes(2);
+  });
+
+  it("never shows an address on the sanctions list", async () => {
+    const onClose = jest.fn();
+    const onOpenUrl = jest.fn();
+    const checkAddressSanctioned = jest.fn(async () => true);
+    renderScreen(onClose, makeReceiveTestStore(), {
+      checkAddressSanctioned,
+      onOpenUrl,
+      onCopyAddress: jest.fn(async () => true),
+    });
+    const user = userEvent.setup();
+
+    expect(await screen.findByTestId("receive-address-sanctioned")).toHaveTextContent(
+      "Keeping you safe",
+    );
+    expect(checkAddressSanctioned).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+    expect(screen.queryByTestId("receive-address-copy")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.sanctionedAddress);
+    await user.click(screen.getByTestId("receive-address-sanctioned-close"));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("keeps the skeletons while the sanctions check runs", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      checkAddressSanctioned: () => new Promise<boolean>(() => {}),
+    });
+
+    await waitFor(() => expect(screen.queryByTestId("receive-address-summary")).toBeNull());
+    expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
   });
 
   it("copies the address from the Copy tile", async () => {

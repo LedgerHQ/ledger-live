@@ -12,6 +12,7 @@ import {
 } from "@features/flow-receive";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import type { Account } from "@ledgerhq/types-live";
 import { copyToClipboard } from "@shared/clipboard";
 import { useSelector } from "~/context/hooks";
@@ -55,6 +56,10 @@ export function useReceiveAddressScreenViewModel({
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(() => toReceiveServiceIncidents(incidents), [incidents]);
+  const checkAddressSanctioned = useMemo(
+    () => network && ((address: string) => isAddressSanctioned(network, address)),
+    [network],
+  );
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
     () => familyConfig && (input => familyConfig({ ...input, featureFlags, legacyAccount })),
@@ -71,6 +76,7 @@ export function useReceiveAddressScreenViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWM,
     getFamilyConfig,
     serviceIncidents,
+    checkAddressSanctioned,
     onOpenUrl: openUrl,
   };
 }

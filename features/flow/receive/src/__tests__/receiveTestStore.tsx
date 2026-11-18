@@ -109,6 +109,11 @@ const receiveTestResources = {
           receiveFromExchange: "How to receive from exchanges?",
           receiveSecurely: "How to receive securely?",
         },
+        sanctioned: {
+          title: "Keeping you safe",
+          description:
+            "This address is on a sanctions list and can't be used to receive funds.\n{{address}}",
+        },
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",
