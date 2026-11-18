@@ -852,7 +852,7 @@ jobs:
         run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@ci-test/ios-trust-store-wait-review
         with:
           worker_count: 3
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
@@ -937,7 +937,7 @@ jobs:
       - name: Check iOS simulators are ready
         # 10 minutes for the simulator checks, plus up to 6 for the trust store update wait.
         timeout-minutes: 16
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@ci-test/ios-trust-store-wait-review
 
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
