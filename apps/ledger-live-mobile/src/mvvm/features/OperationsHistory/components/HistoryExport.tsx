@@ -9,7 +9,7 @@ type Props = Readonly<{
 
 function OpenHistoryExportDrawer({ onClose }: Pick<Props, "onClose">) {
   const port = useHistoryExportPort();
-  return <HistoryExportDrawer isOpen onClose={onClose} port={port} />;
+  return <HistoryExportDrawer onClose={onClose} port={port} />;
 }
 
 /** Mounts the export port only while the drawer is open: it subscribes to the bridge sync state. */
