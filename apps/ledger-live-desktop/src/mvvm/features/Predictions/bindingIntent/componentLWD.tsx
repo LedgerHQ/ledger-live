@@ -1,5 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "@ledgerhq/lumen-ui-react";
+import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import { getProductName } from "@ledgerhq/devices";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { PredictionsBindingJobState } from "@features/platform-predictions";
@@ -10,6 +12,35 @@ import { DeviceActionContent } from "LLD/components/DeviceActionContent";
 import { LoadingContent } from "LLD/components/DeviceIntentExecutor/components/DeviceGenericStates/LoadingContent";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+
+/** The error's description, then its support article on a line of its own, out of the title. */
+function ErrorDescription({ error }: Readonly<{ error: Error }>) {
+  const { t } = useTranslation();
+  const learnMoreUrl = urls.errors[error.name];
+
+  return (
+    <>
+      <TranslatedError error={error} field="description" noLink />
+      {learnMoreUrl && (
+        <span className="mt-8 block">
+          <Link
+            appearance="accent"
+            icon={ExternalLink}
+            href={learnMoreUrl}
+            onClick={event => {
+              event.preventDefault();
+              openURL(learnMoreUrl);
+            }}
+          >
+            {t("common.learnMore")}
+          </Link>
+        </span>
+      )}
+    </>
+  );
+}
 
 type Props = Readonly<{
   jobState: PredictionsBindingJobState | undefined;
@@ -77,8 +108,8 @@ function Step({
         <InfoState
           preset="error"
           size="hug"
-          title={<TranslatedError error={jobState.error} field="title" />}
-          description={<TranslatedError error={jobState.error} field="description" />}
+          title={<TranslatedError error={jobState.error} field="title" noLink />}
+          description={<ErrorDescription error={jobState.error} />}
           primaryCta={retryCta}
           secondaryCta={closeCta}
           testID="predictions-binding-error"

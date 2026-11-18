@@ -8170,7 +8170,8 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Enable Blind signing or Contract data in Ethereum app"
+      "title": "Enable Blind signing or Contract data in Ethereum app",
+      "description": "On your device, open the Ethereum app's settings, turn on Blind signing, then retry."
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"
