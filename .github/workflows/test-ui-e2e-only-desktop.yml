@@ -99,7 +99,6 @@ on:
         type: choice
         options:
           - defaults
-          - wallet40-q1
           - account-detail
         default: defaults
       feature_flags_json:

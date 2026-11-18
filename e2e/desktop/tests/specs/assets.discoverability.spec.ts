@@ -1,6 +1,5 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
@@ -10,7 +9,6 @@ test.describe("Asset discoverability", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
@@ -40,7 +38,6 @@ test.describe("Asset discoverability", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Account.ETH_1.currency.speculosApp,
     cliCommands: [liveDataCommand(Account.ETH_1)],
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
@@ -67,7 +64,6 @@ test.describe("Asset discoverability", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(

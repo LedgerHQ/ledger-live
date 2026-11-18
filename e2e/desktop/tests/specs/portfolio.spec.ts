@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Portfolio", () => {
@@ -43,7 +42,6 @@ test.describe("Portfolio", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountSOL0Balance",
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
