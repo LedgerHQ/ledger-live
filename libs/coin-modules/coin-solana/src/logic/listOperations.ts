@@ -211,11 +211,11 @@ async function signatureSources(
   return { sources: [address, ...associated], maxSlot };
 }
 
-/** Cursor shape carrying `maxSlot`. A plain source map holds only strings, so `v` tells them apart. */
-type CappedCursor = { v: 2; sources: Record<string, string>; maxSlot: number };
+/** Versioned cursor shape (`v: 2`), carrying `maxSlot`. A plain source map holds only strings, so `v` tells them apart. */
+type VersionedCursor = { v: 2; sources: Record<string, string>; maxSlot: number };
 
-function isCappedCursor(value: object): value is CappedCursor {
-  const candidate = value as Partial<CappedCursor>;
+function isVersionedCursor(value: object): value is VersionedCursor {
+  const candidate = value as Partial<VersionedCursor>;
   return (
     candidate.v === 2 &&
     typeof candidate.maxSlot === "number" &&
@@ -228,7 +228,7 @@ function isCappedCursor(value: object): value is CappedCursor {
 /**
  * Reads the three cursor shapes, oldest first: a bare owner signature (`legacy`, minted before
  * token streams existed), a plain map of source to signature (no `maxSlot`), and a
- * {@link CappedCursor}.
+ * {@link VersionedCursor}.
  */
 function decodeCursor(
   cursor: string | undefined,
@@ -238,7 +238,7 @@ function decodeCursor(
   try {
     const parsed: unknown = JSON.parse(Buffer.from(cursor, "base64").toString("utf8"));
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      if (isCappedCursor(parsed)) {
+      if (isVersionedCursor(parsed)) {
         return { cursors: parsed.sources, legacy: false, maxSlot: parsed.maxSlot };
       }
       return { cursors: parsed as Record<string, string>, legacy: false };
@@ -247,13 +247,13 @@ function decodeCursor(
   return { cursors: { [address]: cursor }, legacy: true };
 }
 
-/** Without a cap, the plain source map, as before {@link CappedCursor} existed. */
+/** Without a cap, the plain source map, as before {@link VersionedCursor} existed. */
 function encodeCursor(
   cursors: Record<string, string>,
   maxSlot: number | undefined,
 ): string | undefined {
   if (Object.keys(cursors).length === 0) return undefined;
-  const payload: Record<string, string> | CappedCursor =
+  const payload: Record<string, string> | VersionedCursor =
     maxSlot === undefined ? cursors : { v: 2, sources: cursors, maxSlot };
   return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
