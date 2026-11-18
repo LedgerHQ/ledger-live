@@ -39,44 +39,44 @@ export async function flushPendingWrites(
   await flushMain().catch(error => console.error("Database flush failed", error));
 }
 
-let flushForQuit: () => Promise<void> = () => Promise.resolve();
+let flushWrites: () => Promise<void> = () => Promise.resolve();
+let releasing = false;
 
 /**
- * Write the pending writes now, and let the next quit through without a new flush.
- * For a quit that does not go through `before-quit` first, such as an update install.
+ * Write the pending writes, then run `action`. The close and quit that `action` starts go through.
  */
-export function flushBeforeQuit(): Promise<void> {
-  return flushForQuit();
+export async function flushThen(action: () => void): Promise<void> {
+  await flushWrites();
+  releasing = true;
+  try {
+    action();
+  } finally {
+    releasing = false;
+  }
 }
 
 /**
  * Hold the main window close and the app quit until the pending writes are on disk.
  */
 export function setupFlushOnQuit(window: BrowserWindow, flushMain: () => Promise<void>): void {
-  const flushAll = () => flushPendingWrites(() => requestRendererFlush(window), flushMain);
+  // The renderer answer has no id, so 1 answer must end only 1 wait.
+  let lastFlush = Promise.resolve();
+  flushWrites = () =>
+    (lastFlush = lastFlush.then(() =>
+      flushPendingWrites(() => requestRendererFlush(window), flushMain),
+    ));
 
-  let quitFlush: Promise<void> | null = null;
-  let quitFlushed = false;
-  flushForQuit = () =>
-    (quitFlush ??= flushAll().then(() => {
-      quitFlushed = true;
-    }));
-
-  // The renderer "beforeunload" reloads the db, which clears main memory: flush before the close.
-  let closeFlush: Promise<void> | null = null;
-  let closeFlushed = false;
   window.on("close", event => {
-    if (closeFlushed || quitFlushed) return;
+    if (releasing) return;
     event.preventDefault();
-    closeFlush ??= flushAll().then(() => {
-      closeFlushed = true;
+    void flushThen(() => {
       if (!window.isDestroyed()) window.close();
     });
   });
 
   app.on("before-quit", event => {
-    if (quitFlushed) return;
+    if (releasing) return;
     event.preventDefault();
-    void flushForQuit().then(() => app.quit());
+    void flushThen(() => app.quit());
   });
 }

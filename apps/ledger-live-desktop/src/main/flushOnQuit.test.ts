@@ -7,7 +7,7 @@ import { CHANNELS } from "~/bridge/contract";
 import db from "~/main/db";
 import {
   RENDERER_FLUSH_TIMEOUT_MS,
-  flushBeforeQuit,
+  flushThen,
   requestRendererFlush,
   setupFlushOnQuit,
 } from "./flushOnQuit";
@@ -87,16 +87,20 @@ describe("flushOnQuit", () => {
     expect(calls).toEqual(["renderer", "main"]);
   });
 
-  it("lets the quit through once the writes are flushed", async () => {
+  it("lets through the quit that the flush starts", async () => {
     setupFlushOnQuit(asBrowserWindow(createWindow()), async () => {});
-    const quit = nextQuit();
+    const releasedEvent = preventableEvent();
+    const quit = new Promise<void>(resolve =>
+      jest.mocked(app.quit).mockImplementationOnce(() => {
+        app.emit("before-quit", releasedEvent);
+        resolve();
+      }),
+    );
+
     app.emit("before-quit", preventableEvent());
     await quit;
 
-    const secondEvent = preventableEvent();
-    app.emit("before-quit", secondEvent);
-
-    expect(secondEvent.preventDefault).not.toHaveBeenCalled();
+    expect(releasedEvent.preventDefault).not.toHaveBeenCalled();
   });
 
   it("holds the window close until the renderer and then main have flushed", async () => {
@@ -118,29 +122,72 @@ describe("flushOnQuit", () => {
     expect(window.close).toHaveBeenCalledTimes(1);
   });
 
-  it("lets the window close through once the writes are flushed", async () => {
+  it("lets through the window close that the flush starts", async () => {
     const window = createWindow();
     setupFlushOnQuit(asBrowserWindow(window), async () => {});
+    const releasedEvent = preventableEvent();
+    const closed = new Promise<void>(resolve =>
+      window.close.mockImplementationOnce(() => {
+        window.emit("close", releasedEvent);
+        resolve();
+      }),
+    );
+
     window.emit("close", preventableEvent());
-    await settle();
+    await closed;
 
-    const secondEvent = preventableEvent();
-    window.emit("close", secondEvent);
-
-    expect(secondEvent.preventDefault).not.toHaveBeenCalled();
+    expect(releasedEvent.preventDefault).not.toHaveBeenCalled();
   });
 
-  it("lets the window close through after the quit flush", async () => {
-    const window = createWindow();
-    setupFlushOnQuit(asBrowserWindow(window), async () => {});
+  it("flushes again on the next quit when a released quit did not quit", async () => {
+    const flushMain = jest.fn(async () => {});
+    setupFlushOnQuit(asBrowserWindow(createWindow()), flushMain);
+    await flushThen(() => {});
+
+    const event = preventableEvent();
     const quit = nextQuit();
-    app.emit("before-quit", preventableEvent());
+    app.emit("before-quit", event);
     await quit;
 
-    const closeEvent = preventableEvent();
-    window.emit("close", closeEvent);
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(flushMain).toHaveBeenCalledTimes(2);
+  });
 
-    expect(closeEvent.preventDefault).not.toHaveBeenCalled();
+  it("sends 1 renderer flush request at a time for a close and a quit together", async () => {
+    const answers: Array<() => void> = [];
+    const window = createWindow(() => new Promise<void>(resolve => answers.push(resolve)));
+    const flushMain = jest.fn(async () => {});
+    setupFlushOnQuit(asBrowserWindow(window), flushMain);
+
+    window.emit("close", preventableEvent());
+    const quit = nextQuit();
+    app.emit("before-quit", preventableEvent());
+    await settle();
+    expect(window.webContents.send).toHaveBeenCalledTimes(1);
+
+    answers[0]();
+    await settle();
+    expect(window.close).toHaveBeenCalledTimes(1);
+    expect(window.webContents.send).toHaveBeenCalledTimes(2);
+    expect(app.quit).not.toHaveBeenCalled();
+
+    answers[1]();
+    await quit;
+    expect(flushMain).toHaveBeenCalledTimes(2);
+  });
+
+  it("runs the action after the renderer and then main have flushed", async () => {
+    const calls: string[] = [];
+    const window = createWindow(async () => {
+      calls.push("renderer");
+    });
+    setupFlushOnQuit(asBrowserWindow(window), async () => {
+      calls.push("main");
+    });
+
+    await flushThen(() => calls.push("action"));
+
+    expect(calls).toEqual(["renderer", "main", "action"]);
   });
 
   it("flushes main again on quit after the window close", async () => {
@@ -181,18 +228,6 @@ describe("flushOnQuit", () => {
 
     expect(consoleError).toHaveBeenCalledWith("Database flush failed", expect.any(Error));
     consoleError.mockRestore();
-  });
-
-  it("flushes on demand and then lets the quit through", async () => {
-    const flushMain = jest.fn(async () => {});
-    setupFlushOnQuit(asBrowserWindow(createWindow()), flushMain);
-
-    await flushBeforeQuit();
-    const event = preventableEvent();
-    app.emit("before-quit", event);
-
-    expect(flushMain).toHaveBeenCalledTimes(1);
-    expect(event.preventDefault).not.toHaveBeenCalled();
   });
 
   it("ignores the answer of another renderer", async () => {

@@ -2,7 +2,7 @@ import { app, BrowserWindow } from "electron";
 import { autoUpdater } from "electron-updater";
 import { CHANNELS } from "~/bridge/contract";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
-import { flushBeforeQuit } from "~/main/flushOnQuit";
+import { flushThen } from "~/main/flushOnQuit";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import updater, { init } from "./init";
@@ -42,7 +42,7 @@ jest.mock("electron-updater", () => ({
 }));
 
 jest.mock("~/main/flushOnQuit", () => ({
-  flushBeforeQuit: jest.fn(),
+  flushThen: jest.fn(),
 }));
 
 jest.mock("~/helpers/distributionChannel", () => ({
@@ -248,9 +248,10 @@ async function downloadUpdate() {
 describe("updater quitAndInstall", () => {
   it("should install only after the pending writes are flushed", async () => {
     let finishFlush: (() => void) | undefined;
-    jest
-      .mocked(flushBeforeQuit)
-      .mockReturnValue(new Promise<void>(resolve => (finishFlush = resolve)));
+    jest.mocked(flushThen).mockImplementation(async action => {
+      await new Promise<void>(resolve => (finishFlush = resolve));
+      action();
+    });
 
     const installing = updater.quitAndInstall();
     await Promise.resolve();
