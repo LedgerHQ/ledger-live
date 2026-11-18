@@ -3,6 +3,7 @@ import type { WalletProxyTransaction } from "../../types";
 import { listOperations, parseTransaction } from "./listOperations";
 
 const config = createFixtureConfig();
+const SPONSOR = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
 
 jest.mock("@ledgerhq/concordium-core", () => ({
   decodeMemoFromCbor: jest.fn(),
@@ -93,6 +94,72 @@ describe("parseTransaction", () => {
       type: "IN",
       fee: "0",
       feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("reports the whole transaction cost to the recipient, which paid none of it", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const tx: WalletProxyTransaction = {
+      ...withoutCost,
+      transactionCost: "1373330",
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "222000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      fee: "0",
+      transactionFee: "1373330",
+      value: "222000000",
+      feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("falls back to the payer's cost when the proxy reports no transaction cost", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      fee: "500",
+      transactionFee: "500",
+    });
+  });
+
+  it("names the sponsor as fee payer, and charges the sponsored sender nothing", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      cost: "0",
+      transactionCost: "800",
+      sponsor: { sponsor: SPONSOR, cost: "800" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      fee: "0",
+      transactionFee: "800",
+      value: "1000000",
+      feesPayer: SPONSOR,
     });
   });
 

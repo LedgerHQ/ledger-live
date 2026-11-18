@@ -42,11 +42,15 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
       ? mapEventsToOperations(summary.result.events, summary.hash)
       : { operations: [] as BlockOperation[], memo: undefined };
 
+  // The sender's `cost` is 0 when a sponsor paid; the sponsor's share is then the whole cost.
+  const sponsor = summary.sponsorDetails;
+  const feesPayer = sponsor ? sponsor.sponsor : summary.sender;
+
   return {
     hash: summary.hash,
     failed: summary.result.outcome === "reject",
-    fees: BigInt(summary.cost),
-    ...(summary.sender ? { feesPayer: summary.sender } : {}),
+    fees: BigInt(sponsor ? sponsor.cost : summary.cost),
+    ...(feesPayer ? { feesPayer } : {}),
     operations,
     ...(memo ? { details: { memo } } : {}),
   };

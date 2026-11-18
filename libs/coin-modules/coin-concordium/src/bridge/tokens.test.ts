@@ -548,6 +548,7 @@ const makeRawOp = (over: Partial<RawOperation> = {}): RawOperation => ({
   recipient: "recipient-address",
   amount: "3000000",
   fee: "595400",
+  transactionFee: "595400",
   value: "3000000",
   memo: undefined,
   date: new Date("2026-03-02T00:00:00Z"),

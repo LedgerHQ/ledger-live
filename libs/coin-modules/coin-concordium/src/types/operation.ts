@@ -33,7 +33,10 @@ export interface RawOperation {
   sender: string;
   recipient: string;
   amount: string;
+  /** The microCCD this account paid: 0 when another account paid. */
   fee: string;
+  /** The microCCD the transaction cost, the same in every account's view. */
+  transactionFee: string;
   value: string;
   memo: string | undefined;
   date: Date;
@@ -41,7 +44,7 @@ export interface RawOperation {
   blockHeight: number;
   failed: boolean;
   id: number;
-  /** The transaction sender, who pays its cost. Absent when the proxy names none. */
+  /** The sponsor, else the sender: whoever paid the cost. Absent when the proxy names none. */
   feesPayer?: string;
   tokenId?: string;
   decimals?: number;

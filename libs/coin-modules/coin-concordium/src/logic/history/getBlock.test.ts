@@ -217,6 +217,45 @@ describe("getBlock", () => {
     ]);
   });
 
+  it("charges a sponsored transaction to its sponsor, at the sponsor's cost", async () => {
+    // GIVEN
+    const sponsor = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "ab".repeat(32),
+        sender: SENDER,
+        cost: "0",
+        sponsorDetails: { sponsor, cost: "800" },
+        result: { outcome: "success", events: [] },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000, CURRENCY);
+
+    // THEN
+    expect(transactions[0]).toMatchObject({ fees: 800n, feesPayer: sponsor });
+  });
+
+  it("charges the sender when the sponsor details are null", async () => {
+    // GIVEN
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "ab".repeat(32),
+        sender: SENDER,
+        cost: "601",
+        sponsorDetails: null,
+        result: { outcome: "success", events: [] },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000, CURRENCY);
+
+    // THEN
+    expect(transactions[0]).toMatchObject({ fees: 601n, feesPayer: SENDER });
+  });
+
   it("represents non-transfer transaction types with no operations", async () => {
     // GIVEN
     getBlockTransactionEventsMock.mockResolvedValue([
