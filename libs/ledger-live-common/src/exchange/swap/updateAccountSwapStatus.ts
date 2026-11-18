@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { isSwapOperationPending } from "./";
-import { getMultipleStatus } from "./getStatus";
+import { getSwapStatusNetwork, getSwapStatuses } from "./fusionSwapStatus";
 import type {
   TokenAccount,
   Account,
@@ -33,6 +33,7 @@ export function hasSwapsAwaitingPayoutHash(accounts: AccountLike[]): boolean {
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,
   operations: Operation[] | null | undefined,
+  network: string,
 ): Promise<SwapOperation[] | null | undefined> => {
   const pendingSwapIds: SwapStatusRequest[] = [];
   const atomicSwapIds: SwapStatus[] = [];
@@ -105,7 +106,7 @@ const maybeGetUpdatedSwapHistory = async (
       }
 
       const newStatusList = pendingSwapIds.length
-        ? await getMultipleStatus(uniquePendingSwapIds)
+        ? await getSwapStatuses(uniquePendingSwapIds, network)
         : [];
       newStatusList.push(...atomicSwapIds);
       consolidatedSwapHistory = swapHistory.map<SwapOperation>((swap: SwapOperation) => {
@@ -143,9 +144,11 @@ const maybeGetUpdatedSwapHistory = async (
 };
 
 const updateAccountSwapStatus: UpdateAccountSwapStatus = async (account: Account) => {
+  const network = getSwapStatusNetwork(account);
   const swapHistoryUpdated = await maybeGetUpdatedSwapHistory(
     account.swapHistory,
     account.operations,
+    network,
   );
   let subAccountSwapHistoryUpdated = false;
   let subAccounts: TokenAccount[] = [];
@@ -156,6 +159,7 @@ const updateAccountSwapStatus: UpdateAccountSwapStatus = async (account: Account
         const updatedSwapHistory = await maybeGetUpdatedSwapHistory(
           subAccount.swapHistory,
           subAccount.operations,
+          network,
         );
         //As soon as we get one update, we will need to update the parent account
         if (updatedSwapHistory) subAccountSwapHistoryUpdated = true;
