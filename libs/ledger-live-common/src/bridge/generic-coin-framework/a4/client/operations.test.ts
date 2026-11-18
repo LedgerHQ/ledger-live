@@ -5,7 +5,7 @@ import {
   parseA4Asset,
   withDcRoamRetry,
 } from "./operations";
-import { A4HttpError } from "./errors";
+import { A4HttpError, A4NonNativeFeeError } from "./errors";
 import { PaginationIntegrityError } from "../../../../errors";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
@@ -59,6 +59,26 @@ describe("parseA4Asset", () => {
 });
 
 describe("adaptA4OperationToLiveOperation", () => {
+  it.each([
+    ["a transfer", undefined],
+    ["an NFT transfer", "NFT_OUT"],
+  ])("rejects %s whose fee is paid in a token", (_case, ledgerOpType) => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash", ...(ledgerOpType ? { details: { ledgerOpType } } : {}) },
+      assets: { "token.erc20.0xusdt": "-6601" },
+      events: {},
+      failed: false,
+      fees: "1601",
+      feeAsset: "token.erc20.0xusdt",
+      feePayer: "0xaddress",
+    };
+
+    expect(() => adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toThrow(
+      A4NonNativeFeeError,
+    );
+  });
+
   it("returns [] for NFT_IN", () => {
     const op: A4OperationView = {
       block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
@@ -959,6 +979,27 @@ describe("fetchA4Operations", () => {
       expect.objectContaining({ hash: "0xtx2" }),
     ]);
     expect(bounded).toBe(false);
+  });
+
+  it("fails on a transaction that pays its fee in a token, so the sync reads the coin module", async () => {
+    listOperationsSpy.mockResolvedValueOnce({
+      data: {
+        items: [makeA4Op("0xtx1"), { ...makeA4Op("0xtx2"), feeAsset: "token.erc20.0xusdt" }],
+        nextToken: undefined,
+      },
+      version: undefined,
+    });
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 5,
+      }),
+    ).rejects.toThrow("A4 transaction 0xtx2 pays its fee in token.erc20.0xusdt");
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
   });
 
   it("bounds on adapted operations, not raw transactions, so a fanned-out transaction stops the walk on its own page", async () => {

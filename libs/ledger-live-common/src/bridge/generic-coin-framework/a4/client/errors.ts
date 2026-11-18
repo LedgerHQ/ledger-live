@@ -24,3 +24,12 @@ export function toA4HttpError(error: unknown): A4HttpError {
   const status = "status" in error && typeof error.status === "number" ? error.status : undefined;
   return new A4HttpError(error.message, status);
 }
+
+/**
+ * A4 serves a transaction whose fee is paid in another asset than the native coin. The A4 adapter
+ * does not translate such a fee: the sync falls back to the coin module, which reports the fee
+ * asset in a form the family resolves.
+ */
+export class A4NonNativeFeeError extends Error {
+  override name = "A4NonNativeFeeError";
+}
