@@ -6,6 +6,7 @@ import type {
   VerifyAddressDeviceAction,
   VerifyAddressDeviceState,
   VerifyAddressIntentJobState,
+  VerifyAddressIntentResult,
   StartAddressVerification,
 } from "../types";
 
@@ -23,6 +24,7 @@ function subscribeJob(
   expectedAddress = EXPECTED_ADDRESS,
 ) {
   const states: VerifyAddressIntentJobState[] = [];
+  const results: VerifyAddressIntentResult[] = [];
   let error: unknown;
   let completed = false;
 
@@ -37,7 +39,7 @@ function subscribeJob(
     },
     deviceExtractedContext: {} as never,
     input: { expectedAddress, startAddressVerification },
-    onResult: jest.fn(),
+    onResult: result => results.push(result),
   }).subscribe({
     next: state => states.push(state),
     error: e => {
@@ -50,6 +52,7 @@ function subscribeJob(
 
   return {
     states,
+    results,
     subscription,
     isCompleted: () => completed,
     getError: () => error,
@@ -123,6 +126,54 @@ describe("verifyAddressIntentJob", () => {
       { type: "mismatch", expectedAddress: expected, reportedAddress: reported },
     ]);
     expect(isCompleted()).toBe(true);
+  });
+
+  it.each([
+    [
+      "verified",
+      EXPECTED_ADDRESS,
+      { type: "verified", address: EXPECTED_ADDRESS } satisfies VerifyAddressIntentResult,
+    ],
+    [
+      "mismatch",
+      "0xDEAD000000000000000000000000000000000000",
+      {
+        type: "mismatch",
+        expectedAddress: EXPECTED_ADDRESS,
+        reportedAddress: "0xDEAD000000000000000000000000000000000000",
+      } satisfies VerifyAddressIntentResult,
+    ],
+  ] as const)("reports the %s result once the device answers", (_label, reported, result) => {
+    const { results, emit } = startJob();
+    emit({ type: "awaiting-confirmation" });
+    expect(results).toEqual([]);
+
+    emit({ type: "confirmed", address: reported });
+    expect(results).toEqual([result]);
+  });
+
+  it("reports refused on each refusal, then the result of the retry", () => {
+    const { states, results, emit } = startJob();
+    emit({ type: "refused" });
+    expect(results).toEqual([{ type: "refused" }]);
+
+    (states[1] as Extract<VerifyAddressIntentJobState, { type: "cancelled" }>).retry();
+    emit({ type: "confirmed", address: EXPECTED_ADDRESS });
+
+    expect(results).toEqual([{ type: "refused" }, { type: "verified", address: EXPECTED_ADDRESS }]);
+  });
+
+  it("reports the unsupported result with the adapter error", () => {
+    const error = new Error("cannot display");
+    const { results, emit } = startJob();
+    emit({ type: "unsupported", error });
+    expect(results).toEqual([{ type: "unsupported", error }]);
+  });
+
+  it("reports no result when the device fails", () => {
+    const { results, fail } = startJob();
+    fail(new Error("device disconnected"));
+    expect(results).toEqual([]);
   });
 
   it("emits addressDisplayed when the device shows the address, before the user confirms", () => {

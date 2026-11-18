@@ -46,16 +46,36 @@ export type VerifyAddressIntentJobState =
   | { type: "mismatch"; expectedAddress: string; reportedAddress: string }
   | { type: "unsupported"; error: Error };
 
-export type VerifyAddressIntentDefinition = IntentDefinition<
-  VerifyAddressIntentJobState,
-  VerifyAddressIntentInput
->;
+/**
+ * How the verification ended, reported through `onResult`. `refused` is reported on each refusal:
+ * a retry can report another result, and the last one reported is the ending.
+ */
+export type VerifyAddressIntentResult =
+  | { type: "verified"; address: string }
+  | { type: "mismatch"; expectedAddress: string; reportedAddress: string }
+  | { type: "unsupported"; error: Error }
+  | { type: "refused" };
 
-export type VerifyAddressIntentPlatformDefinition<ExtraProps = undefined> =
-  IntentPlatformDefinition<VerifyAddressIntentJobState, VerifyAddressIntentInput, ExtraProps>;
-
-export type VerifyAddressIntent<ExtraProps = undefined> = Intent<
+/** `Result` stays `undefined` for a host that ignores the result. */
+export type VerifyAddressIntentDefinition<Result = undefined> = IntentDefinition<
   VerifyAddressIntentJobState,
   VerifyAddressIntentInput,
-  ExtraProps
+  Result
+>;
+
+export type VerifyAddressIntentPlatformDefinition<
+  ExtraProps = undefined,
+  Result = undefined,
+> = IntentPlatformDefinition<
+  VerifyAddressIntentJobState,
+  VerifyAddressIntentInput,
+  ExtraProps,
+  Result
+>;
+
+export type VerifyAddressIntent<ExtraProps = undefined, Result = undefined> = Intent<
+  VerifyAddressIntentJobState,
+  VerifyAddressIntentInput,
+  ExtraProps,
+  Result
 >;

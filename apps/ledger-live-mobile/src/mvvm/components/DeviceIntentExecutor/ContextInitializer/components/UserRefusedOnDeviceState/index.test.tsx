@@ -4,10 +4,10 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { RetryableStateType } from "@ledgerhq/live-dmk-shared";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
-import { UserRefusedOnDeviceState } from "./UserRefusedOnDeviceState";
-import type { InitializerDevice } from "../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_APP } from "../../../utils/trackDeviceIntent";
+import { UserRefusedOnDeviceState } from ".";
+import type { InitializerDevice } from "../../types";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
