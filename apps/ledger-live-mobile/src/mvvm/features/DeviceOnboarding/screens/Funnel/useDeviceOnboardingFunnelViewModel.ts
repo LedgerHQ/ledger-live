@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { NotificationsPromptContext } from "LLM/features/NotificationsPrompt/new/NotificationsPromptProvider";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
 import type {
@@ -718,7 +717,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     quitConfirmation?.isOpen === true;
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const notifyFlowCompleted = useContext(NotificationsPromptContext)?.notifyFlowCompleted;
   const recoverFeature = useFeature("protectServicesMobile");
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
   const focused = useIsFocused();
@@ -735,11 +733,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     (sawRecoverPitch: boolean) => {
       completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
       if (sawRecoverPitch) dispatch(setHasBeenUpsoldProtect(true));
-      notifyFlowCompleted?.("onboarding");
       allowLeave.current = true;
       resetToPortfolio(navigation);
     },
-    [dispatch, hasCompletedOnboarding, navigation, notifyFlowCompleted, wasReadOnlyAtEntry],
+    [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
   );
 
   const openRecover = useCallback(() => {
