@@ -57,6 +57,8 @@ export interface DeeplinkHandlerContext {
   isContactsEnabled: boolean;
   /** `ptxPredictionsLiveAppDesktop` enabled and its manifest found, or the live app catalog still loading so a cold-start deeplink is not dropped. */
   isPredictionsAvailable: boolean;
+  hasLedgerSyncTrustchain: boolean;
+  isLedgerSyncFaked: boolean;
 }
 
 export interface ParsedDeeplink {
