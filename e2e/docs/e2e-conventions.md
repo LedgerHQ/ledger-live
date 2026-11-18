@@ -8,39 +8,33 @@ Rules for desktop and mobile E2E tests. MUST and MUST NOT are required. SHOULD i
 
 Tests MUST seed dismissed introductions, onboarding, and settings through fixtures and feature flags. Tests MUST NOT branch the flow on whether something is visible.
 
-### Feature Flags
-
-Set `E2E_FEATURE_FLAGS_JSON` to inject feature flags for a Desktop or Mobile run. The value MUST be a JSON object of flag keys. An empty value is ignored. Arrays, scalars, `null`, and invalid JSON MUST be rejected.
-
-```json
-{
-  "myFeature": {
-    "enabled": true,
-    "params": {
-      "foo": "bar"
-    }
-  }
-}
-```
-
-```bash
-export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
-```
-
-Feature Flags apply in this order. A later layer replaces the same key:
-
-1. Built-in E2E defaults.
-2. The preset from `E2E_DESKTOP_FEATURE_FLAGS` or `E2E_MOBILE_FEATURE_FLAGS` (if set).
-3. `E2E_FEATURE_FLAGS_JSON`.
-4. Per-test flag (set in the spec or at test initialization).
-
-See [Desktop Feature Flag Presets](../desktop/README.md#feature-flag-presets) and [Mobile Feature Flag Presets](../mobile/README.md#feature-flag-presets) for available options.
-
 ## Shared support
 
 ### Shared fixtures and helpers MUST live in libs/live-e2e-shared
 
 Shared data, types, and utility functions MUST be declared in `libs/live-e2e-shared` when both desktop and mobile use them. Client-specific logic MUST stay in the desktop or mobile directory.
+
+### A timeout, delay, or poll interval MUST be a bucket
+
+A timeout MUST be a `TIMEOUT` bucket, and a delay, poll interval, or pause between attempts an `INTERVAL` bucket, from [`@ledgerhq/live-e2e-shared/timeouts`](../../libs/live-e2e-shared/src/timeouts.ts) (mobile re-exports them from `utils/timeouts.ts`), not a bare number. A named constant MUST NOT be added unless no bucket fits, such as a per-test budget above the largest bucket or a partner's server-side wait, and it MUST state its reason. It lives in the file that uses it, or in the client's timeouts file when several files do. A config file MAY keep a literal, since the key already names it (`setupTimeout` in `detox.config.js`, the test timeout in `playwright.config.ts`). Feature-flag params such as `pollingInterval` configure the app, not a wait, so this rule does not apply to them.
+
+```ts
+await this.screen.waitVisible(TIMEOUT.small); // not 5000
+```
+
+### Ambiguous parameters MUST use one options object
+
+A new or changed function or constructor MUST take a single options object instead of positional parameters when it has any of:
+
+- 3 or more parameters
+- an optional parameter that callers would skip with `undefined`
+- 2 or more parameters of the same type that could be swapped without a type error (for example `tmsLinks` and `tags`)
+
+Keep 1–2 obvious parameters positional.
+
+Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.
+
+The positional `Currency` and `Transaction` constructors in `live-e2e-shared` predate this rule. Callers keep using them as they are until they are migrated.
 
 ## Page objects
 
@@ -58,7 +52,7 @@ A spec MUST describe only the scenario.
 
 ### A page object MUST keep one assertion-method prefix
 
-The prefix MUST be one of `expect*`, `check*`, or `verify*`, and that page object MUST keep it.
+The prefix MUST be one of `expect*`, `check*`, or `verify*`, and that page object MUST keep it. A new page object MUST use `expect*`. In a page object that already mixes prefixes, a new method MUST take the prefix most of its methods use, and existing methods MUST NOT be renamed only to align them.
 
 ### Cross-page workflows MUST live in a util, builder, or flow
 
@@ -101,15 +95,3 @@ See [Desktop](../desktop/docs/e2e-desktop-conventions.md#tests-that-broadcast-or
 ### Paytab specs MUST live under paytab
 
 Paytab specs MUST live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).
-
-### Ambiguous parameters MUST use one options object
-
-A function or constructor MUST take a single options object instead of positional parameters when it has any of:
-
-- 3 or more parameters
-- an optional parameter that callers would skip with `undefined`
-- 2 or more parameters of the same type that could be swapped without a type error (for example `tmsLinks` and `tags`)
-
-Keep 1–2 obvious parameters positional.
-
-Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.

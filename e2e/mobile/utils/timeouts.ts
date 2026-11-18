@@ -9,10 +9,8 @@
  * which documents each bucket, and this file re-exports them.
  *
  * The scales are a vocabulary, so every bucket stays even while a single file uses it.
- * Beyond them, a named budget lives here only when more than one file relies on it. A
- * budget that bounds one file's own flow (a per-test override, a harness step, a partner's
- * server-side wait) stays in that file as a named constant, so its rationale travels with it.
- * Either way, a call site never passes a bare number.
+ * When a named budget belongs here: e2e/docs/e2e-conventions.md, "A timeout, delay, or poll
+ * interval MUST be a bucket".
  *
  * `jest.config.js` requires this file as well as the test code, so it must stay free of
  * non-erasable TypeScript syntax (no `enum`, no `namespace`) — Node strips the types at

@@ -72,7 +72,7 @@ Do not add unused icon selector fields (`networkFeesInfoIcon`, `rateInfoIcon`).
 
 ## Quick checklist
 
- - [ ] Follow the conventions docs and typecheck each changed package (`pnpm --filter ledger-live-desktop-e2e-tests typecheck` and/or `pnpm --filter ledger-live-mobile-e2e-tests typecheck`).
+- [ ] Follow the conventions docs and typecheck each changed package as its README says: [desktop](../../../e2e/desktop/README.md#typecheck), [mobile](../../../e2e/mobile/README.md#typecheck).
 - [ ] Multi-step mobile flow has a post-click state assertion.
 - [ ] Amounts are not hardcoded where the minimum is provider-dependent.
 - [ ] Removed helpers above were not reintroduced.

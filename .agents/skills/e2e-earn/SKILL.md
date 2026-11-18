@@ -93,20 +93,20 @@ On any failure, classify using the Troubleshooting taxonomy below and tell the u
   - `e2e/desktop/tests/page/earn.base.page.ts` — abstract `EarnBasePage extends WebViewAppPage` (`webviewIdentifier = "earn"`, `goAndWaitForEarnToBeReady`).
   - `e2e/desktop/tests/page/earn.v2.dashboard.page.ts` — `EarnV2Page` (dashboard states + deposit/withdrawal + provider selection). Assertion methods use `verify*`.
   - `e2e/desktop/tests/page/modal/delegate.modal.ts` — native delegation modal.
-- **Desktop utils / flags**: `e2e/desktop/tests/utils/featureFlagUtils.ts` (`EARN_V2_DESKTOP_FLAGS`, `FF_STAKE_PROGRAMS_MODAL`, `useLocalEarnManifest`), `e2e/desktop/tests/utils/earnLocalManifest.json`.
+- **Desktop utils / flags**: `e2e/desktop/tests/utils/featureFlagUtils.ts` (`FF_EARN_V2_DESKTOP`, `FF_STAKE_PROGRAMS_MODAL`, `useLocalEarnManifest`), `e2e/desktop/tests/utils/earnLocalManifest.json`.
 - **Mobile specs/builders**: `e2e/mobile/specs/earn/**` (e.g. `earnV2_iceColdStart_ETH_3.spec.ts`, `earnV2_position_withdrawal_USDT.spec.ts`, `earnInlineAddAccount.spec.ts`), builder `e2e/mobile/specs/earn/earnV2.ts` (includes `runInlineAddAccountTest`). The legacy Earn v1 builder (`earn.ts`) and its consumer specs (`correctEarnPage_*`, `startStakingFromEarnDashboard_*`) have been removed.
 - **Mobile page objects**: `e2e/mobile/page/trade/earnV2Dashboard.page.ts`.
 
 ## Earn surfaces
 
 - **Desktop**: the Earn app is a webview with `webviewIdentifier = "earn"`. `goAndWaitForEarnToBeReady(earnFunction)` runs that navigation callback, waits for `earn-app-container`, then resolves the webview. It does not watch the console or `loading-skeleton`. Prefer that over an ad-hoc wait. Native staking (the `delegate` modal) acts on the main window. The dashboard and deposit flow act on the webview.
-- **Mobile**: force Earn v2 or the redirect flow with `E2E_FEATURE_FLAGS_JSON`. Per-test flags still win.
+- **Mobile**: the test function forces Earn v2 or the redirect flow with the `featureFlags` it initializes the app with (`EARN_V2_FLAGS` in `e2e/mobile/specs/earn/earnV2.ts`).
 
 ## Earn flow and feature flags
 
 Earn behaviour is feature-flag driven. Get this wrong and the app routes to the legacy modal instead of the Earn dashboard (or vice versa).
 
-- `EARN_V2_DESKTOP_FLAGS` enables the Earn v2 dashboard. When `useLocalEarnManifest` (`USE_LOCAL_EARN_MANIFEST=1`) is set, it also points `ptxEarnLiveApp` at the local `earn-local-manifest` (`earnLocalManifest.json`) and the spec applies `localManifestOverride`.
+- `FF_EARN_V2_DESKTOP` enables the Earn v2 dashboard. When `useLocalEarnManifest` (`USE_LOCAL_EARN_MANIFEST=1`) is set, it also points `ptxEarnLiveApp` at the local `earn-local-manifest` (`earnLocalManifest.json`) and the spec applies `localManifestOverride`.
 - `FF_STAKE_PROGRAMS_MODAL` (`stakePrograms`) controls native staking vs redirect-to-Earn per currency:
   - `params.list` — currencies that use **native** staking UI.
   - `params.redirects` — currencies that **redirect** into the Earn app (platform `earn`, with `queryParams`). For native ETH the redirect carries `cryptoAssetId: "ethereum"`, `intent: "deposit"`, and an `ethDepositCohort` (e.g. `"basic_sorting"`). Omitting `ethDepositCohort` yields a `missing_cohort_value` sentinel and the wrong screen.
@@ -149,4 +149,4 @@ Classify every failure as **environment**, **build**, or **test-flow mismatch**,
 - [ ] Readiness goes through `goAndWaitForEarnToBeReady` (`webviewIdentifier = "earn"`).
 - [ ] Feature flags match the intended flow (`list` vs `redirects`, `ethDepositCohort`).
 - [ ] Failures classified (environment vs build vs test-flow) with a concrete fix.
-- [ ] Follow the conventions docs and typecheck each changed package (`pnpm --filter ledger-live-desktop-e2e-tests typecheck` and/or `pnpm --filter ledger-live-mobile-e2e-tests typecheck`).
+- [ ] Follow the conventions docs and typecheck each changed package as its README says: [desktop](../../../e2e/desktop/README.md#typecheck), [mobile](../../../e2e/mobile/README.md#typecheck).

@@ -15,8 +15,6 @@ You are an expert in end-to-end testing the Ledger Wallet Mobile application.
 
 Read and follow these documents for guidance: 
 
-- [`AGENTS.md`](../../AGENTS.md) for repository guidance.
-- [`README.md`](README.md) for e2e-mobile project guidance.
 - [`e2e-mobile-add-or-update.md`](docs/e2e-mobile-add-or-update.md) for guidance on adding or updating mobile E2E tests.
 
 ## E2E Mobile Code Conventions

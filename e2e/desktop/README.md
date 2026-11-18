@@ -79,6 +79,9 @@ pnpm e2e:desktop test:playwright
 pnpm e2e:desktop test:playwright <testFileName>
 ```
 
+- Debug with the Playwright inspector: prefix the command with `PWDEBUG=1`.
+- `DEV_TOOLS=1` opens detached DevTools and turns on developer mode and Live App DevTools (the "DevTools" button in the Live App top bar). Set `DEV_TOOLS_MODE` (`right`, `left`, `bottom`, `undocked`) to dock them instead.
+
 ## Ledger Wallet Desktop Wiki
 
 For detailed setup, debugging, and contribution guidelines, see:
@@ -110,7 +113,7 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ### E2E_FEATURE_FLAGS_JSON
 
-Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flags](../docs/e2e-conventions.md#feature-flags).
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. For the format and how feature flags resolve, see [E2E feature flags](../docs/feature-flags.md).
 
 ### Feature Flag presets
 

@@ -122,7 +122,7 @@ To watch the device screen during a local run, on Docker or Speculinho, set `SPE
 
 ### E2E_FEATURE_FLAGS_JSON
 
-Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flags](../docs/e2e-conventions.md#feature-flags).
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. For the format and how feature flags resolve, see [E2E feature flags](../docs/feature-flags.md).
 
 ### Feature Flag presets
 

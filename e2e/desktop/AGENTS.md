@@ -15,8 +15,6 @@ You are an expert in end-to-end testing the Ledger Wallet Desktop application.
 
 Read and follow these documents for guidance: 
 
-- [`AGENTS.md`](../../AGENTS.md) for repository guidance.
-- [`README.md`](README.md) for e2e-desktop project guidance.
 - [`e2e-desktop-add-or-update.md`](docs/e2e-desktop-add-or-update.md) for guidance on adding or updating desktop E2E tests.
 
 ## E2E Desktop Code Conventions

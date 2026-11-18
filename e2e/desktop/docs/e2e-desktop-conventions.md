@@ -12,10 +12,9 @@ Tests MUST wait for an element or a navigation instead.
 
 ### A timeout or a poll interval MUST be a bucket
 
-A wait SHOULD omit a timeout so the page and `expect` defaults apply. A passed timeout MUST be a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. A poll interval or a pause between attempts (`expect.poll` `intervals`, a `setTimeout` in a polling loop) MUST be an `INTERVAL` bucket from the same file. A named constant in the file MUST NOT be added unless no bucket fits, such as a per-test budget (`test.setTimeout`) above the largest bucket, and it MUST state its reason. Feature-flag params such as `pollingInterval` or `searchDebounceTime` configure the app, not a wait, so this rule does not apply to them. The page default in `tests/fixtures/common.ts` and the `expect` default in `playwright.config.ts` MUST be buckets too. A budget no bucket covers, such as the test timeout, MAY stay a literal in `playwright.config.ts`, since the key already names it.
+The rule and its exceptions: [A timeout, delay, or poll interval MUST be a bucket](../../docs/e2e-conventions.md#a-timeout-delay-or-poll-interval-must-be-a-bucket). On desktop, a wait SHOULD omit a timeout so the page and `expect` defaults apply, and those defaults (`tests/fixtures/common.ts`, `playwright.config.ts`) MUST be buckets too.
 
 ```ts
-await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge }); // not 60_000
 await expect.poll(countEnvs, { intervals: [INTERVAL.medium] }).toBeGreaterThan(0); // not [1_000]
 ```
 

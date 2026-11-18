@@ -59,7 +59,7 @@ That keeps `expectScreenVisible` out of every other line of the spec without cou
 ```ts
 @Step("Open Contacts")
 async openContacts() {
-  await tapByElement(this.contactsButton());
+  await this.contactsButton.tap();
   await app.contacts.expectScreenVisible();
 }
 ```
@@ -74,9 +74,9 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### A handle locator MUST be a private readonly property
+### A handle locator MUST be a property
 
-A static locator MUST be a private readonly handle, and a dynamic one a private readonly arrow function that returns a handle. A step MUST NOT build a handle inline.
+A static locator MUST be a handle property, and a dynamic one an arrow-function property that returns a handle. A step MUST NOT build a handle inline. Visibility: [Selectors MUST be non-public and readonly](../../docs/e2e-conventions.md#selectors-must-be-non-public-and-readonly).
 
 ```ts
 private readonly recipientInput = byId("recipient-input");
@@ -121,11 +121,9 @@ Allure keys a test on its spec path and full name (`describe` titles + `it` titl
 `toBeVisible()` defaults to 75%, which a bottom sheet satisfies while still sliding, so the next tap can hit a moving view. The wait MUST use an id that proves the sheet is fully presented. A `-content` anchor on its container SHOULD be used, because controls usually mount before presentation. An inset control MUST be used only when a documented platform-specific visibility issue makes the container unsuitable.
 
 ```ts
-await tapByElement(this.actionsTrigger());
-await waitForFullyVisibleById(this.actionsMenuContentId);
+await this.actionsTrigger.tap();
+await this.actionsMenuContent.waitFullyVisible();
 ```
-
-Measured on Contacts under a CPU-starved emulator: 2 failures in 4 at the default, 0 in 13 at 100%, costing about 4s per run.
 
 ### A failing wait MUST be fixed
 
@@ -138,14 +136,6 @@ A row id survives a rename. The name does not. Detox has no data API, so the id 
 ### Navigation MUST go through the UI
 
 A deeplink MUST NOT be used unless the deeplink is what is under test. A deeplink blurs the current screen and closes open bottom sheets.
-
-### Timeouts MUST use a named bucket
-
-A timeout, delay, or poll interval MUST be a `TIMEOUT` or `INTERVAL` bucket from [`utils/timeouts.ts`](../utils/timeouts.ts), not a bare number. A named constant in the file is allowed only when no bucket fits or the value needs its reason written down. Config files MAY keep literals, since the key already names them (`setupTimeout: 500000` in `detox.config.js`).
-
-```ts
-await this.screen.waitVisible(TIMEOUT.small); // not 5000
-```
 
 ## Test data
 
