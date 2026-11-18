@@ -19,6 +19,8 @@ const displayRoundingTolerance = (text: string) => {
 const OPERATIONS_LIST_ITEM_ID = "operations-list-item";
 const ADDRESS_ITEM_NAME_PREFIX = "asset-detail-address-item-name-";
 
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export default class AssetDetailPage {
   // The testID ends with the currency id (`asset-detail-scroll-view-<currencyId>`).
   private readonly anyScrollView = byId(/^asset-detail-scroll-view-.*/);
@@ -42,10 +44,10 @@ export default class AssetDetailPage {
       // The ticker sits inside a formatted amount such as "+1 DAI".
       text: new RegExp(`.*${ticker}.*`, "i"),
     });
-  private readonly operationWithType = (operationType: string) =>
-    byIdWithDescendantText({ id: OPERATIONS_LIST_ITEM_ID, text: operationType });
   private readonly addressItemNameAt = (index: number) =>
     byId(new RegExp(`${ADDRESS_ITEM_NAME_PREFIX}.*`), index);
+  private readonly addressItemNameOfAddress = (address: string) =>
+    byId(new RegExp(`${ADDRESS_ITEM_NAME_PREFIX}.*${escapeRegExp(address)}.*`));
   private readonly addressItemName = (accountId: string) =>
     byId(`asset-detail-address-item-name-${accountId}`);
   private readonly addressItemAddress = (accountId: string) =>
@@ -212,19 +214,22 @@ export default class AssetDetailPage {
     await this.operationDetailsTitle.waitVisible();
   }
 
-  @Step("Open Asset Detail transaction of type {{{0}}}")
-  async openTransactionOfType(operationType: string) {
-    await this.scrollToTransactions();
-    await this.operationWithType(operationType).revealForTap(await this.scrollView());
-    await this.operationWithType(operationType).tap();
+  /** The page only previews three transactions of all its holders: the history has them all. */
+  @Step("Open the received transaction of {{{0}}} {{{1}}} from the history")
+  async openReceivedTransaction(amount: string, ticker: string) {
+    await this.openTransactionsHistory();
+    await app.operation.expectOperationsListVisible();
+    await app.operation.openOperationWithAmount(
+      new RegExp(`^\\+\\s*${escapeRegExp(amount)}\\s*${escapeRegExp(ticker)}`, "i"),
+    );
     await this.operationDetailsTitle.waitVisible();
   }
 
   /** The address rows are the accounts holding the asset: their ids are the ones of the main accounts. */
-  @Step("Get the id of the first holding account")
-  async getFirstHoldingAccountId() {
+  @Step("Get the id of the account holding the asset at address {{{0}}}")
+  async getHoldingAccountIdOf(address: string) {
     await this.scrollToAddressesSection();
-    const name = this.addressItemNameAt(0);
+    const name = this.addressItemNameOfAddress(address);
     await name.scrollTo(await this.scrollView());
     return (await name.getIdentifier()).replace(ADDRESS_ITEM_NAME_PREFIX, "");
   }

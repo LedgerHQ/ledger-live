@@ -309,9 +309,12 @@ export default class AccountPage {
   }
 
   @Step("Scroll to the history of the sub account and click on last operation {{{0}}}")
-  async scrollToSubAccountHistoryAndClickOnLastOperation(operationType: string) {
+  async scrollToSubAccountHistoryAndClickOnLastOperation(
+    operationType: string,
+    received: { amount: string; ticker: string },
+  ) {
     if (isAccountDetailEnabled()) {
-      await app.assetDetail.openTransactionOfType(operationType);
+      await app.assetDetail.openReceivedTransaction(received.amount, received.ticker);
       return;
     }
     await this.scrollToHistoryAndClickOnLastOperation(operationType);
@@ -349,12 +352,7 @@ export default class AccountPage {
     await this.navigateToTokenInAccount(account);
 
     if (isAccountDetailEnabled()) {
-      const holdingAccountId = await app.assetDetail.getFirstHoldingAccountId();
-      invariant(
-        holdingAccountId.includes(parentAddress),
-        `expected an asset held by ${parentAccount.accountName}, landed on ${holdingAccountId}`,
-      );
-      return holdingAccountId;
+      return await app.assetDetail.getHoldingAccountIdOf(parentAddress);
     }
 
     // Several graphs can match the pattern: take the one on screen.

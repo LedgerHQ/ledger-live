@@ -78,6 +78,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
         await app.account.expectSubAccountBalanceVisible(transaction.accountToCredit, subAccountId);
         await app.account.scrollToSubAccountHistoryAndClickOnLastOperation(
           TransactionStatus.RECEIVED,
+          { amount: transaction.amount, ticker: transaction.accountToCredit.currency.ticker },
         );
         await app.operationDetails.checkOperationInfos(transaction, false);
       }
