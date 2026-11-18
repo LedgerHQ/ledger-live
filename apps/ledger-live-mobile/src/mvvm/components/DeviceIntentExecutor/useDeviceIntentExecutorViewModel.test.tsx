@@ -405,6 +405,38 @@ describe("useDeviceIntentExecutorViewModel", () => {
       });
     });
 
+    it("WHEN a child screen reported a failure before the user cancels THEN it gives that failure to the original onUserCancel", () => {
+      // GIVEN
+      const onUserCancel = jest.fn();
+      const { result } = renderViewModel({ onUserCancel });
+      const failure = { failureType: "WrongDeviceForAccount", countsAsFailure: true } as const;
+      act(() => {
+        result.current.trackingContextValue.reportFailure(failure);
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(onUserCancel).toHaveBeenCalledWith(failure);
+    });
+
+    it("WHEN the user cancels without any failure THEN it gives null to the original onUserCancel", () => {
+      // GIVEN
+      const onUserCancel = jest.fn();
+      const { result } = renderViewModel({ onUserCancel });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(onUserCancel).toHaveBeenCalledWith(null);
+    });
+
     it("WHEN the user retries after a disconnection and cancels THEN it fires deviceflow_aborted without failure", () => {
       // GIVEN
       const { result } = renderViewModel();

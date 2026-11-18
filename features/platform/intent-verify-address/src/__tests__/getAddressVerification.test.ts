@@ -20,19 +20,31 @@ function rejectAfterDeviceRequest(error: Error): VerifyAddressOnDevice {
 }
 
 function controllableVerify() {
-  const pending: { onDeviceRequest?: () => void; reject?: (error: Error) => void } = {};
-  const verify: VerifyAddressOnDevice = onDeviceRequest =>
+  const pending: {
+    onDeviceRequest?: () => void;
+    signal?: AbortSignal;
+    reject?: (error: Error) => void;
+  } = {};
+  const verify: VerifyAddressOnDevice = (onDeviceRequest, signal) =>
     new Promise((_resolve, reject) => {
       pending.onDeviceRequest = onDeviceRequest;
+      pending.signal = signal;
       pending.reject = reject;
     });
 
   return {
     verify,
     startDeviceRequest: () => pending.onDeviceRequest?.(),
+    isAborted: () => pending.signal?.aborted,
     reject: (error: Error) => pending.reject?.(error),
   };
 }
+
+const stopsOnceAborted: VerifyAddressOnDevice = async (_onDeviceRequest, signal) => {
+  await Promise.resolve();
+  if (signal.aborted) throw new Error("cancelled before the device request");
+  return { address: ADDRESS };
+};
 
 function subscribeTo(verify: VerifyAddressOnDevice) {
   const action = getAddressVerification(verify);
@@ -151,5 +163,33 @@ describe("getAddressVerification", () => {
     startDeviceRequest();
 
     expect(states).toEqual([]);
+  });
+
+  it.each([
+    ["cancel", (action: { cancel: () => void }) => action.cancel()],
+    [
+      "unsubscribe",
+      (_action: unknown, subscription: { unsubscribe: () => void }) => subscription.unsubscribe(),
+    ],
+  ] as const)("hands verify a signal that stays open until %s", (_label, stop) => {
+    const { verify, isAborted } = controllableVerify();
+    const { action, subscription } = subscribeTo(verify);
+    expect(isAborted()).toBe(false);
+
+    stop(action, subscription);
+
+    expect(isAborted()).toBe(true);
+    subscription.unsubscribe();
+  });
+
+  it("stays silent when verify gives up because the signal was aborted", async () => {
+    const { action, states, error, subscription } = subscribeTo(stopsOnceAborted);
+
+    action.cancel();
+    await new Promise(resolve => setTimeout(resolve));
+
+    expect(states).toEqual([]);
+    expect(error).not.toHaveBeenCalled();
+    subscription.unsubscribe();
   });
 });

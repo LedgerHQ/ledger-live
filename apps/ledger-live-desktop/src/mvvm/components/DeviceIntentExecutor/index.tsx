@@ -4,7 +4,11 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
-import type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
+import type {
+  DeviceFlowFailure,
+  DeviceIntentTrackingProperties,
+  SourceFlow,
+} from "@ledgerhq/live-dmk-shared";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
@@ -22,15 +26,16 @@ import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewM
 
 export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
+export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
+export { UserRefusedOnDevice } from "./components/DeviceGenericStates/UserRefusedOnDevice";
 export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
-type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
-  JobState,
-  Input,
-  ExtraProps,
-  InitializationInput,
-  Result
+type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
+  DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitializationInput, Result>,
+  "onUserCancel"
 > & {
+  /** Gets the error screen the user closed, if any. */
+  onUserCancel: (failure: DeviceFlowFailure | null) => void;
   initializerConfig?: InitializerConfig;
   /**
    * Originating user intent that initiated the device flow. Required for analytics.
