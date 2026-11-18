@@ -18,7 +18,7 @@ export default class SwapPage {
   private readonly baseLink = "swap";
 
   private readonly proceedButton = byId("proceed-button");
-  private readonly deviceActionError = byId("error-description-deviceAction");
+  private readonly exchangeError = byId("wallet-api-exchange-error");
   private readonly swapSuccessTitle = byId("swap-success-title");
   private readonly closeButton = byId("NavigationHeaderCloseButton");
   private readonly historyButton = byId("navigation-header-swap-history");
@@ -126,13 +126,13 @@ export default class SwapPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.deviceActionError);
+    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.exchangeError);
     await this.proceedButton.tap();
   }
 
   @Step("Wait for swap success and close")
   async waitForSuccessAndClose() {
-    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.deviceActionError);
+    await this.swapSuccessTitle.waitVisible(TIMEOUT.xxxlarge, this.exchangeError);
     await this.closeButton.waitFullyVisible();
     await this.closeButton.tap();
     await this.swapSuccessTitle.waitNotVisible();
