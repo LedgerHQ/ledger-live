@@ -15,6 +15,7 @@ import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectingState, WaitingForSelectedDeviceState } from "LLM/components/DeviceConnection";
 import { useTranslation } from "~/context/Locale";
+import { assertNever } from "../utils/assertNever";
 
 export type DeviceStateSheetState = Extract<
   ConnectKnownOrNewDeviceUIState,
@@ -52,6 +53,24 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void 
   );
 }
 
+function DeviceStateContent({
+  state,
+}: Readonly<{ state: DeviceStateSheetState }>): React.ReactNode {
+  switch (state.type) {
+    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
+      return (
+        <>
+          <WaitingForSelectedDeviceState device={state.device} />
+          {state.showDeviceNotFound && <WaitingHint onAddNewDevice={state.addNewDevice} />}
+        </>
+      );
+    case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
+      return <ConnectingState />;
+    default:
+      return assertNever(state);
+  }
+}
+
 export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): React.JSX.Element {
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
@@ -73,15 +92,7 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
         showsVerticalScrollIndicator={false}
       >
         <BottomSheetHeader />
-        <Box lx={{ gap: "s16" }}>
-          {state?.type === ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice && (
-            <>
-              <WaitingForSelectedDeviceState device={state.device} />
-              {state.showDeviceNotFound && <WaitingHint onAddNewDevice={state.addNewDevice} />}
-            </>
-          )}
-          {state?.type === ConnectKnownOrNewDeviceUIStateTypes.Connecting && <ConnectingState />}
-        </Box>
+        <Box lx={{ gap: "s16" }}>{state && <DeviceStateContent state={state} />}</Box>
       </BottomSheetScrollView>
     </QueuedBottomSheet>
   );
