@@ -8,7 +8,11 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { useEffect, useMemo } from "react";
 import { useStore } from "LLD/hooks/redux";
 import { selectHasSeenIntro, markPredictionsIntroSeen } from "@domain/entity-predictions";
-import { usePredictionsSetupHooks, usePredictionsSheetHooks } from "@features/flow-predictions";
+import {
+  usePredictionsOrderHooks,
+  usePredictionsSetupHooks,
+  usePredictionsSheetHooks,
+} from "@features/flow-predictions";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
   findPredictionsAccount,
@@ -19,6 +23,7 @@ export function usePredictionsHandlers(onClose?: () => void) {
   const store = useStore();
   const sheetHooks = usePredictionsSheetHooks();
   const setupHooks = usePredictionsSetupHooks();
+  const orderHooks = usePredictionsOrderHooks();
   const bindingSigner = useMemo(
     () =>
       createPredictionsSigner({
@@ -31,8 +36,20 @@ export function usePredictionsHandlers(onClose?: () => void) {
       }),
     [store, setupHooks],
   );
+  const orderSigner = useMemo(
+    () =>
+      createPredictionsSigner({
+        requests: predictionsSigningRequests,
+        purpose: "order",
+        findAccount: walletAccountId =>
+          findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
+        refusal: () => new UserRefusedOnDevice(),
+      }),
+    [store],
+  );
 
   useEffect(() => bindingSigner.cancelOpened, [bindingSigner]);
+  useEffect(() => orderSigner.cancelOpened, [orderSigner]);
 
   return useMemo<WalletAPICustomHandlers>(
     () =>
@@ -47,8 +64,13 @@ export function usePredictionsHandlers(onClose?: () => void) {
               getBindingTypedData(account.freshAddress),
             ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
+          "order.sign": async (walletAccountId, typedData) => {
+            const { signature } = await orderSigner.sign(walletAccountId, () => typedData);
+            return { signature, orderId: orderHooks.startOrder() };
+          },
+          "order.report": orderHooks["order.report"],
         },
       }),
-    [onClose, sheetHooks, setupHooks, store, bindingSigner],
+    [onClose, sheetHooks, setupHooks, orderHooks, store, bindingSigner, orderSigner],
   );
 }

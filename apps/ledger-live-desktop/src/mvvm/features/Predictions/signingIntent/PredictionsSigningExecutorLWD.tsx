@@ -33,7 +33,8 @@ export function PredictionsSigningExecutorLWD({
   onDone,
 }: Props): React.ReactElement | null {
   const [initInput, setInitInput] = useState<InitializationInput | null>(null);
-  const isSignedRef = useRef(false);
+  // Signed, or expired before signing: once the job completes, the executor closes.
+  const isFinishedRef = useRef(false);
 
   useEffect(() => {
     let isCancelled = false;
@@ -57,13 +58,19 @@ export function PredictionsSigningExecutorLWD({
 
   const onResult = useCallback(
     (result: PredictionsSigningResult) => {
-      if (result.type === "mismatch") {
-        // The live app raises its alert right away; the executor keeps showing the mismatch.
-        onError(result.error);
-        return;
+      switch (result.type) {
+        case "mismatch":
+          // The live app raises its alert right away; the executor keeps showing the mismatch.
+          onError(result.error);
+          return;
+        case "expired":
+          isFinishedRef.current = true;
+          onError(result.error);
+          return;
+        case "signed":
+          isFinishedRef.current = true;
+          onSuccess(result.signature);
       }
-      isSignedRef.current = true;
-      onSuccess(result.signature);
     },
     [onError, onSuccess],
   );
@@ -87,7 +94,7 @@ export function PredictionsSigningExecutorLWD({
   const prompt = useMemo<PredictionsSigningPrompt>(() => ({ purpose }), [purpose]);
 
   const onIntentJobComplete = useCallback(() => {
-    if (isSignedRef.current) onDone();
+    if (isFinishedRef.current) onDone();
   }, [onDone]);
 
   const onUserCancel = useCallback(() => {

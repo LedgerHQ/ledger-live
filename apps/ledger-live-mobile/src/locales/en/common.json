@@ -12748,6 +12748,40 @@
         "unknown": "Something went wrong while setting it up."
       }
     },
+    "order": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Placing your order",
+      "filled": {
+        "title": "Order filled",
+        "fill_one": "{{shares}} share at {{price}}",
+        "fill_other": "{{shares}} shares at {{price}}",
+        "description": "Your order went through.",
+        "return": "Return to predictions"
+      },
+      "notFilled": {
+        "title": "Order not filled",
+        "description": "The price moved. No funds left your balance."
+      },
+      "rejected": {
+        "title": "Order not placed",
+        "expired-signature": "The order's authorization expired before it was sent.",
+        "insufficient-balance": "Your trading balance is too low for this order.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "workflow-failed": "MoonPay couldn't place the order."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your order",
+        "description": "Check your positions before trying again."
+      },
+      "tryAgain": "Try again"
+    },
     "onboarding": {
       "intro": {
         "title": "Trade on future events",

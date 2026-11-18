@@ -51,7 +51,7 @@ describe("createSigningRequests", () => {
       onCancel: jest.fn(),
     });
 
-    expect(onError).toHaveBeenCalledWith(new Error("The Predictions binding isn't mounted"));
+    expect(onError).toHaveBeenCalledWith(new Error("The Predictions signing prompt isn't mounted"));
   });
 
   it("keeps a root registered since when an older one unregisters", () => {

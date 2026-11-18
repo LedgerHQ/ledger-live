@@ -51,9 +51,22 @@ type Props = Readonly<{
   onClose: () => void;
 }>;
 
-const TITLE_KEYS = {
-  binding: "predictions.binding.title",
-} as const satisfies Record<PredictionsSigningPurpose, string>;
+const PROMPT_KEYS = {
+  binding: {
+    preparing: "predictions.binding.preparing",
+    title: "predictions.binding.title",
+    description: "predictions.binding.description",
+    mismatchTitle: "predictions.binding.mismatch.title",
+    mismatchDescription: "predictions.binding.mismatch.description",
+  },
+  order: {
+    preparing: "predictions.order.preparing",
+    title: "predictions.order.title",
+    description: "predictions.order.description",
+    mismatchTitle: "predictions.order.mismatch.title",
+    mismatchDescription: "predictions.order.mismatch.description",
+  },
+} as const satisfies Record<PredictionsSigningPurpose, Record<string, string>>;
 
 function Step({
   jobState,
@@ -65,22 +78,18 @@ function Step({
   onClose: () => void;
 }>) {
   const { t } = useTranslation();
+  const keys = PROMPT_KEYS[purpose];
 
   const closeCta = {
     label: t("common.close"),
     onPress: onClose,
-    testID: "predictions-binding-close",
+    testID: "predictions-signing-close",
   };
 
   switch (jobState.type) {
     case "signing": {
       if (!jobState.isAwaitingConfirmation) {
-        return (
-          <LoadingContent
-            title={t("predictions.binding.preparing")}
-            testID="predictions-binding-preparing"
-          />
-        );
+        return <LoadingContent title={t(keys.preparing)} testID="predictions-signing-preparing" />;
       }
       const deviceModelId = dmkToLedgerDeviceIdMap[jobState.deviceModelId];
       return (
@@ -91,9 +100,9 @@ function Step({
             action="continue"
             deviceModelId={deviceModelId}
             deviceName={jobState.deviceName}
-            title={t(TITLE_KEYS[purpose], { productName: getProductName(deviceModelId) })}
-            description={t("predictions.binding.description")}
-            testID="predictions-binding-signing"
+            title={t(keys.title, { productName: getProductName(deviceModelId) })}
+            description={t(keys.description)}
+            testID="predictions-signing-confirm"
           />
         </>
       );
@@ -102,7 +111,7 @@ function Step({
       const retryCta = {
         label: t("common.retry"),
         onPress: jobState.retry,
-        testID: "predictions-binding-retry",
+        testID: "predictions-signing-retry",
       };
       if (jobState.error instanceof UserRefusedOnDevice) {
         return (
@@ -112,7 +121,7 @@ function Step({
             title={t("deviceIntentExecutor.initialization.retryable.userRefused.title")}
             primaryCta={closeCta}
             secondaryCta={retryCta}
-            testID="predictions-binding-refused"
+            testID="predictions-signing-refused"
           />
         );
       }
@@ -124,7 +133,7 @@ function Step({
           description={<ErrorDescription error={jobState.error} />}
           primaryCta={retryCta}
           secondaryCta={closeCta}
-          testID="predictions-binding-error"
+          testID="predictions-signing-error"
         />
       );
     }
@@ -133,10 +142,10 @@ function Step({
         <InfoState
           preset="error"
           size="hug"
-          title={t("predictions.binding.mismatch.title")}
-          description={t("predictions.binding.mismatch.description")}
+          title={t(keys.mismatchTitle)}
+          description={t(keys.mismatchDescription)}
           primaryCta={closeCta}
-          testID="predictions-binding-mismatch"
+          testID="predictions-signing-mismatch"
         />
       );
   }

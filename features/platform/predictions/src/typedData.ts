@@ -1,6 +1,6 @@
 import { verifyTypedData } from "ethers";
 
-type TypedDataField = { name: string; type: string };
+export type TypedDataField = { name: string; type: string };
 
 /** An EIP-712 message, in the JSON form the Ethereum app signs. */
 export type PredictionsTypedData = {
