@@ -19,8 +19,9 @@ export type ChecksDrawerTestIds = Readonly<{
   notGenuineSheet: string;
 }>;
 
-type ChecksDrawersProps = ChecksDrawerProps &
+type ChecksDrawersProps = Omit<ChecksDrawerProps, "allowSheet"> &
   Readonly<{
+    allowSheet?: ChecksDrawerProps["allowSheet"];
     testIds: ChecksDrawerTestIds;
   }>;
 
@@ -127,16 +128,18 @@ export function ChecksDrawers({
 }: ChecksDrawersProps) {
   return (
     <>
-      <ChecksSheet
-        isOpen={allowSheet.isOpen}
-        onHeaderClosePressed={allowSheet.onClose}
-        testID={testIds.allowSheet}
-      >
-        <ContinueOnDevice
-          deviceModelId={allowSheet.deviceModelId}
-          deviceName={allowSheet.deviceName}
-        />
-      </ChecksSheet>
+      {allowSheet ? (
+        <ChecksSheet
+          isOpen={allowSheet.isOpen}
+          onHeaderClosePressed={allowSheet.onClose}
+          testID={testIds.allowSheet}
+        >
+          <ContinueOnDevice
+            deviceModelId={allowSheet.deviceModelId}
+            deviceName={allowSheet.deviceName}
+          />
+        </ChecksSheet>
+      ) : null}
       {errorDrawer.kind === "declined" ? (
         <ChecksInfoSheet
           isOpen={errorDrawer.isOpen}

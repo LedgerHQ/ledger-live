@@ -12,7 +12,7 @@ import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info"
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
-export type SetupViewProps = ChecksDrawerProps &
+export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet"> &
   Readonly<{
     infoCard: SetupInfoCard | undefined;
     suspendInfoSheet: boolean;
@@ -26,6 +26,7 @@ export type SetupViewProps = ChecksDrawerProps &
     stageTitle: string;
     stageDescription?: string;
     currentStep: number;
+    completedSteps: number;
     totalSteps: number;
     status: SetupStageStatus;
     closeLabel: string;
@@ -100,7 +101,12 @@ export function useSetupScreenViewModel({
     closeSheet();
     onQuit();
   };
-  const { headerQuitHidden, reopenFirmwareOffer, ...drawers } = useChecksDrawers({
+  const {
+    headerQuitHidden,
+    reopenFirmwareOffer,
+    allowSheet: _allowSheet,
+    ...drawers
+  } = useChecksDrawers({
     device,
     state: checks?.state ?? null,
     error: checks?.error ?? null,
@@ -127,6 +133,7 @@ export function useSetupScreenViewModel({
     stageTitle: t(stageTitleKeys[stage.kind]),
     ...(descriptionKey ? { stageDescription: t(descriptionKey, { productName }) } : {}),
     currentStep: stage.index + 1,
+    completedSteps: stage.index,
     totalSteps: stage.total,
     status,
     closeLabel: t("deviceOnboarding.checks.close"),
