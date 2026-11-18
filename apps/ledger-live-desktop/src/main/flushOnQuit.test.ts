@@ -11,6 +11,7 @@ import {
   flushThen,
   requestRendererFlush,
   setupFlushOnQuit,
+  removeCloseListenersButFlush,
 } from "./flushOnQuit";
 
 jest.mock("electron", () => {
@@ -160,6 +161,22 @@ describe("flushOnQuit", () => {
     await closed;
 
     expect(releasedEvent.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it("keeps the flush when the update install removes the close listeners", async () => {
+    const window = createWindow();
+    setupFlushOnQuit(asBrowserWindow(window), async () => {});
+    const otherListener = jest.fn();
+    window.on("close", otherListener);
+
+    removeCloseListenersButFlush(asBrowserWindow(window));
+    const event = preventableEvent();
+    window.emit("close", event);
+
+    expect(otherListener).not.toHaveBeenCalled();
+    expect(event.preventDefault).toHaveBeenCalled();
+    await settle();
+    expect(window.close).toHaveBeenCalledTimes(1);
   });
 
   it("flushes again on the next quit when a released quit did not quit", async () => {

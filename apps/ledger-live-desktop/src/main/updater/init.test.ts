@@ -43,6 +43,7 @@ jest.mock("electron-updater", () => ({
 
 jest.mock("~/main/flushOnQuit", () => ({
   flushThen: jest.fn(),
+  removeCloseListenersButFlush: jest.fn(),
 }));
 
 jest.mock("~/helpers/distributionChannel", () => ({

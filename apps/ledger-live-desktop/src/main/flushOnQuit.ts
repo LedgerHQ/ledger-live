@@ -76,6 +76,19 @@ export async function flushThen(action: () => void): Promise<void> {
   }
 }
 
+const flushOnClose = new WeakMap<BrowserWindow, (event: Electron.Event) => void>();
+
+/**
+ * Remove the close listeners of `window` but the flush: an update install that fails leaves the app
+ * running, and a later close must still flush.
+ */
+export function removeCloseListenersButFlush(window: BrowserWindow): void {
+  const flush = flushOnClose.get(window);
+  for (const listener of window.listeners("close")) {
+    if (listener !== flush) window.removeListener("close", listener as () => void);
+  }
+}
+
 /**
  * Hold the main window close and the app quit until the pending writes are on disk.
  */
@@ -86,13 +99,15 @@ export function setupFlushOnQuit(window: BrowserWindow, flushMain: () => Promise
       flushPendingWrites(() => requestRendererFlush(window), flushMain),
     ));
 
-  window.on("close", event => {
+  const onClose = (event: Electron.Event) => {
     if (releasing) return;
     event.preventDefault();
     void flushThen(() => {
       if (!window.isDestroyed()) window.close();
     });
-  });
+  };
+  flushOnClose.set(window, onClose);
+  window.on("close", onClose);
 
   app.on("before-quit", event => {
     if (releasing) return;

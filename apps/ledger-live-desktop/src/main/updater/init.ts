@@ -4,7 +4,7 @@ import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
 import { CHANNELS } from "~/bridge/contract";
-import { flushThen } from "~/main/flushOnQuit";
+import { flushThen, removeCloseListenersButFlush } from "~/main/flushOnQuit";
 
 export type UpdateStatus =
   | "idle"
@@ -79,9 +79,7 @@ const quitAndInstall = () =>
     // Fixes quitAndInstall not quitting on macOS, as suggested on
     // https://github.com/electron-userland/electron-builder/issues/1604#issuecomment-306709572
     app.removeAllListeners("window-all-closed");
-    BrowserWindow.getAllWindows().forEach(browserWindow => {
-      browserWindow.removeAllListeners("close");
-    });
+    BrowserWindow.getAllWindows().forEach(removeCloseListenersButFlush);
     autoUpdater.quitAndInstall();
   });
 init();
