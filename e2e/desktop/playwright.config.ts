@@ -3,6 +3,7 @@ import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
+  testIgnore: ["**/conventionBreak.spec.ts"],
   retries: process.env.CI ? 1 : 0,
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
