@@ -1,6 +1,2 @@
 export { resolveMarketPriceSectionSourceId } from "./resolveMarketPriceSectionSourceId";
-export {
-  getPriceChangeKeyForRange,
-  resolveRangePriceChange,
-  resolveTrendPercentAndVariant,
-} from "./marketPriceDerivation";
+export { resolveRangePriceChange, resolveTrendPercentAndVariant } from "./marketPriceDerivation";

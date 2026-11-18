@@ -14,9 +14,9 @@ export function hasStartedLedgerRecoverFlowForPostOnboarding(
   if (state === undefined) {
     return false;
   }
+  const inProgressStates: string[] = Object.values(LedgerRecoverSubscriptionStateInProgressEnum);
   return (
-    state in LedgerRecoverSubscriptionStateInProgressEnum ||
-    state === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE
+    inProgressStates.includes(state) || state === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE
   );
 }
 

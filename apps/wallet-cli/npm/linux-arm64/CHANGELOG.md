@@ -1,5 +1,9 @@
 # @ledgerhq/wallet-cli-linux-arm64
 
+## 3.5.0
+
+## 3.5.0-next.0
+
 ## 3.4.0
 
 ## 3.3.0
@@ -39,11 +43,5 @@
 ## 2.8.0-next.0
 
 ## 2.7.0
-
-## 2.7.0-next.0
-
-## 2.6.0
-
-## 2.6.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
