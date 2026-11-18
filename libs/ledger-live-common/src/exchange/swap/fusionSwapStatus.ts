@@ -31,9 +31,15 @@ async function resolveOneinchSwapsAsFusion(
   const unknownSwaps = statuses.filter(isUnknownOneinchSwap);
   if (!unknownSwaps.length || !network) return statuses;
 
-  const fusionStatuses = await getMultipleStatus(
-    unknownSwaps.map(({ swapId }) => ({ provider: ONEINCH_FUSION_PROVIDER, swapId, network })),
-  );
+  let fusionStatuses: SwapStatus[];
+  try {
+    fusionStatuses = await getMultipleStatus(
+      unknownSwaps.map(({ swapId }) => ({ provider: ONEINCH_FUSION_PROVIDER, swapId, network })),
+    );
+  } catch {
+    // Keep the other swaps' statuses, the next poll asks again
+    return statuses;
+  }
 
   return statuses.map(status => {
     if (!isUnknownOneinchSwap(status)) return status;
