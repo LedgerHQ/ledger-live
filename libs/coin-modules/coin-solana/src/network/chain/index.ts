@@ -59,6 +59,8 @@ export type ChainAPI = Readonly<{
     commitmentOrConfig?: Commitment | GetLatestBlockhashConfig,
   ) => Promise<BlockhashWithExpiryBlockHeight>;
 
+  isBlockhashValid: (blockhash: string, commitment: Commitment) => Promise<boolean>;
+
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
   getParsedTokenAccountsByOwner: (
@@ -252,6 +254,12 @@ export function getChainAPI(
 
     getLatestBlockhash: (commitmentOrConfig?: Commitment | GetLatestBlockhashConfig) =>
       connection.getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
+
+    isBlockhashValid: (blockhash: string, commitment: Commitment) =>
+      connection
+        .isBlockhashValid(blockhash, { commitment })
+        .then(r => r.value)
+        .catch(remapErrors),
 
     getFeeForMessage: (msg: VersionedMessage) =>
       connection

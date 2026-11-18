@@ -146,6 +146,7 @@ export function classifyTransactionError(error: Error): ErrorCategory {
     case "GasEstimationError":
     case "SequenceNumberError":
     case "TronTransactionExpired":
+    case "SolanaTxBlockhashExpired":
     case "UnsupportedRpcMethodError":
     case "NetworkError":
     case "NetworkDown":

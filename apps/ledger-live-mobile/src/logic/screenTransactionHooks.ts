@@ -55,7 +55,8 @@ type Navigation =
     >
   | StackNavigatorNavigation<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
-const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
+export const shouldRestartFlow = (error: Error) =>
+  error.name === "InvalidTransactionError" || error.name === "SolanaTxBlockhashExpired";
 
 type Route =
   | StackNavigatorRoute<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

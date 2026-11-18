@@ -1,7 +1,11 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TransactionBroadcastError } from "../../errors/transactionBroadcastErrors";
 
-const ERRORS_KEPT_AS_IS = new Set(["InvalidTransactionError", "TransactionBroadcastError"]);
+const ERRORS_KEPT_AS_IS = new Set([
+  "InvalidTransactionError",
+  "TransactionBroadcastError",
+  "SolanaTxBlockhashExpired",
+]);
 
 const RETRYABLE_SEND_CONFIRMATION_ERRORS = new Set([
   "LedgerAPI5xx",
