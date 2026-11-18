@@ -30,9 +30,10 @@ log() {
 # Called directly rather than through xcrun, so a timeout kills simctl itself.
 SIMCTL="$(xcrun -f simctl)" || exit 1
 
-# Runs a command for at most <seconds>, and never past DEADLINE. macOS has no `timeout`: the alarm
-# survives exec and its default action kills the command.
-with_timeout() {
+source "$(dirname "${BASH_SOURCE[0]}")/../check-ios-simulators/simulator-helpers.sh"
+
+# Runs a command for at most <seconds>, and never past DEADLINE.
+with_deadline() {
   local seconds="$1"
   shift
   local remaining=$((DEADLINE - SECONDS))
@@ -43,20 +44,16 @@ with_timeout() {
     log "⚠️ ${BUDGET}s budget exhausted, skipping simctl $2 $3"
     return 1
   fi
-  perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$seconds" "$@"
-}
-
-sim_name() {
-  if [[ "$1" -eq 1 ]]; then echo "iOS Simulator"; else echo "iOS Simulator $1"; fi
+  with_timeout "$seconds" "$@"
 }
 
 for ((i = 1; i <= N; i++)); do
-  with_timeout "$BOOT_TIMEOUT" "$SIMCTL" boot "$(sim_name "$i")" || true
+  with_deadline "$BOOT_TIMEOUT" "$SIMCTL" boot "$(sim_name "$i")" || true
 done
 
 unbooted=0
 for ((i = 1; i <= N; i++)); do
-  if ! with_timeout "$BOOT_TIMEOUT" "$SIMCTL" bootstatus "$(sim_name "$i")"; then
+  if ! with_deadline "$BOOT_TIMEOUT" "$SIMCTL" bootstatus "$(sim_name "$i")"; then
     log "⚠️ $(sim_name "$i") did not finish booting"
     unbooted=$((unbooted + 1))
   fi

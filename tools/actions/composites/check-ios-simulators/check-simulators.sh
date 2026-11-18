@@ -43,16 +43,7 @@ fi
 # Called directly rather than through xcrun, so a timeout kills simctl itself.
 SIMCTL="$(xcrun -f simctl)" || fail "simctl not found"
 
-# macOS has no `timeout`: the alarm survives exec and its default action kills the command.
-with_timeout() {
-  local seconds="$1"
-  shift
-  perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$seconds" "$@"
-}
-
-sim_name() {
-  if [[ "$1" -eq 1 ]]; then echo "iOS Simulator"; else echo "iOS Simulator $1"; fi
-}
+source "$(dirname "${BASH_SOURCE[0]}")/simulator-helpers.sh"
 
 launch_timeout=$FIRST_PROBE_TIMEOUT
 
