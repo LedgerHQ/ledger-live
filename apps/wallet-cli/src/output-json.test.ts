@@ -4,6 +4,7 @@ import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { AddressSchema } from "@domain/entity-account-descriptor";
 import { NetworkIdSchema } from "./shared/accountDescriptor";
 
@@ -751,6 +752,44 @@ describe("JsonCommandOutput", () => {
           hint: "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
         },
       });
+    });
+
+    it("names the host of a failed request behind a device error", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+      const deviceError = WalletCliDeviceError.fromUnknown(
+        new Error("UnexpectedGetBalanceError", { cause: socketClosed }),
+      );
+
+      expect(failWith(deviceError)).toMatchObject({
+        ok: false,
+        error: {
+          host: "explorers.api.live.ledger.com",
+          hint: "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+        },
+      });
+    });
+
+    it("keeps the USB hint over a failed request on a failed USB open", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+      const usbAccess = { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" } as const;
+      const deviceError = new WalletCliDeviceError(
+        { code: "unknown", cause: socketClosed, usbAccess },
+        { cause: socketClosed },
+      );
+
+      const envelope = failWith(deviceError);
+
+      expect(envelope).toMatchObject({
+        error: {
+          usb_access_error: "LIBUSB_ERROR_ACCESS",
+          hint: expect.stringMatching(/^The host refused USB access/),
+        },
+      });
+      expect(envelope).not.toMatchObject({ error: { host: expect.anything() } });
     });
 
     it.each([
