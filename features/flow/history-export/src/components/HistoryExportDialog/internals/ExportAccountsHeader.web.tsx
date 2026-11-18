@@ -1,6 +1,6 @@
 import React from "react";
 import { Subheader, Link, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@shared/i18n";
 
 type ExportAccountsHeaderProps = Readonly<{
   allSelected: boolean;

@@ -8,18 +8,15 @@ import {
   Checkbox,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import type { ExportAccount } from "../useHistoryExportDialogViewModel";
+import type { HistoryExportAccount } from "../../../model/ports";
 
 type ExportAccountListItemProps = Readonly<{
-  account: ExportAccount;
+  account: HistoryExportAccount;
   checked: boolean;
   onToggle: () => void;
 }>;
 
 export function ExportAccountListItem({ account, checked, onToggle }: ExportAccountListItemProps) {
-  const unit = account.currency.units[0];
-
   return (
     <ListItem onClick={onToggle}>
       <ListItemLeading>
@@ -32,7 +29,9 @@ export function ExportAccountListItem({ account, checked, onToggle }: ExportAcco
       <ListItemTrailing>
         <ListItemContent>
           <ListItemTitle>
-            <FormattedVal val={account.balance} unit={unit} showCode color="inherit" />
+            <span className="body-2 block w-full overflow-hidden text-ellipsis whitespace-pre">
+              {account.formattedBalance}
+            </span>
           </ListItemTitle>
         </ListItemContent>
       </ListItemTrailing>

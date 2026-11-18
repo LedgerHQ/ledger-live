@@ -127,6 +127,7 @@
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
+    "@features/flow-history-export": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",

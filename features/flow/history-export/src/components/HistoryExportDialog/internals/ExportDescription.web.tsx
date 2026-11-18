@@ -1,6 +1,6 @@
 import React from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@shared/i18n";
 
 export function ExportDescription() {
   const { t } = useTranslation();
