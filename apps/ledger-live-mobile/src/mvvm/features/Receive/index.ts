@@ -12,6 +12,8 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
 
+export { VerifyAddressExecutorLWM } from "./verifyAddressIntent/VerifyAddressExecutorLWM";
+
 type Props = {
   currency?: CryptoOrTokenCurrency;
   /**
