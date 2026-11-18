@@ -60,6 +60,26 @@ describe("getSwapStatuses", () => {
     expect(statuses).toEqual([unknown]);
   });
 
+  it("keeps the first statuses when asking again as oneinchfusion fails", async () => {
+    const statuses = [
+      { provider: "oneinch", swapId: ORDER_HASH, status: "unknown" as const },
+      { provider: "changelly", swapId: "cex-swap", status: "finished" as const },
+    ];
+    mockedGetMultipleStatus
+      .mockResolvedValueOnce(statuses)
+      .mockRejectedValueOnce(new Error("network"));
+
+    await expect(
+      getSwapStatuses(
+        [
+          { provider: "oneinch", swapId: ORDER_HASH },
+          { provider: "changelly", swapId: "cex-swap" },
+        ],
+        "ethereum",
+      ),
+    ).resolves.toEqual(statuses);
+  });
+
   it("does not ask again for a resolved oneinch swap or without a network", async () => {
     mockedGetMultipleStatus.mockResolvedValueOnce([
       { provider: "oneinch", swapId: "0xclassic", status: "finished" },
