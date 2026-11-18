@@ -72,7 +72,7 @@ trust_logs() {
   timeout="$(remaining)"
   ((timeout < LOG_SHOW_TIMEOUT)) || timeout=$LOG_SHOW_TIMEOUT
   ((timeout > 0)) || return 1
-  with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 20m --style compact \
+  with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 60m --style compact \
     --predicate "(process == \"trustd\" AND (eventMessage CONTAINS \"$TRUSTD_START_MARKER\" OR eventMessage CONTAINS \"$START_MARKER\" OR eventMessage CONTAINS \"$FAILED_UPDATE_MARKER\" OR eventMessage CONTAINS \"$SKIPPED_CHECK_MARKER\")) OR eventMessage CONTAINS \"$ANSWERED_MARKER\"" \
     >"$LOGS_FILE" 2>/dev/null
   status=$?
@@ -146,11 +146,11 @@ update_state() {
 WAIT_STARTED_AT="$(date +%s)"
 pending=()
 logs_read=()
-any_update_seen=0
+trustd_logs_matched=0
 for ((i = 1; i <= N; i++)); do pending+=("$i"); done
 
 finish() {
-  if ((any_update_seen == 0)); then
+  if ((trustd_logs_matched == 0 && ${#logs_read[@]} > 0)); then
     echo "::notice::No simulator logged \"$START_MARKER\": either this runtime needs no trust store update, or trustd reworded its log lines and this wait no longer works"
   fi
   exit 0
@@ -174,10 +174,10 @@ while ((${#pending[@]} > 0)); do
     # Checked before each simulator: one slow log query must not push the wait past its deadline.
     if (($(remaining) <= 0)); then still_pending+=("$i"); continue; fi
     name="$(sim_name "$i")"
-    waited=$(($(date +%s) - WAIT_STARTED_AT))
     read -r state detail <<<"$(update_state "$name")"
+    waited=$(($(date +%s) - WAIT_STARTED_AT))
     [[ "$state" == query-failed ]] || logs_read[i]=1
-    [[ "$state" != finished && "$state" != up-to-date && "$detail" != update ]] || any_update_seen=1
+    [[ "$state" != finished && "$state" != up-to-date && "$state" != skipped && "$detail" != update ]] || trustd_logs_matched=1
     case "$state" in
       finished)
         if [[ -n "$detail" ]]; then
