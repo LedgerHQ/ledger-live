@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { VerifyAddressIntentResult } from "@features/platform-intent-verify-address";
 import { track } from "@shared/analytics";
+import { VERIFICATION_PAGE } from "../logic/verificationPage";
 import type {
   VerifyAddressDeviceFlowFailure,
   VerifyAddressOutcome,
@@ -15,8 +16,6 @@ type ResultOutcome = Extract<
 type TrackedOutcome = ResultOutcome | "dismissed";
 
 type EarlyOutcome = Extract<VerifyAddressOutcome, "unsupported" | "failed">;
-
-const VERIFICATION_PAGE = { page: "Receive Address Verification", flow: "receive" } as const;
 
 const OUTCOME_EVENT = {
   verified: "receive_verification_complete",

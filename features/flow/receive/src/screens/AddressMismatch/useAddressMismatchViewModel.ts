@@ -1,10 +1,9 @@
 import { useCallback } from "react";
 import { track } from "@shared/analytics";
 import { useTranslation } from "@shared/i18n";
+import { VERIFICATION_PAGE } from "../../logic/verificationPage";
 import type { AddressMismatchProps } from "./AddressMismatch.types";
 import type { AddressMismatchViewProps } from "./AddressMismatchView.types";
-
-const VERIFICATION_PAGE = { page: "Receive Address Verification", flow: "receive" } as const;
 
 export function useAddressMismatchViewModel({
   onContactSupport,

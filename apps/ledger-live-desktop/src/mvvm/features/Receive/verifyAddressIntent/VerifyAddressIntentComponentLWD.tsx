@@ -1,26 +1,24 @@
 import React from "react";
 import {
   AddressDisplayed,
+  AddressMismatch,
   AddressVerified,
+  VerifyAddressError,
   type VerifyAddressIntentComponentProps,
 } from "@features/flow-receive";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { ContinueOnDevice, UserRefusedOnDevice } from "LLD/components/DeviceIntentExecutor";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import { useContactSupport } from "./useContactSupport";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { VerifyAddressErrorScreen } from "./components/VerifyAddressErrorScreen";
-import { VerifyAddressMismatchScreen } from "./components/VerifyAddressMismatchScreen";
-
-function assertNever(value: never): never {
-  throw new Error(`Unhandled verify address job state: ${JSON.stringify(value)}`);
-}
 
 /** The dialog stays locked until the user acts on the device. */
 export function VerifyAddressIntentComponentLWD({
   jobState,
   onClose,
 }: VerifyAddressIntentComponentProps): React.ReactElement | null {
+  const onContactSupport = useContactSupport();
   if (!jobState) return null;
 
   switch (jobState.type) {
@@ -56,16 +54,14 @@ export function VerifyAddressIntentComponentLWD({
         />
       );
     case "mismatch":
-      return <VerifyAddressMismatchScreen onClose={onClose} />;
+      return <AddressMismatch onContactSupport={onContactSupport} onClose={onClose} />;
     case "unsupported":
       return (
-        <VerifyAddressErrorScreen
+        <VerifyAddressError
           title={<TranslatedError error={jobState.error} field="title" />}
           description={<TranslatedError error={jobState.error} field="description" />}
           onClose={onClose}
         />
       );
-    default:
-      return assertNever(jobState);
   }
 }

@@ -11,5 +11,6 @@ export * from "./screens/AddressDisplayed";
 export * from "./screens/AddressMismatch";
 export * from "./screens/AddressVerified";
 export * from "./screens/ReceiveAddress";
+export * from "./screens/VerifyAddressError";
 export * from "./state";
 export * from "./types";

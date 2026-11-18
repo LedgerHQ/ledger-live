@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { track } from "@shared/analytics";
 import { useTranslation } from "@shared/i18n";
+import { VERIFICATION_PAGE } from "../../logic/verificationPage";
 import type { AddressVerifiedProps } from "./AddressVerified.types";
 import type { AddressVerifiedViewProps } from "./AddressVerifiedView.types";
 
@@ -11,11 +12,7 @@ export function useAddressVerifiedViewModel({
 
   const trackAndFinish = useCallback(
     function trackAndFinish() {
-      track("button_clicked", {
-        button: "Done",
-        page: "Receive Address Verification",
-        flow: "receive",
-      });
+      track("button_clicked", { button: "Done", ...VERIFICATION_PAGE });
       onDone();
     },
     [onDone],

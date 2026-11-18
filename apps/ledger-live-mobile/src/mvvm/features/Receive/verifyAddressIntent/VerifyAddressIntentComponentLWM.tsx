@@ -1,7 +1,9 @@
 import React from "react";
 import {
   AddressDisplayed,
+  AddressMismatch,
   AddressVerified,
+  VerifyAddressError,
   type VerifyAddressIntentComponentProps,
 } from "@features/flow-receive";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
@@ -9,19 +11,15 @@ import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/re
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ContinueOnDevice, UserRefusedOnDevice } from "LLM/components/DeviceIntentExecutor";
 import ModalLock from "~/components/ModalLock";
+import { useContactSupport } from "./useContactSupport";
 import TranslatedError from "~/components/TranslatedError";
-import { VerifyAddressErrorScreen } from "./components/VerifyAddressErrorScreen";
-import { VerifyAddressMismatchScreen } from "./components/VerifyAddressMismatchScreen";
-
-function assertNever(value: never): never {
-  throw new Error(`Unhandled verify address job state: ${JSON.stringify(value)}`);
-}
 
 /** The drawer stays locked until the user acts on the device. */
 export function VerifyAddressIntentComponentLWM({
   jobState,
   onClose,
 }: VerifyAddressIntentComponentProps): React.ReactElement | null {
+  const onContactSupport = useContactSupport();
   if (!jobState) return null;
 
   switch (jobState.type) {
@@ -57,16 +55,14 @@ export function VerifyAddressIntentComponentLWM({
         />
       );
     case "mismatch":
-      return <VerifyAddressMismatchScreen onClose={onClose} />;
+      return <AddressMismatch onContactSupport={onContactSupport} onClose={onClose} />;
     case "unsupported":
       return (
-        <VerifyAddressErrorScreen
+        <VerifyAddressError
           title={<TranslatedError error={jobState.error} field="title" />}
           description={<TranslatedError error={jobState.error} field="description" />}
           onClose={onClose}
         />
       );
-    default:
-      return assertNever(jobState);
   }
 }
