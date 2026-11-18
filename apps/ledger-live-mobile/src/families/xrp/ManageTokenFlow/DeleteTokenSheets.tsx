@@ -1,6 +1,7 @@
 import React from "react";
+import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetScrollView, Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { TrackScreen } from "@shared/analytics-react";
 import { InfoState, type InfoStateProps } from "@shared/ui-info-state";
@@ -18,13 +19,12 @@ import {
 const TRACK_NAMES: Record<InfoStep, string> = {
   blocked: "DeleteBlocked",
   confirm: "DeleteConfirm",
+  broadcasting: "DeleteBroadcasting",
   success: "DeleteSuccess",
   error: "DeleteError",
 };
 
 const DEVICE_CONNECTION_PARAMS = { acceptedDeviceModelIds: [] };
-
-function noop() {}
 
 function useInfoState(viewModel: ReturnType<typeof useDeleteTokenViewModel>): InfoStateProps {
   const { t, i18n } = useTranslation();
@@ -73,6 +73,17 @@ function useInfoState(viewModel: ReturnType<typeof useDeleteTokenViewModel>): In
         },
       };
     }
+    case "broadcasting":
+      return {
+        preset: "text",
+        title: t("send.newSendFlow.processingTransaction"),
+        content: (
+          <Box lx={{ alignItems: "center" }}>
+            <Spinner size={32} />
+          </Box>
+        ),
+        testID: "xrp-delete-token-broadcasting",
+      };
     case "success":
       return {
         preset: "success",
@@ -105,9 +116,14 @@ function useInfoState(viewModel: ReturnType<typeof useDeleteTokenViewModel>): In
 }
 
 export default function DeleteTokenSheets(props: Props) {
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const viewModel = useDeleteTokenViewModel(props);
   const infoState = useInfoState(viewModel);
+  const isBroadcasting = viewModel.infoStep === "broadcasting";
+
+  // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
+  const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
 
   return (
     <>
@@ -115,14 +131,21 @@ export default function DeleteTokenSheets(props: Props) {
         isRequestingToBeOpened={viewModel.isInfoSheetOpen}
         onClose={viewModel.onInfoSheetClose}
         onModalHide={viewModel.onInfoSheetHidden}
+        noCloseButton={isBroadcasting}
+        preventBackdropClick={isBroadcasting}
         enableDynamicSizing
+        maxDynamicContentSize={maxDynamicContentSize}
         contentHasBottomSpace
         testID="xrp-delete-token-sheet"
       >
-        <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetScrollView
+          contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
+          showsVerticalScrollIndicator={false}
+        >
           <BottomSheetHeader />
           {viewModel.isInfoSheetOpen ? (
             <TrackScreen
+              key={viewModel.infoStep}
               category="XrpManageTokenFlow"
               name={TRACK_NAMES[viewModel.infoStep]}
               type="drawer"
@@ -139,7 +162,7 @@ export default function DeleteTokenSheets(props: Props) {
           <Box lx={{ paddingHorizontal: "s16" }}>
             <InfoState size="hug" {...infoState} />
           </Box>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </QueuedBottomSheet>
       {viewModel.signing ? (
         <DeviceIntentExecutor
@@ -150,11 +173,8 @@ export default function DeleteTokenSheets(props: Props) {
           deviceInitializationInput={viewModel.signing.deviceInitializationInput}
           intent={viewModel.signing.intent}
           intentComponentExtraProps={SIGNATURE_EXTRA_PROPS}
-          onExecutorStateChanged={noop}
           onIntentJobStateChanged={viewModel.onIntentJobStateChanged}
-          onIntentJobComplete={noop}
-          onIntentJobError={noop}
-          cancelIntentRequestId={undefined}
+          onIntentJobComplete={viewModel.onIntentJobComplete}
           onUserCancel={viewModel.onUserCancel}
         />
       ) : null}

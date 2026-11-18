@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
@@ -98,12 +97,11 @@ describe("getDeleteBlocker", () => {
 });
 
 describe("makeOptOutTransaction", () => {
-  it("removes the token with an amount of 0", () => {
+  it("builds an opt-out of the token", () => {
     const bridge = makeMockAccountBridge() as unknown as AccountBridge<Transaction>;
 
     expect(makeOptOutTransaction(bridge, XRP_ACCOUNT, xrpIouToken)).toMatchObject({
       mode: "optOut",
-      amount: new BigNumber(0),
       ...xrpIouAsset,
     });
   });

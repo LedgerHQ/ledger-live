@@ -3,6 +3,8 @@ import BigNumber from "bignumber.js";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
+import { track, trackPage } from "@shared/analytics";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
@@ -23,8 +25,9 @@ import { xrpIouAsset, xrpIouToken, xrpMptToken } from "../../__mocks__/currency.
 type ExecutorProps = {
   sourceFlow: string;
   analyticsProperties?: Record<string, unknown>;
-  intent: { input: { transaction: object } };
+  intent: { input: { transaction: object }; onResult: (signedOperation: object) => void };
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
+  onIntentJobComplete: () => void;
   onUserCancel: () => void;
 };
 
@@ -89,6 +92,8 @@ const BROADCAST_TIMEOUT = { timeout: 10000 };
 
 const EMPTY_BALANCE = { balance: new BigNumber(0), spendableBalance: new BigNumber(0) };
 
+const SIGNED_OPERATION = { operation: XRP_IOU_REMOVAL, signature: "sig" };
+
 function makeAccount(
   tokenAccount: Partial<XrpTokenAccount>,
   pendingOperations: Operation[] = [],
@@ -143,13 +148,24 @@ async function confirmDelete(user: UserEvents) {
   await screen.findByTestId("device-intent-executor");
 }
 
-function signOnDevice() {
+function getExecutorProps(): ExecutorProps {
+  if (!mockExecutorProps) throw new Error("The device intent executor is not rendered");
+
+  return mockExecutorProps;
+}
+
+// Like the real job: the result, then the last state, then the end of the job
+function deliverSignature() {
+  const { intent, onIntentJobStateChanged } = getExecutorProps();
   act(() => {
-    mockExecutorProps!.onIntentJobStateChanged({
-      type: "signed",
-      signedOperation: { operation: XRP_IOU_REMOVAL, signature: "sig" },
-    });
+    intent.onResult(SIGNED_OPERATION);
+    onIntentJobStateChanged({ type: "signed", signedOperation: SIGNED_OPERATION });
   });
+}
+
+function signOnDevice() {
+  deliverSignature();
+  act(() => getExecutorProps().onIntentJobComplete());
 }
 
 describe("XRP delete token (integration)", () => {
@@ -217,6 +233,28 @@ describe("XRP delete token (integration)", () => {
     expect(blockedSheet).toBeVisible();
   });
 
+  it("opens the sheet again on Delete when a backdrop close reports the close and the hide at once", async () => {
+    const { user } = renderManageAssets(accountWithTokenBalance);
+
+    await user.press(await screen.findByTestId(DELETE_BUTTON));
+    await screen.findByTestId("xrp-delete-token-blocked");
+    const sheet = screen
+      .UNSAFE_getAllByType(QueuedBottomSheet)
+      .find(({ props }) => props.testID === "xrp-delete-token-sheet");
+
+    act(() => {
+      sheet?.props.onClose();
+      sheet?.props.onModalHide();
+    });
+
+    await waitFor(() => expect(screen.queryByTestId("xrp-delete-token-blocked")).toBeNull());
+    await user.press(screen.getByTestId(DELETE_BUTTON));
+
+    const blockedSheet = await screen.findByTestId("xrp-delete-token-blocked");
+
+    expect(blockedSheet).toBeVisible();
+  });
+
   it("confirms the removal of an IOU, and warns the device shows a limit of 0", async () => {
     const { user } = renderManageAssets(accountWithEmptyToken);
 
@@ -262,7 +300,8 @@ describe("XRP delete token (integration)", () => {
     expect(screen.getByTestId("xrp-delete-token-continue")).toBeDisabled();
   });
 
-  it("signs the removal on the device, then shows the success sheet", async () => {
+  it("signs the removal on the device, broadcasts once the job ends, then shows the success sheet", async () => {
+    const broadcastSpy = jest.spyOn(mockAccountBridge, "broadcast");
     const { user } = renderManageAssets(accountWithEmptyToken);
 
     await confirmDelete(user);
@@ -275,10 +314,12 @@ describe("XRP delete token (integration)", () => {
     });
     expect(mockExecutorProps?.intent.input.transaction).toMatchObject({
       mode: "optOut",
-      amount: new BigNumber(0),
       ...xrpIouAsset,
     });
-    signOnDevice();
+    deliverSignature();
+    await act(() => jest.advanceTimersByTimeAsync(100));
+    expect(broadcastSpy).not.toHaveBeenCalled();
+    act(() => getExecutorProps().onIntentJobComplete());
 
     const title = await screen.findByText(
       "RLUSD was successfully removed from your account",
@@ -287,6 +328,10 @@ describe("XRP delete token (integration)", () => {
     );
     expect(title).toBeVisible();
     expect(screen.getByText("You can add this asset again anytime.")).toBeVisible();
+    expect(broadcastSpy).toHaveBeenCalledTimes(1);
+    expect(broadcastSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ signedOperation: SIGNED_OPERATION }),
+    );
     expect(screen.getByTestId(DELETE_BUTTON)).toBeDisabled();
 
     await user.press(screen.getByText("Got it"));
@@ -295,7 +340,51 @@ describe("XRP delete token (integration)", () => {
     expect(accountScreen).toBeVisible();
   });
 
-  it("shows a failed broadcast that may still go through, then signs again on Try again", async () => {
+  it("closes the device sheet and shows the broadcast in progress, so the removal cannot be signed again", async () => {
+    const broadcastSpy = jest.spyOn(mockAccountBridge, "broadcast");
+    const { user } = renderManageAssets(accountWithEmptyToken);
+
+    await confirmDelete(user);
+    signOnDevice();
+
+    const broadcasting = await screen.findByTestId("xrp-delete-token-broadcasting");
+    expect(broadcasting).toBeVisible();
+    expect(screen.getByText("Your transaction is being processed")).toBeVisible();
+    expect(screen.queryByTestId("device-intent-executor")).toBeNull();
+    const title = await screen.findByText(
+      "RLUSD was successfully removed from your account",
+      {},
+      BROADCAST_TIMEOUT,
+    );
+    expect(title).toBeVisible();
+    expect(broadcastSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("tracks the result sheet shown after the broadcast", async () => {
+    const { user } = renderManageAssets(accountWithEmptyToken);
+
+    await confirmDelete(user);
+    signOnDevice();
+    await screen.findByText(
+      "RLUSD was successfully removed from your account",
+      {},
+      BROADCAST_TIMEOUT,
+    );
+
+    const pageNames = jest
+      .mocked(trackPage)
+      .mock.calls.filter(([page]) => page.category === "XrpManageTokenFlow")
+      .map(([page]) => page.name);
+
+    expect(pageNames).toEqual([
+      "ManageToken",
+      "DeleteConfirm",
+      "DeleteBroadcasting",
+      "DeleteSuccess",
+    ]);
+  });
+
+  it("shows a failed broadcast that may still go through, then confirms again on Try again", async () => {
     jest.spyOn(mockAccountBridge, "broadcast").mockRejectedValueOnce(broadcastError);
     const { user } = renderManageAssets(accountWithEmptyToken);
 
@@ -313,6 +402,11 @@ describe("XRP delete token (integration)", () => {
     expect(screen.queryByTestId("device-intent-executor")).toBeNull();
 
     await user.press(screen.getByTestId("xrp-delete-token-retry"));
+
+    const confirmSheet = await screen.findByTestId("xrp-delete-token-confirm");
+    expect(confirmSheet).toBeVisible();
+    expect(screen.queryByTestId("device-intent-executor")).toBeNull();
+    await user.press(screen.getByTestId("xrp-delete-token-continue"));
 
     const executor = await screen.findByTestId("device-intent-executor");
     expect(executor).toBeVisible();
@@ -333,11 +427,41 @@ describe("XRP delete token (integration)", () => {
     expect(screen.queryByTestId("xrp-delete-token-broadcast-error")).toBeNull();
   });
 
+  it("tracks a signing error by name", async () => {
+    const { user } = renderManageAssets(accountWithEmptyToken);
+
+    await confirmDelete(user);
+    act(() => {
+      getExecutorProps().onIntentJobStateChanged({
+        type: "error",
+        error: makeNamedError("TransportStatusError"),
+        retry: jest.fn(),
+      });
+    });
+
+    const errorEvents = jest
+      .mocked(track)
+      .mock.calls.filter(([event]) => event === "error_displayed");
+    expect(errorEvents).toEqual([
+      [
+        "error_displayed",
+        {
+          action: "delete",
+          currency: XRP_ACCOUNT.currency.id,
+          tokenType: "iou",
+          step: "signature",
+          message_id: "TransportStatusError",
+          message_type: "error",
+        },
+      ],
+    ]);
+  });
+
   it("cancels on the device, and opens the confirmation again on Delete", async () => {
     const { user } = renderManageAssets(accountWithEmptyToken);
 
     await confirmDelete(user);
-    act(() => mockExecutorProps!.onUserCancel());
+    act(() => getExecutorProps().onUserCancel());
 
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
     await user.press(screen.getByTestId(DELETE_BUTTON));
@@ -351,7 +475,7 @@ describe("XRP delete token (integration)", () => {
 
     await confirmDelete(user);
     signOnDevice();
-    act(() => mockExecutorProps!.onUserCancel());
+    act(() => getExecutorProps().onUserCancel());
 
     const title = await screen.findByText(
       "RLUSD was successfully removed from your account",
