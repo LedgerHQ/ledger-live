@@ -67,7 +67,10 @@ export const checkFailure = { fails: new UnknownDAError() };
 export const deviceDisconnected = { fails: { _tag: "DeviceDisconnectedWhileSendingError" } };
 export const secureConnectionPrompt = { prompts: UserInteractionRequired.AllowSecureConnection };
 
-export const passingChecks: OnboardingDmkScript = { genuineCheck: [genuine], firmwareCheck: [upToDate] };
+export const passingChecks: OnboardingDmkScript = {
+  genuineCheck: [genuine],
+  firmwareCheck: [upToDate],
+};
 
 export type OnboardingActor = Actor<typeof deviceOnboardingMachine>;
 
@@ -180,7 +183,10 @@ export function handoverScript(
   };
 }
 
-export async function handOverAndReturn(actor: OnboardingActor, sessionId = "session"): Promise<void> {
+export async function handOverAndReturn(
+  actor: OnboardingActor,
+  sessionId = "session",
+): Promise<void> {
   actor.send({ type: "USER_ACCEPT" });
   await settle();
   actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId });
