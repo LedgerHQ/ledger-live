@@ -63,8 +63,63 @@ describe("findFailedRequest", () => {
     });
     expect(findFailedRequest(solanaError)).toEqual({
       host: "solana.coin.ledger.com",
+      status: 403,
+    });
+  });
+
+  it("reads a server error status from the message, so the hint names no sandbox", () => {
+    const failedRequest = findFailedRequest(
+      new Error(
+        "HTTPError: Request failed with status code 500 Internal Server Error: POST https://solana.coin.ledger.com/",
+      ),
+    );
+    expect(failedRequest).toEqual({ host: "solana.coin.ledger.com", status: 500 });
+  });
+
+  it("reads the url Bun puts on a fetch that got no answer", () => {
+    const bunFetchError = Object.assign(
+      new TypeError("Unable to connect. Is the computer able to access the url?"),
+      { code: "ConnectionRefused", path: "https://earn.api.live.ledger.com/v1/yields" },
+    );
+    expect(findFailedRequest(bunFetchError)).toEqual({
+      host: "earn.api.live.ledger.com",
       status: undefined,
     });
+  });
+
+  it("ignores a file path", () => {
+    const fileError = Object.assign(new Error("ENOENT"), { path: "/home/user/session.yaml" });
+    expect(findFailedRequest(fileError)).toBeUndefined();
+  });
+
+  it("prefers the request of a cause over a URL a wrapper's message quotes", () => {
+    const socketClosed = Object.assign(new Error("Socket is closed"), {
+      config: { url: "https://swap.ledger.com/v5/quote" },
+    });
+    const wrapper = new Error(
+      "The swap provider rejected the request: see GET https://explorers.api.live.ledger.com/x",
+      { cause: socketClosed },
+    );
+    expect(findFailedRequest(wrapper)?.host).toBe("swap.ledger.com");
+  });
+
+  it.each([
+    "https://evil.example/x",
+    "https://evilledger.com/x",
+    "https://ledger.com.evil.example/x",
+    "https://x.ledger.com@evil.example/x",
+  ])("reads no host but a Ledger one from a message, which can quote a server: %s", url => {
+    const quoted = new Error(`Earn API returned non-JSON response: GET ${url}`);
+    expect(findFailedRequest(quoted)).toBeUndefined();
+  });
+
+  it("reads the last request line, the one the HTTP client appends after the server's text", () => {
+    const failedRequest = findFailedRequest(
+      new Error(
+        "HTTPError: Request failed with status code 403 GET https://earn.api.live.ledger.com/: POST https://solana.coin.ledger.com/",
+      ),
+    );
+    expect(failedRequest?.host).toBe("solana.coin.ledger.com");
   });
 
   it("ignores a URL in a message that does not describe a request", () => {

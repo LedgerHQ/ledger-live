@@ -443,8 +443,7 @@ class HumanCommandOutput implements CommandOutput {
       const displayText = HumanCommandOutput._formatErrorForSpinner(err);
       this._activeSpin?.error(displayText);
       this._activeSpin = null;
-      const failedRequest = findFailedRequest(err);
-      if (failedRequest) writeStderr(failedRequestHint(failedRequest) + "\n");
+      HumanCommandOutput._writeFailedRequestHint(err);
       throw err;
     }
   }
@@ -464,6 +463,11 @@ class HumanCommandOutput implements CommandOutput {
     return HumanFormatter.formatError(err);
   }
 
+  private static _writeFailedRequestHint(err: unknown): void {
+    const failedRequest = findFailedRequest(err);
+    if (failedRequest) writeStderr(failedRequestHint(failedRequest) + "\n");
+  }
+
   private _exitWithDeviceError(err: WalletCliDeviceError): never {
     const displayText = HumanCommandOutput._formatErrorForSpinner(err);
     if (isInteractive() && this._activeSpin) {
@@ -475,6 +479,8 @@ class HumanCommandOutput implements CommandOutput {
     if (err.state.code === "unknown" && err.state.usbAccess) {
       writeStderr(colors.dim(`    ${describeUsbAccess(err.state.usbAccess)}`) + "\n");
     }
+    // account discover maps every failure, an explorer request too, to a device error.
+    HumanCommandOutput._writeFailedRequestHint(err);
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -1237,6 +1243,10 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   private _errorEnvelope(e: unknown): Record<string, unknown> {
+    const failedRequest = findFailedRequest(e);
+    const failedRequestFields = failedRequest
+      ? { host: failedRequest.host, hint: failedRequestHint(failedRequest) }
+      : {};
     if (e instanceof WalletCliDeviceError) {
       const { message } = renderDeviceState(e.state);
       return {
@@ -1247,7 +1257,7 @@ class JsonCommandOutput implements CommandOutput {
           message,
           ...(e.state.code === "unknown" && e.state.usbAccess
             ? usbAccessFields(e.state.usbAccess)
-            : {}),
+            : failedRequestFields),
         },
       };
     }
@@ -1259,7 +1269,6 @@ class JsonCommandOutput implements CommandOutput {
     }
     const hasCustomName = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
     const httpStatus = hasCustomName && "httpStatus" in e ? e.httpStatus : undefined;
-    const failedRequest = findFailedRequest(e);
     return {
       ok: false,
       error: {
@@ -1268,9 +1277,7 @@ class JsonCommandOutput implements CommandOutput {
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
-        ...(failedRequest
-          ? { host: failedRequest.host, hint: failedRequestHint(failedRequest) }
-          : {}),
+        ...failedRequestFields,
       },
     };
   }
