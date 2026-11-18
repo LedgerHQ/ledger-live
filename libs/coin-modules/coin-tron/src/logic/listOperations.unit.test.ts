@@ -41,6 +41,7 @@ function toTxInfo(record: FakeRecord): TrongridTxInfo {
     blockHeight: record.ts,
     type: record.endpoint === "trc20" ? "TriggerSmartContract" : "TransferContract",
     from: address,
+    to: "TRecipient",
     value: new BigNumber(1),
     hasFailed: false,
     ...(record.endpoint === "trc20" && { tokenType: "trc20", tokenAddress: TRC20_CONTRACT }),

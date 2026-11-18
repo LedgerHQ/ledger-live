@@ -2,4 +2,4 @@
 "@ledgerhq/coin-tron": minor
 ---
 
-Keep every TRC20 transfer of a transaction in the history, summing transfers of one token in one direction
+Sum TRC20 transfers of one token in one direction within a transaction so none is lost
