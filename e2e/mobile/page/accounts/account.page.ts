@@ -302,7 +302,7 @@ export default class AccountPage {
   @Step("Expect the balance of sub account {{{0.accountName}}} to be visible")
   async expectSubAccountBalanceVisible(account: AccountType, subAccountId: string) {
     if (isAccountDetailEnabled()) {
-      await app.assetDetail.expectTotalBalanceCryptoForTicker(account.currency.ticker);
+      await app.assetDetail.expectHoldingBalanceForTicker(subAccountId, account.currency.ticker);
       return;
     }
     await this.expectAccountBalanceVisible(subAccountId);

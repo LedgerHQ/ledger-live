@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { parseTickerAmount } from "@e2e/helpers/commonHelpers";
+import { escapeRegExp, parseTickerAmount } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText, type NativeHandle } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { expectWithinTolerance } from "@e2e/utils/amountUtils";
@@ -18,8 +18,6 @@ const displayRoundingTolerance = (text: string) => {
 
 const OPERATIONS_LIST_ITEM_ID = "operations-list-item";
 const ADDRESS_ITEM_NAME_PREFIX = "asset-detail-address-item-name-";
-
-const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export default class AssetDetailPage {
   // The testID ends with the currency id (`asset-detail-scroll-view-<currencyId>`).
@@ -139,6 +137,13 @@ export default class AssetDetailPage {
     );
   }
 
+  @Step("Expect holding account {{{0}}} to hold {{{1}}}")
+  async expectHoldingBalanceForTicker(accountId: string, ticker: string) {
+    await this.scrollToAddressItem(accountId);
+    const balanceText = await this.addressItemBalance(accountId).getText();
+    jestExpect(parseTickerAmount(balanceText, ticker)).toBeGreaterThan(0);
+  }
+
   @Step("Expect Asset Detail balance, addresses and transaction sections")
   async expectPortfolioSectionsVisible() {
     await this.totalBalance.scrollTo(await this.scrollView());
@@ -220,7 +225,7 @@ export default class AssetDetailPage {
     await this.openTransactionsHistory();
     await app.operation.expectOperationsListVisible();
     await app.operation.openOperationWithAmount(
-      new RegExp(`^\\+\\s*${escapeRegExp(amount)}\\s*${escapeRegExp(ticker)}`, "i"),
+      new RegExp(String.raw`^\+\s*${escapeRegExp(amount)}\s*${escapeRegExp(ticker)}`, "i"),
     );
     await this.operationDetailsTitle.waitVisible();
   }
