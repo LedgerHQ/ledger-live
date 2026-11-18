@@ -52,6 +52,7 @@ import {
   setMockSponsoredSeam,
   setMockStatus,
   setMockStatusResolver,
+  setMockBridgeStatusResolver,
   setMockTransaction,
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
@@ -715,6 +716,14 @@ describe("Send Flow Integration", () => {
       setMockTransaction(
         createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
       );
+      const feeByStrategy: Record<string, number> = { slow: 100, medium: 200, fast: 300 };
+      setMockBridgeStatusResolver((transaction: Transaction) => {
+        const strategy = "feesStrategy" in transaction ? transaction.feesStrategy : null;
+        return createResolvedStatus(
+          {},
+          { estimatedFees: new BigNumber(feeByStrategy[strategy ?? ""] ?? 0) },
+        );
+      });
 
       const { user } = renderSendFlow(ethereumAccount);
       await navigateToAmountScreen(user);

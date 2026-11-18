@@ -15,6 +15,7 @@ import { formatFeeCurrencyAmount } from "../utils/networkFeesDisplay";
 
 /** Formatted fee amounts for one preset. Either side is `null` when it cannot be computed. */
 export type FeePresetValues = Readonly<{
+  amount: BigNumber;
   fiat: string | null;
   crypto: string | null;
 }>;
@@ -82,6 +83,7 @@ async function estimateValuesForPresets(params: {
           estimatedFees,
         );
         const values: FeePresetValues = {
+          amount: estimatedFees,
           fiat: formatCountervalueAsFiat(params.fiatUnit, countervalue, params.locale),
           crypto: formatFeeCurrencyAmount(params.displayUnit, estimatedFees, params.locale),
         };
@@ -165,6 +167,7 @@ export function useFeePresetValuesCore({
     for (const option of feePresetOptions) {
       const countervalue = calculateCountervalue(mainAccount.currency, option.amount);
       next[option.id] = {
+        amount: option.amount,
         fiat: formatCountervalueAsFiat(fiatUnit, countervalue, locale),
         crypto: formatFeeCurrencyAmount(displayUnit, option.amount, locale),
       };
