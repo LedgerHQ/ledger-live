@@ -153,7 +153,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       if (program == 0 && !hasFailed) buildProgram()
       val u = uniforms
       if (program == 0 || u == null) return clearToCanvas()
-      setUniforms(u, now)
+      setUniforms(u)
       GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3) // one big triangle covers the view
     }
 
@@ -170,7 +170,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     }
 
     /** Sends this frame's values to the shader. */
-    private fun setUniforms(u: GlowUniforms, now: Long) {
+    private fun setUniforms(u: GlowUniforms) {
       GLES20.glUniform2f(u.uRes, width.toFloat(), height.toFloat())
       GLES20.glUniform1f(u.uTime, elapsedSeconds.toFloat())
       GLES20.glUniform1f(u.uDpr, dpr)
