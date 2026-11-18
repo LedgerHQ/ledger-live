@@ -2,15 +2,7 @@ import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/ge
 import isEqual from "lodash/isEqual";
 import { useCallback } from "react";
 import { useSelector, useDispatch, useStore } from "~/context/hooks";
-import {
-  setDynamicContentWalletCards,
-  setDynamicContentAssetsCards,
-  setDynamicContentNotificationCards,
-  setDynamicContentCategoriesCards,
-  setDynamicContentMobileCards,
-  setIsDynamicContentLoading,
-  setDynamicContentLandingPageStickyCtaCards,
-} from "../actions/dynamicContent";
+import { setDynamicContentBrazeCards, setIsDynamicContentLoading } from "../actions/dynamicContent";
 import {
   filterByPage,
   filterByType,
@@ -27,8 +19,8 @@ import { ContentCardLocation, ContentCardsType, BrazeContentCard } from "./types
 import { dismissedContentCardsSelector } from "~/reducers/settings";
 import { getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { clearDismissedContentCards } from "~/actions/settings";
-import { replaceBrazeGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
 import { markBrazePublish } from "LLM/utils/logStartup/logBrazePublish";
+import { selectGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
 
 const EMPTY_DISMISSED_CONTENT_CARDS = {};
 
@@ -83,27 +75,34 @@ export const useDynamicContentLogic = () => {
           `${categoriesCards.length} category, ${landingPageStickyCtaCards.length} sticky, ` +
           `${genericAwarenessModalContentCards.length} modal)`,
       );
-      // A list equal to the stored one keeps its reference: a new one re-renders all its readers.
-      const { dynamicContent, genericAwarenessModal } = store.getState();
+      // Only the lists that changed go in: an unchanged one keeps its reference, so its readers
+      // do not render again.
+      const state = store.getState();
+      const { dynamicContent } = state;
+      const storedModalCards = selectGenericAwarenessModalContentCards(state);
+      const changed = <T>(stored: T, next: T): T | undefined =>
+        isEqual(stored, next) ? undefined : next;
       const modalCards = [
-        ...genericAwarenessModal.contentCards.filter(card => card.isLocal),
+        ...storedModalCards.filter(card => card.isLocal),
         ...genericAwarenessModalContentCards,
       ];
-      if (!isEqual(dynamicContent.categoriesCards, categoriesCards))
-        dispatch(setDynamicContentCategoriesCards(categoriesCards));
-      if (!isEqual(dynamicContent.mobileCards, mobileContentCards))
-        dispatch(setDynamicContentMobileCards(mobileContentCards));
-      if (!isEqual(dynamicContent.walletCards, walletCards))
-        dispatch(setDynamicContentWalletCards(walletCards));
-      if (!isEqual(dynamicContent.assetsCards, assetCards))
-        dispatch(setDynamicContentAssetsCards(assetCards));
-      if (!isEqual(dynamicContent.notificationCards, notificationCards))
-        dispatch(setDynamicContentNotificationCards(notificationCards));
-      if (!isEqual(dynamicContent.landingPageStickyCtaCards, landingPageStickyCtaCards))
-        dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
-      if (!isEqual(genericAwarenessModal.contentCards, modalCards))
-        dispatch(replaceBrazeGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
-      if (dynamicContent.isLoading) dispatch(setIsDynamicContentLoading(false));
+      const update = {
+        categoriesCards: changed(dynamicContent.categoriesCards, categoriesCards),
+        mobileCards: changed(dynamicContent.mobileCards, mobileContentCards),
+        walletCards: changed(dynamicContent.walletCards, walletCards),
+        assetsCards: changed(dynamicContent.assetsCards, assetCards),
+        notificationCards: changed(dynamicContent.notificationCards, notificationCards),
+        landingPageStickyCtaCards: changed(
+          dynamicContent.landingPageStickyCtaCards,
+          landingPageStickyCtaCards,
+        ),
+        genericAwarenessModalCards: isEqual(storedModalCards, modalCards)
+          ? undefined
+          : genericAwarenessModalContentCards,
+      };
+      if (dynamicContent.isLoading || Object.values(update).some(list => list !== undefined)) {
+        dispatch(setDynamicContentBrazeCards(update));
+      }
     },
     [dismissedContentCards, dispatch, store],
   );

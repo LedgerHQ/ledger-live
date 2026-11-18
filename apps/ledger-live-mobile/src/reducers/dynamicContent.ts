@@ -15,6 +15,7 @@ import {
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
   DynamicContentMarkLocalCardsViewedPayload,
+  DynamicContentSetBrazeCardsPayload,
 } from "../actions/types";
 import { createSelector } from "~/context/selectors";
 import {
@@ -68,6 +69,19 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     isLoading: (action as unknown as Action<boolean>).payload,
   }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_BRAZE_CARDS]: (state, action) => {
+    const cards = (action as Action<DynamicContentSetBrazeCardsPayload>).payload;
+    return {
+      ...state,
+      categoriesCards: cards.categoriesCards ?? state.categoriesCards,
+      mobileCards: cards.mobileCards ?? state.mobileCards,
+      walletCards: cards.walletCards ?? state.walletCards,
+      assetsCards: cards.assetsCards ?? state.assetsCards,
+      notificationCards: cards.notificationCards ?? state.notificationCards,
+      landingPageStickyCtaCards: cards.landingPageStickyCtaCards ?? state.landingPageStickyCtaCards,
+      isLoading: false,
+    };
+  },
   [DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_CARDS]: (state, action) => {
     const { category, cards } = (action as Action<DynamicContentAddLocalCardsPayload>).payload;
     const localCategoriesCardsWithoutSameId = category.categoryId

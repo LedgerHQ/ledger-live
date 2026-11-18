@@ -1,4 +1,5 @@
 import type { AccountComparator } from "@ledgerhq/live-common/account/ordering";
+import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, AccountUserData, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
@@ -157,7 +158,21 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
   DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS",
   DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED = "DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED",
+  DYNAMIC_CONTENT_SET_BRAZE_CARDS = "DYNAMIC_CONTENT_SET_BRAZE_CARDS",
 }
+
+/** A Braze publish in one update: each list it holds replaces the stored one, and loading ends. */
+export type DynamicContentSetBrazeCardsPayload = Partial<
+  Pick<
+    DynamicContentState,
+    | "categoriesCards"
+    | "mobileCards"
+    | "walletCards"
+    | "assetsCards"
+    | "notificationCards"
+    | "landingPageStickyCtaCards"
+  >
+> & { genericAwarenessModalCards?: GenericAwarenessModalContentCard[] };
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
 
@@ -196,7 +211,8 @@ export type DynamicContentPayload =
   | DynamicContentAppendLocalCardsPayload
   | DynamicContentRemoveLocalCardPayload
   | DynamicContentAddLocalWalletCarouselPayload
-  | DynamicContentMarkLocalCardsViewedPayload;
+  | DynamicContentMarkLocalCardsViewedPayload
+  | DynamicContentSetBrazeCardsPayload;
 
 // === RATINGS ACTIONS ===
 
