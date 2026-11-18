@@ -148,7 +148,8 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 - **Alternate devices** on every measured launch: right after a launch on the same simulator, one
   was ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
-  launch to the read.
+  launch to the read, then its clock, which the pause stops, is set back to the runner's: it was
+  ~230 s behind by the last launch (run 44180985368), under 1 s with the reset (run 44181029109).
 - **Recover**: an Android ANR or crash dialog is cleared by restarting its process (recorded as
   `clearedDialogs`), a failed read is retried once with the full flow, and 4 failures in a row on
   one device stop the run. Maestro runs with `--no-reinstall-driver` (~50 s per read otherwise, run

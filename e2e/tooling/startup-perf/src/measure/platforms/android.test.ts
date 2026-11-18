@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  clockSetCommand,
   parseBlockingDialog,
   parseProcessStart,
   parseScreenState,
@@ -26,6 +27,12 @@ describe("parseProcessStart", () => {
   });
   it("is null when the app has no process", () => {
     assert.equal(parseProcessStart(NO_PROCESS_OUTPUT, 2_000_000), null);
+  });
+});
+
+describe("clockSetCommand", () => {
+  it("sets the clock as root to the runner's time once the command runs, to the millisecond", () => {
+    assert.deepEqual(clockSetCommand(1_700_000_000_123), ["su", "0", "date", "@1700000000.163"]);
   });
 });
 
