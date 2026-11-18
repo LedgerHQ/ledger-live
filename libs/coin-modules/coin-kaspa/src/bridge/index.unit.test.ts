@@ -11,7 +11,7 @@ jest.mock("../network", () => ({
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import BigNumber from "bignumber.js";
-import { firstValueFrom } from "rxjs";
+import { lastValueFrom, toArray } from "rxjs";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
 import type { KaspaSigner } from "../types";
@@ -23,11 +23,14 @@ const mockedScanOperations = jest.mocked(scanOperations);
 const mockedGetBlockDagInfo = jest.mocked(getBlockDagInfo);
 const mockedGetVirtualChainBlueScore = jest.mocked(getVirtualChainBlueScore);
 
-const xpub = "02".repeat(65);
+const xpubsByPath = {
+  "44'/111111'/0'": "02".repeat(65),
+  "44'/111111'/1'": "03".repeat(65),
+};
 const signer = {
-  getAddress: jest.fn(async (path: string) => ({
+  getAddress: jest.fn(async (path: keyof typeof xpubsByPath) => ({
     address: "kaspa:address",
-    publicKey: xpub,
+    publicKey: xpubsByPath[path],
     path,
   })),
 };
@@ -70,20 +73,26 @@ describe("currencyBridge.scanAccounts", () => {
     mockedGetVirtualChainBlueScore.mockResolvedValue(1);
   });
 
-  it("should discover the first empty account using the address returned by the device", async () => {
-    const { currencyBridge } = createBridges(signerContext);
-    const result = await firstValueFrom(
-      currencyBridge.scanAccounts({
-        currency: getCryptoCurrencyById("kaspa"),
-        deviceId: "device",
-        syncConfig: { paginationConfig: {}, blacklistedTokenIds: [] },
-      }),
-    );
+  it("should discover a used account followed by an empty account using device-derived keys", async () => {
+    mockedScanOperations.mockResolvedValueOnce([{ id: "operation", date: new Date() } as never]);
 
-    expect(result).toMatchObject({
-      type: "discovered",
-      account: { xpub, index: 0, freshAddress: "kaspa:receive", used: false },
-    });
+    const { currencyBridge } = createBridges(signerContext);
+    const events = await lastValueFrom(
+      currencyBridge
+        .scanAccounts({
+          currency: getCryptoCurrencyById("kaspa"),
+          deviceId: "device",
+          syncConfig: { paginationConfig: {}, blacklistedTokenIds: [] },
+        })
+        .pipe(toArray()),
+    );
+    const accounts = events.flatMap(event => (event.type === "discovered" ? [event.account] : []));
+
+    expect(accounts).toMatchObject([
+      { xpub: xpubsByPath["44'/111111'/0'"], index: 0, freshAddress: "kaspa:receive", used: true },
+      { xpub: xpubsByPath["44'/111111'/1'"], index: 1, freshAddress: "kaspa:receive", used: false },
+    ]);
     expect(signer.getAddress).toHaveBeenCalledWith("44'/111111'/0'", false);
+    expect(signer.getAddress).toHaveBeenCalledWith("44'/111111'/1'", false);
   });
 });

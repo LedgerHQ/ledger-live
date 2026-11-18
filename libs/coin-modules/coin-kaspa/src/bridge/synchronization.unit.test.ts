@@ -104,6 +104,11 @@ describe("getAccountShape", () => {
       id: "scanned",
       date: new Date("2024-01-02"),
     } as KaspaAccount["operations"][number];
+    mockedScanAddresses.mockResolvedValue({
+      ...accountAddresses,
+      usedReceiveAddresses: [address("receive-recent", 0, 0, 10, 900_000)],
+      usedChangeAddresses: [address("change-old", 1, 0, 5, 1)],
+    });
     mockedScanOperations.mockResolvedValue([scannedOperation]);
 
     const shape = await getAccountShape({
@@ -116,7 +121,7 @@ describe("getAccountShape", () => {
       },
     } as Parameters<typeof getAccountShape>[0]);
 
-    expect(mockedScanOperations).toHaveBeenCalledWith([], accountId, 800_000);
+    expect(mockedScanOperations).toHaveBeenCalledWith(["receive-recent"], accountId, 800_000);
     expect(shape.operations).toEqual([scannedOperation, previousOperation]);
     expect(shape.operationsCount).toBe(2);
     expect(shape.used).toBe(true);
