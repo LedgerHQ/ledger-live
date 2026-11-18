@@ -8,6 +8,7 @@ function readAllPages(ops: { id: string }[], limit: number): string[][] {
   const pages: string[][] = [];
   let cursor: string | undefined;
   do {
+    if (pages.length > ops.length) throw new Error("pagination never reached the last page");
     const page = paginateOperations(ops, { limit, cursor });
     pages.push(ids(page));
     cursor = page.nextCursor;
@@ -52,6 +53,16 @@ describe("paginateOperations", () => {
     const second = paginateOperations(withNewOps, { limit: 2, cursor: first.nextCursor });
     expect(ids(second)).toEqual(["c", "d"]);
   });
+
+  // The bridge lists an internal operation under both parents of a self-send, with the same id.
+  const selfSendHistory = ["out", "internal", "in", "internal", "older"].map(id => ({ id }));
+
+  it.each([1, 2, 3, 4])(
+    "returns every operation once when operations share an id (limit %i)",
+    limit => {
+      expect(readAllPages(selfSendHistory, limit).flat()).toEqual(selfSendHistory.map(op => op.id));
+    },
+  );
 
   it.each([
     ["is not a cursor", "not-a-cursor"],
