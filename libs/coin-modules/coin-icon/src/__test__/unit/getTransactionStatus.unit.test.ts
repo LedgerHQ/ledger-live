@@ -15,7 +15,6 @@ import * as logic from "../../logic";
 import { IconAccount, Transaction } from "../../types";
 
 jest.mock("../../logic");
-jest.mock("../../api");
 jest.mock("@ledgerhq/coin-module-framework/currencies/index");
 
 const mockedLogic = jest.mocked(logic);
