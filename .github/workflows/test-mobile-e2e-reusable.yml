@@ -935,7 +935,8 @@ jobs:
           use-fallback: false
 
       - name: Check iOS simulators are ready
-        timeout-minutes: 10
+        # 10 minutes for the simulator checks, plus up to 6 for the trust store update wait.
+        timeout-minutes: 16
         uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
 
       - name: Check the exclusive lock store (R2)
