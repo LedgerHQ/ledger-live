@@ -1,5 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Stepper } from "@ledgerhq/lumen-ui-rnative";
 import { render, screen, within } from "@tests/test-renderer";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupScreen } from "./index";
@@ -120,8 +121,8 @@ function renderSetup({
   };
 }
 
-function allowSheet() {
-  return screen.getByTestId(setupTestIds.allowSheet);
+function UNSAFE_getStepper() {
+  return screen.UNSAFE_getByType(Stepper);
 }
 
 describe("SetupView", () => {
@@ -129,13 +130,35 @@ describe("SetupView", () => {
     renderSetup();
 
     expect(screen.getByText("Continue on your Ledger device")).toBeVisible();
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
     expect(screen.getByText("Genuine & OS check")).toBeVisible();
     expect(screen.getByText("Verifying your device")).toBeVisible();
     expect(screen.getByTestId(setupTestIds.stageLoading)).toBeVisible();
   });
+
+  it("should not ask to continue on the device while it waits for the check approval", () => {
+    renderSetup({ checks: { state: "awaitingAllow" } });
+
+    expect(screen.queryByTestId(setupTestIds.allowSheet)).toBeNull();
+    expect(screen.getByText("Genuine & OS check")).toBeVisible();
+    expect(screen.getByTestId(setupTestIds.stageLoading)).toBeVisible();
+  });
+
+  it.each([
+    [0, "1/5"],
+    [2, "3/5"],
+  ])(
+    "should fill only the finished steps on step %i and still count the current one",
+    (index, label) => {
+      renderSetup({
+        stage: { index, total: 5, kind: index === 0 ? "checks" : "pin", indicator: "none" },
+      });
+
+      const stepper = UNSAFE_getStepper();
+      expect(stepper.props.currentStep).toBe(index);
+      expect(stepper.props.totalSteps).toBe(5);
+      expect(within(screen.getByTestId(setupTestIds.stepper)).getByText(label)).toBeVisible();
+    },
+  );
 
   it("should ask to quit from the close bar", async () => {
     const { user, onQuit } = renderSetup();
@@ -261,26 +284,6 @@ describe("SetupView", () => {
     expect(onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it("should hide an open approval sheet while setup sheets are suspended", () => {
-    const { rerender, props } = renderSetup({ checks: { state: "awaitingAllow" } });
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-
-    rerender(<SetupScreen {...props} suspendSheets />);
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
-
-    rerender(<SetupScreen {...props} suspendSheets={false} />);
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-  });
-
   it("should hide a firmware offer while setup sheets are suspended", () => {
     const { rerender, props } = renderSetup({
       checks: {
@@ -346,45 +349,6 @@ describe("SetupView", () => {
     await user.press(screen.getByRole("button", { name: "Check my device" }));
 
     expect(onStart).toHaveBeenCalledTimes(1);
-  });
-
-  it("should close the approval sheet once the device has been approved", () => {
-    const { rerender, props } = renderSetup({ checks: { state: "awaitingAllow" } });
-    const checks = props.checks;
-    if (!checks) throw new Error("checks are required");
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-
-    rerender(
-      <SetupScreen
-        {...props}
-        stage={{ index: 0, total: 5, kind: "checks", indicator: "success" }}
-        checks={null}
-      />,
-    );
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
-  });
-
-  it("should bring the approval instructions back when setup continues", async () => {
-    const { user, onQuit, rerender, props } = renderSetup({
-      checks: { state: "awaitingAllow" },
-    });
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: true });
-
-    await user.press(screen.getByTestId(`${setupTestIds.allowSheet}-header-close`));
-    rerender(<SetupScreen {...props} suspendSheets />);
-
-    expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: false });
-
-    rerender(<SetupScreen {...props} suspendSheets={false} />);
-
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: true });
   });
 
   it.each([
