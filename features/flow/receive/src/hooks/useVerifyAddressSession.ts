@@ -90,7 +90,8 @@ export function useVerifyAddressSession({
 
   const onResult = useCallback(
     (result: VerifyAddressIntentResult) => {
-      if (exitedRef.current) return;
+      const previousOutcome = resultOutcomeRef.current;
+      if (exitedRef.current || (previousOutcome && previousOutcome !== "cancelled")) return;
       const outcome = RESULT_OUTCOME[result.type];
       resultOutcomeRef.current = outcome;
       trackOutcome(outcome);

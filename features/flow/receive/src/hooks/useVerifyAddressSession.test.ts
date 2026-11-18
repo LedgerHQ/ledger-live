@@ -143,6 +143,26 @@ describe("useVerifyAddressSession", () => {
     expect(onExit).toHaveBeenCalledWith("verified");
   });
 
+  it.each([
+    { first: RESULTS.mismatch, next: RESULTS.verified, outcome: "mismatch" },
+    { first: RESULTS.verified, next: RESULTS.refused, outcome: "verified" },
+    { first: RESULTS.unsupported, next: RESULTS.verified, outcome: "unsupported" },
+  ])(
+    "should keep the $outcome result when a retry after a reconnection reports another one",
+    ({ first, next, outcome }) => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onResult(first));
+      act(() => result.current.onAttemptStart());
+      mockTrack.mockClear();
+
+      act(() => result.current.onResult(next));
+      act(() => result.current.onUserCancel(null));
+
+      expect(mockTrack).not.toHaveBeenCalled();
+      expect(onExit).toHaveBeenCalledWith(outcome);
+    },
+  );
+
   it("should exit as dismissed and send the dismiss event when the user leaves before any result", () => {
     const { onExit, result } = renderSession();
 
