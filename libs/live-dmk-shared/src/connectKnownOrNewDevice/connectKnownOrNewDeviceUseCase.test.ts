@@ -3,14 +3,20 @@ import type {
   DeviceManagementKit,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, defer, Subject, type Observable } from "rxjs";
 
 import { connectKnownOrNewDeviceUseCase } from "./connectKnownOrNewDeviceUseCase";
 import { ConnectKnownOrNewDeviceUIStateTypes, type ConnectKnownOrNewDeviceUIState } from "./types";
 import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 import { BaseConnectionErrorTypes } from "../deviceConnectivity/types";
 
-const setupTest = ({ isPaused }: { isPaused?: boolean } = {}) => {
+const setupTest = ({
+  isPaused,
+  connectedDevicesSource,
+}: {
+  isPaused?: boolean;
+  connectedDevicesSource?: Observable<Array<ConnectedDevice>>;
+} = {}) => {
   const connectedDevices$ = new BehaviorSubject<Array<ConnectedDevice>>([]);
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const deviceDiscoveryService = createFakeDeviceDiscoveryService({
@@ -22,7 +28,7 @@ const setupTest = ({ isPaused }: { isPaused?: boolean } = {}) => {
     dmk: {} as DeviceManagementKit,
     deviceDiscoveryService,
     knownDevices$: new BehaviorSubject([]),
-    connectedDevices$,
+    connectedDevices$: connectedDevicesSource ?? connectedDevices$,
     findMatchingDevice: () => null,
     getConnectivity: () => "BLE",
     removeKnownDevice: jest.fn(),
@@ -84,16 +90,23 @@ describe("connectKnownOrNewDeviceUseCase", () => {
 
   it("GIVEN a use case that emitted an UnknownError, WHEN subscribing again, THEN it should start a new state machine", () => {
     // GIVEN
-    const { connectedDevices$, deviceDiscoveryService, states, subscribe } = setupTest();
+    const failingConnectedDevices$ = new BehaviorSubject<Array<ConnectedDevice>>([]);
+    const connectedDevicesBySubscription = [
+      failingConnectedDevices$,
+      new BehaviorSubject<Array<ConnectedDevice>>([]),
+    ];
+    const { deviceDiscoveryService, states, subscribe } = setupTest({
+      connectedDevicesSource: defer(() => connectedDevicesBySubscription.shift()!),
+    });
     subscribe();
-    connectedDevices$.error(new Error("session state failed"));
+    failingConnectedDevices$.error(new Error("session state failed"));
 
     // WHEN
     const subscription = subscribe();
 
     // THEN
-    expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
-    expect(states.at(-1)?.type).toBe(ConnectKnownOrNewDeviceUIStateTypes.UnknownError);
+    expect(states.at(-1)?.type).toBe(ConnectKnownOrNewDeviceUIStateTypes.Discovering);
+    expect(deviceDiscoveryService.isRunning).toBe(true);
     subscription.unsubscribe();
   });
 
