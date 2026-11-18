@@ -4,7 +4,7 @@ import { toOperation } from "../toOperation";
 
 const NATIVE = "Amulet";
 
-const map = (row: OperationView, partyId = "alice-party") => toOperation(NATIVE, partyId, row);
+const map = (row: OperationView, partyId = "alice-party") => toOperation(partyId, row);
 
 function withoutField<K extends keyof OperationView>(key: K): OperationView {
   const { [key]: _omitted, ...rest } = createMockOperationView();
@@ -19,6 +19,14 @@ describe("toOperation", () => {
   describe("asset", () => {
     it("maps the native instrument to the framework's native asset", () => {
       expect(map(createMockOperationView()).asset).toEqual({ type: "native" });
+    });
+
+    it("keeps a native row native under the gateway's placeholder admin", () => {
+      const row = createMockOperationView({
+        asset: { type: "native", instrumentAdmin: `DSO::${"0".repeat(68)}`, instrumentId: NATIVE },
+      });
+
+      expect(map(row).asset).toEqual({ type: "native" });
     });
 
     it("maps a token to its instrument id and admin", () => {

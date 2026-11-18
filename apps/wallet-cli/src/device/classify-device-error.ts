@@ -11,6 +11,8 @@ import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import type { DeviceState, RejectedContext } from "./device-state";
 import { speculosTarget } from "./speculos-target";
+import { usbAccessEvidence } from "./usb-access-evidence";
+import { UsbSessionOpenError } from "./usb-session-open-error";
 
 export type ClassifyContext = {
   /** App name we attempted to open/use. Used for `app_not_installed` / `wrong_app`. */
@@ -144,5 +146,16 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
     };
   }
 
+  if (error instanceof UsbSessionOpenError) {
+    return usbSessionOpenErrorState(error);
+  }
+
   return { code: "unknown", cause: error };
+}
+
+function usbSessionOpenErrorState(error: UsbSessionOpenError): DeviceState {
+  const usbAccess = usbAccessEvidence(error.cause);
+  return usbAccess
+    ? { code: "unknown", cause: error, usbAccess }
+    : { code: "unknown", cause: error };
 }

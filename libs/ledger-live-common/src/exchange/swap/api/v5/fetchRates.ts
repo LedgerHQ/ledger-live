@@ -23,7 +23,7 @@ export const throwRateError = (response: ExchangeRate[]) => {
   // the highest priority error to the user.
   // lowest number is the highest rank.
   // highest number is lowest rank.
-  const errorsRank = {
+  const errorsRank: Record<string, number> = {
     SwapExchangeRateAmountTooLowOrTooHigh: 1,
     SwapExchangeRateAmountTooLow: 2,
     SwapExchangeRateAmountTooHigh: 3,

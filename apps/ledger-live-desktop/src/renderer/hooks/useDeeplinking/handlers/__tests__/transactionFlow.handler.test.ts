@@ -24,6 +24,11 @@ jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
 }));
 
+jest.mock("LLD/features/Receive/openReceiveFlow", () => ({
+  openModalWithReceiveFlow: (...args: Parameters<typeof openModal>) =>
+    jest.requireMock("~/renderer/actions/modals").openModal(...args),
+}));
+
 jest.mock("../../utils", () => ({
   getAccountsOrSubAccountsByCurrency: jest.fn(),
 }));

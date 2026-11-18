@@ -62,7 +62,7 @@ const createTransaction = (): Transaction => ({
   assetOwner: "",
 });
 
-const updateTransaction = (t, patch) => {
+const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => {
   return { ...t, ...patch };
 };
 
@@ -171,7 +171,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: Account, t: any): Promise<Transaction> => {
   const networkInfo = t.networkInfo || {
     family: "stellar",
     fees: new BigNumber("100"),
@@ -188,7 +188,11 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const estimateMaxSpendable = async ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),

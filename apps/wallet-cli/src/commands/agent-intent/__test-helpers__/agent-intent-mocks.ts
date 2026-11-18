@@ -65,6 +65,7 @@ const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
 const TOKEN_LOOKUP_KEYS = [
   "findEthereumToken",
   "findEthereumSwapAsset",
+  "findEthereumSwapAssetByContract",
   "findSolanaToken",
   "findSolanaMintProgram",
   "findTokensByTicker",

@@ -91,6 +91,8 @@ export type CantonResources = {
   pendingTransferProposals: TransferProposal[];
   publicKey?: string;
   xpub?: string;
+  /** The DSO party issuing native CC; absent until a sync reads it. */
+  nativeInstrumentAdmin?: string;
 };
 export type CantonResourcesRaw = {
   isOnboarded: boolean;
@@ -98,6 +100,7 @@ export type CantonResourcesRaw = {
   pendingTransferProposals: TransferProposal[];
   publicKey?: string;
   xpub?: string;
+  nativeInstrumentAdmin?: string;
 };
 
 export type CantonAccount = Account & {

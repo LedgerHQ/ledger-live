@@ -84,7 +84,7 @@ export function useListPlatformCurrencies(
   return useCallback(
     async (filters?: CurrencyFilters) => {
       const filterCurrencyRegexes = filters?.currencies
-        ? filters.currencies.map(filter => makeRe(filter))
+        ? filters.currencies.map(filter => makeRe(filter) as RegExp)
         : null;
 
       // 1. Gather all supported parent currencies

@@ -9,12 +9,14 @@ import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import { getInstrumentBalances } from "./instrumentBalances";
+import { isInstrument, type NativeInstrument } from "../logic/asset";
 import { determineOperationType } from "../logic/operationType";
 import {
   getCalTokensCached,
   getEnabledInstrumentsCached,
   getKey,
   getLedgerEnd,
+  getNativeInstrument,
   getOperations,
   getPartyById,
   getPendingTransferProposals,
@@ -142,6 +144,21 @@ export async function filterDisabledTokenAccounts(
   });
 }
 
+// So a node info outage doesn't fail every sync of an account an earlier sync classified.
+async function getNativeInstrumentOrSaved(
+  context: CantonContext,
+  config: CantonCoinConfig,
+  savedAdmin: string | undefined,
+): Promise<NativeInstrument> {
+  try {
+    return await getNativeInstrument(config);
+  } catch (error) {
+    if (!savedAdmin) throw error;
+    context.logger("canton/sync", "DSO party read failed, using the saved one", { error });
+    return { instrumentId: config.nativeInstrumentId, instrumentAdmin: savedAdmin };
+  }
+}
+
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
   context: CantonContext,
@@ -190,8 +207,20 @@ export function makeGetAccountShape(
     });
 
     const { nativeInstrumentId } = config;
-    const balances = xpubOrAddress
-      ? await getInstrumentBalances(getCurrencyContext(context, currency), xpubOrAddress)
+    // Without a party there is nothing to classify, so a fresh account scans without it.
+    const nativeInstrument = xpubOrAddress
+      ? await getNativeInstrumentOrSaved(
+          context,
+          config,
+          initialAccount?.cantonResources?.nativeInstrumentAdmin,
+        )
+      : undefined;
+    const balances = nativeInstrument
+      ? await getInstrumentBalances(
+          getCurrencyContext(context, currency),
+          xpubOrAddress,
+          nativeInstrument,
+        )
       : [];
     const pendingTransferProposals = xpubOrAddress
       ? await getPendingTransferProposals(config, xpubOrAddress)
@@ -241,7 +270,8 @@ export function makeGetAccountShape(
     }
 
     for await (const balance of balances) {
-      const isNative = balance.instrumentId === nativeInstrumentId;
+      const isNative =
+        !!nativeInstrument && isInstrument(nativeInstrument, balance.instrumentId, balance.adminId);
       // Use just instrumentId for native (no admin), composite key for tokens
       const balanceKey = isNative
         ? nativeInstrumentId
@@ -306,7 +336,8 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
-    // Filter main account operations (native instrument only)
+    // Filter main account operations (native instrument only). By id alone: the gateway gives every
+    // Amulet operation the same placeholder admin.
     const mainAccountOperations = operations.filter(op => {
       const extra = op.extra as { instrumentId?: string };
       return extra?.instrumentId === nativeInstrumentId;
@@ -326,6 +357,7 @@ export function makeGetAccountShape(
       isOnboarded,
       instrumentUtxoCounts,
       pendingTransferProposals,
+      ...(nativeInstrument ? { nativeInstrumentAdmin: nativeInstrument.instrumentAdmin } : {}),
       ...(publicKey ? { publicKey } : {}),
       xpub: xpubOrAddress,
     };

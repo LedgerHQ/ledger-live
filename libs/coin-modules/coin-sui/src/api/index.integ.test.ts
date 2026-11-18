@@ -241,6 +241,29 @@ describe("Sui Api", () => {
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
 
+    it("maps a known incoming transfer of the address to its operation shape", async () => {
+      expect(txs).toContainEqual({
+        id: "3PPknnwqbx8F7EeBCUZMUqC4aKKZmj2fXH3CJFLXdbL6",
+        type: "IN",
+        value: 60_500_000_000n,
+        asset: { type: "native" },
+        senders: ["0x56c8b7ba565a7852265ee23695a0347102d7ad60f0db46091458f55f37424e6c"],
+        recipients: [SENDER],
+        tx: {
+          hash: "3PPknnwqbx8F7EeBCUZMUqC4aKKZmj2fXH3CJFLXdbL6",
+          date: new Date("2025-04-30T22:46:02.473Z"),
+          fees: -13_812_040n,
+          feesPayer: "0x56c8b7ba565a7852265ee23695a0347102d7ad60f0db46091458f55f37424e6c",
+          failed: false,
+          block: {
+            height: 139910600,
+            hash: "DePxjGdALq6yJ72jN3knNefMvrErmws8tQMdvAbZ58KB",
+            time: new Date("2025-04-30T22:46:02.473Z"),
+          },
+        },
+      });
+    });
+
     it("returns block height as a number", async () => {
       txs.forEach(t => {
         expect(t.tx.block.height).toBeGreaterThan(0);

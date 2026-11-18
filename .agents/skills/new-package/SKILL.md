@@ -34,6 +34,9 @@ source-only package has no `build` target, and Nx `^build` reaches its dependenc
 Tooling details live in [support-config](../support-config/SKILL.md); change them only when the
 generated preset is wrong for the package.
 
+Before adding an `exports` entry, read the `package.json` items of the
+[package checklist](../../../docs/new-library.md#package-checklist).
+
 ## 2. README and status marker
 
 Replace the generator's one-line description with a short scope: problem solved, main exports, who

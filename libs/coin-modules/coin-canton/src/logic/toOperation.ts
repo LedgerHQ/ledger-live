@@ -1,17 +1,17 @@
 import type { AssetInfo, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetView, OperationDetailsView, OperationView } from "../types/gateway";
-import { instrumentAsset } from "./asset";
 import { determineOperationType } from "./operationType";
 
-function operationAsset(nativeInstrumentId: string, asset: AssetView | undefined): AssetInfo {
-  if (!asset) return { type: "native" };
+// The gateway reports every Amulet operation as native, under a placeholder admin, so its type is all there is to go on.
+function operationAsset(asset: AssetView | undefined): AssetInfo {
+  if (!asset || asset.type === "native") return { type: "native" };
   if (asset.type === "template") {
     return {
       type: "template",
       assetReference: `${asset.packageId}:${asset.moduleName}:${asset.entityName}`,
     };
   }
-  return instrumentAsset(nativeInstrumentId, asset.instrumentId, asset.instrumentAdmin);
+  return { type: "token", assetReference: asset.instrumentId, assetOwner: asset.instrumentAdmin };
 }
 
 function firstString(...values: unknown[]): string | undefined {
@@ -30,11 +30,7 @@ function memoOf(
   );
 }
 
-export function toOperation(
-  nativeInstrumentId: string,
-  partyId: string,
-  row: OperationView,
-): Operation {
+export function toOperation(partyId: string, row: OperationView): Operation {
   const transfer = row.transfers?.[0];
   const value = transfer?.value ?? "0";
   const senders = row.senders ?? [];
@@ -49,7 +45,7 @@ export function toOperation(
     value: BigInt(value),
     senders,
     recipients: row.recipients ?? [],
-    asset: operationAsset(nativeInstrumentId, row.asset),
+    asset: operationAsset(row.asset),
     details: { ledgerOpType: type, ...(memo === undefined ? {} : { memo }) },
     tx: {
       hash: row.transaction_hash,

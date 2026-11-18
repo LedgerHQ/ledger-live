@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
+import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStage } from "./toSetupStage";
 
 export type SetupChecksProps = {
@@ -21,4 +22,5 @@ export type SetupScreenProps = {
   checks: SetupChecksProps | null;
   onQuit: () => void;
   suspendSheets?: boolean;
+  connection?: SessionReconnect | null;
 };

@@ -448,4 +448,36 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeUndefined();
     });
   });
+
+  describe("plain send", () => {
+    it("returns no error and no warning for a valid send", async () => {
+      const transaction = createFixtureTransaction({
+        amount: BigNumber(2_000_000),
+        fees: BigNumber(1_000),
+      });
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+      expect(result.amount).toEqual(BigNumber(2_000_000));
+    });
+
+    it("returns RecipientRequired when the recipient is an empty string", async () => {
+      const transaction = createFixtureTransaction({ recipient: "" });
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors).toEqual({ recipient: new RecipientRequired() });
+    });
+
+    it("returns AmountRequired when the amount is a zero BigNumber", async () => {
+      const transaction = createFixtureTransaction({ amount: BigNumber(0) });
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors).toEqual({ amount: new AmountRequired() });
+      expect(result.amount).toEqual(BigNumber(0));
+    });
+  });
 });
