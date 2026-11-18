@@ -271,8 +271,54 @@ export default class AccountPage {
     await this.buyButton.tap();
   }
 
+  /**
+   * The picker names a token by its own id, which some tokens lack: they carry the id of their
+   * chain, which names the native row. For them nothing but the chain's id is known, so none is passed.
+   */
+  @Step("Tap on send for {{{0.accountName}}}")
+  async tapSendOf(account: Account) {
+    const isToken = account.parentAccount !== undefined;
+    const namesChainOnly = account.currency.id === account.parentAccount?.currency.id;
+    await this.tapSend(namesChainOnly ? undefined : account.currency.id, isToken);
+  }
+
+  @Step("Open the send of sub account {{{0.accountName}}}")
+  async openSubAccountSend(account: AccountType) {
+    if (isAccountDetailEnabled()) {
+      invariant(account.parentAccount, `${account.accountName} has no parent account`);
+      await this.openViaDeeplink();
+      await this.goToAccountByName(account.parentAccount.accountName);
+      await this.tapSendOf(account);
+      return;
+    }
+    await this.navigateToSubAccount(account);
+    await this.tapSend();
+  }
+
+  @Step("Expect the balance of sub account {{{0.accountName}}} to be visible")
+  async expectSubAccountBalanceVisible(account: AccountType, subAccountId: string) {
+    if (isAccountDetailEnabled()) {
+      await app.assetDetail.expectTotalBalanceCryptoForTicker(account.currency.ticker);
+      return;
+    }
+    await this.expectAccountBalanceVisible(subAccountId);
+  }
+
+  @Step("Scroll to the history of the sub account and click on last operation {{{0}}}")
+  async scrollToSubAccountHistoryAndClickOnLastOperation(operationType: string) {
+    if (isAccountDetailEnabled()) {
+      await app.assetDetail.openTransactionOfType(operationType);
+      return;
+    }
+    await this.scrollToHistoryAndClickOnLastOperation(operationType);
+  }
+
   @Step("Navigate to token in account {{{0.accountName}}}")
   async navigateToTokenInAccount(subAccount: Account) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.openAsset(subAccount.currency.name);
+      return;
+    }
     const subAccountRow = this.subAccountRow(subAccount.currency.ticker);
     await this.accountScreenScrollView.waitVisible();
     try {
@@ -297,6 +343,15 @@ export default class AccountPage {
     await this.openViaDeeplink();
     await this.goToAccountByName(parentAccount.accountName);
     await this.navigateToTokenInAccount(account);
+
+    if (isAccountDetailEnabled()) {
+      const holdingAccountId = await app.assetDetail.getFirstHoldingAccountId();
+      invariant(
+        holdingAccountId.includes(parentAddress),
+        `expected an asset held by ${parentAccount.accountName}, landed on ${holdingAccountId}`,
+      );
+      return holdingAccountId;
+    }
 
     // Several graphs can match the pattern: take the one on screen.
     await this.subAccountGraph().waitExist();

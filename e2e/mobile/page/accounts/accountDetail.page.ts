@@ -24,6 +24,7 @@ export default class AccountDetailPage {
   private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
+  private readonly assetRow = (currencyName: string) => byId(`assetItem-${currencyName}`);
   private readonly operationRowWithType = (operationType: string) =>
     byIdWithDescendantText({ id: OPERATION_ROW_ID, text: operationType });
 
@@ -51,6 +52,14 @@ export default class AccountDetailPage {
   @Step("Expect the address label to match {{{0}}}")
   async expectAddressLabelMatching(pattern: RegExp) {
     await this.navBarAddress.expectLabelMatching(pattern);
+  }
+
+  /** A token has no account screen of its own here: its row opens the asset page. */
+  @Step("Open the asset {{{0}}} held by the account")
+  async openAsset(currencyName: string) {
+    await this.assetRow(currencyName).scrollTo(this.scrollView);
+    await this.assetRow(currencyName).tap();
+    await app.assetDetail.expectAssetDetailPageVisible();
   }
 
   @Step("Expect account receive and send actions")

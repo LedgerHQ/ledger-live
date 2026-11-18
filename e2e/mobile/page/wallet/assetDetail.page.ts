@@ -17,6 +17,7 @@ const displayRoundingTolerance = (text: string) => {
 };
 
 const OPERATIONS_LIST_ITEM_ID = "operations-list-item";
+const ADDRESS_ITEM_NAME_PREFIX = "asset-detail-address-item-name-";
 
 export default class AssetDetailPage {
   // The testID ends with the currency id (`asset-detail-scroll-view-<currencyId>`).
@@ -41,8 +42,10 @@ export default class AssetDetailPage {
       // The ticker sits inside a formatted amount such as "+1 DAI".
       text: new RegExp(`.*${ticker}.*`, "i"),
     });
+  private readonly operationWithType = (operationType: string) =>
+    byIdWithDescendantText({ id: OPERATIONS_LIST_ITEM_ID, text: operationType });
   private readonly addressItemNameAt = (index: number) =>
-    byId(/asset-detail-address-item-name-.*/, index);
+    byId(new RegExp(`${ADDRESS_ITEM_NAME_PREFIX}.*`), index);
   private readonly addressItemName = (accountId: string) =>
     byId(`asset-detail-address-item-name-${accountId}`);
   private readonly addressItemAddress = (accountId: string) =>
@@ -207,6 +210,23 @@ export default class AssetDetailPage {
     await this.operationByTicker(ticker).expectVisible();
     await this.operationsListItem().tap();
     await this.operationDetailsTitle.waitVisible();
+  }
+
+  @Step("Open Asset Detail transaction of type {{{0}}}")
+  async openTransactionOfType(operationType: string) {
+    await this.scrollToTransactions();
+    await this.operationWithType(operationType).revealForTap(await this.scrollView());
+    await this.operationWithType(operationType).tap();
+    await this.operationDetailsTitle.waitVisible();
+  }
+
+  /** The address rows are the accounts holding the asset: their ids are the ones of the main accounts. */
+  @Step("Get the id of the first holding account")
+  async getFirstHoldingAccountId() {
+    await this.scrollToAddressesSection();
+    const name = this.addressItemNameAt(0);
+    await name.scrollTo(await this.scrollView());
+    return (await name.getIdentifier()).replace(ADDRESS_ITEM_NAME_PREFIX, "");
   }
 
   @Step("Open Asset Detail transactions history")

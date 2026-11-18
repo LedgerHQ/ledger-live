@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { escapeRegExp } from "@e2e/helpers/commonHelpers";
 import { byId, byIdAndText, byIdWithDescendantText } from "@e2e/helpers/elements/native";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 
 const wholeTextContaining = (text: string) =>
@@ -72,6 +73,10 @@ export default class NewSendFlowPage {
   async navigateToTokenSendScreen(parentAccountName: string, tokenAccount: Account) {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(parentAccountName);
+    if (isAccountDetailEnabled()) {
+      await app.account.tapSendOf(tokenAccount);
+      return;
+    }
     await app.account.navigateToTokenInAccount(tokenAccount);
     await app.account.tapSend();
   }

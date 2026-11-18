@@ -36,10 +36,7 @@ export default class SendPage {
   async navigateToSendScreen(accountToDebit: Account, accountName?: string) {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(accountName || accountToDebit.accountName);
-    // Some tokens carry the id of their chain, which names the native row of the picker, not theirs.
-    const isToken = accountToDebit.parentAccount !== undefined;
-    const namesChainOnly = accountToDebit.currency.id === accountToDebit.parentAccount?.currency.id;
-    await app.account.tapSend(namesChainOnly ? undefined : accountToDebit.currency.id, isToken);
+    await app.account.tapSendOf(accountToDebit);
   }
 
   @Step("Open send via deeplink")
