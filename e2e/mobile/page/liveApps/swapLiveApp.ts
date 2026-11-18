@@ -61,7 +61,8 @@ export default class SwapLiveAppPage {
   private readonly revokeApprovalButton = webById("revoke-approval-button");
   private readonly giveApprovalButton = webById("give-approval-button");
   private readonly signPermitButton = webById("sign-permit-button");
-  private readonly deviceActionErrorDescription = byId("error-description-deviceAction");
+  private readonly exchangeErrorDescription = byId("wallet-api-exchange-error-description");
+  private readonly exchangeRefused = byId("wallet-api-exchange-refused");
   private readonly liveAppTitle = byId("live-app-title");
 
   private readonly lnsUnsupportedBannerPattern =
@@ -260,7 +261,12 @@ export default class SwapLiveAppPage {
 
   @Step("Check error message: {{{0}}}")
   async checkErrorMessage(errorMessage: string) {
-    await this.deviceActionErrorDescription.expectText(errorMessage, { containing: true });
+    await this.exchangeErrorDescription.expectText(errorMessage, { containing: true });
+  }
+
+  @Step("Check the swap was refused on the device")
+  async checkSwapRefused() {
+    await this.exchangeRefused.waitVisible();
   }
 
   @Step("Check first quote container infos {{{0}}}")
