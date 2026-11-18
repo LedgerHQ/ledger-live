@@ -12,7 +12,9 @@ export default (type: string) => {
       if (!updater.quitAndInstall) {
         console.error(`Auto-update error: quitAndInstall called before init`);
       } else {
-        void updater.quitAndInstall();
+        updater
+          .quitAndInstall()
+          .catch(error => console.error("Auto-update error: quitAndInstall failed", error));
       }
       break;
     default:
