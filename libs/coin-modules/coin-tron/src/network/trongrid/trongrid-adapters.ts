@@ -28,8 +28,8 @@ export function fromTrongridTxInfoToOperation(
     },
     type,
     value,
-    senders: [trongridTxInfo.from],
-    recipients: trongridTxInfo.to ? [trongridTxInfo.to] : [],
+    senders: trongridTxInfo.senders ?? [trongridTxInfo.from],
+    recipients: trongridTxInfo.recipients ?? (trongridTxInfo.to ? [trongridTxInfo.to] : []),
     asset,
   };
 
@@ -60,7 +60,7 @@ export function fromTrongridTxInfoToOperation(
  * heuristic alone types every one of them as a plain send, which would cost synced history its
  * Freeze / Unfreeze / Vote / Reward labels.
  */
-function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
+export function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
   switch (trongridTxInfo.type) {
     case "VoteWitnessContract":
       return "VOTE";
