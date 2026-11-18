@@ -113,6 +113,26 @@ describe("network/sdk (msw)", () => {
     expect(ops[0].value.toFixed()).toBe("100");
   });
 
+  it("getESDTOperations marks a failed token transfer", async () => {
+    const esdtTx = {
+      ...sendTx,
+      txHash: "h-esdt-failed",
+      status: "fail",
+      action: {
+        name: "transfer",
+        arguments: { transfers: [{ token: "USDC-c76f1f", value: "100" }] },
+      },
+    };
+    server.use(
+      http.get(`${API}/accounts/:addr/transactions/count`, () => HttpResponse.json(1)),
+      http.get(`${API}/accounts/:addr/transactions`, () => HttpResponse.json([esdtTx])),
+    );
+
+    const ops = await getESDTOperations("tokAccId", ADDR, "USDC-c76f1f", 0);
+    expect(ops).toHaveLength(1);
+    expect(ops[0]).toMatchObject({ hasFailed: true });
+  });
+
   it("getAccountESDTTokens returns the token list", async () => {
     server.use(
       http.get(`${API}/accounts/:addr/tokens/count`, () => HttpResponse.json(1)),
