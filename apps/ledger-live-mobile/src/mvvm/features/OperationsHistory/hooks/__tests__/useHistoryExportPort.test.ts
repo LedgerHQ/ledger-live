@@ -7,7 +7,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { State } from "~/reducers/types";
 import { sendFile } from "~/e2e/bridge/client";
 import logger from "~/logger";
-import { getExportFileName, useHistoryExportPort } from "../useHistoryExportPort";
+import { useHistoryExportPort } from "../useHistoryExportPort";
 
 jest.mock("~/e2e/bridge/client", () => ({ sendFile: jest.fn() }));
 jest.mock("~/logger", () => ({ __esModule: true, default: { critical: jest.fn() } }));
@@ -144,9 +144,5 @@ describe("useHistoryExportPort", () => {
     const { result } = renderPort();
 
     expect(result.current.isSyncing([BTC_ID])).toBe(false);
-  });
-
-  it("names the file after the local date, without extension for the share sheet", () => {
-    expect(getExportFileName(new Date(2026, 0, 5))).toBe("ledgerwallet-operations-2026.01.05");
   });
 });

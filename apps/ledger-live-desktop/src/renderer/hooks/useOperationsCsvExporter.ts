@@ -9,7 +9,7 @@ import type { Account } from "@ledgerhq/types-live";
 import logger from "~/renderer/logger";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
+import { getHistoryExportFileName } from "@features/flow-history-export";
 
 async function saveOperationsToFile(request: SaveRequest, csv: string): Promise<SaveOutcome> {
   try {
@@ -26,7 +26,6 @@ export function useOperationsCsvExporter() {
   const walletState = useSelector(walletSelector);
   const sync = useBridgeSync();
   const syncState = useBridgeSyncState();
-  const getDateTxt = useTechnicalDateFn();
 
   const syncAccounts = useCallback(
     (accountIds: readonly string[]) => {
@@ -63,7 +62,7 @@ export function useOperationsCsvExporter() {
           {
             options: {
               title: "Exported account transactions",
-              defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
+              defaultPath: `${getHistoryExportFileName(new Date())}.csv`,
               filters: [{ name: "All Files", extensions: ["csv"] }],
             },
             // The fixture suffixes this with the test id, so parallel runs do not race on
@@ -77,7 +76,7 @@ export function useOperationsCsvExporter() {
         return "failed";
       }
     },
-    [countervalueCurrency, countervalueState, getDateTxt, walletState.accountNames],
+    [countervalueCurrency, countervalueState, walletState.accountNames],
   );
 
   return { syncAccounts, isSyncing, exportCsv };

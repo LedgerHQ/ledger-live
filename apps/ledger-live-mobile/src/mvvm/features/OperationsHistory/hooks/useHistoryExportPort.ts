@@ -4,10 +4,11 @@ import Share from "react-native-share";
 import type { Account } from "@ledgerhq/types-live";
 import { AccountIdSchema, type AccountId } from "@domain/entity-account";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import type {
-  HistoryExportAccount,
-  HistoryExportOutcome,
-  HistoryExportPort,
+import {
+  getHistoryExportFileName,
+  type HistoryExportAccount,
+  type HistoryExportOutcome,
+  type HistoryExportPort,
 } from "@features/flow-history-export";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -24,12 +25,6 @@ import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 /** iOS rejects a cancelled "Save to Files" picker with this code; Android resolves `dismissedAction`. */
 const PICKER_CANCELED_CODE = "CANCELLED";
-
-const pad = (value: number) => String(value).padStart(2, "0");
-
-/** Without extension: the share sheet adds `.csv` from the `text/csv` type. */
-export const getExportFileName = (date: Date) =>
-  `ledgerwallet-operations-${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}`;
 
 const isPickerCanceled = (error: unknown) =>
   error instanceof Error && "code" in error && error.code === PICKER_CANCELED_CODE;
@@ -104,7 +99,7 @@ export function useHistoryExportPort(): HistoryExportPort {
           countervalueState,
           walletState.accountNames,
         );
-        const fileName = getExportFileName(new Date());
+        const fileName = getHistoryExportFileName(new Date());
 
         if (Config.DETOX) {
           sendFile({ fileName: `${fileName}.csv`, fileContent: csv });
