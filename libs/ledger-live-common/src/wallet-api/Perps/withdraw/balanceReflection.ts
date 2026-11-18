@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../../account";
+import { delay } from "../../../promise";
 
 export const WITHDRAW_BALANCE_REFLECTION_TIMEOUT_MS = 60_000;
 export const WITHDRAW_BALANCE_REFLECTION_POLL_MS = 2_000;
@@ -24,8 +25,6 @@ export type WithdrawBalanceReflectionParams = Readonly<{
   timeoutMs?: number;
   pollMs?: number;
 }>;
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * The balance once the withdraw shows: lower by at least the amount withdrawn (the Hyperliquid fee
@@ -63,7 +62,7 @@ export async function waitForWithdrawBalanceReflected({
     if (isCancelled()) return "cancelled";
     if (isReflected()) return "reflected";
     syncAccount();
-    await wait(Math.min(pollMs, deadline - Date.now()));
+    await delay(Math.min(pollMs, deadline - Date.now()));
   }
 
   return isReflected() ? "reflected" : "timeout";
