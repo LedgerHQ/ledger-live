@@ -12,22 +12,23 @@ callbacks and ports.
 
 ## Layout
 
-The verify hint state, the device verification state and its screens are in place;
-the other screens land in follow-up tickets. Target layout, per the
-[flow-package skill](../../../.agents/skills/flow-package/SKILL.md):
+Per the [flow-package skill](../../../.agents/skills/flow-package/SKILL.md):
 
 ```text
 src/
 ├── screens/
-│   ├── Address/            # receive address screen
+│   ├── ReceiveAddress/     # the address screen: a dialog on desktop, a screen on mobile
 │   ├── AddressDisplayed/   # "Address securely displayed", while the address is on the device
 │   ├── AddressVerified/    # "Address verified", once the device confirmed the same address
-│   └── AddressMismatch/    # "Don't use this address", when the device confirmed another one
+│   ├── AddressMismatch/    # "This address doesn't match your Ledger"
+│   └── VerifyAddressError/ # the device cannot show the address
+├── analytics/              # the newReceiveFlow flag as analytics attributes
 ├── copy/                   # i18n keys to labels, under the receiveAddress namespace
 ├── hooks/                  # device verification flow, executor view model and tracking
-├── logic/                  # no React: verify guard, device request wiring, executor preparation
-├── state/                  # verify hint slice, registered and persisted by the apps
+├── logic/                  # no React: screen state, notices, address split, verification
+├── state/                  # verify hint, desktop dialog target, DevTools simulation slices
 ├── types.ts                # public contract
+├── urls.ts                 # support articles the flow links to
 ├── index.ts                # web barrel
 └── index.native.ts         # native barrel
 ```
@@ -36,6 +37,25 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
 
 ## Public API
 
+- `ReceiveAddress`: the address screen, opened with `{ accountUUID, assetId }` and reading
+  everything from the account model (`receive`, `accountStatus`, `assetStatus`), never a legacy
+  `Account`. The app gives what only it has, each optional: without one, its feature is hidden.
+
+  | Prop                     | What the app gives                                             |
+  | ------------------------ | -------------------------------------------------------------- |
+  | `onCopyAddress`          | the clipboard                                                  |
+  | `onShareAddress`         | the system share sheet (mobile)                                |
+  | `VerifyAddressExecutor`  | its device verification executor                               |
+  | `getFamilyConfig`        | the account's coin family slot, with the flags and legacy account it needs |
+  | `serviceIncidents`       | status.ledger.com incidents on the network (`toReceiveServiceIncidents`) |
+  | `checkAddressSanctioned` | the sanctions list check; a listed address is never shown      |
+  | `onUseLegacyFlow`        | the hand-over to the legacy flow, for an account to onboard or a token to activate |
+  | `onOpenUrl`              | opening a support link                                         |
+  | `source`                 | the entry point, sent with every event of the screen           |
+
+- `AddressDisplayed`, `AddressVerified`, `AddressMismatch`, `VerifyAddressError`: the screens of
+  the device verification, which the apps' executors render per job state.
+- `getNewReceiveFlowAttributes(flag)`: the `newReceive` analytics attributes both apps send.
 - `@features/flow-receive`: the main entry, resolved per platform through the `react-native`
   condition. It holds the receive family contract: each app's coin family implements
   `GetReceiveFamilyConfig` only where it differs from the defaults (notices, support, device models
@@ -80,10 +100,22 @@ set up with another seed, the usual cause, therefore reaches the job and reports
 bug on our side would: the user is warned off the address, told to connect the right Ledger or
 contact Ledger Support, and the receive flow closes.
 
-- `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
-  seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
-  and persist `receiveVerifyHintPersistedSelector` under their own `receiveVerifyHint` storage
-  key, restored with `restoreReceiveVerifyHint`.
+- `@features/flow-receive/state`, slices the apps register:
+  - `receiveVerifyHint`: whether the user has already seen the hint pointing at **Verify**. The
+    apps persist `receiveVerifyHintPersistedSelector` under their own `receiveVerifyHint` storage
+    key, restored with `restoreReceiveVerifyHint`.
+  - `receiveAddressDialog` (desktop): the account and asset the address dialog shows.
+  - `receiveSimulation`: what the DevTools make the screen show, such as a sanctioned address.
+    Not persisted.
+
+## Family-specific content
+
+`ReceiveNoticeId` (`utxo`, `taproot`, `dashStaking`, `tronInactiveAccount`, `tezosDelegation`,
+`zcashPrivateNotEnabled`) and the Zcash address options (`transparent`, `shielded`) are named
+here, in the generic flow. It is a trade-off: their wording, tone and support links stay in one
+place and one catalog namespace, and a family only says which notice it needs. The cost: a family
+with a new notice adds its id, wording and tone here. The flow still never branches on a family
+name; the families pick their notices in their `GetReceiveFamilyConfig`.
 
 The barrels hold `export *` lines only, per the
 [package-public-api skill](../../../.agents/skills/package-public-api/SKILL.md).
