@@ -21,6 +21,7 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
+  private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
   private readonly operationRowWithType = (operationType: string) =>
@@ -52,9 +53,47 @@ export default class AccountDetailPage {
     await this.navBarAddress.expectLabelMatching(pattern);
   }
 
-  @Step("Expect account transfer action to be visible")
-  async expectTransferActionVisible() {
-    await this.heroAction("transfer").expectVisible();
+  @Step("Expect account receive and send actions")
+  async expectReceiveAndSendActionsVisible() {
+    await this.openTransferDrawer();
+    await app.transferDrawer.expectReceiveVisible();
+    await app.transferDrawer.expectSendVisible();
+    await app.transferDrawer.close();
+  }
+
+  @Step("Tap on receive")
+  async tapReceive() {
+    await this.openTransferDrawer();
+    await app.transferDrawer.tapReceive();
+  }
+
+  @Step("Tap on send {{{0}}}")
+  async tapSend(currencyId?: string, isToken = false) {
+    await this.openTransferDrawer();
+    await app.transferDrawer.tapSend();
+    // A token is held next to its chain's asset, so the picker has to ask which one to send.
+    if (isToken || (await this.sendOpensAssetPicker())) {
+      if (!currencyId) throw new Error("Send asks which asset to send: pass the currency to pick");
+      await app.transferDrawer.pickAsset(currencyId);
+    }
+  }
+
+  /**
+   * A native send asks which asset to send only when the account holds several, which the app knows
+   * once it has synced the tokens: take whichever of the picker or the recipient screen shows first.
+   */
+  private async sendOpensAssetPicker() {
+    const deadline = Date.now() + TIMEOUT.xxlarge;
+    while (Date.now() < deadline) {
+      if (await app.transferDrawer.isAssetPickerVisible(TIMEOUT.xxxsmall)) return true;
+      if (await this.sendRecipientInput.isVisible(TIMEOUT.xxxsmall)) return false;
+    }
+    throw new Error("Send opened neither the asset picker nor the recipient screen");
+  }
+
+  private async openTransferDrawer() {
+    await this.heroAction("transfer").tap();
+    await app.transferDrawer.waitSettled();
   }
 
   @Step("Expect operation history to be visible")

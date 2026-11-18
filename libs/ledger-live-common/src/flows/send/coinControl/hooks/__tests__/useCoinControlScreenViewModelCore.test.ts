@@ -17,7 +17,15 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { bitcoinCoinControlConfig } from "../../../../../families/bitcoin/descriptor/coinControl";
 import { bitcoinPickingStrategy } from "../../../../../families/bitcoin/types";
 
+const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: string) => true);
+
 jest.mock("../../../../../bridge/impl");
+jest.mock("../../../../../platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: mockIsCurrencyAvailable,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getMainAccount: jest.fn((acc: AccountLike) => acc),
   getAccountCurrency: jest.fn((acc: AccountLike) => (acc as { currency: unknown }).currency),
@@ -217,6 +225,33 @@ describe("useCoinControlScreenViewModelCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCoinControlConfig.mockImplementation(() => null);
+    mockIsCurrencyAvailable.mockReturnValue(true);
+  });
+
+  describe("insufficient funds CTA", () => {
+    it("shows Get {ticker} when Buy is available for the currency", () => {
+      const { result } = renderCoinControlCore({
+        transaction: { ...createTransaction(), amount: new BigNumber(100) } as Transaction,
+        status: statusNotEnoughBalance(),
+      });
+
+      expect(mockIsCurrencyAvailable).toHaveBeenCalledWith("bitcoin", "onRamp");
+      expect(result.current.reviewLabel).toBe("Get BTC");
+      expect(result.current.reviewShowIcon).toBe(false);
+      expect(result.current.reviewDisabled).toBe(false);
+    });
+
+    it("keeps a disabled Review when Buy is unavailable for the currency", () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      const { result } = renderCoinControlCore({
+        transaction: { ...createTransaction(), amount: new BigNumber(100) } as Transaction,
+        status: statusNotEnoughBalance(),
+      });
+
+      expect(result.current.reviewLabel).toBe("Review");
+      expect(result.current.reviewShowIcon).toBe(true);
+      expect(result.current.reviewDisabled).toBe(true);
+    });
   });
 
   it("returns expected shape with minimal params", () => {

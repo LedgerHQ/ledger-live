@@ -39,7 +39,7 @@ function buildViewModel(isResolving: boolean): CardLoginViewModel {
     headline: "Get your crypto card",
     description: "Get 1% cashback every time you spend",
     loginLabel: "Get card",
-    alreadyHaveCardLabel: null,
+    showAlreadyHaveCard: false,
     isLoading: false,
     isResolving,
     error: null,

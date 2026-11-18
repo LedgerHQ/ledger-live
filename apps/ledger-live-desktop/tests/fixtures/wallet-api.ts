@@ -332,6 +332,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "bitcoin_signet",
+    ticker: "BTC",
+    name: "Bitcoin Signet",
+    family: "bitcoin",
+    color: "#00ff00",
+    decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
     id: "cardano",
     ticker: "ADA",
     name: "Cardano",

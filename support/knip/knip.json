@@ -36,7 +36,8 @@
     "**/*.d.ts",
     "**/.eslintrc.guardrails.js",
     "**/.eslintrc.i18n.js",
-    ".agents/**"
+    ".agents/**",
+    ".koda/**"
   ],
   "ignoreWorkspaces": [
     "apps/cli",

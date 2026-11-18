@@ -20,7 +20,7 @@ Find more information [here](https://github.com/LedgerHQ/ledger-live/blob/develo
 git clone git@github.com:LedgerHQ/ledger-live.git
 cd ledger-live
 pnpm install
-pnpm build:libs
+pnpm build:libs   # builds the packages the testers read that have a build; other private libs are read from source
 ```
 
 - [Docker](https://docs.docker.com/engine/install)

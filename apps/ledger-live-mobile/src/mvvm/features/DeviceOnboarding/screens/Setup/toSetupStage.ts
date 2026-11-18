@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { OnboardingStep } from "@features/platform-device-onboarding";
+import { toSetupInfoCard, type SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
 const modelsWithoutNaming = new Set<DeviceModelId>([
   DeviceModelId.nanoS,
@@ -28,6 +29,7 @@ export type SetupStage = {
   kind: SetupStageKind;
   indicator: SetupIndicator;
   detail?: SetupStageDetail;
+  infoCard?: SetupInfoCard;
 };
 
 const touchOrder = [
@@ -92,6 +94,7 @@ export function toSetupStage(input: {
   machineState: string;
   currentStep: string | null;
   modelId: DeviceModelId;
+  reportsRecoveryKey: boolean;
 }): SetupStage | null {
   if (safetyWarningHidesStage(input.machineState, input.currentStep)) return null;
   if (hiddenSetupStates.has(input.machineState)) return null;
@@ -107,8 +110,14 @@ export function toSetupStage(input: {
 
   const indicator = kind === SetupStageKind.Checks ? checksIndicator(input.machineState) : "none";
   const detail = detailByState.get(input.machineState);
+  const infoCard = toSetupInfoCard(input.machineState, input.reportsRecoveryKey);
 
-  return detail
-    ? { index, total: order.length, kind, indicator, detail }
-    : { index, total: order.length, kind, indicator };
+  return {
+    index,
+    total: order.length,
+    kind,
+    indicator,
+    ...(detail ? { detail } : {}),
+    ...(infoCard ? { infoCard } : {}),
+  };
 }

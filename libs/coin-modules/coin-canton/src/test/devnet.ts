@@ -1,6 +1,5 @@
-import network from "@ledgerhq/live-network";
 import type { CantonCoinConfig } from "../config";
-import { getNodeId, getOperations } from "../network/gateway";
+import { getNodeInfo, getOperations } from "../network/gateway";
 import type { OperationView } from "../types/gateway";
 
 const SINGLE_PAGE_LIMIT = 5_000;
@@ -9,11 +8,7 @@ export const UNKNOWN_PARTY = `nobody::1220${"a".repeat(64)}`;
 
 /** Merges its holdings continuously, so it always has history. */
 export async function getDevnetValidatorParty(config: CantonCoinConfig): Promise<string> {
-  const { data } = await network<{ validator_id: string }>({
-    method: "GET",
-    url: `${config.gatewayUrl}/v1/node/${getNodeId(config)}`,
-  });
-  return data.validator_id;
+  return (await getNodeInfo(config)).validator_id;
 }
 
 /** Halves the window until one request serves it whole, so the gateway's `next` bug cannot drop rows. */

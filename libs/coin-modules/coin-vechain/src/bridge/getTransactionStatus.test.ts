@@ -250,6 +250,31 @@ describe("getTransactionStatus", () => {
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
+
+    it("returns NotEnoughBalance and the amount plus fees as total spent when a token transaction amount exceeds the VTHO spendable balance", async () => {
+      const amount = new BigNumber("2000000000000000000000");
+      const tokenTransaction: Transaction = {
+        ...mockTransaction,
+        subAccountId: "vechain:1:0x123:+vtho",
+        amount,
+      };
+      mockedCalculateTransactionInfo.mockResolvedValue({
+        isTokenAccount: true,
+        amount,
+        spendableBalance: new BigNumber("999790000000000000000"),
+        balance: new BigNumber("1000000000000000000000"),
+        tokenAccount: mockVthoAccount,
+        estimatedFees: "210000000000000000",
+        estimatedGas: 21000,
+        maxFeePerGas: 10000000000000,
+        maxPriorityFeePerGas: 1000000000000,
+      });
+
+      const result = await getTransactionStatus(mockAccount, tokenTransaction);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(result.totalSpent).toEqual(amount.plus("210000000000000000"));
+    });
   });
 
   describe("VTHO balance validation", () => {
@@ -262,6 +287,31 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(accountWithLowVtho, mockTransaction);
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughVTHO);
+    });
+
+    it("returns NotEnoughVTHO instead of NotEnoughBalance when the amount exceeds the balance and the fees exceed the VTHO balance", async () => {
+      const accountWithoutFunds: Account = {
+        ...mockAccount,
+        balance: new BigNumber(0),
+        spendableBalance: new BigNumber(0),
+        subAccounts: [{ ...mockVthoAccount, balance: new BigNumber("1000000000000000") }],
+      };
+      mockedCalculateTransactionInfo.mockResolvedValue({
+        isTokenAccount: false,
+        amount: new BigNumber("1000000000000000000"),
+        spendableBalance: new BigNumber(0),
+        balance: new BigNumber(0),
+        tokenAccount: undefined,
+        estimatedFees: "210000000000000000",
+        estimatedGas: 21000,
+        maxFeePerGas: 10000000000000,
+        maxPriorityFeePerGas: 1000000000000,
+      });
+
+      const result = await getTransactionStatus(accountWithoutFunds, mockTransaction);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughVTHO);
+      expect(result.totalSpent).toEqual(new BigNumber("1000000000000000000"));
     });
 
     it("should handle missing VTHO subaccount gracefully", async () => {

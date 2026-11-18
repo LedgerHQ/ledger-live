@@ -7,14 +7,21 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import { type UiHook, type useWalletAPIServerOptions, useDappSessionUiHook } from "./react";
+import {
+  type UiHook,
+  type useWalletAPIServerOptions,
+  useCacheBustedLiveApps,
+  useDappSessionUiHook,
+} from "./react";
+import { INITIAL_PLATFORM_STATE } from "./constants";
+import type { DiscoverDB } from "./types";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { AccountPublicKeyUnavailable, BridgeSessionClosed, SignPsbtAppNotAllowed } from "../errors";
 import { accountGetPublicKeyLogic, signRawTransactionLogic } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { BridgeSession } from "./bridgeSession";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import {
   getAccountIdFromWalletAccountId,
@@ -1047,5 +1054,26 @@ describe("useDappSessionUiHook", () => {
     jest.mocked(uiHook["transaction.sign"]).mock.calls[0][0].onSuccess({} as never);
 
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+});
+
+describe("useCacheBustedLiveApps", () => {
+  it("keeps both entries when edit is called twice before a new render", () => {
+    const { result } = renderHook(() => {
+      const [state, setState] = useState<DiscoverDB>({
+        ...INITIAL_PLATFORM_STATE,
+        cacheBustedLiveApps: { init: 1, "other-app": 5 },
+      });
+      return useCacheBustedLiveApps([state.cacheBustedLiveApps, setState, true]);
+    });
+
+    act(() => {
+      result.current.edit("app-a", 2);
+      result.current.edit("app-b", 3);
+    });
+
+    expect(result.current.getLatest("app-a")).toBe(2);
+    expect(result.current.getLatest("app-b")).toBe(3);
+    expect(result.current.getLatest("other-app")).toBe(5);
   });
 });

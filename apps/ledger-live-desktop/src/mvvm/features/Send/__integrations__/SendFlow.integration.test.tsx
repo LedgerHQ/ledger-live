@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, within } from "tests/testSetup";
+import { HttpResponse, http, server } from "tests/server";
 import userEvent from "@testing-library/user-event";
 import { track } from "@shared/analytics";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -630,6 +631,31 @@ describe("Send Flow Integration", () => {
       await navigateToAmountScreen(user);
 
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
+    });
+
+    it("should keep review disabled when balance is insufficient and Buy does not support the currency", async () => {
+      let catalogServed = false;
+      server.use(
+        http.get("https://buy.api.live.ledger.com/buy/v1/provider/currencies", () => {
+          catalogServed = true;
+          return HttpResponse.json({ onRamp: { moonpay: ["bitcoin"] } });
+        }),
+      );
+      setMockTransaction(
+        createMinimalEvmTransaction({
+          amount: new BigNumber("99000000000000000000"),
+          recipient: VALID_EVM_RECIPIENT,
+        }),
+      );
+      setMockStatus(createResolvedStatus({ amount: new NotEnoughBalance() }));
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      // An unloaded catalog also reports the currency unavailable: assert once it has answered.
+      await waitFor(() => expect(catalogServed).toBe(true));
+      expect(await screen.findByTestId("send-review-button")).toBeDisabled();
+      expect(screen.queryByTestId("send-get-funds-button")).not.toBeInTheDocument();
     });
 
     it("should disable review when no amount is entered", async () => {

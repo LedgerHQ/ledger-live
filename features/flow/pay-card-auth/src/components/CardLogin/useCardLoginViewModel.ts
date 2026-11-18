@@ -291,9 +291,7 @@ export function useCardLoginViewModel({
       headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
-      alreadyHaveCardLabel: hasSeenLoginIntro
-        ? null
-        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
+      showAlreadyHaveCard: !hasSeenLoginIntro,
     };
   }, [t, hasSeenLoginIntro]);
 

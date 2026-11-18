@@ -1,4 +1,4 @@
-import { Observable, throwError } from "rxjs";
+import { Observable, Subscription, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
@@ -10,9 +10,10 @@ export { Transport };
 
 const LOG_TYPE = "device-sdk-transport";
 
-const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
+const identifyTransport = (t: Transport & { id?: unknown }) =>
+  typeof t.id === "string" ? t.id : "";
 
-const needsCleanup = {};
+const needsCleanup: Record<string, boolean> = {};
 // When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withTransport
 export const cancelDeviceAction = (transport: Transport): void => {
@@ -72,8 +73,8 @@ export const withTransport = (
         return close(transport, deviceId).catch(() => {});
       };
 
-      let unsubscribed;
-      let sub;
+      let unsubscribed: boolean | undefined;
+      let sub: Subscription | undefined;
 
       // Setups a given transport
       const setupTransport = async (transport: Transport) => {
@@ -240,7 +241,7 @@ const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   return throwError(() => mappedError);
 };
 
-let errorRemapping = e => throwError(() => e);
+let errorRemapping: (e: Error) => Observable<never> = e => throwError(() => e);
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
 };

@@ -108,6 +108,7 @@ export function useAmountScreenViewModel({
     reviewDisabled,
     amountComputationPending,
     hasInsufficientFundsError,
+    showGetFundsCta,
     shouldPrepare,
   } = amountReviewCore;
 
@@ -295,7 +296,8 @@ export function useAmountScreenViewModel({
   );
 
   // No quote while the option stays available means one is loading: every failure withdraws it.
-  // Get funds needs no quote, so only Review waits for it.
+  // Insufficient funds leaves nothing to wait for (Get funds, or a disabled Review), so only a
+  // sendable Review waits for it.
   const sponsoredReviewNotReady =
     !hasInsufficientFundsError && sponsoredSelected && available && (!intentReady || !quote);
 
@@ -318,11 +320,9 @@ export function useAmountScreenViewModel({
     amountMessage,
     reviewLabel,
     reviewShowIcon,
-    // An insufficient amount turns Review into Get funds, which stays pressable.
+    // An insufficient amount turns Review into Get funds when Buy is available, which stays pressable.
     reviewDisabled:
-      reviewDisabled ||
-      (sponsoredUnaffordable && !hasInsufficientFundsError) ||
-      sponsoredReviewNotReady,
+      reviewDisabled || (sponsoredUnaffordable && !showGetFundsCta) || sponsoredReviewNotReady,
     sponsoredFeeError: sponsoredUnaffordable
       ? t("newSendFlow.feePayment.insufficientFunds", {
           feeCurrency: feeCurrencyTicker,

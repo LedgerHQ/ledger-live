@@ -15,18 +15,24 @@ export const isCoinModuleCallTier = (value: unknown): value is CoinModuleCallTie
   (COIN_MODULE_CALL_TIERS as readonly unknown[]).includes(value);
 
 /**
- * The tier of every method of the coin-module contract, unless the `coinObservability` flag
+ * Tiers by method name. Keyed by plain strings, not by the contract's method names, so the
+ * coin-module contract can gain or lose a method without a change here.
+ */
+export type MethodTiers = Readonly<Partial<Record<string, CoinModuleCallTier>>>;
+
+/**
+ * The coin-module methods that are observed, with their tier, unless the `coinObservability` flag
  * overrides it with `methodTiers`.
  *
- * Ledger Live Common checks at compile time that this table names exactly the contract's methods,
- * so a framework bump that adds a method fails the typecheck until the method is classified here.
- * A method missing at runtime falls back to `sync`, which is sampled.
+ * This is a whitelist, not a copy of the contract: a method it does not name is `off`, so a
+ * framework release that adds a method sends nothing for it until it is listed here or given a
+ * tier by the flag.
  *
  * `craftTransactionData` and `validateAddress` are `preparation`: the bridge calls them while the
  * user edits a transaction. `getNextSequence` is `sync`: the bridge calls it on every account
  * sync, and only once more at signing.
  */
-export const DEFAULT_METHOD_TIERS = {
+export const DEFAULT_METHOD_TIERS: MethodTiers = {
   craftTransaction: "transaction",
   craftRawTransaction: "transaction",
   combine: "transaction",
@@ -50,17 +56,14 @@ export const DEFAULT_METHOD_TIERS = {
   getValidators: "sync",
   register: "sync",
   call: "sync",
-} as const satisfies Record<string, CoinModuleCallTier>;
-
-/** Per-method tiers sent by the `coinObservability` flag; they win over the defaults. */
-export type MethodTiers = Readonly<Partial<Record<string, CoinModuleCallTier>>>;
+};
 
 const lookup = (tiers: MethodTiers, method: string): CoinModuleCallTier | undefined =>
   Object.prototype.hasOwnProperty.call(tiers, method) ? tiers[method] : undefined;
 
-/** The tier of `method`: the flag's override, else the default, else `sync`. */
+/** The tier of `method`: the flag's override, else the default, else `off`. */
 export function tierFor(method: string, overrides: MethodTiers = {}): CoinModuleCallTier {
-  return lookup(overrides, method) ?? lookup(DEFAULT_METHOD_TIERS, method) ?? "sync";
+  return lookup(overrides, method) ?? lookup(DEFAULT_METHOD_TIERS, method) ?? "off";
 }
 
 /**

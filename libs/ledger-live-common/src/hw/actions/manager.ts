@@ -70,7 +70,7 @@ type Event =
       deviceId: DeviceId;
     };
 
-const mapResult = ({ deviceInfo, device, result }): Result | null | undefined =>
+const mapResult = ({ deviceInfo, device, result }: ManagerState): Result | null | undefined =>
   deviceInfo && device
     ? {
         device,
@@ -225,7 +225,7 @@ export const createAction = (
       });
     }, [deviceInfo]);
 
-    const onRepairModal = useCallback(open => {
+    const onRepairModal = useCallback((open: boolean) => {
       setRepairModalOpened(
         open
           ? {

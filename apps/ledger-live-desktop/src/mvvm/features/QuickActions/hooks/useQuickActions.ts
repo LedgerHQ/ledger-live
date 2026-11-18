@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { openModal } from "~/renderer/actions/modals";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import {
@@ -21,6 +20,7 @@ import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       return;
     }
 
-    dispatch(openModal("MODAL_RECEIVE", { sourcePage: trackingPageName }));
+    dispatch(openReceiveFlow({ sourcePage: trackingPageName }));
   }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow, trackingPageName]);
 
   const onBuy = useCallback(() => {

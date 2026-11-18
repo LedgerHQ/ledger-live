@@ -9,7 +9,7 @@ import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 import { StartExchangeInput } from "./types";
 import { getProviderConfig, getSwapProvider } from "../providers";
 
-const withDevicePromise = (deviceId, fn) =>
+const withDevicePromise = <T>(deviceId: string, fn: (transport: Transport) => Promise<T>) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 type StartNewExchangeTransactionParams = Pick<

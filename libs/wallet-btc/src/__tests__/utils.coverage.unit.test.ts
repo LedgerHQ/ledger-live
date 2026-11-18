@@ -84,6 +84,16 @@ describe("isTaprootAddress", () => {
     expect(isTaprootAddress("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "bitcoin")).toBe(false);
   });
 
+  it("returns true for a mainnet taproot address", () => {
+    expect(
+      isTaprootAddress("bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0", "bitcoin"),
+    ).toBe(true);
+  });
+
+  it("returns false for a mainnet segwit v0 address", () => {
+    expect(isTaprootAddress("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bitcoin")).toBe(false);
+  });
+
   it("returns false for a currency without taproot support", () => {
     expect(isTaprootAddress(p2trAddress, "litecoin" as never)).toBe(false);
   });

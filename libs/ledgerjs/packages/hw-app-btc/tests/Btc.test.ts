@@ -63,6 +63,14 @@ describe("Btc", () => {
       expect(btc["_impl"]).toBeInstanceOf(BtcNew);
     });
 
+    it("should create a Btc instance with bitcoin_signet currency", async () => {
+      const transport = await openTransportReplayer(RecordStore.fromString(""));
+      btc = new Btc({ transport, currency: "bitcoin_signet" });
+
+      expect(btc).toBeInstanceOf(Btc);
+      expect(btc["_impl"]).toBeInstanceOf(BtcNew);
+    });
+
     it("should create a Btc instance with qtum currency", async () => {
       const transport = await openTransportReplayer(RecordStore.fromString(""));
       btc = new Btc({ transport, currency: "qtum" });

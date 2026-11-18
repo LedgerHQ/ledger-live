@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { getAccountUrl } from "~/renderer/utils";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import IconPlus from "~/renderer/icons/Plus";
@@ -25,6 +24,7 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 type Props = {
   account: Account;
 };
@@ -48,7 +48,7 @@ function TokensList({ account }: Props) {
   );
   const onReceiveClick = useCallback(() => {
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openReceiveFlow({
         account,
         receiveTokenMode: true,
         sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,

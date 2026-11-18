@@ -30,6 +30,7 @@ export * from "./bitcoin_cash";
 export * from "./bitcoin_gold";
 export * from "./bitcoin_private";
 export * from "./bitcoin_regtest";
+export * from "./bitcoin_signet";
 export * from "./bitcoin_testnet";
 export * from "./bitlayer";
 export * from "./bittensor";

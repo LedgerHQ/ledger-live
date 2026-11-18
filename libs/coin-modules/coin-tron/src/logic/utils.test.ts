@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { decodeTransaction, getTronResources, isCanonicalTriggerSmartContractTx } from "./utils";
+import {
+  decodeRawData,
+  decodeTransaction,
+  getTronResources,
+  isCanonicalTriggerSmartContractTx,
+} from "./utils";
 
 describe("decodeTransaction", () => {
   it("creates a TRX transaction in TronWeb format", async () => {
@@ -135,6 +140,44 @@ describe("decodeTransaction", () => {
 
 const TRONIFY_PAYMENT_HEX =
   "0a028ed022087280df3dd121c50c40b0b4cfd1e9335aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c56270b092bac0e933900180c2d72f";
+
+describe("decodeRawData", () => {
+  const TRX_TRANSFER =
+    "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332";
+  const TRC20_TRANSFER =
+    "0a020ee522082e5fc67747a428af40f0e2ace4d3325aad01081f12a8010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412730a154119e7e376e7c213b7e7e7e46cc70a5dd086daff2a121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2243a9059cbb000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000000000000000000000000000000000000f424070fd9ca9e4d33290018087a70e";
+
+  it.each([
+    ["a TRX transfer", TRX_TRANSFER],
+    ["a TRC20 transfer", TRC20_TRANSFER],
+  ])("decodes %s synchronously, as decodeTransaction does", async (_label, rawTx) => {
+    const rawData = decodeRawData(rawTx);
+
+    expect(rawData).not.toBeInstanceOf(Promise);
+    expect(rawData).toEqual((await decodeTransaction(rawTx)).raw_data);
+  });
+
+  it("exposes the owner of a TRC20 transfer", () => {
+    expect(decodeRawData(TRC20_TRANSFER).contract).toEqual([
+      expect.objectContaining({
+        type: "TriggerSmartContract",
+        parameter: expect.objectContaining({
+          value: expect.objectContaining({
+            owner_address: "4119e7e376e7c213b7e7e7e46cc70a5dd086daff2a",
+          }),
+        }),
+      }),
+    ]);
+  });
+
+  it("decodes bytes with no contract to an empty contract list", () => {
+    expect(decodeRawData("0a020ee5").contract).toEqual([]);
+  });
+
+  it("throws on bytes that are not a transaction", () => {
+    expect(() => decodeRawData("ffff")).toThrow();
+  });
+});
 
 describe("isCanonicalTriggerSmartContractTx", () => {
   it("accepts a payment Tronify built", () => {

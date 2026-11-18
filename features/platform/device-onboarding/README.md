@@ -142,7 +142,6 @@ any legacy onboarding flow.
 ## Validation
 
 ```sh
-pnpm nx run @features/platform-device-onboarding:build
 pnpm nx run @features/platform-device-onboarding:typecheck
 pnpm nx run @features/platform-device-onboarding:test
 pnpm nx run @features/platform-device-onboarding:lint

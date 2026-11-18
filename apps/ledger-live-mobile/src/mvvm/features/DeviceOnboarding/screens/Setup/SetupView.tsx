@@ -19,6 +19,8 @@ import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDr
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupGlow } from "./components/SetupGlow";
+import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
 function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
@@ -53,6 +55,12 @@ export function SetupView({
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  infoCard,
+  suspendInfoSheet,
+  reportsRecoveryKey,
+  connection,
+  productName,
+  suspendSheets,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -116,6 +124,11 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
+        <SetupInfo
+          card={infoCard}
+          suspendSheets={suspendInfoSheet}
+          reportsRecoveryKey={reportsRecoveryKey}
+        />
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>
@@ -140,6 +153,11 @@ export function SetupView({
         unsupportedUpdate={unsupportedUpdate}
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
+      />
+      <ReconnectSheet
+        connection={connection}
+        productName={productName}
+        suspendSheets={suspendSheets}
       />
     </Box>
   );

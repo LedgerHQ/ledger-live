@@ -220,6 +220,27 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
   });
 }
 
+/** run.json, beside summary.json: what the run compared, for readers of the artifact alone. */
+export interface RunInfo {
+  preset: string;
+  thresholdMs: number;
+  /** The pairs per scenario the plan asked for; summary.json has the pairs each row got. */
+  pairs: number | null;
+  labelA: string;
+  labelB: string;
+}
+
+export function runInfoOf(options: ReportOptions, pairs: string | undefined): RunInfo {
+  const planned = Number(pairs);
+  return {
+    preset: options.preset,
+    thresholdMs: options.thresholdMs,
+    pairs: pairs && Number.isInteger(planned) ? planned : null,
+    labelA: options.labelA,
+    labelB: options.labelB,
+  };
+}
+
 async function main(): Promise<void> {
   const { values } = parseArgs({
     options: {
@@ -228,7 +249,9 @@ async function main(): Promise<void> {
       "threshold-ms": { type: "string", default: "100" },
       "label-a": { type: "string", default: "A" },
       "label-b": { type: "string", default: "B" },
+      pairs: { type: "string" },
       json: { type: "string" },
+      "run-json": { type: "string" },
     },
   });
   const texts = await Promise.all(
@@ -257,6 +280,11 @@ async function main(): Promise<void> {
     const json = insideWorkingDir(values.json);
     await mkdir(path.dirname(json), { recursive: true });
     await writeFile(json, JSON.stringify(rows satisfies ResultRow[], null, 2));
+  }
+  if (values["run-json"]) {
+    const file = insideWorkingDir(values["run-json"]);
+    await mkdir(path.dirname(file), { recursive: true });
+    await writeFile(file, JSON.stringify(runInfoOf(options, values.pairs), null, 2));
   }
   if (failedRows(rows)) {
     console.error(

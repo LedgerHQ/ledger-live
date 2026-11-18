@@ -57,6 +57,8 @@
     "stableSavings",
     "ptxEarnCtaOnMobile",
     "earnWithdrawV2",
+    "earnTxLifecycleMonitoring",
+    "earnApiGravitee",
     "llmWalletApiDeviceIntentSign"
   ]
 }

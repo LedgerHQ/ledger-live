@@ -18,7 +18,8 @@ on:
     # The cron expression below is matched verbatim in the concurrency group and the
     # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
-    - cron: "0 1 * * 2-5"
+    - cron: "0 1 * * 2,3"
+    - cron: "0 1 * * 4,5"
   workflow_dispatch:
     inputs:
       ref:
@@ -188,7 +189,7 @@ permissions:
   contents: read
 
 env:
-  E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
+  E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || github.event.schedule == '0 1 * * 2,3' && 'account-detail' || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
