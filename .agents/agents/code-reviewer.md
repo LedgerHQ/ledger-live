@@ -49,6 +49,8 @@ When the diff touches **`shared/`**, **`domain/`**, **`features/`**, **`support/
 
 When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the Lumen skills as before.
 
+When the diff touches **`e2e/`** or **`libs/live-e2e-shared/`**, follow `.github/instructions/e2e.instructions.md`.
+
 ## Core Review Responsibilities
 
 **Project Guidelines Compliance**: Verify adherence to the rules listed above: layer placement, MVVM where it applies, import conventions, framework usage, TypeScript style, error handling, testing practices, and naming conventions.

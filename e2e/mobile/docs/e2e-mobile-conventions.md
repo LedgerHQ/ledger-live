@@ -30,9 +30,9 @@ A setup MUST NOT open screens or tap controls to reach the state under test.
 
 ### Tests MUST NOT use conditional steps
 
-A step MUST NOT branch on a condition and run only when that condition is met. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags.
+A step MUST NOT branch on what the screen shows and run only when it is shown. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags. A branch on the test data follows [the product's own rule](../../docs/e2e-conventions.md#a-product-branch-must-follow-the-products-own-rule).
 
-A conditional step MAY stay when the test documents why the branch is required.
+The one exception is an interruption the product shows non-deterministically, such as the analytics consent drawer: one page-object method MAY dismiss it when visible, and MUST say why it cannot be seeded.
 
 ### The test function MUST decide which assertions run
 
