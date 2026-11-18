@@ -212,8 +212,8 @@ async function reload() {
 }
 
 /**
- * The memory holds the decrypted data of the previous session until a reload ends.
- * The saves do not wait for it, so the reload flush can end.
+ * The memory holds the decrypted data of the previous session until a reload or a reset ends.
+ * The saves do not wait for it, so the reload flush and the reset can end.
  */
 function waitForReload(): Promise<void> {
   return reloading;
@@ -475,11 +475,17 @@ async function cleanCache() {
 async function resetAll() {
   await waitForReload();
   if (!DBPath) throw new NoDBPathGiven();
+  const resetting = deleteAppNamespace(DBPath);
+  // A setKey during the reset would load the old app.json again and save it back.
+  reloading = resetting.catch(() => undefined);
+  await resetting;
+}
+async function deleteAppNamespace(dbPath: string) {
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
   // A write already in progress would put the old data back after the unlink.
   await saversByNamespace.get("app")?.inFlight();
-  await fs.unlink(path.resolve(DBPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
+  await fs.unlink(path.resolve(dbPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
     if (e.code !== "ENOENT") throw e;
   });
 }

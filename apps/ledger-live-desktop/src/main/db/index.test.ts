@@ -500,6 +500,26 @@ describe("db flush", () => {
     unlink.mockRestore();
   });
 
+  it("does not load the old app.json again for a setKey during the reset", async () => {
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "old" } })));
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "old");
+    await waitMs(50);
+
+    const resetting = db.resetAll();
+    await waitMs(0);
+    const setting = db.setKey("app", "accounts", []);
+    await waitMs(0);
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    finishWrite();
+    await resetting;
+    await setting;
+    writeFileMock.mockClear();
+    await db.flush();
+
+    expect(writtenFile("app")).toEqual({ accounts: [] });
+  });
+
   it("writes a pending save before reload clears the memory", async () => {
     jest.useFakeTimers();
     void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
