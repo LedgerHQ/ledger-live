@@ -43,7 +43,7 @@ fi
 # Called directly rather than through xcrun, so a timeout kills simctl itself.
 SIMCTL="$(xcrun -f simctl)" || fail "simctl not found"
 
-source "$(dirname "${BASH_SOURCE[0]}")/simulator-helpers.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/simulator-helpers.sh" || fail "simulator-helpers.sh not found next to check-simulators.sh"
 
 launch_timeout=$FIRST_PROBE_TIMEOUT
 

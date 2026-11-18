@@ -30,7 +30,11 @@ log() {
 # Called directly rather than through xcrun, so a timeout kills simctl itself.
 SIMCTL="$(xcrun -f simctl)" || exit 1
 
-source "$(dirname "${BASH_SOURCE[0]}")/../check-ios-simulators/simulator-helpers.sh"
+HELPERS="$(dirname "${BASH_SOURCE[0]}")/../check-ios-simulators/simulator-helpers.sh"
+if ! source "$HELPERS"; then
+  log "❌ $HELPERS not found: no simulator was booted"
+  exit 1
+fi
 
 # Runs a command for at most <seconds>, and never past DEADLINE.
 with_deadline() {
