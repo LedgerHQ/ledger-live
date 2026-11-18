@@ -4,7 +4,8 @@
 # simulator waits until it is done (up to two minutes). An evaluation that waits ~15 s fails with
 # NSURLErrorDomain -1200, so an app launched then starts on compiled-default feature flags (QAA-1840).
 #
-# Waits until each simulator has finished that update, or has run long enough without starting one.
+# Waits until each simulator has finished that update, has skipped the check that starts it, or has
+# run long enough without starting one.
 # Never fails the job: at worst Detox starts as it did before this wait existed.
 #
 # Reads IOS_SIMULATOR_COUNT, exported to the job by boot-ios-simulators-background.
@@ -29,6 +30,9 @@ FAILED_UPDATE_MARKER="SecPinningDb: unable to create pinning list"
 ANSWERED_MARKER="trustd returned"
 END_MARKERS="$FAILED_UPDATE_MARKER|$ANSWERED_MARKER"
 TRUSTD_START_MARKER="Opening db with version"
+# The runner image leaves one simulator without trustd's AutoAsset.plist, so its first trustd exits
+# ~15 s after boot and the next one usually skips the update check as too recent: no update follows.
+SKIPPED_CHECK_MARKER="PKITrustSupplementals too recent, skipping check"
 
 if ((N < 1)); then
   echo "ℹ️ No simulators to wait for"
@@ -69,7 +73,7 @@ trust_logs() {
   ((timeout < LOG_SHOW_TIMEOUT)) || timeout=$LOG_SHOW_TIMEOUT
   ((timeout > 0)) || return 1
   with_timeout "$timeout" "$SIMCTL" spawn "$1" log show --last 20m --style compact \
-    --predicate "(process == \"trustd\" AND (eventMessage CONTAINS \"$TRUSTD_START_MARKER\" OR eventMessage CONTAINS \"$START_MARKER\" OR eventMessage CONTAINS \"$FAILED_UPDATE_MARKER\")) OR eventMessage CONTAINS \"$ANSWERED_MARKER\"" \
+    --predicate "(process == \"trustd\" AND (eventMessage CONTAINS \"$TRUSTD_START_MARKER\" OR eventMessage CONTAINS \"$START_MARKER\" OR eventMessage CONTAINS \"$FAILED_UPDATE_MARKER\" OR eventMessage CONTAINS \"$SKIPPED_CHECK_MARKER\")) OR eventMessage CONTAINS \"$ANSWERED_MARKER\"" \
     >"$LOGS_FILE" 2>/dev/null
   status=$?
   grep -E "^[0-9]{4}-" "$LOGS_FILE"
@@ -90,6 +94,7 @@ last_version() {
 #   finished <seconds from trustd start to update start, or nothing when unknown>
 #   up-to-date <version>     trustd restarted on the version an earlier update moved to
 #   pending update           an update is under way
+#   skipped                  trustd skipped the check that starts an update
 #   pending | not-started | query-failed
 update_state() {
   local logs since_trustd_start since_update trustd_started_at update_started_at opened target
@@ -123,6 +128,11 @@ update_state() {
   target="$(last_version "$START_MARKER" <<<"$logs")"
   if [[ -n "$opened" && -n "$target" ]] && ((opened >= target)); then
     echo "up-to-date $opened"
+    return
+  fi
+
+  if grep -q "$SKIPPED_CHECK_MARKER" <<<"$since_trustd_start"; then
+    echo skipped
     return
   fi
 
@@ -178,6 +188,9 @@ while ((${#pending[@]} > 0)); do
         ;;
       up-to-date)
         echo "✅ $name's trust store is already at version $detail (waited ${waited}s)"
+        ;;
+      skipped)
+        echo "✅ $name's trustd skipped its trust store update check (waited ${waited}s)"
         ;;
       not-started)
         echo "✅ $name has no trust store update to apply (waited ${waited}s)"
