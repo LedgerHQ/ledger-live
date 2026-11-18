@@ -101,6 +101,38 @@ describe("getTransactionStatus", () => {
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
   });
 
+  it.each(["stake", "unstake"] as const)(
+    "returns no fees error for a %s transaction with zero fee",
+    async txType => {
+      const transaction = createMockTransaction({
+        txType,
+        amount: new BigNumber(800),
+        fees: { fee: new BigNumber(0), accountCreationFee: new BigNumber(0) },
+      });
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+      expect(result.estimatedFees).toEqual(new BigNumber(0));
+      expect(result.totalSpent).toEqual(new BigNumber(800));
+    },
+  );
+
+  it("returns no amount error for a stake transaction with zero amount", async () => {
+    const transaction = createMockTransaction({
+      txType: "stake",
+      amount: new BigNumber(0),
+      useAllAmount: false,
+    });
+
+    const result = await getTransactionStatus(mockAccount, transaction);
+
+    expect(result.errors).toEqual({});
+    expect(result.amount).toEqual(new BigNumber(0));
+    expect(result.totalSpent).toEqual(new BigNumber(10));
+  });
+
   it("should allow self-delegation for unstake txType", async () => {
     const txUnstake = {
       ...mockTransaction,
