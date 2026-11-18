@@ -146,11 +146,13 @@ update_state() {
 WAIT_STARTED_AT="$(date +%s)"
 pending=()
 logs_read=()
-trustd_logs_matched=0
+start_marker_seen=0
+# Set when a simulator was held until a deadline for lack of START_MARKER.
+held_for_start_marker=0
 for ((i = 1; i <= N; i++)); do pending+=("$i"); done
 
 finish() {
-  if ((trustd_logs_matched == 0 && ${#logs_read[@]} > 0)); then
+  if ((start_marker_seen == 0 && held_for_start_marker == 1)); then
     echo "::notice::No simulator logged \"$START_MARKER\": either this runtime needs no trust store update, or trustd reworded its log lines and this wait no longer works"
   fi
   exit 0
@@ -162,6 +164,7 @@ warn_and_finish() {
     if [[ -z "${logs_read[i]:-}" ]]; then
       echo "::warning::$(sim_name "$i")'s trustd logs could not be read within ${waited}s: its first TLS connections may fail"
     else
+      held_for_start_marker=1
       echo "::warning::$(sim_name "$i") had not finished its trust store update after ${waited}s: its first TLS connections may fail"
     fi
   done
@@ -177,7 +180,7 @@ while ((${#pending[@]} > 0)); do
     read -r state detail <<<"$(update_state "$name")"
     waited=$(($(date +%s) - WAIT_STARTED_AT))
     [[ "$state" == query-failed ]] || logs_read[i]=1
-    [[ "$state" != finished && "$state" != up-to-date && "$state" != skipped && "$detail" != update ]] || trustd_logs_matched=1
+    [[ "$state" != finished && "$state" != up-to-date && "$detail" != update ]] || start_marker_seen=1
     case "$state" in
       finished)
         if [[ -n "$detail" ]]; then
@@ -193,6 +196,7 @@ while ((${#pending[@]} > 0)); do
         echo "✅ $name's trustd skipped its trust store update check (waited ${waited}s)"
         ;;
       not-started)
+        held_for_start_marker=1
         echo "✅ $name has no trust store update to apply (waited ${waited}s)"
         ;;
       *) still_pending+=("$i") ;;
