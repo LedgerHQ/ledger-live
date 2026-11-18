@@ -15,7 +15,7 @@ import db from "./db";
 import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemptThrottle";
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
-import { setupFlushOnQuit } from "./flushOnQuit";
+import { flushThen, setupFlushOnQuit } from "./flushOnQuit";
 import debounce from "lodash/debounce";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
@@ -167,7 +167,7 @@ app.on("ready", async () => {
   });
   ipcMain.handle(CHANNELS.reloadRenderer, () => {
     console.log("reloading renderer ...");
-    loadWindow();
+    void flushThen(() => void loadWindow());
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
   setupExplorerSessionAffinity(session.defaultSession);
@@ -254,9 +254,7 @@ ipcMain.on(CHANNELS.deepLinking, (_, l) => {
 
 ipcMain.on(CHANNELS.appReload, () => {
   const w = getMainWindow();
-  if (w) {
-    w.reload();
-  }
+  if (w) void flushThen(() => w.reload());
 });
 ipcMain.on(CHANNELS.showApp, () => {
   const w = getMainWindow();
