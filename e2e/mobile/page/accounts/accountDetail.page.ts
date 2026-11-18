@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 
 const OPERATION_ROW_ID = "operations-list-item";
 
@@ -76,14 +77,14 @@ export default class AccountDetailPage {
     await app.transferDrawer.tapReceive();
   }
 
-  @Step("Tap on send {{{0}}}")
-  async tapSend(currencyId?: string, isToken = false) {
+  @Step("Tap on send")
+  async tapSend(asset?: AssetToPick, isToken = false) {
     await this.openTransferDrawer();
     await app.transferDrawer.tapSend();
     // A token is held next to its chain's asset, so the picker has to ask which one to send.
     if (isToken || (await this.sendOpensAssetPicker())) {
-      if (!currencyId) throw new Error("Send asks which asset to send: pass the currency to pick");
-      await app.transferDrawer.pickAsset(currencyId);
+      if (!asset) throw new Error("Send asks which asset to send: pass the asset to pick");
+      await app.transferDrawer.pickAsset(asset);
     }
   }
 

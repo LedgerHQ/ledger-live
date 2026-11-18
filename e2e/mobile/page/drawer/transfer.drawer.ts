@@ -1,5 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
-import { byId } from "@e2e/helpers/elements/native";
+import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
+
+/** The row to pick by the id of its currency, or, when that id is not known, by the name of its token. */
+export type AssetToPick = Readonly<{ currencyId: string } | { tokenName: string }>;
 
 /** The Transfer bottom sheet of the quick actions, opened from the portfolio and the account screens. */
 export default class TransferDrawer {
@@ -10,6 +13,9 @@ export default class TransferDrawer {
   private readonly assetPicker = byId("transfer-asset-picker-list");
   private readonly assetPickerRow = (currencyId: string) =>
     byId(`transfer-asset-picker-${currencyId}`);
+  // The id of a token row reads `<chain>/<standard>/<contract>`, unlike the list and the native rows.
+  private readonly tokenRowNamed = (name: string) =>
+    byIdWithDescendantText({ id: /^transfer-asset-picker-[^/]+\/.+/, text: name });
 
   // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
   async waitSettled() {
@@ -59,11 +65,15 @@ export default class TransferDrawer {
     return await this.assetPicker.isVisible(timeout);
   }
 
-  @Step("Pick asset {{{0}}} in the transfer drawer")
-  async pickAsset(currencyId: string) {
+  @Step("Pick asset in the transfer drawer")
+  async pickAsset(asset: AssetToPick) {
+    const row =
+      "currencyId" in asset
+        ? this.assetPickerRow(asset.currencyId)
+        : this.tokenRowNamed(asset.tokenName);
     await this.assetPicker.waitFullyVisible();
     // The rows are sorted by value: the asset can sit below the visible ones.
-    await this.assetPickerRow(currencyId).scrollTo(this.assetPicker);
-    await this.assetPickerRow(currencyId).tap();
+    await row.scrollTo(this.assetPicker);
+    await row.tap();
   }
 }

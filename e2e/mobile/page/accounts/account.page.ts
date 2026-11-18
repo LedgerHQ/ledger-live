@@ -5,6 +5,7 @@ import { byId, byIdAndText, byText } from "@e2e/helpers/elements/native";
 import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 import AccountDetailPage from "./accountDetail.page";
 
 const ACCOUNT_GRAPH_PREFIX = "account-graph-";
@@ -244,9 +245,9 @@ export default class AccountPage {
   }
 
   @Step("Tap on send button")
-  async tapSend(currencyId?: string, isToken = false) {
+  async tapSend(asset?: AssetToPick, isToken = false) {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.tapSend(currencyId, isToken);
+      await this.accountDetail.tapSend(asset, isToken);
       return;
     }
     await this.sendButton.revealForTap(this.accountScreenScrollView);
@@ -272,14 +273,17 @@ export default class AccountPage {
   }
 
   /**
-   * The picker names a token by its own id, which some tokens lack: they carry the id of their
-   * chain, which names the native row. For them nothing but the chain's id is known, so none is passed.
+   * The picker names a row by the id of its currency, which some tokens lack: they carry the id of
+   * their chain, which names the native row. Those are picked by the name of their token instead.
    */
   @Step("Tap on send for {{{0.accountName}}}")
   async tapSendOf(account: Account) {
     const isToken = account.parentAccount !== undefined;
     const namesChainOnly = account.currency.id === account.parentAccount?.currency.id;
-    await this.tapSend(namesChainOnly ? undefined : account.currency.id, isToken);
+    await this.tapSend(
+      namesChainOnly ? { tokenName: account.currency.name } : { currencyId: account.currency.id },
+      isToken,
+    );
   }
 
   @Step("Open the send of sub account {{{0.accountName}}}")
