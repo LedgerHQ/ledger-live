@@ -265,7 +265,7 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Check the swap was refused on the device")
-  async expectSwapRefused() {
+  async checkSwapRefused() {
     await this.exchangeRefused.waitVisible();
   }
 

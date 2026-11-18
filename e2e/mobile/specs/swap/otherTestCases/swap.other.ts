@@ -355,7 +355,7 @@ export function runUserRefusesTransactionTest(
       await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, rejectAmount);
-      await app.swapLiveApp.expectSwapRefused();
+      await app.swapLiveApp.checkSwapRefused();
     });
   });
 }
