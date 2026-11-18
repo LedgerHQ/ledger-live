@@ -50,7 +50,7 @@ export async function getTransactionStatus(
       swapId: args.swapId,
       swapOperation,
     }),
-    swapOperation && getSwapStatusNetwork(swapOperation.fromAccount),
+    getSwapNetwork(accounts, args.swapId, swapOperation),
   );
   const status =
     remoteStatus?.status ??
@@ -101,6 +101,20 @@ function getMagnitudeAwareRemoteFinalAmount(
 function getTransactionStatusValue(status: string | undefined): TransactionStatusValue | undefined {
   if (!status || !isTransactionStatusValue(status)) return undefined;
   return status;
+}
+
+// The swap is missing from the history until its operation is synced: use the entry's account then
+function getSwapNetwork(
+  accounts: AccountLike[],
+  swapId: string,
+  swapOperation: MappedSwapOperation | undefined,
+): string | undefined {
+  if (swapOperation) return getSwapStatusNetwork(swapOperation.fromAccount);
+  const entryAccount = accounts.find(account =>
+    account.swapHistory?.some(entry => entry.swapId === swapId),
+  );
+  if (!entryAccount) return undefined;
+  return getSwapStatusNetwork(entryAccount);
 }
 
 async function findSwapOperation(

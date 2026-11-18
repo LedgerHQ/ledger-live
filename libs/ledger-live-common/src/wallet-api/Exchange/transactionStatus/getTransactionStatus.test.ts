@@ -148,6 +148,25 @@ describe("getTransactionStatus", () => {
     );
   });
 
+  it("sends the network of the swap entry's account before its operation is synced", async () => {
+    mockedGetCompleteSwapHistory.mockResolvedValueOnce([]);
+    mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+    const account = {
+      ...makeAccount("from"),
+      swapHistory: [{ provider: "oneinchfusion", swapId: "swap-1" }],
+    } as unknown as Account;
+
+    await getTransactionStatus(
+      { swapId: "swap-1", provider: "oneinchfusion" },
+      { accounts: [account] },
+    );
+
+    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: "oneinchfusion", swapId: "swap-1" }),
+      "from-currency",
+    );
+  });
+
   it("sends operation identifiers for MoonPay trade status requests", async () => {
     mockedGetCompleteSwapHistory.mockResolvedValueOnce([
       {
