@@ -4,11 +4,12 @@ import {
   selectDialogWithDataParams,
 } from "~/renderer/reducers/dialogsWithData";
 import type { DialogWithDataId } from "~/renderer/reducers/dialogsWithData";
+import type { AnyAccountId } from "@domain/entity-account";
 import type { State } from "~/renderer/reducers";
 
 const DIALOG_ID = "FAMILY_DIALOG" satisfies DialogWithDataId;
 
-export const openFamilyDialog = (accountId: string, params: unknown) =>
+export const openFamilyDialog = (accountId: AnyAccountId, params: unknown) =>
   openDialogWithData({ id: DIALOG_ID, data: { accountId, params } });
 
 export const closeFamilyDialog = () => closeDialogWithData(DIALOG_ID);

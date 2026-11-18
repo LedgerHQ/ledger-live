@@ -1,4 +1,5 @@
 import React from "react";
+import { parseAnyAccountId } from "@domain/entity-account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -58,7 +59,9 @@ describe("FamilyDialogs", () => {
     const { store, user } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog(XRP_ACCOUNT.id, { screen: "manageAssets" }));
+      store.dispatch(
+        openFamilyDialog(parseAnyAccountId(XRP_ACCOUNT.id), { screen: "manageAssets" }),
+      );
     });
 
     expect(screen.getByRole("dialog", { name: "XRP dialog" })).toBeVisible();
@@ -75,7 +78,7 @@ describe("FamilyDialogs", () => {
     const { store } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog(XRP_TOKEN_ACCOUNT.id, null));
+      store.dispatch(openFamilyDialog(parseAnyAccountId(XRP_TOKEN_ACCOUNT.id), null));
     });
 
     expect(screen.getByTestId("account")).toHaveTextContent(XRP_TOKEN_ACCOUNT.id);
@@ -86,7 +89,7 @@ describe("FamilyDialogs", () => {
     const { store } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog(XRP_ACCOUNT.id, null));
+      store.dispatch(openFamilyDialog(parseAnyAccountId(XRP_ACCOUNT.id), null));
     });
     act(() => {
       store.dispatch(removeAccount(XRP_ACCOUNT_WITH_TOKEN));
@@ -100,7 +103,7 @@ describe("FamilyDialogs", () => {
     const { store } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog(BITCOIN_ACCOUNT.id, null));
+      store.dispatch(openFamilyDialog(parseAnyAccountId(BITCOIN_ACCOUNT.id), null));
     });
 
     expect(store.getState().dialogsWithData.FAMILY_DIALOG).toEqual({ isOpen: false, data: null });
@@ -110,7 +113,7 @@ describe("FamilyDialogs", () => {
     const { store } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog(BITCOIN_ACCOUNT.id, null));
+      store.dispatch(openFamilyDialog(parseAnyAccountId(BITCOIN_ACCOUNT.id), null));
     });
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -120,7 +123,7 @@ describe("FamilyDialogs", () => {
     const { store } = renderFamilyDialogs();
 
     act(() => {
-      store.dispatch(openFamilyDialog("unknown-account", null));
+      store.dispatch(openFamilyDialog(parseAnyAccountId("unknown-account"), null));
     });
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();

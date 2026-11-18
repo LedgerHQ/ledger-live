@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { Reducer } from "redux";
+import type { AnyAccountId } from "@domain/entity-account";
 import type { State } from "~/renderer/reducers";
 
 export const DIALOGS_WITH_DATA_IDS = [
@@ -13,7 +14,7 @@ export type DialogWithDataId = (typeof DIALOGS_WITH_DATA_IDS)[number];
 export type DialogWithDataPayloadById = {
   SWAP_TRANSACTION_STATUS: SwapTransactionStatusParams;
   CURRENCY_REGION_RESTRICTED: { currencyName: string };
-  FAMILY_DIALOG: { accountId: string; params: unknown };
+  FAMILY_DIALOG: { accountId: AnyAccountId; params: unknown };
 };
 
 type DialogWithDataEntry<Id extends DialogWithDataId> = {
