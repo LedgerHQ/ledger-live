@@ -31,6 +31,7 @@ import type {
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
 import { useIsAppInBackground } from "./useIsAppInBackground";
+import { assertNever } from "./utils/assertNever";
 
 const LOG_TYPE = "ConnectKnownOrNewDevice";
 
@@ -71,10 +72,29 @@ function getAddModeLastNonErrorState(
   return isErrorState(addModeState) ? previous.addModeLastNonErrorState : addModeState;
 }
 
+function getDevices(
+  previous: ViewState,
+  state: ConnectKnownOrNewDeviceUIState,
+): ViewState["devices"] {
+  switch (state.type) {
+    case ConnectKnownOrNewDeviceUIStateTypes.Discovering:
+    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
+    case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
+    case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
+    case ConnectKnownOrNewDeviceUIStateTypes.ConnectionError:
+      return state.devices;
+    case ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice:
+    case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
+      return previous.devices;
+    default:
+      return assertNever(state);
+  }
+}
+
 function toNextViewState(previous: ViewState, state: ConnectKnownOrNewDeviceUIState): ViewState {
   return {
     state,
-    devices: "devices" in state ? state.devices : previous.devices,
+    devices: getDevices(previous, state),
     addModeLastNonErrorState: getAddModeLastNonErrorState(previous, state),
   };
 }
@@ -246,9 +266,14 @@ export function useConnectKnownOrNewDeviceViewModel({
       case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
         setRestartCount(count => count + 1);
         return;
-      default:
+      case ConnectKnownOrNewDeviceUIStateTypes.Discovering:
+      case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
+      case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
+      case ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice:
         // The sheet also reports a close when the state leaves an error: nothing to do then.
         return;
+      default:
+        assertNever(state);
     }
   }, [state]);
 
@@ -257,11 +282,17 @@ export function useConnectKnownOrNewDeviceViewModel({
       return;
     }
     const addModeState = state.connectNewDeviceUIState;
-    if (
-      addModeState.type === ConnectNewDeviceUIStateTypes.DiscoveryError ||
-      addModeState.type === ConnectNewDeviceUIStateTypes.ConnectionError
-    ) {
-      addModeState.close();
+    switch (addModeState.type) {
+      case ConnectNewDeviceUIStateTypes.DiscoveryError:
+      case ConnectNewDeviceUIStateTypes.ConnectionError:
+        addModeState.close();
+        return;
+      case ConnectNewDeviceUIStateTypes.Discovering:
+      case ConnectNewDeviceUIStateTypes.Connecting:
+      case ConnectNewDeviceUIStateTypes.Connected:
+        return;
+      default:
+        assertNever(addModeState);
     }
   }, [state]);
 

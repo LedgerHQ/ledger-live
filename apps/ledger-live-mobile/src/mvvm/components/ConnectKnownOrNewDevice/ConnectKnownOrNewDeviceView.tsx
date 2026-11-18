@@ -12,11 +12,8 @@ import type {
   ConnectKnownOrNewDeviceErrorUIState,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
+import { assertNever } from "./utils/assertNever";
 import { isErrorState } from "./utils/isErrorState";
-
-function assertNever(value: never): never {
-  throw new Error(`Unhandled connect known or new device error: ${JSON.stringify(value)}`);
-}
 
 function ErrorStateView({
   state,
