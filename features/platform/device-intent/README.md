@@ -19,7 +19,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 ### What's covered
 
 - **Concepts** — what a Device Intent is, what the Device Intent Executor (DIE) is, and how they fit together.
-- **Design rules** — the principles that keep the DIE simple and the device UX consistent, and the rules for changing it.
+- **Design rules** — the principles that keep the Device Intent Executor simple and the device UX consistent, and the rules for changing it.
 - **Usage guide** — implementation checklist, mounting the executor, building the `deviceInitializationInput`, defining and structuring intents, orchestrating multi-step (and context-switching) flows.
 - **Runtime contracts and observability** — completion, intent/context co-changes, cancellation, callbacks, interactive jobs, idle state.
 - **Pitfalls and common mistakes** when integrating.
@@ -275,27 +275,29 @@ sequenceDiagram
 
 ## Design rules
 
-The DIE is the main way to run a device flow in Ledger Wallet, such as signing
-flows. Device management flows, such as My Ledger and onboarding, have their
-own. These rules keep the DIE simple and keep the device UX the same in every
-flow that uses it. They apply to the callers, to the app wrappers and to the
-package itself.
+The Device Intent Executor is the main way to run a device flow in Ledger
+Wallet, such as signing flows. Device management flows, such as My Ledger and
+onboarding, have their own. These rules keep the Device Intent Executor simple
+and keep the device UX the same in every flow that uses it. They apply to the
+callers, to the app wrappers and to the package itself.
 
 ### Principles
 
-1. **Change the DIE only for a product need that flows share.** Each option
-   added to the DIE is one more way to use it. A change needs a need that
-   several flows share, agreed with the device team (`@ledgerhq/live-devices`).
-   A single flow or a devtool adapts to the DIE, not the other way round.
-2. **Let the DIE handle device states and errors.** The DIE shows each device
-   state and error (device locked, unsupported firmware, no storage left,
-   disconnection…) with the right screen and actions, and the user closes it
-   (`onUserCancel`). Do not close or unmount the executor because of a device
+1. **Change the Device Intent Executor only for a product need that flows
+   share.** Each option added to it is one more way to use it. A change needs a
+   need that several flows share, agreed with the device team
+   (`@ledgerhq/live-devices`). A single flow or a devtool adapts to the
+   Device Intent Executor, not the other way round.
+2. **Let the Device Intent Executor handle device states and errors.** It shows
+   each device state and error (device locked, unsupported firmware, no storage
+   left, disconnection…) with the right screen and actions, and the user closes
+   it (`onUserCancel`). Do not close or unmount the executor because of a device
    state, and do not rebuild error handling on top of it: each copy drifts from
-   the others and from the device UX. If the DIE handles a case badly, improve
-   the DIE (principle 1).
-3. **Follow the existing architecture.** Add to the DIE the way its existing
-   parts were added. The rules below apply this to the common cases.
+   the others and from the device UX. If the Device Intent Executor handles a
+   case badly, improve it (principle 1).
+3. **Follow the existing architecture.** Add to the Device Intent Executor the
+   way its existing parts were added. The rules below apply this to the common
+   cases.
 
 ### Rules for changes
 
