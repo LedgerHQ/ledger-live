@@ -77,39 +77,47 @@ export function createInjector({
     userdata: Userdata;
     side: Side;
   }): Promise<void> {
-    const { data, meta } = encodeStorage(storageEntries(userdata));
+    const written = storageEntries(userdata);
+    const { data, meta } = encodeStorage(written);
     for (const d of devices) await P.stop(d);
     await P.writeStorage(device, { [STORAGE_FILE]: data, [STORAGE_META_FILE]: meta });
     await P.clearDialogs(device);
     await P.launch(device);
     await sleep(FIRST_LAUNCH_MS);
     await P.stop(device);
-    await checkSaved({ platform: P, device, side, accounts: userdata.accounts.length });
+    await checkSaved({ platform: P, device, side, written, accounts: userdata.accounts.length });
   };
 }
 
 /**
  * Fails when the app dropped the storage file (MMKV discards one whose CRC does not match) or any
- * account of it (one it does not support): A and B must start from the same accounts.
+ * account of it (one it does not support): A and B must start from the same accounts. A dropped
+ * account's record stays until the app saves accounts, so one must have been saved again.
  */
 async function checkSaved({
   platform: P,
   device,
   side,
+  written,
   accounts,
 }: {
   platform: Platform;
   device: string;
   side: Side;
+  written: Array<[string, string]>;
   accounts: number;
 }): Promise<void> {
   const data = await P.readStorage(device, STORAGE_FILE);
   if (!data) throw new Error(`build ${side} on ${device}: no storage after the first launch`);
-  const saved = savedState(decodeStorage(data, await P.readStorage(device, STORAGE_META_FILE)));
-  if (!saved.termsAccepted || saved.accounts !== accounts) {
+  const saved = savedState(
+    decodeStorage(data, await P.readStorage(device, STORAGE_META_FILE)),
+    written,
+  );
+  const kept = `keeps ${saved.accounts} of ${accounts} accounts (${saved.resaved} saved again)`;
+  if (!saved.termsAccepted || saved.accounts !== accounts || (accounts > 0 && !saved.resaved)) {
     throw new Error(
-      `build ${side} on ${device}: after its first launch the app keeps ${saved.accounts} of the ${accounts} accounts written, terms ${saved.termsAccepted ? "" : "not "}accepted`,
+      `build ${side} on ${device}: after its first launch the app ${kept}, terms ${saved.termsAccepted ? "" : "not "}accepted: it must keep the terms and every account, and save one again (a sync) to show it loaded them`,
     );
   }
-  log(`  ${device}: build ${side} keeps ${saved.accounts} of ${accounts} accounts`);
+  log(`  ${device}: build ${side} ${kept}`);
 }

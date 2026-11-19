@@ -126,20 +126,33 @@ export function storageEntries(userdata: Userdata): Array<[string, string]> {
 
 export interface SavedState {
   accounts: number;
+  /** Account records the app saved again, so differing from the ones written. */
+  resaved: number;
   termsAccepted: boolean;
 }
 
 /**
- * The accounts and terms the app keeps in its storage: none of either when it dropped the file.
- * It loads one account per `accounts.active.*` record (`accounts.sort` only orders them).
+ * The accounts and terms the app keeps in its storage, against the `written` entries: none of
+ * either when it dropped the file. It loads one account per `accounts.active.*` record
+ * (`accounts.sort` only orders them), and saves accounts only once one changes (a sync), deleting
+ * then the record of any account it did not load: a resaved record shows that deletion ran.
  */
-export function savedState(values: Map<string, Buffer>): SavedState {
+export function savedState(
+  values: Map<string, Buffer>,
+  written: Array<[string, string]>,
+): SavedState {
+  const writtenValues = new Map(written);
   const value = values.get("settings");
   const settings = value
     ? (JSON.parse(stringValue(value)) as { generalTermsVersionAccepted?: unknown })
     : undefined;
+  const accountKeys = [...values.keys()].filter(key => key.startsWith(ACCOUNT_KEY_PREFIX));
   return {
-    accounts: [...values.keys()].filter(key => key.startsWith(ACCOUNT_KEY_PREFIX)).length,
+    accounts: accountKeys.length,
+    resaved: accountKeys.filter(key => {
+      const saved = values.get(key);
+      return saved !== undefined && stringValue(saved) !== writtenValues.get(key);
+    }).length,
     termsAccepted: settings?.generalTermsVersionAccepted === GENERAL_TERMS_VERSION,
   };
 }

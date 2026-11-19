@@ -129,24 +129,37 @@ describe("storageEntries", () => {
 });
 
 describe("savedState", () => {
-  it("counts the saved accounts and sees the accepted terms", () => {
-    const { data, meta } = encodeStorage(storageEntries(USERDATA));
-    assert.deepEqual(savedState(decodeStorage(data, meta)), { accounts: 2, termsAccepted: true });
+  const written = storageEntries(USERDATA);
+  const saved = (entries: Array<[string, string]>) => {
+    const { data, meta } = encodeStorage(entries);
+    return savedState(decodeStorage(data, meta), written);
+  };
+  const synced = (key: string, value: string): string =>
+    key.startsWith("accounts.active.")
+      ? JSON.stringify({ ...JSON.parse(value), lastSyncDate: "2026-11-19" })
+      : value;
+
+  it("counts the account records and those the app saved again, and sees the accepted terms", () => {
+    assert.deepEqual(saved(written), { accounts: 2, resaved: 0, termsAccepted: true });
+    const oneSynced = written.map(([key, value]): [string, string] => [
+      key,
+      key === "accounts.active.js:2:solana:B:" ? synced(key, value) : value,
+    ]);
+    assert.deepEqual(saved(oneSynced), { accounts: 2, resaved: 1, termsAccepted: true });
   });
 
   it("counts the account records the app loads, not the ids of the order", () => {
-    const entries = storageEntries(USERDATA).filter(
-      ([key]) => key !== "accounts.active.js:2:solana:B:",
-    );
-    const { data, meta } = encodeStorage(entries);
-    assert.deepEqual(savedState(decodeStorage(data, meta)), { accounts: 1, termsAccepted: true });
+    const entries = written.filter(([key]) => key !== "accounts.active.js:2:solana:B:");
+    assert.deepEqual(saved(entries), { accounts: 1, resaved: 0, termsAccepted: true });
   });
 
   it("finds neither in the storage of an app that dropped the file", () => {
-    const { data, meta } = encodeStorage([
-      ["migration-status", "completed"],
-      ["settings", "{}"],
-    ]);
-    assert.deepEqual(savedState(decodeStorage(data, meta)), { accounts: 0, termsAccepted: false });
+    assert.deepEqual(
+      saved([
+        ["migration-status", "completed"],
+        ["settings", "{}"],
+      ]),
+      { accounts: 0, resaved: 0, termsAccepted: false },
+    );
   });
 });
