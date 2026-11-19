@@ -35,13 +35,13 @@ describe("renderer storage", () => {
 
   it("sends the debounced writes to main on flush", async () => {
     setKey("app", "ptx", { lastScreen: "swap" });
-    setKey("app", "history", { lastSeenOperationDate: null });
+    setKey("app", "coinConfigOverrides", { overrides: {} });
     expect(db.setKey).not.toHaveBeenCalled();
 
     await flushPendingWrites();
 
     expect(db.setKey).toHaveBeenCalledWith("app", "ptx", { lastScreen: "swap" });
-    expect(db.setKey).toHaveBeenCalledWith("app", "history", { lastSeenOperationDate: null });
+    expect(db.setKey).toHaveBeenCalledWith("app", "coinConfigOverrides", { overrides: {} });
   });
 
   it("waits on flush until main has the write", async () => {

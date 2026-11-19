@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "LLD/hooks/redux";
+import { useSelector, useDispatch, useStore } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { setEncryptionKey, isEncryptionKeyCorrect, hasBeenDecrypted } from "~/renderer/storage";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";
-import { fetchAccounts } from "~/renderer/actions/accounts";
+import { encryptedRecordsLoaded, hydrateEncryptedRecords } from "~/persistence/composition";
 import { fetchTrustchain } from "~/renderer/actions/trustchain";
 import { unlock } from "~/renderer/actions/application";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
@@ -20,6 +20,7 @@ import Logo from "~/renderer/icons/Logo";
 
 export default function IsUnlocked({ children }: { children: React.ReactNode }): React.JSX.Element {
   const dispatch = useDispatch();
+  const store = useStore();
   const { t } = useTranslation();
   const hardReset = useHardReset();
   const [inputValue, setInputValue] = useState<InputValue>({
@@ -52,10 +53,13 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
         const isAccountDecrypted = await hasBeenDecrypted();
         if (!isAccountDecrypted) {
           await setEncryptionKey(inputValue.password);
-          await dispatch(fetchAccounts());
-          await dispatch(fetchTrustchain());
         } else if (!(await isEncryptionKeyCorrect(inputValue.password))) {
           throw new PasswordIncorrectError();
+        }
+        // Also after a first try whose hydration failed: the app never unlocks without them.
+        if (!encryptedRecordsLoaded(store.getState())) {
+          await hydrateEncryptedRecords(store);
+          await dispatch(fetchTrustchain());
         }
         dispatch(unlock());
       } catch {
@@ -67,7 +71,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
         setSubmitting(false);
       }
     },
-    [inputValue, dispatch, submitting],
+    [inputValue, dispatch, store, submitting],
   );
   const handleOpenHardResetModal = useCallback(
     () => setIsHardResetModalOpened(true),

@@ -6,6 +6,7 @@ import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
 import dynamicContent, { DynamicContentState } from "./dynamicContent";
 import history, { HistoryState } from "./history";
+import { persistenceSlice, type PersistenceState } from "@features/platform-persistence";
 import modals, { ModalsState } from "./modals";
 import UI, { UIState } from "./UI";
 import settings, { SettingsState } from "./settings";
@@ -108,6 +109,7 @@ export type State = LLDRTKApiState & {
   dynamicContent: DynamicContentState;
   featureFlags: FeatureFlagsState;
   history: HistoryState;
+  persistence: PersistenceState;
   identities: IdentitiesState;
   market: MarketState;
   marketBanner: MarketBannerState;
@@ -165,6 +167,7 @@ const appReducer = combineReducers({
   dynamicContent,
   featureFlags,
   history,
+  persistence: persistenceSlice.reducer,
   identities: identitiesSlice.reducer,
   modals,
   modularDialog,
