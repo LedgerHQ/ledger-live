@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Boots the two Android emulators the measurement alternates on (emulator-5554 and emulator-5556)
-# and waits until both are on cellular and idle. Run from the repo root, after the AVD and its
-# copy exist (AVD_NAME, AVD_NAME_2):
+# Boots the two Android emulators the measurement alternates on (emulator-5554 and emulator-5556),
+# or the first alone (count 1, the accounts snapshot), and waits until they are on cellular and
+# idle. Run from the repo root, after the AVD and, for two, its copy exist (AVD_NAME, AVD_NAME_2):
 #
-#   boot-emulators.sh <log_dir>
+#   boot-emulators.sh <log_dir> [count]
 set -euo pipefail
 : "${ANDROID_HOME:?}" "${AVD_NAME:?}" "${PERF_AVD_CORES:?}"
 
 log_dir="${1:?log directory}"
+count="${2:-2}"
 read -ra avd_options <<< "${AVD_OPTIONS:-}"
 BOOT_TIMEOUT_S=900
 CELLULAR_POLLS=30
@@ -75,10 +76,14 @@ wait_until_idle() {
 
 tools/scripts/cleanup-android-emulators.sh || true
 mkdir -p "$log_dir"
+serials=(emulator-5554)
 start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
-start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
-for serial in emulator-5554 emulator-5556; do prepare "$serial"; done
-for serial in emulator-5554 emulator-5556; do switch_to_cellular "$serial"; done
+if ((count > 1)); then
+  serials+=(emulator-5556)
+  start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
+fi
+for serial in "${serials[@]}"; do prepare "$serial"; done
+for serial in "${serials[@]}"; do switch_to_cellular "$serial"; done
 deadline=$((SECONDS + IDLE_TIMEOUT_S))
-for serial in emulator-5554 emulator-5556; do wait_until_idle "$serial" "$deadline"; done
+for serial in "${serials[@]}"; do wait_until_idle "$serial" "$deadline"; done
 adb devices

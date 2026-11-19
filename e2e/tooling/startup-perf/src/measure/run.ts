@@ -6,13 +6,18 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { createAndroid } from "./platforms/android.ts";
 import { errorMessage, insideWorkingDir, log, sleep } from "./exec.ts";
-import { createInjector, loadUserdata } from "./inject.ts";
+import {
+  createInjector,
+  loadUserdata,
+  snapshotStorage,
+  userdataStorage,
+  type StartingStorage,
+} from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
 import { createStartupLineWriters, createStartupLogReader } from "./startup-log.ts";
 import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
-import type { Userdata } from "./types.ts";
 
 const { values: opts } = parseArgs({
   options: {
@@ -28,6 +33,8 @@ const { values: opts } = parseArgs({
       type: "string",
       default: "speculos-x-other-account,swap-history",
     },
+    // The accounts scenario's storage from src/snapshot/run.ts, in place of its userdata.
+    "accounts-snapshot": { type: "string" },
     pairs: { type: "string", default: "20" },
     warmups: { type: "string", default: "1" },
     "idle-ms": { type: "string", default: "2000" },
@@ -254,7 +261,7 @@ function writeMeta(): Promise<void> {
         read: READ,
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
-          accounts: opts["accounts-userdata"],
+          accounts: opts["accounts-snapshot"] ?? opts["accounts-userdata"],
         },
       },
       null,
@@ -270,24 +277,24 @@ function layout(phase: number): { placement: Record<Side, string>; order: Side[]
     : { placement: { A: DEVICES[1], B: DEVICES[0] }, order: ["B", "A"] };
 }
 
-/** Installs a build and imports the scenario's userdata into it, retrying the import once. */
+/** Installs a build and writes the scenario's storage into it, retrying the injection once. */
 async function installAndInject({
   scenario,
   side,
   device,
-  userdata,
+  storage,
 }: {
   scenario: string;
   side: Side;
   device: string;
-  userdata: Userdata;
+  storage: StartingStorage;
 }): Promise<void> {
   log(`installing ${side} on ${device} and injecting ${scenario}`);
   await P.install(device, APPS[side]);
-  await inject({ device, userdata, side }).catch(async (error: unknown) => {
+  await inject({ device, storage, side }).catch(async (error: unknown) => {
     log(`  injection failed (${errorMessage(error)}); retrying once`);
     await P.stop(device);
-    await inject({ device, userdata, side });
+    await inject({ device, storage, side });
   });
   // The injection is a launch: it takes the slowdown of a screen read before it.
   screenReadSinceLaunch = false;
@@ -306,19 +313,26 @@ async function launchEach({
   }
 }
 
-async function measureScenario(scenario: string): Promise<void> {
+async function startingStorage(scenario: string): Promise<StartingStorage> {
+  const snapshot = opts["accounts-snapshot"];
+  if (scenario === "accounts" && snapshot) return snapshotStorage(insideWorkingDir(snapshot));
   const userdata = await loadUserdata({
     dir: insideWorkingDir(opts["userdata-dir"]),
     names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
   });
-  log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
+  return userdataStorage(userdata);
+}
+
+async function measureScenario(scenario: string): Promise<void> {
+  const storage = await startingStorage(scenario);
+  log(`=== ${scenario}: ${storage.accounts} accounts from ${storage.source}`);
   read = READ;
   lineWriters.clear();
   for (const phase of [0, 1]) {
     // A measured launch never follows one on the same device; a warm-up after a check can.
     const { placement, order } = layout(phase);
     for (const side of order) {
-      await installAndInject({ scenario, side, device: placement[side], userdata });
+      await installAndInject({ scenario, side, device: placement[side], storage });
     }
     // In turn, like the rounds: no build starts round 0 after idling through the other's warm-ups.
     for (let w = 0; w < WARMUPS; w++) {

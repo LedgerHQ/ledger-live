@@ -78,8 +78,10 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       const file = path.join(await storageDir(device), path.basename(name));
       return readFile(file).catch(() => null);
     },
-    async launch(device) {
-      const { stdout } = await run("xcrun", ["simctl", "launch", device, appId]);
+    async launch(device, launchArgs = {}) {
+      // react-native-launch-arguments reads "-key value" pairs from the process arguments.
+      const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
+      const { stdout } = await run("xcrun", ["simctl", "launch", device, appId, ...args]);
       const pid = Number(/:\s*(\d+)\s*$/m.exec(stdout)?.[1]);
       pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
       return {};

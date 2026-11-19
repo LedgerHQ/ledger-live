@@ -32,7 +32,11 @@ export interface Platform {
   stop(device: string): Promise<void>;
   /** Stops Maestro's on-device driver, so the next call starts a fresh one. */
   stopDriver(device: string): Promise<void>;
-  launch(device: string): Promise<{ amStartMs?: number | null }>;
+  /** Launches the app, with the launch arguments react-native-launch-arguments reads, if any. */
+  launch(
+    device: string,
+    launchArgs?: Record<string, string | number>,
+  ): Promise<{ amStartMs?: number | null }>;
   /** Writes files, by name, into the storage directory of the app, which must not be running. */
   writeStorage(device: string, files: Record<string, Buffer>): Promise<void>;
   /** A file of the app's storage directory, or null when there is none. */

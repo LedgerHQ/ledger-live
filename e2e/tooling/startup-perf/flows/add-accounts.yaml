@@ -1,0 +1,51 @@
+# Adds the accounts the scan finds for one coin on the Speculos the app has registered, as
+# e2e/mobile's add-account steps do: TICKER, and NETWORK for a coin that asks for one.
+# src/snapshot/run.ts runs it once per coin.
+appId: com.ledger.live
+env:
+  NETWORK: ""
+---
+- runFlow:
+    when:
+      visible:
+        id: "bottom-sheet-header-close-button"
+    commands:
+      - tapOn:
+          id: "bottom-sheet-header-close-button"
+- openLink: ledgerlive://add-account
+- extendedWaitUntil:
+    visible:
+      id: "add-accounts-modal-add-button|modular-drawer-search-input"
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        id: "add-accounts-modal-add-button"
+    commands:
+      - tapOn:
+          id: "add-accounts-modal-add-button"
+- tapOn:
+    id: "modular-drawer-search-input"
+- inputText: ${TICKER}
+- tapOn:
+    id: "asset-item-${TICKER}"
+- runFlow:
+    when:
+      true: ${NETWORK != ''}
+    commands:
+      - tapOn:
+          id: "network-item-${NETWORK}"
+# The scan of every derivation path, on Speculinho.
+- extendedWaitUntil:
+    visible:
+      id: "enabled-add-accounts-continue-button"
+    timeout: 240000
+# Every account the scan found is selected: the snapshot keeps them all.
+- tapOn:
+    id: "enabled-add-accounts-continue-button"
+- extendedWaitUntil:
+    visible:
+      id: "button-close-add-account"
+    timeout: 60000
+- tapOn:
+    id: "button-close-add-account"

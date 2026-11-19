@@ -49,7 +49,6 @@ const INPUTS: PlanInputs = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  accountsUserdata: "speculos-x-other-account,swap-history",
   read: "log",
   branchSha: SHA(9),
   branchName: "ci/branch",
@@ -178,7 +177,6 @@ describe("inputsOf", () => {
     PAIRS: "",
     THRESHOLD: "100",
     SCENARIOS: "accounts",
-    ACCOUNTS_USERDATA: "swap-history",
     READ: "both",
     BRANCH_SHA: SHA(9),
     GITHUB_REF_NAME: "ci/branch",
@@ -206,10 +204,10 @@ describe("inputsOf", () => {
 });
 
 describe("outputsOf and summaryOf", () => {
-  for (const accountsUserdata of [`swap-history\nref_a=${SHA(7)}`, "swap-history\r"]) {
-    it(`refuses an output that spans lines: ${JSON.stringify(accountsUserdata)}`, () => {
-      const plan = planBuilds({ ...INPUTS, accountsUserdata }, fakeLsRemote());
-      assert.throws(() => outputsOf(plan), /accounts_userdata must be on one line/);
+  for (const read of [`log\nref_a=${SHA(7)}`, "log\r"]) {
+    it(`refuses an output that spans lines: ${JSON.stringify(read)}`, () => {
+      const plan = planBuilds({ ...INPUTS, read }, fakeLsRemote());
+      assert.throws(() => outputsOf(plan), /read must be on one line/);
     });
   }
 
@@ -228,8 +226,9 @@ describe("outputsOf and summaryOf", () => {
         "platforms=Android & iOS",
         "pairs=20",
         "threshold_ms=100",
-        "accounts_userdata=speculos-x-other-account,swap-history",
         "read=log",
+        "snapshot_release=live-mobile@4.27.1",
+        `snapshot_ref=${SHA(5)}`,
         "",
       ].join("\n"),
     );
@@ -237,5 +236,12 @@ describe("outputsOf and summaryOf", () => {
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
     );
+    assert.match(summaryOf(plan, INPUTS, "4"), /- Accounts: the snapshot live-mobile@4\.27\.1's/);
+  });
+
+  it("names no snapshot release when the run has no accounts scenario", () => {
+    const plan = planBuilds({ ...INPUTS, scenarios: "no-accounts" }, fakeLsRemote());
+    assert.match(outputsOf(plan), /\nsnapshot_release=\nsnapshot_ref=\n$/);
+    assert.doesNotMatch(summaryOf(plan, INPUTS, "4"), /Accounts:/);
   });
 });

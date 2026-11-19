@@ -108,6 +108,12 @@ export function stringValue(value: Buffer): string {
   return value.toString("utf8", start, start + length);
 }
 
+/** Whether a value is one string, as the app stores every value: its length covers the rest. */
+export function isStringValue(value: Buffer): boolean {
+  const [length, start] = readVarint(value, 0);
+  return start + length === value.length;
+}
+
 /** What a fresh install saves once the E2E bridge imported `userdata`, terms accepted. */
 export function storageEntries(userdata: Userdata): Array<[string, string]> {
   const entries: Array<[string, string]> = [MIGRATION_DONE];
