@@ -8,6 +8,7 @@ const setup = (notes: string | null = "## Ledger Recover\n\nAn **optional** serv
   const onOpenReleaseNotes = jest.fn();
   const utils = render(
     <WhatsNewScreen
+      name="5.4.3-il3"
       version="5.4.3"
       notes={notes}
       onOpenReleaseNotes={onOpenReleaseNotes}
@@ -23,7 +24,7 @@ describe("WhatsNewScreen", () => {
     setup();
 
     expect(screen.getByText("LedgerOS™")).toBeVisible();
-    expect(screen.getByText("Version 5.4.3")).toBeVisible();
+    expect(screen.getByText("Version 5.4.3-il3")).toBeVisible();
     expect(screen.getByText(/Ensure your 24 words Secret Recovery Phrase/)).toBeVisible();
     expect(screen.getByText("What’s in this OS update?")).toBeVisible();
   });
