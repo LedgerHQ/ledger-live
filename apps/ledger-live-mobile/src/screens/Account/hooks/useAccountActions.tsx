@@ -10,7 +10,9 @@ import {
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@features/platform-feature-flags";
@@ -28,6 +30,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenSwap } from "LLM/features/Swap";
 import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 type Props = {
   account: AccountLike;
@@ -45,6 +48,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const route = useRoute();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
 
@@ -222,25 +226,19 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     [shouldUseNewFlow, account, parentAccount, extraSendActionParams, t, isZeroBalance],
   );
 
+  const getReceiveRoute = useReceiveRoute();
   const ReceiveAction = useMemo(
     () => ({
       id: "receive",
-      navigationParams: [
-        NavigatorName.ReceiveFunds,
-        {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            accountId: account.id,
-            currency,
-          },
-        },
-      ],
+      // The route is read on press: the flag or the account data may change after render.
+      customHandler: () =>
+        navigation.navigate(...getReceiveRoute({ accountId: account.id, currency })),
       label: t("account.receive"),
       event: "AccountReceive",
       Icon: IconsLegacy.ArrowBottomMedium,
       ...extraReceiveActionParams,
     }),
-    [extraReceiveActionParams, t, account.id, currency],
+    [getReceiveRoute, navigation, extraReceiveActionParams, t, account.id, currency],
   );
 
   const platformStakeRoute = useMemo(
