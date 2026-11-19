@@ -1471,6 +1471,16 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
     },
 );
 
+export const acceptPerpsDeposit = withDeviceController(({ getButtonsController }) => async () => {
+  await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+  await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await getButtonsController().both();
+  }
+});
+
 export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
   ({ getButtonsController }) =>
     async (

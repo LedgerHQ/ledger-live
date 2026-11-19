@@ -8,6 +8,7 @@ import {
   expectValidAddressDevice,
   signSendTransaction,
   signDelegationTransaction,
+  acceptPerpsDeposit,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
@@ -108,6 +109,11 @@ export class SpeculosPage extends AppPage {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
     }
+  }
+
+  @step("Accept the Perps deposit on the device")
+  async acceptPerpsDeposit() {
+    await acceptPerpsDeposit();
   }
 
   @step("Verify amounts and accept swap for different seed")
