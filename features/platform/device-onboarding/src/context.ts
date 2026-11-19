@@ -153,6 +153,7 @@ export const contextActions = {
     successAcknowledgedOnSession: null,
   }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.
+  // The polling pause is not reset here: the Recover app still owns the device on the new session.
   startNewSession: update(({ event }) => {
     if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
       return {};
@@ -163,7 +164,6 @@ export const contextActions = {
       firmware: null,
       lastGenuineFailure: null,
       checksPaused: false,
-      pollingPaused: false,
     };
   }),
   // The update reboots the device onto a new session: it goes through the genuine check again.

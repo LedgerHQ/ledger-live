@@ -150,6 +150,8 @@ export const deviceOnboardingMachine = setup({
     QUIT: ".quitting",
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
+    // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.
+    RESUME_POLLING: { actions: "resumePolling" },
   },
   output: ({ context, event }) => exitContract(context, event.output),
   states: {
@@ -390,14 +392,13 @@ export const deviceOnboardingMachine = setup({
 
     deviceSetup: {
       initial: "waiting",
-      entry: "resumePolling",
-      exit: "resumePolling",
       invoke: {
         id: "seedPolling",
         src: "seedPolling",
         input: ({ context }) => ({
           dmk: context.dmk,
           sessionId: context.sessionId,
+          paused: context.pollingPaused,
         }),
       },
       on: {

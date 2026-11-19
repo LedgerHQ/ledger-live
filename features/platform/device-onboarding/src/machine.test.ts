@@ -1748,6 +1748,54 @@ describe("device setup", () => {
     expect(actor.getSnapshot().context.pollingPaused).toBe(false);
   });
 
+  it("keeps polling paused across a lock while Recover owns the device", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    expect(stateOf(actor)).toBe("deviceLocked");
+
+    unlock();
+    await wait(1100);
+    await settle();
+    const callsWhenBack = fake.sendCommand.mock.calls.length;
+    await wait(1100);
+
+    expect(stateOf(actor)).toBe("waiting");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhenBack);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+    actor.stop();
+  });
+
+  it("clears the pause on a resume sent while the device is locked", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    unlock();
+    await wait(1100);
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    actor.stop();
+  });
+
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
     const { actor, fake } = await launch(
       { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },
@@ -1845,6 +1893,24 @@ async function enterSetup(
     },
     overrides,
   );
+}
+
+function startOnRecoverRestore(): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
+  const recoverRestore: OsVersionResponseOptions = {
+    ...unseeded,
+    onboardingState: "restore-recover-backup",
+  };
+  return start({ osVersion: [os(unseeded), os(recoverRestore)], ...passingChecks });
+}
+
+// Every command fails until the returned function lets them through again.
+function lockDevice(fake: FakeOnboardingDmk): () => void {
+  const answer = fake.sendCommand.getMockImplementation();
+  fake.sendCommand.mockImplementation(() => Promise.reject(new Error("device is locked")));
+
+  return () => {
+    if (answer) fake.sendCommand.mockImplementation(answer);
+  };
 }
 
 async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {

@@ -374,7 +374,13 @@ export type HostNextState = {
 type MachineNode = typeof deviceOnboardingMachine.root;
 
 // The host sends these from any state, so listing them on every step adds nothing.
-const hiddenFromNextStates = new Set(["LOCKED", "TRANSPORT_LOST", "QUIT", "SESSION_CHANGED"]);
+const hiddenFromNextStates = new Set([
+  "LOCKED",
+  "TRANSPORT_LOST",
+  "QUIT",
+  "SESSION_CHANGED",
+  "RESUME_POLLING",
+]);
 
 /** The deepest active node is the current state. */
 function currentNode(snapshot: SnapshotFrom<typeof deviceOnboardingMachine>): MachineNode {

@@ -233,6 +233,27 @@ describe("seedPolling", () => {
     stop();
   });
 
+  it("starts paused and reads nothing until resumed", async () => {
+    const { dmk, sendCommand } = createFakeCommandDmk([reads(restoringWord(0))]);
+    const { received, send, stop } = runActor<SeedPollingEvent>(seedPolling, {
+      dmk,
+      sessionId: "session",
+      failureThreshold: 3,
+      paused: true,
+    });
+
+    await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);
+    expect(sendCommand).not.toHaveBeenCalled();
+    expect(received).toEqual([]);
+
+    send({ type: "RESUME" });
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(received.map(event => event.type)).toEqual(["STEP_CHANGED"]);
+    stop();
+  });
+
   it("should report a step change that happened while polling was paused", async () => {
     const { dmk, sendCommand } = createFakeCommandDmk([
       reads(restoringWord(0)),

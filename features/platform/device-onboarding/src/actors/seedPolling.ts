@@ -19,6 +19,8 @@ export type SeedPollingInput = {
   sessionId: DeviceSessionId;
   intervalMs?: number;
   failureThreshold?: number;
+  // Starts paused while the Recover app owns the device, so a relock or a new session does not poll it.
+  paused?: boolean;
 };
 
 export const defaultSeedPollingIntervalMs = 1000;
@@ -35,7 +37,7 @@ export const seedPolling = fromCallback<SeedPollingCommand, SeedPollingInput>(
     const failureThreshold = input.failureThreshold ?? defaultSeedPollingFailureThreshold;
 
     let stopped = false;
-    let paused = false;
+    let paused = input.paused ?? false;
     let polling = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let wakeWait: (() => void) | undefined;
@@ -111,7 +113,7 @@ export const seedPolling = fromCallback<SeedPollingCommand, SeedPollingInput>(
       if (wasPaused && !polling) void poll();
     });
 
-    void poll();
+    if (!paused) void poll();
 
     return () => {
       stopped = true;
