@@ -1,11 +1,14 @@
 import {
   DeviceStatus,
   GetAppAndVersionCommand,
+  GoToDashboardDeviceAction,
+  isDashboardName,
   isSuccessCommandResult,
   type ConnectedDevice,
   type DeviceManagementKit,
   type DeviceSessionId,
   type DiscoveredDevice,
+  type GoToDashboardDAInput,
 } from "@ledgerhq/device-management-kit";
 import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromCallback, fromPromise, setup } from "xstate";
@@ -29,7 +32,12 @@ import {
   type CheckErrorCauseStateMachineInput,
   type CheckErrorCauseStateMachineOutput,
 } from "./types";
-import { isDeviceDisconnectedError, isDeviceLockedError } from "@features/platform-device-kit";
+import {
+  createDeviceActionStateMachine,
+  isDeviceDisconnectedError,
+  isDeviceLockedError,
+  isOpenAppError,
+} from "@features/platform-device-kit";
 import { matchesRebootedDevice } from "./utils/matchesRebootedDevice";
 
 const LOG_TYPE = "OsUpdatesCheckErrorCause";
@@ -71,7 +79,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
         input,
       }: {
         input: { dmk: DeviceManagementKit; sessionId: DeviceSessionId };
-      }): Promise<void> => {
+      }): Promise<string> => {
         const result = await input.dmk.sendCommand({
           sessionId: input.sessionId,
           command: new GetAppAndVersionCommand(),
@@ -79,8 +87,12 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
         if (!isSuccessCommandResult(result)) {
           throw result.error;
         }
+        return result.data.name;
       },
     ),
+    goToDashboard: createDeviceActionStateMachine({
+      createDeviceAction: (input: GoToDashboardDAInput) => new GoToDashboardDeviceAction({ input }),
+    }),
     listenUntilDisconnected: fromCallback<
       CheckErrorCauseStateMachineEvent,
       { dmk: DeviceManagementKit; sessionId: DeviceSessionId }
@@ -188,6 +200,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
   guards: {
     isDeviceLocked: ({ context }) => isDeviceLockedError(context.error),
     isDeviceDisconnected: ({ context }) => isDeviceDisconnectedError(context.error),
+    isOpenApp: ({ context }) => isOpenAppError(context.error),
     isConnectionTimedOut: ({ context }) => context.isConnectionTimedOut,
   },
   delays: {
@@ -203,6 +216,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
   context: ({ input, self }) => ({
     ...input,
     result: null,
+    isUnexplained: false,
     rediscoveredDevice: null,
     isConnectionTimedOut: false,
     send: self.send,
@@ -221,6 +235,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
         {
           guard: "isDeviceDisconnected",
           target: "AwaitingDeviceReconnection",
+        },
+        {
+          guard: "isOpenApp",
+          target: "ProbeUnknownError",
         },
         {
           target: "IdentifyConnectionLoss",
@@ -256,6 +274,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // device action had dropped: a PIN lock, a drop that only surfaced now, or any other unexpected
     // error, which is unrecoverable. It never loops back to IdentifyConnectionLoss: the host stays
     // on its last state until this probe reaches a verdict.
+    // An app answering the probe explains the failure: apps reject the OS commands, so close it.
+    // An open-app error skips the settle window, since the device answered: the dashboard rejects
+    // the commands it does not know with the same status words, and only the probe tells them apart.
+    // The dashboard answering explains nothing: the host decides whether retrying is still worth it.
     ProbeUnknownError: {
       entry: { type: "logState", params: "ProbeUnknownError" },
       invoke: {
@@ -264,13 +286,41 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
           dmk: context.dmk,
           sessionId: context.connectedDevice.sessionId,
         }),
-        onDone: {
-          target: "Recovered",
-        },
+        onDone: [
+          {
+            guard: ({ event }) => !isDashboardName(event.output),
+            target: "GoToDashboard",
+          },
+          {
+            actions: assign({ isUnexplained: true }),
+            target: "Recovered",
+          },
+        ],
         onError: {
           actions: assign({ error: ({ event }) => event.error }),
           target: "CheckProbedErrorCause",
         },
+      },
+    },
+    GoToDashboard: {
+      entry: { type: "logState", params: "GoToDashboard" },
+      invoke: {
+        src: "goToDashboard",
+        input: ({ context }) => ({
+          dmk: context.dmk,
+          sessionId: context.connectedDevice.sessionId,
+          daInput: { unlockTimeout: 0 },
+        }),
+        onDone: [
+          {
+            guard: ({ event }) => event.output.isLeft(),
+            actions: assign({ error: ({ event }) => event.output.extract() }),
+            target: "CheckProbedErrorCause",
+          },
+          {
+            target: "Recovered",
+          },
+        ],
       },
     },
     CheckProbedErrorCause: {
@@ -471,6 +521,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
   },
   output: ({ context }): CheckErrorCauseStateMachineOutput =>
     context.result === CheckErrorCauseResult.Recovered
-      ? { result: context.result, connectedDevice: context.connectedDevice }
+      ? {
+          result: context.result,
+          connectedDevice: context.connectedDevice,
+          isUnexplained: context.isUnexplained,
+        }
       : { result: CheckErrorCauseResult.Unrecoverable },
 });

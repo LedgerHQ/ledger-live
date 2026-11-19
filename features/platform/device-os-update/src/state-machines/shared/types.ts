@@ -34,6 +34,7 @@ export type CheckErrorCauseStateMachineInput = {
 
 export type CheckErrorCauseStateMachineContext = CheckErrorCauseStateMachineInput & {
   result: CheckErrorCauseResult | null;
+  isUnexplained: boolean;
   rediscoveredDevice: DiscoveredDevice | null;
   isConnectionTimedOut: boolean;
   send: (event: CheckErrorCauseStateMachineEvent) => void;
@@ -66,6 +67,8 @@ export type CheckErrorCauseStateMachineOutput =
   | {
       result: CheckErrorCauseResult.Recovered;
       connectedDevice: ConnectedDevice;
+      /** The device answers from the dashboard but nothing explains the failure: retrying may not help. */
+      isUnexplained: boolean;
     }
   | {
       result: CheckErrorCauseResult.Unrecoverable;
