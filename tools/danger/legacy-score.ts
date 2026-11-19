@@ -10,7 +10,13 @@ export type ChangedFile = {
 
 export type CountLines = (path: string) => number | undefined;
 
-export type AreaLines = { area: Kind; label: string; added: number; deleted: number };
+export type AreaLines = {
+  area: Kind;
+  label: string;
+  ticket?: string;
+  added: number;
+  deleted: number;
+};
 
 export type AllowlistEntry = { path: string; reason: string; target: string; ticket: string };
 
@@ -31,6 +37,7 @@ const DEPENDENCY_BOT = "live-github-bot[bot]";
 
 const ALLOWLIST_FIELDS = ["path", "reason", "target", "ticket"] as const;
 const TICKET = /^LIVE-\d+$/;
+const JIRA_BROWSE = "https://ledgerhq.atlassian.net/browse/";
 
 export function isScoredAuthor(login: string): boolean {
   return login !== DEPENDENCY_BOT;
@@ -90,10 +97,10 @@ function isAllowlisted(path: string, entry: string): boolean {
 export function classify(
   path: string,
   allowlist: AllowlistEntry[] = [],
-): { area: Kind; label: string } | null {
+): { area: Kind; label: string; ticket?: string } | null {
   if (!SOURCE.test(path) || DECLARATION.test(path) || TEST.test(path)) return null;
   const allowed = allowlist.find(entry => isAllowlisted(path, entry.path));
-  if (allowed) return { area: "allowlisted", label: `${allowed.path} (${allowed.ticket})` };
+  if (allowed) return { area: "allowlisted", label: allowed.path, ticket: allowed.ticket };
   for (const { pattern, area } of RULES) {
     const match = pattern.exec(path);
     if (match) return area ? { area, label: match[0].replace(/\/$/, "") } : null;
@@ -236,7 +243,8 @@ const KIND_LABEL: Record<Kind, string> = {
 
 export function formatReport({ areas, newLines, legacyGrowth, score }: LegacyScoreReport): string {
   const rows = areas.map(
-    a => `| ${KIND_LABEL[a.area]} | \`${a.label}\` | +${a.added} | −${a.deleted} |`,
+    a =>
+      `| ${KIND_LABEL[a.area]} | \`${a.label}\`${a.ticket ? ` ([${a.ticket}](${JIRA_BROWSE}${a.ticket}))` : ""} | +${a.added} | −${a.deleted} |`,
   );
   return [
     `### ${scoreEmoji(score)} Architecture score: ${Math.floor(score * 100)}%`,

@@ -97,7 +97,8 @@ describe("classify", () => {
     assert.equal(classify(path)?.area, "legacy");
     assert.deepEqual(classify(path, allowlist), {
       area: "allowlisted",
-      label: "libs/ledger-live-common/src/account-data/full-sync/ (LIVE-38772)",
+      label: "libs/ledger-live-common/src/account-data/full-sync/",
+      ticket: "LIVE-38772",
     });
   });
 
@@ -251,7 +252,7 @@ describe("computeLegacyScore", () => {
     assert.equal(report.score, 1);
     assert.match(
       formatReport(report),
-      /allowlisted \| `libs\/ledger-live-common\/src\/account-data\/full-sync\/ \(LIVE-38772\)` \| \+500/,
+      /allowlisted \| `libs\/ledger-live-common\/src\/account-data\/full-sync\/` \(\[LIVE-38772\]\(https:\/\/ledgerhq\.atlassian\.net\/browse\/LIVE-38772\)\) \| \+500/,
     );
     assert.equal(computeLegacyScore(files).score, 60 / 560);
   });
