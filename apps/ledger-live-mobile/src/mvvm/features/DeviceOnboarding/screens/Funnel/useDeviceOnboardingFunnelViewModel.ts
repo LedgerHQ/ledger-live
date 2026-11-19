@@ -507,11 +507,10 @@ function useRestoreRecoverHandoff({
     }
     awaitingPollingResume.current = true;
     navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.Recover,
+      screen: ScreenName.DeviceOnboardingRecover,
       params: {
         platform: protectId,
         device: liveDevice ?? undefined,
-        fromOnboarding: true,
         redirectTo: "restore",
       },
     });

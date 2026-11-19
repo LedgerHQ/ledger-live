@@ -2611,11 +2611,10 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     rerender(undefined);
 
     expect(navigate).toHaveBeenCalledWith(NavigatorName.Base, {
-      screen: ScreenName.Recover,
+      screen: ScreenName.DeviceOnboardingRecover,
       params: {
         platform: "protect-simu",
         device,
-        fromOnboarding: true,
         redirectTo: "restore",
       },
     });
