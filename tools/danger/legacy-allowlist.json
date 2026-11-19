@@ -16,5 +16,11 @@
     "reason": "Transitional until each family derives its descriptor with a DMK signer kit",
     "target": "features/platform/account-discovery",
     "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/legacy-spike/",
+    "reason": "Spike: verify an allowlisted legacy folder passes",
+    "target": "features/platform/legacy-spike",
+    "ticket": "LIVE-41880"
   }
 ]
