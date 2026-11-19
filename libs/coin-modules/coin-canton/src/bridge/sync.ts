@@ -103,6 +103,71 @@ const groupKey = (hash: string, { instrumentId, instrumentAdmin }: Instrument, t
   [hash, instrumentId, instrumentAdmin, type].join("\n");
 
 /**
+ * A row's operation type and fee. `shownFee` joins the row's operation: its value too when the
+ * account paid it on an OUT or FEES row, and otherwise as a fee shown, not charged. A fee the
+ * account paid in another asset or on another type goes to `separateFeeAsset`. `paidFeeAsset` is
+ * the asset of any fee the account paid.
+ */
+function classifyRow(row: ValidOperationInfo, partyId: string) {
+  const [{ value: transferValue, details }] = row.transfers;
+  const type = determineOperationType(
+    details?.operationType,
+    row.type,
+    transferValue,
+    row.senders,
+    partyId,
+  );
+  const instrument = {
+    instrumentId: row.asset.instrumentId,
+    instrumentAdmin: row.asset.instrumentAdmin,
+  };
+  const feeInstrument = instrumentOf(row.fee.asset);
+  const fee = new BigNumber(row.fee.value);
+  const isOwnFee = feeInstrument !== undefined && isSameInstrument(feeInstrument, instrument);
+  const isPaid = PAYING_TYPES.has(type) && row.senders.includes(partyId) && fee.gt(0);
+  const joinsValue = isPaid && isOwnFee && CHARGED_TYPES.has(type);
+  const isSeparate = isPaid && !joinsValue;
+  return {
+    type,
+    instrument,
+    transferValue,
+    memo: details?.metadata?.reason,
+    fee,
+    shownFee: isOwnFee && !isSeparate ? fee : new BigNumber(0),
+    separateFeeAsset: isSeparate ? feeInstrument : undefined,
+    paidFeeAsset: isPaid ? feeInstrument : undefined,
+  };
+}
+
+/**
+ * Charges a fee paid outside its row on the transaction's OUT or FEES operation in the fee's
+ * asset, or else on a FEES operation of its own.
+ */
+function chargeSeparateFee(
+  groups: Map<string, OperationGroup>,
+  { row, instrument, fee }: { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber },
+  partyId: string,
+): void {
+  const payer = [...CHARGED_TYPES]
+    .map(type => groups.get(groupKey(row.transaction_hash, instrument, type)))
+    .find(group => group !== undefined);
+  if (payer) {
+    payer.fee = payer.fee.plus(fee);
+    return;
+  }
+  groups.set(groupKey(row.transaction_hash, instrument, "FEES"), {
+    row,
+    instrument,
+    type: "FEES",
+    transferValue: new BigNumber(0),
+    fee,
+    senders: new Set([partyId]),
+    recipients: new Set(),
+    memos: new Set(),
+  });
+}
+
+/**
  * Charges each fee in its own asset (ADR-068). A row's fee is that of its own transfer, and the
  * gateway sets it on the sender's row only. A fee in the row's asset joins the value of an OUT or
  * FEES row. Any other fee the account paid, in practice the CC fee of a token transfer or of a
@@ -131,28 +196,11 @@ function toOperations(
   };
 
   for (const row of rows) {
-    const [{ value: transferValue, details }] = row.transfers;
-    const type = determineOperationType(
-      details?.operationType,
-      row.type,
-      transferValue,
-      row.senders,
-      partyId,
-    );
-    const instrument = {
-      instrumentId: row.asset.instrumentId,
-      instrumentAdmin: row.asset.instrumentAdmin,
-    };
-    const feeInstrument = instrumentOf(row.fee.asset);
-    const fee = new BigNumber(row.fee.value);
-    const isOwnFee = feeInstrument !== undefined && isSameInstrument(feeInstrument, instrument);
-    const isPaid =
-      PAYING_TYPES.has(type) && row.senders.includes(partyId) && fee.gt(0) && !!feeInstrument;
-    const paidFee = isPaid ? feeInstrument : undefined;
-    const joinsValue = paidFee !== undefined && isOwnFee && CHARGED_TYPES.has(type);
+    const { type, instrument, transferValue, memo, fee, shownFee, separateFeeAsset, paidFeeAsset } =
+      classifyRow(row, partyId);
 
     if (pendingHashes.has(row.transaction_hash)) {
-      if (paidFee) addSeparateFee(row, paidFee, fee);
+      if (paidFeeAsset) addSeparateFee(row, paidFeeAsset, fee);
       continue;
     }
 
@@ -168,35 +216,15 @@ function toOperations(
       memos: new Set<string>(),
     };
     group.transferValue = group.transferValue.plus(transferValue);
-    const memo = details?.metadata?.reason;
     if (memo !== undefined) group.memos.add(memo);
-    // A fee on a row the account did not pay for is shown, not charged.
-    if (joinsValue || (isOwnFee && !paidFee)) group.fee = group.fee.plus(fee);
-    else if (paidFee) addSeparateFee(row, paidFee, fee);
+    group.fee = group.fee.plus(shownFee);
+    if (separateFeeAsset) addSeparateFee(row, separateFeeAsset, fee);
     row.senders.forEach(sender => group.senders.add(sender));
     row.recipients.forEach(recipient => group.recipients.add(recipient));
     groups.set(key, group);
   }
 
-  for (const { row, instrument, fee } of separateFees.values()) {
-    const payer = [...CHARGED_TYPES]
-      .map(type => groups.get(groupKey(row.transaction_hash, instrument, type)))
-      .find(group => group !== undefined);
-    if (payer) {
-      payer.fee = payer.fee.plus(fee);
-      continue;
-    }
-    groups.set(groupKey(row.transaction_hash, instrument, "FEES"), {
-      row,
-      instrument,
-      type: "FEES",
-      transferValue: new BigNumber(0),
-      fee,
-      senders: new Set([partyId]),
-      recipients: new Set(),
-      memos: new Set(),
-    });
-  }
+  for (const separate of separateFees.values()) chargeSeparateFee(groups, separate, partyId);
 
   return [...groups.values()].map(
     ({ row, instrument, type, transferValue, fee, senders, recipients, memos }) => ({
