@@ -1,0 +1,29 @@
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
+import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import type { useManagerDeviceAction } from "~/hooks/deviceActions";
+
+export type MyWalletDeviceListProps = {
+  /** Called when the Add mode starts and stops. My Wallet hides its other sections. */
+  onAddModeChange?: (isAdding: boolean) => void;
+};
+
+export type MyWalletDeviceListViewProps = {
+  isAdding: boolean;
+  topInset: number;
+  isPaused: boolean;
+  onConnected: (result: DeviceConnectionResult) => void;
+  onAddModeChange: (isAdding: boolean) => void;
+  onDeviceNotFound: () => void;
+  /** The device under the lock check, before the device action. */
+  deviceToCheck: Device | null;
+  onDeviceUnlocked: () => void;
+  onCloseLockedCheck: () => void;
+  /** The device of the My Ledger device action. */
+  device: Device | undefined;
+  action: ReturnType<typeof useManagerDeviceAction>;
+  onResult: (result: Result) => void;
+  onCloseModal: () => void;
+  onModalHide: () => void;
+  onError: (error: Error) => void;
+};
