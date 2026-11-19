@@ -1,0 +1,12 @@
+{
+  "name": "@ledgerhq/e2e-test-filter",
+  "targets": {
+    "test": {
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json"
+      ]
+    }
+  }
+}
