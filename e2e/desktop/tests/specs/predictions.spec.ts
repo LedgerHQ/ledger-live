@@ -27,27 +27,25 @@ test.describe("Predictions", () => {
     },
     async ({ app }) => {
       await app.mainNavigation.openDeeplink(predictionsDeeplink);
-      await app.predictionsDialog.expectTermsNotAccepted();
-      await app.predictionsDialog.expectRiskDisclaimer();
+      await app.predictionsTermsDialog.expectNotAccepted();
+      await app.predictionsTermsDialog.expectRiskDisclaimer();
 
-      await app.predictionsDialog.closeTerms();
+      await app.predictionsTermsDialog.close();
       await app.mainNavigation.validateTargetFromMainNavigation("home");
 
       await app.mainNavigation.openDeeplink(predictionsDeeplink);
-      await app.predictionsDialog.expectTermsNotAccepted();
-      await app.predictionsDialog.acknowledgeTerms();
-      await app.predictionsDialog.agreeAndContinue();
-      await app.predictionsDialog.expectConsentNotAccepted();
+      await app.predictionsTermsDialog.expectNotAccepted();
+      await app.predictionsTermsDialog.accept();
+      await app.predictionsConsentDialog.expectNotAccepted();
 
-      await app.predictionsDialog.closeConsent();
+      await app.predictionsConsentDialog.close();
       await app.mainNavigation.validateTargetFromMainNavigation("home");
 
       await app.mainNavigation.openDeeplink(predictionsDeeplink);
-      await app.predictionsDialog.expectConsentNotAccepted();
-      await app.predictionsDialog.expectTermsHidden();
-      await app.predictionsDialog.acceptConsent();
-      await app.predictionsDialog.continueFromConsent();
-      await app.predictionsDialog.expectAssetSelection();
+      await app.predictionsConsentDialog.expectNotAccepted();
+      await app.predictionsTermsDialog.expectHidden();
+      await app.predictionsConsentDialog.accept();
+      await app.modularDialog.checkAssetSelectionVisible();
     },
   );
 });

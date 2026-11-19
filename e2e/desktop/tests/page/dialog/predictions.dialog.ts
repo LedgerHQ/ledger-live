@@ -1,90 +1,52 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Dialog } from "tests/component/dialog.component";
 
-export class PredictionsDialog extends Dialog {
-  private readonly termsDialog = this.page.getByRole("dialog", { name: "Terms & Conditions" });
-  private readonly consentDialog = this.page.getByRole("dialog", {
-    name: "Clear signed trade on Polymarket via MoonPay",
-  });
+const CTA_LABELS = {
+  terms: "Agree and Continue",
+  consent: "Continue",
+} as const;
 
-  private readonly termsClose = this.termsDialog.getByRole("button", { name: "Close" });
-  private readonly consentClose = this.consentDialog.getByRole("button", { name: "Close" });
-  private readonly termsCheckbox = this.termsDialog.getByRole("checkbox");
-  private readonly termsCta = this.termsDialog.getByRole("button", { name: "Agree and Continue" });
-  private readonly consentCheckbox = this.consentDialog.getByRole("checkbox");
-  private readonly consentCta = this.consentDialog.getByRole("button", {
-    name: "Continue",
-    exact: true,
-  });
+type PredictionsStep = keyof typeof CTA_LABELS;
 
-  private readonly assetSelection = this.page.getByTestId("modular-dialog-screen-ASSET_SELECTION");
+export abstract class PredictionsDialog extends Dialog {
+  protected readonly stepType: PredictionsStep;
+  protected readonly dialog: Locator;
+  private readonly checkbox: Locator;
+  private readonly cta: Locator;
+  private readonly dismissButton: Locator;
 
-  @step("Verify the terms dialog is shown and not accepted")
-  async expectTermsNotAccepted() {
-    await expect(this.termsDialog).toBeVisible();
-    await expect(this.termsCheckbox).not.toBeChecked();
-    await expect(this.termsCta).toBeDisabled();
+  constructor(page: Page, stepType: PredictionsStep) {
+    super(page);
+    this.stepType = stepType;
+    this.dialog = this.page.getByTestId(`predictions-sheet-${stepType}`);
+    this.checkbox = this.dialog.getByRole("checkbox");
+    this.cta = this.dialog.getByRole("button", { name: CTA_LABELS[stepType], exact: true });
+    this.dismissButton = this.dialog.getByRole("button", { name: "Close" });
   }
 
-  @step("Verify the terms dialog shows the risk disclaimer")
-  async expectRiskDisclaimer() {
-    await this.softExpect(async soft => {
-      await soft(this.termsDialog).toContainText("total loss of funds");
-      await soft(this.termsDialog).toContainText("market and resolution risk");
-      await soft(this.termsDialog).toContainText("liquidity risk");
-      await soft(this.termsDialog).toContainText("smart contract risk");
-    });
+  @step("Verify the Predictions $stepType dialog is shown and not accepted")
+  async expectNotAccepted() {
+    await expect(this.dialog).toBeVisible();
+    await expect(this.checkbox).not.toBeChecked();
+    await expect(this.cta).toBeDisabled();
   }
 
-  @step("Close the terms dialog")
-  async closeTerms() {
-    await this.termsClose.click();
-    await expect(this.termsDialog).toBeHidden();
+  @step("Verify the Predictions $stepType dialog is not shown")
+  async expectHidden() {
+    await expect(this.dialog).toBeHidden();
   }
 
-  @step("Acknowledge the terms")
-  async acknowledgeTerms() {
-    await this.termsCheckbox.check();
-    await expect(this.termsCta).toBeEnabled();
+  @step("Close the Predictions $stepType dialog")
+  async close() {
+    await this.dismissButton.click();
+    await expect(this.dialog).toBeHidden();
   }
 
-  @step("Click Agree and Continue")
-  async agreeAndContinue() {
-    await this.termsCta.click();
-  }
-
-  @step("Verify the terms dialog is not shown")
-  async expectTermsHidden() {
-    await expect(this.termsDialog).toBeHidden();
-  }
-
-  @step("Verify the consent dialog is shown and not accepted")
-  async expectConsentNotAccepted() {
-    await expect(this.consentDialog).toBeVisible();
-    await expect(this.consentCheckbox).not.toBeChecked();
-    await expect(this.consentCta).toBeDisabled();
-  }
-
-  @step("Close the consent dialog")
-  async closeConsent() {
-    await this.consentClose.click();
-    await expect(this.consentDialog).toBeHidden();
-  }
-
-  @step("Accept the consent")
-  async acceptConsent() {
-    await this.consentCheckbox.check();
-    await expect(this.consentCta).toBeEnabled();
-  }
-
-  @step("Click Continue")
-  async continueFromConsent() {
-    await this.consentCta.click();
-  }
-
-  @step("Verify the Select asset drawer is shown")
-  async expectAssetSelection() {
-    await expect(this.assetSelection).toBeVisible();
+  @step("Accept the Predictions $stepType dialog")
+  async accept() {
+    await this.checkbox.check();
+    await expect(this.cta).toBeEnabled();
+    await this.cta.click();
   }
 }
