@@ -155,6 +155,9 @@ function assertAppNamespaceSetKeyAllowed(keyPath: string): void {
   }
 }
 
+/** The read in progress of each namespace file: a later read would replace the values set since. */
+const loadingNamespaces = new Map<string, Promise<unknown>>();
+
 /**
  * Reset memory state, db path, encryption keys, transforms..
  */
@@ -163,6 +166,7 @@ function init(_DBPath: string) {
   memoryNamespaces = {};
   encryptionKeys = {};
   saveTriggers.clear();
+  loadingNamespaces.clear();
 }
 
 /**
@@ -194,9 +198,16 @@ async function load(ns: string): Promise<unknown> {
   return memoryNamespaces[ns];
 }
 async function ensureNSLoaded(ns: string) {
-  if (!memoryNamespaces[ns]) {
-    await load(ns);
+  if (memoryNamespaces[ns]) return;
+  let loading = loadingNamespaces.get(ns);
+  if (!loading) {
+    const read = load(ns).finally(() => {
+      if (loadingNamespaces.get(ns) === read) loadingNamespaces.delete(ns);
+    });
+    loading = read;
+    loadingNamespaces.set(ns, read);
   }
+  await loading;
 }
 
 let reloading: Promise<void> = Promise.resolve();
@@ -496,6 +507,8 @@ async function resetAll() {
   await resetting;
 }
 async function deleteAppNamespace(dbPath: string) {
+  // A read already in progress would put the old data back in memory after the reset.
+  await loadingNamespaces.get("app")?.catch(() => undefined);
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
   // A write already in progress would put the old data back after the unlink.
