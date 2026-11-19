@@ -25,7 +25,7 @@ runs:
       env:
         INPUTS_ENABLE_BROADCAST: ${{ inputs.enable_broadcast }}
 
-    - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
+    - name: Set environment-specific API and live app variables
       id: set-envs
       shell: bash
       run: |

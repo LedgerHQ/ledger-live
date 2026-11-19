@@ -44,6 +44,7 @@ export class PortfolioPage extends AppPage {
   private readonly stocksSectionHeader = this.page.getByTestId("stocks-section-header-button");
   private readonly borrowEntryPoint = this.page.getByTestId("portfolio-borrow-entry-point");
   private readonly borrowEntryCtaButton = this.page.getByTestId("portfolio-borrow-entry-point-cta");
+  private readonly perpsEntryPoint = this.page.getByTestId("portfolio-perps-subheader-row");
 
   private getExpectedCounterValuePattern(counterValue: string): RegExp {
     const countervalueAliases: Record<string, RegExp> = {
@@ -329,5 +330,10 @@ export class PortfolioPage extends AppPage {
   @step("Click borrow entry point")
   async clickBorrowEntryPoint() {
     await this.borrowEntryCtaButton.click();
+  }
+
+  @step("Click perps entry point")
+  async clickPerpsEntryPoint() {
+    await this.perpsEntryPoint.click();
   }
 }
