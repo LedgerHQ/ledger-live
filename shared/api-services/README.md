@@ -18,6 +18,7 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 | `services/card`          | `cardApi`          | `@domain/api-card-management`                                                        |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed` |
 | `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`, `@domain/api-market-countervalues`, `@domain/api-ofac`   |
+| `services/earn`          | `earnApi`          | `@domain/api-earn-positions`                                                         |
 | `services/portfolio`     | `portfolioApi`     | `@domain/api-account-portfolio`                                                      |
 | `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                                           |
 
@@ -89,8 +90,8 @@ configureStore({
 ```
 
 **Or list several services once with `defineApiServices`.** Each service has a descriptor factory
-(`calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`, `portfolioService`,
-`pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
+(`calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`, `earnService`,
+`portfolioService`, `pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
 import or at `defineApiServices`: `createExtra` reads and validates every config once, at store
 creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, and trimmed
 before it reaches every service that sends it. Two services giving different values for one `extraArgument` key throw.
