@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -24,8 +25,9 @@
     "@domain/entity-currency": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/analytics": "workspace:*",
-    "@shared/analytics-react": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

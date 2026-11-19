@@ -2776,8 +2776,18 @@
   "receiveAddress": {
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
-      "gotItCta": "Got it"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
+    },
+    "addressVerified": {
+      "title": "Address verified",
+      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
+      "doneCta": "Done"
+    },
+    "addressMismatch": {
+      "title": "This address doesn't match your Ledger",
+      "description": "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
+      "contactSupportCta": "Contact Ledger Support",
+      "closeCta": "Close"
     }
   },
   "send": {
@@ -7235,6 +7245,9 @@
         "expiresAt": "Expires at",
         "expiresIn": "Expires in",
         "amount": "Amount",
+        "unknownToken": "Unknown token",
+        "instrumentId": "Instrument ID",
+        "instrumentAdmin": "Instrument admin",
         "transaction": "Transaction",
         "viewTransaction": "View transaction",
         "action": "Action",

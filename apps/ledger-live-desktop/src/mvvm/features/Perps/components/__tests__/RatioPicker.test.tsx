@@ -44,4 +44,12 @@ describe("RatioPicker", () => {
     expect(screen.getByTestId("perps-test-ratio-25%")).toBeDisabled();
     expect(screen.getByTestId("perps-test-ratio-MAX")).toBeDisabled();
   });
+
+  it("disables every pill when disabled, e.g. while the max is loading", () => {
+    render(<RatioPicker {...baseProps} disabled />);
+
+    for (const label of ["25%", "50%", "75%", "MAX"]) {
+      expect(screen.getByTestId(`perps-test-ratio-${label}`)).toBeDisabled();
+    }
+  });
 });

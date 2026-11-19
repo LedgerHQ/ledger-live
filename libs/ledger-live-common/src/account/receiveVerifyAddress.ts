@@ -7,6 +7,14 @@ import { loadAccountModuleForFamily } from "../coin-modules/registry";
 const toGetAddressPath = (path: string) => path.slice(2).replaceAll("h", "'");
 
 /** The `getAddress` call showing an `address` verification on the device; none for any other type. */
+export function toReceiveVerifyAddressOptions(
+  account: Account,
+  verification: Extract<ReceiveVerification, { type: "address" }>,
+): Promise<GetAddressOptions>;
+export function toReceiveVerifyAddressOptions(
+  account: Account,
+  verification: ReceiveVerification,
+): Promise<GetAddressOptions | undefined>;
 export async function toReceiveVerifyAddressOptions(
   account: Account,
   verification: ReceiveVerification,

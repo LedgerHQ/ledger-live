@@ -38,6 +38,7 @@ export type WatchedOnboardingContext = {
   firmwareChecked: boolean;
   firmwareUpToDate: boolean | null;
   onEarlyCheckScreen: boolean;
+  returningFromFirmwareUpdate: boolean;
   secureConnectionRequested: boolean;
   isGenuine: boolean | null;
   verdictMatchesSession: boolean | null;
@@ -80,6 +81,7 @@ export function flattenDeviceOnboardingContext(
     firmwareChecked: firmwareSettled(firmware),
     firmwareUpToDate: firmwareSettled(firmware) ? firmware.kind === "upToDate" : null,
     onEarlyCheckScreen: context.onEarlyCheckScreen,
+    returningFromFirmwareUpdate: context.returningFromFirmwareUpdate,
     secureConnectionRequested: snapshot.matches({ checks: { genuineCheck: "awaitingApproval" } }),
     isGenuine: verdict?.isGenuine ?? null,
     verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,

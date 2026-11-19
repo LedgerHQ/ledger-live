@@ -8,13 +8,14 @@ import {
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
+import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
-const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
+const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
 const statesThatAnswerTheUpdate = new Set([
   "checks.firmwareUpdateDelegated",
   "checks.checksDone",
