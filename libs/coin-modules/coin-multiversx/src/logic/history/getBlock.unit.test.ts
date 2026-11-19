@@ -73,6 +73,7 @@ describe("getBlock", () => {
           { type: "transfer", address: BOB, peer: ALICE, asset: NATIVE, amount: 1000n },
         ],
         fees: 50000000000000n,
+        feesAsset: NATIVE,
         feesPayer: ALICE,
       },
     ]);
@@ -203,6 +204,7 @@ describe("getBlock", () => {
         failed: false,
         operations: [{ type: "transfer", address: BOB, asset: NATIVE, amount: 528n }],
         fees: 0n,
+        feesAsset: NATIVE,
       },
     ]);
   });
@@ -220,7 +222,14 @@ describe("getBlock", () => {
       );
 
       expect(block.transactions).toEqual([
-        { hash: "TX", failed: true, operations: [], fees: 966010000000000n, feesPayer: ALICE },
+        {
+          hash: "TX",
+          failed: true,
+          operations: [],
+          fees: 966010000000000n,
+          feesAsset: NATIVE,
+          feesPayer: ALICE,
+        },
       ]);
     },
   );

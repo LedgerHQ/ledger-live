@@ -592,7 +592,11 @@ describe("listOperations", () => {
       expect(items).toEqual([
         expect.objectContaining({
           senders: [],
-          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePrivateBase }),
+          tx: expect.objectContaining({
+            feesPayer: address,
+            fees: mockedFeePrivateBase,
+            feesAsset: { type: "native" },
+          }),
         }),
       ]);
     });

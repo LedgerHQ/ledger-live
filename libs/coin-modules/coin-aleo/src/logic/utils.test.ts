@@ -1054,6 +1054,7 @@ describe("toPrivateFeeOperation", () => {
       details: { functionId: "fee_private", transactionType: "private", ledgerOpType: "FEES" },
       tx: {
         fees: 2318n,
+        feesAsset: { type: "native" },
         feesPayer: testnetAddress,
         hash: "at1join",
         date: new Date(1704067200 * 1000),

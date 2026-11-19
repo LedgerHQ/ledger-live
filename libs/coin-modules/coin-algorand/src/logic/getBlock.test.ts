@@ -119,6 +119,7 @@ describe("getBlock", () => {
           { type: "transfer", address: BOB, peer: ALICE, asset: NATIVE, amount: 5000000n },
         ],
         fees: 1000n,
+        feesAsset: NATIVE,
         feesPayer: ALICE,
         details: { txType: "pay" },
       },
@@ -154,7 +155,11 @@ describe("getBlock", () => {
 
     const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
 
-    expect(transactions[0]).toMatchObject({ fees: 1000n, feesPayer: ALICE });
+    expect(transactions[0]).toMatchObject({
+      fees: 1000n,
+      feesAsset: NATIVE,
+      feesPayer: ALICE,
+    });
     expect(transactions[0].operations).toEqual([
       { type: "transfer", address: ALICE, peer: BOB, asset: USDC, amount: -250n },
       { type: "transfer", address: BOB, peer: ALICE, asset: USDC, amount: 250n },
@@ -247,6 +252,7 @@ describe("getBlock", () => {
           { type: "transfer", address: ALICE, peer: "APP", asset: USDC, amount: 42n },
         ],
         fees: 1000n,
+        feesAsset: NATIVE,
         feesPayer: ALICE,
         details: { txType: "appl" },
       },
@@ -266,6 +272,7 @@ describe("getBlock", () => {
         failed: false,
         operations: [],
         fees: 1000n,
+        feesAsset: NATIVE,
         feesPayer: ALICE,
         details: { txType: "keyreg" },
       },

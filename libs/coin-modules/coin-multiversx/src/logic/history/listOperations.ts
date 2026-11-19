@@ -181,6 +181,7 @@ function egldOpToFramework(
         time: new Date((tx.timestamp ?? 0) * 1000),
       },
       fees: BigInt(fee.toFixed(0)),
+      feesAsset: { type: "native" },
       date: new Date((tx.timestamp ?? 0) * 1000),
       failed: hasFailed,
     },
@@ -217,6 +218,7 @@ function esdtOpToFramework(
         time: new Date((tx.timestamp ?? 0) * 1000),
       },
       fees: 0n, // ESDT fees are paid on the parent native op
+      feesAsset: { type: "native" },
       date: new Date((tx.timestamp ?? 0) * 1000),
       failed: hasFailed,
     },
