@@ -7,7 +7,7 @@ import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
@@ -21,6 +21,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 const useText = (
   entryPoint: "noFunds" | "getFunds",
   ticker: CryptoCurrency["ticker"] | TokenCurrency["ticker"],
@@ -142,7 +143,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     dispatch(closeModal(modalName));
 
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openReceiveFlow({
         parentAccount,
         account,
         sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,

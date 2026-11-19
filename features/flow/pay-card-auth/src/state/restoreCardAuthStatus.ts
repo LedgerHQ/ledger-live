@@ -1,7 +1,7 @@
 import { getCardSessionToken } from "@features/platform-card";
 import type { Dispatch } from "@reduxjs/toolkit";
-import { selectCardAuthStatus, type PayCardAuthStateRoot } from "./selectors";
-import { setSignedIn } from "./slice";
+import { selectCardAuthStatus, setSignedIn } from "./slice";
+import type { PayCardAuthStateRoot } from "./types";
 
 async function hasStoredCardSession(): Promise<boolean> {
   try {

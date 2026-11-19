@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../index";
 import type { GroupedProposals } from "../types";
 import type { PendingTransferProposalsViewModel } from "../usePendingTransferProposalsViewModel";
-import { createProcessedProposal } from "./test-utils";
+import { createProcessedProposal, UNKNOWN_UNIT } from "./test-utils";
 
 const unit: Unit = { code: "CANTON", magnitude: 38, name: "Canton" };
 
@@ -81,6 +81,39 @@ describe("PendingTransferProposals", () => {
       fireEvent.click(screen.getByRole("button", { name: /reject/i }));
 
       expect(onOpenModal).toHaveBeenCalledWith("contract-123", "reject");
+    });
+  });
+
+  describe("unknown instruments", () => {
+    it("labels an unknown instrument's amount and keeps the offer rejectable", () => {
+      const proposal = createProcessedProposal({
+        isIncoming: true,
+        isUnknownInstrument: true,
+        unit: UNKNOWN_UNIT,
+      });
+      const onOpenModal = jest.fn();
+
+      render(
+        <View
+          {...buildViewModel({
+            groupedIncoming: [{ day: proposal.day, proposals: [proposal] }],
+            incomingCount: 1,
+            onOpenModal,
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /reject/i }));
+
+      expect(screen.getByText(/Unknown token/)).toBeInTheDocument();
+      expect(onOpenModal).toHaveBeenCalledWith(proposal.contractId, "reject");
+    });
+
+    it("does not label an offer for a known instrument", () => {
+      const { grouped, count } = buildIncoming();
+
+      render(<View {...buildViewModel({ groupedIncoming: grouped, incomingCount: count })} />);
+
+      expect(screen.queryByText(/Unknown token/)).not.toBeInTheDocument();
     });
   });
 

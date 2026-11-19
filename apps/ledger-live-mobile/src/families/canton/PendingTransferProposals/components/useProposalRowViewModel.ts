@@ -47,7 +47,9 @@ export function useProposalRowViewModel({
 
   const addressToShow = isIncoming ? sender : receiver;
   const amountValue = isIncoming ? amount : amount.negated();
-  const amountColor = isIncoming ? "success.c50" : "error.c50";
+  const directionColor = isIncoming ? "success.c50" : "error.c50";
+  // An unknown instrument's amount is coded with the "Unknown token" label, so it carries the warning.
+  const amountColor = proposal.isUnknownInstrument ? "warning.c70" : directionColor;
   const formattedTime = hoursAndMinutesOptions.format(expiresAt);
 
   const handleRowPress = useCallback(() => {

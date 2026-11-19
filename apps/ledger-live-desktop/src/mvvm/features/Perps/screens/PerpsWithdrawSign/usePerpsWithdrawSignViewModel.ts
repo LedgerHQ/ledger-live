@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
@@ -14,11 +15,18 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
 import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/history";
+import {
+  getWithdrawTargetBalance,
+  waitForWithdrawBalanceReflected,
+  WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection";
 import { track } from "@shared/analytics";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { accountSelector } from "~/renderer/reducers/accounts";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
+import { isBroadcastDisabled } from "LLD/features/Perps/utils/isBroadcastDisabled";
 import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import type { PerpsWithdrawSummaryData } from "../PerpsWithdrawSummary/usePerpsWithdrawSummaryViewModel";
@@ -52,6 +60,15 @@ export function usePerpsWithdrawSignViewModel(
   const [step, setStep] = useState<PerpsWithdrawSignStep>({ kind: "connect" });
   const [attempt, setAttempt] = useState(0);
   const dispatch = useDispatch();
+  const sync = useBridgeSync();
+  const storedSourceAccount = useSelector(state =>
+    accountSelector(state, { accountId: data.sourceAccount.id }),
+  );
+  // Read while waiting for the withdraw to show up in the balance, so it must stay current.
+  const sourceBalanceRef = useRef((storedSourceAccount ?? data.sourceAccount).spendableBalance);
+  useEffect(() => {
+    if (storedSourceAccount) sourceBalanceRef.current = storedSourceAccount.spendableBalance;
+  }, [storedSourceAccount]);
   const action = useConnectAppAction();
   const request = useMemo(() => ({ appName: PERPS_WITHDRAW_SIGNING_APP_NAME }), []);
 
@@ -74,6 +91,7 @@ export function usePerpsWithdrawSignViewModel(
     async (device: Device) => {
       const { sourceAccount, destinationAccount, quote, quoteParams } = data;
       setStep({ kind: "sign" });
+      const balanceBeforeWithdraw = sourceBalanceRef.current;
       try {
         const result = await executePerpsWithdraw({
           requestId: requestIdRef.current,
@@ -87,6 +105,7 @@ export function usePerpsWithdrawSignViewModel(
           },
           targetCurrency: getAccountCurrency(destinationAccount).ticker,
           track,
+          broadcastDisabled: isBroadcastDisabled(),
           onSigned: () => {
             if (!closedRef.current) setStep({ kind: "submitting" });
           },
@@ -102,6 +121,27 @@ export function usePerpsWithdrawSignViewModel(
             payoutNetworkFees: quote.payoutNetworkFees,
           });
           dispatch(updateAccountWithUpdater(accountId, updater));
+        }
+        // Stays on the submitting step until the balance shows the withdraw, so the next
+        // withdraw never offers money that already left. Nothing to wait for when the
+        // withdraw was not submitted (broadcast disabled).
+        if (result.swapId) {
+          await waitForWithdrawBalanceReflected({
+            targetBalance: getWithdrawTargetBalance(
+              sourceAccount,
+              balanceBeforeWithdraw,
+              quoteParams.amount,
+            ),
+            getBalance: () => sourceBalanceRef.current,
+            syncAccount: () =>
+              sync({
+                type: "SYNC_ONE_ACCOUNT",
+                accountId: sourceAccount.id,
+                priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
+                reason: "perps-withdraw",
+              }),
+            isCancelled: () => closedRef.current,
+          });
         }
         if (closedRef.current) return;
         openPerpsTransactionSigned({
@@ -120,7 +160,7 @@ export function usePerpsWithdrawSignViewModel(
         setStep({ kind: "error", error, canRetry: isPerpsWithdrawRetryable(error) });
       }
     },
-    [backToSummary, data, dispatch, onClose],
+    [backToSummary, data, dispatch, onClose, sync],
   );
 
   const handleDeviceResult = useCallback(

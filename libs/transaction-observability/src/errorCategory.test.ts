@@ -48,6 +48,7 @@ describe("classifyTransactionError", () => {
     ],
     ["SequenceNumberError", { name: "SequenceNumberError" }, ErrorCategory.Blockchain],
     ["NetworkError", { name: "NetworkError" }, ErrorCategory.Blockchain],
+    ["SolanaTxBlockhashExpired", { name: "SolanaTxBlockhashExpired" }, ErrorCategory.Blockchain],
     ["NONCE_EXPIRED (message)", { message: "nonce_expired: foo" }, ErrorCategory.Blockchain],
     ["unknown", { name: "Error", message: "something weird" }, ErrorCategory.Unknown],
   ])("maps %s", (_label, partial, expected) => {

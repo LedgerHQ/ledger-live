@@ -95,6 +95,12 @@ export type BlockTransactionResult =
   | { outcome: "success"; events: TransactionEvent[] }
   | { outcome: "reject"; rejectReason?: { tag: string; contents?: unknown } };
 
+/** The account that paid for a sponsored transaction, and the whole cost it paid. */
+export interface SponsorDetails {
+  sponsor: string;
+  cost: string | number; // microCCD
+}
+
 /**
  * A transaction summary as returned by /v0/blockTransactionEvents/{blockHash}.
  * This is the raw node `TransactionSummary` shape (structured, tagged events),
@@ -103,7 +109,8 @@ export type BlockTransactionResult =
 export interface BlockTransactionSummary {
   hash: string;
   sender: string | null;
-  cost: string; // microCCD as a string
+  cost: string; // microCCD paid by the sender; 0 for a sponsored transaction
+  sponsorDetails?: SponsorDetails | null;
   energyCost?: number;
   index?: number;
   type?: { type: string; contents?: string };
@@ -495,7 +502,11 @@ export interface WalletProxyTransaction {
   blockHeight: number; // Absolute block height
   origin: WalletProxyTransactionOrigin;
   energy?: number;
-  cost?: number; // Transaction cost in microCCD
+  /** The microCCD the queried account paid: absent when another account paid. */
+  cost?: string | number;
+  /** The microCCD the transaction cost, whichever account paid. Proxy ≥ 0.51.0. */
+  transactionCost?: string | number;
+  sponsor?: SponsorDetails;
   subtotal?: number;
   transactionHash: string;
   details: WalletProxyTransactionDetails;

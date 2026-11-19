@@ -37,7 +37,13 @@ const STEP_COPY = {
     titleKey: "payTab.cardOnboarding.steps.firstPurchase.title",
     descriptionKey: "payTab.cardOnboarding.steps.firstPurchase.description",
   },
-} as const satisfies Record<CardOnboardingStepId, { titleKey: string; descriptionKey: string }>;
+} as const satisfies Record<
+  CardOnboardingStepId,
+  {
+    titleKey: `payTab.cardOnboarding.steps.${string}.title`;
+    descriptionKey: `payTab.cardOnboarding.steps.${string}.description`;
+  }
+>;
 
 export function useOnboardingSteps(
   steps: readonly CardOnboardingStep[],

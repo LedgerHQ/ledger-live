@@ -1,9 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { CardLogin } from "../CardLogin";
 import type { CardLoginProps } from "../CardLogin.types";
 import type { CardLoginViewModel } from "../types";
+import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
 
 let viewModel: CardLoginViewModel = null;
 
@@ -19,11 +21,13 @@ const oauthConfig: CardLoginProps["oauthConfig"] = {
 
 function renderCardLogin() {
   return render(
-    <StyleProvider colorScheme="dark">
-      <CardLogin oauthConfig={oauthConfig} callback={null}>
-        <div data-testid="card-artwork" />
-      </CardLogin>
-    </StyleProvider>,
+    <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>
+      <StyleProvider colorScheme="dark">
+        <CardLogin oauthConfig={oauthConfig} callback={null}>
+          <div data-testid="card-artwork" />
+        </CardLogin>
+      </StyleProvider>
+    </I18nTestProvider>,
   );
 }
 
@@ -33,7 +37,7 @@ function buildViewModel(isResolving: boolean): CardLoginViewModel {
     headline: "Get your crypto card",
     description: "Get 1% cashback every time you spend",
     loginLabel: "Get card",
-    alreadyHaveCardLabel: null,
+    showAlreadyHaveCard: false,
     isLoading: false,
     isResolving,
     error: null,

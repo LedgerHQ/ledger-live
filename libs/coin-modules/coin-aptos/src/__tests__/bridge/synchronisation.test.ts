@@ -42,6 +42,12 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
 
 const mockedDecodeTokenAccountId = jest.mocked(decodeTokenAccountId);
 
+jest.mock("@ledgerhq/live-env", () => ({
+  ...jest.requireActual("@ledgerhq/live-env"),
+  getEnv: jest.fn(),
+}));
+const mockedGetEnv = jest.mocked(getEnv);
+
 jest.mock("../../network");
 let mockedAptosAPI: jest.Mocked<any>;
 
@@ -1444,10 +1450,63 @@ describe("getStake", () => {
   });
 
   afterEach(() => {
+    mockedGetEnv.mockReset();
     jest.clearAllMocks();
   });
 
-  it("When AptosResource has StakingPositions should validate", async () => {
+  it("returns empty staking positions and a balance equal to the spendable balance when staking is disabled", async () => {
+    const validatorAddress = "0xvalidator1";
+    const stakingOperation = {
+      id: "js:2:aptos:474d:aptos-0x3f35-OUT",
+      hash: "0x3f35",
+      type: "STAKE",
+      value: BigNumber(1200),
+      fee: BigNumber(1200),
+      blockHash: "0x6d02",
+      blockHeight: 311948147,
+      senders: ["0xa0d8"],
+      recipients: [validatorAddress],
+      accountId: "js:2:aptos:474d:aptos",
+      date: new Date("2025-03-28T15:56:00.481Z"),
+      extra: { version: "2532591427" },
+      transactionSequenceNumber: new BigNumber(121),
+      hasFailed: false,
+    } as Operation;
+    const mockedGetDelegatorBalanceInPool = jest.fn();
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: jest.fn().mockResolvedValue({
+        balance: BigNumber(5000000),
+        transactions: [],
+        blockHeight: 1,
+      }),
+      getDelegatorBalanceInPool: mockedGetDelegatorBalanceInPool,
+    }));
+    jest.mocked(mergeOps).mockReturnValue([]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], [stakingOperation]]);
+
+    const result = await getAccountShape(
+      {
+        id: "1",
+        address: "address",
+        currency: getCryptoCurrencyById("aptos"),
+        derivationMode: "",
+        index: 0,
+        xpub: "address",
+        derivationPath: "",
+        deviceId: "1",
+        initialAccount: undefined,
+      } as unknown as AccountShapeInfo<AptosAccount>,
+      {} as SyncConfig,
+    );
+
+    expect(result.aptosResources?.stakingPositions).toEqual([]);
+    expect(result.spendableBalance).toEqual(BigNumber(5000000));
+    expect(result.balance).toEqual(BigNumber(5000000));
+    expect(mockedGetDelegatorBalanceInPool).not.toHaveBeenCalled();
+  });
+
+  it("returns staking positions and adds staked balances to the account balance when staking is enabled", async () => {
+    mockedGetEnv.mockReturnValue(true);
     const mockDelegatorBalance = [1000000, 500000, 200000];
 
     const validatorAddress = "0xvalidator1";
@@ -2135,23 +2194,20 @@ describe("getStake", () => {
 
     const result = await getAccountShape(info, {} as SyncConfig);
 
-    const stakingEnabled = getEnv("APTOS_ENABLE_STAKING") === true;
-    if (stakingEnabled) {
-      expect(result.aptosResources?.stakingPositions).toHaveLength(1);
-
-      const position = result.aptosResources?.stakingPositions?.[0];
-      expect(position).toEqual({
+    expect(result.aptosResources?.stakingPositions).toEqual([
+      {
         active: BigNumber(mockDelegatorBalance[0]),
         inactive: BigNumber(mockDelegatorBalance[1]),
         pendingInactive: BigNumber(mockDelegatorBalance[2]),
         validatorId: stakingOperations[0].recipients[0],
-      });
-
-      expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
-      expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
-      expect(result.aptosResources?.pendingInactiveBalance).toEqual(
-        BigNumber(mockDelegatorBalance[2]),
-      );
-    }
+      },
+    ]);
+    expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
+    expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
+    expect(result.aptosResources?.pendingInactiveBalance).toEqual(
+      BigNumber(mockDelegatorBalance[2]),
+    );
+    expect(result.spendableBalance).toEqual(BigNumber(68254118));
+    expect(result.balance).toEqual(BigNumber(68254118).plus(1700000));
   });
 });

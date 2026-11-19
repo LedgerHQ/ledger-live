@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { renderHook } from "@tests/test-renderer";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useTransactionChangeFromNavigation } from "./screenTransactionHooks";
+import { shouldRestartFlow, useTransactionChangeFromNavigation } from "./screenTransactionHooks";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -17,6 +17,19 @@ const routeWith = (params: { transaction?: Transaction }) =>
     name: "SendAmountCoin",
     params,
   } as never);
+
+describe("shouldRestartFlow", () => {
+  it.each(["InvalidTransactionError", "SolanaTxBlockhashExpired"])(
+    "restarts the flow on %s",
+    name => {
+      expect(shouldRestartFlow(Object.assign(new Error(), { name }))).toBe(true);
+    },
+  );
+
+  it("does not restart the flow on another broadcast error", () => {
+    expect(shouldRestartFlow(Object.assign(new Error(), { name: "NetworkDown" }))).toBe(false);
+  });
+});
 
 describe("useTransactionChangeFromNavigation", () => {
   beforeEach(() => {

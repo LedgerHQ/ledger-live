@@ -40,7 +40,14 @@ describe("createApi", () => {
   // contract-call escape hatch nor an enrollment step.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(), context)).resolves.toEqual({
-      unsupported: ["call", "craftRawTransaction", "getNextSequence", "getRewards", "register"],
+      supported: [
+        "getBlock",
+        "getBlockInfo",
+        "getStakes",
+        "getValidators",
+        "validateAddress",
+        "validateIntent",
+      ],
       inconsistent: [],
     });
   });

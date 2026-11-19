@@ -799,6 +799,39 @@ describe("the firmware handover", () => {
     expect(stateOf(actor)).toBe("readingState");
   });
 
+  it("flags the way back to the checks until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session" });
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+  });
+
+  it("flags the wait for the rebooted session until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+
+    expect(stateOf(actor)).toBe("awaitingSessionAfterFirmwareUpdate");
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    actor.send({ type: "SESSION_READY", sessionId: "session-after-update" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+  });
+
   it("completes the checks when the device comes back updated", async () => {
     const { actor } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
@@ -1504,6 +1537,16 @@ describe("device setup", () => {
 
     expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
 
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+  });
+
+  it("knows a new seed first seen on its confirmation step", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [OnboardingStep.Pin, OnboardingStep.NewDeviceConfirming]);
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });

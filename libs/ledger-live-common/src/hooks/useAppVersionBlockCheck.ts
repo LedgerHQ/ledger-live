@@ -39,9 +39,12 @@ export const useAppVersionBlockCheck = ({
     return { shouldUpdate };
   }
   if (appKey === "llm" && (platform === "android" || platform === "ios") && osVersion) {
+    const coercedOsVersion = semver.coerce(osVersion);
     shouldUpdate = llMinVersionConfig[appKey][platform]
-      .filter(minVersionConfig =>
-        semver.satisfies(semver.coerce(osVersion), `>=${minVersionConfig.minOsVersion}`),
+      .filter(
+        minVersionConfig =>
+          coercedOsVersion !== null &&
+          semver.satisfies(coercedOsVersion, `>=${minVersionConfig.minOsVersion}`),
       )
       .reduce((acc, curr) => {
         return acc || semver.satisfies(appVersion, `<${semver.coerce(curr.version)}`);

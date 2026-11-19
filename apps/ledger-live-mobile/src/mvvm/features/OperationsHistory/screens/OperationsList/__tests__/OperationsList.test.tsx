@@ -160,6 +160,21 @@ describe("OperationsList", () => {
     );
   });
 
+  it("registers the transaction history options menu when only the export feature flag is enabled", () => {
+    renderOperationsListWithNavigation(
+      { setOptions: mockSetOptions },
+      { overrideInitialState: withFlagOverrides({ lwmHistoryCsvExport: { enabled: true } }) },
+    );
+
+    expect(mockSetOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lumenNavBar: expect.objectContaining({
+          renderTrailing: expect.any(Function),
+        }),
+      }),
+    );
+  });
+
   it("shows card history without crypto-only controls when the Card tab is selected", async () => {
     const { getByTestId, queryByTestId, user } = renderOperationsListWithNavigation(
       { setOptions: mockSetOptions, dispatch: jest.fn() },

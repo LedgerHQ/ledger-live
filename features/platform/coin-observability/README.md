@@ -18,7 +18,7 @@ host needs to consume the events lives here, with no legacy import.
 - `setCoinModuleCallObserver` / `emitCoinModuleCall`: a global registry. The coin-module is resolved
   outside React, so a host registers its observers once at startup. A throwing observer never breaks
   the call it observes.
-- `DEFAULT_METHOD_TIERS` / `tierFor`: the tier of each method of the coin-module contract.
+- `DEFAULT_METHOD_TIERS` / `tierFor`: the coin-module methods that are observed, and their tier.
   - `transaction` (`craftTransaction`, `craftRawTransaction`, `combine`, `broadcast`): always sent.
   - `preparation` (`craftTransactionData`, `estimateFees`, `listFeeOptions`, `validateIntent`,
     `validateAddress`), called on every edit of a transaction: successes sampled.
@@ -26,10 +26,9 @@ host needs to consume the events lives here, with no legacy import.
   - `off`: nothing sent, failures included.
 
   The flag's `methodTiers` param moves a method to another tier without a release, e.g.
-  `{ "craftTransactionData": "off" }`; an entry with an unknown tier is ignored. A method the table
-  does not know falls back to `sync`. Live-common checks at compile time that the table names
-  exactly the contract's methods, so a framework bump that adds a method fails the typecheck until
-  the method is classified.
+  `{ "craftTransactionData": "off" }`; an entry with an unknown tier is ignored. The table is a
+  whitelist: a method it does not list is `off`, so a framework release that adds a method sends
+  nothing for it until it is listed or the flag gives it a tier.
 - `createCoinModuleCallTransmitter`: the policy for a sink that leaves the process:
   - preparation and sync successes are sampled per app session, each tier with its own rate: a
     session sends all of them or none;

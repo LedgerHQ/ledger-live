@@ -8,12 +8,8 @@ import { Platform } from "react-native";
 import Config from "react-native-config";
 import { useLocale } from "~/context/Locale";
 import { LocalManifestsImporter } from "~/e2e/LocalManifestsImporter";
-import {
-  DISCOVER_STORE_KEY,
-  INITIAL_PLATFORM_STATE,
-} from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
-import { useDB } from "./db";
+import { useDiscoverDB } from "./discoverDB";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -56,9 +52,5 @@ function selectLocalLiveAppDB(state: DiscoverDB) {
 }
 
 function useLocalLiveAppDB() {
-  return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    selectLocalLiveAppDB,
-  );
+  return useDiscoverDB(selectLocalLiveAppDB);
 }

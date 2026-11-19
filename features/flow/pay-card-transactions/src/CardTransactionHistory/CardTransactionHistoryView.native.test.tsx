@@ -141,6 +141,20 @@ describe("CardTransactionHistoryView (native)", () => {
     expect(screen.getByText("Provided by Monavate Onchain")).toBeVisible();
   });
 
+  it("renders the empty state without a Pay action when the host gives none", () => {
+    render(
+      <CardTransactionHistoryView
+        isLoadingMore={false}
+        displayState={{ kind: "empty" }}
+        onRowClick={jest.fn()}
+      />,
+      { wrapper },
+    );
+
+    expect(screen.getByTestId("card-history-empty-state")).toBeVisible();
+    expect(screen.queryByTestId("card-history-empty-state-cta")).toBeNull();
+  });
+
   it("runs the Pay action from the empty state", async () => {
     const onGoToPay = jest.fn();
     const user = userEvent.setup();

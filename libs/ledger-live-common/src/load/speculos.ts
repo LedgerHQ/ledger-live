@@ -46,7 +46,7 @@ const modelMapPriority: Record<string, number> = {
 };
 const defaultFirmware: Record<string, string> = {};
 
-function hackBadSemver(str) {
+function hackBadSemver(str: string) {
   const split = str.split(".");
   const [x, y, , ...rest] = split;
   let [, , z] = split;

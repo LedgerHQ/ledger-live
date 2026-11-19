@@ -14,12 +14,15 @@ import {
   useDeviceOnboardingSession,
 } from "../../hooks/DeviceOnboardingProvider";
 import { useOfferSync } from "../../hooks/useOfferSync";
+import type { DeviceUnlockSheetProps } from "../../types";
+import { deviceLockedState, toDeviceUnlockSheetProps } from "../../utils/deviceLocked";
 import { selectPairedKnownDevices } from "../../utils/pairedDevice";
 import { shouldRevealFunnel } from "../../utils/pairingHold";
 
 export type DeviceOnboardingConnectModel = Readonly<{
   closeLabel: string;
   showDeviceList: boolean;
+  unlockSheet: DeviceUnlockSheetProps | null;
   onConnected: (result: DeviceConnectionResult) => void;
   onClose: () => void;
   onDeviceNotFound: () => void;
@@ -83,21 +86,22 @@ export function useDeviceOnboardingConnectViewModel(): DeviceOnboardingConnectMo
     navigation.goBack();
   }, [discard, navigation, pairedDevice]);
 
-  // `pop` closes the flow; a plain navigate would stack a second onboarding above it.
+  // Push on top of the flow: back returns here. A `pop` showed Get Started first.
   const onDeviceNotFound = useCallback(() => {
-    navigation.navigate(
-      NavigatorName.BaseOnboarding,
-      {
-        screen: NavigatorName.Onboarding,
-        params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
-      },
-      { pop: true },
-    );
+    navigation.push(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
+    });
   }, [navigation]);
+
+  const deviceIsLocked = state === deviceLockedState && error === null;
+  const unlockSheet =
+    deviceIsLocked && pairedDevice ? toDeviceUnlockSheetProps(pairedDevice) : null;
 
   return {
     closeLabel: t("common.close"),
     showDeviceList: isFocused || pairedDevice !== undefined,
+    unlockSheet,
     onConnected,
     onClose,
     onDeviceNotFound,

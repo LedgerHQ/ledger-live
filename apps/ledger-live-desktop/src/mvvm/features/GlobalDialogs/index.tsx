@@ -47,9 +47,11 @@ const SwapTransactionStatusDialog = lazy(() => import("LLD/features/SwapTransact
 const CurrencyRegionRestrictedDialog = lazy(
   () => import("LLD/features/CurrencyRegionRestrictedDialog"),
 );
+const FamilyDialogs = lazy(() => import("LLD/features/FamilyDialogs"));
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
+const ReceiveAddressDialog = lazy(() => import("LLD/features/Receive/screens/ReceiveAddress"));
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -118,7 +120,13 @@ const GlobalDialogs = () => (
       <AccountPublicKeyUnavailableDialog />
     </Suspense>
     <Suspense fallback={null}>
+      <ReceiveAddressDialog />
+    </Suspense>
+    <Suspense fallback={null}>
       <CurrencyRegionRestrictedDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <FamilyDialogs />
     </Suspense>
   </>
 );

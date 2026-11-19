@@ -86,6 +86,8 @@ type SetupTestOptions = {
   readonly transportIds?: Array<TransportIdentifier>;
   readonly connect?: jest.Mock;
   readonly connectedDevice?: ConnectedDevice;
+  /** Returned by `dmk.listConnectedDevices`. */
+  readonly openSessions?: Array<ConnectedDevice>;
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
   readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
   readonly filterListedDevices?: ConnectNewDeviceFilterListedDevices;
@@ -103,6 +105,7 @@ const setupTest = ({
   transportIds = [bleTransport, usbTransport],
   connect = jest.fn().mockResolvedValue("session-id"),
   connectedDevice = makeConnectedDevice(),
+  openSessions = [],
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   getDiscoveredDeviceKey = getDeviceKeyById,
   filterListedDevices,
@@ -120,6 +123,7 @@ const setupTest = ({
     connect,
     getConnectedDevice: jest.fn(() => connectedDevice),
     disconnect: jest.fn().mockResolvedValue(undefined),
+    listConnectedDevices: jest.fn(() => openSessions),
   } as unknown as DeviceManagementKit;
   const onConnected = jest.fn();
   const onClose = jest.fn();
@@ -602,6 +606,35 @@ describe("ConnectNewDeviceStateMachine", () => {
       expect(connect).toHaveBeenCalledTimes(1);
       expect(lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
     });
+
+    it("GIVEN the selected device already has a session, WHEN the user selects it, THEN it should reuse that session and start disconnecting the other sessions", async () => {
+      // GIVEN
+      const setup = setupTest({
+        openSessions: [
+          makeConnectedDevice({ id: nanoX.id, sessionId: "nano-x-ble-session" }),
+          makeConnectedDevice({
+            id: nanoX.id,
+            transport: usbTransport,
+            sessionId: "nano-x-usb-session",
+          }),
+          makeConnectedDevice({ id: stax.id, sessionId: "stax-session" }),
+        ],
+      });
+
+      // WHEN
+      await connectToNanoX(setup);
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      // THEN
+      expect(setup.connect).not.toHaveBeenCalled();
+      expect(setup.onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({ sessionId: "nano-x-ble-session" }),
+      );
+      expect(jest.mocked(setup.dmk.disconnect).mock.calls).toEqual([
+        [{ sessionId: "nano-x-usb-session" }],
+        [{ sessionId: "stax-session" }],
+      ]);
+    });
   });
 
   describe("Connected and Done", () => {
@@ -972,18 +1005,6 @@ describe("ConnectNewDeviceStateMachine", () => {
       return { connect, resolveConnect: (sessionId: string) => resolveConnect(sessionId) };
     };
 
-    it("should disconnect the session when the connection succeeds after the machine is stopped", async () => {
-      const { connect, resolveConnect } = connectAfterStop();
-      const setup = setupTest({ connect });
-
-      await connectToNanoX(setup);
-      setup.machine.stop();
-      resolveConnect("late-session-id");
-      await flushPromises();
-
-      expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "late-session-id" });
-    });
-
     it("should not call onConnected when the connection succeeds after the machine is stopped", async () => {
       const { connect, resolveConnect } = connectAfterStop();
       const setup = setupTest({ connect });
@@ -995,54 +1016,6 @@ describe("ConnectNewDeviceStateMachine", () => {
       jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
 
       expect(setup.onConnected).not.toHaveBeenCalled();
-    });
-
-    it("should disconnect the session when the machine is stopped during the success delay", async () => {
-      const setup = setupTest();
-
-      await connectToNanoX(setup);
-      setup.machine.stop();
-
-      expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "session-id" });
-    });
-
-    it("should not disconnect the session when the machine is stopped after Done", async () => {
-      const setup = setupTest();
-
-      await connectToNanoX(setup);
-      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
-      setup.machine.stop();
-
-      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
-    });
-
-    it("should not disconnect anything when the machine is stopped while discovering", () => {
-      const { dmk, machine } = setupTest();
-
-      machine.start();
-      machine.stop();
-
-      expect(dmk.disconnect).not.toHaveBeenCalled();
-    });
-
-    it("should not throw when disconnecting the unclaimed session fails", async () => {
-      const setup = setupTest();
-      jest.mocked(setup.dmk.disconnect).mockRejectedValue(new Error("disconnect failed"));
-
-      await connectToNanoX(setup);
-
-      expect(() => setup.machine.stop()).not.toThrow();
-      await flushPromises();
-    });
-
-    it("should disconnect the unclaimed session once when the machine is stopped twice during the success delay", async () => {
-      const setup = setupTest();
-
-      await connectToNanoX(setup);
-      setup.machine.stop();
-      setup.machine.stop();
-
-      expect(setup.dmk.disconnect).toHaveBeenCalledTimes(1);
     });
 
     it("should stop discovery once when the machine is stopped twice while discovering", () => {

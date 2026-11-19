@@ -5,11 +5,7 @@ import { vechainDefaults, type VechainCurrencyConfig } from "../config";
 import { createApi } from "./index";
 import { createMockVechainContext } from "../test/context";
 
-// Repo-committed VeChain mainnet address, already used by src/datasets/vechain.ts for bridge
-// integration/dataset testing ("account information is fetched from the blockchain"). Reused
-// here as a real, network-reachable address for balance-agnostic smoke assertions — its exact
-// current balance is not asserted (only shape/type), mirroring coin-kaspa's FUNDED_SENDER smoke
-// pattern but without asserting a specific non-zero balance we cannot guarantee ahead of time.
+// Real VeChain mainnet address for smoke assertions on shape and type, not on its current balance.
 const KNOWN_ADDRESS = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
 
 describe("createApi (integration)", () => {
@@ -124,6 +120,23 @@ describe("createApi (integration)", () => {
         expect(["IN", "OUT"]).toContain(op.type);
         expect(typeof op.value).toBe("bigint");
       }
+    });
+
+    it("lists the known VET incoming operation of the address at block 16407349", async () => {
+      const page = await api.listOperations(context, KNOWN_ADDRESS, { minHeight: 16407349 });
+
+      expect(page.items).toContainEqual(
+        expect.objectContaining({
+          type: "IN",
+          value: 10_000_000_000_000_000_000n,
+          senders: ["0xcf130b42ae31c4931298b4b1c0f1d974b8732957"],
+          recipients: ["0x0fe6688548f0c303932bb197b0a96034f1d74dba"],
+          tx: expect.objectContaining({
+            hash: "0xe113f82af98a24c6f2473802f8673f0d69eed1c0f51a5a87d3cc6b8cf96ccfd6",
+            block: expect.objectContaining({ height: 16407349 }),
+          }),
+        }),
+      );
     });
   });
 

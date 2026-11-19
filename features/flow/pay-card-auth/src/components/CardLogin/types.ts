@@ -40,8 +40,8 @@ export type CardLoginCopy = Readonly<{
   headline: string;
   description: string;
   loginLabel: string;
-  /** `null` once the intro has been seen, because the login action is the login by then. */
-  alreadyHaveCardLabel: string | null;
+  /** False once the intro has been seen, because the login action is the login by then. */
+  showAlreadyHaveCard: boolean;
 }>;
 
 export type CardAuthErrorCopy = Readonly<{

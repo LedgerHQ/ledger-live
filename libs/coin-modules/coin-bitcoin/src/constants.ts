@@ -3,6 +3,7 @@ export const ESTIMATION_RECIPIENTS: Record<string, string> = {
   bitcoin_cash: "1mW6fDEMjKrDHvLvoEsaeLxSCzZBf3Bfg",
   bitcoin_gold: "GeTZ7bjfXtGsyEcerSSFJNUSZwLfjtCJX9",
   bitcoin_private: "b1SGV7U5kGAMHtGbkAR3mjaZqVn57SHFbiR",
+  bitcoin_signet: "mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV",
   bitcoin_testnet: "mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV",
   dash: "XoJA8qE3N2Y3jMLEtZ3vcN42qseZ8LvFf5",
   decred: "DshusByvZ2y4HuUaqkb7LrNTQTrqCjLnBW7",

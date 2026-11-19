@@ -22,14 +22,14 @@ describe("tierFor", () => {
     expect(tierFor("getBalance", { getBalance: "transaction" })).toBe("transaction");
   });
 
-  it("classifies a method the defaults do not know", () => {
-    expect(tierFor("someFutureMethod")).toBe("sync");
+  it("turns off a method the defaults do not list, unless the flag gives it a tier", () => {
+    expect(tierFor("someFutureMethod")).toBe("off");
     expect(tierFor("someFutureMethod", { someFutureMethod: "preparation" })).toBe("preparation");
   });
 
   it("ignores inherited object keys", () => {
-    expect(tierFor("toString")).toBe("sync");
-    expect(tierFor("constructor", {})).toBe("sync");
+    expect(tierFor("toString")).toBe("off");
+    expect(tierFor("constructor", {})).toBe("off");
   });
 });
 

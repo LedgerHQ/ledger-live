@@ -12,13 +12,17 @@ import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors"
 import type { GetBalanceResponse } from "../types/gateway";
 import { TransactionType } from "../types/gateway";
 import {
+  clearDsoPartyIdCache,
   clearEnabledInstrumentsCache,
   clearIsTopologyChangeRequiredCache,
   getBalance,
   getCalTokensCached,
+  getDsoPartyIdCached,
   getEnabledInstruments,
   getEnabledInstrumentsCached,
   getLedgerEnd,
+  getNativeInstrument,
+  getNodeInfo,
   getOperations,
   getPartyById,
   getPartyByIdCached,
@@ -378,6 +382,75 @@ describe("getPartyByIdCached", () => {
     expect(mockNetwork).toHaveBeenLastCalledWith(
       expect.objectContaining({ url: expect.stringContaining("https://gateway-c.example.com") }),
     );
+  });
+});
+
+describe("getNodeInfo and getNativeInstrument", () => {
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+  const DSO = "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc";
+  const nodeInfo = { validator_id: "validator::1220", dso_id: DSO };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getDsoPartyIdCached.reset();
+    mockNetwork.mockResolvedValue({ data: nodeInfo, status: 200 });
+  });
+
+  it("reads the node info of the configured node", async () => {
+    const config = createTestNodeConfig();
+
+    await expect(getNodeInfo(config)).resolves.toEqual(nodeInfo);
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "GET",
+        url: `${config.gatewayUrl}/v1/node/test-node-id`,
+      }),
+    );
+  });
+
+  it("pairs the configured native instrument id with the node's DSO party", async () => {
+    await expect(getNativeInstrument(createTestNodeConfig())).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: DSO,
+    });
+  });
+
+  it("caches the DSO party per gateway and node", async () => {
+    const config = createTestNodeConfig();
+
+    await getNativeInstrument(config);
+    await getNativeInstrument(config);
+    await getNativeInstrument({ ...config, gatewayUrl: "https://gateway-b.example.com" });
+
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("reads the DSO party again after clearDsoPartyIdCache, for that gateway and node only", async () => {
+    const config = createTestNodeConfig();
+    const gatewayB = { ...config, gatewayUrl: "https://gateway-b.example.com" };
+    await getNativeInstrument(config);
+    await getNativeInstrument(gatewayB);
+    mockNetwork.mockResolvedValue({
+      data: { ...nodeInfo, dso_id: "DSO::after-reset" },
+      status: 200,
+    });
+
+    clearDsoPartyIdCache(config);
+
+    await expect(getNativeInstrument(config)).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: "DSO::after-reset",
+    });
+    await expect(getNativeInstrument(gatewayB)).resolves.toEqual({
+      instrumentId: "Amulet",
+      instrumentAdmin: DSO,
+    });
+  });
+
+  it("rejects node info without a DSO party instead of matching no native holding", async () => {
+    mockNetwork.mockResolvedValue({ data: { validator_id: "validator::1220" }, status: 200 });
+
+    await expect(getNativeInstrument(createTestNodeConfig())).rejects.toThrow("no DSO party");
   });
 });
 

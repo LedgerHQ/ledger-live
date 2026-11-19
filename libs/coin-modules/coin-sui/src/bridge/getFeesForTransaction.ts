@@ -35,6 +35,12 @@ export default async function getEstimatedFees({
 
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
   const asset = toSuiAsset(subAccount?.token.contractAddress ?? DEFAULT_COIN_TYPE);
+  // The SDK refuses to build a token transfer above the token balance, which would fail the
+  // estimate before `getTransactionStatus` can report `NotEnoughBalance`. The fee does not depend
+  // on the token amount, so the estimate uses at most the balance.
+  const estimatedAmount = subAccount
+    ? BigNumber.min(t.amount, subAccount.spendableBalance)
+    : t.amount;
 
   let transactionType: "send" | "delegate" | "undelegate";
   let intentType: "transaction" | "staking" = "transaction";
@@ -64,7 +70,7 @@ export default async function getEstimatedFees({
     intentType,
     recipient,
     sender: account.freshAddress,
-    amount: BigInt(t.amount.toString()),
+    amount: BigInt(estimatedAmount.toFixed()),
     type: transactionType,
     asset,
     currencyId: account.currency.id,

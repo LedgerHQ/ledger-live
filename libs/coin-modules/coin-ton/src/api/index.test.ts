@@ -33,15 +33,7 @@ describe("createApi", () => {
 
   it("omits the capabilities TON does not expose", async () => {
     await expect(capabilityReport(createApi(), context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getRewards",
-        "getStakes",
-        "getValidators",
-        "register",
-      ],
+      supported: ["getBlockInfo", "getNextSequence", "validateAddress", "validateIntent"],
       inconsistent: [],
     });
   });
