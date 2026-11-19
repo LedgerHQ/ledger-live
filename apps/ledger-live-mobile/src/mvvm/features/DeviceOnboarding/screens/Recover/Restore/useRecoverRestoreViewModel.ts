@@ -20,7 +20,7 @@ export type RecoverRestoreScreenProps = Readonly<{
 
 export type RecoverRestoreRow = Readonly<{
   id: "identity" | "phrase";
-  number: string;
+  number: 1 | 2;
   description: string;
 }>;
 
@@ -64,12 +64,12 @@ export function useRecoverRestoreViewModel({
     rows: [
       {
         id: "identity",
-        number: "1",
+        number: 1,
         description: t("deviceOnboarding.recover.restore.identity"),
       },
       {
         id: "phrase",
-        number: "2",
+        number: 2,
         description: t("deviceOnboarding.recover.restore.phrase"),
       },
     ],

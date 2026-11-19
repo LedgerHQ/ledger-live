@@ -8,6 +8,7 @@ import {
   ListItemContent,
   ListItemDescription,
   ListItemLeading,
+  SpotNumber,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -59,20 +60,7 @@ export function RecoverRestoreView({
           {rows.map(row => (
             <ListItem key={row.id}>
               <ListItemLeading>
-                <Box
-                  lx={{
-                    width: "s48",
-                    height: "s48",
-                    borderRadius: "full",
-                    backgroundColor: "muted",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-                    {row.number}
-                  </Text>
-                </Box>
+                <SpotNumber value={row.number} size={48} />
                 <ListItemContent>
                   <ListItemDescription>{row.description}</ListItemDescription>
                 </ListItemContent>
