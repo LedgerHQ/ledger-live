@@ -34,8 +34,6 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
 
-  useAutoRedirectToPostOnboarding();
-
   // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
   useEffect(() => {
     setDevice(params?.device);
@@ -142,8 +140,19 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   );
 }
 
+// Mounted only while focused: the Recover upsell state of the hook resets at each focus.
+function PostOnboardingRedirect() {
+  useAutoRedirectToPostOnboarding();
+  return null;
+}
+
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
   if (!isFocused) return null;
-  return <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />;
+  return (
+    <>
+      <PostOnboardingRedirect />
+      <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />
+    </>
+  );
 }
