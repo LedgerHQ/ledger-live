@@ -2825,7 +2825,8 @@
       "checks": {
         "title": "Genuine & OS check",
         "description": "Verifying your device",
-        "successDescription": "Your device is genuine and safe to use"
+        "successDescription": "Your device is genuine and safe to use",
+        "notUpToDateDescription": "Your device is not up-to-date"
       },
       "naming": {
         "title": "Device name",
@@ -2903,6 +2904,18 @@
           "description": "Make sure your {{productName}} is on, unlocked and close to your phone, then try again.",
           "retryCta": "Try again",
           "helpCta": "Get help"
+        }
+      },
+      "updateOffer": {
+        "title": "Update OS™ to unlock full functionality",
+        "versions": "OS {{current}} → OS {{available}}",
+        "description": "Get access to transaction check and the latest device features.",
+        "updateCta": "Update Ledger OS™",
+        "skip": {
+          "title": "Skip this update?",
+          "description": "You’ll miss the latest fixes and features for your Ledger device.",
+          "updateCta": "Update now",
+          "skipCta": "Skip anyway"
         }
       }
     },

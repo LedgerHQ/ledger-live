@@ -1,7 +1,7 @@
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { SeedPath } from "@features/platform-device-onboarding";
+import { SeedPath, type FirmwareCheck } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -64,11 +64,12 @@ jest.mock("../../hooks/useFirmwareUpdateHandover", () => {
     ...actual,
     useFirmwareUpdateHandover: (input: unknown) => {
       firmwareUpdateHandover(input);
-      return { close: closeFirmwareHandover };
+      return { close: closeFirmwareHandover, returnsWithoutUpdate: mockReturnsWithoutUpdate };
     },
   };
 });
 
+let mockReturnsWithoutUpdate = 0;
 const closeFirmwareHandover = jest.fn();
 const firmwareUpdateHandover = jest.fn();
 const useSession = jest.mocked(useDeviceOnboardingSession);
@@ -217,6 +218,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     listeners.clear();
     mockRouteParams = { wasReadOnlyAtEntry: true };
     recorded.host = null;
+    mockReturnsWithoutUpdate = 0;
   });
 
   it.each([
@@ -2143,6 +2145,137 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       indicator: "loading",
     });
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should ask to confirm the skip when the OS update comes back after the release notes closed", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+
+    moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
+    moveTo("readingState");
+    moveTo("checks.genuineCheck.running");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+
+    moveTo("checks.firmwareUpdateDelegated");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it.each([
+    ["the device locks", "deviceLocked"],
+    ["the session drops", "awaitingSession"],
+  ])(
+    "should still ask to confirm the skip when %s before the update is offered again",
+    (_, interruption) => {
+      const unseeded = unseededContext({
+        availableFirmwareVersion: "5.4.3",
+        firmwareVersion: "2.1.0",
+      });
+      useSession.mockReturnValue(
+        session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+      );
+      const { result, rerender } = renderFunnel();
+      const moveTo = (state: string) => {
+        useSession.mockReturnValue(session({ state, context: unseeded }));
+        rerender(undefined);
+      };
+
+      moveTo("checks.firmwareUpdateDelegated");
+      mockReturnsWithoutUpdate = 1;
+      moveTo("readingState");
+      moveTo(interruption);
+      moveTo("readingState");
+      moveTo("checks.firmwareUpdateOffered");
+
+      expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+    },
+  );
+
+  it("should still ask to confirm the skip when the release notes close after a disconnect", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
+    moveTo("awaitingSessionAfterFirmwareUpdate");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+  });
+
+  it("should not ask to confirm the skip when the release notes never opened", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it("should not ask to confirm the skip when the OS update is first offered", () => {
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseededContext() }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it.each<[FirmwareCheck["kind"], boolean]>([
+    ["declined", true],
+    ["upToDate", false],
+    ["skipped", false],
+  ])("should report a firmware answer of %s as declined: %s", (kind, declined) => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: unseededContext(),
+        snapshot: { context: { firmware: { kind } } } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).firmwareDeclined).toBe(declined);
   });
 
   it("should continue once each time an unseeded device reaches the end of the checks", () => {
