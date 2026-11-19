@@ -184,8 +184,10 @@ async function load(ns: string): Promise<unknown> {
     }
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
-      memoryNamespaces[ns] = {};
-      await save(ns);
+      // A concurrent read of the missing file can end first and already hold a setKey value.
+      memoryNamespaces[ns] ??= {};
+      // The debounce or db.flush() writes the new file; saveAndLog logs a failed save.
+      save(ns).catch(() => undefined);
     } else {
       console.error(err);
       throw err;
@@ -364,17 +366,16 @@ const settingKeys = new Set<Promise<void>>();
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
   // A reload flushes first, so a setKey that waits for the reload must not hold that flush.
   await waitForReload();
-  const setting = setKeyInMemory(ns, keyPath, value);
+  const setting = setKeyAndSave(ns, keyPath, value);
   settingKeys.add(setting);
   try {
     await setting;
   } finally {
     settingKeys.delete(setting);
   }
-  return save(ns);
 }
 
-async function setKeyInMemory<K>(ns: string, keyPath: string, value: K): Promise<void> {
+async function setKeyAndSave<K>(ns: string, keyPath: string, value: K): Promise<void> {
   if (ns === "app") {
     assertAppNamespaceSetKeyAllowed(keyPath);
   }
@@ -385,6 +386,8 @@ async function setKeyInMemory<K>(ns: string, keyPath: string, value: K): Promise
     saveTriggers.set(ns, new Set());
   }
   saveTriggers.get(ns)!.add(keyPath);
+  // saveAndLog logs the failure once for all the setKey calls that the save holds.
+  save(ns).catch(() => undefined);
 }
 
 /**
