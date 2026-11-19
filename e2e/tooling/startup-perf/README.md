@@ -108,9 +108,10 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   the accounts and saves what it builds itself (countervalues, token cache), as the bridge's
   injection launch did, and reads the storage back: it fails unless the accepted terms and a record
   for every account written are still there (MMKV drops a file whose CRC does not match, the app an
-  account it does not support), so A and B start from the same accounts. Feature flags are not
-  written: they come from production Firebase. `verify-build.mts` checks the binary has no `MOCK` or
-  `DETOX`.
+  account it does not support), so A and B start from the same accounts, and unless the app saved
+  one of them again: it saves accounts only once one changes (a sync), and only that save deletes
+  the record of an account it did not load. Feature flags are not written: they come from
+  production Firebase. `verify-build.mts` checks the binary has no `MOCK` or `DETOX`.
 - **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
   ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
   them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
