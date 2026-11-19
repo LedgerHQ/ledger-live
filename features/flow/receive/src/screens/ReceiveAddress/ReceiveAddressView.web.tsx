@@ -48,7 +48,8 @@ export function ReceiveAddressView({
   return (
     <Dialog open onOpenChange={handleOpenChange} height="fit">
       <DialogContent
-        aria-describedby={undefined}
+        // The network label describes the dialog once known; until then there is no description.
+        {...(!networkLabel && { "aria-describedby": undefined })}
         data-testid="receive-address"
         onPointerDownOutside={keepOpenWhileHint}
         onInteractOutside={keepOpenWhileHint}
