@@ -80,6 +80,7 @@ import {
   BACKGROUND_SIZE,
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
+import { NewSettingsRoute } from "LLD/features/NewSettings";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -213,7 +214,10 @@ function MainAppContent() {
           <Page>
             <Routes>
               <Route path="/" element={withSuspense(PortfolioPage)({})} />
-              <Route path="/settings/*" element={withSuspense(Settings)({})} />
+              <Route
+                path="/settings/*"
+                element={<NewSettingsRoute legacySettings={withSuspense(Settings)({})} />}
+              />
               <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
               <Route path="/accounts" element={withSuspense(Accounts)({})} />
               <Route path="/cryptos" element={withSuspense(CryptoAddresses)({})} />
