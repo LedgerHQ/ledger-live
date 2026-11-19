@@ -270,6 +270,41 @@ describe("pending operation retention", () => {
     expect(result.subAccounts?.[0].pendingOperations).toEqual([]);
   });
 
+  it("prunes a pending op outnumbered by a swap whose only row the pool sent", () => {
+    const synced: CeloAccount = {
+      ...senderAccount,
+      operations: [],
+      subAccounts: [
+        {
+          ...usdcTokenAccount,
+          operations: [
+            { ...pending(113, "0xswap"), type: "IN", senders: ["0xpool"], blockHeight: 2000 },
+          ],
+          pendingOperations: [pending(114), pending(113)],
+        },
+      ],
+    };
+
+    const result = postSync(senderAccount, synced);
+
+    expect(nonces(result.subAccounts?.[0].pendingOperations ?? [])).toEqual([114]);
+  });
+
+  it("prunes a pending op outnumbered by a confirmed nonce whatever the address case", () => {
+    const synced: CeloAccount = {
+      ...senderAccount,
+      operations: [{ ...pending(111, "0xs"), senders: [sender.toLowerCase()], blockHeight: 2000 }],
+      pendingOperations: [
+        pending(112),
+        { ...pending(111), senders: [`0x${sender.slice(2).toUpperCase()}`] },
+      ],
+    };
+
+    const result = postSync(senderAccount, synced);
+
+    expect(nonces(result.pendingOperations)).toEqual([112]);
+  });
+
   it("keeps a token pending op added while the sync ran", () => {
     const addedDuringSync = { ...pending(112), accountId: usdcTokenAccount.id };
     const current: CeloAccount = {

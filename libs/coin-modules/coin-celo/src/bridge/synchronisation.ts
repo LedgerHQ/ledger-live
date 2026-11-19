@@ -23,7 +23,6 @@ import type {
   AccountShapeInfo,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import type {
   AccountLike,
   Operation as OperationLive,
@@ -97,7 +96,7 @@ const parseSequence = (sequence: unknown): BigNumber | undefined => {
 };
 
 /**
- * The explorer's nonce, which `shouldRetainPendingOperation` compares with the optimistic op's to
+ * The explorer's nonce, which `postSync` compares with the optimistic op's to
  * drop it once its tx is synced. A missing nonce stays unset rather than 0, which would claim one.
  */
 const toSequenceNumber = (sequence: unknown): BigNumber | undefined => {
@@ -501,18 +500,21 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
  * replaced during it.
  */
 export const postSync = (current: CeloAccount, synced: CeloAccount): CeloAccount => {
-  // `shouldRetainPendingOperation` reads only the first op from the sender, so it gets the op with
-  // the highest nonce. A token-only transaction has no parent op, so sub-account ops count too.
-  const latestNonceOperation = [
+  // Only the account's own transactions carry a nonce, whoever sent their rows: a swap's token IN
+  // comes from the pool. A token-only transaction has no parent op, so sub-account ops count too.
+  const latestNonce = [
     ...synced.operations,
     ...(synced.subAccounts ?? []).flatMap(sub => sub.operations),
   ]
-    .filter(o => o.transactionSequenceNumber !== undefined)
-    .sort((a, b) => b.transactionSequenceNumber!.comparedTo(a.transactionSequenceNumber!) ?? 0)
-    .slice(0, 1);
-  const withNonces = { ...synced, operations: latestNonceOperation };
+    .map(o => o.transactionSequenceNumber)
+    .reduce<BigNumber | undefined>(
+      (max, nonce) => (nonce && (!max || nonce.gt(max)) ? nonce : max),
+      undefined,
+    );
   const isPending = (owner: AccountLike, op: OperationLive) =>
-    !owner.operations.some(o => o.hash === op.hash) && shouldRetainPendingOperation(withNonces, op);
+    !owner.operations.some(o => o.hash === op.hash) &&
+    !(latestNonce && op.transactionSequenceNumber?.lte(latestNonce)) &&
+    Date.now() - op.date.valueOf() < getEnv("OPERATION_OPTIMISTIC_RETENTION");
 
   const latestPending = (sub: TokenAccount): OperationLive[] =>
     current.subAccounts?.find(s => s.id === sub.id)?.pendingOperations ?? sub.pendingOperations;
