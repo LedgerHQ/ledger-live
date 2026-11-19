@@ -448,6 +448,8 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Device
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/OsUpdate/             @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MyWallet/views/MyWalletDeviceList/ @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MyWallet/__integrations__/MyWalletDeviceList.integration.test.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
