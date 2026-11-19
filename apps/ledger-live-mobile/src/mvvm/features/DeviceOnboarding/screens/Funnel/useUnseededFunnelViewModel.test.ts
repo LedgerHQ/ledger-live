@@ -24,6 +24,8 @@ function input(machineState: string): UnseededFunnelInput {
     deviceNotGenuine: false,
     firmwareVersion: "1.8.0",
     availableFirmwareVersion: null,
+    firmwareDeclined: false,
+    returnsWithoutUpdate: 0,
     reportsRecoveryKey: true,
     device,
     connectionError: null,
