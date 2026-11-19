@@ -147,9 +147,13 @@ export type LLDCoinFamily<
      * Override the currency used to display operation fees in the details drawer
      * (e.g. Celo CIP-64 fees paid in a non-native token). Called during render
      * and may invoke React hooks; return undefined to fall back to
-     * `getFeesCurrency(mainAccount)`.
+     * `getFeesCurrency(mainAccount)`, or null when the fee is in a currency not resolved yet, so
+     * the drawer shows no fee rather than one in the wrong unit.
      */
-    useFeesCurrency?: (operation: O, account: A) => CryptoCurrency | TokenCurrency | undefined;
+    useFeesCurrency?: (
+      operation: O,
+      account: A,
+    ) => CryptoCurrency | TokenCurrency | null | undefined;
 
     /**
      * Override the raw fee value when the on-chain magnitude differs from the
