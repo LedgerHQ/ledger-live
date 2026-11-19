@@ -140,9 +140,19 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   );
 }
 
+// Mounted only while focused: the Recover upsell state of the hook resets at each focus.
+function PostOnboardingRedirect() {
+  useAutoRedirectToPostOnboarding();
+  return null;
+}
+
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
-  useAutoRedirectToPostOnboarding();
   if (!isFocused) return null;
-  return <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />;
+  return (
+    <>
+      <PostOnboardingRedirect />
+      <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />
+    </>
+  );
 }
