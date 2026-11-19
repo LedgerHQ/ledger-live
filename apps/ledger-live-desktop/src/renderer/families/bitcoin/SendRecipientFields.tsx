@@ -19,10 +19,6 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 type Props = {
   account: BitcoinAccount;
   confirmationsNb: number;
-  transaction: Transaction;
-  status: TransactionStatus;
-  onChange: (transaction: Transaction) => void;
-  autoFocus?: boolean;
 };
 
 const SendRecipientFields = (props: Props) => {
@@ -66,5 +62,4 @@ const m = connect(
 )(SendRecipientFields);
 export default {
   component: m,
-  fields: ["memo"],
 };

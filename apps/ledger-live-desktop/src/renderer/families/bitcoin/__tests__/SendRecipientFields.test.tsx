@@ -2,14 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import SendRecipientFields from "../SendRecipientFields";
-
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({
-    updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
-  }),
-}));
 
 const renderComponent = (account: ReturnType<typeof createFixtureAccount>) =>
   render(
