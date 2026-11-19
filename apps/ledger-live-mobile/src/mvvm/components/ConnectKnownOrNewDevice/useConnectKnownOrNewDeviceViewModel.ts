@@ -18,6 +18,7 @@ import { isErrorState } from "LLM/components/ConnectNewDevice";
 import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
 import { removeKnownBleDevice } from "~/actions/ble";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
+import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { knownDevicesSelector, removeKnownDevice } from "~/reducers/knownDevices";
 import {
@@ -30,7 +31,6 @@ import type {
   ConnectKnownOrNewDeviceProps,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
-import { useIsAppInBackground } from "./useIsAppInBackground";
 import { assertNever } from "./utils/assertNever";
 
 const LOG_TYPE = "ConnectKnownOrNewDevice";
@@ -135,7 +135,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
   const isFocused = useIsFocused();
-  const isAppInBackground = useIsAppInBackground();
+  const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;
 
   const [viewState, setViewState] = useState<ViewState>(INITIAL_VIEW_STATE);
