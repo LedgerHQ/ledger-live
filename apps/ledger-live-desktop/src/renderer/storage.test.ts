@@ -1,5 +1,11 @@
 import { db } from "~/renderer/bridge";
+import * as flushInRoundsModule from "~/helpers/flushInRounds";
 import { flushPendingWrites, resetAll, setKey } from "./storage";
+
+jest.mock("~/helpers/flushInRounds", () => ({
+  __esModule: true,
+  ...jest.requireActual("~/helpers/flushInRounds"),
+}));
 
 function blockNextMainWrite(): () => void {
   let answer: (() => void) | undefined;
@@ -81,6 +87,36 @@ describe("renderer storage", () => {
     await Promise.all([first, second]);
     expect(db.setKey).toHaveBeenCalledTimes(2);
     expect(db.setKey).toHaveBeenLastCalledWith("app", "ptx", { lastScreen: "swap" });
+  });
+
+  it("waits on a second flush until the writes of the first one reach main", async () => {
+    const answerEarlierWrite = blockNextMainWrite();
+    setKey("app", "ptx", { lastScreen: "earn" });
+    await jest.advanceTimersByTimeAsync(1000);
+    setKey("app", "ptx", { lastScreen: "swap" });
+    const first = flushPendingWrites();
+
+    const lastMainWriteOnSecondFlushEnd = flushPendingWrites().then(
+      () => jest.mocked(db.setKey).mock.lastCall,
+    );
+    await jest.runAllTimersAsync();
+    answerEarlierWrite();
+
+    expect(await lastMainWriteOnSecondFlushEnd).toEqual(["app", "ptx", { lastScreen: "swap" }]);
+    await first;
+  });
+
+  it("runs the next flush after a flush that failed", async () => {
+    const flushInRoundsSpy = jest
+      .spyOn(flushInRoundsModule, "flushInRounds")
+      .mockRejectedValueOnce(new Error("flush failed"));
+    await expect(flushPendingWrites()).rejects.toThrow("flush failed");
+
+    setKey("app", "ptx", { lastScreen: "swap" });
+    await flushPendingWrites();
+
+    expect(db.setKey).toHaveBeenCalledWith("app", "ptx", { lastScreen: "swap" });
+    flushInRoundsSpy.mockRestore();
   });
 
   it("drops the pending writes on reset", async () => {
