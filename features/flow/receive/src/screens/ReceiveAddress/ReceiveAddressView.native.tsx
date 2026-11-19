@@ -7,7 +7,12 @@ import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 const CONTENT_BOTTOM_SPACING = 16;
 
-export function ReceiveAddressView({ title, networkLabel }: ReceiveAddressViewProps) {
+export function ReceiveAddressView({
+  title,
+  networkLabel,
+  addressSelection,
+  address,
+}: ReceiveAddressViewProps) {
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -24,8 +29,8 @@ export function ReceiveAddressView({ title, networkLabel }: ReceiveAddressViewPr
         }}
       >
         <ZonePlaceholder zone="header" label={`${title} · ${networkLabel}`} />
-        <ZonePlaceholder zone="summary" />
-        <ZonePlaceholder zone="address" />
+        <ZonePlaceholder zone="summary" label={address?.value} />
+        <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
         <ZonePlaceholder zone="actions" />
         <ZonePlaceholder zone="notices" />
         <ZonePlaceholder zone="extras" />

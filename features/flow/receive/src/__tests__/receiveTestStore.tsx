@@ -72,6 +72,8 @@ const receiveTestResources = {
       receiveAddress: {
         title: "Receive {{asset}}",
         networkLabel: "{{network}} network",
+        selectAddress: { title: "Select address" },
+        addressOptions: { transparent: "Public address", shielded: "Private address" },
       },
     },
   },

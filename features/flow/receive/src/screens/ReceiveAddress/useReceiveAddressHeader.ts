@@ -2,13 +2,14 @@ import { useMemo } from "react";
 import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import { useCryptoCurrencyById, useCurrencyById } from "@features/platform-currencies";
-import { useReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
+import { useReceiveAddressCopy, type ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import { toReceiveAddressData, type ReceiveAddressData } from "../../logic/toReceiveAddressData";
 
 export type ReceiveAddressHeader = Readonly<{
   title: string;
   networkLabel: string;
   data: ReceiveAddressData | undefined;
+  copy: ReceiveAddressCopy;
 }>;
 
 /** The asset and network the screen receives on: empty labels until the currencies are known. */
@@ -24,10 +25,15 @@ export function useReceiveAddressHeader(
     () => (asset && network ? toReceiveAddressData({ asset, network }) : undefined),
     [asset, network],
   );
-  const { title, networkLabel } = useReceiveAddressCopy({
+  const copy = useReceiveAddressCopy({
     assetTicker: data?.asset.ticker ?? "",
     networkName: data?.network ?? "",
   });
 
-  return { title: data ? title : "", networkLabel: data ? networkLabel : "", data };
+  return {
+    title: data ? copy.title : "",
+    networkLabel: data ? copy.networkLabel : "",
+    data,
+    copy,
+  };
 }
