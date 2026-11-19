@@ -663,6 +663,61 @@ describe("a nano firmware update held back until setup", () => {
     },
   );
 
+  it("ends the setup on QUIT once the seeded device is offered the update", async () => {
+    const { actor } = await enterHeldBackSetup();
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context).toMatchObject({
+      firmware: { kind: "skipped" },
+      updateAfterSetup: false,
+    });
+  });
+
+  it("ends the setup on QUIT once the post-setup firmware check failed", async () => {
+    const { actor } = await enterHeldBackSetup({ firmwareCheck: [checkFailure] });
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("ends the setup on QUIT when the held-back update comes back on a new session", async () => {
+    const { actor } = await enterHeldBackSetup({
+      osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable],
+    });
+    expectWaitingInSetup(actor);
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+    actor.send(readyAndSeeded);
+    await settle();
+    expect(actor.getSnapshot().matches({ checks: "firmwareUpdateOffered" })).toBe(true);
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("still quits the onboarding on QUIT while the device is being set up", async () => {
+    const { actor } = await enterHeldBackSetup();
+    expectWaitingInSetup(actor);
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+  });
+
   it("runs the firmware check again on a retry", async () => {
     const { actor, fake } = await enterHeldBackSetup({
       firmwareCheck: [checkFailure, updateAvailable],

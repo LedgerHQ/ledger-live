@@ -404,6 +404,52 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).onSkipFirmwareCheck).toBeUndefined();
   });
 
+  function seededDuringSetupSession(updateAfterSetup: boolean) {
+    return session({
+      state: "postSetupFirmware.firmwareUpdateOffered",
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: false,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: { context: { updateAfterSetup } } as DeviceOnboardingSession["snapshot"],
+    });
+  }
+
+  it("should end the setup from the close button once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).not.toBe(true);
+  });
+
+  it("should end the setup from Android back once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should still ask before leaving an unseeded device without a held-back update", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
+  });
+
   it.each([
     "readingState",
     "legacyFallback",

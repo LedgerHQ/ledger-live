@@ -131,6 +131,7 @@ export const deviceOnboardingMachine = setup({
       }),
     sessionAttested: ({ context }) => currentVerdict(context)?.isGenuine === true,
     // A firmware check already run on the seeded device, after a reconnection, answered it.
+    setupDoneWithUpdatePending: ({ context }) => context.updateAfterSetup && context.isOnboarded,
     updateDeferred: ({ context }) =>
       context.updateAfterSetup &&
       (context.firmware === null || context.firmware.kind === "deferred"),
@@ -186,7 +187,15 @@ export const deviceOnboardingMachine = setup({
   on: {
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
-    QUIT: ".quitting",
+    QUIT: [
+      // Setup is finished: leaving skips only the held-back update, and the success screen shows.
+      {
+        guard: "setupDoneWithUpdatePending",
+        target: ".setupExit",
+        actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
+      },
+      { target: ".quitting" },
+    ],
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
     // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.

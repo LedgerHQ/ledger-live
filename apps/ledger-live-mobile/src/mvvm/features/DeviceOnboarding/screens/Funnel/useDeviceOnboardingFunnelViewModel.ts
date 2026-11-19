@@ -712,8 +712,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
+  const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
+  // Once the held-back update is all that is left, leaving ends the setup instead of losing it.
+  const setupDone = updateAfterSetup && onboarding.context?.isOnboarded === true;
   const confirmsQuit =
-    unseeded || (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
+    (unseeded && !setupDone) ||
+    (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
 
   const quitOrLeave = useCallback(() => {
@@ -995,7 +999,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       trackClick(seededButtons.close);
       quit();
     },
-    updateAfterSetup: onboarding.snapshot?.context.updateAfterSetup === true,
+    updateAfterSetup,
   };
   const built =
     successScreen(screen) ??
