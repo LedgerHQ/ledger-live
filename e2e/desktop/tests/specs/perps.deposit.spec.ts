@@ -64,7 +64,7 @@ test.describe("Perps deposit", () => {
       await app.perpsDepositDialog.selectFundingAccount(fundingAccount);
       await app.perpsDepositDialog.enterAmount(depositAmount);
       await app.perpsDepositDialog.clickReview();
-      await app.perpsDepositDialog.expectReview(fundingAccount, receiverAccount);
+      await app.perpsDepositDialog.expectReview({ fundingAccount, receiverAccount });
       await app.perpsDepositDialog.clickDeposit();
       await app.perpsDepositDialog.expectSigning();
       await app.speculos.acceptPerpsDeposit();

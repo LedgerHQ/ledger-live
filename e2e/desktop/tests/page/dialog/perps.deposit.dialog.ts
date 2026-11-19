@@ -81,7 +81,13 @@ export class PerpsDepositDialog extends Dialog {
   }
 
   @step("Verify the Perps deposit review")
-  async expectReview(fundingAccount: Account, receiverAccount: Account) {
+  async expectReview({
+    fundingAccount,
+    receiverAccount,
+  }: {
+    fundingAccount: Account;
+    receiverAccount: Account;
+  }) {
     await expect(this.reviewTitle).toBeVisible();
     await expect(this.reviewSubtitle).toBeVisible();
     await expect(this.reviewBackButton).toBeVisible();
