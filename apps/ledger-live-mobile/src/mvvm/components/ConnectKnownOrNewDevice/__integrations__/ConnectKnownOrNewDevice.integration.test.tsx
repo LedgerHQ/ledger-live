@@ -184,48 +184,24 @@ describe("ConnectKnownOrNewDevice", () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it("GIVEN a caller Add handler and no device, WHEN Add a Ledger device is pressed, THEN it should call the handler instead of opening the Add mode", async () => {
+  it("GIVEN a caller Add handler, WHEN the flow replaces the Add mode, THEN it should call the handler", () => {
     // GIVEN
     const onAddDevice = jest.fn();
-    const addNewDevice = jest.fn();
-    const { user } = renderComponent(onAddDevice);
-    emit({
-      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
-      isPaused: false,
-      devices: [],
-      addNewDevice,
-    });
+    renderComponent(onAddDevice);
 
     // WHEN
-    await user.press(screen.getByText("Add a Ledger device"));
+    act(() => useCaseInput().onAddNewDevice?.(false));
 
     // THEN
     expect(onAddDevice).toHaveBeenCalledWith(false);
-    expect(addNewDevice).not.toHaveBeenCalled();
   });
 
-  it("GIVEN a caller Add handler and a device that is not found, WHEN the hint is pressed, THEN it should close the waiting sheet and call the handler", async () => {
-    // GIVEN
-    const onAddDevice = jest.fn();
-    const addNewDevice = jest.fn();
-    const close = jest.fn();
-    const { user } = renderComponent(onAddDevice);
-    emit({
-      type: ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice,
-      devices: [nanoXRow],
-      device: nanoX,
-      showDeviceNotFound: true,
-      addNewDevice,
-      close,
-    });
-
-    // WHEN
-    await user.press(screen.getByText("Add a Ledger device"));
+  it("GIVEN no caller Add handler, WHEN the flow starts, THEN it should keep the Add mode", () => {
+    // GIVEN / WHEN
+    renderComponent();
 
     // THEN
-    expect(close).toHaveBeenCalledTimes(1);
-    expect(onAddDevice).toHaveBeenCalledWith(true);
-    expect(addNewDevice).not.toHaveBeenCalled();
+    expect(useCaseInput().onAddNewDevice).toBeUndefined();
   });
 
   it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {

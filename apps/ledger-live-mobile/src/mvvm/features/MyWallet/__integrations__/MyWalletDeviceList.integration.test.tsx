@@ -232,13 +232,13 @@ describe("MyWalletDeviceList", () => {
     expect(screen.getByText("Device action for redirected-id")).toBeVisible();
   });
 
-  it("GIVEN onboarding owns the Add entry point, WHEN Add a Ledger device is pressed, THEN it should open Get Started instead of the Add mode", async () => {
+  it("GIVEN onboarding owns the Add entry point, WHEN the flow replaces the Add mode with no device, THEN it should open Get Started", async () => {
     // GIVEN
-    const { user, onPairingStateChanged } = renderMyWallet({ unifiedEntryPoints: true });
+    renderMyWallet({ unifiedEntryPoints: true });
     emit(discovering);
 
     // WHEN
-    await user.press(screen.getByText("Add a Ledger device"));
+    act(() => mockedConnectKnownOrNewDevice.mock.lastCall?.[0].onAddNewDevice?.(false));
 
     // THEN
     expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
@@ -246,7 +246,13 @@ describe("MyWalletDeviceList", () => {
       expect.objectContaining({ name: "Get Started", props: { source: "my_wallet_empty" } }),
       expect.anything(),
     );
-    expect(discovering.addNewDevice).not.toHaveBeenCalled();
-    expect(onPairingStateChanged).not.toHaveBeenCalledWith(true);
+  });
+
+  it("GIVEN onboarding does not own the Add entry point, WHEN the flow starts, THEN it should keep the Add mode", () => {
+    // GIVEN / WHEN
+    renderMyWallet();
+
+    // THEN
+    expect(mockedConnectKnownOrNewDevice.mock.lastCall?.[0].onAddNewDevice).toBeUndefined();
   });
 });
