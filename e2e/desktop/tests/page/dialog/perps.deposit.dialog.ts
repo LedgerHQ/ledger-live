@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "tests/component/dialog.component";
 import { step } from "tests/misc/reporters/step";
 
@@ -59,11 +59,7 @@ export class PerpsDepositDialog extends Dialog {
   @step("Select the Perps deposit funding account")
   async selectFundingAccount(account: Account) {
     await expect(this.accountSelection).toBeVisible();
-    await this.page
-      .locator("[data-testid^='account-row-']")
-      .filter({ hasText: getParentAccountName(account) })
-      .first()
-      .click();
+    await this.page.getByTestId(`account-row-${account.accountName}`).click();
     await expect(this.selectCurrency).toContainText(account.currency.ticker);
   }
 
