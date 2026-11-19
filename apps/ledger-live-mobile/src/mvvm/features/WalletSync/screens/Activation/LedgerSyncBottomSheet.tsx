@@ -5,6 +5,9 @@ import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-
 import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
 
+// The side padding Lumen's scrollable puts around a sheet's content.
+const SHEET_SIDE_MARGIN = 16;
+
 type Props = Readonly<{
   isOpen: boolean;
   onClose?: () => void;
@@ -54,7 +57,7 @@ export function LedgerSyncBottomSheet({
       testID={testID}
     >
       <LedgerSyncBottomSheetContent
-        header={hasCustomHeader ? customHeader : <BottomSheetHeader />}
+        header={hasCustomHeader ? customHeader : <BottomSheetHeader spacing />}
         testID={`${testID}-content`}
       >
         {children}
@@ -92,14 +95,22 @@ function LedgerSyncBottomSheetContent({
 }: Readonly<{ header: React.ReactNode; testID: string; children: React.ReactNode }>) {
   const bottomInset = useBottomSheetBottomInset();
 
+  // The side margin goes on the content, not the scroll view, so a custom header spans the sheet
+  // width as on the legacy drawer.
   return (
     <BottomSheetScrollView
+      style={{ paddingHorizontal: 0 }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       testID={testID}
     >
       {header}
-      <View style={{ paddingBottom: bottomInset }}>{children}</View>
+      <View
+        style={{ paddingHorizontal: SHEET_SIDE_MARGIN, paddingBottom: bottomInset }}
+        testID={`${testID}-body`}
+      >
+        {children}
+      </View>
     </BottomSheetScrollView>
   );
 }

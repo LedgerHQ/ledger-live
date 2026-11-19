@@ -490,6 +490,20 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
     });
 
+    it("should give the QR code step's header the full sheet width and keep the side margin on its content", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+
+      const sheetContent = screen.getByTestId("wallet-sync-activation-sheet-content");
+      const body = screen.getByTestId("wallet-sync-activation-sheet-content-body");
+      expect(sheetContent).toHaveStyle({ paddingHorizontal: 0 });
+      expect(body).toHaveStyle({ paddingHorizontal: 16 });
+      expect(within(body).queryByTestId("drawer-header")).toBeNull();
+      expect(within(sheetContent).getByTestId("drawer-header")).toBeVisible();
+    });
+
     it("should grow the show QR code tab's instructions up into the scan tab's frame and caption room", async () => {
       const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
       await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));

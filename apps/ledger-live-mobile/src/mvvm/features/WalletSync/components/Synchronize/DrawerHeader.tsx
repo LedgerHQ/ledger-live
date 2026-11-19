@@ -17,6 +17,9 @@ const CLOSE_ICON_SIZE = 16;
 const CLOSE_BUTTON_SIZE = CLOSE_ICON_SIZE + 2 * CLOSE_BUTTON_PADDING;
 // Centers the close button on the first line of the title.
 const CLOSE_BUTTON_TOP = HEADER_TOP + (TITLE_LINE_HEIGHT - CLOSE_BUTTON_SIZE) / 2;
+const SPACE_BESIDE_CLOSE_BUTTON = 8;
+// Kept on both sides so the title stays centered and clear of the close button.
+const TITLE_SIDE_MARGIN = CLOSE_BUTTON_SIZE + SPACE_BESIDE_CLOSE_BUTTON;
 
 const DrawerHeader: React.FC<Props> = ({ onClose }) => {
   const { colors } = useTheme();
@@ -32,20 +35,17 @@ const DrawerHeader: React.FC<Props> = ({ onClose }) => {
       }}
       testID="drawer-header"
     >
-      <Flex flexDirection="row">
-        <Flex flex={1} />
-        <Text
-          flex={3}
-          fontSize={16}
-          lineHeight={`${TITLE_LINE_HEIGHT}px`}
-          fontWeight="semiBold"
-          color={colors.neutral.c100}
-          textAlign="center"
-        >
-          {t("walletSync.synchronize.qrCode.title")}
-        </Text>
-        <Flex flex={1} />
-      </Flex>
+      <Text
+        style={{ marginHorizontal: TITLE_SIDE_MARGIN }}
+        fontSize={16}
+        lineHeight={`${TITLE_LINE_HEIGHT}px`}
+        fontWeight="semiBold"
+        color={colors.neutral.c100}
+        textAlign="center"
+        testID="drawer-header-title"
+      >
+        {t("walletSync.synchronize.qrCode.title")}
+      </Text>
       <Flex
         style={{ position: "absolute", top: CLOSE_BUTTON_TOP, right: HEADER_SIDE }}
         testID="drawer-header-close-container"

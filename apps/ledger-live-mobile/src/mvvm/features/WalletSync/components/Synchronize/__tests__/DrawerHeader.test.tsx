@@ -24,4 +24,15 @@ describe("DrawerHeader", () => {
       paddingBottom: 24,
     });
   });
+
+  it("lets the title span the width left by the close button, reserved on both sides to stay centered", () => {
+    render(<DrawerHeader onClose={jest.fn()} />);
+
+    // The 40 wide close button plus 8 of space beside it.
+    expect(screen.getByTestId("drawer-header-title")).toHaveStyle({
+      marginHorizontal: 48,
+      textAlign: "center",
+    });
+    expect(screen.getByTestId("drawer-header-title")).not.toHaveStyle({ flex: 3 });
+  });
 });
