@@ -13,7 +13,7 @@ const intent = (utxoStrategy?: NonNullable<BitcoinIntent["data"]>["utxoStrategy"
     recipient: "recipient",
     amount: 1n,
     asset: { type: "native" },
-    ...(utxoStrategy ? { data: { type: "string", utxoStrategy } } : {}),
+    ...(utxoStrategy ? { data: { type: "unknown", utxoStrategy } } : {}),
   }) as BitcoinIntent;
 
 describe("coinControlOf", () => {
@@ -93,7 +93,7 @@ describe("coinControlOf", () => {
   ])("rejects a utxoStrategy that is %s rather than ignoring it", (_kind, utxoStrategy) => {
     const malformed = {
       ...intent(),
-      data: { type: "string", utxoStrategy },
+      data: { type: "unknown", utxoStrategy },
     } as unknown as BitcoinIntent;
     expect(() => coinControlOf(malformed)).toThrow(InvalidUtxoStrategy);
   });

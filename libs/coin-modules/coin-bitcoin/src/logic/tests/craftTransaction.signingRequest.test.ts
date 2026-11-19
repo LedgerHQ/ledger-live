@@ -191,7 +191,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     const selected = await craftTransaction(context, c.currencyId, {
       ...intent,
       amount: 10_000_000n,
-      data: { type: "string", utxoStrategy: { selectedUtxos: [`${utxos[2].txId}:2`] } },
+      data: { type: "unknown", utxoStrategy: { selectedUtxos: [`${utxos[2].txId}:2`] } },
     } as TransactionIntent);
     const selectedRequest = JSON.parse(selected.transaction) as SigningRequest;
     expect(selectedRequest.inputs.map(input => [input.txid, input.vout])).toEqual([
@@ -203,7 +203,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
       ...intent,
       amount: 0n,
       useAllAmount: true,
-      data: { type: "string", utxoStrategy: { excludedUtxos: [`${utxos[0].txId}:0`] } },
+      data: { type: "unknown", utxoStrategy: { excludedUtxos: [`${utxos[0].txId}:0`] } },
     } as TransactionIntent);
     const excludedRequest = JSON.parse(excluded.transaction) as SigningRequest;
     expect(excludedRequest.inputs.map(input => input.txid).sort()).toEqual(

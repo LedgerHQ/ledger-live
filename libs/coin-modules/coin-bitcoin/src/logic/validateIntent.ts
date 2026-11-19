@@ -57,12 +57,31 @@ async function validateRecipient(
 }
 
 /**
- * The amount must be positive, covered by the funds, and above the payment's dust threshold.
- *
- * Funds: when `customFees` comes from `estimateFees`, its `parameters.sufficient` is the verdict,
- * since the estimate selected from the outputs crafting spends (confirmed ones and the address's
- * own unconfirmed change, see `getSpendableUtxos`), which a confirmed balance does not show; so is
- * the sweep it priced. Otherwise the amount and the fees are checked against the native balance.
+ * Whether the funds cover the amount and the fees. A selection under an absolute fee is spent
+ * exactly, so its value (`parameters.selectedValue`) must cover both: the estimate's `sufficient`
+ * was priced at the relay floor, not at the caller's fee. Otherwise, when the parameters come from
+ * `estimateFees`, its `sufficient` is the verdict, since the estimate selected from the outputs
+ * crafting spends (confirmed ones and the address's own unconfirmed change, see
+ * `getSpendableUtxos`), which a confirmed balance does not show; so is the sweep it priced. Without
+ * them, the amount and the fees are checked against the native balance.
+ */
+function isCovered(
+  intent: BitcoinIntent,
+  amount: bigint,
+  fees: bigint,
+  nativeBalance: bigint,
+  parameters: FeeEstimation["parameters"],
+): boolean {
+  const selectedValue = amountParameter(parameters, "selectedValue");
+  if (selectedValue !== undefined && !intent.useAllAmount) return amount + fees <= selectedValue;
+  if (typeof parameters?.sufficient === "boolean") return parameters.sufficient;
+  if (intent.useAllAmount && amountParameter(parameters, "amount") !== undefined) return true;
+  return amount + fees <= nativeBalance;
+}
+
+/**
+ * The amount must be positive, covered by the funds (see `isCovered`), and above the payment's dust
+ * threshold.
  */
 function validateAmount(
   currencyId: string,
@@ -77,12 +96,7 @@ function validateAmount(
     return { errors: { amount: error }, warnings: {} };
   }
 
-  const sufficient = customFees?.parameters?.sufficient;
-  const sweepEstimated =
-    intent.useAllAmount && amountParameter(customFees?.parameters, "amount") !== undefined;
-  const covered =
-    typeof sufficient === "boolean" ? sufficient : sweepEstimated || amount + fees <= nativeBalance;
-  if (!covered) {
+  if (!isCovered(intent, amount, fees, nativeBalance, customFees?.parameters)) {
     return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
   }
 
