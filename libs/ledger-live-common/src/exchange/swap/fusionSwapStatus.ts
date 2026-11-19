@@ -23,7 +23,7 @@ function isUnknownOneinchSwap({ provider, status }: SwapStatus): boolean {
   return provider === ONEINCH_PROVIDER && status === TransactionStatus.Unknown;
 }
 
-// The swap live app saved 1inch Fusion swaps as "oneinch" for a while (LIVE-38612)
+// The swap live app saves 1inch Fusion swaps as "oneinch" (LIVE-38612)
 async function resolveOneinchSwapsAsFusion(
   statuses: SwapStatus[],
   network: string | undefined,
