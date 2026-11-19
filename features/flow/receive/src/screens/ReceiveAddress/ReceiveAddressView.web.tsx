@@ -1,6 +1,8 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
+import { AddressOptionList } from "./components/AddressOptionList";
+import { AddressSummary } from "./components/AddressSummary";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -26,20 +28,41 @@ export function ReceiveAddressView({
         data-testid="receive-address"
       >
         <DialogBackgroundToneProvider>
-          <DialogHeader
-            density="compact"
-            title={title}
-            description={networkLabel}
-            onBack={onBack}
-            onClose={closeDialog}
-          />
-          <DialogBody className="flex flex-col gap-24">
-            <ZonePlaceholder zone="summary" label={address?.value} />
-            <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
-            <ZonePlaceholder zone="actions" />
-            <ZonePlaceholder zone="notices" />
-            <ZonePlaceholder zone="extras" />
-          </DialogBody>
+          {addressSelection ? (
+            <>
+              <DialogHeader
+                density="expanded"
+                title={addressSelection.title}
+                onClose={closeDialog}
+              />
+              <DialogBody>
+                <AddressOptionList
+                  options={addressSelection.options}
+                  onSelect={addressSelection.onSelect}
+                />
+              </DialogBody>
+            </>
+          ) : (
+            <>
+              <DialogHeader
+                density="compact"
+                title={title}
+                description={networkLabel}
+                onBack={onBack}
+                onClose={closeDialog}
+              />
+              <DialogBody className="flex flex-col gap-24">
+                {address ? (
+                  <AddressSummary address={address} />
+                ) : (
+                  <ZonePlaceholder zone="summary" />
+                )}
+                <ZonePlaceholder zone="actions" />
+                <ZonePlaceholder zone="notices" />
+                <ZonePlaceholder zone="extras" />
+              </DialogBody>
+            </>
+          )}
         </DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>
