@@ -5,6 +5,7 @@ import {
   isFirmwareUpdateDelegated,
   isHeldBackUpdatePending,
 } from "./postSetupFirmware";
+import type { DeviceOnboardingContext } from "./types";
 
 describe("post-setup firmware states", () => {
   it("reads a post-setup state as the pre-setup checks state", () => {
@@ -51,9 +52,33 @@ describe("held-back update", () => {
   ])(
     "is pending with updateAfterSetup %s and isOnboarded %s: %s",
     (updateAfterSetup, isOnboarded, pending) => {
-      expect(isHeldBackUpdatePending({ updateAfterSetup, isOnboarded })).toBe(pending);
+      expect(isHeldBackUpdatePending({ updateAfterSetup, isOnboarded, firmware: null })).toBe(
+        pending,
+      );
     },
   );
+
+  it.each(["upToDate", "declined", "skipped"] as const)(
+    "is no longer pending once the update is answered as %s",
+    kind => {
+      expect(
+        isHeldBackUpdatePending({ updateAfterSetup: true, isOnboarded: true, firmware: { kind } }),
+      ).toBe(false);
+    },
+  );
+
+  it.each(["deferred", "offered"] as const)("is still pending while the update is %s", kind => {
+    const firmware = { kind } as DeviceOnboardingContext["firmware"];
+    expect(isHeldBackUpdatePending({ updateAfterSetup: true, isOnboarded: true, firmware })).toBe(
+      true,
+    );
+  });
+
+  it("still finishes the setup on quit once the update is answered", () => {
+    expect(finishesSetupOnQuit({ updateAfterSetup: true, isOnboarded: true, ...attested })).toBe(
+      true,
+    );
+  });
 
   it("finishes the setup on quit once this session is genuine", () => {
     expect(finishesSetupOnQuit({ updateAfterSetup: true, isOnboarded: true, ...attested })).toBe(

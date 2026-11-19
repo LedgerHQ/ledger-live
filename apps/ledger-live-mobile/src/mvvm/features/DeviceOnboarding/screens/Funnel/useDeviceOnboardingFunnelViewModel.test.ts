@@ -366,6 +366,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       context: {
         updateAfterSetup,
         isOnboarded: true,
+        firmware: null,
         sessionId: "session",
         genuineVerdict: { sessionId: "session", isGenuine },
       },
@@ -1538,6 +1539,37 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
       expect(result.current.status).toBe("recoverNewSeed");
     });
+
+    it.each(["upToDate", "declined", "skipped"] as const)(
+      "should leave a new seed to the Recover pitch once the held-back update is %s",
+      kind => {
+        useSession.mockReturnValue(
+          session({
+            state: "done",
+            status: "exited",
+            context: {
+              onboardedOnEntry: false,
+              isOnboarded: true,
+              checksPaused: false,
+            } as DeviceOnboardingSession["context"],
+            snapshot: {
+              context: {
+                seedPath: SeedPath.NewSeed,
+                updateAfterSetup: true,
+                isOnboarded: true,
+                firmware: { kind },
+                sessionId: "session",
+                genuineVerdict: { sessionId: "session", isGenuine: true },
+              },
+            } as DeviceOnboardingSession["snapshot"],
+          }),
+        );
+
+        const { result } = renderRecoverFunnel();
+
+        expect(result.current.status).toBe("recoverNewSeed");
+      },
+    );
 
     it("should keep a seeded device on the shipped success screen", () => {
       useSession.mockReturnValue(doneSession(true, SeedPath.RestorePhrase));
