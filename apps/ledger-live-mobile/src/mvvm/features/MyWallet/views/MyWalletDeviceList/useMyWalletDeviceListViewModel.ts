@@ -1,19 +1,24 @@
 import { useCallback, useLayoutEffect, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
-import type { RouteProp } from "@react-navigation/native";
+import type { CompositeNavigationProp, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { type DeviceConnectionResult, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useDispatch } from "~/context/hooks";
-import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import { NavigatorName, ScreenName } from "~/const";
+import { MANAGER_TABS } from "~/const/manager";
+import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import type { MyWalletNavigatorStackParamList } from "../../types";
 import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
+
+type MyWalletNavigation = CompositeNavigationProp<
+  NativeStackNavigationProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>,
+  BaseNavigation
+>;
 
 function toLegacyDevice(result: DeviceConnectionResult): Device {
   return {
@@ -31,11 +36,9 @@ function toLegacyDevice(result: DeviceConnectionResult): Device {
 export function useMyWalletDeviceListViewModel({
   onAddModeChange,
 }: MyWalletDeviceListProps): MyWalletDeviceListViewProps {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+  const navigation = useNavigation<MyWalletNavigation>();
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
-  const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const { top: topInset } = useSafeAreaInsets();
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
@@ -53,16 +56,12 @@ export function useMyWalletDeviceListViewModel({
   const [isAdding, setIsAdding] = useState(false);
   const [deviceToCheck, setDeviceToCheck] = useState<Device | null>(null);
 
-  // Before paint, so that the header and the tab bar go in the same frame as the other sections.
+  // Before paint, so that the header goes in the same frame as the other sections.
   useLayoutEffect(() => {
     if (!isAdding || !isFocused) return;
     navigation.setOptions({ headerShown: false });
-    dispatch(updateMainNavigatorVisibility(false));
-    return () => {
-      navigation.setOptions({ headerShown: true });
-      dispatch(updateMainNavigatorVisibility(true));
-    };
-  }, [dispatch, isAdding, isFocused, navigation]);
+    return () => navigation.setOptions({ headerShown: true });
+  }, [isAdding, isFocused, navigation]);
 
   const handleAddModeChange = useCallback(
     (adding: boolean) => {
@@ -95,20 +94,20 @@ export function useMyWalletDeviceListViewModel({
   const resetDevice = useCallback(() => setDevice(undefined), []);
 
   const onResult = useCallback(
-    (result: Result) => {
-      setDevice(undefined);
-      if (result && "result" in result) {
-        navigation.navigate(NavigatorName.MyLedger, {
-          screen: ScreenName.MyLedgerDevice,
-          params: {
-            ...result,
-            firmwareUpdate: params?.firmwareUpdate,
-            searchQuery: params?.searchQuery || params?.installApp,
-            tab: params?.tab,
-            updateModalOpened: params?.updateModalOpened,
-          },
-        });
-      }
+    ({ device: resultDevice, deviceInfo, result: appsResult }: Result) => {
+      if (!appsResult) return;
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerDevice,
+        params: {
+          device: resultDevice,
+          deviceInfo,
+          result: appsResult,
+          firmwareUpdate: params?.firmwareUpdate,
+          searchQuery: params?.searchQuery || params?.installApp,
+          tab: params?.tab ?? MANAGER_TABS.CATALOG,
+          updateModalOpened: params?.updateModalOpened,
+        },
+      });
     },
     [
       navigation,

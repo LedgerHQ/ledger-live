@@ -15,7 +15,6 @@ import { trackPage } from "@shared/analytics";
 import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { BaseOnboardingTestScreens } from "@tests/OnboardingTestScreens";
 import { NavigatorName, ScreenName } from "~/const";
-import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { MyLedgerSection } from "../views/MyLedgerSection";
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
@@ -187,9 +186,9 @@ describe("MyWalletDeviceList", () => {
     expect(resume).toHaveBeenCalled();
   });
 
-  it("GIVEN the device list, WHEN the Add mode starts and then ends, THEN it should hide the other sections and the tab bar, then show them again", () => {
+  it("GIVEN the device list, WHEN the Add mode starts and then ends, THEN it should hide the other sections, then show them again", () => {
     // GIVEN
-    const { store, onPairingStateChanged } = renderMyWallet();
+    const { onPairingStateChanged } = renderMyWallet();
     emit(discovering);
 
     // WHEN
@@ -206,14 +205,12 @@ describe("MyWalletDeviceList", () => {
 
     // THEN
     expect(onPairingStateChanged).toHaveBeenLastCalledWith(true);
-    expect(isMainNavigatorVisibleSelector(store.getState())).toBe(false);
 
     // WHEN
     emit(discovering);
 
     // THEN
     expect(onPairingStateChanged).toHaveBeenLastCalledWith(false);
-    expect(isMainNavigatorVisibleSelector(store.getState())).toBe(true);
   });
 
   it("GIVEN a redirect with a device, WHEN My Wallet opens, THEN it should open the device action at once", () => {
