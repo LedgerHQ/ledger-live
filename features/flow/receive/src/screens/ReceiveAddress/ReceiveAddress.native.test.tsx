@@ -1,20 +1,18 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { I18nTestProvider } from "@shared/i18n/testing";
+import { receiveTestWrapper, testAccountUUID } from "../../__tests__/receiveTestStore";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 describe("ReceiveAddress (Native)", () => {
   it("lays the zones out in screen order", () => {
     render(
       <ReceiveAddress
-        accountUUID={computeAccountUUID(mockAddressAccountDescriptor())}
+        accountUUID={testAccountUUID}
         assetId={CryptoOrTokenCurrencyIdSchema.parse("ethereum")}
         onClose={jest.fn()}
       />,
-      { wrapper: I18nTestProvider },
+      { wrapper: receiveTestWrapper() },
     );
 
     expect(screen.getByTestId("receive-address")).toBeTruthy();

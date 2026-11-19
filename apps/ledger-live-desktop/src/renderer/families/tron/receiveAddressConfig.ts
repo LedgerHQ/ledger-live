@@ -1,7 +1,6 @@
-import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import type { GetReceiveFamilyConfig } from "@features/flow-receive";
 
-export const receiveAddressConfig: GetReceiveFamilyConfig<TronAccount> = ({ legacyAccount }) => {
-  const isInactiveAccount = legacyAccount?.operationsCount === 0;
+export const receiveAddressConfig: GetReceiveFamilyConfig = ({ accountStatus }) => {
+  const isInactiveAccount = accountStatus?.used === false;
   return isInactiveAccount ? { notices: ["tronInactiveAccount"] } : {};
 };

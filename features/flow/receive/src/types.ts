@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
+import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
@@ -35,6 +36,8 @@ export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
   featureFlags: PartialFeatures;
   /** The account's `receive` data, absent until it is read. */
   receive?: AccountReceive;
+  /** The account's `accountStatus` data, absent until it is read. */
+  accountStatus?: AccountStatus;
   legacyAccount?: A;
 }>;
 

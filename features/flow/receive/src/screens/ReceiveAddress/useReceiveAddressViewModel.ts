@@ -1,9 +1,12 @@
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import { useReceiveScreenData } from "./useReceiveScreenData";
 
-/** Static for now: the screen data (LIVE-41128) and each zone task fill it. */
 export function useReceiveAddressViewModel({
+  accountUUID,
+  assetId,
   onClose,
 }: ReceiveAddressProps): ReceiveAddressViewProps {
-  return { onClose };
+  const { data } = useReceiveScreenData(accountUUID, assetId);
+  return { data, onClose };
 }

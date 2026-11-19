@@ -13464,15 +13464,24 @@ importers:
       '@domain/entity-account':
         specifier: workspace:*
         version: link:../../../domain/entity/account
+      '@domain/entity-account-data':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-data
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
       '@domain/entity-account-receive':
         specifier: workspace:*
         version: link:../../../domain/entity/account-receive
+      '@domain/entity-account-status':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-status
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency
+      '@features/platform-account-data':
+        specifier: workspace:*
+        version: link:../../platform/account-data
       '@features/platform-device-intent':
         specifier: workspace:*
         version: link:../../platform/device-intent
@@ -13495,6 +13504,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/ui-info-state
     devDependencies:
+      '@domain/api-account-data':
+        specifier: workspace:*
+        version: link:../../../domain/api/account-data
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -13567,6 +13579,9 @@ importers:
       react-native-safe-area-context:
         specifier: 'catalog:'
         version: 5.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
