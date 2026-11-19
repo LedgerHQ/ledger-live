@@ -2,6 +2,7 @@
 // keeps the preset's mappers and setup files by spreading the exported tables.
 
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import test from "node:test";
@@ -75,3 +76,10 @@ for (const [name, create, mapper, setupFiles, [mappedModule, mappedTo], setupFil
     assert.deepEqual(create({ roots: ["<rootDir>/lib"] }).roots, ["<rootDir>/lib"]);
   });
 }
+
+test("createNativeJestConfig: extends @react-native/jest-preset by an absolute path a consumer can load", () => {
+  const { preset } = createNativeJestConfig();
+  assert.ok(path.isAbsolute(preset), `not absolute: ${preset}`);
+  assert.match(preset, /@react-native[\\/]jest-preset[\\/]jest-preset\.js$/);
+  assert.ok(existsSync(preset), `missing: ${preset}`);
+});

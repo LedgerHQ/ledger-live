@@ -1,3 +1,8 @@
+On Android, Pressability measures the pressed view through the app's MeasureTransform native module.
+Fabric hit-testing ignores animated transforms, so taps on moving views fail (LIVE-38228).
+Upstream issue: https://github.com/facebook/react-native/issues/51621, fix PR https://github.com/facebook/react-native/pull/51835 (both still open).
+Remove when a react-native release ships #51835 and taps on moving views work without this patch.
+
 diff --git a/Libraries/Pressability/Pressability.js b/Libraries/Pressability/Pressability.js
 --- a/Libraries/Pressability/Pressability.js
 +++ b/Libraries/Pressability/Pressability.js
@@ -9,11 +14,12 @@ diff --git a/Libraries/Pressability/Pressability.js b/Libraries/Pressability/Pre
  import PressabilityPerformanceEventEmitter from './PressabilityPerformanceEventEmitter.js';
  import {type PressabilityTouchSignal as TouchSignal} from './PressabilityTypes.js';
  import invariant from 'invariant';
-@@ -805,7 +806,27 @@ export default class Pressability {
+@@ -805,7 +806,28 @@ export default class Pressability {
      if (typeof this._responderID === 'number') {
        UIManager.measure(this._responderID, this._measureCallback);
      } else {
 -      this._responderID.measure(this._measureCallback);
++      // Ledger patch (LIVE-38228): upstream fix https://github.com/facebook/react-native/pull/51835, remove once released
 +      const MeasureTransform = NativeModules.MeasureTransform;
 +
 +      if (MeasureTransform && typeof this._responderID.__nativeTag === 'number') {
@@ -38,18 +44,3 @@ diff --git a/Libraries/Pressability/Pressability.js b/Libraries/Pressability/Pre
      }
    }
 
-diff --git a/third-party-podspecs/fmt.podspec b/third-party-podspecs/fmt.podspec
---- a/third-party-podspecs/fmt.podspec
-+++ b/third-party-podspecs/fmt.podspec
-@@ -26,4 +26,11 @@ Pod::Spec.new do |spec|
-   spec.public_header_files = "include/fmt/*.h"
-   spec.header_mappings_dir = "include"
-   spec.source_files = ["include/fmt/*.h", "src/format.cc"]
-+
-+  # TODO: Remove after upgrading React Native past 0.83.x
-+  # Fix fmt 11.0.2 consteval build error with Xcode 26.4 (facebook/react-native#55601)
-+  # Fixed in RN 0.84+ which bumps fmt to a compatible version.
-+  spec.prepare_command = <<~SCRIPT
-+    perl -i -pe 's/^#  define FMT_USE_CONSTEVAL 1$/#  define FMT_USE_CONSTEVAL 0/' include/fmt/base.h
-+  SCRIPT
- end

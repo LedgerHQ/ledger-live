@@ -37,7 +37,7 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@xstate/react": "catalog:",
     "expo-crypto": "catalog:",
-    "expo-web-browser": "15.0.10",
+    "expo-web-browser": "57.0.3",
     "react-native-keychain": "catalog:",
     "xstate": "catalog:"
   },

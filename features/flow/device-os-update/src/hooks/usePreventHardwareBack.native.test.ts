@@ -1,8 +1,9 @@
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { renderHook } from "@testing-library/react-native";
 import { usePreventHardwareBack } from "./usePreventHardwareBack";
 
 const addEventListener = jest.mocked(BackHandler.addEventListener);
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
 
 describe("usePreventHardwareBack", () => {
   beforeEach(() => {
@@ -14,7 +15,7 @@ describe("usePreventHardwareBack", () => {
 
     expect(addEventListener).toHaveBeenCalledWith("hardwareBackPress", expect.any(Function));
     const onBackPress = addEventListener.mock.calls[0][1];
-    expect(onBackPress()).toBe(true);
+    expect(onBackPress(backPressEvent)).toBe(true);
   });
 
   it("leaves the back button alone while inactive", () => {

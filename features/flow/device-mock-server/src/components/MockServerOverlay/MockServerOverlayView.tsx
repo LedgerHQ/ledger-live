@@ -7,8 +7,8 @@ import { MockServerOverlayContainer } from "./MockServerOverlayContainer";
 import type { MockServerOverlayViewModel } from "./useMockServerOverlayViewModel";
 
 const styles = StyleSheet.create({
-  panelLayer: StyleSheet.absoluteFillObject,
-  panel: StyleSheet.absoluteFillObject,
+  panelLayer: StyleSheet.absoluteFill,
+  panel: StyleSheet.absoluteFill,
   hiddenPanel: { display: "none" },
 });
 

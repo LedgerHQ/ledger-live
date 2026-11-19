@@ -355,6 +355,8 @@ export default withRozeniteUrlFix(
           ...getRsdoctorPlugin(),
           new rspack.DefinePlugin({
             "process.env.DETOX_APP_VERSION": defineDetoxAppVersion(platform),
+            // expo/fetch needs ReadableStream, which Hermes lacks, and breaks Detox sync (wix/Detox#4973)
+            "process.env.EXPO_PUBLIC_USE_RN_FETCH": JSON.stringify("1"),
           }),
         ],
         stats: "errors-warnings",
