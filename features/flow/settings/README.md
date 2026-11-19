@@ -7,13 +7,30 @@ The new Settings of Ledger Wallet mobile and desktop (Settings 4.0), shown behin
 feature flag. Both apps share the same sections, rows and wording; only the rendering differs. The
 legacy Settings stay in the apps, untouched, until the flag reaches 100%.
 
-The package starts with the rule for hiding rows. The screens come with the next tickets of the
+The sections come with the next tickets of the
 [Settings 4.0 epic](https://ledgerhq.atlassian.net/browse/LIVE-41813).
+
+## Page and rows
+
+| Export                   | Entry  | Purpose                                                                 |
+| ------------------------ | ------ | ----------------------------------------------------------------------- |
+| `SettingsPage`           | `/web` | Desktop page: title and one tab per section; the app renders the content |
+| `SettingsSection`        | `.`    | Block of rows with an optional title                                    |
+| `SettingsRow`            | `.`    | Icon, title, description with an optional link, and a trailing element  |
+| `SETTINGS_SECTIONS`      | `.`    | General, Asset management, Security, Privacy, About                     |
+| `resolveSettingsSection` | `.`    | Turns an address segment into a section, General when unknown           |
+| `useSettingsLabels`      | `.`    | Page title and section names                                            |
+
+A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
+On mobile, the select shows the current value; the picker comes with the mobile screens.
 
 ## Hiding rows
 
 The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
 use: on that device the app hides `myLedgerProvider` and `mockAppUpdate`.
+
+Wrap the Settings in `HiddenSettingsProvider` with that list: a `SettingsRow` whose `settingId`
+is in it is not rendered.
 
 | Export              | Purpose                                                                  |
 | ------------------- | ------------------------------------------------------------------------ |
