@@ -54,6 +54,7 @@ import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculo
 import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
+import { type KnownSpeculos, readSpeculosLaunchArgs } from "~/e2e/speculosLaunchArgs";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -85,6 +86,68 @@ function removeKnownSpeculosDevices() {
   if (deviceIds.length) {
     store.dispatch(removeKnownDevices(deviceIds));
   }
+}
+
+async function registerKnownSpeculos({ address, model, sessionToken }: KnownSpeculos) {
+  setSpeculosDeviceModel(model);
+  setSpeculosSessionToken(sessionToken);
+  await disconnectAllSpeculosSessions();
+  const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
+  const knownSpeculosIds = bleDevicesSelector(store.getState())
+    .map(device => device.id)
+    .filter(isSpeculosLegacyDeviceId);
+  if (knownSpeculosIds.length) {
+    store.dispatch(removeKnownBleDevices(knownSpeculosIds));
+  }
+  store.dispatch(
+    setLastConnectedDevice({
+      deviceId: speculosDeviceId,
+      deviceName: address,
+      wired: false,
+      modelId: model,
+    }),
+  );
+  store.dispatch(
+    addKnownBleDevice({
+      id: speculosDeviceId,
+      name: address,
+      modelId: model,
+    }),
+  );
+  // Device intents only offer DMK-known devices, so Speculos is registered here too.
+  speculosTargetSubject.next({
+    url: address,
+    deviceModelId: ledgerToDmkDeviceIdMap[model],
+    bearerToken: sessionToken,
+  });
+  removeKnownSpeculosDevices();
+  store.dispatch(
+    addKnownDevice({
+      transport: speculosIdentifier,
+      id: speculosDeviceId,
+      name: address,
+      deviceModelId: model,
+    }),
+  );
+  setEnv("DEVICE_PROXY_URL", address);
+}
+
+// Once per process: init() runs again on every bridge retry, and registering again would drop the
+// session the app is using.
+let speculosLaunchArgsApplied = false;
+
+/** Registers the Speculos device the launch arguments name, for runs that have no bridge server. */
+function applySpeculosLaunchArgs() {
+  if (speculosLaunchArgsApplied) return;
+  speculosLaunchArgsApplied = true;
+  const speculos = readSpeculosLaunchArgs(LaunchArguments.value());
+  if (!speculos) return;
+  log(`[E2E Bridge Client]: Speculos from the launch arguments: ${speculos.model}`);
+  registerKnownSpeculos(speculos).catch((error: unknown) =>
+    log(
+      `[E2E Bridge Client]: could not register the Speculos of the launch arguments: ${String(error)}`,
+    ),
+  );
 }
 
 function overrideLedgerSyncEnvironment() {
@@ -148,6 +211,7 @@ function seedMockServerKnownDevice(model: DeviceModelId) {
 
 export function init() {
   applyMockServerLaunchArgs();
+  applySpeculosLaunchArgs();
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const wsToken = LaunchArguments.value()["wsToken"];
   const mock = LaunchArguments.value()["mock"];
@@ -325,54 +389,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const {
-          address,
-          model,
-          sessionToken,
-        }: { address: string; model: DeviceModelId; sessionToken?: string } = JSON.parse(
-          msg.payload,
-        );
-        setSpeculosDeviceModel(model);
-        setSpeculosSessionToken(sessionToken);
-        await disconnectAllSpeculosSessions();
-        const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
-        const knownSpeculosIds = bleDevicesSelector(store.getState())
-          .map(device => device.id)
-          .filter(isSpeculosLegacyDeviceId);
-        if (knownSpeculosIds.length) {
-          store.dispatch(removeKnownBleDevices(knownSpeculosIds));
-        }
-        store.dispatch(
-          setLastConnectedDevice({
-            deviceId: speculosDeviceId,
-            deviceName: address,
-            wired: false,
-            modelId: model,
-          }),
-        );
-        store.dispatch(
-          addKnownBleDevice({
-            id: speculosDeviceId,
-            name: address,
-            modelId: model,
-          }),
-        );
-        // Device intents only offer DMK-known devices, so Speculos is registered here too.
-        speculosTargetSubject.next({
-          url: address,
-          deviceModelId: ledgerToDmkDeviceIdMap[model],
-          bearerToken: sessionToken,
-        });
-        removeKnownSpeculosDevices();
-        store.dispatch(
-          addKnownDevice({
-            transport: speculosIdentifier,
-            id: speculosDeviceId,
-            name: address,
-            deviceModelId: model,
-          }),
-        );
-        setEnv("DEVICE_PROXY_URL", address);
+        await registerKnownSpeculos(JSON.parse(msg.payload) as KnownSpeculos);
         break;
       }
       case "removeKnownSpeculos": {
