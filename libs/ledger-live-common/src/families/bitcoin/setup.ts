@@ -16,6 +16,7 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { SignMessage } from "../../hw/signMessage/types";
+import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner =>
   new Btc({ transport, currency: currency.id });
@@ -57,4 +58,6 @@ const resolver: Resolver = (
   return bitcoinResolver(signerContext, context.logger)("", addressOpt);
 };
 
-export { bridge, resolver, messageSigner, signerContext };
+const deriveAccountDescriptor = createDeriveAccountDescriptor(resolver, createSigner);
+
+export { bridge, resolver, messageSigner, signerContext, deriveAccountDescriptor };

@@ -12,7 +12,6 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { setTrackingSource } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -25,6 +24,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
 import type { StepProps, TokenAction } from "../types";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 export function Row({
   label,
   children,
@@ -77,7 +77,7 @@ function GetXrpBanner(
 
   const onReceive = () => {
     props.onClose();
-    dispatch(openModal("MODAL_RECEIVE", { account }));
+    dispatch(openReceiveFlow({ account }));
   };
 
   const onBuy = () => {

@@ -46,13 +46,17 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
 });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction ? defaultGetFees(mainAccount, transaction) : new BigNumber(10);
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (a, t) => {
+const getTransactionStatus = (a: Account, t: Transaction) => {
   const minimalBaseAmount = 10 ** a.currency.units[0].magnitude * 20;
   const errors: {
     amount?: Error;
@@ -118,7 +122,7 @@ const getTransactionStatus = (a, t) => {
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: Account, t: any) => {
   // TODO it needs to set the fee if not in t as well
   if (!t.networkInfo) {
     return {

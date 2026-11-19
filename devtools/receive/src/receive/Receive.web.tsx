@@ -1,8 +1,18 @@
 import type { ReactNode } from "react";
-import { Button, Switch, TextInput } from "@ledgerhq/lumen-ui-react";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import {
+  Button,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  Switch,
+  TextInput,
+} from "@ledgerhq/lumen-ui-react";
 import type { ReceiveToolProps } from "../types";
 import { copy } from "./copy";
-import { useReceiveToolViewModel } from "./useReceiveToolViewModel";
+import { type ReceiveRow, useReceiveToolViewModel } from "./useReceiveToolViewModel";
 
 function Section({
   title,
@@ -20,9 +30,22 @@ function Section({
   );
 }
 
+function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
+  return (
+    <ListItem onClick={row.onPress} aria-label={row.accessibilityLabel}>
+      <ListItemLeading>
+        <CryptoIcon {...row.icon} size={32} />
+        <ListItemContent>
+          <ListItemTitle>{row.title}</ListItemTitle>
+          <ListItemDescription>{row.description}</ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+    </ListItem>
+  );
+}
+
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excludedDraft, setExcludedDraft, applyExcludedFamilies } =
-    useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
 
   return (
     <div className="flex flex-col">
@@ -38,11 +61,43 @@ export function Receive(props: ReceiveToolProps) {
         <TextInput
           label={copy.excludedFamilies}
           placeholder={copy.excludedFamiliesPlaceholder}
-          value={excludedDraft}
-          onChange={event => setExcludedDraft(event.target.value)}
+          value={excluded.draft}
+          onChange={event => excluded.setDraft(event.target.value)}
         />
-        <Button className="self-end" appearance="gray" size="sm" onClick={applyExcludedFamilies}>
+        <Button className="self-end" appearance="gray" size="sm" onClick={excluded.apply}>
           {copy.apply}
+        </Button>
+      </Section>
+      <Section title={copy.triggerTitle} description={copy.triggerDescription}>
+        <Button className="self-start" appearance="gray" size="sm" onClick={pickAsset}>
+          {copy.pickAsset}
+        </Button>
+        {rows.length === 0 ? (
+          <p className="body-3 text-muted">{copy.noAsset}</p>
+        ) : (
+          <div className="flex flex-col">
+            {rows.map(row => (
+              <AssetRow key={row.key} row={row} />
+            ))}
+          </div>
+        )}
+      </Section>
+      <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
+        <TextInput
+          label={copy.deeplinkLabel}
+          value={deeplink.draft}
+          onChange={event => deeplink.setDraft(event.target.value)}
+          helperText={deeplink.error}
+          status={deeplink.error && "error"}
+        />
+        <Button
+          className="self-end"
+          appearance="gray"
+          size="sm"
+          disabled={!deeplink.canOpen}
+          onClick={deeplink.open}
+        >
+          {copy.openDeeplink}
         </Button>
       </Section>
     </div>

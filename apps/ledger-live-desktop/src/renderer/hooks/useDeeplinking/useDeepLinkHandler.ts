@@ -5,6 +5,8 @@ import { useFeature } from "@features/platform-feature-flags";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { setTrackingSource } from "@shared/analytics";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closeDialog as closeModularDialog } from "~/renderer/reducers/modularDialog";
@@ -30,6 +32,8 @@ export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const hasLedgerSyncTrustchain = !!useSelector(trustchainSelector)?.rootId;
+  const isLedgerSyncFaked = useSelector(walletSyncFakedSelector);
   const location = useLocation();
   const routerNavigate = useNavigate();
 
@@ -105,6 +109,8 @@ export function useDeepLinkHandler() {
       isPayTabEnabled,
       isContactsEnabled,
       isPredictionsAvailable,
+      hasLedgerSyncTrustchain,
+      isLedgerSyncFaked,
     }),
     [
       dispatch,
@@ -126,6 +132,8 @@ export function useDeepLinkHandler() {
       isPayTabEnabled,
       isContactsEnabled,
       isPredictionsAvailable,
+      hasLedgerSyncTrustchain,
+      isLedgerSyncFaked,
     ],
   );
 

@@ -20,6 +20,9 @@ import {
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
+const familyLiveToWalletApi: Partial<Record<string, string>> = FAMILIES_MAPPING_LL_TO_WAPI;
+const familyWalletApiToLive: Partial<Record<string, string>> = FAMILIES_MAPPING_WAPI_TO_LL;
+
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
 const uuidToAccountId = new Map<string, string>();
@@ -104,7 +107,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
+    family: familyLiveToWalletApi[currency.family] ?? currency.family,
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -127,12 +130,12 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   const servedFamily =
     isTokenAccount(account) || !account.currency ? undefined : account.currency.family;
   const servedFamilyWapiName = servedFamily
-    ? (FAMILIES_MAPPING_LL_TO_WAPI[servedFamily] ?? servedFamily)
+    ? (familyLiveToWalletApi[servedFamily] ?? servedFamily)
     : undefined;
   const liveFamily =
     servedFamily && servedFamilyWapiName === walletApiTransaction.family
       ? servedFamily
-      : (FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family);
+      : (familyWalletApiToLive[walletApiTransaction.family] ?? walletApiTransaction.family);
 
   const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 

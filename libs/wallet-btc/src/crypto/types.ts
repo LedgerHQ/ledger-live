@@ -49,4 +49,5 @@ export type Currency =
   | "zencash"
   | "decred"
   | "bitcoin_testnet"
-  | "bitcoin_regtest";
+  | "bitcoin_regtest"
+  | "bitcoin_signet";

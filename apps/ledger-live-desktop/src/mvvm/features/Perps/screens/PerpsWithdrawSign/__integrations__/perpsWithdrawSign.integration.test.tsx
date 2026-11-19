@@ -37,6 +37,12 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
 }));
 
 const mockCancelWithdrawRequest = jest.fn();
+// The balance follows the withdraw only seconds later: covered by the view model tests.
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection"),
+  waitForWithdrawBalanceReflected: () => Promise.resolve("reflected"),
+}));
+
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/request", () => ({
   getWithdrawRequestId: () => "request-1",
   cancelWithdrawRequest: (id?: string | null) => mockCancelWithdrawRequest(id),

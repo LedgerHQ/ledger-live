@@ -14,6 +14,11 @@ import {
   type PerpsWithdrawSignProps,
 } from "../usePerpsWithdrawSignViewModel";
 
+const mockIsBroadcastDisabled = jest.fn();
+jest.mock("LLM/features/Perps/utils/isBroadcastDisabled", () => ({
+  isBroadcastDisabled: () => mockIsBroadcastDisabled(),
+}));
+
 const mockExecute = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute"),
@@ -22,6 +27,18 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/request", () => ({
   getWithdrawRequestId: () => "request-1",
+}));
+
+const mockSync = jest.fn();
+jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
+  useBridgeSync: () => mockSync,
+}));
+
+const mockWaitForBalance = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection"),
+  waitForWithdrawBalanceReflected: (params: unknown) => mockWaitForBalance(params),
 }));
 
 jest.mock("~/hooks/deviceActions", () => ({ useAppDeviceAction: () => ({}) }));
@@ -72,7 +89,11 @@ function renderViewModel() {
 }
 
 describe("usePerpsWithdrawSignViewModel", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsBroadcastDisabled.mockReturnValue(false);
+    mockWaitForBalance.mockResolvedValue("reflected");
+  });
 
   it("should connect to the Ethereum app first", () => {
     const { result } = renderViewModel();
@@ -125,6 +146,63 @@ describe("usePerpsWithdrawSignViewModel", () => {
     );
   });
 
+  it.each([true, false])(
+    "should pass the app's broadcast setting (%s) to the withdraw",
+    async disabled => {
+      mockIsBroadcastDisabled.mockReturnValue(disabled);
+      mockExecute.mockResolvedValue({ swapId: "swap-1" });
+      const { result, props } = renderViewModel();
+
+      act(() => result.current.handleDeviceResult(appResult));
+
+      await waitFor(() => expect(props.onDone).toHaveBeenCalled());
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ broadcastDisabled: disabled }),
+      );
+    },
+  );
+
+  it("should not record a swap in the history when nothing was submitted", async () => {
+    mockIsBroadcastDisabled.mockReturnValue(true);
+    mockExecute.mockResolvedValue({});
+    const { result, store, props } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalledWith({}));
+    const receiver = store
+      .getState()
+      .accounts.active.find(account => account.id === destinationAccount.id);
+    expect(receiver?.swapHistory ?? []).toEqual([]);
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
+  });
+
+  it("should wait for the balance to show the withdraw before handing the swap id over", async () => {
+    let reflect: () => void = () => undefined;
+    mockWaitForBalance.mockImplementation(() => new Promise<void>(resolve => (reflect = resolve)));
+    mockExecute.mockResolvedValue({ swapId: "swap-1" });
+    const { result, props } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(mockWaitForBalance).toHaveBeenCalled());
+    const [params] = mockWaitForBalance.mock.lastCall;
+    // 10 USDC lower: a smaller drop, e.g. from trading, does not count.
+    expect(params.targetBalance).toEqual(sourceAccount.spendableBalance.minus(10_000_000));
+    params.syncAccount();
+    expect(mockSync).toHaveBeenCalledWith({
+      type: "SYNC_ONE_ACCOUNT",
+      accountId: sourceAccount.id,
+      // Above the signing screen's SyncSkipUnderPriority(100), or the polls are dropped.
+      priority: 100,
+      reason: "perps-withdraw",
+    });
+    expect(props.onDone).not.toHaveBeenCalled();
+
+    await act(async () => reflect());
+    expect(props.onDone).toHaveBeenCalledWith({ swapId: "swap-1" });
+  });
+
   it("should go back to the summary when the withdrawal is declined on the device", async () => {
     mockExecute.mockRejectedValue(new UserRefusedOnDevice());
     const { result, props } = renderViewModel();
@@ -132,6 +210,7 @@ describe("usePerpsWithdrawSignViewModel", () => {
     act(() => result.current.handleDeviceResult(appResult));
 
     await waitFor(() => expect(props.onRefused).toHaveBeenCalledTimes(1));
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
     // The sheet reports its close as well, which must not count twice.
     act(() => result.current.handleDrawerClose());
     expect(props.onRefused).toHaveBeenCalledTimes(1);

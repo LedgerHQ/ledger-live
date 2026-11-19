@@ -29,6 +29,10 @@ const prepares: Received[] = [];
 const submits: Received[] = [];
 
 const server = setupServer(
+  // The DSO party issues the fixtures' native balance rows.
+  http.get(`${config.gatewayUrl}/v1/node/:node`, () =>
+    HttpResponse.json({ validator_id: "validator::1220", dso_id: "AmuletAdmin" }),
+  ),
   http.post(`${partyUrl}/transaction/prepare`, async ({ params, request }) => {
     prepares.push({ party: params.party, body: await request.json() });
     return HttpResponse.json(prepared);

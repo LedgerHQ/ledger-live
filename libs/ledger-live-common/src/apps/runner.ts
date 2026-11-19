@@ -99,7 +99,7 @@ export const runAllWithProgress = (
 ): Observable<InlineInstallProgress> => {
   const total = state.uninstallQueue.length + state.installQueue.length;
 
-  function globalProgress(s, localProgress) {
+  function globalProgress(s: State, localProgress: number) {
     let p = 1 - (s.uninstallQueue.length + s.installQueue.length - localProgress) / total;
     p = Math.round(p * precision) / precision;
     return p;

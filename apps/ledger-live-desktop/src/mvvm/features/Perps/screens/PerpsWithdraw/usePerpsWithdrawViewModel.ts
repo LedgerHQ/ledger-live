@@ -41,6 +41,16 @@ export type PerpsWithdrawFormState = Readonly<{
   setPicked: Dispatch<SetStateAction<PickedWithdrawAccount | undefined>>;
 }>;
 
+/** Hides the available balance until it is refreshed, rather than showing the old one. */
+function getHeaderDescription(
+  sourceName: string,
+  formattedAvailable: string,
+  isBalanceRefreshing: boolean,
+): string {
+  if (isBalanceRefreshing) return sourceName;
+  return `${sourceName} · ${formattedAvailable}`;
+}
+
 function toAmountText(amount: number): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
 }
@@ -57,6 +67,7 @@ export type PerpsWithdrawViewModel = Readonly<{
   selectAmountRatio: (amount: number) => void;
   maxAmount: number;
   selectMax: () => void;
+  isBalanceRefreshing: boolean;
   destinationTicker: string;
   destinationLedgerId: string;
   destinationAccountName: string | null;
@@ -167,7 +178,11 @@ export function usePerpsWithdrawViewModel(
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
   return {
-    headerDescription: `${sourceName} · ${form.formattedAvailable}`,
+    headerDescription: getHeaderDescription(
+      sourceName,
+      form.formattedAvailable,
+      form.isBalanceRefreshing,
+    ),
     amountText,
     amount,
     currencyCode: counterValueUnit.code,
@@ -178,6 +193,7 @@ export function usePerpsWithdrawViewModel(
     selectAmountRatio,
     maxAmount,
     selectMax,
+    isBalanceRefreshing: form.isBalanceRefreshing,
     destinationTicker: destinationCurrency?.ticker ?? "",
     destinationLedgerId: destinationCurrency?.id ?? "",
     destinationAccountName: destinationAccount

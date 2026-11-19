@@ -1,18 +1,31 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ActionTilesView } from "../ActionTilesView";
 import type { ActionTilesViewProps } from "../types";
 
+const RESOURCES = {
+  en: {
+    translation: {
+      payTab: { actions: { deposit: "Add stablecoin", request: "Request", pay: "New payment" } },
+    },
+  },
+};
+
 function renderWithStyle(ui: React.ReactElement) {
-  return render(<StyleProvider colorScheme="dark">{ui}</StyleProvider>);
+  return render(
+    <I18nTestProvider resources={RESOURCES}>
+      <StyleProvider colorScheme="dark">{ui}</StyleProvider>
+    </I18nTestProvider>,
+  );
 }
 
 const defaultProps: ActionTilesViewProps = {
   tiles: [
-    { id: "deposit", label: "Deposit", onOpenFlow: jest.fn(), appearance: "base" },
-    { id: "request", label: "Request", onOpenFlow: jest.fn(), appearance: "transparent" },
-    { id: "pay", label: "New payment", onOpenFlow: jest.fn(), appearance: "transparent" },
+    { id: "deposit", onOpenFlow: jest.fn(), appearance: "base" },
+    { id: "request", onOpenFlow: jest.fn(), appearance: "transparent" },
+    { id: "pay", onOpenFlow: jest.fn(), appearance: "transparent" },
   ],
 };
 
@@ -28,9 +41,7 @@ describe("ActionTilesView (Web)", () => {
   it("should call onOpenFlow when a tile is clicked", () => {
     const onOpenFlow = jest.fn();
     renderWithStyle(
-      <ActionTilesView
-        tiles={[{ id: "deposit", label: "Deposit", onOpenFlow, appearance: "base" }]}
-      />,
+      <ActionTilesView tiles={[{ id: "deposit", onOpenFlow, appearance: "base" }]} />,
     );
 
     fireEvent.click(screen.getByTestId("action-tile-deposit"));
@@ -38,10 +49,10 @@ describe("ActionTilesView (Web)", () => {
     expect(onOpenFlow).toHaveBeenCalledTimes(1);
   });
 
-  it("should render tile labels", () => {
+  it("should render each tile label from the mounted i18n provider", () => {
     renderWithStyle(<ActionTilesView {...defaultProps} />);
 
-    expect(screen.getByText("Deposit")).toBeVisible();
+    expect(screen.getByText("Add stablecoin")).toBeVisible();
     expect(screen.getByText("Request")).toBeVisible();
     expect(screen.getByText("New payment")).toBeVisible();
   });

@@ -3,7 +3,7 @@ import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../PendingTransferProposalsDetails";
 import type { PendingTransferProposalsDetailsViewModel } from "../usePendingTransferProposalsDetailsViewModel";
-import { createProcessedProposal } from "./test-utils";
+import { createProcessedProposal, UNKNOWN_UNIT } from "./test-utils";
 
 const unit: Unit = { code: "CANTON", magnitude: 38, name: "Canton" };
 
@@ -78,6 +78,31 @@ describe("PendingTransferProposalsDetails View", () => {
       render(<View {...buildViewModel({ proposal })} />);
 
       expect(screen.queryByText("Memo")).not.toBeInTheDocument();
+    });
+
+    it("should label an unknown instrument's amount and show its id and admin", () => {
+      const proposal = createProcessedProposal({
+        isUnknownInstrument: true,
+        unit: UNKNOWN_UNIT,
+        instrumentId: "\u202ECBTC",
+        instrumentAdmin: "impostor::1220",
+      });
+
+      const { container } = render(<View {...buildViewModel({ proposal })} />);
+
+      expect(screen.getByText(/Unknown token/)).toBeInTheDocument();
+      expect(screen.getByText("Instrument ID")).toBeInTheDocument();
+      expect(screen.getByText("Instrument admin")).toBeInTheDocument();
+      expect(screen.getByText("CBTC")).toBeInTheDocument();
+      expect(container.textContent).not.toContain("\u202E");
+      expect(container.textContent).toContain("impostor::1220");
+    });
+
+    it("should show no instrument details for a known instrument", () => {
+      render(<View {...buildViewModel({ proposal: createProcessedProposal() })} />);
+
+      expect(screen.queryByText(/Unknown token/)).not.toBeInTheDocument();
+      expect(screen.queryByText("Instrument admin")).not.toBeInTheDocument();
     });
 
     it("should display contract ID", () => {

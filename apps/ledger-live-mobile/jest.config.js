@@ -36,7 +36,6 @@ const transformIncludePatterns = [
   "expo-modules-core",
   "uuid",
   "react-native-ble-plx",
-  "react-native-qrcode-svg",
   "react-native-video",
   "ky",
   "@gorhom/bottom-sheet",

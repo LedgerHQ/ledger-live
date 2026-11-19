@@ -116,6 +116,21 @@ export function createTronifyOrderFailed(reason: string): ExchangeErrorData {
   };
 }
 
+export function createTronifyOrderNotFound(orderId: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_ORDER_NOT_FOUND",
+    message: "tronify rent order is unknown, expired or already submitted",
+    data: { orderId },
+  };
+}
+
+export function createTronifyUploadFailed(reason: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_UPLOAD_FAILED",
+    message: `tronify rent payment upload failed: ${reason}`,
+  };
+}
+
 /**
  * Extends `Error` so that the wallet-api serializer keeps `message` and `cause` (the code) on the
  * wire. The live app reads the code from `cause`.

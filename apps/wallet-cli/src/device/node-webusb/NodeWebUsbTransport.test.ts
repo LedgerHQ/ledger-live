@@ -200,6 +200,20 @@ function collectDeviceEmissions(
   return emissions;
 }
 
+function collectDeviceStream(transport: NodeWebUsbTransport): {
+  emissions: string[][];
+  errors: unknown[];
+} {
+  const stream = { emissions: [] as string[][], errors: [] as unknown[] };
+  subscriptions.push(
+    transport.listenToAvailableDevices().subscribe({
+      next: devices => stream.emissions.push(devices.map(device => device.id)),
+      error: (error: unknown) => stream.errors.push(error),
+    }),
+  );
+  return stream;
+}
+
 async function waitForFirstDeviceId(
   emissions: Array<Array<{ id: string; transport: string }>>,
 ): Promise<DeviceId> {
@@ -2491,7 +2505,7 @@ describe("NodeWebUsbTransport", () => {
     await transport.destroy();
   });
 
-  it("returns an empty scan and keeps the current discovery list when USB scanning fails", async () => {
+  it("returns an empty scan and keeps the current discovery list when a listed Ledger fails to open", async () => {
     const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
     const records = { errors: [] as unknown[], warnings: [] as unknown[] };
@@ -2509,23 +2523,66 @@ describe("NodeWebUsbTransport", () => {
         getDeviceList: () => [nativeDevice] as never[],
         createWebUsbDevice: async () => {
           if (shouldThrow) {
-            throw new Error("USB scan failed");
+            throw new Error("LIBUSB_ERROR_ACCESS");
           }
           return webUsbDevice as never;
         },
       }),
     );
 
-    const emissions = collectDeviceEmissions(transport);
+    const stream = collectDeviceStream(transport);
     await waitFor(() => {
-      expect(emissions.at(-1)).toHaveLength(1);
+      expect(stream.emissions.at(-1)).toHaveLength(1);
+    });
+    const listed = stream.emissions.at(-1);
+
+    shouldThrow = true;
+    const scanned = await transport.updateTransportDiscoveredDevices();
+
+    expect(scanned).toEqual([]);
+    expect(stream.emissions.at(-1)).toEqual(listed);
+    expect(stream.errors).toEqual([]);
+    expect(records.errors).toHaveLength(1);
+
+    await transport.destroy();
+  });
+
+  it("returns an empty scan and keeps the current discovery list when listing USB devices fails", async () => {
+    const nativeDevice = createNativeLedgerDevice();
+    const webUsbDevice = createWebUsbLedgerDevice();
+    const records = { errors: [] as unknown[], warnings: [] as unknown[] };
+    let shouldThrow = false;
+
+    const transport = new NodeWebUsbTransport(
+      createLedgerModelDataSource(),
+      () => createRecordingLogger(records),
+      createUnusedApduSenderFactory(),
+      createUnusedApduReceiverFactory(),
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => {
+          if (shouldThrow) {
+            throw new Error("USB scan failed");
+          }
+          return [nativeDevice] as never[];
+        },
+        createWebUsbDevice: async () => webUsbDevice as never,
+      }),
+    );
+
+    const stream = collectDeviceStream(transport);
+    await waitFor(() => {
+      expect(stream.emissions.at(-1)).toHaveLength(1);
     });
 
     shouldThrow = true;
     const scanned = await transport.updateTransportDiscoveredDevices();
 
     expect(scanned).toEqual([]);
-    expect(emissions.at(-1)).toHaveLength(1);
+    expect(stream.emissions.at(-1)).toHaveLength(1);
+    expect(stream.errors).toEqual([]);
     expect(records.errors).toHaveLength(1);
 
     await transport.destroy();
@@ -3007,5 +3064,96 @@ describe("NodeWebUsbTransport", () => {
 
     expect(transport.getIdentifier()).toBe("NODE-WEBUSB");
     await (transport as unknown as NodeWebUsbTransport).destroy();
+  });
+});
+
+/**
+ * Recorded on Linux under bubblewrap with the Claude Code sandbox's device layout
+ * (`--ro-bind / / --dev /dev`): sysfs lists the Ledger and `/dev/bus/usb` is missing.
+ */
+const LINUX_SANDBOX_OPEN_ERROR = "initialize error: Error: LIBUSB_ERROR_NO_DEVICE";
+
+describe("Ledger open failures (LIVE-31394)", () => {
+  afterEach(() => {
+    subscriptions.forEach(subscription => subscription.unsubscribe());
+    subscriptions = [];
+  });
+
+  it("fails the device stream with the open error when no Ledger it lists can be opened", async () => {
+    const openError = new Error(LINUX_SANDBOX_OPEN_ERROR);
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [createNativeLedgerDevice()] as never[],
+        createWebUsbDevice: async () => {
+          throw openError;
+        },
+      }),
+    );
+
+    const stream = collectDeviceStream(transport);
+    await waitFor(() => {
+      expect(stream.errors).toHaveLength(1);
+    });
+
+    const [error] = stream.errors;
+    expect(error).toBeInstanceOf(NoAccessibleDeviceError);
+    expect((error as NoAccessibleDeviceError).originalError).toBe(openError);
+    expect(stream.emissions).toEqual([[]]);
+
+    await transport.destroy();
+  });
+
+  it("lists the Ledger that opened, without failing the stream, when another one fails", async () => {
+    const failingLedger = createNativeLedgerDevice();
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [failingLedger, createNativeLedgerDevice()] as never[],
+        createWebUsbDevice: async native => {
+          if (native === (failingLedger as never)) {
+            throw new Error("LIBUSB_ERROR_ACCESS");
+          }
+          return createWebUsbLedgerDevice("ledger-2") as never;
+        },
+      }),
+    );
+
+    const stream = collectDeviceStream(transport);
+    await waitFor(() => {
+      expect(stream.emissions.at(-1)).toHaveLength(1);
+    });
+    await transport.updateTransportDiscoveredDevices();
+
+    expect(stream.errors).toEqual([]);
+
+    await transport.destroy();
+  });
+
+  it("fails the device stream when a Ledger plugged in later cannot be opened", async () => {
+    const openError = new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [] as never[],
+        createWebUsbDevice: async () => {
+          throw openError;
+        },
+      }),
+    );
+
+    const stream = collectDeviceStream(transport);
+    await transport.handleDeviceConnection(createNativeLedgerDevice() as never);
+
+    expect(stream.errors).toHaveLength(1);
+    expect((stream.errors[0] as NoAccessibleDeviceError).originalError).toBe(openError);
+
+    await transport.destroy();
   });
 });

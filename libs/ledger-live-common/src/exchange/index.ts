@@ -5,7 +5,7 @@ import { getEnv } from "@shared/env";
 import calService from "@ledgerhq/ledger-cal-service";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
-const exchangeSupportAppVersions = {
+const exchangeSupportAppVersions: Record<string, string> = {
   bitcoin_cash: "1.5.0",
   bitcoin_gold: "1.5.0",
   bitcoin: "1.5.0",

@@ -17,6 +17,7 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { isZcashShieldedEnabled } from "../../bridge/zcashRouting";
+import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 type TransportWithDmk = Transport &
   Partial<{
@@ -42,7 +43,9 @@ const resolver = createResolver(createSigner, zcashAddressResolver);
 
 // No `messageSigner`: the Zcash DMK signer kit does not expose message
 // signing (see @ledgerhq/coin-zcash/types/signer BitcoinSigner surface).
-export { bridge, resolver, signerContext };
+const deriveAccountDescriptor = createDeriveAccountDescriptor(resolver, createSigner);
+
+export { bridge, resolver, signerContext, deriveAccountDescriptor };
 
 // Re-exported so the host apps can mirror the `zcashShielded` feature flag (via
 // `useFeature` → `setZcashShieldedEnabled`) from the same setup module they

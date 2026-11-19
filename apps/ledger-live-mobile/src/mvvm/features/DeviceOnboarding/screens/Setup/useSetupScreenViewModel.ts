@@ -1,5 +1,6 @@
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
+import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import {
   useChecksDrawers,
   type ChecksDrawerProps,
@@ -7,17 +8,25 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SetupScreenProps } from "./types";
 import type { SetupStage } from "./toSetupStage";
+import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
-export type SetupViewProps = ChecksDrawerProps &
+export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet"> &
   Readonly<{
+    infoCard: SetupInfoCard | undefined;
+    suspendInfoSheet: boolean;
+    reportsRecoveryKey: boolean;
+    connection: SessionReconnect | null;
+    productName: string;
+    suspendSheets: boolean;
     deviceModelId: Device["modelId"];
     deviceName?: string;
     title: string;
     stageTitle: string;
     stageDescription?: string;
     currentStep: number;
+    completedSteps: number;
     totalSteps: number;
     status: SetupStageStatus;
     closeLabel: string;
@@ -75,8 +84,11 @@ export function useSetupScreenViewModel({
   checks,
   onQuit,
   suspendSheets = false,
+  reportsRecoveryKey = false,
+  connection = null,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
+
   const checksIdle = checks?.state === "idle";
   const pausedNotGenuine = checksIdle && checks.deviceNotGenuine;
   const status = stageStatus(stage, checksIdle);
@@ -89,7 +101,12 @@ export function useSetupScreenViewModel({
     closeSheet();
     onQuit();
   };
-  const { headerQuitHidden, reopenFirmwareOffer, ...drawers } = useChecksDrawers({
+  const {
+    headerQuitHidden,
+    reopenFirmwareOffer,
+    allowSheet: _allowSheet,
+    ...drawers
+  } = useChecksDrawers({
     device,
     state: checks?.state ?? null,
     error: checks?.error ?? null,
@@ -104,12 +121,19 @@ export function useSetupScreenViewModel({
   });
 
   return {
+    infoCard: stage.infoCard,
+    suspendInfoSheet: suspendSheets || connection !== null,
+    reportsRecoveryKey,
+    connection,
+    productName,
+    suspendSheets,
     deviceModelId: device.modelId,
     ...(device.deviceName ? { deviceName: device.deviceName } : {}),
     title: t("deviceOnboarding.setup.title"),
     stageTitle: t(stageTitleKeys[stage.kind]),
     ...(descriptionKey ? { stageDescription: t(descriptionKey, { productName }) } : {}),
     currentStep: stage.index + 1,
+    completedSteps: stage.index,
     totalSteps: stage.total,
     status,
     closeLabel: t("deviceOnboarding.checks.close"),

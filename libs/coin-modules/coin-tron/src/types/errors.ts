@@ -217,6 +217,15 @@ export class EnergyRentInsufficientBalance extends Error {
   }
 }
 
+/** The signed energy-rent payment is not signed by its owner key. */
+export class EnergyRentSignatureMismatch extends Error {
+  override name = "EnergyRentSignatureMismatch";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentSignatureMismatch");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class InvalidRawDataHex extends Error {
   override name = "InvalidRawDataHex";
   constructor(message?: string, fields?: Record<string, unknown>) {

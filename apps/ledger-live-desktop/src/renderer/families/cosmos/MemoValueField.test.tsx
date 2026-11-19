@@ -64,7 +64,7 @@ describe("MemoValueField", () => {
     render(
       <MemoValueField
         account={account}
-        transaction={makeTransaction({ memo: "prefilled memo" })}
+        transaction={makeTransaction({ memoType: "text", memoValue: "prefilled memo" })}
         onChange={jest.fn()}
         status={makeStatus()}
       />,
@@ -79,7 +79,7 @@ describe("MemoValueField", () => {
     render(
       <MemoValueField
         account={account}
-        transaction={makeTransaction({ memo: "" })}
+        transaction={makeTransaction({ memoValue: "" })}
         onChange={handleChange}
         status={makeStatus()}
       />,
@@ -91,7 +91,6 @@ describe("MemoValueField", () => {
     expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenCalledWith(
       expect.objectContaining({
-        memo: "payment ref",
         memoType: "text",
         memoValue: "payment ref",
       }),

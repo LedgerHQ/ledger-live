@@ -23,10 +23,4 @@ export const IconStack = forwardRef(IconStackComponent) as <T>(
   props: IconStackProps<T> & React.RefAttributes<HTMLDivElement>,
 ) => React.ReactElement | null;
 
-export type { IconStackProps, IconStackViewModelParams } from "./types";
-export {
-  DEFAULT_MAX_OVERFLOW_DISPLAY,
-  DEFAULT_MAX_VISIBLE_ICONS,
-  sliceItemsForIconStackDisplay,
-} from "./utils/sliceItemsForIconStackDisplay";
-export type { IconStackDisplaySlice } from "./utils/sliceItemsForIconStackDisplay";
+export type { IconStackProps } from "./types";

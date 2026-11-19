@@ -2,6 +2,7 @@ import { Tuple, type Middleware } from "@reduxjs/toolkit";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
+import { xrpApi } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import {
   calApi,
   cardApi,
@@ -38,6 +39,7 @@ const EXPECTED_REDUCER_PATHS = [
   "marketApi",
   "pushDevicesApi",
   "swapApi",
+  "xrpApi",
 ] as const;
 
 const EXPECTED_APIS = [
@@ -52,6 +54,7 @@ const EXPECTED_APIS = [
   marketApi,
   pushDevicesApi,
   swapApi,
+  xrpApi,
 ];
 
 describe("llmRTKApiReducers", () => {

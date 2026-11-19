@@ -9,6 +9,7 @@ import type { SendFlowTransactionActions } from "../types";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMaxAvailable, isInsufficientFundsAmountError } from "../amount/utils/amountReview";
+import { useRampCatalog } from "../../../platform/providers/RampCatalogProvider/useRampCatalog";
 
 export type UseSendFlowAmountReviewCoreLabels = Readonly<{
   getCtaLabel: (currency: string) => string;
@@ -34,6 +35,8 @@ export type UseSendFlowAmountReviewCoreResult = Readonly<{
   amountComputationPending: boolean;
   maxAvailable: BigNumber;
   hasInsufficientFundsError: boolean;
+  /** Insufficient funds and Buy is available for the currency: the CTA becomes "Get {ticker}". */
+  showGetFundsCta: boolean;
   hasErrors: boolean;
   hasAmount: boolean;
   reviewLabel: string;
@@ -80,12 +83,18 @@ export function useSendFlowAmountReviewCore({
 
   const hasInsufficientFundsError = useMemo(() => isInsufficientFundsAmountError(status), [status]);
 
+  const { isCurrencyAvailable } = useRampCatalog();
+  const isBuyAvailable = accountCurrency
+    ? isCurrencyAvailable(accountCurrency.id, "onRamp")
+    : false;
+  // Without Buy for this currency, the CTA stays a disabled Review rather than leading to Buy.
+  const showGetFundsCta = hasInsufficientFundsError && isBuyAvailable;
+
   const hasErrors = Object.keys(status.errors ?? {}).length > 0;
   const hasAmount = hasRawAmount;
-  const reviewDisabled =
-    (hasErrors && !hasInsufficientFundsError) || !hasAmount || amountComputationPending;
+  const reviewDisabled = (hasErrors && !showGetFundsCta) || !hasAmount || amountComputationPending;
 
-  const reviewLabel = hasInsufficientFundsError
+  const reviewLabel = showGetFundsCta
     ? labels.getCtaLabel(accountCurrency?.ticker ?? "CRYPTO")
     : labels.reviewCta;
 
@@ -98,10 +107,11 @@ export function useSendFlowAmountReviewCore({
     amountComputationPending,
     maxAvailable,
     hasInsufficientFundsError,
+    showGetFundsCta,
     hasErrors,
     hasAmount,
     reviewLabel,
-    reviewShowIcon: !hasInsufficientFundsError,
+    reviewShowIcon: !showGetFundsCta,
     reviewDisabled,
   };
 }

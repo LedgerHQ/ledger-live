@@ -1457,6 +1457,10 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
+    "SolanaTxBlockhashExpired": {
+      "title": "Transaction has expired",
+      "description": "The network no longer accepts this transaction. Please try again to create a new one."
+    },
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
@@ -2410,10 +2414,24 @@
     }
   },
   "receiveAddress": {
+    "title": "Receive {{asset}}",
+    "networkLabel": "{{network}} network",
+    "close": "Close",
+    "back": "Back",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
-      "gotItCta": "Got it"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
+    },
+    "addressVerified": {
+      "title": "Address verified",
+      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
+      "doneCta": "Done"
+    },
+    "addressMismatch": {
+      "title": "This address doesn't match your Ledger",
+      "description": "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
+      "contactSupportCta": "Contact Ledger Support",
+      "closeCta": "Close"
     }
   },
   "ratings": {
@@ -2701,6 +2719,40 @@
         "nothingMoves": "Nothing moves without your say.",
         "setUp": "Let’s set it up.",
         "cta": "Check your device"
+      },
+      "recover": {
+        "tooManyBackups": "There’s no such thing as too many backups.",
+        "encryptedBackup": "Especially an encrypted digital backup.",
+        "thereWhenYouNeedIt": "A digital backup that’s there when you need it.",
+        "title": "Protect access to your wallet with Ledger Recover.",
+        "description": "Physical recovery sheets get lost or damaged. Ledger Recover keeps an encrypted backup linked to your identity.",
+        "price": "First month free then start at $9.99/month. Cancel anytime. T&Cs apply",
+        "protect": "Protect my wallet",
+        "skip": "Skip for now",
+        "sheet": {
+          "title": "How does Ledger Recover work?",
+          "identity": {
+            "title": "Protected by your identity",
+            "description": "Your face and ID are the key to unlock a restore."
+          },
+          "security": {
+            "title": "Enhanced digital security",
+            "description": "Encrypted, fragmented and never stored in one place."
+          },
+          "legacy": {
+            "title": "Futureproof your digital legacy",
+            "description": "Add someone you trust to help secure your backup."
+          },
+          "start": "Get started now (~10min)",
+          "remindLater": "Remind me later"
+        }
+      },
+      "success": {
+        "allSet": "You’re all set",
+        "timeToExplore": "Time to explore",
+        "cta": "Explore now",
+        "ready": "You’re all set.",
+        "walletReady": "Your wallet is ready."
       }
     },
     "checks": {
@@ -2787,6 +2839,64 @@
       "restore": {
         "title": "Restore access",
         "recoveryPhraseDescription": "Secret Recovery Phrase"
+      },
+      "info": {
+        "cards": {
+          "setupChoice": "Which setup method?",
+          "recoveryPhrase": "What’s a Secret Recovery Phrase?",
+          "restoreChoice": "Choose a backup to restore from",
+          "recoveryKey": "What’s a Recovery Key?",
+          "restoreRecoveryKey": "What’s a Secret Recovery Key?"
+        },
+        "faq": "View complete FAQ",
+        "setupChoice": {
+          "title": "Set up or restore?",
+          "newDevice": {
+            "title": "Set up as a new Ledger device",
+            "description": "It generates your Secret Recovery Phrase. Choose if you don’t already have one."
+          },
+          "restore": {
+            "title": "Restore from backup",
+            "description": "Restore using an existing backup: Secret Recovery Phrase, Recovery Key, or Ledger Recover.",
+            "descriptionWithoutRecoveryKey": "Restore using an existing backup: Secret Recovery Phrase or Ledger Recover."
+          }
+        },
+        "recoveryPhrase": {
+          "title": "Secret Recovery Phrase",
+          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+        },
+        "restoreChoice": {
+          "recoveryPhrase": {
+            "title": "Secret Recovery Phrase",
+            "description": "Use the 12, 18 or 24 words you saved when setting up your wallet."
+          },
+          "recoveryKey": {
+            "title": "Ledger Recovery Key",
+            "description": "Use your offline, PIN-protected card to restore with a tap."
+          },
+          "recover": {
+            "title": "Ledger Recover subscription",
+            "description": "Verify your identity through your active subscription to restore access."
+          }
+        },
+        "recoveryKey": {
+          "title": "Recovery Key",
+          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost or replaced.",
+          "inTheBox": "A Recovery Key is included in the box of your device.",
+          "learnHowToUse": "Learn how to use"
+        }
+      },
+      "connection": {
+        "reconnecting": {
+          "title": "Reconnecting to your {{productName}}",
+          "description": "Keep your {{productName}} on, unlocked and close to your phone."
+        },
+        "failed": {
+          "title": "Couldn't connect to {{productName}}",
+          "description": "Make sure your {{productName}} is on, unlocked and close to your phone, then try again.",
+          "retryCta": "Try again",
+          "helpCta": "Get help"
+        }
       }
     },
     "connection": {
@@ -3969,6 +4079,20 @@
       "crypto": "Crypto",
       "card": "Card",
       "accessibilityLabel": "Transaction history type"
+    },
+    "exportDialog": {
+      "title": "Export transaction history",
+      "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
+      "accountsToInclude": "Accounts to include",
+      "selectAll": "Select all ({{count}})",
+      "deselectAll": "Deselect all ({{count}})",
+      "export": "Export history",
+      "successTitle": "Transaction history saved successfully",
+      "successDescription": "The CSV file of your transaction history was saved successfully in the selected folder",
+      "done": "Done",
+      "errorTitle": "Something went wrong",
+      "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
+      "tryAgain": "Try again"
     }
   },
   "operationsList": {
@@ -3980,7 +4104,11 @@
       "hideDustTransactions": "Hide dust transactions",
       "showDustTransactions": "Show dust transactions",
       "dustTransactionsHiddenDescription": "Transactions below {{threshold}} will be hidden.",
-      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed."
+      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed.",
+      "exportCsv": {
+        "title": "Export transaction history",
+        "description": "Save the transactions of your accounts as a CSV file."
+      }
     }
   },
   "operationDetails": {
@@ -8478,8 +8606,26 @@
         "text": "It applies once the network confirms the transaction."
       }
     },
+    "manageAssets": {
+      "cta": "Manage",
+      "title": "Manage assets",
+      "empty": "This account has no tokens yet.",
+      "tokenType": "Token type",
+      "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "iou": "Trust Line (IOU)",
+      "mpt": "Multi Purpose Token",
+      "issuer": "Issuer",
+      "transferFee": "Transfer fee",
+      "transferFeeInfo": "The share of each transfer between holders that the issuer takes.",
+      "transferFeeUnavailable": "Not available",
+      "lockedAmount": "Locked amount",
+      "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "tokenSettings": {
       "limit": "Trust limit",
+      "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum"
@@ -8489,6 +8635,8 @@
     },
     "rippling": {
       "label": "Rippling",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
       "on": "On",
       "off": "Off",
       "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
@@ -11438,6 +11586,9 @@
         "outgoingTitle": "Outgoing transfer details"
       },
       "amount": "Amount",
+      "unknownToken": "Unknown token",
+      "instrumentId": "Instrument ID",
+      "instrumentAdmin": "Instrument admin",
       "from": "From",
       "to": "To",
       "memo": "Memo",

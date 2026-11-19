@@ -61,7 +61,7 @@ export default function useCryptoAddressesViewModel(
     return [...filteredAccounts].sort((a, b) => {
       const aCV = aggregatedAccountsData.get(a.id)?.countervalue ?? new BigNumber(0);
       const bCV = aggregatedAccountsData.get(b.id)?.countervalue ?? new BigNumber(0);
-      return bCV.comparedTo(aCV);
+      return bCV.comparedTo(aCV) ?? 0;
     });
   }, [filteredAccounts, aggregatedAccountsData]);
 

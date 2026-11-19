@@ -1,7 +1,7 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
+import { FF_ANALYTICS_OPTIN_DISABLED } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 /**
@@ -17,7 +17,7 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 test.describe("Asset aggregation", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+    featureFlags: FF_ANALYTICS_OPTIN_DISABLED,
   });
 
   test.describe("Portfolio aggregation", () => {

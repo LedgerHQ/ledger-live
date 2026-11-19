@@ -14,6 +14,7 @@ const CURRENCIES = [
   "bitcoin",
   "bitcoin_testnet",
   "bitcoin_regtest",
+  "bitcoin_signet",
   "bitcoin_cash",
   "bitcoin_gold",
   "dash",
@@ -26,9 +27,9 @@ const CURRENCIES = [
 ];
 
 // coin-bitcoin `buildTransaction.ts`: the currencies whose transactions signal replace-by-fee.
-const RBF = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest"];
+const RBF = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest", "bitcoin_signet"];
 // hw-app-btc `Btc.ts`: the currencies signed by app-bitcoin-new, which builds version 2 transactions.
-const APP_BITCOIN_NEW = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest", "qtum"];
+const APP_BITCOIN_NEW = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest", "bitcoin_signet", "qtum"];
 
 const defaultsOf = (currencyId: string) =>
   bitcoinConfig[`config_currency_${currencyId}`].default as Partial<BitcoinConfig>;

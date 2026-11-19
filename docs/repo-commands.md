@@ -21,13 +21,16 @@ For example, [apps/ledger-live-mobile/README.md](../apps/ledger-live-mobile/READ
 
 ### Building
 
-If a specific dependency isn't rebuilding automatically\*, you can try this:
+Private packages have no build: apps, tests and typecheck read their `src/`. Published packages
+build, and so do the private exceptions listed in
+[`source-only-debt.mjs`](../tools/nx-plugins/enforce-tool-config/rules/source-only-debt.mjs), some
+of which keep only a no-op `build` target. Nx runs these builds before a target that depends on
+them. To run them by hand:
 
 ```bash
-pnpm nx run <package-name>:build
+pnpm build:libs                     # the @ledgerhq packages, minus the ones the script excludes
+pnpm nx run <package-name>:build    # one package that has a build
 ```
-
-_\*If you're running commands through Nx dependencies should be rebuilt automatically._
 
 ### Linting & typechecking
 
@@ -90,7 +93,7 @@ Prefer `nx` over a raw `--filter` because:
 - configs like `dependsOn` (being rolled out across the monorepo) keep dependencies up to date
 - flags like `affected`, `base` and `include` enable advanced filtering
 
-In the following example dependencies will be built and tests run on affected files.
+In the following example dependencies that have a build will be built and tests run on affected files.
 
 ```bash
 pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
@@ -98,8 +101,7 @@ pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
 
 #### ✅ Good
 
-Nx builds a project's dependencies before running the target, so
-`@domain/entity-client-identity` is built before its `test` target runs:
+Nx builds the dependencies of a project that have a build before running the target:
 
 ```bash
 pnpm nx test @domain/entity-client-identity
@@ -107,7 +109,7 @@ pnpm nx test @domain/entity-client-identity
 
 #### ❌ Bad
 
-⚠️ Skipping `nx` risks dependencies being out of date:
+⚠️ Skipping `nx` risks reading a stale build of a dependency:
 
 ```bash
 pnpm --filter @domain/entity-client-identity test

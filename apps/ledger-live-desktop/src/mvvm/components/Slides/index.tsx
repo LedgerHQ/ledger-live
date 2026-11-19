@@ -15,6 +15,4 @@ Slides.ProgressIndicator = ProgressIndicator;
 Slides.Footer = Footer;
 
 export { Slides };
-export type { SlidesProps };
 export { useSlidesContext } from "./context";
-export type { SlidesContextValue } from "./context";

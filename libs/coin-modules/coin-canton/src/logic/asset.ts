@@ -3,12 +3,23 @@ import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 
 export type Instrument = { instrumentId: string; instrumentAdmin?: string };
 
+export type NativeInstrument = Required<Instrument>;
+
+// A target without an admin matches every admin.
+export const isInstrument = (
+  target: Instrument,
+  instrumentId: string,
+  instrumentAdmin: string | undefined,
+): boolean =>
+  instrumentId === target.instrumentId &&
+  (!target.instrumentAdmin || instrumentAdmin === target.instrumentAdmin);
+
 export function instrumentAsset(
-  nativeInstrumentId: string,
+  native: NativeInstrument,
   instrumentId: string,
   adminId: string,
 ): AssetInfo {
-  return instrumentId === nativeInstrumentId
+  return isInstrument(native, instrumentId, adminId)
     ? { type: "native" }
     : { type: "token", assetReference: instrumentId, assetOwner: adminId };
 }
@@ -27,17 +38,13 @@ export function assetInstrument(
 
 export function instrumentOf(asset: AssetInfo, nativeInstrumentId: string): Instrument {
   const instrument = assetInstrument(asset, nativeInstrumentId);
-  if (!instrument) {
+  // Without an admin the gateway spends the DSO's holdings, while validation could read another admin's.
+  const isOwnerlessUnderNativeId =
+    asset.type !== "native" &&
+    instrument?.instrumentId === nativeInstrumentId &&
+    !instrument.instrumentAdmin;
+  if (!instrument || isOwnerlessUnderNativeId) {
     throw new InvalidParameterError(`canton: cannot transfer asset ${JSON.stringify(asset)}`);
   }
   return instrument;
 }
-
-// A target without an admin matches every admin, as sync does for the native instrument.
-export const isInstrument = (
-  target: Instrument,
-  instrumentId: string,
-  instrumentAdmin: string | undefined,
-): boolean =>
-  instrumentId === target.instrumentId &&
-  (!target.instrumentAdmin || instrumentAdmin === target.instrumentAdmin);

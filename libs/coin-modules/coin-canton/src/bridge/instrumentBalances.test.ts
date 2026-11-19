@@ -44,7 +44,10 @@ describe("getInstrumentBalances", () => {
 
     mockedGetBalanceFromNetwork.mockResolvedValue(mockInstruments);
 
-    const result = await getInstrumentBalances(createMockContext(config), "test-party-id");
+    const result = await getInstrumentBalances(createMockContext(config), "test-party-id", {
+      instrumentId: "native-id",
+      instrumentAdmin: "AmuletAdmin",
+    });
 
     expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(config, "test-party-id");
     expect(result).toEqual([
@@ -67,12 +70,31 @@ describe("getInstrumentBalances", () => {
     ]);
   });
 
+  it("reads another admin's holding of the native instrument id as a token", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(1, [
+        { instrument_id: "native-id", admin_id: "impostor", amount: "900", locked: false },
+      ]),
+    );
+
+    const [balance] = await getInstrumentBalances(
+      createMockContext(createMockConfig(true, "native-id")),
+      "test-party-id",
+      { instrumentId: "native-id", instrumentAdmin: "AmuletAdmin" },
+    );
+
+    expect(balance.asset).toEqual({ type: "token", assetReference: "native-id" });
+  });
+
   it("should throw an error when useGateway is false (not implemented with node)", async () => {
     mockedIsGatewayEnabled.mockReturnValue(false);
 
-    await expect(getInstrumentBalances(createMockContext(), "test-party-id")).rejects.toThrow(
-      "Not implemented",
-    );
+    await expect(
+      getInstrumentBalances(createMockContext(), "test-party-id", {
+        instrumentId: "Amulet",
+        instrumentAdmin: "AmuletAdmin",
+      }),
+    ).rejects.toThrow("Not implemented");
     expect(mockedGetBalanceFromNetwork).not.toHaveBeenCalled();
   });
 });

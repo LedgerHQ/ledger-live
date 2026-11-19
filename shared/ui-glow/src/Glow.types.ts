@@ -9,6 +9,7 @@ export type GlowProps = Readonly<{
   showBottom?: boolean;
   /** Wait before a show change starts, for example while other content fades out. */
   delayMs?: number;
+  canvasColor?: string;
   /** Overrides some of GLOW_DEFAULTS. */
   params?: Partial<GlowParams>;
   /** Shown when the GPU effect cannot run, for example after a shader error. */

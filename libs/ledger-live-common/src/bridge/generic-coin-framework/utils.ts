@@ -103,14 +103,15 @@ export function addAccountToBuyLinks(
 ): Record<string, Error> {
   for (const error of Object.values(errors)) {
     const holder = error as { links?: unknown };
-    if (!Array.isArray(holder.links)) continue;
+    const originalLinks = holder.links;
+    if (!Array.isArray(originalLinks)) continue;
 
-    const links = holder.links.map(link =>
+    const links = originalLinks.map(link =>
       typeof link === "string" ? withBuyAccount(link, accountId) : link,
     );
     // Assigned only when something changed, and as a new array either way: a coin module is free to
     // hand back a module-level constant, which must not be rewritten under it.
-    if (links.some((link, index) => link !== holder.links![index])) holder.links = links;
+    if (links.some((link, index) => link !== originalLinks[index])) holder.links = links;
   }
 
   return errors;
@@ -203,7 +204,7 @@ export function toTransferFeeFromUnknown(value: unknown): TransferFee | undefine
 }
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
-  const networksRemap = {
+  const networksRemap: Record<string, string> = {
     xrp: "ripple",
   };
   return findCryptoCurrencyById(networksRemap[network] ?? network);
@@ -659,6 +660,8 @@ type FrameworkOperationExtra = {
   memo?: string | undefined;
   internal?: boolean;
   feePayer?: string;
+  feeAsset?: AssetInfo;
+  feeAmount?: string;
   stake?: { address: string; amount: BigNumber };
   transferId?: string;
 };
@@ -689,6 +692,8 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     memo: true,
     internal: true,
     feePayer: true,
+    feeAsset: true,
+    feeAmount: true,
     stake: true,
     transferId: true,
   } satisfies Record<keyof FrameworkOperationExtra, true>),
@@ -805,6 +810,12 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
     extra.feePayer = op.tx.feesPayer;
   }
 
+  const feeAsset = readNonNativeFeeAsset(op.tx.feesAsset);
+  if (feeAsset) {
+    extra.feeAsset = feeAsset;
+    extra.feeAmount = op.tx.fees.toString();
+  }
+
   const stake = buildStakeExtra(op.details?.stake);
   if (stake) {
     extra.stake = stake;
@@ -815,6 +826,21 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   }
 
   return extra;
+}
+
+/**
+ * The asset that paid a fee, when it is not the native coin, as a JSON-safe copy for `extra`. An
+ * absent fee asset means the native coin (ADR-068).
+ */
+export function readNonNativeFeeAsset(feeAsset: AssetInfo | undefined): AssetInfo | undefined {
+  if (feeAsset === undefined || feeAsset.type === "native") return undefined;
+  const assetReference = "assetReference" in feeAsset ? feeAsset.assetReference : undefined;
+  const assetOwner = "assetOwner" in feeAsset ? feeAsset.assetOwner : undefined;
+  return {
+    type: feeAsset.type,
+    ...(assetReference !== undefined ? { assetReference } : {}),
+    ...(assetOwner !== undefined ? { assetOwner } : {}),
+  };
 }
 
 /** Compare two addresses for equality, ignoring case. */
@@ -868,8 +894,13 @@ export function adaptCoreOperationToLiveOperation(
   const opType = op.type as OperationType;
   const extra = buildOperationExtra(op);
 
-  const bnFees = new BigNumber(op.tx.fees.toString());
+  // A fee paid in another asset is no native amount: it stays out of the value and `fee`, and the
+  // sync charges it once, as a FEES operation of the fee token (`tokenFeeOperations`).
+  const bnFees = new BigNumber(extra.feeAsset ? 0 : op.tx.fees.toString());
   const hasFailed = op.tx.failed;
+  // A failed transaction's only effect is its fee: a token amount would replace the 0 value in the
+  // sub-account (`buildSubAccounts`).
+  if (extra.feeAsset && hasFailed) delete extra.assetAmount;
   const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
   // Landed flat beside the framework's own keys and revived through the family's
@@ -912,7 +943,7 @@ export function adaptCoreOperationToLiveOperation(
 function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (!transaction.mode) return "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
 
-  const modeRemap = {
+  const modeRemap: Record<string, string> = {
     delegate: "stake",
     undelegate: "unstake",
   };

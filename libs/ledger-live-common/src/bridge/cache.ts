@@ -20,7 +20,7 @@ export function makeBridgeCacheSystem({
     return value;
   };
 
-  const lruCaches = {};
+  const lruCaches: Record<string, () => Promise<unknown>> = {};
 
   const prepareCurrency = async (
     currency: CryptoCurrency,

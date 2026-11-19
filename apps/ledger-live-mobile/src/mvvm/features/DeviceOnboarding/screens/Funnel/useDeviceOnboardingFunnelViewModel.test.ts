@@ -1,13 +1,22 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { SeedPath } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
+import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import {
+  giveUpAfterPowerOnMs,
+  powerOnAfterUpdateDelayMs,
+} from "LLM/features/DeviceOnboarding/utils/deviceOff";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
+const resetNavigation = jest.fn();
+const navigate = jest.fn();
 type RemovalEvent = {
   preventDefault: () => void;
   data: { action: { type: string } };
@@ -21,12 +30,16 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
     goBack,
+    navigate,
+    reset: resetNavigation,
+    getParent: () => undefined,
     addListener: (event: string, handler: (event: RemovalEvent) => void) => {
       listeners.set(event, handler);
       return jest.fn();
     },
   }),
   useRoute: () => ({ params: mockRouteParams }),
+  useIsFocused: jest.fn(() => true),
 }));
 
 jest.mock("../../hooks/DeviceOnboardingProvider", () => {
@@ -68,6 +81,17 @@ const device = {
   wired: false,
 };
 
+function doneWithSeed(seedPath: string): DeviceOnboardingSession {
+  return session({
+    state: "done",
+    context: {
+      onboardedOnEntry: false,
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"],
+    snapshot: { context: { seedPath } } as DeviceOnboardingSession["snapshot"],
+  });
+}
+
 function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboardingSession {
   return {
     status: "running",
@@ -106,6 +130,35 @@ function setupOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   return model.setup;
 }
 
+function recoverOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "recoverNewSeed") throw new Error(model.status);
+  return model.recoverNewSeed;
+}
+
+function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "success") throw new Error(model.status);
+  return model.success;
+}
+
+const recoverEnabled = { protectServicesMobile: { enabled: true } };
+
+function renderRecoverFunnel() {
+  return renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+    overrideInitialState: withFlagOverrides(recoverEnabled),
+  });
+}
+
+function renderFunnelWithSyncOffer(flags: Parameters<typeof withFlagOverrides>[0] = {}) {
+  return renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+    overrideInitialState: withFlagOverrides({
+      deviceOnboarding: { enabled: true, params: { offerLedgerSync: true } },
+      ...flags,
+    }),
+  });
+}
+
+const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true };
+
 function useFunnelViewModel(props: void) {
   void props;
   return useDeviceOnboardingFunnelViewModel();
@@ -123,6 +176,39 @@ function unseededContext(
     checksPaused: false,
     ...overrides,
   } as DeviceOnboardingSession["context"];
+}
+
+function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
+  const connect = jest.fn();
+  const unseeded = unseededContext({ currentOnboardingStep: "pin" });
+  useSession.mockReturnValue(session({ state: "deviceSetup.pin", context: unseeded, connect }));
+  const hook = renderFunnel();
+  const update = (overrides: Partial<DeviceOnboardingSession>) => {
+    useSession.mockReturnValue(session({ context: unseeded, connect, ...overrides }));
+    hook.rerender(undefined);
+  };
+  update({ state: "awaitingSession", ...afterDrop });
+
+  return { ...hook, connect, update };
+}
+
+const seededContext = {
+  onboardedOnEntry: true,
+  checksPaused: false,
+} as DeviceOnboardingSession["context"];
+
+const returningContext = {
+  onboardedOnEntry: true,
+  checksPaused: false,
+  returningFromFirmwareUpdate: true,
+} as DeviceOnboardingSession["context"];
+
+function waitingSession(extra: Partial<DeviceOnboardingSession> = {}) {
+  return session({
+    state: "awaitingSessionAfterFirmwareUpdate",
+    context: returningContext,
+    ...extra,
+  });
 }
 
 describe("useDeviceOnboardingFunnelViewModel", () => {
@@ -372,6 +458,315 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(closeFirmwareHandover).not.toHaveBeenCalled();
   });
 
+  it("should keep the checks screen up while returning from an OS update", () => {
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateDelegated", context: seededContext }),
+    );
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("checking");
+
+    for (const state of ["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+      expect(result.current.status).toBe("checks");
+      expect(checksOf(result.current).state).toBe("checking");
+    }
+
+    useSession.mockReturnValue(
+      session({ state: "checks.checksSucceeded", context: seededContext }),
+    );
+    rerender(undefined);
+
+    expect(checksOf(result.current).state).toBe("succeeded");
+  });
+
+  it("should keep the checks screen up when the device locks and unlocks while returning from an OS update", () => {
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+      expect(result.current.status).toBe("checks");
+      expect(checksOf(result.current).state).toBe("checking");
+      expect(checksModel(result.current).unlockSheet !== null).toBe(state === "deviceLocked");
+    }
+  });
+
+  it("should not close the firmware handover from the checks screen once the device unlocks after an OS update", () => {
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState", "routing"]) {
+      useSession.mockReturnValue(session({ state, context: returningContext }));
+      rerender(undefined);
+    }
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+  });
+
+  it("should abort the firmware reconnect from the checks screen", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        context: returningContext,
+        abortFirmwareReconnect,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    checksOf(result.current).onQuit?.();
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+  });
+
+  it("should quit through the confirmation, not abort the reconnect, once a locked device is read again", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(waitingSession({ abortFirmwareReconnect }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const state of ["deviceLocked", "readingState"]) {
+      useSession.mockReturnValue(
+        session({ state, context: returningContext, abortFirmwareReconnect }),
+      );
+      rerender(undefined);
+    }
+    act(() => checksOf(result.current).onQuit?.());
+    useSession.mockReturnValue(
+      session({ state: "routing", context: returningContext, abortFirmwareReconnect }),
+    );
+    rerender(undefined);
+
+    expect(abortFirmwareReconnect).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should abort the firmware reconnect when back is pressed on the checks screen", () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        context: returningContext,
+        abortFirmwareReconnect,
+      }),
+    );
+
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+  });
+
+  it("should keep the checks and offer to try again when returning from an OS update fails", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        error: "Unable to connect to the device",
+        context: returningContext,
+        connect,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const model = checksModel(result.current);
+
+    expect(model.checks.state).toBe("checking");
+    expect(model.powerOnSheet).toBeNull();
+    expect(model.reconnectSheet?.connection?.state).toBe("failed");
+
+    act(() => model.reconnectSheet?.connection?.retry());
+
+    expect(connect).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep the checks, ask to power on and reconnect when the device switches off right after returning from an OS update", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    for (const error of [null, "connection-error"]) {
+      useSession.mockReturnValue(
+        session({
+          state: "awaitingSession",
+          status: "connecting",
+          error,
+          connect,
+          context: returningContext,
+        }),
+      );
+      rerender(undefined);
+
+      const switchedOff = checksModel(result.current);
+      expect(switchedOff.checks.state).toBe("checking");
+      expect(switchedOff.powerOnSheet).not.toBeNull();
+    }
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledWith("device-id");
+
+    act(() => {
+      jest.advanceTimersByTime(2_000);
+    });
+
+    expect(connect).toHaveBeenCalledTimes(2);
+  });
+
+  it("should keep the checks and offer to try again on an error that needs the user when the device switches off after returning from an OS update", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSession",
+        status: "connecting",
+        error: "bluetooth-disabled-promptable",
+        connect,
+        context: returningContext,
+      }),
+    );
+    rerender(undefined);
+    const model = checksModel(result.current);
+
+    expect(model.powerOnSheet).toBeNull();
+    expect(model.reconnectSheet?.connection?.state).toBe("failed");
+    expect(connect).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      jest.advanceTimersByTime(10_000);
+    });
+    expect(connect).toHaveBeenCalledTimes(1);
+
+    act(() => model.reconnectSheet?.connection?.retry());
+
+    expect(connect).toHaveBeenCalledTimes(2);
+    expect(connect).toHaveBeenLastCalledWith("device-id");
+  });
+
+  describe("when the updated device takes long to come back", () => {
+    it("should keep the checks screen without a sheet during the first 20 seconds", () => {
+      useSession.mockReturnValue(waitingSession());
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs - 1));
+
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+      expect(checksOf(result.current).state).toBe("checking");
+    });
+
+    it("should ask to power on and unlock over the checks after 20 seconds, and abort the reconnect on quit", () => {
+      const abortFirmwareReconnect = jest.fn();
+      useSession.mockReturnValue(waitingSession({ abortFirmwareReconnect }));
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+
+      const waiting = checksModel(result.current);
+      expect(waiting.checks.state).toBe("checking");
+      expect(waiting.checks.suspendSheets).toBe(true);
+      expect(waiting.powerOnSheet).toEqual({
+        deviceModelId: DeviceModelId.stax,
+        deviceName: "Ledger Stax",
+        onQuit: expect.any(Function),
+      });
+
+      act(() => waiting.powerOnSheet?.onQuit());
+
+      expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should offer to try again 30 seconds after asking to power on, and wait again on retry", () => {
+      const connect = jest.fn();
+      useSession.mockReturnValue(waitingSession({ connect }));
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs - 1));
+      expect(checksModel(result.current).reconnectSheet).toBeNull();
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+
+      act(() => jest.advanceTimersByTime(1));
+      const gaveUp = checksModel(result.current);
+      expect(gaveUp.reconnectSheet?.connection?.state).toBe("failed");
+      expect(gaveUp.powerOnSheet).toBeNull();
+
+      act(() => gaveUp.reconnectSheet?.connection?.retry());
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(connect).toHaveBeenLastCalledWith();
+      expect(checksModel(result.current).reconnectSheet).toBeNull();
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+      expect(checksModel(result.current).reconnectSheet?.connection?.state).toBe("failed");
+    });
+
+    it("should abort the reconnect when quitting from the try again sheet", () => {
+      const abortFirmwareReconnect = jest.fn();
+      useSession.mockReturnValue(waitingSession({ abortFirmwareReconnect }));
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+
+      act(() => checksModel(result.current).reconnectSheet?.onQuit?.());
+
+      expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should offer to try again 30 seconds after the device switched off right after returning", () => {
+      useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+      const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      useSession.mockReturnValue(
+        session({ state: "awaitingSession", status: "connecting", context: returningContext }),
+      );
+      rerender(undefined);
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+
+      expect(checksModel(result.current).reconnectSheet?.connection?.state).toBe("failed");
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+    });
+
+    it("should drop the sheet once the device is read again", () => {
+      useSession.mockReturnValue(waitingSession());
+      const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+
+      useSession.mockReturnValue(session({ state: "readingState", context: returningContext }));
+      rerender(undefined);
+
+      expect(checksModel(result.current).powerOnSheet).toBeNull();
+    });
+
+    it("should not ask to power on in the unseeded flow", () => {
+      useSession.mockReturnValue(
+        session({
+          state: "awaitingSessionAfterFirmwareUpdate",
+          context: unseededContext({ returningFromFirmwareUpdate: true }),
+        }),
+      );
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+
+      expect(result.current.status).toBe("connecting");
+    });
+  });
+
   it("should close the firmware handover from the waiting screen", () => {
     useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
 
@@ -400,7 +795,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksModel(result.current).unlockSheet).toBeNull();
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const locked = checksModel(result.current);
     expect(locked.checks.state).toBe("updating");
@@ -412,7 +807,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     });
 
     useSession.mockReturnValue(session({ state: "readingState", context: firmware }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const reading = checksModel(result.current);
     expect(reading.checks.state).toBe("updating");
@@ -420,7 +815,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(reading.unlockSheet).toBeNull();
 
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded", context: firmware }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     expect(checksOf(result.current).state).toBe("succeeded");
     expect(checksModel(result.current).unlockSheet).toBeNull();
@@ -446,16 +841,35 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
             ...afterSwitchOff,
           }),
         );
-        hook.rerender(undefined as never);
+        hook.rerender(undefined);
       };
       poweredOff();
 
       return { ...hook, connect, poweredOff };
     }
 
+    it("should offer to try again 30 seconds after asking to power on, and wait again on retry", () => {
+      const connect = jest.fn();
+      const { result } = switchOff({ connect });
+
+      act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs - 1));
+      expect(checksModel(result.current).reconnectSheet).toBeNull();
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+
+      act(() => jest.advanceTimersByTime(1));
+      const gaveUp = checksModel(result.current);
+      expect(gaveUp.reconnectSheet?.connection?.state).toBe("failed");
+      expect(gaveUp.powerOnSheet).toBeNull();
+
+      connect.mockClear();
+      act(() => gaveUp.reconnectSheet?.connection?.retry());
+      expect(connect).toHaveBeenCalledWith("device-id");
+      expect(checksModel(result.current).powerOnSheet).not.toBeNull();
+    });
+
     it("should show power on and unlock over the checks and reconnect once to the same device", () => {
       const { result, rerender, connect } = switchOff();
-      rerender(undefined as never);
+      rerender(undefined);
 
       const poweredOff = checksModel(result.current);
       expect(poweredOff.powerOnSheet).toEqual({
@@ -569,14 +983,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
-    rerender(undefined as never);
+    rerender(undefined);
     useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     expect(result.current.status).toBe("failed");
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context: null }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const locked = checksModel(result.current);
     expect(locked.checks.state).toBe("synchronizing");
@@ -599,9 +1013,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
-    rerender(undefined as never);
+    rerender(undefined);
     useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const reconnected = {
       deviceId: "other-device",
@@ -610,7 +1024,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       wired: false,
     };
     useSession.mockReturnValue(session({ state: "deviceLocked", liveDevice: reconnected }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const locked = checksModel(result.current);
     expect(locked.checks.device.deviceId).toBe("other-device");
@@ -626,7 +1040,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     useSession.mockReturnValue(session({ state: "deviceLocked" }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     checksOf(result.current).onQuit?.();
 
@@ -871,6 +1285,45 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).state).toBe("synchronizing");
   });
 
+  describe("on done", () => {
+    function doneSession(onboardedOnEntry: boolean, seedPath: SeedPath | null) {
+      return session({
+        state: "done",
+        status: "exited",
+        context: { onboardedOnEntry, checksPaused: false } as DeviceOnboardingSession["context"],
+        snapshot: { context: { seedPath } } as DeviceOnboardingSession["snapshot"],
+      });
+    }
+
+    it.each([SeedPath.RestorePhrase, SeedPath.Recover, SeedPath.RecoveryKey, null])(
+      "should end an unseeded restore (%s) on the success karaoke",
+      seedPath => {
+        useSession.mockReturnValue(doneSession(false, seedPath));
+
+        const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+        expect(result.current.status).toBe("unseededSuccessKaraoke");
+        expect(result.current.quitConfirmation).toBeNull();
+      },
+    );
+
+    it("should leave a new seed to the Recover pitch", () => {
+      useSession.mockReturnValue(doneSession(false, SeedPath.NewSeed));
+
+      const { result } = renderRecoverFunnel();
+
+      expect(result.current.status).toBe("recoverNewSeed");
+    });
+
+    it("should keep a seeded device on the shipped success screen", () => {
+      useSession.mockReturnValue(doneSession(true, SeedPath.RestorePhrase));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(checksOf(result.current).state).toBe("succeeded");
+    });
+  });
+
   it.each([
     [true, true],
     [false, false],
@@ -940,6 +1393,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
           onboardedOnEntry: false,
           checksPaused: false,
         } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
       }),
     );
 
@@ -962,7 +1418,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context: unseededContext }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const locked = result.current;
     if (locked.status !== "unseededIntroKaraoke") throw new Error(locked.status);
@@ -975,12 +1431,12 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
 
     useSession.mockReturnValue(session({ state: "readingState", context: unseededContext }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     expect(result.current.status).toBe("unseededIntroKaraoke");
 
     useSession.mockReturnValue(session({ state: "awaitingStart", context: unseededContext }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const unlocked = result.current;
     if (unlocked.status !== "unseededIntroKaraoke") throw new Error(unlocked.status);
@@ -1030,7 +1486,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     useSession.mockReturnValue(
       session({ state: "checks.firmwareCheck", context: unseededContext() }),
     );
-    rerender(undefined as never);
+    rerender(undefined);
     expect(result.current.status).toBe("setup");
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
     expect(setupOf(result.current).suspendSheets).toBe(true);
@@ -1039,7 +1495,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.quitConfirmation?.isOpen).toBe(false);
 
     useSession.mockReturnValue(session({ state: "awaitingStart", context: unseededContext() }));
-    rerender(undefined as never);
+    rerender(undefined);
     expect(result.current.status).toBe("unseededIntroKaraoke");
     expect(result.current.quitConfirmation?.isOpen).toBe(false);
   });
@@ -1099,6 +1555,61 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(send).not.toHaveBeenCalled();
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should leave a finished restore for the portfolio on Android back, without completing it", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "done",
+        status: "running",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.RestorePhrase },
+        } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).toHaveBeenCalledWith(
+      expect.objectContaining({ routes: [expect.objectContaining({ name: NavigatorName.Base })] }),
+    );
+  });
+
+  it("should ask before Android back leaves a new seed's done screen", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "done",
+        status: "running",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).not.toHaveBeenCalled();
   });
 
   it("should release the error sheet while Android back asks to leave a seeded device", () => {
@@ -1231,7 +1742,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
         } as DeviceOnboardingSession["context"],
       }),
     );
-    rerender(undefined as never);
+    rerender(undefined);
 
     expect(result.current.quitConfirmation).toBeNull();
     expect(checksOf(result.current).suspendSheets).toBeFalsy();
@@ -1297,7 +1808,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
 
     useSession.mockReturnValue(session({ state: "deviceLocked", context }));
-    rerender(undefined as never);
+    rerender(undefined);
 
     const locked = result.current;
     if (locked.status !== "setup") throw new Error(locked.status);
@@ -1310,13 +1821,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
 
     useSession.mockReturnValue(session({ state: "readingState", context }));
-    rerender(undefined as never);
+    rerender(undefined);
     if (result.current.status !== "setup") throw new Error(result.current.status);
     expect(result.current.unlockSheet).toBeNull();
     expect(setupOf(result.current).suspendSheets).toBe(true);
 
     useSession.mockReturnValue(session({ state: "checks.firmwareCheck", context }));
-    rerender(undefined as never);
+    rerender(undefined);
     expect(result.current.status).toBe("setup");
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
     expect(setupOf(result.current).suspendSheets).toBe(true);
@@ -1383,7 +1894,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
-  it("should keep the success screen when an unseeded device reaches done", () => {
+  it("should keep Recover when a new seed reaches done", () => {
     useSession.mockReturnValue(
       session({
         state: "done",
@@ -1391,13 +1902,195 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
           onboardedOnEntry: false,
           checksPaused: false,
         } as DeviceOnboardingSession["context"],
+        snapshot: {
+          context: { seedPath: SeedPath.NewSeed },
+        } as DeviceOnboardingSession["snapshot"],
       }),
     );
 
+    const { result } = renderRecoverFunnel();
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should show Recover when an unseeded device reaches done on a new seed", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+
+    const { result } = renderRecoverFunnel();
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should skip the Recover pitch when protectServicesMobile is disabled", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).not.toHaveBeenCalled();
+
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
+    expect(store.getState().postOnboarding.actionsToComplete).not.toContain("recover");
+  });
+
+  it("should move to the success karaoke when Recover is skipped", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderRecoverFunnel();
+    act(() => recoverOf(result.current).onSkip());
+
+    expect(result.current.status).toBe("success");
+  });
+
+  it("should add the recover action and show success when the user asks to be reminded", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderRecoverFunnel();
+    act(() => recoverOf(result.current).onRemindLater());
+
+    expect(result.current.status).toBe("success");
+    expect(store.getState().postOnboarding.actionsToComplete).toContain("recover");
+  });
+
+  it("should open Recover without completing onboarding", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderRecoverFunnel();
+    act(() => recoverOf(result.current).onOpenLiveApp());
+
+    expect(navigate).toHaveBeenCalledWith("Base", {
+      screen: "DeviceOnboardingRecover",
+      params: { platform: "protect-simu", device },
+    });
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
+  it("should show the success karaoke when the funnel is focused again after Recover", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, rerender } = renderRecoverFunnel();
+    act(() => recoverOf(result.current).onOpenLiveApp());
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    expect(result.current.status).toBe("recoverNewSeed");
+
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+    expect(result.current.status).toBe("success");
+  });
+
+  it("should complete onboarding on the success tap after the pitch", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderRecoverFunnel();
+    act(() => recoverOf(result.current).onSkip());
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
+    expect(resetNavigation).toHaveBeenCalled();
+  });
+
+  it("should show the success karaoke when an unseeded restore reaches done", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should not open Ledger Sync on a restore when the flag is off", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(checksOf(result.current).state).toBe("succeeded");
-    expect(result.current.status).not.toBe("connecting");
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("should offer Ledger Sync without the Recover pitch when protectServicesMobile is disabled", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer();
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+  });
+
+  it("should offer Ledger Sync before the success karaoke of a restore", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { result, store } = renderFunnelWithSyncOffer();
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(resetNavigation).not.toHaveBeenCalled();
+  });
+
+  it("should offer Ledger Sync before the success karaoke of a new seed, after Recover is skipped", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer(recoverEnabled);
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(result.current.status).toBe("recoverNewSeed");
+
+    act(() => recoverOf(result.current).onSkip());
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+    expect(result.current.status).toBe("success");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should complete a new seed on the success tap after Ledger Sync", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer(recoverEnabled);
+    act(() => recoverOf(result.current).onSkip());
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
+    expect(resetNavigation).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should open Ledger Sync once when the funnel regains focus", () => {
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    const { rerender } = renderFunnelWithSyncOffer();
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not open Ledger Sync later when the device is gone at the success screen", () => {
+    useSession.mockReturnValue({ ...doneWithSeed("restorePhrase"), liveDevice: null });
+    const { result, rerender } = renderFunnelWithSyncOffer();
+
+    expect(result.current.status).toBe("unseededSuccessKaraoke");
+    expect(navigate).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(doneWithSeed("restorePhrase"));
+    rerender(undefined);
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("should leave a finished unseeded device without completing onboarding", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => result.current.quitConfirmation?.onLeave());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(resetNavigation).toHaveBeenCalled();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
   });
 
   it("should close a not genuine sheet with CLOSE on an unseeded device", () => {
@@ -1762,5 +2455,58 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.state).toBe("idle");
     setupOf(result.current).checks?.onStart();
     expect(send).toHaveBeenCalledWith({ type: "RETRY" });
+  });
+  describe("when an unseeded device disconnects during the setup", () => {
+    it("should keep the stage, reconnect to the same device and show the reconnecting sheet", () => {
+      const { result, connect } = dropDuringPin();
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(connect).toHaveBeenCalledWith("device-id");
+    });
+
+    it("should show the failed sheet when the reconnection fails, and reconnect on retry", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "awaitingSession", error: "unknown-error" });
+      expect(setupOf(result.current).connection?.state).toBe("failed");
+
+      act(() => setupOf(result.current).connection?.retry());
+
+      expect(connect).toHaveBeenCalledTimes(2);
+      expect(connect).toHaveBeenLastCalledWith("device-id");
+    });
+
+    it("should close the sheet on the same stage once the session is back", () => {
+      const { result, update } = dropDuringPin();
+
+      update({ state: "readingState" });
+
+      const setup = setupOf(result.current);
+      expect(setup.stage.kind).toBe("pin");
+      expect(setup.connection).toBeNull();
+    });
+
+    it("should reconnect again on a second drop after reconnecting to a locked device", () => {
+      const { result, connect, update } = dropDuringPin();
+
+      update({ state: "deviceLocked" });
+      const locked = setupOf(result.current);
+      expect(locked.stage.kind).toBe("pin");
+      expect(locked.connection).toBeNull();
+
+      update({ state: "awaitingSession" });
+
+      expect(setupOf(result.current).connection?.state).toBe("reconnecting");
+      expect(connect).toHaveBeenCalledTimes(2);
+    });
+
+    it("should keep showing the connecting screen after a firmware update", () => {
+      const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
+
+      expect(result.current.status).toBe("connecting");
+    });
   });
 });

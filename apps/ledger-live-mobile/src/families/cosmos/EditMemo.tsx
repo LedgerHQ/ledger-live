@@ -21,7 +21,7 @@ type Props = BaseComposite<
 function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo);
+  const [memo, setMemo] = useState(route.params.transaction.memoValue);
   const account = route.params.account;
   const currencyName = account.currency.name;
   const bridge = useAccountBridge<CosmosTransaction>(account);

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
 import { http, HttpResponse, server } from "tests/server";
 import { useLocation, useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
+import { files } from "~/renderer/bridge";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { track, trackPage } from "@shared/analytics";
@@ -31,8 +31,6 @@ import {
 } from "./contactHistory.fixtures";
 
 const mockNavigate = jest.fn();
-let mockExportShouldSucceed = true;
-let mockExportShouldError = false;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -61,8 +59,7 @@ jest.mock("@tanstack/react-virtual", () => ({
   },
 }));
 
-jest.mock("~/renderer/hooks/useExportOperationsCsv");
-const mockedUseExportOperationsCsv = jest.mocked(useExportOperationsCsv);
+const mockedExportOperations = jest.mocked(files.exportOperations);
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
@@ -71,44 +68,10 @@ function LocationSearch() {
   return <output data-testid="history-location-search">{search}</output>;
 }
 
-type ExportHookArgs = {
-  onSuccess?: () => void;
-  onError?: () => void;
-};
-
-function mockUseExportOperationsCsv({ onSuccess, onError }: ExportHookArgs) {
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
-
-  return {
-    success,
-    error,
-    isLoading: false,
-    exportCsv: async () => {
-      if (mockExportShouldError) {
-        setError(true);
-        onError?.();
-      } else if (mockExportShouldSucceed) {
-        setSuccess(true);
-        onSuccess?.();
-      }
-    },
-    resetState: () => {
-      setSuccess(false);
-      setError(false);
-    },
-  };
-}
-
-function mockExportHook() {
-  mockedUseExportOperationsCsv.mockImplementation(mockUseExportOperationsCsv);
-}
-
 describe("History integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    mockExportHook();
   });
 
   afterEach(() => {
@@ -495,10 +458,8 @@ describe("History integration", () => {
 describe("History export dialog integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockExportShouldSucceed = true;
-    mockExportShouldError = false;
+    mockedExportOperations.mockResolvedValue("saved");
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    mockExportHook();
   });
 
   afterEach(() => {
@@ -578,6 +539,14 @@ describe("History export dialog integration", () => {
     await selectAllAndExport(user, dialog);
 
     expect(await screen.findByTestId("history-export-success-title")).toBeVisible();
+    expect(mockedExportOperations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          defaultPath: expect.stringMatching(/^ledgerwallet-operations-.+\.csv$/),
+        }),
+      }),
+      expect.stringMatching(/^Operation Date,Status,Currency Ticker,/),
+    );
     await user.click(screen.getByRole("button", { name: /done/i }));
   });
 
@@ -585,7 +554,7 @@ describe("History export dialog integration", () => {
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    mockExportShouldSucceed = false;
+    mockedExportOperations.mockResolvedValue("canceled");
     await selectAllAndExport(user, dialog);
 
     expect(screen.queryByTestId("history-export-success-title")).not.toBeInTheDocument();
@@ -598,7 +567,7 @@ describe("History export dialog integration", () => {
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    mockExportShouldError = true;
+    mockedExportOperations.mockResolvedValue("failed");
     await selectAllAndExport(user, dialog);
 
     await waitFor(() => expect(screen.getByTestId("history-export-error-title")).toBeVisible(), {
