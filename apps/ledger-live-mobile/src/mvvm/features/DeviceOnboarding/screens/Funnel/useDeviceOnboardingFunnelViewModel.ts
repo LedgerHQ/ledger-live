@@ -13,7 +13,12 @@ import {
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
-import { deviceReportsRecoveryKey, SeedPath } from "@features/platform-device-onboarding";
+import {
+  deviceReportsRecoveryKey,
+  SeedPath,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -38,6 +43,11 @@ import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/u
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
+import { seededButtons } from "@features/platform-device-onboarding-analytics";
+import {
+  useSeededFunnelTracking,
+  type SeededFunnelTracking,
+} from "LLM/features/DeviceOnboarding/analytics/useSeededFunnelTracking";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
@@ -225,7 +235,13 @@ type ScreenActions = {
   availableFirmwareVersion: string | null;
   firmwareUpToDate: boolean;
   genuineFailureKind: string | null;
+  tracking: ChecksTracking;
+  markUpdateAccepted: () => void;
+  /** Wraps a close button's action so it also sends the `close` click. */
+  withCloseClick: (quit: () => void) => () => void;
 };
+
+type ChecksTracking = Pick<SeededFunnelTracking, "seededDeviceType" | "trackClick" | "screensFor">;
 
 function failedScreen(
   copy: ScreenCopy,
@@ -279,20 +295,28 @@ function earlyScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null
       return failedScreen(
         copy,
         actions.reconnect,
-        actions.leaveFirmwareReconnect,
+        actions.withCloseClick(actions.leaveFirmwareReconnect),
         quitConfirmation,
       );
     }
-    return connectingScreen(copy, actions.leaveFirmwareReconnect, quitConfirmation);
+    return connectingScreen(
+      copy,
+      actions.withCloseClick(actions.leaveFirmwareReconnect),
+      quitConfirmation,
+    );
   }
   if (actions.state === "awaitingSession") {
-    return failedScreen(copy, actions.reconnect, actions.leaveFromHeader, quitConfirmation);
+    return failedScreen(
+      copy,
+      actions.reconnect,
+      actions.withCloseClick(actions.leaveFromHeader),
+      quitConfirmation,
+    );
   }
   if (!actions.device || !actions.screenState) {
-    if (actions.error) {
-      return failedScreen(copy, actions.retry, actions.quitOrLeave, quitConfirmation);
-    }
-    return connectingScreen(copy, actions.quitOrLeave, quitConfirmation);
+    const quit = actions.withCloseClick(actions.quitOrLeave);
+    if (actions.error) return failedScreen(copy, actions.retry, quit, quitConfirmation);
+    return connectingScreen(copy, quit, quitConfirmation);
   }
   return null;
 }
@@ -428,7 +452,11 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   const device = actions.device;
   const screenState = actions.screenState;
   if (!device || !screenState) {
-    return connectingScreen(actions.copy, actions.quitOrLeave, actions.quitConfirmation);
+    return connectingScreen(
+      actions.copy,
+      actions.withCloseClick(actions.quitOrLeave),
+      actions.quitConfirmation,
+    );
   }
   if (actions.unseeded && actions.state === "awaitingStart") {
     return {
@@ -444,6 +472,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     };
   }
   const startEvent = actions.state === "checks.checksIdle" ? "RETRY" : "CONTINUE";
+  const { tracking } = actions;
   return {
     status: "checks",
     quitConfirmation: actions.quitConfirmation,
@@ -460,16 +489,34 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
           ? toFirmwareUpdate(actions.firmwareVersion, actions.availableFirmwareVersion)
           : null,
       firmwareUpToDate: actions.firmwareUpToDate,
-      onStart: () => actions.send({ type: startEvent }),
+      onStart: () => {
+        tracking.trackClick(seededButtons.initiateGenuineCheck);
+        actions.send({ type: startEvent });
+      },
       onRetry: () => actions.send({ type: "RETRY" }),
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
-      onDeclineUpdate: () => actions.send({ type: "USER_DECLINE" }),
+      onDeclineUpdate: () => {
+        tracking.trackClick(seededButtons.skipUpdate);
+        actions.send({ type: "USER_DECLINE" });
+      },
+      onUpdatePressed: () => {
+        tracking.trackClick(seededButtons.continue);
+        actions.markUpdateAccepted();
+      },
+      onInstallUpdate: () => tracking.trackClick(seededButtons.installUpdate),
+      onUpdateSheetClosed: () => tracking.trackClick(seededButtons.close),
+      screensFor: tracking.screensFor,
+      seededDeviceType: tracking.seededDeviceType,
       onContinue:
         actions.state === "checks.checksSucceeded"
-          ? () => actions.send({ type: "CONTINUE" })
+          ? () => {
+              tracking.trackClick(seededButtons.continue);
+              actions.send({ type: "CONTINUE" });
+            }
           : undefined,
       onQuit: checksQuit(actions),
+      onClosePressed: () => tracking.trackClick(seededButtons.close),
     },
   };
 }
@@ -542,22 +589,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const allowLeave = useRef(false);
   const quitSent = useRef(false);
   const [quitConfirmationOpen, setQuitConfirmationOpen] = useState(false);
-  const onLeave = useCallback(() => {
-    allowLeave.current = true;
-  }, []);
+  const [firmwareUpdateStarted, setFirmwareUpdateStarted] = useState(false);
   const onboarding = useDeviceOnboardingSession();
-  const host = useMemo(
-    () => ({
-      navigation,
-      onLeave,
-      dmk,
-      knownDevices,
-      offerSync,
-      wasReadOnlyAtEntry,
-    }),
-    [dmk, knownDevices, navigation, offerSync, onLeave, wasReadOnlyAtEntry],
-  );
-  useDeviceOnboardingHost(host);
   const started = useRef(false);
   const dismissRestoreRef = useRef<(() => void) | null>(null);
   const [heldState, setHeldState] = useState<HeldState | null>(null);
@@ -568,6 +601,38 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     return true;
   }, []);
   const restoreShown = useCallback(() => dismissRestoreRef.current !== null, []);
+  const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
+  const machineState = onboarding.state;
+  const locked = machineState === deviceLockedState;
+  const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
+  const returningFromFirmwareUpdate = onboarding.context?.returningFromFirmwareUpdate === true;
+  const deviceOffDuringChecks = isDeviceOffDuringChecks({
+    machineState,
+    heldMachineState: heldState?.state ?? null,
+    onboardedOnEntry,
+    hasLiveDevice: onboarding.liveDevice !== null,
+    returningFromFirmwareUpdate,
+  });
+  const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
+  const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
+  const seededTracking = useSeededFunnelTracking({
+    machineState: shownState,
+    machineContext: onboarding.snapshot?.context ?? null,
+    firmwareUpdateStarted,
+  });
+  const { trackClick, trackAbort, trackExit } = seededTracking;
+  const onLeave = useCallback(
+    (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
+      allowLeave.current = true;
+      return trackExit(reason, context);
+    },
+    [trackExit],
+  );
+  const host = useMemo(
+    () => ({ navigation, onLeave, dmk, knownDevices, offerSync, wasReadOnlyAtEntry }),
+    [dmk, knownDevices, navigation, offerSync, onLeave, wasReadOnlyAtEntry],
+  );
+  useDeviceOnboardingHost(host);
 
   useEffect(() => {
     connectWhenIdle(started, onboarding);
@@ -585,9 +650,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const leave = useCallback(() => {
     allowLeave.current = true;
+    trackAbort();
     onboarding.reset();
     navigation.goBack();
-  }, [navigation, onboarding]);
+  }, [navigation, onboarding, trackAbort]);
 
   const leaveFinishedSetup = useCallback(() => {
     allowLeave.current = true;
@@ -634,7 +700,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "QUIT" });
   }, [closeFirmwareHandover, navigation, onboarding.state, send]);
 
-  const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const confirmsQuit =
@@ -725,17 +790,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     ],
   );
 
-  const machineState = onboarding.state;
-  const locked = machineState === deviceLockedState;
-  const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
-  const returningFromFirmwareUpdate = onboarding.context?.returningFromFirmwareUpdate === true;
-  const deviceOffDuringChecks = isDeviceOffDuringChecks({
-    machineState,
-    heldMachineState: heldState?.state ?? null,
-    onboardedOnEntry,
-    hasLiveDevice: onboarding.liveDevice !== null,
-    returningFromFirmwareUpdate,
-  });
   const { connect } = onboarding;
   const liveDeviceId = onboarding.liveDevice?.deviceId;
   const reconnectToLiveDevice = useCallback(() => connect(liveDeviceId), [connect, liveDeviceId]);
@@ -744,8 +798,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     error: onboarding.error,
     connect: reconnectToLiveDevice,
   });
-  const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
-  const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
   const phase = phaseOf(shownState, onboardedOnEntry, returningFromFirmwareUpdate);
   const waitingForUpdatedDevice =
     phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState;
@@ -829,6 +881,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       device: liveDevice,
       wasReadOnlyAtEntry,
       unseeded: true,
+      seededResult: null,
     });
   }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
 
@@ -922,6 +975,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
+    tracking: {
+      seededDeviceType: seededTracking.seededDeviceType,
+      trackClick,
+      screensFor: seededTracking.screensFor,
+    },
+    markUpdateAccepted: () => setFirmwareUpdateStarted(true),
+    withCloseClick: (quit: () => void) => () => {
+      trackClick(seededButtons.close);
+      quit();
+    },
   };
   const built =
     successScreen(screen) ??

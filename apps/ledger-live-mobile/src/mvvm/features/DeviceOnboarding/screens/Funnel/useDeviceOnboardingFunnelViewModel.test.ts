@@ -1,11 +1,19 @@
+import { track, trackPage } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { SeedPath, type FirmwareCheck } from "@features/platform-device-onboarding";
+import {
+  deviceOnboardingMachine,
+  SeedPath,
+  type AvailableFirmwareUpdate,
+  type DeviceOnboardingContext,
+  type FirmwareCheck,
+} from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
+import type { ChecksScreenProps, UpdateStep } from "LLM/features/DeviceOnboarding/types";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import {
@@ -13,6 +21,26 @@ import {
   powerOnAfterUpdateDelayMs,
 } from "LLM/features/DeviceOnboarding/utils/deviceOff";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => "Page Pairing"),
+}));
+
+const events = () => jest.mocked(track).mock.calls.map(([event]) => event);
+const pages = () => jest.mocked(trackPage).mock.calls.map(([page]) => page.category);
+const clicks = () =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([event]) => event === "button_clicked")
+    .map(([, props]) => (props && "button" in props ? props.button : undefined));
+
+const screensOf = (checks: Pick<ChecksScreenProps, "screensFor">, step: UpdateStep | null = null) =>
+  checks.screensFor?.(step).map(({ tracking }) => tracking.category) ?? [];
+
+const unseededExit = { onboardedOnEntry: false } as DeviceOnboardingContext;
 
 const goBack = jest.fn();
 const resetNavigation = jest.fn();
@@ -163,7 +191,7 @@ function renderFunnelWithSyncOffer(flags: Parameters<typeof withFlagOverrides>[0
   });
 }
 
-const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true };
+const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true, seededResult: null };
 
 function useFunnelViewModel(props: void) {
   void props;
@@ -184,6 +212,76 @@ function unseededContext(
   } as DeviceOnboardingSession["context"];
 }
 
+function seededContext(
+  overrides: Partial<NonNullable<DeviceOnboardingSession["context"]>> = {},
+): DeviceOnboardingSession["context"] {
+  return {
+    onboardedOnEntry: true,
+    deviceModelId: "stax",
+    checksPaused: false,
+    ...overrides,
+  } as DeviceOnboardingSession["context"];
+}
+
+function seededMachineContext(
+  overrides: Partial<DeviceOnboardingContext> = {},
+): DeviceOnboardingContext {
+  return {
+    sessionId: "s1",
+    onboardedOnEntry: true,
+    isOnboarded: true,
+    deviceModelId: "stax",
+    firmwareVersion: "2.4.0",
+    offerSync: false,
+    checksPaused: false,
+    firmware: null,
+    genuineVerdict: null,
+    lastGenuineFailure: null,
+    ...overrides,
+  } as DeviceOnboardingContext;
+}
+
+/** A snapshot the machine can really publish: an active actor holding this context. */
+function activeSnapshot(context: DeviceOnboardingContext): DeviceOnboardingSession["snapshot"] {
+  return deviceOnboardingMachine.resolveState({ value: "readingState", context });
+}
+
+/** A seeded session: the flat context drives the screens, the machine context the tracking. */
+function seededSession(
+  state: string,
+  machine: Partial<DeviceOnboardingContext> = {},
+  flat: Partial<NonNullable<DeviceOnboardingSession["context"]>> = {},
+): DeviceOnboardingSession {
+  return session({
+    state,
+    context: seededContext(flat),
+    snapshot: activeSnapshot(seededMachineContext(machine)),
+  });
+}
+
+const upToDate: FirmwareCheck = { kind: "upToDate" };
+const declined: FirmwareCheck = { kind: "declined" };
+const skipped: FirmwareCheck = { kind: "skipped" };
+const availableUpdate = { finalFirmware: { version: "1.1.0" } } as AvailableFirmwareUpdate;
+
+function offered(update: AvailableFirmwareUpdate): FirmwareCheck {
+  return { kind: "offered", update };
+}
+
+function renderUpdateOffer() {
+  useSession.mockReturnValue(
+    seededSession(
+      "checks.firmwareUpdateOffered",
+      { firmware: offered(availableUpdate) },
+      {
+        firmwareVersion: "1.0.0",
+        availableFirmwareVersion: "1.1.0",
+      },
+    ),
+  );
+  return checksOf(renderFunnel().result.current);
+}
+
 function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
   const connect = jest.fn();
   const unseeded = unseededContext({ currentOnboardingStep: "pin" });
@@ -197,11 +295,6 @@ function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
 
   return { ...hook, connect, update };
 }
-
-const seededContext = {
-  onboardedOnEntry: true,
-  checksPaused: false,
-} as DeviceOnboardingSession["context"];
 
 const returningContext = {
   onboardedOnEntry: true,
@@ -343,7 +436,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(goBack).not.toHaveBeenCalled();
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(1);
   });
@@ -363,7 +456,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
@@ -379,7 +472,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
@@ -467,7 +560,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should keep the checks screen up while returning from an OS update", () => {
     useSession.mockReturnValue(
-      session({ state: "checks.firmwareUpdateDelegated", context: seededContext }),
+      session({ state: "checks.firmwareUpdateDelegated", context: seededContext() }),
     );
 
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
@@ -482,7 +575,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     }
 
     useSession.mockReturnValue(
-      session({ state: "checks.checksSucceeded", context: seededContext }),
+      session({ state: "checks.checksSucceeded", context: seededContext() }),
     );
     rerender(undefined);
 
@@ -2675,7 +2768,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     useSession.mockReturnValue(
       session({
         state: "checks.firmwareCheck",
-        context: seededContext,
+        context: seededContext(),
       }),
     );
 
@@ -2787,6 +2880,269 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
 
       expect(result.current.status).toBe("connecting");
+    });
+  });
+
+  describe("seeded funnel tracking", () => {
+    it("should track the idle genuine check and its start", () => {
+      useSession.mockReturnValue(seededSession("awaitingStart"));
+
+      const { result } = renderFunnel();
+      const checks = checksOf(result.current);
+      checks.onStart();
+
+      expect(screensOf(checks)).toEqual(["Genuine Check"]);
+      expect(track).toHaveBeenCalledWith(
+        "onboarding_started",
+        expect.objectContaining({ ledger_sync_eligibility: "no", deviceType: "stax" }),
+      );
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "Initiate Genuine Check", source: "Page Pairing" }),
+      );
+    });
+
+    it("should leave the refusal page and the retry click to the drawer when the device refuses", () => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.genuineFailed",
+          {
+            lastGenuineFailure: { kind: "GENUINE_CHECK_REFUSED" },
+          } as Partial<DeviceOnboardingContext>,
+          { genuineFailureKind: "GENUINE_CHECK_REFUSED" },
+        ),
+      );
+
+      const { result } = renderFunnel();
+      const checks = checksOf(result.current);
+      checks.onRetry();
+
+      expect(screensOf(checks)).toEqual([]);
+      expect(checks.seededDeviceType).toBe("stax");
+      expect(clicks()).toEqual([]);
+      expect(send).toHaveBeenCalledWith({ type: "RETRY" });
+    });
+
+    it.each([
+      [null, ["Genuine Check success"]],
+      ["offerSheet", ["Genuine Check success", "OS update required"]],
+      ["decisionScreen", ["Genuine Check success", "OS update required refusal screen"]],
+      ["unsupportedUsbDrawer", ["Genuine Check success", "Drawer : OS update unsupported"]],
+    ] as const)("should show the genuine success page then the %s page", (step, expected) => {
+      expect(screensOf(renderUpdateOffer(), step)).toEqual(expected);
+    });
+
+    it("should send the unsupported reason when the device needs USB", () => {
+      const checks = renderUpdateOffer();
+
+      expect(checks.screensFor?.("unsupportedUsbDrawer").at(-1)?.tracking).toEqual(
+        expect.objectContaining({ reason: "usb_required", deviceType: "stax" }),
+      );
+    });
+
+    it("should send the update availability on the genuine success page", () => {
+      expect(renderUpdateOffer().screensFor?.("offerSheet")[0]?.tracking).toEqual(
+        expect.objectContaining({
+          category: "Genuine Check success",
+          firmware_update_availability: "yes",
+        }),
+      );
+    });
+
+    it("should send close when the user closes the offer sheet", () => {
+      renderUpdateOffer().onUpdateSheetClosed?.();
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
+    it.each([
+      ["Install Ledger OS update", "onInstallUpdate"],
+      ["Continue", "onUpdatePressed"],
+      ["Skip Ledger OS update", "onDeclineUpdate"],
+      ["close", "onClosePressed"],
+    ] as const)("should send %s when the user presses it", (button, press) => {
+      const checks = renderUpdateOffer();
+      checks[press]?.();
+
+      expect(clicks()).toEqual([button]);
+    });
+
+    it("should mark the firmware update as started on the Continue tap, before the eligibility check", () => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.firmwareUpdateOffered",
+          { firmware: offered(availableUpdate) },
+          {
+            firmwareVersion: "1.0.0",
+            availableFirmwareVersion: "1.1.0",
+          },
+        ),
+      );
+
+      const { result } = renderFunnel();
+      act(() => checksOf(result.current).onUpdatePressed?.());
+      const exit = recorded.host?.onLeave?.("offerLedgerSync", seededMachineContext());
+
+      expect(send).not.toHaveBeenCalled();
+      expect(exit).toEqual(expect.objectContaining({ firmwareUpdateStarted: true }));
+    });
+
+    it("should leave from the checks without a click: the close button sends it", () => {
+      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
+
+      const { result } = renderFunnel();
+      act(() => checksOf(result.current).onQuit?.());
+
+      expect(clicks()).toEqual([]);
+      expect(result.current.quitConfirmation?.isOpen).toBe(true);
+      expect(events()).not.toContain("onboarding_aborted");
+    });
+
+    it("should send the genuine success page again, as a new screen, after a skipped OS update", () => {
+      const before = renderUpdateOffer().screensFor?.("offerSheet")[0];
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.checksSucceeded",
+          { firmware: declined },
+          {
+            firmwareUpToDate: false,
+            firmwareChecked: true,
+          },
+        ),
+      );
+
+      const [after] = checksOf(renderFunnel().result.current).screensFor?.(null) ?? [];
+
+      expect(after?.tracking).toEqual(
+        expect.objectContaining({
+          category: "Genuine Check success",
+          firmware_update_availability: "yes",
+        }),
+      );
+      expect(after?.key).not.toBe(before?.key);
+    });
+
+    it.each([
+      [upToDate, "no"],
+      [skipped, "unknown"],
+    ] as const)("should send availability %o → %s on the result page", (check, availability) => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.checksSucceeded",
+          { firmware: check },
+          {
+            firmwareUpToDate: check === upToDate,
+            firmwareChecked: true,
+          },
+        ),
+      );
+
+      expect(checksOf(renderFunnel().result.current).screensFor?.(null)[0]?.tracking).toEqual(
+        expect.objectContaining({ firmware_update_availability: availability }),
+      );
+    });
+
+    it("should keep the checks page while the device is locked, so unlock sends it once", () => {
+      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
+      const { result, rerender } = renderFunnel();
+      const before = checksOf(result.current).screensFor?.(null);
+
+      useSession.mockReturnValue(seededSession("deviceLocked"));
+      rerender(undefined);
+
+      expect(checksOf(result.current).screensFor?.(null)).toEqual(before);
+    });
+
+    it("should track the success page and the continue click when the OS is up to date", () => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.checksSucceeded",
+          { firmware: upToDate },
+          {
+            firmwareUpToDate: true,
+            firmwareChecked: true,
+          },
+        ),
+      );
+
+      const { result } = renderFunnel();
+      const checks = checksOf(result.current);
+      expect(clicks()).toEqual([]);
+      checks.onContinue?.();
+
+      expect(screensOf(checks)).toEqual(["Genuine Check & OS success"]);
+      expect(clicks()).toEqual(["Continue"]);
+    });
+
+    it.each([
+      ["an unseeded device", "checks.checksSucceeded", { onboardedOnEntry: false }],
+      ["a leave before the device read", null, null],
+    ])("should send nothing for %s", (_case, state, context) => {
+      useSession.mockReturnValue(
+        session({
+          status: state ? "running" : "connecting",
+          state,
+          liveDevice: state ? device : null,
+          context: context as DeviceOnboardingSession["context"],
+        }),
+      );
+
+      const { result } = renderFunnel();
+      if (result.current.status === "connecting") result.current.onQuit();
+
+      expect(pages()).toEqual([]);
+      expect(events()).toEqual([]);
+    });
+
+    it("should send close from the connecting screen's close", () => {
+      useSession.mockReturnValue({
+        ...seededSession("checks.firmwareCheck"),
+        status: "connecting",
+        liveDevice: null,
+      });
+
+      const { result } = renderFunnel();
+      if (result.current.status !== "connecting") throw new Error(result.current.status);
+      act(() => {
+        if (result.current.status === "connecting") result.current.onQuit();
+      });
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
+    it("should send the start once when the first seeded page shows", () => {
+      useSession.mockReturnValue(seededSession("checks.genuineCheck.running"));
+      const { rerender } = renderFunnel();
+      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
+      rerender(undefined);
+
+      expect(events().filter(event => event === "onboarding_started")).toHaveLength(1);
+    });
+
+    it.each([
+      ["completed", true, ["onboarding_started", "onboarding_done"]],
+      ["userQuit", true, ["onboarding_started", "onboarding_done"]],
+      ["userQuit", false, ["onboarding_started", "onboarding_aborted"]],
+      ["resumeFirmwareUpdate", true, ["onboarding_started", "onboarding_aborted"]],
+      ["offerLedgerSync", true, ["onboarding_started"]],
+      ["legacyFallback", true, ["onboarding_started", "onboarding_done"]],
+      ["legacyFallback", false, []],
+    ] as const)("should end a %s exit (genuine: %s) with %j", (reason, genuine, sent) => {
+      useSession.mockReturnValue(seededSession("readingState"));
+      renderFunnel();
+
+      const exit = recorded.host?.onLeave?.(
+        reason,
+        seededMachineContext({
+          firmwareVersion: null,
+          genuineVerdict: { sessionId: "s1", isGenuine: genuine },
+        }),
+      );
+
+      expect(events()).toEqual(sent);
+      expect(exit ?? null).toEqual(
+        sent.length ? expect.objectContaining({ deviceType: "stax" }) : null,
+      );
     });
   });
 });

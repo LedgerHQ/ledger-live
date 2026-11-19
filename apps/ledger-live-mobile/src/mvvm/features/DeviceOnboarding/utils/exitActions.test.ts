@@ -1,4 +1,8 @@
-import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -11,7 +15,16 @@ import {
 } from "~/actions/settings";
 import { StackActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { exitActions } from "./exitActions";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
+import { exitActions, seededOutcome } from "./exitActions";
+
+const seededResult: SeededResult = {
+  deviceType: DmkDeviceModelId.STAX,
+  ledgerSyncEligible: false,
+  firmwareUpdateAvailability: "no",
+  firmwareUpdateStarted: false,
+  firmwareUpdateDone: false,
+};
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
 type Route = { name: string; params?: unknown; state?: { routes: Route[] } };
@@ -26,6 +39,10 @@ const stax: Device = {
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it.each([
     [
       "resumeFirmwareUpdate",
@@ -100,6 +117,7 @@ describe("exitActions", () => {
       params: {
         device: stax,
         wasReadOnlyAtEntry: true,
+        seededResult,
       },
     });
   });
@@ -185,6 +203,20 @@ describe("exitActions", () => {
     });
   });
 
+  it.each([
+    ["completed", {}, "done"],
+    ["offerLedgerSync", {}, "syncOffer"],
+    ["resumeFirmwareUpdate", {}, "aborted"],
+    ["userQuit", { genuine: true }, "done"],
+    ["userQuit", { genuine: false }, "aborted"],
+    ["legacyFallback", { seeded: false }, "legacy"],
+    ["legacyFallback", { genuine: true }, "done"],
+    ["legacyFallback", { genuine: false }, "aborted"],
+    ["legacyFallback", { genuine: false, firmwareVersion: null }, "legacy"],
+  ] as const)("should end a seeded funnel on %s %o as %s", (reason, overrides, outcome) => {
+    expect(seededOutcome(reason, exitContext(overrides))).toBe(outcome);
+  });
+
   it("should finish a seeded fallback only after a current genuine verdict", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
@@ -232,6 +264,7 @@ function leave(
     wasReadOnlyAtEntry: false,
     isGenuine: false,
     deviceWasSeeded: false,
+    seededResult,
     firmwareNeedsLegacyFlow: false,
     hasCompletedOnboarding: false,
     ...overrides,
@@ -255,4 +288,22 @@ function lastRoute(routes: Route[], path: string[] = []): { path: string[]; para
   const route = routes[routes.length - 1];
   const next = [...path, route.name];
   return route.state ? lastRoute(route.state.routes, next) : { path: next, params: route.params };
+}
+
+function exitContext({
+  genuine = false,
+  seeded = true,
+  firmwareVersion = "2.4.0",
+}: {
+  genuine?: boolean;
+  seeded?: boolean;
+  firmwareVersion?: string | null;
+}): DeviceOnboardingContext {
+  return {
+    sessionId: "session-1",
+    isOnboarded: seeded,
+    firmwareVersion,
+    deviceModelId: DmkDeviceModelId.STAX,
+    genuineVerdict: { sessionId: "session-1", isGenuine: genuine },
+  } as DeviceOnboardingContext;
 }

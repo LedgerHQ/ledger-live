@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { TrackScreen } from "@shared/analytics-react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glow } from "@shared/ui-glow/native";
 import { KARAOKE_GLOW_SIZE, KaraokeGlow } from "@shared/ui-karaoke/native";
@@ -118,6 +119,7 @@ function OfferLayout({
 }
 
 function SyncOfferSuccess({
+  screenTracking,
   title,
   continueLabel,
   closeLabel,
@@ -131,6 +133,7 @@ function SyncOfferSuccess({
       onQuit={onQuit}
       sources={successSources}
       loop={false}
+      trailing={screenTracking ? <TrackScreen {...screenTracking} /> : null}
       footer={
         <Button
           appearance="base"
@@ -163,6 +166,7 @@ function SyncOfferSynchronizing({
 }
 
 function SyncOfferPrompt({
+  screenTracking,
   title,
   description,
   learnMoreLabel,
@@ -220,12 +224,16 @@ function SyncOfferPrompt({
         </Box>
       }
       trailing={
-        <SkipLedgerSyncDrawer
-          isOpen={skipDrawer.isOpen}
-          handleClose={skipDrawer.onClose}
-          openSync={skipDrawer.onActivate}
-          skipSync={skipDrawer.onSkip}
-        />
+        <>
+          {screenTracking ? <TrackScreen {...screenTracking} /> : null}
+          <SkipLedgerSyncDrawer
+            isOpen={skipDrawer.isOpen}
+            handleClose={skipDrawer.onClose}
+            openSync={skipDrawer.onActivate}
+            skipSync={skipDrawer.onSkip}
+            trackingProps={skipDrawer.trackingProps}
+          />
+        </>
       }
     />
   );

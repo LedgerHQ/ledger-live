@@ -1,10 +1,16 @@
 import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
+import {
+  requiresLegacyFlow,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
+import { isCurrentSessionGenuine } from "./genuineSession";
 
 type ExitDeps = {
   dispatch: ReturnType<typeof useDispatch>;
@@ -13,6 +19,7 @@ type ExitDeps = {
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
+  seededResult: SeededResult | null;
   firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
@@ -22,12 +29,12 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
-  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededResult }) =>
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
-    });
-  },
+      seededResult,
+    }),
   resumeFirmwareUpdate: ({ navigation, device }) => resetToMyLedger(navigation, device),
   legacyFallback: ({
     navigation,
@@ -63,6 +70,41 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     closeOnboarding(navigation);
   },
 };
+
+export function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
+  return (
+    context.isOnboarded === true &&
+    (context.firmwareVersion === null ||
+      requiresLegacyFlow({
+        currentVersion: context.firmwareVersion,
+        deviceModelId: context.deviceModelId,
+      }))
+  );
+}
+
+/** How a seeded funnel ends for each exit, as `exitActions` handles it. */
+export type SeededOutcome = "done" | "aborted" | "syncOffer" | "legacy";
+
+export function seededOutcome(
+  reason: DeviceOnboardingExitReason,
+  context: DeviceOnboardingContext,
+): SeededOutcome {
+  const genuine = isCurrentSessionGenuine(context);
+  switch (reason) {
+    case "completed":
+      return "done";
+    case "offerLedgerSync":
+      return "syncOffer";
+    case "resumeFirmwareUpdate":
+      return "aborted";
+    case "userQuit":
+      return genuine ? "done" : "aborted";
+    case "legacyFallback":
+      if (context.isOnboarded !== true) return "legacy";
+      if (genuine) return "done";
+      return firmwareNeedsLegacyFlow(context) ? "legacy" : "aborted";
+  }
+}
 
 /** Back to the caller, or Portfolio on first launch. */
 export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {

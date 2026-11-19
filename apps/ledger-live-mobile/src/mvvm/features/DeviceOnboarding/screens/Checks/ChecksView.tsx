@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TrackScreen } from "@shared/analytics-react";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
@@ -64,6 +65,7 @@ export function ChecksView({
   secondary,
   onQuit,
   closeLabel,
+  screenTracking,
   allowSheet,
   firmwareUpdate,
   unsupportedUpdate,
@@ -74,6 +76,9 @@ export function ChecksView({
 
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      {screenTracking.map(({ key, tracking }) => (
+        <TrackScreen key={key} {...tracking} />
+      ))}
       <Box lx={{ flex: 1, gap: "s24" }}>
         <DeviceOnboardingCloseBar label={closeLabel} testID={checksTestIds.quit} onPress={onQuit} />
         {illustration ? <Illustration kind={illustration} /> : null}
