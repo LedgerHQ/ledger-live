@@ -39,9 +39,11 @@ export const getAccountTransactions = async (
     nextUrl = nextUrl.concat(`&next=${options.nextToken}`);
   }
 
-  const { data } = await network<ExplorerTransactions>({
+  const request = {
     url: nextUrl,
-  });
+    transformResponse: parseLosslessJSON,
+  };
+  const { data } = await network<ExplorerTransactions<ExplorerAmount>>(request);
 
   const transactions = data.transactions.flatMap(tx =>
     options?.includeInnerTransactions ? parseRawTransaction(tx) : [parseRootTransaction(tx)],
@@ -114,16 +116,18 @@ const parseLosslessJSON = (raw: unknown): unknown => {
   }
 };
 
-const parseRootTransaction = (tx: ExplorerTransaction): AlgoTransaction =>
+const toBigNumber = (amount: ExplorerAmount): BigNumber => new BigNumber(amount.toString());
+
+const parseRootTransaction = (tx: ExplorerTransaction<ExplorerAmount>): AlgoTransaction =>
   parseTransaction(tx, { id: tx.id, fee: tx.fee, sender: tx.sender }, tx.id, false)[0];
-const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction[] => {
+const parseRawTransaction = (tx: ExplorerTransaction<ExplorerAmount>): AlgoTransaction[] => {
   const root = { id: tx.id, fee: tx.fee, sender: tx.sender };
   return parseTransaction(tx, root, tx.id, true);
 };
 
 function parseTransaction(
-  tx: ExplorerTransaction | ExplorerInnerTransaction,
-  root: { id: string; fee: number; sender: string },
+  tx: ExplorerTransaction<ExplorerAmount> | ExplorerInnerTransaction<ExplorerAmount>,
+  root: { id: string; fee: ExplorerAmount; sender: string },
   id: string,
   includeInnerTransactions: boolean,
 ): AlgoTransaction[] {
@@ -132,21 +136,21 @@ function parseTransaction(
   if (tx["tx-type"] === "pay") {
     const info = tx["payment-transaction"]!;
     details = {
-      amount: new BigNumber(info.amount),
+      amount: toBigNumber(info.amount),
       recipientAddress: info.receiver,
       closeAmount:
-        info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
+        info["close-amount"] === undefined ? undefined : toBigNumber(info["close-amount"]),
       closeToAddress: info["close-remainder-to"],
     } satisfies AlgoPaymentInfo;
   } else if (tx["tx-type"] === "axfer") {
     const info = tx["asset-transfer-transaction"]!;
     details = {
-      assetAmount: new BigNumber(info.amount),
+      assetAmount: toBigNumber(info.amount),
       assetId: info["asset-id"].toString(),
       assetRecipientAddress: info.receiver,
       assetSenderAddress: info.sender,
       assetCloseAmount:
-        info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
+        info["close-amount"] === undefined ? undefined : toBigNumber(info["close-amount"]),
       assetCloseToAddress: info["close-to"],
     } satisfies AlgoAssetTransferInfo;
   }
@@ -157,13 +161,11 @@ function parseTransaction(
     timestamp: tx["round-time"].toString(),
     round: tx["confirmed-round"],
     senderAddress: tx.sender,
-    senderRewards: new BigNumber(tx["sender-rewards"]),
-    recipientRewards: new BigNumber(tx["receiver-rewards"]),
-    closeRewards:
-      tx["close-rewards"] === undefined ? undefined : new BigNumber(tx["close-rewards"]),
-    closeAmount:
-      tx["closing-amount"] === undefined ? undefined : new BigNumber(tx["closing-amount"]),
-    fee: new BigNumber(root.fee),
+    senderRewards: toBigNumber(tx["sender-rewards"]),
+    recipientRewards: toBigNumber(tx["receiver-rewards"]),
+    closeRewards: tx["close-rewards"] === undefined ? undefined : toBigNumber(tx["close-rewards"]),
+    closeAmount: tx["closing-amount"] === undefined ? undefined : toBigNumber(tx["closing-amount"]),
+    fee: toBigNumber(root.fee),
     feesPayer: root.sender,
     note: tx.note,
     type: tx["tx-type"],

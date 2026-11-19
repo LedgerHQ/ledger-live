@@ -159,9 +159,11 @@ describe("indexer", () => {
 
       await getAccountTransactions(config, "ALGO_ADDRESS", { minRound: 50000000 });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("min-round=50000000"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("min-round=50000000"),
+        }),
+      );
     });
 
     it("should include nextToken in URL when provided", async () => {
@@ -171,9 +173,11 @@ describe("indexer", () => {
 
       await getAccountTransactions(config, "ALGO_ADDRESS", { nextToken: "abc123" });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("next=abc123"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("next=abc123"),
+        }),
+      );
     });
 
     it("should return next token when present", async () => {
@@ -323,9 +327,11 @@ describe("indexer", () => {
 
       await getAllAccountTransactions(config, "ALGO_ADDRESS", 50000000);
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("min-round=50000000"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("min-round=50000000"),
+        }),
+      );
     });
 
     it("should handle empty transaction list", async () => {
@@ -393,6 +399,15 @@ describe("indexer", () => {
         return (transformResponse as (data: unknown) => unknown)(raw);
       };
 
+      const parseAccountResponse = async (raw: unknown) => {
+        mockNetwork.mockResolvedValueOnce({
+          data: { transactions: [] },
+        } as never);
+        await getAccountTransactions(config, "ALGO_ADDRESS");
+        const { transformResponse } = mockNetwork.mock.calls[0][0];
+        return (transformResponse as (data: unknown) => unknown)(raw);
+      };
+
       it("should keep the exact value of amounts above the safe integer range", async () => {
         const parsed = await parseResponse(
           '{"transactions":[{"fee":1000,"asset-transfer-transaction":{"amount":18446744073709551615}}]}',
@@ -401,6 +416,21 @@ describe("indexer", () => {
         expect(parsed).toEqual({
           transactions: [
             { fee: 1000, "asset-transfer-transaction": { amount: 18446744073709551615n } },
+          ],
+        });
+      });
+
+      it("should keep exact inner transaction amounts above safe integer range", async () => {
+        const parsed = await parseAccountResponse(
+          '{"transactions":[{"fee":1000,"inner-txns":[{"asset-transfer-transaction":{"amount":18446744073709551615}}]}]}',
+        );
+
+        expect(parsed).toEqual({
+          transactions: [
+            {
+              fee: 1000,
+              "inner-txns": [{ "asset-transfer-transaction": { amount: 18446744073709551615n } }],
+            },
           ],
         });
       });
