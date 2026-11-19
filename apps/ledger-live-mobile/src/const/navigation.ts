@@ -170,6 +170,7 @@ export enum ScreenName {
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   ReceiveProvider = "ReceiveProvider",
   Recover = "Recover",
+  DeviceOnboardingRecover = "DeviceOnboardingRecover",
   Resources = "Resources",
   XrpEditTag = "XrpEditTag",
   ScanRecipient = "ScanRecipient",

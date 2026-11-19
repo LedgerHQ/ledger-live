@@ -130,6 +130,17 @@ export type CommonAddAccountNavigatorParamsList = {
   onError?: (_: Error) => void;
 };
 
+export type RecoverRouteParams = {
+  platform?: string;
+  device?: Device;
+  fromOnboarding?: boolean;
+  name?: string;
+  source?: string;
+  redirectTo?: string;
+  callback?: string;
+  date?: string;
+};
+
 export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]?: NavigatorScreenParams<MainNavigatorParamList> & {
     hideTabNavigation?: boolean;
@@ -163,16 +174,8 @@ export type BaseNavigatorStackParamList = {
     goToURL?: string;
   };
   [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
-  [ScreenName.Recover]: {
-    platform?: string;
-    device?: Device;
-    fromOnboarding?: boolean;
-    name?: string;
-    source?: string;
-    redirectTo?: string;
-    callback?: string;
-    date?: string; // used to reload the webview in case of multiple restore in a row
-  };
+  [ScreenName.Recover]: RecoverRouteParams;
+  [ScreenName.DeviceOnboardingRecover]: RecoverRouteParams;
   [ScreenName.LearnWebView]: {
     uri?: string;
   };

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
+  useIsFocused,
   useNavigation,
   useRoute,
   type NavigationProp,
@@ -10,10 +13,14 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
 import { deviceReportsRecoveryKey, SeedPath } from "@features/platform-device-onboarding";
+import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
 import { useTranslation } from "~/context/Locale";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setHasBeenUpsoldProtect } from "~/actions/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
-import type { ScreenName } from "~/const";
 import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
 import type {
   ChecksScreenProps,
@@ -32,6 +39,10 @@ import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
+import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
+import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
+import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import {
   canRetryWithoutUser,
@@ -45,8 +56,11 @@ import {
   toDeviceUnlockSheetProps,
 } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
-import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
-import { useUnseededFunnelViewModel } from "./useUnseededFunnelViewModel";
+import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
+
+/** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
+const recoverDeferredEvent = "recover_deferred_from_new_seed";
+const defaultProtectId = "protect-prod";
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -77,6 +91,16 @@ export type DeviceOnboardingFunnelModel = (
       reconnectSheet: ReconnectSheetProps | null;
     }
   | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
+  | {
+      status: "recoverNewSeed";
+      recoverNewSeed: RecoverNewSeedScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
+  | {
+      status: "success";
+      success: SuccessKaraokeScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
       status: "failed";
@@ -528,9 +552,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     if (quitSent.current) return;
     quitSent.current = true;
     setQuitConfirmationOpen(false);
+    // The machine is already final here: QUIT has nowhere to go, and completed did not navigate.
+    if (onboarding.state === "done") {
+      allowLeave.current = true;
+      resetToPortfolio(navigation);
+      return;
+    }
     if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
     send({ type: "QUIT" });
-  }, [closeFirmwareHandover, onboarding.state, send]);
+  }, [closeFirmwareHandover, navigation, onboarding.state, send]);
 
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const unseeded = onboardedOnEntry === false;
@@ -685,11 +715,73 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     waitedLongForDeviceAfterUpdate ||
     reconnectFailed ||
     quitConfirmation?.isOpen === true;
+  const dispatch = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const recoverFeature = useFeature("protectServicesMobile");
+  const recoverAvailable = recoverFeature?.enabled === true;
+  const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
+  const focused = useIsFocused();
+  const [pastRecover, setPastRecover] = useState(false);
+  const awaitingRecoverReturn = useRef(false);
+
+  useEffect(() => {
+    if (!focused || !awaitingRecoverReturn.current) return;
+    awaitingRecoverReturn.current = false;
+    setPastRecover(true);
+  }, [focused]);
+
+  const finishUnseeded = useCallback(
+    (sawRecoverPitch: boolean) => {
+      completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+      if (sawRecoverPitch) dispatch(setHasBeenUpsoldProtect(true));
+      allowLeave.current = true;
+      resetToPortfolio(navigation);
+    },
+    [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
+  );
+
+  const syncOfferDecided = useRef(false);
+  const liveDevice = onboarding.liveDevice;
+  const recoverPitchBlocksKaraoke =
+    recoverAvailable && seedPath === SeedPath.NewSeed && !pastRecover;
+  const readyForKaraoke = unseeded && machineState === "done" && !recoverPitchBlocksKaraoke;
+  useEffect(() => {
+    if (!focused || !readyForKaraoke || syncOfferDecided.current) return;
+    syncOfferDecided.current = true;
+    if (!offerSync || !liveDevice) return;
+    navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
+      device: liveDevice,
+      wasReadOnlyAtEntry,
+      unseeded: true,
+    });
+  }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
+
+  const openRecover = useCallback(() => {
+    if (!recoverAvailable) return;
+    awaitingRecoverReturn.current = true;
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.DeviceOnboardingRecover,
+      params: {
+        platform: protectId,
+        device: onboarding.liveDevice ?? undefined,
+      },
+    });
+  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable]);
+
+  const remindRecoverLater = useCallback(() => {
+    dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
+    track(recoverDeferredEvent, { page: "Recover new seed" });
+    setPastRecover(true);
+  }, [dispatch]);
+
   const unseededSetup = useUnseededFunnelViewModel({
     machineState: shownState,
     liveMachineState: machineState,
     onboardedOnEntry,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
+    seedPath,
+    pastRecover,
+    recoverAvailable,
     checksPaused: onboarding.context?.checksPaused === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
     deviceNotGenuine:
@@ -745,21 +837,26 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   };
   const built =
     successScreen(screen) ??
-    (unseededSetup
-      ? {
-          status: "setup" as const,
-          setup: unseededSetup.setup,
-          quitConfirmation,
-          unlockSheet: null,
-        }
-      : (earlyScreen(screen) ?? checksScreen(screen)));
+    screenForUnseeded(unseededSetup, {
+      quitConfirmation,
+      suspendSheets,
+      onSkip: () => setPastRecover(true),
+      onRemindLater: remindRecoverLater,
+      onOpenLiveApp: openRecover,
+      onClose: requestQuit,
+      onFinish: finishUnseeded,
+    }) ??
+    earlyScreen(screen) ??
+    checksScreen(screen);
   const nextHeld = nextHeldState(
     heldState,
     machineState,
     holdingPreviousScreen,
     built.status === "checks" ||
       built.status === "setup" ||
-      built.status === "unseededIntroKaraoke",
+      built.status === "unseededIntroKaraoke" ||
+      built.status === "recoverNewSeed" ||
+      built.status === "success",
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
@@ -770,6 +867,52 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onQuit: waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
     onRetry: reconnectFailed ? retryAfterFailure : null,
   });
+}
+
+function screenForUnseeded(
+  flow: UnseededFunnelModel | null,
+  actions: Readonly<{
+    quitConfirmation: QuitConfirmationModel | null;
+    suspendSheets: boolean;
+    onSkip: () => void;
+    onRemindLater: () => void;
+    onOpenLiveApp: () => void;
+    onClose: () => void;
+    onFinish: (sawRecoverPitch: boolean) => void;
+  }>,
+): DeviceOnboardingFunnelModel | null {
+  if (flow?.status === "setup") {
+    return {
+      status: "setup",
+      setup: flow.setup,
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+    };
+  }
+  if (flow?.status === "recoverNewSeed") {
+    return {
+      status: "recoverNewSeed",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      recoverNewSeed: {
+        suspendSheets: actions.suspendSheets,
+        onSkip: actions.onSkip,
+        onRemindLater: actions.onRemindLater,
+        onOpenLiveApp: actions.onOpenLiveApp,
+        onClose: actions.onClose,
+      },
+    };
+  }
+  if (flow?.status === "success") {
+    const sawRecoverPitch = flow.sawRecoverPitch;
+    return {
+      status: "success",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      success: { onFinish: () => actions.onFinish(sawRecoverPitch) },
+    };
+  }
+  return null;
 }
 
 function readString(value: unknown): string | null {

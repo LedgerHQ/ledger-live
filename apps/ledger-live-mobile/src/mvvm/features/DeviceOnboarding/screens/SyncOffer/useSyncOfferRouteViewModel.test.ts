@@ -26,7 +26,9 @@ const trustchain = {
 
 const reset = jest.fn();
 const navigate = jest.fn();
+const goBack = jest.fn();
 const mockNotifyFlowCompleted = jest.fn();
+const mockOfferParams: { unseeded?: boolean } = {};
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: mockNotifyFlowCompleted }),
@@ -37,6 +39,7 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
     navigate,
+    goBack,
     addListener: (event: string, handler: (event: { preventDefault: () => void }) => void) => {
       listeners.set(event, handler);
       return jest.fn();
@@ -51,6 +54,7 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
+      ...mockOfferParams,
     },
   }),
 }));
@@ -83,6 +87,7 @@ describe("useSyncOfferRouteViewModel", () => {
     jest.clearAllMocks();
     listeners.clear();
     mockWalletSyncState.visualPending = false;
+    mockOfferParams.unseeded = undefined;
   });
 
   afterEach(() => {
@@ -237,6 +242,35 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(reset).toHaveBeenCalledTimes(1);
     expect(navigate).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
+  });
+
+  it("should return to the funnel without completing when an unseeded setup skips the offer", () => {
+    mockOfferParams.unseeded = true;
+    const { result, store } = renderOffer(false);
+
+    act(() => result.current.onSkip());
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+    expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
+  it("should return to the funnel without completing when an unseeded sync finishes", () => {
+    mockOfferParams.unseeded = true;
+    const { result, store } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+    act(() => result.current.onContinue());
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
   });
 
   it("should keep the offer in place after the trustchain lands", () => {

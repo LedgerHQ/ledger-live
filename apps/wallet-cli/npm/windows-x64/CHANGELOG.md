@@ -1,5 +1,7 @@
 # @ledgerhq/wallet-cli-windows-x64
 
+## 3.6.0
+
 ## 3.5.0
 
 ## 3.5.0-next.0

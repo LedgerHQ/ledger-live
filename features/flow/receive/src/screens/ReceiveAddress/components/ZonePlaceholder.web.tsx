@@ -10,13 +10,13 @@ const HEIGHT_CLASS = {
   extras: "h-112",
 } as const;
 
-export function ZonePlaceholder({ zone }: ZonePlaceholderProps) {
+export function ZonePlaceholder({ zone, label }: ZonePlaceholderProps) {
   return (
     <div
       className={`flex items-center justify-center rounded-md bg-muted ${HEIGHT_CLASS[zone]}`}
       data-testid={`receive-address-zone-${zone}`}
     >
-      <span className="body-3 text-muted">{zone}</span>
+      <span className="body-3 text-muted">{label || zone}</span>
     </div>
   );
 }

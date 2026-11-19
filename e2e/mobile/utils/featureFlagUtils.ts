@@ -2,30 +2,6 @@ import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJs
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
-const FF_LWM_WALLET_40_Q1 = {
-  lwmWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: false,
-      earnSimulator: false,
-    },
-  },
-} satisfies PartialFeatures;
-
-export const FF_LWM_WALLET_40_Q2 = {
-  lwmWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: true,
-      earnSimulator: true,
-    },
-  },
-} satisfies PartialFeatures;
-
 const FF_ACCOUNT_DETAIL = {
   accountDetail: { enabled: true },
 } satisfies PartialFeatures;
@@ -37,7 +13,6 @@ export const FF_PASSWORD_REVAMP = {
 } satisfies PartialFeatures;
 
 export const FF_BORROW_ENABLED = {
-  ...FF_LWM_WALLET_40_Q2,
   ptxBorrowLiveApp: {
     enabled: true,
     params: { manifest_id: "borrow" },
@@ -131,7 +106,6 @@ export const getMergedFeatureFlags = ({
      * This will reduce friction and provide CI stability for any callers of the workflow.
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
-    "wallet40-q1": FF_LWM_WALLET_40_Q1,
     "account-detail": FF_ACCOUNT_DETAIL,
   };
 
@@ -172,8 +146,6 @@ export const getMergedFeatureFlags = ({
         backendEnvironment: "PROD",
       },
     },
-    // default flags for wallet 4.0
-    ...FF_LWM_WALLET_40_Q2,
     // any flags from env variable (if set)
     ...ffPresetMap[process.env.E2E_MOBILE_FEATURE_FLAGS || ""],
   };

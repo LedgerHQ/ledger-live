@@ -1,3 +1,17 @@
+export const recoverNewSeedTestIds = {
+  screen: "device-onboarding-recover",
+  close: "device-onboarding-recover-close",
+  protect: "device-onboarding-recover-protect",
+  skip: "device-onboarding-recover-skip",
+  sheet: "device-onboarding-recover-sheet",
+  sheetStart: "device-onboarding-recover-sheet-start",
+  sheetRemind: "device-onboarding-recover-sheet-remind",
+} as const;
+
+export const successKaraokeTestIds = {
+  screen: "device-onboarding-success-karaoke",
+} as const;
+
 export const unseededIntroKaraokeTestIds = {
   screen: "device-onboarding-karaoke",
   close: "device-onboarding-karaoke-close",
@@ -41,6 +55,7 @@ export const setupTestIds = {
   start: "device-onboarding-setup-start",
   contactSupport: "device-onboarding-setup-contact-support",
   stepper: "device-onboarding-setup-stepper",
+  glow: "device-onboarding-setup-glow",
   stageLoading: "device-onboarding-setup-stage-loading",
   stageSuccess: "device-onboarding-setup-stage-success",
   allowSheet: "device-onboarding-setup-allow-sheet",
