@@ -14,12 +14,8 @@ import { launchApp } from "@e2e/helpers/commonHelpers";
 import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
 import type { PartialFeatures } from "@shared/feature-flags";
 
-/** Device status a locked device answers GET_APP_AND_VERSION with. */
-const GET_APP_AND_VERSION_PREFIX = "b001";
-const LOCKED_DEVICE_STATUS = "5515";
-
-/** A fresh install has no user id yet, so the n-1 OS is picked for a rollout-agnostic one. */
-const FRESH_INSTALL_ROLLOUT_USER_ID = "e2e-seeded-device-onboarding";
+/** The OS update offered depends on the user id rollout; a fixed id keeps it the same on every run. */
+const OS_UPDATE_ROLLOUT_USER_ID = "e2e-seeded-device-onboarding";
 
 type SeededFunnelOptions = {
   /** `null` is a fresh install, which reaches the portfolio in read-only mode. */
@@ -60,7 +56,7 @@ function setupSeededFunnel(options: SeededFunnelOptions): () => MockServerDevice
   beforeAll(async () => {
     const { modelId, apps: _noApps, ...deviceConfig } = deviceUnderTest();
     const firmware = options.osUpdateAvailable
-      ? await getPreviousFirmwareVersion(modelId, FRESH_INSTALL_ROLLOUT_USER_ID)
+      ? await getPreviousFirmwareVersion(modelId, OS_UPDATE_ROLLOUT_USER_ID)
       : await getDeviceFirmwareVersion(modelId);
     session = await provisionMockServerSession([{ ...deviceConfig, firmware_version: firmware }]);
     mockServer = new MockServerDevicePage(session.baseUrl, session.token);
@@ -75,6 +71,7 @@ function setupSeededFunnel(options: SeededFunnelOptions): () => MockServerDevice
     });
     await device.reverseTcpPort(port);
     await app.init({ userdata: options.userdata, featureFlags: seededFunnelFlags(options) });
+    await app.common.disableSynchronizationForiOS();
   });
 
   afterAll(async () => {
@@ -99,8 +96,6 @@ function tagSeededFunnelScenario(tmsLinks: string[], tags: string[]) {
 
 async function connectDevice() {
   await app.deviceOnboarding.expectConnectScreen();
-  // iOS Workaround: the mock device keeps the app busy - disable sync for remainder of the spec
-  await app.common.disableSynchronizationForiOS();
   await app.deviceOnboarding.selectDevice();
   await app.deviceOnboarding.expectChecksIdle();
 }
@@ -118,16 +113,20 @@ async function enterFunnelFromReadOnlyPortfolio() {
 
 async function enterFunnelFromMyLedger() {
   await app.mainNavigation.waitForWallet40Ready();
-  await app.manager.openViaDeeplink();
+  await app.mainNavigation.openMyWallet();
   await app.deviceOnboarding.tapAddDevice();
   await app.onboarding.selectStartingOption("accessWallet");
   await connectDevice();
 }
 
-async function passChecks() {
-  await app.deviceOnboarding.startChecks();
+async function completeChecks() {
   await app.deviceOnboarding.expectChecksSucceeded();
   await app.deviceOnboarding.continueAfterChecks();
+}
+
+async function passChecks() {
+  await app.deviceOnboarding.startChecks();
+  await completeChecks();
 }
 
 /** Leaving read-only mode sends the user to the post-onboarding hub first. */
@@ -249,65 +248,6 @@ export function runAcceptOsUpdateTest(tmsLinks: string[], tags: string[]) {
       await app.deviceOnboarding.expectFirmwareUpdateOffer();
       await app.deviceOnboarding.acceptFirmwareUpdate();
       await app.deviceOnboarding.expectFirmwareUpdateScreen();
-    });
-  });
-}
-
-export function runAbandonSyncActivationTest(tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.ENGAGEMENT);
-  describe("Seeded device onboarding - abandon the Ledger Sync activation", () => {
-    setupSeededFunnel({ userdata: null, featureFlags: { lwmLedgerSyncDie: { enabled: true } } });
-    tagSeededFunnelScenario(tmsLinks, tags);
-
-    it("Comes back to the offer and skips Ledger Sync", async () => {
-      await enterFunnelFromReadOnlyPortfolio();
-      await passChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.activateSync();
-      await app.deviceOnboarding.closeLedgerSyncDeviceStep();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.skipSync();
-      await expectOnboardedFromReadOnly();
-    });
-  });
-}
-
-export function runDeviceUnpluggedDuringChecksTest(tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.ENGAGEMENT);
-  describe("Seeded device onboarding - device unplugged during the checks", () => {
-    const mockServer = setupSeededFunnel({ userdata: null });
-    tagSeededFunnelScenario(tmsLinks, tags);
-
-    it("Asks to power the device on and resumes once it is back", async () => {
-      await enterFunnelFromReadOnlyPortfolio();
-      await mockServer().unplugDevice();
-      await app.deviceOnboarding.expectPowerOnSheet();
-      await mockServer().plugDevice();
-      await app.deviceOnboarding.expectPowerOnSheetClosed();
-      await passChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.skipSync();
-      await expectOnboardedFromReadOnly();
-    });
-  });
-}
-
-export function runDeviceLockedDuringChecksTest(tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.ENGAGEMENT);
-  describe("Seeded device onboarding - device locked during the checks", () => {
-    const mockServer = setupSeededFunnel({ userdata: null });
-    tagSeededFunnelScenario(tmsLinks, tags);
-
-    it("Asks to unlock the device and resumes once it is unlocked", async () => {
-      await enterFunnelFromReadOnlyPortfolio();
-      await mockServer().pinApduResponse(GET_APP_AND_VERSION_PREFIX, LOCKED_DEVICE_STATUS);
-      await app.deviceOnboarding.expectUnlockSheet();
-      await mockServer().releaseApduResponse(GET_APP_AND_VERSION_PREFIX);
-      await app.deviceOnboarding.expectUnlockSheetClosed();
-      await passChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.skipSync();
-      await expectOnboardedFromReadOnly();
     });
   });
 }

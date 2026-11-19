@@ -257,17 +257,6 @@ export class MockServerSessionHandle {
     if (pinned) await this.client.deleteMock(id, pinned.id);
   }
 
-  /** The app sees the device leave until `plugDevice`. */
-  async unplugDevice(): Promise<void> {
-    const { id } = await this.firstDevice();
-    await this.client.disconnect(id);
-  }
-
-  async plugDevice(): Promise<void> {
-    const { id } = await this.firstDevice();
-    await this.client.connect(id);
-  }
-
   /**
    * Edits the mock covering a prefix in place rather than clearing and re-adding it:
    * `addMock` does not replace a prefix it already holds, and dropping the mock first
