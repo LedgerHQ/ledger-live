@@ -15,12 +15,17 @@ import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/s
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
+import storage from "LLM/storage";
+import { STORAGE_TYPE } from "LLM/storage/constants";
+import { selectUsesPersistence, type HydrationStatuses } from "@features/platform-persistence";
+import { persistence } from "~/persistence/composition";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { logFirstCountervaluesLoad } from "LLM/utils/logStartup/logFirstCountervaluesLoad";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import {
   getAccounts,
+  migrateAccountsIfNecessary,
   getCountervalues,
   getCryptoAssetsCacheState,
   getFeatureFlagsState,
@@ -137,6 +142,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // Everything rendered once `ready` flips, including the providers above `WaitForAppReady`,
       // must resolve flags from the Firebase cache rather than from the compiled defaults.
       const cachedFlagsSettled = whenCachedFlagsSettled(store);
+      // Persistence reads MMKV only, so an install still on AsyncStorage stays on the legacy code.
+      const isOnMmkv = storage.getState().storageType === STORAGE_TYPE.MMKV;
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);
       const unreadableKeys: string[] = [];
@@ -167,7 +174,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         readKey("ble", getBle, unreadableKeys),
         readKey("knownDevices", getKnownDevices, unreadableKeys),
         readKey("settings", getSettings, unreadableKeys),
-        readKey("accounts", getAccounts, unreadableKeys),
+        // On MMKV, persistence reads the accounts; the old single key still migrates first.
+        isOnMmkv
+          ? readKey("accounts", migrateAccountsIfNecessary, unreadableKeys)
+          : readKey("accounts", getAccounts, unreadableKeys),
         readKey("postOnboarding", getPostOnboardingState, unreadableKeys),
         readKey("largeScreenUpsellModal", getLargeScreenUpsellModalState, unreadableKeys),
         readKey("predictions", getPredictionsState, unreadableKeys),
@@ -239,10 +249,21 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         restoreTokensToCache(store.dispatch, persistedCryptoAssets);
       }
 
+      // After the CAL restore: the account decode reads the tokens from the cache.
+      const statuses: HydrationStatuses = isOnMmkv ? await persistence.hydrate(store) : {};
+      if (statuses.accounts === "failed") {
+        console.error(
+          "Storage initialization stopped: cannot read accounts. The stored values are kept.",
+        );
+        return;
+      }
+
       // Handle account import with error recovery for async issues
       try {
-        // Always set here: an unreadable accounts key stops the boot above.
-        if (accountsData) (await importAccountsRaw(accountsData))(store.dispatch);
+        // Set only without persistence: an unreadable accounts key stops the boot above.
+        if (accountsData && !selectUsesPersistence(store.getState(), "accounts")) {
+          (await importAccountsRaw(accountsData))(store.dispatch);
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);
@@ -302,7 +323,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importLargeMoverState(largeMoverState));
       }
 
-      if (historyState) {
+      if (historyState && !selectUsesPersistence(store.getState(), "history")) {
         store.dispatch(initHistory(historyState));
       }
 

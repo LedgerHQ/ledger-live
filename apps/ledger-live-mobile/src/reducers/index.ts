@@ -20,6 +20,7 @@ import genericAwarenessModal from "./genericAwarenessModal";
 import backupHubFeatureIntro from "./backupHubFeatureIntro";
 import productTourDrawer from "./productTourDrawer";
 import history from "./history";
+import { persistenceSlice } from "@features/platform-persistence";
 import inView from "./inView";
 import knownDevices from "./knownDevices";
 import largeMover from "./largeMover";
@@ -87,6 +88,7 @@ const appReducer = combineReducers({
   backupHubFeatureIntro,
   productTourDrawer,
   history,
+  persistence: persistenceSlice.reducer,
   identities: identitiesSlice.reducer,
   inView,
   knownDevices,

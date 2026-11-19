@@ -46,6 +46,8 @@ import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-car
 import { accountAnalyticsIntroductionPersistedSelector } from "@features/flow-account-detail-analytics-notice/state";
 import { saveAccountAnalyticsIntroductionSafely } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { settingsStoreSelector } from "~/reducers/settings";
+import { selectUsesPersistence } from "@features/platform-persistence";
+import { persistence } from "~/persistence/composition";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
@@ -133,10 +135,15 @@ function useDBSaveEffect<D, S>({
     checkForSave();
   }, [lense, save, checkForSave, store, getChangesStats, selectedSlice]);
 }
-const flushes: Array<() => void> = [];
-export const flushAll = () => Promise.all(flushes.map(flush => flush()));
+/** The lodash flush of a throttled save: the promise of the save it runs, if any. */
+type FlushSave = () => Promise<void> | undefined;
 
-function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () => void }) {
+const flushes: FlushSave[] = [];
+// A failed persistence write is already reported.
+const flushPersistence = () => persistence.flush().catch(() => undefined);
+export const flushAll = () => Promise.all([...flushes.map(flush => flush()), flushPersistence()]);
+
+function useFlushMechanism({ flush, cancel }: { flush: FlushSave; cancel: () => void }) {
   const cancelRef = useRef(cancel);
   useEffect(() => () => cancelRef.current(), []);
   useEffect(() => {
@@ -171,6 +178,7 @@ const getAccountsChanged = (
     }
   | null
   | undefined => {
+  if (selectUsesPersistence(newState, "accounts")) return null;
   if (oldState.accounts !== newState.accounts) {
     const oldById = new Map(oldState.accounts.active.map(a => [a.id, a] as const));
     return {
@@ -256,7 +264,8 @@ export const featureFlagsLense = (state: State) => ({
 });
 const liveConfigOverridesNotEquals = (a: State, b: State) =>
   a.liveConfigOverrides.overrides !== b.liveConfigOverrides.overrides;
-const historyNotEquals = (a: State, b: State) => a.history !== b.history;
+const historyNotEquals = (a: State, b: State) =>
+  a.history !== b.history && !selectUsesPersistence(b, "history");
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
