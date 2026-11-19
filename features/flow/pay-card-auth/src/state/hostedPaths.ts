@@ -3,7 +3,7 @@ const TOP_UP_PATH = "/topup";
 const WITHDRAWAL_PATH = "/withdrawal";
 const MANAGE_PIN_PATH = "/set-pin";
 const ACCESS_BAANX_PATH = "/";
-const ADD_ASSET_PATH = "/dashboard/accounts/crypto";
+const ADD_ASSET_PATH = "/manage-assets";
 const ORDER_CARD_PATH = "/order-card";
 const CASHBACK_PATH = "/cashback";
 
