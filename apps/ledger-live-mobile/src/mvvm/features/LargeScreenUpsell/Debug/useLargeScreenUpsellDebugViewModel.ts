@@ -9,6 +9,7 @@ import {
   isCooldownElapsed,
   shouldThrottle,
 } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
+import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
@@ -31,7 +32,6 @@ import {
   onboardingCompletionDateSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
-import { resolveUpsellCooldownStartDate } from "../utils/upsellCooldownStartDate";
 import {
   useLargeScreenUpsellEligibility,
   type LargeScreenUpsellIneligibilityReason,
@@ -114,7 +114,9 @@ function deriveDebugDecision({
     "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
 
   const cooldownElapsed = isCooldownElapsed(
-    resolveUpsellCooldownStartDate(onboardingDate, onboardingCompletionDate),
+    onboardingCompletionDate
+      ? new Date(onboardingCompletionDate)
+      : resolveOnboardingDateForUpsell(onboardingDate),
     resolvedCooldownDays ?? 0,
     now,
   );

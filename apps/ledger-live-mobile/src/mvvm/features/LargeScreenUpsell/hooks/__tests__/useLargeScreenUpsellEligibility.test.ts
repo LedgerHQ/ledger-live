@@ -260,34 +260,5 @@ describe("useLargeScreenUpsellEligibility", () => {
         cooldownDays: 1,
       });
     });
-
-    it("should keep the post onboarding date when it is later than the device setup", () => {
-      const { result } = renderEligibility({
-        knownDeviceModelIds: [DeviceModelId.nanoX],
-        onboardingDate: "2026-06-20T12:00:00.000Z",
-        onboardingCompletionDate: "2026-05-01T12:00:00.000Z",
-      });
-
-      expect(result.current).toEqual({
-        isEligible: false,
-        reason: "cooldown",
-        deviceModelId: DeviceModelId.nanoX,
-        cooldownDays: 30,
-      });
-    });
-
-    it("should ignore an unreadable device setup date", () => {
-      const { result } = renderEligibility({
-        knownDeviceModelIds: [DeviceModelId.nanoX],
-        onboardingDate: null,
-        onboardingCompletionDate: "not-a-date",
-      });
-
-      expect(result.current).toEqual({
-        isEligible: true,
-        deviceModelId: DeviceModelId.nanoX,
-        cooldownDays: 30,
-      });
-    });
   });
 });
