@@ -1,7 +1,6 @@
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type { OsUpdate } from "@domain/entity-device-os-update";
 import { hasAnythingToRestore } from "../../utils/hasAnythingToRestore";
-import { isOsUpdateSupported } from "../../utils/isOsUpdateSupported";
 import type { DeviceBackupStorage } from "../../types/DeviceBackupStorage";
 import type { ResolvedOsUpdates, ResolveOsUpdatesInput } from "../../types/ResolveOsUpdates";
 import { executeResolveOsUpdatePath } from "./executeResolveOsUpdatePath";
@@ -9,12 +8,10 @@ import { findLastConnectedDevice } from "@features/platform-device-kit";
 
 async function resolveOsUpdatePath({
   dmk,
-  modelId,
   wired,
-  osVersion,
   isBootloader,
 }: ResolveOsUpdatesInput): Promise<OsUpdate[]> {
-  if (isBootloader || !isOsUpdateSupported({ modelId, version: osVersion, wired })) return [];
+  if (isBootloader) return [];
   const connectedDevice = findLastConnectedDevice(dmk, { wired });
   if (!connectedDevice) return [];
   try {
@@ -40,7 +37,8 @@ async function hasStoredBackup(
 
 /**
  * Resolves the OS update path of the connected device, and whether a backup of its model waits to
- * be restored. Never fails: an unsupported device or a resolve error gives no update.
+ * be restored. Never fails: a bootloader device or a resolve error gives no update. Whether the
+ * update can run over the device's transport is the app's call, see `isOsUpdateSupported`.
  */
 export class ResolveOsUpdatesUseCase {
   async execute(input: ResolveOsUpdatesInput): Promise<ResolvedOsUpdates> {
