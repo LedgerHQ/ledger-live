@@ -8,40 +8,57 @@ type Props = {
   onClose: () => void;
 };
 
+const HEADER_TOP = 16;
+const HEADER_SIDE = 16;
+const TITLE_LINE_HEIGHT = 24;
+const SPACE_UNDER_TITLE = 24;
+const CLOSE_BUTTON_PADDING = 12;
+const CLOSE_ICON_SIZE = 16;
+const CLOSE_BUTTON_SIZE = CLOSE_ICON_SIZE + 2 * CLOSE_BUTTON_PADDING;
+// Centers the close button on the first line of the title.
+const CLOSE_BUTTON_TOP = HEADER_TOP + (TITLE_LINE_HEIGHT - CLOSE_BUTTON_SIZE) / 2;
+
 const DrawerHeader: React.FC<Props> = ({ onClose }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
     <Flex
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
       width="100%"
-      pt={16}
-      pl={16}
-      pr={16}
+      style={{
+        paddingTop: HEADER_TOP,
+        paddingHorizontal: HEADER_SIDE,
+        paddingBottom: SPACE_UNDER_TITLE,
+      }}
+      testID="drawer-header"
     >
-      <Flex flex={1} />
-      <Text
-        flex={3}
-        fontSize={16}
-        fontWeight="semiBold"
-        color={colors.neutral.c100}
-        textAlign="center"
+      <Flex flexDirection="row">
+        <Flex flex={1} />
+        <Text
+          flex={3}
+          fontSize={16}
+          lineHeight={`${TITLE_LINE_HEIGHT}px`}
+          fontWeight="semiBold"
+          color={colors.neutral.c100}
+          textAlign="center"
+        >
+          {t("walletSync.synchronize.qrCode.title")}
+        </Text>
+        <Flex flex={1} />
+      </Flex>
+      <Flex
+        style={{ position: "absolute", top: CLOSE_BUTTON_TOP, right: HEADER_SIDE }}
+        testID="drawer-header-close-container"
       >
-        {t("walletSync.synchronize.qrCode.title")}
-      </Text>
-      <Flex flex={1} alignItems="flex-end">
-        <Pressable onPressIn={onClose} hitSlop={16}>
+        <Pressable onPressIn={onClose} hitSlop={16} testID="drawer-header-close">
           <Flex
             justifyContent="center"
             alignItems="center"
-            p={3}
+            style={{ padding: CLOSE_BUTTON_PADDING }}
             borderRadius={32}
             backgroundColor={colors.opacityDefault.c10}
           >
-            <Icons.Close size={"XS"} color={colors.neutral.c100} />
+            <Icons.Close size="XS" color={colors.neutral.c100} />
           </Flex>
         </Pressable>
       </Flex>
