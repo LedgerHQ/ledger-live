@@ -14,8 +14,10 @@ import {
   buildMockServerCompatDeviceId,
   type DeviceConnectionResult,
 } from "@ledgerhq/live-dmk-shared";
+import { trackPage } from "@shared/analytics";
 import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { ScreenName } from "~/const";
+import { BaseOnboardingTestScreens } from "@tests/OnboardingTestScreens";
+import { NavigatorName, ScreenName } from "~/const";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { MyLedgerSection } from "../views/MyLedgerSection";
 
@@ -114,7 +116,10 @@ function makeConnectionResult(compatDeviceId: string): DeviceConnectionResult {
 
 const Stack = createNativeStackNavigator();
 
-function renderMyWallet(initialParams?: object) {
+function renderMyWallet({
+  initialParams,
+  unifiedEntryPoints = false,
+}: { initialParams?: object; unifiedEntryPoints?: boolean } = {}) {
   const onPairingStateChanged = jest.fn();
   function MyWalletTestScreen() {
     return <MyLedgerSection onPairingStateChanged={onPairingStateChanged} />;
@@ -126,8 +131,14 @@ function renderMyWallet(initialParams?: object) {
         component={MyWalletTestScreen}
         initialParams={initialParams}
       />
+      <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingTestScreens} />
     </Stack.Navigator>,
-    { overrideInitialState: withFlagOverrides({ lwmMyWalletDeviceList: { enabled: true } }) },
+    {
+      overrideInitialState: withFlagOverrides({
+        lwmMyWalletDeviceList: { enabled: true },
+        deviceOnboarding: { enabled: true, params: { unifiedEntryPoints } },
+      }),
+    },
   );
   return { ...view, onPairingStateChanged };
 }
@@ -232,9 +243,27 @@ describe("MyWalletDeviceList", () => {
     };
 
     // WHEN
-    renderMyWallet({ device });
+    renderMyWallet({ initialParams: { device } });
 
     // THEN
     expect(screen.getByText("Device action for redirected-id")).toBeVisible();
+  });
+
+  it("GIVEN onboarding owns the Add entry point, WHEN Add a Ledger device is pressed, THEN it should open Get Started instead of the Add mode", async () => {
+    // GIVEN
+    const { user, onPairingStateChanged } = renderMyWallet({ unifiedEntryPoints: true });
+    emit(discovering);
+
+    // WHEN
+    await user.press(screen.getByText("Add a Ledger device"));
+
+    // THEN
+    expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Get Started", props: { source: "my_wallet_empty" } }),
+      expect.anything(),
+    );
+    expect(discovering.addNewDevice).not.toHaveBeenCalled();
+    expect(onPairingStateChanged).not.toHaveBeenCalledWith(true);
   });
 });

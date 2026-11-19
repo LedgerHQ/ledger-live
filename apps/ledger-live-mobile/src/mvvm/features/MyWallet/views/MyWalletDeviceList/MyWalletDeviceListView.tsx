@@ -14,6 +14,7 @@ export function MyWalletDeviceListView({
   onConnected,
   onAddModeChange,
   onDeviceNotFound,
+  onAddDevice,
   deviceToCheck,
   onDeviceUnlocked,
   onCloseLockedCheck,
@@ -37,6 +38,7 @@ export function MyWalletDeviceListView({
             onAddModeChange={onAddModeChange}
             isPaused={isPaused}
             onDeviceNotFound={onDeviceNotFound}
+            onAddDevice={onAddDevice}
           >
             <LNUpsellBanner location="profile" />
           </ConnectKnownOrNewDevice>

@@ -15,6 +15,8 @@ export type MyWalletDeviceListViewProps = {
   onConnected: (result: DeviceConnectionResult) => void;
   onAddModeChange: (isAdding: boolean) => void;
   onDeviceNotFound: () => void;
+  /** Set when onboarding owns the Add entry point: Add opens Get Started instead of the Add mode. */
+  onAddDevice?: (hasDevices: boolean) => void;
   /** The device under the lock check, before the device action. */
   deviceToCheck: Device | null;
   onDeviceUnlocked: () => void;
