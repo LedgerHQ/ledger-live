@@ -1,6 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { SeedPath } from "@features/platform-device-onboarding";
+import { SeedPath, type FirmwareCheck } from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
 import { NavigatorName } from "~/const";
@@ -1953,6 +1953,36 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
   });
 
+  it.each([
+    ["the device locks", "deviceLocked"],
+    ["the session drops", "awaitingSession"],
+  ])(
+    "should still ask to confirm the skip when %s before the update is offered again",
+    (_, interruption) => {
+      const unseeded = unseededContext({
+        availableFirmwareVersion: "5.4.3",
+        firmwareVersion: "2.1.0",
+      });
+      useSession.mockReturnValue(
+        session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+      );
+      const { result, rerender } = renderFunnel();
+      const moveTo = (state: string) => {
+        useSession.mockReturnValue(session({ state, context: unseeded }));
+        rerender(undefined);
+      };
+
+      moveTo("checks.firmwareUpdateDelegated");
+      mockReturnsWithoutUpdate = 1;
+      moveTo("readingState");
+      moveTo(interruption);
+      moveTo("readingState");
+      moveTo("checks.firmwareUpdateOffered");
+
+      expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+    },
+  );
+
   it("should not ask to confirm the skip when the release notes never opened", () => {
     const unseeded = unseededContext({
       availableFirmwareVersion: "5.4.3",
@@ -1984,7 +2014,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
   });
 
-  it.each([
+  it.each<[FirmwareCheck["kind"], boolean]>([
     ["declined", true],
     ["upToDate", false],
     ["skipped", false],

@@ -20,6 +20,8 @@ device OS is out of date.
   answered.
 - `UpdateOfferSheetsProps`, `OfferedUpdate`, `UpdateScreenReturnInput`: the types.
 
+`@features/flow-device-onboarding-update-offer/testing` exports `updateOfferTestIds` for consumers' tests.
+
 The copy lives under `deviceOnboarding.setup.updateOffer` in the mobile catalog.
 
 ## Consumers

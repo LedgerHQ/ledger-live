@@ -3,6 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Stepper } from "@ledgerhq/lumen-ui-rnative";
 import { render, screen, within } from "@tests/test-renderer";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { updateOfferTestIds } from "@features/flow-device-onboarding-update-offer/testing";
 import { SetupScreen } from "./index";
 import type { SetupChecksProps, SetupScreenProps } from "./types";
 
@@ -121,13 +122,6 @@ function renderSetup({
     props,
   };
 }
-
-const updateOfferTestIds = {
-  offerSheet: "device-onboarding-update-offer-sheet",
-  offerUpdate: "device-onboarding-update-offer-update",
-  skipSheet: "device-onboarding-update-skip-sheet",
-  skipConfirm: "device-onboarding-update-skip-confirm",
-};
 
 function expanded(testID: string) {
   return screen.getByTestId(testID).props.accessibilityState?.expanded;
