@@ -1,4 +1,5 @@
 import React from "react";
+import { Image, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "@shared/analytics-react";
 import {
@@ -10,12 +11,24 @@ import {
   ListItemLeading,
   SpotNumber,
   Text,
+  useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { recoverRestoreTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import recoverShieldDark from "../../../Debug/assets/recoverShieldDark.webp";
+import recoverShieldLight from "../../../Debug/assets/recoverShieldLight.webp";
 import { restoreEventProps, restoreWithRecoverPage } from "./useRecoverRestoreViewModel";
 import type { RecoverRestoreViewProps } from "./useRecoverRestoreViewModel";
+
+function RecoverIllustration() {
+  const { colorScheme } = useTheme();
+  const source = colorScheme === "light" ? recoverShieldLight : recoverShieldDark;
+  return <Image source={source} resizeMode="contain" style={styles.illustration} />;
+}
+
+const styles = StyleSheet.create({
+  illustration: { width: "100%", height: 200 },
+});
 
 export function RecoverRestoreView({
   title,
@@ -45,9 +58,7 @@ export function RecoverRestoreView({
         onPress={onClose}
       />
       <Box lx={{ flex: 1, justifyContent: "center", gap: "s24", paddingHorizontal: "s16" }}>
-        <Box lx={{ alignItems: "center", justifyContent: "center" }} style={{ height: 200 }}>
-          <ShieldCheck size={56} color="base" />
-        </Box>
+        <RecoverIllustration />
         <Box lx={{ gap: "s8" }}>
           <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {title}
@@ -62,7 +73,7 @@ export function RecoverRestoreView({
               <ListItemLeading>
                 <SpotNumber value={row.number} size={48} />
                 <ListItemContent>
-                  <ListItemDescription>{row.description}</ListItemDescription>
+                  <ListItemDescription numberOfLines={2}>{row.description}</ListItemDescription>
                 </ListItemContent>
               </ListItemLeading>
             </ListItem>
