@@ -11,7 +11,7 @@ import { NavigatorName, ScreenName } from "~/const";
 /** Detail pages kept in the Base stack while hopping between Asset Detail and Account Detail. */
 export const ASSET_ACCOUNT_CHAIN_MAX_DEPTH = 3;
 
-type RouteLike = Readonly<{ name?: string; state?: StateLike }>;
+type RouteLike = Readonly<{ name?: string; params?: object; state?: StateLike }>;
 type StateLike = Readonly<{ key?: string; index?: number; routes: readonly RouteLike[] }>;
 
 type BaseParams = BaseNavigatorStackParamList;
@@ -48,6 +48,51 @@ const ASSET_ACCOUNT_ROUTE_NAMES = new Set<string>([
   ScreenName.Account,
 ]);
 
+function readParam(params: object | undefined, key: string): unknown {
+  return params && key in params ? (params as Record<string, unknown>)[key] : undefined;
+}
+
+function nestedParams(params: object | undefined): object | undefined {
+  const nested = readParam(params, "params");
+  return typeof nested === "object" && nested !== null ? nested : undefined;
+}
+
+function accountKey(params: object | undefined): string | undefined {
+  return pageKey("account", readParam(params, "parentId") ?? readParam(params, "accountId"));
+}
+
+function pageKey(kind: "asset" | "account", id: unknown): string | undefined {
+  return typeof id === "string" ? `${kind}:${id}` : undefined;
+}
+
+/** Identifies the page a route shows; a token account shows its parent account. */
+export function assetAccountPageKey(
+  name: string | undefined,
+  params: object | undefined,
+): string | undefined {
+  switch (name) {
+    case NavigatorName.AssetDetail:
+      return pageKey("asset", readParam(nestedParams(params), "currencyId"));
+    case NavigatorName.Accounts:
+      return accountKey(nestedParams(params));
+    case ScreenName.Account:
+      return accountKey(params);
+    default:
+      return undefined;
+  }
+}
+
+function isPageBelow(stack: StateLike, target: AssetAccountTarget): boolean {
+  const below = stack.routes[(stack.index ?? stack.routes.length - 1) - 1];
+  const [name, params] = target;
+  const targetKey = assetAccountPageKey(name, params);
+  return (
+    targetKey !== undefined &&
+    below !== undefined &&
+    targetKey === assetAccountPageKey(below.name, below.params)
+  );
+}
+
 /** The stack that holds the Asset and Account Detail pages: the Base stack under the Root one in the app. */
 export function findAssetAccountStack(state: StateLike): StateLike | undefined {
   const focused = focusedRoute(state);
@@ -72,7 +117,8 @@ export function countTrailingAssetAccountRoutes(stack: StateLike): number {
 /**
  * Opens the next Asset or Account Detail page. Once the Base stack holds
  * {@link ASSET_ACCOUNT_CHAIN_MAX_DEPTH} of them, the current page is replaced,
- * so Back always reaches the entry point within that many steps.
+ * or popped when the target is the page right below, so Back always reaches
+ * the entry point within that many steps and never shows the same page twice.
  */
 export function useAssetAccountChainNavigate() {
   const navigation: AssetAccountNavigation = useNavigation<NativeStackNavigationProp<BaseParams>>();
@@ -88,7 +134,10 @@ export function useAssetAccountChainNavigate() {
         countTrailingAssetAccountRoutes(stack) >= ASSET_ACCOUNT_CHAIN_MAX_DEPTH
       ) {
         const [name, params] = target;
-        container.dispatch({ ...StackActions.replace(name, params), target: stack.key });
+        const action = isPageBelow(stack, target)
+          ? StackActions.pop()
+          : StackActions.replace(name, params);
+        container.dispatch({ ...action, target: stack.key });
         return;
       }
       navigation.navigate(...target);

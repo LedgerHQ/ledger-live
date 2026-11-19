@@ -19,6 +19,7 @@ jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
   useLocation: () => ({ pathname: "/asset/bitcoin" }),
+  useParams: () => ({ "*": "bitcoin" }),
 }));
 
 const mockOpenAddAccountFlow = jest.fn();
@@ -129,7 +130,11 @@ describe("useAddressListViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(
       getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id),
       expect.objectContaining({
-        state: { accountBackPath: "/asset/bitcoin", assetAccountChainDepth: 2 },
+        state: {
+          accountBackPath: "/asset/bitcoin",
+          assetAccountChainDepth: 2,
+          assetAccountChainBelow: "asset:bitcoin",
+        },
       }),
     );
   });

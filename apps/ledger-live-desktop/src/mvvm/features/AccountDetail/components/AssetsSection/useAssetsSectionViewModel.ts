@@ -20,7 +20,11 @@ import { useSelector } from "LLD/hooks/redux";
 import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { ASSETS_PRICE_REFRESH_INTERVAL_MS } from "LLD/features/Assets/constants";
 import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
-import { useAssetAccountChainNavigate } from "LLD/utils/assetAccountChain";
+import {
+  accountChainPageKey,
+  assetChainPageKey,
+  useAssetAccountChainNavigate,
+} from "LLD/utils/assetAccountChain";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import {
   blacklistedTokenIdsSelector,
@@ -87,7 +91,10 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
         accountAssetClickedProps(getAccountTrackingFacts(account), original.currency.ticker),
       );
       setTrackingSource(ACCOUNT_DETAIL_PAGES.account);
-      navigate(getAssetDetailPath(original.currency.id));
+      navigate(getAssetDetailPath(original.currency.id), {
+        from: accountChainPageKey(account.id),
+        to: assetChainPageKey(original.currency.id),
+      });
     },
     [account, navigate],
   );

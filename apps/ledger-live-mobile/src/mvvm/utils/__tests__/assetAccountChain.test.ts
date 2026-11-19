@@ -1,5 +1,9 @@
 import { NavigatorName, ScreenName } from "~/const";
-import { countTrailingAssetAccountRoutes, findAssetAccountStack } from "../assetAccountChain";
+import {
+  assetAccountPageKey,
+  countTrailingAssetAccountRoutes,
+  findAssetAccountStack,
+} from "../assetAccountChain";
 
 const entry = { name: NavigatorName.Main };
 const asset = {
@@ -73,5 +77,33 @@ describe("findAssetAccountStack", () => {
       routes: [{ name: NavigatorName.Base, state: { index: 0, routes: [entry] } }],
     };
     expect(findAssetAccountStack(root)).toBeUndefined();
+  });
+});
+
+describe("assetAccountPageKey", () => {
+  it("identifies an asset page by its currency", () => {
+    const params = { screen: ScreenName.AssetDetail, params: { currencyId: "bitcoin" } };
+    expect(assetAccountPageKey(NavigatorName.AssetDetail, params)).toBe("asset:bitcoin");
+  });
+
+  it("identifies an account page by its account", () => {
+    const params = { screen: ScreenName.Account, params: { accountId: "btc-1" } };
+    expect(assetAccountPageKey(NavigatorName.Accounts, params)).toBe("account:btc-1");
+    expect(assetAccountPageKey(ScreenName.Account, { accountId: "btc-1" })).toBe("account:btc-1");
+  });
+
+  it("identifies a token account page by its parent account", () => {
+    const params = { screen: ScreenName.Account, params: { accountId: "usdc", parentId: "eth-1" } };
+    expect(assetAccountPageKey(NavigatorName.Accounts, params)).toBe("account:eth-1");
+    expect(assetAccountPageKey(ScreenName.Account, { accountId: "usdc", parentId: "eth-1" })).toBe(
+      "account:eth-1",
+    );
+  });
+
+  it("returns undefined for any other page", () => {
+    expect(assetAccountPageKey(NavigatorName.Main, undefined)).toBeUndefined();
+    expect(
+      assetAccountPageKey(NavigatorName.Accounts, { screen: ScreenName.Accounts }),
+    ).toBeUndefined();
   });
 });

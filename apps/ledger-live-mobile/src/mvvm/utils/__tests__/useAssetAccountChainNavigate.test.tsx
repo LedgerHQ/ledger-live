@@ -18,62 +18,61 @@ const AccountsStack = createNativeStackNavigator<AccountsNavigatorParamList>();
 function EntryScreen({
   navigation,
 }: StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PortfolioOperationHistory>) {
+  const openAsset = (currencyId: string) =>
+    navigation.navigate(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
+      params: { currencyId },
+    });
   return (
-    <Pressable
-      testID="open-asset"
-      onPress={() =>
-        navigation.navigate(NavigatorName.AssetDetail, {
-          screen: ScreenName.AssetDetail,
-          params: { currencyId: "1" },
-        })
-      }
-    >
+    <>
       <Text>entry</Text>
-    </Pressable>
+      <Pressable testID="open-asset" onPress={() => openAsset("1")} />
+      <Pressable testID="open-asset-A" onPress={() => openAsset("A")} />
+    </>
   );
 }
 
+/** Asset page: `hop` opens the next numbered account, the other buttons open named accounts. */
 function AssetScreen({
   route,
   navigation,
 }: StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>) {
   const navigateInChain = useAssetAccountChainNavigate();
-  const page = Number(route.params.currencyId);
+  const page = route.params.currencyId;
+  const openAccount = (accountId: string, parentId?: string) =>
+    navigateInChain(NavigatorName.Accounts, {
+      screen: ScreenName.Account,
+      params: { accountId, parentId },
+    });
   return (
     <>
       <Text>{`page ${page}`}</Text>
-      <Pressable
-        testID={`hop-${page}`}
-        onPress={() =>
-          navigateInChain(NavigatorName.Accounts, {
-            screen: ScreenName.Account,
-            params: { accountId: String(page + 1) },
-          })
-        }
-      />
+      <Pressable testID={`hop-${page}`} onPress={() => openAccount(String(Number(page) + 1))} />
+      <Pressable testID={`${page}-to-account-X`} onPress={() => openAccount("X")} />
+      <Pressable testID={`${page}-to-token-of-X`} onPress={() => openAccount("token-X", "X")} />
       <Pressable testID={`back-${page}`} onPress={() => navigation.goBack()} />
     </>
   );
 }
 
+/** Account page, labelled like the app with the main account of a token account. */
 function AccountScreen({
   route,
   navigation,
 }: StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>) {
   const navigateInChain = useAssetAccountChainNavigate();
-  const page = Number(route.params?.accountId);
+  const page = route.params?.parentId ?? route.params?.accountId ?? "";
+  const openAsset = (currencyId: string) =>
+    navigateInChain(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
+      params: { currencyId },
+    });
   return (
     <>
       <Text>{`page ${page}`}</Text>
-      <Pressable
-        testID={`hop-${page}`}
-        onPress={() =>
-          navigateInChain(NavigatorName.AssetDetail, {
-            screen: ScreenName.AssetDetail,
-            params: { currencyId: String(page + 1) },
-          })
-        }
-      />
+      <Pressable testID={`hop-${page}`} onPress={() => openAsset(String(Number(page) + 1))} />
+      <Pressable testID={`${page}-to-asset-A`} onPress={() => openAsset("A")} />
+      <Pressable testID={`${page}-to-asset-B`} onPress={() => openAsset("B")} />
       <Pressable testID={`back-${page}`} onPress={() => navigation.goBack()} />
     </>
   );
@@ -125,6 +124,33 @@ describe("useAssetAccountChainNavigate", () => {
 
     await user.press(screen.getByTestId("back-1"));
     expect(await screen.findByText("entry")).toBeVisible();
+  });
+
+  it("goes back to the page right below instead of showing it twice", async () => {
+    const { user } = renderChain();
+    await user.press(screen.getByTestId("open-asset-A"));
+    await user.press(await screen.findByTestId("A-to-account-X"));
+    await user.press(await screen.findByTestId("X-to-asset-B"));
+    await user.press(await screen.findByTestId("B-to-account-X"));
+    expect(await screen.findByText("page X")).toBeVisible();
+
+    await user.press(screen.getByTestId("back-X"));
+    expect(await screen.findByText("page A")).toBeVisible();
+
+    await user.press(screen.getByTestId("back-A"));
+    expect(await screen.findByText("entry")).toBeVisible();
+  });
+
+  it("treats a token account as its parent account page", async () => {
+    const { user } = renderChain();
+    await user.press(screen.getByTestId("open-asset-A"));
+    await user.press(await screen.findByTestId("A-to-account-X"));
+    await user.press(await screen.findByTestId("X-to-asset-B"));
+    await user.press(await screen.findByTestId("B-to-token-of-X"));
+    expect(await screen.findByText("page X")).toBeVisible();
+
+    await user.press(screen.getByTestId("back-X"));
+    expect(await screen.findByText("page A")).toBeVisible();
   });
 
   it("keeps every page while the chain is short", async () => {
