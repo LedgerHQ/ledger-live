@@ -7,6 +7,8 @@ import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 export function ReceiveAddressView({
   title,
   networkLabel,
+  addressSelection,
+  address,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -32,8 +34,8 @@ export function ReceiveAddressView({
             onClose={closeDialog}
           />
           <DialogBody className="flex flex-col gap-24">
-            <ZonePlaceholder zone="summary" />
-            <ZonePlaceholder zone="address" />
+            <ZonePlaceholder zone="summary" label={address?.value} />
+            <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
             <ZonePlaceholder zone="actions" />
             <ZonePlaceholder zone="notices" />
             <ZonePlaceholder zone="extras" />

@@ -11,6 +11,8 @@ export function ReceiveAddressView({
   title,
   networkLabel,
   networkIcon,
+  addressSelection,
+  address,
   closeLabel,
   backLabel,
   onBack,
@@ -46,8 +48,8 @@ export function ReceiveAddressView({
             networkLabel={networkLabel}
             networkIcon={networkIcon}
           />
-          <ZonePlaceholder zone="summary" />
-          <ZonePlaceholder zone="address" />
+          <ZonePlaceholder zone="summary" label={address?.value} />
+          <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
           <ZonePlaceholder zone="actions" />
           <ZonePlaceholder zone="notices" />
           <ZonePlaceholder zone="extras" />

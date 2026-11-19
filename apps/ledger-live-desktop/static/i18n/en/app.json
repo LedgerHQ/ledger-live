@@ -2791,6 +2791,13 @@
       "contactSupportCta": "Contact Ledger Support",
       "closeCta": "Close"
     },
+    "selectAddress": {
+      "title": "Select address"
+    },
+    "addressOptions": {
+      "transparent": "Public address",
+      "shielded": "Private address"
+    },
     "close": "Close",
     "back": "Back"
   },
