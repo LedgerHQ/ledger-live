@@ -32,10 +32,11 @@ export interface Platform {
   stop(device: string): Promise<void>;
   /** Stops Maestro's on-device driver, so the next call starts a fresh one. */
   stopDriver(device: string): Promise<void>;
-  launch(
-    device: string,
-    launchArgs?: Record<string, string | number>,
-  ): Promise<{ amStartMs?: number | null }>;
+  launch(device: string): Promise<{ amStartMs?: number | null }>;
+  /** Writes files, by name, into the storage directory of the app, which must not be running. */
+  writeStorage(device: string, files: Record<string, Buffer>): Promise<void>;
+  /** A file of the app's storage directory, or null when there is none. */
+  readStorage(device: string, name: string): Promise<Buffer | null>;
   ensureScreenOn(device: string): Promise<unknown>;
   /** The package whose ANR or crash dialog has the focus, if any. */
   blockingDialog(device: string): Promise<string | null>;
@@ -56,6 +57,6 @@ export interface Platform {
 export interface Userdata {
   names: string[];
   settings: Record<string, unknown>;
-  accounts: Array<{ data?: { id?: string } }>;
+  accounts: Array<{ data?: { id?: string }; version?: number }>;
   postOnboarding?: unknown;
 }
