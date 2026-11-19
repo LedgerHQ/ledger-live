@@ -3,9 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
@@ -16,7 +14,7 @@ import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 type Sender = "public" | "private";
 
 type Props = {
-  account: Account;
+  account: ZcashAccount;
   transaction: Transaction;
   onChange: (t: Transaction) => void;
 };
@@ -32,11 +30,11 @@ const ZcashSelfTransferToggle = ({ account, transaction, onChange }: Props) => {
   const isZcash = account.type === "Account" && isZcashCurrencyId(account.currency.id);
   const active = isZcash && shieldedEnabled;
 
-  const bridge = useAccountBridge<ZcashTransaction>(account);
-  const tx = transaction as unknown as ZcashTransaction;
+  const bridge = useAccountBridge<Transaction>(account);
+  const tx = transaction;
   const sender: Sender = tx.sender === "private" ? "private" : "public";
 
-  const privateInfo = (account as ZcashAccount).privateInfo;
+  const privateInfo = account.privateInfo;
   // Opposite pool from the source. Taken as-is -- never derived, decomposed or
   // recomposed here, so mainnet/testnet HRPs both flow through untouched.
   const targetAddress =
@@ -56,7 +54,7 @@ const ZcashSelfTransferToggle = ({ account, transaction, onChange }: Props) => {
   useEffect(() => {
     if (!active || !isOn || !targetAddress) return;
     if (tx.recipient === targetAddress) return;
-    onChange(bridge.updateTransaction(tx, { recipient: targetAddress }) as unknown as Transaction);
+    onChange(bridge.updateTransaction(tx, { recipient: targetAddress }));
   }, [active, isOn, targetAddress, tx.recipient, bridge, onChange, tx]);
 
   // If the source flips to a pool whose address is missing, fall back to an
@@ -67,7 +65,7 @@ const ZcashSelfTransferToggle = ({ account, transaction, onChange }: Props) => {
       bridge.updateTransaction(tx, {
         selfTransfer: false,
         recipient: "",
-      }) as unknown as Transaction,
+      }),
     );
   }, [active, isOn, available, bridge, onChange, tx]);
 
@@ -76,7 +74,7 @@ const ZcashSelfTransferToggle = ({ account, transaction, onChange }: Props) => {
       bridge.updateTransaction(tx, {
         selfTransfer: next,
         recipient: next ? (targetAddress ?? "") : "",
-      }) as unknown as Transaction,
+      }),
     );
   };
 

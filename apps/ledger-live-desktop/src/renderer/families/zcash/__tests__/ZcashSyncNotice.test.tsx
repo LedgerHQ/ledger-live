@@ -2,15 +2,14 @@ import React from "react";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(),
 }));
-jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
+jest.mock("~/renderer/families/zcash/ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
 
@@ -29,7 +28,7 @@ const buildZcashAccount = (
   }) as unknown as ZcashAccount;
 
 const buildTransaction = (sender: "public" | "private" | undefined): Transaction =>
-  (sender !== undefined ? { family: "bitcoin", sender } : { family: "bitcoin" }) as Transaction;
+  (sender !== undefined ? { family: "zcash", sender } : { family: "zcash" }) as Transaction;
 
 const renderNotice = (
   account: ZcashAccount | (typeof baseAccount & { currency: { id: string } }),

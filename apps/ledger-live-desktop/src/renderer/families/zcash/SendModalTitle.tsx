@@ -2,11 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type {
-  Transaction as ZcashTransaction,
-  ZcashTransferType,
-} from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashTransferType } from "@ledgerhq/coin-zcash/types";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 const ZCASH_SEND_TITLE_KEY: Record<ZcashTransferType, string> = {
@@ -30,7 +26,7 @@ const SendModalTitle = ({
 
   const transferType =
     shieldedEnabled && isZcashCurrencyId(account.currency.id)
-      ? (transaction as ZcashTransaction | undefined)?.transferType
+      ? transaction?.transferType
       : undefined;
 
   if (!transferType) return <>{fallback}</>;

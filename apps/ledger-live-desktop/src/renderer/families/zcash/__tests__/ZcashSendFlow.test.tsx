@@ -16,7 +16,7 @@ import { SendWorkflow } from "LLD/features/Send";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
 import { ZcashAmountStepSync } from "../ZcashAmountStepSync";
 
-jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
+jest.mock("~/renderer/families/zcash/ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
 

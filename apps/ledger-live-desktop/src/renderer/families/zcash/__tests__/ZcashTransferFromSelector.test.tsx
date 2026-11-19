@@ -9,7 +9,7 @@ import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/coin-zcash/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import ZcashTransferFromSelector from "../ZcashTransferFromSelector";
 

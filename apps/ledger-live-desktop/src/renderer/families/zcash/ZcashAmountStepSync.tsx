@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { ZcashAccount, Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { ZcashAccount, Transaction } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = Readonly<{
-  account: BitcoinAccount;
+  account: ZcashAccount;
   transaction: Transaction;
 }>;
 
@@ -18,8 +17,8 @@ type Props = Readonly<{
  */
 export function ZcashAmountStepSync({ account, transaction }: Props) {
   const isZcash = isZcashCurrencyId(account.currency.id);
-  const sender = (transaction as unknown as ZcashTransaction).sender;
-  const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
+  const sender = transaction.sender;
+  const { startShieldedSync } = useZcashShieldedSync(account);
 
   useEffect(() => {
     if (isZcash && sender === "private") startShieldedSync();

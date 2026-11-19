@@ -2,7 +2,7 @@ import React from "react";
 import { act, render } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount, Transaction } from "@ledgerhq/coin-zcash/types";
 import { ZcashAmountStepSync } from "../ZcashAmountStepSync";
 
 const mockStartShieldedSync = jest.fn();
@@ -16,11 +16,11 @@ jest.mock("../useZcashShieldedSync", () => ({
 
 const baseAccount = createFixtureAccount();
 
-const buildAccount = (isZcash = true): BitcoinAccount =>
+const buildAccount = (isZcash = true): ZcashAccount =>
   ({
     ...baseAccount,
     currency: { id: isZcash ? "zcash" : "bitcoin" } as CryptoCurrency,
-  }) as unknown as BitcoinAccount;
+  }) as unknown as ZcashAccount;
 
 // coin-zcash's `sender` field doesn't exist on the bitcoin family's own
 // Transaction type: author against the real coin-zcash shape and hand it

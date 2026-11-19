@@ -1,4 +1,3 @@
-import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
@@ -11,12 +10,12 @@ import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
  * bitcoin-family currency (and a Zcash account with no shielded address yet)
  * is recognized by its transparent fresh address only.
  */
-export function getAccountRecipientAddresses(account: BitcoinAccount): string[] {
+export function getAccountRecipientAddresses(account: ZcashAccount): string[] {
   const addresses = [account.freshAddress];
 
   if (!isZcashCurrencyId(account.currency.id)) return addresses;
 
-  const privateInfo = (account as ZcashAccount).privateInfo as ZcashPrivateInfo | undefined;
+  const privateInfo = account.privateInfo as ZcashPrivateInfo | undefined;
   if (privateInfo?.shieldedAddress) addresses.push(privateInfo.shieldedAddress);
 
   return addresses;
