@@ -4,6 +4,12 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
 [
   {
     "balance": "2859728000000000000",
+    "balances": [
+      {
+        "locked": "2040000000000000000",
+        "value": "2859728000000000000",
+      },
+    ],
     "currencyId": "mantra",
     "derivationMode": "",
     "freshAddress": "mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn",
@@ -21,6 +27,11 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "mantra",
     "derivationMode": "",
     "freshAddress": "mantra1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefwef05",

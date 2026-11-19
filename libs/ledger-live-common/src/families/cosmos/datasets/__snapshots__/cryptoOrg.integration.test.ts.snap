@@ -4,6 +4,11 @@ exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 1`] = `
 [
   {
     "balance": "10000012",
+    "balances": [
+      {
+        "value": "10000012",
+      },
+    ],
     "currencyId": "crypto_org",
     "derivationMode": "",
     "freshAddress": "cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39",
@@ -21,6 +26,11 @@ exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "crypto_org",
     "derivationMode": "",
     "freshAddress": "cro1x7dn0wn5q9rvpzkqsqravg2jgvgr64l6nfeafz",

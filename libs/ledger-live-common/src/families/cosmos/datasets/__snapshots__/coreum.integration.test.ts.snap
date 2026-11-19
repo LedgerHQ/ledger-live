@@ -4,6 +4,12 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
 [
   {
     "balance": "2638906",
+    "balances": [
+      {
+        "locked": "1689542",
+        "value": "2638906",
+      },
+    ],
     "currencyId": "coreum",
     "derivationMode": "",
     "freshAddress": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
@@ -21,6 +27,11 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
   },
   {
     "balance": "1000000",
+    "balances": [
+      {
+        "value": "1000000",
+      },
+    ],
     "currencyId": "coreum",
     "derivationMode": "",
     "freshAddress": "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
@@ -38,6 +49,11 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "coreum",
     "derivationMode": "",
     "freshAddress": "core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk",
