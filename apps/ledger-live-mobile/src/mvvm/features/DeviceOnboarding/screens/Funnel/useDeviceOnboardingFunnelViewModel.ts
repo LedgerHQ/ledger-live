@@ -718,6 +718,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const recoverFeature = useFeature("protectServicesMobile");
+  const recoverAvailable = recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
   const focused = useIsFocused();
   const [pastRecover, setPastRecover] = useState(false);
@@ -741,8 +742,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const syncOfferDecided = useRef(false);
   const liveDevice = onboarding.liveDevice;
-  const readyForKaraoke =
-    unseeded && machineState === "done" && (seedPath !== SeedPath.NewSeed || pastRecover);
+  const recoverPitchBlocksKaraoke =
+    recoverAvailable && seedPath === SeedPath.NewSeed && !pastRecover;
+  const readyForKaraoke = unseeded && machineState === "done" && !recoverPitchBlocksKaraoke;
   useEffect(() => {
     if (!focused || !readyForKaraoke || syncOfferDecided.current) return;
     syncOfferDecided.current = true;
@@ -755,6 +757,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
 
   const openRecover = useCallback(() => {
+    if (!recoverAvailable) return;
     awaitingRecoverReturn.current = true;
     navigation.navigate(NavigatorName.Base, {
       screen: ScreenName.DeviceOnboardingRecover,
@@ -763,7 +766,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         device: onboarding.liveDevice ?? undefined,
       },
     });
-  }, [navigation, onboarding.liveDevice, protectId]);
+  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable]);
 
   const remindRecoverLater = useCallback(() => {
     dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
@@ -778,6 +781,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,
+    recoverAvailable,
     checksPaused: onboarding.context?.checksPaused === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
     deviceNotGenuine:

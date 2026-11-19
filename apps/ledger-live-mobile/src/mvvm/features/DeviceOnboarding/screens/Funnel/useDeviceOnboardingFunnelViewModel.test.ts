@@ -140,10 +140,19 @@ function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>)
   return model.success;
 }
 
-function renderFunnelWithSyncOffer() {
+const recoverEnabled = { protectServicesMobile: { enabled: true } };
+
+function renderRecoverFunnel() {
+  return renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+    overrideInitialState: withFlagOverrides(recoverEnabled),
+  });
+}
+
+function renderFunnelWithSyncOffer(flags: Parameters<typeof withFlagOverrides>[0] = {}) {
   return renderHook(() => useDeviceOnboardingFunnelViewModel(), {
     overrideInitialState: withFlagOverrides({
       deviceOnboarding: { enabled: true, params: { offerLedgerSync: true } },
+      ...flags,
     }),
   });
 }
@@ -1301,9 +1310,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     it("should leave a new seed to the Recover pitch", () => {
       useSession.mockReturnValue(doneSession(false, SeedPath.NewSeed));
 
-      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      const { result } = renderRecoverFunnel();
 
-      expect(result.current.status).not.toBe("unseededSuccessKaraoke");
+      expect(result.current.status).toBe("recoverNewSeed");
     });
 
     it("should keep a seeded device on the shipped success screen", () => {
@@ -1899,7 +1908,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       }),
     );
 
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result } = renderRecoverFunnel();
 
     expect(result.current.status).toBe("recoverNewSeed");
   });
@@ -1907,14 +1916,28 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
   it("should show Recover when an unseeded device reaches done on a new seed", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
 
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result } = renderRecoverFunnel();
 
     expect(result.current.status).toBe("recoverNewSeed");
   });
 
+  it("should skip the Recover pitch when protectServicesMobile is disabled", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).not.toHaveBeenCalled();
+
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
+    expect(store.getState().postOnboarding.actionsToComplete).not.toContain("recover");
+  });
+
   it("should move to the success karaoke when Recover is skipped", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result } = renderRecoverFunnel();
     act(() => recoverOf(result.current).onSkip());
 
     expect(result.current.status).toBe("success");
@@ -1922,7 +1945,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should add the recover action and show success when the user asks to be reminded", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result, store } = renderRecoverFunnel();
     act(() => recoverOf(result.current).onRemindLater());
 
     expect(result.current.status).toBe("success");
@@ -1931,7 +1954,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should open Recover without completing onboarding", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result, store } = renderRecoverFunnel();
     act(() => recoverOf(result.current).onOpenLiveApp());
 
     expect(navigate).toHaveBeenCalledWith("Base", {
@@ -1944,7 +1967,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should show the success karaoke when the funnel is focused again after Recover", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result, rerender } = renderRecoverFunnel();
     act(() => recoverOf(result.current).onOpenLiveApp());
     jest.mocked(useIsFocused).mockReturnValue(false);
     rerender(undefined);
@@ -1957,7 +1980,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should complete onboarding on the success tap after the pitch", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result, store } = renderRecoverFunnel();
     act(() => recoverOf(result.current).onSkip());
     act(() => successOf(result.current).onFinish());
 
@@ -1982,6 +2005,20 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
+  it("should offer Ledger Sync without the Recover pitch when protectServicesMobile is disabled", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result, store } = renderFunnelWithSyncOffer();
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(ScreenName.DeviceOnboardingSyncOffer, syncOfferParams);
+
+    act(() => successOf(result.current).onFinish());
+
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+  });
+
   it("should offer Ledger Sync before the success karaoke of a restore", () => {
     useSession.mockReturnValue(doneWithSeed("restorePhrase"));
     const { result, store } = renderFunnelWithSyncOffer();
@@ -1995,7 +2032,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should offer Ledger Sync before the success karaoke of a new seed, after Recover is skipped", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, store } = renderFunnelWithSyncOffer();
+    const { result, store } = renderFunnelWithSyncOffer(recoverEnabled);
 
     expect(navigate).not.toHaveBeenCalled();
     expect(result.current.status).toBe("recoverNewSeed");
@@ -2010,7 +2047,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should complete a new seed on the success tap after Ledger Sync", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
-    const { result, store } = renderFunnelWithSyncOffer();
+    const { result, store } = renderFunnelWithSyncOffer(recoverEnabled);
     act(() => recoverOf(result.current).onSkip());
     act(() => successOf(result.current).onFinish());
 

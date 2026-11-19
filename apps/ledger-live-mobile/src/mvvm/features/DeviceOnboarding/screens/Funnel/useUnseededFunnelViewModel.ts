@@ -30,6 +30,7 @@ export type UnseededFunnelInput = {
   seedPath: string | null;
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
   pastRecover: boolean;
+  recoverAvailable: boolean;
   checksPaused: boolean;
   genuineFailureKind: string | null;
   deviceNotGenuine: boolean;
@@ -133,9 +134,10 @@ function useContinueChecks(
 }
 
 function toDoneModel(
-  input: Pick<UnseededFunnelInput, "seedPath" | "pastRecover">,
+  input: Pick<UnseededFunnelInput, "seedPath" | "pastRecover" | "recoverAvailable">,
 ): UnseededFunnelModel | null {
   if (input.seedPath !== SeedPath.NewSeed) return null;
+  if (!input.recoverAvailable) return { status: "success", sawRecoverPitch: false };
   if (!input.pastRecover) return { status: "recoverNewSeed" };
   return { status: "success", sawRecoverPitch: true };
 }
