@@ -167,4 +167,27 @@ describe("createApi", () => {
       }),
     ).toEqual({ type: "string", opReturnData: "abcd" });
   });
+
+  it("keeps the intent's coin control, so the data round-trips into estimation and crafting", () => {
+    const utxoStrategy = {
+      strategy: "merge-outputs" as const,
+      excludedUtxos: [`${"ab".repeat(32)}:0`],
+    };
+    expect(
+      createApi("bitcoin").craftTransactionData(context, {
+        ...intent,
+        data: { type: "string", utxoStrategy },
+      }),
+    ).toEqual({ type: "string", utxoStrategy });
+  });
+
+  it.each([null, false, ""])(
+    "keeps a malformed coin control (%p), for estimation and crafting to refuse",
+    utxoStrategy => {
+      const data = { ...intent.data, utxoStrategy } as unknown as BitcoinTxData;
+      expect(
+        createApi("bitcoin").craftTransactionData(context, { ...intent, data }),
+      ).toHaveProperty("utxoStrategy", utxoStrategy);
+    },
+  );
 });
