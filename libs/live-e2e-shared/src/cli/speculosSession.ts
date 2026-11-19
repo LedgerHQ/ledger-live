@@ -40,13 +40,18 @@ export function parseSpeculosArgs(argv: string[]): SpeculosCommand {
   throw new Error(USAGE);
 }
 
+function withoutTrailingSlashes(url: string): string {
+  let end = url.length;
+  while (url.endsWith("/", end)) end--;
+  return url.slice(0, end);
+}
+
 /** The address a device registers Speculos under, as e2e/mobile's `registerKnownSpeculos` sends it. */
 export function knownSpeculosAddress(configured: string | undefined, port: number): string {
   const address = configured?.trim();
   if (!address) return `http://127.0.0.1:${port}`;
-  const withScheme = (address.startsWith("http") ? address : `http://${address}`).replace(
-    /\/+$/,
-    "",
+  const withScheme = withoutTrailingSlashes(
+    address.startsWith("http") ? address : `http://${address}`,
   );
   return /:\d+$/.test(withScheme) ? withScheme : `${withScheme}:${port}`;
 }

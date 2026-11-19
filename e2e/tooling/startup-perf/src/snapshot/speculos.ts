@@ -21,10 +21,10 @@ export function parseSession(text: string): SpeculosSession {
   const value = JSON.parse(text) as Partial<Record<keyof SpeculosSession, unknown>>;
   const { id, address, model, sessionToken } = value;
   if (typeof id !== "string" || typeof address !== "string" || typeof model !== "string") {
-    throw new Error("speculos: the session file has no id, address or model");
+    throw new TypeError("speculos: the session file has no id, address or model");
   }
   if (sessionToken !== undefined && typeof sessionToken !== "string") {
-    throw new Error("speculos: the session token is not a string");
+    throw new TypeError("speculos: the session token is not a string");
   }
   return { id, address, model, ...(sessionToken ? { sessionToken } : {}) };
 }
