@@ -21,7 +21,7 @@ import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { makeGetAccountShape, SYNC_HASH } from "./sync";
+import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { validateAddress } from "./validateAddress";
 
@@ -48,8 +48,9 @@ export function createBridges(signerContext: SignerContext<CantonSigner>, contex
   const signOperation = buildSignOperation(signerContext, context);
   const sync = makeSync({
     getAccountShape: makeGetAccountShape(signerContext, context),
-    // A rebuild replaces the stored operations: merging would bring the stale ones back.
-    shouldMergeOps: initial => Promise.resolve(initial.syncHash === SYNC_HASH),
+    // getAccountShape merges the new operations with the stored ones, or replaces them on a
+    // rebuild: merging again would bring the stale ones back.
+    shouldMergeOps: false,
   });
 
   const accountBridge: AccountBridge<Transaction, CantonAccount> = {

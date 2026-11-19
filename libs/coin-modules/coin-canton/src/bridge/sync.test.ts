@@ -12,11 +12,7 @@ import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
 import { lastValueFrom } from "rxjs";
-import {
-  createMockCantonAccount,
-  createMockCantonCurrency,
-  createMockCoinConfigValue,
-} from "../test/fixtures";
+import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
 import { createBridges } from "./index";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CantonAccount, CantonSigner } from "../types";
@@ -394,14 +390,18 @@ describe("makeGetAccountShape", () => {
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toMatchObject({
-      operations: [
+    expect(shape.operations).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({
           type: "TRANSFER_PROPOSAL",
-          value: BigNumber(200), // transfer value only, fees not added for TRANSFER_PROPOSAL
+          value: BigNumber(200),
+          fee: BigNumber(0),
         }),
-      ],
-    });
+      ]),
+    );
+    expect(fees(shape)).toEqual([
+      expect.objectContaining({ hash: "tx3", value: BigNumber(5), fee: BigNumber(5) }),
+    ]);
   });
 
   it("should set operation type to TRANSFER_REJECTED when operationType is transfer-rejected", async () => {
@@ -951,6 +951,22 @@ describe("makeGetAccountShape", () => {
 
     describe("fee asset", () => {
       const usdcxInstrument = { instrumentId, instrumentAdmin: calAdmin };
+      /** A proposal row the account sent, of CC or of USDCx. */
+      const proposalRow = (txHash: string, instrument = { instrumentId: "Amulet" }) => ({
+        ...createMockOperationView({ txHash, operationType: "transfer-proposal", ...instrument }),
+        ...(instrument.instrumentId === "Amulet"
+          ? {}
+          : { asset: { type: "token" as const, ...usdcxInstrument } }),
+      });
+      const pendingProposal = (updateId: string, instrument_id = "Amulet") => ({
+        ...proposalFrom(instrument_id === "Amulet" ? "native-admin" : calAdmin),
+        contract_id: `offer-${updateId}`,
+        sender: "party123",
+        receiver: "bob",
+        amount: "100",
+        instrument_id,
+        update_id: updateId,
+      });
 
       beforeEach(() => {
         mockedGetBalance.mockResolvedValue([
@@ -1089,6 +1105,221 @@ describe("makeGetAccountShape", () => {
         ]);
         expect(shape.operations).toEqual([]);
       });
+
+      it("keeps one operation per token for a transaction sending two tokens, and charges both CC fees once", async () => {
+        const cbtc = {
+          ...usdcx,
+          id: "canton_network/cip56/cbtc",
+          contractAddress: "cbtc-admin::1220eeee",
+          name: "CBTC",
+          ticker: "CBTC",
+        };
+        const cbtcInstrument = { instrumentId: "CBTC", instrumentAdmin: cbtc.contractAddress };
+        mockedGetCalTokensCached.mockResolvedValue(
+          new Map([
+            [usdcx.id, instrumentId],
+            [cbtc.id, "CBTC"],
+          ]),
+        );
+        mockFindTokenById.mockImplementation(async (id: string) =>
+          [usdcx, cbtc].find(token => token.id === id),
+        );
+        mockedGetEnabledInstrumentsCached.mockResolvedValue(
+          new Set([`${instrumentId}____${calAdmin}`, `CBTC____${cbtc.contractAddress}`]),
+        );
+        mockedGetBalance.mockResolvedValue([
+          createMockNativeBalance("1000"),
+          tokenBalance(calAdmin, "500"),
+          tokenBalance(cbtc.contractAddress, "300", "CBTC"),
+        ]);
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "two-tokens", { uid: "uid-1" }),
+            tokenOperationView(cbtcInstrument, "two-tokens", {
+              uid: "uid-2",
+              transfers: [
+                {
+                  address: "party123",
+                  type: "Send",
+                  value: "40",
+                  asset: "CBTC",
+                  details: { operationType: "transfer" },
+                },
+              ],
+            } as Partial<OperationInfo>),
+          ],
+        });
+
+        const shape = await sync();
+
+        const tokenOperations = (shape.subAccounts ?? []).map(({ token, operations }) => [
+          token.id,
+          operations.map(({ type, value, fee }) => [type, value.toString(), fee.toString()]),
+        ]);
+        expect(tokenOperations).toEqual(
+          expect.arrayContaining([
+            [usdcx.id, [["OUT", "100", "0"]]],
+            [cbtc.id, [["OUT", "40", "0"]]],
+          ]),
+        );
+        expect(tokenOperations).toHaveLength(2);
+        expect(fees(shape)).toEqual([
+          expect.objectContaining({ hash: "two-tokens", value: BigNumber(10) }),
+        ]);
+      });
+
+      describe("transfer proposals", () => {
+        it("charges the fees of a pending proposal the account sent, without the proposal", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([pendingProposal("offer-tx")]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [
+              proposalRow("offer-tx"),
+              createMockOperationView({ txHash: "offer-tx", uid: "change" }),
+            ],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual([
+            expect.objectContaining({
+              hash: "offer-tx",
+              type: "FEES",
+              value: BigNumber(10),
+              fee: BigNumber(10),
+            }),
+          ]);
+        });
+
+        it("records nothing for a pending proposal the account received", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([pendingProposal("offer-tx")]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [{ ...proposalRow("offer-tx"), type: "Receive", senders: ["alice"] }],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual([]);
+        });
+
+        it("charges the CC fee of a pending token proposal on the main account", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([
+            pendingProposal("token-offer", instrumentId),
+          ]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [proposalRow("token-offer", usdcxInstrument)],
+          });
+
+          const shape = await sync();
+
+          expect(shape.subAccounts?.[0].operations).toEqual([]);
+          expect(shape.operations).toEqual([
+            expect.objectContaining({
+              hash: "token-offer",
+              type: "FEES",
+              value: BigNumber(5),
+              extra: expect.objectContaining({ instrumentId: "Amulet" }),
+            }),
+          ]);
+        });
+
+        it("charges the fee of a settled proposal once, on its creation", async () => {
+          mockedGetOperations.mockResolvedValue({
+            operations: [
+              proposalRow("offer-tx"),
+              {
+                ...createMockOperationView({ txHash: "accept-tx" }),
+                fee: { ...createMockOperationView().fee, value: "0" },
+              },
+            ],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({ type: "TRANSFER_PROPOSAL", fee: BigNumber(0) }),
+              expect.objectContaining({ hash: "accept-tx", type: "OUT", value: BigNumber(100) }),
+            ]),
+          );
+          expect(fees(shape)).toEqual([
+            expect.objectContaining({ hash: "offer-tx", value: BigNumber(5) }),
+          ]);
+        });
+      });
+
+      describe("a token that gets its sub-account", () => {
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: sampleCurrency.id,
+          xpubOrAddress: "party123",
+          derivationMode: "canton",
+        });
+        const storedUsdcx = {
+          type: "TokenAccount",
+          id: encodeTokenAccountId(accountId, usdcx as TokenAccount["token"]),
+          parentId: accountId,
+          token: usdcx,
+          balance: BigNumber(500),
+          spendableBalance: BigNumber(500),
+          creationDate: new Date(0),
+          operations: [],
+          operationsCount: 0,
+          pendingOperations: [],
+          balanceHistoryCache: emptyHistoryCache,
+          swapHistory: [],
+        } as unknown as TokenAccount;
+        const rows = [
+          {
+            ...tokenOperationView(usdcxInstrument, "early-token"),
+            block: { height: 10, time: "" },
+          },
+          { ...createMockOperationView({ txHash: "late" }), block: { height: 20, time: "" } },
+        ];
+
+        beforeEach(() => {
+          mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+            operations: rows.filter(row => row.block.height >= minOffset),
+            next: -1,
+          }));
+        });
+
+        it("reads the history again from offset 0, recovering a CC fee older than every stored operation", async () => {
+          const account = await syncAccount(SYNC_HASH, {
+            id: accountId,
+            operations: [storedOperation(20)],
+          });
+
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+          expect(account.operations.map(op => op.hash).sort()).toEqual(["early-token", "late"]);
+          expect(fees(account)).toEqual([
+            expect.objectContaining({ hash: "early-token", value: BigNumber(5) }),
+          ]);
+          expect(account.subAccounts?.[0].operations.map(op => op.hash)).toEqual(["early-token"]);
+        });
+
+        it("reads on from the newest stored operation once the sub-account is stored", async () => {
+          await syncAccount(SYNC_HASH, {
+            id: accountId,
+            operations: [storedOperation(20)],
+            subAccounts: [storedUsdcx],
+          });
+
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 21 })]);
+        });
+
+        it("does not read the history again for a held token that stays disabled", async () => {
+          mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
+
+          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
+          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
+
+          expect(readFrom()).toEqual([
+            expect.objectContaining({ minOffset: 21 }),
+            expect.objectContaining({ minOffset: 21 }),
+          ]);
+        });
+      });
     });
   });
 
@@ -1105,7 +1336,7 @@ describe("makeGetAccountShape", () => {
         subAccounts: [{ operations: [storedOperation(9)] }] as unknown as TokenAccount[],
       });
 
-      expect(readFrom()).toEqual([{ minOffset: 10, maxOffset: 12345, limit: 100 }]);
+      expect(readFrom()).toEqual([{ minOffset: 10, maxOffset: 12345, limit: 1000 }]);
       expect(shape.operations).toEqual([storedOperation(5)]);
       expect(shape.syncHash).toBe(SYNC_HASH);
     });
@@ -1125,9 +1356,9 @@ describe("makeGetAccountShape", () => {
       const shape = await syncFrom({ syncHash: SYNC_HASH });
 
       expect(readFrom()).toEqual([
-        { minOffset: 0, maxOffset: 12345, limit: 100 },
-        { minOffset: 0, maxOffset: 12345, cursor: 2, limit: 100 },
-        { minOffset: 0, maxOffset: 12345, cursor: 8, limit: 100 },
+        { minOffset: 0, maxOffset: 12345, limit: 1000 },
+        { minOffset: 0, maxOffset: 12345, cursor: 2, limit: 1000 },
+        { minOffset: 0, maxOffset: 12345, cursor: 8, limit: 1000 },
       ]);
       expect(shape.operations?.map(op => op.hash).sort()).toEqual(["first", "second"]);
     });
@@ -1158,7 +1389,7 @@ describe("makeGetAccountShape", () => {
         ] as unknown as TokenAccount[],
       });
 
-      expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 100 }]);
+      expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 1000 }]);
       expect(shape.operations?.map(op => op.hash)).toEqual(["fresh"]);
     });
 
@@ -1259,171 +1490,69 @@ describe("makeGetAccountShape", () => {
   });
 });
 
+const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
+  type: "TokenAccount",
+  id: `token-account-${contractAddress}`,
+  parentId: "parent-account-id",
+  token: {
+    type: "TokenCurrency",
+    id: tokenId ?? `token-id-${contractAddress}`,
+    contractAddress,
+    name: "Test Token",
+    ticker: "TEST",
+    decimals: 18,
+    parentCurrencyId: "canton_network",
+  } as any,
+  balance: new BigNumber(100),
+  spendableBalance: new BigNumber(100),
+  operationsCount: 0,
+  operations: [],
+  pendingOperations: [],
+  balanceHistoryCache: {
+    HOUR: { latestDate: null, balances: [] },
+    DAY: { latestDate: null, balances: [] },
+    WEEK: { latestDate: null, balances: [] },
+  },
+  swapHistory: [],
+  creationDate: new Date(),
+});
+
 describe("filterDisabledTokenAccounts", () => {
-  const mockConfig = createMockCoinConfigValue();
+  it("keeps the token accounts of enabled CAL tokens only", () => {
+    const enabled = createMockTokenAccount("0xenabled", "token-id-enabled");
+    const disabled = createMockTokenAccount("0xdisabled", "token-id-disabled");
+    const unlisted = createMockTokenAccount("0xunlisted", "token-id-unlisted");
+    const calTokens = new Map([
+      ["token-id-enabled", "instrument-enabled"],
+      ["token-id-disabled", "instrument-disabled"],
+    ]);
 
-  const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
-    type: "TokenAccount",
-    id: `token-account-${contractAddress}`,
-    parentId: "parent-account-id",
-    token: {
-      type: "TokenCurrency",
-      id: tokenId ?? `token-id-${contractAddress}`,
-      contractAddress,
-      name: "Test Token",
-      ticker: "TEST",
-      decimals: 18,
-      parentCurrencyId: "canton_network",
-    } as any,
-    balance: new BigNumber(100),
-    spendableBalance: new BigNumber(100),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    creationDate: new Date(),
+    const result = filterDisabledTokenAccounts(
+      [enabled, disabled, unlisted],
+      calTokens,
+      new Set(["instrument-enabled____0xenabled", "instrument-unlisted____0xunlisted"]),
+    );
+
+    expect(result).toEqual([enabled]);
   });
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  it("does not keep token accounts without contractAddress", () => {
+    const withoutAddress = createMockTokenAccount("", "token-id-noaddr");
 
-  it("should return empty array when subAccounts is undefined", async () => {
-    const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, undefined, calTokens);
+    const result = filterDisabledTokenAccounts(
+      [withoutAddress],
+      new Map([["token-id-noaddr", "instrument-noaddr"]]),
+      new Set(["instrument-noaddr____"]),
+    );
+
     expect(result).toEqual([]);
-    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
-  it("should return empty array when subAccounts is empty", async () => {
-    const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, [], calTokens);
-    expect(result).toEqual([]);
-    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
-  });
-
-  it("should filter out disabled token accounts", async () => {
-    const enabledAdminId = "0xenabled";
-    const disabledAdminId = "0xdisabled";
-    const enabledTokenId = "token-id-enabled";
-    const disabledTokenId = "token-id-disabled";
-    const enabledInstrumentId = "instrument-enabled";
-    const disabledInstrumentId = "instrument-disabled";
-
-    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
-    const disabledTokenAccount = createMockTokenAccount(disabledAdminId, disabledTokenId);
-
-    // calTokens maps token.id -> instrumentId
-    const calTokens = new Map<string, string>([
-      [enabledTokenId, enabledInstrumentId],
-      [disabledTokenId, disabledInstrumentId],
-    ]);
-
-    // enabledInstruments is a Set of keys in format "instrumentId____adminId"
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${enabledInstrumentId}____${enabledAdminId}`]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [enabledTokenAccount, disabledTokenAccount],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(enabledTokenAccount);
-    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(mockConfig);
-  });
-
-  it("should keep enabled token accounts", async () => {
-    const adminId1 = "0xenabled1";
-    const adminId2 = "0xenabled2";
-    const tokenId1 = "token-id-1";
-    const tokenId2 = "token-id-2";
-    const instrumentId1 = "instrument-1";
-    const instrumentId2 = "instrument-2";
-
-    const enabledTokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
-    const enabledTokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
-
-    const calTokens = new Map<string, string>([
-      [tokenId1, instrumentId1],
-      [tokenId2, instrumentId2],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${instrumentId1}____${adminId1}`, `${instrumentId2}____${adminId2}`]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [enabledTokenAccount1, enabledTokenAccount2],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(2);
-    expect(result).toContain(enabledTokenAccount1);
-    expect(result).toContain(enabledTokenAccount2);
-  });
-
-  it("should not keep token accounts without contractAddress", async () => {
-    const tokenAccountWithoutAddress = {
-      ...createMockTokenAccount("0xtest", "token-id-noaddr"),
-      token: {
-        ...createMockTokenAccount("0xtest", "token-id-noaddr").token,
-        contractAddress: "",
-      },
-    };
-    const enabledAdminId = "0xenabled";
-    const enabledTokenId = "token-id-enabled";
-    const enabledInstrumentId = "instrument-enabled";
-    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
-
-    const calTokens = new Map<string, string>([
-      ["token-id-noaddr", "instrument-noaddr"],
-      [enabledTokenId, enabledInstrumentId],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${enabledInstrumentId}____${enabledAdminId}`, "instrument-noaddr____"]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [tokenAccountWithoutAddress, enabledTokenAccount],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(enabledTokenAccount);
-    expect(result).not.toContain(tokenAccountWithoutAddress);
-  });
-
-  it("should handle empty enabled instruments list", async () => {
-    const adminId1 = "0xtoken1";
-    const adminId2 = "0xtoken2";
-    const tokenId1 = "token-id-1";
-    const tokenId2 = "token-id-2";
-
-    const tokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
-    const tokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
-
-    const calTokens = new Map<string, string>([
-      [tokenId1, "instrument-1"],
-      [tokenId2, "instrument-2"],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [tokenAccount1, tokenAccount2],
-      calTokens,
+  it("keeps nothing when no instrument is enabled", () => {
+    const result = filterDisabledTokenAccounts(
+      [createMockTokenAccount("0xtoken1", "token-id-1")],
+      new Map([["token-id-1", "instrument-1"]]),
+      new Set(),
     );
 
     expect(result).toEqual([]);

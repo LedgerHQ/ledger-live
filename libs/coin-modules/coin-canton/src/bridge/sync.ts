@@ -1,5 +1,8 @@
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
@@ -62,10 +65,16 @@ function isValidOperation(txInfo: OperationInfo): txInfo is ValidOperationInfo {
  */
 export const SYNC_HASH = "1";
 
-const GATEWAY_PAGE_SIZE = 100;
+const GATEWAY_PAGE_SIZE = 1_000;
 
 /** Operation types whose fee the account paid, so their value includes it. */
 const CHARGED_TYPES: ReadonlySet<OperationType> = new Set(["OUT", "FEES"]);
+
+/**
+ * Operation types whose fee the account pays when it sends them. Creating a transfer proposal burns
+ * its fee although the proposal moves no value.
+ */
+const PAYING_TYPES: ReadonlySet<OperationType> = new Set([...CHARGED_TYPES, "TRANSFER_PROPOSAL"]);
 
 type Instrument = { instrumentId: string; instrumentAdmin: string };
 
@@ -95,16 +104,31 @@ const groupKey = (hash: string, { instrumentId, instrumentAdmin }: Instrument, t
 
 /**
  * Charges each fee in its own asset (ADR-068). A row's fee is that of its own transfer, and the
- * gateway sets it on the sender's row only. A fee in the row's asset joins the row's value; a fee
- * in another asset, in practice the CC fee of a token transfer, joins the transaction's operation
- * that the account paid in that asset, or a FEES operation of its own.
+ * gateway sets it on the sender's row only. A fee in the row's asset joins the value of an OUT or
+ * FEES row. Any other fee the account paid, in practice the CC fee of a token transfer or of a
+ * transfer proposal, joins the transaction's OUT or FEES operation in that asset, or a FEES
+ * operation of its own.
+ *
+ * A transaction of a pending transfer proposal yields its paid fees only, as FEES operations: the
+ * offer list shows the proposal itself until it settles.
  */
-function toOperations(rows: ValidOperationInfo[], accountId: string, partyId: string): Operation[] {
+function toOperations(
+  rows: ValidOperationInfo[],
+  accountId: string,
+  partyId: string,
+  pendingHashes: ReadonlySet<string>,
+): Operation[] {
   const groups = new Map<string, OperationGroup>();
-  const foreignFees = new Map<
+  const separateFees = new Map<
     string,
     { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber }
   >();
+  const addSeparateFee = (row: ValidOperationInfo, instrument: Instrument, fee: BigNumber) => {
+    const key = groupKey(row.transaction_hash, instrument, "");
+    const separate = separateFees.get(key) ?? { row, instrument, fee: new BigNumber(0) };
+    separate.fee = separate.fee.plus(fee);
+    separateFees.set(key, separate);
+  };
 
   for (const row of rows) {
     const [{ value: transferValue, details }] = row.transfers;
@@ -122,6 +146,15 @@ function toOperations(rows: ValidOperationInfo[], accountId: string, partyId: st
     const feeInstrument = instrumentOf(row.fee.asset);
     const fee = new BigNumber(row.fee.value);
     const isOwnFee = feeInstrument !== undefined && isSameInstrument(feeInstrument, instrument);
+    const isPaid =
+      PAYING_TYPES.has(type) && row.senders.includes(partyId) && fee.gt(0) && !!feeInstrument;
+    const paidFee = isPaid ? feeInstrument : undefined;
+    const joinsValue = paidFee !== undefined && isOwnFee && CHARGED_TYPES.has(type);
+
+    if (pendingHashes.has(row.transaction_hash)) {
+      if (paidFee) addSeparateFee(row, paidFee, fee);
+      continue;
+    }
 
     const key = groupKey(row.transaction_hash, instrument, type);
     const group = groups.get(key) ?? {
@@ -137,24 +170,15 @@ function toOperations(rows: ValidOperationInfo[], accountId: string, partyId: st
     group.transferValue = group.transferValue.plus(transferValue);
     const memo = details?.metadata?.reason;
     if (memo !== undefined) group.memos.add(memo);
-    if (isOwnFee) group.fee = group.fee.plus(fee);
+    // A fee on a row the account did not pay for is shown, not charged.
+    if (joinsValue || (isOwnFee && !paidFee)) group.fee = group.fee.plus(fee);
+    else if (paidFee) addSeparateFee(row, paidFee, fee);
     row.senders.forEach(sender => group.senders.add(sender));
     row.recipients.forEach(recipient => group.recipients.add(recipient));
     groups.set(key, group);
-
-    if (!isOwnFee && feeInstrument && CHARGED_TYPES.has(type) && fee.gt(0)) {
-      const feeKey = groupKey(row.transaction_hash, feeInstrument, "");
-      const foreign = foreignFees.get(feeKey) ?? {
-        row,
-        instrument: feeInstrument,
-        fee: new BigNumber(0),
-      };
-      foreign.fee = foreign.fee.plus(fee);
-      foreignFees.set(feeKey, foreign);
-    }
   }
 
-  for (const { row, instrument, fee } of foreignFees.values()) {
+  for (const { row, instrument, fee } of separateFees.values()) {
     const payer = [...CHARGED_TYPES]
       .map(type => groups.get(groupKey(row.transaction_hash, instrument, type)))
       .find(group => group !== undefined);
@@ -206,13 +230,7 @@ const filterOperations = (
 ): Operation[] => {
   const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
 
-  return toOperations(
-    transactions
-      .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
-      .filter(isValidOperation),
-    accountId,
-    partyId,
-  );
+  return toOperations(transactions.filter(isValidOperation), accountId, partyId, pendingUpdateIds);
 };
 
 /** Every row from `start` to `end`, the ledger end read before the walk so it does not chase new activity. */
@@ -249,25 +267,23 @@ const highestBlockHeight = (operations: Operation[]): number | undefined =>
     undefined,
   );
 
-export async function filterDisabledTokenAccounts(
-  config: CantonCoinConfig,
-  subAccounts: TokenAccount[] | undefined,
+/** Whether the token gets a sub-account: listed in the CAL with an admin, and enabled. */
+const isTokenEnabled = (
+  token: TokenCurrency,
   calTokens: Map<string, string>,
-): Promise<TokenAccount[]> {
-  if (!subAccounts || subAccounts.length === 0) {
-    return [];
-  }
+  enabledInstruments: ReadonlySet<string>,
+): boolean => {
+  const instrumentId = calTokens.get(token.id);
+  const adminId = token.contractAddress;
+  return !!instrumentId && !!adminId && enabledInstruments.has(getKey(instrumentId, adminId));
+};
 
-  const enabledInstruments = await getEnabledInstrumentsCached(config);
-  return subAccounts.filter(subAccount => {
-    const instrumentId = calTokens.get(subAccount.token.id);
-    const adminId = subAccount.token.contractAddress;
-    if (!instrumentId || !adminId) {
-      return false;
-    }
-
-    return enabledInstruments.has(getKey(instrumentId, adminId));
-  });
+export function filterDisabledTokenAccounts(
+  subAccounts: TokenAccount[],
+  calTokens: Map<string, string>,
+  enabledInstruments: ReadonlySet<string>,
+): TokenAccount[] {
+  return subAccounts.filter(({ token }) => isTokenEnabled(token, calTokens, enabledInstruments));
 }
 
 // So a node info outage doesn't fail every sync of an account an earlier sync classified.
@@ -444,8 +460,21 @@ export function makeGetAccountShape(
         adminId,
       }));
 
-    // A stale sync hash rebuilds the history from offset 0, without the stored operations.
-    const isRebuild = initialAccount !== undefined && initialAccount.syncHash !== SYNC_HASH;
+    // One snapshot, so that the rebuild check and the sub-accounts agree on the enabled tokens.
+    const enabledInstruments =
+      tokenBalances.length > 0 ? await getEnabledInstrumentsCached(config) : new Set<string>();
+    const storedSubAccountIds = new Set(initialAccount?.subAccounts?.map(({ id }) => id));
+    // Rows of a token without a sub-account produced no operation, and later syncs read past them.
+    const hasNewTokenAccount = tokenBalances.some(
+      ({ token }) =>
+        isTokenEnabled(token, calTokens, enabledInstruments) &&
+        !storedSubAccountIds.has(encodeTokenAccountId(accountId, token)),
+    );
+
+    // A stale sync hash, or a token that gets its sub-account, rebuilds the history from offset 0,
+    // without the stored operations: merging them would drop the operations older than them.
+    const isRebuild =
+      initialAccount !== undefined && (initialAccount.syncHash !== SYNC_HASH || hasNewTokenAccount);
     const storedOperations = isRebuild ? [] : (initialAccount?.operations ?? []);
     const storedSubAccounts = (initialAccount?.subAccounts ?? []).map(subAccount =>
       isRebuild ? { ...subAccount, operations: [], operationsCount: 0 } : subAccount,
@@ -498,7 +527,11 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
     };
 
-    const filteredSubAccounts = await filterDisabledTokenAccounts(config, subAccounts, calTokens);
+    const filteredSubAccounts = filterDisabledTokenAccounts(
+      subAccounts,
+      calTokens,
+      enabledInstruments,
+    );
 
     const used = !isCantonAccountEmpty({
       operationsCount: mainAccountOperations.length,
