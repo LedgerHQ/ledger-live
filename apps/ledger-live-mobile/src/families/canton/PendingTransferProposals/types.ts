@@ -1,4 +1,5 @@
 import type { Unit } from "@domain/entity-currency-unit";
+import type { ResolvedInstrument } from "@ledgerhq/live-common/families/canton/proposalSorting";
 import type BigNumber from "bignumber.js";
 
 export type TransferProposalAction = "accept" | "reject" | "withdraw";
@@ -21,9 +22,14 @@ export type ProcessedProposal = {
   receiver: string;
   amount: BigNumber;
   instrumentId: string;
-  // Unit resolved per-instrument so token offers render with the token's
+  instrumentAdmin: string;
+  // Unit resolved per instrument (id and admin) so token offers render with the token's
   // ticker / magnitude even when shown on the parent (native) account.
   unit: Unit;
+  // The currency its countervalue is priced in; absent for an unknown instrument.
+  currency?: ResolvedInstrument["currency"];
+  // Neither native CC nor a CAL token: another admin's instrument, or one CAL doesn't list.
+  isUnknownInstrument: boolean;
   memo: string;
   expiresAtMicros: number;
   isExpired: boolean;

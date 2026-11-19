@@ -2414,10 +2414,24 @@
     }
   },
   "receiveAddress": {
+    "title": "Receive {{asset}}",
+    "networkLabel": "{{network}} network",
+    "close": "Close",
+    "back": "Back",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
-      "gotItCta": "Got it"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
+    },
+    "addressVerified": {
+      "title": "Address verified",
+      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
+      "doneCta": "Done"
+    },
+    "addressMismatch": {
+      "title": "This address doesn't match your Ledger",
+      "description": "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
+      "contactSupportCta": "Contact Ledger Support",
+      "closeCta": "Close"
     }
   },
   "ratings": {
@@ -2706,10 +2720,39 @@
         "setUp": "Let’s set it up.",
         "cta": "Check your device"
       },
+      "recover": {
+        "tooManyBackups": "There’s no such thing as too many backups.",
+        "encryptedBackup": "Especially an encrypted digital backup.",
+        "thereWhenYouNeedIt": "A digital backup that’s there when you need it.",
+        "title": "Protect access to your wallet with Ledger Recover.",
+        "description": "Physical recovery sheets get lost or damaged. Ledger Recover keeps an encrypted backup linked to your identity.",
+        "price": "First month free then start at $9.99/month. Cancel anytime. T&Cs apply",
+        "protect": "Protect my wallet",
+        "skip": "Skip for now",
+        "sheet": {
+          "title": "How does Ledger Recover work?",
+          "identity": {
+            "title": "Protected by your identity",
+            "description": "Your face and ID are the key to unlock a restore."
+          },
+          "security": {
+            "title": "Enhanced digital security",
+            "description": "Encrypted, fragmented and never stored in one place."
+          },
+          "legacy": {
+            "title": "Futureproof your digital legacy",
+            "description": "Add someone you trust to help secure your backup."
+          },
+          "start": "Get started now (~10min)",
+          "remindLater": "Remind me later"
+        }
+      },
       "success": {
         "allSet": "You’re all set",
         "timeToExplore": "Time to explore",
-        "cta": "Explore now"
+        "cta": "Explore now",
+        "ready": "You’re all set.",
+        "walletReady": "Your wallet is ready."
       }
     },
     "checks": {
@@ -4036,6 +4079,20 @@
       "crypto": "Crypto",
       "card": "Card",
       "accessibilityLabel": "Transaction history type"
+    },
+    "exportDialog": {
+      "title": "Export transaction history",
+      "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
+      "accountsToInclude": "Accounts to include",
+      "selectAll": "Select all ({{count}})",
+      "deselectAll": "Deselect all ({{count}})",
+      "export": "Export history",
+      "successTitle": "Transaction history saved successfully",
+      "successDescription": "The CSV file of your transaction history was saved successfully in the selected folder",
+      "done": "Done",
+      "errorTitle": "Something went wrong",
+      "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
+      "tryAgain": "Try again"
     }
   },
   "operationsList": {
@@ -4047,7 +4104,11 @@
       "hideDustTransactions": "Hide dust transactions",
       "showDustTransactions": "Show dust transactions",
       "dustTransactionsHiddenDescription": "Transactions below {{threshold}} will be hidden.",
-      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed."
+      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed.",
+      "exportCsv": {
+        "title": "Export transaction history",
+        "description": "Save the transactions of your accounts as a CSV file."
+      }
     }
   },
   "operationDetails": {
@@ -11525,6 +11586,9 @@
         "outgoingTitle": "Outgoing transfer details"
       },
       "amount": "Amount",
+      "unknownToken": "Unknown token",
+      "instrumentId": "Instrument ID",
+      "instrumentAdmin": "Instrument admin",
       "from": "From",
       "to": "To",
       "memo": "Memo",

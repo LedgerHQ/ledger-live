@@ -748,33 +748,111 @@ describe("listOperations", () => {
     expect(result.items[0].tx.hash).toBe("sig2");
   });
 
-  it("should skip transactions where address is not in accountKeys", async () => {
+  describe("a transaction that changes nothing the address holds", () => {
     const blockTime = 1700000000;
-    const OTHER_ADDRESS = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
-    mockGetSignaturesForAddress.mockResolvedValue([
-      { signature: "sig1", slot: 100, blockTime, err: null },
-    ]);
+    const SPAMMER = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
+    const TOKEN_PROGRAM_ID_STR = TOKEN_PROGRAM_ID.toBase58();
 
-    mockGetParsedTransactions.mockResolvedValue([
-      {
-        transaction: {
-          signatures: ["sig1"],
-          message: {
-            accountKeys: [{ pubkey: new PublicKey(OTHER_ADDRESS) }],
-            recentBlockhash: TEST_BLOCKHASH,
-            instructions: [],
+    // A transfer reaching the owner's USDC account only, the owner absent from the account keys:
+    // the shape of a 0-token address-poisoning transfer, or of a failed one.
+    function transferToOwnerAta(amountAfter: string, err: string | object | null = null) {
+      const ata = ataAddressOf(USDC_MINT_FIXTURE);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+        value: [ataFixture(USDC_MINT_FIXTURE)],
+      });
+      mockGetSignaturesForAddress.mockImplementation(async address =>
+        address === ata ? [{ signature: "spam1", slot: 100, blockTime, err }] : [],
+      );
+      const usdcBalance = (amount: string) => ({
+        accountIndex: 1,
+        mint: USDC_MINT_FIXTURE,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount },
+      });
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["spam1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(SPAMMER) }, { pubkey: new PublicKey(ata) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [],
+            },
+          },
+          meta: {
+            fee: 5000,
+            err,
+            preBalances: [1_000_000, 2_039_280],
+            postBalances: [995_000, 2_039_280],
+            preTokenBalances: [usdcBalance("1000")],
+            postTokenBalances: [usdcBalance(amountAfter)],
           },
         },
-        meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
-      },
-    ]);
+      ]);
+    }
 
-    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
-      minHeight: 0,
-      order: "desc",
+    it.each([
+      ["a transfer of 0 tokens", "1000", null],
+      ["a failed transfer", "1000", { InstructionError: [0, "Custom"] }],
+    ])(
+      "records %s as a hidden NONE row, so a caller resuming from its newest row does not fetch it again",
+      async (_, amountAfter, err) => {
+        transferToOwnerAta(amountAfter, err);
+
+        const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+          minHeight: 0,
+          order: "desc",
+        });
+
+        expect(result.items).toEqual([
+          expect.objectContaining({
+            type: "NONE",
+            value: 0n,
+            asset: { type: "native" },
+            senders: [],
+            recipients: [],
+            tx: expect.objectContaining({
+              hash: "spam1",
+              block: expect.objectContaining({ height: 100 }),
+              failed: err !== null,
+            }),
+          }),
+        ]);
+      },
+    );
+
+    it("adds no NONE row next to a real change", async () => {
+      transferToOwnerAta("1500");
+
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(result.items).toEqual([
+        expect.objectContaining({ type: "IN", value: 500n, asset: expect.anything() }),
+      ]);
+      expect(result.items[0].asset.type).not.toBe("native");
     });
 
-    expect(result.items).toHaveLength(0);
+    it("keeps the resume point moving: the next walk from above it fetches nothing", async () => {
+      transferToOwnerAta("1000");
+      const first = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+      const newestHeight = Math.max(...first.items.map(op => op.tx.block.height));
+      mockGetParsedTransactions.mockClear();
+
+      const second = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: newestHeight + 1,
+        order: "desc",
+      });
+
+      expect(second.items).toEqual([]);
+      expect(mockGetParsedTransactions).not.toHaveBeenCalled();
+    });
   });
 
   it("should detect NONE type for non-fee-payer with zero balance delta", async () => {

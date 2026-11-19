@@ -1,5 +1,25 @@
 # @ledgerhq/wallet-cli
 
+## 3.6.0
+
+### Minor Changes
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent swap` takes tickers and ERC-20 contract addresses in `--from` and `--to` as well as currency ids, and fails with the candidates' currency ids when a ticker is ambiguous. It refuses another chain's coin in Ledger's currency list by currency id, ticker or name in any case (`bitcoin`, `BTC`, `Solana`) instead of an ERC-20 token that shares its ticker, unless the `--account` holds a token with that ticker to sell. `USDC` resolves to its ERC-20 token
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent send` and `agent-intent swap` find a ticker in the Crypto Assets List in any case (`steth` finds stETH), and take the token whose mixed-case ticker is spelled as typed over one that matches only in another case, so `mETH` no longer fails as ambiguous with `METH`. An all-lowercase or all-uppercase ticker matches every case, so `METH` fails listing mETH and the token listed as `METH`, and a token listed as `usdc` can't stand in for USD Coin. When the search for other letter cases fails or is cut off, the exact ticker lookups still answer, and stderr says another token may share the ticker
+
+- [#25038](https://github.com/LedgerHQ/ledger-live/pull/25038) [`12c4404`](https://github.com/LedgerHQ/ledger-live/commit/12c44047b07b96aa4d65b6c7e8eafc00b0309abc) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Pin the install commands of the skill copy published to LedgerHQ/agent-skills to its wallet-cli version, and have an agent on a newer wallet-cli follow the skill embedded in that binary
+
+- [#24961](https://github.com/LedgerHQ/ledger-live/pull/24961) [`ff71f51`](https://github.com/LedgerHQ/ledger-live/commit/ff71f516effdd64c3f157de70a096475474815d6) Thanks [@oscarchaix](https://github.com/oscarchaix)! - `agent-intent enroll` warns when the state dir is on temporary storage (`/tmp`, the OS temp dir, `/dev/shm`, `$XDG_RUNTIME_DIR`), where a restart would wipe the agent's profile
+
+- [#22205](https://github.com/LedgerHQ/ledger-live/pull/22205) [`361cdd8`](https://github.com/LedgerHQ/ledger-live/commit/361cdd89dd60ccfac2dd8a470f4f94477e091105) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - feat(wallet-cli): name the USB error when a Ledger cannot be opened, and stop discovery at once
+
+### Patch Changes
+
+- [#24647](https://github.com/LedgerHQ/ledger-live/pull/24647) [`af01e1d`](https://github.com/LedgerHQ/ledger-live/commit/af01e1d6d4b930c8ad6887e93201d38d4f434940) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.93.0
+
+  - Updated `oxlint` to `1.93.0`
+
 ## 3.5.0
 
 ### Minor Changes

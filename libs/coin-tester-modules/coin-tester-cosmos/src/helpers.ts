@@ -8,6 +8,7 @@ import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBridge";
 import { getCoinFrameworkCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/currencyBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { cosmosMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
 import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
@@ -45,7 +46,7 @@ export function genericToCosmosTransaction(gt: GenericTransaction): CosmosTransa
   const base = {
     family: "cosmos" as const,
     amount,
-    memo: gt.memoValue ?? "",
+    ...cosmosMemoPatch(gt.memoValue),
     useAllAmount: gt.useAllAmount ?? false,
     fees: null,
     gas: null,

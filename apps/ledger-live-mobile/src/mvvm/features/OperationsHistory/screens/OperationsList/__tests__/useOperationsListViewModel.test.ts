@@ -232,6 +232,50 @@ describe("useOperationsListViewModel", () => {
     });
   });
 
+  describe("history export", () => {
+    it("offers no export and keeps the options sheet closed when no history option flag is enabled", () => {
+      const { result } = renderHook(() => useOperationsListViewModel());
+
+      expect(result.current.onExport).toBeUndefined();
+      expect(result.current.hasHistoryOptions).toBe(false);
+
+      act(() => result.current.openOptionsSheet());
+
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.isExportOpen).toBe(false);
+    });
+
+    it("opens the options sheet with only the export flag enabled", () => {
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides({ lwmHistoryCsvExport: { enabled: true } }),
+      });
+
+      expect(result.current.isDustFilterFeatureEnabled).toBe(false);
+      expect(result.current.hasHistoryOptions).toBe(true);
+
+      act(() => result.current.openOptionsSheet());
+
+      expect(result.current.isOptionsSheetOpen).toBe(true);
+    });
+
+    it("closes the options sheet, tracks and opens the export, then closes it", () => {
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides({ lwmHistoryCsvExport: { enabled: true } }),
+      });
+
+      act(() => result.current.openOptionsSheet());
+      act(() => result.current.onExport?.());
+
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.isExportOpen).toBe(true);
+      expect(mockedTrack).toHaveBeenCalledWith("ExportAccountOperations");
+
+      act(() => result.current.closeExport());
+
+      expect(result.current.isExportOpen).toBe(false);
+    });
+  });
+
   describe("accountIds scoping", () => {
     it("filters root accounts to those whose tree intersects the given accountIds", () => {
       const ethereum = getCryptoCurrencyById("ethereum");

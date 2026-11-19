@@ -2,12 +2,13 @@ import { isCantonAccount, TransferOfferExpiredError } from "@ledgerhq/coin-canto
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  buildUnitResolver,
+  buildInstrumentResolver,
   byTokenAndDate,
 } from "@ledgerhq/live-common/families/canton/proposalSorting";
-import type {
-  TransferInstructionParams,
-  TransferInstructionType,
+import {
+  useCantonOfferTokens,
+  type TransferInstructionParams,
+  type TransferInstructionType,
 } from "@ledgerhq/live-common/families/canton/react";
 import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
@@ -15,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "~/context/Locale";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -98,7 +100,10 @@ export function usePendingTransferProposalsViewModel({
   performTransferInstruction,
   sync,
 }: Input): PendingTransferProposalsViewModel {
+  const { t } = useTranslation();
   const unit = useAccountUnit(account);
+  const offerTokens = useCantonOfferTokens(parentAccount);
+  const unknownCode = t("canton.pendingTransactions.unknownToken");
   const llmModularDrawer = useFeature("llmModularDrawer");
 
   const [modal, setModal] = useState<Modal>({ isOpen: false, action: "accept", contractId: "" });
@@ -120,7 +125,7 @@ export function usePendingTransferProposalsViewModel({
       const { incoming, outgoing } = processTransferProposals(
         pendingTransferProposals,
         accountXpub,
-        buildUnitResolver(parentAccount),
+        buildInstrumentResolver(parentAccount, unknownCode, offerTokens),
       );
 
       incoming.sort(byTokenAndDate);
@@ -133,7 +138,7 @@ export function usePendingTransferProposalsViewModel({
         outgoingCount: outgoing.length,
         allProposals: [...incoming, ...outgoing],
       };
-    }, [account, accountXpub, parentAccount]);
+    }, [account, accountXpub, parentAccount, unknownCode, offerTokens]);
 
   const selectedProposal = useMemo(
     () => allProposals.find(p => p.contractId === selectedContractId) ?? null,

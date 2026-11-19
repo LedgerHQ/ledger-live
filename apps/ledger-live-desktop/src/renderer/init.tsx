@@ -74,7 +74,6 @@ import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { restorePredictionsState } from "@domain/entity-predictions";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
-import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
@@ -313,9 +312,12 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  const accountData = await getKey("app", "accounts", []);
+  const [accountData, walletData] = await Promise.all([
+    getKey("app", "accounts", []),
+    getKey("app", "wallet"),
+  ]);
   if (accountData) {
-    dispatch(initAccounts(accountData));
+    dispatch(initAccounts(accountData, walletData));
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
@@ -422,7 +424,6 @@ async function init() {
   r(<ReactRoot store={store} language={language} />);
 
   await dispatch(fetchTrustchain());
-  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {

@@ -8,12 +8,10 @@ import {
   NATIVE_FEE_CURRENCY_MARKER,
 } from "@ledgerhq/live-common/families/celo/constants";
 import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
-import { getCeloTransactionFeeCurrency } from "@ledgerhq/live-common/families/celo/network";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
-import { useQuery } from "@tanstack/react-query";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -126,67 +124,51 @@ const OperationDetailsExtra = ({
       return null;
   }
 };
-const resolveFeeTokenFromAdapter = (
-  adapter: string,
-  account: CeloAccount,
-): TokenCurrency | undefined => {
-  const adapterLower = adapter.toLowerCase();
-  const option = FEE_CURRENCY_BY_ADAPTER.get(adapterLower);
-  const contract = option?.contractAddress?.toLowerCase() ?? adapterLower;
-  const tokenAccount = (account.subAccounts ?? []).find(
-    sub => sub.type === "TokenAccount" && sub.token.contractAddress.toLowerCase() === contract,
-  );
-  return tokenAccount?.type === "TokenAccount" ? tokenAccount.token : undefined;
+/**
+ * The contract of the token that paid the fee: `feeAsset`, or the token behind the CIP-64 fee
+ * currency of a pending operation built before `feeAsset` existed.
+ */
+const readFeeTokenContract = (operation: CeloOperation): string | undefined => {
+  const { feeAsset, feeCurrencyAddress } = operation.extra ?? {};
+  if (feeAsset) return feeAsset;
+  if (!feeCurrencyAddress || feeCurrencyAddress === NATIVE_FEE_CURRENCY_MARKER) return undefined;
+  const adapter = feeCurrencyAddress.toLowerCase();
+  return FEE_CURRENCY_BY_ADAPTER.get(adapter)?.contractAddress?.toLowerCase() ?? adapter;
 };
 
+/** The fee currency: CELO (undefined), the fee token, or null while that token is unresolved. */
 const useFeesCurrency = (
   operation: CeloOperation,
   account: CeloAccount,
-): CryptoCurrency | TokenCurrency | undefined => {
-  const storedAddress = operation.extra?.feeCurrencyAddress;
-  // Fall back to an on-chain lookup when the bridge hasn't enriched the op
-  // yet. Skipped when we already have a stored value (including the NATIVE
-  // sentinel) or the op isn't confirmed on chain.
-  const { data: fetchedAddress } = useQuery({
-    queryKey: ["celo.feeCurrency", account.currency.id, operation.hash],
-    queryFn: () => getCeloTransactionFeeCurrency(operation.hash),
-    enabled:
-      !storedAddress &&
-      !!operation.hash &&
-      operation.blockHeight != null &&
-      operation.blockHeight > 0,
-    staleTime: Infinity,
-    // Sync recovers from transient failures via the bridge's own enrichment pass.
-    retry: false,
-  });
-  // NATIVE sentinel: confirmed non-CIP-64, no token to resolve.
-  const raw = storedAddress ?? fetchedAddress ?? undefined;
-  const adapter = raw && raw !== NATIVE_FEE_CURRENCY_MARKER ? raw : undefined;
-  const option = adapter ? FEE_CURRENCY_BY_ADAPTER.get(adapter.toLowerCase()) : undefined;
-  const contract = option?.contractAddress?.toLowerCase() ?? adapter?.toLowerCase() ?? "";
+): CryptoCurrency | TokenCurrency | null | undefined => {
+  const contract = readFeeTokenContract(operation);
+  const tokenAccount = contract
+    ? (account.subAccounts ?? []).find(
+        sub => sub.type === "TokenAccount" && sub.token.contractAddress.toLowerCase() === contract,
+      )
+    : undefined;
+  const tokenFromAccount = tokenAccount?.type === "TokenAccount" ? tokenAccount.token : undefined;
 
-  // CAL fallback for received txs where the user doesn't hold the fee token.
+  // CAL fallback for a fee token the account does not hold, as on a received transaction
   const { data: tokenFromCal } = useFindTokenByAddressInCurrencyQuery(
-    { contract_address: contract, network: account.currency.id },
-    { skip: !contract },
+    { contract_address: contract ?? "", network: account.currency.id },
+    { skip: !contract || !!tokenFromAccount },
   );
 
-  if (!adapter) return undefined;
-  return resolveFeeTokenFromAdapter(adapter, account) ?? tokenFromCal;
+  if (!contract) return undefined;
+  return tokenFromAccount ?? tokenFromCal ?? null;
 };
 
 /**
- * CIP-64 normalizes gas price to 18 decimals via the fee-currency adapter,
- * so `operation.fee` is 10^(18 - magnitude) too large for non-18-dec fee
- * tokens (e.g. USDT/USDC at 6 decimals). Rescale to the token's native units
- * so both `FormattedVal` (unit-based) and `CounterValue` (magnitude-based)
- * render consistently.
+ * The fee of a pending operation built before `feeAsset` existed is in the CIP-64 adapter's
+ * 18-decimal units: rescaled to the token's own units. Every other fee is already in them.
  */
 const getDisplayFee = (
   operation: CeloOperation,
   _account: CeloAccount,
   currency: CryptoCurrency | TokenCurrency,
 ): BigNumber | undefined => {
+  if (operation.extra?.feeAsset || !operation.extra?.feeCurrencyAddress) return undefined;
   if (currency.type !== "TokenCurrency") return undefined;
   const magnitude = currency.units[0]?.magnitude;
   // magnitude >= 18: shift would be <= 1, dividing would inflate not shrink.

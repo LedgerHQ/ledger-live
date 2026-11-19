@@ -1,8 +1,10 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { genOperation } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import Prando from "prando";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Observable, of } from "rxjs";
 import { loadMockAccountForFamily } from "../coin-modules/registry";
 import { genAccount } from "../mock/account";
@@ -115,42 +117,59 @@ export { isInvalidRecipient } from "./validateAddress";
 const subtractOneYear = (date: Date) =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
+const MOCK_SCAN_SIZE = 3;
+
+/** The `index`th account the mock scan finds, the same at every scan; the last one is empty. */
+export async function genScannedMockAccount(
+  currency: CryptoCurrency,
+  index: number,
+): Promise<Account> {
+  const isLast = index === MOCK_SCAN_SIZE - 1;
+  const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${index}`, {
+    operationsSize: isLast ? 0 : 100,
+    currency,
+    subAccountsCount: isLast ? 0 : undefined,
+    bandwidth: !isLast,
+  });
+  account.index = index;
+  account.operations = isLast
+    ? []
+    : account.operations.map(operation => ({
+        ...operation,
+        date: subtractOneYear(operation.date),
+      }));
+  account.used = isLast ? false : account.used;
+
+  if (isLast) {
+    account.spendableBalance = account.balance = new BigNumber(0);
+  }
+
+  const perFamilyOperation = await loadMockAccountForFamily(currency.family);
+  perFamilyOperation?.postScanAccount?.(account, { isEmpty: isLast });
+  account.balanceHistoryCache = generateHistoryFromOperations(account);
+  return account;
+}
+
+/** The account of the mock scan keyed on `key`, its xpub or address. */
+export async function findScannedMockAccount(
+  currency: CryptoCurrency,
+  key: string,
+): Promise<Account | undefined> {
+  const accounts = await Promise.all(
+    Array.from({ length: MOCK_SCAN_SIZE }, (_, index) => genScannedMockAccount(currency, index)),
+  );
+  return accounts.find(account => account.xpub === key || account.freshAddress === key);
+}
+
 export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
   new Observable(o => {
     let unsubscribed = false;
 
     async function job() {
       // TODO offer a way to mock a failure
-      const nbAccountToGen = 3;
-
-      for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
-        const isLast = i === 2;
+      for (let i = 0; i < MOCK_SCAN_SIZE && !unsubscribed; i++) {
         await delay(500);
-        const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
-          operationsSize: isLast ? 0 : 100,
-          currency,
-          subAccountsCount: isLast ? 0 : undefined,
-          bandwidth: !isLast,
-        });
-        account.index = i;
-        account.operations = isLast
-          ? []
-          : account.operations.map(operation => ({
-              ...operation,
-              date: subtractOneYear(operation.date),
-            }));
-        account.used = isLast ? false : account.used;
-
-        if (isLast) {
-          account.spendableBalance = account.balance = new BigNumber(0);
-        }
-
-        const perFamilyOperation = await loadMockAccountForFamily(currency.family);
-        const postScanAccount = perFamilyOperation?.postScanAccount;
-        if (postScanAccount)
-          postScanAccount(account, {
-            isEmpty: isLast,
-          });
+        const account = await genScannedMockAccount(currency, i);
         if (!unsubscribed)
           o.next({
             type: "discovered",
