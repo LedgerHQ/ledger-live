@@ -5,7 +5,9 @@
       "inputs": [
         "default",
         "^default",
-        "{workspaceRoot}/libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json"
+        "{workspaceRoot}/libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json",
+        "{workspaceRoot}/domain/entity/currency-crypto/src/currencies/*.ts",
+        "{workspaceRoot}/e2e/desktop/tests/utils/tagsUtils.ts"
       ]
     }
   }
