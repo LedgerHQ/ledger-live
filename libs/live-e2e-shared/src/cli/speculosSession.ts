@@ -57,9 +57,9 @@ async function start({
   catalog,
   out,
 }: Extract<SpeculosCommand, { action: "start" }>): Promise<void> {
-  const { specs, startSpeculos, stopSpeculos } = await import("../speculos");
-  const { createNanoAppJsonFile, getSpeculosModel } = await import("../speculosAppVersion");
-  const { waitForSpeculosReady } = await import("../speculosCI");
+  const { specs, startSpeculos, stopSpeculos } = await import("../speculos.js");
+  const { createNanoAppJsonFile, getSpeculosModel } = await import("../speculosAppVersion.js");
+  const { waitForSpeculosReady } = await import("../speculosCI.js");
 
   const spec = specs[app];
   if (!spec) throw new Error(`No Speculos spec for "${app}"`);
@@ -90,7 +90,7 @@ async function start({
 }
 
 async function stop({ id }: Extract<SpeculosCommand, { action: "stop" }>): Promise<void> {
-  const { stopSpeculos } = await import("../speculos");
+  const { stopSpeculos } = await import("../speculos.js");
   if (!(await stopSpeculos(id))) throw new Error(`Speculos ${id} was not released`);
   console.log(`Speculos ${id} released`);
 }
