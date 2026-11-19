@@ -187,13 +187,7 @@ function useQuickActions({ currency, accounts, ledgerIds }: QuickActionProps = {
     if (canBeRecovered) {
       list.RECOVER = {
         disabled: isLegacyRebornFlow,
-        route: [
-          NavigatorName.Main,
-          {
-            screen: NavigatorName.MyLedger,
-            params: { screen: ScreenName.MyLedgerChooseDevice },
-          },
-        ],
+        route: [NavigatorName.MyWallet, { screen: ScreenName.MyWallet }],
         icon: IconsLegacy.ShieldCheckMedium,
       };
     }

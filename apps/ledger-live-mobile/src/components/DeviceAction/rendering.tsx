@@ -175,8 +175,8 @@ export function renderRequiresAppInstallation({
             if (onOpenManager) {
               onOpenManager();
             } else {
-              navigation.navigate(NavigatorName.MyLedger, {
-                screen: ScreenName.MyLedgerChooseDevice,
+              navigation.navigate(NavigatorName.MyWallet, {
+                screen: ScreenName.MyWallet,
                 params: { searchQuery: appNamesCSV },
               });
             }
@@ -662,16 +662,13 @@ export function renderError({
           const onPressRetry = () => {
             if (managerAppName && navigation) {
               navigation.navigate(NavigatorName.Base, {
-                screen: NavigatorName.Main,
+                screen: NavigatorName.MyWallet,
                 params: {
-                  screen: NavigatorName.MyLedger,
+                  screen: ScreenName.MyWallet,
                   params: {
-                    screen: ScreenName.MyLedgerChooseDevice,
-                    params: {
-                      tab: MANAGER_TABS.INSTALLED_APPS,
-                      updateModalOpened: true,
-                      device,
-                    },
+                    tab: MANAGER_TABS.INSTALLED_APPS,
+                    updateModalOpened: true,
+                    device,
                   },
                 },
               });
@@ -1130,8 +1127,8 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
     });
   }
 
@@ -1207,8 +1204,8 @@ export const AutoRepair = ({
       },
       complete: () => {
         onDone();
-        navigation.replace(ScreenName.MyLedgerChooseDevice, {});
-        // we re-navigate to the manager to reset the selected device for the action
+        navigation.replace(ScreenName.MyWallet, {});
+        // we re-navigate to My Wallet to reset the selected device for the action
         // if we don't do that, we get an "Invalid Channel" error once the device is back online
         // since the manager still thinks it's connected to a bootloader device and not a normal one
       },

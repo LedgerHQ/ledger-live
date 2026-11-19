@@ -16,7 +16,7 @@ import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import {
   BaseComposite,
@@ -28,6 +28,10 @@ import { useFeature } from "@features/platform-feature-flags";
 import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { selectHasOsUpdates } from "@domain/entity-device-os-update";
 import { isOsUpdateTransportSupported } from "LLM/features/OsUpdate/utils/isOsUpdateTransportSupported";
+import {
+  navigateToMyLedger,
+  resetToMyLedger,
+} from "LLM/features/OsUpdate/utils/myLedgerNavigation";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
   AppWithDependencies,
@@ -61,9 +65,9 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
     if (lastConnectedDevice?.wired && !device.wired) {
-      navigation.replace(ScreenName.MyLedgerChooseDevice, { device: lastConnectedDevice });
+      navigateToMyLedger(baseNavigation, { device: lastConnectedDevice });
     }
-  }, [device.wired, lastConnectedDevice, navigation]);
+  }, [device.wired, lastConnectedDevice, baseNavigation]);
 
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
   const hasOsUpdates = useSelector(selectHasOsUpdates);
@@ -166,21 +170,8 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      const myLedgerState = {
-        routes: [
-          {
-            name: ScreenName.MyLedgerChooseDevice,
-            params: ["start", "completed"].includes(updateState) ? { device } : {},
-          },
-        ],
-      };
-
-      baseNavigation.reset({
-        index: 1,
-        routes: [
-          { name: NavigatorName.Main },
-          { name: NavigatorName.MyLedger, state: myLedgerState },
-        ],
+      resetToMyLedger(baseNavigation, {
+        device: ["start", "completed"].includes(updateState) ? device : undefined,
       });
     },
     [device, baseNavigation],

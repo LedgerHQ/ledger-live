@@ -34,8 +34,8 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
   const navigateToManager = useCallback(() => {
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
     });
   }, [navigation]);
 
