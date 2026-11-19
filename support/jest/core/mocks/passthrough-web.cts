@@ -9,12 +9,8 @@ function resolveAvatarColor(identifier) {
 }
 
 // Closed dialogs render nothing, matching the real Dialog. `height` is forwarded as `data-height`.
-function Dialog({ children, open, height, onOpenChange }) {
-  return React.createElement(
-    DialogOpenContext.Provider,
-    { value: { open, height, onOpenChange } },
-    children,
-  );
+function Dialog({ children, open, height }) {
+  return React.createElement(DialogOpenContext.Provider, { value: { open, height } }, children);
 }
 
 function DialogContent({ children, ...props }) {
@@ -29,13 +25,7 @@ function DialogContent({ children, ...props }) {
 }
 
 // Render the header's back and close buttons so tests can query them by their real Lumen labels.
-// Like Lumen's DialogClose, Close runs `onClose` and then closes the dialog through `onOpenChange`.
 function DialogHeader({ title, description, onBack, onClose }) {
-  const { onOpenChange } = React.useContext(DialogOpenContext) ?? {};
-  const close = () => {
-    onClose?.();
-    onOpenChange?.(false);
-  };
   return React.createElement(
     "div",
     undefined,
@@ -44,7 +34,7 @@ function DialogHeader({ title, description, onBack, onClose }) {
       : React.createElement("button", { type: "button", "aria-label": "Go back", onClick: onBack }),
     title === undefined ? null : React.createElement("h2", undefined, title),
     description === undefined ? null : React.createElement("p", undefined, description),
-    React.createElement("button", { type: "button", "aria-label": "Close", onClick: close }),
+    React.createElement("button", { type: "button", "aria-label": "Close", onClick: onClose }),
   );
 }
 

@@ -30,7 +30,7 @@ export function ConfirmSheet({ status, confirmState, onConfirm, onClose }: Confi
           )}
           data-testid={`freeze-confirm-gradient-${hasFailed ? "error" : "muted"}`}
         />
-        <DialogHeader density="compact" />
+        <DialogHeader density="compact" onClose={handleClose} />
         <DialogBody
           className="flex flex-col items-center gap-32 px-24 pb-24 text-center"
           data-testid="freeze-confirm-sheet-content"
