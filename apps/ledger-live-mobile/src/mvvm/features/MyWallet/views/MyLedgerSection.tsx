@@ -24,7 +24,7 @@ type MyLedgerSectionProps = {
   onPairingStateChanged?: (isPairing: boolean) => void;
 };
 
-function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps) {
+function MyWalletDeviceListLegacy({ onPairingStateChanged }: MyLedgerSectionProps) {
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
@@ -159,14 +159,13 @@ function PostOnboardingRedirect() {
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
   const isDeviceListEnabled = useFeature("lwmMyWalletDeviceList")?.enabled ?? false;
-  if (isDeviceListEnabled) {
-    return <MyWalletDeviceList onAddModeChange={onPairingStateChanged} />;
-  }
-  if (!isFocused) return null;
   return (
     <>
-      <PostOnboardingRedirect />
-      <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />
+      {isFocused && <PostOnboardingRedirect />}
+      {isDeviceListEnabled && <MyWalletDeviceList onAddModeChange={onPairingStateChanged} />}
+      {!isDeviceListEnabled && isFocused && (
+        <MyWalletDeviceListLegacy onPairingStateChanged={onPairingStateChanged} />
+      )}
     </>
   );
 }
