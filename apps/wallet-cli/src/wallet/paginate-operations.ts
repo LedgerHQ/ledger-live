@@ -1,7 +1,4 @@
-// The cursor names the last operation of the previous page, so operations that arrive at the top
-// of the history between two calls do not shift the next page. Operation ids are not unique (an
-// internal operation can repeat its parent's id), so the cursor also counts which occurrence it is,
-// from the top: only a new operation that repeats that id would shift the next page.
+// Ids repeat (internal ops can share their parent's id), so the cursor also stores the occurrence.
 
 export class InvalidOperationsCursorError extends Error {
   constructor() {
