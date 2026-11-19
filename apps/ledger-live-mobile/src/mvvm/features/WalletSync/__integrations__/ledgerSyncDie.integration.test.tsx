@@ -500,8 +500,8 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       const body = screen.getByTestId("wallet-sync-activation-sheet-content-body");
       expect(sheetContent).toHaveStyle({ paddingHorizontal: 0 });
       expect(body).toHaveStyle({ paddingHorizontal: 16 });
-      expect(within(body).queryByTestId("drawer-header")).toBeNull();
-      expect(within(sheetContent).getByTestId("drawer-header")).toBeVisible();
+      expect(within(body).queryByTestId("qr-code-sheet-header")).toBeNull();
+      expect(within(sheetContent).getByTestId("qr-code-sheet-header")).toBeVisible();
     });
 
     it("should grow the show QR code tab's instructions up into the scan tab's frame and caption room", async () => {

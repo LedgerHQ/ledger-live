@@ -6,6 +6,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";
 import DrawerHeader from "../../components/Synchronize/DrawerHeader";
+import { QrCodeSheetHeader } from "../../components/Synchronize/QrCodeSheetHeader";
 import useActivationDrawerModel from "./useActivationDrawerModel";
 import { LedgerSyncBottomSheet } from "./LedgerSyncBottomSheet";
 
@@ -59,7 +60,7 @@ function View({
         <LedgerSyncBottomSheet
           isOpen={isOpen}
           onClose={onCloseDrawer}
-          customHeader={hasCustomHeader ? <DrawerHeader onClose={handleClose} /> : undefined}
+          customHeader={hasCustomHeader ? <QrCodeSheetHeader onClose={handleClose} /> : undefined}
           hasBackButton={canGoBack}
           onBack={goBackToPreviousStep}
           enableContentPanningGesture={!hasScrollableInstructions}
