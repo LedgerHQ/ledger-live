@@ -104,11 +104,20 @@ export function useMyWalletDeviceListViewModel({
             ...result,
             firmwareUpdate: params?.firmwareUpdate,
             searchQuery: params?.searchQuery || params?.installApp,
+            tab: params?.tab,
+            updateModalOpened: params?.updateModalOpened,
           },
         });
       }
     },
-    [navigation, params?.firmwareUpdate, params?.installApp, params?.searchQuery],
+    [
+      navigation,
+      params?.firmwareUpdate,
+      params?.installApp,
+      params?.searchQuery,
+      params?.tab,
+      params?.updateModalOpened,
+    ],
   );
 
   return {
