@@ -8,6 +8,9 @@ export type FilecoinConfig = {
   infra?: {
     API_FILECOIN_ENDPOINT?: string;
   };
+  indexer: {
+    url: string;
+  };
 };
 
 export type FilecoinCoinConfig = CurrencyConfig & FilecoinConfig;
@@ -30,5 +33,6 @@ export const filecoinDefaults = {
     },
     name: "Filecoin",
     unit: { name: "FIL", code: "FIL", magnitude: 18 },
+    indexer: { url: "https://proxyblockscout.api.live.ledger.com/314/api/v2" },
   },
 } satisfies Record<string, FilecoinCoinConfig>;
