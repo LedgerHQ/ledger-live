@@ -109,11 +109,49 @@ describe("transaction paging past the last page (injective)", () => {
   }, 120_000);
 
   it("fetches a real history without tripping the paging guard", async () => {
-    const funded = "inj1k6dn0f8mfgvtxfv0ja8ld6049xkjv3a3nyf2tl";
-    const txs = await injectiveApi["fetchAllTransactions"](funded, "transfer.recipient", 100);
+    // The node keeps ~5 weeks of history, so a hard-coded address eventually reads as empty:
+    // pick a recent MsgSend recipient whose whole history fits in a couple of pages.
+    const MAX_HISTORY = 50;
+    const height = await injectiveApi.getHeight();
+    const { txs: recentSends } = await injectiveApi["fetchTransactions"](
+      new URLSearchParams({
+        query: `tx.height>=${height - 10_000} AND message.action='/cosmos.bank.v1beta1.MsgSend'`,
+        page: "1",
+        limit: "100",
+        order_by: "ORDER_BY_DESC",
+      }),
+    );
+    const recipients = new Set<string>(
+      recentSends.flatMap(tx =>
+        (tx.tx.body.messages as { "@type": string; to_address?: string }[])
+          .filter(msg => msg["@type"] === "/cosmos.bank.v1beta1.MsgSend")
+          .flatMap(msg => (msg.to_address ? [msg.to_address] : [])),
+      ),
+    );
+
+    let funded: { address: string; total: number } | undefined;
+    for (const address of recipients) {
+      const { total } = await injectiveApi["fetchTransactions"](
+        new URLSearchParams({ query: `transfer.recipient='${address}'`, page: "1", limit: "1" }),
+      );
+      if (total >= 2 && total <= MAX_HISTORY) {
+        funded = { address, total };
+        break;
+      }
+    }
+    if (!funded) {
+      throw new Error(`No recent MsgSend recipient with 2..${MAX_HISTORY} txs on injective`);
+    }
+
+    // Two pages, the last one possibly partial: the walk has to stop on `total`, not on a failure.
+    const txs = await injectiveApi["fetchAllTransactions"](
+      funded.address,
+      "transfer.recipient",
+      Math.ceil(funded.total / 2),
+    );
     expect(txs.length).toBeGreaterThan(0);
-    expect(txs.length).toBeGreaterThanOrEqual(1);
-  });
+    expect(txs.length).toBeGreaterThanOrEqual(funded.total);
+  }, 120_000);
 });
 
 describe("Broadcast", () => {
