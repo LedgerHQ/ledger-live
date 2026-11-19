@@ -60,6 +60,7 @@ function buildTransactionInfo(
       time: safeDate(tx.timestamp),
     },
     fees: safeBigInt(tx.fees),
+    feesAsset: { type: "native" },
     feesPayer: senders.length === 1 ? senders[0] : undefined,
     date: safeDate(tx.timestamp),
     failed: false, // Cardano API only returns successful transactions

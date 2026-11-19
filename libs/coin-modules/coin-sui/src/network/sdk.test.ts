@@ -1359,6 +1359,7 @@ describe("conversion methods", () => {
       hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
       failed: false,
       fees: 1009880n,
+      feesAsset: { type: "native" },
       feesPayer: SENDER,
       operations: [
         {

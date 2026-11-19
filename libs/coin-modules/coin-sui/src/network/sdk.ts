@@ -724,6 +724,7 @@ export function transactionToCoinFrameworkOperation(
       date: getOperationDate(transaction),
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
+      feesAsset: { type: "native" },
       ...(feesPayer ? { feesPayer } : {}),
       block: {
         height: blockHeight,
@@ -791,6 +792,7 @@ export function toBlockTransaction(transaction: SuiTransactionResponse): BlockTr
     failed: transaction.effects.status.status !== "success",
     operations: changes.flatMap(change => toBlockOperation(transaction, change, operationFee)),
     fees: BigInt(operationFee.toString()),
+    feesAsset: { type: "native" },
     ...(feesPayer ? { feesPayer } : {}),
   };
 }
