@@ -245,6 +245,14 @@ export type PublicKeyAccountsResponse = Array<{
 }>;
 
 /**
+ * Response of `GET /v0/accCanonicalAddress/{address}`: the address the account
+ * was created with, for any of its addresses (aliases).
+ */
+export interface AccountCanonicalAddressResponse {
+  accountAddress: string;
+}
+
+/**
  * Response from /v2/accBalance/{address}
  * Wallet-proxy returns balance information including CCD balance, PLT balance, and cooldowns
  *

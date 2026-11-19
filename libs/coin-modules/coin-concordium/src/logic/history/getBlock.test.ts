@@ -13,6 +13,10 @@ jest.mock("@ledgerhq/concordium-core", () => ({
   decodeMemoFromCbor: jest.fn(),
 }));
 
+jest.mock("../account/canonicalAddress", () => ({
+  toCanonicalAddresses: jest.fn(),
+}));
+
 const { getBlockInfo: getBlockInfoMock } = jest.requireMock("./getBlockInfo");
 const { getBlockTransactionEvents: getBlockTransactionEventsMock } = jest.requireMock(
   "../../network/proxyClient",
@@ -20,6 +24,15 @@ const { getBlockTransactionEvents: getBlockTransactionEventsMock } = jest.requir
 const { decodeMemoFromCbor: decodeMemoFromCborMock } = jest.requireMock(
   "@ledgerhq/concordium-core",
 );
+const { toCanonicalAddresses: toCanonicalAddressesMock } = jest.requireMock(
+  "../account/canonicalAddress",
+);
+
+/** Resolves each address with `canonical`, or to itself. */
+const resolveWith =
+  (canonical: Record<string, string> = {}) =>
+  async (_config: unknown, _currency: string, addresses: Iterable<string>) =>
+    new Map([...addresses].map(address => [address, canonical[address] ?? address]));
 
 const CURRENCY = "concordium_testnet";
 const config = createFixtureConfig();
@@ -40,6 +53,79 @@ describe("getBlock", () => {
     jest.clearAllMocks();
     getBlockInfoMock.mockResolvedValue(BLOCK_INFO);
     decodeMemoFromCborMock.mockReturnValue("");
+    toCanonicalAddressesMock.mockImplementation(resolveWith());
+  });
+
+  it("names every account by its canonical address, whatever alias the chain reports", async () => {
+    // GIVEN the sender used one alias, received on another, and the recipient used an alias too
+    const SENDER_ALIAS = "sender-alias";
+    const SENDER_OTHER_ALIAS = "sender-other-alias";
+    const RECIPIENT_ALIAS = "recipient-alias";
+    toCanonicalAddressesMock.mockImplementation(
+      resolveWith({
+        [SENDER_ALIAS]: SENDER,
+        [SENDER_OTHER_ALIAS]: SENDER,
+        [RECIPIENT_ALIAS]: RECIPIENT,
+      }),
+    );
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "aa".repeat(32),
+        sender: SENDER_ALIAS,
+        cost: "601",
+        result: {
+          outcome: "success",
+          events: [
+            {
+              tag: "Transferred",
+              amount: "5",
+              from: account(SENDER_ALIAS),
+              to: account(RECIPIENT_ALIAS),
+            },
+            {
+              tag: "Transferred",
+              amount: "7",
+              from: account(SENDER_ALIAS),
+              to: account(SENDER_OTHER_ALIAS),
+            },
+          ],
+        },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000, CURRENCY);
+
+    // THEN each distinct address is resolved, and none of the aliases is left
+    expect(toCanonicalAddressesMock).toHaveBeenCalledWith(
+      config,
+      CURRENCY,
+      expect.arrayContaining([SENDER_ALIAS, SENDER_OTHER_ALIAS, RECIPIENT_ALIAS]),
+    );
+    expect(transactions[0].feesPayer).toBe(SENDER);
+    expect(transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: SENDER,
+        peer: RECIPIENT,
+        asset: { type: "native" },
+        amount: -5n,
+      },
+      { type: "transfer", address: RECIPIENT, peer: SENDER, asset: { type: "native" }, amount: 5n },
+      { type: "transfer", address: SENDER, peer: SENDER, asset: { type: "native" }, amount: -7n },
+      { type: "transfer", address: SENDER, peer: SENDER, asset: { type: "native" }, amount: 7n },
+    ]);
+  });
+
+  it("fails when an address cannot be resolved", async () => {
+    // GIVEN
+    toCanonicalAddressesMock.mockRejectedValue(new Error("API HTTP 404"));
+    getBlockTransactionEventsMock.mockResolvedValue([
+      { hash: "aa".repeat(32), sender: SENDER, cost: "601", result: { outcome: "reject" } },
+    ]);
+
+    // WHEN / THEN: a block with aliases left would lose the operations of the accounts using them
+    await expect(getBlock(config, 1000, CURRENCY)).rejects.toThrow("API HTTP 404");
   });
 
   it("reuses getBlockInfo for info and returns an empty transaction list for an empty block", async () => {

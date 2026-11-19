@@ -4,6 +4,7 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockTransactionEvents } from "../../network/proxyClient";
+import { toCanonicalAddresses } from "../account/canonicalAddress";
 import type {
   BlockTransactionSummary,
   TransactionEvent,
@@ -21,6 +22,10 @@ const NATIVE_ASSET = { type: "native" } as const;
  * Returns a full block (info + transactions) for a given height.
  * `info` reuses the getBlockInfo logic (height → hash → info); transactions come
  * from the per-block events endpoint and are mapped tag-by-tag.
+ *
+ * Events name the alias each party used on chain. Every account address is
+ * replaced by the canonical address of its account, as `listOperations` names
+ * the queried account, so a client tracking an account matches all its aliases.
  */
 export async function getBlock(
   config: ConcordiumCoinConfig,
@@ -29,10 +34,38 @@ export async function getBlock(
 ): Promise<Block> {
   const info = await getBlockInfo(config, height, currencyId);
   const summaries = await getBlockTransactionEvents(config, currencyId, info.hash);
+  const transactions = summaries.map(toBlockTransaction);
+  const canonical = await toCanonicalAddresses(
+    config,
+    currencyId,
+    transactions.flatMap(addressesOf),
+  );
 
   return {
     info,
-    transactions: summaries.map(toBlockTransaction),
+    transactions: transactions.map(tx => withAddresses(tx, canonical)),
+  };
+}
+
+function addressesOf(tx: BlockTransaction): string[] {
+  return [
+    ...(tx.feesPayer ? [tx.feesPayer] : []),
+    ...tx.operations.flatMap(op =>
+      op.type === "transfer" ? [op.address, ...(op.peer ? [op.peer] : [])] : [],
+    ),
+  ];
+}
+
+function withAddresses(tx: BlockTransaction, canonical: Map<string, string>): BlockTransaction {
+  const to = (address: string) => canonical.get(address) ?? address;
+  return {
+    ...tx,
+    ...(tx.feesPayer ? { feesPayer: to(tx.feesPayer) } : {}),
+    operations: tx.operations.map(op =>
+      op.type === "transfer"
+        ? { ...op, address: to(op.address), ...(op.peer ? { peer: to(op.peer) } : {}) }
+        : op,
+    ),
   };
 }
 

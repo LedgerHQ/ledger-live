@@ -18,6 +18,15 @@ function accountBytes(address: string): Uint8Array | undefined {
   }
 }
 
+/**
+ * The bytes naming the account of an address, hex encoded: the same for all its
+ * aliases. Undefined for anything but a valid account address.
+ */
+export function accountKey(address: string): string | undefined {
+  const account = accountBytes(address);
+  return account && Buffer.from(account).toString("hex");
+}
+
 /** Whether two addresses are aliases of one account, as the chain and the wallet proxy decide it. */
 export function isSameAccount(address: string, other: string): boolean {
   if (address === other) return true;

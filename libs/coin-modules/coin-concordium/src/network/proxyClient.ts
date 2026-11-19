@@ -3,6 +3,7 @@ import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/coin-module-framework/promises";
 import type {
   AccountBalanceResponse,
+  AccountCanonicalAddressResponse,
   BlockInfoResponse,
   BlocksAtHeightResponse,
   BlockTransactionEventsResponse,
@@ -220,6 +221,26 @@ export async function getPltTokenInfo(
     client.request<PltTokenInfo>({
       method: "GET",
       url: `/v0/plt/tokenInfo/${encodeURIComponent(tokenId)}`,
+    }),
+  );
+}
+
+/**
+ * Get the canonical address of the account an address (possibly an alias)
+ * refers to, in the last finalized block.
+ * GET /v0/accCanonicalAddress/{address}
+ *
+ * Answers 404 "Account does not exist" for an account not finalized yet.
+ */
+export async function getAccountCanonicalAddress(
+  config: ConcordiumCoinConfig,
+  currencyId: string,
+  accountAddress: string,
+): Promise<AccountCanonicalAddressResponse> {
+  return withClient(config, currencyId, async client =>
+    client.request<AccountCanonicalAddressResponse>({
+      method: "GET",
+      url: `/v0/accCanonicalAddress/${accountAddress}`,
     }),
   );
 }
