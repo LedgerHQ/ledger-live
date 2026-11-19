@@ -521,6 +521,7 @@ const extraProperties = async (store: AppStore) => {
   const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
   const accountDetail = accountDetailFeature?.enabled ?? false;
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
+  const newSettings = analyticsFeatureFlagMethod?.("newSettings")?.enabled ?? false;
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
@@ -584,6 +585,7 @@ const extraProperties = async (store: AppStore) => {
     agentIntent,
     accountDetail,
     accountDetailAnalyticsBanner,
+    newSettings,
     recoverV2,
     ...remoteABTestingAttributes,
   };
