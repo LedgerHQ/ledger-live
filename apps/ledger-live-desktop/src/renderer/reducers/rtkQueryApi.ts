@@ -10,6 +10,7 @@ import {
   cvsService,
   dadaService,
   defineApiServices,
+  earnService,
   portfolioService,
   pushDevicesService,
   swapService,
@@ -22,6 +23,7 @@ import {
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
+import { getEarnApiBaseUrl } from "~/config/earnService";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 // Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
@@ -41,6 +43,7 @@ export const apiServices = defineApiServices([
   coinMarketCapService(() => ({ coinMarketCapApiUrl: getEnv("CMC_API_URL") })),
   cvsService(() => ({ getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API") })),
   dadaService(),
+  earnService(() => ({ earnApiBaseUrl: getEarnApiBaseUrl() })),
   // POC, dev only: empty disables the service.
   portfolioService(() => ({ portfolioServiceUrl: getPortfolioServiceUrl() })),
   pushDevicesService(() => ({ pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL") })),

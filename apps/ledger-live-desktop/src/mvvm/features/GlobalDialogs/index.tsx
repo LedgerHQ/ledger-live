@@ -35,6 +35,9 @@ const PredictionsDialogRoot = lazy(() =>
 const PredictionsSetupRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSetupSheet })),
 );
+const StakePositionDialogRoot = lazy(
+  () => import("LLD/features/StakePosition/StakePositionDialogRoot"),
+);
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(
@@ -92,6 +95,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PredictionsSetupRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <StakePositionDialogRoot />
     </Suspense>
     <ActionConfirmationDialog />
     <ActionMenuDialog />

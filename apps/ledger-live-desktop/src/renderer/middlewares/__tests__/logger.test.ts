@@ -1,5 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
-import { CARD_REDUCER_PATH, PORTFOLIO_REDUCER_PATH } from "@shared/api-services";
+import { CARD_REDUCER_PATH, PORTFOLIO_REDUCER_PATH, earnApi } from "@shared/api-services";
 import logger from "~/renderer/logger";
 import type { State } from "../../reducers";
 import loggerMiddleware from "../logger";
@@ -111,6 +111,29 @@ describe("loggerMiddleware", () => {
     expect(record).not.toContain("portfolioId");
     expect(record).toContain("getBalance");
     expect(record).toContain("400");
+  });
+
+  it("drops the wallet address and the stake accounts of an Earn read before they are logged", () => {
+    const walletAddress = "sentinel-wallet-address";
+    const stakeAccount = "sentinel-stake-account";
+    runMiddleware({
+      type: `${earnApi.reducerPath}/executeQuery/fulfilled`,
+      payload: { positions: [{ id: stakeAccount, ownerAddress: walletAddress }] },
+      meta: {
+        arg: {
+          endpointName: "getEarnPositions",
+          originalArgs: { network: "solana", address: walletAddress },
+          queryCacheKey: `getEarnPositions({"address":"${walletAddress}","network":"solana"})`,
+        },
+        requestId: "request-e",
+      },
+    });
+
+    const record = loggedRecord();
+    expect(record).not.toContain(walletAddress);
+    expect(record).not.toContain(stakeAccount);
+    expect(record).toContain("getEarnPositions");
+    expect(record).toContain("request-e");
   });
 
   it("passes the whole Card action on to the reducers", () => {

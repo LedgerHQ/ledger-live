@@ -6,6 +6,7 @@ import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import StakeBanner from "./StakeBanner";
+import StakePositionDialogContent from "./StakePositionDialogContent";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 import { SolanaFamily } from "./types";
 import operationDetails from "./operationDetails";
@@ -22,6 +23,7 @@ const family: SolanaFamily = {
   AccountDetailBalanceSummary,
   StepSummaryAdditionalRows,
   StakeBanner,
+  StakePositionDialogContent,
   operationDetails,
   sendAmountFields,
   transactionConfirmFields,
