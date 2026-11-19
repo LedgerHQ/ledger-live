@@ -6,15 +6,19 @@ import { getFees } from "../network/getFees";
 import type { VechainCurrencyConfig } from "../config";
 import { decodeVip180Transfer } from "./vip180";
 
+/** Reads the VTHO fee of a transaction; by default one receipt request per log row. */
+export type ReadFees = (transactionId: string) => Promise<BigNumber>;
+
 export const mapVetTransfersToOperations = async (
   config: VechainCurrencyConfig,
   txs: TransferLog[],
   accountId: string,
   addr: string,
+  readFees: ReadFees = id => getFees(config, id),
 ): Promise<Operation[]> => {
   return Promise.all(
     txs.map(async tx => {
-      const fees = await getFees(config, tx.meta.txID);
+      const fees = await readFees(tx.meta.txID);
       return {
         id: encodeOperationId(
           accountId,
@@ -42,12 +46,13 @@ export const mapTokenTransfersToOperations = async (
   events: EventLog[],
   accountId: string,
   addr: string,
+  readFees: ReadFees = id => getFees(config, id),
 ): Promise<Operation[]> => {
   return Promise.all(
     events.map(async event => {
       const { from, to, value } = decodeVip180Transfer(event);
       const type = to === addr.toLowerCase() ? "IN" : "OUT";
-      const fees = await getFees(config, event.meta.txID);
+      const fees = await readFees(event.meta.txID);
       return {
         id: encodeOperationId(accountId, event.meta.txID, type),
         hash: event.meta.txID,
