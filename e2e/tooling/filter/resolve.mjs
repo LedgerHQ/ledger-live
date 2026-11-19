@@ -348,7 +348,8 @@ function matchesFile(filePath, matcher) {
 
 const TEST_CALL = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail))?\s*\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
 const DECLARES_TESTS = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail|describe))?\s*\(/;
-const REPEATS_CODE = /\b(?:for|while)\s*\(|\.(?:forEach|map|flatMap|reduce)\(|\bArray\.from\(/;
+const REPEATS_CODE =
+  /\b(?:for|while)\s*\(|\.\s*(?:forEach|map|flatMap|reduce)\s*\(|\bArray\s*\.\s*from\s*\(/;
 const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*[;,)\n]/;
 // A named function can declare tests and be called more than once.
 const NAMED_FUNCTION =
