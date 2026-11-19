@@ -129,16 +129,17 @@ export interface SavedState {
   termsAccepted: boolean;
 }
 
-/** The accounts and terms the app keeps in its storage: none of either when it dropped the file. */
+/**
+ * The accounts and terms the app keeps in its storage: none of either when it dropped the file.
+ * It loads one account per `accounts.active.*` record (`accounts.sort` only orders them).
+ */
 export function savedState(values: Map<string, Buffer>): SavedState {
-  const read = (key: string): unknown => {
-    const value = values.get(key);
-    return value ? JSON.parse(stringValue(value)) : undefined;
-  };
-  const order = read(ACCOUNT_ORDER_KEY);
-  const settings = read("settings") as { generalTermsVersionAccepted?: unknown } | undefined;
+  const value = values.get("settings");
+  const settings = value
+    ? (JSON.parse(stringValue(value)) as { generalTermsVersionAccepted?: unknown })
+    : undefined;
   return {
-    accounts: Array.isArray(order) ? order.length : 0,
+    accounts: [...values.keys()].filter(key => key.startsWith(ACCOUNT_KEY_PREFIX)).length,
     termsAccepted: settings?.generalTermsVersionAccepted === GENERAL_TERMS_VERSION,
   };
 }

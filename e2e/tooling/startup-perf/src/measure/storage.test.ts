@@ -134,6 +134,14 @@ describe("savedState", () => {
     assert.deepEqual(savedState(decodeStorage(data, meta)), { accounts: 2, termsAccepted: true });
   });
 
+  it("counts the account records the app loads, not the ids of the order", () => {
+    const entries = storageEntries(USERDATA).filter(
+      ([key]) => key !== "accounts.active.js:2:solana:B:",
+    );
+    const { data, meta } = encodeStorage(entries);
+    assert.deepEqual(savedState(decodeStorage(data, meta)), { accounts: 1, termsAccepted: true });
+  });
+
   it("finds neither in the storage of an app that dropped the file", () => {
     const { data, meta } = encodeStorage([
       ["migration-status", "completed"],

@@ -88,7 +88,10 @@ export function createInjector({
   };
 }
 
-/** Fails when the app dropped the storage file: MMKV discards one whose CRC does not match. */
+/**
+ * Fails when the app dropped the storage file (MMKV discards one whose CRC does not match) or any
+ * account of it (one it does not support): A and B must start from the same accounts.
+ */
 async function checkSaved({
   platform: P,
   device,
@@ -103,9 +106,9 @@ async function checkSaved({
   const data = await P.readStorage(device, STORAGE_FILE);
   if (!data) throw new Error(`build ${side} on ${device}: no storage after the first launch`);
   const saved = savedState(decodeStorage(data, await P.readStorage(device, STORAGE_META_FILE)));
-  if (!saved.termsAccepted || (accounts > 0 && saved.accounts === 0)) {
+  if (!saved.termsAccepted || saved.accounts !== accounts) {
     throw new Error(
-      `build ${side} on ${device}: the app did not keep the storage written before its first launch (${saved.accounts} accounts, terms ${saved.termsAccepted ? "" : "not "}accepted)`,
+      `build ${side} on ${device}: after its first launch the app keeps ${saved.accounts} of the ${accounts} accounts written, terms ${saved.termsAccepted ? "" : "not "}accepted`,
     );
   }
   log(`  ${device}: build ${side} keeps ${saved.accounts} of ${accounts} accounts`);
