@@ -14,7 +14,8 @@ describe("createTransaction", () => {
       recipient: "",
       useAllAmount: false,
       networkInfo: null,
-      memo: null,
+      memoType: null,
+      memoValue: null,
     });
   });
 
