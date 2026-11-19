@@ -39,6 +39,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 
 # Platform — features
 /features/                                               @ledgerhq/platform
+/features/platform/persistence/                          @ledgerhq/platform
 
 # Platform — shared
 /shared/                                                 @ledgerhq/platform
