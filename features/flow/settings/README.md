@@ -1,0 +1,33 @@
+# @features/flow-settings
+
+> [!CAUTION]
+> **Status: UNSTABLE**. New package, in active development.
+
+The new Settings of Ledger Wallet mobile and desktop (Settings 4.0), shown behind the `newSettings`
+feature flag. Both apps share the same sections, rows and wording; only the rendering differs. The
+legacy Settings stay in the apps, untouched, until the flag reaches 100%.
+
+The package starts with the rule for hiding rows. The screens come with the next tickets of the
+[Settings 4.0 epic](https://ledgerhq.atlassian.net/browse/LIVE-41813).
+
+## Hiding rows
+
+The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
+use: on that device the app hides `myLedgerProvider` and `mockAppUpdate`.
+
+| Export              | Purpose                                                                  |
+| ------------------- | ------------------------------------------------------------------------ |
+| `SETTING_IDS`       | Closed list of the rows that can be hidden                               |
+| `SettingId`         | One of `SETTING_IDS`                                                     |
+| `isSettingId`       | Tells whether a value is a known row id                                  |
+| `getHiddenSettings` | Turns the list given by the app into the set of rows to hide             |
+
+`getHiddenSettings` never throws: a missing list, a value that is not a list, an unknown id or a
+duplicate is ignored.
+
+A row id is the English label of the row in camelCase, e.g. "My Ledger provider" gives
+`myLedgerProvider`. Add the id to `SETTING_IDS` when a row needs to be hidden.
+
+## Consumers
+
+Ledger Wallet Desktop and Ledger Wallet Mobile.

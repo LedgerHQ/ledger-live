@@ -1,0 +1,43 @@
+{
+  "name": "@features/flow-settings",
+  "version": "0.1.0",
+  "private": true,
+  "description": "New Settings of Ledger Wallet mobile and desktop (Settings 4.0)",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
