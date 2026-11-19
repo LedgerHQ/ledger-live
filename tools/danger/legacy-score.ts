@@ -150,13 +150,26 @@ export function computeLegacyScore(
   };
 }
 
-// Narrowest folder holding every added legacy file, to suggest as an allowlist path
+export function legacyGrowthRows({ areas }: LegacyScoreReport): string {
+  return areas
+    .filter(a => a.area === "legacy" && a.added > a.deleted)
+    .map(a => `\`${a.label}\` +${a.added - a.deleted}`)
+    .join(", ");
+}
+
+// Narrowest folder holding every added file of the growing legacy areas, to suggest as an allowlist path
 export function legacyFolder(
   files: ChangedFile[],
   allowlist: AllowlistEntry[] = [],
 ): string | undefined {
-  const dirs = files
-    .filter(f => f.additions > 0 && classify(f.filename, allowlist)?.area === "legacy")
+  const legacy = files.flatMap(file => {
+    const found = classify(file.filename, allowlist);
+    return found?.area === "legacy" ? [{ ...file, label: found.label }] : [];
+  });
+  const net = new Map<string, number>();
+  for (const f of legacy) net.set(f.label, (net.get(f.label) ?? 0) + f.additions - f.deletions);
+  const dirs = legacy
+    .filter(f => f.additions > 0 && (net.get(f.label) ?? 0) > 0)
     .map(f => f.filename.split("/").slice(0, -1));
   if (!dirs.length) return undefined;
   const common = dirs.reduce((prefix, dir) => {
