@@ -17,7 +17,7 @@ pnpm --silent wallet-cli start earn yields -n ethereum --output json
 - Without `-n`, it lists headline rates only for networks with discovered accounts; `--all` lists every supported network.
 - With `-n ethereum` or `-n solana`, each deposit target ends with `→ --product <id>`; in JSON the value is `vaultId` (Ethereum) or `validator` (Solana). `--limit` caps the number of targets.
 - **Ethereum:** vault ids such as `1_0x7daeba3f217614e409f85d3014d33923a6b03630`.
-- **Solana:** validator vote accounts. The Ledger-operated validators ("Ledger by Figment", "Ledger by Bitwise") are the recommended targets; any other valid vote account also works.
+- **Solana:** validator vote accounts. Ledger operates two of them ("Ledger by Figment", "Ledger by Bitwise"); any other valid vote account works too.
 
 ## Positions and stake accounts
 
