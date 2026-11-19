@@ -545,7 +545,7 @@ jobs:
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${AVD_CACHE_KEY}" >> $GITHUB_OUTPUT
-          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> "$GITHUB_OUTPUT"
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'apps/ledger-live-mobile/scripts/post.mjs', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> "$GITHUB_OUTPUT"
 
       - name: Prepare test filter
         id: test-filter
