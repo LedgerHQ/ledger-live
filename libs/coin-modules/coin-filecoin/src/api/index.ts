@@ -3,6 +3,7 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
+  Block,
   BlockInfo,
   BroadcastConfig,
   CoinModuleImpl,
@@ -18,6 +19,7 @@ import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craf
 import { type FilecoinCoinConfig, type FilecoinContext } from "../config";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
+import { getBlock } from "../logic/history/getBlock";
 import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { lastBlock } from "../logic/history/lastBlock";
 import { listOperations } from "../logic/history/listOperations";
@@ -59,6 +61,9 @@ export function createApi() {
     ): Promise<FeeEstimation> => estimateFees(intent, options?.customFeesParameters),
 
     lastBlock: (_context: FilecoinContext) => lastBlock(),
+
+    getBlock: (context: FilecoinContext, height: number): Promise<Block> =>
+      getBlock(context, height),
 
     getBlockInfo: (context: FilecoinContext, height: number): Promise<BlockInfo> =>
       getBlockInfo(context, height),
