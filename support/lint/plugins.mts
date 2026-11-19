@@ -17,3 +17,8 @@ export const COIN_FAMILIES_PLUGIN = fileURLToPath(
 export const DERIVATION_MIRROR_PLUGIN = fileURLToPath(
   new URL("./src/derivation-mirror.js", import.meta.url),
 );
+
+/** Absolute path of the `storage` oxlint JS plugin, for a config's `jsPlugins`. */
+export const STORAGE_BOUNDARIES_PLUGIN = fileURLToPath(
+  new URL("./src/storage-boundaries.js", import.meta.url),
+);

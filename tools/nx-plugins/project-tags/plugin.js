@@ -52,6 +52,15 @@ function inferTags(projectRoot, packageName) {
 
   if (projectRoot.startsWith("shared/")) {
     tags.add("scope:shared");
+    if (projectRoot === "shared/storage" || projectRoot.startsWith("shared/storage-")) {
+      tags.add("type:storage");
+    } else if (projectRoot === "shared/persistence") {
+      tags.add("type:persistence-records");
+    }
+  }
+
+  if (projectRoot.startsWith("features/platform/persistence-")) {
+    tags.add("type:persistence-records");
   }
 
   if (projectRoot.startsWith("devtools/")) {
