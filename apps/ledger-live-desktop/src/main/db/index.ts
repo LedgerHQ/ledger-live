@@ -184,7 +184,8 @@ async function load(ns: string): Promise<unknown> {
     }
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
-      memoryNamespaces[ns] = {};
+      // A concurrent read of the missing file can end first and already hold a setKey value.
+      memoryNamespaces[ns] ??= {};
       // The debounce or db.flush() writes the new file; saveAndLog logs a failed save.
       save(ns).catch(() => undefined);
     } else {

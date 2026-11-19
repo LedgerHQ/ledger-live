@@ -412,6 +412,25 @@ describe("db flush", () => {
     consoleError.mockRestore();
   });
 
+  it("keeps the value of a setKey when another read of the missing file ends later", async () => {
+    const missingFile = () => Object.assign(new Error("missing"), { code: "ENOENT" });
+    let endSecondRead: (() => void) | undefined;
+    readFileMock
+      .mockRejectedValueOnce(missingFile())
+      .mockImplementationOnce(
+        () => new Promise<Buffer>((_, reject) => (endSecondRead = () => reject(missingFile()))),
+      );
+
+    const settingSettings = db.setKey("app", "settings", { theme: "dark" });
+    const settingAccounts = db.setKey("app", "accounts", []);
+    await settingSettings;
+    endSecondRead?.();
+    await settingAccounts;
+    await db.flush();
+
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" }, accounts: [] });
+  });
+
   it("logs a failed save once for all the setKey calls it holds", async () => {
     const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
     writeFileMock.mockRejectedValueOnce(new Error("disk full"));
