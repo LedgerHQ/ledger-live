@@ -14,6 +14,7 @@ import { toAccountBalanceHistory } from "./balanceHistory";
 import { toAccountOperations } from "./operations";
 import { toAccountStatus } from "./accountStatus";
 import { toAssetStatus } from "./assetStatus";
+import { syncDetached } from "./syncDetached";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -34,7 +35,7 @@ export type FullSyncSource = AccountDataSource & {
 const notFound = (accountUUID: AccountUUID) =>
   new FullSyncAccountNotFoundError(`No legacy account in the store for ${accountUUID}`);
 
-/** Every kind from one `AccountBridge.sync()`, the one the background sync runs: the legacy path. */
+/** Every kind from one `AccountBridge.sync()`, the one the background sync runs: the legacy path. `accountStatus` also answers for accounts the store does not hold (discovery candidates). */
 export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
   const sync = async ({ accountUUID }: AccountTarget): Promise<Account> => {
     const account = host.findAccount(accountUUID);
@@ -53,6 +54,19 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     return synced;
   };
 
+  // A discovery candidate the store does not hold yet gets one sync kept out of the store.
+  const syncHeldOrDetached = (target: AccountTarget): Promise<Account> =>
+    host.findAccount(target.accountUUID)
+      ? sync(target)
+      : syncDetached(
+          target.descriptor,
+          {
+            prepareCurrency: host.prepareCurrency,
+            blacklistedTokenIds: host.blacklistedTokenIds?.() ?? [],
+          },
+          target.signal,
+        );
+
   return {
     id: AccountDataSourceIdSchema.parse("full-sync"),
     concurrency: getEnv("SYNC_MAX_CONCURRENT"),
@@ -65,7 +79,7 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
       balanceHistory: (target, query) =>
         sync(target).then(account => toAccountBalanceHistory(account, query)),
       receive: target => sync(target).then(toAccountReceive),
-      accountStatus: target => sync(target).then(toAccountStatus),
+      accountStatus: target => syncHeldOrDetached(target).then(toAccountStatus),
       assetStatus: (target, query) => toAssetStatus(target, query, sync),
     },
     sync,
