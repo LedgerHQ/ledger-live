@@ -209,10 +209,17 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
   debouncedSetKey(value);
 };
 
+let lastFlush: Promise<void> = Promise.resolve();
+
 /**
  * Send the debounced `setKey` calls to main now, and wait until main has them.
+ * A flush starts when the previous one ends, so it also waits for the writes of that flush.
  */
-export const flushPendingWrites = (): Promise<void> => flushInRounds(flushDebouncedSetKeys);
+export const flushPendingWrites = (): Promise<void> => {
+  const flush = lastFlush.then(() => flushInRounds(flushDebouncedSetKeys));
+  lastFlush = flush.catch(() => undefined);
+  return flush;
+};
 
 async function flushDebouncedSetKeys(): Promise<boolean> {
   const toFlush = Array.from(debouncedSinceLastFlush);
