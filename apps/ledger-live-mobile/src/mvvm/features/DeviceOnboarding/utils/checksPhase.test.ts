@@ -1,7 +1,4 @@
 import {
-  asChecksState,
-  isFirmwareCheckFailed,
-  isFirmwareUpdateDelegated,
   toChecksError,
   toChecksScreenState,
   toFirmwareUpdate,
@@ -106,13 +103,6 @@ describe("toFirmwareUpdate", () => {
 });
 
 describe("the firmware update held back until setup", () => {
-  it("should show each post-setup firmware state as its pre-setup one", () => {
-    expect(asChecksState("postSetupFirmware.firmwareCheck")).toBe("checks.firmwareCheck");
-    expect(asChecksState("checks.firmwareCheck")).toBe("checks.firmwareCheck");
-    expect(asChecksState("deviceSetup.pin")).toBe("deviceSetup.pin");
-    expect(asChecksState(null)).toBeNull();
-  });
-
   it.each([
     ["postSetupFirmware.firmwareCheck", "checking"],
     ["postSetupFirmware.firmwareCheckFailed", "checking"],
@@ -120,18 +110,5 @@ describe("the firmware update held back until setup", () => {
     ["postSetupFirmware.firmwareUpdateDelegated", "checking"],
   ])("should show %s as %s", (machineState, expected) => {
     expect(toChecksScreenState(machineState, false, false)).toBe(expected);
-  });
-
-  it("should recognise the update handover before and after setup", () => {
-    expect(isFirmwareUpdateDelegated("checks.firmwareUpdateDelegated")).toBe(true);
-    expect(isFirmwareUpdateDelegated("postSetupFirmware.firmwareUpdateDelegated")).toBe(true);
-    expect(isFirmwareUpdateDelegated("postSetupFirmware.firmwareUpdateOffered")).toBe(false);
-  });
-
-  it("should find a failed firmware check before and after setup", () => {
-    expect(isFirmwareCheckFailed("postSetupFirmware.firmwareCheckFailed")).toBe(true);
-    expect(isFirmwareCheckFailed("checks.firmwareCheckFailed")).toBe(true);
-    expect(isFirmwareCheckFailed("checks.genuineFailed")).toBe(false);
-    expect(isFirmwareCheckFailed(null)).toBe(false);
   });
 });

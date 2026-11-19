@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
+import {
+  isFirmwareUpdateDelegated,
+  type HostOnboardingEvent,
+} from "@features/platform-device-onboarding";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
-import { isFirmwareUpdateDelegated } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;

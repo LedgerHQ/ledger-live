@@ -127,6 +127,9 @@ The session stays open after the exit, so the app can keep using it.
 - `firmwareRules.ts` — the pure decisions the transitions ask from model, firmware and seeded state:
   which devices leave for the legacy flow (`requiresLegacyFlow`) and which hold their firmware
   update until they are seeded (`updateWaitsForSeed`)
+- `postSetupFirmware.ts` — how the machine and the apps read that held-back update: its states
+  (`asChecksState`, `isFirmwareCheckFailed`, `isFirmwareUpdateDelegated`) and when leaving finishes
+  the setup instead of quitting it (`isHeldBackUpdatePending`, `finishesSetupOnQuit`)
 - `internals/` — what only the package uses: the machine's actions, `isTouchscreen` and
   `firmwareSettled`. The barrel never re-exports it
 - `host/` — what the apps and the devtool use around the machine: the session events

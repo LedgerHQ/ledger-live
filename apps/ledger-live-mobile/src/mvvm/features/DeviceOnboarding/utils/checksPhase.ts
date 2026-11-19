@@ -1,3 +1,4 @@
+import { asChecksState, isFirmwareCheckFailed } from "@features/platform-device-onboarding";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
 
 const genuineErrorKinds = {
@@ -10,24 +11,6 @@ const genuineErrorKinds = {
 export function toGenuineError(kind: string | null): { kind: GenuineErrorKind } | null {
   if (!kind || !(kind in genuineErrorKinds)) return null;
   return { kind: genuineErrorKinds[kind as keyof typeof genuineErrorKinds] };
-}
-
-const postSetupFirmwarePrefix = "postSetupFirmware.";
-
-export const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
-
-/** The firmware check a Nano held back until it was seeded shows as the pre-setup one. */
-export function asChecksState(machineState: string | null): string | null {
-  if (!machineState?.startsWith(postSetupFirmwarePrefix)) return machineState;
-  return `checks.${machineState.slice(postSetupFirmwarePrefix.length)}`;
-}
-
-export function isFirmwareCheckFailed(machineState: string | null): boolean {
-  return asChecksState(machineState) === "checks.firmwareCheckFailed";
-}
-
-export function isFirmwareUpdateDelegated(machineState: string | null): boolean {
-  return asChecksState(machineState) === firmwareUpdateDelegatedState;
 }
 
 export function toChecksError(

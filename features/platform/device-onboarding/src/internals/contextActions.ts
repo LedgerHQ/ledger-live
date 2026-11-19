@@ -55,7 +55,9 @@ function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | n
   return isRecoveryKeyBackupInProgress(status);
 }
 
-export function currentVerdict(context: DeviceOnboardingContext): GenuineVerdict | null {
+export function currentVerdict(
+  context: Pick<DeviceOnboardingContext, "sessionId" | "genuineVerdict">,
+): GenuineVerdict | null {
   const { genuineVerdict } = context;
 
   if (genuineVerdict === null || genuineVerdict.sessionId !== context.sessionId) {

@@ -17,6 +17,7 @@ import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { isTouchscreen } from "./internals/deviceModel";
 import { firmwareSettled } from "./internals/firmwareCheckState";
 import { requiresLegacyFlow, updateWaitsForSeed } from "./firmwareRules";
+import { finishesSetupOnQuit } from "./postSetupFirmware";
 import {
   isOnRecoveryKeyScreen,
   isRecoveryKeyBackupFinished,
@@ -66,8 +67,8 @@ const firmwareUpdateDelegated = {
  * Once the device is seeded and attested on this session, leaving skips only the held-back update,
  * and the success screen shows.
  */
-const finishSetupOnQuit = {
-  guard: and(["setupDoneWithUpdatePending", "sessionAttested"]),
+const quitEndsSetup = {
+  guard: "finishesSetupOnQuit",
   target: "#deviceOnboarding.setupExit",
   actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
 } as const;
@@ -141,7 +142,7 @@ export const deviceOnboardingMachine = setup({
       }),
     sessionAttested: ({ context }) => currentVerdict(context)?.isGenuine === true,
     // A firmware check already run on the seeded device, after a reconnection, answered it.
-    setupDoneWithUpdatePending: ({ context }) => context.updateAfterSetup && context.isOnboarded,
+    finishesSetupOnQuit: ({ context }) => finishesSetupOnQuit(context),
     updateDeferred: ({ context }) =>
       context.updateAfterSetup &&
       (context.firmware === null || context.firmware.kind === "deferred"),
@@ -197,7 +198,7 @@ export const deviceOnboardingMachine = setup({
   on: {
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
-    QUIT: [finishSetupOnQuit, { target: ".quitting" }],
+    QUIT: [quitEndsSetup, { target: ".quitting" }],
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
     // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.
@@ -562,7 +563,7 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
-        QUIT: [finishSetupOnQuit, { target: "#deviceOnboarding.exitOnboarding" }],
+        QUIT: [quitEndsSetup, { target: "#deviceOnboarding.exitOnboarding" }],
       },
     },
     awaitingSessionAfterFirmwareUpdate: {

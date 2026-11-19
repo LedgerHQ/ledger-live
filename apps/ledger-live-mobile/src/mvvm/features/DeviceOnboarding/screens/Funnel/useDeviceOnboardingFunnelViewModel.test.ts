@@ -365,6 +365,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     return {
       context: {
         updateAfterSetup,
+        isOnboarded: true,
         sessionId: "session",
         genuineVerdict: { sessionId: "session", isGenuine },
       },

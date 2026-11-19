@@ -15,6 +15,10 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
 import {
   deviceReportsRecoveryKey,
+  finishesSetupOnQuit,
+  isFirmwareCheckFailed,
+  isFirmwareUpdateDelegated,
+  isHeldBackUpdatePending,
   SeedPath,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
@@ -55,12 +59,7 @@ import type { RecoverRestoreScreenProps } from "LLM/features/DeviceOnboarding/sc
 import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
-import {
-  isFirmwareCheckFailed,
-  isFirmwareUpdateDelegated,
-  toChecksError,
-  toFirmwareUpdate,
-} from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import {
   canRetryWithoutUser,
   giveUpAfterPowerOnMs,
@@ -73,7 +72,6 @@ import {
   toDeviceUnlockSheetProps,
 } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
-import { isCurrentSessionGenuine } from "LLM/features/DeviceOnboarding/utils/genuineSession";
 import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
 
 /** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
@@ -714,9 +712,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
-  const heldBackUpdatePending = updateAfterSetup && onboarding.context?.isOnboarded === true;
-  // Leaving then ends the setup instead of losing it, as the machine does on QUIT.
-  const setupDone = heldBackUpdatePending && isCurrentSessionGenuine(onboarding.snapshot?.context);
+  const machineContext = onboarding.snapshot?.context;
+  const heldBackUpdatePending = machineContext ? isHeldBackUpdatePending(machineContext) : false;
+  const setupDone = machineContext ? finishesSetupOnQuit(machineContext) : false;
   const confirmsQuit =
     (unseeded && !setupDone) ||
     (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));

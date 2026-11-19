@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   createSessionEventsActor,
+  isFirmwareUpdateDelegated,
   stateValueToString,
   useDeviceOnboardingActor,
   type DeviceOnboardingActorSession,
@@ -16,7 +17,7 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import { isFirmwareUpdateDelegated, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 
 type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
 
