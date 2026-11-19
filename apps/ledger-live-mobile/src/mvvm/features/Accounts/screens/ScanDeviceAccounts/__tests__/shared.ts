@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Observable, EMPTY } from "rxjs";
 import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -13,6 +14,8 @@ type Mocks = {
   makeDiscoveredEvent: (account: Account) => ScanAccountEvent;
   resetSpies: () => void;
   getCurrentCurrency: () => Account["currency"];
+  /** An unused, empty account of the route currency, by default. */
+  createAccount: (overrides?: Partial<Account>) => Account;
 };
 
 let routeParams: Record<string, unknown> = {
@@ -100,6 +103,37 @@ export const setupScanDeviceTests = (): Mocks => {
 
   const getCurrentCurrency = () => routeParams.currency as Account["currency"];
 
+  const createAccount = (overrides?: Partial<Account>): Account => {
+    const balance = overrides?.balance ?? new BigNumber(0);
+    return {
+      type: "Account",
+      id: "js:eth:0:eth",
+      seedIdentifier: "seed",
+      derivationMode: "",
+      index: 0,
+      freshAddress: "0xabc",
+      freshAddressPath: "44/60",
+      used: false,
+      balance,
+      spendableBalance: balance,
+      creationDate: new Date(),
+      blockHeight: 0,
+      currency: getCurrentCurrency(),
+      operationsCount: 0,
+      operations: [],
+      pendingOperations: [],
+      lastSyncDate: new Date(),
+      balanceHistoryCache: {
+        HOUR: { latestDate: null, balances: [] },
+        DAY: { latestDate: null, balances: [] },
+        WEEK: { latestDate: null, balances: [] },
+      },
+      swapHistory: [],
+      subAccounts: [],
+      ...overrides,
+    };
+  };
+
   const resetSpies = () => {
     replace.mockClear();
     navigate.mockClear();
@@ -117,5 +151,6 @@ export const setupScanDeviceTests = (): Mocks => {
     makeDiscoveredEvent,
     resetSpies,
     getCurrentCurrency,
+    createAccount,
   };
 };

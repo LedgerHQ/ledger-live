@@ -7,7 +7,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";
-import { resetRumOperationsForTests } from "LLM/utils/rumOperation";
+import { setOperationSink } from "@shared/observability-operations";
+import { datadogOperationSink } from "~/datadogOperationSink";
 import { setupScanDeviceTests } from "./shared";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
 
@@ -81,7 +82,7 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     mockTrack.mockClear();
     jest.mocked(DdRum.succeedFeatureOperation).mockClear();
     jest.mocked(DdRum.failFeatureOperation).mockClear();
-    resetRumOperationsForTests();
+    setOperationSink(datadogOperationSink);
     setRouteParams("aleo");
     setScanObservable(EMPTY);
   });
@@ -228,6 +229,32 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
       analyticsMetadata.ScanDeviceAccounts.onBack.payload,
     );
     expect(mockTrack.mock.invocationCallOrder[0]).toBeLessThan(
+      mockOnScanDeviceAccountsBack.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("fails the add_account RUM operation as abandoned by a back before delegating to the custom flow handler", async () => {
+    const { result, unmount } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scanDeviceAccountsBack).toBeInstanceOf(Function));
+    result.current.scanDeviceAccountsBack?.();
+    unmount();
+
+    const failFeatureOperation = jest.mocked(DdRum.failFeatureOperation);
+    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(failFeatureOperation).toHaveBeenCalledWith(
+      "add_account",
+      null,
+      "ABANDONED",
+      expect.objectContaining({ trigger: "back" }),
+    );
+    expect(failFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
       mockOnScanDeviceAccountsBack.mock.invocationCallOrder[0],
     );
   });

@@ -1,93 +1,52 @@
+import React from "react";
 import { setupScanDeviceTests } from "./shared";
+import { setSyncScanObservable } from "./syncBridgeHooks";
 import BigNumber from "bignumber.js";
-import { Observable, of } from "rxjs";
+import { of } from "rxjs";
 import { DdRum } from "@datadog/mobile-react-native";
-import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
-import {
-  isRumOperationActive,
-  resetRumOperationsForTests,
-  RumOperation,
-} from "LLM/utils/rumOperation";
+import { isOperationActive, setOperationSink } from "@shared/observability-operations";
+import { ADD_ACCOUNT_OPERATION } from "LLM/features/Accounts/constants";
+import { datadogOperationSink } from "~/datadogOperationSink";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
 
 jest.mock("@datadog/mobile-react-native", () => require("@tests/mocks/datadogMobileReactNative"));
 jest.mock("~/datadog", () => ({ isDatadogRecording: () => true }));
 
-// Synchronous bridge hooks, as in ScanDeviceAccountsCallbacks.test. The currency bridge is a new
-// object on each render, so every render re-runs the scan effect: the operation must not follow it.
-jest.mock("@ledgerhq/live-common/bridge/useCurrencyBridge", () => {
-  const state: { obs: unknown } = { obs: require("rxjs").EMPTY };
-  return {
-    __esModule: true,
-    useCurrencyBridge: () => ({
-      scanAccounts: () => state.obs,
-      preload: () => Promise.resolve(undefined),
-      hydrate: () => {},
-    }),
-    __setScanObservable: (obs: unknown) => {
-      state.obs = obs;
-    },
-  };
-});
-
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  __esModule: true,
-  useAccountBridgeOrNull: () => ({ isAccountEmpty: () => false }),
-}));
-
-const { __setScanObservable } = jest.requireMock(
+// Synchronous bridge hooks. The currency bridge is a new object on each render, so every render
+// re-runs the scan effect: the operation must not follow it.
+jest.mock(
   "@ledgerhq/live-common/bridge/useCurrencyBridge",
-) as { __setScanObservable: (obs: unknown) => void };
+  () => require("./syncBridgeHooks").currencyBridgeHook,
+);
+jest.mock(
+  "@ledgerhq/live-common/bridge/useAccountBridge",
+  () => require("./syncBridgeHooks").accountBridgeHook,
+);
 
 const {
   replace,
   navigate,
+  goBack,
   pop,
   setRouteParams,
   makeDiscoveredEvent,
   resetSpies,
-  getCurrentCurrency,
+  createAccount: createEmptyAccount,
 } = setupScanDeviceTests();
 
-const setScanObservable = (obs: Observable<ScanAccountEvent>) => __setScanObservable(obs);
+const setScanObservable = setSyncScanObservable;
 
 const startFeatureOperation = jest.mocked(DdRum.startFeatureOperation);
 const succeedFeatureOperation = jest.mocked(DdRum.succeedFeatureOperation);
 const failFeatureOperation = jest.mocked(DdRum.failFeatureOperation);
 
-const createAccount = (overrides?: Partial<Account>): Account => {
-  const balance = overrides?.balance ?? new BigNumber(1000);
-  return {
-    type: "Account",
-    id: overrides?.id ?? "js:eth:0:eth",
-    seedIdentifier: "seed",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "0xabc",
-    freshAddressPath: "44/60",
-    used: overrides?.used ?? true,
-    balance,
-    spendableBalance: balance,
-    creationDate: new Date(),
-    blockHeight: 0,
-    currency: getCurrentCurrency(),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    subAccounts: [],
-    ...overrides,
-  };
-};
+/** A funded account, importable as soon as the scan finds it. */
+const createAccount = (overrides?: Partial<Account>) =>
+  createEmptyAccount({ balance: new BigNumber(1000), used: true, ...overrides });
 
 // Stable references: fresh arrays on each render would restart the scan subscription.
 const NO_EXISTING_ACCOUNTS: Account[] = [];
@@ -110,7 +69,7 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetSpies();
-    resetRumOperationsForTests();
+    setOperationSink(datadogOperationSink);
     (prepareCurrency as jest.Mock).mockResolvedValue(undefined);
     setRouteParams("ethereum", "device-1", { context: "addAccounts" });
     setScanObservable(of(makeDiscoveredEvent(createAccount())));
@@ -210,7 +169,7 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
 
     expect(startFeatureOperation).toHaveBeenCalledTimes(2);
     expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ attempt: 2 });
-    expect(isRumOperationActive(RumOperation.AddAccount)).toBe(true);
+    expect(isOperationActive(ADD_ACCOUNT_OPERATION)).toBe(true);
   });
 
   it("should keep the active operation when the scan restarts without an error", async () => {
@@ -234,7 +193,81 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
     await waitFor(() => expect(result.current.scanning).toBe(false));
 
     expect(startFeatureOperation).toHaveBeenCalledTimes(1);
-    expect(isRumOperationActive(RumOperation.AddAccount)).toBe(false);
+    expect(isOperationActive(ADD_ACCOUNT_OPERATION)).toBe(false);
+  });
+
+  it("should not start a new operation when the start attributes change after the operation ended", async () => {
+    const { result, rerender } = renderScan();
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+    act(() => result.current.quitFlow());
+
+    setRouteParams("ethereum", "device-1", { context: "receiveFunds" });
+    rerender({});
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(startFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(isOperationActive(ADD_ACCOUNT_OPERATION)).toBe(false);
+  });
+
+  it("should restart the attempt count at 1 when an inline retry goes back to device selection", async () => {
+    // Known limitation: the count belongs to the screen, and an inline retry remounts it.
+    setRouteParams("ethereum", "device-1", { inline: true });
+    (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
+
+    // Device selection then opens the scan screen again: a new instance of the view model.
+    let screenInstance = 0;
+    const ScreenInstance = ({ children }: { children?: React.ReactNode }) =>
+      React.createElement(React.Fragment, { key: screenInstance }, children);
+
+    const { result, rerender } = renderHook(
+      () =>
+        useScanDeviceAccountsViewModel({
+          existingAccounts: NO_EXISTING_ACCOUNTS,
+          blacklistedTokenIds: NO_BLACKLISTED_TOKENS,
+          analyticsMetadata: {},
+        }),
+      { innerWrapper: ScreenInstance },
+    );
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+    act(() => result.current.handleRetry());
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(startFeatureOperation).toHaveBeenCalledTimes(1);
+
+    screenInstance = 1;
+    rerender({});
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(startFeatureOperation).toHaveBeenCalledTimes(2);
+    expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ inline: true, attempt: 1 });
+    // Only the scan error: the failed operation is not abandoned again on unmount.
+    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(failFeatureOperation.mock.calls[0][2]).toBe("ERROR");
+  });
+
+  it("should succeed as a Canton onboarding hand-off before replacing the screen", async () => {
+    setRouteParams("canton_network");
+    const cantonAccount = {
+      ...createAccount({ id: "js:2:canton_network:party" }),
+      cantonResources: { isOnboarded: false },
+    } as Account;
+    setScanObservable(of(makeDiscoveredEvent(cantonAccount)));
+
+    const { result, unmount } = renderScan();
+    await waitFor(() => expect(result.current.selectedIds).toEqual([cantonAccount.id]));
+    act(() => result.current.importAccounts());
+    unmount();
+
+    expect(replace).toHaveBeenCalledWith(ScreenName.CantonOnboardAccount, expect.anything());
+    expect(succeedFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(lastCallAttributes(succeedFeatureOperation)).toMatchObject({
+      currency_id: "canton_network",
+      handoff: "canton_onboarding",
+      accounts_selected: 1,
+    });
+    expect(succeedFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
+      replace.mock.invocationCallOrder[0],
+    );
+    expect(failFeatureOperation).not.toHaveBeenCalled();
   });
 
   it("should fail with OTHER when the user quits with nothing to add", async () => {
