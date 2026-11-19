@@ -162,9 +162,9 @@ and its flag are unchanged.
 
 A kill-switch going off only drops the attempts of its own product. A webview attempt (`dapp` or
 `borrow`) is keyed by platform and manifest, not by product or path, so the products only touch
-each other's attempts on a manifest both claim, which Earn owns. There the Borrow screen drops Earn's pending attempt when it
-mounts, and closes it as `failure/abandoned` when it goes away. That abandon follows the attempt
-and posts to Earn's sink, never to Borrow's.
+each other's attempts on a manifest both claim, which Earn owns. There the Borrow screen leaves
+Earn's pending attempt untouched: mounting does not drop it and teardown does not abandon it, since
+both only act on an attempt Borrow opened. Earn's own terminal or teardown closes it, on Earn's sink.
 
 One known gap: the host gets no event when signing completes, only the broadcast outcome. On
 desktop the sign modal lives outside the Borrow route, so a user who leaves Borrow after signing
