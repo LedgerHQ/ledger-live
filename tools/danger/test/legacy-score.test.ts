@@ -8,6 +8,7 @@ import {
   computeLegacyScore,
   formatReport,
   legacyFolder,
+  legacyGrowthRows,
   parseAllowlist,
   scoreEmoji,
   type AllowlistEntry,
@@ -287,11 +288,29 @@ describe("legacyFolder", () => {
     assert.equal(legacyFolder(files), "libs/ledger-live-common/src/exchange/");
   });
 
+  it("ignores legacy areas that shrank", () => {
+    const files = [
+      { filename: "libs/a/src/x/a.ts", additions: 300, deletions: 0 },
+      { filename: "libs/b/src/b.ts", additions: 100, deletions: 200 },
+    ];
+    assert.equal(legacyFolder(files), "libs/a/src/x/");
+  });
+
   it("has no suggestion without added legacy files", () => {
     assert.equal(
       legacyFolder([{ filename: "features/flow/a/src/a.ts", additions: 5, deletions: 0 }]),
       undefined,
     );
+  });
+});
+
+describe("legacyGrowthRows", () => {
+  it("lists only the legacy areas that grew, by their net growth", () => {
+    const report = computeLegacyScore([
+      { filename: "libs/A/src/a.ts", additions: 300, deletions: 0 },
+      { filename: "libs/B/src/b.ts", additions: 100, deletions: 200 },
+    ]);
+    assert.equal(legacyGrowthRows(report), "`libs/A` +300");
   });
 });
 

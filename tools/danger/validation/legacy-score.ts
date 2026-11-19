@@ -3,6 +3,7 @@ import {
   formatReport,
   GREEN_ABOVE,
   legacyFolder,
+  legacyGrowthRows,
   MIN_LINES,
   parseAllowlist,
   RED_BELOW,
@@ -65,13 +66,9 @@ async function validateLegacyScore() {
     if (quiet && !touchesAllowlist) return;
 
     if (!quiet && report.score < RED_BELOW) {
-      const legacyRows = report.areas
-        .filter(a => a.area === "legacy" && a.added > 0)
-        .map(a => `\`${a.label}\` +${a.added}`)
-        .join(", ");
       const path = legacyFolder(files, allowlist) ?? "<folder>/";
       fail(
-        `Only ${Math.floor(report.score * 100)}% of the new code lands in the new architecture layers. Legacy growth: ${legacyRows}. Move it out of \`libs/\` and app feature folders into \`shared/\`, \`domain/\` or \`features/\`. If the legacy code is intended, add an entry to \`${ALLOWLIST_FILE}\`, which \`@ledgerhq/platform\` owns and reviews, with the narrowest path that fits: \`{ "path": "${path}", "reason": "", "target": "features/...", "ticket": "LIVE-" }\`. See the details below.`,
+        `Only ${Math.floor(report.score * 100)}% of the new code lands in the new architecture layers. Legacy growth: ${legacyGrowthRows(report)}. Move it out of \`libs/\` and app feature folders into \`shared/\`, \`domain/\` or \`features/\`. If the legacy code is intended, add an entry to \`${ALLOWLIST_FILE}\`, which \`@ledgerhq/platform\` owns and reviews, with the narrowest path that fits: \`{ "path": "${path}", "reason": "", "target": "features/...", "ticket": "LIVE-" }\`. See the details below.`,
       );
     }
     markdown(formatReport(report));
