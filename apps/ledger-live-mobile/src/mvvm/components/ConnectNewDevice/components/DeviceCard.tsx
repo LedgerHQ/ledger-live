@@ -18,7 +18,7 @@ type DeviceCardProps = {
 };
 
 export function DeviceCard({ selectableDevice }: Readonly<DeviceCardProps>): React.ReactNode {
-  const { device, isAvailable } = selectableDevice;
+  const { key, device, isAvailable } = selectableDevice;
   const onSelect = selectableDevice.isAvailable ? selectableDevice.onSelect : undefined;
   const { t } = useTranslation();
   const deviceName = device.name ?? t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
@@ -38,7 +38,7 @@ export function DeviceCard({ selectableDevice }: Readonly<DeviceCardProps>): Rea
             size="sm"
             disabled={!isAvailable}
             onPress={onSelect}
-            testID={`connect-new-device-select-${device.deviceModelId}`}
+            testID={`connect-new-device-select-${key}`}
             // For screen readers: the visible label does not say which device the button selects.
             accessibilityLabel={t("connectNewDevice.discovering.selectAccessibilityLabel", {
               deviceName,
