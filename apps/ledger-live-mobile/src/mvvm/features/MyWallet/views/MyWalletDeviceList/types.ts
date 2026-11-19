@@ -27,5 +27,4 @@ export type MyWalletDeviceListViewProps = {
   onResult: (result: Result) => void;
   onCloseModal: () => void;
   onModalHide: () => void;
-  onError: (error: Error) => void;
 };

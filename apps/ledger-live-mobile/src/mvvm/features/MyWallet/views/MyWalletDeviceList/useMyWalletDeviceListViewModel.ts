@@ -111,12 +111,6 @@ export function useMyWalletDeviceListViewModel({
     [navigation, params?.firmwareUpdate, params?.installApp, params?.searchQuery],
   );
 
-  const onError = useCallback((error: Error) => {
-    if (error?.name === "BluetoothRequired") {
-      setDevice(undefined);
-    }
-  }, []);
-
   return {
     isAdding,
     topInset,
@@ -133,6 +127,5 @@ export function useMyWalletDeviceListViewModel({
     onResult,
     onCloseModal: resetDevice,
     onModalHide: resetDevice,
-    onError,
   };
 }
