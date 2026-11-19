@@ -5,6 +5,7 @@ import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { DeviceLockedCheckDrawer } from "~/components/SelectDevice2/DeviceLockedCheckDrawer";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { ExploreDevicesRow } from "./components/ExploreDevicesRow";
 import type { MyWalletDeviceListViewProps } from "./types";
 
 export function MyWalletDeviceListView({
@@ -15,6 +16,7 @@ export function MyWalletDeviceListView({
   onAddModeChange,
   onDeviceNotFound,
   onAddDevice,
+  onExploreDevices,
   deviceToCheck,
   onDeviceUnlocked,
   onCloseLockedCheck,
@@ -39,6 +41,7 @@ export function MyWalletDeviceListView({
             onDeviceNotFound={onDeviceNotFound}
             onAddDevice={onAddDevice}
           >
+            <ExploreDevicesRow onPress={onExploreDevices} />
             <LNUpsellBanner location="profile" />
           </ConnectKnownOrNewDevice>
         </View>

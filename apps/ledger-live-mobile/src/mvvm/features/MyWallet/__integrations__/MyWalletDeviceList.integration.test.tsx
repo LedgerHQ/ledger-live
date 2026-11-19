@@ -1,4 +1,5 @@
 import React from "react";
+import { Linking } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
@@ -184,6 +185,20 @@ describe("MyWalletDeviceList", () => {
     // THEN
     expect(screen.queryByText("Device action for nano-x-id")).toBeNull();
     expect(resume).toHaveBeenCalled();
+  });
+
+  it("GIVEN the device list, WHEN Explore all Ledger devices is pressed, THEN it should open the Ledger shop", async () => {
+    // GIVEN
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { user } = renderMyWallet();
+    emit(discovering);
+
+    // WHEN
+    await user.press(screen.getByText("Explore all Ledger devices"));
+
+    // THEN
+    expect(openURL).toHaveBeenCalledTimes(1);
+    openURL.mockRestore();
   });
 
   it("GIVEN the device list, WHEN the Add mode starts and then ends, THEN it should hide the other sections, then show them again", () => {

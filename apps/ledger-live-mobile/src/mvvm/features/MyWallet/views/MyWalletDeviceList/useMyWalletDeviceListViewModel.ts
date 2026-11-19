@@ -12,6 +12,7 @@ import { MANAGER_TABS } from "~/const/manager";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
+import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
 import type { MyWalletNavigatorStackParamList } from "../../types";
 import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
 
@@ -43,6 +44,7 @@ export function useMyWalletDeviceListViewModel({
   const { top: topInset } = useSafeAreaInsets();
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const onAddDevice = useUnifiedAddDevice();
+  const onExploreDevices = useBuyDeviceAction();
 
   // A redirect, for example from the "not enough space" error of a flow, opens My Ledger at once.
   const redirectedDevice = params?.device;
@@ -127,6 +129,7 @@ export function useMyWalletDeviceListViewModel({
     onAddModeChange: handleAddModeChange,
     onDeviceNotFound,
     onAddDevice,
+    onExploreDevices,
     deviceToCheck,
     onDeviceUnlocked,
     onCloseLockedCheck,
