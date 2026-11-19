@@ -133,19 +133,11 @@ jobs:
           CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/snapshot/**', '!e2e/tooling/startup-perf/src/snapshot/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'libs/live-e2e-shared/src/cli/speculosSession.ts') }}
         run: echo "key=develop/mobile-startup-perf-accounts-${RELEASE}-${CODE_HASH:0:16}" >> "$GITHUB_OUTPUT"
 
-      - name: Resolve the cache role
-        id: cache-role
-        if: ${{ steps.plan.outputs.snapshot_release != '' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
-        with:
-          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-
       - name: Configure AWS credentials
         if: ${{ steps.plan.outputs.snapshot_release != '' }}
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
-          role-to-assume: ${{ steps.cache-role.outputs.role-arn }}
+          role-to-assume: ${{ github.ref == 'refs/heads/develop' && secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP || secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Restore the Android accounts snapshot
@@ -546,19 +538,11 @@ jobs:
           retention-days: 7
 
       # Credentials of their own: setup-caches' may have expired by now.
-      - name: Resolve the cache role
-        id: cache-role
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
-        with:
-          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-
       - name: Configure AWS credentials
         if: ${{ github.ref == 'refs/heads/develop' }}
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
-          role-to-assume: ${{ steps.cache-role.outputs.role-arn }}
+          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Save the accounts snapshot
@@ -669,19 +653,11 @@ jobs:
           retention-days: 7
 
       # Credentials of their own: setup-caches' may have expired by now.
-      - name: Resolve the cache role
-        id: cache-role
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
-        with:
-          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-
       - name: Configure AWS credentials
         if: ${{ github.ref == 'refs/heads/develop' }}
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
-          role-to-assume: ${{ steps.cache-role.outputs.role-arn }}
+          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Save the accounts snapshot
