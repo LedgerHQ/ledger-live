@@ -2342,7 +2342,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-slider (5.2.0):
+  - react-native-slider (5.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -2360,7 +2360,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-slider/common (= 5.2.0)
+    - react-native-slider/common (= 5.2.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2371,7 +2371,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-slider/common (5.2.0):
+  - react-native-slider/common (5.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3742,7 +3742,7 @@ DEPENDENCIES:
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_dec0d0bf7fd0dd6054bb511d43e0d925/node_modules/react-native-safe-area-context`)"
-  - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider`)"
+  - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.2/node_modules/@react-native-community/slider`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_2af7e0ae46a2d40e67603fa9cf2f990d/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.19.3_react-native@0.81.6_p_24d493d7478d4474de07246f66b25323/node_modules/react-native-video`)"
@@ -3993,7 +3993,7 @@ EXTERNAL SOURCES:
   react-native-safe-area-context:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_dec0d0bf7fd0dd6054bb511d43e0d925/node_modules/react-native-safe-area-context"
   react-native-slider:
-    :path: "../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider"
+    :path: "../../../node_modules/.pnpm/@react-native-community+slider@5.2.2/node_modules/@react-native-community/slider"
   react-native-tcp-socket:
     :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_2af7e0ae46a2d40e67603fa9cf2f990d/node_modules/react-native-tcp-socket"
   react-native-vector-icons-material-design-icons:
@@ -4215,7 +4215,7 @@ SPEC CHECKSUMS:
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
-  react-native-slider: 205c30f4f19af8469c1c24bd4e3ec74038576a67
+  react-native-slider: e559187916f6597f371962a1bb60957c9e140c94
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
   react-native-video: 558711646609a96027f16a724c89556d9b149806
