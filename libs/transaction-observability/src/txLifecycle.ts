@@ -284,7 +284,7 @@ export function sendTxLifecycle(
   const pending = pendingLifecycle.get(key);
   if (!pending) return;
   pendingLifecycle.delete(key);
-  postTxLifecycle(pending.product, payload, "event");
+  postTxLifecycle(pending.product, { ...payload, path: pending.base.path }, "event");
 }
 
 function ownsPendingDapp(key: string, productId: string | undefined): boolean {
