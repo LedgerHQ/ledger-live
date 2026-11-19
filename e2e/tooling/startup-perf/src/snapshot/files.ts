@@ -10,6 +10,7 @@ import {
   encodeStorage,
   isStringValue,
   stringValue,
+  type StorageValue,
 } from "../measure/storage.ts";
 
 export const MANIFEST_FILE = "snapshot.json";
@@ -27,22 +28,24 @@ export interface SnapshotManifest {
 }
 
 export interface Snapshot {
-  entries: Array<[key: string, value: string]>;
+  entries: Array<[key: string, value: StorageValue]>;
   manifest: SnapshotManifest;
 }
 
-/** The app's storage values as strings, without the device the accounts were added on. */
-export function withoutDevice(values: Map<string, Buffer>): Array<[string, string]> {
-  const entries: Array<[string, string]> = [];
+/**
+ * The app's storage values as it saved them (strings, and numbers such as the last known balance),
+ * without the device the accounts were added on.
+ */
+export function withoutDevice(values: Map<string, Buffer>): Array<[string, StorageValue]> {
+  const entries: Array<[string, StorageValue]> = [];
   for (const [key, value] of values) {
     if (DEVICE_KEYS.has(key)) continue;
-    if (!isStringValue(value)) throw new Error(`snapshot: the value of ${key} is not a string`);
-    const text = stringValue(value);
     if (key !== "settings") {
-      entries.push([key, text]);
+      entries.push([key, value]);
       continue;
     }
-    const settings = JSON.parse(text) as Record<string, unknown>;
+    if (!isStringValue(value)) throw new Error("snapshot: the settings are not a string");
+    const settings = JSON.parse(stringValue(value)) as Record<string, unknown>;
     for (const name of DEVICE_SETTINGS) delete settings[name];
     entries.push([key, JSON.stringify(settings)]);
   }
@@ -50,7 +53,7 @@ export function withoutDevice(values: Map<string, Buffer>): Array<[string, strin
 }
 
 /** The `accounts.active.<id>` records by currency, from ids like `js:2:<currency>:<xpub>:<mode>`. */
-export function accountsByCurrency(entries: Array<[string, string]>): Record<string, number> {
+export function accountsByCurrency(entries: Array<[string, unknown]>): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const [key] of entries) {
     if (!key.startsWith(ACCOUNT_KEY_PREFIX)) continue;
@@ -76,6 +79,5 @@ export async function readSnapshot(dir: string): Promise<Snapshot> {
   const manifest = JSON.parse(
     await readFile(path.join(dir, MANIFEST_FILE), "utf8"),
   ) as SnapshotManifest;
-  const entries = [...values].map(([key, value]): [string, string] => [key, stringValue(value)]);
-  return { entries, manifest };
+  return { entries: [...values], manifest };
 }

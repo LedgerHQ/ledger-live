@@ -48,11 +48,22 @@ function readVarint(buffer: Buffer, start: number): [value: number, next: number
   throw new Error(`storage: varint at ${start} runs past the end`);
 }
 
-/** A string value is stored as MMKV stores any bytes: its length, then the UTF-8. */
-function encodeEntry(key: string, value: string): Buffer {
+/**
+ * A value to write: a string, or the bytes of a value as `decodeStorage` read them, which may be
+ * a number or a boolean the app stored.
+ */
+export type StorageValue = string | Buffer;
+
+/** The bytes of a value: a string is stored as MMKV stores any bytes, its length then the UTF-8. */
+function bytesOf(value: StorageValue): Buffer {
+  if (typeof value !== "string") return value;
+  const utf8 = Buffer.from(value, "utf8");
+  return Buffer.concat([varint(utf8.length), utf8]);
+}
+
+function encodeEntry(key: string, value: StorageValue): Buffer {
   const keyBytes = Buffer.from(key, "utf8");
-  const valueBytes = Buffer.from(value, "utf8");
-  const holder = Buffer.concat([varint(valueBytes.length), valueBytes]);
+  const holder = bytesOf(value);
   return Buffer.concat([varint(keyBytes.length), keyBytes, varint(holder.length), holder]);
 }
 
@@ -65,7 +76,7 @@ function padToPages(buffer: Buffer): Buffer {
 }
 
 /** The two files of an MMKV instance holding `entries`, in order. */
-export function encodeStorage(entries: Array<[key: string, value: string]>): StorageFiles {
+export function encodeStorage(entries: Array<[key: string, value: StorageValue]>): StorageFiles {
   const body = Buffer.concat([
     varint(ITEM_SIZE_HOLDER),
     ...entries.map(([key, value]) => encodeEntry(key, value)),
@@ -145,9 +156,9 @@ export interface SavedState {
  */
 export function savedState(
   values: Map<string, Buffer>,
-  written: Array<[string, string]>,
+  written: Array<[string, StorageValue]>,
 ): SavedState {
-  const writtenValues = new Map(written);
+  const writtenValues = new Map(written.map(([key, value]) => [key, bytesOf(value)]));
   const value = values.get("settings");
   const settings = value
     ? (JSON.parse(stringValue(value)) as { generalTermsVersionAccepted?: unknown })
@@ -157,7 +168,8 @@ export function savedState(
     accounts: accountKeys.length,
     resaved: accountKeys.filter(key => {
       const saved = values.get(key);
-      return saved !== undefined && stringValue(saved) !== writtenValues.get(key);
+      const before = writtenValues.get(key);
+      return saved !== undefined && !(before && saved.equals(before));
     }).length,
     termsAccepted: settings?.generalTermsVersionAccepted === GENERAL_TERMS_VERSION,
   };

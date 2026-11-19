@@ -10,6 +10,7 @@ import {
   encodeStorage,
   savedState,
   storageEntries,
+  type StorageValue,
 } from "./storage.ts";
 import type { Side } from "../types.ts";
 import type { Platform, Userdata } from "./types.ts";
@@ -63,7 +64,7 @@ export async function loadUserdata({
 export interface StartingStorage {
   /** Where the entries come from, for the log. */
   source: string;
-  entries: Array<[string, string]>;
+  entries: Array<[string, StorageValue]>;
   accounts: number;
 }
 
@@ -132,7 +133,7 @@ async function checkSaved({
   platform: Platform;
   device: string;
   side: Side;
-  written: Array<[string, string]>;
+  written: Array<[string, StorageValue]>;
   accounts: number;
 }): Promise<void> {
   const data = await P.readStorage(device, STORAGE_FILE);
