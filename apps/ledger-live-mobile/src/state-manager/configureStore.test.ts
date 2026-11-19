@@ -182,6 +182,14 @@ describe("mobile store", () => {
       }
     });
 
+    it("resolves the Earn base url through Config, production without one", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+
+      expect(readExtra(store)).toEqual(
+        expect.objectContaining({ earnApiBaseUrl: "https://earn.api.live.ledger.com" }),
+      );
+    });
+
     it("reads the client version when the store is created", () => {
       const { setEnv } = require("@shared/env") as typeof import("@shared/env");
       setEnv("LEDGER_CLIENT_VERSION", "set-before-store-creation");
@@ -190,6 +198,33 @@ describe("mobile store", () => {
       expect(readExtra(store)).toEqual(
         expect.objectContaining({ ledgerClientVersion: "set-before-store-creation" }),
       );
+    });
+  });
+
+  describe("dev tools", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    // `dontMock` would also drop the mock of the jest setup: the plugin itself cannot load here.
+    afterEach(() => {
+      jest.doMock("@rozenite/redux-devtools-plugin", () => ({
+        rozeniteDevToolsEnhancer: () => (next: unknown) => next,
+      }));
+    });
+
+    it("hands the Rozenite dev tools the sanitizers that redact the Card and Earn slices", () => {
+      const rozeniteDevToolsEnhancer = jest.fn(() => (next: unknown) => next);
+      jest.doMock("@rozenite/redux-devtools-plugin", () => ({ rozeniteDevToolsEnhancer }));
+
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { devToolsSanitizers } =
+        require("./devToolsSanitizers") as typeof import("./devToolsSanitizers");
+
+      expect(store).toBeDefined();
+      expect(rozeniteDevToolsEnhancer).toHaveBeenCalledWith(devToolsSanitizers);
     });
   });
 
