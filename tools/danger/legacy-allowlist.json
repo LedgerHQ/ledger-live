@@ -1,0 +1,20 @@
+[
+  {
+    "path": "libs/ledger-live-common/src/account-data/full-sync/",
+    "reason": "Transitional until every dependency on the former Account type is released",
+    "target": "domain/entity/account-* and features/platform/account-*",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/account-data/coin-module/",
+    "reason": "Transitional until every dependency on the former Account type is released",
+    "target": "domain/entity/account-* and features/platform/account-*",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/account-data/discovery/",
+    "reason": "Transitional until each family derives its descriptor with a DMK signer kit",
+    "target": "features/platform/account-discovery",
+    "ticket": "LIVE-38772"
+  }
+]
