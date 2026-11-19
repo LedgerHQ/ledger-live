@@ -71,6 +71,7 @@ export function useOsUpdateFlowViewModel({
     () =>
       latestOsUpdate
         ? {
+            name: latestOsUpdate.finalFirmware.name,
             version: latestOsUpdate.finalFirmware.version,
             notes: latestOsUpdate.osuFirmware.notes,
           }
