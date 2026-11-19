@@ -3,6 +3,7 @@ export * from "./card";
 export * from "./coinmarketcap";
 export * from "./countervalues";
 export * from "./dada";
+export * from "./earn";
 export * from "./portfolio/api";
 export * from "./portfolio/redaction";
 export * from "./portfolio/schema";

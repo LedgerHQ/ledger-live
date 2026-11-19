@@ -6,7 +6,7 @@ import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-
 import type { StakePositionSurfaceViewProps } from "./StakePositionSurfaceView.types";
 import { useAndroidBack } from "./useAndroidBack";
 
-function SheetBody({ title, children }: Readonly<{ title: string; children: ReactNode }>) {
+function SheetBody({ title, children }: Readonly<{ title?: string; children: ReactNode }>) {
   const bottomInset = useBottomSheetBottomInset();
 
   return (
@@ -16,7 +16,8 @@ function SheetBody({ title, children }: Readonly<{ title: string; children: Reac
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
     >
-      <BottomSheetHeader density="expanded" title={title} />
+      {/* The header draws the close button; without a title it holds that button alone. */}
+      <BottomSheetHeader density={title ? "expanded" : "compact"} title={title} />
       {children}
     </BottomSheetScrollView>
   );
@@ -25,7 +26,7 @@ function SheetBody({ title, children }: Readonly<{ title: string; children: Reac
 export function StakePositionSurfaceView({
   isOpen,
   title,
-  onBack,
+  isTitleInHeader,
   onDismiss,
   isDismissible,
   children,
@@ -38,7 +39,7 @@ export function StakePositionSurfaceView({
   // its screen is unfocused. Only a sheet the user sees may take the Android back.
   const [isPresented, setIsPresented] = useState(false);
 
-  useAndroidBack(isOpen && isPresented, isDismissible ? (onBack ?? onDismiss) : undefined);
+  useAndroidBack(isOpen && isPresented, isDismissible ? onDismiss : undefined);
 
   return (
     // `onClose` also fires for programmatic closes, so only explicit user closes dismiss, and
@@ -49,8 +50,6 @@ export function StakePositionSurfaceView({
       preventBackdropClick={!isDismissible}
       onHeaderClosePressed={isDismissible ? onDismiss : undefined}
       onBackdropPress={isDismissible ? onDismiss : undefined}
-      hasBackButton={onBack !== undefined}
-      onBack={onBack}
       onOpened={() => setIsPresented(true)}
       onModalHide={() => setIsPresented(false)}
       enablePanDownToClose={false}
@@ -61,7 +60,7 @@ export function StakePositionSurfaceView({
       contentHasBottomSpace
       testID={testID}
     >
-      <SheetBody title={title}>{children}</SheetBody>
+      <SheetBody title={isTitleInHeader ? title : undefined}>{children}</SheetBody>
     </QueuedBottomSheet>
   );
 }

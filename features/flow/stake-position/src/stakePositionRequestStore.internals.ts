@@ -1,17 +1,17 @@
 import { StakePositionBusy } from "./errors";
 import type {
   ShownStakePositionRequest,
+  StakePositionOpenResult,
   StakePositionOrigin,
   StakePositionPhase,
   StakePositionRequestInput,
-  StakePositionResult,
 } from "./types";
 
 export type StakePositionRequest = Readonly<{
   shown: ShownStakePositionRequest;
   phase: StakePositionPhase;
   owner: symbol;
-  resolve: (result: StakePositionResult) => void;
+  resolve: (result: StakePositionOpenResult) => void;
 }>;
 
 // Module-level so the Wallet API handlers of any live app player drive the one mounted surface.
@@ -37,7 +37,7 @@ export function subscribeToStakePositionRequest(listener: () => void) {
 export function requestStakePosition(
   input: StakePositionRequestInput & Readonly<{ origin: StakePositionOrigin }>,
   owner: symbol,
-): Promise<StakePositionResult> {
+): Promise<StakePositionOpenResult> {
   const displacedRequest = currentRequest;
   if (displacedRequest?.phase === "committed") {
     return Promise.reject(new StakePositionBusy("A stake position is being signed or broadcast"));

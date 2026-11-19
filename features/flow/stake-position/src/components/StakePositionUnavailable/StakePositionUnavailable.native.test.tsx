@@ -12,32 +12,45 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () =>
     .lumenNativeWithAccessibleButtons(),
 );
 
+const { unavailable } = STAKE_POSITION_COPY;
+
 function renderUnavailable(reason: StakePositionUnavailableProps["reason"]) {
   const onDismiss = jest.fn();
-  render(<StakePositionUnavailable reason={reason} onDismiss={onDismiss} />, {
+  const onRetry = jest.fn();
+  render(<StakePositionUnavailable reason={reason} onDismiss={onDismiss} onRetry={onRetry} />, {
     wrapper: I18nWrapper,
   });
-  return { onDismiss };
+  return { onDismiss, onRetry };
 }
 
 describe("StakePositionUnavailable (native)", () => {
   it("should say the position is loading, without a way out of the step", () => {
     renderUnavailable("loading");
 
-    expect(screen.getByText(STAKE_POSITION_COPY.unavailable.loading)).toBeTruthy();
+    expect(screen.getByText(unavailable.loading)).toBeTruthy();
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("should say the position is gone and close from there", () => {
+  it("should say the position is not available and close from there", () => {
     const { onDismiss } = renderUnavailable("notFound");
 
-    expect(
-      screen.getByRole("header", { name: STAKE_POSITION_COPY.unavailable.notFoundTitle }),
-    ).toBeTruthy();
-    expect(screen.getByText(STAKE_POSITION_COPY.unavailable.notFoundDescription)).toBeTruthy();
+    expect(screen.getByRole("header", { name: unavailable.notFoundTitle })).toBeTruthy();
+    expect(screen.getByText(unavailable.notFoundDescription)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: unavailable.retry })).toBeNull();
 
-    fireEvent.press(screen.getByRole("button", { name: STAKE_POSITION_COPY.unavailable.close }));
+    fireEvent.press(screen.getByRole("button", { name: unavailable.close }));
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("should say the position could not load and read it again on Try again", () => {
+    const { onRetry, onDismiss } = renderUnavailable("error");
+
+    expect(screen.getByRole("header", { name: unavailable.errorTitle })).toBeTruthy();
+
+    fireEvent.press(screen.getByRole("button", { name: unavailable.retry }));
+
+    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(onDismiss).not.toHaveBeenCalled();
   });
 });

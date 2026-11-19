@@ -5,21 +5,20 @@ import {
   StakePositionBusy,
   StakePositionUnsupported,
 } from "./errors";
-import { handlers, sanitizeRewards, type StakePositionUiHooks } from "./server";
-import type { StakePositionResult } from "./types";
+import { handlers, type StakePositionUiHooks } from "./server";
+import type { StakePositionOpenResult } from "./types";
 
 type RpcAnswer = Readonly<{ result?: unknown; error?: { code: number; data?: unknown } }>;
 
 const PARAMS = {
   accountId: "wallet-api-account-id",
   positionId: "stake-account-address",
-  validatorAddress: "validator-vote-address",
 };
 
 const INVALID_REQUEST_CODE = -32600;
 const INVALID_PARAMS_CODE = -32602;
 
-const answerNull = async (): Promise<StakePositionResult> => ({ action: null });
+const answerNull = async (): Promise<StakePositionOpenResult> => ({ action: null });
 
 // Through the real Wallet API server: the JSON-RPC answer the live app gets.
 function setup(answer: StakePositionUiHooks["position.open"] = answerNull) {
@@ -58,35 +57,30 @@ describe("custom.stake.position.open", () => {
     const answer = await open({
       accountId: `  ${PARAMS.accountId} `,
       positionId: ` ${PARAMS.positionId}`,
-      validatorAddress: `${PARAMS.validatorAddress}  `,
     });
 
-    expect(openPosition).toHaveBeenCalledWith({ ...PARAMS, rewards: undefined });
+    expect(openPosition).toHaveBeenCalledWith(PARAMS);
     expect(answer.result).toEqual({ action: "deactivate" });
   });
 
-  it("should pass the unavailable reason of the host to the live app", async () => {
-    const { open } = setup(async () => ({ action: null, reason: "ambiguous" }));
+  it("should pass the unavailable answer of the host to the live app", async () => {
+    const { open } = setup(async () => ({ action: null, reason: "unavailable" }));
 
     const answer = await open(PARAMS);
 
-    expect(answer.result).toEqual({ action: null, reason: "ambiguous" });
+    expect(answer.result).toEqual({ action: null, reason: "unavailable" });
   });
 
-  it("should hand the trimmed rewards to the host", async () => {
+  it("should hand only the identity of the position to a caller still sending rewards and a validator", async () => {
     const { openPosition, open } = setup();
 
-    await open({ ...PARAMS, rewards: " 20393024000000000 " });
+    const answer = await open({
+      ...PARAMS,
+      validatorAddress: "validator-vote-address",
+      rewards: "20393024000000000",
+    });
 
-    expect(openPosition).toHaveBeenCalledWith({ ...PARAMS, rewards: "20393024000000000" });
-  });
-
-  it("should still open the position when the rewards are not base units", async () => {
-    const { openPosition, open } = setup();
-
-    const answer = await open({ ...PARAMS, rewards: "12.5" });
-
-    expect(openPosition).toHaveBeenCalledWith({ ...PARAMS, rewards: undefined });
+    expect(openPosition).toHaveBeenCalledWith(PARAMS);
     expect(answer.error).toBeUndefined();
   });
 
@@ -95,35 +89,17 @@ describe("custom.stake.position.open", () => {
 
     await open({ ...PARAMS, foo: "bar" });
 
-    expect(openPosition).toHaveBeenCalledWith({ ...PARAMS, rewards: undefined });
+    expect(openPosition).toHaveBeenCalledWith(PARAMS);
   });
 
   it.each([
-    ["an empty", ""],
-    ["a blank", "   "],
-  ])(
-    "should open a position without a validator when its validator address is %s string",
-    async (_case, validatorAddress) => {
-      const { openPosition, open } = setup();
-
-      const answer = await open({ ...PARAMS, validatorAddress });
-
-      expect(openPosition).toHaveBeenCalledWith({
-        ...PARAMS,
-        validatorAddress: "",
-        rewards: undefined,
-      });
-      expect(answer.error).toBeUndefined();
-    },
-  );
-
-  it.each([
-    ["no account id", { positionId: PARAMS.positionId, validatorAddress: PARAMS.validatorAddress }],
+    ["no account id", { positionId: PARAMS.positionId }],
     ["a blank account id", { ...PARAMS, accountId: "   " }],
+    ["no position id", { accountId: PARAMS.accountId }],
+    ["a blank position id", { ...PARAMS, positionId: "   " }],
     ["a position id over 128 characters", { ...PARAMS, positionId: "a".repeat(129) }],
-    ["no validator address", { accountId: PARAMS.accountId, positionId: PARAMS.positionId }],
-    ["a validator address over 128 characters", { ...PARAMS, validatorAddress: "a".repeat(129) }],
-    ["a numeric validator address", { ...PARAMS, validatorAddress: 42 }],
+    ["an account id over 128 characters", { ...PARAMS, accountId: "a".repeat(129) }],
+    ["a numeric position id", { ...PARAMS, positionId: 42 }],
     ["null params", null],
     ["an array", []],
     ["a string", "x"],
@@ -134,6 +110,15 @@ describe("custom.stake.position.open", () => {
 
     expect(answer.error?.code).toBe(INVALID_PARAMS_CODE);
     expect(openPosition).not.toHaveBeenCalled();
+  });
+
+  it("should accept ids of exactly 128 characters", async () => {
+    const { openPosition, open } = setup();
+    const params = { accountId: "a".repeat(128), positionId: "b".repeat(128) };
+
+    await open(params);
+
+    expect(openPosition).toHaveBeenCalledWith(params);
   });
 
   it("should leave a request without params to the JSON-RPC layer, which refuses it", async () => {
@@ -156,21 +141,4 @@ describe("custom.stake.position.open", () => {
 
     expect(answer.error?.data).toMatchObject({ data: { name: error.name } });
   });
-});
-
-describe("sanitizeRewards", () => {
-  it.each([
-    [" 123 ", "123"],
-    ["0", "0"],
-    ["9".repeat(30), "9".repeat(30)],
-  ])("should keep %p as %p", (rewards, expected) => {
-    expect(sanitizeRewards(rewards)).toBe(expected);
-  });
-
-  it.each(["12.5", "-1", "1e9", "", "   ", "0x10", "9".repeat(31), 123, null, undefined, {}])(
-    "should drop %p",
-    rewards => {
-      expect(sanitizeRewards(rewards)).toBeUndefined();
-    },
-  );
 });

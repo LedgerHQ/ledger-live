@@ -1,13 +1,18 @@
 import type { ReactNode } from "react";
-import type { StakePositionAmount, StakePositionExitAction } from "../../types";
+import type { StakePositionExitAction } from "../../types";
 
 export type StakePositionConfirmProps = Readonly<{
-  ticker: string;
   action: StakePositionExitAction;
-  amount: StakePositionAmount;
+  ticker: string;
+  /**
+   * The chain snapshot figure of the prepared transaction (`getExitAmount`), formatted with its
+   * ticker. The details show the backend figures instead.
+   */
+  amount: string;
+  /** The validator as `getStakePositionValidatorName` names it. */
   validatorName: string;
-  /** Formatted network fees. The row is hidden when missing. */
-  fees?: string;
+  /** The name of the account the funds go back to. Defaults to the ticker. */
+  accountName?: string;
   /** The transaction error, as the app renders it. */
   errorContent?: ReactNode;
   /** The transaction is still being prepared: the confirmation waits for it. */

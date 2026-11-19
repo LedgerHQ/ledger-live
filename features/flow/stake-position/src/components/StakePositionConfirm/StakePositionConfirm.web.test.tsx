@@ -1,18 +1,27 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { I18nWrapper, STAKE_POSITION_COPY } from "../../__tests__/i18nWrapper";
+import { Download } from "@ledgerhq/lumen-ui-react/symbols";
+import { InfoState } from "@shared/ui-info-state";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import type { StakePositionExitAction } from "../../types";
 import { StakePositionConfirm } from "./StakePositionConfirm";
 import type { StakePositionConfirmProps } from "./StakePositionConfirm.types";
+
+jest.mock("@shared/ui-info-state", () => {
+  const infoState =
+    jest.requireActual<typeof import("@shared/ui-info-state")>("@shared/ui-info-state");
+  return { ...infoState, InfoState: jest.fn(infoState.InfoState) };
+});
 
 type DataProps = Omit<StakePositionConfirmProps, "onConfirm">;
 
 const PROPS: DataProps = {
   ticker: "SOL",
   action: "deactivate",
-  amount: { crypto: "12.5 SOL", fiat: "$1,875.00" },
+  amount: "12.5 SOL",
   validatorName: "Ledger by Figment",
-  fees: "0.000005 SOL",
+  accountName: "Solana 1",
   isPending: false,
   isConfirmDisabled: false,
 };
@@ -26,40 +35,51 @@ function renderConfirm(overrides: Partial<DataProps> = {}) {
 }
 
 describe("StakePositionConfirm (web)", () => {
-  it("should describe the deactivation and confirm it", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should describe the deactivation with its amount and validator, and confirm it", () => {
     renderConfirm({ action: "deactivate" });
 
+    expect(screen.getByRole("heading", { name: "Deactivate your SOL" })).toBeVisible();
     expect(
       screen.getByText(
-        "Your SOL will stop earning rewards. Once deactivation is complete, you can withdraw it.",
+        "Your 12.5 SOL in Ledger by Figment will be deactivated. Once deactivated, you will be able to withdraw your funds. It may take a few days to complete deactivation.",
       ),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled();
   });
 
-  it("should describe the withdrawal and confirm it", () => {
+  it("should describe the withdrawal with its amount, validator and account, and confirm it", () => {
     renderConfirm({ action: "withdraw" });
 
+    expect(screen.getByRole("heading", { name: "Withdraw SOL" })).toBeVisible();
     expect(
-      screen.getByText("The full balance of this position goes back to your SOL account."),
+      screen.getByText(
+        "Your 12.5 SOL in Ledger by Figment will be withdrawn to your Solana 1 account. This may take a few minutes.",
+      ),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Withdraw all" })).toBeEnabled();
   });
 
-  it("should show the full amount, the validator and the network fees", () => {
-    renderConfirm();
+  it.each<StakePositionExitAction>(["deactivate", "withdraw"])(
+    "should lead the %s confirmation with the download spot over the muted glow",
+    action => {
+      renderConfirm({ action });
 
-    expect(screen.getByText("12.5 SOL")).toBeVisible();
-    expect(screen.getByText("$1,875.00")).toBeVisible();
-    expect(screen.getByText("Ledger by Figment")).toBeVisible();
-    expect(screen.getByText(STAKE_POSITION_COPY.confirm.fees)).toBeVisible();
-    expect(screen.getByText("0.000005 SOL")).toBeVisible();
-  });
+      expect(jest.mocked(InfoState).mock.lastCall?.[0]).toMatchObject({
+        preset: "spot",
+        spotProps: { icon: Download },
+        backgroundTone: "info",
+      });
+    },
+  );
 
-  it("should hide the network fees while they are unknown", () => {
-    renderConfirm({ fees: undefined });
+  it("should name the ticker as the account while the account has no name", () => {
+    renderConfirm({ action: "withdraw", accountName: undefined });
 
-    expect(screen.queryByText(STAKE_POSITION_COPY.confirm.fees)).not.toBeInTheDocument();
+    expect(screen.getByText(/will be withdrawn to your SOL account\./)).toBeVisible();
   });
 
   it("should show the error of the transaction", () => {
@@ -76,6 +96,7 @@ describe("StakePositionConfirm (web)", () => {
     renderConfirm({ isPending: true });
 
     expect(screen.getByRole("button", { name: "Deactivate" })).toBeDisabled();
+    expect(jest.mocked(InfoState).mock.lastCall?.[0].primaryCta).toMatchObject({ loading: true });
   });
 
   it("should hand the confirmation to the app", async () => {

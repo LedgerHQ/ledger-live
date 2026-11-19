@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { track, trackPage } from "@shared/analytics";
+import type { StakePositionOrigin } from "../types";
 import { useStakePositionTracking } from "./useStakePositionTracking";
 
 jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
@@ -8,11 +9,19 @@ const mockTrack = jest.mocked(track);
 const mockTrackPage = jest.mocked(trackPage);
 
 const FLOW_PROPS = { flow: "stake", currency: "SOL", source: "earn" };
-const ALLOWED_PROPS = ["flow", "currency", "source", "position_status", "action", "button", "page"];
+const ALLOWED_PROPS = [
+  "flow",
+  "currency",
+  "source",
+  "position_status",
+  "action",
+  "reason",
+  "button",
+  "page",
+];
 
-function renderTracking() {
-  return renderHook(() => useStakePositionTracking({ origin: "earn", ticker: "SOL" })).result
-    .current;
+function renderTracking(origin: StakePositionOrigin = "earn") {
+  return renderHook(() => useStakePositionTracking({ origin, ticker: "SOL" })).result.current;
 }
 
 describe("useStakePositionTracking", () => {
@@ -30,24 +39,39 @@ describe("useStakePositionTracking", () => {
     });
   });
 
-  it("should track the confirmation page with its exit", () => {
-    renderTracking().trackStep({ page: "confirm", action: "withdraw" });
+  it.each([
+    ["confirm", "Confirm"],
+    ["success", "Success"],
+    ["failure", "Failure"],
+  ] as const)("should track the %s page with its exit", (page, name) => {
+    renderTracking().trackStep({ page, action: "withdraw" });
 
     expect(mockTrackPage).toHaveBeenCalledWith({
       category: "Stake position",
-      name: "Confirm",
+      name,
       props: { ...FLOW_PROPS, action: "withdraw" },
     });
   });
 
-  it("should track the not found page", () => {
-    renderTracking().trackStep({ page: "notFound" });
+  it.each(["not_found", "load_error"] as const)(
+    "should track the unavailable page with its %s reason",
+    reason => {
+      renderTracking().trackStep({ page: "unavailable", reason });
 
-    expect(mockTrackPage).toHaveBeenCalledWith({
-      category: "Stake position",
-      name: "Not found",
-      props: FLOW_PROPS,
-    });
+      expect(mockTrackPage).toHaveBeenCalledWith({
+        category: "Stake position",
+        name: "Unavailable",
+        props: { ...FLOW_PROPS, reason },
+      });
+    },
+  );
+
+  it("should name a wallet screen as the source of a position it opened", () => {
+    renderTracking("account").trackStep({ page: "details", positionStatus: "inactive" });
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ props: expect.objectContaining({ source: "account" }) }),
+    );
   });
 
   it("should track a button of the details page", () => {
@@ -72,11 +96,15 @@ describe("useStakePositionTracking", () => {
   });
 
   it("should send no address, amount or validator", () => {
-    const tracking = renderTracking();
+    const tracking = renderTracking("account");
 
     tracking.trackStep({ page: "details", positionStatus: "inactive" });
-    tracking.trackButton("withdraw_all", "details");
-    tracking.trackButton("close", "notFound");
+    tracking.trackStep({ page: "unavailable", reason: "load_error" });
+    tracking.trackButton("withdraw", "details");
+    tracking.trackButton("view_transaction", "success", "withdraw");
+    tracking.trackButton("try_again", "failure", "deactivate");
+    tracking.trackButton("retry_load", "unavailable");
+    tracking.trackButton("close", "unavailable");
 
     const sentProps = [
       ...mockTrackPage.mock.calls.map(([page]) => page.props),
@@ -87,12 +115,12 @@ describe("useStakePositionTracking", () => {
     }
   });
 
-  it("should leave tx_intent, tx_terminal and the Segment completion to the host's lifecycle seam", () => {
+  it("should leave the transaction events to the host's lifecycle seam", () => {
     const tracking = renderTracking();
 
     tracking.trackButton("earn_more", "details");
     tracking.trackButton("confirm", "confirm", "deactivate");
-    tracking.trackButton("back", "confirm");
+    tracking.trackButton("close", "confirm", "deactivate");
 
     expect(new Set(mockTrack.mock.calls.map(([event]) => event))).toEqual(
       new Set(["button_clicked"]),
