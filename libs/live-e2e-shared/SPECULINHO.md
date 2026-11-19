@@ -25,7 +25,14 @@ Run the tests with the usual commands. Compared with Docker:
 
 ## Sessions
 
-Each Speculos is a session named by its `run_id` (`<app>-lw-local-<id>` locally, `-lw-ci-` in CI). The suite acquires it with `POST /acquire`, waits for `/status/<run_id>` to report it ready, and releases it at the end of the test, or as soon as it fails to become ready. Each `/acquire` names its `origin` for Speculinho's usage reports: `ledger-live/<suite>`, with `<suite>` one of `desktop-e2e`, `mobile-e2e`, `desktop-e2e-userdata`, `desktop-e2e-addresses` or `borrow`.
+Each Speculos is a session named by its `run_id` (`<app>-lw-local-<id>` locally, `-lw-ci-` in CI). The suite acquires it with `POST /acquire`, waits for `/status/<run_id>` to report it ready, and releases it at the end of the test, or as soon as it fails to become ready. Each `/acquire` names its `origin` for Speculinho's usage reports: `ledger-live/<suite>`, with `<suite>` one of `desktop-e2e`, `mobile-e2e`, `desktop-e2e-userdata`, `desktop-e2e-addresses`, `borrow` or `mobile-startup-perf`.
+
+A program outside the suites can hold a session through the E2E CLI, as the mobile startup check's accounts snapshot does ([e2e/tooling/startup-perf](../../e2e/tooling/startup-perf/README.md)). `start` writes the session's id, address, device model and token to `--out`, readable by your user only, and `stop` releases it:
+
+```bash
+pnpm --dir libs/live-e2e-shared e2e-cli speculos start --app Bitcoin --suite <suite> --catalog <file> --out <file>
+pnpm --dir libs/live-e2e-shared e2e-cli speculos stop --id <id>
+```
 
 Sessions are protected: Speculinho returns a session token, and every request about the session (`/status`, `/logs`, `/release` and the Speculos URL itself) must carry it as `Authorization: Bearer <token>`. A browser therefore can't open the Speculos URL; see [Watch the device](#watch-the-device). An operator without protected sessions makes the suite warn `Speculinho sessions are not protected` and carry on without tokens.
 
