@@ -19,6 +19,7 @@ export function paginateOperations<T extends { id: string }>(
   ops: T[],
   { cursor, limit }: { cursor?: string; limit?: number },
 ): { operations: T[]; nextCursor: string | undefined } {
+  if (limit !== undefined && limit < 1) throw new RangeError("limit must be at least 1");
   const start = cursor === undefined ? 0 : indexOf(ops, decodeCursor(cursor)) + 1;
   const end = limit === undefined ? ops.length : start + limit;
   const operations = ops.slice(start, end);

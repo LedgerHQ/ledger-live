@@ -64,6 +64,10 @@ describe("paginateOperations", () => {
     },
   );
 
+  it("rejects a limit below 1 instead of reporting the history as complete", () => {
+    expect(() => paginateOperations(history, { limit: 0 })).toThrow(RangeError);
+  });
+
   it.each([
     ["is not a cursor", "not-a-cursor"],
     [
