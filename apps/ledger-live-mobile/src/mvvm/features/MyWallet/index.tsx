@@ -7,9 +7,12 @@ import { BackupsButton } from "./views/BackupsButton";
 import { ContactsButton } from "LLM/features/Contacts";
 import { MyLedgerSection } from "./views/MyLedgerSection";
 import { ManageAgentsButton } from "./views/ManageAgentsButton";
+import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 
 export function MyWalletScreen() {
   const [isPairing, setIsPairing] = useState(false);
+
+  useAutoRedirectToPostOnboarding();
 
   const onPairingStateChanged = (pairing: boolean) => setIsPairing(pairing);
 
