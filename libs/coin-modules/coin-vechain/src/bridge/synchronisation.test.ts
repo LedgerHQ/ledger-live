@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
 import { getAccountShape } from "./synchronisation";
-import { Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
@@ -23,7 +23,7 @@ jest.mock("../network", () => {
   return {
     getAccount: () => mockGetAccount(),
     getLastBlockHeight: () => mockGetLastBlockHeight(),
-    getOperations: () => mockGetOperations(),
+    getOperations: (...args: unknown[]) => mockGetOperations(...args),
     getTokenOperations: () => mockGetTokenOperations(),
   };
 });
@@ -245,5 +245,55 @@ describe("scanAccounts", () => {
 
     // Then
     expect(account.used).toBe(true);
+  });
+
+  it("requests the operations after the newest stored one and merges them with the stored ones", async () => {
+    const address = "0x5066118c66793ED86bd379b50b20E32B0FC1aBf5";
+    const makeOperation = (id: string, blockHeight: number, date: string): Operation =>
+      ({
+        id,
+        hash: id,
+        type: "IN",
+        value: new BigNumber(1),
+        fee: new BigNumber(0),
+        blockHeight,
+        date: new Date(date),
+        senders: [],
+        recipients: [],
+        accountId: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
+        extra: {},
+      }) as unknown as Operation;
+    const newest = makeOperation("newest", 200, "2024-02-01");
+    const oldest = makeOperation("oldest", 100, "2024-01-01");
+    const fetched = makeOperation("fetched", 300, "2024-03-01");
+    mockGetAccount.mockResolvedValueOnce({ balance: "0", energy: "0" });
+    mockGetLastBlockHeight.mockResolvedValueOnce(400);
+    mockGetOperations.mockResolvedValueOnce([fetched]);
+    mockGetTokenOperations.mockResolvedValueOnce([]);
+
+    const shape = await getAccountShape(
+      {
+        currency,
+        derivationMode: "vechain",
+        address,
+        index: 0,
+        initialAccount: { operations: [newest, oldest] } as unknown as Account,
+      } as Parameters<typeof getAccountShape>[0],
+      syncConfig as Parameters<typeof getAccountShape>[1],
+    );
+
+    expect(mockGetOperations).toHaveBeenCalledWith(
+      expect.anything(),
+      "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
+      address,
+      201,
+      400,
+    );
+    expect(shape.operations?.map(operation => operation.id)).toEqual([
+      "fetched",
+      "newest",
+      "oldest",
+    ]);
+    expect(shape.operationsCount).toEqual(3);
   });
 });

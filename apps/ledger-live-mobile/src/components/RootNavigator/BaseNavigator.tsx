@@ -35,6 +35,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
+import { ReceiveNavigator } from "LLM/features/Receive/Navigator";
 import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -197,6 +198,7 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
+  const newReceiveFlow = useFeature("newReceiveFlow");
   const swapToEarnFlag = useFeature("swapToEarn");
   const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
@@ -330,6 +332,11 @@ export default function BaseNavigator() {
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
+          name={ScreenName.DeviceOnboardingRecover}
+          component={RecoverPlayer}
+          options={{ headerShown: false, headerStyle: styles.headerNoShadow }}
+        />
+        <Stack.Screen
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
@@ -379,6 +386,13 @@ export default function BaseNavigator() {
           component={PerpsNavigator}
           options={{ headerShown: false }}
         />
+        {newReceiveFlow?.enabled && (
+          <Stack.Screen
+            name={NavigatorName.Receive}
+            component={ReceiveNavigator}
+            options={{ headerShown: false }}
+          />
+        )}
         <Stack.Screen
           name={NavigatorName.GlobalSearch}
           component={GlobalSearchNavigator}

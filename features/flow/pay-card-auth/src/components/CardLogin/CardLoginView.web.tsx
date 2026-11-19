@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Skeleton } from "@ledgerhq/lumen-ui-react";
+import { useTranslation } from "@shared/i18n";
 import { CardAuthError } from "./CardAuthError";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
@@ -8,7 +9,7 @@ export function CardLoginView({
   headline,
   description,
   loginLabel,
-  alreadyHaveCardLabel,
+  showAlreadyHaveCard,
   isLoading,
   isResolving,
   error,
@@ -16,6 +17,9 @@ export function CardLoginView({
   onAlreadyHaveCardPress,
   intro,
 }: CardLoginViewProps) {
+  const { t } = useTranslation();
+  const alreadyHaveCardLabel = t("payTab.cardLogin.beforeIntro.alreadyHaveCard");
+
   return (
     <>
       {isResolving ? (
@@ -37,7 +41,7 @@ export function CardLoginView({
             >
               {loginLabel}
             </Button>
-            {alreadyHaveCardLabel ? (
+            {showAlreadyHaveCard ? (
               <Button
                 appearance="no-background"
                 size="md"

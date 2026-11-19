@@ -116,6 +116,53 @@ describe("getTransactionStatus", () => {
     expect(result.totalSpent.isGreaterThan(100)).toBe(true);
   });
 
+  it("coin send max sets the amount to the balance minus the estimated fees without error", async () => {
+    const mockedAccount = getMockedAccount({ balance: new BigNumber(1000) });
+    const mockedTransaction = getMockedTransaction({
+      recipient: validRecipientAddress,
+      amount: new BigNumber(0),
+      useAllAmount: true,
+    });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect({
+      errors: result.errors,
+      warnings: result.warnings,
+      amount: result.amount.toString(),
+      estimatedFees: result.estimatedFees.toString(),
+      totalSpent: result.totalSpent.toString(),
+    }).toEqual({
+      errors: {},
+      warnings: {},
+      amount: "999",
+      estimatedFees: "1",
+      totalSpent: "1000",
+    });
+  });
+
+  it("hts token send max sets the amount and the total spent to the token balance", async () => {
+    const tokenAccount = getMockedTokenAccount(getMockedHTSTokenCurrency(), {
+      balance: new BigNumber(500),
+    });
+    const account = getMockedAccount({ balance: new BigNumber(1000), subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      subAccountId: tokenAccount.id,
+      recipient: validRecipientAddress,
+      amount: new BigNumber(100),
+      useAllAmount: true,
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect({
+      errors: result.errors,
+      warnings: result.warnings,
+      amount: result.amount.toString(),
+      totalSpent: result.totalSpent.toString(),
+    }).toEqual({ errors: {}, warnings: {}, amount: "500", totalSpent: "500" });
+  });
+
   it("hts token transfer with valid recipient and sufficient balance completes successfully", async () => {
     mockCheckAccountTokenAssociationStatus.mockResolvedValueOnce(true);
 

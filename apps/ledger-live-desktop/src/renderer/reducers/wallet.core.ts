@@ -86,6 +86,3 @@ export const importWalletState =
       dispatch(updateRecentAddresses(payload.recentAddresses));
     }
   };
-
-export { updateRecentAddresses };
-export { bulkSetAccountNames } from "@domain/entity-account-name";

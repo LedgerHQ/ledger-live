@@ -1,5 +1,4 @@
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { getPriceChangeKeyForRange as getSharedPriceChangeKeyForRange } from "@ledgerhq/live-common/market/utils/rangePriceChangeKey";
 import {
   resolveRangePriceChange as resolveSharedRangePriceChange,
   type RangePriceChange,
@@ -14,10 +13,6 @@ const DESKTOP_PRICE_CHANGE_KEY_EXTENSIONS: Partial<Record<LineChartRange, KeysPr
 };
 
 export type { RangePriceChange };
-
-export function getPriceChangeKeyForRange(range: LineChartRange): KeysPriceChange | undefined {
-  return getSharedPriceChangeKeyForRange(range, DESKTOP_PRICE_CHANGE_KEY_EXTENSIONS);
-}
 
 type ResolveRangePriceChangeParams = Readonly<{
   selectedRange: LineChartRange;

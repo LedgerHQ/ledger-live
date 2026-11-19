@@ -68,6 +68,12 @@ describe("useProposalRowViewModel", () => {
 
       expect(result.current.amountColor).toBe("error.c50");
     });
+
+    it("should return the warning color for an unknown instrument", () => {
+      const { result } = renderViewModel({ isIncoming: true, isUnknownInstrument: true });
+
+      expect(result.current.amountColor).toBe("warning.c70");
+    });
   });
 
   describe("timeRemaining", () => {

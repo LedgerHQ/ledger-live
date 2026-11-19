@@ -27,9 +27,12 @@ export type ProcessedProposal = {
   receiver: string;
   amount: BigNumber;
   instrumentId: string;
-  // Unit resolved per-instrument so token offers render with the token's
+  instrumentAdmin: string;
+  // Unit resolved per instrument (id and admin) so token offers render with the token's
   // ticker / magnitude even when shown on the parent (native) account.
   unit: Unit;
+  // Neither native CC nor a CAL token: another admin's instrument, or one CAL doesn't list.
+  isUnknownInstrument: boolean;
   memo: string;
   expiresAtMicros: number;
   isExpired: boolean;

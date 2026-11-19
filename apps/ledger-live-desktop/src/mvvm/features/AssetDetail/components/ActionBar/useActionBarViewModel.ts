@@ -15,7 +15,6 @@ import {
   type MarketCurrencyRampLedgerIds,
 } from "LLD/features/Market/utils/rampCatalogAvailability";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal } from "~/renderer/actions/modals";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { isAssetDetailPageLoading } from "LLD/features/AssetDetail/utils/isAssetDetailPageLoading";
@@ -27,6 +26,7 @@ import { useSwapNavigation } from "LLD/features/Market/hooks/useSwapNavigation";
 import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
 import { resolveRampLedgerIds } from "LLD/features/AssetDetail/utils/resolveRampLedgerIds";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 type UseActionBarViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
@@ -161,7 +161,7 @@ export function useActionBarViewModel({
     ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
   const rampNavigationCurrencyIds =
     rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
-  const sendCurrencyIds = useMemo(() => {
+  const assetCurrencyIds = useMemo(() => {
     if (ledgerIds && ledgerIds.length > 0) return ledgerIds;
     if (trackingCurrencyId) return [trackingCurrencyId];
     return undefined;
@@ -201,9 +201,9 @@ export function useActionBarViewModel({
     });
     openSendFlow({
       source: ASSET_DETAIL_TRACKING_PAGE_NAME,
-      currencyIds: sendCurrencyIds,
+      currencyIds: assetCurrencyIds,
     });
-  }, [openSendFlow, sendCurrencyIds, trackingCurrencyId]);
+  }, [openSendFlow, assetCurrencyIds, trackingCurrencyId]);
 
   const onReceive = useCallback(() => {
     track("button_clicked", {
@@ -212,12 +212,15 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openReceiveFlow({
         sourcePage: ASSET_DETAIL_TRACKING_PAGE_NAME,
-        ...(primaryAccount ? { account: primaryAccount, parentAccount: primaryParentAccount } : {}),
+        currencyIds: assetCurrencyIds,
+        legacyAccount: primaryAccount
+          ? { account: primaryAccount, parentAccount: primaryParentAccount }
+          : undefined,
       }),
     );
-  }, [dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
+  }, [assetCurrencyIds, dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
 
   const onSwap = useCallback(() => {
     if (!ledgerCurrency) return;

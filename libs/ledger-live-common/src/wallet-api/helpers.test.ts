@@ -650,6 +650,9 @@ describe("wallet-api helpers", () => {
       ["bitcoin", { dependencies: [] }, true],
       ["bitcoin", { hwAppId: "Hashi" }, true],
       ["bitcoin_testnet", { hwAppId: "Hashi Test" }, true],
+      ["bitcoin_signet", { hwAppId: "Hashi Test" }, true],
+      ["bitcoin_signet", { hwAppId: "Hashi" }, false],
+      ["bitcoin_signet", { hwAppId: "Bitcoin Test" }, true],
       ["bitcoin", { hwAppId: "Hashi Test" }, false],
       ["bitcoin_testnet", { hwAppId: "Hashi" }, false],
       ["bitcoin", { hwAppId: "Jibberish" }, false],
@@ -675,6 +678,8 @@ describe("wallet-api helpers", () => {
     it.each([
       ["bitcoin", "Hashi", true],
       ["bitcoin_testnet", "Hashi Test", true],
+      ["bitcoin_signet", "Hashi Test", true],
+      ["bitcoin_signet", "Hashi", false],
       ["bitcoin", undefined, false],
       ["bitcoin", "Bitcoin", false],
       ["bitcoin", "Hashi Test", false],

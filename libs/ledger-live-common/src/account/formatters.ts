@@ -6,21 +6,21 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "../currencies";
 import { toAccountRaw } from "./serialization";
 import { getAccountBridge } from "../bridge";
 
-const isSignificantAccount = acc =>
+const isSignificantAccount = (acc: AccountLike) =>
   acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
 
 const formatOp = (
   unitByAccountId: (arg0: string) => Unit | null | undefined,
   familySpecific: (arg0: Operation, arg1: Unit | null | undefined) => string,
 ) => {
-  const format = (op: Operation, level = 0) => {
+  const format = (op: Operation, level = 0): string => {
     const unit = unitByAccountId(op.accountId);
     const amountBN = getOperationAmountNumber(op);
     const amount = unit
@@ -51,9 +51,9 @@ const formatOp = (
   return (op: Operation) => format(op, 0);
 };
 
-function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
+function maybeDisplaySumOfOpsIssue(ops: Operation[], balance: BigNumber, unit: Unit) {
   const sumOfOps = ops.reduce(
-    (sum, op) => sum.plus(getOperationAmountNumber(op)),
+    (sum: BigNumber, op) => sum.plus(getOperationAmountNumber(op)),
     new BigNumber(0),
   );
   if (sumOfOps.eq(balance)) return "";
@@ -67,7 +67,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   );
 }
 
-const cliFormat = async (account, level?: string): Promise<string> => {
+const cliFormat = async (account: Account & { name?: string }, level?: string): Promise<string> => {
   const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations } = account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
@@ -130,7 +130,7 @@ const cliFormat = async (account, level?: string): Promise<string> => {
   return str;
 };
 
-const stats = account => {
+const stats = (account: Account) => {
   const { subAccounts, operations } = account;
   const sumOfAllOpsNumber = operations.reduce(
     (sum: BigNumber, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
@@ -151,7 +151,7 @@ const stats = account => {
 };
 
 // this is developped for debug purpose in order to compare with balance APIs
-const operationBalanceHistoryBackwards = account => {
+const operationBalanceHistoryBackwards = (account: Account) => {
   let acc = account.balance;
   return JSON.stringify(
     account.operations
@@ -165,7 +165,7 @@ const operationBalanceHistoryBackwards = account => {
       .reverse(),
   );
 };
-const operationBalanceHistory = account => {
+const operationBalanceHistory = (account: Account) => {
   let acc = new BigNumber(0);
   return JSON.stringify(
     account.operations
@@ -181,7 +181,7 @@ const operationBalanceHistory = account => {
   );
 };
 
-export const accountFormatters: { [_: string]: (Account) => any } = {
+export const accountFormatters: { [_: string]: (account: Account) => any } = {
   operationBalanceHistoryBackwards,
   operationBalanceHistory,
   json: async account => JSON.stringify(await toAccountRaw(account)),
@@ -212,7 +212,7 @@ export async function formatOperation(
   };
 
   const bridge = account ? await getAccountBridge(account) : null;
-  const familyExtra = (operation, unit) =>
+  const familyExtra = (operation: Operation, unit: Unit | null | undefined) =>
     bridge?.formatOperationSpecifics?.(operation, unit) ?? "";
 
   return formatOp(unitByAccountId, familyExtra);

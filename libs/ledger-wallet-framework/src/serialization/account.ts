@@ -11,7 +11,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { getCurrenciesResolver } from "../currencies/resolver";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
-import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
+import { emptyHistoryCache, refreshHistoryFromOperations } from "../account/balanceHistoryCache";
 import {
   compressBalanceHistoryCache,
   decompressBalanceHistoryCache,
@@ -160,7 +160,7 @@ export async function fromAccountRaw(
       ? decompressBalanceHistoryCache(balanceHistoryCache)
       : emptyHistoryCache,
   };
-  res.balanceHistoryCache = generateHistoryFromOperations(res);
+  res.balanceHistoryCache = refreshHistoryFromOperations(res);
 
   res.used = resolveUsed(used, res);
 
@@ -352,7 +352,7 @@ async function fromTokenAccountRaw(
       ? decompressBalanceHistoryCache(balanceHistoryCache)
       : emptyHistoryCache,
   };
-  res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
+  res.balanceHistoryCache = refreshHistoryFromOperations(res as TokenAccount);
   return res;
 }
 function toTokenAccountRaw(

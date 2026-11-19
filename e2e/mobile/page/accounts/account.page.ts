@@ -214,7 +214,7 @@ export default class AccountPage {
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.expectTransferActionVisible();
+      await this.accountDetail.expectReceiveAndSendActionsVisible();
       return;
     }
     await this.receiveButton.scrollTo(this.accountScreenScrollView);
@@ -235,12 +235,20 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapReceive();
+      return;
+    }
     await this.receiveButton.revealForTap(this.accountScreenScrollView);
     await this.receiveButton.tap();
   }
 
   @Step("Tap on send button")
-  async tapSend() {
+  async tapSend(currencyId?: string, isToken = false) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapSend(currencyId, isToken);
+      return;
+    }
     await this.sendButton.revealForTap(this.accountScreenScrollView);
     await this.sendButton.tap();
   }

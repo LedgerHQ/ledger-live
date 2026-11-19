@@ -116,8 +116,17 @@ describe("sampling attributes", () => {
     });
   });
 
-  it("puts an unknown method in the sync tier", () => {
+  it("drops a method the defaults do not list, failures included", () => {
     const transmit = createCoinModuleCallTransmitter(() => config, { random: always });
+    expect(transmit(event("someFutureMethod", "success"))).toBeNull();
+    expect(transmit(event("someFutureMethod", "failure"))).toBeNull();
+  });
+
+  it("sends an unlisted method the flag gives a tier", () => {
+    const transmit = createCoinModuleCallTransmitter(
+      () => ({ ...config, methodTiers: { someFutureMethod: "sync" } }),
+      { random: always },
+    );
     expect(transmit(event("someFutureMethod", "success"))).toEqual({
       tier: "sync",
       sampleRate: 0.05,

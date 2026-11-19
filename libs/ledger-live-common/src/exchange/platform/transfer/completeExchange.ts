@@ -33,8 +33,10 @@ import {
   toExchangeError,
 } from "../../error";
 
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
+const withDevicePromise = <T>(
+  deviceId: string | undefined,
+  fn: (transport: Transport) => Promise<T>,
+) => firstValueFrom(withDevice(deviceId as string)(transport => from(fn(transport))));
 
 export type ConfirmTransferExchangeInput = CompleteExchangeInputFund | CompleteExchangeInputSell;
 

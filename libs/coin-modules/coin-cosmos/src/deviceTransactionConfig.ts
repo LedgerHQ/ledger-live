@@ -76,7 +76,7 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<CosmosTransactionFieldType>> {
-  const { mode, memo } = transaction;
+  const { mode, memoValue } = transaction;
   const validators = resolveTransactionValidators(transaction);
   const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -188,11 +188,11 @@ async function getDeviceTransactionConfig({
       break;
   }
 
-  if (memo) {
+  if (memoValue) {
     fields.push({
       type: "text",
       label: "Memo",
-      value: memo,
+      value: memoValue,
     });
   }
 

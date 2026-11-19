@@ -19,7 +19,7 @@ export function filterPlatformAccounts(
   filters: AccountFilters,
 ): PlatformAccount[] {
   const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map(filter => makeRe(filter))
+    ? filters.currencies.map(filter => makeRe(filter) as RegExp)
     : null;
 
   return accounts.filter(account => {

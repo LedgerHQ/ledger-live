@@ -1,9 +1,7 @@
 import React, { useCallback } from "react";
-import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation, Trans } from "react-i18next";
 import { TFunction } from "i18next";
-import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { canReceive, getMainAccount } from "@ledgerhq/live-common/account/index";
 import IconReceive from "~/renderer/icons/Receive";
@@ -21,18 +19,16 @@ import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTokenTypes } from "~/renderer/families/useTokenTypes";
-const mapDispatchToProps = {
-  openModal,
-};
+import { useOpenReceiveFlow } from "LLD/features/Receive";
 type OwnProps = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
 type Props = OwnProps & {
   t: TFunction;
-  openModal: (name: string, data: Record<string, unknown>) => void;
 };
-function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
+function EmptyStateAccount({ t, account, parentAccount }: Props) {
+  const openReceiveFlow = useOpenReceiveFlow();
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const tokenTypes = useTokenTypes(mainAccount.currency);
@@ -115,7 +111,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               mt={5}
               primary
               onClick={() =>
-                openModal("MODAL_RECEIVE", {
+                openReceiveFlow({
                   account,
                   parentAccount,
                   sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
@@ -145,8 +141,6 @@ const Description = styled(Box).attrs(() => ({
   textAlign: "center",
 }))``;
 
-const ConnectedEmptyStateAccount = compose<React.ComponentType<OwnProps>>(
-  connect(null, mapDispatchToProps),
-  withTranslation(),
-)(EmptyStateAccount);
+const ConnectedEmptyStateAccount =
+  compose<React.ComponentType<OwnProps>>(withTranslation())(EmptyStateAccount);
 export default ConnectedEmptyStateAccount;

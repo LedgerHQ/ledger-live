@@ -2,11 +2,14 @@ import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "../../bridge/buildOptimisticOperation";
 import {
   accountFixture,
+  accountWithTokenAccountFixture,
   transactionFixture,
   transactionWithUsdcFeeFixture,
+  usdcToken,
 } from "../../bridge/fixtures";
 
 const FEE_CURRENCY = "0xCEBA9300F2B948710D2653DD7B07F33A8B32118C";
+const USDC_ADAPTER = "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B";
 
 describe("buildOptimisticOperation", () => {
   it("should build a proper send operation", () => {
@@ -81,6 +84,31 @@ describe("buildOptimisticOperation", () => {
     expect(optimisticOperation.extra.feeCurrencyAddress).toEqual(
       "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
     );
+  });
+
+  it("gives a fee paid through an adapter in the token's own units, with the token", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountWithTokenAccountFixture,
+      { ...transactionFixture, mode: "send", feeCurrency: USDC_ADAPTER },
+      // 0.004072 USDC in the adapter's 18 decimals
+      BigNumber("4072000000000000"),
+      { nonce: 7, feeCurrency: USDC_ADAPTER },
+    );
+
+    expect(optimisticOperation.fee).toEqual(BigNumber(4072));
+    expect(optimisticOperation.extra).toEqual({ feeAsset: usdcToken.contractAddress });
+  });
+
+  it("keeps a fee in the fee currency's units, with the adapter, without the token's decimals", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountFixture,
+      { ...transactionFixture, mode: "send", feeCurrency: USDC_ADAPTER },
+      BigNumber("4072000000000000"),
+      { nonce: 7, feeCurrency: USDC_ADAPTER },
+    );
+
+    expect(optimisticOperation.fee).toEqual(BigNumber("4072000000000000"));
+    expect(optimisticOperation.extra).toEqual({ feeCurrencyAddress: USDC_ADAPTER.toLowerCase() });
   });
 
   it("leaves feeCurrencyAddress unset when the signed tx has no fee currency", () => {

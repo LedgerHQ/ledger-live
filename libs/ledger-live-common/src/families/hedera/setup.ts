@@ -16,6 +16,7 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
 import { withGenericTransactionSupport } from "./legacyBridgeAdapter";
+import { deriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
   return new Hedera(transport);
@@ -38,4 +39,4 @@ const bridge: Bridge<Transaction, HederaAccount, TransactionStatus> = {
 
 const resolver: Resolver = createResolver(createSigner, hederaResolver);
 
-export { bridge, resolver };
+export { bridge, resolver, deriveAccountDescriptor };

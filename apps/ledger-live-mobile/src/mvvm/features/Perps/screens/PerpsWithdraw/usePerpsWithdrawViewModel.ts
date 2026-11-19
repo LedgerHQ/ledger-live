@@ -32,6 +32,8 @@ type NavigationProps = RootComposite<
 
 export type PerpsWithdrawViewModel = Readonly<{
   headerDescription: string;
+  /** The available balance is being refreshed, so `headerDescription` leaves it out. */
+  isBalanceRefreshing: boolean;
   amountText: string;
   amount: number;
   currencyCode: string;
@@ -65,6 +67,16 @@ export type PerpsWithdrawViewModel = Readonly<{
   endSigning: (result: PerpsWithdrawResult) => void;
   leaveWithdraw: () => void;
 }>;
+
+/** Hides the available balance until it is refreshed, rather than showing the old one. */
+function getHeaderDescription(
+  sourceName: string,
+  formattedAvailable: string,
+  isBalanceRefreshing: boolean,
+): string {
+  if (isBalanceRefreshing) return sourceName;
+  return `${sourceName} · ${formattedAvailable}`;
+}
 
 export function usePerpsWithdrawViewModel({
   navigation,
@@ -201,7 +213,12 @@ export function usePerpsWithdrawViewModel({
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
   return {
-    headerDescription: `${sourceName} · ${form.formattedAvailable}`,
+    headerDescription: getHeaderDescription(
+      sourceName,
+      form.formattedAvailable,
+      form.isBalanceRefreshing,
+    ),
+    isBalanceRefreshing: form.isBalanceRefreshing,
     amountText,
     amount,
     currencyCode: counterValueUnit.code,

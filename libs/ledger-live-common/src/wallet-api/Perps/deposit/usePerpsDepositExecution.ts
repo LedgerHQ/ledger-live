@@ -95,6 +95,8 @@ export type PerpsDepositExecutionDeps = Readonly<{
   updateAccount: (accountId: string, updater: (account: Account) => Account) => void;
   broadcastLogger?: (event: LogEvent) => void;
   track: PerpsDepositTrack;
+  /** The deposit is not recorded or reported to the live app, and the swap is reported cancelled. */
+  broadcastDisabled: boolean;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -119,6 +121,7 @@ export function usePerpsDepositExecution(
     updateAccount,
     broadcastLogger,
     track,
+    broadcastDisabled,
   }: PerpsDepositExecutionDeps,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
@@ -231,6 +234,11 @@ export function usePerpsDepositExecution(
       onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
 
+      // The provider's id still goes to executeSwap, which reports the swap as cancelled.
+      if (broadcastDisabled) {
+        return { operation, swapId: undefined, providerSwapId: exchangeParams.swapId };
+      }
+
       const swapId = exchangeParams.swapId;
       if (swapId) {
         const [accountId, updater] = getUpdateAccountWithUpdaterParams({
@@ -245,10 +253,11 @@ export function usePerpsDepositExecution(
         if (accountId && updater) updateAccount(accountId, updater);
       }
 
-      return { operation, swapId };
+      return { operation, swapId, providerSwapId: swapId };
     },
     [
       broadcast,
+      broadcastDisabled,
       depositAccount,
       deviceActions.confirm,
       deviceActions.sign,
@@ -318,7 +327,10 @@ export function usePerpsDepositExecution(
                 if (settled) return;
                 settled = true;
                 signed = result;
-                onSuccess({ operationHash: result.operation.hash, swapId: result.swapId ?? "" });
+                onSuccess({
+                  operationHash: result.operation.hash,
+                  swapId: result.providerSwapId ?? "",
+                });
               }, cancel);
             },
             "custom.exchange.error": () => undefined,

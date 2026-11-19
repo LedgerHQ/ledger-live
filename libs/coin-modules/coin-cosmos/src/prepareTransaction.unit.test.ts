@@ -23,7 +23,8 @@ const transaction = {
   mode: "send",
   recipient: "cosmosrecipientaddress",
   amount: new BigNumber("1000000"),
-  memo: "test memo",
+  memoType: "text",
+  memoValue: "test memo",
   useAllAmount: false,
 } as unknown as Transaction;
 
@@ -86,7 +87,8 @@ describe("calculateFees", () => {
       mode: "send",
       recipient: "cosmosrecipientaddress",
       amount: new BigNumber("1000000"),
-      memo: "test memo",
+      memoType: "text",
+      memoValue: "test memo",
       useAllAmount: false,
     }) as unknown as Transaction;
 
@@ -199,7 +201,10 @@ describe("calculateFees", () => {
     const tx = createTransaction();
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    await calculateFees({ account: acc, transaction: { ...tx, memo: "yikes" } });
+    await calculateFees({
+      account: acc,
+      transaction: { ...tx, memoType: "text", memoValue: "yikes" },
+    });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
@@ -267,7 +272,8 @@ describe("prepareTransaction", () => {
       mode: "send",
       recipient: "cosmosrecipientaddress",
       amount: new BigNumber("1000000"),
-      memo: "test memo",
+      memoType: "text",
+      memoValue: "test memo",
       useAllAmount: false,
       ...patch,
     }) as unknown as Transaction;
@@ -293,28 +299,29 @@ describe("prepareTransaction", () => {
   it("defaults the memo of a staking transaction to Ledger Live", async () => {
     const prepared = await prepareTransaction(
       stakingAccount(),
-      sendTransaction({ mode: "delegate", memo: undefined }),
+      sendTransaction({ mode: "delegate", memoType: undefined, memoValue: undefined }),
     );
 
-    expect(prepared.memo).toBe("Ledger Live");
+    expect(prepared.memoType).toBe("text");
+    expect(prepared.memoValue).toBe("Ledger Live");
   });
 
   it("keeps the memo the user typed on a staking transaction", async () => {
     const prepared = await prepareTransaction(
       stakingAccount(),
-      sendTransaction({ mode: "delegate", memo: "my memo" }),
+      sendTransaction({ mode: "delegate", memoValue: "my memo" }),
     );
 
-    expect(prepared.memo).toBe("my memo");
+    expect(prepared.memoValue).toBe("my memo");
   });
 
   it("does not invent a memo for a send", async () => {
     const prepared = await prepareTransaction(
       stakingAccount(),
-      sendTransaction({ memo: undefined }),
+      sendTransaction({ memoType: undefined, memoValue: undefined }),
     );
 
-    expect(prepared.memo).toBeUndefined();
+    expect(prepared.memoValue).toBeUndefined();
   });
 
   it("sends the whole balance minus fees, staked and unbonding principal", async () => {

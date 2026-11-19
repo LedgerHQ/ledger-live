@@ -81,10 +81,13 @@ const getSwapOperationMap =
         if (token && toAccount.type === "Account") {
           toParentAccount = toAccount;
           // Enhance the account with the given token in case we don't have funds yet.
-          toAccount = (accountWithMandatoryTokens(toAccount, [token]).subAccounts || []).find(
-            a => getAccountCurrency(a).id === tokenId,
-          );
-          toExists = (toParentAccount.subAccounts || []).includes(toAccount);
+          const tokenAccount = (
+            accountWithMandatoryTokens(toAccount, [token]).subAccounts || []
+          ).find(a => getAccountCurrency(a).id === tokenId);
+          toAccount = tokenAccount;
+          toExists =
+            tokenAccount !== undefined &&
+            (toParentAccount.subAccounts || []).includes(tokenAccount);
         }
       }
 
@@ -143,7 +146,7 @@ const getSwapOperationMap =
     }
   };
 
-function startOfDay(t) {
+function startOfDay(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 

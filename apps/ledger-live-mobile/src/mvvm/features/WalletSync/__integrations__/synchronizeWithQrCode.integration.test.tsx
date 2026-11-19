@@ -1,7 +1,10 @@
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
-import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import {
+  createQRCodeCandidateInstance,
+  createQRCodeHostInstance,
+} from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { Code } from "react-native-vision-camera";
 
 import { mockSimulateBarcodeScanned } from "@tests/jest-setup";
@@ -19,11 +22,29 @@ const MOCK_CODE: Code = {
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeCandidateInstance: jest.fn(),
+  createQRCodeHostInstance: jest.fn(),
 }));
 
 jest.useFakeTimers();
 
 describe("SynchronizeWithQrCode", () => {
+  it("Should render the host QR code once the Ledger Sync url is received", async () => {
+    (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayQRCode }) => {
+      onDisplayQRCode("wss://trustchain.api.live.ledger.com/v1/qr?host=02abc");
+      return new Promise(() => {});
+    });
+
+    const { user } = render(<WalletSyncSettingsNavigator />, {
+      overrideInitialState: INITIAL_TEST,
+    });
+    await user.press(await screen.findByText(/ledger sync/i));
+    await user.press(await screen.findByText(/I already turned it on/i));
+    await user.press(await screen.findByText(/scan qr code/i));
+    await user.press(screen.queryAllByText(/show qr/i)[0]);
+
+    expect(await screen.findByTestId("ws-qr-code")).toBeVisible();
+  });
+
   it("Should display the QR code when 'show qr' toggle is pressed and add a new member through the flow", async () => {
     let resolveQRCodeFlowPromise: unknown = null;
     let requestQRCodeInput: unknown = null;

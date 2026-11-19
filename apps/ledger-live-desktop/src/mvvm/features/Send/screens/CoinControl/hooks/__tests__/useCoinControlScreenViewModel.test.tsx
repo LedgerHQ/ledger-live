@@ -10,6 +10,12 @@ import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/t
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: () => true,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),

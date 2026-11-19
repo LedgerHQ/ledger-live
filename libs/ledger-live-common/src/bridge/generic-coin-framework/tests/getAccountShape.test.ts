@@ -4993,6 +4993,87 @@ describe("genericGetAccountShape", () => {
       expect(result.operations?.map(op => op.blockHeight)).toEqual([8]);
       expect(result.blockHeight).not.toBe(0);
     });
+
+    describe("a NONE row for a transaction that changed nothing", () => {
+      const noneOp = (hash: string, height: number) => ({ ...coreOp(hash, height), type: "NONE" });
+
+      test("is stored, so the next sync resumes above it instead of downloading it again", async () => {
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+        // Sync 1: a real operation at 9, then two transactions at 11 and 12 that changed nothing.
+        listOperationsMock.mockResolvedValueOnce({
+          items: [noneOp("spam12", 12), noneOp("spam11", 11), coreOp("h9", 9)],
+        });
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result1 = await getShape(
+          { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result1.operations?.map(op => [op.type, op.blockHeight])).toEqual([
+          ["NONE", 12],
+          ["NONE", 11],
+          ["IN", 9],
+        ]);
+
+        // Sync 2: resumes at 13. Without the NONE rows it would resume at 10, and fetch 11 and 12
+        // again, on this sync and every later one.
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+        await getShape(
+          {
+            address: "addr1",
+            initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(listOperationsMock).toHaveBeenNthCalledWith(
+          2,
+          expect.anything(),
+          "addr1",
+          expect.objectContaining({ minHeight: 13 }),
+        );
+      });
+
+      test("counts toward a bounded walk like any row, and the resume point stays on what was fetched", async () => {
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+        // The bound stops the walk after the first page: the second page is never fetched.
+        listOperationsMock
+          .mockResolvedValueOnce({ items: [noneOp("spam12", 12), coreOp("h11", 11)], next: "c1" })
+          .mockResolvedValueOnce({ items: [coreOp("h9", 9)] });
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result1 = await getShape(
+          { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        // The bounded stop drops the block it cut into (11), as for any row; the NONE row stays.
+        expect(result1.operations?.map(op => [op.type, op.blockHeight])).toEqual([["NONE", 12]]);
+
+        listOperationsMock.mockReset();
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+        await getShape(
+          {
+            address: "addr1",
+            initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        // The newest row fetched, never a height the walk did not reach.
+        expect(listOperationsMock).toHaveBeenCalledWith(
+          expect.anything(),
+          "addr1",
+          expect.objectContaining({ minHeight: 13 }),
+        );
+      });
+    });
   });
 
   describe("resumable token discovery", () => {
@@ -5361,6 +5442,163 @@ describe("genericGetAccountShape", () => {
         await expect(syncWith(resumed)).rejects.toThrow("store unreachable");
         expect(buildSubAccountsMock).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("fee paid in a token", () => {
+    const address = "0xAbC";
+    const usdtFeeAsset = { type: "erc20", assetReference: "0xUsdt" };
+    const usdtAsset = { type: "erc20", assetReference: "0xUSDT", assetOwner: address };
+    const usdtToken = { id: "ethereum/erc20/usdt" };
+    const native = { asset: { type: "native" }, value: 100n, locked: 0n };
+    const coreOperation = (overrides: Record<string, unknown> = {}) => ({
+      id: "core-op",
+      asset: { type: "native" },
+      type: "FEES",
+      value: 0n,
+      senders: [address],
+      recipients: ["0xContract"],
+      tx: {
+        hash: "0xhash",
+        fees: 1601n,
+        feesAsset: usdtFeeAsset,
+        feesPayer: address,
+        block: { hash: "0xblock", height: 10, time: new Date("2026-11-18T00:00:00Z") },
+        date: new Date("2026-11-18T00:00:00Z"),
+        failed: false,
+      },
+      ...overrides,
+    });
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
+    const syncWith = async ({
+      operations = [coreOperation()],
+      tokenBalances = [],
+      bridgeApi = {},
+    }: {
+      operations?: unknown[];
+      tokenBalances?: unknown[];
+      bridgeApi?: Record<string, unknown>;
+    } = {}) => {
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => usdtAsset,
+        ...bridgeApi,
+      }));
+      getTokenFromAssetMock.mockResolvedValue(usdtToken);
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 0n });
+      getBalanceMock.mockResolvedValue([native, ...tokenBalances]);
+      listOperationsMock.mockResolvedValue({ items: operations, next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 20 });
+      adaptCoreOperationToLiveOperationMock.mockImplementation((...args: any[]) =>
+        jest.requireActual("../utils").adaptCoreOperationToLiveOperation(...args),
+      );
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+      buildSubAccountsMock.mockReturnValue([]);
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+      const shape: any = await genericGetAccountShape("mainnet", "ethereum")(
+        {
+          address,
+          currency: { id: "ethereum", name: "Ethereum" },
+          derivationMode: "",
+          initialAccount: undefined,
+        } as any,
+        { paginationConfig: {} as any },
+      );
+      return { shape, subAccountInput: buildSubAccountsMock.mock.calls[0][0] };
+    };
+
+    it("hands the fee token a FEES operation and turns the native carrier into NONE", async () => {
+      const { shape, subAccountInput } = await syncWith({
+        tokenBalances: [{ asset: usdtAsset, value: 5000n }],
+      });
+
+      expect(subAccountInput.operations).toEqual([
+        expect.objectContaining({
+          hash: "0xhash",
+          type: "FEES",
+          value: new BigNumber(1601),
+          extra: expect.objectContaining({
+            ledgerOpType: "FEES",
+            assetReference: "0xUSDT",
+            assetOwner: address,
+          }),
+        }),
+      ]);
+      expect(subAccountInput.allTokenAssetsBalances).toEqual([{ asset: usdtAsset, value: 5000n }]);
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          id: "accId-0xhash-NONE",
+          type: "NONE",
+          value: new BigNumber(0),
+          fee: new BigNumber(0),
+          extra: expect.objectContaining({ feeAsset: usdtFeeAsset, feeAmount: "1601" }),
+        }),
+      ]);
+    });
+
+    it("replaces a value-0 FEES operation of the fee token with the charged one", async () => {
+      const { subAccountInput } = await syncWith({
+        operations: [coreOperation({ asset: usdtAsset })],
+        tokenBalances: [{ asset: usdtAsset, value: 5000n }],
+      });
+
+      expect(subAccountInput.operations).toEqual([
+        expect.objectContaining({ type: "FEES", value: new BigNumber(1601) }),
+      ]);
+    });
+
+    it("keeps a native transfer of a transaction whose fee was paid in a token", async () => {
+      const { shape } = await syncWith({
+        operations: [coreOperation({ type: "OUT", value: 7n })],
+        tokenBalances: [{ asset: usdtAsset, value: 5000n }],
+      });
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({ type: "OUT", value: new BigNumber(7), fee: new BigNumber(0) }),
+      ]);
+    });
+
+    it("gives the fee token a 0 balance when the family's balance lists every token", async () => {
+      const { subAccountInput } = await syncWith({ bridgeApi: { balanceListsEveryToken: true } });
+
+      expect(subAccountInput.allTokenAssetsBalances).toEqual([{ value: 0n, asset: usdtAsset }]);
+    });
+
+    it("gives the fee token no balance when nothing tells it", async () => {
+      const { subAccountInput } = await syncWith();
+
+      expect(subAccountInput.allTokenAssetsBalances).toEqual([]);
+    });
+
+    it("charges nothing in a token for a fee another account paid", async () => {
+      const { subAccountInput } = await syncWith({
+        operations: [
+          coreOperation({ tx: { ...coreOperation().tx, feesPayer: "0xOther" }, type: "IN" }),
+        ],
+        tokenBalances: [{ asset: usdtAsset, value: 5000n }],
+      });
+
+      expect(subAccountInput.operations).toEqual([]);
+    });
+
+    it("keeps a native fee as today", async () => {
+      const { shape, subAccountInput } = await syncWith({
+        operations: [
+          coreOperation({ tx: { ...coreOperation().tx, feesAsset: { type: "native" } } }),
+        ],
+      });
+
+      expect(subAccountInput.operations).toEqual([]);
+      expect(shape.operations).toEqual([
+        expect.objectContaining({ type: "FEES", value: new BigNumber(1601) }),
+      ]);
     });
   });
 });

@@ -127,7 +127,7 @@ const countries = {
   US: "United States",
 };
 
-const swapBackendErrorCodes = {
+const swapBackendErrorCodes: Record<number, new (message?: string) => Error> = {
   "100": JSONRPCResponseError,
   "101": JSONDecodeError,
   "200": NoIPHeaderError,

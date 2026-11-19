@@ -50,6 +50,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "zencash",
       "bitcoin_testnet",
       "bitcoin_regtest",
+      "bitcoin_signet",
     ],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),
@@ -251,6 +252,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-filecoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-filecoin/deviceTransactionConfig").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/filecoin/coinModuleApi").then(m => m.createLocalFilecoinApi),
+    // Its getBalance returns FIL only: the ERC-20 balances FullSync reads would go missing.
+    localApiServesAccountData: false,
   },
   {
     family: "hedera",

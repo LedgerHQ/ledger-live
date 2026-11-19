@@ -18,17 +18,6 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
-  let amount = transaction.amount;
-
-  if (transaction.useAllAmount) {
-    amount = calculateAmount({ account, transaction });
-  }
-
-  const { fees, gasBudget } = await getFeesForTransaction({
-    account,
-    transaction,
-  });
-
   let mode: SuiTransactionMode = transaction.mode ?? "send";
   let coinType = DEFAULT_COIN_TYPE;
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
@@ -38,6 +27,19 @@ export const prepareTransaction: AccountBridge<
     mode = "token.send";
     coinType = subAccount?.token.contractAddress || DEFAULT_COIN_TYPE;
   }
+
+  // The mode decides how send max and the fees are computed, so it is settled first: a token
+  // transaction can arrive still in the default "send" mode, whose maximum is the SUI balance.
+  const settled: Transaction = { ...transaction, mode };
+
+  const amount = settled.useAllAmount
+    ? calculateAmount({ account, transaction: settled })
+    : settled.amount;
+
+  const { fees, gasBudget } = await getFeesForTransaction({
+    account,
+    transaction: settled,
+  });
 
   const patch: Partial<Transaction> = {
     amount,

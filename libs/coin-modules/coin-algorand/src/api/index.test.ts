@@ -43,15 +43,7 @@ describe("Algorand API", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(), mockCtx)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getNextSequence",
-        "getRewards",
-        "getStakes",
-        "getValidators",
-        "register",
-      ],
+      supported: ["getBlock", "getBlockInfo", "validateAddress", "validateIntent"],
       inconsistent: [],
     });
   });

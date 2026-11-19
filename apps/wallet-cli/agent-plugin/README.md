@@ -64,10 +64,10 @@ You can also copy the [`skills/wallet-cli-usage`](skills/wallet-cli-usage) direc
 
 ## Requirements
 
-You need the Ledger wallet-cli at the version of this plugin or later (`version` in `plugin.json`), since the plugin is exported from wallet-cli with its version:
+You need the Ledger wallet-cli at the version of this plugin or later (`version` in `plugin.json`), since the plugin is exported from wallet-cli with its version. With a newer wallet-cli, the agent follows the skill embedded in that binary (`wallet-cli skill retrieve`) instead of the plugin's copy. Install the plugin's version:
 
 ```bash
-npm i -g @ledgerhq/wallet-cli
+npm i -g @ledgerhq/wallet-cli@<version from plugin.json>
 wallet-cli --version
 ```
 
@@ -98,7 +98,7 @@ On Grok Bot, run a real `agent-intent send` in a 1:1 DM with the bot. Its auto-r
 
 The plugin is Markdown instructions and JSON manifests, plus an empty OpenClaw entry module (`openclaw.extension.mjs`, which OpenClaw needs for git installs and which registers nothing). It has no hooks, MCP servers or telemetry. The skill has the agent:
 
-- run `wallet-cli` shell commands, and install `@ledgerhq/wallet-cli` globally with a package manager when it is missing;
+- run `wallet-cli` shell commands, and install `@ledgerhq/wallet-cli` globally at the plugin's version with a package manager when it is missing;
 - reach Ledger services through wallet-cli: blockchain data, swap and staking providers, Ledger Sync, and the Agent Intent service with its encrypted enrollment relay;
 - leave a background listener (`wallet-cli agent-intent enroll --detach`) or a background job (`recover`, and `enroll` on a host that kills background processes) waiting until you approve on your Ledger;
 - store credentials through wallet-cli: the Agent Intent agent key, the Ledger Key Ring credential and the Ledger API auth key for swap quotes go to the OS keychain (the agent key goes to an unencrypted 0600 file instead only when you agree), and wallet-cli keeps its state in `~/.local/state/ledger-wallet-cli` (Windows: `%LOCALAPPDATA%\ledger-wallet-cli\State`).
@@ -114,7 +114,7 @@ name: ledger
 title: Ledger
 repo: https://github.com/LedgerHQ/agent-skills
 sha: <full SHA of the release commit>
-description: "Ledger wallet-cli skill: send, swap and stake from a Ledger hardware wallet, and propose Ethereum and Solana payments and Ethereum swaps through Agent Intents that a human approves on their Ledger. Disclosure — Markdown skill and JSON manifests, plus an empty OpenClaw entry module that registers nothing (no hooks, MCP servers or telemetry); it has the agent run wallet-cli shell commands (and install @ledgerhq/wallet-cli when missing), which call Ledger services; enroll/recover wait in the background until the human approves; wallet-cli stores the agent key in the OS keychain (or, only with the human's consent, an unencrypted 0600 file), a Ledger API auth key for swap quotes in the OS keychain, and state in ~/.local/state/ledger-wallet-cli (Windows: %LOCALAPPDATA%\\ledger-wallet-cli\\State)."
+description: "Ledger wallet-cli skill: send, swap and stake from a Ledger hardware wallet, and propose Ethereum and Solana payments and Ethereum swaps through Agent Intents that a human approves on their Ledger. Disclosure — Markdown skill and JSON manifests, plus an empty OpenClaw entry module that registers nothing (no hooks, MCP servers or telemetry); it has the agent run wallet-cli shell commands (and install @ledgerhq/wallet-cli at the plugin's version when missing), which call Ledger services; enroll/recover wait in the background until the human approves; wallet-cli stores the agent key in the OS keychain (or, only with the human's consent, an unencrypted 0600 file), a Ledger API auth key for swap quotes in the OS keychain, and state in ~/.local/state/ledger-wallet-cli (Windows: %LOCALAPPDATA%\\ledger-wallet-cli\\State)."
 maintainer: LedgerHQ
 tier: community
 category: tools

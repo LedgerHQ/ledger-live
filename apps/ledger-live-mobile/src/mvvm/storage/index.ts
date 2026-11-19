@@ -56,7 +56,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           state: state,
         });
         incrementNumberOfErrors(state, e);
-        return rejectWithError({ e, extraData: { op: "get", key } });
+        return rejectWithError({ e, extraData: { op: "get", ...keyLogData(key) } });
       }
     },
 
@@ -87,7 +87,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "save", key, value } });
+        return rejectWithError({ e, extraData: { op: "save", ...keyLogData(key) } });
       }
     },
 
@@ -132,7 +132,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "delete", key } });
+        return rejectWithError({ e, extraData: { op: "delete", ...keyLogData(key) } });
       }
     },
 
@@ -162,7 +162,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "push", key, value } });
+        return rejectWithError({ e, extraData: { op: "push", key } });
       }
     },
 
@@ -262,6 +262,11 @@ function runInitializer(init: StorageInitializer, state: StorageState): Promise<
 
 function logInitError(error: unknown): void {
   console.warn("Failed to initialize storage, staying on AsyncStorage", error);
+}
+
+/** Bulk operations log only a count, because account keys hold the xpub or the address. */
+function keyLogData(key: string | unknown[]): { key: string } | { keyCount: number } {
+  return typeof key === "string" ? { key } : { keyCount: key.length };
 }
 
 function incrementNumberOfErrors(state: StorageState, error: unknown): void {

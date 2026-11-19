@@ -35,7 +35,7 @@ type DrawerParams = {
   onCancel?: () => void;
 };
 
-function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
+export function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
   const {
     currencies,
     categories,

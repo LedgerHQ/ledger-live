@@ -179,12 +179,37 @@ describe("rewriteReferenceFile", () => {
 });
 
 describe("stampSkillVersion", () => {
-  it("names the version right after the install line", () => {
+  it("pins every install command to the version", () => {
     const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.1.0-nightly.1");
+    for (const command of ["npm i -g", "pnpm add -g", "yarn global add", "bun add -g"]) {
+      expect(stamped).toContain(`\`${command} @ledgerhq/wallet-cli@3.1.0-nightly.1\``);
+    }
+    expect(stamped).not.toContain(STANDALONE_INSTALL_LINE);
+  });
+
+  it("names the version and hands a newer binary over to its embedded skill", () => {
+    const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
     expect(stamped).toContain(
-      `${STANDALONE_INSTALL_LINE}\n\nThis copy documents wallet-cli 3.1.0-nightly.1.`,
+      "This copy documents wallet-cli 3.4.0. Before your first command, run `wallet-cli --version`",
     );
-    expect(stamped).toContain("`wallet-cli --version`");
+    expect(stamped).toContain(
+      "if it prints a newer version, follow the skill embedded in that wallet-cli instead of this copy",
+    );
+    expect(stamped).toContain("(`wallet-cli skill retrieve wallet-cli-usage`)");
+  });
+
+  it("has an older binary updated and checked against --help until then", () => {
+    const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.4.0");
+    expect(stamped).toContain(
+      "if it prints an older version, tell the human to update wallet-cli with the install command above",
+    );
+    expect(stamped).toContain("check each command against its `--help`.");
+  });
+
+  it("leaves the embedded copy, which is never stamped, unpinned", () => {
+    const embedded = rewriteSkillMd(sourceSkillMd());
+    expect(embedded).toContain(STANDALONE_INSTALL_LINE);
+    expect(embedded).not.toContain("@ledgerhq/wallet-cli@");
   });
 
   it("throws on a value that is not a version", () => {

@@ -402,6 +402,169 @@ describe("CoinModuleApi (integration)", () => {
       expect(result.errors.recipient?.name).toBe("NearNewNamedAccountError");
     });
 
+    describe("validateIntent against live chain state", () => {
+      const UNKNOWN_IMPLICIT = "9f3a1c5e7b2d4f6081a3c5e7092b4d6f8a1c3e5b7d9f0a2c4e6b8d0f1a3c5e7b";
+      const ABOVE_ANY_BALANCE = 10n ** 36n;
+      const ONE_NEAR = 10n ** 24n;
+      const ANY_FEE = { value: 1n };
+
+      const stakingIntent = (
+        mode: "stake" | "unstake" | "withdraw",
+        overrides: Partial<StakingTransactionIntent> = {},
+      ): StakingTransactionIntent =>
+        ({
+          ...sendIntent(),
+          intentType: "staking",
+          type: mode,
+          mode,
+          valAddress: "astro-stakers.poolv1.near",
+          amount: ONE_NEAR,
+          ...overrides,
+        }) as StakingTransactionIntent;
+
+      it("warns that an unknown implicit recipient will be created by the transfer", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: UNKNOWN_IMPLICIT, amount: ONE_NEAR }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors).toEqual({});
+        expect(result.warnings.recipient?.name).toBe("NearNewAccountWarning");
+      });
+
+      it("rejects an amount below the activation cost of an unknown implicit recipient", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: UNKNOWN_IMPLICIT, amount: 1_000n }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearActivationFeeNotCovered");
+      });
+
+      it("accepts a transfer to an account that exists without any warning", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: DELEGATOR }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors).toEqual({});
+        expect(result.warnings).toEqual({});
+      });
+
+      it("warns when the recipient is the sender", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: ACCOUNT_WITH_HISTORY }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.recipient?.name).toBe(
+          "InvalidAddressBecauseDestinationIsAlsoSource",
+        );
+      });
+
+      it("rejects an amount above the live spendable balance", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ amount: ABOVE_ANY_BALANCE }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NotEnoughBalance");
+      });
+
+      it("recommends unstaking first when sending everything from a delegating account", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ sender: DELEGATOR, recipient: ACCOUNT_WITH_HISTORY, useAllAmount: true }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+      });
+
+      it("still finds the delegation when the balances carry no staking entries", async () => {
+        const balances = (await api.getBalance(context, DELEGATOR)).filter(
+          balance => balance.stake === undefined,
+        );
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ sender: DELEGATOR, recipient: ACCOUNT_WITH_HISTORY, useAllAmount: true }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+      });
+
+      it("rejects staking below the staking threshold", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("stake", { amount: 1n }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearStakingThresholdNotMet");
+      });
+
+      it("rejects unstaking more than the live delegated amount", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+        const position = balances.find(balance => balance.stake?.state === "active");
+        expect(position?.stake?.delegate).toMatch(/\S/);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("unstake", {
+            sender: DELEGATOR,
+            valAddress: position!.stake!.delegate!,
+            amount: position!.stake!.amount + ONE_NEAR,
+          }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughStaked");
+      });
+
+      it("rejects withdrawing more than the live withdrawable amount", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("withdraw", { sender: DELEGATOR, amount: ABOVE_ANY_BALANCE }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughAvailable");
+      });
+    });
+
     it("validates address formats", async () => {
       await expect(api.validateAddress(context, ACCOUNT_WITH_HISTORY, {})).resolves.toBe(true);
       await expect(api.validateAddress(context, "NOT VALID", {})).resolves.toBe(false);

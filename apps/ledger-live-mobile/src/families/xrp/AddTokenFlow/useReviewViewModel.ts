@@ -10,6 +10,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import { NavigatorName, ScreenName } from "~/const";
 import { makeChangeTrustTransaction } from "../utils";
 import type { XrpAddTokenFlowParamList } from "./types";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 export type Props = BaseComposite<
   StackNavigatorProps<XrpAddTokenFlowParamList, ScreenName.XrpAddTokenReview>
@@ -56,12 +57,10 @@ export function useReviewViewModel({ navigation, route }: Props) {
 
   const { isCurrencyAvailable } = useRampCatalog();
 
+  const getReceiveRoute = useReceiveRoute();
   const onReceive = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: { accountId: account.id, currency: account.currency },
-    });
-  }, [account, navigation]);
+    navigation.navigate(...getReceiveRoute({ accountId: account.id, currency: account.currency }));
+  }, [getReceiveRoute, account, navigation]);
 
   const onBuy = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {

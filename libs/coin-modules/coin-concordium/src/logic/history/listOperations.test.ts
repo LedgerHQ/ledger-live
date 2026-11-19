@@ -3,8 +3,14 @@ import type { WalletProxyTransaction } from "../../types";
 import { listOperations, parseTransaction } from "./listOperations";
 
 const config = createFixtureConfig();
+const SPONSOR = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
+
+// Aliases 1 and 2 of VALID_ADDRESS: the same account, as the chain reports it.
+const VALID_ADDRESS_ALIAS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qjcEerDDouG";
+const VALID_ADDRESS_ALIAS_2 = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qjcEez6ovLW";
 
 jest.mock("@ledgerhq/concordium-core", () => ({
+  ...jest.requireActual("@ledgerhq/concordium-core"),
   decodeMemoFromCbor: jest.fn(),
 }));
 
@@ -70,8 +76,99 @@ describe("parseTransaction", () => {
 
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
+      amount: "0",
       fee: "500",
+      value: "500",
       feesPayer: VALID_ADDRESS,
+    });
+  });
+
+  it("should keep a transfer received on another alias of the account", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const tx: WalletProxyTransaction = {
+      ...withoutCost,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      total: 2000000,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS_ALIAS,
+        transferAmount: "2000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      sender: VALID_ADDRESS_2,
+      recipient: VALID_ADDRESS_ALIAS,
+      amount: "2000000",
+      value: "2000000",
+    });
+  });
+
+  it("should keep a transfer sent from another alias of the account", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_ALIAS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      sender: VALID_ADDRESS_ALIAS,
+      recipient: VALID_ADDRESS_2,
+      amount: "1000000",
+      value: "1000500",
+      feesPayer: VALID_ADDRESS,
+    });
+  });
+
+  it("should charge only the fee for a transfer between two aliases of the account", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      total: -500,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_ALIAS,
+        transferDestination: VALID_ADDRESS_ALIAS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      sender: VALID_ADDRESS_ALIAS,
+      recipient: VALID_ADDRESS_ALIAS_2,
+      amount: "0",
+      fee: "500",
+      value: "500",
+    });
+  });
+
+  it("should charge only the fee for a transfer from another alias to the queried address", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      total: -500,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_ALIAS,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      amount: "0",
+      value: "500",
     });
   });
 
@@ -93,6 +190,101 @@ describe("parseTransaction", () => {
       type: "IN",
       fee: "0",
       feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("reports the whole transaction cost to the recipient, which paid none of it", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const tx: WalletProxyTransaction = {
+      ...withoutCost,
+      transactionCost: "1373330",
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "222000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      fee: "0",
+      transactionFee: "1373330",
+      value: "222000000",
+      feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("falls back to the payer's cost when the proxy reports no transaction cost", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      fee: "500",
+      transactionFee: "500",
+    });
+  });
+
+  it("names the sponsor as fee payer, and charges the sponsored sender nothing", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      cost: "0",
+      transactionCost: "800",
+      sponsor: { sponsor: SPONSOR, cost: "800" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      fee: "0",
+      transactionFee: "800",
+      value: "1000000",
+      feesPayer: SPONSOR,
+    });
+  });
+
+  it("reads a sponsored cost off the sponsor when the proxy reports no transaction cost", () => {
+    const sponsored = {
+      sponsor: { sponsor: SPONSOR, cost: "800" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000000",
+      },
+    } as const;
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const senderView: WalletProxyTransaction = { ...baseTx, ...sponsored, cost: "0" };
+    const recipientView: WalletProxyTransaction = {
+      ...withoutCost,
+      ...sponsored,
+      origin: { type: "account", address: VALID_ADDRESS },
+    };
+
+    expect(parseTransaction(senderView, VALID_ADDRESS)).toMatchObject({
+      fee: "0",
+      transactionFee: "800",
+    });
+    expect(parseTransaction(recipientView, VALID_ADDRESS_2)).toMatchObject({
+      fee: "0",
+      transactionFee: "800",
     });
   });
 
@@ -283,6 +475,41 @@ describe("parseTransaction, PLT", () => {
       value: "20000000",
       fee: "0",
       feesPayer: VALID_ADDRESS_2,
+      tokenId: "trUSDT",
+    });
+  });
+
+  it("should keep a PLT transfer received on another alias of the account", () => {
+    const tx = {
+      ...incomingTx,
+      details: { ...incomingTx.details, transferDestination: VALID_ADDRESS_ALIAS },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      recipient: VALID_ADDRESS_ALIAS,
+      value: "20000000",
+      tokenId: "trUSDT",
+    });
+  });
+
+  it("should move no token between two aliases of the account, leaving the fee to pay", () => {
+    const tx = {
+      ...outgoingTx,
+      details: {
+        ...outgoingTx.details,
+        transferSource: VALID_ADDRESS_ALIAS,
+        transferDestination: VALID_ADDRESS_ALIAS_2,
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      sender: VALID_ADDRESS_ALIAS,
+      recipient: VALID_ADDRESS_ALIAS_2,
+      amount: "0",
+      value: "0",
+      fee: "595400",
       tokenId: "trUSDT",
     });
   });

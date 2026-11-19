@@ -7,10 +7,6 @@ export function getCurrentPage(scrollPosition: number, pageSize: number): number
   return Math.floor(scrollPosition / size) + 1;
 }
 
-export function formatPercentage(percentage: number, decimals = 2): number {
-  return parseFloat(percentage.toFixed(decimals));
-}
-
 /** Minimal shape for ramp on/off-ramp checks (full `MarketCurrencyData` is assignable). */
 export type MarketCurrencyRampLedgerIds = Pick<MarketCurrencyData, "ledgerIds">;
 

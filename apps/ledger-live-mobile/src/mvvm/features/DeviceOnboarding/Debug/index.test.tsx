@@ -86,6 +86,21 @@ describe("DeviceOnboardingDebug", () => {
     expect(screen.getByRole("button", { name: "Skip for now" })).toBeVisible();
   });
 
+  it("should preview the unseeded outro karaoke and close it from its action", async () => {
+    const { user, store } = render(<DeviceOnboardingDebug />);
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+    await user.press(screen.getByRole("button", { name: "unseededOutro" }));
+
+    expect(screen.getByText("You’re all set")).toBeOnTheScreen();
+
+    await user.press(screen.getByRole("button", { name: "Tap to continue" }));
+    await user.press(screen.getByRole("button", { name: "Explore now" }));
+
+    expect(screen.getByText("Karaoke")).toBeVisible();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
   it("should leave the preview from the state list back button", async () => {
     const { user } = render(<DeviceOnboardingDebug />);
 

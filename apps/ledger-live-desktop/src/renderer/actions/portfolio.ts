@@ -1,12 +1,9 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   usePortfolio as usePortfolioRaw,
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueRaw,
-  useCurrencyPortfolio as useCurrencyPortfolioRaw,
 } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import { filterAccountsExcludingBlacklisted } from "@ledgerhq/live-common/account/filterAccountsExcludingBlacklisted";
 import {
@@ -50,21 +47,5 @@ export function usePortfolio() {
     range,
     to,
     options: hasBlacklistedAssets ? { flattenSourceAccounts: false } : undefined,
-  });
-}
-export function useCurrencyPortfolio({
-  currency,
-  range,
-}: {
-  currency: CryptoCurrency | TokenCurrency;
-  range: PortfolioRange;
-}) {
-  const accounts = useSelector(accountsSelector);
-  const to = useSelector(counterValueCurrencySelector);
-  return useCurrencyPortfolioRaw({
-    accounts,
-    range,
-    to,
-    currency,
   });
 }

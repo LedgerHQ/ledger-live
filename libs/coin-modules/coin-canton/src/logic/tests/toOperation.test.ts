@@ -4,7 +4,7 @@ import { toOperation } from "../toOperation";
 
 const NATIVE = "Amulet";
 
-const map = (row: OperationView, partyId = "alice-party") => toOperation(NATIVE, partyId, row);
+const map = (row: OperationView, partyId = "alice-party") => toOperation(partyId, row);
 
 function withoutField<K extends keyof OperationView>(key: K): OperationView {
   const { [key]: _omitted, ...rest } = createMockOperationView();
@@ -19,6 +19,14 @@ describe("toOperation", () => {
   describe("asset", () => {
     it("maps the native instrument to the framework's native asset", () => {
       expect(map(createMockOperationView()).asset).toEqual({ type: "native" });
+    });
+
+    it("keeps a native row native under the gateway's placeholder admin", () => {
+      const row = createMockOperationView({
+        asset: { type: "native", instrumentAdmin: `DSO::${"0".repeat(68)}`, instrumentId: NATIVE },
+      });
+
+      expect(map(row).asset).toEqual({ type: "native" });
     });
 
     it("maps a token to its instrument id and admin", () => {
@@ -168,6 +176,7 @@ describe("toOperation", () => {
       expect(operation.tx).toEqual({
         hash: "0xtxhash",
         fees: 1n,
+        feesAsset: { type: "native" },
         feesPayer: "alice-party",
         date: new Date("2024-01-01T00:00:00.000Z"),
         block: { height: 10, hash: "blockhash", time: new Date("2024-01-01T00:00:00.000Z") },
@@ -185,6 +194,21 @@ describe("toOperation", () => {
 
     it("marks a failed row as failed", () => {
       expect(map(createMockOperationView({ status: "Failed" })).tx.failed).toBe(true);
+    });
+
+    it("reads the fee asset as the operation asset is read", () => {
+      const row = createMockOperationView({
+        fee: {
+          value: "7",
+          asset: { type: "token", instrumentAdmin: "IssuerA", instrumentId: "USDCx" },
+          details: {},
+        },
+      });
+
+      expect(map(row).tx).toMatchObject({
+        fees: 7n,
+        feesAsset: { type: "token", assetReference: "USDCx", assetOwner: "IssuerA" },
+      });
     });
   });
 });

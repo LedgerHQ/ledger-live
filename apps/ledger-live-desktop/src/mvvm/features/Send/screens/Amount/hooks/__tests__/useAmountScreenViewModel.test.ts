@@ -21,7 +21,15 @@ import {
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 import { useSponsoredSend } from "../../../../context/SponsoredSendContext";
 
+const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: string) => true);
+
 jest.mock("@ledgerhq/live-common/bridge/impl");
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: mockIsCurrencyAvailable,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("../../../../hooks/useSendFlowTrackingProperties");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
@@ -183,6 +191,7 @@ function renderViewModel(
 describe("useAmountScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsCurrencyAvailable.mockReturnValue(true);
 
     mockedUseSendFlowTrackingProperties.mockReturnValue({
       flow: "send",
@@ -583,6 +592,34 @@ describe("useAmountScreenViewModel", () => {
 
       expect(result.current.reviewShowIcon).toBe(false);
       expect(result.current.reviewDisabled).toBe(false);
+      expect(result.current.reviewLoading).toBe(false);
+    });
+
+    it("keeps a disabled Review without loading when Buy is unavailable for the currency", () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      const { account, transaction } = buildAffordableParams(new BigNumber(1_000_000));
+      const status = {
+        errors: { amount: createNamedError("NotEnoughBalance") },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as TransactionStatus;
+
+      mockedUseSponsoredSend.mockReturnValue({
+        ...SPONSORED_IDENTITY,
+        selectedFeeOptionId: SPONSORED_ID,
+        available: true,
+        intentReady: false,
+        quote: null,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(mockIsCurrencyAvailable).toHaveBeenCalledWith(expect.any(String), "onRamp");
+      expect(result.current.reviewShowIcon).toBe(true);
+      expect(result.current.reviewLabel).toBe("Review");
+      expect(result.current.reviewDisabled).toBe(true);
       expect(result.current.reviewLoading).toBe(false);
     });
 

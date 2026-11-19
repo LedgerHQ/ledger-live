@@ -38,10 +38,6 @@ export default class PortfolioPage {
   private readonly quickActionSendButton = byId("quick-action-send");
   private readonly quickActionBuyLedgerButton = byId("quick-action-buy-ledger");
   private readonly connectButton = byId("quick-action-connect");
-  private readonly transferDrawer = byId("transfer-drawer");
-  private readonly transferReceiveButton = byId("transfer-action-receive");
-  private readonly transferSendButton = byId("transfer-action-send");
-  private readonly transferBankTransferButton = byId("transfer-action-bank-transfer");
   private readonly addAccountCta = byId("add-account-cta");
   private readonly cryptoAddressesAddAccountCta = byId("crypto-addresses-add-account-cta");
   private readonly cryptoAddressesButton = byId("crypto-addresses-button");
@@ -363,28 +359,22 @@ export default class PortfolioPage {
 
   @Step("Check transfer bottom sheet receive button visibility")
   async checkTransferBottomSheetReceiveButtonVisibility() {
-    await this.transferReceiveButton.expectVisible();
+    await app.transferDrawer.expectReceiveVisible();
   }
 
   @Step("Check transfer bottom sheet send button visibility")
   async checkTransferBottomSheetSendButtonVisibility() {
-    await this.transferSendButton.expectVisible();
+    await app.transferDrawer.expectSendVisible();
   }
 
   @Step("Check transfer bottom sheet bank transfer button visibility")
   async checkTransferBottomSheetBankTransferButtonVisibility() {
-    await this.transferBankTransferButton.expectVisible();
-  }
-
-  // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
-  private async waitForTransferDrawerSettled() {
-    await this.transferDrawer.waitFullyVisible();
+    await app.transferDrawer.expectBankTransferVisible();
   }
 
   @Step("Press transfer bottom sheet receive button")
   async pressTransferBottomSheetReceiveButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferReceiveButton.tap();
+    await app.transferDrawer.tapReceive();
   }
 
   @Step("Open the receive drawer")
@@ -395,14 +385,12 @@ export default class PortfolioPage {
 
   @Step("Press transfer bottom sheet send button")
   async pressTransferBottomSheetSendButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferSendButton.tap();
+    await app.transferDrawer.tapSend();
   }
 
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferBankTransferButton.tap();
+    await app.transferDrawer.tapBankTransfer();
   }
 
   private async checkSectionVisible(
