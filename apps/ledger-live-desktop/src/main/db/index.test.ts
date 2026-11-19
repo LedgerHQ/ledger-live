@@ -389,6 +389,29 @@ describe("db flush", () => {
     consoleError.mockRestore();
   });
 
+  it("resolves setKey for a missing file before the disk write", async () => {
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+
+    await db.setKey("app", "settings", { theme: "dark" });
+    expect(writeFileMock).not.toHaveBeenCalled();
+
+    await db.flush();
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
+  });
+
+  it("keeps the value of a setKey for a missing file when the first save fails", async () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    writeFileMock.mockRejectedValueOnce(new Error("disk full"));
+
+    await db.setKey("app", "settings", { theme: "dark" });
+    await db.flush();
+
+    await expect(db.getKey("app", "settings")).resolves.toEqual({ theme: "dark" });
+    expect(consoleError).toHaveBeenCalledWith("[db] app.json save failed", expect.any(Error));
+    consoleError.mockRestore();
+  });
+
   it("logs a failed save once for all the setKey calls it holds", async () => {
     const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
     writeFileMock.mockRejectedValueOnce(new Error("disk full"));

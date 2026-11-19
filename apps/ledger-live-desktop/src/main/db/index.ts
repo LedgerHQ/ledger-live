@@ -185,7 +185,8 @@ async function load(ns: string): Promise<unknown> {
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
       memoryNamespaces[ns] = {};
-      await save(ns);
+      // The debounce or db.flush() writes the new file; saveAndLog logs a failed save.
+      save(ns).catch(() => undefined);
     } else {
       console.error(err);
       throw err;
