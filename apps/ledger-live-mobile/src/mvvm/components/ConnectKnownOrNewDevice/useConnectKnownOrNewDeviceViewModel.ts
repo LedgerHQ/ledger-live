@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BackHandler, Platform } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { log } from "@ledgerhq/logs";
@@ -152,7 +152,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     lastConnectedDevice,
     shouldPause,
   });
-  useEffect(() => {
+  useLayoutEffect(() => {
     latestRef.current = {
       onConnected,
       onAddModeChange,
@@ -231,7 +231,8 @@ export function useConnectKnownOrNewDeviceViewModel({
   const isAdding = state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
 
   const wasAddingRef = useRef(false);
-  useEffect(() => {
+  // Before paint: the caller hides the rest of its screen in the first frame of the Add mode.
+  useLayoutEffect(() => {
     if (wasAddingRef.current !== isAdding) {
       wasAddingRef.current = isAdding;
       latestRef.current.onAddModeChange(isAdding);
