@@ -1,7 +1,14 @@
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
-import type { ReceiveScreenData } from "./useReceiveScreenData";
+
+/** The account data could not be read: Retry reads what failed again. */
+export type ReceiveAddressError = Readonly<{
+  title: string;
+  description: string;
+  retryLabel: string;
+  onRetry: () => void;
+}>;
 
 /** The user picks one of several addresses (Zcash) before the screen shows it. */
 export type ReceiveAddressSelectionView = Readonly<{
@@ -21,7 +28,9 @@ export type ReceiveAddressShown = Readonly<{
 }>;
 
 export type ReceiveAddressViewProps = Readonly<{
-  data: ReceiveScreenData;
+  /** The address is not known yet: skeletons hold the place of the QR card and the address. */
+  isLoading: boolean;
+  error?: ReceiveAddressError;
   addressSelection?: ReceiveAddressSelectionView;
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;

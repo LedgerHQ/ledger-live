@@ -31,7 +31,16 @@ export function useReceiveAddressViewModel({
   );
 
   return {
-    data,
+    isLoading: data.type === "loading",
+    error:
+      data.type === "error"
+        ? {
+            title: copy.errorTitle,
+            description: copy.errorDescription,
+            retryLabel: copy.retryLabel,
+            onRetry: data.retry,
+          }
+        : undefined,
     addressSelection: selection.isSelecting
       ? {
           title: copy.selectAddressTitle,

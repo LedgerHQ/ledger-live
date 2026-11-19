@@ -16,6 +16,9 @@ describe("useReceiveAddressCopy", () => {
       backLabel: "Back",
       selectAddressTitle: "Select address",
       addressOptionLabels: { transparent: "Public address", shielded: "Private address" },
+      errorTitle: "We couldn't load this address",
+      errorDescription: "Check your internet connection, then try again.",
+      retryLabel: "Retry",
     });
   });
 });
