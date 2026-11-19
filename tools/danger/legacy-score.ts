@@ -20,6 +20,7 @@ export type LegacyScoreReport = {
   legacyRemoved: number;
   score: number;
   areas: AreaLines[];
+  suggestedFolder?: string;
 };
 
 export const MIN_LINES = 50;
@@ -124,8 +125,9 @@ export function computeLegacyScore(
   countLines?: CountLines,
   allowlist: AllowlistEntry[] = [],
 ): LegacyScoreReport {
+  const expanded = expandMoves(files, allowlist, countLines);
   const byLabel = new Map<string, AreaLines>();
-  for (const { filename, additions, deletions } of expandMoves(files, allowlist, countLines)) {
+  for (const { filename, additions, deletions } of expanded) {
     const found = classify(filename, allowlist);
     if (!found || (!additions && !deletions)) continue;
     const entry = byLabel.get(found.label) ?? { ...found, added: 0, deleted: 0 };
@@ -147,6 +149,7 @@ export function computeLegacyScore(
     legacyRemoved: Math.max(0, -legacyNet),
     score: total ? newLines / total : 1,
     areas,
+    suggestedFolder: legacyFolder(expanded, allowlist),
   };
 }
 

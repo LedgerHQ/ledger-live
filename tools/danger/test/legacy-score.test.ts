@@ -302,6 +302,20 @@ describe("legacyFolder", () => {
       undefined,
     );
   });
+
+  it("suggests the destination folder of a file moved into legacy", () => {
+    const files = [
+      {
+        filename: "libs/example/src/feature/a.ts",
+        previous_filename: "shared/example/src/a.ts",
+        additions: 0,
+        deletions: 0,
+      },
+    ];
+    const report = computeLegacyScore(files, () => 100);
+    assert.equal(report.legacyGrowth, 100);
+    assert.equal(report.suggestedFolder, "libs/example/src/feature/");
+  });
 });
 
 describe("legacyGrowthRows", () => {
