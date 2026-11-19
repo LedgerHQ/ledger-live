@@ -40,6 +40,50 @@ describe("getEstimatedFees", () => {
     expect(result.gasBudget.toString()).toEqual(gasBudget.toString());
   });
 
+  it("estimates a token transfer above the token balance with the balance", async () => {
+    const tokenAccount = {
+      type: "TokenAccount",
+      id: "hbtc",
+      token: { contractAddress: "0xabc::btc::BTC" },
+      spendableBalance: new BigNumber(100_000),
+    };
+    const account = createFixtureAccount({ subAccounts: [tokenAccount] });
+    estimateFees.mockResolvedValue({ fees: BigInt("850000"), gasBudget: BigInt("3976000") });
+
+    await getEstimatedFees({
+      account,
+      transaction: createFixtureTransaction({
+        mode: "token.send",
+        subAccountId: "hbtc",
+        amount: new BigNumber(100_001),
+      }),
+    });
+
+    expect(estimateFees.mock.lastCall[1].amount).toBe(100_000n);
+  });
+
+  it("estimates a token transfer within the token balance with its amount", async () => {
+    const tokenAccount = {
+      type: "TokenAccount",
+      id: "hbtc",
+      token: { contractAddress: "0xabc::btc::BTC" },
+      spendableBalance: new BigNumber(100_000),
+    };
+    const account = createFixtureAccount({ subAccounts: [tokenAccount] });
+    estimateFees.mockResolvedValue({ fees: BigInt("850000"), gasBudget: BigInt("3976000") });
+
+    await getEstimatedFees({
+      account,
+      transaction: createFixtureTransaction({
+        mode: "token.send",
+        subAccountId: "hbtc",
+        amount: new BigNumber(1000),
+      }),
+    });
+
+    expect(estimateFees.mock.lastCall[1].amount).toBe(1000n);
+  });
+
   it("forwards stakedSuiId and useAllAmount when mode is undelegate", async () => {
     // GIVEN
     const account = createFixtureAccount();
