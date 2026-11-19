@@ -38,7 +38,7 @@ A setup MUST NOT open screens or tap controls to reach the state under test.
 
 A step MUST NOT branch on a condition and run only when that condition is met. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags.
 
-A conditional step MAY stay when the test documents why the branch is required.
+A conditional step MAY stay when explicit fixture or input state decides its outcome, not a visibility probe, and reachable callers need each outcome. A branch no caller reaches MUST be removed.
 
 ### The test function MUST decide which assertions run
 

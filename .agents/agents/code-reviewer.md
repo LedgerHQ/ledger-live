@@ -40,6 +40,7 @@ Also pay special attention to:
 - `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
 - `.agents/skills/dependency-patches/SKILL.md` — Dependency patch policy; review changes to `patches/*.patch` and `patchedDependencies` (`pnpm-workspace.yaml`) against its upstream, tracking, and removal requirements
 - `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys and must keep them statically verifiable; flag keys or labels injected by `apps/*`, `string`-typed key props/tables/helpers, keys missing from the Desktop or Mobile English catalog, and any raise of `unverifiable-baseline.json`
+- `e2e/docs/e2e-conventions.md` — Shared e2e conventions; its Reviews section applies to every e2e diff
 - `e2e/mobile/AGENTS.md` — Mobile e2e project information and review guidelines
 - `e2e/desktop/AGENTS.md` — Desktop e2e project information and review guidelines
 

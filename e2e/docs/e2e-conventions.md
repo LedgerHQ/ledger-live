@@ -42,6 +42,10 @@ See [Desktop Feature Flag Presets](../desktop/README.md#feature-flag-presets) an
 
 Shared data, types, and utility functions MUST be declared in `libs/live-e2e-shared` when both desktop and mobile use them. Client-specific logic MUST stay in the desktop or mobile directory.
 
+### A value used in a locator MUST be the product's id for that entity
+
+When a locator interpolates test data into a product testID (`` `transfer-asset-picker-${currency.id}` ``), the value MUST be the identifier the product renders for the intended entity, for every value reachable callers pass. When a fixture field names another entity, such as a token whose `id` is its chain's, the locator MUST use or add a separate identifier. The existing field MUST NOT change, since other code relies on it (`coinTeamOwner`).
+
 ## Page objects
 
 ### Selectors MUST live on the page object that renders the screen
@@ -59,6 +63,10 @@ A spec MUST describe only the scenario.
 ### A page object MUST keep one assertion-method prefix
 
 The prefix MUST be one of `expect*`, `check*`, or `verify*`, and that page object MUST keep it.
+
+### A step label MUST describe what the method does with the values it uses
+
+A label placeholder MUST name the value the body acts on. When one argument can override another (`accountName || account.accountName`), the label MUST drop that placeholder, or the method MUST take the resolved value as its argument. Allure lists the arguments as parameters either way.
 
 ### Cross-page workflows MUST live in a util, builder, or flow
 
@@ -113,3 +121,9 @@ A function or constructor MUST take a single options object instead of positiona
 Keep 1–2 obvious parameters positional.
 
 Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.
+
+## Reviews
+
+### A review MUST check the test's product claims against product code
+
+A test encodes claims about the product: the field a testID is built from, the screens a branch expects, the ids an enum or fixture passes. A review MUST check each claim the diff adds against the source that decides it: the product code that renders it (search `apps/` and `features/` for the testID or its constant), the fixture or enum definition, and the call sites. The test's own comments are not evidence. The review MUST check every value reachable callers pass, not only the one in the diff. A mismatch MUST be reported only with a concrete reachable input or path that shows it, citing the changed test line and the decisive product, fixture or caller line.
