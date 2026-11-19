@@ -17,6 +17,10 @@
  * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
  *
  * `type:account-data-source` packages are wired by apps only: features and domain go through the router.
+ *
+ * `type:storage` packages (the storage port and its adapters) are reached by persistence
+ * and the app composition roots only. Domain packages and the record definitions
+ * (`type:persistence-records`) hold no I/O.
  */
 const DEP_CONSTRAINTS = [
   { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
@@ -63,6 +67,8 @@ const DEP_CONSTRAINTS = [
   },
   { sourceTag: "scope:features", notDependOnLibsWithTags: ["type:account-data-source"] },
   { sourceTag: "scope:domain", notDependOnLibsWithTags: ["type:account-data-source"] },
+  { sourceTag: "scope:domain", notDependOnLibsWithTags: ["type:storage"] },
+  { sourceTag: "type:persistence-records", notDependOnLibsWithTags: ["type:storage"] },
 ];
 
 /**

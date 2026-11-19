@@ -7,6 +7,7 @@
   "exports": {
     "./base": "./base.mts",
     "./devtools": "./devtools.mts",
+    "./domain": "./domain.mts",
     "./features-flow": "./features-flow.mts",
     "./features-platform": "./features-platform.mts",
     "./libs": "./libs.mts",

@@ -77,6 +77,8 @@ export default defineConfig({
     "jest/valid-expect": "error",
     "suffix-imports/no-platform-suffix": "error",
     "redux-slices/selectors-in-slice": "error",
+    "storage/no-engine-import": "error",
+    "storage/no-port-import": "error",
   },
   overrides: [
     {

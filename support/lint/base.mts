@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   DERIVATION_MIRROR_PLUGIN,
   REDUX_SLICES_PLUGIN,
+  STORAGE_BOUNDARIES_PLUGIN,
   SUFFIX_IMPORTS_PLUGIN,
 } from "./plugins.mts";
 import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
@@ -33,7 +34,12 @@ const SLICE_SELECTORS_WAIVERS: string[] = [
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, REDUX_SLICES_PLUGIN, DERIVATION_MIRROR_PLUGIN],
+  jsPlugins: [
+    SUFFIX_IMPORTS_PLUGIN,
+    REDUX_SLICES_PLUGIN,
+    DERIVATION_MIRROR_PLUGIN,
+    STORAGE_BOUNDARIES_PLUGIN,
+  ],
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
     // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is
@@ -112,6 +118,10 @@ export default defineConfig({
 
     // Fires on the two copies of the derivation tables only, so libs/ inherits it as an error.
     "derivation-mirror/in-step": "error",
+
+    // Declared off like the suffix rule: the domain, features-flow, features-platform and shared presets enforce them.
+    "storage/no-engine-import": "off",
+    "storage/no-port-import": "off",
   },
   overrides: [
     sliceSelectorsWaivers(SLICE_SELECTORS_WAIVERS),
