@@ -13,6 +13,8 @@ import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
 import { useReceiveRoute } from "./hooks/useReceiveRoute";
 
+export { VerifyAddressExecutorLWM } from "./verifyAddressIntent/VerifyAddressExecutorLWM";
+
 type Props = {
   currency?: CryptoOrTokenCurrency;
   /**
