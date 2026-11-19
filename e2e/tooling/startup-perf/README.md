@@ -84,9 +84,7 @@ The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` 
 Android, Release simulator app on iOS, with the JS bundled in the binary. `prepare-build.mts`:
 
 - removes `MOCK`, `DETOX` and the other test-only keys no store env file has, and points swap to
-  prod;
-- starts the E2E bridge only on a launch that passes `wsPort` (the injection), 20 s after the store
-  is ready, so measured launches run no bridge code;
+  prod: without `DETOX` the E2E bridge never starts;
 - keeps the real blur, which rspack aliases to the E2E mock for any "mock" env file;
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
@@ -216,8 +214,8 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
 the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
-(LIVE-36190 included), the app still reads the storage `storage.ts` writes (instance, keys,
-migration status, terms version), and the screens the
+(LIVE-36190 included), the E2E bridge still starts only with `DETOX`, the app still reads the
+storage `storage.ts` writes (instance, keys, migration status, terms version), and the screens the
 flows open still show "Debug", "Performance" and "App startup time". The package does not depend on
 `live-mobile`, so a mobile PR does not run it: an app change that breaks the measurement fails this
 test at the next change to this folder, and a workflow run before that stops in `prepare-build.mts`

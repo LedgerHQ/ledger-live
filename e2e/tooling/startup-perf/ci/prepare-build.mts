@@ -18,15 +18,6 @@ export const RSPACK_LINE =
   'const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").includes("mock");';
 const RSPACK_PROD_LINE =
   'const isDetoxBuild = process.env.DETOX === "1"; // startup-perf prod-like: no blur mock';
-export const BRIDGE_IMPORT = 'import { init } from "~/e2e/bridge/client";';
-const LAUNCH_ARGUMENTS_IMPORT = 'import { LaunchArguments } from "react-native-launch-arguments";';
-const DETOX_BRIDGE_BLOCK = [
-  "  onInitFinished = () => {",
-  "    if (Config.DETOX) {",
-  "      init();",
-  "    }",
-  "  };",
-];
 export const JS_START_LINE = 'logStartupEvent("Before js imports");';
 const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
 const SAVE_AT_START = "    saveAtStart: true,";
@@ -44,49 +35,6 @@ const indexesOf = (lines: string[], matches: (index: number) => boolean): number
   lines.flatMap((_, index) => (matches(index) ? [index] : []));
 const savesTrustchainAtStart = (lines: string[], index: number) =>
   index > 0 && lines[index - 1] === TRUSTCHAIN_LENSE && lines[index] === SAVE_AT_START;
-
-/**
- * Starts the E2E bridge only on the launch that passes `wsPort` (the injection), `delayMs` after
- * the store is ready, so measured launches run no bridge code.
- */
-export function gateBridgeOnWsPort(source: string, delayMs: number): string {
-  const lines = linesOf(source);
-  const imports = indexesOf(lines, i => lines[i] === BRIDGE_IMPORT);
-  const blocks = indexesOf(lines, i =>
-    DETOX_BRIDGE_BLOCK.every((line, k) => lines[i + k] === line),
-  );
-  const hasLaunchArguments = lines.includes(LAUNCH_ARGUMENTS_IMPORT);
-  const otherLaunchArguments = countLines(
-    lines,
-    line => line !== LAUNCH_ARGUMENTS_IMPORT && line.includes('"react-native-launch-arguments"'),
-  );
-  if (imports.length !== 1 || blocks.length !== 1 || otherLaunchArguments !== 0) {
-    throw new StepFailure(
-      `cannot gate the bridge on wsPort: found ${imports.length} bridge import(s), ${blocks.length} onInitFinished DETOX block(s), ${otherLaunchArguments} other launch-arguments import(s); expected 1, 1, 0`,
-    );
-  }
-  const gated = [
-    DETOX_BRIDGE_BLOCK[0],
-    "    if (Config.DETOX) {",
-    "      init();",
-    "    } else {",
-    "      // startup-perf prod-like: the E2E bridge only on the injection launch (wsPort),",
-    "      // after the measured startup, so measured launches run no bridge code.",
-    "      setTimeout(() => {",
-    '        if (LaunchArguments.value()["wsPort"]) init();',
-    `      }, ${delayMs});`,
-    "    }",
-    "  };",
-  ];
-  const launchArguments = hasLaunchArguments ? [] : [LAUNCH_ARGUMENTS_IMPORT];
-  return textOf(
-    lines.flatMap((line, i) => {
-      if (i === imports[0]) return [line, ...launchArguments];
-      if (i === blocks[0]) return gated;
-      return i > blocks[0] && i < blocks[0] + DETOX_BRIDGE_BLOCK.length ? [] : [line];
-    }),
-  );
-}
 
 /** rspack aliases the blur to the E2E mock for any "mock" ENVFILE: kept for DETOX=1 only. */
 export const realBlur = (source: string): string =>
@@ -144,7 +92,6 @@ export function readdLive36190(dbSave: string): string {
 
 interface AppFiles {
   env: string;
-  index: string;
   rspack: string;
   packageJson: string;
   jsStart: string;
@@ -153,7 +100,6 @@ interface AppFiles {
 
 const appFiles = (app: string): AppFiles => ({
   env: path.join(app, ".env.mock.prerelease"),
-  index: path.join(app, "src/index.tsx"),
   rspack: path.join(app, "rspack.config.mjs"),
   packageJson: path.join(app, "package.json"),
   jsStart: path.join(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"),
@@ -169,7 +115,7 @@ function requireOne(file: string, line: string, anchor: string): void {
 
 /** Every anchor, before any file is edited. */
 function checkApp(files: AppFiles, regression: string): void {
-  for (const file of [files.env, files.index, files.rspack, files.packageJson, files.jsStart]) {
+  for (const file of [files.env, files.rspack, files.packageJson, files.jsStart]) {
     if (!existsSync(file)) throw new StepFailure(`${file} not found`);
   }
   if (read(files.packageJson).includes('"react-native-startup-time"')) {
@@ -177,13 +123,10 @@ function checkApp(files: AppFiles, regression: string): void {
       "refs before live-mobile@4.26.0 are not supported: this one still has react-native-startup-time",
     );
   }
-  if (
-    [files.index, files.rspack, files.jsStart].some(file => read(file).includes("startup-perf"))
-  ) {
+  if ([files.rspack, files.jsStart].some(file => read(file).includes("startup-perf"))) {
     throw new StepFailure("this checkout is already patched");
   }
   requireOne(files.rspack, RSPACK_LINE, "isDetoxBuild");
-  requireOne(files.index, BRIDGE_IMPORT, "bridge import");
   requireOne(files.jsStart, JS_START_LINE, "JS start");
   if (regression) checkLive36190(files.dbSave);
   for (const line of ["MOCK=1", "DETOX=1", "FORCE_DEBUG_VISIBLE=1"]) {
@@ -212,11 +155,7 @@ function rewrite(file: string, edit: (text: string) => string): void {
   console.log(`edited ${path.relative(process.cwd(), file)}`);
 }
 
-function options(): { app: string; delayMs: number; regression: string } {
-  const delay = process.env.STARTUP_PERF_BRIDGE_DELAY_MS || "20000";
-  if (!/^\d+$/.test(delay)) {
-    throw new StepFailure("STARTUP_PERF_BRIDGE_DELAY_MS must be a number of ms");
-  }
+function options(): { app: string; regression: string } {
   const regression = process.env.STARTUP_PERF_REGRESSION ?? "";
   if (regression && !REGRESSIONS.has(regression)) {
     throw new StepFailure(`unknown STARTUP_PERF_REGRESSION ${regression}`);
@@ -225,15 +164,14 @@ function options(): { app: string; delayMs: number; regression: string } {
   if (!existsSync(app) || !statSync(app).isDirectory()) {
     throw new StepFailure(`no app directory ${app}`);
   }
-  return { app, delayMs: Number(delay), regression };
+  return { app, regression };
 }
 
 function main(): void {
-  const { app, delayMs, regression } = options();
+  const { app, regression } = options();
   const files = appFiles(app);
   checkApp(files, regression);
 
-  rewrite(files.index, source => gateBridgeOnWsPort(source, delayMs));
   rewrite(files.rspack, realBlur);
 
   const withoutDetox = bundleWithoutDetox(read(files.packageJson));
@@ -256,7 +194,7 @@ function main(): void {
     summary("LIVE-36190 re-added: the trustchain is no longer saved at start");
   }
   summary(
-    `prod-like build: no MOCK/DETOX in the env file, swap on prod, bridge on wsPort only after ${delayMs} ms, real blur`,
+    "prod-like build: no MOCK/DETOX in the env file (so no E2E bridge), swap on prod, real blur",
   );
 }
 
