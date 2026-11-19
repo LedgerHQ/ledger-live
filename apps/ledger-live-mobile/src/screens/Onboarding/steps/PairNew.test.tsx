@@ -76,13 +76,20 @@ type TestStackParamList = OnboardingNavigatorParamList & {
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
-function renderPairNew(readOnlyModeEnabled = false) {
+function renderPairNew(
+  readOnlyModeEnabled = false,
+  params: Partial<OnboardingNavigatorParamList[ScreenName.OnboardingPairNew]> = {},
+) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen
         name={ScreenName.OnboardingPairNew}
         component={PairNew}
-        initialParams={{ deviceModelId: DeviceModelId.stax, fromAccessExistingWallet: true }}
+        initialParams={{
+          deviceModelId: DeviceModelId.stax,
+          fromAccessExistingWallet: true,
+          ...params,
+        }}
       />
       <Stack.Screen name={ScreenName.OnboardingBluetoothInformation}>
         {() => <Placeholder label="bluetooth" />}
@@ -94,7 +101,11 @@ function renderPairNew(readOnlyModeEnabled = false) {
     {
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: { ...state.settings, readOnlyModeEnabled },
+        settings: {
+          ...state.settings,
+          readOnlyModeEnabled,
+          hasBeenRedirectedToPostOnboarding: true,
+        },
       }),
     },
   );
@@ -116,6 +127,24 @@ describe("PairNew", () => {
     await user.press(screen.getByLabelText("select device"));
 
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
+  });
+
+  it("should keep the post-onboarding redirect of an existing wallet as it was", async () => {
+    const { user, store } = renderPairNew();
+
+    await pair(user);
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(true);
+  });
+
+  it("should send a read-only user to post-onboarding after pairing", async () => {
+    const { user, store } = renderPairNew(true, { resetPostOnboardingRedirect: true });
+
+    await pair(user);
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
   });
 });
 

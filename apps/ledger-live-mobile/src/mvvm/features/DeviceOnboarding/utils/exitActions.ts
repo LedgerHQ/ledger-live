@@ -41,7 +41,8 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       finishOrGoBack(deps);
       return;
     }
-    if (deps.deviceWasSeeded) resetToLegacySeededChecks(deps.navigation, deps.device);
+    if (deps.deviceWasSeeded)
+      resetToLegacySeededChecks(deps.navigation, deps.device, deps.wasReadOnlyAtEntry);
     else openLegacySetup(deps.navigation, deps.device);
   },
   userQuit: finishOrGoBack,
@@ -163,7 +164,11 @@ function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Devi
 }
 
 /** The old checks of a seeded device: the sync companion on a touchscreen, the pairing step on a Nano. */
-function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, device: Device) {
+function resetToLegacySeededChecks(
+  navigation: NavigationProp<ParamListBase>,
+  device: Device,
+  wasReadOnlyAtEntry: boolean,
+) {
   const onboardingRoutes = isSyncOnboardingSupported(device.modelId)
     ? [
         { name: NavigatorName.Onboarding },
@@ -179,7 +184,11 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
             routes: [
               {
                 name: ScreenName.OnboardingPairNew,
-                params: { deviceModelId: device.modelId, fromAccessExistingWallet: true },
+                params: {
+                  deviceModelId: device.modelId,
+                  fromAccessExistingWallet: true,
+                  resetPostOnboardingRedirect: wasReadOnlyAtEntry,
+                },
               },
             ],
           },

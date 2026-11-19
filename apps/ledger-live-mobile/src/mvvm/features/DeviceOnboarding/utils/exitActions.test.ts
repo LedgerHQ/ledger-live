@@ -257,6 +257,7 @@ describe("exitActions", () => {
                       params: {
                         deviceModelId: DeviceModelId.nanoS,
                         fromAccessExistingWallet: true,
+                        resetPostOnboardingRedirect: false,
                       },
                     },
                   ],
@@ -266,6 +267,21 @@ describe("exitActions", () => {
           },
         },
       ],
+    });
+  });
+
+  it("should ask the nano pairing step to bring a read-only user to post-onboarding", () => {
+    const { opened } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+      wasReadOnlyAtEntry: true,
+    });
+
+    expect(opened?.params).toEqual({
+      deviceModelId: DeviceModelId.nanoS,
+      fromAccessExistingWallet: true,
+      resetPostOnboardingRedirect: true,
     });
   });
 
