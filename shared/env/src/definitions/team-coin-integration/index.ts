@@ -233,7 +233,7 @@ const teamCoinIntegration = {
     desc: "mock remote live app manifest",
   },
   EXPLORER: {
-    def: "https://explorers.api.live.ledger.com",
+    def: "https://fresnel.api.live.ledger-test.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
