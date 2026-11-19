@@ -83,6 +83,7 @@ describe("listOperations", () => {
           tx: {
             hash: "hash1",
             fees: BigInt(1),
+            feesAsset: { type: "native" },
             block: {
               height: 10,
               hash: "blockHash1",
@@ -102,6 +103,7 @@ describe("listOperations", () => {
           tx: {
             hash: "hash2",
             fees: BigInt(5),
+            feesAsset: { type: "native" },
             block: {
               height: 11,
               hash: "blockHash2",
@@ -177,6 +179,7 @@ describe("listOperations", () => {
           tx: {
             hash: "hash1",
             fees: BigInt(1),
+            feesAsset: { type: "native" },
             block: {
               height: 0,
               hash: "blockHash1",
@@ -230,6 +233,7 @@ describe("listOperations", () => {
           tx: {
             hash: "hash1",
             fees: BigInt(1),
+            feesAsset: { type: "native" },
             block: {
               height: 10,
               hash: "blockHash1",

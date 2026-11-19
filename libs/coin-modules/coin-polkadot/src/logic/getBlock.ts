@@ -3,6 +3,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
+  AssetInfo,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { type PolkadotCoinConfig } from "../config";
 import api from "../network";
@@ -63,7 +64,7 @@ function blockTime(block: SidecarBlock): Date {
 }
 
 function toBlockTransaction(extrinsic: SignedExtrinsic): BlockTransaction {
-  const { fees, feesPayer, assetFees } = toFees(extrinsic);
+  const { fees, feesAsset, feesPayer, assetFees } = toFees(extrinsic);
 
   return {
     hash: extrinsic.hash,
@@ -74,6 +75,7 @@ function toBlockTransaction(extrinsic: SignedExtrinsic): BlockTransaction {
           .flatMap(toTransferOperations)
       : [],
     fees,
+    feesAsset,
     feesPayer,
     details: {
       palletMethod: `${extrinsic.method.pallet}.${extrinsic.method.method}`,
@@ -84,6 +86,7 @@ function toBlockTransaction(extrinsic: SignedExtrinsic): BlockTransaction {
 
 type Fees = {
   fees: bigint;
+  feesAsset: AssetInfo;
   feesPayer: string;
   assetFees?: { asset: unknown; amount: bigint };
 };
@@ -92,7 +95,7 @@ function toFees(extrinsic: SignedExtrinsic): Fees {
   const feePaid = extrinsic.events.find(isPalletMethod("transactionPayment", "TransactionFeePaid"));
   if (feePaid) {
     const [feesPayer, actualFee] = stringValues(feePaid, 2);
-    return { fees: BigInt(actualFee), feesPayer };
+    return { fees: BigInt(actualFee), feesAsset: NATIVE_ASSET, feesPayer };
   }
 
   const assetFeePaid = extrinsic.events.find(isAssetTxFeePaid);
@@ -106,10 +109,18 @@ function toFees(extrinsic: SignedExtrinsic): Fees {
     }
     // The signer can name the native asset, which debits the native balance
     if (isNativeLocation(asset)) {
-      return { fees: BigInt(actualFee), feesPayer };
+      return { fees: BigInt(actualFee), feesAsset: NATIVE_ASSET, feesPayer };
     }
-    // Asset Hub lets the signer pay fees in another asset, leaving the native balance untouched
-    return { fees: 0n, feesPayer, assetFees: { asset, amount: BigInt(actualFee) } };
+    const feesAsset = toAssetHubAsset(asset);
+    // A location outside the local assets pallet leaves the native balance untouched
+    return feesAsset
+      ? { fees: BigInt(actualFee), feesAsset, feesPayer }
+      : {
+          fees: 0n,
+          feesAsset: NATIVE_ASSET,
+          feesPayer,
+          assetFees: { asset, amount: BigInt(actualFee) },
+        };
   }
 
   // Older runtimes emit no TransactionFeePaid event
@@ -120,13 +131,13 @@ function toFees(extrinsic: SignedExtrinsic): Fees {
   }
   if (!extrinsic.paysFee) {
     // The tip is still charged when the inclusion fee is waived
-    return { fees: tip, feesPayer };
+    return { fees: tip, feesAsset: NATIVE_ASSET, feesPayer };
   }
   const partialFee = extrinsic.info?.partialFee;
   if (partialFee === undefined) {
     throw new Error(`Polkadot extrinsic ${extrinsic.hash} pays fees but reports none`);
   }
-  return { fees: BigInt(partialFee) + tip, feesPayer };
+  return { fees: BigInt(partialFee) + tip, feesAsset: NATIVE_ASSET, feesPayer };
 }
 
 function toTransferOperations(event: SidecarEvent): BlockOperation[] {
@@ -166,6 +177,35 @@ const isLocation = (value: unknown): value is Location =>
 // The relay chain's token, as the Sidecar writes it: { parents: "1", interior: { here: null } }
 const isNativeLocation = (location: Location): boolean =>
   String(location.parents) === "1" && "here" in location.interior;
+
+function toAssetHubAsset(location: Location): AssetInfo | undefined {
+  const [pallet, index] = xcmInterior(location, "x2");
+  if (
+    String(location.parents) !== "0" ||
+    !isPalletInstance(pallet, "50") ||
+    !isGeneralIndex(index)
+  ) {
+    return undefined;
+  }
+  return { type: "token", assetReference: String(index.generalIndex) };
+}
+
+function xcmInterior(location: Location, key: string): unknown[] {
+  const value = location.interior[key];
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value;
+}
+
+const isPalletInstance = (value: unknown, instance: string): value is { palletInstance: unknown } =>
+  typeof value === "object" &&
+  value !== null &&
+  "palletInstance" in value &&
+  String(value.palletInstance) === instance;
+
+const isGeneralIndex = (value: unknown): value is { generalIndex: unknown } =>
+  typeof value === "object" && value !== null && "generalIndex" in value;
 
 const isAssetTxFeePaid = (event: SidecarEvent): boolean =>
   isPalletMethod("assetTxPayment", "AssetTxFeePaid")(event) ||

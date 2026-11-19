@@ -338,6 +338,7 @@ describe("listOperations", () => {
           time: new Date(blockTime * 1000),
         },
         fees: 5000n,
+        feesAsset: { type: "native" },
         feesPayer: TEST_ADDRESS,
         date: new Date(blockTime * 1000),
         failed: false,

@@ -107,6 +107,7 @@ function toBlockTransaction(
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
+    feesAsset: { type: "native" },
     feesPayer: txInfo.from,
     operations: toTransactionOperations(
       txInfo,
