@@ -32,8 +32,8 @@ module.
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
 | `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
 | `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: checks, and launches without the lines      |
-| `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
-| `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
+| `src/measure/inject.ts`             | Writes a scenario's userdata into a fresh install's storage, then launches it once          |
+| `src/measure/storage.ts`            | The app's storage files (MMKV instance `ledger-live`): writes them, reads them back         |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
 | `src/analysis/analyze.ts`           | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
 | `src/analysis/stats.ts`             | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
@@ -84,9 +84,7 @@ The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` 
 Android, Release simulator app on iOS, with the JS bundled in the binary. `prepare-build.mts`:
 
 - removes `MOCK`, `DETOX` and the other test-only keys no store env file has, and points swap to
-  prod;
-- starts the E2E bridge only on a launch that passes `wsPort` (the injection), 20 s after the store
-  is ready, so measured launches run no bridge code;
+  prod: without `DETOX` the E2E bridge never starts;
 - keeps the real blur, which rspack aliases to the E2E mock for any "mock" env file;
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
@@ -101,10 +99,19 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 
 ## A launch
 
-- **Inject once per install.** `inject.ts` launches with `wsPort`, sends the settings, accounts and
-  post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
-  10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
-  or `DETOX`. Feature flags are not imported: they come from production Firebase.
+- **Inject once per install.** Before the first launch, `inject.ts` writes the settings (terms
+  accepted), accounts and post-onboarding state of `e2e/mobile/userdata` into the app's storage,
+  the two files of its MMKV instance `ledger-live` (`storage.ts`): as root (`su`) into `files/mmkv`
+  with the app's user and SELinux label on Android, into the data container's `Documents/mmkv` on
+  iOS. These are the keys the app saves after an E2E bridge import, and at boot it reads them
+  through the same `importStore`. It then launches the app once for 30 s, not measured, so it syncs
+  the accounts and saves what it builds itself (countervalues, token cache), as the bridge's
+  injection launch did, and reads the storage back: it fails unless the accepted terms and a record
+  for every account written are still there (MMKV drops a file whose CRC does not match, the app an
+  account it does not support), so A and B start from the same accounts, and unless the app saved
+  one of them again: it saves accounts only once one changes (a sync), and only that save deletes
+  the record of an account it did not load. Feature flags are not written: they come from
+  production Firebase. `verify-build.mts` checks the binary has no `MOCK` or `DETOX`.
 - **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
   ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
   them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
@@ -210,7 +217,8 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
 the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
-(LIVE-36190 included), the bridge still handles every message `inject.ts` sends, and the screens the
+(LIVE-36190 included), the E2E bridge still starts only with `DETOX`, the app still reads the
+storage `storage.ts` writes (instance, keys, migration status, terms version), and the screens the
 flows open still show "Debug", "Performance" and "App startup time". The package does not depend on
 `live-mobile`, so a mobile PR does not run it: an app change that breaks the measurement fails this
 test at the next change to this folder, and a workflow run before that stops in `prepare-build.mts`

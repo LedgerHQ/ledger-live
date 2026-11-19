@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.ts";
 import { FLOWS_DIR, MAESTRO_SCROLL_TIMEOUT_MS } from "../maestro.ts";
@@ -51,6 +51,12 @@ async function stopDriver(device: string): Promise<void> {
 export function createIos({ appId, maestro }: { appId: string; maestro: Maestro }): Platform {
   const pids = new Map<string, number | null>();
 
+  // MMKV's default directory, in the data container simctl creates at install.
+  async function storageDir(device: string): Promise<string> {
+    const { stdout } = await run("xcrun", ["simctl", "get_app_container", device, appId, "data"]);
+    return path.join(stdout.trim(), "Documents", "mmkv");
+  }
+
   return {
     async install(device, app) {
       await run("xcrun", ["simctl", "uninstall", device, appId], { allowFail: true });
@@ -61,10 +67,19 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       await stopDriver(device);
     },
     stopDriver,
-    async launch(device, launchArgs = {}) {
-      // react-native-launch-arguments reads "-key value" pairs from the process arguments.
-      const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
-      const { stdout } = await run("xcrun", ["simctl", "launch", device, appId, ...args]);
+    async writeStorage(device, files) {
+      const dir = await storageDir(device);
+      await mkdir(dir, { recursive: true });
+      for (const [name, data] of Object.entries(files)) {
+        await writeFile(path.join(dir, path.basename(name)), data);
+      }
+    },
+    async readStorage(device, name) {
+      const file = path.join(await storageDir(device), path.basename(name));
+      return readFile(file).catch(() => null);
+    },
+    async launch(device) {
+      const { stdout } = await run("xcrun", ["simctl", "launch", device, appId]);
       const pid = Number(/:\s*(\d+)\s*$/m.exec(stdout)?.[1]);
       pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
       return {};
