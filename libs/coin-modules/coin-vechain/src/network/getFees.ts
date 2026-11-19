@@ -52,6 +52,6 @@ export const getFees = async (
 ): Promise<BigNumber> => {
   const receipt = await getReceipt(config, transactionId);
 
-  if (!receipt || !receipt.paid) return new BigNumber(0);
+  if (!receipt?.paid) return new BigNumber(0);
   return new BigNumber(receipt.paid);
 };
