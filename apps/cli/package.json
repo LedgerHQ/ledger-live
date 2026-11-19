@@ -29,6 +29,7 @@
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {
+    "@features/platform-persistence-accounts": "workspace:*",
     "@shared/api-services": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
@@ -44,6 +45,9 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/persistence": "workspace:*",
+    "@shared/storage": "workspace:*",
+    "@shared/storage-node-file": "workspace:*",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
     "command-line-args": "5.2.1",

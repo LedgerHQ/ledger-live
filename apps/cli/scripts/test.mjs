@@ -21,3 +21,5 @@ if (errors.length > 0) {
     errors,
   );
 }
+
+await $`node --test ${"tests/*.test.mjs"}`;

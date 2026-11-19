@@ -1,11 +1,10 @@
 import { reduce, mergeMap } from "rxjs/operators";
-import fs from "fs";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
-import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { Account } from "@ledgerhq/types-live";
 import { extractPersistedCALFromState, type PersistedCAL } from "@domain/api-currency-token";
 import { calStore } from "../../live-common-setup";
+import { addAccountsToAppJson, buildAppJson } from "../../persistence/appJson";
 
 export type LiveDataJobOpts = ScanCommonOpts &
   Partial<{
@@ -34,40 +33,13 @@ export default {
     scan(opts).pipe(
       reduce<Account, Account[]>((accounts, account) => accounts.concat(account), []),
       mergeMap(async accounts => {
-        const appjsondata = opts.appjson
-          ? JSON.parse(fs.readFileSync(opts.appjson, "utf-8"))
-          : {
-              data: {
-                accounts: [],
-              },
-            };
-
-        if (typeof appjsondata.data.accounts === "string") {
-          throw new Error("encrypted ledger live data is not supported");
-        }
-
-        const existingIds = appjsondata.data.accounts.map(
-          (a: { data: { id: string } }) => a.data.id,
-        );
-        const append = await Promise.all(
-          accounts
-            .filter(a => !existingIds.includes(a.id))
-            .map(async account => ({
-              data: await toAccountRaw(account),
-              version: 1,
-            })),
-        );
-        appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
-
         const persistedTokens: PersistedCAL = extractPersistedCALFromState(calStore.getState());
-        appjsondata.data.cryptoAssets = persistedTokens;
 
         if (opts.appjson) {
-          fs.writeFileSync(opts.appjson, JSON.stringify(appjsondata), "utf-8");
-          return append.length + " accounts added.";
-        } else {
-          return JSON.stringify(appjsondata);
+          const added = await addAccountsToAppJson(opts.appjson, accounts, persistedTokens);
+          return added + " accounts added.";
         }
+        return buildAppJson(accounts, persistedTokens);
       }),
     ),
 };
