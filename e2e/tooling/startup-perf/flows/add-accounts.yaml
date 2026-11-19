@@ -5,14 +5,22 @@ appId: com.ledger.live
 env:
   NETWORK: ""
 ---
+# A sheet left open would cover the deep link's drawer.
+- tapOn:
+    id: "bottom-sheet-header-close-button"
+    optional: true
+- openLink: ledgerlive://add-account
+# iOS asks to confirm opening the link, a second time once the drawer is open.
 - runFlow:
     when:
-      visible:
-        id: "bottom-sheet-header-close-button"
+      platform: iOS
     commands:
       - tapOn:
-          id: "bottom-sheet-header-close-button"
-- openLink: ledgerlive://add-account
+          text: "Open"
+          optional: true
+      - tapOn:
+          text: "Open"
+          optional: true
 - extendedWaitUntil:
     visible:
       id: "add-accounts-modal-add-button|modular-drawer-search-input"
@@ -44,8 +52,16 @@ env:
 - tapOn:
     id: "enabled-add-accounts-continue-button"
 - extendedWaitUntil:
-    visible:
-      id: "button-close-add-account"
+    notVisible:
+      id: "enabled-add-accounts-continue-button"
     timeout: 60000
-- tapOn:
-    id: "button-close-add-account"
+# The success screen, unless the flow was inline: it then closes on its own.
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "button-close-add-account"
+    commands:
+      - tapOn:
+          id: "button-close-add-account"

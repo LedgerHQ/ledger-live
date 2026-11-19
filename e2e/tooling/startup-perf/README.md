@@ -108,7 +108,8 @@ The accounts scenario starts from accounts added through the app's UI, as a user
 
 - **Made**: by `src/snapshot/run.ts` on the E2E build of the latest `live-mobile@X.Y.Z` release, as
   built for E2E (not made prod-like), one snapshot per platform. It writes the no-accounts userdata
-  (`skip-onboarding`), then launches the app with `wsPort`, `wsToken` and `mock=0` (the build has
+  (`skip-onboarding`) with the release's tours marked as seen (their sheet would cover the deep
+  link, and a user who adds accounts has seen them), then launches the app with `wsPort`, `wsToken` and `mock=0` (the build has
   `MOCK`, whose bridges would add mock accounts). For Bitcoin, Ethereum and Solana in turn, it
   starts a Speculinho session with `pnpm e2e-cli speculos` of `libs/live-e2e-shared` (the E2E
   suites' firmware, app versions and session tokens, on a `nanoX` with the E2E seed), sends the app

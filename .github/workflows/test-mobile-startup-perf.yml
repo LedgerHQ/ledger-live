@@ -564,6 +564,7 @@ jobs:
           name: startup-perf-snapshot-debug-android
           path: ${{ env.SNAPSHOT_DEBUG_DIR }}
           retention-days: 14
+          include-hidden-files: true
 
   snapshot-ios:
     name: "iOS accounts snapshot"
@@ -679,6 +680,7 @@ jobs:
           name: startup-perf-snapshot-debug-ios
           path: ${{ env.SNAPSHOT_DEBUG_DIR }}
           retention-days: 14
+          include-hidden-files: true
 
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"

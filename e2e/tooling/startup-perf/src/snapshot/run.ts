@@ -38,6 +38,9 @@ export const COINS: Coin[] = [
   { app: "Solana", ticker: "SOL", currency: "solana" },
 ];
 
+// A user who adds accounts has seen the release's tours, whose sheets would cover the deep link.
+const SEEN_TOURS = { hasSeenQ2WalletV4Tour: true, hasSeenQ3WalletV4Tour: true };
+
 const ADD_ACCOUNTS_FLOW = path.join(FLOWS_DIR, "add-accounts.yaml");
 // Its scan waits up to 240 s; the deep link, the asset list and the success screen take the rest.
 const ADD_ACCOUNTS_TIMEOUT_MS = 420_000;
@@ -134,7 +137,9 @@ async function main(): Promise<void> {
   log(`installing ${APP} (${RELEASE}) on ${DEVICE}`);
   await P.install(DEVICE, APP);
   await P.stop(DEVICE);
-  const { data, meta } = encodeStorage(storageEntries(userdata));
+  const { data, meta } = encodeStorage(
+    storageEntries({ ...userdata, settings: { ...userdata.settings, ...SEEN_TOURS } }),
+  );
   await P.writeStorage(DEVICE, { [STORAGE_FILE]: data, [STORAGE_META_FILE]: meta });
 
   const bridge = await startBridge();
