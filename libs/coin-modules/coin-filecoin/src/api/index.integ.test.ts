@@ -23,7 +23,6 @@ describe("createApi (integration)", () => {
       "register",
       "craftRawTransaction",
       "getBlock",
-      "getBlockInfo",
       "getStakes",
       "getRewards",
       "getValidators",
@@ -47,10 +46,6 @@ describe("createApi (integration)", () => {
 
     it("getBlock throws not supported", () => {
       expect(() => api.getBlock(context, 1000)).toThrow(/not supported/);
-    });
-
-    it("getBlockInfo throws not supported", () => {
-      expect(() => api.getBlockInfo(context, 1000)).toThrow(/not supported/);
     });
 
     it("craftRawTransaction throws not supported", () => {
