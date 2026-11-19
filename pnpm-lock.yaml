@@ -13513,6 +13513,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../../domain/api/currency-token
+      '@ledgerhq/crypto-icons':
+        specifier: 'catalog:'
+        version: 2.0.7(c32e40ecc26dc641bed309ca003041d9)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)

@@ -32,7 +32,8 @@ export function ReceiveNavigator(): React.JSX.Element {
       <Stack.Screen
         name={ScreenName.ReceiveAddress}
         component={ReceiveAddressScreen}
-        options={{ title: "", headerLeft: () => null }}
+        // The screen draws its own top bar: back to the address choice or close.
+        options={{ headerShown: false }}
         // Every way out of receive offers the notifications prompt, as the legacy flow does.
         listeners={{ beforeRemove: () => notifyFlowCompleted("receive") }}
       />
