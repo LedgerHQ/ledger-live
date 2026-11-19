@@ -119,6 +119,49 @@ export class DeviceManagementKitBLETransport extends Transport {
     );
   }
 
+  /**
+   * A DMK flow can open a session without publishing it in `activeDeviceSessionSubject`, and a
+   * connected device does not advertise, so a scan would never find it. `exchange` reads that
+   * subject, so the reused session is published there.
+   */
+  private static async reuseConnectedSession(
+    deviceId: string,
+    deviceName: string | undefined,
+  ): Promise<DeviceManagementKitBLETransport | null> {
+    const dmk = getDeviceManagementKit();
+    const connectedBleDevices = dmk
+      .listConnectedDevices()
+      .filter(device => device.transport === rnBleTransportIdentifier);
+    const matchingDevice = findMatchingDiscoveredDevice(deviceId, deviceName, connectedBleDevices);
+
+    if (!matchingDevice) {
+      tracer.trace("[DMKTransport] [open] no connected device to reuse", {
+        data: { deviceId, connectedDeviceIds: connectedBleDevices.map(device => device.id) },
+      });
+      return null;
+    }
+
+    const { sessionId } = matchingDevice;
+    const matchedBy = matchingDevice.id === deviceId ? "id" : "name";
+    const deviceSessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
+      () => null,
+    );
+
+    if (!deviceSessionState || deviceSessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
+      tracer.trace("[DMKTransport] [open] connected device session not reusable", {
+        data: { deviceId, sessionId, matchedBy, status: deviceSessionState?.deviceStatus },
+      });
+      return null;
+    }
+
+    tracer.trace("[DMKTransport] [open] reusing the session of a connected device", {
+      data: { deviceId, sessionId, matchedBy, status: deviceSessionState.deviceStatus },
+    });
+    const transport = new DeviceManagementKitBLETransport(dmk, sessionId);
+    activeDeviceSessionSubject.next({ sessionId, transport });
+    return transport;
+  }
+
   static async open(
     deviceOrId: DiscoveredDevice | string,
     _timeoutMs?: number,
@@ -189,6 +232,14 @@ export class DeviceManagementKitBLETransport extends Transport {
     }
 
     if (typeof deviceOrId === "string") {
+      const connectedTransport = await DeviceManagementKitBLETransport.reuseConnectedSession(
+        deviceOrId,
+        options?.matchDeviceByName,
+      );
+      if (connectedTransport) {
+        return connectedTransport;
+      }
+
       const devicesObs = getDeviceManagementKit().listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
       });

@@ -121,12 +121,12 @@ export function findMatchingOldDevice(
   );
 }
 
-export const findMatchingDiscoveredDevice = (
+export const findMatchingDiscoveredDevice = <T extends Pick<DiscoveredDevice, "id" | "name">>(
   deviceId: string,
   deviceName: string | undefined,
-  discoveredDevices: DiscoveredDevice[],
-): DiscoveredDevice | null => {
-  let matchByName: DiscoveredDevice | null = null;
+  discoveredDevices: T[],
+): T | null => {
+  let matchByName: T | null = null;
   for (const discoveredDevice of discoveredDevices) {
     if (discoveredDevice.id === deviceId) {
       return discoveredDevice;

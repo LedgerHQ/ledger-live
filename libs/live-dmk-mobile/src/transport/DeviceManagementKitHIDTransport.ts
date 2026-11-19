@@ -13,6 +13,7 @@ import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import { BehaviorSubject, Subscription, firstValueFrom } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { buildUsbCompatDeviceId } from "./usbCompatDeviceId";
 
 export const activeDeviceSessionSubject = new BehaviorSubject<{
   transport: DeviceManagementKitHIDTransport;
@@ -32,6 +33,55 @@ export class DeviceManagementKitHIDTransport extends Transport {
     this.dmk = dmk;
     this.tracer = tracer;
     this.listenToDisconnect();
+  }
+
+  /**
+   * A DMK flow can open a session without publishing it in `activeDeviceSessionSubject`.
+   * `exchange` reads that subject, so the reused session is published there. Like the connection
+   * below, it falls back to the first USB device: a phone has one USB port.
+   */
+  private static async reuseConnectedSession(
+    deviceId: string,
+    dmk: DeviceManagementKit,
+  ): Promise<DeviceManagementKitHIDTransport | null> {
+    const connectedUsbDevices = dmk
+      .listConnectedDevices()
+      .filter(device => device.transport === rnHidTransportIdentifier);
+    const matchingDevice =
+      connectedUsbDevices.find(device => buildUsbCompatDeviceId(device.id) === deviceId) ??
+      connectedUsbDevices[0];
+
+    if (!matchingDevice) {
+      tracer.trace("[open] no connected device to reuse", { deviceId });
+      return null;
+    }
+
+    const { sessionId } = matchingDevice;
+    const matchedBy =
+      buildUsbCompatDeviceId(matchingDevice.id) === deviceId ? "id" : "first connected device";
+    const deviceSessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
+      () => null,
+    );
+
+    if (!deviceSessionState || deviceSessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
+      tracer.trace("[open] connected device session not reusable", {
+        deviceId,
+        sessionId,
+        matchedBy,
+        status: deviceSessionState?.deviceStatus,
+      });
+      return null;
+    }
+
+    tracer.trace("[open] reusing the session of a connected device", {
+      deviceId,
+      sessionId,
+      matchedBy,
+      status: deviceSessionState.deviceStatus,
+    });
+    const transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
+    activeDeviceSessionSubject.next({ transport });
+    return transport;
   }
 
   static async open(
@@ -68,6 +118,13 @@ export class DeviceManagementKitHIDTransport extends Transport {
           return activeDeviceSession.transport;
         }
         tracer.trace("[open] session not reusable");
+      }
+      const connectedTransport = await DeviceManagementKitHIDTransport.reuseConnectedSession(
+        deviceId,
+        dmk,
+      );
+      if (connectedTransport) {
+        return connectedTransport;
       }
       tracer.trace(
         `[open] listening to available devices and connecting to first available device with timeoutMs: ${timeoutMs}`,
