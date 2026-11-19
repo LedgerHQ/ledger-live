@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
+import {
+  NoAccessibleDeviceError,
+  OpeningConnectionError,
+  SendApduTimeoutError,
+} from "@ledgerhq/device-management-kit";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -7,8 +11,9 @@ import {
 } from "@ledgerhq/hw-transport/errors";
 import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
-import { EmptyError } from "rxjs";
+import { EmptyError, TimeoutError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";
+import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./usb-session-open-error";
 
 describe("classifyDeviceError", () => {
   it("rxjs EmptyError → disconnected", () => {
@@ -141,5 +146,41 @@ describe("classifyDeviceError on Speculos", () => {
       code: "timeout",
       speculosUrl,
     });
+  });
+});
+
+describe("classifyDeviceError on a failed USB session open (LIVE-31394)", () => {
+  it("keeps a discovery failure unknown and adds the open error the transport reported", () => {
+    const error = new DeviceDiscoveryFailedError(
+      new NoAccessibleDeviceError(new Error("initialize error: Error: LIBUSB_ERROR_NO_DEVICE")),
+    );
+
+    expect(classifyDeviceError(error)).toEqual({
+      code: "unknown",
+      cause: error,
+      usbAccess: { error: "LIBUSB_ERROR_NO_DEVICE", kind: "device_unreachable" },
+    });
+  });
+
+  it("reads the libusb error a DMK connection error carries on originalError", () => {
+    const error = new DeviceConnectionFailedError(
+      new OpeningConnectionError(new Error("claimInterface error: LIBUSB_ERROR_BUSY")),
+    );
+
+    expect(classifyDeviceError(error)).toEqual({
+      code: "unknown",
+      cause: error,
+      usbAccess: { error: "LIBUSB_ERROR_BUSY", kind: "busy" },
+    });
+  });
+
+  it("adds nothing when discovery timed out or no device stack error names a USB error", () => {
+    const timedOut = new DeviceDiscoveryFailedError(new TimeoutError());
+    const noCause = new DeviceDiscoveryFailedError();
+    const sessionFailed = new DeviceConnectionFailedError(new Error("Session init failed"));
+
+    for (const error of [timedOut, noCause, sessionFailed]) {
+      expect(classifyDeviceError(error)).toEqual({ code: "unknown", cause: error });
+    }
   });
 });

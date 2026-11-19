@@ -44,6 +44,27 @@ describe("Karaoke", () => {
     expect(glow.props.delayMs).toBe(0);
   });
 
+  it("should make the bottom glow shorter, with the same top glow, when one action shows", () => {
+    render(
+      <Karaoke.Root phrases={["Only."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    const withAction = screen.getByTestId(karaokeTestIds.glow).props;
+    screen.unmount();
+    render(
+      <Karaoke.Root phrases={["Only."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    const withFinal = screen.getByTestId(karaokeTestIds.glow).props;
+
+    expect(withAction.glowReach).toBeLessThan(withFinal.glowReach);
+    expect(withAction.glowReach * withAction.glowTopReach).toBeCloseTo(
+      withFinal.glowReach * withFinal.glowTopReach,
+    );
+  });
+
   it("should move the glow down once the final title is read", async () => {
     const user = userEvent.setup();
     render(

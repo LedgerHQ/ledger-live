@@ -159,6 +159,8 @@ export default function Content({
       ? specificOperationDetails.useFeesCurrency
       : undefined;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
+  // null: the fee is in a currency not resolved yet, so it is not shown in another unit
+  const isFeeCurrencyUnresolved = customFeesCurrency === null;
   const feeCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
   const getDisplayFeeOverride =
@@ -384,7 +386,7 @@ export default function Content({
         value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
-      {isNegative || operation.fee ? (
+      {(isNegative || operation.fee) && !isFeeCurrencyUnresolved ? (
         <Section
           title={t("operationDetails.fees")}
           headerRight={

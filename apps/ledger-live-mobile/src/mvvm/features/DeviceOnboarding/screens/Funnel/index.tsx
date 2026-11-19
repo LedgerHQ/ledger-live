@@ -1,21 +1,23 @@
 import React from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
+import { DeviceUnlockSheet } from "LLM/features/DeviceOnboarding/components/DeviceUnlockSheet";
+import { FunnelSheet } from "LLM/features/DeviceOnboarding/components/FunnelSheet";
 import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
+import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
 import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
-import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { UnseededSuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
+import { RecoverNewSeedScreen } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import { SuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import {
   useDeviceOnboardingFunnelViewModel,
   type DeviceOnboardingFunnelModel,
   type PowerOnSheetModel,
-  type UnlockSheetModel,
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
@@ -27,11 +29,15 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
       </>
     );
   }
+  if (screen.status === "unseededSuccessKaraoke") {
+    return <UnseededSuccessKaraokeScreen {...screen.unseededSuccessKaraoke} />;
+  }
   if (screen.status === "checks") {
     return (
       <>
         <ChecksScreen {...screen.checks} />
         {screen.powerOnSheet ? <PowerOnSheet {...screen.powerOnSheet} /> : null}
+        {screen.reconnectSheet ? <ReconnectSheet {...screen.reconnectSheet} /> : null}
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );
@@ -43,6 +49,12 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );
+  }
+  if (screen.status === "recoverNewSeed") {
+    return <RecoverNewSeedScreen {...screen.recoverNewSeed} />;
+  }
+  if (screen.status === "success") {
+    return <SuccessKaraokeScreen {...screen.success} />;
   }
 
   return (
@@ -73,32 +85,6 @@ export function DeviceOnboardingFunnel() {
   );
 }
 
-function FunnelSheet({
-  testID,
-  onQuit,
-  children,
-}: Readonly<{ testID: string; onQuit?: () => void; children: React.ReactNode }>) {
-  const { bottom: bottomInset } = useSafeAreaInsets();
-
-  return (
-    <QueuedBottomSheet
-      isRequestingToBeOpened
-      noCloseButton={!onQuit}
-      onHeaderClosePressed={onQuit}
-      preventBackdropClick
-      enablePanDownToClose={false}
-      enableDynamicSizing
-      contentHasBottomSpace
-      testID={testID}
-    >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-        <BottomSheetHeader />
-        <Box lx={{ paddingHorizontal: "s16" }}>{children}</Box>
-      </BottomSheetView>
-    </QueuedBottomSheet>
-  );
-}
-
 function PowerOnSheet({ deviceModelId, deviceName, onQuit }: PowerOnSheetModel) {
   const { t } = useTranslation();
   const { productName } = getDeviceModel(deviceModelId);
@@ -113,14 +99,6 @@ function PowerOnSheet({ deviceModelId, deviceName, onQuit }: PowerOnSheetModel) 
           productName,
         })}
       />
-    </FunnelSheet>
-  );
-}
-
-function DeviceUnlockSheet({ deviceModelId, deviceName }: UnlockSheetModel) {
-  return (
-    <FunnelSheet testID={funnelTestIds.unlockSheet}>
-      <UnlockDevice deviceModelId={deviceModelId} deviceName={deviceName} />
     </FunnelSheet>
   );
 }

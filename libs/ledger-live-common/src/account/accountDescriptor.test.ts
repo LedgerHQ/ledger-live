@@ -17,6 +17,7 @@ import {
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
   toLegacyAccount,
+  toLegacyPath,
   type LegacyAccountIdentity,
 } from "./accountDescriptor";
 import {
@@ -589,5 +590,11 @@ describe("toLegacyAccount", () => {
         path,
       }),
     ).toThrow("hardened segments");
+  });
+});
+
+describe("toLegacyPath", () => {
+  it("spells a descriptor path the legacy way", () => {
+    expect(toLegacyPath("m/84h/0h/2h")).toBe("84'/0'/2'");
   });
 });

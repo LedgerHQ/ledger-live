@@ -13,12 +13,16 @@ import {
   Stepper,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Glow } from "@shared/ui-glow/native";
+import { KARAOKE_ACTION_GLOW_SIZE, KaraokeGlow } from "@shared/ui-karaoke/native";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import { SetupGlow } from "./components/SetupGlow";
+import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
 
 function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
@@ -36,6 +40,7 @@ export function SetupView({
   stageTitle,
   stageDescription,
   currentStep,
+  completedSteps,
   totalSteps,
   status,
   closeLabel,
@@ -48,17 +53,32 @@ export function SetupView({
   onReopenFirmwareOffer,
   skipUpdateLabel,
   onSkipUpdate,
-  allowSheet,
   firmwareUpdate,
   unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
+  infoCard,
+  suspendInfoSheet,
+  reportsRecoveryKey,
+  connection,
+  productName,
+  suspendSheets,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { theme, colorScheme } = useTheme();
 
   return (
     <Box testID={setupTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <SetupGlow />
+      <Glow
+        testID={setupTestIds.glow}
+        showTop={false}
+        showBottom
+        canvasColor={theme.colors.bg.canvas}
+        params={KARAOKE_ACTION_GLOW_SIZE}
+        fallback={
+          <KaraokeGlow isAtBottom delayMs={0} isLight={colorScheme === "light"} hasAction />
+        }
+      />
       <DeviceOnboardingCloseBar
         label={closeLabel}
         testID={setupTestIds.close}
@@ -116,10 +136,19 @@ export function SetupView({
             {supportLabel}
           </Button>
         ) : null}
+        <SetupInfo
+          card={infoCard}
+          suspendSheets={suspendInfoSheet}
+          reportsRecoveryKey={reportsRecoveryKey}
+        />
         <Card type="info" testID={setupTestIds.stepper}>
           <CardHeader>
             <CardLeading>
-              <Stepper currentStep={currentStep} totalSteps={totalSteps} />
+              <Stepper
+                currentStep={completedSteps}
+                totalSteps={totalSteps}
+                label={`${currentStep}/${totalSteps}`}
+              />
               <CardContent>
                 <CardContentTitle>{stageTitle}</CardContentTitle>
                 {stageDescription ? (
@@ -134,12 +163,16 @@ export function SetupView({
         </Card>
       </Box>
       <ChecksDrawers
-        allowSheet={allowSheet}
         testIds={setupTestIds}
         firmwareUpdate={firmwareUpdate}
         unsupportedUpdate={unsupportedUpdate}
         errorDrawer={errorDrawer}
         notGenuineDrawer={notGenuineDrawer}
+      />
+      <ReconnectSheet
+        connection={connection}
+        productName={productName}
+        suspendSheets={suspendSheets}
       />
     </Box>
   );

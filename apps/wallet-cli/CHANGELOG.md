@@ -1,5 +1,37 @@
 # @ledgerhq/wallet-cli
 
+## 3.6.0
+
+### Minor Changes
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent swap` takes tickers and ERC-20 contract addresses in `--from` and `--to` as well as currency ids, and fails with the candidates' currency ids when a ticker is ambiguous. It refuses another chain's coin in Ledger's currency list by currency id, ticker or name in any case (`bitcoin`, `BTC`, `Solana`) instead of an ERC-20 token that shares its ticker, unless the `--account` holds a token with that ticker to sell. `USDC` resolves to its ERC-20 token
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent send` and `agent-intent swap` find a ticker in the Crypto Assets List in any case (`steth` finds stETH), and take the token whose mixed-case ticker is spelled as typed over one that matches only in another case, so `mETH` no longer fails as ambiguous with `METH`. An all-lowercase or all-uppercase ticker matches every case, so `METH` fails listing mETH and the token listed as `METH`, and a token listed as `usdc` can't stand in for USD Coin. When the search for other letter cases fails or is cut off, the exact ticker lookups still answer, and stderr says another token may share the ticker
+
+- [#25038](https://github.com/LedgerHQ/ledger-live/pull/25038) [`12c4404`](https://github.com/LedgerHQ/ledger-live/commit/12c44047b07b96aa4d65b6c7e8eafc00b0309abc) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Pin the install commands of the skill copy published to LedgerHQ/agent-skills to its wallet-cli version, and have an agent on a newer wallet-cli follow the skill embedded in that binary
+
+- [#24961](https://github.com/LedgerHQ/ledger-live/pull/24961) [`ff71f51`](https://github.com/LedgerHQ/ledger-live/commit/ff71f516effdd64c3f157de70a096475474815d6) Thanks [@oscarchaix](https://github.com/oscarchaix)! - `agent-intent enroll` warns when the state dir is on temporary storage (`/tmp`, the OS temp dir, `/dev/shm`, `$XDG_RUNTIME_DIR`), where a restart would wipe the agent's profile
+
+- [#22205](https://github.com/LedgerHQ/ledger-live/pull/22205) [`361cdd8`](https://github.com/LedgerHQ/ledger-live/commit/361cdd89dd60ccfac2dd8a470f4f94477e091105) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - feat(wallet-cli): name the USB error when a Ledger cannot be opened, and stop discovery at once
+
+### Patch Changes
+
+- [#24647](https://github.com/LedgerHQ/ledger-live/pull/24647) [`af01e1d`](https://github.com/LedgerHQ/ledger-live/commit/af01e1d6d4b930c8ad6887e93201d38d4f434940) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.93.0
+
+  - Updated `oxlint` to `1.93.0`
+
+## 3.5.0
+
+### Minor Changes
+
+- [#24776](https://github.com/LedgerHQ/ledger-live/pull/24776) [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953) Thanks [@gre-ledger](https://github.com/gre-ledger)! - `addressFromKey` returns a branded `Address`; wallet-cli requires it wherever an address is expected, so a descriptor key can no longer be used as one
+
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#24776](https://github.com/LedgerHQ/ledger-live/pull/24776) [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953) Thanks [@gre-ledger](https://github.com/gre-ledger)! - `addressFromKey` returns a branded `Address`; wallet-cli requires it wherever an address is expected, so a descriptor key can no longer be used as one
+
 ## 3.4.0
 
 ### Minor Changes
@@ -411,35 +443,5 @@
 ### Minor Changes
 
 - [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
-
-## 2.7.0-next.0
-
-### Minor Changes
-
-- [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
-
-## 2.6.0
-
-### Minor Changes
-
-- [#21182](https://github.com/LedgerHQ/ledger-live/pull/21182) [`7d7c26e`](https://github.com/LedgerHQ/ledger-live/commit/7d7c26e546e470ada7e061bf2d3845c45b428b83) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix the embedded agent skill diverging from the copy published to `agent-skills`, and make the two artifacts share one transform.
-
-  - `wallet-cli skill retrieve` no longer returns stale examples prefixed with `pnpm --silent wallet-cli start`. The canonical `SKILL.md` is authored for monorepo contributors; the standalone rewrite to plain `wallet-cli <command>` (already applied when syncing to `agent-skills`) was missing from the codegen that inlines the skill into the binary.
-  - The embedded skill is now consistently named `wallet-cli-usage` — the name the published copy already used — across `skill list`, the manifest, `skill retrieve`, install directories and the `.wallet-cli-skill.json` sidecar, instead of the monorepo source's directory name.
-  - `ledger-wallet-cli` keeps working as a lookup alias in `skill retrieve` and `skill install`, so previously documented commands don't break. It resolves to the canonical skill and never installs a second copy under the old name; `skill list` shows only `wallet-cli-usage`. `skill doctor` now reports a pre-rename install directory as superseded rather than ignoring it (it never deletes it).
-  - The transform is implemented once in `scripts/standalone-skill-transform.mjs` and used by both the binary codegen and the `agent-skills` sync workflow, which previously duplicated it as a `sed` pipeline. It now asserts its own output — expected input markers present, nothing monorepo-only surviving — so a reworded source fails the build instead of silently shipping instructions a standalone user cannot follow.
-  - Skill collection now refuses any symlink resolving outside the skills tree, in both the binary codegen and the `agent-skills` export, so a symlink committed inside a skill directory cannot pull unrelated repo content into a published artifact.
-
-## 2.6.0-next.0
-
-### Minor Changes
-
-- [#21182](https://github.com/LedgerHQ/ledger-live/pull/21182) [`7d7c26e`](https://github.com/LedgerHQ/ledger-live/commit/7d7c26e546e470ada7e061bf2d3845c45b428b83) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix the embedded agent skill diverging from the copy published to `agent-skills`, and make the two artifacts share one transform.
-
-  - `wallet-cli skill retrieve` no longer returns stale examples prefixed with `pnpm --silent wallet-cli start`. The canonical `SKILL.md` is authored for monorepo contributors; the standalone rewrite to plain `wallet-cli <command>` (already applied when syncing to `agent-skills`) was missing from the codegen that inlines the skill into the binary.
-  - The embedded skill is now consistently named `wallet-cli-usage` — the name the published copy already used — across `skill list`, the manifest, `skill retrieve`, install directories and the `.wallet-cli-skill.json` sidecar, instead of the monorepo source's directory name.
-  - `ledger-wallet-cli` keeps working as a lookup alias in `skill retrieve` and `skill install`, so previously documented commands don't break. It resolves to the canonical skill and never installs a second copy under the old name; `skill list` shows only `wallet-cli-usage`. `skill doctor` now reports a pre-rename install directory as superseded rather than ignoring it (it never deletes it).
-  - The transform is implemented once in `scripts/standalone-skill-transform.mjs` and used by both the binary codegen and the `agent-skills` sync workflow, which previously duplicated it as a `sed` pipeline. It now asserts its own output — expected input markers present, nothing monorepo-only surviving — so a reworded source fails the build instead of silently shipping instructions a standalone user cannot follow.
-  - Skill collection now refuses any symlink resolving outside the skills tree, in both the binary codegen and the `agent-skills` export, so a symlink committed inside a skill directory cannot pull unrelated repo content into a published artifact.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

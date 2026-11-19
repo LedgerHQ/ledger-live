@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import { urls } from "~/config/urls";
@@ -11,6 +10,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 export type Props = {
   account: AlgorandAccount | TokenAccount;
 };
@@ -18,7 +18,7 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(openModal("MODAL_RECEIVE", { account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }));
+    dispatch(openReceiveFlow({ account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }));
   }, [account, dispatch]);
 
   const algorandStakingRewards = useLocalizedUrl(urls.algorandStakingRewards);

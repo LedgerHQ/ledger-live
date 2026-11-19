@@ -45,6 +45,7 @@ export const WALLET_API_VERSION = "2.0.0";
 export const BITCOIN_SIGN_PSBT_ALLOWED_APPS: Readonly<Record<string, ReadonlySet<string>>> = {
   bitcoin: new Set(["Hashi"]),
   bitcoin_testnet: new Set(["Hashi Test"]),
+  bitcoin_signet: new Set(["Hashi Test"]),
 };
 
 export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<AppManifest> = {

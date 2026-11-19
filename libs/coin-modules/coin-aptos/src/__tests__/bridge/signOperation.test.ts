@@ -2,7 +2,7 @@ import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/ind
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { Observable } from "rxjs";
+import { Observable, filter, lastValueFrom } from "rxjs";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import buildSignOperation, { getAddress } from "../../bridge/signOperation";
 import { signTransaction } from "../../network";
@@ -176,6 +176,31 @@ describe("buildSignOperation", () => {
     observable.forEach(signOperationEvent => {
       expect(signOperationEvent).toEqual(expectedValues[i]);
       i++;
+    });
+  });
+
+  it.each([
+    ["send", "OUT"],
+    ["stake", "STAKE"],
+    ["restake", "STAKE"],
+    ["unstake", "UNSTAKE"],
+    ["withdraw", "WITHDRAW"],
+  ] as const)("sets the operation type of a %s transaction to %s", async (mode, type) => {
+    mockedSignTransaction.mockReturnValue("signedTx");
+    const account = createFixtureAccount();
+    account.id = "js:2:aptos:0x000:";
+    const transaction = createFixtureTransaction({ mode });
+
+    const signed = await lastValueFrom(
+      buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
+        account,
+        deviceId: "1",
+        transaction,
+      }).pipe(filter(event => event.type === "signed")),
+    );
+
+    expect(signed).toMatchObject({
+      signedOperation: { operation: { type, id: `js:2:aptos:0x000:--${type}` } },
     });
   });
 

@@ -53,6 +53,19 @@ describe("isCeloOperationExtra", () => {
       isCeloOperationExtra({ feeCurrencyAddress: "abcdef0123456789abcdef0123456789abcdef01" }),
     ).toBe(false);
   });
+
+  it("accepts a 20-byte hex address as feeAsset", () => {
+    expect(isCeloOperationExtra({ feeAsset: "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e" })).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    ["the native sentinel", "native"],
+    ["a malformed address", "0xdeadbeef"],
+  ])("rejects %s as feeAsset", (_case, feeAsset) => {
+    expect(isCeloOperationExtra({ feeAsset })).toBe(false);
+  });
 });
 
 describe("isCeloOperationExtraRaw", () => {

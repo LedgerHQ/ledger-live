@@ -1,6 +1,10 @@
 import type { Job } from "@features/platform-device-intent";
 import { Observable, type Subscription } from "rxjs";
-import type { VerifyAddressIntentInput, VerifyAddressIntentJobState } from "./types";
+import type {
+  VerifyAddressIntentInput,
+  VerifyAddressIntentJobState,
+  VerifyAddressIntentResult,
+} from "./types";
 
 function toError(error: unknown, fallbackMessage: string): Error {
   if (error instanceof Error) return error;
@@ -38,18 +42,19 @@ function addressesMatch(expected: string, reported: string): boolean {
  * happens per coin family (DMK-native signer or legacy `receive`); this job
  * stays signer-agnostic.
  *
- * Outcomes:
- * - device request in flight → `addressDisplayed` (non-terminal, once per attempt).
+ * Outcomes (`JobState`, then the `Result` reported through `onResult`):
+ * - device request in flight → `addressDisplayed` (non-terminal, once per attempt), no result.
  * - device output matches the expected address → `verified` (terminal).
  * - device output differs → `mismatch` (terminal), so the host can warn the user.
- * - user refuses on device → `cancelled` with a `retry` handler (non-terminal).
+ * - user refuses on device → `cancelled` with a `retry` handler (non-terminal), result `refused`.
  * - device app cannot display the address → `unsupported` (terminal).
- * - any other device failure → observable error (executor's shared error screen).
+ * - any other device failure → observable error (executor's shared error screen), no result.
  */
-export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddressIntentInput> = ({
-  deviceConnectionResult,
-  input,
-}) =>
+export const verifyAddressIntentJob: Job<
+  VerifyAddressIntentJobState,
+  VerifyAddressIntentInput,
+  VerifyAddressIntentResult
+> = ({ deviceConnectionResult, input, onResult }) =>
   new Observable<VerifyAddressIntentJobState>(subscriber => {
     const { connectedDevice, compatDeviceName } = deviceConnectionResult;
     const { expectedAddress, startAddressVerification } = input;
@@ -85,26 +90,30 @@ export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddr
               return;
             case "confirmed": {
               const reportedAddress = state.address;
-              if (addressesMatch(expectedAddress, reportedAddress)) {
-                subscriber.next({ type: "verified", address: reportedAddress });
-              } else {
-                subscriber.next({ type: "mismatch", expectedAddress, reportedAddress });
-              }
+              const ending = addressesMatch(expectedAddress, reportedAddress)
+                ? ({ type: "verified", address: reportedAddress } as const)
+                : ({ type: "mismatch", expectedAddress, reportedAddress } as const);
+              onResult(ending);
+              subscriber.next(ending);
               subscriber.complete();
               return;
             }
             case "refused":
+              onResult({ type: "refused" });
               // Non-terminal: keep the intent open so the user can retry.
               subscriber.next({ type: "cancelled", retry: run });
               return;
-            case "unsupported":
-              subscriber.next({
+            case "unsupported": {
+              const ending = {
                 type: "unsupported",
                 error:
                   state.error ?? new Error("Address verification not supported on this device"),
-              });
+              } as const;
+              onResult(ending);
+              subscriber.next(ending);
               subscriber.complete();
               return;
+            }
           }
         },
         error: error => {

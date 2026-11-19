@@ -18,6 +18,12 @@ const { getMainAccount, getAccountCurrency } = jest.requireMock(
 
 // --- Bridge & Send flow ---
 jest.mock("@ledgerhq/live-common/bridge/impl");
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({
+    isCurrencyAvailable: () => true,
+    getSupportedCryptoCurrencyIds: () => null,
+  }),
+}));
 
 const mockUpdateTransaction = jest.fn();
 const mockOnAmountChange = jest.fn();

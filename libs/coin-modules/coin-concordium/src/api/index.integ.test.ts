@@ -157,6 +157,31 @@ describe("Concordium Api (testnet)", () => {
       const transferOps = tx.operations.filter(op => op.type === "transfer");
       expect(transferOps.length).toBeGreaterThanOrEqual(2);
     });
+
+    it("reports the same fees and payer to both parties of a transfer as getBlock does", async () => {
+      const hash = "626bddccebc2a25625628be98072485fd726ca32a9c2d13d1c1ee8fbb2e28744";
+      const height = 39323112;
+      const payer = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
+      const recipient = "3xMnezvQu5KmNPeHfuy3QhskSZZdYECLhQUTwZ8aD6JdYvLxAp";
+
+      const views = await Promise.all(
+        [payer, recipient].map(async address => {
+          const { items } = await api.listOperations(context, address, {
+            minHeight: height,
+            order: "asc",
+            limit: 20,
+          });
+          return items.find(op => op.tx.hash === hash);
+        }),
+      );
+      const block = await api.getBlock(context, height);
+      const blockTx = block.transactions.find(t => t.hash === hash);
+
+      expect(blockTx).toMatchObject({ fees: 1373330n, feesPayer: payer });
+      for (const view of views) {
+        expect(view?.tx).toMatchObject({ fees: blockTx?.fees, feesPayer: payer });
+      }
+    });
   });
 
   describe("craftTransaction", () => {

@@ -10,6 +10,7 @@ import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import type { BitcoinTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
+import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 
@@ -34,6 +35,8 @@ export function createApi(currencyId: string) {
     getBlock: (context: BitcoinContext, height) => getBlock(context, currencyId, height),
     listOperations: (context: BitcoinContext, address, options) =>
       listOperations(context, currencyId, address, options),
+    listHoldings: (context: BitcoinContext, address, options?) =>
+      listHoldings(context, currencyId, address, options),
     estimateFees: (context: BitcoinContext, intent, options?) =>
       estimateFees(context, currencyId, intent, options?.customFeesParameters),
     craftTransaction: (context: BitcoinContext, intent, options?) =>

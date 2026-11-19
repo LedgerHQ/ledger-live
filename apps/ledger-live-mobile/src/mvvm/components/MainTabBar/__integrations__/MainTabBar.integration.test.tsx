@@ -28,8 +28,9 @@ const PortfolioScreen = () => <StubScreen label="Portfolio Content" />;
 const SwapScreen = () => <StubScreen label="Swap Content" />;
 const EarnScreen = () => <StubScreen label="Earn Content" />;
 const CardScreen = () => <StubScreen label="Card Content" />;
+const AgentsScreen = () => <StubScreen label="Agents Content" />;
 
-function TestNavigator() {
+function TestNavigator({ withAgentsTab = false }: { readonly withAgentsTab?: boolean }) {
   return (
     <Tab.Navigator
       tabBar={props => <MainTabBar {...(props as MainTabBarProps)} />}
@@ -39,6 +40,9 @@ function TestNavigator() {
       <Tab.Screen name={NavigatorName.Earn} component={EarnScreen} />
       <Tab.Screen name={NavigatorName.Swap} component={SwapScreen} />
       <Tab.Screen name={NavigatorName.CardTab} component={CardScreen} />
+      {withAgentsTab ? (
+        <Tab.Screen name={NavigatorName.AgentIntentTab} component={AgentsScreen} />
+      ) : null}
     </Tab.Navigator>
   );
 }
@@ -87,5 +91,29 @@ describe("MainTabBar Integration", () => {
 
     expect(screen.getByRole("tab", { name: "Yield" })).toBeVisible();
     expect(screen.queryByRole("tab", { name: "Earn" })).toBeNull();
+  });
+
+  it("should render and open the Agents tab as a fifth tab", async () => {
+    const { user } = render(<TestNavigator withAgentsTab />);
+
+    ["Home", "Earn", "Swap", "Card", "Agents"].forEach(name =>
+      expect(screen.getByRole("tab", { name })).toBeVisible(),
+    );
+
+    await user.press(screen.getByRole("tab", { name: "Agents" }));
+
+    expect(screen.getByText("Agents Content")).toBeVisible();
+    expect(screen.getByRole("tab", { name: "Agents" })).toHaveProp("accessibilityState", {
+      selected: true,
+    });
+  });
+
+  it("should keep the tabs working when the Agents tab is added after mount", async () => {
+    const { user, rerender } = render(<TestNavigator />);
+
+    rerender(<TestNavigator withAgentsTab />);
+    await user.press(screen.getByRole("tab", { name: "Agents" }));
+
+    expect(screen.getByText("Agents Content")).toBeVisible();
   });
 });

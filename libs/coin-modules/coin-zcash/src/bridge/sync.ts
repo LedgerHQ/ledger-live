@@ -5,7 +5,7 @@ import type {
   AccountShapeInfo,
   GetAccountShapeStream,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { mergeOps, pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId, decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -51,7 +51,6 @@ import {
 import {
   DEFAULT_ZCASH_PRIVATE_INFO,
   ZCASH_LOG_TYPE,
-  ZCASH_XPUB_VERSION,
   ZCASH_SHIELDED_BATCH_SIZE,
   ZCASH_SHIELDED_CHUNK_TIMEOUT_MS,
   zainoEndpoint,
@@ -62,7 +61,7 @@ import { bindExplorer } from "./explorer";
 import { getZCashClient } from "../logic/engineClient";
 import { birthdayTimestamp } from "../logic/birthday";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
-import { composeXpub } from "../signer/xpub";
+import { deriveAccountXpub } from "../signer/accountXpub";
 import { releaseConfirmedNullifiers, releaseRetiredReservations } from "./note-reservation";
 
 export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
@@ -663,31 +662,9 @@ async function generateXpubIfNeeded(
   if (deviceId === undefined || deviceId === null) {
     throw new Error("deviceId required to generate the xpub");
   }
-  // coin-zcash always composes the xpub locally (see signer/xpub.ts) -- the
-  // DMK Zcash signer kit only exposes getAddress, not a native xpub command.
-  const accountPathElements = pathStringToArray(accountPath);
-  if (accountPathElements.length === 0) {
-    throw new Error(`Cannot derive xpub from empty path "${accountPath}"`);
-  }
-  const parentPath = accountPath.split("/").slice(0, -1).join("/");
-  const childNumber = accountPathElements[accountPathElements.length - 1];
-
   // Both keys come from a single device session: two concurrent signerContext
   // acquisitions on the same deviceId contend for the transport.
-  const { parent, account } = await signerContext(deviceId, async signer => {
-    const parent = await signer.getAddress(parentPath, false);
-    const account = await signer.getAddress(accountPath, false);
-    return { parent, account };
-  });
-
-  return composeXpub({
-    xpubVersion: ZCASH_XPUB_VERSION,
-    depth: accountPathElements.length,
-    childNumber,
-    parentPublicKeyHex: parent.publicKey,
-    accountPublicKeyHex: account.publicKey,
-    accountChainCodeHex: account.chainCode,
-  });
+  return signerContext(deviceId, signer => deriveAccountXpub(signer, accountPath));
 }
 
 // ── Shielded sync ────────────────────────────────────────────────────────

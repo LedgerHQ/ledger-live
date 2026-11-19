@@ -159,6 +159,20 @@ describe("scanAccountsIntentJob", () => {
     expect(job.events.at(-1)).toBe("complete");
   });
 
+  it("fails the job on a device disconnect, for the executor to retry the scan", () => {
+    const disconnect = Object.assign(new Error("disconnected"), { _tag: "DisconnectError" });
+    const { subject, startScan, wasUnsubscribed } = subjectScan();
+    const job = run(startScan);
+
+    subject.next({ id: "a" });
+    subject.error(disconnect);
+
+    expect(job.getObservableError()).toBe(disconnect);
+    expect(job.events).toEqual(["scanning", "scanning", "observable-error"]);
+    expect(job.getResult()).toBeUndefined();
+    expect(wasUnsubscribed()).toBe(true);
+  });
+
   it("maps a non-Error failure to an Error", () => {
     const { subject, startScan } = subjectScan();
     const job = run(startScan);

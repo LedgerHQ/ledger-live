@@ -42,7 +42,6 @@ const APPS = {
     catalog: "apps/ledger-live-mobile/src/locales/en/common.json",
   },
 };
-const BASELINE_FILE = path.join(__dirname, "unverifiable-baseline.json");
 const WEB_ONLY = /\.web\.(ts|tsx)$/;
 const NATIVE_ONLY = /\.native\.(ts|tsx)$/;
 const MAX_COMBINATIONS = 500;
@@ -543,27 +542,13 @@ function findMissingKeys(files, catalogs, consumers) {
   return analyzeFiles(files, catalogs, consumers).missing;
 }
 
-function readBaseline() {
-  const empty = { unverifiable: null, allowMissing: [] };
-  if (!fs.existsSync(BASELINE_FILE)) return empty;
-  return { ...empty, ...JSON.parse(fs.readFileSync(BASELINE_FILE, "utf8")) };
-}
-
 function main() {
   const started = Date.now();
   const catalogs = Object.fromEntries(
     Object.entries(APPS).map(([app, { catalog }]) => [app, loadCatalog(catalog)]),
   );
   const files = SCANNED_LAYERS.flatMap(layer => [...walk(path.join(ROOT, layer))]);
-  const baseline = readBaseline();
-  const analysis = analyzeFiles(files, catalogs, resolveConsumers());
-  const { unverifiable, stats } = analysis;
-  const missing = analysis.missing
-    .map(m => ({
-      ...m,
-      absentFrom: m.absentFrom.filter(app => !baseline.allowMissing.includes(`${app} ${m.key}`)),
-    }))
-    .filter(m => m.absentFrom.length > 0);
+  const { missing, unverifiable, stats } = analyzeFiles(files, catalogs, resolveConsumers());
   const seconds = ((Date.now() - started) / 1000).toFixed(1);
   console.log(
     `i18n keys: ${stats.static} static, ${stats.enumerated} type-enumerated, ${stats.unverifiable} unverifiable call sites (${seconds}s)`,
@@ -571,54 +556,29 @@ function main() {
 
   for (const u of unverifiable) console.log(`  unverifiable ${u.file}:${u.line}`);
 
-  let limit = baseline.unverifiable;
-  if (process.argv.includes("--update-baseline")) {
-    if (limit !== null && unverifiable.length > limit) {
-      console.error(
-        `\nCannot raise the baseline: ${unverifiable.length} > ${limit}. Fix the new sites.`,
-      );
-      process.exitCode = 1;
-      return;
-    }
-    fs.writeFileSync(
-      BASELINE_FILE,
-      `${JSON.stringify({ ...baseline, unverifiable: unverifiable.length }, null, 2)}\n`,
-    );
-    console.log(`Baseline updated to ${unverifiable.length}.`);
-    limit = unverifiable.length;
-  }
+  const failures = failureMessages({ missing, unverifiable });
+  for (const line of failures) console.error(line);
+  if (failures.length > 0) process.exitCode = 1;
+}
 
-  const actualMisses = new Set(
-    analysis.missing.flatMap(m => m.absentFrom.map(app => `${app} ${m.key}`)),
-  );
-  const stale = baseline.allowMissing.filter(entry => !actualMisses.has(entry));
-  if (stale.length > 0) {
-    console.error(
-      `\nStale allowMissing entries (no longer missing, remove them): ${stale.join(", ")}`,
-    );
-    process.exitCode = 1;
-  }
+function failureMessages({ missing, unverifiable }) {
+  const lines = [];
 
   if (missing.length > 0) {
-    console.error(`Missing i18n keys (${missing.length}):`);
+    lines.push(`Missing i18n keys (${missing.length}):`);
     for (const m of missing)
-      console.error(`  ${m.file}:${m.line}  "${m.key}"  missing in ${m.absentFrom.join(" + ")}`);
+      lines.push(`  ${m.file}:${m.line}  "${m.key}"  missing in ${m.absentFrom.join(" + ")}`);
     const absentApps = new Set(missing.flatMap(m => m.absentFrom));
-    console.error(`\nAdd them to: ${[...absentApps].map(app => APPS[app].catalog).join(" and ")}`);
-    process.exitCode = 1;
+    lines.push(`\nAdd them to: ${[...absentApps].map(app => APPS[app].catalog).join(" and ")}`);
   }
 
-  if (limit !== null && unverifiable.length > limit) {
-    console.error(
-      `\nUnverifiable i18n key sites increased: ${unverifiable.length} > baseline ${limit}. Use literal or literal-union keys (listed above).`,
+  if (unverifiable.length > 0) {
+    lines.push(
+      `\nUnverifiable i18n key sites (${unverifiable.length}, listed above): use literal or literal-union keys.`,
     );
-    process.exitCode = 1;
-  } else if (limit !== null && unverifiable.length < limit) {
-    console.error(
-      `\nUnverifiable i18n key sites dropped to ${unverifiable.length} (baseline ${limit}): run with --update-baseline and commit it.`,
-    );
-    process.exitCode = 1;
   }
+
+  return lines;
 }
 
 if (require.main === module) main();
@@ -628,6 +588,7 @@ module.exports = {
   appsForFile,
   createProgram,
   extractKeys,
+  failureMessages,
   findMissingKeys,
   flatten,
   hasKey,

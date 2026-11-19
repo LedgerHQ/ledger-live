@@ -134,11 +134,10 @@ describe("transactionStrategies", () => {
       payinExtraId: "payin-42",
     };
 
-    it("should carry the payin memo in the legacy and generic memo fields", () => {
+    it("should carry the payin memo in memoType and memoValue", () => {
       expect(cosmosTransaction(transaction)).toMatchObject({
         family: "cosmos",
         mode: "send",
-        memo: "payin-42",
         memoType: "text",
         memoValue: "payin-42",
       });
@@ -159,7 +158,6 @@ describe("transactionStrategies", () => {
       const { payinExtraId: _payinExtraId, ...withoutMemo } = transaction;
 
       expect(cosmosTransaction(withoutMemo)).toMatchObject({
-        memo: undefined,
         memoType: null,
         memoValue: undefined,
       });

@@ -206,6 +206,8 @@ async function mockSeiEvmRpc(page: Page) {
 const MOCKED_SEI_EMPTY_REDELEGATIONS = { redelegation_responses: [] };
 const MOCKED_SEI_EMPTY_UNBONDINGS = { unbonding_responses: [] };
 const MOCKED_SEI_EMPTY_REWARDS = { rewards: [], total: [] };
+const MOCKED_SEI_MINTER = { total_mint_amount: "1000000000000" };
+const MOCKED_SEI_POOL = { pool: { bonded_tokens: "2000000000000000" } };
 const MOCKED_SEI_VALIDATORS = {
   validators: [
     {
@@ -292,7 +294,30 @@ async function mockSeiValidatorsApi(page: Page) {
       return;
     }
 
-    throw new Error(`Unexpected SEI REST staking request: ${request.method()} ${url.toString()}`);
+    const isMinterRequest =
+      request.method() === "GET" && pathname === "/seichain/mint/v1beta1/minter";
+
+    if (isMinterRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_MINTER),
+      });
+      return;
+    }
+
+    const isPoolRequest = request.method() === "GET" && pathname === "/cosmos/staking/v1beta1/pool";
+
+    if (isPoolRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_POOL),
+      });
+      return;
+    }
+
+    throw new Error(`Unexpected SEI REST staking request:${request.method()} ${url.toString()}`);
   });
 }
 

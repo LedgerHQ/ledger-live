@@ -9,7 +9,7 @@ export const req = {
     provider: 1,
   },
 };
-export const minAppVersion = {
+export const minAppVersion: Record<string, string> = {
   Aleo: "1.0.0",
   Aeternity: "0.4.3",
   Aion: "1.0.2",

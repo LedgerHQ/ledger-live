@@ -31,14 +31,17 @@ export async function decodeTransaction(rawTx: string): Promise<{
   raw_data: Record<string, any>;
   raw_data_hex: string;
 }> {
-  const { Transaction } = tronWebProto();
-  const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
-
   return {
     txID: tronTxIdFromRawDataHex(rawTx),
-    raw_data: convertTxFromRaw(transaction),
+    raw_data: decodeRawData(rawTx),
     raw_data_hex: rawTx,
   };
+}
+
+/** The `raw_data` of {@link decodeTransaction}, for callers that must stay synchronous. */
+export function decodeRawData(rawTx: string): Record<string, any> {
+  const { Transaction } = tronWebProto();
+  return convertTxFromRaw(Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex")));
 }
 
 const sameBytes = (a: Uint8Array, b: Uint8Array): boolean => Buffer.from(a).equals(Buffer.from(b));

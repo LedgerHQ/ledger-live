@@ -1,7 +1,7 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
 import { selectorStateDefaultValues, useFetchCurrencyTo } from ".";
-import { getAccountTuplesForCurrency } from "../utils";
+import { getAccountTuplesForCurrency, type AccountTuple } from "../utils";
 import { SwapSelectorStateType, SwapDataType, SwapTransactionType } from "../types";
 
 export const useToState = ({
@@ -35,14 +35,15 @@ export const useToState = ({
 
   /* Get the list of possible target accounts given the target currency. */
   const getTargetAccountsPairs = useCallback(
-    currency => currency && accounts && getAccountTuplesForCurrency(currency, accounts, false),
+    (currency: SwapSelectorStateType["currency"]): any =>
+      currency && accounts && getAccountTuplesForCurrency(currency, accounts, false),
     [accounts],
   );
 
   const targetAccounts = useMemo(
     () =>
       getTargetAccountsPairs(toState.currency)?.map(
-        ({ account, subAccount }) => subAccount || account,
+        ({ account, subAccount }: AccountTuple) => subAccount || account,
       ),
     [toState.currency, getTargetAccountsPairs],
   );

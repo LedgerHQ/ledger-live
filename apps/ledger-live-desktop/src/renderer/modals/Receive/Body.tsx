@@ -44,6 +44,8 @@ export type Data = {
   eventType?: string;
   isFromPostOnboardingEntryPoint?: boolean;
   shouldUseReceiveOptions?: boolean;
+  /** Asset page assets: when set, they decide whether the Noah options show. */
+  currencyIds?: readonly string[];
   sourcePage?: string;
 };
 

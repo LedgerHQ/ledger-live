@@ -155,22 +155,34 @@ export type CeloOperationRaw = OperationRaw<CeloOperationExtraRaw>;
 export type CeloOperationExtra = {
   celoOperationValue?: BigNumber;
   celoSourceValidator?: string;
-  // Tri-state fee-currency tag:
-  //   - lowercased 0x… address → CIP-64 tx, fees paid in that ERC-20
-  //   - NATIVE_FEE_CURRENCY_MARKER → confirmed non-CIP-64, fees paid in CELO
-  //   - absent → not yet enriched (e.g. inside the reorg window, or RPC failed)
+  /**
+   * The lower-case contract of the token that paid the fee, when it is not CELO. `fee` is then in
+   * that token's units.
+   */
+  feeAsset?: string;
+  /**
+   * The CIP-64 fee currency (an adapter address) of a pending operation built before `feeAsset`
+   * existed, whose `fee` is in the adapter's 18-decimal units; or the NATIVE sentinel.
+   */
   feeCurrencyAddress?: string;
 };
-// `feeCurrencyAddress` has a generic name, so we also validate its value shape
-// to avoid false-matching another family's extras: must be either the NATIVE
-// sentinel or a 20-byte EVM address (40 hex chars).
+// The fee keys have generic names, so their value shape is validated too, to avoid
+// false-matching another family's extras: a 20-byte EVM address (40 hex chars), or the
+// NATIVE sentinel for `feeCurrencyAddress`.
 const HEX_ADDRESS_RE = /^0x[0-9a-f]{40}$/i;
 const hasCeloFeeCurrencyAddress = (op: object): boolean => {
   const v = (op as Record<string, unknown>).feeCurrencyAddress;
   return typeof v === "string" && (v === NATIVE_FEE_CURRENCY_MARKER || HEX_ADDRESS_RE.test(v));
 };
+const hasCeloFeeAsset = (op: object): boolean => {
+  const v = (op as Record<string, unknown>).feeAsset;
+  return typeof v === "string" && HEX_ADDRESS_RE.test(v);
+};
 const hasAnyCeloExtraKey = (op: object): boolean =>
-  "celoOperationValue" in op || "celoSourceValidator" in op || hasCeloFeeCurrencyAddress(op);
+  "celoOperationValue" in op ||
+  "celoSourceValidator" in op ||
+  hasCeloFeeAsset(op) ||
+  hasCeloFeeCurrencyAddress(op);
 
 export function isCeloOperationExtra(op: OperationExtra): op is CeloOperationExtra {
   return op !== null && typeof op === "object" && hasAnyCeloExtraKey(op);
@@ -178,6 +190,7 @@ export function isCeloOperationExtra(op: OperationExtra): op is CeloOperationExt
 export type CeloOperationExtraRaw = {
   celoOperationValue?: string;
   celoSourceValidator?: string;
+  feeAsset?: string;
   feeCurrencyAddress?: string;
 };
 export function isCeloOperationExtraRaw(op: OperationExtraRaw): op is CeloOperationExtraRaw {

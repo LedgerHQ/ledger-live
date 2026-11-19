@@ -18,6 +18,7 @@ const GRADIENT_STOPS = [
 export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   activeRouteName,
   tabItems,
+  isCompact,
   onTabPress,
   hideTabBar,
   bottomInset,
@@ -45,7 +46,11 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
 
       <LinearGradient stops={GRADIENT_STOPS} style={StyleSheet.absoluteFill} pointerEvents="none" />
 
-      <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s24" }}>
+      <TabBar
+        active={activeRouteName}
+        onTabPress={onTabPress}
+        lx={{ marginHorizontal: isCompact ? "s8" : "s24" }}
+      >
         {tabItems.map(item => (
           <TabBarItem
             key={item.value}

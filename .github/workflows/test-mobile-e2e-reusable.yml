@@ -3,7 +3,8 @@ run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 # One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
-# test surface (tests_type or schedule cron). Matches checkout ref: inputs.ref || github.sha.
+# test surface (tests_type or schedule cron). A direct dispatch with an empty ref keys on the branch, like
+# ref=<branch>. CI smoke callers (a dispatched build-and-test-scheduled) keep the sha.
 # NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
 # It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
@@ -12,7 +13,7 @@ concurrency:
   # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
   # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || (github.event_name == 'workflow_dispatch' && !inputs.ci_smoke && github.ref_name || github.sha), github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
@@ -105,7 +106,6 @@ on:
         type: choice
         options:
           - defaults
-          - wallet40-q1
           - account-detail
         default: defaults
       feature_flags_json:
@@ -536,7 +536,7 @@ jobs:
           fi
           IOS_NATIVE_HASH="${IOS_FINGERPRINT:+fp-$IOS_FINGERPRINT}"
           ANDROID_NATIVE_HASH="${ANDROID_FINGERPRINT:+fp-$ANDROID_FINGERPRINT}"
-          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
           echo "android_native_key=${PREFIX}longterm-${ANDROID_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
@@ -934,7 +934,8 @@ jobs:
           use-fallback: false
 
       - name: Check iOS simulators are ready
-        timeout-minutes: 10
+        # 10 minutes for the simulator checks, plus up to 6 for the trust store update wait.
+        timeout-minutes: 16
         uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
 
       - name: Check the exclusive lock store (R2)

@@ -11,13 +11,21 @@ export function isCantonAccount(account: Account): account is CantonAccount {
 }
 
 function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
-  const { isOnboarded, instrumentUtxoCounts, pendingTransferProposals, publicKey, xpub } = r;
+  const {
+    isOnboarded,
+    instrumentUtxoCounts,
+    pendingTransferProposals,
+    publicKey,
+    xpub,
+    nativeInstrumentAdmin,
+  } = r;
   return {
     isOnboarded: isOnboarded,
     instrumentUtxoCounts,
     pendingTransferProposals,
     ...(publicKey ? { publicKey } : {}),
     ...(xpub ? { xpub } : {}),
+    ...(nativeInstrumentAdmin ? { nativeInstrumentAdmin } : {}),
   };
 }
 
@@ -28,6 +36,7 @@ function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
     pendingTransferProposals: r.pendingTransferProposals,
     ...(r.publicKey ? { publicKey: r.publicKey } : {}),
     ...(r.xpub ? { xpub: r.xpub } : {}),
+    ...(r.nativeInstrumentAdmin ? { nativeInstrumentAdmin: r.nativeInstrumentAdmin } : {}),
   };
 }
 

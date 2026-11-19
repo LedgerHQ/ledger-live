@@ -49,6 +49,10 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   - `ConnectNewDeviceFilterListedDevices` — type of the optional `filterListedDevices` input. It selects the `ListedDevice`s that `Discovering` shows. A hidden device keeps its position in the list.
   - `embedded` — optional input, `false` by default. `true` is the embedded mode, for a parent state machine that runs the flow with its own discovery service, already scanning, and ends it itself (see the [spec](src/connectNewDevice/ConnectNewDeviceStateMachine.spec.md#embedded-mode)).
   - `EmbeddedConnectNewDeviceUIState` — the UI states that a parent shows in embedded mode: all the states without `Done`, `Terminated` and `UnknownError`.
+- `connectKnownOrNewDevice/` — the device list of My Wallet. It lists the known, connected and discovered devices, connects, disconnects and removes a device, and embeds `connectNewDevice` in embedded mode to add a new device (see the [spec](src/connectKnownOrNewDevice/ConnectKnownOrNewDeviceStateMachine.spec.md)):
+  - `connectKnownOrNewDeviceUseCase` — returns `uiStates`, an `Observable` of UI states, with `pause` and `resume`. Each subscription starts a new state machine, stopped on unsubscribe.
+  - `ConnectKnownOrNewDeviceUIState` / `ConnectKnownOrNewDeviceUIStateTypes` — its UI states, including the shared error states
+  - `DeviceListItem` / `SelectableDeviceListItem` / `DeviceListItemStatuses` — the rows of the list, with their status and connectivity
 - `LedgerLiveLogger`, `LiveBlindSigningReporter`, `UserHashService` — shared services
 - `transport/` — shared transport interface definitions
 

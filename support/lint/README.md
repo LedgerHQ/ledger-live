@@ -49,8 +49,9 @@ The `no-restricted-imports` entries that several configs share live in `restrict
 which the presets and the `.mts` configs import and which writes the JSON fragments in
 `restricted-imports/` that the JSON configs extend.
 
-`plugins.mts` (`@support/lint/plugins`) exports `SUFFIX_IMPORTS_PLUGIN` and `REDUX_SLICES_PLUGIN`,
-the absolute paths of the `suffix-imports` and `redux-slices` JS plugins. `base` puts them in
+`plugins.mts` (`@support/lint/plugins`) exports `SUFFIX_IMPORTS_PLUGIN`, `REDUX_SLICES_PLUGIN` and
+`DERIVATION_MIRROR_PLUGIN`, the absolute paths of the `suffix-imports`, `redux-slices` and
+`derivation-mirror` JS plugins. `base` puts them in
 `jsPlugins`; a config that does not extend a preset,
 such as an app config, imports it by package name, as it imports `@support/lint/restricted-imports`.
 
@@ -165,5 +166,15 @@ that declare no slice, and test files. The rule has no autofix. An exception goe
 
 Each preset waives its remaining violators through `sliceSelectorsWaivers` in
 `src/redux-slices.js`, which states the waiver policy.
+
+### `derivation-mirror/in-step`
+
+[`src/derivation-mirror.js`](src/derivation-mirror.js) compares the derivation tables of
+`libs/ledger-wallet-framework/src/derivation.ts` with their mirror in
+`domain/entity/derivation/src/modes.internals.ts`, and reports each table that differs on the file
+being linted, so either side fails on its own. It reads the other file from disk with the
+TypeScript parser, loaded only for these two files. `base` turns it on as an error and `libs`
+inherits it. The [`@domain/entity-derivation` README](../../domain/entity/derivation/README.md#a-mirror-of-derivationts)
+says why both copies exist and how to change them.
 
 Run the rules' tests with `nx run @support/lint:test`.

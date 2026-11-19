@@ -50,6 +50,7 @@ const INPUTS: PlanInputs = {
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
   accountsUserdata: "speculos-x-other-account,swap-history",
+  read: "log",
   branchSha: SHA(9),
   branchName: "ci/branch",
 };
@@ -178,6 +179,7 @@ describe("inputsOf", () => {
     THRESHOLD: "100",
     SCENARIOS: "accounts",
     ACCOUNTS_USERDATA: "swap-history",
+    READ: "both",
     BRANCH_SHA: SHA(9),
     GITHUB_REF_NAME: "ci/branch",
   };
@@ -197,6 +199,7 @@ describe("inputsOf", () => {
   it("keeps a dispatch's inputs as they are, so a blank one is still refused", () => {
     const inputs = inputsOf({ GITHUB_EVENT_NAME: "workflow_dispatch", ...DISPATCH });
     assert.equal(inputs.platforms, "iOS Only");
+    assert.equal(inputs.read, "both");
     assert.equal(inputs.pairs, "");
     assert.throws(() => planBuilds(inputs, fakeLsRemote()), /even number ≥ 6/);
   });
@@ -226,6 +229,7 @@ describe("outputsOf and summaryOf", () => {
         "pairs=20",
         "threshold_ms=100",
         "accounts_userdata=speculos-x-other-account,swap-history",
+        "read=log",
         "",
       ].join("\n"),
     );
