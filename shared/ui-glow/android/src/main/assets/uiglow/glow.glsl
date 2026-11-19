@@ -1,8 +1,8 @@
 // The glow shader in GLSL ES 1.00 (OpenGL ES 2.0). Source of truth: ios/glow.msl is a port.
 //
-// Based on the designer's "Final Glow Sequence" playground, trimmed to the design rules: dark
-// background, a glow keeps its height and only moves side to side. Two glows, one at the top and
-// one at the bottom, each with its own fade.
+// Based on the designer's "Final Glow Sequence" playground, trimmed to the design rules: a glow
+// keeps its height and only moves side to side. Two glows, one at the top and one at the bottom,
+// each with its own fade.
 //
 // One file for both stages: GlowView prepends "#define VERTEX" or "#define FRAGMENT". The 4 lobe
 // centers are the same for every pixel, so the vertex stage computes them.
@@ -18,6 +18,7 @@ uniform float uDpr;
 uniform float uFade;
 uniform float uFadeTop;
 uniform float uFadeBottom;
+uniform vec3  uCanvas;
 // The design params (GlowParams), packed by 4: GLES2 only guarantees 16 uniform vectors per
 // fragment shader. GlowView.kt sets each group by name.
 uniform vec4  uLook;     // intensity, opacity, grain, grainSize
@@ -179,6 +180,17 @@ vec3 glowColor(vec2 uv, float h, vec2 px, float t, float reachScale) {
   return col;
 }
 
+const vec3 LUMA = vec3(0.299, 0.587, 0.114);
+const vec3 LIGHT_TINT = vec3(0.831, 0.627, 1.0);
+const float LIGHT_GAIN = 3.0;
+const float LIGHT_MAX = 0.25;
+
+vec3 onCanvas(vec3 glow) {
+  if (dot(uCanvas, LUMA) < 0.5) return uCanvas + glow;
+  float amount = clamp(dot(glow, LUMA) * LIGHT_GAIN, 0.0, LIGHT_MAX);
+  return uCanvas * mix(vec3(1.0), LIGHT_TINT, amount);
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / uRes;
   uv.y = 1.0 - uv.y;
@@ -190,7 +202,7 @@ void main() {
   if (uFadeBottom > 0.0) col += glowColor(uv, 1.0 - uv.y, px, t, 1.0) * smoothstep(0.0, 1.0, uFadeBottom);
   col += (hash21(gl_FragCoord.xy * 0.39) - 0.5) * 0.009;
   col *= uFade;
-  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+  gl_FragColor = vec4(clamp(onCanvas(col), 0.0, 1.0), 1.0);
 }
 
 #endif

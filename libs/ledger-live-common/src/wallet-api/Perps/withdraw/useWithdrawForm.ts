@@ -20,6 +20,7 @@ import {
 import type { WithdrawQuote } from "./quote";
 import { useWithdrawCurrencies } from "./useWithdrawCurrencies";
 import { usePerpsWithdrawQuote } from "./useWithdrawQuote";
+import { useSourceBalanceRefresh } from "./useSourceBalanceRefresh";
 
 export type WithdrawFormError = Readonly<{
   labelKey: string;
@@ -56,6 +57,8 @@ export type PerpsWithdrawForm = Readonly<{
   /** Max withdrawable amount, in the counter value. */
   maxAmount: number;
   formattedAvailable: string;
+  /** The available balance is being refreshed, so it may still be the old one. */
+  isBalanceRefreshing: boolean;
   statusError: WithdrawFormError | null;
   exceedsBalance: boolean;
   canReview: boolean;
@@ -92,6 +95,7 @@ export function usePerpsWithdrawForm({
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const countervaluesState = useCountervaluesCache();
   const { currencyIds, isError: currenciesUnavailable } = useWithdrawCurrencies();
+  const isBalanceRefreshing = useSourceBalanceRefresh(sourceAccount.id);
 
   const availableBalance = useMemo(() => getPerpsAvailableBalance(sourceAccount), [sourceAccount]);
   const counterValueUnit = counterValueCurrency.units[0];
@@ -239,9 +243,11 @@ export function usePerpsWithdrawForm({
     destinationCounterValue,
     maxAmount,
     formattedAvailable,
+    isBalanceRefreshing,
     statusError,
     exceedsBalance: balanceError !== null,
     canReview:
+      !isBalanceRefreshing &&
       amount > 0 &&
       destinationAccount !== undefined &&
       statusError === null &&

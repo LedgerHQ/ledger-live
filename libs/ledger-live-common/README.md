@@ -35,11 +35,9 @@ Narrower local docs:
 
 ## Development
 
-Run commands from the repository root.
+Run commands from the repository root. Live-common is read from source; its no-op `build` only relays `^build` for CI.
 
 ```bash
-pnpm common build
-pnpm common watch
 pnpm common lint
 pnpm common lint:fix
 pnpm common format:check

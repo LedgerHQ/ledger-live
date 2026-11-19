@@ -7,7 +7,8 @@ Owns the launch availability check for Ledger Wallet. Apps wrap the tree with `A
 and read `useAppAvailability` from splash gates. Unavailable states render
 `@shared/ui-app-unavailable`.
 
-Today the flow runs the OFAC geo-block check from `@domain/api-ofac` (fail-open on error). A CAL
+Today the flow runs the OFAC geo-block check from `@domain/api-ofac` (fail-open on error, but a
+failed refetch keeps a 451 that the app already received). A CAL
 service-unavailable check will compose in later.
 
 ## Exports

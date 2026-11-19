@@ -1,13 +1,11 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Operations history", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
@@ -37,6 +35,7 @@ test.describe("Operations history", () => {
       await app.operationDrawer.expectOperationDetailsVisible(clickedRow);
       await app.operationDrawer.closeDrawer();
 
+      await app.layout.waitForSyncButtonToBeEnabled({ slowSync: true });
       await app.history.clickExportCsv();
       await app.history.selectFirstAccountForExport();
       await app.history.expectExportButtonEnabled();

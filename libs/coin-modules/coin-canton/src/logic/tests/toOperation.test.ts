@@ -176,6 +176,7 @@ describe("toOperation", () => {
       expect(operation.tx).toEqual({
         hash: "0xtxhash",
         fees: 1n,
+        feesAsset: { type: "native" },
         feesPayer: "alice-party",
         date: new Date("2024-01-01T00:00:00.000Z"),
         block: { height: 10, hash: "blockhash", time: new Date("2024-01-01T00:00:00.000Z") },
@@ -193,6 +194,21 @@ describe("toOperation", () => {
 
     it("marks a failed row as failed", () => {
       expect(map(createMockOperationView({ status: "Failed" })).tx.failed).toBe(true);
+    });
+
+    it("reads the fee asset as the operation asset is read", () => {
+      const row = createMockOperationView({
+        fee: {
+          value: "7",
+          asset: { type: "token", instrumentAdmin: "IssuerA", instrumentId: "USDCx" },
+          details: {},
+        },
+      });
+
+      expect(map(row).tx).toMatchObject({
+        fees: 7n,
+        feesAsset: { type: "token", assetReference: "USDCx", assetOwner: "IssuerA" },
+      });
     });
   });
 });

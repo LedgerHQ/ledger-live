@@ -71,6 +71,7 @@ import type { InternetComputerNeuronManageFlowParamList } from "../../../familie
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { XrpAddTokenFlowParamList } from "../../../families/xrp/AddTokenFlow/types";
+import type { XrpManageTokenFlowParamList } from "../../../families/xrp/ManageTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
@@ -110,6 +111,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
+import type { ReceiveNavigatorParamList } from "./ReceiveNavigator";
 import type { GlobalSearchNavigatorParamList } from "LLM/features/GlobalSearch/types";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
@@ -234,6 +236,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
+  [NavigatorName.Receive]?: NavigatorScreenParams<ReceiveNavigatorParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SendFlow]: {
     onClose?: () => void;
@@ -352,6 +355,7 @@ export type BaseNavigatorStackParamList = {
 
   // Xrp
   [NavigatorName.XrpAddTokenFlow]: NavigatorScreenParams<XrpAddTokenFlowParamList>;
+  [NavigatorName.XrpManageTokenFlow]: NavigatorScreenParams<XrpManageTokenFlowParamList>;
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;

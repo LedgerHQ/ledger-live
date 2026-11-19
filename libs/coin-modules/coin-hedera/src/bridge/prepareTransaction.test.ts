@@ -49,6 +49,19 @@ describe("prepareTransaction", () => {
     mockCalculateAmount.mockResolvedValue(mockCalculatedAmount);
   });
 
+  it("returns the same result when prepared twice or in parallel", async () => {
+    const transaction = getMockedTransaction({ recipient: "0.0.9999" });
+
+    const first = await prepareTransaction(mockAccount, { ...transaction });
+    const second = await prepareTransaction(mockAccount, { ...first });
+    const [parallelA, parallelB] = await Promise.all([
+      prepareTransaction(mockAccount, { ...transaction }),
+      prepareTransaction(mockAccount, { ...first }),
+    ]);
+
+    expect([second, parallelA, parallelB]).toEqual([first, first, first]);
+  });
+
   it("should set amount and maxFee from utils", async () => {
     const result = await prepareTransaction(mockAccount, mockTx);
 

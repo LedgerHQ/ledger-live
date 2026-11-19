@@ -1,4 +1,5 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { genOperation } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -151,6 +152,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           postScanAccount(account, {
             isEmpty: isLast,
           });
+        account.balanceHistoryCache = generateHistoryFromOperations(account);
         if (!unsubscribed)
           o.next({
             type: "discovered",

@@ -165,6 +165,7 @@ export enum ScreenName {
   ProviderList = "ProviderList",
   PurchaseDevice = "PurchaseDevice",
   ReceiveConfirmation = "ReceiveConfirmation",
+  ReceiveAddress = "ReceiveAddress",
   ReceiveConnectDevice = "ReceiveConnectDevice",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   ReceiveProvider = "ReceiveProvider",
@@ -602,6 +603,7 @@ export enum ScreenName {
   XrpAddTokenConnectDevice = "XrpAddTokenConnectDevice",
   XrpAddTokenValidationError = "XrpAddTokenValidationError",
   XrpAddTokenValidationSuccess = "XrpAddTokenValidationSuccess",
+  XrpManageTokenList = "XrpManageTokenList",
   HederaDelegationSummary = "HederaDelegationSummary",
   HederaDelegationSelectValidator = "HederaDelegationSelectValidator",
   HederaDelegationSelectDevice = "HederaDelegationSelectDevice",
@@ -761,6 +763,7 @@ export enum NavigatorName {
   PasswordModifyFlow = "PasswordModifyFlow",
   PlatformExchange = "PlatformExchange",
   ReceiveFunds = "ReceiveFunds",
+  Receive = "ReceiveNavigator",
   SendFunds = "SendFunds",
   SendFlow = "SendFlow",
   Settings = "Settings",
@@ -828,6 +831,7 @@ export enum NavigatorName {
   NearWithdrawingFlow = "NearWithdrawingFlow",
   // Xrp
   XrpAddTokenFlow = "XrpAddTokenFlow",
+  XrpManageTokenFlow = "XrpManageTokenFlow",
   // Hedera
   HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
   HederaDelegationFlow = "HederaDelegationFlow",

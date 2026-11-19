@@ -1,9 +1,21 @@
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveScreenData } from "./useReceiveScreenData";
 
-/** Empty for now: the placeholder layout (LIVE-40948) and the screen data (LIVE-41128) fill it. */
 export function useReceiveAddressViewModel({
+  accountUUID,
+  assetId,
   onClose,
 }: ReceiveAddressProps): ReceiveAddressViewProps {
-  return { onClose };
+  const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(descriptor, assetId);
+
+  return {
+    data,
+    title: header.title,
+    networkLabel: header.networkLabel,
+    networkIcon: header.data?.networkIcon,
+    onClose,
+  };
 }

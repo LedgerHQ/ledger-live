@@ -8,11 +8,15 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SetupScreenProps } from "./types";
 import type { SetupStage } from "./toSetupStage";
+import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
 export type SetupStageStatus = "none" | "loading" | "success";
 
-export type SetupViewProps = ChecksDrawerProps &
+export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet"> &
   Readonly<{
+    infoCard: SetupInfoCard | undefined;
+    suspendInfoSheet: boolean;
+    reportsRecoveryKey: boolean;
     connection: SessionReconnect | null;
     productName: string;
     suspendSheets: boolean;
@@ -22,6 +26,7 @@ export type SetupViewProps = ChecksDrawerProps &
     stageTitle: string;
     stageDescription?: string;
     currentStep: number;
+    completedSteps: number;
     totalSteps: number;
     status: SetupStageStatus;
     closeLabel: string;
@@ -79,6 +84,7 @@ export function useSetupScreenViewModel({
   checks,
   onQuit,
   suspendSheets = false,
+  reportsRecoveryKey = false,
   connection = null,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
@@ -95,7 +101,12 @@ export function useSetupScreenViewModel({
     closeSheet();
     onQuit();
   };
-  const { headerQuitHidden, reopenFirmwareOffer, ...drawers } = useChecksDrawers({
+  const {
+    headerQuitHidden,
+    reopenFirmwareOffer,
+    allowSheet: _allowSheet,
+    ...drawers
+  } = useChecksDrawers({
     device,
     state: checks?.state ?? null,
     error: checks?.error ?? null,
@@ -110,6 +121,9 @@ export function useSetupScreenViewModel({
   });
 
   return {
+    infoCard: stage.infoCard,
+    suspendInfoSheet: suspendSheets || connection !== null,
+    reportsRecoveryKey,
     connection,
     productName,
     suspendSheets,
@@ -119,6 +133,7 @@ export function useSetupScreenViewModel({
     stageTitle: t(stageTitleKeys[stage.kind]),
     ...(descriptionKey ? { stageDescription: t(descriptionKey, { productName }) } : {}),
     currentStep: stage.index + 1,
+    completedSteps: stage.index,
     totalSteps: stage.total,
     status,
     closeLabel: t("deviceOnboarding.checks.close"),

@@ -26,6 +26,7 @@ type RpcToConnection = {
   getTransaction: "getParsedTransaction";
   getBalance: "getBalanceAndContext";
   getLatestBlockhash: "getLatestBlockhashAndContext";
+  isBlockhashValid: "isBlockhashValid";
   getFeeForMessage: "getFeeForMessage";
   getTokenAccountsByOwner: "getParsedTokenAccountsByOwner";
   simulateTransaction: "simulateTransaction";

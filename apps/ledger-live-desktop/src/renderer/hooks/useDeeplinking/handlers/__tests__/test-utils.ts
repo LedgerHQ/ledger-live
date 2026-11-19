@@ -21,5 +21,7 @@ export const createMockContext = (
   isPayTabEnabled: false,
   isContactsEnabled: false,
   isPredictionsAvailable: true,
+  hasLedgerSyncTrustchain: false,
+  isLedgerSyncFaked: false,
   ...overrides,
 });

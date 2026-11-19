@@ -389,6 +389,8 @@ const OperationD = (props: Props) => {
   // operationDetails implementation.
   const useFeesCurrencyOverride = specific?.operationDetails?.useFeesCurrency;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
+  // null: the fee is in a currency not resolved yet, so it is not shown in another unit
+  const isFeesCurrencyUnresolved = customFeesCurrency === null;
   const feesCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
   const getDisplayFeeOverride = specific?.operationDetails?.getDisplayFee;
@@ -542,7 +544,7 @@ const OperationD = (props: Props) => {
         </OpDetailsData>
       </OpDetailsSection>
 
-      {(isNegative || fee) && (
+      {(isNegative || fee) && !isFeesCurrencyUnresolved && (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.fees")}</OpDetailsTitle>
           <OpDetailsData>

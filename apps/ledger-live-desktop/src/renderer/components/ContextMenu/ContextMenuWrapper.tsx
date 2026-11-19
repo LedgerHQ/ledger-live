@@ -8,7 +8,7 @@ export type ContextType = {
   showContextMenu: (event: MouseEvent, items: ContextMenuItemType[]) => void;
 };
 
-export const ContextMenuContext = React.createContext<ContextType>({
+const ContextMenuContext = React.createContext<ContextType>({
   showContextMenu: () => undefined,
 });
 

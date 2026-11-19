@@ -21,6 +21,7 @@ export function useReconnectSheetViewModel({
   connection,
   productName,
   suspendSheets,
+  onQuit,
 }: ReconnectSheetProps): ReconnectSheetViewProps | null {
   const { t } = useTranslation();
   const [dismissed, setDismissed] = useState<SessionReconnectState | null>(null);
@@ -49,6 +50,6 @@ export function useReconnectSheetViewModel({
     helpLabel: t("deviceOnboarding.setup.connection.failed.helpCta"),
     onRetry: connection.retry,
     onGetHelp: () => void Linking.openURL(reconnectUrls.help),
-    onClose: () => setDismissed(connection.state),
+    onClose: onQuit ?? (() => setDismissed(connection.state)),
   };
 }

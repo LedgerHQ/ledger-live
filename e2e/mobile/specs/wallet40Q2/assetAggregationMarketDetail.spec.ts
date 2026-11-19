@@ -1,7 +1,7 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2, isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { getFixtureAccountId, getFixtureTokenAccountId } from "@e2e/utils/fixtureAccounts";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -30,15 +30,16 @@ const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
   POLYGON_DAI_TOKEN_ID,
 );
 
-// Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {
   lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    enabled: true,
     params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       lazyOnboarding: false,
+      brazePlacement: true,
+      earnUpselling: true,
+      earnSimulator: true,
     },
   },
 };

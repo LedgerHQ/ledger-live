@@ -7,13 +7,14 @@ import {
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
 const droppedState = "awaitingSession";
-const statesThatKeepTheStage = new Set(["deviceLocked", "readingState", droppedState]);
+const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
 
 export type UnseededFunnelInput = {
   machineState: string | null;
@@ -25,6 +26,7 @@ export type UnseededFunnelInput = {
   deviceNotGenuine: boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
+  reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
   suspendSheets: boolean;
@@ -47,6 +49,7 @@ export function useUnseededFunnelViewModel(
           machineState,
           currentStep: input.currentStep,
           modelId: device.modelId,
+          reportsRecoveryKey: input.reportsRecoveryKey,
         })
       : null;
   const holdsDuringSafetyWarning =
@@ -91,6 +94,7 @@ export function useUnseededFunnelViewModel(
       device,
       stage: visibleStage,
       suspendSheets: input.suspendSheets,
+      reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
       checks: checksState
         ? {
@@ -118,6 +122,7 @@ function sameStage(next: SetupStage, held: SetupStage | null) {
     held.index === next.index &&
     held.total === next.total &&
     held.indicator === next.indicator &&
-    held.detail === next.detail
+    held.detail === next.detail &&
+    held.infoCard === next.infoCard
   );
 }

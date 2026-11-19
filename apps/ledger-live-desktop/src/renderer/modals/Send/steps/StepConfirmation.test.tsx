@@ -12,7 +12,7 @@ jest.mock("./Confirmation/NodeError", () => ({
 
 jest.mock("~/renderer/components/ErrorDisplay", () => ({
   __esModule: true,
-  default: () => <div data-testid="error-display" />,
+  default: ({ error }: { error: Error }) => <div data-testid="error-display">{error.name}</div>,
 }));
 
 const mockT: TFunction = jest.fn((k: string) => k) as unknown as TFunction;
@@ -101,6 +101,16 @@ describe("StepConfirmation", () => {
       expect(screen.queryByTestId("node-error")).not.toBeInTheDocument();
     },
   );
+
+  it("renders an expired Solana blockhash error as is, not as a broadcast error", () => {
+    const error = Object.assign(new Error("SolanaTxBlockhashExpired"), {
+      name: "SolanaTxBlockhashExpired",
+    });
+    render(<StepConfirmation {...baseProps} signed error={error} account={mockAccount} />);
+
+    expect(screen.getByTestId("error-display")).toHaveTextContent("SolanaTxBlockhashExpired");
+    expect(screen.queryByTestId("node-error")).not.toBeInTheDocument();
+  });
 });
 
 describe("StepConfirmationFooter", () => {

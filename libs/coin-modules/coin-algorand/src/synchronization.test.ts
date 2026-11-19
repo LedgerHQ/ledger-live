@@ -308,7 +308,7 @@ describe("Synchronization", () => {
               assetAmount: new BigNumber("0"),
               assetId: "12345",
               assetRecipientAddress: accountAddress,
-              assetSenderAddress: accountAddress,
+              assetSenderAddress: undefined,
             },
           },
         ]);
@@ -368,6 +368,50 @@ describe("Synchronization", () => {
         expect(result.operations[0].type).toBe("OPT_OUT");
       });
 
+      it("should map a clawback as an outgoing ASA operation for its source", async () => {
+        const accountAddress = "CLAWBACK_SOURCE";
+        jest.spyOn(network, "getAccount").mockResolvedValue({
+          round: 50000000,
+          balance: new BigNumber("5000000"),
+          pendingRewards: new BigNumber("0"),
+          assets: [{ assetId: "12345", balance: new BigNumber("400") }],
+        } as never);
+        jest.spyOn(network, "getAllAccountTransactions").mockResolvedValue([
+          {
+            id: "TX_CLAWBACK",
+            type: AlgoTransactionType.ASSET_TRANSFER,
+            senderAddress: "ASSET_MANAGER",
+            timestamp: "1700000000",
+            round: 49999000,
+            fee: new BigNumber("1000"),
+            senderRewards: new BigNumber("0"),
+            recipientRewards: new BigNumber("0"),
+            details: {
+              assetAmount: new BigNumber("100"),
+              assetId: "12345",
+              assetRecipientAddress: "RECIPIENT_ADDRESS",
+              assetSenderAddress: accountAddress,
+            },
+          },
+        ]);
+
+        const result = await getAccountShape(
+          {
+            address: accountAddress,
+            initialAccount: null,
+            currency: { id: "algorand" },
+            derivationMode: "",
+          } as never,
+          {} as never,
+        );
+
+        expect(result.operations[0]).toMatchObject({ type: "FEES", senders: ["ASSET_MANAGER"] });
+        expect(result.subAccounts?.[0].operations[0]).toMatchObject({
+          type: "OUT",
+          senders: [accountAddress],
+          value: new BigNumber("100"),
+        });
+      });
       it("should map FEES type for regular asset transfer from sender", async () => {
         const accountAddress = "SENDER_ADDRESS";
         jest.spyOn(network, "getAccount").mockResolvedValue({
