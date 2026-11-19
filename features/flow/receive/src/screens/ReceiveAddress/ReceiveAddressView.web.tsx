@@ -14,7 +14,6 @@ export function ReceiveAddressView({
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
   };
-  const closeDialog = () => handleOpenChange(false);
 
   return (
     <Dialog open onOpenChange={handleOpenChange} height="fit">
@@ -29,7 +28,6 @@ export function ReceiveAddressView({
             title={title}
             description={networkLabel}
             onBack={onBack}
-            onClose={closeDialog}
           />
           <DialogBody className="flex flex-col gap-24">
             <ZonePlaceholder zone="summary" />

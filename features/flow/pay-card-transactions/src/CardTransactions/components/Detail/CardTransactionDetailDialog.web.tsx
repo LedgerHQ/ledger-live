@@ -28,7 +28,7 @@ export function CardTransactionDetailDialog({
         data-testid="card-transaction-detail-dialog"
         aria-describedby={undefined}
       >
-        <DialogHeader density="compact" onClose={onClose} />
+        <DialogHeader density="compact" />
         <DialogBody className="overflow-y-auto">
           <CardTransactionDetail {...detailProps} />
         </DialogBody>

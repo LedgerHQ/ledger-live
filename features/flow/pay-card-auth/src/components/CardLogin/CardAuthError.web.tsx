@@ -17,7 +17,7 @@ export function CardAuthError({ error }: CardAuthErrorProps) {
     <Dialog open height="fit" onOpenChange={handleOpenChange}>
       <DialogContent aria-describedby={undefined} data-testid="card-auth-error-dialog">
         <DialogBackgroundToneProvider>
-          <DialogHeader density="compact" onClose={error.onDismiss} />
+          <DialogHeader density="compact" />
           <DialogBody>
             <InfoState
               preset="error"
