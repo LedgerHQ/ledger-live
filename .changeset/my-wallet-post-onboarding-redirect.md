@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Run the post onboarding and Recover upsell redirect of My Wallet from the screen, so that it does not depend on the device list
+Run the post onboarding and Recover upsell redirect of My Wallet from the whole My Ledger section, not only from its SelectDevice2 part
