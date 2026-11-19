@@ -75,7 +75,7 @@ const connectionResult: DeviceConnectionResult = {
   } as DeviceConnectionResult["connectedDevice"],
 };
 
-function renderComponent() {
+function renderComponent(onAddDevice?: (hasDevices: boolean) => void) {
   const onConnected = jest.fn();
   const onAddModeChange = jest.fn();
   const view = render(
@@ -83,6 +83,7 @@ function renderComponent() {
       onConnected={onConnected}
       onAddModeChange={onAddModeChange}
       isPaused={false}
+      onAddDevice={onAddDevice}
     >
       <Text>Explore all Ledger devices</Text>
     </ConnectKnownOrNewDevice>,
@@ -181,6 +182,50 @@ describe("ConnectKnownOrNewDevice", () => {
 
     // THEN
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a caller Add handler and no device, WHEN Add a Ledger device is pressed, THEN it should call the handler instead of opening the Add mode", async () => {
+    // GIVEN
+    const onAddDevice = jest.fn();
+    const addNewDevice = jest.fn();
+    const { user } = renderComponent(onAddDevice);
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
+      devices: [],
+      addNewDevice,
+    });
+
+    // WHEN
+    await user.press(screen.getByText("Add a Ledger device"));
+
+    // THEN
+    expect(onAddDevice).toHaveBeenCalledWith(false);
+    expect(addNewDevice).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN a caller Add handler and a device that is not found, WHEN the hint is pressed, THEN it should close the waiting sheet and call the handler", async () => {
+    // GIVEN
+    const onAddDevice = jest.fn();
+    const addNewDevice = jest.fn();
+    const close = jest.fn();
+    const { user } = renderComponent(onAddDevice);
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice,
+      devices: [nanoXRow],
+      device: nanoX,
+      showDeviceNotFound: true,
+      addNewDevice,
+      close,
+    });
+
+    // WHEN
+    await user.press(screen.getByText("Add a Ledger device"));
+
+    // THEN
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(onAddDevice).toHaveBeenCalledWith(true);
+    expect(addNewDevice).not.toHaveBeenCalled();
   });
 
   it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {

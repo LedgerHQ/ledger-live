@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BackHandler, Platform } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { log } from "@ledgerhq/logs";
@@ -113,6 +113,36 @@ function toLibraryDelays(delays: ConnectKnownOrNewDeviceDelays | undefined) {
   };
 }
 
+function withCallerAddDevice(
+  state: ConnectKnownOrNewDeviceUIState,
+  onAddDevice: ConnectKnownOrNewDeviceProps["onAddDevice"],
+): ConnectKnownOrNewDeviceUIState {
+  if (!onAddDevice) {
+    return state;
+  }
+  switch (state.type) {
+    case ConnectKnownOrNewDeviceUIStateTypes.Discovering:
+      return state.isPaused
+        ? state
+        : { ...state, addNewDevice: () => onAddDevice(state.devices.length > 0) };
+    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice: {
+      const { addNewDevice, close, devices } = state;
+      if (!addNewDevice) {
+        return state;
+      }
+      return {
+        ...state,
+        addNewDevice: () => {
+          close();
+          onAddDevice(devices.length > 0);
+        },
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 function getLastConnectedDeviceId({ transport, id }: KnownDevice): string {
   return transport === mockserverIdentifier ? buildMockServerCompatDeviceId(id) : id;
 }
@@ -122,6 +152,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   onAddModeChange,
   isPaused,
   onDeviceNotFound,
+  onAddDevice,
   delays,
   children,
 }: ConnectKnownOrNewDeviceProps): ConnectKnownOrNewDeviceViewProps {
@@ -297,8 +328,11 @@ export function useConnectKnownOrNewDeviceViewModel({
     }
   }, [state]);
 
+  const shownState = useMemo(() => withCallerAddDevice(state, onAddDevice), [state, onAddDevice]);
+
   return {
     ...viewState,
+    state: shownState,
     platform,
     onDeviceNotFound,
     onCloseErrorSheet,
