@@ -118,6 +118,7 @@ describe("estimatePlaywrightTestCount gives null when a spec may run more tests"
     "a generic arrow helper": `  const register = <T,>(x: T) => {\n${literalTest("inner")}\n  };`,
     "a typed variable arrow helper": `  const register: Register = () => {\n${literalTest("inner")}\n  };`,
     "an arrow helper with a default call": `  const register = (x = pick()) => {\n${literalTest("inner")}\n  };`,
+    "an arrow helper with a parenthesis in a string default": `  const register = (prefix = "(") => {\n${literalTest("inner")}\n  };`,
     "an object method": `  const helpers = {\n    register() {\n${literalTest("inner")}\n    },\n  };`,
     "an object arrow property": `  const helpers = {\n    register: () => {\n${literalTest("inner")}\n    },\n  };`,
     "a class method": `  class Helpers {\n    static register(name: string): void {\n${literalTest("inner")}\n    }\n  }`,

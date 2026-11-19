@@ -355,7 +355,8 @@ const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*(?:[;,)\n]|\.\s*extend\b)/;
 // A named function can declare tests and be called more than once.
 const PARAMS = String.raw`(?:<[^>]*>\s*)?\([^()]*(?:\([^()]*\)[^()]*)*\)`;
 const RETURN_TYPE = String.raw`(?:\s*:\s*[^=;{}()]+?)?`;
-const ARROW_OR_FUNCTION = String.raw`(?:async\s+)?(?:function\b|${PARAMS}${RETURN_TYPE}\s*=>|\w+\s*=>)`;
+// The flat `\([^)]*\)` form still catches a default such as `(prefix = "(") =>` that PARAMS misreads.
+const ARROW_OR_FUNCTION = String.raw`(?:async\s+)?(?:function\b|${PARAMS}${RETURN_TYPE}\s*=>|\([^)]*\)${RETURN_TYPE}\s*=>|\w+\s*=>)`;
 const NAMED_FUNCTION = new RegExp(
   [
     String.raw`\bfunction\s*\*?\s*\w+\s*[<(]`,
