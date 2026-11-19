@@ -20,6 +20,7 @@ export type GetTransactionsOptions = {
   minRound?: number | undefined;
   limit?: number | undefined;
   nextToken?: string | undefined;
+  includeInnerTransactions?: boolean;
 };
 
 export const getAccountTransactions = async (
@@ -42,7 +43,9 @@ export const getAccountTransactions = async (
     url: nextUrl,
   });
 
-  const transactions = data.transactions.flatMap(parseRawTransaction);
+  const transactions = data.transactions.flatMap(tx =>
+    options?.includeInnerTransactions ? parseRawTransaction(tx) : [parseRootTransaction(tx)],
+  );
   const nextToken = data["next-token"];
 
   return { transactions, nextToken };
@@ -111,6 +114,8 @@ const parseLosslessJSON = (raw: unknown): unknown => {
   }
 };
 
+const parseRootTransaction = (tx: ExplorerTransaction): AlgoTransaction =>
+  parseTransaction(tx, { id: tx.id, fee: tx.fee, sender: tx.sender }, tx.id)[0];
 const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction[] => {
   const root = { id: tx.id, fee: tx.fee, sender: tx.sender };
   return parseTransaction(tx, root, tx.id);

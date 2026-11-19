@@ -627,6 +627,106 @@ describe("listOperations", () => {
     ).resolves.toMatchObject({ items: [{ type: "FEES", value: 0n }] });
   });
 
+  it("should create a FEES operation for a clawback submitter", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          id: "CLAWBACK",
+          rootId: "CLAWBACK",
+          type: AlgoTransactionType.ASSET_TRANSFER,
+          senderAddress: address,
+          feesPayer: address,
+          fee: new BigNumber("1000"),
+          round: 1000000,
+          timestamp: "1700000000",
+          note: undefined,
+          senderRewards: new BigNumber(25),
+          recipientRewards: new BigNumber(0),
+          details: {
+            assetAmount: new BigNumber(100),
+            assetId: "123",
+            assetRecipientAddress: "RECIPIENT",
+            assetSenderAddress: "SOURCE",
+            assetCloseAmount: undefined,
+            assetCloseToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({
+      items: [
+        { type: "FEES", value: 0n, asset: { type: "native" }, tx: { fees: 1000n } },
+        { type: "REWARD", value: 25n, tx: { fees: 0n } },
+      ],
+    });
+  });
+
+  it("should ignore inner movements unrelated to the observed account", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          type: AlgoTransactionType.PAYMENT,
+          senderAddress: "APP",
+          feesPayer: "ROOT_SENDER",
+          fee: new BigNumber("1000"),
+          round: 1000000,
+          timestamp: "1700000000",
+          note: undefined,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          details: {
+            amount: new BigNumber(100),
+            recipientAddress: "UNRELATED",
+            closeAmount: undefined,
+            closeToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({ items: [] });
+  });
+
+  it("should create a reward operation for a non-transfer root transaction", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          id: "KEYREG",
+          rootId: "KEYREG",
+          type: "keyreg",
+          senderAddress: address,
+          feesPayer: address,
+          fee: new BigNumber("1000"),
+          round: 1000000,
+          timestamp: "1700000000",
+          note: undefined,
+          senderRewards: new BigNumber(25),
+          recipientRewards: new BigNumber(0),
+          details: undefined,
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    await expect(
+      listOperations(mockAlgorandContext, address, { order: "desc" }),
+    ).resolves.toMatchObject({
+      items: [
+        { type: "FEES", value: 0n, tx: { fees: 1000n } },
+        { type: "REWARD", value: 25n, tx: { fees: 0n } },
+      ],
+    });
+  });
+
   it("should return a FEES operation for non-transfer transactions", async () => {
     mockGetAccountTransactions.mockResolvedValue({
       transactions: [
@@ -666,6 +766,7 @@ describe("listOperations", () => {
       minRound: 5000,
       limit: 50,
       nextToken: "PAGE_TOKEN",
+      includeInnerTransactions: true,
     });
   });
 

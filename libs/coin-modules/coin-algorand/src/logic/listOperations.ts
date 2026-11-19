@@ -30,8 +30,11 @@ export async function listOperations(
     minRound: minHeight,
     limit,
     nextToken: cursor,
+    includeInnerTransactions: true,
   });
-  const operations = result.transactions.flatMap(tx => convertToOperations(tx, address));
+  const operations = result.transactions
+    .filter(tx => isRelevantToAddress(tx, address))
+    .flatMap(tx => convertToOperations(tx, address));
 
   if (order === "desc") {
     operations.sort((a, b) => b.tx.block.height - a.tx.block.height);
@@ -42,8 +45,22 @@ export async function listOperations(
   return { items: operations, next: result.nextToken ?? "" };
 }
 
+function isRootFeePayer(tx: AlgoTransaction, address: string): boolean {
+  return tx.id === (tx.rootId ?? tx.id) && (tx.feesPayer ?? tx.senderAddress) === address;
+}
+
+function isMovementParty(tx: AlgoTransaction, address: string): boolean {
+  const { senders, recipients } = getOperationParties(tx);
+  return senders.includes(address) || recipients.includes(address);
+}
+
+function isRelevantToAddress(tx: AlgoTransaction, address: string): boolean {
+  return isRootFeePayer(tx, address) || (isTransfer(tx) && isMovementParty(tx, address));
+}
+
 function convertToOperations(tx: AlgoTransaction, address: string): Operation[] {
-  const operation = convertToOperation(tx, address);
+  const feesOnly = isRootFeePayer(tx, address) && isTransfer(tx) && !isMovementParty(tx, address);
+  const operation = convertToOperation(tx, address, feesOnly);
   const reward = getReward(tx, address);
 
   if (isTransfer(tx)) {
@@ -52,9 +69,10 @@ function convertToOperations(tx: AlgoTransaction, address: string): Operation[] 
       : [operation, createRewardOperation(operation, tx, address, reward)];
   }
 
-  return tx.id === (tx.rootId ?? tx.id) && (tx.feesPayer ?? tx.senderAddress) === address
-    ? [operation]
-    : [];
+  const fees = isRootFeePayer(tx, address) ? [operation] : [];
+  return reward === undefined
+    ? fees
+    : [...fees, createRewardOperation(operation, tx, address, reward)];
 }
 
 function createRewardOperation(
@@ -79,13 +97,14 @@ function createRewardOperation(
 function isTransfer(tx: AlgoTransaction): boolean {
   return tx.type === AlgoTransactionType.PAYMENT || tx.type === AlgoTransactionType.ASSET_TRANSFER;
 }
-function convertToOperation(tx: AlgoTransaction, address: string): Operation {
-  const type = isTransfer(tx) ? getOperationType(tx, address) : "FEES";
-  const value = isTransfer(tx) ? getOperationValue(tx, address) : 0n;
-  const { senders, recipients } = isTransfer(tx)
+function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = false): Operation {
+  const isTransferOperation = isTransfer(tx) && !feesOnly;
+  const type = isTransferOperation ? getOperationType(tx, address) : "FEES";
+  const value = isTransferOperation ? getOperationValue(tx, address) : 0n;
+  const { senders, recipients } = isTransferOperation
     ? getOperationParties(tx)
     : { senders: [], recipients: [] };
-  const asset = isTransfer(tx) ? getOperationAsset(tx) : { type: "native" };
+  const asset = isTransferOperation ? getOperationAsset(tx) : { type: "native" };
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const memo: AlgorandMemo | undefined = tx.note
     ? { type: "string", kind: "note", value: tx.note }

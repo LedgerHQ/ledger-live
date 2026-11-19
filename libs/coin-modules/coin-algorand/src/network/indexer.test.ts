@@ -126,7 +126,9 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS", {
+        includeInnerTransactions: true,
+      });
 
       expect(result.transactions).toMatchObject([
         { id: "APPL", rootId: "APPL", fee: new BigNumber(1000), feesPayer: "ROOT_SENDER" },
