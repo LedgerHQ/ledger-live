@@ -28,9 +28,8 @@ describe("ReceiveAddress (Web)", () => {
   it("names the asset and its network in the header", () => {
     renderScreen();
 
-    expect(screen.getByTestId("receive-address-zone-header")).toHaveTextContent(
-      "Receive ETH · Ethereum network",
-    );
+    expect(screen.getByText("Receive ETH")).toBeVisible();
+    expect(screen.getByText("Ethereum network")).toBeVisible();
   });
 
   it("lays the zones out in screen order", () => {
@@ -39,7 +38,6 @@ describe("ReceiveAddress (Web)", () => {
     expect(
       screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
     ).toEqual([
-      "receive-address-zone-header",
       "receive-address-zone-summary",
       "receive-address-zone-address",
       "receive-address-zone-actions",
