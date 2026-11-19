@@ -15,7 +15,7 @@ import db from "./db";
 import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemptThrottle";
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
-import debounce from "lodash/debounce";
+import { flushThen, setupFlushOnQuit } from "./flushOnQuit";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -100,6 +100,7 @@ app.on("ready", async () => {
   });
   await userDataCleanup.cleanup();
   db.init(userDataDirectory);
+  setupFlushOnQuit(window, db.flush);
 
   // Defer extension installation to not block startup
   if (__DEV__) {
@@ -165,7 +166,7 @@ app.on("ready", async () => {
   });
   ipcMain.handle(CHANNELS.reloadRenderer, () => {
     console.log("reloading renderer ...");
-    loadWindow();
+    void flushThen(() => void loadWindow());
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
   setupExplorerSessionAffinity(session.defaultSession);
@@ -178,28 +179,20 @@ app.on("ready", async () => {
   await applyWindowParams(windowParams, settings);
 
   // Setup window event handlers
-  window.on(
-    "resize",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [width, height] = window.getSize();
-      db.setKey("windowParams", `${window.name}.dimensions`, {
-        width,
-        height,
-      });
-    }, 300),
-  );
-  window.on(
-    "move",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [x, y] = window.getPosition();
-      db.setKey("windowParams", `${window.name}.positions`, {
-        x,
-        y,
-      });
-    }, 300),
-  );
+  // The db logs a failed save once, for all the setKey calls that the save holds.
+  const ignoreLoggedSaveError = () => undefined;
+  window.on("resize", () => {
+    if (!window || window.isDestroyed()) return;
+    const [width, height] = window.getSize();
+    db.setKey("windowParams", `${window.name}.dimensions`, { width, height }).catch(
+      ignoreLoggedSaveError,
+    );
+  });
+  window.on("move", () => {
+    if (!window || window.isDestroyed()) return;
+    const [x, y] = window.getPosition();
+    db.setKey("windowParams", `${window.name}.positions`, { x, y }).catch(ignoreLoggedSaveError);
+  });
 
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
@@ -252,9 +245,7 @@ ipcMain.on(CHANNELS.deepLinking, (_, l) => {
 
 ipcMain.on(CHANNELS.appReload, () => {
   const w = getMainWindow();
-  if (w) {
-    w.reload();
-  }
+  if (w) void flushThen(() => w.reload());
 });
 ipcMain.on(CHANNELS.showApp, () => {
   const w = getMainWindow();

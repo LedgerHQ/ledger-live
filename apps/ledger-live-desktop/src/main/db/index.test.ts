@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import fs from "fs/promises";
 
 const readFileMock = jest.fn<(path: string) => Promise<Buffer>>();
 const writeFileMock = jest.fn<(path: string, data: string) => Promise<void>>();
@@ -308,5 +309,258 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(db.isEncryptionKeyCorrect("new-password")).toBe(true);
     await expect(db.removeEncryptionKey("new-password")).resolves.toBe(true);
     expect(db.hasEncryptionKey()).toBe(false);
+  });
+});
+
+function writtenFile(ns: string): Record<string, unknown> | undefined {
+  const call = [...writeFileMock.mock.calls]
+    .reverse()
+    .find(([filePath]) => filePath.endsWith(`${ns}.json`));
+  return call && (JSON.parse(call[1]).data as Record<string, unknown>);
+}
+
+function blockNextWrite(): () => void {
+  let finishWrite: (() => void) | undefined;
+  writeFileMock.mockImplementationOnce(() => new Promise<void>(resolve => (finishWrite = resolve)));
+  return () => finishWrite?.();
+}
+
+const waitMs = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+describe("db flush", () => {
+  let db: typeof import("./index").default;
+  const testDir = "/tmp/db-test";
+
+  beforeEach(async () => {
+    jest.resetModules();
+    readFileMock.mockReset();
+    writeFileMock.mockReset();
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: {} }), "utf-8"));
+    writeFileMock.mockResolvedValue(undefined);
+    db = (await import("./index")).default;
+    db.init(testDir);
+  });
+
+  afterEach(async () => {
+    jest.useRealTimers();
+    await db.flush();
+  });
+
+  it("writes a pending save at once", async () => {
+    jest.useFakeTimers();
+    const saved = db.setKey("app", "settings", { theme: "dark" });
+    await jest.advanceTimersByTimeAsync(0);
+    expect(writtenFile("app")).toBeUndefined();
+
+    await db.flush();
+
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
+    await expect(saved).resolves.toBeUndefined();
+  });
+
+  it("logs a failed save once for all the setKey calls it holds", async () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    writeFileMock.mockRejectedValueOnce(new Error("disk full"));
+
+    const saves = [
+      db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 }),
+      db.setKey("windowParams", "MainWindow.positions", { x: 3, y: 4 }),
+      db.setKey("windowParams", "MainWindow.positions", { x: 5, y: 6 }),
+    ];
+    await db.flush();
+
+    for (const saved of saves) await expect(saved).rejects.toThrow("disk full");
+    expect(consoleError).toHaveBeenCalledTimes(1);
+    consoleError.mockRestore();
+  });
+
+  it("waits for a save that is already in progress", async () => {
+    const finishWrite = blockNextWrite();
+    const saved = db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await waitMs(0);
+    expect(flushed).toBe(false);
+
+    finishWrite();
+    await flushing;
+    await saved;
+    expect(flushed).toBe(true);
+  });
+
+  it("waits for each write of a namespace, not only the last one", async () => {
+    const finishFirstWrite = blockNextWrite();
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+    void db.setKey("app", "settings", { theme: "light" });
+    await waitMs(50);
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await waitMs(0);
+    expect(flushed).toBe(false);
+
+    finishFirstWrite();
+    await flushing;
+    expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
+  });
+
+  it("waits for a second save whose timer fires while the flush waits", async () => {
+    const finishFirstWrite = blockNextWrite();
+    const finishSecondWrite = blockNextWrite();
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    void db.setKey("app", "settings", { theme: "light" });
+    await waitMs(50);
+    finishFirstWrite();
+    await waitMs(0);
+    expect(writeFileMock).toHaveBeenCalledTimes(2);
+    expect(flushed).toBe(false);
+
+    finishSecondWrite();
+    await flushing;
+    expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
+  });
+
+  it("writes a namespace first saved while the flush waits", async () => {
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+
+    const flushing = db.flush();
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await waitMs(0);
+    finishWrite();
+    await flushing;
+
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
+
+  it("writes a setKey that still waits for its namespace read", async () => {
+    let finishRead: (value: Buffer) => void = () => undefined;
+    readFileMock.mockReturnValueOnce(new Promise<Buffer>(resolve => (finishRead = resolve)));
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await waitMs(0);
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await waitMs(0);
+    expect(flushed).toBe(false);
+
+    finishRead(Buffer.from(JSON.stringify({ data: {} })));
+    await flushing;
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
+
+  it("does not deadlock on a save that was pending at reset", async () => {
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(0);
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    await db.resetAll();
+    writeFileMock.mockClear();
+
+    await db.flush();
+
+    expect(writtenFile("app")).toBeUndefined();
+    await expect(db.getKey("app", "settings")).resolves.toBeUndefined();
+  });
+
+  it("deletes app.json after the save that is already in progress", async () => {
+    const unlink = jest.spyOn(fs, "unlink");
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", { theme: "dark" });
+    await waitMs(50);
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+
+    const resetting = db.resetAll();
+    await waitMs(0);
+    expect(unlink).not.toHaveBeenCalled();
+
+    finishWrite();
+    await resetting;
+    expect(unlink).toHaveBeenCalledWith(`${testDir}/app.json`);
+    unlink.mockRestore();
+  });
+
+  it("does not load the old app.json again for a setKey during the reset", async () => {
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "old" } })));
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "old");
+    await waitMs(50);
+
+    const resetting = db.resetAll();
+    await waitMs(0);
+    const setting = db.setKey("app", "accounts", []);
+    await waitMs(0);
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    finishWrite();
+    await resetting;
+    writeFileMock.mockClear();
+    await setting;
+
+    expect(writtenFile("app")).toEqual({ accounts: [] });
+  });
+
+  it("writes a pending save before reload clears the memory", async () => {
+    jest.useFakeTimers();
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await jest.advanceTimersByTimeAsync(0);
+
+    await db.reload();
+
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
+
+  it("does not serve the memory of the previous session while a reload saves it", async () => {
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "disk" } })));
+    await db.setKey("app", "settings", "memory");
+    await db.flush();
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "pending");
+    await waitMs(0);
+
+    const reloaded = db.reload();
+    let read: unknown;
+    const reading = db.getKey("app", "settings").then(value => (read = value));
+    await waitMs(50);
+    expect(writeFileMock).toHaveBeenCalledTimes(2);
+    expect(read).toBeUndefined();
+
+    finishWrite();
+    await reloaded;
+    await reading;
+    expect(read).toBe("disk");
+  });
+
+  it.each([
+    ["setKey", (d: typeof db) => d.setKey("app", "settings", "new")],
+    ["setEncryptionKey", (d: typeof db) => d.setEncryptionKey("password")],
+    ["removeEncryptionKey", (d: typeof db) => d.removeEncryptionKey()],
+    ["resetAll", (d: typeof db) => d.resetAll()],
+  ])("waits for the reload before %s", async (_name, call) => {
+    await db.setKey("app", "settings", "memory");
+    await db.flush();
+    const finishWrite = blockNextWrite();
+    void db.setKey("app", "settings", "pending");
+    await waitMs(0);
+    const reloaded = db.reload();
+
+    let done = false;
+    const calling = call(db)
+      .catch(() => undefined)
+      .then(() => (done = true));
+    await waitMs(50);
+    expect(done).toBe(false);
+
+    finishWrite();
+    await reloaded;
+    await calling;
+    expect(done).toBe(true);
   });
 });
