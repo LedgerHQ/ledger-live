@@ -1,6 +1,5 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
@@ -12,7 +11,6 @@ describe("Wallet assets", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
@@ -42,10 +40,7 @@ describe("Wallet assets", () => {
   const tmsLinks = ["B2CQA-4841"];
 
   beforeAll(async () => {
-    await app.init({
-      userdata: "wallet40-btc-only",
-      featureFlags: FF_LWM_WALLET_40_Q2,
-    });
+    await app.init({ userdata: "wallet40-btc-only" });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
@@ -66,7 +61,6 @@ describe("Wallet assets", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
