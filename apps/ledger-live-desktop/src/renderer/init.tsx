@@ -41,6 +41,7 @@ import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware, { flushCryptoAssetsCache } from "~/renderer/middlewares/db";
+import { hydrateAtStart, persistence } from "~/persistence/composition";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
@@ -48,7 +49,6 @@ import { startCountervaluesSync } from "@features/platform-market-countervalues"
 import type { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
@@ -96,7 +96,6 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
-import { initHistory } from "~/renderer/reducers/history";
 import {
   installBorrowLifecycleHost,
   installEarnLifecycleHost,
@@ -114,9 +113,9 @@ async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
 
-  db.onFlushRequest(() => {
+  db.onFlushRequest(async () => {
     flushCryptoAssetsCache();
-    return flushPendingWrites();
+    await Promise.allSettled([flushPendingWrites(), persistence.flush()]);
   });
 
   const logVerbose = getEnv("VERBOSE");
@@ -174,6 +173,7 @@ async function init() {
   }
   const store = createStore({
     dbMiddleware,
+    persistenceMiddleware: persistence.middleware,
     countervalues: appCountervaluesSources,
     appConfig: loadAppConfig(configStorage),
   });
@@ -331,14 +331,9 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  const [accountData, walletData] = await Promise.all([
-    getKey("app", "accounts", []),
-    getKey("app", "wallet"),
-  ]);
-  if (accountData) {
-    dispatch(initAccounts(accountData, walletData));
-  } else {
-    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
+  const statuses = await hydrateAtStart(store);
+  // app.accounts guards all the encrypted app.* keys: while it is locked, the app shows the lock screen.
+  if (statuses.accounts === "locked") {
     store.dispatch(lock());
   }
 
@@ -376,11 +371,6 @@ async function init() {
     ) {
       store.dispatch(setBannerVisible(initialSettings["featureFlagsButtonVisible"]));
     }
-  }
-
-  const historyState = await getKey("app", "history");
-  if (historyState) {
-    store.dispatch(initHistory(historyState));
   }
 
   const initialCountervalues = await getKey("app", "countervalues");
