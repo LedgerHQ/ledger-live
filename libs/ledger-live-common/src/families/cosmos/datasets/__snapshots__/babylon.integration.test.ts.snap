@@ -4,6 +4,11 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
 [
   {
     "balance": "1000006",
+    "balances": [
+      {
+        "value": "1000006",
+      },
+    ],
     "currencyId": "babylon",
     "derivationMode": "",
     "freshAddress": "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
@@ -21,6 +26,11 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "babylon",
     "derivationMode": "",
     "freshAddress": "bbn1jy28znlkp4x7gf8cxlj6n2ngkrkxh2yy7t2m9y",

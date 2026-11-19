@@ -4,6 +4,12 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
 [
   {
     "balance": "643420137173618",
+    "balances": [
+      {
+        "locked": "100900000016375",
+        "value": "643420137173618",
+      },
+    ],
     "currencyId": "injective",
     "derivationMode": "",
     "freshAddress": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
@@ -21,6 +27,11 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "injective",
     "derivationMode": "",
     "freshAddress": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
