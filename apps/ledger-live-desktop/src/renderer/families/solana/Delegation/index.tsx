@@ -17,6 +17,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useViewStakePositionDetails } from "../useViewStakePositionDetails";
 import { Header } from "./Header";
 import { Row } from "./Row";
 type DelegateModalName =
@@ -59,6 +60,13 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
       );
     },
     [account, dispatch],
+  );
+  const viewDetails = useViewStakePositionDetails(account);
+  const onViewDetails = useCallback(
+    ({ stake }: SolanaStakeWithMeta) => {
+      if (stake.positionId) viewDetails?.(stake.positionId);
+    },
+    [viewDetails],
   );
   const explorerView = getDefaultExplorerView(account.currency);
   const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
@@ -105,6 +113,9 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
               account={account}
               onManageAction={onRedirect}
               onExternalLink={onExternalLink}
+              onViewDetails={
+                viewDetails && stakeWithMeta.stake.positionId ? onViewDetails : undefined
+              }
             />
           ))}
         </TableContainer>

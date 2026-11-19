@@ -23,11 +23,20 @@ import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { VIEW_STAKE_POSITION_DETAILS } from "../useViewStakePositionDetails";
 type DelegateModalName =
   | "MODAL_SOLANA_DELEGATION_ACTIVATE"
   | "MODAL_SOLANA_DELEGATION_DEACTIVATE"
   | "MODAL_SOLANA_DELEGATION_REACTIVATE"
   | "MODAL_SOLANA_DELEGATION_WITHDRAW";
+type ManageItem = {
+  key: DelegateModalName | typeof VIEW_STAKE_POSITION_DETAILS;
+  label: React.ReactNode;
+};
+const VIEW_DETAILS_ITEM: ManageItem = {
+  key: VIEW_STAKE_POSITION_DETAILS,
+  label: <Trans i18nKey="stakePosition.entry.viewDetails" />,
+};
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -96,17 +105,29 @@ type Props = {
   stakeWithMeta: SolanaStakeWithMeta;
   onManageAction: (stakeWithMeta: SolanaStakeWithMeta, action: DelegateModalName) => void;
   onExternalLink: (stakeWithMeta: SolanaStakeWithMeta) => void;
+  /** Opens the position in the stake position dialog, listed first when it is set. */
+  onViewDetails?: (stakeWithMeta: SolanaStakeWithMeta) => void;
 };
-export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
+export function Row({
+  account,
+  stakeWithMeta,
+  onManageAction,
+  onExternalLink,
+  onViewDetails,
+}: Props) {
   const { stake, meta } = stakeWithMeta;
   const activationState = solanaActivationState(stake);
-  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+  const stakeActions: ManageItem[] = [
+    ...(onViewDetails ? [VIEW_DETAILS_ITEM] : []),
+    ...solanaStakeActions(stake).map(toStakeDropDownItem),
+  ];
   const unit = useAccountUnit(account);
   const onSelect = useCallback(
-    (action: (typeof stakeActions)[number]) => {
-      onManageAction(stakeWithMeta, action.key);
+    (action: ManageItem) => {
+      if (action.key === VIEW_STAKE_POSITION_DETAILS) onViewDetails?.(stakeWithMeta);
+      else onManageAction(stakeWithMeta, action.key);
     },
-    [onManageAction, stakeWithMeta],
+    [onManageAction, onViewDetails, stakeWithMeta],
   );
 
   const validatorName = meta.validator?.name || stake.validatorAddress || "-";
@@ -188,10 +209,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
   );
 }
 
-function toStakeDropDownItem(stakeAction: string): {
-  key: DelegateModalName;
-  label: React.ReactNode;
-} {
+function toStakeDropDownItem(stakeAction: string): ManageItem {
   switch (stakeAction) {
     case "activate":
       return {
