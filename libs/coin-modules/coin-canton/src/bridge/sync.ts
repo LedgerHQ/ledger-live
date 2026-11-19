@@ -30,7 +30,7 @@ import {
   type TransferProposal,
 } from "../network/gateway";
 import resolver from "../signer";
-import { CantonAccount, CantonResources, CantonSigner } from "../types";
+import { CantonAccount, CantonResources, CantonSigner, type ReplayTransaction } from "../types";
 import { buildSubAccounts, mergeOperations } from "./buildSubAccounts";
 import { getCurrencyContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
@@ -297,14 +297,34 @@ const blockHeightBound = (
   }, undefined);
 
 /**
- * Where the history is read from: after the newest stored operation, or at the oldest one to read
- * again, whichever comes first.
+ * Where the history is read from: after the newest stored operation, or at the oldest transaction
+ * to read again, whichever comes first.
  */
-const readStart = (stored: Operation[], isReplayed: (op: Operation) => boolean): number => {
+const readStart = (stored: Operation[], replay: ReplayTransaction[]): number => {
   const lastSyncedHeight = blockHeightBound(stored, Math.max);
   if (lastSyncedHeight === undefined) return 0;
-  const replayHeight = blockHeightBound(stored.filter(isReplayed), Math.min);
-  return Math.min(lastSyncedHeight + 1, replayHeight ?? Number.POSITIVE_INFINITY);
+  return Math.min(lastSyncedHeight + 1, ...replay.map(({ height }) => height));
+};
+
+/** The fees of the operations, by instrument. */
+const feesByInstrument = (operations: Operation[]): Map<string, BigNumber> => {
+  const fees = new Map<string, BigNumber>();
+  for (const { fee, extra } of operations) {
+    const { instrumentId, instrumentAdmin } = extra as Instrument;
+    const key = getKey(instrumentId, instrumentAdmin);
+    fees.set(key, (fees.get(key) ?? new BigNumber(0)).plus(fee));
+  }
+  return fees;
+};
+
+const ofHash = (operations: Operation[], hash: string) => operations.filter(op => op.hash === hash);
+
+/** Whether the operations read again charge at least the fees stored, in each instrument. */
+const coversFees = (read: Operation[], stored: Operation[]): boolean => {
+  const readFees = feesByInstrument(read);
+  return [...feesByInstrument(stored)].every(([key, fee]) =>
+    (readFees.get(key) ?? new BigNumber(0)).gte(fee),
+  );
 };
 
 const withoutReplayed = (
@@ -533,17 +553,17 @@ export function makeGetAccountShape(
       ...keptSubAccounts.flatMap(subAccount => subAccount.operations),
     ];
 
-    // A transaction of an offer pending at the last sync stored its fees only. It is read again, in
-    // full, until the offer leaves the pending list, and replaces what it stored: a settled
-    // transaction can charge its fees to another operation.
-    const previouslyPending = new Set(
-      xpubOrAddress
-        ? (initialAccount?.cantonResources?.pendingTransferProposals ?? []).map(
-            ({ update_id }) => update_id,
-          )
-        : [],
-    );
-    const isReplayed = (op: Operation) => previouslyPending.has(op.hash);
+    // A transaction of a pending offer stores its paid fees only. It is read again, in full, on
+    // every sync until it settles, and replaces what it stored: a settled transaction can charge
+    // its fees to another operation. Taken before a rebuild clears them, the stored operations of a
+    // transaction not read in full stay, and the next sync reads it again.
+    const replay = initialAccount?.cantonResources?.replayTransactions ?? [];
+    const replayHashes = new Set(replay.map(({ hash }) => hash));
+    const isReplayed = (op: Operation) => replayHashes.has(op.hash);
+    const replayedOperations = [
+      ...(initialAccount?.operations ?? []),
+      ...(initialAccount?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
+    ].filter(isReplayed);
 
     // Main account operations: the native instrument only. By id alone: the gateway gives every
     // Amulet operation the same placeholder admin.
@@ -551,23 +571,50 @@ export function makeGetAccountShape(
       (op.extra as { instrumentId?: string })?.instrumentId === nativeInstrumentId;
 
     const blockHeight = await getLedgerEnd(config);
-    let newOperations: Operation[] = [];
+    let fetchedOperations: Operation[] = [];
+    const validHashes = new Set<string>();
+    const invalidHashes = new Set<string>();
     if (xpubOrAddress) {
       // Token operations count too, or a run of them would be read again on every sync.
-      const start = readStart(allKeptOperations, isReplayed);
+      const start = readStart(allKeptOperations, replay);
       const rows = await readOperations(config, xpubOrAddress, start, blockHeight);
-      newOperations = filterOperations(rows, accountId, xpubOrAddress, pendingTransferProposals);
+      for (const row of rows) {
+        (isValidOperation(row) ? validHashes : invalidHashes).add(row.transaction_hash);
+      }
+      fetchedOperations = filterOperations(
+        rows,
+        accountId,
+        xpubOrAddress,
+        pendingTransferProposals,
+      );
     }
 
-    // Without its transaction, what a replayed offer stored has no replacement; the sync fails and
-    // the next one reads it again.
-    const readHashes = new Set(newOperations.map(({ hash }) => hash));
-    const missingHash = allKeptOperations.find(
-      op => isReplayed(op) && !readHashes.has(op.hash),
-    )?.hash;
-    if (missingHash !== undefined) {
-      throw new Error(`canton: transaction ${missingHash} of a pending offer was not returned`);
+    // Read in full: every row valid, and at least the fees it stored. A gateway that hides part of
+    // a transaction would otherwise drop a fee the account paid.
+    const unresolved = new Set(
+      [...replayHashes].filter(
+        hash =>
+          !validHashes.has(hash) ||
+          invalidHashes.has(hash) ||
+          !coversFees(ofHash(fetchedOperations, hash), ofHash(replayedOperations, hash)),
+      ),
+    );
+    const isUnresolved = (op: Operation) => unresolved.has(op.hash);
+    const newOperations = [
+      ...fetchedOperations.filter(op => !isUnresolved(op)),
+      ...replayedOperations.filter(isUnresolved),
+    ];
+
+    const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
+    const nextReplay = new Map(
+      replay.filter(({ hash }) => unresolved.has(hash)).map(entry => [entry.hash, entry]),
+    );
+    for (const { hash, blockHeight: height } of fetchedOperations) {
+      if (pendingHashes.has(hash) && !nextReplay.has(hash) && typeof height === "number") {
+        nextReplay.set(hash, { hash, height });
+      }
     }
+
     const storedOperations = keptOperations.filter(op => !isReplayed(op));
     const storedSubAccounts = keptSubAccounts.map(subAccount =>
       withoutReplayed(subAccount, isReplayed),
@@ -595,6 +642,7 @@ export function makeGetAccountShape(
       pendingTransferProposals,
       ...(nativeInstrument ? { nativeInstrumentAdmin: nativeInstrument.instrumentAdmin } : {}),
       ...(publicKey ? { publicKey } : {}),
+      ...(nextReplay.size > 0 ? { replayTransactions: [...nextReplay.values()] } : {}),
       xpub: xpubOrAddress,
     };
 

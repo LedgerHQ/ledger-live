@@ -83,6 +83,34 @@ describe("canton account serialization", () => {
     expect((restored as CantonAccount).cantonResources.nativeInstrumentAdmin).toBe(DSO);
   });
 
+  it("round-trips the transactions to read again through save and restore", () => {
+    const replayTransactions = [{ hash: "offer", height: 5 }];
+    const account = createMockCantonAccount({}, { replayTransactions }) as Account;
+
+    const accountRaw = { id: account.id } as AccountRaw;
+    assignToAccountRaw(account, accountRaw);
+    const restored = { id: account.id } as Account;
+    assignFromAccountRaw(accountRaw, restored);
+
+    expect((restored as CantonAccount).cantonResources.replayTransactions).toEqual(
+      replayTransactions,
+    );
+  });
+
+  it("restores an account saved without transactions to read again without them", () => {
+    const accountRaw = { id: "acc" } as CantonAccountRaw;
+    accountRaw.cantonResources = {
+      isOnboarded: true,
+      instrumentUtxoCounts: {},
+      pendingTransferProposals: [],
+    };
+    const account = { id: "acc" } as Account;
+
+    assignFromAccountRaw(accountRaw as AccountRaw, account);
+
+    expect("replayTransactions" in (account as CantonAccount).cantonResources).toBe(false);
+  });
+
   it("restores an account saved before the native instrument admin without one", () => {
     const accountRaw = { id: "acc" } as CantonAccountRaw;
     accountRaw.cantonResources = {

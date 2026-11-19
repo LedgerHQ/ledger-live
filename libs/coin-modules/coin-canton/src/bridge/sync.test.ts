@@ -4,7 +4,7 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
 import * as instrumentBalances from "./instrumentBalances";
@@ -17,6 +17,7 @@ import { createBridges } from "./index";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CantonAccount, CantonSigner } from "../types";
 import * as onboard from "./onboard";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { makeGetAccountShape, filterDisabledTokenAccounts, SYNC_HASH } from "./sync";
 
 jest.mock("../network/gateway", () => ({
@@ -240,6 +241,58 @@ const syncFrom = (initialAccount: Partial<CantonAccount>) =>
     }),
     { paginationConfig: {} },
   );
+
+/** A pending offer the account sent. */
+const sentOffer = (hash: string) => ({
+  contract_id: `contract-${hash}`,
+  sender: "party123",
+  receiver: "bob",
+  amount: "100",
+  instrument_id: "Amulet",
+  instrument_admin: "native-admin",
+  memo: "",
+  expires_at_micros: 4_102_444_800_000_000,
+  update_id: hash,
+});
+
+/** A sent offer's transaction: the proposal and its change, each with a fee of 5. */
+const offerRows = (hash: string, height: number) => [
+  at(createMockOperationView({ txHash: hash, operationType: "transfer-proposal" }), height),
+  at(createMockOperationView({ txHash: hash, uid: `change-${hash}` }), height),
+];
+
+/** Syncs from the previous shape, its resources through a serialization round trip. */
+const syncAfter = async (previous: Partial<CantonAccount>, syncHash: string | undefined) => {
+  const raw = {} as AccountRaw;
+  assignToAccountRaw(previous as Account, raw);
+  const restored = {} as Account;
+  assignFromAccountRaw(raw, restored);
+  mockedGetOperations.mockClear();
+  const shape = await syncFrom({
+    syncHash,
+    operations: previous.operations ?? [],
+    subAccounts: previous.subAccounts ?? [],
+    cantonResources: (restored as CantonAccount).cantonResources,
+  });
+  return { shape, from: readFrom().map(({ minOffset }) => minOffset) };
+};
+
+const resync = (previous: Partial<CantonAccount>) => syncAfter(previous, SYNC_HASH);
+
+const feesOf = (shape: Partial<CantonAccount>, hash: string) =>
+  (shape.operations ?? []).filter(op => op.hash === hash && op.type === "FEES");
+
+const replayOf = (shape: Partial<CantonAccount>) => shape.cantonResources?.replayTransactions ?? [];
+
+/** A first sync of the sent offer "offer" while pending: its fees only, and the offer to read again. */
+const syncPending = async () => {
+  const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+  expect(feesOf(pending, "offer")).toEqual([
+    expect.objectContaining({ value: BigNumber(10), fee: BigNumber(10) }),
+  ]);
+  expect(replayOf(pending)).toEqual([{ hash: "offer", height: 5 }]);
+  return pending;
+};
 
 /** A full sync through the account bridge, from an account holding one stale operation. */
 const syncAccount = async (
@@ -1387,96 +1440,140 @@ describe("makeGetAccountShape", () => {
       expect(mockedGetOperations).toHaveBeenCalledTimes(1);
     });
 
-    it("reads a paid offer again once it settles, replacing the fees stored while it was pending", async () => {
-      const rows = [
-        at(createMockOperationView({ txHash: "offer", operationType: "transfer-proposal" }), 5),
-        at(createMockOperationView({ txHash: "offer", uid: "change" }), 5),
-        at(createMockOperationView({ txHash: "later" }), 9),
-      ];
-      mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
-        operations: rows.filter(row => row.block.height >= minOffset),
-        next: -1,
-      }));
-      const offer = {
-        contract_id: "offer-contract",
-        sender: "party123",
-        receiver: "bob",
-        amount: "100",
-        instrument_id: "Amulet",
-        instrument_admin: "native-admin",
-        memo: "",
-        expires_at_micros: 4_102_444_800_000_000,
-        update_id: "offer",
-      };
-      const resync = async (previous: Partial<CantonAccount>) => {
-        mockedGetOperations.mockClear();
-        const shape = await syncFrom({
-          syncHash: SYNC_HASH,
-          operations: previous.operations ?? [],
-          ...(previous.cantonResources && { cantonResources: previous.cantonResources }),
-        });
-        return { shape, from: readFrom().map(({ minOffset }) => minOffset) };
-      };
-
-      mockedGetPendingTransferProposals.mockResolvedValue([offer]);
-      const pending = await resync({ operations: [], cantonResources: {} as never });
-      expect(pending.shape.operations?.filter(op => op.hash === "offer")).toEqual([
-        expect.objectContaining({ type: "FEES", value: BigNumber(10) }),
-      ]);
-
-      mockedGetPendingTransferProposals.mockResolvedValue([]);
-      const settled = await resync(pending.shape);
-      expect(settled.from).toEqual([5]);
-      expect(
-        settled.shape.operations?.filter(op => op.hash === "offer").map(op => op.type),
-      ).toEqual(expect.arrayContaining(["TRANSFER_PROPOSAL", "OUT"]));
-      expect(settled.shape.operations?.some(op => op.type === "FEES")).toBe(false);
-      expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
-
-      const next = await resync(settled.shape);
-      expect(next.from).toEqual([10]);
-    });
-
-    it("fails while the gateway does not return a paid offer again, and replaces its fees once it does", async () => {
-      const offerRows = [
-        at(createMockOperationView({ txHash: "offer", operationType: "transfer-proposal" }), 5),
-        at(createMockOperationView({ txHash: "offer", uid: "change" }), 5),
-      ];
+    describe("pending offers read again", () => {
       const laterRow = at(createMockOperationView({ txHash: "later" }), 9);
-      let rows = offerRows;
-      mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
-        operations: rows.filter(row => row.block.height >= minOffset),
-        next: -1,
-      }));
-      mockedGetPendingTransferProposals.mockResolvedValue([
-        {
-          contract_id: "offer-contract",
-          sender: "party123",
-          receiver: "bob",
-          amount: "100",
-          instrument_id: "Amulet",
-          instrument_admin: "native-admin",
-          memo: "",
-          expires_at_micros: 4_102_444_800_000_000,
-          update_id: "offer",
-        },
-      ]);
-      const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
-      const resync = () =>
-        syncFrom({
-          syncHash: SYNC_HASH,
-          operations: pending.operations ?? [],
-          ...(pending.cantonResources && { cantonResources: pending.cantonResources }),
-        });
+      let rows: OperationInfo[] = [];
 
-      mockedGetPendingTransferProposals.mockResolvedValue([]);
-      rows = [laterRow];
-      await expect(resync()).rejects.toThrow("offer");
+      beforeEach(() => {
+        rows = offerRows("offer", 5);
+        mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+          operations: rows.filter(row => row.block.height >= minOffset),
+          next: -1,
+        }));
+        mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
+      });
 
-      rows = [...offerRows, laterRow];
-      const settled = await resync();
-      expect(settled.operations?.some(op => op.type === "FEES")).toBe(false);
-      expect(feeOf(settled, "offer")).toEqual(BigNumber(10));
+      it("replaces the fees stored while pending once the offer settles, and reads on", async () => {
+        const pending = await syncPending();
+
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        rows = [...offerRows("offer", 5), laterRow];
+        const settled = await resync(pending);
+        expect(settled.from).toEqual([5]);
+        expect(feesOf(settled.shape, "offer")).toEqual([]);
+        expect(
+          settled.shape.operations?.filter(op => op.hash === "offer").map(op => op.type),
+        ).toEqual(expect.arrayContaining(["TRANSFER_PROPOSAL", "OUT"]));
+        expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(settled.shape)).toEqual([]);
+
+        const next = await resync(settled.shape);
+        expect(next.from).toEqual([10]);
+      });
+
+      it("keeps the fees of a settled offer the gateway does not read in full, until it does", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        const invalid = offerRows("offer", 5).map(row => ({ ...row, transfers: [] }));
+
+        let previous: Partial<CantonAccount> = pending;
+        for (const partial of [[], invalid, [offerRows("offer", 5)[0], invalid[1]]]) {
+          rows = [...partial, laterRow];
+          const { shape, from } = await resync(previous);
+          expect(from).toEqual([5]);
+          expect(feesOf(shape, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(shape)).toEqual([{ hash: "offer", height: 5 }]);
+          expect(shape.operations?.map(op => op.hash)).toContain("later");
+          previous = shape;
+        }
+
+        rows = [...offerRows("offer", 5), laterRow];
+        const recovered = await resync(previous);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(recovered.shape)).toEqual([]);
+      });
+
+      it("keeps the fees when the transaction read again charges less than they did", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+
+        rows = [offerRows("offer", 5)[1]];
+        const partial = await resync(pending);
+        expect(feesOf(partial.shape, "offer")).toEqual([
+          expect.objectContaining({ value: BigNumber(10) }),
+        ]);
+        expect(feeOf(partial.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(partial.shape)).toEqual([{ hash: "offer", height: 5 }]);
+
+        rows = offerRows("offer", 5);
+        const recovered = await resync(partial.shape);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+      });
+
+      it("keeps the fees of an offer not read in full through a rebuild", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+
+        rows = [laterRow];
+        const rebuilt = await syncAfter(pending, undefined);
+        expect(rebuilt.from).toEqual([0]);
+        expect(feesOf(rebuilt.shape, "offer")).toEqual([
+          expect.objectContaining({ value: BigNumber(10) }),
+        ]);
+        expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+      });
+
+      it("charges an offer read again under another offer's earlier read once", async () => {
+        rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+        mockedGetPendingTransferProposals.mockResolvedValue([
+          sentOffer("held"),
+          sentOffer("offer"),
+        ]);
+        const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+        expect(replayOf(pending)).toEqual([
+          { hash: "held", height: 3 },
+          { hash: "offer", height: 5 },
+        ]);
+
+        mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+        rows = offerRows("held", 3);
+        const skipped = await resync(pending);
+        expect(skipped.from).toEqual([3]);
+
+        rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+        const recovered = await resync(skipped.shape);
+        expect(recovered.from).toEqual([3]);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
+      });
+
+      it("does not replay a received offer stored before it was listed as pending", async () => {
+        const offer = { ...sentOffer("received"), sender: "alice", receiver: "party123" };
+        rows = [
+          {
+            ...at(
+              createMockOperationView({ txHash: "received", operationType: "transfer-proposal" }),
+              5,
+            ),
+            type: "Receive",
+            senders: ["alice"],
+          },
+        ];
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        const listedLate = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+        expect(listedLate.operations?.map(op => op.hash)).toEqual(["received"]);
+
+        mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+        const next = await resync(listedLate);
+        expect(next.from).toEqual([6]);
+        expect(next.shape.operations?.map(op => op.hash)).toEqual(["received"]);
+        expect(replayOf(next.shape)).toEqual([]);
+      });
     });
 
     it("rebuilds the history from offset 0 when the sync hash changed", async () => {
