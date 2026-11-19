@@ -13,12 +13,14 @@ import {
   Stepper,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Glow } from "@shared/ui-glow/native";
+import { KARAOKE_ACTION_GLOW_SIZE, KaraokeGlow } from "@shared/ui-karaoke/native";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import { SetupGlow } from "./components/SetupGlow";
 import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
 import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
@@ -63,10 +65,20 @@ export function SetupView({
   suspendSheets,
 }: SetupViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { theme, colorScheme } = useTheme();
 
   return (
     <Box testID={setupTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <SetupGlow />
+      <Glow
+        testID={setupTestIds.glow}
+        showTop={false}
+        showBottom
+        canvasColor={theme.colors.bg.canvas}
+        params={KARAOKE_ACTION_GLOW_SIZE}
+        fallback={
+          <KaraokeGlow isAtBottom delayMs={0} isLight={colorScheme === "light"} hasAction />
+        }
+      />
       <DeviceOnboardingCloseBar
         label={closeLabel}
         testID={setupTestIds.close}

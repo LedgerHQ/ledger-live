@@ -20,7 +20,7 @@ import { Glow } from "@shared/ui-glow/native";
 <Glow showTop={!isDone} showBottom={isDone} delayMs={300} fallback={<StaticGlow />} />
 ```
 
-- `showTop` / `showBottom`: the glow at each edge (default: top only). A change waits `delayMs`, then takes 1 s. Both glows fade (ease in and out) at the same time, so a swap is a crossfade.
+- `showTop` / `showBottom`: the glow at each edge (default: top only). The first value shows at once, with no fade. A later change waits `delayMs`, then takes 1 s. Both glows fade (ease in and out) at the same time, so a swap is a crossfade.
 - `canvasColor`: the screen color behind the glow (default black). Pass the theme canvas (Lumen `bg.canvas`). On a dark canvas the glow is added as light. On a light canvas it tints the canvas with lavender (`#D4A0FF`, at most 25%, so it stays light), as in the light mode design.
 - `params`: overrides of `GLOW_DEFAULTS`, the knobs from the designer's playground (`GlowParams`).
 - `fallback`: a static glow, shown only if the shader cannot run.
@@ -37,7 +37,7 @@ Each glow keeps its height and only drifts side to side. Reduce motion (the OS s
 | iOS view (`MTKView`) | `ios/RCTGlowView.mm` |
 | Android view (`GLSurfaceView`) | `android/src/main/java/com/ledger/uiglow/` |
 
-- The shaders ship with the app, not with JS: a shader change needs a native rebuild. They compile at runtime. iOS compiles `glow.msl` (from `SharedUiGlow.bundle`) once per app run. Android reads `glow.glsl` from its assets once per app run, but compiles it for each glow view (each GL context), which is cheap. iOS could precompile it, but since Xcode 26 that needs the Metal Toolchain download on every machine and CI runner. The glow fades in once it is ready.
+- The shaders ship with the app, not with JS: a shader change needs a native rebuild. They compile at runtime. iOS compiles `glow.msl` (from `SharedUiGlow.bundle`) once per app run. Android reads `glow.glsl` from its assets once per app run, but compiles it for each glow view (each GL context), which is cheap. iOS could precompile it, but since Xcode 26 that needs the Metal Toolchain download on every machine and CI runner. The glow shows at once when it is ready, with no fade.
 - Each param is its own typed native prop (`glowIntensity`, `glowWidth`, …), set by name: a named field on iOS, a named `vec4` group on Android (`uLook`, `uShape`, `uTone`). `shaders.native.test.ts` checks that both shaders read each param from the field that the native code fills.
 - Both glows are drawn in one GPU pass; a hidden glow is skipped.
 - Pixel ratio is capped at 2. Rendering stops when the view leaves the window.
