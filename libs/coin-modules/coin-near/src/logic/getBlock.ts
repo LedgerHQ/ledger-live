@@ -78,6 +78,7 @@ const toBlockTransaction = (
     hash: transaction.transaction_hash,
     failed: !status,
     fees: BigInt(fee),
+    feesAsset: { type: "native" },
     feesPayer: transaction.signer_account_id,
     operations: [...collectTransfers(receipts), ...collectActions(receipts)],
   };

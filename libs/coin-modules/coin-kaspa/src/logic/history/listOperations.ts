@@ -42,6 +42,7 @@ function toFrameworkOperation(t: KaspaTransfer): Operation<MemoNotSupported> {
         time: t.date,
       },
       fees,
+      feesAsset: NATIVE_ASSET,
       date: t.date,
       failed: false,
     },

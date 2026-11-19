@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
+import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import { getLastBlockHeight, getOperations, getTokenOperations } from "../../network";
 import { createMockVechainContext } from "../../test/context";
 import { listOperations } from "./listOperations";
@@ -101,6 +102,11 @@ describe("listOperations", () => {
 
     expect(page.items[0].value).toBe(BigInt("1000000000000000000"));
     expect(page.items[0].tx.fees).toBe(0n);
+    expect(page.items[0].tx.feesAsset).toEqual({
+      type: "token",
+      assetReference: VTHO_ADDRESS,
+      assetOwner: ADDRESS,
+    });
   });
 
   it("keeps the VTHO gas as the fee on a VTHO (token) operation", async () => {
@@ -109,6 +115,7 @@ describe("listOperations", () => {
       type: "OUT",
       value: new BigNumber("5000000000000000000"),
       fee: new BigNumber("21000000000000000"),
+      extra: { gasPayer: ADDRESS },
     });
     jest.mocked(getOperations).mockResolvedValueOnce([]);
     jest.mocked(getTokenOperations).mockResolvedValueOnce([vthoOut]);
@@ -117,6 +124,29 @@ describe("listOperations", () => {
 
     expect(page.items[0].value).toBe(BigInt("5000000000000000000"));
     expect(page.items[0].tx.fees).toBe(BigInt("21000000000000000"));
+    expect(page.items[0].tx.feesPayer).toBe(ADDRESS);
+  });
+
+  it("charges the VTHO gas to no account when the receipt names no payer", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest.mocked(getOperations).mockResolvedValueOnce([]);
+    jest.mocked(getTokenOperations).mockResolvedValueOnce([makeLegacyOp({ type: "OUT" })]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx.feesPayer).toBeUndefined();
+  });
+
+  it("charges the VTHO gas to the payer of the receipt, not to the sender of a delegated transfer", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    const sponsor = "0xsponsor";
+    const delegated = makeLegacyOp({ type: "OUT", extra: { gasPayer: sponsor } });
+    jest.mocked(getOperations).mockResolvedValueOnce([]);
+    jest.mocked(getTokenOperations).mockResolvedValueOnce([delegated]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx.feesPayer).toBe(sponsor);
   });
 
   it("returns an empty page without a cursor when the range is already exhausted", async () => {

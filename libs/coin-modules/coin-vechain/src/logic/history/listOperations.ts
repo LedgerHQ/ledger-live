@@ -12,6 +12,8 @@ import { getLastBlockHeight, getOperations, getTokenOperations } from "../../net
 import { NATIVE_ASSET, vthoAsset } from "../account/getBalance";
 
 function toFrameworkOperation(op: LegacyOperation, asset: AssetInfo): Operation<MemoNotSupported> {
+  // An unknown payer charges no account (a fee is never attributed to the transfer's sender)
+  const gasPayer = (op.extra as { gasPayer?: unknown } | undefined)?.gasPayer;
   return {
     id: op.id,
     type: op.type,
@@ -24,6 +26,8 @@ function toFrameworkOperation(op: LegacyOperation, asset: AssetInfo): Operation<
       hash: op.hash,
       block: { height: op.blockHeight ?? 0, hash: op.blockHash ?? "", time: op.date },
       fees: asset.type === "native" ? 0n : BigInt((op.fee ?? 0).toFixed(0)),
+      feesAsset: vthoAsset(op.accountId),
+      ...(asset.type !== "native" && typeof gasPayer === "string" ? { feesPayer: gasPayer } : {}),
       date: op.date,
       failed: op.hasFailed ?? false,
     },

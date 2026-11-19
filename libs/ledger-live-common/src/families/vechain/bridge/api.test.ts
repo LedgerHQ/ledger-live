@@ -104,5 +104,9 @@ describe("vechain bridge api", () => {
         assetOwner: owner,
       });
     });
+
+    it("declares a sync version, so histories synced before the VTHO fee asset resync", () => {
+      expect(vechainBridge(vechain).syncVersion).toBe("1");
+    });
   });
 });

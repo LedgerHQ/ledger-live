@@ -49,6 +49,7 @@ function toBlockTransaction(tx: ApiResponseBlockTransaction): BlockTransaction {
     operations,
     // Not available from the block endpoint (needs input resolution). Documented above.
     fees: 0n,
+    feesAsset: { type: "native" },
     details: { mass: tx.mass ?? undefined, computeMass: tx.verboseData.computeMass ?? undefined },
   };
 }

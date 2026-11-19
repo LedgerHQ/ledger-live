@@ -143,14 +143,14 @@ describe("sdk", () => {
         mockGetFees.mockImplementationOnce(async () => ({ data: {} }));
 
         const account = await getFees(mockVechainConfig, "0xtransaxtion");
-        expect(account).toStrictEqual(new BigNumber(0));
+        expect(account).toEqual({ fees: new BigNumber(0) });
       });
     });
 
     describe("when the transaction's receipt has data.paid", () => {
       test("retrieves fees paid for the transaction", async () => {
         const account = await getFees(mockVechainConfig, "0xtransaxtion");
-        expect(account).toStrictEqual(new BigNumber(42));
+        expect(account).toEqual({ fees: new BigNumber(42) });
       });
     });
   });
