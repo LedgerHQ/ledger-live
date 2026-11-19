@@ -19,6 +19,7 @@ import {
   type TxLifecyclePayload,
   type TxLifecycleProduct,
 } from "./txLifecycle";
+import { listenToTxLifecycle } from "./txLifecycleEndpoint.mock";
 import { toTxLifecyclePayload } from "./txLifecycleProducts";
 
 const sendTxLifecycle = (payload: TxLifecyclePayload, manifestId?: string) =>
@@ -404,7 +405,7 @@ describe("sendTxLifecycle", () => {
 });
 
 describe("lifecycle products", () => {
-  let fetchSpy: jest.SpiedFunction<typeof fetch>;
+  const lifecycle = listenToTxLifecycle();
 
   const product = (
     overrides: Partial<TxLifecycleProduct> & { id: string },
@@ -423,14 +424,14 @@ describe("lifecycle products", () => {
     currency_family: "tezos",
   };
 
+  const receivedUrls = async () => (await lifecycle.received()).map(({ url }) => url);
+
   beforeEach(() => {
     clearPendingTxLifecycle("desktop");
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
   });
 
   afterEach(() => {
     clearPendingTxLifecycle("desktop");
-    fetchSpy.mockRestore();
   });
 
   it("gives a manifest two products claim to the first one listed", () => {
@@ -444,46 +445,46 @@ describe("lifecycle products", () => {
     expect(resolveTxLifecycleProduct([product({ id: "c" })], event)).toBeUndefined();
   });
 
-  it("clears one product's attempts and keeps the other's", () => {
+  it("clears one product's attempts and keeps the other's", async () => {
     const a = product({ id: "a" });
     const b = product({ id: "b" });
     sendForProduct(a, payload, "app-a");
     sendForProduct(b, payload, "app-b");
-    fetchSpy.mockClear();
+    await lifecycle.forget();
 
     clearPendingTxLifecycle("desktop", "a");
     abandonPendingDappTxLifecycle("desktop", "app-a");
     abandonPendingDappTxLifecycle("desktop", "app-b");
 
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("https://b.example.test/v1/tx/lifecycle");
+    expect(await receivedUrls()).toEqual(["https://b.example.test/v1/tx/lifecycle"]);
   });
 
-  it("moves the pending state for payloads the product does not report", () => {
+  it("moves the pending state for payloads the product does not report", async () => {
     const quiet = product({ id: "quiet", reports: () => false });
     sendForProduct(quiet, payload, "app");
     sendForProduct(quiet, { ...payload, event: "tx_terminal", outcome: "success" }, "app");
     abandonPendingDappTxLifecycle("desktop", "app");
 
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
   });
 
-  it("posts a superseded attempt to the sink of the product that opened it", () => {
+  it("posts a superseded attempt to the sink of the product that opened it", async () => {
     sendForProduct(product({ id: "a" }), payload, "app");
     sendForProduct(product({ id: "b" }), { ...payload, currency_family: "solana" }, "app");
 
-    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+    const received = await lifecycle.received();
+    expect(received.map(({ url }) => url)).toEqual([
       "https://a.example.test/v1/tx/lifecycle",
       "https://a.example.test/v1/tx/lifecycle",
       "https://b.example.test/v1/tx/lifecycle",
     ]);
-    expect(JSON.parse(fetchSpy.mock.calls[1][1]?.body as string)).toMatchObject({
+    expect(received[1].body).toMatchObject({
       failure_class: "abandoned",
       currency_family: "tezos",
     });
   });
 
-  it("posts a terminal through the product that opened the attempt, not the latest claimant", () => {
+  it("posts a terminal through the product that opened the attempt, not the latest claimant", async () => {
     const quiet = product({ id: "quiet", reports: () => false });
     sendForProduct(product({ id: "a" }), payload, "app");
     sendForProduct(
@@ -498,23 +499,40 @@ describe("lifecycle products", () => {
       "other",
     );
 
-    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+    expect(await receivedUrls()).toEqual([
       "https://a.example.test/v1/tx/lifecycle",
       "https://a.example.test/v1/tx/lifecycle",
     ]);
   });
 
-  it("only clears or abandons a dApp attempt the named product owns", () => {
+  it("keeps the intent's path on a terminal claimed by a product with another path", async () => {
+    sendForProduct(product({ id: "earn" }), payload, "app");
+    sendForProduct(
+      product({ id: "borrow" }),
+      { ...payload, path: "borrow", event: "tx_terminal", outcome: "success" },
+      "app",
+    );
+
+    const received = await lifecycle.received();
+    expect(received.map(({ url }) => url)).toEqual([
+      "https://earn.example.test/v1/tx/lifecycle",
+      "https://earn.example.test/v1/tx/lifecycle",
+    ]);
+    expect(received.map(({ body }) => body)).toEqual([
+      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
+      expect.objectContaining({ event: "tx_terminal", outcome: "success", path: "dapp" }),
+    ]);
+  });
+
+  it("only clears or abandons a dApp attempt the named product owns", async () => {
     sendForProduct(product({ id: "a" }), payload, "app");
-    fetchSpy.mockClear();
+    await lifecycle.forget();
 
     clearPendingDappTxLifecycle("desktop", "app", "b");
     abandonPendingDappTxLifecycle("desktop", "app", "b");
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await lifecycle.received()).toEqual([]);
 
     abandonPendingDappTxLifecycle("desktop", "app", "a");
-    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
-      "https://a.example.test/v1/tx/lifecycle",
-    ]);
+    expect(await receivedUrls()).toEqual(["https://a.example.test/v1/tx/lifecycle"]);
   });
 });
