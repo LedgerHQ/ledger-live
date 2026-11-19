@@ -1,6 +1,7 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
 import { isPltRejectReason } from "../../network/plt";
 import { getTransactions } from "../../network/proxyClient";
+import { isSameAccount } from "../account/sameAccount";
 import type {
   ConcordiumCoinConfig,
   RawOperation,
@@ -72,14 +73,17 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
   const sender = tx.details.transferSource || "";
   const recipient = tx.details.transferDestination || "";
 
-  const isOutgoing = sender === address;
-  const isIncoming = recipient === address;
+  // The proxy lists every alias's transactions under the account but names each
+  // party by the alias used on chain.
+  const isOutgoing = isSameAccount(sender, address);
+  const isIncoming = isSameAccount(recipient, address);
 
   if (!isOutgoing && !isIncoming) {
     return null;
   }
 
-  const amount = tx.details.transferAmount || "0";
+  // Between two aliases of the account the amount never leaves it: only the fee does.
+  const amount = isOutgoing && isIncoming ? "0" : tx.details.transferAmount || "0";
   const fee = String(tx.cost || 0);
 
   return {
@@ -177,21 +181,24 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
     return isSentByAccount(tx) ? feeOnlyOperation(tx, address, false) : null;
   }
 
-  const isOutgoing = transferSource === address;
-  if (!isOutgoing && transferDestination !== address) {
+  const isOutgoing = isSameAccount(transferSource, address);
+  const isIncoming = isSameAccount(transferDestination, address);
+  if (!isOutgoing && !isIncoming) {
     return null;
   }
+
+  const amount = isOutgoing && isIncoming ? "0" : tokenTransferAmount.value;
 
   return {
     ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
     sender: transferSource,
     recipient: transferDestination,
-    amount: tokenTransferAmount.value,
+    amount,
     fee: isSentByAccount(tx) ? String(tx.cost || 0) : "0",
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
-    value: tokenTransferAmount.value,
+    value: amount,
     memo: tx.details.memo ? decodePltMemo(tx.details.memo, tx.transactionHash) : undefined,
     failed: false,
     tokenId,

@@ -64,16 +64,16 @@ catalog:
   "@ledgerhq/devices": 8.19.0
   "@ledgerhq/hw-transport": 6.37.0
   "@ledgerhq/hw-transport-mocker": 6.36.0
-  "@ledgerhq/live-network": 3.4.0
+  "@ledgerhq/live-network": 3.4.1
   "@ledgerhq/live-promise": 0.5.0
   "@ledgerhq/psbtv2": 0.7.0
   "@ledgerhq/hw-ledger-key-ring-protocol": 1.1.0
-  "@ledgerhq/ledger-key-ring-protocol": 1.2.1
+  "@ledgerhq/ledger-key-ring-protocol": 1.2.2
   "@ledgerhq/live-config": 3.10.0
   "@ledgerhq/live-env": 4.2.0
   "@ledgerhq/live-currency-format": 0.17.1
-  "@ledgerhq/domain-service": 1.10.0
-  "@ledgerhq/evm-tools": 2.1.0
+  "@ledgerhq/domain-service": 1.10.1
+  "@ledgerhq/evm-tools": 2.1.1
   "@ledgerhq/lumen-design-core": 0.1.35
   "@ledgerhq/lumen-lint-plugin": 0.1.3
   "@ledgerhq/lumen-ui-react": 0.1.73
@@ -161,7 +161,7 @@ catalog:
   "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.7
-  axios: 1.20.0
+  axios: 1.21.1
   babel-jest: 30.5.2
   bs58: 6.0.0
   bs58check: 4.0.0
@@ -223,7 +223,7 @@ catalog:
   "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tsx: 4.20.6
-  ws: 8.22.0
+  ws: 8.23.0
   qrcode: 1.5.4
   "@types/qrcode": 1.5.6
   otpauth: 9.5.1

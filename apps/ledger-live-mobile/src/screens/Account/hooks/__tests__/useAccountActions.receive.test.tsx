@@ -7,6 +7,8 @@ import {
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { makeStacksAccount } from "~/families/stacks/__mocks__/account.mock";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { renderHook, withFlagOverrides, withReadOnlyDisabled } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -46,8 +48,11 @@ const entry = LegacyAccountEntrySchema.parse(
   }),
 );
 
-function renderReceiveAction(isNewReceiveFlowOn: boolean) {
-  const { result } = renderHook(() => useAccountActions({ account }), {
+function renderReceiveAction(
+  isNewReceiveFlowOn: boolean,
+  actionsFor: Parameters<typeof useAccountActions>[0] = { account },
+) {
+  const { result } = renderHook(() => useAccountActions(actionsFor), {
     overrideInitialState: withFlagOverrides(
       { newReceiveFlow: { enabled: isNewReceiveFlowOn, params: { excludedFamilies: [] } } },
       (state: State): State => ({
@@ -83,6 +88,29 @@ describe("useAccountActions receive action", () => {
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: { accountId: account.id, currency: account.currency },
+    });
+  });
+
+  it("should keep the parent of a token account when opening the legacy receive screen", () => {
+    const tokenAccount = {
+      ...genTokenAccount(0, account, {
+        ...getCryptoCurrencyById("ethereum"),
+        type: "TokenCurrency",
+        id: "stacks/sip010/token",
+        parentCurrency: account.currency,
+        tokenType: "sip010",
+      } as never),
+      parentId: account.id,
+    };
+
+    renderReceiveAction(false, {
+      account: tokenAccount,
+      parentAccount: account,
+    })?.customHandler?.();
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConfirmation,
+      params: expect.objectContaining({ accountId: tokenAccount.id, parentId: account.id }),
     });
   });
 });

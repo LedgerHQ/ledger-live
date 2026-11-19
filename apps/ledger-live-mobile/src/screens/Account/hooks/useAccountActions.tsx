@@ -232,13 +232,23 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       id: "receive",
       // The route is read on press: the flag or the account data may change after render.
       customHandler: () =>
-        navigation.navigate(...getReceiveRoute({ accountId: account.id, currency })),
+        navigation.navigate(
+          ...getReceiveRoute({ accountId: account.id, parentId: parentAccount?.id, currency }),
+        ),
       label: t("account.receive"),
       event: "AccountReceive",
       Icon: IconsLegacy.ArrowBottomMedium,
       ...extraReceiveActionParams,
     }),
-    [getReceiveRoute, navigation, extraReceiveActionParams, t, account.id, currency],
+    [
+      getReceiveRoute,
+      navigation,
+      extraReceiveActionParams,
+      t,
+      account.id,
+      parentAccount?.id,
+      currency,
+    ],
   );
 
   const platformStakeRoute = useMemo(
