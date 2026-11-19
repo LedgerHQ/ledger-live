@@ -1,7 +1,13 @@
 import BigNumber from "bignumber.js";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
 import { CurrencyRegionRestrictedError } from "../../../errors";
-import type { StakingDelegation, StakingResources, StakingUnbonding } from "@ledgerhq/types-live";
+import type {
+  Account,
+  StakingDelegation,
+  StakingResources,
+  StakingUnbonding,
+} from "@ledgerhq/types-live";
+import { withAccountBalances } from "@ledgerhq/ledger-wallet-framework/account/balances";
 import { genericGetAccountShape } from "../getAccountShape";
 import { extractBalances } from "../utils";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -5599,6 +5605,110 @@ describe("genericGetAccountShape", () => {
       expect(shape.operations).toEqual([
         expect.objectContaining({ type: "FEES", value: new BigNumber(1601) }),
       ]);
+    });
+  });
+
+  describe("balance pool rows", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const native = { type: "native" as const };
+    const position = (uid: string, amount: bigint) => ({
+      uid,
+      address: "tz1pools",
+      state: "active" as const,
+      asset: native,
+      amount,
+    });
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    const shapeFor = async (balances: unknown[], bridgeApi: Record<string, unknown> = {}) => {
+      getBalanceMock.mockResolvedValue(balances);
+      getBridgeApiMock.mockImplementationOnce(() => ({ ...defaultBridgeApi(), ...bridgeApi }));
+      const getShape = genericGetAccountShape(network, currency.id);
+      return getShape(
+        { address: "tz1pools", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("leaves balances undefined for a module without pool rows", async () => {
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 10n });
+
+      const result = await shapeFor([{ value: 100n, locked: 10n, asset: native }]);
+
+      expect(result).toHaveProperty("balances", undefined);
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(90));
+    });
+
+    test("sums the pool rows into the totals and puts them on the shape", async () => {
+      const result = await shapeFor([
+        { value: 60n, locked: 5n, asset: native, pool: "public" },
+        { value: 40n, locked: 40n, asset: native, pool: "shielded", private: true },
+      ]);
+
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(55));
+      expect(result.balances).toEqual([
+        { value: new BigNumber(60), locked: new BigNumber(5), pool: "public" },
+        { value: new BigNumber(40), locked: new BigNumber(40), pool: "shielded", private: true },
+      ]);
+      expect(extractBalanceMock).not.toHaveBeenCalled();
+    });
+
+    test("keeps an untagged public row next to a private row", async () => {
+      const result = await shapeFor([
+        { value: 60n, asset: native },
+        { value: 40n, asset: native, private: true },
+      ]);
+
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.balances).toEqual([
+        { value: new BigNumber(60) },
+        { value: new BigNumber(40), private: true },
+      ]);
+
+      const account = withAccountBalances({ ...result, id: "acc" } as unknown as Account, {
+        account: result.balances,
+      });
+      expect(account.balances).toEqual(result.balances);
+    });
+
+    test("keeps stake rows out of the totals unless the family partitions, then folds them into the public row", async () => {
+      const stake = {
+        value: 30n,
+        locked: 30n,
+        asset: native,
+        stake: position("delegation-tz1pools", 30n),
+      };
+      const rows = [{ value: 70n, asset: native, pool: "public" }, stake];
+
+      const inside = await shapeFor(rows, { usesStakingPositions: true });
+      expect(inside.balance).toEqual(new BigNumber(70));
+      expect(inside.balances).toEqual([{ value: new BigNumber(70), pool: "public" }]);
+
+      const partitioned = await shapeFor(rows, {
+        usesStakingPositions: true,
+        partitionsNativeBalance: true,
+      });
+      expect(partitioned.balance).toEqual(new BigNumber(100));
+      expect(partitioned.spendableBalance).toEqual(new BigNumber(70));
+      const folded = [{ value: new BigNumber(100), locked: new BigNumber(30), pool: "public" }];
+      expect(partitioned.balances).toEqual(folded);
+
+      const account = withAccountBalances({ ...partitioned, id: "acc" } as unknown as Account, {
+        account: partitioned.balances,
+      });
+      expect(account.balances).toEqual(folded);
     });
   });
 });

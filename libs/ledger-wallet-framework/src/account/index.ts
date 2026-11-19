@@ -10,6 +10,16 @@ export {
   emptyHistoryCache,
   getAccountHistoryBalances,
 } from "./balanceHistoryCache";
+export {
+  type AccountBalancesResult,
+  clampLocked,
+  defaultAccountBalances,
+  isValidAccountBalances,
+  withAccountBalances,
+  toAccountBalancesRaw,
+  fromAccountBalancesRaw,
+  restoreAccountBalances,
+} from "./balances";
 export { groupAccountOperationsByDay, groupAccountsOperationsByDay } from "./groupOperations";
 export {
   getMainAccount,

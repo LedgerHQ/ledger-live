@@ -25,6 +25,7 @@ import { buildGetTransactionStatus } from "./getTransactionStatus";
 import { buildPrepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape, postSync } from "./sync";
+import { makeZcashAccountBalances } from "./accountBalances";
 import { updateTransaction } from "./updateTransaction";
 import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import formatters from "./transaction";
@@ -102,6 +103,7 @@ export function createBridges(
     getAccountShape,
     getAddressFn: getAddressWrapper(getAddressFn),
     postSync,
+    getAccountBalances: makeZcashAccountBalances(isShieldedEnabled),
   });
 
   const currencyBridge: CurrencyBridge = {
@@ -112,6 +114,7 @@ export function createBridges(
     getAccountShape,
     postSync,
     shouldMergeOps: false,
+    getAccountBalances: makeZcashAccountBalances(isShieldedEnabled),
   });
 
   const receive = makeAccountBridgeReceive<ZcashAccount>(getAddressWrapper(getAddressFn));

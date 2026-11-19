@@ -16,6 +16,7 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
 import { lastBlock } from "../logic";
+import { aleoAccountBalances } from "./accountBalances";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
   extractViewKey,
@@ -907,4 +908,5 @@ export const sync = makeSync<AleoTransaction, AleoAccount>({
   getAccountShape: makeGetAccountShape(),
   shouldMergeOps: false,
   postSync,
+  getAccountBalances: aleoAccountBalances,
 });

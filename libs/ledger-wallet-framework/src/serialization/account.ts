@@ -17,6 +17,7 @@ import {
   decompressBalanceHistoryCache,
 } from "../account/balanceHistoryCacheCompression";
 import { isAccountEmpty } from "../account/helpers";
+import { restoreAccountBalances, toAccountBalancesRaw } from "../account/balances";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import {
   buildSubOperationIndex,
@@ -81,6 +82,7 @@ export async function fromAccountRaw(
     balance,
     balanceHistoryCache,
     spendableBalance,
+    balances,
     subAccounts: subAccountsRaw,
     swapHistory,
     sellOperationIds,
@@ -162,6 +164,8 @@ export async function fromAccountRaw(
   };
   res.balanceHistoryCache = refreshHistoryFromOperations(res);
 
+  res.balances = restoreAccountBalances(balances, res);
+
   res.used = resolveUsed(used, res);
 
   if (xpub) {
@@ -227,6 +231,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     balance,
     balanceHistoryCache,
     spendableBalance,
+    balances,
     subAccounts,
     swapHistory,
     sellOperationIds,
@@ -260,6 +265,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (feesCurrency) {
     res.feesCurrencyId = feesCurrency.id;
+  }
+
+  if (balances) {
+    res.balances = toAccountBalancesRaw(balances);
   }
 
   if (balanceHistoryCache) {
@@ -326,6 +335,7 @@ async function fromTokenAccountRaw(
     creationDate,
     balance,
     spendableBalance,
+    balances,
     balanceHistoryCache,
     swapHistory,
   } = raw;
@@ -353,6 +363,7 @@ async function fromTokenAccountRaw(
       : emptyHistoryCache,
   };
   res.balanceHistoryCache = refreshHistoryFromOperations(res as TokenAccount);
+  res.balances = restoreAccountBalances(balances, res);
   return res;
 }
 function toTokenAccountRaw(
@@ -368,6 +379,7 @@ function toTokenAccountRaw(
     pendingOperations,
     balance,
     spendableBalance,
+    balances,
     balanceHistoryCache,
     swapHistory,
   } = ta;
@@ -387,6 +399,10 @@ function toTokenAccountRaw(
     pendingOperations: pendingOperations.map(convertOperation),
     swapHistory: swapHistory?.map(toSwapOperationRaw),
   };
+
+  if (balances) {
+    res.balances = toAccountBalancesRaw(balances);
+  }
 
   if (balanceHistoryCache) {
     res.balanceHistoryCache = compressBalanceHistoryCache(balanceHistoryCache);

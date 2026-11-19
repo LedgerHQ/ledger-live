@@ -52,6 +52,28 @@ export type CompressedBalanceHistoryCache = Record<
   CompressedBalanceHistoryDataCache
 >;
 
+/**
+ * One row of an account's balance breakdown: a pool of one asset inside one account.
+ * Rows partition the account balance: `balance === Σ value`. The spendable part of a row is
+ * `value − locked`. A row is identified by `pool` and `private` together.
+ */
+export type AccountBalance = {
+  value: BigNumber;
+  /** The non-spendable part of `value`, including funds committed to pending operations. */
+  locked?: BigNumber;
+  /** A family-defined pool id, opaque to the wallet. */
+  pool?: string;
+  /** The row is held privately and is not visible on-chain. */
+  private?: boolean;
+};
+
+export type AccountBalanceRaw = {
+  value: string;
+  locked?: string;
+  pool?: string;
+  private?: boolean;
+};
+
 /** Legacy, like `Account`: tokens are rows of each `account-*` entity, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models. A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
@@ -59,8 +81,11 @@ export type TokenAccount = {
   // id of the parent account this token account belongs to
   parentId: string;
   token: TokenCurrency;
+  // broken down per pool in `balances`
   balance: BigNumber;
   spendableBalance: BigNumber;
+  // per-pool breakdown of `balance`, filled at every sync
+  balances?: AccountBalance[];
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -136,10 +161,12 @@ export type Account = {
   readiness?: AccountReadiness;
   // next account sequence (nonce). Present only when the family opts in via accountSequenceSupported.
   sequence?: number;
-  // account balance in satoshi
+  // account balance in satoshi, broken down per pool in `balances`
   balance: BigNumber;
   // part of the balance that can effectively be spent
   spendableBalance: BigNumber;
+  // per-pool breakdown of `balance` (native rows), filled at every sync
+  balances?: AccountBalance[];
   // date the account started "existing", essentially the date of the older tx received/done of this account
   // It is equal to Date.now() for EMPTY accounts because empty account don't really "exists"
   creationDate: Date;
@@ -212,6 +239,7 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
+  balances?: AccountBalanceRaw[];
   // Compressed format for storage optimization (backward compatible: accepts both formats)
   balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
@@ -233,6 +261,7 @@ export type AccountRaw = {
   sequence?: number;
   balance: string;
   spendableBalance?: string;
+  balances?: AccountBalanceRaw[];
   blockHeight: number;
   creationDate?: string;
   operationsCount?: number;
