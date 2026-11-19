@@ -1,4 +1,5 @@
 import { track } from "@shared/analytics";
+import { DdRum } from "@datadog/mobile-react-native";
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
@@ -6,8 +7,12 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";
+import { resetRumOperationsForTests } from "LLM/utils/rumOperation";
 import { setupScanDeviceTests } from "./shared";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
+
+jest.mock("@datadog/mobile-react-native", () => require("@tests/mocks/datadogMobileReactNative"));
+jest.mock("~/datadog", () => ({ isDatadogRecording: () => true }));
 
 const mockOnImportAccounts = jest.fn();
 const mockOnScanDeviceAccountsBack = jest.fn();
@@ -74,6 +79,9 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     mockOnImportAccounts.mockClear();
     mockOnScanDeviceAccountsBack.mockClear();
     mockTrack.mockClear();
+    jest.mocked(DdRum.succeedFeatureOperation).mockClear();
+    jest.mocked(DdRum.failFeatureOperation).mockClear();
+    resetRumOperationsForTests();
     setRouteParams("aleo");
     setScanObservable(EMPTY);
   });
@@ -114,6 +122,38 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     expect(mockTrack.mock.invocationCallOrder[0]).toBeLessThan(
       mockOnImportAccounts.mock.invocationCallOrder[0],
     );
+  });
+
+  it("succeeds the add_account RUM operation as a custom flow handoff before delegating", async () => {
+    const aleoAccount = createAleoAccount({ used: true, balance: new BigNumber(1000) });
+    setScanObservable(of(makeDiscoveredEvent(aleoAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    result.current.onPressAccount(aleoAccount);
+    await waitFor(() => expect(result.current.selectedIds).toContain(aleoAccount.id));
+
+    result.current.importAccounts();
+
+    const succeedFeatureOperation = jest.mocked(DdRum.succeedFeatureOperation);
+    expect(succeedFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(succeedFeatureOperation).toHaveBeenCalledWith(
+      "add_account",
+      null,
+      expect.objectContaining({ handoff: "custom_flow", accounts_selected: 1 }),
+    );
+    // Ended before the custom flow navigates away, so the unmount does not abandon it.
+    expect(succeedFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
+      mockOnImportAccounts.mock.invocationCallOrder[0],
+    );
+    expect(DdRum.failFeatureOperation).not.toHaveBeenCalled();
   });
 
   it("pluralizes the custom flow's confirm label based on the number of selected accounts", async () => {

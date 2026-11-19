@@ -28,6 +28,7 @@ import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 import AccountsListHeaderRight from "LLM/features/LedgerSyncEntryPoint/components/AccountsListHeaderRight";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
+import { failRumOperation, RumOperation } from "LLM/utils/rumOperation";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
@@ -59,12 +60,14 @@ export default function Navigator() {
   const onExitScanDeviceAccounts = useCallback(() => {
     const clickMetadata = analyticsMetadata[ScreenName.ScanDeviceAccounts]?.onClose;
     track(clickMetadata?.eventName, clickMetadata?.payload);
+    failRumOperation(RumOperation.AddAccount, "ABANDONED", { attributes: { trigger: "close" } });
     exitProcess();
   }, [exitProcess, analyticsMetadata]);
 
   const onBackScanDeviceAccounts = useCallback(() => {
     const clickMetadata = analyticsMetadata[ScreenName.ScanDeviceAccounts]?.onBack;
     track(clickMetadata?.eventName, clickMetadata?.payload);
+    failRumOperation(RumOperation.AddAccount, "ABANDONED", { attributes: { trigger: "back" } });
     navigation.goBack();
   }, [navigation, analyticsMetadata]);
 
