@@ -17,6 +17,7 @@ import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import { NavigatorName, ScreenName } from "~/const";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
+import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import type { MyWalletNavigatorStackParamList } from "../../types";
 import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
 
@@ -52,6 +53,7 @@ export function useMyWalletDeviceListViewModel({
   const isFocused = useIsFocused();
   const { top: topInset } = useSafeAreaInsets();
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
+  const onAddDevice = useUnifiedAddDevice();
 
   // A redirect, for example from the "not enough space" error of a flow, opens My Ledger at once.
   const redirectedDevice = params?.device;
@@ -141,6 +143,7 @@ export function useMyWalletDeviceListViewModel({
     onConnected,
     onAddModeChange: handleAddModeChange,
     onDeviceNotFound,
+    onAddDevice,
     deviceToCheck,
     onDeviceUnlocked,
     onCloseLockedCheck,
