@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -69,7 +69,8 @@ export function useMyWalletDeviceListViewModel({
 
   useAutoRedirectToPostOnboarding();
 
-  useEffect(() => {
+  // Before paint, so that the header and the tab bar go in the same frame as the other sections.
+  useLayoutEffect(() => {
     if (!isAdding || !isFocused) return;
     navigation.setOptions({ headerShown: false });
     dispatch(updateMainNavigatorVisibility(false));
