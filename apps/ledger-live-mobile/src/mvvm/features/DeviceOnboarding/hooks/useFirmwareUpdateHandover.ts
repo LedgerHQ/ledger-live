@@ -67,10 +67,10 @@ export function useFirmwareUpdateHandover({
   }, [send]);
 
   const returnFromUpdate = useCallback(
-    (rebooted: boolean) => {
+    (rebooted: boolean, updated: boolean) => {
       if (closedRef.current) return;
+      if (!updated) setReturnsWithoutUpdate(count => count + 1);
       if (!rebooted) {
-        setReturnsWithoutUpdate(count => count + 1);
         closeHandoverOnce();
         return;
       }
@@ -86,7 +86,8 @@ export function useFirmwareUpdateHandover({
       if (closedRef.current) return;
       awaitingReturnRef.current = false;
       baseNavigation.goBack();
-      returnFromUpdate(updateStep === "completed" || currentSessionIdRef.current === null);
+      const updated = updateStep === "completed";
+      returnFromUpdate(updated || currentSessionIdRef.current === null, updated);
     },
     [baseNavigation, returnFromUpdate],
   );
@@ -148,7 +149,7 @@ export function useFirmwareUpdateHandover({
   useFocusEffect(
     useCallback(() => {
       if (!awaitingReturnRef.current) return;
-      returnFromUpdate(currentSessionIdRef.current === null);
+      returnFromUpdate(currentSessionIdRef.current === null, false);
     }, [returnFromUpdate]),
   );
 

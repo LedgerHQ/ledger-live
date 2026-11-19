@@ -2206,6 +2206,29 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     },
   );
 
+  it("should still ask to confirm the skip when the release notes close after a disconnect", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
+    moveTo("awaitingSessionAfterFirmwareUpdate");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+  });
+
   it("should not ask to confirm the skip when the release notes never opened", () => {
     const unseeded = unseededContext({
       availableFirmwareVersion: "5.4.3",
