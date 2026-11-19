@@ -4,6 +4,13 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
+import {
+  ACCOUNT_KEY_PREFIX,
+  ACCOUNT_ORDER_KEY,
+  GENERAL_TERMS_VERSION,
+  MIGRATION_DONE,
+  STORAGE_FILE,
+} from "./measure/storage.ts";
 
 // What the measurement needs from the mobile app of this checkout: a failure means an app change
 // broke it (README.md, "The build" and "A launch").
@@ -84,16 +91,25 @@ describe("the mobile app of this checkout", () => {
     });
   });
 
-  it("handles every bridge message the injection sends", () => {
-    const client = read(APP, "src/e2e/bridge/client.ts");
-    const sent = new Set(
-      [...read(import.meta.dirname, "measure/inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
+  it("reads the keys storage.ts writes before the first launch", () => {
+    const quoted = (text: string) => `"${text.replace(/\./g, "\\.")}"`;
+    assert.match(
+      read(APP, "src/mvvm/storage/mmkvStorageWrapper/constants.ts"),
+      new RegExp(`ID: ${quoted(STORAGE_FILE)}`),
     );
-    assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.ts was not parsed");
-    for (const type of sent) {
-      assert.match(client, new RegExp(`case "${type}"`), `client.ts no longer handles ${type}`);
+    const migration = read(APP, "src/mvvm/storage/utils/migrations/constants.ts");
+    assert.match(migration, new RegExp(`MIGRATION_STATUS_KEY = ${quoted(MIGRATION_DONE[0])}`));
+    assert.match(migration, new RegExp(`COMPLETED: ${quoted(MIGRATION_DONE[1])}`));
+    const db = read(APP, "src/db.ts");
+    assert.match(db, new RegExp(`ACCOUNTS_KEY_SORT = ${quoted(ACCOUNT_ORDER_KEY)}`));
+    assert.match(db, new RegExp(`ACCOUNTS_DB_PREFIX = ${quoted(ACCOUNT_KEY_PREFIX)}`));
+    for (const key of ["settings", "postOnboarding"]) {
+      assert.match(db, new RegExp(`storage\\.get\\(${quoted(key)}\\)`));
     }
-    assert.match(client, /type: "appEnvs"/);
+    assert.match(
+      read(APP, "src/logic/terms.tsx"),
+      new RegExp(`generalTermsVersionRequired = ${quoted(GENERAL_TERMS_VERSION)}`),
+    );
   });
 
   it("shows the screens and labels the Maestro flows and the parser look for", () => {

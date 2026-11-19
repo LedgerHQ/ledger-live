@@ -1,19 +1,20 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { type Bridge, startBridge } from "./bridge.ts";
 import { log, sleep } from "./exec.ts";
+import {
+  STORAGE_FILE,
+  STORAGE_META_FILE,
+  decodeStorage,
+  encodeStorage,
+  savedState,
+  storageEntries,
+} from "./storage.ts";
 import type { Side } from "../types.ts";
 import type { Platform, Userdata } from "./types.ts";
 
-const APP_CONNECT_TIMEOUT_MS = 180_000;
-// Lets the client finish its handshake before the first message.
-const HANDSHAKE_MS = 2000;
-const ACK_TIMEOUT_MS = 60_000;
-const ENVS_TIMEOUT_MS = 15_000;
-// The store saves settings only once its save effect is mounted: they are sent again after this.
-const SAVE_EFFECT_MOUNT_MS = 10_000;
-// For the settings sent again to be saved before the app stops.
-const SETTINGS_SAVE_MS = 10_000;
+// The first launch after an install, not measured: it syncs the accounts and saves what the app
+// builds itself (countervalues, token cache), as the injection launch of the E2E bridge did.
+const FIRST_LAUNCH_MS = 30_000;
 
 /**
  * Merges the userdata files of a scenario: settings and post-onboarding come from the first.
@@ -56,15 +57,16 @@ export async function loadUserdata({
   };
 }
 
-/** Imports a scenario's userdata into a fresh install through the E2E bridge. */
+/**
+ * Writes a scenario's userdata into a fresh install's storage, then launches it once: no E2E
+ * bridge, so the builds need none.
+ */
 export function createInjector({
   platform: P,
   devices,
-  port,
 }: {
   platform: Platform;
   devices: string[];
-  port: number;
 }) {
   return async function inject({
     device,
@@ -75,70 +77,36 @@ export function createInjector({
     userdata: Userdata;
     side: Side;
   }): Promise<void> {
-    const bridge = startBridge(port, m => log(`  [bridge] ${m}`));
-    await bridge.listening;
-    const sent: Array<{ type: string; id: string }> = [];
-    const send = (type: string, payload?: unknown) =>
-      sent.push({ type, id: bridge.send(type, payload) });
-    const acknowledged = async () => {
-      for (const { type, id } of sent.splice(0)) {
-        await bridge.waitFor({ id, type: "ACK", timeoutMs: ACK_TIMEOUT_MS }).catch(() => {
-          throw new Error(`injection on ${device}: the app did not acknowledge ${type}`);
-        });
-      }
-    };
-    try {
-      // Both devices reach the bridge on the same host port.
-      for (const d of devices) await P.stop(d);
-      await P.clearDialogs(device);
-      await P.launch(device, { wsPort: port, wsToken: "startup-perf" });
-      await bridge.waitForClient(APP_CONNECT_TIMEOUT_MS);
-      await sleep(HANDSHAKE_MS);
-      send("acceptTerms");
-      send("importSettings", userdata.settings);
-      send("navigate", "Base");
-      if (userdata.accounts.length) send("importAccounts", userdata.accounts);
-      if (userdata.postOnboarding) send("importPostOnboarding", userdata.postOnboarding);
-      await acknowledged();
-      await sleep(SAVE_EFFECT_MOUNT_MS);
-      send("acceptTerms");
-      send("importSettings", { ...userdata.settings });
-      await acknowledged();
-      await checkTestModes({ bridge, device, side });
-      await sleep(SETTINGS_SAVE_MS);
-      await P.stop(device);
-    } finally {
-      await bridge.close();
-    }
+    const { data, meta } = encodeStorage(storageEntries(userdata));
+    for (const d of devices) await P.stop(d);
+    await P.writeStorage(device, { [STORAGE_FILE]: data, [STORAGE_META_FILE]: meta });
+    await P.clearDialogs(device);
+    await P.launch(device);
+    await sleep(FIRST_LAUNCH_MS);
+    await P.stop(device);
+    await checkSaved({ platform: P, device, side, accounts: userdata.accounts.length });
   };
 }
 
-/** The app's environment variables, or null when it does not answer. */
-async function readAppEnvs(bridge: Bridge): Promise<Record<string, unknown> | null> {
-  try {
-    const id = bridge.send("getEnvs");
-    const reply = await bridge.waitFor({ id, type: "appEnvs", timeoutMs: ENVS_TIMEOUT_MS });
-    return JSON.parse(reply.payload as string);
-  } catch {
-    return null;
-  }
-}
-
-/** Fails when the app reports MOCK or DETOX on. */
-async function checkTestModes({
-  bridge,
+/** Fails when the app dropped the storage file: MMKV discards one whose CRC does not match. */
+async function checkSaved({
+  platform: P,
   device,
   side,
+  accounts,
 }: {
-  bridge: Bridge;
+  platform: Platform;
   device: string;
   side: Side;
+  accounts: number;
 }): Promise<void> {
-  const envs = await readAppEnvs(bridge);
-  if (!envs) throw new Error(`build ${side}: MOCK and DETOX could not be read`);
-  const on = (name: string) => Boolean(envs[name]) && envs[name] !== "0";
-  log(
-    `  ${device}: build ${side} runs with MOCK ${on("MOCK") ? "on" : "off"}, DETOX ${on("DETOX") ? "on" : "off"}`,
-  );
-  if (on("MOCK") || on("DETOX")) throw new Error(`build ${side} runs with MOCK or DETOX on`);
+  const data = await P.readStorage(device, STORAGE_FILE);
+  if (!data) throw new Error(`build ${side} on ${device}: no storage after the first launch`);
+  const saved = savedState(decodeStorage(data, await P.readStorage(device, STORAGE_META_FILE)));
+  if (!saved.termsAccepted || (accounts > 0 && saved.accounts === 0)) {
+    throw new Error(
+      `build ${side} on ${device}: the app did not keep the storage written before its first launch (${saved.accounts} accounts, terms ${saved.termsAccepted ? "" : "not "}accepted)`,
+    );
+  }
+  log(`  ${device}: build ${side} keeps ${saved.accounts} of ${accounts} accounts`);
 }

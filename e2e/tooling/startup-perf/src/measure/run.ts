@@ -34,7 +34,6 @@ const { values: opts } = parseArgs({
     "settle-ms": { type: "string", default: "5000" },
     read: { type: "string", default: "log" },
     maestro: { type: "string", default: "maestro" },
-    "bridge-port": { type: "string", default: "8099" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -53,7 +52,6 @@ const WARMUPS = Number(opts.warmups);
 const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
 const READ = opts.read;
-const BRIDGE_PORT = Number(opts["bridge-port"]);
 const OUT_DIR = insideWorkingDir(opts["out-dir"]);
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
@@ -84,7 +82,7 @@ const P =
   PLATFORM === "android" ? createAndroid({ appId: APP_ID }) : createIos({ appId: APP_ID, maestro });
 const readPerformance = createPerformanceReader({ platform: P, maestro });
 const readStartupLog = createStartupLogReader(P);
-const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
+const inject = createInjector({ platform: P, devices: DEVICES });
 
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
