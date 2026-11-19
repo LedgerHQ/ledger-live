@@ -6250,6 +6250,10 @@
       }
     }
   },
+  "connectKnownOrNewDevice": {
+    "title": "Devices",
+    "add": "Add"
+  },
   "osUpdates": {
     "backupBanner": {
       "title": "Saved settings found",
