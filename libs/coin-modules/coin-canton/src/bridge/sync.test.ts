@@ -1552,6 +1552,75 @@ describe("makeGetAccountShape", () => {
         expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
       });
 
+      describe("an offer stored in full before it was listed as pending", () => {
+        const typesOf = (shape: Partial<CantonAccount>, hash: string) =>
+          (shape.operations ?? [])
+            .filter(op => op.hash === hash)
+            .map(op => op.type)
+            .sort();
+
+        /** A sync where only "held" is pending yet, which stores "offer" in full. */
+        const syncListedLate = async () => {
+          rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          const listedLate = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+          expect(typesOf(listedLate, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(listedLate, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(listedLate)).toEqual([{ hash: "held", height: 3 }]);
+          mockedGetPendingTransferProposals.mockResolvedValue([
+            sentOffer("held"),
+            sentOffer("offer"),
+          ]);
+          return listedLate;
+        };
+
+        it("replaces its operations when read again while pending, charging its fees once", async () => {
+          const listedLate = await syncListedLate();
+
+          const pending = await resync(listedLate);
+          expect(pending.from).toEqual([3]);
+          expect(typesOf(pending.shape, "offer")).toEqual(["FEES"]);
+          expect(feeOf(pending.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(pending.shape)).toEqual(
+            expect.arrayContaining([
+              { hash: "held", height: 3 },
+              { hash: "offer", height: 5 },
+            ]),
+          );
+          expect(replayOf(pending.shape)).toHaveLength(2);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          const settled = await resync(pending.shape);
+          expect(typesOf(settled.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(settled.shape)).toEqual([{ hash: "held", height: 3 }]);
+        });
+
+        it("keeps its operations when read again in part, until it is read in full", async () => {
+          const listedLate = await syncListedLate();
+
+          rows = [...offerRows("held", 3), offerRows("offer", 5)[0]];
+          const partial = await resync(listedLate);
+          expect(typesOf(partial.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(partial.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(partial.shape)).toContainEqual({ hash: "offer", height: 5 });
+
+          rows = offerRows("held", 3);
+          const rebuilt = await syncAfter(partial.shape, undefined);
+          expect(rebuilt.from).toEqual([0]);
+          expect(typesOf(rebuilt.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(rebuilt.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(rebuilt.shape)).toContainEqual({ hash: "offer", height: 5 });
+
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+          const recovered = await resync(rebuilt.shape);
+          expect(typesOf(recovered.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
+        });
+      });
+
       it("does not replay a received offer stored before it was listed as pending", async () => {
         const offer = { ...sentOffer("received"), sender: "alice", receiver: "party123" };
         rows = [

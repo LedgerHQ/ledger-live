@@ -553,17 +553,7 @@ export function makeGetAccountShape(
       ...keptSubAccounts.flatMap(subAccount => subAccount.operations),
     ];
 
-    // A transaction of a pending offer stores its paid fees only. It is read again, in full, on
-    // every sync until it settles, and replaces what it stored: a settled transaction can charge
-    // its fees to another operation. Taken before a rebuild clears them, the stored operations of a
-    // transaction not read in full stay, and the next sync reads it again.
     const replay = initialAccount?.cantonResources?.replayTransactions ?? [];
-    const replayHashes = new Set(replay.map(({ hash }) => hash));
-    const isReplayed = (op: Operation) => replayHashes.has(op.hash);
-    const replayedOperations = [
-      ...(initialAccount?.operations ?? []),
-      ...(initialAccount?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
-    ].filter(isReplayed);
 
     // Main account operations: the native instrument only. By id alone: the gateway gives every
     // Amulet operation the same placeholder admin.
@@ -589,6 +579,25 @@ export function makeGetAccountShape(
       );
     }
 
+    // A transaction of a pending offer stores its paid fees only. It is read again, in full, on
+    // every sync until it settles, and replaces what it stored: a settled transaction can charge
+    // its fees to another operation. Taken before a rebuild clears them, the stored operations of a
+    // transaction not read in full stay, and the next sync reads it again. An offer stored in full
+    // before it was listed as pending joins them when it is read again while pending, or its
+    // stored fees would add to the fees read.
+    const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
+    const initialOperations = [
+      ...(initialAccount?.operations ?? []),
+      ...(initialAccount?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
+    ];
+    const initialHashes = new Set(initialOperations.map(({ hash }) => hash));
+    const replayHashes = new Set(replay.map(({ hash }) => hash));
+    for (const { hash } of fetchedOperations) {
+      if (pendingHashes.has(hash) && initialHashes.has(hash)) replayHashes.add(hash);
+    }
+    const isReplayed = (op: Operation) => replayHashes.has(op.hash);
+    const replayedOperations = initialOperations.filter(isReplayed);
+
     // Read in full: every row valid, and at least the fees it stored. A gateway that hides part of
     // a transaction would otherwise drop a fee the account paid.
     const unresolved = new Set(
@@ -605,7 +614,6 @@ export function makeGetAccountShape(
       ...replayedOperations.filter(isUnresolved),
     ];
 
-    const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
     const nextReplay = new Map(
       replay.filter(({ hash }) => unresolved.has(hash)).map(entry => [entry.hash, entry]),
     );
