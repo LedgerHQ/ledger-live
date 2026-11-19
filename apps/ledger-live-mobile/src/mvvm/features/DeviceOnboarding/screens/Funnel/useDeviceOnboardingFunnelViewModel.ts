@@ -73,6 +73,7 @@ import {
   toDeviceUnlockSheetProps,
 } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { isCurrentSessionGenuine } from "LLM/features/DeviceOnboarding/utils/genuineSession";
 import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
 
 /** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
@@ -713,8 +714,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
-  // Once the held-back update is all that is left, leaving ends the setup instead of losing it.
-  const setupDone = updateAfterSetup && onboarding.context?.isOnboarded === true;
+  const heldBackUpdatePending = updateAfterSetup && onboarding.context?.isOnboarded === true;
+  // Leaving then ends the setup instead of losing it, as the machine does on QUIT.
+  const setupDone = heldBackUpdatePending && isCurrentSessionGenuine(onboarding.snapshot?.context);
   const confirmsQuit =
     (unseeded && !setupDone) ||
     (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
@@ -932,6 +934,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     machineState: shownState,
     liveMachineState: machineState,
     onboardedOnEntry,
+    heldBackUpdatePending,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,

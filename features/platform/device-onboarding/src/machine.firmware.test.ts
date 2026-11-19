@@ -12,6 +12,7 @@ import {
   exitOf,
   expectChecksPassed,
   genuine,
+  notGenuine,
   handOverAfterReboot,
   handOverAndReturn,
   handoverScript,
@@ -706,6 +707,42 @@ describe("a nano firmware update held back until setup", () => {
     await settle();
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("ends the setup on QUIT once the seeded device lost its transport", async () => {
+    const { actor } = await enterHeldBackSetup();
+    actor.send(readyAndSeeded);
+    await settle();
+    actor.send({ type: "TRANSPORT_LOST" });
+    await settle();
+    expect(stateOf(actor)).toBe("awaitingSession");
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("quits the onboarding on QUIT when the new session is not genuine after setup", async () => {
+    const { actor } = await enterHeldBackSetup({
+      osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, notGenuine],
+      firmwareCheck: [updateAvailable],
+    });
+    expectWaitingInSetup(actor);
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+    actor.send(readyAndSeeded);
+    await settle();
+    expect(actor.getSnapshot().context.genuineVerdict).toMatchObject({
+      sessionId: "session-2",
+      isGenuine: false,
+    });
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
   });
 
   it("still quits the onboarding on QUIT while the device is being set up", async () => {

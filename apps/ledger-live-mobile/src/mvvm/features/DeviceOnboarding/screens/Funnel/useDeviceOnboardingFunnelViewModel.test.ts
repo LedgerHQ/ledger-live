@@ -361,11 +361,26 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).error).toEqual(error);
   });
 
+  function snapshotOf(updateAfterSetup: boolean, isGenuine = true) {
+    return {
+      context: {
+        updateAfterSetup,
+        sessionId: "session",
+        genuineVerdict: { sessionId: "session", isGenuine },
+      },
+    } as DeviceOnboardingSession["snapshot"];
+  }
+
+  /** An unseeded device set up in this run; without a held-back update, a seeded one. */
   function heldBackUpdateSession(state: string, updateAfterSetup: boolean) {
     return session({
       state,
-      context: { checksPaused: false } as DeviceOnboardingSession["context"],
-      snapshot: { context: { updateAfterSetup } } as DeviceOnboardingSession["snapshot"],
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: !updateAfterSetup,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: snapshotOf(updateAfterSetup),
     });
   }
 
@@ -404,7 +419,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).onSkipFirmwareCheck).toBeUndefined();
   });
 
-  function seededDuringSetupSession(updateAfterSetup: boolean) {
+  function seededDuringSetupSession(updateAfterSetup: boolean, isGenuine = true) {
     return session({
       state: "postSetupFirmware.firmwareUpdateOffered",
       context: {
@@ -412,7 +427,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
         onboardedOnEntry: false,
         isOnboarded: true,
       } as DeviceOnboardingSession["context"],
-      snapshot: { context: { updateAfterSetup } } as DeviceOnboardingSession["snapshot"],
+      snapshot: snapshotOf(updateAfterSetup, isGenuine),
     });
   }
 
@@ -437,6 +452,17 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should still ask before leaving once the new session is not genuine", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true, false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
   });
 
   it("should still ask before leaving an unseeded device without a held-back update", () => {

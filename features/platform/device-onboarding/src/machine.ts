@@ -62,6 +62,16 @@ const firmwareUpdateDelegated = {
   },
 } as const;
 
+/**
+ * Once the device is seeded and attested on this session, leaving skips only the held-back update,
+ * and the success screen shows.
+ */
+const finishSetupOnQuit = {
+  guard: and(["setupDoneWithUpdatePending", "sessionAttested"]),
+  target: "#deviceOnboarding.setupExit",
+  actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
+} as const;
+
 /** A final state. The host's `leaveOnboarding` runs once, when the machine enters it. */
 function exitWith(reason: ExitOutput["reason"]) {
   return {
@@ -187,15 +197,7 @@ export const deviceOnboardingMachine = setup({
   on: {
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
-    QUIT: [
-      // Setup is finished: leaving skips only the held-back update, and the success screen shows.
-      {
-        guard: "setupDoneWithUpdatePending",
-        target: ".setupExit",
-        actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
-      },
-      { target: ".quitting" },
-    ],
+    QUIT: [finishSetupOnQuit, { target: ".quitting" }],
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
     // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.
@@ -560,7 +562,7 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
-        QUIT: "#deviceOnboarding.exitOnboarding",
+        QUIT: [finishSetupOnQuit, { target: "#deviceOnboarding.exitOnboarding" }],
       },
     },
     awaitingSessionAfterFirmwareUpdate: {
