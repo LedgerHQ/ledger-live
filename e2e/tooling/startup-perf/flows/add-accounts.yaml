@@ -2,8 +2,6 @@
 # e2e/mobile's add-account steps do: TICKER, and NETWORK for a coin that asks for one.
 # src/snapshot/run.ts runs it once per coin.
 appId: com.ledger.live
-env:
-  NETWORK: ""
 ---
 # A sheet left open would cover the deep link's drawer.
 - tapOn:
@@ -39,7 +37,8 @@ env:
     id: "asset-item-${TICKER}"
 - runFlow:
     when:
-      true: ${NETWORK != ''}
+      # Maestro applies a flow's env defaults over the CLI's -e: NETWORK has none.
+      true: ${typeof NETWORK !== 'undefined' && NETWORK !== ''}
     commands:
       - tapOn:
           id: "network-item-${NETWORK}"
