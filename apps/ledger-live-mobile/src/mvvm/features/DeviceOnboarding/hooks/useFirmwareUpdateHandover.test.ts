@@ -262,6 +262,77 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("should count a return from the update screen without updating", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+
+    const params = mockPush.mock.calls[0][1] as { onBackFromUpdate: () => void };
+    act(() => params.onBackFromUpdate());
+
+    expect(result.current.returnsWithoutUpdate).toBe(1);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" }),
+    );
+  });
+
+  it.each([
+    ["the release notes are closed", "start", 1],
+    ["the update completed", "completed", 0],
+  ])(
+    "should ask for a new session after a disconnect and count the return when %s",
+    async (_, updateStep, expectedReturns) => {
+      const onReconnectRequired = jest.fn();
+      const { result, rerender } = renderDelegated(jest.fn(), { onReconnectRequired });
+
+      reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+      rerender({ machineState: delegated });
+      await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+      const params = mockPush.mock.calls[0][1] as {
+        onBackFromUpdate: (updateStep: string) => void;
+      };
+
+      rerender({ currentSessionId: null });
+      act(() => params.onBackFromUpdate(updateStep));
+
+      expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+      expect(result.current.returnsWithoutUpdate).toBe(expectedReturns);
+    },
+  );
+
+  it("should count a return from focus alone after a disconnect", async () => {
+    const onReconnectRequired = jest.fn();
+    const { result, rerender } = renderDelegated(jest.fn(), { onReconnectRequired });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    rerender({ currentSessionId: null });
+    act(() => {
+      mockFocusCallback?.();
+    });
+
+    expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+    expect(result.current.returnsWithoutUpdate).toBe(1);
+  });
+
+  it("should not count a return when the firmware metadata fails", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("error");
+    rerender({ machineState: delegated });
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+  });
+
   it("does not open the updater when the user closes before its effect runs", () => {
     const send = jest.fn();
     const closeOnLayout = { current: false };

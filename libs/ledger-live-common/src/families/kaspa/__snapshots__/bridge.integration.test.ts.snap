@@ -4,6 +4,11 @@ exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
 [
   {
     "balance": "33370000",
+    "balances": [
+      {
+        "value": "33370000",
+      },
+    ],
     "currencyId": "kaspa",
     "derivationMode": "",
     "freshAddress": "kaspa:qq8jze8j0lg84nem993vrcu680u8u27hj58vgavaxt55g857c9pkjfku6c3dz",
@@ -21,6 +26,11 @@ exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "kaspa",
     "derivationMode": "",
     "freshAddress": "kaspa:qpncmme6ues25uk9umkqju4rtwtt33ud9lcrp7qn8jwv62m53m26jpjhar48j",

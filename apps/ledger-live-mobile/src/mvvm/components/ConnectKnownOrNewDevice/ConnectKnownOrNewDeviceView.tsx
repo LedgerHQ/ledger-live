@@ -1,5 +1,9 @@
 import React from "react";
-import { ConnectKnownOrNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
+import {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  type ConnectKnownOrNewDeviceUIState,
+  type DeviceListItem,
+} from "@ledgerhq/live-dmk-mobile";
 import {
   ConnectionErrorState,
   DiscoveryErrorState,
@@ -7,13 +11,68 @@ import {
   UnknownErrorState,
 } from "LLM/components/DeviceConnection";
 import { AddMode } from "./components/AddMode";
+import type { DeviceRowItem } from "./components/DeviceRow";
 import { DeviceSection } from "./components/DeviceSection";
+import { DeviceStateSheet, type DeviceStateSheetState } from "./components/DeviceStateSheet";
 import type {
   ConnectKnownOrNewDeviceErrorUIState,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
 import { assertNever } from "./utils/assertNever";
-import { isErrorState } from "./utils/isErrorState";
+
+const withoutActions = ({ key, device, connectivity, status }: DeviceListItem): DeviceListItem => ({
+  key,
+  device,
+  connectivity,
+  status,
+});
+
+type ListUIState = Exclude<
+  ConnectKnownOrNewDeviceUIState,
+  { type: typeof ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice }
+>;
+
+type ListLayout = {
+  devices: Array<DeviceRowItem>;
+  onAddNewDevice?: () => void;
+  disabled: boolean;
+  deviceState: DeviceStateSheetState | null;
+  errorState: ConnectKnownOrNewDeviceErrorUIState | null;
+};
+
+function getListLayout(state: ListUIState, keptDevices: Array<DeviceListItem>): ListLayout {
+  switch (state.type) {
+    case ConnectKnownOrNewDeviceUIStateTypes.Discovering:
+      return state.isPaused
+        ? { devices: state.devices, disabled: true, deviceState: null, errorState: null }
+        : {
+            devices: state.devices,
+            onAddNewDevice: state.addNewDevice,
+            disabled: false,
+            deviceState: null,
+            errorState: null,
+          };
+    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
+    case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
+      return {
+        devices: keptDevices.map(withoutActions),
+        disabled: false,
+        deviceState: state,
+        errorState: null,
+      };
+    case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
+    case ConnectKnownOrNewDeviceUIStateTypes.ConnectionError:
+    case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
+      return {
+        devices: keptDevices.map(withoutActions),
+        disabled: false,
+        deviceState: null,
+        errorState: state,
+      };
+    default:
+      return assertNever(state);
+  }
+}
 
 function ErrorStateView({
   state,
@@ -57,17 +116,12 @@ export function ConnectKnownOrNewDeviceView({
     );
   }
 
-  const isDiscovering = state.type === ConnectKnownOrNewDeviceUIStateTypes.Discovering;
-  const errorState = isErrorState(state) ? state : null;
+  const { deviceState, errorState, ...listProps } = getListLayout(state, devices);
 
   return (
     <>
-      <DeviceSection
-        devices={isDiscovering ? state.devices : devices}
-        onAddNewDevice={isDiscovering && !state.isPaused ? state.addNewDevice : undefined}
-      >
-        {children}
-      </DeviceSection>
+      <DeviceSection {...listProps}>{children}</DeviceSection>
+      <DeviceStateSheet state={deviceState} />
       <ErrorBottomSheet
         isOpen={errorState !== null}
         onClose={onCloseErrorSheet}

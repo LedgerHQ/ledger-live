@@ -11,6 +11,7 @@ import {
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
 import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
@@ -21,6 +22,21 @@ const restoreRecoverState = "deviceSetup.restoreRecover";
 const restoreChoiceState = "deviceSetup.restoreChoice";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
+const statesThatAnswerTheUpdate = new Set([
+  "checks.firmwareUpdateDelegated",
+  "checks.checksDone",
+  "checks.leavingEarlyCheckScreen",
+  checksSucceededState,
+]);
+
+function rechecksTheUpdate(liveMachineState: string | null) {
+  if (liveMachineState === null || statesThatAnswerTheUpdate.has(liveMachineState)) return false;
+  return (
+    liveMachineState.startsWith("checks.") ||
+    liveMachineState === "routing" ||
+    statesThatKeepTheStage.has(liveMachineState)
+  );
+}
 
 const doneState = "done";
 
@@ -38,6 +54,9 @@ export type UnseededFunnelInput = {
   deviceNotGenuine: boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
+  firmwareDeclined: boolean;
+  /** How many times the user came back from the update screen without updating. */
+  returnsWithoutUpdate: number;
   reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
@@ -74,6 +93,10 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
     connect: input.reconnect,
   });
   useContinueChecks(unseeded, liveMachineState, send);
+  const confirmSkipUpdate = useConfirmSkipAfterUpdateScreen({
+    returnsWithoutUpdate: input.returnsWithoutUpdate,
+    recheckingUpdate: unseeded && rechecksTheUpdate(liveMachineState),
+  });
 
   if (unseeded && machineState === doneState) return toDoneModel(input);
   if (unseeded && machineState === restoreRecoverState && !restoreDismissed) {
@@ -89,7 +112,8 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
       suspendSheets: input.suspendSheets,
       reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
-      checks: toChecks(input, machineState),
+      firmwareDeclined: input.firmwareDeclined,
+      checks: toChecks(input, machineState, confirmSkipUpdate),
       onQuit: input.onQuit,
     },
   };
@@ -154,7 +178,11 @@ function toDoneModel(
   return { status: "success", sawRecoverPitch: true };
 }
 
-function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecksProps | null {
+function toChecks(
+  input: UnseededFunnelInput,
+  machineState: string,
+  confirmSkipUpdate: boolean,
+): SetupChecksProps | null {
   if (!machineState.startsWith("checks.")) return null;
   const state = toChecksScreenState(machineState, input.checksPaused, false);
   if (!state) return null;
@@ -165,6 +193,7 @@ function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecks
     error: toChecksError(machineState, input.genuineFailureKind),
     deviceNotGenuine: input.deviceNotGenuine,
     update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
+    confirmSkipUpdate,
     onStart: () => send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
     onRetry: () => send({ type: "RETRY" }),
     onCloseSheet: () => send({ type: "CLOSE" }),

@@ -32,6 +32,7 @@ import {
   isSameAddress,
   optionalNumeric,
   sumBalance,
+  toAccountPoolRows,
 } from "./utils";
 import {
   buildSubOperationIndex,
@@ -899,9 +900,27 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         sequencePromise,
       ]);
 
-    const nativeAsset = bridgeApi.partitionsNativeBalance
-      ? sumBalance(balanceRes, "native")
-      : extractBalance(balanceRes, "native");
+    // Pool rows partition the liquid native balance; stake rows stay apart from them. Once one
+    // row is tagged, an untagged public row is part of the partition too.
+    const liquidNativeRows = balanceRes.filter(b => b.asset.type === "native" && !b.stake);
+    const poolRows = liquidNativeRows.some(b => b.pool !== undefined || b.private !== undefined)
+      ? liquidNativeRows
+      : [];
+    // Stake rows count in the balance only when the family partitions it.
+    const stakeRows = bridgeApi.partitionsNativeBalance
+      ? balanceRes.filter(b => b.asset.type === "native" && b.stake)
+      : [];
+    let nativeAsset: Balance;
+    if (poolRows.length > 0) {
+      nativeAsset = sumBalance(
+        balanceRes.filter(b => !b.stake || bridgeApi.partitionsNativeBalance),
+        "native",
+      );
+    } else if (bridgeApi.partitionsNativeBalance) {
+      nativeAsset = sumBalance(balanceRes, "native");
+    } else {
+      nativeAsset = extractBalance(balanceRes, "native");
+    }
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
     // A token account fully swept to zero can disappear entirely from the balance response
@@ -1380,6 +1399,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
+      // Set even when absent so rows from a previous sync never survive the merge.
+      balances: poolRows.length > 0 ? toAccountPoolRows(poolRows, stakeRows) : undefined,
       operations,
       subAccounts,
       // `operations.length`, i.e. the retained count once a bound applies, not the account's true

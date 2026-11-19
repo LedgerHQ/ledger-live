@@ -1,8 +1,10 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
+import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { AddressOptionList } from "./components/AddressOptionList";
+import { AddressSummary } from "./components/AddressSummary";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
@@ -36,25 +38,36 @@ export function ReceiveAddressView({
           testID="receive-address-close"
         />
       </Box>
-      <ScrollView
-        alwaysBounceVertical={false}
-        showsVerticalScrollIndicator={false}
-        // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
-      >
-        <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-          <ReceiveAddressTitle
-            title={title}
-            networkLabel={networkLabel}
-            networkIcon={networkIcon}
+      {addressSelection ? (
+        <Box lx={{ gap: "s16", padding: "s16" }}>
+          <Text typography="heading2SemiBold" lx={{ color: "base" }}>
+            {addressSelection.title}
+          </Text>
+          <AddressOptionList
+            options={addressSelection.options}
+            onSelect={addressSelection.onSelect}
           />
-          <ZonePlaceholder zone="summary" label={address?.value} />
-          <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
-          <ZonePlaceholder zone="actions" />
-          <ZonePlaceholder zone="notices" />
-          <ZonePlaceholder zone="extras" />
         </Box>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          alwaysBounceVertical={false}
+          showsVerticalScrollIndicator={false}
+          // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
+        >
+          <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+            <ReceiveAddressTitle
+              title={title}
+              networkLabel={networkLabel}
+              networkIcon={networkIcon}
+            />
+            {address ? <AddressSummary address={address} /> : <ZonePlaceholder zone="summary" />}
+            <ZonePlaceholder zone="actions" />
+            <ZonePlaceholder zone="notices" />
+            <ZonePlaceholder zone="extras" />
+          </Box>
+        </ScrollView>
+      )}
     </Box>
   );
 }

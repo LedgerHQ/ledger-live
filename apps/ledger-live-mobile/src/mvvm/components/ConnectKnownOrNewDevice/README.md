@@ -15,9 +15,22 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 | `delays`                            | Optional. The delay of the waiting hint (`deviceNotFound`) and the delays of the Add mode (`connectNewDevice`), in ms. The component reads them on mount only.                      |
 | `children`                          | Optional. Shown under the list, for example the Explore row of My Wallet.                                                                                                            |
 
+## Device list
+
+Each row shows the packshot, the name and the status of the device: Not connected, Available or Connected. The order comes from the state machine.
+
+- Tapping a row connects the device. The rows have actions only in the list state: while the component waits for a device, connects or shows an error, they are for display only.
+- The ⋮ button opens a sheet with Disconnect for a connected device and Remove for a known Bluetooth device. A row with neither action has no ⋮ button.
+- The list shows 3 devices, then "Show all N devices". "Show less" collapses it again.
+- With no device, the list shows the "Add a Ledger device" row instead of the Add link.
+
+## Waiting and connecting
+
+Tapping a device that is not connected shows a sheet over the list: "power on and unlock" while the component waits for the device, then the connecting view. After a delay, the waiting sheet shows a hint that opens the Add mode. Closing the sheet goes back to the list.
+
 ## Discovery
 
-Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background.
+Discovery stops while `isPaused` is `true`, while the screen is not focused, and while the app is in the background. While discovery is stopped, the rows and the Add button show greyed out.
 
 `onConnected` does not stop discovery. A caller that uses the device after `onConnected` sets `isPaused` to `true` or leaves the screen.
 
@@ -34,6 +47,10 @@ The Add mode shows the `ConnectNewDevice` views with the UI state of the embedde
 ## Errors
 
 Discovery, connection and unknown errors show in a bottom sheet over the list, with the shared error components in [`../DeviceConnection/`](../DeviceConnection/). Closing a discovery or connection error goes back to the list. Closing the unknown error starts the component again, with a new state machine.
+
+## Try it
+
+Settings > Debug > Features > Device Intent Executor > Connect Known Or New Device renders the component with an `isPaused` switch and an "Auto pauses on connect" switch (off by default: when it is on, `onConnected` sets `isPaused` to `true`), and logs each callback call. With the mock server, it lists the BLE and USB mock devices.
 
 ## Links
 
