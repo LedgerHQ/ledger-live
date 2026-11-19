@@ -22,6 +22,10 @@ import {
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
+  return <>{openingScreen(screen) ?? setupScreen(screen)}</>;
+}
+
+function openingScreen(screen: DeviceOnboardingFunnelModel) {
   if (screen.status === "unseededIntroKaraoke") {
     return (
       <>
@@ -43,6 +47,10 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
       </>
     );
   }
+  return null;
+}
+
+function setupScreen(screen: DeviceOnboardingFunnelModel) {
   if (screen.status === "setup") {
     return (
       <>
@@ -65,6 +73,7 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
   if (screen.status === "success") {
     return <SuccessKaraokeScreen {...screen.success} />;
   }
+  if (screen.status !== "connecting" && screen.status !== "failed") return null;
 
   return (
     <Box lx={{ flex: 1, justifyContent: "center", gap: "s16", padding: "s16" }}>

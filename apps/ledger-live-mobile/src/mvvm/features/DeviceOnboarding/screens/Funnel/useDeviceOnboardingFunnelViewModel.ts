@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
   useIsFocused,
@@ -473,6 +474,58 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   };
 }
 
+function useRestoreRecoverHandoff({
+  focused,
+  liveDevice,
+  navigation,
+  pollingPaused,
+  protectId,
+  send,
+  state,
+}: Readonly<{
+  focused: boolean;
+  liveDevice: Device | null;
+  navigation: NavigationProp<ParamListBase>;
+  pollingPaused: boolean;
+  protectId: string;
+  send: DeviceOnboardingSession["send"];
+  state: DeviceOnboardingSession["state"];
+}>): () => void {
+  const openingRecover = useRef(false);
+  const awaitingPollingResume = useRef(false);
+  const continueRestore = useCallback(() => {
+    openingRecover.current = true;
+    send({ type: "PAUSE_POLLING" });
+  }, [send]);
+
+  useEffect(() => {
+    if (!openingRecover.current || !pollingPaused) return;
+    openingRecover.current = false;
+    if (state !== "deviceSetup.restoreRecover") {
+      send({ type: "RESUME_POLLING" });
+      return;
+    }
+    awaitingPollingResume.current = true;
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.Recover,
+      params: {
+        platform: protectId,
+        device: liveDevice ?? undefined,
+        fromOnboarding: true,
+        redirectTo: "restore",
+      },
+    });
+  }, [liveDevice, navigation, pollingPaused, protectId, send, state]);
+
+  useEffect(() => {
+    if (!focused || !awaitingPollingResume.current) return;
+    awaitingPollingResume.current = false;
+    send({ type: "RESUME_POLLING" });
+  }, [focused, send]);
+
+  return continueRestore;
+}
+
 export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelModel {
   const dmk = useDeviceManagementKit();
   const allKnownDevices = useSelector(knownDevicesSelector);
@@ -505,8 +558,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   useDeviceOnboardingHost(host);
   const started = useRef(false);
   const dismissRestoreRef = useRef<(() => void) | null>(null);
-  const openingRecover = useRef(false);
-  const awaitingPollingResume = useRef(false);
   const [heldState, setHeldState] = useState<HeldState | null>(null);
   const dismissRestore = useCallback(() => {
     const dismiss = dismissRestoreRef.current;
@@ -778,42 +829,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     });
   }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
 
-  const continueRestore = useCallback(() => {
-    openingRecover.current = true;
-    send({ type: "PAUSE_POLLING" });
-  }, [send]);
-
-  useEffect(() => {
-    if (!openingRecover.current || onboarding.context?.pollingPaused !== true) return;
-    openingRecover.current = false;
-    if (onboarding.state !== "deviceSetup.restoreRecover") {
-      send({ type: "RESUME_POLLING" });
-      return;
-    }
-    awaitingPollingResume.current = true;
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.Recover,
-      params: {
-        platform: protectId,
-        device: onboarding.liveDevice ?? undefined,
-        fromOnboarding: true,
-        redirectTo: "restore",
-      },
-    });
-  }, [
+  const continueRestore = useRestoreRecoverHandoff({
+    focused,
+    liveDevice: onboarding.liveDevice,
     navigation,
-    onboarding.context?.pollingPaused,
-    onboarding.liveDevice,
-    onboarding.state,
+    pollingPaused: onboarding.context?.pollingPaused === true,
     protectId,
     send,
-  ]);
-
-  useEffect(() => {
-    if (!focused || !awaitingPollingResume.current) return;
-    awaitingPollingResume.current = false;
-    send({ type: "RESUME_POLLING" });
-  }, [focused, send]);
+    state: onboarding.state,
+  });
 
   const openRecover = useCallback(() => {
     if (!recoverAvailable) return;
@@ -859,8 +883,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send,
     onQuit: requestQuit,
   });
-  dismissRestoreRef.current =
-    unseededSetup?.status === "recoverRestore" ? unseededSetup.dismiss : null;
+  dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
   const screen = {
     state: shownState,
@@ -930,6 +953,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onQuit: waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
     onRetry: reconnectFailed ? retryAfterFailure : null,
   });
+}
+
+function restoreDismiss(flow: UnseededFunnelModel | null): (() => void) | null {
+  if (flow?.status !== "recoverRestore") return null;
+  return flow.dismiss;
 }
 
 function screenForUnseeded(
