@@ -12,7 +12,7 @@ import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecu
 import { useStore } from "LLD/hooks/redux";
 import type { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { VerifyAddressIntentComponentLWD } from "./componentLWD";
+import { VerifyAddressIntentComponentLWD } from "./VerifyAddressIntentComponentLWD";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 

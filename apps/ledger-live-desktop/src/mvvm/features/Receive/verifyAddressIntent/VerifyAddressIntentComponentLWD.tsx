@@ -1,51 +1,19 @@
-import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import {
   AddressDisplayed,
-  AddressMismatch,
   AddressVerified,
   type VerifyAddressIntentComponentProps,
 } from "@features/flow-receive";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
-import { InfoState } from "@shared/ui-info-state";
 import { ContinueOnDevice, UserRefusedOnDevice } from "LLD/components/DeviceIntentExecutor";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { urls } from "~/config/urls";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
+import { VerifyAddressErrorScreen } from "./components/VerifyAddressErrorScreen";
+import { VerifyAddressMismatchScreen } from "./components/VerifyAddressMismatchScreen";
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled verify address job state: ${JSON.stringify(value)}`);
-}
-
-function ErrorScreen({
-  title,
-  description,
-  onClose,
-}: Readonly<{ title: React.ReactNode; description: React.ReactNode; onClose: () => void }>) {
-  const { t } = useTranslation();
-
-  return (
-    <InfoState
-      preset="error"
-      size="hug"
-      title={title}
-      description={description}
-      primaryCta={{ label: t("common.close"), onPress: onClose }}
-      testID="receive-verify-address-error"
-    />
-  );
-}
-
-function MismatchScreen({ onClose }: Readonly<{ onClose: () => void }>) {
-  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
-  const openSupport = useCallback(() => {
-    openURL(contactSupportUrl);
-  }, [contactSupportUrl]);
-
-  return <AddressMismatch onContactSupport={openSupport} onClose={onClose} />;
 }
 
 /** The dialog stays locked until the user acts on the device. */
@@ -88,10 +56,10 @@ export function VerifyAddressIntentComponentLWD({
         />
       );
     case "mismatch":
-      return <MismatchScreen onClose={onClose} />;
+      return <VerifyAddressMismatchScreen onClose={onClose} />;
     case "unsupported":
       return (
-        <ErrorScreen
+        <VerifyAddressErrorScreen
           title={<TranslatedError error={jobState.error} field="title" />}
           description={<TranslatedError error={jobState.error} field="description" />}
           onClose={onClose}

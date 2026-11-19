@@ -12,7 +12,7 @@ import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecu
 import { accountSelector } from "~/reducers/accounts";
 import type { State } from "~/reducers/types";
 import { useStore } from "~/context/hooks";
-import { VerifyAddressIntentComponentLWM } from "./componentLWM";
+import { VerifyAddressIntentComponentLWM } from "./VerifyAddressIntentComponentLWM";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
