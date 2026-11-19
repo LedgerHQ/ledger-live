@@ -38,9 +38,9 @@ describe("Deeplinks", () => {
     await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
   });
 
-  (isSmokeTestRun ? it.skip : it)("should open My Ledger page", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open My Wallet from the My Ledger deeplink", async () => {
     await app.manager.openViaDeeplink();
-    await app.manager.expectManagerPage();
+    await app.myWallet.expectScreenVisible();
   });
 
   $Tag("@smoke");

@@ -44,6 +44,8 @@ export function handleWallet40Deeplink(
     };
   }
 
+  // "ledgerlive://myledger?searchQuery=bitcoin" (or ?installApp=bitcoin) opens My Wallet. After a
+  // connection, My Ledger opens with "bitcoin" in its search input.
   if (hostname === "myledger") {
     return {
       routes: [
@@ -54,11 +56,11 @@ export function handleWallet40Deeplink(
             routes: [
               { name: NavigatorName.Main },
               {
-                name: NavigatorName.MyLedger,
+                name: NavigatorName.MyWallet,
                 state: {
                   routes: [
                     {
-                      name: ScreenName.MyLedgerChooseDevice,
+                      name: ScreenName.MyWallet,
                       params: {
                         searchQuery: query.searchQuery,
                         installApp: query.installApp,

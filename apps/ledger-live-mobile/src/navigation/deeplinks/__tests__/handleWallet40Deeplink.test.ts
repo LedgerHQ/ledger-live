@@ -42,7 +42,7 @@ describe("handleWallet40Deeplink", () => {
   });
 
   describe('hostname === "myledger"', () => {
-    it("should return MyLedger navigation state with query params", () => {
+    it("should return My Wallet navigation state with query params", () => {
       const result = handleWallet40Deeplink("myledger", "", {
         searchQuery: "ledger nano",
         installApp: "bitcoin",
@@ -57,11 +57,11 @@ describe("handleWallet40Deeplink", () => {
               routes: [
                 { name: NavigatorName.Main },
                 {
-                  name: NavigatorName.MyLedger,
+                  name: NavigatorName.MyWallet,
                   state: {
                     routes: [
                       {
-                        name: ScreenName.MyLedgerChooseDevice,
+                        name: ScreenName.MyWallet,
                         params: {
                           searchQuery: "ledger nano",
                           installApp: "bitcoin",
@@ -85,7 +85,7 @@ describe("handleWallet40Deeplink", () => {
       expect(baseState?.routes[0]).toEqual({ name: NavigatorName.Main });
     });
 
-    it("should return MyLedger navigation state with undefined params when query is empty", () => {
+    it("should return My Wallet navigation state with undefined params when query is empty", () => {
       const result = handleWallet40Deeplink("myledger", "", {});
 
       expect(result).toEqual({
@@ -97,11 +97,11 @@ describe("handleWallet40Deeplink", () => {
               routes: [
                 { name: NavigatorName.Main },
                 {
-                  name: NavigatorName.MyLedger,
+                  name: NavigatorName.MyWallet,
                   state: {
                     routes: [
                       {
-                        name: ScreenName.MyLedgerChooseDevice,
+                        name: ScreenName.MyWallet,
                         params: {
                           searchQuery: undefined,
                           installApp: undefined,
