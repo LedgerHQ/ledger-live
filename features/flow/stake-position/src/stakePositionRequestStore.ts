@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { StakePositionBusy } from "./errors";
 import {
   getStakePositionRequest,
   requestStakePosition,
@@ -9,10 +10,9 @@ import {
 import type {
   ShownStakePosition,
   StakePositionAction,
+  StakePositionOpenResult,
   StakePositionOrigin,
   StakePositionRequestInput,
-  StakePositionResult,
-  StakePositionUnavailableReason,
 } from "./types";
 
 function findRequest(id: number) {
@@ -54,16 +54,18 @@ export function settleStakePosition(id: number, action: StakePositionAction): vo
   request.resolve({ action });
 }
 
-/** The host cannot act on the position: the live app gets the reason and falls back. */
-export function settleStakePositionUnavailable(
-  id: number,
-  reason: StakePositionUnavailableReason,
-): void {
+/**
+ * The host cannot show the position: closes the open request. The Earn live app gets
+ * `reason: "unavailable"` and falls back to its own menu; a wallet screen gets no reason.
+ */
+export function answerStakePositionUnavailable(id: number): void {
   const request = findRequest(id);
   if (request?.phase !== "open") return;
 
   setStakePositionRequest(null);
-  request.resolve({ action: null, reason });
+  const answer: StakePositionOpenResult =
+    request.shown.origin === "earn" ? { action: null, reason: "unavailable" } : { action: null };
+  request.resolve(answer);
 }
 
 /** The flow failed or was left: closes the surface whatever its phase. */
@@ -86,12 +88,33 @@ function dismissOpenRequestOf(owner: symbol) {
  */
 export function useStakePositionRequester(
   origin: StakePositionOrigin,
-): (input: StakePositionRequestInput) => Promise<StakePositionResult> {
+): (input: StakePositionRequestInput) => Promise<StakePositionOpenResult> {
   const [owner] = useState(() => Symbol("stake position requester"));
 
   useEffect(() => () => dismissOpenRequestOf(owner), [owner]);
 
   return useCallback(input => requestStakePosition({ ...input, origin }, owner), [origin, owner]);
+}
+
+function ignoreBusy(error: unknown) {
+  if (!(error instanceof StakePositionBusy)) throw error;
+}
+
+/**
+ * Opens a position from a wallet screen, which waits for no answer. While another position is
+ * being signed, nothing opens. Unlike a live app player, the screen leaving keeps the request.
+ */
+export function useStakePositionOpener(
+  origin: StakePositionOrigin,
+): (input: StakePositionRequestInput) => void {
+  const [owner] = useState(() => Symbol("stake position opener"));
+
+  return useCallback(
+    input => {
+      requestStakePosition({ ...input, origin }, owner).catch(ignoreBusy);
+    },
+    [origin, owner],
+  );
 }
 
 function isForOrigin(

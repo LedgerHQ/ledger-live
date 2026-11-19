@@ -1,13 +1,14 @@
 import { act, renderHook } from "@testing-library/react";
 import {
   abandonStakePosition,
+  answerStakePositionUnavailable,
   commitStakePosition,
   dismissStakePosition,
   reopenStakePosition,
   settleStakePosition,
-  settleStakePositionUnavailable,
   useIsStakePositionShown,
   useShownStakePosition,
+  useStakePositionOpener,
   useStakePositionRequester,
 } from "./stakePositionRequestStore";
 import {
@@ -19,12 +20,7 @@ import type { StakePositionOrigin, StakePositionRequestInput } from "./types";
 const INPUT: StakePositionRequestInput = {
   accountId: "host-account-id",
   positionId: "stake-account-address",
-  validatorAddress: "validator-vote-address",
-  rewards: "1000000000",
 };
-
-// Only Earn requests positions today: a second origin stands for the next surface.
-const OTHER_ORIGIN = "assetPage" as StakePositionOrigin;
 
 const flushPromises = () => act(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
 
@@ -79,6 +75,19 @@ describe("stakePositionRequestStore", () => {
     expect(first.onResult).toHaveBeenCalledWith({ action: null });
     expect(getStakePositionRequest()?.shown.id).toBe(second.id);
     expect(phaseOf()).toBe("open");
+  });
+
+  it("should show one position at a time: a request from another origin replaces an open one", async () => {
+    const fromEarn = open("earn");
+
+    const fromAccount = open("account");
+    await flushPromises();
+
+    expect(fromEarn.onResult).toHaveBeenCalledWith({ action: null });
+    expect(getStakePositionRequest()?.shown).toMatchObject({
+      id: fromAccount.id,
+      origin: "account",
+    });
   });
 
   it("should refuse a new request while one is committed, without touching it", async () => {
@@ -178,37 +187,51 @@ describe("stakePositionRequestStore", () => {
     expect(phaseOf()).toBe("removed");
   });
 
-  describe("when the host cannot act on the position", () => {
-    it("should answer the reason and remove the request", async () => {
-      const request = open();
+  describe("when the host cannot show the position", () => {
+    it("should close the Earn live app's request and answer it unavailable", async () => {
+      const request = open("earn");
 
-      act(() => settleStakePositionUnavailable(request.id, "ambiguous"));
+      act(() => answerStakePositionUnavailable(request.id));
       await flushPromises();
 
-      expect(request.onResult).toHaveBeenCalledWith({ action: null, reason: "ambiguous" });
+      expect(request.onResult).toHaveBeenCalledWith({ action: null, reason: "unavailable" });
+      expect(phaseOf()).toBe("removed");
+    });
+
+    it("should close a wallet screen's request without a reason", async () => {
+      const request = open("account");
+
+      act(() => answerStakePositionUnavailable(request.id));
+      await flushPromises();
+
+      expect(request.onResult).toHaveBeenCalledWith({ action: null });
       expect(phaseOf()).toBe("removed");
     });
 
     it("should answer once when it is reported twice", async () => {
-      const request = open();
+      const request = open("earn");
 
-      act(() => settleStakePositionUnavailable(request.id, "notFound"));
-      act(() => settleStakePositionUnavailable(request.id, "ambiguous"));
+      act(() => answerStakePositionUnavailable(request.id));
+      act(() => answerStakePositionUnavailable(request.id));
       await flushPromises();
 
       expect(request.onResult).toHaveBeenCalledTimes(1);
-      expect(request.onResult).toHaveBeenCalledWith({ action: null, reason: "notFound" });
     });
 
-    it("should leave a committed request going", async () => {
-      const request = open();
-      act(() => commitStakePosition(request.id));
+    it.each([
+      ["committed", (id: number) => commitStakePosition(id)],
+      ["settled", (id: number) => settleStakePosition(id, "deactivate")],
+    ])("should leave a %s request going", async (phase, moveTo) => {
+      const request = open("earn");
+      act(() => moveTo(request.id));
+      await flushPromises();
+      const answersBefore = request.onResult.mock.calls.length;
 
-      act(() => settleStakePositionUnavailable(request.id, "notFound"));
+      act(() => answerStakePositionUnavailable(request.id));
       await flushPromises();
 
-      expect(request.onResult).not.toHaveBeenCalled();
-      expect(phaseOf()).toBe("committed");
+      expect(request.onResult).toHaveBeenCalledTimes(answersBefore);
+      expect(phaseOf()).toBe(phase);
     });
   });
 
@@ -252,10 +275,7 @@ describe("stakePositionRequestStore", () => {
     ["commitStakePosition", (id: number) => commitStakePosition(id)],
     ["reopenStakePosition", (id: number) => reopenStakePosition(id)],
     ["settleStakePosition", (id: number) => settleStakePosition(id, "deactivate")],
-    [
-      "settleStakePositionUnavailable",
-      (id: number) => settleStakePositionUnavailable(id, "notFound"),
-    ],
+    ["answerStakePositionUnavailable", (id: number) => answerStakePositionUnavailable(id)],
     ["abandonStakePosition", (id: number) => abandonStakePosition(id)],
   ])("should ignore %s with the id of a former request", async (_name, call) => {
     const former = open();
@@ -330,6 +350,50 @@ describe("stakePositionRequestStore", () => {
     });
   });
 
+  describe("useStakePositionOpener", () => {
+    it("should open a request of its origin", () => {
+      const { result: shown } = renderHook(() => useShownStakePosition("account"));
+      const { result: openPosition } = renderHook(() => useStakePositionOpener("account"));
+
+      act(() => openPosition.current(INPUT));
+
+      expect(shown.current.request).toMatchObject({ ...INPUT, origin: "account" });
+      expect(shown.current.phase).toBe("open");
+    });
+
+    it("should open nothing and throw nothing while another position is committed", async () => {
+      const committed = open("earn");
+      act(() => commitStakePosition(committed.id));
+      const { result: openPosition } = renderHook(() => useStakePositionOpener("account"));
+
+      expect(() => act(() => openPosition.current(INPUT))).not.toThrow();
+      await flushPromises();
+
+      expect(getStakePositionRequest()?.shown).toMatchObject({ id: committed.id, origin: "earn" });
+      expect(phaseOf()).toBe("committed");
+    });
+
+    it("should keep its request open when the screen that opened it unmounts", async () => {
+      const screen = renderHook(() => useStakePositionOpener("account"));
+      act(() => screen.result.current(INPUT));
+
+      screen.unmount();
+      await flushPromises();
+
+      expect(getStakePositionRequest()?.shown).toMatchObject({ origin: "account" });
+      expect(phaseOf()).toBe("open");
+    });
+
+    it("should return the same function on every render", () => {
+      const { result, rerender } = renderHook(() => useStakePositionOpener("account"));
+      const openPosition = result.current;
+
+      rerender();
+
+      expect(result.current).toBe(openPosition);
+    });
+  });
+
   describe("useShownStakePosition", () => {
     it("should keep the last request as closed once it is removed", () => {
       const { result } = renderHook(() => useShownStakePosition("earn"));
@@ -356,12 +420,20 @@ describe("stakePositionRequestStore", () => {
 
     it("should show only the requests of its origin", () => {
       const { result: earn } = renderHook(() => useShownStakePosition("earn"));
-      const { result: other } = renderHook(() => useShownStakePosition(OTHER_ORIGIN));
+      const { result: account } = renderHook(() => useShownStakePosition("account"));
 
       const request = open("earn");
 
       expect(earn.current.request?.id).toBe(request.id);
-      expect(other.current).toEqual({ request: null, phase: "closed" });
+      expect(account.current).toEqual({ request: null, phase: "closed" });
+    });
+
+    it("should show the requests of every origin when it names none", () => {
+      const { result } = renderHook(() => useShownStakePosition());
+
+      const request = open("account");
+
+      expect(result.current.request?.id).toBe(request.id);
     });
 
     it("should show nothing to a surface mounted after the last request closed", () => {
@@ -391,7 +463,7 @@ describe("stakePositionRequestStore", () => {
     });
 
     it("should ignore the requests of another origin", () => {
-      const { result } = renderHook(() => useIsStakePositionShown(OTHER_ORIGIN));
+      const { result } = renderHook(() => useIsStakePositionShown("account"));
 
       open("earn");
 

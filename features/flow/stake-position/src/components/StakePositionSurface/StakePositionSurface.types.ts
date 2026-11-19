@@ -3,10 +3,14 @@ import type { StakePositionHeading } from "../../types";
 
 export type StakePositionSurfaceProps = Readonly<{
   isOpen: boolean;
+  /**
+   * Names the surface. Only the details title shows in the header: a confirmation or a result
+   * leads with its own title, under a header that holds the close button alone.
+   */
   heading: StakePositionHeading;
   ticker: string;
-  /** The header's back button, shown while the surface is dismissible. */
-  onBack?: () => void;
+  /** The currency's name, which the details title uses ("Earning Solana"). Defaults to the ticker. */
+  currencyName?: string;
   onDismiss: () => void;
   /** Off once the transaction is signed: no close button, Escape, backdrop or Android back. */
   isDismissible: boolean;

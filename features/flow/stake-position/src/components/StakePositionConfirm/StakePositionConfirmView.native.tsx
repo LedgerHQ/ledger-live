@@ -1,13 +1,11 @@
 import React from "react";
-import { Banner, Box, Button, DescriptionItemValue, Text } from "@ledgerhq/lumen-ui-rnative";
-import { PositionAmount, PositionRow } from "../PositionRows";
+import { Download } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { InfoState } from "@shared/ui-info-state";
 import type { StakePositionConfirmViewProps } from "./StakePositionConfirmView.types";
 
+// The `info` tone draws the muted glow of the design behind the icon.
 export function StakePositionConfirmView({
   labels,
-  amount,
-  validatorName,
-  fees,
   errorContent,
   isPending,
   isConfirmDisabled,
@@ -15,34 +13,21 @@ export function StakePositionConfirmView({
   testID,
 }: StakePositionConfirmViewProps) {
   return (
-    <Box lx={{ gap: "s24" }} testID={testID}>
-      <Text typography="body2" lx={{ color: "muted" }}>
-        {labels.description}
-      </Text>
-      <Box lx={{ gap: "s12" }}>
-        <PositionRow label={labels.amount}>
-          <PositionAmount amount={amount} />
-        </PositionRow>
-        <PositionRow label={labels.validator}>
-          <DescriptionItemValue>{validatorName}</DescriptionItemValue>
-        </PositionRow>
-        {fees ? (
-          <PositionRow label={labels.fees}>
-            <DescriptionItemValue>{fees}</DescriptionItemValue>
-          </PositionRow>
-        ) : null}
-      </Box>
-      {errorContent ? <Banner appearance="error" description={errorContent} /> : null}
-      <Button
-        appearance="base"
-        size="lg"
-        isFull
-        loading={isPending}
-        disabled={isConfirmDisabled}
-        onPress={onConfirm}
-      >
-        {labels.cta}
-      </Button>
-    </Box>
+    <InfoState
+      preset="spot"
+      spotProps={{ icon: Download }}
+      backgroundTone="info"
+      size="hug"
+      title={labels.title}
+      description={labels.description}
+      banner={errorContent ? { appearance: "error", description: errorContent } : undefined}
+      primaryCta={{
+        label: labels.cta,
+        onPress: onConfirm,
+        loading: isPending,
+        disabled: isConfirmDisabled,
+      }}
+      testID={testID}
+    />
   );
 }

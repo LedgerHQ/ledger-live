@@ -5,11 +5,10 @@ import type { StakePositionSurfaceViewProps } from "./StakePositionSurfaceView.t
 export function useStakePositionSurfaceViewModel({
   heading,
   ticker,
-  onBack,
-  isDismissible,
+  currencyName,
   ...props
 }: StakePositionSurfaceProps): StakePositionSurfaceViewProps {
-  const title = useStakePositionTitle(heading, ticker);
+  const title = useStakePositionTitle(heading, ticker, currencyName);
 
-  return { ...props, title, isDismissible, onBack: isDismissible ? onBack : undefined };
+  return { ...props, title, isTitleInHeader: heading.kind === "details" };
 }

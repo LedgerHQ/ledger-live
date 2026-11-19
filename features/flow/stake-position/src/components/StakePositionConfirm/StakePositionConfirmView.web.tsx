@@ -1,19 +1,12 @@
 import React from "react";
-import {
-  Banner,
-  Button,
-  DescriptionItemValue,
-  DialogBody,
-  DialogFooter,
-} from "@ledgerhq/lumen-ui-react";
-import { PositionAmount, PositionRow } from "../PositionRows";
+import { DialogBody } from "@ledgerhq/lumen-ui-react";
+import { Download } from "@ledgerhq/lumen-ui-react/symbols";
+import { InfoState } from "@shared/ui-info-state";
 import type { StakePositionConfirmViewProps } from "./StakePositionConfirmView.types";
 
+// The `info` tone draws the muted glow of the design behind the icon.
 export function StakePositionConfirmView({
   labels,
-  amount,
-  validatorName,
-  fees,
   errorContent,
   isPending,
   isConfirmDisabled,
@@ -21,38 +14,23 @@ export function StakePositionConfirmView({
   testID,
 }: StakePositionConfirmViewProps) {
   return (
-    <>
-      <DialogBody data-testid={testID}>
-        <div className="flex flex-col gap-16">
-          <p className="body-2 text-muted">{labels.description}</p>
-          <div className="flex flex-col gap-8">
-            <PositionRow label={labels.amount}>
-              <PositionAmount amount={amount} />
-            </PositionRow>
-            <PositionRow label={labels.validator}>
-              <DescriptionItemValue>{validatorName}</DescriptionItemValue>
-            </PositionRow>
-            {fees ? (
-              <PositionRow label={labels.fees}>
-                <DescriptionItemValue>{fees}</DescriptionItemValue>
-              </PositionRow>
-            ) : null}
-          </div>
-          {errorContent ? <Banner appearance="error" description={errorContent} /> : null}
-        </div>
-      </DialogBody>
-      <DialogFooter>
-        <Button
-          appearance="base"
-          size="lg"
-          isFull
-          loading={isPending}
-          disabled={isConfirmDisabled}
-          onClick={onConfirm}
-        >
-          {labels.cta}
-        </Button>
-      </DialogFooter>
-    </>
+    <DialogBody>
+      <InfoState
+        preset="spot"
+        spotProps={{ icon: Download }}
+        backgroundTone="info"
+        size="hug"
+        title={labels.title}
+        description={labels.description}
+        banner={errorContent ? { appearance: "error", description: errorContent } : undefined}
+        primaryCta={{
+          label: labels.cta,
+          onPress: onConfirm,
+          loading: isPending,
+          disabled: isConfirmDisabled,
+        }}
+        testID={testID}
+      />
+    </DialogBody>
   );
 }

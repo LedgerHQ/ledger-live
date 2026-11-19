@@ -41,12 +41,17 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
   return { ...sheet, QueuedBottomSheet: jest.fn(sheet.QueuedBottomSheet) };
 });
 
+// The real header draws the close button next to an optional title.
 jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const { createElement } = jest.requireActual<typeof import("react")>("react");
   const lumen = jest.requireActual<Record<string, unknown>>("@ledgerhq/lumen-ui-rnative");
   const overrides: Record<string, unknown> = {
-    BottomSheetHeader: ({ title }: { title?: string }) =>
-      createElement("Text", { accessibilityRole: "header" }, title),
+    BottomSheetHeader: ({ title, density }: { title?: string; density?: string }) =>
+      createElement(
+        "Text",
+        { accessibilityRole: "header", testID: `sheet-header-${density}` },
+        title,
+      ),
   };
   return new Proxy(overrides, {
     get: (target, prop: string) => (prop in target ? target[prop] : lumen[prop]),
@@ -63,12 +68,10 @@ function renderSurface({
   heading = DETAILS,
   isOpen = true,
   isDismissible = true,
-  onBack,
 }: {
   heading?: StakePositionHeading;
   isOpen?: boolean;
   isDismissible?: boolean;
-  onBack?: () => void;
 } = {}) {
   const onDismiss = jest.fn();
   render(
@@ -76,7 +79,7 @@ function renderSurface({
       isOpen={isOpen}
       heading={heading}
       ticker="SOL"
-      onBack={onBack}
+      currencyName="Solana"
       onDismiss={onDismiss}
       isDismissible={isDismissible}
       testID={SHEET_TEST_ID}
@@ -119,18 +122,30 @@ describe("StakePositionSurface (native)", () => {
     expect(mockBackPressHandlers).toHaveLength(0);
   });
 
-  it("should show the position title and the step while open", () => {
+  it("should title the details after the currency in the header and show the step", () => {
     renderSurface();
 
     expect(isSheetOpen()).toBe(true);
-    expect(screen.getByRole("header", { name: "SOL position" })).toBeTruthy();
+    expect(screen.getByRole("header", { name: "Earning Solana" })).toBeTruthy();
+    expect(screen.getByTestId("sheet-header-expanded")).toBeTruthy();
     expect(screen.getByText("Step content")).toBeTruthy();
   });
 
-  it("should show the confirmation title of the exit", () => {
-    renderSurface({ heading: CONFIRM });
+  it.each<[string, StakePositionHeading, string]>([
+    ["confirmation", CONFIRM, "Deactivate your SOL"],
+    ["success", { kind: "result", outcome: "success" }, "Transaction signed"],
+    ["failure", { kind: "result", outcome: "failure" }, "Transaction failed"],
+  ])("should keep the close button alone in the header of the %s", (_step, heading, title) => {
+    const { onDismiss } = renderSurface({ heading });
 
-    expect(screen.getByRole("header", { name: "Deactivate this position?" })).toBeTruthy();
+    expect(screen.queryByRole("header", { name: title })).toBeNull();
+    expect(screen.getByTestId("sheet-header-compact")).toBeTruthy();
+    expect(queryControl("back")).toBeNull();
+    expect(lastSheetProps()?.hasBackButton).toBeUndefined();
+
+    pressControl("header-close");
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
   it.each(["header-close", "backdrop"] as const)("should dismiss from the %s", closeControl => {
@@ -141,48 +156,29 @@ describe("StakePositionSurface (native)", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
-  it("should go back from the header back button", () => {
-    const onBack = jest.fn();
-    const { onDismiss } = renderSurface({ heading: CONFIRM, onBack });
-
-    pressControl("back");
-
-    expect(onBack).toHaveBeenCalledTimes(1);
-    expect(onDismiss).not.toHaveBeenCalled();
-  });
-
-  it("should offer no close, backdrop or back control once the transaction is signed", () => {
-    renderSurface({ heading: CONFIRM, isDismissible: false, onBack: jest.fn() });
+  it("should offer no close or backdrop control once the transaction is signed", () => {
+    renderSurface({ heading: CONFIRM, isDismissible: false });
 
     expect(queryControl("header-close")).toBeNull();
     expect(queryControl("backdrop")).toBeNull();
-    expect(queryControl("back")).toBeNull();
     expect(lastSheetProps()).toMatchObject({ noCloseButton: true, preventBackdropClick: true });
   });
 
   describe("Android back", () => {
-    it("should dismiss the details", () => {
-      const { onDismiss } = renderSurface();
+    it.each([
+      ["details", DETAILS],
+      ["confirmation", CONFIRM],
+    ] as const)("should dismiss the %s", (_step, heading) => {
+      const { onDismiss } = renderSurface({ heading });
 
       expect(pressAndroidBack()).toBe(true);
       expect(onDismiss).toHaveBeenCalledTimes(1);
     });
 
-    it("should go back from the confirmation instead of dismissing", () => {
-      const onBack = jest.fn();
-      const { onDismiss } = renderSurface({ heading: CONFIRM, onBack });
-
-      expect(pressAndroidBack()).toBe(true);
-      expect(onBack).toHaveBeenCalledTimes(1);
-      expect(onDismiss).not.toHaveBeenCalled();
-    });
-
     it("should be consumed without closing once the transaction is signed", () => {
-      const onBack = jest.fn();
-      const { onDismiss } = renderSurface({ heading: CONFIRM, isDismissible: false, onBack });
+      const { onDismiss } = renderSurface({ heading: CONFIRM, isDismissible: false });
 
       expect(pressAndroidBack()).toBe(true);
-      expect(onBack).not.toHaveBeenCalled();
       expect(onDismiss).not.toHaveBeenCalled();
     });
 

@@ -10,15 +10,17 @@ type DataProps = Omit<StakePositionDetailsProps, "onEarnMore" | "onSelectExitAct
 
 const PROPS: DataProps = {
   ticker: "SOL",
-  state: "active",
-  balance: { crypto: "12.5 SOL", fiat: "$1,875.00" },
-  rewards: { crypto: "0.42 SOL", fiat: "$63.00" },
+  status: "active",
+  totalRewards: { crypto: "0.42 SOL", fiat: "$63.00" },
+  currentBalance: { crypto: "12.5 SOL", fiat: "$1,875.00" },
+  initialDeposit: { crypto: "12.08 SOL", fiat: "$1,812.00" },
   apy: "7.81%",
   validator: { name: "Ledger by Figment", imageUrl: "https://validators.example/ledger.png" },
-  address: `StakeA${"b".repeat(32)}Acct42`,
+  accountName: "Solana 1",
   exitAction: "deactivate",
-  notice: null,
   isExitActionPending: false,
+  notice: null,
+  showEarnMore: true,
 };
 
 function renderDetails(overrides: Partial<DataProps> = {}) {
@@ -46,80 +48,143 @@ describe("StakePositionDetails (web)", () => {
     ["activating", "Activating"],
     ["deactivating", "Deactivating"],
     ["inactive", "Deactivated"],
-  ])("should show the %s status as %p", (state, label) => {
-    renderDetails({ state });
+  ])("should show the %s status as %p", (status, label) => {
+    renderDetails({ status });
 
     expect(screen.getByText(label)).toBeVisible();
   });
 
-  it("should show the balance, the rewards, the APY, the validator and the stake account", () => {
+  it("should show the rewards, the balance, the initial deposit, the APY, the account and the validator", () => {
     renderDetails();
 
-    expect(screen.getByText("12.5 SOL")).toBeVisible();
-    expect(screen.getByText("$1,875.00")).toBeVisible();
+    expect(screen.getByText(STAKE_POSITION_COPY.details.totalRewards)).toBeVisible();
     expect(screen.getByText("0.42 SOL")).toBeVisible();
-    expect(screen.getByText("$63.00")).toBeVisible();
-    expect(screen.getByText("7.81%")).toBeVisible();
+    expect(screen.getByText("12.5 SOL")).toBeVisible();
+    expect(screen.getByText(STAKE_POSITION_COPY.details.currentBalance)).toBeVisible();
+    expect(screen.getByText(STAKE_POSITION_COPY.details.initialDeposit)).toBeVisible();
+    expect(screen.getByText("12.08 SOL")).toBeVisible();
+    expect(screen.getByText("$1,812.00")).toBeVisible();
+    expect(screen.getByText("7.81% APY")).toBeVisible();
+    expect(screen.getByText("Solana 1")).toBeVisible();
     expect(screen.getByText("Ledger by Figment")).toBeVisible();
-    expect(screen.getByText("StakeA…Acct42")).toBeVisible();
   });
 
-  it("should show the APY as unavailable when it is unknown", () => {
+  it("should show the balance in crypto only, and no stake account row", () => {
+    renderDetails();
+
+    expect(screen.queryByText("$1,875.00")).not.toBeInTheDocument();
+    expect(screen.queryByText("Stake account")).not.toBeInTheDocument();
+  });
+
+  it("should hide the initial deposit row when the backend sends no deposited amount", () => {
+    renderDetails({ initialDeposit: undefined });
+
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.initialDeposit)).not.toBeInTheDocument();
+  });
+
+  it("should show the initial deposit in crypto alone without a counter value", () => {
+    renderDetails({ initialDeposit: { crypto: "12.08 SOL" } });
+
+    expect(screen.getByText("12.08 SOL")).toBeVisible();
+  });
+
+  it("should hide the APY row while the validator APY is unknown", () => {
     renderDetails({ apy: undefined });
 
-    expect(screen.getByText(STAKE_POSITION_COPY.details.unavailableValue)).toBeVisible();
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.apy)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\sAPY$/)).not.toBeInTheDocument();
   });
 
   it("should hide the rewards when they are unknown", () => {
-    renderDetails({ rewards: undefined });
+    renderDetails({ totalRewards: undefined });
 
-    expect(screen.queryByText(STAKE_POSITION_COPY.details.rewards)).not.toBeInTheDocument();
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.totalRewards)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("stake-position-rewards")).not.toBeInTheDocument();
   });
 
-  it("should show the crypto amount alone when there is no fiat value", () => {
-    renderDetails({ balance: { crypto: "12.5 SOL" } });
+  it("should lead with the rewards in crypto when there is no counter value", () => {
+    renderDetails({ totalRewards: { crypto: "0.42 SOL" }, rewardsHeadline: undefined });
 
-    expect(screen.getByText("12.5 SOL")).toBeVisible();
-    expect(screen.queryByText("$1,875.00")).not.toBeInTheDocument();
+    expect(screen.getByText(STAKE_POSITION_COPY.details.totalRewards)).toBeVisible();
+    expect(screen.getByText("0.42 SOL")).toBeVisible();
+  });
+
+  it("should keep the exit when the backend sends no balance", () => {
+    renderDetails({ currentBalance: undefined });
+
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.currentBalance)).not.toBeInTheDocument();
+    expect(button("Deactivate")).toBeEnabled();
+  });
+
+  it("should show the account name next to its icon", () => {
+    renderDetails({ accountIcon: <span data-testid="account-icon" /> });
+
+    expect(screen.getByText(STAKE_POSITION_COPY.details.account)).toBeVisible();
+    expect(screen.getByTestId("account-icon")).toBeVisible();
+  });
+
+  it("should hide the account row when the account has no name", () => {
+    renderDetails({ accountName: undefined });
+
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.account)).not.toBeInTheDocument();
+  });
+
+  it("should show the initial of a validator without a logo", () => {
+    renderDetails({ validator: { name: "26pV97…c53dJx" } });
+
+    expect(screen.getByText("26pV97…c53dJx")).toBeVisible();
+    expect(screen.getByRole("img")).toHaveTextContent("2");
+  });
+
+  it("should hide the validator row of a position without a validator", () => {
+    renderDetails({ validator: undefined });
+
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.validator)).not.toBeInTheDocument();
   });
 
   it("should offer to deactivate the position next to Earn more", () => {
     renderDetails({ exitAction: "deactivate" });
 
-    expect(button("Deactivate to withdraw")).toBeEnabled();
+    expect(button("Deactivate")).toBeEnabled();
     expect(button("Earn more")).toBeEnabled();
-    expect(queryButton("Withdraw all")).not.toBeInTheDocument();
+    expect(queryButton("Withdraw")).not.toBeInTheDocument();
   });
 
-  it("should offer to withdraw all of the position", () => {
-    renderDetails({ state: "inactive", exitAction: "withdraw" });
+  it("should offer to withdraw the position, without Earn more when it is not offered", () => {
+    renderDetails({ status: "inactive", exitAction: "withdraw", showEarnMore: false });
 
-    expect(button("Withdraw all")).toBeEnabled();
-    expect(queryButton("Deactivate to withdraw")).not.toBeInTheDocument();
+    expect(button("Withdraw")).toBeEnabled();
+    expect(queryButton("Deactivate")).not.toBeInTheDocument();
+    expect(queryButton("Earn more")).not.toBeInTheDocument();
   });
 
-  it("should offer only Earn more when the position has no exit", () => {
-    renderDetails({ state: "deactivating", exitAction: null, notice: "deactivating" });
+  it("should offer no exit and no Earn more on a deactivating position", () => {
+    renderDetails({
+      status: "deactivating",
+      exitAction: null,
+      notice: "deactivating",
+      showEarnMore: false,
+    });
 
-    expect(queryButton("Deactivate to withdraw")).not.toBeInTheDocument();
-    expect(queryButton("Withdraw all")).not.toBeInTheDocument();
-    expect(button("Earn more")).toBeEnabled();
+    expect(queryButton("Deactivate")).not.toBeInTheDocument();
+    expect(queryButton("Withdraw")).not.toBeInTheDocument();
+    expect(queryButton("Earn more")).not.toBeInTheDocument();
   });
 
   it("should disable the exit, but not Earn more, while the exit waits", () => {
     renderDetails({ isExitActionPending: true });
 
-    expect(button("Deactivate to withdraw")).toBeDisabled();
+    expect(button("Deactivate")).toBeDisabled();
     expect(button("Earn more")).toBeEnabled();
   });
 
   it("should hand the exit of the position to the app", async () => {
     const { onSelectExitAction, onEarnMore, user } = renderDetails({
-      state: "inactive",
+      status: "inactive",
       exitAction: "withdraw",
     });
 
-    await user.click(button("Withdraw all"));
+    await user.click(button("Withdraw"));
 
     expect(onSelectExitAction).toHaveBeenCalledWith("withdraw");
     expect(onEarnMore).not.toHaveBeenCalled();
@@ -140,6 +205,7 @@ describe("StakePositionDetails (web)", () => {
       "missingAuthority",
       "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
     ],
+    ["updating", "This position is updating. Some details may be out of date."],
   ] as const)("should explain the %s notice", (notice, text) => {
     renderDetails({ exitAction: null, notice });
 

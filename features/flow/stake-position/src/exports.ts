@@ -1,11 +1,14 @@
 export * from "./analytics/stakePositionEvents";
 export * from "./errors";
+export * from "./hooks/useMarkStakePositionTransacted";
+export * from "./hooks/useStakePositionData";
 export * from "./hooks/useStakePositionTracking";
 export * from "./logic/positionRules";
-export * from "./logic/resolvePositionMatch";
+export * from "./logic/stakePositionDetails";
 export * from "./nativeStakePositionInput";
 export * from "./server";
 export * from "./stakePositionRequestStore";
+export * from "./stakePositionTransactions";
 export * from "./state/stakePositionStepReducer";
 export * from "./state/useStakePositionSteps";
 export type * from "./types";

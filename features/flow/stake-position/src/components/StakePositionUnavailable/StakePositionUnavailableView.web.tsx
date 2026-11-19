@@ -23,9 +23,16 @@ export function StakePositionUnavailableView(props: StakePositionUnavailableView
         </div>
       </DialogBody>
       <DialogFooter>
-        <Button appearance="gray" size="lg" isFull onClick={props.onDismiss}>
-          {props.closeLabel}
-        </Button>
+        <div className="flex w-full flex-col gap-16">
+          {props.retry ? (
+            <Button appearance="base" size="lg" isFull onClick={props.retry.onRetry}>
+              {props.retry.label}
+            </Button>
+          ) : null}
+          <Button appearance="gray" size="lg" isFull onClick={props.onDismiss}>
+            {props.closeLabel}
+          </Button>
+        </div>
       </DialogFooter>
     </>
   );
