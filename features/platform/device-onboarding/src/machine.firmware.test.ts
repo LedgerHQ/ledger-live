@@ -787,6 +787,34 @@ describe("a nano firmware update held back until setup", () => {
     expect(actor.getSnapshot().context.updateAfterSetup).toBe(true);
   });
 
+  it.each([
+    ["declined", { type: "USER_DECLINE" }],
+    ["skipped", null],
+  ] as const)(
+    "stops holding the update once it is %s on the re-attested session",
+    async (kind, answer) => {
+      const { actor } = await enterHeldBackSetup({
+        osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
+        genuineCheck: [genuine, genuine],
+        firmwareCheck: [answer ? updateAvailable : checkFailure],
+      });
+      expectWaitingInSetup(actor);
+      actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+      await settle();
+      actor.send(readyAndSeeded);
+      await settle();
+      expect(actor.getSnapshot().context.updateAfterSetup).toBe(true);
+
+      actor.send(answer ?? { type: "SKIP" });
+      await settle();
+
+      expect(actor.getSnapshot().context).toMatchObject({
+        firmware: { kind },
+        updateAfterSetup: false,
+      });
+    },
+  );
+
   it("does not offer the update twice once the re-attested session answered it", async () => {
     const { actor } = await enterHeldBackSetup({
       osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],

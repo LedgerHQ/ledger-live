@@ -132,9 +132,10 @@ export const contextActions = {
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
-  rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" } }),
-  rememberFirmwareDeclined: update({ firmware: { kind: "declined" } }),
-  rememberFirmwareSkipped: update({ firmware: { kind: "skipped" } }),
+  // An answered update no longer waits for the setup, even when answered in the checks again.
+  rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" }, updateAfterSetup: false }),
+  rememberFirmwareDeclined: update({ firmware: { kind: "declined" }, updateAfterSetup: false }),
+  rememberFirmwareSkipped: update({ firmware: { kind: "skipped" }, updateAfterSetup: false }),
   deferUpdate: update({ firmware: { kind: "deferred" }, updateAfterSetup: true }),
   // The ready step reports the seed, but only DEVICE_STATE_READ set `isOnboarded` so far.
   rememberOnboarded: update(({ event }) => {

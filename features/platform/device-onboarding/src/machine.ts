@@ -70,7 +70,7 @@ const firmwareUpdateDelegated = {
 const quitEndsSetup = {
   guard: "finishesSetupOnQuit",
   target: "#deviceOnboarding.setupExit",
-  actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
+  actions: "rememberFirmwareSkipped",
 } as const;
 
 /** A final state. The host's `leaveOnboarding` runs once, when the machine enters it. */
@@ -512,7 +512,7 @@ export const deviceOnboardingMachine = setup({
           on: {
             FIRMWARE_UP_TO_DATE: {
               target: "#deviceOnboarding.setupExit",
-              actions: ["rememberFirmwareUpToDate", "forgetUpdateAfterSetup"],
+              actions: "rememberFirmwareUpToDate",
             },
             FIRMWARE_UPDATE_AVAILABLE: {
               target: "firmwareUpdateOffered",
@@ -527,11 +527,11 @@ export const deviceOnboardingMachine = setup({
             RETRY: "firmwareCheck",
             SKIP: {
               target: "#deviceOnboarding.setupExit",
-              actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
+              actions: "rememberFirmwareSkipped",
             },
             CLOSE: {
               target: "#deviceOnboarding.setupExit",
-              actions: ["rememberFirmwareSkipped", "forgetUpdateAfterSetup"],
+              actions: "rememberFirmwareSkipped",
             },
           },
         },
@@ -541,7 +541,7 @@ export const deviceOnboardingMachine = setup({
             USER_ACCEPT: { target: "firmwareUpdateDelegated", actions: "forgetUpdateAfterSetup" },
             USER_DECLINE: {
               target: "#deviceOnboarding.setupExit",
-              actions: ["rememberFirmwareDeclined", "forgetUpdateAfterSetup"],
+              actions: "rememberFirmwareDeclined",
             },
           },
         },
