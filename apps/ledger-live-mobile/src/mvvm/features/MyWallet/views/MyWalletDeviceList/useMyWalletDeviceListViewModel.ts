@@ -11,7 +11,6 @@ import { useDispatch } from "~/context/hooks";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import { NavigatorName, ScreenName } from "~/const";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
-import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import type { MyWalletNavigatorStackParamList } from "../../types";
 import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
@@ -53,8 +52,6 @@ export function useMyWalletDeviceListViewModel({
 
   const [isAdding, setIsAdding] = useState(false);
   const [deviceToCheck, setDeviceToCheck] = useState<Device | null>(null);
-
-  useAutoRedirectToPostOnboarding();
 
   // Before paint, so that the header and the tab bar go in the same frame as the other sections.
   useLayoutEffect(() => {
