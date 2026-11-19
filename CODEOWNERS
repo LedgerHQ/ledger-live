@@ -474,6 +474,7 @@ libs/speculos-transport/                                           @ledgerhq/liv
 libs/live-dmk-mobile/                                              @ledgerhq/live-devices
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
+**/*KnownOrNewDevice*                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
 libs/live-signer-solana/                                           @ledgerhq/live-devices
 libs/live-signer-aleo/                                             @ledgerhq/live-devices
