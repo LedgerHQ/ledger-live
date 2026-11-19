@@ -179,15 +179,19 @@ app.on("ready", async () => {
   await applyWindowParams(windowParams, settings);
 
   // Setup window event handlers
+  // The db logs a failed save once, for all the setKey calls that the save holds.
+  const ignoreLoggedSaveError = () => undefined;
   window.on("resize", () => {
     if (!window || window.isDestroyed()) return;
     const [width, height] = window.getSize();
-    void db.setKey("windowParams", `${window.name}.dimensions`, { width, height });
+    db.setKey("windowParams", `${window.name}.dimensions`, { width, height }).catch(
+      ignoreLoggedSaveError,
+    );
   });
   window.on("move", () => {
     if (!window || window.isDestroyed()) return;
     const [x, y] = window.getPosition();
-    void db.setKey("windowParams", `${window.name}.positions`, { x, y });
+    db.setKey("windowParams", `${window.name}.positions`, { x, y }).catch(ignoreLoggedSaveError);
   });
 
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
