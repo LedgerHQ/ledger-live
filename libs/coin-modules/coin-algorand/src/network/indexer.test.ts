@@ -146,6 +146,10 @@ describe("indexer", () => {
           details: { amount: new BigNumber(100), recipientAddress: "RECIPIENT" },
         },
       ]);
+
+      const roots = await getAccountTransactions(config, "ALGO_ADDRESS");
+      expect(roots.transactions).toHaveLength(1);
+      expect(roots.transactions[0]).toMatchObject({ id: "APPL" });
     });
 
     it("should include minRound in URL when provided", async () => {

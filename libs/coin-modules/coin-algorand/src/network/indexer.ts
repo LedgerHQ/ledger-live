@@ -115,16 +115,17 @@ const parseLosslessJSON = (raw: unknown): unknown => {
 };
 
 const parseRootTransaction = (tx: ExplorerTransaction): AlgoTransaction =>
-  parseTransaction(tx, { id: tx.id, fee: tx.fee, sender: tx.sender }, tx.id)[0];
+  parseTransaction(tx, { id: tx.id, fee: tx.fee, sender: tx.sender }, tx.id, false)[0];
 const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction[] => {
   const root = { id: tx.id, fee: tx.fee, sender: tx.sender };
-  return parseTransaction(tx, root, tx.id);
+  return parseTransaction(tx, root, tx.id, true);
 };
 
 function parseTransaction(
   tx: ExplorerTransaction | ExplorerInnerTransaction,
   root: { id: string; fee: number; sender: string },
   id: string,
+  includeInnerTransactions: boolean,
 ): AlgoTransaction[] {
   let details: AlgoTransactionDetails | undefined;
 
@@ -171,8 +172,10 @@ function parseTransaction(
 
   return [
     transaction,
-    ...(tx["inner-txns"] ?? []).flatMap((inner, index) =>
-      parseTransaction(inner, root, `${id}-inner-${index}`),
-    ),
+    ...(includeInnerTransactions
+      ? (tx["inner-txns"] ?? []).flatMap((inner, index) =>
+          parseTransaction(inner, root, `${id}-inner-${index}`, true),
+        )
+      : []),
   ];
 }
