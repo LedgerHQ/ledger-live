@@ -182,6 +182,7 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   /** Session whose success screen the user already left. A new session asks again. */
   successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;
+  returningFromFirmwareUpdate: boolean;
   currentSetupStep: OnboardingStep | null;
   seedPath: SeedPath | null;
   recoveryKeyBackupOpen: boolean;

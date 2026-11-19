@@ -30,6 +30,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     checksPaused: false,
     successAcknowledgedOnSession: null,
     firmware: null,
+    returningFromFirmwareUpdate: false,
     currentSetupStep: null,
     seedPath: null,
     recoveryKeyBackupOpen: false,
@@ -140,6 +141,8 @@ export const contextActions = {
     };
   }),
   forgetFirmwareCheck: update({ firmware: null }),
+  startReturningFromFirmwareUpdate: update({ returningFromFirmwareUpdate: true }),
+  finishReturningFromFirmwareUpdate: update({ returningFromFirmwareUpdate: false }),
   // Cleared before the rebooted session id is known, so a reused id still repeats the genuine check.
   clearGenuineVerdict: update({
     genuineVerdict: null,

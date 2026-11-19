@@ -1,10 +1,11 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { checksTestIds, funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { powerOnAfterUpdateDelayMs } from "LLM/features/DeviceOnboarding/utils/deviceOff";
 import { DeviceOnboardingFunnel } from "./index";
 
 jest.mock("@react-navigation/native", () => ({
@@ -88,6 +89,20 @@ function session(state: string): DeviceOnboardingSession {
   };
 }
 
+function renderWaiting() {
+  const abortFirmwareReconnect = jest.fn();
+  useSession.mockReturnValue({
+    ...session("awaitingSessionAfterFirmwareUpdate"),
+    context: {
+      checksPaused: false,
+      onboardedOnEntry: true,
+      returningFromFirmwareUpdate: true,
+    } as DeviceOnboardingSession["context"],
+    abortFirmwareReconnect,
+  });
+  return { ...render(<DeviceOnboardingFunnel />), abortFirmwareReconnect };
+}
+
 describe("DeviceOnboardingFunnel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -112,6 +127,70 @@ describe("DeviceOnboardingFunnel", () => {
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-header-close`)).toBeNull();
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-dismiss`)).toBeNull();
     expect(screen.queryByTestId(`${funnelTestIds.unlockSheet}-backdrop`)).toBeNull();
+  });
+
+  describe("when the updated device takes long to come back", () => {
+    it("should keep the checks up without a sheet at first", () => {
+      renderWaiting();
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs - 1));
+
+      expect(screen.getByTestId(checksTestIds.quit)).toBeVisible();
+      expect(screen.queryByTestId(funnelTestIds.powerOnSheet)).toBeNull();
+      expect(screen.queryByText("Connection failed")).toBeNull();
+    });
+
+    it("should ask to power on after 20 seconds and let the user quit", async () => {
+      const { user, abortFirmwareReconnect } = renderWaiting();
+      act(() => jest.advanceTimersByTime(powerOnAfterUpdateDelayMs));
+
+      expect(screen.getByText("Power on and unlock your Ledger Stax")).toBeVisible();
+
+      await user.press(screen.getByTestId(`${funnelTestIds.powerOnSheet}-header-close`));
+
+      expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should offer to try again over the checks when returning from an OS update fails", async () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue({
+      ...session("awaitingSessionAfterFirmwareUpdate"),
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: true,
+        returningFromFirmwareUpdate: true,
+      } as DeviceOnboardingSession["context"],
+      error: "Unable to reconnect to the device",
+      connect,
+    });
+    const { user } = render(<DeviceOnboardingFunnel />);
+
+    expect(screen.getByText("Couldn't connect to Ledger Stax")).toBeVisible();
+    expect(screen.queryByText("Connection failed")).toBeNull();
+    expect(screen.queryByTestId(funnelTestIds.powerOnSheet)).toBeNull();
+
+    await user.press(screen.getByTestId("device-onboarding-reconnect-retry"));
+
+    expect(connect).toHaveBeenCalledTimes(1);
+  });
+
+  it("should quit from the close of the try again sheet instead of hiding it", async () => {
+    const abortFirmwareReconnect = jest.fn();
+    useSession.mockReturnValue({
+      ...session("awaitingSessionAfterFirmwareUpdate"),
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: true,
+        returningFromFirmwareUpdate: true,
+      } as DeviceOnboardingSession["context"],
+      error: "bluetooth-disabled-promptable",
+      abortFirmwareReconnect,
+    });
+    const { user } = render(<DeviceOnboardingFunnel />);
+
+    await user.press(screen.getByTestId("device-onboarding-reconnect-failed-sheet-header-close"));
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
   });
 
   describe("when the device switches off during checks", () => {

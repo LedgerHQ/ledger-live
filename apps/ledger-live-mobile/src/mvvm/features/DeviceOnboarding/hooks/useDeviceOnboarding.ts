@@ -27,10 +27,11 @@ import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
-import { isRebootedDevice } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { matchesPairedDevice, selectPairedKnownDevices } from "../utils/pairedDevice";
 import { createDeviceOnboardingPorts } from "../utils/ports";
+import { isRebootedDevice } from "../utils/rebootedDevice";
+import { selectKnownDevicesToReconnect } from "../utils/reconnectDevices";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -245,7 +246,7 @@ export function useDeviceOnboarding({
         const expectedDevice = expectedDeviceRef.current;
         const reusedSession = result.sessionId === releasedSessionRef.current;
         const differentDevice =
-          expectedDevice !== null && !isRebootedDevice(expectedDevice, incomingDevice);
+          expectedDevice === null || !isRebootedDevice(expectedDevice, incomingDevice);
         if (
           actorRef.current &&
           waitingAfterUpdateRef.current &&
@@ -280,6 +281,7 @@ export function useDeviceOnboarding({
             return;
           }
           waitingAfterUpdateRef.current = false;
+          expectedDeviceRef.current = null;
           startSessionListener(result, nextPorts.currentSessionId());
           setSessionReady(true);
           setStatus("running");
@@ -387,7 +389,9 @@ export function useDeviceOnboarding({
       connectionRef.current?.unsubscribe();
       connectionRef.current = connectDevice({
         dmk,
-        knownDevices: selectPairedKnownDevices(knownDevices, pairedDeviceId),
+        knownDevices: waitingAfterUpdateRef.current
+          ? selectKnownDevicesToReconnect(knownDevices, expectedDeviceRef.current)
+          : selectPairedKnownDevices(knownDevices, pairedDeviceId),
         isMockServerEnabled,
         onConnected: result => {
           void adoptConnection(result);
@@ -423,6 +427,7 @@ export function useDeviceOnboarding({
     void ports?.closeSession();
     retryRef.current = null;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -439,6 +444,8 @@ export function useDeviceOnboarding({
     portsRef.current = null;
     void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
+    waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -450,6 +457,7 @@ export function useDeviceOnboarding({
     if (!actor?.getSnapshot().can({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" })) return;
     waitingAfterUpdateRef.current = true;
     expectedDeviceRef.current = liveDeviceRef.current;
+    retryRef.current = null;
     releasedSessionRef.current = portsRef.current?.currentSessionId() ?? null;
     dropLostTransport();
     send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
@@ -464,6 +472,7 @@ export function useDeviceOnboarding({
   const abortFirmwareReconnect = useCallback(() => {
     adoptGeneration.current += 1;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
     sessionActorRef.current?.stop();
