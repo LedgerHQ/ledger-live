@@ -15,7 +15,7 @@ import { DustLimit, FeeTooLow } from "../errors";
 import { amountParameter } from "./feeParameters";
 import { validateAddress } from "./validateAddress";
 import type { BitcoinIntent } from "./intent";
-import { opReturnScript } from "./intent";
+import { coinControlOf, opReturnScript } from "./intent";
 import { cryptoFor, paymentDustThreshold } from "./selectUtxos";
 
 type Validation = Pick<TransactionValidation, "errors" | "warnings">;
@@ -24,18 +24,21 @@ const NONE: Validation = { errors: {}, warnings: {} };
 
 /**
  * The amount the transaction sends: the intent's, or for `useAllAmount` the sweep `estimateFees`
- * priced (`parameters.amount`: every spendable output minus the fee), else the balance minus the
- * fees.
+ * priced (`parameters.amount`: every spendable output minus the fee), else the value of the outputs
+ * it spends under an absolute fee (`parameters.sweepValue`, coin control applied) minus the fees,
+ * else the balance minus the fees.
  */
 function computeAmount(
   intent: BitcoinIntent,
   nativeBalance: bigint,
   fees: bigint,
   sweep?: bigint,
+  sweepValue?: bigint,
 ): bigint {
   if (!intent.useAllAmount) return intent.amount;
   if (sweep !== undefined) return sweep;
-  return nativeBalance > fees ? nativeBalance - fees : 0n;
+  const funds = sweepValue ?? nativeBalance;
+  return funds > fees ? funds - fees : 0n;
 }
 
 /** The recipient must be given, and be an address of the currency. */
@@ -95,6 +98,10 @@ function validateAmount(
  * The fee must not be negative (validation would subtract it from the funds needed, while crafting
  * ignores it), nor below the network's minimum relay fee, as far as the parameters `estimateFees`
  * returned tell (`relayFeePerByte`, `vsize`, `feePerByte`): a node would not relay the transaction.
+ *
+ * A zero fee alongside a rate imposes nothing (crafting follows the rate), but without one it is an
+ * absolute fee of zero, below the relay fee too: crafting would otherwise pay the relay fee the
+ * summary leaves out.
  */
 function validateFees(fees: bigint, parameters: FeeEstimation["parameters"]): Validation {
   if (fees < 0n) {
@@ -105,7 +112,8 @@ function validateFees(fees: bigint, parameters: FeeEstimation["parameters"]): Va
   if (relayFeePerByte === undefined) return NONE;
   const vsize = amountParameter(parameters, "vsize");
   const feePerByte = amountParameter(parameters, "feePerByte");
-  const belowRelayFee = fees > 0n && vsize !== undefined && fees < vsize * relayFeePerByte;
+  const absoluteFee = fees > 0n || feePerByte === undefined;
+  const belowRelayFee = absoluteFee && vsize !== undefined && fees < vsize * relayFeePerByte;
   const belowRelayRate = feePerByte !== undefined && feePerByte < relayFeePerByte;
   if (belowRelayFee || belowRelayRate) {
     return { errors: { fees: new FeeTooLow() }, warnings: {} };
@@ -127,6 +135,21 @@ function validateOpReturn(currencyId: string, intent: BitcoinIntent): Validation
   }
 }
 
+/**
+ * The coin control (`intent.data.utxoStrategy`) must be well formed: UTXO ids "txid:vout", none
+ * both selected and excluded, a known strategy (reported under `coinControl`). Whether a selected
+ * output is spendable needs the network: `estimateFees` and `craftTransaction` report it.
+ */
+function validateCoinControl(intent: BitcoinIntent): Validation {
+  try {
+    coinControlOf(intent);
+    return NONE;
+  } catch (error) {
+    const coinControl = error instanceof Error ? error : new Error(String(error));
+    return { errors: { coinControl }, warnings: {} };
+  }
+}
+
 /** Warns when the fees are more than 10% of the amount. */
 function validateFeeRatio(
   customFees: FeeEstimation | undefined,
@@ -142,7 +165,7 @@ function validateFeeRatio(
 /**
  * Fee-agnostic validation of a transaction intent, from the intent and the balances passed in,
  * plus `customFees` when provided: recipient, amount (funds, dust), fees (relay minimum), OP_RETURN
- * data, and a warning when the fees are high. Makes no network call.
+ * data, coin control, and a warning when the fees are high. Makes no network call.
  */
 export async function validateIntent(
   context: BitcoinContext,
@@ -155,12 +178,14 @@ export async function validateIntent(
   const fees = customFees?.value ?? 0n;
   const nativeBalance = balances.find(balance => balance.asset.type === "native")?.value ?? 0n;
   const sweep = amountParameter(customFees?.parameters, "amount");
-  const amount = computeAmount(intent, nativeBalance, fees, sweep);
+  const sweepValue = amountParameter(customFees?.parameters, "sweepValue");
+  const amount = computeAmount(intent, nativeBalance, fees, sweep, sweepValue);
 
   const recipient = await validateRecipient(currencyId, config.name, intent);
   const funds = validateAmount(currencyId, intent, amount, fees, nativeBalance, customFees);
   const fee = validateFees(fees, customFees?.parameters);
   const opReturn = validateOpReturn(currencyId, intent);
+  const coinControl = validateCoinControl(intent);
   const feeRatio = validateFeeRatio(customFees, amount, fees);
 
   return {
@@ -169,6 +194,7 @@ export async function validateIntent(
       ...funds.errors,
       ...fee.errors,
       ...opReturn.errors,
+      ...coinControl.errors,
       ...feeRatio.errors,
     },
     warnings: {
@@ -176,6 +202,7 @@ export async function validateIntent(
       ...funds.warnings,
       ...fee.warnings,
       ...opReturn.warnings,
+      ...coinControl.warnings,
       ...feeRatio.warnings,
     },
     estimatedFees: fees,

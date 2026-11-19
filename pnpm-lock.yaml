@@ -13512,6 +13512,9 @@ importers:
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../../shared/ui-info-state
+      '@shared/ui-qr-code':
+        specifier: workspace:*
+        version: link:../../../shared/ui-qr-code
     devDependencies:
       '@domain/api-account-data':
         specifier: workspace:*
