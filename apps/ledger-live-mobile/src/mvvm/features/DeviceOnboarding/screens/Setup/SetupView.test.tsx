@@ -218,12 +218,20 @@ describe("SetupView", () => {
       checks: { state: "updating", update: { current: "2.4.0", available: "2.5.0" } },
     });
 
-    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
-
     await user.press(screen.getByTestId(updateOfferTestIds.offerUpdate));
 
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should keep the header close button while the OS update is offered", async () => {
+    const { user, onQuit } = renderSetup({
+      checks: { state: "updating", update: { current: "1.0.0", available: "1.1.0" } },
+    });
+
+    await user.press(screen.getByTestId(setupTestIds.close));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
   });
 
   it("should skip the OS update only once the skip is confirmed", async () => {

@@ -3,7 +3,8 @@ import { useTranslation } from "~/context/Locale";
 import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import type { UpdateOfferSheetsProps } from "@features/flow-device-onboarding-update-offer";
 import {
-  useChecksDrawers,
+  useChecksErrorDrawers,
+  useFirmwareUpdateRequest,
   type ChecksDrawerProps,
 } from "LLM/features/DeviceOnboarding/components/ChecksDrawers/useChecksDrawers";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -109,23 +110,22 @@ export function useSetupScreenViewModel({
     closeSheet();
     onQuit();
   };
-  const {
-    headerQuitHidden,
-    reopenFirmwareOffer: _reopenFirmwareOffer,
-    allowSheet: _allowSheet,
-    firmwareUpdate,
-    ...drawers
-  } = useChecksDrawers({
+  const { allowSheet: _allowSheet, ...errorDrawers } = useChecksErrorDrawers({
     device,
     state: checks?.state ?? null,
     error: checks?.error ?? null,
-    update: checks?.update ?? null,
     onRetry: () => checks?.onRetry(),
     onCloseSheet: closeSheet,
     onErrorCancel: quitAfterClosingError,
-    onAcceptUpdate: () => checks?.onAcceptUpdate(),
     onAllowDismiss: onQuit,
     onNotGenuineClose: closeSheet,
+    suspendSheets,
+  });
+  const offeredUpdate = checks?.state === "updating" ? checks.update : null;
+  const { requestUpdate, unsupportedUpdate } = useFirmwareUpdateRequest({
+    device,
+    update: offeredUpdate,
+    onAcceptUpdate: () => checks?.onAcceptUpdate(),
     suspendSheets,
   });
 
@@ -135,10 +135,10 @@ export function useSetupScreenViewModel({
     reportsRecoveryKey,
     connection,
     updateOffer: {
-      update: checks?.state === "updating" ? checks.update : null,
+      update: offeredUpdate,
       confirmSkip: checks?.confirmSkipUpdate === true,
-      suspendSheets: suspendSheets || connection !== null || drawers.unsupportedUpdate.mounted,
-      onUpdate: firmwareUpdate.onUpdate,
+      suspendSheets: suspendSheets || connection !== null || unsupportedUpdate.mounted,
+      onUpdate: requestUpdate,
       onSkip: () => checks?.onDeclineUpdate(),
     },
     productName,
@@ -153,16 +153,17 @@ export function useSetupScreenViewModel({
     totalSteps: stage.total,
     status,
     closeLabel: t("deviceOnboarding.checks.close"),
-    onAskLeave: headerQuitHidden ? undefined : onQuit,
+    onAskLeave: onQuit,
     ...(checksIdle && !pausedNotGenuine
       ? { startLabel: t("deviceOnboarding.checks.idle.cta"), onStart: checks.onStart }
       : {}),
     ...(pausedNotGenuine
       ? {
           supportLabel: t("earlySecurityCheck.genuineCheckNonGenuineDrawer.supportCta"),
-          onContactSupport: drawers.notGenuineDrawer.onContactSupport,
+          onContactSupport: errorDrawers.notGenuineDrawer.onContactSupport,
         }
       : {}),
-    ...drawers,
+    ...errorDrawers,
+    unsupportedUpdate,
   };
 }
