@@ -191,6 +191,7 @@
     "@walletconnect/types": "2.26.0",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
+    "bs58check": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:"
   },
