@@ -8,6 +8,8 @@ import {
   cardApi,
   redactCardApiAction,
   redactCardApiState,
+  redactEarnApiAction,
+  redactEarnApiState,
   redactPortfolioApiAction,
   redactPortfolioApiState,
 } from "@shared/api-services";
@@ -105,8 +107,10 @@ const customCreateStore = ({
         .concat(accountDataTaps.middleware),
     devTools: __DEV__
       ? {
-          actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),
-          stateSanitizer: state => redactPortfolioApiState(redactCardApiState(state)),
+          actionSanitizer: action =>
+            redactEarnApiAction(redactPortfolioApiAction(redactCardApiAction(action))),
+          stateSanitizer: state =>
+            redactEarnApiState(redactPortfolioApiState(redactCardApiState(state))),
         }
       : false,
   });
