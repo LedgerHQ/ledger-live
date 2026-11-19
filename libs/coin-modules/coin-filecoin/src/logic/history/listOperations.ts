@@ -56,7 +56,7 @@ function mapNativeOperations(
         // OUT: value = amount + fees (bridge convention)
         value: value + fee,
         asset: { type: "native" },
-        tx: { hash, block, fees: fee, date, failed },
+        tx: { hash, block, fees: fee, feesAsset: { type: "native" }, date, failed },
       });
       opIndex++;
     }
@@ -70,7 +70,7 @@ function mapNativeOperations(
         recipients: [to],
         value,
         asset: { type: "native" },
-        tx: { hash, block, fees: fee, date, failed },
+        tx: { hash, block, fees: fee, feesAsset: { type: "native" }, date, failed },
       });
       opIndex++;
     }
@@ -108,7 +108,7 @@ function mapTokenOperations(
         recipients: [to],
         value,
         asset,
-        tx: { hash, block, fees: 0n, date, failed },
+        tx: { hash, block, fees: 0n, feesAsset: { type: "native" }, date, failed },
       });
       opIndex++;
     }
@@ -121,7 +121,7 @@ function mapTokenOperations(
         recipients: [to],
         value,
         asset,
-        tx: { hash, block, fees: 0n, date, failed },
+        tx: { hash, block, fees: 0n, feesAsset: { type: "native" }, date, failed },
       });
       opIndex++;
     }

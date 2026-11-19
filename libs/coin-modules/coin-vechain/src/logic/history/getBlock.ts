@@ -42,6 +42,7 @@ function toBlockTransaction(tx: ApiResponseBlockTransaction): BlockTransaction {
     failed: tx.reverted,
     operations,
     fees: BigInt(tx.paid || "0"),
+    feesAsset: { ...VTHO_ASSET },
     feesPayer: tx.gasPayer ?? tx.origin,
   };
 }

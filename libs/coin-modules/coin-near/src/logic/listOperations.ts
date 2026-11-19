@@ -37,6 +37,7 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
         time: date,
       },
       fees: BigInt(transaction.outcomes_agg?.transaction_fee || 0),
+      feesAsset: { type: "native" },
       date,
       failed: transaction.outcomes?.status === false,
     },

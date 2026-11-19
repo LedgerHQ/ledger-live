@@ -104,6 +104,7 @@ describe("getBlock", () => {
       hash: "TxHash1",
       failed: false,
       fees: 1_352_240_164_463_600_000_000n,
+      feesAsset: { type: "native" },
       feesPayer: USER,
       operations: [
         { type: "transfer", address: POOL, peer: USER, asset: NATIVE, amount: -1000n },

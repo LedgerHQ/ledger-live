@@ -69,7 +69,7 @@ describe("mapVetTransfersToOperations", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetFees.mockResolvedValue(new BigNumber("21000000000000000"));
+    mockedGetFees.mockResolvedValue({ fees: new BigNumber("21000000000000000") });
     mockedEncodeOperationId.mockImplementation(
       (accountId, hash, type) => `${accountId}${hash}${type}`,
     );
@@ -136,6 +136,19 @@ describe("mapVetTransfersToOperations", () => {
     expect(result).toHaveLength(2);
     expect(result[0].type).toBe("IN");
     expect(result[1].type).toBe("OUT");
+  });
+
+  it("should keep the gas payer of the receipt on the operation", async () => {
+    mockedGetFees.mockResolvedValue({ fees: new BigNumber("1"), gasPayer: "0xsponsor" });
+
+    const [operation] = await mapVetTransfersToOperations(
+      mockVechainConfig,
+      mockTransferLogs,
+      mockAccountId,
+      mockAddr,
+    );
+
+    expect(operation.extra).toEqual({ gasPayer: "0xsponsor" });
   });
 
   it("should call getFees for each transfer", async () => {
@@ -217,7 +230,7 @@ describe("mapTokenTransfersToOperations", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetFees.mockResolvedValue(new BigNumber("37000000000000000"));
+    mockedGetFees.mockResolvedValue({ fees: new BigNumber("37000000000000000") });
     mockedEncodeOperationId.mockImplementation(
       (accountId, hash, type) => `${accountId}${hash}${type}`,
     );

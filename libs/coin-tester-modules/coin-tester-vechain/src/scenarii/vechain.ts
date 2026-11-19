@@ -109,8 +109,13 @@ function makeTransactions(): Tx[] {
       );
       expect(latestOp.value.gt(0)).toBe(true);
       expect(latestOp.value.gt(prevSub!.balance.times(0.99))).toBe(true);
-      expect(sub!.balance).toEqual(prevSub!.balance.minus(latestOp.value).minus(latestOp.fee));
-      expect(sub!.balance.lte(latestOp.fee.times(10))).toBe(true);
+      // The generic-adapter strategy charges the VTHO gas on a FEES operation of the same
+      // transaction, the legacy one on the transfer itself
+      const feesOp = sub!.operations.find(op => op.type === "FEES" && op.hash === latestOp.hash);
+      const fee = feesOp?.fee ?? latestOp.fee;
+      expect(fee.gt(0)).toBe(true);
+      expect(sub!.balance).toEqual(prevSub!.balance.minus(latestOp.value).minus(fee));
+      expect(sub!.balance.lte(fee.times(10))).toBe(true);
       expect(sub!.balance.lt(prevSub!.balance.times(0.01))).toBe(true);
     },
   };

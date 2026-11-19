@@ -34,5 +34,8 @@ export default function vechainBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
+    // 1: the VTHO gas is a fee of its own asset, charged on a FEES operation of the VTHO account,
+    // so histories synced before that resync from scratch.
+    syncVersion: "1",
   };
 }

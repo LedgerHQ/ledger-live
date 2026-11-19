@@ -69,6 +69,7 @@ describe("getBlock", () => {
         hash: "0xtx1",
         failed: false,
         fees: BigInt("0x100"),
+        feesAsset: { type: "token", assetReference: VTHO_ADDRESS },
         feesPayer: "0xsender",
         operations: [
           {
