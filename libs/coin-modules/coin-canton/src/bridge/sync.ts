@@ -544,10 +544,6 @@ export function makeGetAccountShape(
         : [],
     );
     const isReplayed = (op: Operation) => previouslyPending.has(op.hash);
-    const storedOperations = keptOperations.filter(op => !isReplayed(op));
-    const storedSubAccounts = keptSubAccounts.map(subAccount =>
-      withoutReplayed(subAccount, isReplayed),
-    );
 
     // Main account operations: the native instrument only. By id alone: the gateway gives every
     // Amulet operation the same placeholder admin.
@@ -562,6 +558,20 @@ export function makeGetAccountShape(
       const rows = await readOperations(config, xpubOrAddress, start, blockHeight);
       newOperations = filterOperations(rows, accountId, xpubOrAddress, pendingTransferProposals);
     }
+
+    // Without its transaction, what a replayed offer stored has no replacement; the sync fails and
+    // the next one reads it again.
+    const readHashes = new Set(newOperations.map(({ hash }) => hash));
+    const missingHash = allKeptOperations.find(
+      op => isReplayed(op) && !readHashes.has(op.hash),
+    )?.hash;
+    if (missingHash !== undefined) {
+      throw new Error(`canton: transaction ${missingHash} of a pending offer was not returned`);
+    }
+    const storedOperations = keptOperations.filter(op => !isReplayed(op));
+    const storedSubAccounts = keptSubAccounts.map(subAccount =>
+      withoutReplayed(subAccount, isReplayed),
+    );
 
     // Merged per account: operations of several assets in one transaction share an id.
     const mainAccountOperations = mergeOperations(

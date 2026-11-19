@@ -1437,6 +1437,48 @@ describe("makeGetAccountShape", () => {
       expect(next.from).toEqual([10]);
     });
 
+    it("fails while the gateway does not return a paid offer again, and replaces its fees once it does", async () => {
+      const offerRows = [
+        at(createMockOperationView({ txHash: "offer", operationType: "transfer-proposal" }), 5),
+        at(createMockOperationView({ txHash: "offer", uid: "change" }), 5),
+      ];
+      const laterRow = at(createMockOperationView({ txHash: "later" }), 9);
+      let rows = offerRows;
+      mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+        operations: rows.filter(row => row.block.height >= minOffset),
+        next: -1,
+      }));
+      mockedGetPendingTransferProposals.mockResolvedValue([
+        {
+          contract_id: "offer-contract",
+          sender: "party123",
+          receiver: "bob",
+          amount: "100",
+          instrument_id: "Amulet",
+          instrument_admin: "native-admin",
+          memo: "",
+          expires_at_micros: 4_102_444_800_000_000,
+          update_id: "offer",
+        },
+      ]);
+      const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+      const resync = () =>
+        syncFrom({
+          syncHash: SYNC_HASH,
+          operations: pending.operations ?? [],
+          ...(pending.cantonResources && { cantonResources: pending.cantonResources }),
+        });
+
+      mockedGetPendingTransferProposals.mockResolvedValue([]);
+      rows = [laterRow];
+      await expect(resync()).rejects.toThrow("offer");
+
+      rows = [...offerRows, laterRow];
+      const settled = await resync();
+      expect(settled.operations?.some(op => op.type === "FEES")).toBe(false);
+      expect(feeOf(settled, "offer")).toEqual(BigNumber(10));
+    });
+
     it("rebuilds the history from offset 0 when the sync hash changed", async () => {
       const balanceHistoryCache = { HOUR: { latestDate: 1, balances: [] } };
       mockedGetOperations.mockResolvedValue({
