@@ -9,7 +9,6 @@ import {
   isCooldownElapsed,
   shouldThrottle,
 } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
-import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
@@ -29,8 +28,10 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import {
   analyticsEnabledSelector,
   knownDeviceModelIdsSelector,
+  onboardingCompletionDateSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
+import { resolveUpsellCooldownStartDate } from "../utils/upsellCooldownStartDate";
 import {
   useLargeScreenUpsellEligibility,
   type LargeScreenUpsellIneligibilityReason,
@@ -83,6 +84,7 @@ const toIso = (date: Date | null) =>
 type DebugDecisionInput = {
   eligibility: ReturnType<typeof useLargeScreenUpsellEligibility>;
   onboardingDate: Date | null;
+  onboardingCompletionDate: string | null;
   retries: number;
   lastSeenDate: Date | null;
   now: Date;
@@ -97,6 +99,7 @@ type DebugDecisionInput = {
 function deriveDebugDecision({
   eligibility,
   onboardingDate,
+  onboardingCompletionDate,
   retries,
   lastSeenDate,
   now,
@@ -111,7 +114,7 @@ function deriveDebugDecision({
     "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
 
   const cooldownElapsed = isCooldownElapsed(
-    resolveOnboardingDateForUpsell(onboardingDate),
+    resolveUpsellCooldownStartDate(onboardingDate, onboardingCompletionDate),
     resolvedCooldownDays ?? 0,
     now,
   );
@@ -413,6 +416,7 @@ export function useLargeScreenUpsellDebugViewModel() {
   const hasCompetingModal = useCompetingAppStartModalsPresent();
 
   const onboardingDate = useSelector(onboardingDateSelector);
+  const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const retries = useSelector(retriesUpsellModalSelector);
   const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
@@ -461,6 +465,7 @@ export function useLargeScreenUpsellDebugViewModel() {
   } = deriveDebugDecision({
     eligibility,
     onboardingDate,
+    onboardingCompletionDate,
     retries,
     lastSeenDate,
     now,

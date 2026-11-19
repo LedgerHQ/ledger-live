@@ -11,14 +11,18 @@ type RenderOptions = {
   enabled?: boolean;
   knownDeviceModelIds?: DeviceModelId[];
   onboardingDate?: string | null;
+  onboardingCompletionDate?: string | null;
   audienceModels?: Partial<Record<NanoDeviceModelId, boolean>>;
+  nanoSCooldownDays?: number;
 };
 
 function renderEligibility({
   enabled = true,
   knownDeviceModelIds = [],
   onboardingDate = "2026-06-01T12:00:00.000Z",
+  onboardingCompletionDate = null,
   audienceModels,
+  nanoSCooldownDays,
 }: RenderOptions = {}) {
   const withState = (state: State): State => ({
     ...state,
@@ -28,6 +32,7 @@ function renderEligibility({
         ...state.settings.knownDeviceModelIds,
         ...Object.fromEntries(knownDeviceModelIds.map(deviceModelId => [deviceModelId, true])),
       },
+      onboardingCompletionDate,
     },
     postOnboarding: {
       ...state.postOnboarding,
@@ -40,11 +45,16 @@ function renderEligibility({
       {
         largeScreenUpsell: {
           enabled,
-          ...(audienceModels && {
+          ...((audienceModels || nanoSCooldownDays !== undefined) && {
             params: {
-              audience: {
-                models: { nanoS: true, nanoSP: true, nanoX: true, ...audienceModels },
-              },
+              ...(audienceModels && {
+                audience: {
+                  models: { nanoS: true, nanoSP: true, nanoX: true, ...audienceModels },
+                },
+              }),
+              ...(nanoSCooldownDays !== undefined && {
+                cooldownDays: { default: 30, nanoS: nanoSCooldownDays },
+              }),
             },
           }),
         },
@@ -183,6 +193,101 @@ describe("useLargeScreenUpsellEligibility", () => {
       reason: "cooldown",
       deviceModelId: DeviceModelId.nanoX,
       cooldownDays: 30,
+    });
+  });
+
+  describe("when the cooldown starts from a device setup", () => {
+    it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+      "should keep %s in cooldown right after its setup when post onboarding has not started yet",
+      deviceModelId => {
+        const { result } = renderEligibility({
+          knownDeviceModelIds: [deviceModelId],
+          onboardingDate: null,
+          onboardingCompletionDate: NOW.toISOString(),
+        });
+
+        expect(result.current).toEqual({
+          isEligible: false,
+          reason: "cooldown",
+          deviceModelId,
+          cooldownDays: 30,
+        });
+      },
+    );
+
+    it("should restart the cooldown when another device is set up after an older post onboarding", () => {
+      const { result } = renderEligibility({
+        knownDeviceModelIds: [DeviceModelId.nanoX],
+        onboardingDate: "2026-01-15T12:00:00.000Z",
+        onboardingCompletionDate: NOW.toISOString(),
+      });
+
+      expect(result.current).toEqual({
+        isEligible: false,
+        reason: "cooldown",
+        deviceModelId: DeviceModelId.nanoX,
+        cooldownDays: 30,
+      });
+    });
+
+    it("should keep Nano S in cooldown on the day of its setup with a 1-day cooldown", () => {
+      const { result } = renderEligibility({
+        knownDeviceModelIds: [DeviceModelId.nanoS],
+        onboardingDate: null,
+        onboardingCompletionDate: NOW.toISOString(),
+        nanoSCooldownDays: 1,
+      });
+
+      expect(result.current).toEqual({
+        isEligible: false,
+        reason: "cooldown",
+        deviceModelId: DeviceModelId.nanoS,
+        cooldownDays: 1,
+      });
+    });
+
+    it("should make Nano S eligible the day after its setup with a 1-day cooldown", () => {
+      const { result } = renderEligibility({
+        knownDeviceModelIds: [DeviceModelId.nanoS],
+        onboardingDate: null,
+        onboardingCompletionDate: "2026-07-05T12:00:00.000Z",
+        nanoSCooldownDays: 1,
+      });
+
+      expect(result.current).toEqual({
+        isEligible: true,
+        deviceModelId: DeviceModelId.nanoS,
+        cooldownDays: 1,
+      });
+    });
+
+    it("should keep the post onboarding date when it is later than the device setup", () => {
+      const { result } = renderEligibility({
+        knownDeviceModelIds: [DeviceModelId.nanoX],
+        onboardingDate: "2026-06-20T12:00:00.000Z",
+        onboardingCompletionDate: "2026-05-01T12:00:00.000Z",
+      });
+
+      expect(result.current).toEqual({
+        isEligible: false,
+        reason: "cooldown",
+        deviceModelId: DeviceModelId.nanoX,
+        cooldownDays: 30,
+      });
+    });
+
+    it("should ignore an unreadable device setup date", () => {
+      const { result } = renderEligibility({
+        knownDeviceModelIds: [DeviceModelId.nanoX],
+        onboardingDate: null,
+        onboardingCompletionDate: "not-a-date",
+      });
+
+      expect(result.current).toEqual({
+        isEligible: true,
+        deviceModelId: DeviceModelId.nanoX,
+        cooldownDays: 30,
+      });
     });
   });
 });

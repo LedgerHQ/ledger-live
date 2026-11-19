@@ -1,11 +1,11 @@
-import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
-import { knownDeviceModelIdsSelector } from "~/reducers/settings";
+import { knownDeviceModelIdsSelector, onboardingCompletionDateSelector } from "~/reducers/settings";
+import { resolveUpsellCooldownStartDate } from "../utils/upsellCooldownStartDate";
 
 const NANO_DEVICE_MODEL_IDS = [
   DeviceModelId.nanoS,
@@ -66,6 +66,7 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
   const feature = useFeature("largeScreenUpsell");
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const onboardingDate = useSelector(onboardingDateSelector);
+  const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
 
   const params = feature?.params;
   const hasSeenTouchscreen = hasSeenTouchscreenDevice(knownDeviceModelIds);
@@ -93,9 +94,12 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
   const deviceModelId = selectCooldownDeviceModelId(enabledNanoDeviceModelIds, params.cooldownDays);
   const cooldownDays = resolveCooldownDays(params.cooldownDays, deviceModelId);
   const now = new Date();
-  const onboardingDateForEligibility = resolveOnboardingDateForUpsell(onboardingDate);
+  const cooldownStartDate = resolveUpsellCooldownStartDate(
+    onboardingDate,
+    onboardingCompletionDate,
+  );
 
-  if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, now)) {
+  if (!isCooldownElapsed(cooldownStartDate, cooldownDays, now)) {
     return { isEligible: false, reason: "cooldown", deviceModelId, cooldownDays };
   }
 

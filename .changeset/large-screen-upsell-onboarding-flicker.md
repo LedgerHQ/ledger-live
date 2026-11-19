@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Stop the large screen upsell modal from opening in the app session where a device setup finished
+Start the large screen upsell cooldown from the latest device setup so the modal no longer opens right after onboarding

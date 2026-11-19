@@ -8,13 +8,9 @@ import {
   resetUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
-import { getAppSessionStartedAt } from "~/appSessionStart";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import {
-  onboardingCompletionDateSelector,
-  personalizedRecommendationsEnabledSelector,
-} from "~/reducers/settings";
+import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { useLargeScreenUpsellEligibility } from "../../hooks/useLargeScreenUpsellEligibility";
 import { useCompetingAppStartModalsPresent } from "../../hooks/useCompetingAppStartModalsPresent";
@@ -60,7 +56,6 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   );
   const retries = useSelector((state: State) => state.largeScreenUpsellModal.retries);
   const lastSeenAt = useSelector((state: State) => state.largeScreenUpsellModal.lastSeenAt);
-  const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasSeenCompetingAppStartModalRef = useRef(hasCompetingAppStartModal);
   const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
   const hasHandledCurrentModalInteractionRef = useRef(false);
@@ -94,14 +89,8 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const isEligible = Boolean(
     hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
   );
-  const hasCompletedOnboardingThisSession =
-    onboardingCompletionDate !== null &&
-    Date.parse(onboardingCompletionDate) >= getAppSessionStartedAt();
   const shouldAttemptAutoOpen =
-    isEligible &&
-    !hasCompletedOnboardingThisSession &&
-    !hasSeenCompetingAppStartModalRef.current &&
-    !hasAutoOpenedThisSession;
+    isEligible && !hasSeenCompetingAppStartModalRef.current && !hasAutoOpenedThisSession;
 
   const sharedAnalyticsProps: LargeScreenUpsellSharedAnalyticsProps | null = useMemo(() => {
     if (!("deviceModelId" in eligibility)) {

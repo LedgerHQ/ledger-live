@@ -8,7 +8,6 @@ import { useDispatch } from "~/context/hooks";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import type { State } from "~/reducers/types";
-import { markAppSessionStart } from "~/appSessionStart";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { LargeScreenUpsellModalPortfolioMount } from "..";
 import { __resetLargeScreenUpsellAutoOpenForTests } from "../components/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
@@ -481,21 +480,14 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     });
   });
 
-  describe("after a device setup", () => {
-    const APP_SESSION_START = new Date("2026-06-01T11:50:00.000Z");
-
-    beforeEach(() => {
-      jest.setSystemTime(APP_SESSION_START);
-      markAppSessionStart();
-      jest.setSystemTime(NOW);
-    });
-
-    const withOnboardingCompletedAt = (onboardingCompletionDate: string) =>
+  describe("right after a device setup, before post onboarding starts", () => {
+    const withJustSetUpDevice = (deviceModelId: DeviceModelId) =>
       withFlagOverrides(
         {
           largeScreenUpsell: {
             enabled: true,
             params: {
+              cooldownDays: { default: 30, nanoS: 1 },
               opted_out: {
                 enabled: true,
                 link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
@@ -506,35 +498,35 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
           lwmGenericAwarenessModal: { enabled: false },
           analyticsOptIn: { enabled: false },
         },
-        withKnownDeviceModels([DeviceModelId.nanoS], {
-          hasCompletedOnboarding: true,
-          onboardingCompletionDate,
-        }),
+        (state: State): State => {
+          const withDevice = withKnownDeviceModels([deviceModelId], {
+            hasCompletedOnboarding: true,
+            onboardingCompletionDate: NOW.toISOString(),
+          })(state);
+          return {
+            ...withDevice,
+            postOnboarding: { ...withDevice.postOnboarding, onboardingDate: null },
+          };
+        },
       );
 
-    it("should not auto-open the upsell modal when the setup finished in this app session before Portfolio loaded", async () => {
-      const { store } = render(<IntegrationNavigator />, {
-        overrideInitialState: withOnboardingCompletedAt("2026-06-01T11:55:00.000Z"),
-      });
+    it.each([DeviceModelId.nanoS, DeviceModelId.nanoX])(
+      "should not auto-open the upsell modal for %s",
+      async deviceModelId => {
+        const { store } = render(<IntegrationNavigator />, {
+          overrideInitialState: withJustSetUpDevice(deviceModelId),
+        });
 
-      expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
+        expect(
+          await screen.findByTestId("large-screen-upsell-integration-portfolio"),
+        ).toBeVisible();
+        act(() => {
+          jest.runOnlyPendingTimers();
+        });
 
-      expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeVisible();
-      expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
-    });
-
-    it("should auto-open the upsell modal when the setup finished in a previous app session", async () => {
-      const { store } = render(<IntegrationNavigator />, {
-        overrideInitialState: withOnboardingCompletedAt("2026-05-31T12:00:00.000Z"),
-      });
-
-      await waitFor(() => {
-        expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
-      });
-      expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
-    });
+        expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeVisible();
+        expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+      },
+    );
   });
 });
