@@ -1,3 +1,4 @@
+import "../../SpikeTool/spikeTool";
 import React from "react";
 import { DevTools } from "@devtools/shell";
 import { TransportPanel } from "@devtools/transport-panel";
