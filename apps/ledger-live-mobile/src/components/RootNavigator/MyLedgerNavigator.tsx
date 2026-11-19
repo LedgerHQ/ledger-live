@@ -6,11 +6,10 @@ import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import MyLedgerChooseDeviceScreen from "~/screens/MyLedgerChooseDevice";
 import MyLedgerDeviceScreen from "~/screens/MyLedgerDevice";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
-import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
+import { wallet40HeaderOptions } from "~/screens/MyLedgerDevice/wallet40HeaderOptions";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -42,11 +41,6 @@ export default function MyLedgerNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
-      <Stack.Screen
-        name={ScreenName.MyLedgerChooseDevice}
-        component={MyLedgerChooseDeviceScreen}
-        options={wallet40GestureHeaderOptions}
-      />
       <Stack.Screen
         name={ScreenName.MyLedgerDevice}
         component={MyLedgerDeviceScreen}

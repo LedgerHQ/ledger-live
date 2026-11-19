@@ -5,17 +5,6 @@ import { ScreenName } from "~/const";
 import { ManagerTab } from "~/const/manager";
 
 export type MyLedgerNavigatorStackParamList = {
-  [ScreenName.MyLedgerChooseDevice]:
-    | {
-        searchQuery?: string;
-        tab?: ManagerTab;
-        installApp?: string;
-        device?: Device | null;
-        appsToRestore?: string[];
-        updateModalOpened?: boolean;
-        firmwareUpdate?: boolean;
-      }
-    | undefined;
   [ScreenName.MyLedgerDevice]: {
     device: Device;
     deviceInfo: DeviceInfo;
