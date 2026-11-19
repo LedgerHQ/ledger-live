@@ -22,8 +22,8 @@ export function asChecksState(machineState: string | null): string | null {
   return `checks.${machineState.slice(postSetupFirmwarePrefix.length)}`;
 }
 
-export function isPostSetupFirmware(machineState: string | null): boolean {
-  return machineState?.startsWith(postSetupFirmwarePrefix) === true;
+export function isFirmwareCheckFailed(machineState: string | null): boolean {
+  return asChecksState(machineState) === "checks.firmwareCheckFailed";
 }
 
 export function isFirmwareUpdateDelegated(machineState: string | null): boolean {
@@ -35,7 +35,7 @@ export function toChecksError(
   genuineFailureKind: string | null,
 ): { kind: GenuineErrorKind } | null {
   const machineState = asChecksState(rawMachineState);
-  if (machineState === "checks.firmwareCheckFailed") return { kind: "unknown" };
+  if (isFirmwareCheckFailed(machineState)) return { kind: "unknown" };
   if (machineState === "checks.genuineFailed" || machineState === "checks.notGenuineSupport") {
     return toGenuineError(genuineFailureKind);
   }

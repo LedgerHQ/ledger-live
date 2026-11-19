@@ -1,7 +1,7 @@
 import {
   asChecksState,
+  isFirmwareCheckFailed,
   isFirmwareUpdateDelegated,
-  isPostSetupFirmware,
   toChecksError,
   toChecksScreenState,
   toFirmwareUpdate,
@@ -128,9 +128,10 @@ describe("the firmware update held back until setup", () => {
     expect(isFirmwareUpdateDelegated("postSetupFirmware.firmwareUpdateOffered")).toBe(false);
   });
 
-  it("should tell the post-setup firmware states apart", () => {
-    expect(isPostSetupFirmware("postSetupFirmware.firmwareUpdateOffered")).toBe(true);
-    expect(isPostSetupFirmware("checks.firmwareUpdateOffered")).toBe(false);
-    expect(isPostSetupFirmware(null)).toBe(false);
+  it("should find a failed firmware check before and after setup", () => {
+    expect(isFirmwareCheckFailed("postSetupFirmware.firmwareCheckFailed")).toBe(true);
+    expect(isFirmwareCheckFailed("checks.firmwareCheckFailed")).toBe(true);
+    expect(isFirmwareCheckFailed("checks.genuineFailed")).toBe(false);
+    expect(isFirmwareCheckFailed(null)).toBe(false);
   });
 });

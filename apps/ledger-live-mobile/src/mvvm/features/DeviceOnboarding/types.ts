@@ -32,6 +32,8 @@ export type ChecksScreenProps = {
   firmwareUpToDate: boolean;
   onStart: () => void;
   onRetry: () => void;
+  /** Given only when a failed firmware check may be skipped, which turns cancel into skip. */
+  onSkipFirmwareCheck?: () => void;
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
   onUpdatePressed?: () => void;

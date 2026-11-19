@@ -730,6 +730,26 @@ describe("ChecksView", () => {
     });
   });
 
+  it("should skip the failed firmware check from the unknown sheet after setup", async () => {
+    jest.mocked(track).mockClear();
+    const onSkipFirmwareCheck = jest.fn();
+    const { user, onQuit } = renderChecks("checking", {
+      error: { kind: "unknown" },
+      onSkipFirmwareCheck,
+    });
+    const sheet = within(screen.getByTestId(checksTestIds.unknownSheet));
+
+    expect(sheet.queryByRole("button", { name: "Cancel set up" })).toBeNull();
+    await user.press(sheet.getByRole("button", { name: "Skip Ledger OS update" }));
+
+    expect(onSkipFirmwareCheck).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Skip Ledger OS update",
+      page: "Error: unknown error",
+    });
+  });
+
   it("should retry the genuine check from the unknown sheet", async () => {
     const { user, onRetry, onQuit } = renderChecks("checking", { error: { kind: "unknown" } });
 

@@ -56,8 +56,8 @@ import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/sc
 import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import {
+  isFirmwareCheckFailed,
   isFirmwareUpdateDelegated,
-  isPostSetupFirmware,
   toChecksError,
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
@@ -233,7 +233,7 @@ type ScreenActions = {
   requestQuit: () => void;
   closeFirmwareHandover: () => void;
   send: (event: {
-    type: "RETRY" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE";
+    type: "RETRY" | "SKIP" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE";
   }) => boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
@@ -243,6 +243,7 @@ type ScreenActions = {
   markUpdateAccepted: () => void;
   /** Wraps a close button's action so it also sends the `close` click. */
   withCloseClick: (quit: () => void) => () => void;
+  updateAfterSetup: boolean;
 };
 
 type ChecksTracking = Pick<SeededFunnelTracking, "seededDeviceType" | "trackClick" | "screensFor">;
@@ -486,7 +487,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
-      updateAfterSetup: isPostSetupFirmware(actions.state),
+      updateAfterSetup: actions.updateAfterSetup,
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -499,6 +500,10 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
         actions.send({ type: startEvent });
       },
       onRetry: () => actions.send({ type: "RETRY" }),
+      onSkipFirmwareCheck:
+        actions.updateAfterSetup && isFirmwareCheckFailed(actions.state)
+          ? () => actions.send({ type: "SKIP" })
+          : undefined,
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => {
@@ -990,6 +995,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       trackClick(seededButtons.close);
       quit();
     },
+    updateAfterSetup: onboarding.snapshot?.context.updateAfterSetup === true,
   };
   const built =
     successScreen(screen) ??

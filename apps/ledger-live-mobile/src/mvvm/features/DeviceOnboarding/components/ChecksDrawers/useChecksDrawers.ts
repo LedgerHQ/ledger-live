@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { getPreviousTrackingPage, track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -65,6 +65,8 @@ export type ErrorDrawerProps = Readonly<{
   productName: string;
   onRetry: () => void;
   onCancel: () => void;
+  /** Replaces cancel when the failed check is the firmware one the user may skip. */
+  onSkip?: () => void;
   onClose: () => void;
   onContactSupport: () => void;
   onGoToSettings: () => void;
@@ -97,6 +99,7 @@ type ChecksErrorDrawersInput = Readonly<{
   onRetry: () => void;
   onCloseSheet: () => void;
   onErrorCancel: () => void;
+  onSkipFirmwareCheck?: () => void;
   onAllowDismiss: () => void;
   onNotGenuineClose: () => void;
   /** Set only in the seeded funnel: the drawers then send the seeded page names. */
@@ -297,6 +300,7 @@ export function useChecksErrorDrawers({
   onRetry,
   onCloseSheet,
   onErrorCancel,
+  onSkipFirmwareCheck,
   onAllowDismiss,
   onNotGenuineClose,
   seededDeviceType,
@@ -335,6 +339,21 @@ export function useChecksErrorDrawers({
     );
     onErrorCancel();
   }, [errorDrawerKind, onErrorCancel, seededDeviceType]);
+  const skip = useMemo(
+    () =>
+      onSkipFirmwareCheck
+        ? () => {
+            trackRecoverableButton(
+              "Skip Ledger OS update",
+              recoverableErrorPage,
+              errorDrawerKind,
+              seededDeviceType,
+            );
+            onSkipFirmwareCheck();
+          }
+        : undefined,
+    [errorDrawerKind, onSkipFirmwareCheck, seededDeviceType],
+  );
   const onContactSupport = useCallback(() => {
     trackRecoverableButton(
       "Contact Ledger Support",
@@ -389,6 +408,7 @@ export function useChecksErrorDrawers({
       productName,
       onRetry: retry,
       onCancel: cancel,
+      onSkip: skip,
       onClose: () => dismissIfOpen(suspendSheets, recoverableKind !== null, onCloseSheet),
       onContactSupport,
       onGoToSettings,

@@ -361,6 +361,49 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).error).toEqual(error);
   });
 
+  function heldBackUpdateSession(state: string, updateAfterSetup: boolean) {
+    return session({
+      state,
+      context: { checksPaused: false } as DeviceOnboardingSession["context"],
+      snapshot: { context: { updateAfterSetup } } as DeviceOnboardingSession["snapshot"],
+    });
+  }
+
+  it.each(["postSetupFirmware.firmwareUpdateOffered", "checks.firmwareUpdateOffered"])(
+    "should keep the held-back update after setup in %s",
+    state => {
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(checksOf(result.current).updateAfterSetup).toBe(true);
+    },
+  );
+
+  it.each(["postSetupFirmware.firmwareCheckFailed", "checks.firmwareCheckFailed"])(
+    "should let the user skip the failed firmware check after setup in %s",
+    state => {
+      send.mockClear();
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      checksOf(result.current).onSkipFirmwareCheck?.();
+
+      expect(send).toHaveBeenCalledWith({ type: "SKIP" });
+    },
+  );
+
+  it.each([
+    ["checks.firmwareCheckFailed", false],
+    ["checks.genuineFailed", true],
+  ])("should not offer to skip in %s when the update after setup is %s", (state, flag) => {
+    useSession.mockReturnValue(heldBackUpdateSession(state, flag));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).onSkipFirmwareCheck).toBeUndefined();
+  });
+
   it.each([
     "readingState",
     "legacyFallback",
