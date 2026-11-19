@@ -6,7 +6,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";
 import DrawerHeader from "../../components/Synchronize/DrawerHeader";
-import { QrCodeSheetHeader } from "../../components/Synchronize/QrCodeSheetHeader";
+import { useTranslation } from "~/context/Locale";
 import useActivationDrawerModel from "./useActivationDrawerModel";
 import { LedgerSyncBottomSheet } from "./LedgerSyncBottomSheet";
 
@@ -38,6 +38,7 @@ function View({
   deviceIntentStepElement,
 }: ViewProps) {
   const isLumenSheet = useFeature("lwmLedgerSyncDie")?.enabled === true;
+  const { t } = useTranslation();
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
   const flow = (
@@ -60,7 +61,7 @@ function View({
         <LedgerSyncBottomSheet
           isOpen={isOpen}
           onClose={onCloseDrawer}
-          customHeader={hasCustomHeader ? <QrCodeSheetHeader onClose={handleClose} /> : undefined}
+          title={hasCustomHeader ? t("walletSync.synchronize.qrCode.title") : undefined}
           hasBackButton={canGoBack}
           onBack={goBackToPreviousStep}
           enableContentPanningGesture={!hasScrollableInstructions}

@@ -490,7 +490,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
     });
 
-    it("should give the QR code step's header the full sheet width and keep the side margin on its content", async () => {
+    it("should title the QR code step in the sheet's sticky header and keep the side margin on its content", async () => {
       const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
 
       await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
@@ -499,9 +499,11 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       const sheetContent = screen.getByTestId("wallet-sync-activation-sheet-content");
       const body = screen.getByTestId("wallet-sync-activation-sheet-content-body");
       expect(sheetContent).toHaveStyle({ paddingHorizontal: 0 });
+      expect(sheetContent).toHaveProp("stickyHeaderIndices", [0]);
       expect(body).toHaveStyle({ paddingHorizontal: 16 });
-      expect(within(body).queryByTestId("qr-code-sheet-header")).toBeNull();
-      expect(within(sheetContent).getByTestId("qr-code-sheet-header")).toBeVisible();
+      const title = within(sheetContent).getByTestId("bottom-sheet-header-title");
+      expect(title).toHaveTextContent("Sync Ledger Wallet apps");
+      expect(within(body).queryByTestId("bottom-sheet-header-title")).toBeNull();
     });
 
     it("should grow the show QR code tab's instructions up into the scan tab's frame and caption room", async () => {
@@ -532,6 +534,20 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       act(() => activationSheet()?.props.onClose?.());
 
       expect(store.getState().appstate.isPasswordLockBlocked).toBe(false);
+    });
+
+    it("should close the QR code step with the sheet's close button and restart the flow", async () => {
+      const { user, store } = render(<SettingsEntry />, {
+        overrideInitialState: initialState({}),
+      });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+
+      await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
+
+      await waitFor(() => expect(activationSheet()?.props.isRequestingToBeOpened).toBe(false));
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(false);
+      expect(screen.getByText("entry screen")).toBeVisible();
     });
 
     it("should let the content drag the sheet outside the QR code step", async () => {

@@ -13,8 +13,7 @@ type Props = Readonly<{
   onClose?: () => void;
   hasBackButton?: boolean;
   onBack?: () => void;
-  /** Replaces the sheet header and its close button. */
-  customHeader?: React.ReactNode;
+  title?: string;
   /** Off for content holding a scroll area of its own, so the sheet's drag does not take its scroll. */
   enableContentPanningGesture?: boolean;
   testID: string;
@@ -30,12 +29,11 @@ export function LedgerSyncBottomSheet({
   onClose,
   hasBackButton,
   onBack,
-  customHeader,
+  title,
   enableContentPanningGesture,
   testID,
   children,
 }: Props) {
-  const hasCustomHeader = customHeader !== undefined;
   // Back closes the sheet like its close button, even on a step with a back button, as the legacy
   // drawer's modal did: the sheet then reports it once through `onClose`.
   const [isClosedByBack, setIsClosedByBack] = useState(false);
@@ -50,16 +48,12 @@ export function LedgerSyncBottomSheet({
       onClose={onClose}
       hasBackButton={hasBackButton}
       onBack={onBack}
-      noCloseButton={hasCustomHeader}
       enableDynamicSizing
       enableContentPanningGesture={enableContentPanningGesture}
       contentHasBottomSpace
       testID={testID}
     >
-      <LedgerSyncBottomSheetContent
-        header={hasCustomHeader ? customHeader : <BottomSheetHeader spacing />}
-        testID={`${testID}-content`}
-      >
+      <LedgerSyncBottomSheetContent title={title} testID={`${testID}-content`}>
         {children}
       </LedgerSyncBottomSheetContent>
     </QueuedBottomSheet>
@@ -89,22 +83,24 @@ function useHardwareBackWhileOpen(isOpen: boolean, onBack: (() => void) | undefi
 }
 
 function LedgerSyncBottomSheetContent({
-  header,
+  title,
   testID,
   children,
-}: Readonly<{ header: React.ReactNode; testID: string; children: React.ReactNode }>) {
+}: Readonly<{ title?: string; testID: string; children: React.ReactNode }>) {
   const bottomInset = useBottomSheetBottomInset();
 
-  // The side margin goes on the content, not the scroll view, so a custom header spans the sheet
-  // width as on the legacy drawer.
+  // The side margin goes on the content, not the scroll view, so the sticky header spans the sheet
+  // width and its background hides the content scrolled under it.
   return (
     <BottomSheetScrollView
       style={{ paddingHorizontal: 0 }}
+      stickyHeaderIndices={[0]}
+      alwaysBounceVertical={false}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       testID={testID}
     >
-      {header}
+      <BottomSheetHeader spacing title={title} lx={{ backgroundColor: "canvasSheet" }} />
       <View
         style={{ paddingHorizontal: SHEET_SIDE_MARGIN, paddingBottom: bottomInset }}
         testID={`${testID}-body`}
