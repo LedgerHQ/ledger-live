@@ -39,6 +39,7 @@
     "@shared/analytics": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/ui-animated-qr-code": "workspace:*",
     "@shared/ui-info-state": "workspace:*"
   },
   "devDependencies": {
@@ -46,6 +47,7 @@
     "@domain/api-currency-token": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -69,6 +71,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
@@ -77,10 +80,12 @@
   "peerDependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:"
   },
@@ -98,6 +103,12 @@
       "optional": true
     },
     "@ledgerhq/crypto-icons": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-reanimated": {
       "optional": true
     }
   }
