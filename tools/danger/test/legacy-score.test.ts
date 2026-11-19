@@ -7,6 +7,7 @@ import {
   classify,
   computeLegacyScore,
   formatReport,
+  isScoredAuthor,
   legacyFolder,
   legacyGrowthRows,
   parseAllowlist,
@@ -382,5 +383,15 @@ describe("parseAllowlist", () => {
     const { entries, errors } = parseAllowlist(raw, path => existsSync(join(root, path)));
     assert.deepEqual(errors, []);
     assert.ok(entries.length > 0);
+  });
+});
+
+describe("isScoredAuthor", () => {
+  it("scores AI agent bots", () => {
+    assert.equal(isScoredAuthor("koda-apps[bot]"), true);
+  });
+
+  it("skips dependency bumps", () => {
+    assert.equal(isScoredAuthor("live-github-bot[bot]"), false);
   });
 });

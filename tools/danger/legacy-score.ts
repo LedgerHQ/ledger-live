@@ -27,9 +27,14 @@ export const MIN_LINES = 50;
 export const RED_BELOW = 0.2;
 export const GREEN_ABOVE = 0.8;
 export const THANKS_REMOVED = 1000;
+const DEPENDENCY_BOT = "live-github-bot[bot]";
 
 const ALLOWLIST_FIELDS = ["path", "reason", "target", "ticket"] as const;
 const TICKET = /^LIVE-\d+$/;
+
+export function isScoredAuthor(login: string): boolean {
+  return login !== DEPENDENCY_BOT;
+}
 
 const SOURCE = /\.tsx?$/;
 const DECLARATION = /\.d\.ts$/;

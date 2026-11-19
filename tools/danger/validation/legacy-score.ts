@@ -2,6 +2,7 @@ import {
   computeLegacyScore,
   formatReport,
   GREEN_ABOVE,
+  isScoredAuthor,
   legacyGrowthRows,
   MIN_LINES,
   parseAllowlist,
@@ -45,7 +46,8 @@ function readAllowlist(root: string) {
 }
 
 async function validateLegacyScore() {
-  if (isMergeConflictsPr(danger.github.pr.title) || danger.github.pr.user.type === "Bot") return;
+  if (isMergeConflictsPr(danger.github.pr.title) || !isScoredAuthor(danger.github.pr.user.login))
+    return;
   try {
     const root = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
     const allowlist = readAllowlist(root);
