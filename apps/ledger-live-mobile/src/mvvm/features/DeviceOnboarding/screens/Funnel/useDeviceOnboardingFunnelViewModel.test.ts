@@ -2635,6 +2635,41 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send.mock.calls.filter(([event]) => event.type === "RESUME_POLLING")).toHaveLength(1);
   });
 
+  it("should resume instead of opening Recover when Close lands before the pause is acknowledged", () => {
+    navigate.mockClear();
+    send.mockClear();
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({
+          currentOnboardingStep: "restore-recover-backup",
+          firmwareVersion: "1.8.0",
+          pollingPaused: false,
+        }),
+      }),
+    );
+
+    const { result, rerender } = renderFunnel();
+    const restore = restoreOf(result.current);
+
+    act(() => restore.onContinue());
+    act(() => restore.onClose());
+
+    expect(result.current.status).toBe("setup");
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ pollingPaused: true, firmwareVersion: "1.8.0" }),
+      }),
+    );
+    rerender(undefined);
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+  });
+
   it("should not pause polling for a seeded device", () => {
     send.mockClear();
     useSession.mockReturnValue(

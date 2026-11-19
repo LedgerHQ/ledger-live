@@ -480,6 +480,7 @@ function useRestoreRecoverHandoff({
   navigation,
   pollingPaused,
   protectId,
+  restoreShown,
   send,
   state,
 }: Readonly<{
@@ -488,6 +489,8 @@ function useRestoreRecoverHandoff({
   navigation: NavigationProp<ParamListBase>;
   pollingPaused: boolean;
   protectId: string;
+  /** False once the user closed the restore screen, even if the machine is still on that step. */
+  restoreShown: () => boolean;
   send: DeviceOnboardingSession["send"];
   state: DeviceOnboardingSession["state"];
 }>): () => void {
@@ -501,7 +504,7 @@ function useRestoreRecoverHandoff({
   useEffect(() => {
     if (!openingRecover.current || !pollingPaused) return;
     openingRecover.current = false;
-    if (state !== "deviceSetup.restoreRecover") {
+    if (state !== "deviceSetup.restoreRecover" || !restoreShown()) {
       send({ type: "RESUME_POLLING" });
       return;
     }
@@ -514,7 +517,7 @@ function useRestoreRecoverHandoff({
         redirectTo: "restore",
       },
     });
-  }, [liveDevice, navigation, pollingPaused, protectId, send, state]);
+  }, [liveDevice, navigation, pollingPaused, protectId, restoreShown, send, state]);
 
   useEffect(() => {
     if (!focused || !awaitingPollingResume.current) return;
@@ -564,6 +567,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     dismiss();
     return true;
   }, []);
+  const restoreShown = useCallback(() => dismissRestoreRef.current !== null, []);
 
   useEffect(() => {
     connectWhenIdle(started, onboarding);
@@ -834,6 +838,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     navigation,
     pollingPaused: onboarding.context?.pollingPaused === true,
     protectId,
+    restoreShown,
     send,
     state: onboarding.state,
   });
