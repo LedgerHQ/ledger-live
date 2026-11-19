@@ -26,6 +26,7 @@ export function syncDetached(
   }: Omit<SyncLegacyAccountOptions, "updateAccountWithUpdater">,
   signal: AbortSignal | undefined,
 ): Promise<Account> {
+  if (signal?.aborted) return Promise.reject(abortReason(signal));
   // One observable from the placeholder to the sync, so aborting at any step releases the read at once.
   const synced$ = defer(() => placeholderAccount(descriptor)).pipe(
     switchMap(placeholder =>
@@ -42,7 +43,6 @@ export function syncDetached(
       ),
     ),
   );
-  if (signal?.aborted) return Promise.reject(abortReason(signal));
   const aborted$ = signal
     ? fromEvent(signal, "abort").pipe(
         map(() => {

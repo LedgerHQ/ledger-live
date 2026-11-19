@@ -1,7 +1,7 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-canton/bridge/index";
-import { getEnv } from "@shared/env";
+import { usesMockBridges } from "../../bridge/mockMode";
 import Transport from "@ledgerhq/hw-transport";
 import { CantonSigner } from "@ledgerhq/coin-canton";
 import cantonResolver from "@ledgerhq/coin-canton/signer";
@@ -19,7 +19,7 @@ const createSigner: CreateSigner<CantonSigner> = (transport: Transport) => {
 };
 
 // One bridge serves every Canton network: each call resolves `context.config(currency.id)`.
-const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")
+const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = usesMockBridges()
   ? cantonBridgeMock
   : createBridges(
       executeWithSigner(createSigner),

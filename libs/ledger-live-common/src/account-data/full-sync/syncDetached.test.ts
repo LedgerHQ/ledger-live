@@ -64,10 +64,18 @@ describe("syncDetached", () => {
 
   it("unsubscribes the sync once the signal aborts", async () => {
     const teardown = jest.fn();
-    getAccountBridge.mockResolvedValue({ sync: () => new Observable(() => teardown) });
+    const subscribed = new Promise<void>(started => {
+      getAccountBridge.mockResolvedValue({
+        sync: () =>
+          new Observable(() => {
+            started();
+            return teardown;
+          }),
+      });
+    });
     const controller = new AbortController();
     const pending = syncDetached(descriptor, options, controller.signal);
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await subscribed;
     controller.abort();
     await expect(pending).rejects.toMatchObject({ name: "AbortError" });
     expect(teardown).toHaveBeenCalled();

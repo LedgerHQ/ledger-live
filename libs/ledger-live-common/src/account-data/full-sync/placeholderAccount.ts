@@ -16,7 +16,8 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
   const currency = getCryptoCurrencyById(currencyId);
   // A public-key family's sync reads its key from the account id (TON, ICP, Aptos, Stacks).
   const xpubOrAddress = xpub ?? publicKey ?? freshAddress ?? "";
-  if (usesMockBridges()) {
+  const mock = usesMockBridges();
+  if (mock) {
     const { findScannedMockAccount } = await import("../../bridge/mockHelpers");
     const scanned = await findScannedMockAccount(currency, xpubOrAddress);
     if (scanned) return scanned;
@@ -25,7 +26,7 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
   return {
     type: "Account",
     id: encodeAccountId({
-      type: usesMockBridges() ? "mock" : "js",
+      type: mock ? "mock" : "js",
       version: "2",
       currencyId,
       xpubOrAddress,

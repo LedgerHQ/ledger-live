@@ -1,6 +1,6 @@
 import { AccountDescriptorSchema, toNetworkId } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { fromLegacyAccount, toLegacyPath } from "../../account/accountDescriptor";
+import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { genScannedMockAccount } from "../../bridge/mockHelpers";
 import { placeholderAccount } from "./placeholderAccount";
 
@@ -99,9 +99,5 @@ describe("placeholderAccount", () => {
       freshAddress: "0.0.751515",
       freshAddressPath: "44/3030",
     });
-  });
-
-  it("spells a descriptor path the legacy way", () => {
-    expect(toLegacyPath("m/84h/0h/2h")).toBe("84'/0'/2'");
   });
 });
