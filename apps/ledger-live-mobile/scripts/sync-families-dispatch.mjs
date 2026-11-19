@@ -50,6 +50,7 @@ const targets = [
   "ExpiryDurationInput",
   "ShouldUseReceiveOptions",
   "PendingTransferProposals",
+  "StakePositionSheet",
   "customAddAccountFlow",
   "customSendFlow",
 ];

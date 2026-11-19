@@ -9,6 +9,7 @@ import {
   coinMarketCapApi,
   countervaluesApi,
   dadaApi,
+  earnApi,
   pushDevicesApi,
   swapApi,
 } from "@shared/api-services";
@@ -33,6 +34,7 @@ const EXPECTED_REDUCER_PATHS = [
   "cardApi",
   "coinMarketCapApi",
   "countervaluesApi",
+  "earnApi",
   "hederaApi",
   "marketApi",
   "pushDevicesApi",
@@ -47,6 +49,7 @@ const EXPECTED_APIS = [
   cardApi,
   coinMarketCapApi,
   countervaluesApi,
+  earnApi,
   hederaApi,
   marketApi,
   pushDevicesApi,

@@ -4,6 +4,10 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
@@ -41,6 +45,22 @@ const DEFAULT_MANIFEST_ID =
 
 /** Persists across remounts (e.g. Strict Mode in dev) to avoid loader flicker when provider rehydrates. */
 let lastKnownManifest: LiveAppManifest | undefined;
+
+/**
+ * Tells the live app this host opens stake positions. Only the flag grants it: a value from the
+ * route or a deeplink is dropped, whether it claims the capability or denies it.
+ */
+function withNativeStakePositionInput(
+  params: Record<string, string | undefined>,
+  isEnabled: boolean,
+): Record<string, string | undefined> {
+  const granted = Object.fromEntries(
+    Object.entries(params).filter(([key]) => key !== NATIVE_STAKE_POSITION_INPUT_KEY),
+  );
+  return isEnabled
+    ? { ...granted, [NATIVE_STAKE_POSITION_INPUT_KEY]: NATIVE_STAKE_POSITION_INPUT_VALUE }
+    : granted;
+}
 
 export const EarnScreen = memo(Earn);
 
@@ -106,6 +126,7 @@ function Earn({ route }: Props) {
     [stableSavingsFlag],
   );
   const deviceIntentSignEnabled = useFeature("llmWalletApiDeviceIntentSign")?.enabled ?? false;
+  const nativeStakePositionEnabled = useFeature("earnNativeStakePosition")?.enabled ?? false;
 
   const shouldDisplayBackgroundCanvas = useMemo(
     () => shouldDisplayEarnBackgroundCanvas(params?.intent, swapToEarnFlag?.enabled ?? false),
@@ -121,7 +142,7 @@ function Earn({ route }: Props) {
     const { customDappURL, customDappUrl, ...restParams } = params;
     const dappUrl = customDappURL ?? customDappUrl;
 
-    const earnInitParams: Record<string, string | undefined> = {
+    const baseInitParams: Record<string, string | undefined> = {
       theme,
       lang: language,
       locale: language,
@@ -142,6 +163,7 @@ function Earn({ route }: Props) {
       ...Object.fromEntries(searchParams.entries()),
       llmWalletApiDeviceIntentSignEnabled: deviceIntentSignEnabled ? "true" : "false",
     };
+    const earnInitParams = withNativeStakePositionInput(baseInitParams, nativeStakePositionEnabled);
 
     return {
       ...earnInitParams,
@@ -160,6 +182,7 @@ function Earn({ route }: Props) {
     swapToEarnParam,
     stableSavingsParam,
     deviceIntentSignEnabled,
+    nativeStakePositionEnabled,
     params,
     searchParams,
   ]);
