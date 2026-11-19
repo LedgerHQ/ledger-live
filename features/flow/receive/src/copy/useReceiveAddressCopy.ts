@@ -4,6 +4,8 @@ import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
 export type ReceiveAddressCopy = Readonly<{
   title: string;
   networkLabel: string;
+  closeLabel: string;
+  backLabel: string;
   selectAddressTitle: string;
   addressOptionLabels: Readonly<Record<ReceiveAddressOptionId, string>>;
 }>;
@@ -18,6 +20,8 @@ export function useReceiveAddressCopy({
   return {
     title: t("receiveAddress.title", { asset: assetTicker }),
     networkLabel: t("receiveAddress.networkLabel", { network: networkName }),
+    closeLabel: t("receiveAddress.close"),
+    backLabel: t("receiveAddress.back"),
     selectAddressTitle: t("receiveAddress.selectAddress.title"),
     addressOptionLabels: {
       transparent: t("receiveAddress.addressOptions.transparent"),

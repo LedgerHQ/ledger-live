@@ -10,15 +10,13 @@
 #include <metal_stdlib>
 using namespace metal;
 
-// Same layout as GlowUniforms in RCTGlowView.mm (96 bytes).
+// Same layout as GlowUniforms in RCTGlowView.mm (88 bytes).
 struct Uniforms {
   float2 res;
   float time;
   float dpr;
-  float fade;
   float fadeTop;
   float fadeBottom;
-  float pad;
   // The design params (GlowParams), filled by name from the typed props.
   float intensity;
   float opacity;
@@ -212,6 +210,5 @@ fragment float4 glow_fragment(VertexOut in [[stage_in]], constant Uniforms &u [[
   if (u.fadeTop > 0.0) col += glowColor(u, in, uv, uv.y, px, t, P_TOP_REACH) * smoothstep(0.0, 1.0, u.fadeTop);
   if (u.fadeBottom > 0.0) col += glowColor(u, in, uv, 1.0 - uv.y, px, t, 1.0) * smoothstep(0.0, 1.0, u.fadeBottom);
   col += (hash21(fragCoord * 0.39) - 0.5) * 0.009;
-  col *= u.fade;
   return float4(clamp(onCanvas(u, col), float3(0.0), float3(1.0)), 1.0);
 }

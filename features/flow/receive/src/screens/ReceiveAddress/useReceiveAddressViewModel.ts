@@ -43,6 +43,8 @@ export function useReceiveAddressViewModel({
     title: header.title,
     networkLabel: header.networkLabel,
     networkIcon: header.data?.networkIcon,
+    closeLabel: header.copy.closeLabel,
+    backLabel: header.copy.backLabel,
     onBack: selection.backToSelection,
     onClose,
   };

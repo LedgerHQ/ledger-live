@@ -12,6 +12,8 @@ describe("useReceiveAddressCopy", () => {
     expect(result.current).toEqual({
       title: "Receive USDC",
       networkLabel: "Ethereum network",
+      closeLabel: "Close",
+      backLabel: "Back",
       selectAddressTitle: "Select address",
       addressOptionLabels: { transparent: "Public address", shielded: "Private address" },
     });

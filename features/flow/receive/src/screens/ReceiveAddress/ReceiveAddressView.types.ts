@@ -33,5 +33,7 @@ export type ReceiveAddressViewProps = Readonly<{
   networkIcon?: ReceiveIcon;
   /** Set when the user picked this address among several (Zcash): back to that choice. */
   onBack?: () => void;
+  closeLabel: string;
+  backLabel: string;
   onClose: () => void;
 }>;

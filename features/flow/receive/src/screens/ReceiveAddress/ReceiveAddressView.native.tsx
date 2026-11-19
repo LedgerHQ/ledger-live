@@ -1,39 +1,59 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
+import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
-
-const CONTENT_BOTTOM_SPACING = 16;
 
 export function ReceiveAddressView({
   title,
   networkLabel,
+  networkIcon,
   addressSelection,
   address,
+  closeLabel,
+  backLabel,
+  onBack,
+  onClose,
 }: ReceiveAddressViewProps) {
-  const { bottom } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
 
   return (
-    <Box lx={{ flex: 1, backgroundColor: "canvas" }} testID="receive-address">
+    <Box
+      lx={{ flex: 1, backgroundColor: "canvas" }}
+      style={{ paddingTop: top }}
+      testID="receive-address"
+    >
+      <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }}>
+        <IconButton
+          icon={onBack ? ArrowLeft : Close}
+          appearance="no-background"
+          size="md"
+          onPress={onBack ?? onClose}
+          accessibilityLabel={onBack ? backLabel : closeLabel}
+          testID="receive-address-close"
+        />
+      </Box>
       <ScrollView
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          flexGrow: 1,
-          gap: 24,
-          paddingHorizontal: 16,
-          // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
-          paddingBottom: CONTENT_BOTTOM_SPACING + bottom,
-        }}
+        // The scroll runs to the screen edge: the inset keeps the last zone above the home indicator.
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
       >
-        <ZonePlaceholder zone="header" label={`${title} · ${networkLabel}`} />
-        <ZonePlaceholder zone="summary" label={address?.value} />
-        <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
-        <ZonePlaceholder zone="actions" />
-        <ZonePlaceholder zone="notices" />
-        <ZonePlaceholder zone="extras" />
+        <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <ReceiveAddressTitle
+            title={title}
+            networkLabel={networkLabel}
+            networkIcon={networkIcon}
+          />
+          <ZonePlaceholder zone="summary" label={address?.value} />
+          <ZonePlaceholder zone="address" label={addressSelection?.title ?? address?.label} />
+          <ZonePlaceholder zone="actions" />
+          <ZonePlaceholder zone="notices" />
+          <ZonePlaceholder zone="extras" />
+        </Box>
       </ScrollView>
     </Box>
   );

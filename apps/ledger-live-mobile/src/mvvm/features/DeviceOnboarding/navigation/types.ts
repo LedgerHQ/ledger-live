@@ -14,6 +14,7 @@ export type DeviceOnboardingNavigatorParamList = {
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
     wasReadOnlyAtEntry: boolean;
+    unseeded?: boolean;
   };
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

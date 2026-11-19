@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { CurrencyNotSupported } from "../errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
-import { getEnv } from "@shared/env";
+import { usesMockBridges } from "./mockMode";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   Account,
@@ -107,7 +107,7 @@ export function clearBridgeCache(family?: string): void {
 async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBridge> {
   const family = currency.family;
 
-  if (getEnv("MOCK")) {
+  if (usesMockBridges()) {
     const mockBridge = await loadMockBridgeForFamily(family);
     // TODO Remove once we delete mock bridges tests
     if (mockBridge) {
