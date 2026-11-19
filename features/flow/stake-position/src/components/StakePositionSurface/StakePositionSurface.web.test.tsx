@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { InfoState } from "@shared/ui-info-state";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import type { StakePositionHeading } from "../../types";
 import { StakePositionSurface } from "./StakePositionSurface";
@@ -33,11 +34,14 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
       onEscapeKeyDown,
       onInteractOutside,
       "data-testid": testID,
+      ...naming
     }: {
       children: React.ReactNode;
       onEscapeKeyDown?: (event: Event) => void;
       onInteractOutside?: (event: Event) => void;
       "data-testid"?: string;
+      "aria-label"?: string;
+      "aria-labelledby"?: string;
     }) => {
       const state = useContext(OpenContext);
       useEffect(() => {
@@ -62,9 +66,10 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
               new CustomEvent("pointerdownoutside", { cancelable: true }),
             ),
         }),
+        // Like Radix, the props the surface sets win over the link to the hidden title.
         createElement(
           "div",
-          { role: "dialog", "aria-labelledby": TITLE_ID, "data-testid": testID },
+          { role: "dialog", "aria-labelledby": TITLE_ID, ...naming, "data-testid": testID },
           children,
         ),
       );
@@ -84,11 +89,11 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
         undefined,
         createElement(
           "div",
-          { hidden },
+          { hidden, "data-testid": "dialog-header" },
           onBack
             ? createElement("button", { type: "button", "aria-label": "Go back", onClick: onBack })
             : null,
-          createElement("span", undefined, title),
+          title ? createElement("span", undefined, title) : null,
           createElement("button", {
             type: "button",
             "aria-label": "Close",
@@ -106,17 +111,18 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
 });
 
 const DETAILS: StakePositionHeading = { kind: "details" };
+const CONFIRM: StakePositionHeading = { kind: "confirm", action: "withdraw" };
 
 function renderSurface({
   heading = DETAILS,
   isOpen = true,
   isDismissible = true,
-  onBack,
+  children = <p>Step content</p>,
 }: {
   heading?: StakePositionHeading;
   isOpen?: boolean;
   isDismissible?: boolean;
-  onBack?: () => void;
+  children?: React.ReactNode;
 } = {}) {
   const onDismiss = jest.fn();
   render(
@@ -124,17 +130,19 @@ function renderSurface({
       isOpen={isOpen}
       heading={heading}
       ticker="SOL"
-      onBack={onBack}
+      currencyName="Solana"
       onDismiss={onDismiss}
       isDismissible={isDismissible}
       testID="stake-position-surface"
     >
-      <p>Step content</p>
+      {children}
     </StakePositionSurface>,
     { wrapper: I18nWrapper },
   );
   return { onDismiss, user: userEvent.setup() };
 }
+
+const header = () => screen.getByTestId("dialog-header");
 
 describe("StakePositionSurface (web)", () => {
   it("should render nothing while closed", () => {
@@ -143,21 +151,24 @@ describe("StakePositionSurface (web)", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("should name the dialog after the position and show the step", () => {
+  it("should title the details after the currency in the header and show the step", () => {
     renderSurface();
 
-    expect(screen.getByRole("dialog", { name: "SOL position" })).toBeVisible();
+    expect(screen.getByRole("dialog", { name: "Earning Solana" })).toBeVisible();
+    expect(header()).toHaveTextContent("Earning Solana");
     expect(screen.getByText("Step content")).toBeVisible();
   });
 
-  it("should name the dialog after the confirmation of the exit", () => {
-    renderSurface({ heading: { kind: "confirm", action: "withdraw" } });
+  it.each<[string, StakePositionHeading, string]>([
+    ["confirmation", CONFIRM, "Withdraw SOL"],
+    ["success", { kind: "result", outcome: "success" }, "Transaction signed"],
+    ["failure", { kind: "result", outcome: "failure" }, "Transaction failed"],
+  ])("should keep the close button alone in the header of the %s", async (_step, heading, name) => {
+    const { onDismiss, user } = renderSurface({ heading });
 
-    expect(screen.getByRole("dialog", { name: "Withdraw all your SOL?" })).toBeVisible();
-  });
-
-  it("should dismiss from the header close button", async () => {
-    const { onDismiss, user } = renderSurface();
+    expect(screen.getByRole("dialog", { name })).toBeVisible();
+    expect(header()).not.toHaveTextContent(name);
+    expect(screen.queryByRole("button", { name: "Go back" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Close" }));
 
@@ -180,35 +191,26 @@ describe("StakePositionSurface (web)", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
-  it("should go back from the header back button", async () => {
-    const onBack = jest.fn();
-    const { onDismiss, user } = renderSurface({
-      heading: { kind: "confirm", action: "deactivate" },
-      onBack,
+  it("should tint the dialog with the tone its step asks for", () => {
+    renderSurface({
+      heading: { kind: "result", outcome: "success" },
+      children: <InfoState preset="success" title="Transaction signed" />,
     });
 
-    await user.click(screen.getByRole("button", { name: "Go back" }));
-
-    expect(onBack).toHaveBeenCalledTimes(1);
-    expect(onDismiss).not.toHaveBeenCalled();
+    expect(screen.getByTestId("dialog-status-gradient-success")).toBeInTheDocument();
   });
 
   describe("once the transaction is signed", () => {
-    it("should hide the close and back buttons", () => {
-      renderSurface({
-        heading: { kind: "confirm", action: "deactivate" },
-        isDismissible: false,
-        onBack: jest.fn(),
-      });
+    it("should hide the close button", () => {
+      renderSurface({ heading: CONFIRM, isDismissible: false });
 
       expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: "Go back" })).not.toBeInTheDocument();
     });
 
     it("should keep the dialog named with a hidden title", () => {
-      renderSurface({ heading: { kind: "confirm", action: "deactivate" }, isDismissible: false });
+      renderSurface({ heading: DETAILS, isDismissible: false });
 
-      expect(screen.getByRole("dialog", { name: "Deactivate this position?" })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: "Earning Solana" })).toBeVisible();
     });
 
     it("should stay open on Escape", async () => {

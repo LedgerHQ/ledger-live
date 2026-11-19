@@ -1,5 +1,8 @@
-/** The host surface that asked for a position. Each app root renders the requests of its origin only. */
-export type StakePositionOrigin = "earn";
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import type { ApyFraction, EarnPosition } from "@domain/entity-earn-position";
+
+/** The surface that asked for the position: the Earn live app, or an account screen of the wallet. */
+export type StakePositionOrigin = "earn" | "account";
 
 export type StakePositionState = "active" | "activating" | "deactivating" | "inactive";
 
@@ -7,25 +10,24 @@ export type StakePositionExitAction = "deactivate" | "withdraw";
 
 export type StakePositionAction = StakePositionExitAction | "earnMore";
 
-/** Why the host could not act on the position: the live app falls back to its own row behaviour. */
-export type StakePositionUnavailableReason = "ambiguous" | "notFound";
-
-export type StakePositionResult = Readonly<{
-  action: StakePositionAction | null;
-  reason?: StakePositionUnavailableReason;
-}>;
-
-/** The `custom.stake.position.open` params, once validated. */
+/** The `custom.stake.position.open` params, once validated: the identity of the position only. */
 export type StakePositionOpenParams = Readonly<{
   /** The Wallet API id, as `account.list` returns it. */
   accountId: string;
+  /** The stake account address on Solana. */
   positionId: string;
-  /** Empty when the position has no validator, such as an undelegated Solana stake account. */
-  validatorAddress: string;
-  /** Total rewards in the currency's smallest unit, for display only. */
-  rewards?: string;
 }>;
 
+/**
+ * The `custom.stake.position.open` answer. `reason` is set for the Earn live app only, when the
+ * host could not show the position: Earn then falls back to its own menu.
+ */
+export type StakePositionOpenResult = Readonly<{
+  action: StakePositionAction | null;
+  reason?: "unavailable";
+}>;
+
+/** The chain state of the position, which builds, gates and signs its exit. */
 export type StakePositionSnapshot = Readonly<{
   state: StakePositionState;
   amount: bigint;
@@ -34,28 +36,49 @@ export type StakePositionSnapshot = Readonly<{
   canWithdraw: boolean;
 }>;
 
-export type StakePositionNotice = "deactivating" | "missingAuthority";
+/** Why the chain position offers no exit. */
+export type StakePositionChainNotice = "deactivating" | "missingAuthority";
 
-export type StakePositionCandidate = Readonly<{
-  positionId: string;
-  /** Empty when the position has no validator: it then shares no validator with another one. */
-  validatorAddress: string;
+export type StakePositionNotice = StakePositionChainNotice | "updating";
+
+/** What the chain decides for the details: the exit and why there is none. It carries no amount. */
+export type StakePositionChainExit = Readonly<{
+  state: StakePositionState;
+  action: StakePositionExitAction | null;
+  notice: StakePositionChainNotice | null;
+  /** The account is syncing: the exit waits for it. */
+  isPending: boolean;
 }>;
 
-export type StakePositionMatch =
-  | Readonly<{ kind: "match" }>
-  | Readonly<{ kind: "ambiguous" }>
-  | Readonly<{ kind: "notFound" }>;
-
-/** What the surface's title says: the position, or the confirmation of its exit. */
+/** What the surface's title says: the position, the confirmation of its exit, or its result. */
 export type StakePositionHeading =
   | Readonly<{ kind: "details" }>
-  | Readonly<{ kind: "confirm"; action: StakePositionExitAction }>;
+  | Readonly<{ kind: "confirm"; action: StakePositionExitAction }>
+  | Readonly<{ kind: "result"; outcome: "success" | "failure" }>;
 
 /** A formatted amount: the app formats it, with discreet mode applied. */
 export type StakePositionAmount = Readonly<{
   crypto: string;
   fiat?: string;
+}>;
+
+/** The rewards headline: their counter value, which `AmountDisplay` draws. */
+export type StakePositionRewardsHeadline = Readonly<{
+  /** The counter value, in the unit `formatter` expects. */
+  value: number;
+  formatter: (value: number) => FormattedValue;
+  /** Masks the amount, in discreet mode. */
+  hidden: boolean;
+}>;
+
+/** The app's formatting: its unit, locale, counter value and discreet mode. */
+export type StakePositionFormatter = Readonly<{
+  /** An amount in the smallest unit of the currency, with its counter value when the rate is known. */
+  amount: (baseUnits: string) => StakePositionAmount;
+  /** The counter value headline of an amount in the smallest unit. Undefined without a rate. */
+  rewardsHeadline: (baseUnits: string) => StakePositionRewardsHeadline | undefined;
+  /** A fraction as a percentage: 0.0781 as "7.81%". */
+  percent: (fraction: number) => string;
 }>;
 
 export type StakePositionPhase = "open" | "committed" | "settled";
@@ -64,8 +87,6 @@ export type StakePositionRequestInput = Readonly<{
   /** The host account id, which the app resolves from the Wallet API id. */
   accountId: string;
   positionId: string;
-  validatorAddress: string;
-  rewards?: string;
 }>;
 
 export type ShownStakePositionRequest = StakePositionRequestInput &
@@ -75,4 +96,33 @@ export type ShownStakePositionRequest = StakePositionRequestInput &
 export type ShownStakePosition = Readonly<{
   request: ShownStakePositionRequest | null;
   phase: StakePositionPhase | "closed";
+}>;
+
+/** The position as the Earn backend reports it, ready for the details. */
+export type ReadyStakePositionData = Readonly<{
+  kind: "ready";
+  position: EarnPosition;
+  /** The backend status, as the details show it. */
+  status: StakePositionState;
+  /** The APY of the validator the position is delegated to now. Unknown hides its row. */
+  validatorApy?: ApyFraction;
+  /** Some backend rows were missing or past their time to live when it answered. */
+  isStale: boolean;
+  /** The backend has not shown the user's own transaction on this position yet. */
+  isPolling: boolean;
+}>;
+
+export type StakePositionData =
+  | Readonly<{ kind: "loading" }>
+  | Readonly<{ kind: "notFound" }>
+  | Readonly<{ kind: "error"; retry: () => void }>
+  /** The Earn live app's request is closed and answered `reason: "unavailable"`. */
+  | Readonly<{ kind: "unavailable" }>
+  | ReadyStakePositionData;
+
+/** A transaction the user broadcast on a position, which its next reads wait for. */
+export type StakePositionTransaction = Readonly<{
+  ownerAddress: string;
+  positionId: string;
+  action: StakePositionExitAction;
 }>;

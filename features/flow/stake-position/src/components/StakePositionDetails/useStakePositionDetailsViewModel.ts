@@ -1,64 +1,60 @@
 import { useCallback } from "react";
-import { useStakePositionDetailsLabels } from "../../copy/useStakePositionLabels";
-import type { StakePositionNotice, StakePositionState } from "../../types";
-import { initialOf, middleEllipsis } from "./display";
+import { useStakePositionDetailsCopy } from "../../copy/useStakePositionLabels";
+import { initialOf } from "../../logic/display";
+import type { StakePositionNotice } from "../../types";
 import type { StakePositionDetailsProps } from "./StakePositionDetails.types";
 import type {
   StakePositionDetailsViewProps,
   StakePositionNoticeAppearance,
-  StakePositionStatusAppearance,
 } from "./StakePositionDetailsView.types";
-
-// Same tones as the Solana delegations of Account Detail.
-const STATUS_APPEARANCE = {
-  active: "success",
-  activating: "warning",
-  deactivating: "warning",
-  inactive: "error",
-} as const satisfies Record<StakePositionState, StakePositionStatusAppearance>;
 
 const NOTICE_APPEARANCE = {
   deactivating: "info",
   missingAuthority: "warning",
+  updating: "info",
 } as const satisfies Record<StakePositionNotice, StakePositionNoticeAppearance>;
 
 export function useStakePositionDetailsViewModel({
   ticker,
-  state,
-  balance,
-  rewards,
+  status,
+  totalRewards,
+  rewardsHeadline,
+  currentBalance,
+  initialDeposit,
   apy,
   validator,
-  address,
+  accountName,
+  accountIcon,
   exitAction,
-  notice,
   isExitActionPending,
+  notice,
+  showEarnMore,
   onEarnMore,
   onSelectExitAction,
   testID,
 }: StakePositionDetailsProps): StakePositionDetailsViewProps {
-  const labels = useStakePositionDetailsLabels({ ticker, state, exitAction, notice });
+  const copy = useStakePositionDetailsCopy({ ticker, status, exitAction, notice, apy });
 
   const selectExitAction = useCallback(() => {
     if (exitAction !== null) onSelectExitAction(exitAction);
   }, [exitAction, onSelectExitAction]);
 
   return {
-    labels,
-    balance,
-    rewards,
-    status: { label: labels.state, appearance: STATUS_APPEARANCE[state] },
-    apy: apy ?? labels.unavailableValue,
-    validator: { ...validator, initial: initialOf(validator.name) },
-    address: middleEllipsis(address),
+    labels: copy.labels,
+    rewards: totalRewards && { amount: totalRewards, headline: rewardsHeadline },
+    balance: currentBalance,
+    initialDeposit,
+    apyBadge: copy.apyBadge,
+    status: copy.state,
+    account: accountName ? { name: accountName, icon: accountIcon } : undefined,
+    validator: validator && { ...validator, initial: initialOf(validator.name) },
     exitAction:
-      labels.exitAction === null
-        ? null
-        : { label: labels.exitAction, isDisabled: isExitActionPending },
+      copy.exitAction === null ? null : { label: copy.exitAction, isDisabled: isExitActionPending },
     notice:
-      notice === null || labels.notice === null
+      notice === null || copy.notice === null
         ? null
-        : { text: labels.notice, appearance: NOTICE_APPEARANCE[notice] },
+        : { text: copy.notice, appearance: NOTICE_APPEARANCE[notice] },
+    showEarnMore,
     onEarnMore,
     onSelectExitAction: selectExitAction,
     testID,

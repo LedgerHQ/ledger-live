@@ -7,84 +7,143 @@ import type {
   StakePositionState,
 } from "../types";
 
-export function useStakePositionTitle(heading: StakePositionHeading, ticker: string): string {
+export function useStakePositionTitle(
+  heading: StakePositionHeading,
+  ticker: string,
+  currencyName: string = ticker,
+): string {
   const { t } = useTranslation();
 
-  if (heading.kind === "details") return t("stakePosition.details.title", { ticker });
-  const { action } = heading;
-  return t(`stakePosition.confirm.${action}.title`, { ticker });
+  switch (heading.kind) {
+    case "details":
+      return t("stakePosition.details.title", { currencyName });
+    case "confirm":
+      return t(`stakePosition.confirm.${heading.action}.title`, { ticker });
+    case "result":
+      return t(`stakePosition.result.${heading.outcome}Title`);
+  }
 }
 
 export type StakePositionDetailsLabels = Readonly<{
-  balance: string;
-  rewards: string;
-  status: string;
+  totalRewards: string;
+  currentBalance: string;
+  sectionTitle: string;
   apy: string;
+  status: string;
+  account: string;
   validator: string;
-  address: string;
-  unavailableValue: string;
   earnMore: string;
+}>;
+
+export type StakePositionDetailsCopy = Readonly<{
+  labels: StakePositionDetailsLabels;
   state: string;
   exitAction: string | null;
   notice: string | null;
+  apyBadge?: string;
 }>;
 
 type DetailsVariant = Readonly<{
   ticker: string;
-  state: StakePositionState;
+  status: StakePositionState;
   exitAction: StakePositionExitAction | null;
   notice: StakePositionNotice | null;
+  apy?: string;
 }>;
 
-export function useStakePositionDetailsLabels({
+export function useStakePositionDetailsCopy({
   ticker,
-  state,
+  status,
   exitAction,
   notice,
-}: DetailsVariant): StakePositionDetailsLabels {
+  apy,
+}: DetailsVariant): StakePositionDetailsCopy {
   const { t } = useTranslation();
 
   return useMemo(
     () => ({
-      balance: t("stakePosition.details.balance"),
-      rewards: t("stakePosition.details.rewards"),
-      status: t("stakePosition.details.status"),
-      apy: t("stakePosition.details.apy"),
-      validator: t("stakePosition.details.validator"),
-      address: t("stakePosition.details.address"),
-      unavailableValue: t("stakePosition.details.unavailableValue"),
-      earnMore: t("stakePosition.actions.earnMore"),
-      state: t(`stakePosition.status.${state}`),
+      labels: {
+        totalRewards: t("stakePosition.details.totalRewards"),
+        currentBalance: t("stakePosition.details.currentBalance"),
+        sectionTitle: t("stakePosition.details.sectionTitle"),
+        apy: t("stakePosition.details.apy"),
+        status: t("stakePosition.details.status"),
+        account: t("stakePosition.details.account"),
+        validator: t("stakePosition.details.validator"),
+        earnMore: t("stakePosition.actions.earnMore"),
+      },
+      state: t(`stakePosition.status.${status}`),
       exitAction: exitAction === null ? null : t(`stakePosition.actions.${exitAction}`),
       notice: notice === null ? null : t(`stakePosition.notice.${notice}`, { ticker }),
+      apyBadge: apy === undefined ? undefined : t("stakePosition.details.apyBadge", { apy }),
     }),
-    [t, ticker, state, exitAction, notice],
+    [t, ticker, status, exitAction, notice, apy],
   );
 }
 
 export type StakePositionConfirmLabels = Readonly<{
+  title: string;
   description: string;
   cta: string;
+}>;
+
+/** What the description of the confirmation names. */
+export type StakePositionConfirmValues = Readonly<{
+  /** The chain snapshot figure of the prepared transaction, formatted with its ticker. */
   amount: string;
   validator: string;
-  fees: string;
+  account: string;
 }>;
 
 export function useStakePositionConfirmLabels(
   ticker: string,
   action: StakePositionExitAction,
+  { amount, validator, account }: StakePositionConfirmValues,
 ): StakePositionConfirmLabels {
   const { t } = useTranslation();
 
   return useMemo(
     () => ({
-      description: t(`stakePosition.confirm.${action}.description`, { ticker }),
+      title: t(`stakePosition.confirm.${action}.title`, { ticker }),
+      description: t(`stakePosition.confirm.${action}.description`, {
+        amount,
+        validator,
+        account,
+      }),
       cta: t(`stakePosition.confirm.${action}.cta`),
-      amount: t("stakePosition.confirm.amount"),
-      validator: t("stakePosition.confirm.validator"),
-      fees: t("stakePosition.confirm.fees"),
     }),
-    [t, ticker, action],
+    [t, ticker, action, amount, validator, account],
+  );
+}
+
+export type StakePositionResultLabels = Readonly<{
+  title: string;
+  description?: string;
+  cta: string;
+  broadcastError: string;
+}>;
+
+type ResultVariant =
+  | Readonly<{ outcome: "success"; action: StakePositionExitAction; ticker: string }>
+  | Readonly<{ outcome: "failure" }>;
+
+export function useStakePositionResultLabels(variant: ResultVariant): StakePositionResultLabels {
+  const { t } = useTranslation();
+  const action = variant.outcome === "success" ? variant.action : null;
+  const ticker = variant.outcome === "success" ? variant.ticker : null;
+
+  return useMemo(
+    () => ({
+      title: t(`stakePosition.result.${action === null ? "failure" : "success"}Title`),
+      description:
+        action === null ? undefined : t(`stakePosition.result.${action}Description`, { ticker }),
+      cta:
+        action === null
+          ? t("stakePosition.result.retry")
+          : t("stakePosition.result.viewTransaction"),
+      broadcastError: t("stakePosition.result.broadcastError"),
+    }),
+    [t, action, ticker],
   );
 }
 
@@ -92,6 +151,9 @@ export type StakePositionUnavailableLabels = Readonly<{
   loading: string;
   notFoundTitle: string;
   notFoundDescription: string;
+  errorTitle: string;
+  errorDescription: string;
+  retry: string;
   close: string;
 }>;
 
@@ -103,6 +165,9 @@ export function useStakePositionUnavailableLabels(): StakePositionUnavailableLab
       loading: t("stakePosition.unavailable.loading"),
       notFoundTitle: t("stakePosition.unavailable.notFoundTitle"),
       notFoundDescription: t("stakePosition.unavailable.notFoundDescription"),
+      errorTitle: t("stakePosition.unavailable.errorTitle"),
+      errorDescription: t("stakePosition.unavailable.errorDescription"),
+      retry: t("stakePosition.unavailable.retry"),
       close: t("stakePosition.unavailable.close"),
     }),
     [t],

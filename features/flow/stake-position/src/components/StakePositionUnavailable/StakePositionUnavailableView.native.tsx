@@ -24,9 +24,16 @@ export function StakePositionUnavailableView(props: StakePositionUnavailableView
           {props.description}
         </Text>
       </Box>
-      <Button appearance="gray" size="lg" isFull onPress={props.onDismiss}>
-        {props.closeLabel}
-      </Button>
+      <Box lx={{ gap: "s16" }}>
+        {props.retry ? (
+          <Button appearance="base" size="lg" isFull onPress={props.retry.onRetry}>
+            {props.retry.label}
+          </Button>
+        ) : null}
+        <Button appearance="gray" size="lg" isFull onPress={props.onDismiss}>
+          {props.closeLabel}
+        </Button>
+      </Box>
     </Box>
   );
 }

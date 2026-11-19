@@ -5,19 +5,26 @@ export type StakePositionTrackingContext = Readonly<{
   ticker: string;
 }>;
 
-export type StakePositionTrackedPage = "details" | "confirm" | "notFound";
+export type StakePositionTrackedPage =
+  | "details"
+  | "confirm"
+  | "success"
+  | "failure"
+  | "unavailable";
 
 export type StakePositionTrackedStep =
   | Readonly<{ page: "details"; positionStatus: StakePositionState }>
-  | Readonly<{ page: "confirm"; action: StakePositionExitAction }>
-  | Readonly<{ page: "notFound" }>;
+  | Readonly<{ page: "confirm" | "success" | "failure"; action: StakePositionExitAction }>
+  | Readonly<{ page: "unavailable"; reason: "not_found" | "load_error" }>;
 
 export type StakePositionTrackedButton =
   | "earn_more"
   | "deactivate"
-  | "withdraw_all"
+  | "withdraw"
   | "confirm"
-  | "back"
+  | "view_transaction"
+  | "try_again"
+  | "retry_load"
   | "close";
 
 type EventProps = Readonly<Record<string, string>>;
@@ -33,16 +40,20 @@ export type StakePositionButtonEvent = Readonly<{ event: "button_clicked"; props
 const PAGE_NAMES = {
   details: "Details",
   confirm: "Confirm",
-  notFound: "Not found",
+  success: "Success",
+  failure: "Failure",
+  unavailable: "Unavailable",
 } as const satisfies Record<StakePositionTrackedPage, string>;
 
 const BUTTON_PAGES = {
   details: "Stake position details",
   confirm: "Stake position confirm",
-  notFound: "Stake position not found",
+  success: "Stake position success",
+  failure: "Stake position failure",
+  unavailable: "Stake position unavailable",
 } as const satisfies Record<StakePositionTrackedPage, string>;
 
-// No address, amount or validator: only what identifies the flow and the currency.
+// No address, amount or validator: only what identifies the flow, its entry and the currency.
 const flowProps = ({ origin, ticker }: StakePositionTrackingContext) => ({
   flow: "stake",
   currency: ticker,
@@ -53,10 +64,10 @@ function stepProps(step: StakePositionTrackedStep): EventProps {
   switch (step.page) {
     case "details":
       return { position_status: step.positionStatus };
-    case "confirm":
+    case "unavailable":
+      return { reason: step.reason };
+    default:
       return { action: step.action };
-    case "notFound":
-      return {};
   }
 }
 

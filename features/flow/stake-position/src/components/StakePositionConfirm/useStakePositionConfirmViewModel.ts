@@ -3,13 +3,29 @@ import type { StakePositionConfirmProps } from "./StakePositionConfirm.types";
 import type { StakePositionConfirmViewProps } from "./StakePositionConfirmView.types";
 
 export function useStakePositionConfirmViewModel({
-  ticker,
   action,
+  ticker,
+  amount,
+  validatorName,
+  accountName,
+  errorContent,
   isPending,
   isConfirmDisabled,
-  ...props
+  onConfirm,
+  testID,
 }: StakePositionConfirmProps): StakePositionConfirmViewProps {
-  const labels = useStakePositionConfirmLabels(ticker, action);
+  const labels = useStakePositionConfirmLabels(ticker, action, {
+    amount,
+    validator: validatorName,
+    account: accountName ?? ticker,
+  });
 
-  return { ...props, labels, isPending, isConfirmDisabled: isConfirmDisabled || isPending };
+  return {
+    labels,
+    errorContent,
+    isPending,
+    isConfirmDisabled: isConfirmDisabled || isPending,
+    onConfirm,
+    testID,
+  };
 }
