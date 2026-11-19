@@ -1,6 +1,6 @@
 # Agent plugin
 
-History of the agent plugin before it moved into wallet-cli. Since the move the plugin takes the wallet-cli version, and its changes are in the [wallet-cli changelog](../CHANGELOG.md).
+History of the agent plugin before it moved into wallet-cli. Since the move the plugin takes the wallet-cli version, and its changes are in the [wallet-cli changelog](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/wallet-cli/CHANGELOG.md). Some entries below were reversed later: enrollment again accepts `app.agents.ledger-test.com` and an app URL the human gives in the conversation; recovery still takes no `--app-url`.
 
 ## Before the move (unreleased)
 

@@ -374,7 +374,10 @@ export const getSwapProvider = async (
 export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
   calService.findCurrencyData(currencyId);
 
-export const fetchAndMergeProviderData = async env => {
+export const fetchAndMergeProviderData = async (env: {
+  ledgerSignatureEnv?: "prod" | "test";
+  partnerSignatureEnv?: "prod" | "test";
+}) => {
   if (providerDataCache) {
     return providerDataCache;
   }
@@ -396,15 +399,18 @@ export const fetchAndMergeProviderData = async env => {
   }
 };
 
-function mergeProviderData(baseData, additionalData) {
-  const mergedData = { ...baseData };
+function mergeProviderData(
+  baseData: Record<string, object>,
+  additionalData: Record<string, object>,
+): Record<string, ProviderConfig & AdditionalProviderConfig> {
+  const mergedData: Record<string, object> = { ...baseData };
   Object.keys(additionalData).forEach(key => {
     mergedData[key] = {
       ...mergedData[key],
       ...additionalData[key],
     };
   });
-  return mergedData;
+  return mergedData as Record<string, ProviderConfig & AdditionalProviderConfig>;
 }
 
 export const getAvailableProviders = async (): Promise<string[]> => {

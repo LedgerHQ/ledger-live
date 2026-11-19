@@ -15,6 +15,7 @@ import cryptoFactory, { resolveChainCurrencyId } from "./chain/chain";
 import cosmosCoinConfig, { type CosmosCoinConfig } from "./config";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAPI } from "./network/Cosmos";
+import { COSMOS_MEMO_TYPE, STAKING_DEFAULT_MEMO } from "./logic/transaction/intentAdapter";
 import { Transaction } from "./types";
 
 export const calculateFees: CacheRes<
@@ -46,7 +47,7 @@ export const calculateFees: CacheRes<
       transaction,
     )
       .map(v => `${v.address}-${v.amount}`)
-      .join("_")}_${transaction.memo ? transaction.memo.toString() : ""}_${
+      .join("_")}_${transaction.memoValue ? transaction.memoValue.toString() : ""}_${
       resolveSourceValidator(transaction) ?? ""
     }`,
   {
@@ -109,20 +110,20 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   account,
   transaction,
 ) => {
-  let { memo, amount } = transaction;
+  let { amount } = transaction;
 
-  if (transaction.mode !== "send" && !transaction.memo) {
-    memo = "Ledger Live";
-  }
+  const usesDefaultMemo = transaction.mode !== "send" && !transaction.memoValue;
+  const transactionWithMemo: Transaction = usesDefaultMemo
+    ? { ...transaction, memoType: COSMOS_MEMO_TYPE, memoValue: STAKING_DEFAULT_MEMO }
+    : transaction;
 
   const { gasWanted, gasWantedFees } = await calculateFees({
     account,
     transaction: {
-      ...transaction,
+      ...transactionWithMemo,
       amount: transaction.useAllAmount
         ? account.spendableBalance.minus(new BigNumber(2500))
         : amount,
-      memo,
     },
   });
 
@@ -131,14 +132,13 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   }
 
   if (
-    transaction.memo !== memo ||
+    usesDefaultMemo ||
     !gasWantedFees.eq(transaction.fees || new BigNumber(0)) ||
     !gasWanted.eq(transaction.gas || new BigNumber(0)) ||
     !amount.eq(transaction.amount)
   ) {
     return {
-      ...transaction,
-      memo,
+      ...transactionWithMemo,
       fees: gasWantedFees,
       gas: gasWanted,
       amount,

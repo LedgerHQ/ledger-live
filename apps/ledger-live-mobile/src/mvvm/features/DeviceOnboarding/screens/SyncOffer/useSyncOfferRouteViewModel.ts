@@ -45,7 +45,7 @@ type SyncOfferRouteViewModel = SyncOfferScreenProps &
 export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
+  const { device, wasReadOnlyAtEntry, unseeded = false } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const { visualPending } = useWalletSyncUserState();
   const featureWalletSync = useFeature("llmWalletSync");
@@ -88,10 +88,14 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     if (completedOnSync.current) return;
     completedOnSync.current = true;
     allowLeave.current = true;
+    if (unseeded) {
+      navigation.goBack();
+      return;
+    }
     complete();
     notifyFlowCompleted("onboarding");
     closeOnboarding(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  }, [complete, navigation, notifyFlowCompleted, unseeded]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);

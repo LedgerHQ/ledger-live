@@ -3,7 +3,7 @@
 //
 // Flow: React sets the props (updateProps) → the fades start (GlowFade) → on each frame,
 // drawInMTKView sends the uniforms to the shader. The shader compiles once per app run.
-// The top and bottom glows fade in or out after `delayMs`. The whole glow fades in once the
+// The top and bottom glows fade in or out after `delayMs`. The first display is instant, once the
 // shader is ready. Reduce motion stops the clock and makes fades instant. Pixel ratio capped at 2.
 //
 // Reading Objective-C++ as a JS dev: `[object method:arg]` is `object.method(arg)`, `_name` is a
@@ -12,6 +12,7 @@
 #import "RCTGlowView.h"
 
 #import <MetalKit/MetalKit.h>
+#import <React/RCTConversions.h>
 
 #import <react/renderer/components/SharedUiGlowSpec/ComponentDescriptors.h>
 #import <react/renderer/components/SharedUiGlowSpec/EventEmitters.h>
@@ -24,21 +25,18 @@ using namespace facebook::react;
 
 static const CGFloat kMaxPixelRatio = 2.0;
 static const double kFadeSeconds = 1.0; // one glow coming or going (GLOW_FADE_MS in JS)
-static const double kEntryFadeSeconds = 0.6; // the first display, once the shader is ready
 // The most one frame moves the clock: after the background or a long freeze, the glow does not jump.
 static const double kMaxFrameSeconds = 0.1;
 
 #pragma mark - Uniforms: the values sent to the shader on each frame
 
-// Same fields, same order as `Uniforms` in glow.msl (96 bytes).
+// Same fields, same order as `Uniforms` in glow.msl (88 bytes).
 typedef struct {
   float res[2];
   float time;
   float dpr;
-  float fade;
   float fadeTop;
   float fadeBottom;
-  float pad;
   // The design params (GlowParams), filled by name from the typed props.
   float intensity;
   float opacity;
@@ -53,9 +51,11 @@ typedef struct {
   float balance;
   float contrast;
   float topReach;
-  float pad2[3];
+  float canvasR;
+  float canvasG;
+  float canvasB;
 } GlowUniforms;
-static_assert(sizeof(GlowUniforms) == 96, "must match `Uniforms` in glow.msl");
+static_assert(sizeof(GlowUniforms) == 88, "must match `Uniforms` in glow.msl");
 
 #pragma mark - Shader: compiled once per app run
 
@@ -203,7 +203,6 @@ struct GlowFade {
   BOOL _hasProps; // false until the first props: the first show is instant
   GlowFade _top;
   GlowFade _bottom;
-  CFTimeInterval _readyTime; // when the shader was ready, for the entry fade; 0 = not yet
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -242,7 +241,6 @@ struct GlowFade {
   _hasProps = NO;
   _top = GlowFade();
   _bottom = GlowFade();
-  _readyTime = 0;
 }
 
 // Fabric reuses views: a recycled view starts again from zero.
@@ -269,6 +267,7 @@ struct GlowFade {
 {
   const auto &newProps = *std::static_pointer_cast<GlowViewProps const>(props);
   [self copyDesignParams:newProps];
+  [self setCanvasColor:RCTUIColorFromSharedColor(newProps.canvasColor)];
   [self showTop:newProps.showTop bottom:newProps.showBottom afterMs:newProps.delayMs];
   [super updateProps:props oldProps:oldProps];
   [self loadPipelineOnce];
@@ -289,6 +288,17 @@ struct GlowFade {
   _params.balance = newProps.glowBalance;
   _params.contrast = newProps.glowContrast;
   _params.topReach = newProps.glowTopReach;
+}
+
+- (void)setCanvasColor:(UIColor *)color
+{
+  CGFloat red = 0, green = 0, blue = 0, alpha = 1;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  _params.canvasR = (float)red;
+  _params.canvasG = (float)green;
+  _params.canvasB = (float)blue;
+  _mtkView.clearColor = MTLClearColorMake(red, green, blue, 1);
+  _mtkView.paused = NO;
 }
 
 // The first props show at once. A later change waits `delayMs`, then fades.
@@ -320,7 +330,6 @@ struct GlowFade {
     return; // recycled while the shader compiled
   }
   _pipeline = pipeline;
-  _readyTime = CACurrentMediaTime();
   _mtkView.paused = NO;
   if (error && _eventEmitter) {
     std::static_pointer_cast<const GlowViewEventEmitter>(_eventEmitter)
@@ -351,9 +360,8 @@ struct GlowFade {
   [self moveClock:now isReduceMotion:isReduceMotion];
   BOOL isTopFading = _top.step(now);
   BOOL isBottomFading = _bottom.step(now);
-  BOOL isEntering = _readyTime > 0 && now - _readyTime < kEntryFadeSeconds;
   // A still glow (reduce motion) stops the loop once nothing moves. New props start it again.
-  view.paused = isReduceMotion && !isTopFading && !isBottomFading && !isEntering && _pipeline != nil;
+  view.paused = isReduceMotion && !isTopFading && !isBottomFading && _pipeline != nil;
   [self drawFrameIn:view now:now isReduceMotion:isReduceMotion];
 }
 
@@ -374,7 +382,7 @@ struct GlowFade {
     return;
   }
   id<MTLCommandBuffer> commands = [_queue commandBuffer];
-  id<MTLRenderCommandEncoder> encoder = [commands renderCommandEncoderWithDescriptor:pass]; // clears to black
+  id<MTLRenderCommandEncoder> encoder = [commands renderCommandEncoderWithDescriptor:pass]; // clears to the canvas color
   if (_pipeline) {
     GlowUniforms uniforms = [self uniformsFor:view now:now isReduceMotion:isReduceMotion];
     [encoder setRenderPipelineState:_pipeline];
@@ -395,7 +403,6 @@ struct GlowFade {
   uniforms.res[1] = (float)view.drawableSize.height;
   uniforms.time = (float)_elapsedSeconds;
   uniforms.dpr = (float)view.contentScaleFactor;
-  uniforms.fade = isReduceMotion ? 1 : (float)std::min(1.0, (now - _readyTime) / kEntryFadeSeconds);
   uniforms.fadeTop = _top.value;
   uniforms.fadeBottom = _bottom.value;
   return uniforms;

@@ -1,5 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Stepper } from "@ledgerhq/lumen-ui-rnative";
 import { render, screen, within } from "@tests/test-renderer";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupScreen } from "./index";
@@ -120,8 +121,8 @@ function renderSetup({
   };
 }
 
-function allowSheet() {
-  return screen.getByTestId(setupTestIds.allowSheet);
+function UNSAFE_getStepper() {
+  return screen.UNSAFE_getByType(Stepper);
 }
 
 describe("SetupView", () => {
@@ -129,13 +130,55 @@ describe("SetupView", () => {
     renderSetup();
 
     expect(screen.getByText("Continue on your Ledger device")).toBeVisible();
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
     expect(screen.getByText("Genuine & OS check")).toBeVisible();
     expect(screen.getByText("Verifying your device")).toBeVisible();
     expect(screen.getByTestId(setupTestIds.stageLoading)).toBeVisible();
   });
+
+  it("should keep the same bottom glow when the device moves to the next stage", () => {
+    const { rerender, props } = renderSetup();
+    const glow = screen.getByTestId(setupTestIds.glow);
+
+    expect(glow).toHaveProp("showBottom", true);
+    expect(glow).toHaveProp("showTop", false);
+    expect(glow).toHaveProp("pointerEvents", "none");
+
+    rerender(
+      <SetupScreen
+        {...props}
+        stage={{ index: 1, total: 5, kind: "naming", indicator: "none" }}
+        checks={null}
+      />,
+    );
+
+    expect(screen.getByText("Device name")).toBeVisible();
+    expect(screen.getByTestId(setupTestIds.glow)).toBe(glow);
+  });
+
+  it("should not ask to continue on the device while it waits for the check approval", () => {
+    renderSetup({ checks: { state: "awaitingAllow" } });
+
+    expect(screen.queryByTestId(setupTestIds.allowSheet)).toBeNull();
+    expect(screen.getByText("Genuine & OS check")).toBeVisible();
+    expect(screen.getByTestId(setupTestIds.stageLoading)).toBeVisible();
+  });
+
+  it.each([
+    [0, "1/5"],
+    [2, "3/5"],
+  ])(
+    "should fill only the finished steps on step %i and still count the current one",
+    (index, label) => {
+      renderSetup({
+        stage: { index, total: 5, kind: index === 0 ? "checks" : "pin", indicator: "none" },
+      });
+
+      const stepper = UNSAFE_getStepper();
+      expect(stepper.props.currentStep).toBe(index);
+      expect(stepper.props.totalSteps).toBe(5);
+      expect(within(screen.getByTestId(setupTestIds.stepper)).getByText(label)).toBeVisible();
+    },
+  );
 
   it("should ask to quit from the close bar", async () => {
     const { user, onQuit } = renderSetup();
@@ -261,26 +304,6 @@ describe("SetupView", () => {
     expect(onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it("should hide an open approval sheet while setup sheets are suspended", () => {
-    const { rerender, props } = renderSetup({ checks: { state: "awaitingAllow" } });
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-
-    rerender(<SetupScreen {...props} suspendSheets />);
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
-
-    rerender(<SetupScreen {...props} suspendSheets={false} />);
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-  });
-
   it("should hide a firmware offer while setup sheets are suspended", () => {
     const { rerender, props } = renderSetup({
       checks: {
@@ -348,45 +371,6 @@ describe("SetupView", () => {
     expect(onStart).toHaveBeenCalledTimes(1);
   });
 
-  it("should close the approval sheet once the device has been approved", () => {
-    const { rerender, props } = renderSetup({ checks: { state: "awaitingAllow" } });
-    const checks = props.checks;
-    if (!checks) throw new Error("checks are required");
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: true,
-    });
-
-    rerender(
-      <SetupScreen
-        {...props}
-        stage={{ index: 0, total: 5, kind: "checks", indicator: "success" }}
-        checks={null}
-      />,
-    );
-
-    expect(screen.getByTestId(setupTestIds.allowSheet)).toHaveProp("accessibilityState", {
-      expanded: false,
-    });
-  });
-
-  it("should bring the approval instructions back when setup continues", async () => {
-    const { user, onQuit, rerender, props } = renderSetup({
-      checks: { state: "awaitingAllow" },
-    });
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: true });
-
-    await user.press(screen.getByTestId(`${setupTestIds.allowSheet}-header-close`));
-    rerender(<SetupScreen {...props} suspendSheets />);
-
-    expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: false });
-
-    rerender(<SetupScreen {...props} suspendSheets={false} />);
-
-    expect(allowSheet()).toHaveProp("accessibilityState", { expanded: true });
-  });
-
   it.each([
     ["a new seed", undefined, "Secret Recovery Phrase"],
     ["a Recovery Key backup", "recoveryKey" as const, "Recovery Key"],
@@ -435,5 +419,82 @@ describe("SetupView", () => {
 
     expect(screen.getByText("Restore access")).toBeVisible();
     expect(screen.getByText("Secret Recovery Phrase")).toBeVisible();
+  });
+
+  it("should show no info card while the genuine check runs", () => {
+    renderSetup();
+
+    expect(screen.queryByText("Which setup method?")).toBeNull();
+  });
+
+  it("should open the stage's info card without touching the device", async () => {
+    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
+      renderSetup({
+        stage: {
+          index: 3,
+          total: 5,
+          kind: "setupChoice",
+          indicator: "none",
+          infoCard: "setupChoice",
+        },
+      });
+
+    await user.press(screen.getByText("Which setup method?"));
+
+    expect(screen.getByText("Set up or restore?")).toBeVisible();
+    for (const callback of [
+      onQuit,
+      onStart,
+      onRetry,
+      onCloseSheet,
+      onAcceptUpdate,
+      onDeclineUpdate,
+    ]) {
+      expect(callback).not.toHaveBeenCalled();
+    }
+  });
+});
+
+function sheetOpen(text: string) {
+  let node = screen.getByText(text).parent;
+  while (node && node.props.accessibilityState?.expanded === undefined) node = node.parent;
+  return node?.props.accessibilityState?.expanded;
+}
+
+describe("SetupView connection sheets", () => {
+  const pinStage = { index: 2, total: 5, kind: "pin", indicator: "none" } as const;
+
+  it("should hide an open info sheet while the connection sheet shows, and bring it back after", async () => {
+    const stage = {
+      index: 3,
+      total: 5,
+      kind: "setupChoice",
+      indicator: "none",
+      infoCard: "setupChoice",
+    } as const;
+    const { user, rerender, props } = renderSetup({ stage });
+    await user.press(screen.getByText("Which setup method?"));
+    expect(sheetOpen("Set up or restore?")).toBe(true);
+
+    rerender(<SetupScreen {...props} connection={{ state: "reconnecting", retry: jest.fn() }} />);
+    expect(sheetOpen("Set up or restore?")).toBe(false);
+    expect(sheetOpen("Reconnecting to your Ledger Stax")).toBe(true);
+
+    rerender(<SetupScreen {...props} connection={null} />);
+    expect(sheetOpen("Set up or restore?")).toBe(true);
+  });
+
+  it("should show the reconnecting sheet over the current stage", () => {
+    renderSetup({ stage: pinStage, connection: { state: "reconnecting", retry: jest.fn() } });
+
+    expect(screen.getByText("PIN creation")).toBeVisible();
+    expect(screen.getByText("Reconnecting to your Ledger Stax")).toBeVisible();
+  });
+
+  it("should show no connection sheet while the session is up", () => {
+    renderSetup({ stage: pinStage, connection: null });
+
+    expect(screen.queryByText("Reconnecting to your Ledger Stax")).toBeNull();
+    expect(screen.queryByText("Couldn't connect to Ledger Stax")).toBeNull();
   });
 });

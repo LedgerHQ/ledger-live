@@ -37,7 +37,8 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "@e2e/utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { isUnansweredDetoxRequestError } from "@e2e/helpers/elements/hardTimeout";
+import { isHardTimeout, isUnansweredDetoxRequestError } from "@e2e/helpers/elements/hardTimeout";
+import { attachAppThreadStacks } from "@e2e/helpers/threadStacks";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 
@@ -56,6 +57,7 @@ import type { ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
+const THREAD_STACKS_TIMEOUT_MS = 60_000;
 // getLogs is already capped by the bridge's own response timeout; this outer bound is
 // defense-in-depth for a wedged worker where that inner timer is starved, so it must stay larger.
 const GET_LOGS_TIMEOUT_MS = BRIDGE_RESPONSE_TIMEOUT + 2_000;
@@ -130,6 +132,9 @@ async function captureFailureDiagnostics(
   mergedFeatureFlags: OptionalFeatureMap | undefined,
   failure: unknown,
 ): Promise<void> {
+  if (isHardTimeout(failure)) {
+    await withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks");
+  }
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),

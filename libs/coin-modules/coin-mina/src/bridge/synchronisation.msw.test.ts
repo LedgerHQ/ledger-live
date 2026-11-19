@@ -1,12 +1,26 @@
+import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getTransactions } from "../logic/history/getTransactions";
 import type { RosettaTransaction } from "../network/types";
 import {
   makeTransactionsResponse,
   makeRosettaTransaction,
   makeBlockInfoResponse,
+  makeNetworkStatusResponse,
+  makeAccountBalanceResponse,
+  makeEpochInfoResponse,
+  makeDelegateAccountResponse,
+  makeValidatorFromAPI,
+  makeValidatorsPageResponse,
 } from "../test/helpers/msw-fixtures";
-import { server, rosettaHandlers } from "../test/helpers/msw-rosetta.mock";
-import { mapRosettaTxnToOperation } from "./synchronisation";
+import {
+  server,
+  rosettaHandlers,
+  graphqlHandler,
+  validatorsHandler,
+} from "../test/helpers/msw-rosetta.mock";
+import type { MinaAccount } from "../types/common";
+import { getAccountShape, mapRosettaTxnToOperation } from "./synchronisation";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => server.resetHandlers());
@@ -139,5 +153,136 @@ describe("getTransactions + mapRosettaTxnToOperation integration via MSW", () =>
     const types = ops.map(op => op.type);
     expect(types).toContain("OUT");
     expect(types).toContain("IN");
+  });
+});
+
+describe("getAccountShape via MSW", () => {
+  const VALIDATOR_ADDRESS = "B62qvalidator1";
+  const MAPPED_VALIDATOR = {
+    address: VALIDATOR_ADDRESS,
+    name: "Test Validator",
+    fee: 5,
+    delegatorsCount: 100,
+    validatorLogo: "https://img.example.com/v.png",
+    identityName: "Test Validator",
+    description: "A test validator",
+    website: "https://example.com",
+    stake: 1_000_000_000,
+    delegations: 50,
+    blocksCreated: 500,
+  };
+  const EPOCH_INFO = {
+    epoch: "42",
+    slot: "100",
+    globalSlot: "30000",
+    startTime: "1700000000000",
+    endTime: "1700100000000",
+  };
+  const OUT_TXN = makeRosettaTransaction({
+    hash: "txn-out",
+    blockIndex: 101,
+    fromAddress: ADDRESS,
+    toAddress: OTHER_ADDRESS,
+    paymentValue: "100000000",
+    timestamp: 1700001000000,
+  });
+  const IN_TXN = makeRosettaTransaction({
+    hash: "txn-in",
+    blockIndex: 100,
+    fromAddress: OTHER_ADDRESS,
+    toAddress: ADDRESS,
+    paymentValue: "50000000",
+    timestamp: 1700000000000,
+  });
+  const BLOCK_TIMESTAMPS: Record<number, number> = { 100: 1700000000000, 101: 1700001000000 };
+
+  const serveChain = (delegateKey: string | null) => {
+    server.use(
+      ...rosettaHandlers({
+        "/network/status": () => makeNetworkStatusResponse(),
+        "/account/balance": () =>
+          makeAccountBalanceResponse({ totalBalance: 5_000_000_000, liquidBalance: 4_500_000_000 }),
+        "/search/transactions": () => makeTransactionsResponse([OUT_TXN, IN_TXN]),
+        "/block": body => {
+          const { index } = (body as { block_identifier: { index: number } }).block_identifier;
+          return makeBlockInfoResponse(index, { timestamp: BLOCK_TIMESTAMPS[index] });
+        },
+      }),
+      graphqlHandler(body => {
+        const { query } = body as { query: string };
+        return query.includes("daemonStatus")
+          ? makeEpochInfoResponse()
+          : makeDelegateAccountResponse(delegateKey);
+      }),
+      validatorsHandler(() =>
+        makeValidatorsPageResponse(
+          [makeValidatorFromAPI({ validatorAddress: VALIDATOR_ADDRESS })],
+          true,
+        ),
+      ),
+    );
+  };
+
+  const shapeInfo = (initialAccount?: MinaAccount) =>
+    ({
+      address: ADDRESS,
+      index: 0,
+      derivationPath: "44'/12586'/0'/0/0",
+      derivationMode: "minabip44",
+      currency: getCryptoCurrencyById("mina"),
+      initialAccount,
+    }) as unknown as AccountShapeInfo<MinaAccount>;
+
+  const syncConfig = { paginationConfig: {}, blacklistedTokenIds: [] };
+
+  it("builds the account id, balances, block height, operations and staking resources from the node", async () => {
+    serveChain(VALIDATOR_ADDRESS);
+
+    const shape = await getAccountShape(shapeInfo(), syncConfig);
+
+    expect(shape).toMatchObject({
+      id: `js:2:mina:${ADDRESS}:minabip44`,
+      blockHeight: 350000,
+      operationsCount: 2,
+      resources: {
+        blockProducers: [MAPPED_VALIDATOR],
+        stakingActive: true,
+        delegateInfo: MAPPED_VALIDATOR,
+        epochInfo: EPOCH_INFO,
+      },
+    });
+    expect(shape.balance?.toString()).toBe("5000000000");
+    expect(shape.spendableBalance?.toString()).toBe("4500000000");
+    expect(shape.operations?.map(op => [op.hash, op.type, op.date.getTime()])).toEqual([
+      ["txn-out", "OUT", 1700001000000],
+      ["txn-in", "IN", 1700000000000],
+    ]);
+  });
+
+  it("keeps the stored operation references when the same transactions are fetched again", async () => {
+    serveChain(VALIDATOR_ADDRESS);
+    const first = await getAccountShape(shapeInfo(), syncConfig);
+
+    const second = await getAccountShape(
+      shapeInfo({ operations: first.operations, resources: first.resources } as MinaAccount),
+      syncConfig,
+    );
+
+    expect(second.operations).toHaveLength(2);
+    expect(second.operations?.[0]).toBe(first.operations?.[0]);
+    expect(second.operations?.[1]).toBe(first.operations?.[1]);
+  });
+
+  it("reports staking as inactive and keeps the validators when the account has no delegate", async () => {
+    serveChain(null);
+
+    const shape = await getAccountShape(shapeInfo(), syncConfig);
+
+    expect(shape.resources).toEqual({
+      blockProducers: [MAPPED_VALIDATOR],
+      stakingActive: false,
+      delegateInfo: undefined,
+      epochInfo: EPOCH_INFO,
+    });
   });
 });

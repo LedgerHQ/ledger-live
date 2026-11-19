@@ -30,18 +30,21 @@ describe("combine", () => {
 });
 
 describe("recoverDeviceSignature", () => {
+  const SIGNATURE = `${"0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66".repeat(2)}1B`;
+
   it("recovers the raw device signature from a combined string (inverse of combine)", () => {
     const rawTx =
       "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332";
-    const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
 
-    expect(recoverDeviceSignature(rawTx, combine(rawTx, [signature]))).toEqual(signature);
+    expect(recoverDeviceSignature(rawTx, combine(rawTx, [SIGNATURE]))).toEqual(SIGNATURE);
   });
 
   it.each([
-    ["signed for other bytes", combine("0a02beef", ["aa"]), "0a02dead"],
-    ["length prefix mismatch", `0005${"0a02beef"}aa`, "0a02beef"],
+    ["signed for other bytes", combine("0a02beef", [SIGNATURE]), "0a02dead"],
+    ["length prefix mismatch", `0005${"0a02beef"}${SIGNATURE}`, "0a02beef"],
     ["no signature after the tx", combine("0a02beef", [""]), "0a02beef"],
+    ["a signature shorter than 65 bytes", combine("0a02beef", ["aa"]), "0a02beef"],
+    ["a v the network rejects", combine("0a02beef", [`${SIGNATURE.slice(0, 128)}23`]), "0a02beef"],
   ])("throws InvalidRawDataHex when %s", (_, combined, rawTx) => {
     expect(() => recoverDeviceSignature(rawTx, combined)).toThrow(
       expect.objectContaining({ name: "InvalidRawDataHex" }),

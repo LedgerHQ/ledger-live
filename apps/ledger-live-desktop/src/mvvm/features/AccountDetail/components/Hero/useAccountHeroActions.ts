@@ -9,12 +9,12 @@ import {
 import { track } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { openModal } from "~/renderer/actions/modals";
 import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import type { AccountAsset, AccountAssetsByAction } from "./types";
 import { useInvestActions } from "./useInvestActions";
 import type { PickAccountAsset } from "./usePickAccountAsset";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 export function useAccountHeroActions(
   account: Account,
   assets: readonly AccountAsset[],
@@ -43,9 +43,7 @@ export function useAccountHeroActions(
       );
       switch (id) {
         case "receive":
-          dispatch(
-            openModal("MODAL_RECEIVE", { account, sourcePage: ACCOUNT_DETAIL_PAGES.account }),
-          );
+          dispatch(openReceiveFlow({ account, sourcePage: ACCOUNT_DETAIL_PAGES.account }));
           return;
         case "send":
           pickAsset(assets, openSend, id);

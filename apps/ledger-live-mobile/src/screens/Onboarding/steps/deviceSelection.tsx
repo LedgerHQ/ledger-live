@@ -1,6 +1,6 @@
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Linking, Platform } from "react-native";
@@ -11,7 +11,7 @@ import {
   RootNavigationComposite,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { DeviceCards } from "./Cards/DeviceCard";
@@ -88,6 +88,7 @@ function OnboardingStepDeviceSelection() {
         Linking.openURL(pairingIssuesUrl).catch(() => undefined);
         return;
       }
+      removeDeviceOnboardingFlow();
       navigation.navigate(ScreenName.OnboardingUseCase, { deviceModelId });
       return;
     }
@@ -104,6 +105,18 @@ function OnboardingStepDeviceSelection() {
         deviceModelId,
       });
     }
+  };
+
+  // The device flow stays under this list so back returns to it. Once the user picks a Nano, the
+  // old onboarding takes over: without this, back from the portfolio would reopen the flow.
+  const removeDeviceOnboardingFlow = () => {
+    navigation
+      .getParent()
+      ?.getParent()
+      ?.dispatch(state => {
+        const routes = state.routes.filter(r => r.name !== NavigatorName.DeviceOnboarding);
+        return CommonActions.reset({ ...state, routes, index: routes.length - 1 });
+      });
   };
 
   const closeDrawer = () => {

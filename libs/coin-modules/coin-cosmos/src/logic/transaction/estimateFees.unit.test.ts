@@ -76,7 +76,11 @@ describe("logic/transaction/estimateFees", () => {
     it("returns the Ledger Live memo for a staking intent without a memo", async () => {
       const res = await estimateFees(config, "cosmos", delegateIntent());
 
-      expect(res.parameters).toEqual({ gasLimit: "250000", memo: "Ledger Live" });
+      expect(res.parameters).toEqual({
+        gasLimit: "250000",
+        memoType: "text",
+        memoValue: "Ledger Live",
+      });
     });
 
     it("returns no memo for a staking intent with a memo", async () => {
@@ -106,7 +110,11 @@ describe("logic/transaction/estimateFees", () => {
 
         const res = await estimateFees(config, "cosmos", intent);
 
-        expect(res.parameters).toEqual({ gasLimit: "250000", memo: "Ledger Live" });
+        expect(res.parameters).toEqual({
+          gasLimit: "250000",
+          memoType: "text",
+          memoValue: "Ledger Live",
+        });
       },
     );
   });

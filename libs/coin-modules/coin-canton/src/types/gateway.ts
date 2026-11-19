@@ -66,6 +66,12 @@ export type OnboardingSubmitResponse = {
   party: Party;
 };
 
+/** `GET /v1/node/{node_preset_id}` — response 200 (`NodeInfo`), with only the fields read here. */
+export type NodeInfo = {
+  validator_id: string;
+  dso_id: string;
+};
+
 /** Client-side convenience shape for party-already-exists style conflicts during onboarding (not a named OpenAPI schema). */
 export type OnboardingSubmitError409 = {
   partyId: string;

@@ -187,6 +187,7 @@
       "FEES" : "费用",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
+      "OPT_EDIT" : "代币已更新",
       "CLOSE_ACCOUNT" : "关闭账户",
       "BOND" : "绑定",
       "UNBOND" : "解绑",
@@ -340,7 +341,15 @@
     "home" : "首页",
     "refer" : "推荐好友",
     "catalog" : "探索",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "智能体"
+  },
+  "agentIntent" : {
+    "title" : "智能体",
+    "manageAgents" : {
+      "title" : "管理您的智能体",
+      "description" : "让 AI 代理管理您的资产。"
+    }
   },
   "stars" : {
     "tooltip" : "星标账户"
@@ -1950,13 +1959,13 @@
       "continue" : "继续操作，风险自担"
     },
     "info" : {
-      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Wallet™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Wallet 服务提供商并优化客户服务",
       "reminder" : "不再提醒"
     },
     "error" : {
       "title" : "{{device}}™ 不支持此功能",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Wallet 功能。"
     },
     "update" : "探索您的升级计划",
     "learnMore" : "了解更多",
@@ -2764,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress" : {
+    "addressDisplayed" : {
+      "title" : "地址已安全显示",
+      "description" : "请验证粘贴或共享后的地址与您的 Ledger 设备上的地址一致。",
+      "gotItCta" : "知道了"
+    }
+  },
   "send" : {
     "title" : "发送",
     "totalSpent" : "总借额",
@@ -2991,7 +3007,13 @@
     "processingTransaction" : "您的交易正在处理中",
     "sign" : {
       "title" : "在您的 Ledger {{wording}} 上继续操作",
-      "description" : "按照安全触摸屏上的指示进行操作。"
+      "description" : "按照安全触摸屏上的指示进行操作。",
+      "cancelled" : {
+        "title" : "交易已取消",
+        "description" : "您拒绝了该交易。您的资金不会受到影响。",
+        "close" : "关闭",
+        "retry" : "重试"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "无法刷新网络费用",
@@ -4317,6 +4339,8 @@
     },
     "tokenSettings" : {
       "title" : "代币设置",
+      "currentLimitZero" : "您的限额为 0：您无法接收该代币。",
+      "limitBelowBalance" : "您的余额 ({{balance}}) 已超出此限额。在您的余额低于此限额之前，您将无法接收此代币。",
       "steps" : {
         "confirmation" : {
           "success" : {
@@ -6953,6 +6977,7 @@
       "claimRewardCompound" : "将接收奖励的验证者",
       "compoundReward" : "将接收奖励的验证者",
       "optIn" : "接收方",
+      "changeTrust" : "接收方",
       "tokenAssociate" : "接收方",
       "nominate" : "验证者",
       "stake" : "验证者",
@@ -8089,11 +8114,15 @@
       "description" : "如要停止持有该代币，请改为将其移除。"
     },
     "XrpTokenFrozen" : {
-      "title" : "您无法向此接收者发送此代币",
-      "description" : "该代币的发行方已将其冻结，或者尚未批准您的账户持有该代币。被冻结的代币仍可退回到其发行方。"
+      "title" : "您无法发送此代币",
+      "description" : "该代币的发行方已将其冻结。"
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "您无法发送此代币",
+      "description" : "该代币的发行方尚未批准您的账户持有该代币。"
     },
     "XrpTokenCannotReceive" : {
-      "title" : "此接收者无法接收 {{assetCode}}",
+      "title" : "此接收方无法接收此代币",
       "description" : "接收者可能需要先添加该代币，或者发行方不允许此项转账。"
     },
     "XrpTokenAmountNotDeliverable" : {
@@ -9773,42 +9802,42 @@
     },
     "onboarding" : {
       "intro" : {
-        "title" : "Trade on future events",
-        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "title" : "就未来事件进行交易",
+        "subtitle" : "现在，您可以访问全球最大的预测市场，并针对事件结果进行交易。提供方 MoonPay。",
         "items" : {
           "polymarket" : {
-            "title" : "Access Polymarket in Ledger Wallet",
-            "subtitle" : "Now available in Ledger Wallet"
+            "title" : "在 Ledger Wallet 中访问 Polymarket",
+            "subtitle" : "现可在 Ledger Wallet 中使用"
           },
           "markets" : {
-            "title" : "Sports, Tech, Crypto, Weather, Politics",
-            "subtitle" : "And more, discover all markets"
+            "title" : "体育、科技、加密货币、天气、政治",
+            "subtitle" : "以及更多，探索所有市场"
           },
           "clearSign" : {
-            "title" : "Clear sign all",
-            "subtitle" : "You define and clear sign the amount to trade"
+            "title" : "全部透明签名",
+            "subtitle" : "您可自定义并明文签名交易数额"
           }
         },
-        "discover" : "Discover predictions",
-        "learnMore" : "Learn more"
+        "discover" : "探索预测",
+        "learnMore" : "了解更多"
       },
       "terms" : {
-        "title" : "Terms & Conditions",
-        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
-        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
-        "cta" : "Agree and Continue"
+        "title" : "条款和条件",
+        "body" : "预测市场具有投机性，伴随重大风险，且可能不适合所有用户。在这些市场中进行交易涉及重大风险，包括：资金完全损失（头寸可能会失去其全部价值）；市场与决议风险（结果根据每个市场的规则进行结算，这可能与您的预期不符）；流动性风险（您可能无法以期望的价格出售头寸，甚至完全无法出售）；以及智能合约风险（代码漏洞）。在继续操作之前，请仔细评估这些风险并了解每个市场的运作方式。请参阅 <termsLink>使用条款</termsLink> 了解更多信息。",
+        "checkbox" : "您确认已阅读并理解上述免责声明，并接受在预测市场上进行交易的风险。",
+        "cta" : "同意并继续"
       },
       "consent" : {
-        "title" : "Clear signed trade on Polymarket via MoonPay",
-        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "title" : "通过 MoonPay 在 Polymarket 上进行明文签署交易",
+        "description" : "选择一个 Ledger Wallet 地址来签署您的交易并提现您的预测余额。",
         "bullets" : {
-          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
-          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
-          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+          "dedicatedWallet" : "专用交易钱包：MoonPay Trade 会专门为您的 Polymarket 活动创建一个钱包。仅存入您计划进行交易的资金。不支持直接登录 Polymarket。",
+          "secureSigning" : "安全签署：每项交易指令均使用您选择的 Ledger Wallet 地址进行明文签署。",
+          "withdraw" : "随时提现：随时将您的交易余额转回您的 Ledger Wallet。"
         },
-        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
-        "cta" : "Continue",
-        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+        "checkbox" : "继续操作即表示您同意创建一个 MoonPay Trade 钱包地址，并授权所选的 Ledger Wallet 地址签署交易指令，以及在您提现时接收您的资金。",
+        "cta" : "继续",
+        "footer" : "加密货币交易服务由第三方提供商 MoonPay 提供。Ledger 不提供任何建议或推荐。"
       }
     }
   },
@@ -11402,9 +11431,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "无账户",
     "review" : "审核",
+    "learnMore" : "了解更多",
     "formErrors" : {
+      "offline" : "互联网连接问题。",
       "amountExceedsBalance" : "余额不足",
+      "feeAccountEmpty" : "您需要更多 {{ticker}} 以支付网络费用。",
+      "notEnoughFees" : "您需要 {{fees}} {{ticker}} 以支付网络费用。",
+      "amountTooLow" : "输入至少 {{amount}} {{ticker}} 并重试。",
+      "amountTooHigh" : "进入 {{amount}} {{ticker}} 或更少并重试。",
+      "feeEstimationFailed" : "我们目前无法计算费用。您的加密货币账户可能未同步。重启 Ledger Wallet 应用程序并重试。",
+      "accountNotReady" : "该账户尚未准备好进行发送。在您的账户中将其打开，然后重试。",
+      "seiEvmUnlinked" : "在进行互换前必须关联 SEI EVM 账户。",
+      "aleoPrivateBalance" : "互换仅适用于公开的 {{ticker}}。您的资金目前是私密的，无法进行互换。",
+      "tezosUnrevealed" : "您的 Tezos 账户尚未激活。请在互换前发送小额 XTZ。",
+      "dotMinimumBalance" : "请在互换后保留最低 {{minValue}} DOT 的余额。",
+      "xlmMinimumBalance" : "请在互换后保留最低 {{minValue}} XLM 的余额。",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} 不足",
+        "description" : "您的账户 {{account}} 余额不足，无法支付网络费用。"
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} 所需的最低额度",
+        "description" : "报价所需的最低价值为 {{amount}} {{ticker}}"
+      },
+      "buy" : "买入 {{ticker}}"
     }
   },
   "actionMenuDialog" : {
@@ -11433,6 +11486,10 @@
   },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",
+    "genericError" : {
+      "title" : "出错了",
+      "description" : "请稍后重试或选择其他资产。"
+    },
     "terms" : "通过签署此交易，我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11443,7 +11500,9 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "交易详情",
     "title" : "为永续合约提供资金",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "提取",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "返回永续合约 (Perps)"
   },
   "accountAnalytics" : {
     "assets" : "资产筛选",
@@ -11451,6 +11510,7 @@
     "allAssets" : "所有资产",
     "allAccounts" : "所有账户",
     "error" : "无法加载分析数据。请重试。",
-    "unavailable" : "该选择无可用数据。"
+    "unavailable" : "该选择无可用数据。",
+    "noResults" : "无结果"
   }
 }

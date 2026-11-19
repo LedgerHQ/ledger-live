@@ -17,6 +17,7 @@ export * from "./lwdDustFiltering";
 export * from "./lwdWallet40";
 export * from "./lwmContacts";
 export * from "./lwmDustFiltering";
+export * from "./lwmHistoryCsvExport";
 export * from "./lwmPasswordRevamp";
 export * from "./newReceiveFlow";
 export * from "./lwmWallet40";

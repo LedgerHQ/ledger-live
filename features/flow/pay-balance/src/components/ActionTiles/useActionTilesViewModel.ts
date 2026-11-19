@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useTranslation } from "@shared/i18n";
 import { trackButtonClicked } from "@features/platform-pay-analytics";
 import type { ActionTilesProps, ActionTilesViewProps } from "./types";
 
@@ -10,13 +9,10 @@ const TRACK_BUTTON = {
 } as const;
 
 export function useActionTilesViewModel({ tiles, page }: ActionTilesProps): ActionTilesViewProps {
-  const { t } = useTranslation();
-
   const trackedTiles = useMemo(
     () =>
       tiles.map(tile => ({
         ...tile,
-        label: t(`payTab.actions.${tile.id}`),
         onOpenFlow: () => {
           trackButtonClicked({
             button: TRACK_BUTTON[tile.id],
@@ -26,7 +22,7 @@ export function useActionTilesViewModel({ tiles, page }: ActionTilesProps): Acti
           tile.onOpenFlow();
         },
       })),
-    [t, tiles, page],
+    [tiles, page],
   );
 
   return { tiles: trackedTiles };

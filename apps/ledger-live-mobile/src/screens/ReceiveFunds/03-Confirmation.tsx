@@ -3,7 +3,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode } from "@shared/ui-qr-code";
 import { useTranslation } from "~/context/Locale";
 import * as Haptics from "expo-haptics";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -357,7 +357,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               <Flex
                 p={6}
                 borderRadius={24}
-                position="relative"
                 bg="constant.white"
                 borderWidth={1}
                 borderColor="neutral.c40"
@@ -368,17 +367,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 accessibilityLabel={t("transfer.receive.receiveConfirmation.qrCode")}
                 testID={"receive-qr-code-container-" + mainAccountName}
               >
-                <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
-                <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  width={QRSize * 0.3}
-                  height={QRSize * 0.3}
-                  bg="constant.white"
-                  position="absolute"
-                >
-                  <CurrencyIcon currency={currency} size={48} />
-                </Flex>
+                {freshAccountAddress ? (
+                  <QrCode
+                    value={freshAccountAddress}
+                    size={QRSize}
+                    foregroundColor={colors.constant.black}
+                    centerContent={<CurrencyIcon currency={currency} size={48} />}
+                  />
+                ) : null}
               </Flex>
               <Text
                 testID="receive-fresh-address"

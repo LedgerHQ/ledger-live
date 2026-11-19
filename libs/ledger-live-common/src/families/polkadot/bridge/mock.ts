@@ -22,7 +22,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   broadcast,
@@ -37,7 +37,7 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a: PolkadotAccount, t: Transaction) => t.fees || new BigNumber(0);
+const defaultGetFees = (a: Account, t: Transaction) => t.fees || new BigNumber(0);
 
 const createTransaction = (): Transaction => ({
   amount: new BigNumber(0),
@@ -54,7 +54,11 @@ const createTransaction = (): Transaction => ({
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({ ...t, ...patch });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = ({
+  account,
+  parentAccount,
+  transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -97,7 +101,7 @@ const getTransactionStatus = (account: PolkadotAccount, t: Transaction) => {
   });
 };
 
-const prepareTransaction = async (a, t) => {
+const prepareTransaction = async (a: PolkadotAccount, t: Transaction) => {
   if (!t.fees) {
     return { ...t, fees: new BigNumber(500) };
   }

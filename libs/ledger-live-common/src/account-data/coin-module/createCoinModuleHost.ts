@@ -12,16 +12,16 @@ import {
 import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "@shared/env";
+import { usesMockBridges } from "../../bridge/mockMode";
 import {
   DEFAULT_PAGE_SIZE_BY_FAMILY,
   resolveOperationHistoryBound,
 } from "../../bridge/generic-coin-framework/operationHistoryBound";
 import { getCurrencyConfiguration } from "../../config";
 import {
-  hasLocalApi,
   loadBridgeApiForFamily,
   loadLocalApiForFamily,
+  localApiServesAccountData,
 } from "../../coin-modules/registry";
 import { addressFromKey } from "../../account/accountDescriptor";
 
@@ -83,9 +83,9 @@ export function createCoinModuleHost({
     ...options,
     isCurrencySupported(currencyId) {
       // Mock accounts keep their simulated balances: only FullSync routes them to the mock bridges.
-      if (getEnv("MOCK")) return false;
+      if (usesMockBridges()) return false;
       try {
-        return hasLocalApi(getCryptoCurrencyById(currencyId));
+        return localApiServesAccountData(getCryptoCurrencyById(currencyId));
       } catch {
         return false;
       }

@@ -11,9 +11,26 @@ jest.mock("../../config", () => ({
   getCurrencyConfiguration: () => ({ nativeInstrumentId: "Amulet" }),
 }));
 
-import { renderHook, act } from "@testing-library/react";
+jest.mock("@ledgerhq/coin-canton/network/gateway", () => ({
+  ...jest.requireActual("@ledgerhq/coin-canton/network/gateway"),
+  getCalTokensCached: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
+  getCryptoAssetsStore: jest.fn(),
+}));
+
+import { renderHook, act, waitFor } from "@testing-library/react";
+import { getCalTokensCached } from "@ledgerhq/coin-canton/network/gateway";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
-import { getRemainingTime, useTimeRemaining, useWithdrawableBalance } from "./react";
+import { instrumentKey } from "./proposalSorting";
+import {
+  getRemainingTime,
+  useCantonOfferTokens,
+  useTimeRemaining,
+  useWithdrawableBalance,
+} from "./react";
 
 const MILLISECOND = 1000;
 const SECOND = 1 * MILLISECOND;
@@ -173,18 +190,29 @@ describe("useTimeRemaining", () => {
 
 describe("useWithdrawableBalance", () => {
   const PARTY = "test-party-id";
+  const DSO = "DSO::1220";
   const PAST_MICROS = (Date.now() - 60_000) * 1000;
   const FUTURE_MICROS = (Date.now() + 60_000) * 1000;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const makeParent = (proposals: any[]) =>
+  const makeParent = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    proposals: any[],
+    resources: { nativeInstrumentAdmin?: string } = { nativeInstrumentAdmin: DSO },
+  ) =>
     ({
       type: "Account",
       xpub: PARTY,
       currency: { id: "canton", units: [{ code: "CC", magnitude: 10, name: "Amulet" }] },
-      cantonResources: { pendingTransferProposals: proposals },
+      cantonResources: { pendingTransferProposals: proposals, ...resources },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any;
+  const expiredOutgoing = (amount: string, instrument_id: string, instrument_admin: string) => ({
+    sender: PARTY,
+    amount,
+    expires_at_micros: PAST_MICROS,
+    instrument_id,
+    instrument_admin,
+  });
 
   test("returns 0 when account has no canton resources", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -195,26 +223,11 @@ describe("useWithdrawableBalance", () => {
 
   test("sums only outgoing AND expired native proposals on a parent account", () => {
     const parent = makeParent([
-      {
-        sender: PARTY,
-        amount: "1000",
-        expires_at_micros: PAST_MICROS,
-        instrument_id: "Amulet",
-      },
+      expiredOutgoing("1000", "Amulet", DSO),
       // outgoing but not expired → skip
-      {
-        sender: PARTY,
-        amount: "2000",
-        expires_at_micros: FUTURE_MICROS,
-        instrument_id: "Amulet",
-      },
+      { ...expiredOutgoing("2000", "Amulet", DSO), expires_at_micros: FUTURE_MICROS },
       // incoming, expired → skip
-      {
-        sender: "someone-else",
-        amount: "4000",
-        expires_at_micros: PAST_MICROS,
-        instrument_id: "Amulet",
-      },
+      { ...expiredOutgoing("4000", "Amulet", DSO), sender: "someone-else" },
     ]);
     const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
     expect(result.current).toEqual(new BigNumber("1000"));
@@ -222,21 +235,26 @@ describe("useWithdrawableBalance", () => {
 
   test("excludes token proposals from the parent-account sum (would mis-render as native unit)", () => {
     const parent = makeParent([
-      {
-        sender: PARTY,
-        amount: "500",
-        expires_at_micros: PAST_MICROS,
-        instrument_id: "Amulet",
-      },
-      {
-        sender: PARTY,
-        amount: "99999999",
-        expires_at_micros: PAST_MICROS,
-        instrument_id: "cbtc-instrument-id",
-      },
+      expiredOutgoing("500", "Amulet", DSO),
+      expiredOutgoing("99999999", "cbtc-instrument-id", "cbtc-admin"),
     ]);
     const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
     expect(result.current).toEqual(new BigNumber("500"));
+  });
+
+  test("excludes another admin's instrument under the native id from the parent-account sum", () => {
+    const parent = makeParent([
+      expiredOutgoing("500", "Amulet", DSO),
+      expiredOutgoing("700", "Amulet", "impostor::1220"),
+    ]);
+    const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
+    expect(result.current).toEqual(new BigNumber("500"));
+  });
+
+  test("counts nothing as native on the parent until sync stores the DSO party", () => {
+    const parent = makeParent([expiredOutgoing("500", "Amulet", DSO)], {});
+    const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
+    expect(result.current).toEqual(new BigNumber("0"));
   });
 
   test("token sub-account sums its own (already-filtered) proposals", () => {
@@ -244,14 +262,7 @@ describe("useWithdrawableBalance", () => {
       type: "TokenAccount",
       parentId: "parent-id",
       cantonResources: {
-        pendingTransferProposals: [
-          {
-            sender: PARTY,
-            amount: "123",
-            expires_at_micros: PAST_MICROS,
-            instrument_id: "cbtc-instrument-id",
-          },
-        ],
+        pendingTransferProposals: [expiredOutgoing("123", "cbtc-instrument-id", "cbtc-admin")],
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
@@ -266,5 +277,93 @@ describe("useWithdrawableBalance", () => {
     } as any;
     const { result } = renderHook(() => useWithdrawableBalance(subAccount, [parent]));
     expect(result.current).toEqual(new BigNumber("123"));
+  });
+});
+
+describe("useCantonOfferTokens", () => {
+  const CBTC_ADMIN = "cbtc-network::1220";
+  const CBTC = { id: "canton/cbtc", contractAddress: CBTC_ADMIN, units: [] };
+  const mockedGetCalTokens = jest.mocked(getCalTokensCached);
+  const findTokenById = jest.fn();
+
+  const accountWithOffers = (...instrumentIds: string[]) =>
+    ({
+      type: "Account",
+      currency: { id: "canton_network" },
+      cantonResources: {
+        pendingTransferProposals: instrumentIds.map(instrument_id => ({
+          instrument_id,
+          instrument_admin: CBTC_ADMIN,
+        })),
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({ findTokenById });
+    findTokenById.mockImplementation(async (id: string) => (id === CBTC.id ? CBTC : undefined));
+  });
+
+  test("keys the CAL tokens of the account's offers by instrument id and admin", async () => {
+    mockedGetCalTokens.mockResolvedValue(
+      new Map([
+        [CBTC.id, "CBTC"],
+        ["canton/not-offered", "OTHER"],
+      ]),
+    );
+
+    const { result } = renderHook(() => useCantonOfferTokens(accountWithOffers("CBTC", "CBTC")));
+
+    await waitFor(() => expect(result.current.get(instrumentKey("CBTC", CBTC_ADMIN))).toBe(CBTC));
+    expect(result.current.size).toBe(1);
+    expect(findTokenById).toHaveBeenCalledTimes(1);
+  });
+
+  test("reads nothing from CAL when the account has no offers", () => {
+    const { result } = renderHook(() => useCantonOfferTokens(accountWithOffers()));
+
+    expect(result.current.size).toBe(0);
+    expect(mockedGetCalTokens).not.toHaveBeenCalled();
+  });
+
+  test("stays empty when CAL can't be read", async () => {
+    mockedGetCalTokens.mockRejectedValue(new Error("CAL down"));
+
+    const { result } = renderHook(() => useCantonOfferTokens(accountWithOffers("CBTC")));
+
+    await waitFor(() => expect(mockedGetCalTokens).toHaveBeenCalled());
+    expect(result.current.size).toBe(0);
+  });
+
+  test("keeps the loaded tokens when the same offers come back in another order", async () => {
+    const composed = String.fromCharCode(0xe9);
+    const decomposed = `e${String.fromCharCode(0x301)}`;
+    mockedGetCalTokens.mockResolvedValue(new Map([[CBTC.id, composed]]));
+    const { result, rerender } = renderHook(({ account }) => useCantonOfferTokens(account), {
+      initialProps: { account: accountWithOffers(composed, decomposed) },
+    });
+    await waitFor(() => expect(result.current.size).toBe(1));
+
+    rerender({ account: accountWithOffers(decomposed, composed) });
+
+    expect(result.current.size).toBe(1);
+    expect(mockedGetCalTokens).toHaveBeenCalledTimes(1);
+  });
+
+  test("never returns the tokens loaded for other offers", async () => {
+    mockedGetCalTokens.mockResolvedValueOnce(new Map([[CBTC.id, "CBTC"]]));
+    const { result, rerender } = renderHook(({ account }) => useCantonOfferTokens(account), {
+      initialProps: { account: accountWithOffers("CBTC") },
+    });
+    await waitFor(() => expect(result.current.size).toBe(1));
+
+    mockedGetCalTokens.mockRejectedValueOnce(new Error("CAL down"));
+    rerender({ account: accountWithOffers("CBTC", "ETHX") });
+    expect(result.current.size).toBe(0);
+
+    await act(async () => {});
+    expect(mockedGetCalTokens).toHaveBeenCalledTimes(2);
+    expect(result.current.size).toBe(0);
   });
 });

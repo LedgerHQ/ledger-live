@@ -38,7 +38,8 @@ function isVersionLowerThanRequired(currentVersion: string, requiredVersion: str
     return false;
   }
 
-  return semver.lt(current, required, { includePrerelease: true });
+  const options: semver.RangeOptions = { includePrerelease: true };
+  return semver.lt(current, required, options);
 }
 
 function matchesRule(currencyId: string, rule: VersionCompatibilityRule): boolean {

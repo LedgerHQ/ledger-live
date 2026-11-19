@@ -59,6 +59,7 @@ const setupTest = () => {
       connect: jest.fn().mockResolvedValue("session-id"),
       getConnectedDevice: jest.fn(() => connectedDevice),
       disconnect: jest.fn().mockResolvedValue(undefined),
+      listConnectedDevices: jest.fn(() => []),
     } as unknown as DeviceManagementKit,
     deviceDiscoveryService,
     mapConnectionError: jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),

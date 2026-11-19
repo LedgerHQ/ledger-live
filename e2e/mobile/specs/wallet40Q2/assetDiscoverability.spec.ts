@@ -1,6 +1,5 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
@@ -13,7 +12,6 @@ describe("Asset discoverability", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
-      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -37,7 +35,6 @@ describe("Asset discoverability", () => {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Account.ETH_1.currency.speculosApp,
       cliCommands: [liveDataCommand(Account.ETH_1)],
-      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -57,10 +54,7 @@ describe("Asset discoverability", () => {
 setTeamOwner(Team.WALLET_XP);
 describe("Asset discoverability", () => {
   beforeAll(async () => {
-    await app.init({
-      userdata: "skip-onboarding-with-last-seen-device",
-      featureFlags: FF_LWM_WALLET_40_Q2,
-    });
+    await app.init({ userdata: "skip-onboarding-with-last-seen-device" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
@@ -83,10 +77,7 @@ describe("Asset discoverability", () => {
 setTeamOwner(Team.WALLET_XP);
 describe("Asset discoverability", () => {
   beforeAll(async () => {
-    await app.init({
-      userdata: "skip-onboarding-with-last-seen-device",
-      featureFlags: FF_LWM_WALLET_40_Q2,
-    });
+    await app.init({ userdata: "skip-onboarding-with-last-seen-device" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

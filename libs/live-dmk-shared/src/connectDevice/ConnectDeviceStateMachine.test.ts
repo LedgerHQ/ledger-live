@@ -169,6 +169,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     ({
       connect,
       getConnectedDevice: jest.fn(() => makeConnectedDevice()),
+      listConnectedDevices: jest.fn(() => []),
     } as unknown as DeviceManagementKit);
 
   const states: Array<ConnectDeviceUIState> = [];
@@ -449,6 +450,7 @@ describe("ConnectDeviceStateMachine", () => {
         connect,
         disconnect,
         getConnectedDevice: jest.fn(),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk });
 
@@ -488,6 +490,7 @@ describe("ConnectDeviceStateMachine", () => {
       const dmk = {
         connect: jest.fn().mockResolvedValue("session-id"),
         getConnectedDevice: jest.fn(() => connectedDevice),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk });
 
@@ -519,6 +522,7 @@ describe("ConnectDeviceStateMachine", () => {
       const dmk = {
         connect: jest.fn().mockResolvedValue("session-id"),
         getConnectedDevice: jest.fn(() => connectedDevice),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk, buildCompatDeviceId });
 

@@ -266,7 +266,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit(bridge, optionalInit));
 
   const setAccount = useCallback(
-    async (account, parentAccount) => {
+    async (account: AccountLike, parentAccount: Account | null | undefined) => {
       const bridge = await getAccountBridge(account, parentAccount);
       dispatch({
         type: "setAccount",
@@ -285,7 +285,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   );
 
   const setTransaction = useCallback(
-    transaction =>
+    (transaction: T) =>
       dispatch({
         type: "setTransaction",
         transaction,
@@ -293,7 +293,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     [dispatch],
   );
   const updateTransaction = useCallback(
-    updater =>
+    (updater: (transaction: T) => T) =>
       dispatch({
         type: "updateTransaction",
         updater,

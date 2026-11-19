@@ -89,6 +89,32 @@ function resolveImport(fromFile, source) {
   return undefined;
 }
 
+// Text of the local helpers a spec imports, followed up to MAX_IMPORT_DEPTH levels.
+export function readLocalImports(specPath) {
+  const texts = [];
+  const seen = new Set([specPath]);
+  let level = [[specPath, readFileCached(specPath)]];
+  for (let depth = 0; depth < MAX_IMPORT_DEPTH; depth += 1) {
+    const next = [];
+    for (const [file, text] of level) {
+      for (const [, source] of text.matchAll(IMPORT_SOURCE)) {
+        const target = resolveImport(file, source);
+        if (!target || seen.has(target)) continue;
+        seen.add(target);
+        try {
+          const targetText = readFileCached(target);
+          texts.push(targetText);
+          next.push([target, targetText]);
+        } catch {
+          continue;
+        }
+      }
+    }
+    level = next;
+  }
+  return texts;
+}
+
 // ADDITIVE, because ownership is per-TEST, not per-file: a spec can legitimately have several
 // owners and the filter must over-select rather than silently drop.
 // e2e/desktop/tests/specs/newSendFlow.tx.spec.ts is the case that proves it — its registrar

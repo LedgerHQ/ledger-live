@@ -1,7 +1,8 @@
 import React from "react";
+import { Image } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode as StyledQrCode } from "@shared/ui-qr-code";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Trans, useTranslation } from "~/context/Locale";
 import BottomContainer from "./BottomContainer";
@@ -10,6 +11,8 @@ const Italic = styled(Text)`
   font-style: italic;
 `;
 // Won't work since we don't have inter italic font
+
+const LOGO_SIZE = 65;
 
 type Props = {
   qrCodeValue?: string | null;
@@ -87,11 +90,17 @@ const QrCode = ({ qrCodeValue }: Props) => {
         testID="ws-qr-code-displayed"
       >
         {qrCodeValue ? (
-          <QRCode
+          <StyledQrCode
             value={qrCodeValue}
-            logo={require("~/images/bigSquareLogo.webp")}
-            logoSize={65}
             size={QRCodeSize}
+            foregroundColor={colors.constant.black}
+            testID="ws-qr-code"
+            centerContent={
+              <Image
+                source={require("~/images/bigSquareLogo.webp")}
+                style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
+              />
+            }
           />
         ) : (
           <InfiniteLoader size={65} />

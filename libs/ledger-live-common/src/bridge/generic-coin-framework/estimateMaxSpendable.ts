@@ -15,8 +15,8 @@ import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
 
 export function genericEstimateMaxSpendable(
-  network,
-  kind,
+  network: string,
+  kind: string,
 ): AccountBridge<GenericTransaction>["estimateMaxSpendable"] {
   return async ({ account, parentAccount, transaction }) => {
     if (account.type === "TokenAccount") {

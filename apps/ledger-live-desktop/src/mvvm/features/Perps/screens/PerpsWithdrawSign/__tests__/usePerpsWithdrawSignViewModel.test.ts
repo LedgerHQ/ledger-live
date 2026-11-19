@@ -13,6 +13,11 @@ import {
   type PerpsWithdrawSignData,
 } from "../usePerpsWithdrawSignViewModel";
 
+const mockIsBroadcastDisabled = jest.fn();
+jest.mock("LLD/features/Perps/utils/isBroadcastDisabled", () => ({
+  isBroadcastDisabled: () => mockIsBroadcastDisabled(),
+}));
+
 const mockExecute = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute"),
@@ -23,6 +28,18 @@ const mockCancelWithdrawRequest = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/request", () => ({
   getWithdrawRequestId: () => "request-1",
   cancelWithdrawRequest: (id?: string | null) => mockCancelWithdrawRequest(id),
+}));
+
+const mockSync = jest.fn();
+jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
+  useBridgeSync: () => mockSync,
+}));
+
+const mockWaitForBalance = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection"),
+  waitForWithdrawBalanceReflected: (params: unknown) => mockWaitForBalance(params),
 }));
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
@@ -78,7 +95,11 @@ function renderViewModel() {
 }
 
 describe("usePerpsWithdrawSignViewModel", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsBroadcastDisabled.mockReturnValue(false);
+    mockWaitForBalance.mockResolvedValue("reflected");
+  });
 
   it("should connect to the Ethereum app first", () => {
     const { result } = renderViewModel();
@@ -134,6 +155,66 @@ describe("usePerpsWithdrawSignViewModel", () => {
     ]);
   });
 
+  it.each([true, false])(
+    "should pass the app's broadcast setting (%s) to the withdraw",
+    async disabled => {
+      mockIsBroadcastDisabled.mockReturnValue(disabled);
+      mockExecute.mockResolvedValue({ swapId: "swap-1" });
+      const { result, onClose } = renderViewModel();
+
+      act(() => result.current.handleDeviceResult(appResult));
+
+      await waitFor(() => expect(onClose).toHaveBeenCalled());
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ broadcastDisabled: disabled }),
+      );
+    },
+  );
+
+  it("should open the transaction signed screen without a swap id when nothing was submitted", async () => {
+    mockIsBroadcastDisabled.mockReturnValue(true);
+    mockExecute.mockResolvedValue({});
+    const { result, store, onClose } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
+      receiveCurrencyTicker: "ETH",
+      swapId: undefined,
+      provider: "swapkit_hyperliquid",
+    });
+    const receiver = store.getState().accounts.find(a => a.id === destinationAccount.id);
+    expect(receiver?.swapHistory ?? []).toEqual([]);
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
+  });
+
+  it("should wait for the balance to show the withdraw before the transaction signed screen", async () => {
+    let reflect: () => void = () => undefined;
+    mockWaitForBalance.mockImplementation(() => new Promise<void>(resolve => (reflect = resolve)));
+    mockExecute.mockResolvedValue({ swapId: "swap-1" });
+    const { result } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(mockWaitForBalance).toHaveBeenCalled());
+    const [params] = mockWaitForBalance.mock.lastCall;
+    // 10 USDC lower: a smaller drop, e.g. from trading, does not count.
+    expect(params.targetBalance).toEqual(sourceAccount.spendableBalance.minus(10_000_000));
+    params.syncAccount();
+    expect(mockSync).toHaveBeenCalledWith({
+      type: "SYNC_ONE_ACCOUNT",
+      accountId: sourceAccount.id,
+      // Above the signing screen's SyncSkipUnderPriority(100), or the polls are dropped.
+      priority: 100,
+      reason: "perps-withdraw",
+    });
+    expect(mockOpenPerpsTransactionSigned).not.toHaveBeenCalled();
+
+    await act(async () => reflect());
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalled();
+  });
+
   it("should reopen the summary when the withdrawal is declined on the device", async () => {
     mockExecute.mockRejectedValue(new UserRefusedOnDevice());
     const { result, onClose } = renderViewModel();
@@ -142,6 +223,7 @@ describe("usePerpsWithdrawSignViewModel", () => {
 
     await waitFor(() => expect(mockOpenPerpsWithdrawSummary).toHaveBeenCalledWith(data));
     expect(onClose).toHaveBeenCalled();
+    expect(mockWaitForBalance).not.toHaveBeenCalled();
   });
 
   it("should let a device error be retried from the device connection", async () => {

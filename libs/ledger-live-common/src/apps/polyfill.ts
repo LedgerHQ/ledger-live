@@ -3,8 +3,8 @@ import semver from "semver";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
-const directDep = {};
-const reverseDep = {};
+const directDep: Record<string, string[]> = {};
+const reverseDep: Record<string, string[]> = {};
 
 // whitelist dependencies
 export const whitelistDependencies = [
@@ -78,7 +78,7 @@ function declareDep(name: string, dep: string): void {
 // Nb Starting on version 2.1.0 Bitcoin family apps no longer depend on
 // Bitcoin as a library. We will soon have the dependencies resolved from
 // back-end but until then we need to manually remove them.
-const versionBasedWhitelistDependencies = {
+const versionBasedWhitelistDependencies: Record<string, string> = {
   Bitcoin: "2.1.0",
 };
 

@@ -5,7 +5,7 @@
  * The clock, the fades and reduce motion are native: no JS runs per frame.
  */
 import { codegenNativeComponent } from "react-native";
-import type { CodegenTypes, HostComponent, ViewProps } from "react-native";
+import type { CodegenTypes, ColorValue, HostComponent, ViewProps } from "react-native";
 
 export type GlowErrorEvent = Readonly<{ message: string }>;
 
@@ -34,6 +34,7 @@ export interface NativeProps extends ViewProps {
   showBottom?: CodegenTypes.WithDefault<boolean, false>;
   /** Wait before a show change starts. */
   delayMs?: CodegenTypes.WithDefault<CodegenTypes.Double, 0>;
+  canvasColor?: ColorValue;
   onShaderError?: CodegenTypes.DirectEventHandler<GlowErrorEvent>;
 }
 
