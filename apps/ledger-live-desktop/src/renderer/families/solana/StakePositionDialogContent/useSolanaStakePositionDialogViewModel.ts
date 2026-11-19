@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import {
-  findSolanaStakingPosition,
-  listSolanaStakingPositions,
-  requireStakePositionId,
-} from "@ledgerhq/live-common/families/solana/logic";
+import { findSolanaStakingPosition } from "@ledgerhq/live-common/families/solana/logic";
 import type {
   SolanaAccount,
   SolanaStakingPosition,
@@ -12,20 +8,24 @@ import type {
 } from "@ledgerhq/live-common/families/solana/types";
 import type { Operation, ResolvedAccountBridge } from "@ledgerhq/types-live";
 import {
-  abandonStakePosition,
+  answerStakePositionUnavailable,
   dismissStakePosition,
   getExitAction,
-  getPositionNotice,
+  getExitAmount,
+  getStakePositionValidatorName,
   reopenStakePosition,
-  resolvePositionMatch,
-  settleStakePositionUnavailable,
+  toChainExit,
+  toStakePositionDetailsProps,
+  useStakePositionData,
   useStakePositionSteps,
   useStakePositionTracking,
-  type ShownStakePositionRequest,
-  type StakePositionCandidate,
+  type ReadyStakePositionData,
+  type StakePositionData,
   type StakePositionDetailsProps,
   type StakePositionExitAction,
+  type StakePositionFormatter,
   type StakePositionHeading,
+  type StakePositionSnapshot,
   type StakePositionStep,
   type StakePositionTrackedButton,
   type StakePositionTrackedStep,
@@ -37,13 +37,16 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import type { StakePositionDialogContentProps } from "../../types";
-import type { ExitTransactionStepProps } from "./ExitTransactionStep";
+import type { ExitTransactionStage, ExitTransactionStepProps } from "./ExitTransactionStep";
 import type {
+  StakePositionAccountCurrency,
   StakePositionDialogBody,
   StakePositionDialogContentViewProps,
 } from "./StakePositionDialogContentView";
-import { useStakePositionDisplay, type StakePositionDisplay } from "./useStakePositionDisplay";
+import { toStakePositionSnapshot } from "./toStakePositionSnapshot";
+import { useStakePositionFormatter } from "./useStakePositionFormatter";
 import { useStakePositionSyncOnOpen } from "./useStakePositionSyncOnOpen";
 
 /** The exit as the user confirmed it: the device signs this one whatever the account becomes. */
@@ -51,26 +54,32 @@ type ExitToSign = Readonly<{
   transactionKey: string;
   account: SolanaAccount;
   position: SolanaStakingPosition;
-  display: StakePositionDisplay;
+  validatorName: string;
 }>;
 
 type DialogContent =
   | Readonly<{ view: "loading" | "notFound" }>
-  | Readonly<{ view: "details"; display: StakePositionDisplay; position: SolanaStakingPosition }>
+  | Readonly<{ view: "error"; retry: () => void }>
+  | Readonly<{ view: "details"; data: ReadyStakePositionData; snapshot: StakePositionSnapshot }>
   | Readonly<{
       view: "transaction";
       exit: ExitToSign;
       action: StakePositionExitAction;
-      isOnDevice: boolean;
+      stage: ExitTransactionStage;
     }>
   | Readonly<{ view: "success"; action: StakePositionExitAction }>
-  | Readonly<{ view: "failure"; error: Error; isSigned: boolean }>;
+  | Readonly<{
+      view: "failure";
+      action: StakePositionExitAction;
+      error: Error;
+      isSigned: boolean;
+    }>;
 
 type ContentInputs = Readonly<{
   account: SolanaAccount;
   position: SolanaStakingPosition | undefined;
-  display: StakePositionDisplay | null;
-  isAmbiguous: boolean;
+  snapshot: StakePositionSnapshot | undefined;
+  data: StakePositionData;
   isSyncing: boolean;
   isClosed: boolean;
   liveTransactionKey: string;
@@ -81,6 +90,9 @@ type BodyActions = Readonly<{
   requestId: number;
   bridge: ResolvedAccountBridge<Transaction>;
   ticker: string;
+  accountName: string | undefined;
+  accountCurrency: StakePositionAccountCurrency;
+  format: StakePositionFormatter;
   isSyncing: boolean;
   dismiss: () => void;
   earnMore: () => void;
@@ -89,37 +101,18 @@ type BodyActions = Readonly<{
   markSigned: () => void;
   markBroadcasted: (operation: Operation) => void;
   markFailed: (error: Error) => void;
-  viewDetails?: () => void;
-  close: () => void;
+  viewTransaction?: () => void;
   retry: () => void;
-  abandon: () => void;
+  retryLoad: () => void;
 }>;
 
+const LOADING: DialogContent = { view: "loading" };
 const DETAILS_HEADING: StakePositionHeading = { kind: "details" };
 
-const EXIT_BUTTONS = {
-  deactivate: "deactivate",
-  withdraw: "withdraw_all",
-} as const satisfies Record<StakePositionExitAction, StakePositionTrackedButton>;
-
-const toCandidates = (account: SolanaAccount): StakePositionCandidate[] =>
-  listSolanaStakingPositions(account.stakingResources).map(({ positionId, validatorAddress }) => ({
-    positionId: positionId ?? "",
-    validatorAddress,
-  }));
-
-function findRequestedPosition(
-  account: SolanaAccount,
-  { positionId, validatorAddress }: ShownStakePositionRequest,
-): SolanaStakingPosition | undefined {
-  const position = findSolanaStakingPosition(account, positionId);
-  return position?.validatorAddress === validatorAddress ? position : undefined;
-}
-
 /** Changes whenever the exit transaction would: the confirmation then prepares it again. */
-function revisionOf(account: SolanaAccount, display: StakePositionDisplay | null): string {
-  if (!display) return "";
-  const { state, amount, withdrawableAmount, canStake, canWithdraw } = display.snapshot;
+function revisionOf(account: SolanaAccount, snapshot: StakePositionSnapshot | undefined): string {
+  if (!snapshot) return "";
+  const { state, amount, withdrawableAmount, canStake, canWithdraw } = snapshot;
   return [
     state,
     amount,
@@ -131,59 +124,79 @@ function revisionOf(account: SolanaAccount, display: StakePositionDisplay | null
   ].join(":");
 }
 
-function detailsContentOf({
-  position,
-  display,
-  isAmbiguous,
-  isSyncing,
-}: ContentInputs): DialogContent {
-  if (isAmbiguous || (!display && isSyncing)) return { view: "loading" };
-  if (!display || !position) return { view: "notFound" };
-  return { view: "details", display, position };
+/**
+ * The position as the details show it: the backend reports it, the chain decides its exit. A
+ * position the chain no longer holds once synced is not found, whatever the backend still says.
+ */
+function positionContentOf({ data, snapshot, isSyncing }: ContentInputs): DialogContent {
+  switch (data.kind) {
+    case "loading":
+    case "unavailable":
+      return LOADING;
+    case "notFound":
+      return { view: "notFound" };
+    case "error":
+      return { view: "error", retry: data.retry };
+    case "ready":
+      if (snapshot) return { view: "details", data, snapshot };
+      return isSyncing ? LOADING : { view: "notFound" };
+  }
 }
 
 function contentOf(step: StakePositionStep, inputs: ContentInputs): DialogContent {
-  const { account, position, display, isClosed, liveTransactionKey, exitToSign } = inputs;
+  const { account, position, isClosed, liveTransactionKey, exitToSign } = inputs;
   switch (step.name) {
     case "details":
-      return detailsContentOf(inputs);
-    case "confirm":
-      if (!display || !position) return { view: "notFound" };
+      return positionContentOf(inputs);
+    case "confirm": {
+      const details = positionContentOf(inputs);
+      if (details.view !== "details" || !position) return details;
       return {
         view: "transaction",
-        exit: { transactionKey: liveTransactionKey, account, position, display },
+        exit: {
+          transactionKey: liveTransactionKey,
+          account,
+          position,
+          validatorName: getStakePositionValidatorName(details.data.position),
+        },
         action: step.action,
-        isOnDevice: false,
+        stage: "confirm",
       };
+    }
     case "signing":
       // The dialog stays mounted while it animates out: a signature must not start from there.
-      if (isClosed || !exitToSign) return { view: "loading" };
-      return { view: "transaction", exit: exitToSign, action: step.action, isOnDevice: true };
+      if (isClosed || !exitToSign) return LOADING;
+      return { view: "transaction", exit: exitToSign, action: step.action, stage: "signing" };
     case "broadcasting":
-      if (!exitToSign) return { view: "loading" };
-      return { view: "transaction", exit: exitToSign, action: step.action, isOnDevice: true };
+      if (!exitToSign) return LOADING;
+      return { view: "transaction", exit: exitToSign, action: step.action, stage: "broadcasting" };
     case "success":
       return { view: "success", action: step.action };
     case "failure":
-      return { view: "failure", error: step.error, isSigned: step.signed };
+      return { view: "failure", action: step.action, error: step.error, isSigned: step.signed };
   }
 }
 
 function trackedStepOf(content: DialogContent): StakePositionTrackedStep | null {
   switch (content.view) {
     case "notFound":
-      return { page: "notFound" };
+      return { page: "unavailable", reason: "not_found" };
+    case "error":
+      return { page: "unavailable", reason: "load_error" };
     case "details":
-      return { page: "details", positionStatus: content.display.snapshot.state };
+      return { page: "details", positionStatus: content.data.status };
     case "transaction":
-      return content.isOnDevice ? null : { page: "confirm", action: content.action };
-    default:
+      return content.stage === "confirm" ? { page: "confirm", action: content.action } : null;
+    case "success":
+    case "failure":
+      return { page: content.view, action: content.action };
+    case "loading":
       return null;
   }
 }
 
 const pageKeyOf = (step: StakePositionTrackedStep | null) =>
-  step && (step.page === "confirm" ? `confirm:${step.action}` : step.page);
+  step && ("action" in step ? `${step.page}:${step.action}` : step.page);
 
 /** Tracks each page once per visit, not each time the position it shows is updated. */
 function useTrackStepOnEntry(
@@ -200,21 +213,26 @@ function useTrackStepOnEntry(
   }, [trackStep, trackedStep]);
 }
 
+function headingOf(content: DialogContent): StakePositionHeading {
+  switch (content.view) {
+    case "transaction":
+      return { kind: "confirm", action: content.action };
+    case "success":
+    case "failure":
+      return { kind: "result", outcome: content.view };
+    default:
+      return DETAILS_HEADING;
+  }
+}
+
 function detailsPropsOf(
-  { display, position }: Extract<DialogContent, { view: "details" }>,
+  { data, snapshot }: Extract<DialogContent, { view: "details" }>,
   actions: BodyActions,
 ): StakePositionDetailsProps {
   return {
+    ...toStakePositionDetailsProps(data, toChainExit(snapshot, actions.isSyncing), actions.format),
     ticker: actions.ticker,
-    state: display.snapshot.state,
-    balance: display.balance,
-    rewards: display.rewards,
-    apy: display.apy,
-    validator: display.validator,
-    address: requireStakePositionId(position),
-    exitAction: getExitAction(display.snapshot),
-    notice: getPositionNotice(display.snapshot),
-    isExitActionPending: actions.isSyncing,
+    accountName: actions.accountName,
     onEarnMore: actions.earnMore,
     onSelectExitAction: actions.selectExitAction,
     testID: "stake-position-details",
@@ -222,21 +240,23 @@ function detailsPropsOf(
 }
 
 function transactionPropsOf(
-  { exit, action, isOnDevice }: Extract<DialogContent, { view: "transaction" }>,
+  { exit, action, stage }: Extract<DialogContent, { view: "transaction" }>,
   actions: BodyActions,
 ): ExitTransactionStepProps {
+  const exitAmount = getExitAmount(toStakePositionSnapshot(exit.position), action);
   return {
     requestId: actions.requestId,
     bridge: actions.bridge,
     account: exit.account,
     position: exit.position,
     action,
-    isOnDevice,
+    stage,
     ticker: actions.ticker,
-    amount: exit.display.exitAmount(action),
-    validatorName: exit.display.validator.name,
-    formatFees: exit.display.formatFees,
+    amount: actions.format.amount(exitAmount.toString()).crypto,
+    validatorName: exit.validatorName,
+    accountName: actions.accountName,
     onConfirm: actions.confirmExit,
+    onCancel: actions.dismiss,
     onSigned: actions.markSigned,
     onBroadcasted: actions.markBroadcasted,
     onFailed: actions.markFailed,
@@ -248,8 +268,14 @@ function bodyOf(content: DialogContent, actions: BodyActions): StakePositionDial
     case "loading":
     case "notFound":
       return { kind: content.view, onDismiss: actions.dismiss };
+    case "error":
+      return { kind: "error", onDismiss: actions.dismiss, onRetry: actions.retryLoad };
     case "details":
-      return { kind: "details", details: detailsPropsOf(content, actions) };
+      return {
+        kind: "details",
+        details: detailsPropsOf(content, actions),
+        accountCurrency: actions.accountCurrency,
+      };
     case "transaction":
       return {
         kind: "transaction",
@@ -258,32 +284,29 @@ function bodyOf(content: DialogContent, actions: BodyActions): StakePositionDial
       };
     case "success":
       return {
-        kind: "result",
+        kind: "success",
         result: {
-          kind: "success",
+          outcome: "success",
           action: content.action,
-          onViewDetails: actions.viewDetails,
-          onClose: actions.close,
+          ticker: actions.ticker,
+          onViewTransaction: actions.viewTransaction,
+          testID: "stake-position-success",
         },
       };
     case "failure":
       return {
-        kind: "result",
-        result: {
-          kind: "failure",
-          error: content.error,
-          isSigned: content.isSigned,
-          onRetry: actions.retry,
-          onClose: actions.abandon,
-        },
+        kind: "failure",
+        error: content.error,
+        isSigned: content.isSigned,
+        onRetry: actions.retry,
       };
   }
 }
 
 /**
  * One SOL stake position, from its details to its full deactivation or withdrawal signed on the
- * device. The position is read from the account at each update, by the address the live app asked
- * for: the live app never provides what the transaction spends.
+ * device. Every figure of the details comes from the Earn backend; the account state builds,
+ * gates and signs the exit, found by the stake account of the request.
  */
 export function useSolanaStakePositionDialogViewModel({
   account,
@@ -299,31 +322,50 @@ export function useSolanaStakePositionDialogViewModel({
   const [attempt, setAttempt] = useState(0);
   const [operation, setOperation] = useState<Operation | null>(null);
   const isSyncing = useStakePositionSyncOnOpen(account);
+  const format = useStakePositionFormatter(account);
   const ticker = account.currency.ticker;
+  const accountName = useMaybeAccountName(account);
   const { trackStep, trackButton } = useStakePositionTracking({ origin: request.origin, ticker });
   const requestId = request.id;
-
-  const candidates = useMemo(() => toCandidates(account), [account]);
-  const isAmbiguous = resolvePositionMatch(candidates, request).kind === "ambiguous";
-  const position = useMemo(() => findRequestedPosition(account, request), [account, request]);
-  const display = useStakePositionDisplay(account, position, request.rewards);
-  const exitAction = display && getExitAction(display.snapshot);
   const isClosed = phase === "closed";
-  const content = contentOf(step, {
+
+  const data = useStakePositionData({
+    request,
+    isOpen: !isClosed,
+    network: account.currency.id,
+    ownerAddress: account.freshAddress,
+  });
+  const position = useMemo(
+    () => findSolanaStakingPosition(account, request.positionId),
+    [account, request.positionId],
+  );
+  const snapshot = useMemo(() => position && toStakePositionSnapshot(position), [position]);
+  const exitAction = snapshot ? getExitAction(snapshot) : null;
+
+  const shownContent = contentOf(step, {
     account,
     position,
-    display,
-    isAmbiguous,
+    snapshot,
+    data,
     isSyncing,
     isClosed,
-    liveTransactionKey: `${attempt}:${revisionOf(account, display)}`,
+    liveTransactionKey: `${attempt}:${revisionOf(account, snapshot)}`,
     exitToSign,
   });
+  // The Earn live app shows its own menu for a position the host cannot show, instead of a dialog.
+  const isUnavailableToEarn = request.origin === "earn" && shownContent.view === "notFound";
+  const content = isUnavailableToEarn ? LOADING : shownContent;
   const trackedStep = isClosed ? null : trackedStepOf(content);
+  const isSignedFailure = content.view === "failure" && content.isSigned;
 
   useEffect(() => {
-    if (isAmbiguous && !isSyncing) settleStakePositionUnavailable(requestId, "ambiguous");
-  }, [isAmbiguous, isSyncing, requestId]);
+    if (isUnavailableToEarn) answerStakePositionUnavailable(requestId);
+  }, [isUnavailableToEarn, requestId]);
+
+  // A result has no close button of its own: a signed request opens again so the header closes it.
+  useEffect(() => {
+    if (isSignedFailure) reopenStakePosition(requestId);
+  }, [isSignedFailure, requestId]);
 
   useEffect(() => {
     if (step.name === "confirm" && step.action !== exitAction) dispatchStep({ type: "back" });
@@ -333,8 +375,7 @@ export function useSolanaStakePositionDialogViewModel({
 
   const trackPageButton = (button: StakePositionTrackedButton) => {
     if (!trackedStep) return;
-    const action = trackedStep.page === "confirm" ? trackedStep.action : undefined;
-    trackButton(button, trackedStep.page, action);
+    trackButton(button, trackedStep.page, "action" in trackedStep ? trackedStep.action : undefined);
   };
 
   const dismiss = () => {
@@ -343,18 +384,13 @@ export function useSolanaStakePositionDialogViewModel({
   };
 
   const selectExitAction = (action: StakePositionExitAction) => {
-    trackButton(EXIT_BUTTONS[action], "details", action);
+    trackButton(action, "details", action);
     dispatchStep({ type: "selectExit", action });
   };
 
   const earnMore = () => {
     trackButton("earn_more", "details");
     onEarnMore();
-  };
-
-  const goBack = () => {
-    trackPageButton("back");
-    dispatchStep({ type: "back" });
   };
 
   const confirmExit = () => {
@@ -384,14 +420,21 @@ export function useSolanaStakePositionDialogViewModel({
   );
 
   const retry = () => {
-    if (content.view === "failure" && content.isSigned) reopenStakePosition(requestId);
+    trackPageButton("try_again");
     setExitToSign(null);
     setAttempt(current => current + 1);
     dispatchStep({ type: "retry" });
   };
 
-  const viewDetails = operation
+  const retryLoad = () => {
+    if (content.view !== "error") return;
+    trackPageButton("retry_load");
+    content.retry();
+  };
+
+  const viewTransaction = operation
     ? () => {
+        trackPageButton("view_transaction");
         dismissStakePosition(requestId);
         setDrawer(OperationDetails, { operationId: operation.id, accountId: account.id });
       }
@@ -401,6 +444,9 @@ export function useSolanaStakePositionDialogViewModel({
     requestId,
     bridge,
     ticker,
+    accountName,
+    accountCurrency: { ledgerId: account.currency.id, ticker },
+    format,
     isSyncing,
     dismiss,
     earnMore,
@@ -409,22 +455,17 @@ export function useSolanaStakePositionDialogViewModel({
     markSigned,
     markBroadcasted,
     markFailed,
-    viewDetails,
-    close: () => dismissStakePosition(requestId),
+    viewTransaction,
     retry,
-    abandon: () => abandonStakePosition(requestId),
+    retryLoad,
   });
 
-  const isConfirming = content.view === "transaction" && !content.isOnDevice;
   return {
     surface: {
       isOpen: !isClosed,
-      heading:
-        content.view === "transaction"
-          ? { kind: "confirm", action: content.action }
-          : DETAILS_HEADING,
+      heading: headingOf(content),
       ticker,
-      onBack: isConfirming ? goBack : undefined,
+      currencyName: account.currency.name,
       onDismiss: dismiss,
       isDismissible: phase !== "committed",
       testID: "stake-position-dialog",

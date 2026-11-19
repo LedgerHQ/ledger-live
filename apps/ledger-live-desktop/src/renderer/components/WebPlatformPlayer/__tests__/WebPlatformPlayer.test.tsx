@@ -9,7 +9,7 @@ import {
   setWalletApiIdForAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { useShownStakePosition, type StakePositionResult } from "@features/flow-stake-position";
+import { useShownStakePosition, type StakePositionOpenResult } from "@features/flow-stake-position";
 import { importLLDCoinFamily } from "~/renderer/families";
 import WebPlatformPlayer from "..";
 
@@ -42,7 +42,7 @@ const solanaAccount = {
   },
 };
 
-type OpenHandler = (request: { params: unknown }) => Promise<StakePositionResult>;
+type OpenHandler = (request: { params: unknown }) => Promise<StakePositionOpenResult>;
 
 const lastCustomHandlers = () => mockWebviewProps.mock.calls.at(-1)?.[0].customHandlers ?? {};
 
@@ -82,13 +82,12 @@ describe("WebPlatformPlayer", () => {
     const shown = renderHook(() => useShownStakePosition(), { store });
     const open = lastCustomHandlers()["custom.stake.position.open"] as unknown as OpenHandler;
 
-    let answer: Promise<StakePositionResult> = Promise.resolve({ action: "earnMore" });
+    let answer: Promise<StakePositionOpenResult> = Promise.resolve({ action: "earnMore" });
     act(() => {
       answer = open({
         params: {
           accountId: getWalletApiIdFromAccountId(solanaAccount.id),
           positionId: "stake-account",
-          validatorAddress: "vote-account",
         },
       });
     });

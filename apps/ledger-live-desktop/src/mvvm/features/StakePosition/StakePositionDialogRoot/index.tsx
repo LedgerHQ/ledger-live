@@ -21,6 +21,7 @@ function StakePositionDialogRootView(props: StakePositionDialogRootViewModel) {
           isOpen={props.isOpen}
           heading={DETAILS_HEADING}
           ticker={props.ticker}
+          currencyName={props.currencyName}
           onDismiss={props.onDismiss}
           isDismissible
         >

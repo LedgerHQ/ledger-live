@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -14,19 +14,28 @@ import type {
   SolanaStakingPosition,
   Transaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import type { Operation, ResolvedAccountBridge } from "@ledgerhq/types-live";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import type { Operation, ResolvedAccountBridge, SignedOperation } from "@ledgerhq/types-live";
 import {
   commitStakePosition,
   settleStakePosition,
   StakePositionConfirm,
-  type StakePositionAmount,
+  useMarkStakePositionTransacted,
   type StakePositionExitAction,
 } from "@features/flow-stake-position";
-import { useDispatch } from "LLD/hooks/redux";
+import {
+  StakePositionProcessing,
+  StakePositionSignature,
+} from "LLD/features/StakePosition/signature";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { broadcastLogger } from "~/datadog/logs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import logger from "~/renderer/logger";
-import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
+
+/** Where the exit stands: confirmed by the user, then signed on the device, then broadcast. */
+export type ExitTransactionStage = "confirm" | "signing" | "broadcasting";
 
 export type ExitTransactionStepProps = Readonly<{
   requestId: number;
@@ -35,12 +44,15 @@ export type ExitTransactionStepProps = Readonly<{
   account: SolanaAccount;
   position: SolanaStakingPosition;
   action: StakePositionExitAction;
-  isOnDevice: boolean;
+  stage: ExitTransactionStage;
   ticker: string;
-  amount: StakePositionAmount;
+  /** The chain figure the confirmation names, from the same position as the transaction. */
+  amount: string;
   validatorName: string;
-  formatFees: (fees: BigNumber) => string;
+  accountName: string | undefined;
   onConfirm: () => void;
+  /** The user left the device step before the transaction was signed. */
+  onCancel: () => void;
   onSigned: () => void;
   onBroadcasted: (operation: Operation) => void;
   onFailed: (error: Error) => void;
@@ -60,57 +72,78 @@ function buildExitTransaction(
   return bridge.updateTransaction(bridge.createTransaction(account), exit);
 }
 
-const ignoreStepperTransition = () => undefined;
+const toError = (error: unknown) => (error instanceof Error ? error : new Error(String(error)));
 
-/** Prepares the exit transaction of the position, then signs and broadcasts it on the device. */
+/** Prepares the exit transaction of the position, then signs it on the device and broadcasts it. */
 export function ExitTransactionStep({
   requestId,
   bridge,
   account,
   position,
   action,
-  isOnDevice,
+  stage,
   ticker,
   amount,
   validatorName,
-  formatFees,
+  accountName,
   onConfirm,
+  onCancel,
   onSigned,
   onBroadcasted,
   onFailed,
 }: ExitTransactionStepProps) {
   const dispatch = useDispatch();
-  const {
-    transaction,
-    account: transactionAccount,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction<Transaction>(bridge, () => ({
+  const mevProtected = useSelector(mevProtectionSelector);
+  const markTransacted = useMarkStakePositionTransacted();
+  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction<Transaction>(
+    bridge,
+    () => ({
+      account,
+      parentAccount: undefined,
+      transaction: buildExitTransaction(bridge, account, position, action),
+    }),
+  );
+  const broadcastConfig = useMemo(
+    () => ({
+      mevProtected,
+      source: {
+        type: "coin-module" as const,
+        name: "ledger-live-desktop",
+        flags: { newSendFlow: false },
+      },
+    }),
+    [mevProtected],
+  );
+  const broadcast = useBroadcast({
     account,
     parentAccount: undefined,
-    transaction: buildExitTransaction(bridge, account, position, action),
-  }));
-
-  const handleSigned = useCallback(
-    (signed: boolean) => {
-      if (!signed) return;
-      commitStakePosition(requestId);
-      onSigned();
-    },
-    [onSigned, requestId],
-  );
+    transaction,
+    broadcastConfig,
+    logger: broadcastLogger,
+  });
 
   const accountId = account.id;
+  const ownerAddress = account.freshAddress;
+  const positionId = requireStakePositionId(position);
   const handleBroadcasted = useCallback(
     (operation: Operation) => {
       dispatch(
         updateAccountWithUpdater(accountId, current => addPendingOperation(current, operation)),
       );
+      markTransacted({ ownerAddress, positionId, action });
       settleStakePosition(requestId, action);
       onBroadcasted(operation);
     },
-    [accountId, action, dispatch, onBroadcasted, requestId],
+    [
+      accountId,
+      action,
+      dispatch,
+      markTransacted,
+      onBroadcasted,
+      ownerAddress,
+      positionId,
+      requestId,
+    ],
   );
 
   const handleFailed = useCallback(
@@ -121,38 +154,55 @@ export function ExitTransactionStep({
     [onFailed],
   );
 
-  if (isOnDevice) {
+  const handleSigned = useCallback(
+    (signedOperation: SignedOperation) => {
+      commitStakePosition(requestId);
+      onSigned();
+      broadcast(signedOperation).then(handleBroadcasted, (error: unknown) =>
+        handleFailed(toError(error)),
+      );
+    },
+    [broadcast, handleBroadcasted, handleFailed, onSigned, requestId],
+  );
+
+  if (stage === "broadcasting") {
     return (
       <DialogBody>
         <SyncSkipUnderPriority priority={100} />
-        <GenericStepConnectDevice
-          account={transactionAccount}
-          transaction={transaction}
-          status={status}
-          transitionTo={ignoreStepperTransition}
-          setSigned={handleSigned}
-          onOperationBroadcasted={handleBroadcasted}
-          onTransactionError={handleFailed}
-        />
+        <StakePositionProcessing testID="stake-position-broadcasting" />
       </DialogBody>
     );
   }
 
+  const isSigning = stage === "signing";
   const error: Error | undefined = bridgeError ?? Object.values(status.errors)[0];
   return (
-    <StakePositionConfirm
-      ticker={ticker}
-      action={action}
-      amount={amount}
-      validatorName={validatorName}
-      fees={
-        !bridgePending && status.estimatedFees.gt(0) ? formatFees(status.estimatedFees) : undefined
-      }
-      errorContent={error ? <TranslatedError error={error} /> : undefined}
-      isPending={bridgePending}
-      isConfirmDisabled={!transaction || error !== undefined}
-      onConfirm={onConfirm}
-      testID="stake-position-confirm"
-    />
+    <>
+      <StakePositionConfirm
+        ticker={ticker}
+        action={action}
+        amount={amount}
+        validatorName={validatorName}
+        accountName={accountName}
+        errorContent={error ? <TranslatedError error={error} /> : undefined}
+        isPending={bridgePending || isSigning}
+        isConfirmDisabled={!transaction || error !== undefined}
+        onConfirm={onConfirm}
+        testID="stake-position-confirm"
+      />
+      {isSigning && transaction ? (
+        <>
+          <SyncSkipUnderPriority priority={100} />
+          <StakePositionSignature
+            account={account}
+            transaction={transaction}
+            status={status}
+            onSigned={handleSigned}
+            onFailed={handleFailed}
+            onCancel={onCancel}
+          />
+        </>
+      ) : null}
+    </>
   );
 }

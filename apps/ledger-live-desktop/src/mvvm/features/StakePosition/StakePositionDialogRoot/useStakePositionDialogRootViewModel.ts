@@ -14,7 +14,6 @@ import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAcc
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { StakePositionDialogContentProps } from "~/renderer/families/types";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { STAKE_POSITION_ORIGIN } from "../constants";
 import { closeStakePositionDialog, openStakePositionDialog } from "../stakePositionDialog";
 
 export type StakePositionDialogRootViewModel =
@@ -27,12 +26,18 @@ export type StakePositionDialogRootViewModel =
       phase: ShownStakePosition["phase"];
       onEarnMore: () => void;
     }>
-  | Readonly<{ kind: "accountRemoved"; isOpen: boolean; ticker: string; onDismiss: () => void }>;
+  | Readonly<{
+      kind: "accountRemoved";
+      isOpen: boolean;
+      ticker: string;
+      currencyName: string;
+      onDismiss: () => void;
+    }>;
 
 /** Mirrors the request in the dialogs slice, so the app knows a global dialog is open. */
 function useStakePositionDialogFlag() {
   const dispatch = useDispatch();
-  const isShown = useIsStakePositionShown(STAKE_POSITION_ORIGIN);
+  const isShown = useIsStakePositionShown();
 
   useEffect(() => {
     if (!isShown) return;
@@ -86,7 +91,7 @@ function useDismissRequestWithoutAccount(
 }
 
 export function useStakePositionDialogRootViewModel(): StakePositionDialogRootViewModel {
-  const { request, phase } = useShownStakePosition(STAKE_POSITION_ORIGIN);
+  const { request, phase } = useShownStakePosition();
   const { account, isInWallet } = useRequestAccount(request?.accountId);
   const { StakePositionDialogContent } = useLLDCoinFamily(account?.currency.family);
   const { navigateToStakeForAccount } = useNavigateToStakeForAccount();
@@ -94,11 +99,14 @@ export function useStakePositionDialogRootViewModel(): StakePositionDialogRootVi
   useDismissOnNavigation(request?.id);
   useDismissRequestWithoutAccount(request?.id, phase, account !== undefined);
 
+  // The Earn live app opens its own deposit flow from the answer; a wallet screen has the host do it.
   const onEarnMore = useCallback(() => {
     if (!request || !account) return;
     settleStakePosition(request.id, "earnMore");
     dismissStakePosition(request.id);
-    navigateToStakeForAccount(account, undefined, { source: "stake_position" });
+    if (request.origin !== "earn") {
+      navigateToStakeForAccount(account, undefined, { source: "stake_position" });
+    }
   }, [account, navigateToStakeForAccount, request]);
 
   const onDismiss = useCallback(() => {
@@ -113,6 +121,7 @@ export function useStakePositionDialogRootViewModel(): StakePositionDialogRootVi
       kind: "accountRemoved",
       isOpen: phase !== "closed",
       ticker: account.currency.ticker,
+      currencyName: account.currency.name,
       onDismiss,
     };
   }

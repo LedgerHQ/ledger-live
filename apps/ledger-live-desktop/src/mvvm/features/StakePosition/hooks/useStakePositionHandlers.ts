@@ -11,7 +11,6 @@ import {
   useStakePositionRequester,
 } from "@features/flow-stake-position";
 import { importLLDCoinFamily } from "~/renderer/families";
-import { STAKE_POSITION_ORIGIN } from "../constants";
 
 /**
  * `custom.stake.position.open` for a live app player: the position opens in the global dialog.
@@ -19,7 +18,7 @@ import { STAKE_POSITION_ORIGIN } from "../constants";
  * METHOD_NOT_FOUND and keeps its own behavior.
  */
 export function useStakePositionHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
-  const requestStakePosition = useStakePositionRequester(STAKE_POSITION_ORIGIN);
+  const requestStakePosition = useStakePositionRequester("earn");
   const isMounted = useIsMounted();
   const isEnabled = useFeature("earnNativeStakePosition")?.enabled ?? false;
 
