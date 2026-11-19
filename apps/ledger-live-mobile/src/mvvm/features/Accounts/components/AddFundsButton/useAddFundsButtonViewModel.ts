@@ -36,6 +36,7 @@ export default function useAddFundsButtonViewModel({
     let clickMetadata;
     const parentNavigationState = navigation.getParent()?.getState();
 
+    // Onboarding keeps the legacy receive screen: its success step reads that screen's outcome.
     if (parentNavigationState?.routeNames[0] === NavigatorName.Onboarding && selectedAccount?.id) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
