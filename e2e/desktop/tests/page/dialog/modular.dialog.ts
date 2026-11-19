@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "tests/component/dialog.component";
 import { ModularAssetDialog } from "tests/page/dialog/modular.asset.dialog";
 import { ModularNetworkDialog } from "tests/page/dialog/modular.network.dialog";
@@ -75,6 +75,10 @@ export class ModularDialog extends Dialog {
 
   async selectAccountByName(account: AccountType) {
     return await this.accountDialog.selectAccountByName(account);
+  }
+
+  async selectAccountRow(account: Account) {
+    return await this.accountDialog.selectAccountRow(account);
   }
 
   async clickOnAddAndExistingAccountButton() {

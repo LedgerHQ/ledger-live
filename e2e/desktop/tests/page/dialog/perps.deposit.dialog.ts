@@ -12,9 +12,6 @@ export class PerpsDepositDialog extends Dialog {
     this.page.getByTestId(`perps-deposit-ratio-${label}`),
   );
   private readonly selectCurrency = this.page.getByTestId("perps-deposit-select-currency");
-  private readonly accountSelection = this.page.getByTestId(
-    "modular-dialog-screen-ACCOUNT_SELECTION",
-  );
   private readonly reviewCta = this.page.getByTestId("perps-deposit-review-cta");
 
   private readonly reviewTitle = this.page.getByRole("heading", { name: "Deposit via SwapKit" });
@@ -34,12 +31,6 @@ export class PerpsDepositDialog extends Dialog {
     /^By signing this transaction, I accept SwapKit/,
   );
 
-  private readonly signedTitle = this.page.getByText("Transaction signed", { exact: true });
-  private readonly signedDescription = this.page.getByText(
-    /^You'll receive your .+ once confirmed/,
-  );
-  private readonly signedCta = this.page.getByTestId("perps-transaction-signed-cta");
-
   @step("Verify the Perps deposit form")
   async expectDepositForm() {
     await expect(this.title).toBeVisible();
@@ -56,10 +47,8 @@ export class PerpsDepositDialog extends Dialog {
     await this.selectCurrency.click();
   }
 
-  @step("Select the Perps deposit funding account")
-  async selectFundingAccount(account: Account) {
-    await expect(this.accountSelection).toBeVisible();
-    await this.page.getByTestId(`account-row-${account.accountName}`).click();
+  @step("Verify the Perps deposit funding account is selected")
+  async expectFundingAccountSelected(account: Account) {
     await expect(this.selectCurrency).toContainText(account.currency.ticker);
   }
 
@@ -85,10 +74,12 @@ export class PerpsDepositDialog extends Dialog {
     receiverAccount: Account;
   }) {
     await expect(this.reviewTitle).toBeVisible();
-    await expect(this.reviewSubtitle).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.reviewSubtitle).toBeVisible();
+      await soft(this.swapDetailsTitle).toBeVisible();
+      await soft(this.depositDetailsTitle).toBeVisible();
+    });
     await expect(this.reviewBackButton).toBeVisible();
-    await expect(this.swapDetailsTitle).toBeVisible();
-    await expect(this.depositDetailsTitle).toBeVisible();
     await expect(this.amountSent).toContainText(fundingAccount.currency.ticker);
     await expect(this.amountReceived).toContainText(
       new RegExp(String.raw`~[\d.,]+\s*${receiverAccount.currency.ticker}`),
@@ -106,18 +97,5 @@ export class PerpsDepositDialog extends Dialog {
   @step("Verify the Perps deposit signing dialog")
   async expectSigning() {
     await expect(this.signTerms).toBeVisible();
-  }
-
-  @step("Verify the Perps transaction signed dialog")
-  async expectTransactionSigned(receiverAccount: Account) {
-    await expect(this.signedTitle).toBeVisible();
-    await expect(this.signedDescription).toContainText(receiverAccount.currency.ticker);
-    await expect(this.signedCta).toBeVisible();
-  }
-
-  @step("Close the Perps transaction signed dialog")
-  async closeTransactionSigned() {
-    await this.closeButton.click();
-    await expect(this.signedCta).toBeHidden();
   }
 }

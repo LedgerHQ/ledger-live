@@ -61,15 +61,16 @@ test.describe("Perps deposit", () => {
       await app.perpsDepositDialog.openFundingAccountPicker();
       await app.modularDialog.selectAsset(fundingAccount.currency);
       await app.modularDialog.selectNetwork(fundingAccount.currency);
-      await app.perpsDepositDialog.selectFundingAccount(fundingAccount);
+      await app.modularDialog.selectAccountRow(fundingAccount);
+      await app.perpsDepositDialog.expectFundingAccountSelected(fundingAccount);
       await app.perpsDepositDialog.enterAmount(depositAmount);
       await app.perpsDepositDialog.clickReview();
       await app.perpsDepositDialog.expectReview({ fundingAccount, receiverAccount });
       await app.perpsDepositDialog.clickDeposit();
       await app.perpsDepositDialog.expectSigning();
       await app.speculos.acceptPerpsDeposit();
-      await app.perpsDepositDialog.expectTransactionSigned(receiverAccount);
-      await app.perpsDepositDialog.closeTransactionSigned();
+      await app.perpsTransactionSignedDialog.expectTransactionSigned(receiverAccount);
+      await app.perpsTransactionSignedDialog.close();
       await app.perps.expectFundedAccountBalance();
     },
   );
