@@ -77,12 +77,16 @@ const RULES: { pattern: RegExp; area: Area | null }[] = [
   { pattern: /^apps\/ledger-live-mobile\/src\/[^/]+\//, area: "legacy" },
 ];
 
+function isAllowlisted(path: string, entry: string): boolean {
+  return path === entry || path.startsWith(entry.endsWith("/") ? entry : `${entry}/`);
+}
+
 export function classify(
   path: string,
   allowlist: AllowlistEntry[] = [],
 ): { area: Kind; label: string } | null {
   if (!SOURCE.test(path) || DECLARATION.test(path) || TEST.test(path)) return null;
-  const allowed = allowlist.find(entry => path.startsWith(entry.path));
+  const allowed = allowlist.find(entry => isAllowlisted(path, entry.path));
   if (allowed) return { area: "allowlisted", label: `${allowed.path} (${allowed.ticket})` };
   for (const { pattern, area } of RULES) {
     const match = pattern.exec(path);

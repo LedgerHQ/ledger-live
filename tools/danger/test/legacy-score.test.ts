@@ -99,6 +99,17 @@ describe("classify", () => {
     });
   });
 
+  it("matches allowlist files exactly and folders at a slash boundary", () => {
+    const entries: AllowlistEntry[] = [
+      { ...allowlist[0], path: "libs/example/src/view.ts" },
+      { ...allowlist[0], path: "libs/example/src/feature" },
+    ];
+    assert.equal(classify("libs/example/src/view.ts", entries)?.area, "allowlisted");
+    assert.equal(classify("libs/example/src/view.tsx", entries)?.area, "legacy");
+    assert.equal(classify("libs/example/src/feature/a.ts", entries)?.area, "allowlisted");
+    assert.equal(classify("libs/example/src/feature-other/a.ts", entries)?.area, "legacy");
+  });
+
   it("ignores tests, declarations and non TypeScript files", () => {
     for (const path of [
       "libs/ledger-live-common/src/a.test.ts",
