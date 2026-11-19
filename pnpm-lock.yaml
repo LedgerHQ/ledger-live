@@ -13482,6 +13482,9 @@ importers:
       '@features/platform-account-data':
         specifier: workspace:*
         version: link:../../platform/account-data
+      '@features/platform-currencies':
+        specifier: workspace:*
+        version: link:../../platform/currencies
       '@features/platform-device-intent':
         specifier: workspace:*
         version: link:../../platform/device-intent
@@ -13507,6 +13510,9 @@ importers:
       '@domain/api-account-data':
         specifier: workspace:*
         version: link:../../../domain/api/account-data
+      '@domain/api-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/api/currency-token
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -13519,6 +13525,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest

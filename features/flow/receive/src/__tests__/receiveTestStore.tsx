@@ -2,6 +2,7 @@ import React, { type ReactNode } from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra, type AccountDataSource } from "@domain/api-account-data";
+import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { accountsSlice, remoteAccountsAdded } from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
@@ -10,6 +11,7 @@ import { accountReceivesSlice } from "@domain/entity-account-receive";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { accountStatusSlice } from "@domain/entity-account-status";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
+import { calApiExtra } from "@shared/api-services";
 import { I18nTestProvider } from "@shared/i18n/testing";
 
 export const testDescriptor = mockAddressAccountDescriptor();
@@ -45,8 +47,17 @@ export function makeReceiveTestStore(reads: Partial<ReceiveReads> = {}) {
       accountEntries: accountsSlice.reducer,
       accountReceives: accountReceivesSlice.reducer,
       accountStatus: accountStatusSlice.reducer,
+      [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
     },
-    middleware: getDefault => getDefault({ thunk: { extraArgument: accountDataExtra([source]) } }),
+    middleware: getDefault =>
+      getDefault({
+        thunk: {
+          extraArgument: {
+            ...accountDataExtra([source]),
+            ...calApiExtra({ calServiceUrl: "https://cal.test", ledgerClientVersion: "test" }),
+          },
+        },
+      }).concat(cryptoAssetsApi.middleware),
   });
   store.dispatch(
     remoteAccountsAdded([{ accountUUID: testAccountUUID, descriptor: testDescriptor }]),
@@ -54,12 +65,24 @@ export function makeReceiveTestStore(reads: Partial<ReceiveReads> = {}) {
   return store;
 }
 
-/** The test store and the i18n catalog, as a `render` wrapper. */
+/** The English wording the receive tests read, as in the apps' catalogs. */
+const receiveTestResources = {
+  en: {
+    translation: {
+      receiveAddress: {
+        title: "Receive {{asset}}",
+        networkLabel: "{{network}} network",
+      },
+    },
+  },
+};
+
+/** The test store and the receive wording, as a `render` wrapper. */
 export function receiveTestWrapper(store = makeReceiveTestStore()) {
   return function ReceiveTestWrapper({ children }: { children: ReactNode }) {
     return (
       <Provider store={store}>
-        <I18nTestProvider>{children}</I18nTestProvider>
+        <I18nTestProvider resources={receiveTestResources}>{children}</I18nTestProvider>
       </Provider>
     );
   };

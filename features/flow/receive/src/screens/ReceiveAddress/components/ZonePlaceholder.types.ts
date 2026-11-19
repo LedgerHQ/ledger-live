@@ -9,4 +9,6 @@ export type ReceiveAddressZone =
 
 export type ZonePlaceholderProps = Readonly<{
   zone: ReceiveAddressZone;
+  /** What the zone will show, once its task lands. */
+  label?: string;
 }>;
