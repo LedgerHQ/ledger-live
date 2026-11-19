@@ -420,8 +420,18 @@ function selectPlaywrightSpecs({
     ? [smokeTests ? "@smoke" : "", baseFilter]
     : [applySmokeFilter(baseFilter, smokeTests)];
   const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
+  // An alternative no spec or helper mentions can only match a title built at runtime.
+  const matchesNoSpec = part => {
+    try {
+      const matcher = new RegExp(part, "i");
+      return !specFiles.some(file => matchesFile(file, matcher));
+    } catch {
+      return true;
+    }
+  };
   for (const conjunct of conjuncts) {
     if (!conjunct || splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
+    if (splitFilter(conjunct).some(matchesNoSpec)) return null;
     const matcher = new RegExp(conjunct, "i");
     selected = selected.filter(file => matchesFile(file, matcher));
   }
