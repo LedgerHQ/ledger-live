@@ -53,7 +53,8 @@ const invalidAmounts: Array<{
     transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
-    expectsGetFundsCta: true,
+    // Buy lists "polkadot", not "assethub_polkadot": no Get DOT CTA, Review stays disabled.
+    expectsGetFundsCta: false,
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
