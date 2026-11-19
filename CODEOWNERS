@@ -15,6 +15,7 @@
 /.mise/tasks/mitmproxy/                                 @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/platform  @ledgerhq/wallet-xp
 /tools/                                                 @ledgerhq/platform
+/tools/danger/legacy-allowlist.json                     @ledgerhq/platform
 
 # Platform & Wallet XP teams catchall
 CODEOWNERS                                               @ledgerhq/platform
