@@ -1,0 +1,8 @@
+{
+  "name": "@shared/storage-mmkv",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

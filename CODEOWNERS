@@ -54,6 +54,10 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
 /shared/native-performance/                              @ledgerhq/platform
+/shared/storage/                                         @ledgerhq/platform
+/shared/storage-electron/                                @ledgerhq/platform
+/shared/storage-mmkv/                                    @ledgerhq/platform
+/shared/storage-node-file/                               @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
