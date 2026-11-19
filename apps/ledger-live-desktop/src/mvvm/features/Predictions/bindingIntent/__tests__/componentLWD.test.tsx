@@ -3,7 +3,11 @@ import { render, screen } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { PredictionsBindingJobState } from "@features/platform-predictions";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import { PredictionsBindingIntentComponentLWD } from "../componentLWD";
+
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 function renderStep(jobState: PredictionsBindingJobState, onClose = jest.fn()) {
   const view = render(
@@ -68,6 +72,27 @@ describe("PredictionsBindingIntentComponentLWD", () => {
     await user.click(screen.getByTestId("predictions-binding-retry"));
 
     expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("says how to enable blind signing, with its support article under the explanation", async () => {
+    const blindSigningDisabled = Object.assign(new Error("Enable blind signing"), {
+      name: "EthAppPleaseEnableContractData",
+    });
+    const { user } = renderStep({ type: "error", error: blindSigningDisabled, retry: jest.fn() });
+
+    const title = screen.getByRole("heading", {
+      name: "Enable Blind signing or Contract data in Ethereum app",
+    });
+    expect(title).not.toContainElement(screen.getByRole("link", { name: "Learn more" }));
+    const description = screen.getByTestId("predictions-binding-error-description");
+    expect(description).toHaveTextContent(
+      "On your device, open the Ethereum app's settings, turn on Blind signing, then retry.",
+    );
+    expect(description).toContainElement(screen.getByRole("link", { name: "Learn more" }));
+
+    await user.click(screen.getByRole("link", { name: "Learn more" }));
+
+    expect(openURL).toHaveBeenCalledWith(urls.errors.EthAppPleaseEnableContractData);
   });
 
   it("says a signature from another key can't be used", () => {
