@@ -2,6 +2,8 @@ import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Glow } from "@shared/ui-glow/native";
+import { KARAOKE_GLOW_SIZE, KaraokeGlow } from "@shared/ui-karaoke/native";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
@@ -36,6 +38,26 @@ function useOfferTheme() {
   return colorScheme === "dark" ? "dark" : "light";
 }
 
+function OfferGlow() {
+  const { theme, colorScheme } = useTheme();
+  return (
+    <Glow
+      testID={syncOfferTestIds.glow}
+      showTop
+      canvasColor={theme.colors.bg.canvas}
+      params={KARAOKE_GLOW_SIZE}
+      fallback={
+        <KaraokeGlow
+          isAtBottom={false}
+          delayMs={0}
+          isLight={colorScheme === "light"}
+          hasAction={false}
+        />
+      }
+    />
+  );
+}
+
 function OfferLayout({
   title,
   closeLabel,
@@ -60,6 +82,7 @@ function OfferLayout({
 
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <OfferGlow />
       <Box lx={{ flex: 1, gap: "s24" }}>
         <DeviceOnboardingCloseBar
           label={closeLabel}
