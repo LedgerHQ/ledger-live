@@ -3,14 +3,9 @@ import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native"
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
-import { getEnv } from "@shared/env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import {
-  type DeviceConnectionResult,
-  dmkToLedgerDeviceIdMap,
-  isMockServerCompatDeviceId,
-} from "@ledgerhq/live-dmk-shared";
+import { type DeviceConnectionResult, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "~/context/hooks";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
@@ -28,14 +23,6 @@ function toLegacyDevice(result: DeviceConnectionResult): Device {
     modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
     wired: result.compatDeviceWired,
   };
-}
-
-/** Same rule as `SelectDevice2`: the mock environments cannot answer the lock check. */
-function needsLockedCheck(device: Device): boolean {
-  const { deviceId } = device;
-  return (
-    !getEnv("MOCK") && !deviceId.startsWith("speculos|") && !isMockServerCompatDeviceId(deviceId)
-  );
 }
 
 /**
@@ -91,11 +78,7 @@ export function useMyWalletDeviceListViewModel({
   const onConnected = useCallback((result: DeviceConnectionResult) => {
     const connectedDevice = toLegacyDevice(result);
     track("ManagerDeviceEntered", { modelId: connectedDevice.modelId });
-    if (needsLockedCheck(connectedDevice)) {
-      setDeviceToCheck(connectedDevice);
-    } else {
-      setDevice(connectedDevice);
-    }
+    setDeviceToCheck(connectedDevice);
   }, []);
 
   const onDeviceUnlocked = useCallback(() => {

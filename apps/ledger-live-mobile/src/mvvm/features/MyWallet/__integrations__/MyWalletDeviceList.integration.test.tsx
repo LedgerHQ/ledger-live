@@ -10,10 +10,7 @@ import {
   useDeviceManagementKit,
   type ConnectKnownOrNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import {
-  buildMockServerCompatDeviceId,
-  type DeviceConnectionResult,
-} from "@ledgerhq/live-dmk-shared";
+import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { trackPage } from "@shared/analytics";
 import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { BaseOnboardingTestScreens } from "@tests/OnboardingTestScreens";
@@ -188,20 +185,6 @@ describe("MyWalletDeviceList", () => {
     // THEN
     expect(screen.queryByText("Device action for nano-x-id")).toBeNull();
     expect(resume).toHaveBeenCalled();
-  });
-
-  it("GIVEN the device list, WHEN a mock server device connects, THEN it should open the device action without the lock check", () => {
-    // GIVEN
-    const mockServerDeviceId = buildMockServerCompatDeviceId("mock-device");
-    renderMyWallet();
-    emit(discovering);
-
-    // WHEN
-    connect(makeConnectionResult(mockServerDeviceId));
-
-    // THEN
-    expect(screen.getByText(`Device action for ${mockServerDeviceId}`)).toBeVisible();
-    expect(screen.queryByText(`Unlock ${mockServerDeviceId}`)).toBeNull();
   });
 
   it("GIVEN the device list, WHEN the Add mode starts and then ends, THEN it should hide the other sections and the tab bar, then show them again", () => {
