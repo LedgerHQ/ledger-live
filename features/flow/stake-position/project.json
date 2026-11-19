@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-stake-position",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
