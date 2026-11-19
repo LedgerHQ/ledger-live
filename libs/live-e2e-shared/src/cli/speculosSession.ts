@@ -57,19 +57,18 @@ async function start({
   catalog,
   out,
 }: Extract<SpeculosCommand, { action: "start" }>): Promise<void> {
-  const { setEnv } = await import("@shared/env");
   const { specs, startSpeculos, stopSpeculos } = await import("../speculos");
   const { createNanoAppJsonFile, getSpeculosModel } = await import("../speculosAppVersion");
   const { waitForSpeculosReady } = await import("../speculosCI");
 
   const spec = specs[app];
   if (!spec) throw new Error(`No Speculos spec for "${app}"`);
-  setEnv("MOCK", "");
-  process.env.MOCK = "";
   await createNanoAppJsonFile(catalog);
-  setEnv("E2E_NANO_APP_VERSION_PATH", catalog);
 
-  const device = await startSpeculos(`e2e-cli-${app}`, spec, { suite });
+  const device = await startSpeculos(`e2e-cli-${app}`, spec, {
+    suite,
+    nanoAppCatalogPath: catalog,
+  });
   if (!device) throw new Error(`Speculos did not start for ${app}`);
   try {
     if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);

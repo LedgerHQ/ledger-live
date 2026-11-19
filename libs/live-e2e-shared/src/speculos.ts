@@ -503,12 +503,14 @@ export const specs: Specs = {
 export type StartSpeculosOptions = {
   readonly suite: string;
   readonly apiPort?: number;
+  /** The app catalog file; E2E_NANO_APP_VERSION_PATH otherwise. */
+  readonly nanoAppCatalogPath?: string;
 };
 
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
-  { suite, apiPort }: StartSpeculosOptions,
+  { suite, apiPort, nanoAppCatalogPath }: StartSpeculosOptions,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -519,7 +521,9 @@ export async function startSpeculos(
   const { model } = appQuery;
   const firmware = appQuery.firmware ?? (await getDeviceFirmwareVersion(model));
 
-  const catalog = await getNanoAppCatalogMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
+  const catalog = await getNanoAppCatalogMap(
+    nanoAppCatalogPath ?? getEnv("E2E_NANO_APP_VERSION_PATH"),
+  );
 
   const displayName = spec.currency?.managerAppName || appQuery.appName;
   const appVersion = appQuery.appVersion ?? catalog.get(displayName)?.version;
