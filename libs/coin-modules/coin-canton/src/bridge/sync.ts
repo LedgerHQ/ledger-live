@@ -3,7 +3,7 @@ import {
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -31,7 +31,7 @@ import {
 } from "../network/gateway";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
-import { buildSubAccounts } from "./buildSubAccounts";
+import { buildSubAccounts, mergeOperations } from "./buildSubAccounts";
 import { getCurrencyContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
 
@@ -286,14 +286,35 @@ async function readOperations(
   }
 }
 
-const highestBlockHeight = (operations: Operation[]): number | undefined =>
-  operations.reduce<number | undefined>(
-    (highest, { blockHeight }) =>
-      typeof blockHeight === "number" && (highest === undefined || blockHeight > highest)
-        ? blockHeight
-        : highest,
-    undefined,
-  );
+/** The highest (`Math.max`) or lowest (`Math.min`) block height of the operations. */
+const blockHeightBound = (
+  operations: Operation[],
+  bound: (a: number, b: number) => number,
+): number | undefined =>
+  operations.reduce<number | undefined>((result, { blockHeight }) => {
+    if (typeof blockHeight !== "number") return result;
+    return result === undefined ? blockHeight : bound(result, blockHeight);
+  }, undefined);
+
+/**
+ * Where the history is read from: after the newest stored operation, or at the oldest one to read
+ * again, whichever comes first.
+ */
+const readStart = (stored: Operation[], isReplayed: (op: Operation) => boolean): number => {
+  const lastSyncedHeight = blockHeightBound(stored, Math.max);
+  if (lastSyncedHeight === undefined) return 0;
+  const replayHeight = blockHeightBound(stored.filter(isReplayed), Math.min);
+  return Math.min(lastSyncedHeight + 1, replayHeight ?? Number.POSITIVE_INFINITY);
+};
+
+const withoutReplayed = (
+  subAccount: TokenAccount,
+  isReplayed: (op: Operation) => boolean,
+): TokenAccount => {
+  if (!subAccount.operations.some(isReplayed)) return subAccount;
+  const operations = subAccount.operations.filter(op => !isReplayed(op));
+  return { ...subAccount, operations, operationsCount: operations.length };
+};
 
 /** Whether the token gets a sub-account: listed in the CAL with an admin, and enabled. */
 const isTokenEnabled = (
@@ -503,9 +524,29 @@ export function makeGetAccountShape(
     // without the stored operations: merging them would drop the operations older than them.
     const isRebuild =
       initialAccount !== undefined && (initialAccount.syncHash !== SYNC_HASH || hasNewTokenAccount);
-    const storedOperations = isRebuild ? [] : (initialAccount?.operations ?? []);
-    const storedSubAccounts = (initialAccount?.subAccounts ?? []).map(subAccount =>
+    const keptOperations = isRebuild ? [] : (initialAccount?.operations ?? []);
+    const keptSubAccounts = (initialAccount?.subAccounts ?? []).map(subAccount =>
       isRebuild ? { ...subAccount, operations: [], operationsCount: 0 } : subAccount,
+    );
+    const allKeptOperations = [
+      ...keptOperations,
+      ...keptSubAccounts.flatMap(subAccount => subAccount.operations),
+    ];
+
+    // A transaction of an offer pending at the last sync stored its fees only. It is read again, in
+    // full, until the offer leaves the pending list, and replaces what it stored: a settled
+    // transaction can charge its fees to another operation.
+    const previouslyPending = new Set(
+      xpubOrAddress
+        ? (initialAccount?.cantonResources?.pendingTransferProposals ?? []).map(
+            ({ update_id }) => update_id,
+          )
+        : [],
+    );
+    const isReplayed = (op: Operation) => previouslyPending.has(op.hash);
+    const storedOperations = keptOperations.filter(op => !isReplayed(op));
+    const storedSubAccounts = keptSubAccounts.map(subAccount =>
+      withoutReplayed(subAccount, isReplayed),
     );
 
     // Main account operations: the native instrument only. By id alone: the gateway gives every
@@ -517,21 +558,13 @@ export function makeGetAccountShape(
     let newOperations: Operation[] = [];
     if (xpubOrAddress) {
       // Token operations count too, or a run of them would be read again on every sync.
-      const lastSyncedHeight = highestBlockHeight([
-        ...storedOperations,
-        ...storedSubAccounts.flatMap(subAccount => subAccount.operations),
-      ]);
-      const rows = await readOperations(
-        config,
-        xpubOrAddress,
-        lastSyncedHeight === undefined ? 0 : lastSyncedHeight + 1,
-        blockHeight,
-      );
+      const start = readStart(allKeptOperations, isReplayed);
+      const rows = await readOperations(config, xpubOrAddress, start, blockHeight);
       newOperations = filterOperations(rows, accountId, xpubOrAddress, pendingTransferProposals);
     }
 
     // Merged per account: operations of several assets in one transaction share an id.
-    const mainAccountOperations = mergeOps(
+    const mainAccountOperations = mergeOperations(
       storedOperations,
       newOperations.filter(isMainAccountOperation),
     );

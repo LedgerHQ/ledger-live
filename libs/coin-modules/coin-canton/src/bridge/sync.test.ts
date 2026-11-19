@@ -195,6 +195,19 @@ const rowAtHeight = (txHash: string, height: number): OperationInfo => ({
   block: { height, time: "" },
 });
 
+/** A row at a height, timestamped in height order. */
+const at = (row: OperationInfo, height: number): OperationInfo => ({
+  ...row,
+  transaction_timestamp: new Date(Date.UTC(2026, 0, 1, 0, 0, height)).toISOString(),
+  block: { height, time: "" },
+});
+
+/** The fee charged for a transaction, over all its operations. */
+const feeOf = (shape: Partial<CantonAccount>, hash: string) =>
+  (shape.operations ?? [])
+    .filter(op => op.hash === hash)
+    .reduce((total, op) => total.plus(op.fee), BigNumber(0));
+
 const fees = (shape: Partial<CantonAccount>) =>
   (shape.operations ?? []).filter(op => op.type === "FEES");
 
@@ -1372,6 +1385,56 @@ describe("makeGetAccountShape", () => {
       await syncFrom({ syncHash: SYNC_HASH });
 
       expect(mockedGetOperations).toHaveBeenCalledTimes(1);
+    });
+
+    it("reads a paid offer again once it settles, replacing the fees stored while it was pending", async () => {
+      const rows = [
+        at(createMockOperationView({ txHash: "offer", operationType: "transfer-proposal" }), 5),
+        at(createMockOperationView({ txHash: "offer", uid: "change" }), 5),
+        at(createMockOperationView({ txHash: "later" }), 9),
+      ];
+      mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+        operations: rows.filter(row => row.block.height >= minOffset),
+        next: -1,
+      }));
+      const offer = {
+        contract_id: "offer-contract",
+        sender: "party123",
+        receiver: "bob",
+        amount: "100",
+        instrument_id: "Amulet",
+        instrument_admin: "native-admin",
+        memo: "",
+        expires_at_micros: 4_102_444_800_000_000,
+        update_id: "offer",
+      };
+      const resync = async (previous: Partial<CantonAccount>) => {
+        mockedGetOperations.mockClear();
+        const shape = await syncFrom({
+          syncHash: SYNC_HASH,
+          operations: previous.operations ?? [],
+          ...(previous.cantonResources && { cantonResources: previous.cantonResources }),
+        });
+        return { shape, from: readFrom().map(({ minOffset }) => minOffset) };
+      };
+
+      mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+      const pending = await resync({ operations: [], cantonResources: {} as never });
+      expect(pending.shape.operations?.filter(op => op.hash === "offer")).toEqual([
+        expect.objectContaining({ type: "FEES", value: BigNumber(10) }),
+      ]);
+
+      mockedGetPendingTransferProposals.mockResolvedValue([]);
+      const settled = await resync(pending.shape);
+      expect(settled.from).toEqual([5]);
+      expect(
+        settled.shape.operations?.filter(op => op.hash === "offer").map(op => op.type),
+      ).toEqual(expect.arrayContaining(["TRANSFER_PROPOSAL", "OUT"]));
+      expect(settled.shape.operations?.some(op => op.type === "FEES")).toBe(false);
+      expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+
+      const next = await resync(settled.shape);
+      expect(next.from).toEqual([10]);
     });
 
     it("rebuilds the history from offset 0 when the sync hash changed", async () => {
