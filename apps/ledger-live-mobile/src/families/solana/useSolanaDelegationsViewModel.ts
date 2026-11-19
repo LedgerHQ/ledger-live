@@ -27,6 +27,10 @@ import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { discreetModeSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+import {
+  useViewStakePositionDetails,
+  VIEW_STAKE_POSITION_DETAILS,
+} from "./useViewStakePositionDetails";
 
 const STATE_APPEARANCE = {
   active: "success",
@@ -47,6 +51,7 @@ export const useSolanaDelegationsViewModel = (account: SolanaAccount): AccountDe
   const discreet = useSelector(discreetModeSelector);
   const unit = useAccountUnit(account);
   const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
+  const viewDetails = useViewStakePositionDetails(account);
 
   const formatAmount = (amount: BigNumber | number) =>
     formatCurrencyUnit(unit, BigNumber.isBigNumber(amount) ? amount : new BigNumber(amount), {
@@ -69,13 +74,18 @@ export const useSolanaDelegationsViewModel = (account: SolanaAccount): AccountDe
     (rowId: string, actionId: string) => {
       const stakeWithMeta = stakesWithMeta.find((item, index) => rowIdOf(item, index) === rowId);
       if (!stakeWithMeta) return;
+      if (actionId === VIEW_STAKE_POSITION_DETAILS) {
+        const { positionId } = stakeWithMeta.stake;
+        if (positionId) viewDetails?.(positionId);
+        return;
+      }
       goToDelegationFlow({
         kind: "change",
         stakeWithMeta,
         stakeAction: actionId as StakeAction,
       });
     },
-    [goToDelegationFlow, stakesWithMeta],
+    [goToDelegationFlow, stakesWithMeta, viewDetails],
   );
 
   const onOpenValidator = useCallback(
@@ -124,10 +134,15 @@ export const useSolanaDelegationsViewModel = (account: SolanaAccount): AccountDe
         ...(inactive.gt(0) ? { inactive: { value: formatAmount(inactive), sensitive: true } } : {}),
         available: { value: formatAmount(withdrawable), sensitive: true },
       },
-      actions: solanaStakeActions(stake).map(action => ({
-        id: action,
-        label: t(`solana.delegation.actions.${action}`),
-      })),
+      actions: [
+        ...(viewDetails && stake.positionId
+          ? [{ id: VIEW_STAKE_POSITION_DETAILS, label: t("stakePosition.entry.viewDetails") }]
+          : []),
+        ...solanaStakeActions(stake).map(action => ({
+          id: action,
+          label: t(`solana.delegation.actions.${action}`),
+        })),
+      ],
     };
   });
 
