@@ -11,6 +11,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { makeChangeTrustTransaction } from "../utils";
+import { useSignTokenEdit } from "./useSignTokenEdit";
 import type { XrpManageTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
@@ -27,7 +28,8 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   const { token } = tokenAccount;
   const unit = token.units[0];
 
-  const { xrpResources } = tokenAccount as XrpTokenAccount;
+  const xrpTokenAccount = tokenAccount as XrpTokenAccount;
+  const { xrpResources } = xrpTokenAccount;
   // Undefined when the limit is unknown: that is not a limit of 0
   const storedLimit = xrpResources?.limit;
   const storedIsRippling = xrpResources?.isRippling ?? false;
@@ -77,17 +79,12 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   const onOpenRipplingSheet = useCallback(() => setIsRipplingSheetOpen(true), []);
   const onCloseRipplingSheet = useCallback(() => setIsRipplingSheetOpen(false), []);
 
-  const onContinue = useCallback(() => {
-    if (!transaction) return;
-
-    navigation.navigate(ScreenName.XrpManageTokenSelectDevice, {
-      token,
-      transaction,
-      status,
-      accountId: tokenAccount.id,
-      parentId: parentAccount.id,
-    });
-  }, [navigation, parentAccount.id, status, token, tokenAccount.id, transaction]);
+  const signTokenEdit = useSignTokenEdit({
+    navigation,
+    parentAccount,
+    tokenAccount: xrpTokenAccount,
+    transaction,
+  });
 
   const isLimitChanged = !storedLimit?.eq(limit);
   const isRipplingChanged = isRippling !== storedIsRippling;
@@ -118,12 +115,12 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
     onChangeRippling,
     onOpenRipplingSheet,
     onCloseRipplingSheet,
-    onContinue,
+    signTokenEdit,
     errors: [...(bridgeError ? [bridgeError] : []), ...shownStatusErrors],
     ripplingText: t(isRippling ? "xrp.rippling.activated" : "xrp.rippling.deactivated"),
     isCurrentLimitZero: !!storedLimit?.isZero(),
-    isContinueDisabled: hasNothingToSign || isStatusPendingOrFailed,
-    isContinueLoading: bridgePending,
+    isContinueDisabled: hasNothingToSign || isStatusPendingOrFailed || signTokenEdit.isBroadcasting,
+    isContinueLoading: bridgePending || signTokenEdit.isBroadcasting,
     limitText: isMaximum
       ? t("xrp.tokenSettings.maximum")
       : formatCurrencyUnit(unit, limit, { showCode: true }),

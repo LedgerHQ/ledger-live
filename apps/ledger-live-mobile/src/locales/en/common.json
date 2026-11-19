@@ -8509,7 +8509,12 @@
       "currentLimitZero": "Your limit is 0: you can't receive this token.",
       "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token.",
       "success": {
-        "title": "Token settings updated"
+        "title": "Token settings updated",
+        "description": "Your new settings apply once the transaction is confirmed."
+      },
+      "error": {
+        "title": "Failed to update token settings",
+        "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
       }
     },
     "send": {

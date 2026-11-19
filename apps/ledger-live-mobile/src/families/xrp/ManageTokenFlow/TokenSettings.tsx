@@ -18,6 +18,7 @@ import { ErrorBanner } from "../components/ErrorBanner";
 import { FullTextBanner } from "../components/FullTextBanner";
 import { InfoTooltip } from "../components/InfoTooltip";
 import { RipplingSheet } from "./RipplingSheet";
+import SignTokenEditSheets from "./SignTokenEditSheets";
 import { type Props, useTokenSettingsViewModel } from "./useTokenSettingsViewModel";
 
 function ValueTrailing({ value, testID }: Readonly<{ value: string; testID: string }>) {
@@ -97,12 +98,13 @@ export default function TokenSettings(props: Props) {
           isFull
           disabled={viewModel.isContinueDisabled}
           loading={viewModel.isContinueLoading}
-          onPress={viewModel.onContinue}
+          onPress={viewModel.signTokenEdit.onSign}
           testID="xrp-settings-continue"
         >
           {t("common.continue")}
         </Button>
       </Box>
+      <SignTokenEditSheets viewModel={viewModel.signTokenEdit} />
     </SafeAreaView>
   );
 }

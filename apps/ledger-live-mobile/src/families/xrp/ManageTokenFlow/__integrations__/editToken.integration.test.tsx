@@ -1,9 +1,11 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { Observable } from "rxjs";
+import invariant from "invariant";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
+import { track } from "@shared/analytics";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import type { Account } from "@ledgerhq/types-live";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -24,20 +26,36 @@ import {
 } from "../../__mocks__/bridge.mock";
 import { xrpIouToken, xrpMptToken } from "../../__mocks__/currency.mock";
 
-jest.mock(
-  "@ledgerhq/live-common/hw/actions/app",
-  () => require("../../__mocks__/deviceConnection.mock").hwActionsAppModule,
-);
+type ExecutorProps = {
+  sourceFlow: string;
+  intent: {
+    input: { transaction: { amount: BigNumber; noRipple: boolean } };
+    onResult: (signedOperation: object) => void;
+  };
+  onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
+  onIntentJobComplete: () => void;
+  onUserCancel: () => void;
+};
 
-jest.mock(
-  "@ledgerhq/live-common/hw/index",
-  () => require("../../__mocks__/deviceConnection.mock").hwIndexModule,
-);
+let mockExecutorProps: ExecutorProps | undefined;
 
-jest.mock(
-  "~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling",
-  () => require("../../__mocks__/deviceConnection.mock").deviceLockedPollingModule,
-);
+// DIE drives a real device connection: the test fires its job states by hand
+jest.mock("LLM/components/DeviceIntentExecutor", () => {
+  const ReactModule = require("react");
+  const { View } = require("react-native");
+  return {
+    __esModule: true,
+    buildDeviceInitializationInput: jest.fn(async () => ({ appName: "XRP" })),
+    DeviceIntentExecutor: (props: ExecutorProps) => {
+      mockExecutorProps = props;
+      const onUserCancel = ReactModule.useRef(props.onUserCancel);
+      onUserCancel.current = props.onUserCancel;
+      // Like the real executor sheet, it cancels on unmount with the props of its last render
+      ReactModule.useEffect(() => () => onUserCancel.current(), []);
+      return ReactModule.createElement(View, { testID: "device-intent-executor" });
+    },
+  };
+});
 
 jest.mock("~/datadog", () => {
   return {
@@ -75,6 +93,24 @@ const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
 const EDIT_BUTTON_TEST_ID = `xrp-manage-asset-edit-${xrpIouToken.id}`;
 
 const ZERO_AMOUNT = new BigNumber(0);
+
+const SIGNED_OPERATION = {
+  signature: "sig",
+  operation: {
+    id: "op-edit",
+    hash: "0xedit",
+    type: "OPT_IN",
+    value: new BigNumber(0),
+    fee: new BigNumber(12),
+    senders: [],
+    recipients: [],
+    blockHeight: null,
+    blockHash: null,
+    accountId: XRP_ACCOUNT.id,
+    date: new Date(),
+    extra: {},
+  },
+};
 
 const TOKEN_BALANCE = new BigNumber(500);
 
@@ -175,24 +211,48 @@ async function waitForBridgeToSettle(limit: string) {
   await act(async () => {});
 }
 
-async function signFromEditDetails(user: UserEvents) {
+async function continueToDevice(user: UserEvents) {
   await waitFor(() => expect(getContinueButton()).toBeEnabled());
   await user.press(getContinueButton());
-  const device = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
-  await user.press(device);
+  await screen.findByTestId("device-intent-executor");
+}
+
+function getExecutorProps(): ExecutorProps {
+  invariant(mockExecutorProps, "The device intent executor is not rendered");
+
+  return mockExecutorProps;
+}
+
+// Like the real job: the result, then the last state, then the end of the job
+async function signOnDevice() {
+  const { intent, onIntentJobStateChanged, onIntentJobComplete } = getExecutorProps();
+  act(() => {
+    intent.onResult(SIGNED_OPERATION);
+    onIntentJobStateChanged({ type: "signed", signedOperation: SIGNED_OPERATION });
+  });
+  await act(async () => onIntentJobComplete());
+}
+
+async function signFromEditDetails(user: UserEvents) {
+  await continueToDevice(user);
+  await signOnDevice();
+}
+
+function isEditSheetOpen() {
+  const sheets = screen.UNSAFE_getAllByType(QueuedBottomSheet);
+  const sheet = sheets.find(item => item.props.testID === "xrp-edit-token-sheet");
+
+  return sheet?.props.isRequestingToBeOpened;
 }
 
 function getSignedTransaction() {
-  const calls = mockAccountBridge.signOperation.mock.calls as unknown as [
-    { transaction: { amount: BigNumber; noRipple: boolean } },
-  ][];
-
-  return calls[0][0].transaction;
+  return getExecutorProps().intent.input.transaction;
 }
 
 describe("XRP edit token flow (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockExecutorProps = undefined;
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
     mockTransactionStatus(mockAccountBridge, {});
     server.use(
@@ -493,6 +553,7 @@ describe("XRP edit token flow (integration)", () => {
 
       await user.press(screen.getByText("Close"));
 
+      await waitFor(() => expect(screen.queryByTestId("xrp-settings-continue")).toBeNull());
       const manageAssetsTitle = await screen.findByText("Manage assets");
 
       expect(manageAssetsTitle).toBeVisible();
@@ -513,35 +574,76 @@ describe("XRP edit token flow (integration)", () => {
       expect(screen.getByText("Activated")).toBeVisible();
     });
 
-    it("keeps the entered values when going back from the device step", async () => {
+    it("signs on the device from the Edit details screen, without a device selection screen", async () => {
+      const { user } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+
+      await continueToDevice(user);
+
+      expect(getExecutorProps().sourceFlow).toBe("manage_assets");
+      expect(screen.queryByTestId("device-item-mock")).toBeNull();
+      expect(screen.getByTestId("xrp-settings-continue")).toBeVisible();
+    });
+
+    it("keeps the entered values when the device step is cancelled", async () => {
       const { user } = await renderEditDetails();
       await replaceLimit(user, "2000");
       await chooseRippling(user, "activated");
-      await waitFor(() => expect(getContinueButton()).toBeEnabled());
-      await user.press(getContinueButton());
-      await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+      await continueToDevice(user);
 
-      await user.press(screen.getAllByTestId("navigation-header-back-button").at(-1)!);
+      await act(async () => getExecutorProps().onUserCancel());
 
-      const limitValue = await screen.findByTestId("xrp-settings-limit-value");
-
-      expect(limitValue).toHaveTextContent(/2\D?000 RLUSD/);
+      await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
+      expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/2\D?000 RLUSD/);
       expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
     });
 
-    it("lands on the error screen with Retry when signing fails", async () => {
-      mockAccountBridge.signOperation.mockImplementationOnce(() => {
-        return new Observable<SignOperationEvent>(subscriber => {
-          subscriber.next({ type: "device-signature-requested" });
-          subscriber.error(new Error("UserRefusedOnDevice"));
-        });
-      });
+    it("tracks a signing error by name", async () => {
       const { user } = await renderEditDetails();
       await replaceLimit(user, "2000");
+      await continueToDevice(user);
 
-      await signFromEditDetails(user);
+      act(() => {
+        getExecutorProps().onIntentJobStateChanged({
+          type: "error",
+          error: makeNamedError("TransportStatusError"),
+          retry: jest.fn(),
+        });
+      });
 
-      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
+      const trackCalls = jest.mocked(track).mock.calls;
+      const errorEvents = trackCalls.filter(([event]) => event === "error_displayed");
+      expect(errorEvents).toEqual([
+        [
+          "error_displayed",
+          {
+            action: "edit",
+            currency: XRP_ACCOUNT.currency.id,
+            tokenType: "iou",
+            step: "signature",
+            message_id: "TransportStatusError",
+            message_type: "error",
+          },
+        ],
+      ]);
+    });
+
+    it("keeps the flow open when the device sheet is closed during the broadcast", async () => {
+      const { user } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await continueToDevice(user);
+      await signOnDevice();
+
+      await act(async () => getExecutorProps().onUserCancel());
+
+      expect(isEditSheetOpen()).toBe(true);
+      const successTitle = await screen.findByText(
+        "Token settings updated",
+        {},
+        { timeout: 15000 },
+      );
+
+      expect(successTitle).toBeVisible();
     });
 
     it("shows the broadcast-error notice when the signed transaction fails to broadcast", async () => {
@@ -558,6 +660,41 @@ describe("XRP edit token flow (integration)", () => {
       );
 
       expect(broadcastNotice).toBeVisible();
+      expect(screen.getByTestId("xrp-edit-token-broadcast-error")).toBeVisible();
+    });
+
+    it("signs again on Try again after a failed broadcast", async () => {
+      mockAccountBridge.broadcast.mockRejectedValueOnce(new Error("tefPAST_SEQ"));
+      const { user } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await signFromEditDetails(user);
+      await user.press(await screen.findByTestId("xrp-edit-token-retry", {}, { timeout: 15000 }));
+
+      await screen.findByTestId("device-intent-executor");
+      await signOnDevice();
+
+      const successTitle = await screen.findByText(
+        "Token settings updated",
+        {},
+        { timeout: 15000 },
+      );
+
+      expect(successTitle).toBeVisible();
+    });
+
+    it("stays on Edit details when the failure sheet is closed, and signs again on Continue", async () => {
+      mockAccountBridge.broadcast.mockRejectedValueOnce(new Error("tefPAST_SEQ"));
+      const { user } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await signFromEditDetails(user);
+      await screen.findByTestId("xrp-edit-token-error", {}, { timeout: 15000 });
+
+      await user.press(screen.getByText("Close"));
+
+      await waitFor(() => expect(isEditSheetOpen()).toBe(false));
+      await continueToDevice(user);
+
+      expect(screen.getByTestId("device-intent-executor")).toBeVisible();
     });
   });
 });
