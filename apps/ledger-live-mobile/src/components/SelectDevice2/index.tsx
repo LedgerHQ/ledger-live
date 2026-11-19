@@ -636,7 +636,11 @@ export default function SelectDevice({
                     {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
-                    <Touchable onPress={onAddDevicePress} {...addNewButtonEventProps}>
+                    <Touchable
+                      touchableTestID="select-device-add-new"
+                      onPress={onAddDevicePress}
+                      {...addNewButtonEventProps}
+                    >
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
                           {t(

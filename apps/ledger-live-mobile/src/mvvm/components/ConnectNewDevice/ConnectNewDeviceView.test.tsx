@@ -211,6 +211,12 @@ describe("ConnectNewDeviceView", () => {
     expect(screen.getByLabelText("Connect Ledger Stax")).toBeVisible();
   });
 
+  it("should give each select button a test id named after the device model", () => {
+    renderView(makeDiscoveringState());
+
+    expect(screen.getByTestId(`connect-new-device-select-${DeviceModelId.nanoX}`)).toBeVisible();
+  });
+
   it("should show a discovery error in the sheet over the last non-error view", () => {
     renderView({
       type: ConnectNewDeviceUIStateTypes.DiscoveryError,

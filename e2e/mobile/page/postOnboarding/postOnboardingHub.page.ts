@@ -26,6 +26,23 @@ export default class PostOnboardingHubPage {
     await this.hubContainer.waitFullyVisible();
   }
 
+  @Step("Expect post-onboarding hub to be open")
+  async expectHubOpen(): Promise<void> {
+    await this.hubContainer.waitFullyVisible();
+  }
+
+  @Step("Expect post-onboarding hub not to be open")
+  async expectHubNotOpen(): Promise<void> {
+    await this.hubContainer.expectNotVisible();
+  }
+
+  /** The hub is a bottom sheet over the portfolio when the onboarding widget is on. */
+  @Step("Close post-onboarding hub")
+  async closeHub(): Promise<void> {
+    await this.hubContainer.swipe("down");
+    await this.hubContainer.waitNotVisible();
+  }
+
   @Step("Expect hub action {{0}} to be pending")
   async expectActionPending(actionId: string): Promise<void> {
     await this.hubAction(actionId).waitFullyVisible();

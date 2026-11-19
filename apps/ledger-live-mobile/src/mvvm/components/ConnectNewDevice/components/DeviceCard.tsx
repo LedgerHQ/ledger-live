@@ -38,6 +38,7 @@ export function DeviceCard({ selectableDevice }: Readonly<DeviceCardProps>): Rea
             size="sm"
             disabled={!isAvailable}
             onPress={onSelect}
+            testID={`connect-new-device-select-${device.deviceModelId}`}
             // For screen readers: the visible label does not say which device the button selects.
             accessibilityLabel={t("connectNewDevice.discovering.selectAccessibilityLabel", {
               deviceName,
