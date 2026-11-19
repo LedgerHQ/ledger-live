@@ -19,12 +19,12 @@ export function useReceiveAddressViewModel({
 
   const address = useMemo(
     () =>
-      selected && header.data
+      selected
         ? {
             value: selected.address,
             parts: splitAddress(selected.address),
             label: selection.options.length > 1 ? copy.addressOptionLabels[selected.id] : undefined,
-            assetIcon: header.data.assetIcon,
+            assetIcon: header.data?.assetIcon,
           }
         : undefined,
     [selected, header.data, selection.options.length, copy.addressOptionLabels],

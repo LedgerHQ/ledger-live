@@ -16,8 +16,8 @@ export type ReceiveAddressShown = Readonly<{
   parts: AddressParts;
   /** "Public address" / "Private address", when the account has several. */
   label?: string;
-  /** Drawn in the middle of the QR code. */
-  assetIcon: ReceiveIcon;
+  /** Drawn in the middle of the QR code; absent while the asset metadata is unknown. */
+  assetIcon?: ReceiveIcon;
 }>;
 
 export type ReceiveAddressViewProps = Readonly<{
