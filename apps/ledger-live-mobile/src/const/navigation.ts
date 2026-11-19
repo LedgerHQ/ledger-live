@@ -596,8 +596,8 @@ export enum ScreenName {
   HederaAssociateTokenValidationSuccess = "HederaAssociateTokenValidationSuccess",
   // xrp
   XrpAddTokenSelectToken = "XrpAddTokenSelectToken",
-  XrpAddTokenSettings = "XrpAddTokenSettings",
   XrpAddTokenReview = "XrpAddTokenReview",
+  XrpAddTokenBalanceLimit = "XrpAddTokenBalanceLimit",
   XrpAddTokenSelectDevice = "XrpAddTokenSelectDevice",
   XrpAddTokenConnectDevice = "XrpAddTokenConnectDevice",
   XrpAddTokenValidationError = "XrpAddTokenValidationError",

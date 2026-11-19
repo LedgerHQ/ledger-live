@@ -23,7 +23,7 @@ function AddTokenButton({ accountId }: Readonly<{ accountId: string }>) {
       onPress={() => navigateToAddToken(navigation, accountId)}
       testID="xrp-add-token-button"
     >
-      {t("xrp.addToken.cta")}
+      {t("xrp.addToken.addAsset")}
     </Button>
   );
 }

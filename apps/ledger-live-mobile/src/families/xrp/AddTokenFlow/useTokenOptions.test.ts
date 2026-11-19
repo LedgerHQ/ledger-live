@@ -56,8 +56,8 @@ describe("filterTokenOptions", () => {
     expect(filterTokenOptions([xrpIouToken, ownToken], XRP_ACCOUNT)).toEqual([xrpIouToken]);
   });
 
-  it("keeps a held token", () => {
-    expect(filterTokenOptions([xrpIouToken], XRP_ACCOUNT_WITH_TOKEN)).toEqual([xrpIouToken]);
+  it("drops a token the account already holds", () => {
+    expect(filterTokenOptions([xrpIouToken], XRP_ACCOUNT_WITH_TOKEN)).toEqual([]);
   });
 });
 

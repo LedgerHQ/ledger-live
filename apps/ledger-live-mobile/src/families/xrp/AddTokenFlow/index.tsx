@@ -2,16 +2,16 @@ import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { bridgeSuspenseScreenLayout, getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
+import BalanceLimit from "./BalanceLimit";
 import Review from "./Review";
 import SelectToken from "./SelectToken";
-import Settings from "./Settings";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
 import type { XrpAddTokenFlowParamList } from "./types";
@@ -23,17 +23,20 @@ const options = {
 };
 
 const renderBackButton = () => <NavigationHeaderBackButton />;
-const renderCloseButton = () => <NavigationHeaderCloseButtonAdvanced />;
 
 function AddTokenFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { theme } = useLumenTheme();
+  const canvas = { backgroundColor: theme.colors.bg.canvas };
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
+        contentStyle: canvas,
+        headerStyle: canvas,
         gestureEnabled: Platform.OS === "ios",
       }}
       screenLayout={bridgeSuspenseScreenLayout}
@@ -42,18 +45,11 @@ function AddTokenFlow() {
         name={ScreenName.XrpAddTokenSelectToken}
         component={SelectToken}
         options={{
-          headerLeft: renderBackButton,
-          headerTitle: t("xrp.addToken.steps.token.title"),
-          headerRight: renderCloseButton,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.XrpAddTokenSettings}
-        component={Settings}
-        options={{
-          headerLeft: renderBackButton,
-          headerTitle: t("xrp.addToken.steps.settings.title"),
-          headerRight: renderCloseButton,
+          headerShown: false,
+          gestureEnabled: false,
+          presentation: "transparentModal",
+          animation: "fade",
+          contentStyle: { backgroundColor: "transparent" },
         }}
       />
       <Stack.Screen
@@ -61,8 +57,17 @@ function AddTokenFlow() {
         component={Review}
         options={{
           headerLeft: renderBackButton,
-          headerTitle: t("xrp.addToken.steps.review.title"),
-          headerRight: renderCloseButton,
+          headerRight: undefined,
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.XrpAddTokenBalanceLimit}
+        component={BalanceLimit}
+        options={{
+          headerLeft: renderBackButton,
+          headerRight: undefined,
+          headerTitle: "",
         }}
       />
       <Stack.Screen

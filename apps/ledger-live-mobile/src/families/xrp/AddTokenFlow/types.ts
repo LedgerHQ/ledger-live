@@ -1,28 +1,25 @@
-import type BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
-export type TokenSettings = Readonly<{
-  limit: BigNumber;
-  isMaximum: boolean;
-  isRippling: boolean;
-}>;
+// The limit is a base-units string: route params must stay serializable, a BigNumber is not
+type BalanceLimit = Readonly<{ limit: string; isMaximum: boolean }>;
 
 export type XrpAddTokenFlowParamList = {
   [ScreenName.XrpAddTokenSelectToken]: {
     accountId: string;
   };
-  [ScreenName.XrpAddTokenSettings]: {
-    accountId: string;
-    token: TokenCurrency;
-  };
   [ScreenName.XrpAddTokenReview]: {
     accountId: string;
     token: TokenCurrency;
-    settings?: TokenSettings;
+    balanceLimit?: BalanceLimit;
+  };
+  [ScreenName.XrpAddTokenBalanceLimit]: {
+    accountId: string;
+    token: TokenCurrency;
+    balanceLimit: BalanceLimit;
   };
   [ScreenName.XrpAddTokenSelectDevice]: {
     accountId: string;

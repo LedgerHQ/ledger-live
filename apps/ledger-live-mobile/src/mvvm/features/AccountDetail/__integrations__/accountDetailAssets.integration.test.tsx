@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -12,6 +13,13 @@ import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AccountScreen from "../AccountScreen";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../testIds";
+
+jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
+  return {
+    ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
+    getXrpEnabledTokenStandards: jest.fn().mockReturnValue([]),
+  };
+});
 
 function withBalance<T extends Account | TokenAccount>(account: T, balance: string): T {
   return { ...account, balance: new BigNumber(balance), spendableBalance: new BigNumber(balance) };
@@ -43,6 +51,14 @@ const algorandAccount = withBalance(
 const stellarAccount = withBalance(
   genAccount("account-detail-assets-stellar", {
     currency: getCryptoCurrencyById("stellar"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
+
+const xrpAccount = withBalance(
+  genAccount("account-detail-assets-xrp", {
+    currency: getCryptoCurrencyById("ripple_testnet"),
     operationsSize: 2,
   }),
   "5000000",
@@ -84,7 +100,7 @@ function renderAccount(
           ...withFlag,
           accounts: {
             ...withFlag.accounts,
-            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount],
+            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount, xrpAccount],
           },
           settings: { ...withFlag.settings, blacklistedTokenIds, hideEmptyTokenAccounts },
         };
@@ -157,6 +173,22 @@ describe("AccountDetail assets", () => {
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
     expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
     expect(within(section).getByText("Add")).toBeVisible();
+  });
+
+  it("offers to add an asset on an XRP account when a token standard is enabled", () => {
+    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou"]);
+    renderAccount(xrpAccount);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
+  });
+
+  it("does not offer to add an asset on an XRP account when every token standard is off", () => {
+    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue([]);
+    renderAccount(xrpAccount);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).queryByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeNull();
   });
 
   it("does not offer to add an asset where nothing needs to be added, even with tokens", () => {

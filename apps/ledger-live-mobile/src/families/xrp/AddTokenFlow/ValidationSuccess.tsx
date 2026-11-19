@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
+import { InfoState } from "@shared/ui-info-state";
 import PreventNativeBack from "~/components/PreventNativeBack";
-import ValidateSuccess from "~/components/ValidateSuccess";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
   BaseComposite,
@@ -20,18 +20,14 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { accountId, token, result } = route.params;
+  const { accountId } = route.params;
 
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
-  const onViewDetails = useCallback(() => {
-    navigation.navigate(ScreenName.OperationDetails, { accountId, operation: result });
-  }, [accountId, navigation, result]);
-
   return (
-    <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
+    <SafeAreaView isFlex>
       <TrackScreen category="XrpAddTokenFlow" name="ValidationSuccess" />
       <PreventNativeBack />
       <SyncOneAccountOnMount
@@ -39,12 +35,17 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         priority={10}
         accountId={accountId}
       />
-      <ValidateSuccess
-        onClose={onClose}
-        onViewDetails={onViewDetails}
-        title={t("xrp.addToken.success.title", { token: token.name })}
+      <InfoState
+        preset="success"
+        title={t("xrp.addToken.success.title")}
         description={t("xrp.addToken.success.text")}
+        primaryCta={{
+          label: t("xrp.addToken.success.cta"),
+          onPress: onClose,
+          testID: "xrp-add-token-success-close",
+        }}
+        testID="xrp-add-token-success"
       />
-    </Box>
+    </SafeAreaView>
   );
 }

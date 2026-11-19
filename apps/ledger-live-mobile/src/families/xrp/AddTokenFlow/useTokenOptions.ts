@@ -3,6 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { useTokensData } from "@features/platform-currencies";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import { findHeldTokenAccount } from "../utils";
 
 // The CAL groups ripple, ripple_testnet and ripple_devnet under one network family
 const CAL_NETWORK_FAMILY = "ripple";
@@ -14,8 +15,10 @@ export function filterTokenOptions(tokens: TokenCurrency[], account: Account): T
     const isOnAccountNetwork = token.parentCurrencyId === account.currency.id;
     const isEnabled = enabledStandards.includes(token.tokenType);
     const isIssuedByAccount = token.contractAddress === account.freshAddress;
+    const isHeld = !!findHeldTokenAccount(account, token);
+    const isExcluded = token.delisted || isIssuedByAccount || isHeld;
 
-    return isOnAccountNetwork && isEnabled && !token.delisted && !isIssuedByAccount;
+    return isOnAccountNetwork && isEnabled && !isExcluded;
   });
 }
 
