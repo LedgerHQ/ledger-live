@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { formatIssuerFee, formatLongTrustLimit, getXrpResources } from "./utils";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { formatIssuerFee, formatLongTrustLimit, formatTrustLimit, getXrpResources } from "./utils";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
@@ -11,6 +12,16 @@ const unit = xrpRlusdToken.units[0];
 
 function toBaseUnits(value: string): BigNumber {
   return new BigNumber(value).shiftedBy(unit.magnitude);
+}
+
+function formatLimit(limit: BigNumber) {
+  return formatTrustLimit({
+    limit,
+    unit,
+    locale: "en-US",
+    discreet: false,
+    maximumLabel: "Maximum",
+  });
 }
 
 describe("getXrpResources", () => {
@@ -45,6 +56,16 @@ describe("formatLongTrustLimit", () => {
 
   it("formats a limit of 17 integer digits", () => {
     expect(formatLongTrustLimit(toBaseUnits("1e16"), unit, "en-US")).toBe(`1e16 ${unit.code}`);
+  });
+});
+
+describe("formatTrustLimit", () => {
+  it("names the protocol maximum", () => {
+    expect(formatLimit(MAX_TRUST_LIMIT)).toBe("Maximum");
+  });
+
+  it("shows any other limit in the token unit", () => {
+    expect(formatLimit(toBaseUnits("1000"))).toMatch(/^1,000\sRLUSD$/);
   });
 });
 
