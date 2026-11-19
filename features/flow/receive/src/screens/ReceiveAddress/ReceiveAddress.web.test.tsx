@@ -1,20 +1,18 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { I18nTestProvider } from "@shared/i18n/testing";
+import { receiveTestWrapper, testAccountUUID } from "../../__tests__/receiveTestStore";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 const renderScreen = (onClose = jest.fn()) =>
   render(
     <ReceiveAddress
-      accountUUID={computeAccountUUID(mockAddressAccountDescriptor())}
+      accountUUID={testAccountUUID}
       assetId={CryptoOrTokenCurrencyIdSchema.parse("ethereum")}
       onClose={onClose}
     />,
-    { wrapper: I18nTestProvider },
+    { wrapper: receiveTestWrapper() },
   );
 
 describe("ReceiveAddress (Web)", () => {
