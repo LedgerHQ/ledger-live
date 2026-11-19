@@ -9,6 +9,11 @@ describe("useReceiveAddressCopy", () => {
       { wrapper: receiveTestWrapper() },
     );
 
-    expect(result.current).toEqual({ title: "Receive USDC", networkLabel: "Ethereum network" });
+    expect(result.current).toEqual({
+      title: "Receive USDC",
+      networkLabel: "Ethereum network",
+      closeLabel: "Close",
+      backLabel: "Back",
+    });
   });
 });

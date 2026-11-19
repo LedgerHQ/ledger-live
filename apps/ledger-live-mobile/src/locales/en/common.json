@@ -2416,6 +2416,8 @@
   "receiveAddress": {
     "title": "Receive {{asset}}",
     "networkLabel": "{{network}} network",
+    "close": "Close",
+    "back": "Back",
     "addressDisplayed": {
       "title": "Address securely displayed",
       "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
