@@ -17,6 +17,8 @@ import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { MyWalletNavigatorStackParamList } from "../types";
 import { MyWalletHeaderTrailing } from "./Header";
+import { MyWalletDeviceList } from "./MyWalletDeviceList";
+import { useFeature } from "@features/platform-feature-flags";
 
 type MyLedgerSectionProps = {
   onPairingStateChanged?: (isPairing: boolean) => void;
@@ -156,6 +158,10 @@ function PostOnboardingRedirect() {
 
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
+  const isDeviceListEnabled = useFeature("lwmMyWalletDeviceList")?.enabled ?? false;
+  if (isDeviceListEnabled) {
+    return <MyWalletDeviceList onAddModeChange={onPairingStateChanged} />;
+  }
   if (!isFocused) return null;
   return (
     <>
