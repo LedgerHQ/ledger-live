@@ -19,7 +19,6 @@ const PREPARED_FILES = [
   ".env.mock.prerelease",
   "package.json",
   "rspack.config.mjs",
-  "src/index.tsx",
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
   "src/components/DBSave.ts",
 ];
@@ -78,7 +77,6 @@ describe("the mobile app of this checkout", () => {
     prepare({}, app => {
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
-      assert.match(read(app, "src/index.tsx"), /LaunchArguments\.value\(\)\["wsPort"\]/);
       assert.doesNotMatch(read(app, ".env.mock.prerelease"), /^(MOCK|DETOX)=/m);
       assert.match(read(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"), /JS start epoch/);
       assert.match(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
@@ -89,6 +87,13 @@ describe("the mobile app of this checkout", () => {
     prepare({ STARTUP_PERF_REGRESSION: "LIVE-36190" }, app => {
       assert.doesNotMatch(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
     });
+  });
+
+  it("starts the E2E bridge only with DETOX, which the prepared env file no longer sets", () => {
+    assert.match(
+      read(APP, "src/index.tsx"),
+      /onInitFinished = \(\) => \{\n\s*if \(Config\.DETOX\) \{\n\s*init\(\);\n\s*\}\n\s*\};/,
+    );
   });
 
   it("reads the keys storage.ts writes before the first launch", () => {
