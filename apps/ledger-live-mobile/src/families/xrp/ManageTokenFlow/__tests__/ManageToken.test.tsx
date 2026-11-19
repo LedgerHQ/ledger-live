@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, Text } from "react-native";
+import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
@@ -7,7 +7,6 @@ import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic"
 import { HttpResponse, http, server } from "@tests/server";
 import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
-import { urls } from "~/utils/urls";
 import ManageToken from "../ManageToken";
 import type { XrpManageTokenFlowParamList } from "../types";
 import {
@@ -129,51 +128,6 @@ describe("XRP Manage assets", () => {
 
     expect(limit).toBeVisible();
     expect(screen.getByText("Activated")).toBeVisible();
-  });
-
-  it("warns about a frozen token, tags its card and links to the support article", async () => {
-    const frozen = {
-      ...XRP_IOU_TOKEN_ACCOUNT,
-      xrpResources: { ...XRP_IOU_TOKEN_ACCOUNT.xrpResources, isLocked: true },
-    };
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { user } = renderManageToken({ ...XRP_ACCOUNT, subAccounts: [frozen] });
-
-    const frozenWarning = await screen.findByText("Your RLUSD asset has been frozen");
-    expect(frozenWarning).toBeVisible();
-    expect(screen.getByText("Frozen")).toBeVisible();
-    await user.press(screen.getByText("Learn more"));
-
-    expect(openURL).toHaveBeenCalledTimes(1);
-    expect(openURL).toHaveBeenCalledWith(urls.errors.XrpTokenFrozen);
-    expect(screen.getByTestId(EDIT_BUTTON_TEST_ID)).toBeEnabled();
-  });
-
-  it("puts the frozen warning right above the card of the frozen token", async () => {
-    const frozenMpt = {
-      ...XRP_MPT_TOKEN_ACCOUNT,
-      xrpResources: { isLocked: true },
-    };
-    renderManageToken({ ...XRP_ACCOUNT, subAccounts: [XRP_IOU_TOKEN_ACCOUNT, frozenMpt] });
-
-    await screen.findByText("Your Test MPT asset has been frozen");
-
-    const elements = screen.getAllByTestId(/^xrp-(frozen-banner|manage-asset)-ripple/);
-    const order = elements.map(element => element.props.testID);
-    expect(order).toEqual([
-      `xrp-manage-asset-${xrpIouToken.id}`,
-      `xrp-frozen-banner-${xrpMptToken.id}`,
-      `xrp-manage-asset-${xrpMptToken.id}`,
-    ]);
-  });
-
-  it("shows no frozen warning or tag on a token that is not frozen", async () => {
-    renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
-
-    await screen.findByText("RLUSD");
-
-    expect(screen.queryByText("Your RLUSD asset has been frozen")).toBeNull();
-    expect(screen.queryByText("Frozen")).toBeNull();
   });
 
   it("shows Edit enabled and Delete disabled on an IOU card", async () => {

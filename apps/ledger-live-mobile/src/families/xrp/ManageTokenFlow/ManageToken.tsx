@@ -1,7 +1,6 @@
 import React from "react";
-import { Linking, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import {
-  Banner,
   Box,
   Button,
   Card,
@@ -17,7 +16,6 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
-  Tag,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
@@ -32,7 +30,6 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import { urls } from "~/utils/urls";
 import { InfoTooltip } from "../components/InfoTooltip";
 import { OWNER_RESERVE } from "../utils";
 import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
@@ -100,28 +97,6 @@ function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
-function FrozenBanner(props: Readonly<{ token: TokenCurrency }>) {
-  const { t } = useTranslation();
-
-  return (
-    <Banner
-      appearance="warning"
-      title={t("xrp.manageAssets.frozenTitle", { token: props.token.name })}
-      description={t("errors.XrpTokenFrozen.description")}
-      primaryAction={
-        <Button
-          appearance="transparent"
-          size="sm"
-          onPress={() => Linking.openURL(urls.errors.XrpTokenFrozen)}
-        >
-          {t("common.learnMore")}
-        </Button>
-      }
-      testID={`xrp-frozen-banner-${props.token.id}`}
-    />
-  );
-}
-
 function TokenCard(
   props: Readonly<{
     account: Account;
@@ -150,12 +125,7 @@ function TokenCard(
         <CardLeading>
           <TokenIcon token={token} networkId={networkId} networkTicker={currency.ticker} />
           <CardContent>
-            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
-              <CardContentTitle>{token.name}</CardContentTitle>
-              {xrpResources?.isLocked ? (
-                <Tag size="sm" appearance="gray" label={t("xrp.manageAssets.frozen")} />
-              ) : null}
-            </Box>
+            <CardContentTitle>{token.name}</CardContentTitle>
             <CardContentDescription>
               {shortAddressPreview(props.account.freshAddress)}
             </CardContentDescription>
@@ -258,12 +228,12 @@ export default function ManageToken(props: Props) {
           </Text>
         ) : (
           tokenAccounts.map(tokenAccount => (
-            <Box key={tokenAccount.id} lx={{ gap: "s12" }}>
-              {tokenAccount.xrpResources?.isLocked ? (
-                <FrozenBanner token={tokenAccount.token} />
-              ) : null}
-              <TokenCard account={account} tokenAccount={tokenAccount} onEdit={onEdit} />
-            </Box>
+            <TokenCard
+              key={tokenAccount.id}
+              account={account}
+              tokenAccount={tokenAccount}
+              onEdit={onEdit}
+            />
           ))
         )}
       </ScrollView>

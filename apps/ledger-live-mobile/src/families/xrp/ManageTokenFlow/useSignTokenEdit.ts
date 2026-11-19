@@ -86,7 +86,7 @@ export function useSignTokenEdit(props: Props) {
 
   const broadcast = useBroadcast({
     account: parentAccount,
-    transaction: transaction ?? undefined,
+    transaction,
     broadcastConfig: BROADCAST_CONFIG,
     logger: broadcastLogger,
   });
