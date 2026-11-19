@@ -161,8 +161,8 @@ export function useExitTransactionViewModel({
     (signedOperation: SignedOperation) => {
       commitStakePosition(requestId);
       onSigned();
-      broadcast(signedOperation).then(handleBroadcasted, (failure: unknown) =>
-        handleFailed(toError(failure)),
+      broadcast(signedOperation).then(handleBroadcasted, (error_: unknown) =>
+        handleFailed(toError(error_)),
       );
     },
     [broadcast, handleBroadcasted, handleFailed, onSigned, requestId],

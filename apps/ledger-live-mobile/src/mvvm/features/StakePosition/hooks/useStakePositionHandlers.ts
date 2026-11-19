@@ -24,12 +24,12 @@ export function useStakePositionHandlers(accounts: AccountLike[]): WalletAPICust
     if (!isEnabled) return {};
     return stakePositionHandlers({
       uiHooks: {
-        "position.open": async ({ accountId: walletAccountId, positionId }) => {
+        "position.open": ({ accountId: walletAccountId, positionId }) => {
           const accountId = getAccountIdFromWalletAccountId(walletAccountId);
           const account = accounts.find(({ id }) => id === accountId);
-          if (!account) throw new StakePositionAccountNotFound();
+          if (!account) return Promise.reject(new StakePositionAccountNotFound());
           if (account.type !== "Account" || !stakePositionSheetOf(account.currency.family)) {
-            throw new StakePositionUnsupported();
+            return Promise.reject(new StakePositionUnsupported());
           }
           return requestStakePosition({ accountId: account.id, positionId });
         },
