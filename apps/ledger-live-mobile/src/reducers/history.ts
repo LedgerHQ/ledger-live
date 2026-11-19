@@ -1,4 +1,4 @@
-import { createSelector, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSelector } from "@reduxjs/toolkit";
 import { selectFeature } from "@shared/feature-flags";
 import {
   hasUnreadOperations,
@@ -13,31 +13,8 @@ import {
 } from "./settings";
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 
-export type HistoryState = {
-  lastSeenOperationDate: string | null;
-};
-
-export const INITIAL_STATE: HistoryState = {
-  lastSeenOperationDate: null,
-};
-
-const historySlice = createSlice({
-  name: "history",
-  initialState: INITIAL_STATE,
-  reducers: {
-    markOperationsAsSeen: {
-      reducer: (state, action: PayloadAction<string>) => {
-        state.lastSeenOperationDate = action.payload;
-      },
-      prepare: () => ({ payload: new Date().toISOString() }),
-    },
-    initHistory: (_, action: PayloadAction<HistoryState>) => action.payload,
-  },
-});
-
-export const { markOperationsAsSeen, initHistory } = historySlice.actions;
-
-export default historySlice.reducer;
+export * from "./historySlice";
+export { default } from "./historySlice";
 
 export const lastSeenOperationDateSelector = (state: Pick<State, "history">): string | null =>
   state.history.lastSeenOperationDate;

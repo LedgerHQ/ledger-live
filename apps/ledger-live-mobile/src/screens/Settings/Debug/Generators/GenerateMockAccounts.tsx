@@ -9,8 +9,7 @@ import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
 import { useDispatch, useStore } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
-import { exportSelector } from "~/reducers/accounts";
-import { saveAccounts } from "~/db";
+import { persistAccountsNow } from "~/persistence/persistAccountsNow";
 
 const generateMockAccounts = (count: number) =>
   Array(count)
@@ -52,7 +51,7 @@ export default function GenerateMockAccountsButton({
               onPress: async () => {
                 const mockAccounts = generateMockAccounts(count);
                 dispatch(replaceAccounts(mockAccounts));
-                await saveAccounts(await exportSelector(store.getState()));
+                await persistAccountsNow(store.getState());
                 dispatch(reboot());
               },
             },

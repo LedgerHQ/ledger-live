@@ -12,8 +12,7 @@ import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
 import { useDispatch, useStore } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
-import { exportSelector } from "~/reducers/accounts";
-import { saveAccounts } from "~/db";
+import { persistAccountsNow } from "~/persistence/persistAccountsNow";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -64,7 +63,7 @@ export const GenerateMockAccountSelectScreen = () => {
     const onPress = async () => {
       const mockAccounts = generateMockAccounts(selectedCurrencies, tokens);
       dispatch(replaceAccounts(mockAccounts));
-      await saveAccounts(await exportSelector(store.getState()));
+      await persistAccountsNow(store.getState());
       dispatch(reboot());
     };
 

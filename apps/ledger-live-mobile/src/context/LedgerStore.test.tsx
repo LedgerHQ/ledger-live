@@ -6,9 +6,18 @@ import { combineReducers, type Store } from "redux";
 import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-auth/state";
 import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
+import {
+  persistenceSlice,
+  selectUsesPersistence,
+  selectRecordStatus,
+} from "@features/platform-persistence";
 import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import { receiveVerifyHintSlice } from "@features/flow-receive/state";
+import storage from "LLM/storage";
+import { STORAGE_TYPE } from "LLM/storage/constants";
+import type { StorageType } from "LLM/storage/types";
 import settingsReducer from "~/reducers/settings";
+import { persistence } from "~/persistence/composition";
 import LedgerStoreProvider from "./LedgerStore";
 
 const mockGetSettings = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
@@ -24,12 +33,14 @@ const mockGetPayCardState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(
 const mockGetReceiveVerifyHintState = jest.fn<Promise<unknown>, []>(() =>
   Promise.resolve(undefined),
 );
+const mockMigrateAccountsIfNecessary = jest.fn(() => Promise.resolve());
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
   return {
     getAccounts: () => mockGetAccounts(),
     saveAccounts: () => mockSaveAccounts(),
+    migrateAccountsIfNecessary: () => mockMigrateAccountsIfNecessary(),
     getCountervalues: empty,
     getCryptoAssetsCacheState: empty,
     getFeatureFlagsState: () => mockGetFeatureFlagsState(),
@@ -75,10 +86,17 @@ jest.mock("@features/platform-card", () => ({
 }));
 
 // A store without the feature-flags middleware, so the test decides when the cache settles.
-const createStore = () => configureStore({ reducer: { featureFlags: featureFlagsReducer } });
+const createStore = () =>
+  configureStore({
+    reducer: { featureFlags: featureFlagsReducer, persistence: persistenceSlice.reducer },
+  });
 const createStoreWithOverrides = () =>
   configureStore({
-    reducer: { featureFlags: featureFlagsReducer, liveConfigOverrides: liveConfigOverridesReducer },
+    reducer: {
+      featureFlags: featureFlagsReducer,
+      liveConfigOverrides: liveConfigOverridesReducer,
+      persistence: persistenceSlice.reducer,
+    },
   });
 
 const createStoreWithReceiveVerifyHint = () =>
@@ -88,6 +106,9 @@ const createStoreWithReceiveVerifyHint = () =>
       receiveVerifyHint: receiveVerifyHintSlice.reducer,
     },
   });
+
+const onStorage = (storageType: StorageType) =>
+  jest.spyOn(storage, "getState").mockReturnValue({ ...storage.getState(), storageType });
 
 const renderProvider = (store: Store) =>
   render(
@@ -256,7 +277,8 @@ describe("LedgerStoreProvider", () => {
     expect(mockGetMarketState).toHaveBeenCalledTimes(2);
   });
 
-  it("should stop the boot and not write the accounts when they cannot be read", async () => {
+  it("should stop the boot and not write the accounts when AsyncStorage cannot read them", async () => {
+    const storageSpy = onStorage(STORAGE_TYPE.ASYNC_STORAGE);
     mockGetAccounts.mockRejectedValue(corruptValueError());
     const store = createStore();
     store.dispatch(setCachedFlagsSettled());
@@ -274,6 +296,7 @@ describe("LedgerStoreProvider", () => {
     expect(onInitFinished).not.toHaveBeenCalled();
     expect(mockBootstrapCardSession).not.toHaveBeenCalled();
     expect(mockSaveAccounts).not.toHaveBeenCalled();
+    storageSpy.mockRestore();
   });
 
   it("should stop the boot when the known devices cannot be read", async () => {
@@ -357,6 +380,80 @@ describe("LedgerStoreProvider", () => {
       await act(() => jest.runAllTimersAsync());
 
       expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
+    });
+  });
+
+  describe("accounts", () => {
+    beforeEach(() => {
+      mockGetAccounts.mockClear();
+      mockMigrateAccountsIfNecessary.mockClear();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should hydrate the accounts through persistence on MMKV, with no legacy read", async () => {
+      onStorage(STORAGE_TYPE.MMKV);
+      const store = createStore();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(mockGetAccounts).not.toHaveBeenCalled();
+      expect(mockMigrateAccountsIfNecessary).toHaveBeenCalledTimes(1);
+      expect(selectRecordStatus(store.getState(), "accounts")).toBe("empty");
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    });
+
+    it("should stop the boot when the legacy accounts key migration keeps failing", async () => {
+      onStorage(STORAGE_TYPE.MMKV);
+      mockMigrateAccountsIfNecessary.mockRejectedValue(new Error("save failed"));
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+      const store = createStore();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(mockMigrateAccountsIfNecessary).toHaveBeenCalledTimes(4);
+      expect(consoleError).toHaveBeenCalledWith(
+        "Storage initialization stopped: cannot read accounts. The stored values are kept.",
+      );
+      expect(selectUsesPersistence(store.getState(), "accounts")).toBe(false);
+      expect(screen.getByText("loading")).toBeOnTheScreen();
+      mockMigrateAccountsIfNecessary.mockImplementation(() => Promise.resolve());
+    });
+
+    it("should stop the boot when the accounts record fails", async () => {
+      onStorage(STORAGE_TYPE.MMKV);
+      jest.spyOn(persistence, "hydrate").mockResolvedValue({ accounts: "failed" });
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+      const store = createStore();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(consoleError).toHaveBeenCalledWith(
+        "Storage initialization stopped: cannot read accounts. The stored values are kept.",
+      );
+      expect(screen.getByText("loading")).toBeOnTheScreen();
+    });
+
+    it("should keep the legacy accounts read on AsyncStorage", async () => {
+      onStorage(STORAGE_TYPE.ASYNC_STORAGE);
+      const store = createStore();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(mockGetAccounts).toHaveBeenCalledTimes(1);
+      expect(mockMigrateAccountsIfNecessary).not.toHaveBeenCalled();
+      expect(selectUsesPersistence(store.getState(), "accounts")).toBe(false);
+      expect(screen.getByText("ready")).toBeOnTheScreen();
     });
   });
 });
