@@ -179,10 +179,10 @@ export type ExplorerTransaction<Amount extends ExplorerAmount = number> = {
     "close-remainder-to"?: string;
     receiver: string;
   };
-  "receiver-rewards": Amount;
+  "receiver-rewards"?: Amount;
   "round-time": number;
   sender: string;
-  "sender-rewards": Amount;
+  "sender-rewards"?: Amount;
   signature: {
     sig: string;
   };

@@ -116,8 +116,8 @@ function toRewardOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Block
   const payment = tx["payment-transaction"];
   const assetTransfer = tx["asset-transfer-transaction"];
   const rewards: [string | undefined, ExplorerAmount][] = [
-    [tx.sender, tx["sender-rewards"]],
-    [payment?.receiver ?? assetTransfer?.receiver, tx["receiver-rewards"]],
+    [tx.sender, tx["sender-rewards"] ?? 0],
+    [payment?.receiver ?? assetTransfer?.receiver, tx["receiver-rewards"] ?? 0],
     [payment?.["close-remainder-to"] ?? assetTransfer?.["close-to"], tx["close-rewards"]],
   ];
 

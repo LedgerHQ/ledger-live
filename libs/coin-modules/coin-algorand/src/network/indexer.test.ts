@@ -53,6 +53,34 @@ describe("indexer", () => {
       expect(result.nextToken).toBeUndefined();
     });
 
+    it("should default omitted rewards to zero", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "TX_NO_REWARDS",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "SENDER_ADDRESS",
+              fee: 1000,
+              "tx-type": "pay",
+              "payment-transaction": {
+                amount: 1000000,
+                receiver: "RECIPIENT_ADDRESS",
+              },
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
+
+      expect(result.transactions[0]).toMatchObject({
+        senderRewards: new BigNumber(0),
+        recipientRewards: new BigNumber(0),
+      });
+    });
+
     it("should fetch and parse asset transfer transactions", async () => {
       mockNetwork.mockResolvedValue({
         data: {
