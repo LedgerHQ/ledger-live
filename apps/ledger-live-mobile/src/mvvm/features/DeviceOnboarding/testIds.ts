@@ -70,6 +70,7 @@ export const setupTestIds = {
 
 export const syncOfferTestIds = {
   screen: "device-onboarding-sync-offer",
+  glow: "device-onboarding-sync-offer-glow",
   activate: "device-onboarding-sync-offer-activate",
   skip: "device-onboarding-sync-offer-skip",
   learnMore: "device-onboarding-sync-offer-learn-more",

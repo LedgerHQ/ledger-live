@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
+import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SyncOfferScreen } from "./index";
 
 function QueuedBottomSheetMock({
@@ -45,7 +46,9 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: QueuedBottomSheetMock,
 }));
 
-function renderSyncOffer(phase: "offer" | "synchronizing" | "success" = "offer") {
+type Phase = "offer" | "synchronizing" | "success";
+
+function renderSyncOffer(phase: Phase = "offer") {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
@@ -175,4 +178,13 @@ describe("SyncOfferView", () => {
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onActivate).not.toHaveBeenCalled();
   });
+
+  it.each<Phase>(["offer", "synchronizing", "success"])(
+    "should show the top glow on the %s layout",
+    phase => {
+      renderSyncOffer(phase);
+
+      expect(screen.getByTestId(syncOfferTestIds.glow)).toHaveProp("showTop", true);
+    },
+  );
 });
