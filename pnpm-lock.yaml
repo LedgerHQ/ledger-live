@@ -1331,9 +1331,6 @@ importers:
       '@features/flow-receive':
         specifier: workspace:^
         version: link:../../features/flow/receive
-      '@features/flow-settings':
-        specifier: workspace:^
-        version: link:../../features/flow/settings
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
@@ -2296,9 +2293,6 @@ importers:
       '@features/flow-receive':
         specifier: workspace:^
         version: link:../../features/flow/receive
-      '@features/flow-settings':
-        specifier: workspace:^
-        version: link:../../features/flow/settings
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
