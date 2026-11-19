@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import {
-  useNavigation,
-  useRoute,
-  type NavigationProp,
-  type ParamListBase,
-} from "@react-navigation/native";
+import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import {
+  answerStakePositionUnavailable,
   dismissStakePosition,
   settleStakePosition,
-  settleStakePositionUnavailable,
+  type ShownStakePosition,
   type ShownStakePositionRequest,
 } from "@features/flow-stake-position";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
@@ -21,7 +17,7 @@ import { stakePositionSheetOf } from "../../utils/stakePositionSheetOf";
 
 export type StakePositionRequestSheetProps = Readonly<{
   request: ShownStakePositionRequest;
-  isOpen: boolean;
+  phase: ShownStakePosition["phase"];
 }>;
 
 export type StakePositionRequestSheetViewModel = Omit<StakePositionSheetProps, "account"> &
@@ -32,43 +28,45 @@ export type StakePositionRequestSheetViewModel = Omit<StakePositionSheetProps, "
 
 export function useStakePositionRequestSheetViewModel({
   request,
-  isOpen,
+  phase,
 }: StakePositionRequestSheetProps): StakePositionRequestSheetViewModel {
   const storedAccount = useSelector(state =>
     accountsSelector(state).find(({ id }) => id === request.accountId),
   );
   // Kept so an account removed while the request is shown still renders its sheet, which then
-  // says the position is gone.
+  // says the position is gone, or lets a signed exit finish.
   const [requestedAccount] = useState(storedAccount);
   const account = storedAccount ?? requestedAccount;
   const Sheet = account ? stakePositionSheetOf(account.currency.family) : undefined;
+  const isOpen = phase === "open";
   const isSyncing = useStakePositionAccountSync(storedAccount, isOpen);
 
+  // The sheet lives above the navigators: the stake flow opens from the root navigation.
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const route = useRoute();
   const openStakingDrawer = useStakingDrawer({
     navigation,
-    parentRoute: route,
+    parentRoute: undefined,
     alwaysShowNoFunds: false,
   });
 
   useEffect(() => {
-    if (isOpen && !Sheet) settleStakePositionUnavailable(request.id, "notFound");
+    if (isOpen && !Sheet) answerStakePositionUnavailable(request.id);
   }, [isOpen, Sheet, request.id]);
 
+  // The Earn live app opens its own deposit flow from the answer; a wallet screen has the host do it.
   const onEarnMore = useCallback(() => {
     if (!account) return;
     settleStakePosition(request.id, "earnMore");
     dismissStakePosition(request.id);
-    void openStakingDrawer(account, undefined, account.currency.id);
-  }, [account, openStakingDrawer, request.id]);
+    if (request.origin !== "earn") void openStakingDrawer(account, undefined, account.currency.id);
+  }, [account, openStakingDrawer, request.id, request.origin]);
 
   return {
     Sheet,
     account,
     isAccountRemoved: storedAccount === undefined,
     request,
-    isOpen,
+    phase,
     isSyncing: isSyncing && storedAccount !== undefined,
     onEarnMore,
   };

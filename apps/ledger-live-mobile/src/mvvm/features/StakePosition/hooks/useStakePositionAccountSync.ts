@@ -26,15 +26,16 @@ function snapshotOf(
 
 /**
  * Syncs the account once when an open request shows data the position rules find too old.
- * Returns whether the request still waits for that sync: until the account syncs again, the sync
- * fails, or the wait times out. Call it from a component keyed by the request.
+ * Returns whether the position may still change: the account is syncing, or the request still
+ * waits for that sync, until the account syncs again, the sync fails, or the wait times out. Call
+ * it from a component keyed by the request.
  */
 export function useStakePositionAccountSync(
   account: Account | undefined,
   isOpen: boolean,
 ): boolean {
   const sync = useBridgeSync();
-  const { error } = useAccountSyncState({ accountId: account?.id });
+  const { pending, error } = useAccountSyncState({ accountId: account?.id });
   const [opening] = useState(() => snapshotOf(account, error, isOpen));
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const hasRequestedSync = useRef(false);
@@ -59,5 +60,6 @@ export function useStakePositionAccountSync(
 
   const hasSynced = (account?.lastSyncDate.getTime() ?? 0) > opening.lastSyncTime;
   const hasFailed = Boolean(error) && error !== opening.error;
-  return opening.isStale && !hasSynced && !hasFailed && !hasTimedOut;
+  const isWaitingForItsSync = opening.isStale && !hasSynced && !hasFailed && !hasTimedOut;
+  return pending || isWaitingForItsSync;
 }

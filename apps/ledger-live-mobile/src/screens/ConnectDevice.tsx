@@ -50,7 +50,6 @@ import type { HederaUndelegationFlowParamList } from "~/families/hedera/Undelega
 import type { HederaRedelegationFlowParamList } from "~/families/hedera/RedelegationFlow/types";
 import type { HederaClaimRewardsFlowParamList } from "~/families/hedera/ClaimRewardsFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
-import type { SolanaStakePositionFlowParamList } from "~/families/solana/StakePositionFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
 import { TezosStakeFlowParamList } from "~/families/tezos/StakeFlow/types";
@@ -126,10 +125,6 @@ type Props =
   | StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingConnectDevice>
   | StackNavigatorProps<SuiUnstakingFlowParamList, ScreenName.SuiUnstakingConnectDevice>
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
-  | StackNavigatorProps<
-      SolanaStakePositionFlowParamList,
-      ScreenName.SolanaStakePositionConnectDevice
-    >
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeConnectDevice>

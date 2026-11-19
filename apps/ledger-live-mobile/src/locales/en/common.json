@@ -12595,14 +12595,15 @@
   },
   "stakePosition": {
     "details": {
-      "title": "{{ticker}} position",
-      "balance": "Balance",
-      "rewards": "Rewards",
-      "status": "Status",
-      "apy": "APY",
-      "validator": "Validator",
-      "address": "Stake account",
-      "unavailableValue": "—"
+      "title": "Earning {{currencyName}}",
+      "totalRewards": "Total rewards",
+      "currentBalance": "Current balance",
+      "sectionTitle": "Details",
+      "apy": "Current APY",
+      "apyBadge": "{{apy}} APY",
+      "status": "Transaction status",
+      "account": "Address",
+      "validator": "Validator"
     },
     "status": {
       "active": "Active",
@@ -12612,38 +12613,46 @@
     },
     "actions": {
       "earnMore": "Earn more",
-      "deactivate": "Deactivate to withdraw",
-      "withdraw": "Withdraw all"
+      "deactivate": "Deactivate",
+      "withdraw": "Withdraw"
     },
     "notice": {
       "deactivating": "Deactivation in progress. You can withdraw your {{ticker}} once it is complete.",
-      "missingAuthority": "You can't change this position from this account. Another wallet may control it, or a lockup may apply."
+      "missingAuthority": "You can't change this position from this account. Another wallet may control it, or a lockup may apply.",
+      "updating": "This position is updating. Some details may be out of date."
     },
     "confirm": {
       "deactivate": {
-        "title": "Deactivate this position?",
-        "description": "Your {{ticker}} will stop earning rewards. Once deactivation is complete, you can withdraw it.",
+        "title": "Deactivate your {{ticker}}",
+        "description": "Your {{amount}} in {{validator}} will be deactivated. Once deactivated, you will be able to withdraw your funds. It may take a few days to complete deactivation.",
         "cta": "Deactivate"
       },
       "withdraw": {
-        "title": "Withdraw all your {{ticker}}?",
-        "description": "The full balance of this position goes back to your {{ticker}} account.",
+        "title": "Withdraw your {{ticker}}",
+        "description": "Your {{amount}} in {{validator}} will be withdrawn to your {{account}} account. This may take a few minutes.",
         "cta": "Withdraw all"
-      },
-      "amount": "Amount",
-      "validator": "Validator",
-      "fees": "Network fees"
+      }
+    },
+    "result": {
+      "successTitle": "Transaction signed",
+      "deactivateDescription": "Deactivation can take a few days. You can withdraw your {{ticker}} once it is complete.",
+      "withdrawDescription": "You'll receive your {{ticker}} soon.",
+      "viewTransaction": "View transaction",
+      "failureTitle": "Transaction failed",
+      "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+      "retry": "Try again"
     },
     "unavailable": {
       "loading": "Loading your position...",
-      "notFoundTitle": "Position not found",
-      "notFoundDescription": "We couldn't find this position in your account. Recent changes can take some time to appear.",
+      "notFoundTitle": "Position not available",
+      "notFoundDescription": "We can't show this position yet. Recent changes can take a few minutes to appear.",
+      "errorTitle": "We couldn't load this position",
+      "errorDescription": "Check your connection and try again.",
+      "retry": "Try again",
       "close": "Close"
     },
-    "result": {
-      "deactivateTitle": "Deactivation submitted",
-      "withdrawTitle": "Withdrawal submitted",
-      "description": "Your position will update once the network confirms the transaction."
+    "signature": {
+      "processing": "This can take a few minutes."
     }
   }
 }

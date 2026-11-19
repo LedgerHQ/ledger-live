@@ -1,19 +1,34 @@
-import { useIsFocused } from "@react-navigation/native";
+import { useContext, useEffect } from "react";
+import { NavigationContainerRefContext } from "@react-navigation/native";
 import {
+  dismissStakePosition,
   useShownStakePosition,
-  type ShownStakePositionRequest,
+  type ShownStakePosition,
 } from "@features/flow-stake-position";
 
-export type StakePositionSheetRootViewModel = Readonly<{
-  request: ShownStakePositionRequest | null;
-  isOpen: boolean;
-}>;
+export type StakePositionSheetRootViewModel = ShownStakePosition;
 
+/**
+ * The sheets live above the navigation, so another screen never hides them: the request is
+ * dismissed when the focused screen changes, for instance when the device step opens My Ledger.
+ */
+function useDismissOnNavigation(requestId: number | undefined) {
+  const navigation = useContext(NavigationContainerRefContext);
+
+  useEffect(() => {
+    if (requestId === undefined || !navigation) return;
+    const openedOnRouteKey = navigation.getCurrentRoute()?.key;
+    return navigation.addListener("state", () => {
+      if (navigation.getCurrentRoute()?.key !== openedOnRouteKey) dismissStakePosition(requestId);
+    });
+  }, [navigation, requestId]);
+}
+
+/** Every request, whatever opened it: the one sheet of the app shows it. */
 export function useStakePositionSheetRootViewModel(): StakePositionSheetRootViewModel {
-  const { request, phase } = useShownStakePosition("earn");
-  // Earn can be mounted twice, as a tab and as a Base screen for its intents: only the focused
-  // one shows the request, so its sync and its tracking run once.
-  const isFocused = useIsFocused();
+  const shown = useShownStakePosition();
+  const { request, phase } = shown;
+  useDismissOnNavigation(request && phase !== "closed" ? request.id : undefined);
 
-  return { request: isFocused ? request : null, isOpen: phase === "open" };
+  return shown;
 }

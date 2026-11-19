@@ -1,14 +1,6 @@
 import BigNumber from "bignumber.js";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import type { StakingDelegation, StakingUnbonding } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  exitTransactionPatch,
-  toBigNumber,
-  toStakePositionCandidates,
-  toStakePositionSnapshot,
-} from "./solanaStakePosition";
+import { exitTransactionPatch, toStakePositionSnapshot } from "./solanaStakePosition";
 
 const SOL = (amount: number) => new BigNumber(amount).times(1e9);
 
@@ -35,22 +27,6 @@ const unbonding = (overrides: Partial<StakingUnbonding> = {}): StakingUnbonding 
   status: "withdrawable",
   ...overrides,
 });
-
-const accountWith = (delegations: StakingDelegation[], unbondings: StakingUnbonding[] = []) =>
-  ({
-    ...genAccount("solana-stake-position-mapping", {
-      currency: getCryptoCurrencyById("solana"),
-      operationsSize: 0,
-    }),
-    stakingResources: {
-      delegations,
-      redelegations: [],
-      unbondings,
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-    },
-  }) as SolanaAccount;
 
 describe("toStakePositionSnapshot", () => {
   it("should map an active position to base units and its authorities", () => {
@@ -82,29 +58,11 @@ describe("toStakePositionSnapshot", () => {
   });
 });
 
-describe("toBigNumber", () => {
-  it("should convert base units back without losing precision", () => {
-    expect(toBigNumber(20_393_024_000_000_001n).toFixed()).toBe("20393024000000001");
-  });
-});
-
-describe("toStakePositionCandidates", () => {
-  it("should list every position of the account with its validator", () => {
-    const account = accountWith([delegation()], [unbonding({ positionId: undefined })]);
-
-    expect(toStakePositionCandidates(account)).toEqual([
-      { positionId: "stake-active", validatorAddress: "vote-a" },
-      { positionId: "", validatorAddress: "vote-b" },
-    ]);
-  });
-});
-
 describe("exitTransactionPatch", () => {
-  it("should deactivate the stake account of the position with its whole amount", () => {
+  it("should deactivate the stake account of the position, which names no amount", () => {
     expect(exitTransactionPatch(delegation(), "deactivate")).toEqual({
       mode: "undelegate",
       recipient: "stake-active",
-      amount: SOL(2),
     });
   });
 

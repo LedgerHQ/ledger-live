@@ -60,7 +60,6 @@ import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/Reb
 import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
-import type { SolanaStakePositionFlowParamList } from "../../../families/solana/StakePositionFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { StacksStakingFlowParamList } from "../../../families/stacks/StakingFlow/types";
 import type { StacksUnstakingFlowParamList } from "../../../families/stacks/UnstakingFlow/types";
@@ -335,7 +334,6 @@ export type BaseNavigatorStackParamList = {
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
-  [NavigatorName.SolanaStakePositionFlow]: NavigatorScreenParams<SolanaStakePositionFlowParamList>;
 
   // Stelar
   [NavigatorName.StellarAddAssetFlow]: NavigatorScreenParams<StellarAddAssetFlowParamList>;

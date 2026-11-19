@@ -548,10 +548,6 @@ export enum ScreenName {
   SolanaEditMemo = "SolanaEditMemo",
   SolanaEditAmount = "SolanaEditAmount",
   SolanaDelegationStarted = "SolanaDelegationStarted",
-  SolanaStakePositionSelectDevice = "SolanaStakePositionSelectDevice",
-  SolanaStakePositionConnectDevice = "SolanaStakePositionConnectDevice",
-  SolanaStakePositionValidationSuccess = "SolanaStakePositionValidationSuccess",
-  SolanaStakePositionValidationError = "SolanaStakePositionValidationError",
   PostBuyDeviceScreen = "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen = "PostBuyDeviceSetupNanoWallScreen",
   NoDeviceWallScreen = "NoDeviceWallScreen",
@@ -811,7 +807,6 @@ export enum NavigatorName {
   PolkadotSimpleOperationFlow = "PolkadotSimpleOperationFlow",
   // Solana
   SolanaDelegationFlow = "SolanaDelegationFlow",
-  SolanaStakePositionFlow = "SolanaStakePositionFlow",
   // Stellar
   StellarAddAssetFlow = "StellarAddAssetFlow",
   NotificationCenter = "NotificationCenter",

@@ -8,13 +8,13 @@ import {
   StakePositionAccountNotFound,
   StakePositionUnsupported,
   useStakePositionRequester,
-  type StakePositionResult,
 } from "@features/flow-stake-position";
 import { stakePositionSheetOf } from "../utils/stakePositionSheetOf";
 
 /**
- * The `custom.stake.position.open` handler of the Earn live app player. While the
- * `earnNativeStakePosition` flag is off it is not registered: the live app gets METHOD_NOT_FOUND.
+ * The `custom.stake.position.open` handler of the Earn live app player: the position opens in the
+ * app-level sheet. While the `earnNativeStakePosition` flag is off it is not registered: the live
+ * app gets METHOD_NOT_FOUND.
  */
 export function useStakePositionHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const requestStakePosition = useStakePositionRequester("earn");
@@ -24,18 +24,14 @@ export function useStakePositionHandlers(accounts: AccountLike[]): WalletAPICust
     if (!isEnabled) return {};
     return stakePositionHandlers({
       uiHooks: {
-        "position.open": async ({ accountId: walletAccountId, ...position }) => {
+        "position.open": async ({ accountId: walletAccountId, positionId }) => {
           const accountId = getAccountIdFromWalletAccountId(walletAccountId);
           const account = accounts.find(({ id }) => id === accountId);
           if (!account) throw new StakePositionAccountNotFound();
           if (account.type !== "Account" || !stakePositionSheetOf(account.currency.family)) {
             throw new StakePositionUnsupported();
           }
-          const result: StakePositionResult = await requestStakePosition({
-            accountId: account.id,
-            ...position,
-          });
-          return result;
+          return requestStakePosition({ accountId: account.id, positionId });
         },
       },
     });
