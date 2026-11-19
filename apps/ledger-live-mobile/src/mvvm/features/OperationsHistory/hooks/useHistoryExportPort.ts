@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import Config from "react-native-config";
 import Share from "react-native-share";
-import type { Account } from "@ledgerhq/types-live";
 import { AccountIdSchema, type AccountId } from "@domain/entity-account";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -10,11 +9,14 @@ import {
   type HistoryExportOutcome,
   type HistoryExportPort,
 } from "@features/flow-history-export";
+import {
+  exportAccountsOperationsCsv,
+  type OperationsCsvAccountRequest,
+} from "@features/platform-account-operations-csv";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
-import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
-import { useSelector } from "~/context/hooks";
+import { findAssetCurrency } from "~/config/account-data-setup";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { sendFile } from "~/e2e/bridge/client";
 import logger from "~/logger";
@@ -38,9 +40,8 @@ export function useHistoryExportPort(): HistoryExportPort {
   const discreet = useSelector(discreetModeSelector);
   const countervalueCurrency = useSelector(counterValueCurrencySelector);
   const walletState = useSelector(walletSelector);
-  const countervalueState = useCountervaluesCache();
-  const sync = useBridgeSync();
-  const syncState = useBridgeSyncState();
+  const countervalues = useCountervaluesCache();
+  const dispatch = useDispatch();
 
   const accounts = useMemo<HistoryExportAccount[]>(
     () =>
@@ -60,44 +61,25 @@ export function useHistoryExportPort(): HistoryExportPort {
     [rawAccounts, walletState, locale, discreet],
   );
 
-  const findAccounts = useCallback(
-    (accountIds: readonly AccountId[]): Account[] => {
-      const requestedIds = new Set<string>(accountIds);
-      return rawAccounts.filter(account => requestedIds.has(account.id));
-    },
-    [rawAccounts],
-  );
-
-  const syncAccounts = useCallback(
-    (accountIds: readonly AccountId[]) => {
-      sync({
-        type: "SYNC_SOME_ACCOUNTS",
-        accountIds: [...accountIds],
-        priority: 10,
-        reason: "export-operations",
-      });
-    },
-    [sync],
-  );
-
-  const isSyncing = useCallback(
-    (accountIds: readonly AccountId[]) =>
-      findAccounts(accountIds).some(
-        account =>
-          syncState[account.id]?.pending ||
-          account.subAccounts?.some(subAccount => syncState[subAccount.id]?.pending),
-      ),
-    [findAccounts, syncState],
+  const csvRequests = useMemo<OperationsCsvAccountRequest[]>(
+    () =>
+      rawAccounts.map((account, index) => ({
+        id: accounts[index].id,
+        name: accounts[index].name,
+        xpub: account.xpub || account.freshAddress,
+      })),
+    [rawAccounts, accounts],
   );
 
   const exportCsv = useCallback(
     async (accountIds: readonly AccountId[]): Promise<HistoryExportOutcome> => {
       try {
-        const csv = accountsOpToCSV(
-          findAccounts(accountIds),
-          countervalueCurrency,
-          countervalueState,
-          walletState.accountNames,
+        const requested = new Set<string>(accountIds);
+        const csv = await dispatch(
+          exportAccountsOperationsCsv(
+            csvRequests.filter(({ id }) => requested.has(id)),
+            { countervalueCurrency, countervalues, findCurrency: findAssetCurrency },
+          ),
         );
         const fileName = getHistoryExportFileName(new Date());
 
@@ -123,11 +105,8 @@ export function useHistoryExportPort(): HistoryExportPort {
         return "failed";
       }
     },
-    [countervalueCurrency, countervalueState, findAccounts, t, walletState],
+    [csvRequests, countervalueCurrency, countervalues, dispatch, t],
   );
 
-  return useMemo(
-    () => ({ accounts, syncAccounts, isSyncing, exportCsv }),
-    [accounts, exportCsv, isSyncing, syncAccounts],
-  );
+  return useMemo(() => ({ accounts, exportCsv }), [accounts, exportCsv]);
 }

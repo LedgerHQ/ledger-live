@@ -53,6 +53,7 @@ const withAccounts = (state: State): State => ({
 
 function renderHistory(exportEnabled: boolean) {
   return render(<OperationsListWithNavBar />, {
+    withAccountData: true,
     overrideInitialState: withFlagOverrides(
       { lwmHistoryCsvExport: { enabled: exportEnabled } },
       withAccounts,
@@ -86,6 +87,7 @@ describe("History CSV export", () => {
 
     await exportBitcoinAccount(user);
 
+    expect(await screen.findByText("Transaction history saved successfully")).toBeVisible();
     expect(track).toHaveBeenCalledWith("ExportAccountOperations");
     expect(mockedShareOpen).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -93,7 +95,6 @@ describe("History CSV export", () => {
         url: expect.stringMatching(/^data:text\/csv;base64,/),
       }),
     );
-    expect(await screen.findByText("Transaction history saved successfully")).toBeVisible();
   });
 
   it("shows the error when the share fails and lets the user try again", async () => {

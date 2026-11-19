@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { AccountIdSchema, type AccountId } from "@domain/entity-account";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { HistoryExportAccount, HistoryExportPort } from "@features/flow-history-export";
+import type { OperationsCsvAccountRequest } from "@features/platform-account-operations-csv";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -14,7 +15,7 @@ export function useHistoryExportPort(): HistoryExportPort {
   const names = useBatchMaybeAccountName(rawAccounts);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const { syncAccounts, isSyncing, exportCsv } = useOperationsCsvExporter();
+  const { exportCsv } = useOperationsCsvExporter();
 
   const accounts = useMemo<HistoryExportAccount[]>(
     () =>
@@ -34,21 +35,23 @@ export function useHistoryExportPort(): HistoryExportPort {
     [rawAccounts, names, locale, discreet],
   );
 
-  const findAccounts = useCallback(
-    (accountIds: readonly AccountId[]) => {
-      const requestedIds = new Set<string>(accountIds);
-      return rawAccounts.filter(account => requestedIds.has(account.id));
-    },
-    [rawAccounts],
+  const csvRequests = useMemo<OperationsCsvAccountRequest[]>(
+    () =>
+      rawAccounts.map((account, index) => ({
+        id: accounts[index].id,
+        name: accounts[index].name,
+        xpub: account.xpub || account.freshAddress,
+      })),
+    [rawAccounts, accounts],
   );
 
-  return useMemo(
-    () => ({
-      accounts,
-      syncAccounts,
-      isSyncing: accountIds => isSyncing(findAccounts(accountIds)),
-      exportCsv: accountIds => exportCsv(findAccounts(accountIds)),
-    }),
-    [accounts, exportCsv, findAccounts, isSyncing, syncAccounts],
+  const exportRequested = useCallback(
+    (accountIds: readonly AccountId[]) => {
+      const requestedIds = new Set<string>(accountIds);
+      return exportCsv(csvRequests.filter(({ id }) => requestedIds.has(id)));
+    },
+    [csvRequests, exportCsv],
   );
+
+  return useMemo(() => ({ accounts, exportCsv: exportRequested }), [accounts, exportRequested]);
 }

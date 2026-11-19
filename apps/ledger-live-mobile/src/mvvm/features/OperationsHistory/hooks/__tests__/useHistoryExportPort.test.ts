@@ -30,6 +30,7 @@ const EXPORT_FILE_NAME = "ledgerwallet-operations-2026.11.18";
 
 function renderPort(discreetMode = false) {
   return renderHook(() => useHistoryExportPort(), {
+    withAccountData: true,
     overrideInitialState: (state: State) => ({
       ...state,
       accounts: { ...state.accounts, active: [BTC_ACCOUNT, ETH_ACCOUNT] },
@@ -93,6 +94,7 @@ describe("useHistoryExportPort", () => {
     expect(csv).toMatch(/^Operation Date,Status,Currency Ticker,/);
     expect(csv).toContain(",ETH,");
     expect(csv).not.toContain(",BTC,");
+    expect(csv).toContain(`,${ETH_ACCOUNT.xpub || ETH_ACCOUNT.freshAddress},`);
   });
 
   it("reports canceled when the share sheet is dismissed", async () => {
@@ -138,11 +140,5 @@ describe("useHistoryExportPort", () => {
       fileContent: expect.stringMatching(/^Operation Date,/),
     });
     detox.restore();
-  });
-
-  it("reports the requested accounts as not syncing when no sync is pending", () => {
-    const { result } = renderPort();
-
-    expect(result.current.isSyncing([BTC_ID])).toBe(false);
   });
 });

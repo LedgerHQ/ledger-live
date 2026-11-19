@@ -11,6 +11,7 @@ import type { CountervaluesSettings } from "@domain/entity-market-countervalues"
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { createMobileCountervaluesMiddleware } from "~/state-manager/middleware/countervalues";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
+import { accountDataExtra } from "@domain/api-account-data";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -33,6 +34,7 @@ import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
 import { INITIAL_STATE as BORROW_INITIAL_STATE } from "~/reducers/borrow";
 import { INITIAL_STATE as CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE } from "~/reducers/currencyRegionRestrictedDrawer";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
+import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
 import { INITIAL_STATE as IN_VIEW_INITIAL_STATE } from "~/reducers/inView";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
@@ -119,6 +121,12 @@ type ExtraOptions = RenderOptions & {
   overrideInitialState?: (state: State) => State;
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
   navigationInitialState?: InitialState;
+  /**
+   * Wires the account data layer as the app does: its router in the thunk extra and the accounts
+   * slice kept in step with the legacy accounts. Its reads reach the app's real sources, so it is off
+   * by default.
+   */
+  withAccountData?: boolean;
 };
 
 enum RenderType {
@@ -129,7 +137,13 @@ enum RenderType {
 type NavigationChildren = React.ComponentProps<typeof NavigationContainer>["children"];
 type WrapperProps = { children?: NavigationChildren };
 
-function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
+function createStore({
+  overrideInitialState,
+  withAccountData = false,
+}: {
+  overrideInitialState: (state: State) => State;
+  withAccountData?: boolean;
+}) {
   const transformed = overrideInitialState(INITIAL_STATE);
   // Mirror the slice's resolution chain (override > default) so tests that mutate
   // `featureFlags.overrides` directly (custom helpers, ad-hoc state shaping) get a
@@ -149,7 +163,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     },
   };
 
-  return configureStore({
+  const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
@@ -158,6 +172,14 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              ...(withAccountData
+                ? accountDataExtra(
+                    accountDataSources(
+                      (): State => store.getState(),
+                      (action): unknown => store.dispatch(action),
+                    ),
+                  )
+                : {}),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -174,6 +196,8 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     preloadedState: state,
     devTools: false,
   });
+  if (withAccountData) connectAccounts(store);
+  return store;
 }
 
 export type ReduxStore = ReturnType<typeof createStore>;
@@ -329,11 +353,13 @@ const customRender = (
     overrideInitialState: overrideInitialState = state => state,
     userEventOptions = {},
     navigationInitialState,
+    withAccountData,
     ...renderOptions
   }: ExtraOptions = {},
 ) => {
   const store = createStore({
     overrideInitialState,
+    withAccountData,
   });
 
   const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
@@ -384,6 +410,7 @@ const customRenderHook = <Result,>(
   {
     overrideInitialState: overrideInitialState = state => state,
     innerWrapper,
+    withAccountData,
     ...renderOptions
   }: ExtraOptions & {
     /**
@@ -397,6 +424,7 @@ const customRenderHook = <Result,>(
 ) => {
   const store = createStore({
     overrideInitialState,
+    withAccountData,
   });
   const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
     const inner = innerWrapper ? React.createElement(innerWrapper, undefined, children) : children;

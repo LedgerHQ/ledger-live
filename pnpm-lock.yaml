@@ -1334,6 +1334,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-operations-csv':
+        specifier: workspace:^
+        version: link:../../features/platform/account-operations-csv
       '@features/platform-account-source-coin-module':
         specifier: workspace:^
         version: link:../../features/platform/account-source-coin-module
@@ -2296,6 +2299,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-operations-csv':
+        specifier: workspace:^
+        version: link:../../features/platform/account-operations-csv
       '@features/platform-account-source-coin-module':
         specifier: workspace:^
         version: link:../../features/platform/account-source-coin-module

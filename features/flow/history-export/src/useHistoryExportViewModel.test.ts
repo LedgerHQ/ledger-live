@@ -6,6 +6,15 @@ import type { HistoryExportPort } from "./model/ports";
 
 jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
+/** An export that saves only when the test says so. */
+function pendingSave() {
+  let resolve: ((outcome: "saved") => void) | undefined;
+  const promise = new Promise<"saved">(settle => {
+    resolve = settle;
+  });
+  return { promise, resolve: (outcome: "saved") => resolve?.(outcome) };
+}
+
 function renderViewModel(port: HistoryExportPort) {
   return renderHook(() => useHistoryExportViewModel({ port }));
 }
@@ -13,22 +22,6 @@ function renderViewModel(port: HistoryExportPort) {
 describe("useHistoryExportViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("syncs every account once when it mounts", () => {
-    const port = createFakePort();
-    const { rerender } = renderViewModel(port);
-    rerender();
-
-    expect(port.syncAccounts).toHaveBeenCalledTimes(1);
-    expect(port.syncAccounts).toHaveBeenCalledWith([BITCOIN_ACCOUNT.id, ETHEREUM_ACCOUNT.id]);
-  });
-
-  it("does not sync when there is no account", () => {
-    const port = createFakePort({ accounts: [] });
-    renderViewModel(port);
-
-    expect(port.syncAccounts).not.toHaveBeenCalled();
   });
 
   it("starts with nothing selected and the export disabled", () => {
@@ -60,15 +53,29 @@ describe("useHistoryExportViewModel", () => {
     expect(result.current.checkedIds).toEqual([]);
   });
 
-  it("is loading while a selected account syncs", () => {
-    const port = createFakePort({ isSyncing: jest.fn(() => true) });
+  it("is loading while the export runs and ignores another export meanwhile", async () => {
+    const pending = pendingSave();
+    const port = createFakePort({ exportCsv: jest.fn(() => pending.promise) });
     const { result } = renderViewModel(port);
-
+    act(() => result.current.toggleAccount(ETHEREUM_ACCOUNT.id));
     expect(result.current.isLoading).toBe(false);
 
-    act(() => result.current.toggleAccount(ETHEREUM_ACCOUNT.id));
+    let firstExport: Promise<void> = Promise.resolve();
+    act(() => {
+      firstExport = result.current.exportCsv();
+      void result.current.exportCsv();
+    });
+
     expect(result.current.isLoading).toBe(true);
-    expect(port.isSyncing).toHaveBeenLastCalledWith([ETHEREUM_ACCOUNT.id]);
+    expect(port.exportCsv).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      pending.resolve("saved");
+      await firstExport;
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.success).toBe(true);
   });
 
   it("exports the selected accounts and shows the success when the file is saved", async () => {
