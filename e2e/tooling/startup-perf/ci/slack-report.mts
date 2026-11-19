@@ -32,6 +32,8 @@ export interface Measurement {
 
 interface PlatformJobs {
   build: string;
+  /** The accounts snapshot's job: skipped when the cache had the snapshot. */
+  snapshot?: string;
   measure: string;
 }
 
@@ -167,6 +169,13 @@ function platformLines(report: RunReport, platform: (typeof PLATFORMS)[number]):
     ];
   }
   if (jobs.build !== "success") return [];
+  if (UNFINISHED.has(jobs.snapshot ?? "")) {
+    return [
+      failure(
+        `${platform.emoji} ${platform.name} : ❌ the accounts snapshot could not be made, so nothing was measured`,
+      ),
+    ];
+  }
   const scenarioLines = report.scenarios.map(scenario => {
     const rows = report.rows.filter(r => r.platform === platform.key && r.scenario === scenario);
     if (rows.length) {
@@ -352,8 +361,16 @@ export function reportOf(env: NodeJS.ProcessEnv, { rows, measurements }: Results
     runUrl: env.RUN_URL ?? "",
     jobs: {
       plan: env.PLAN ?? "",
-      android: { build: env.ANDROID_BUILD ?? "", measure: env.ANDROID_MEASURE ?? "" },
-      ios: { build: env.IOS_BUILD ?? "", measure: env.IOS_MEASURE ?? "" },
+      android: {
+        build: env.ANDROID_BUILD ?? "",
+        snapshot: env.ANDROID_SNAPSHOT ?? "",
+        measure: env.ANDROID_MEASURE ?? "",
+      },
+      ios: {
+        build: env.IOS_BUILD ?? "",
+        snapshot: env.IOS_SNAPSHOT ?? "",
+        measure: env.IOS_MEASURE ?? "",
+      },
     },
     rows,
     measurements,

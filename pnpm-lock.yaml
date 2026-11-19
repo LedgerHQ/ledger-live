@@ -8708,10 +8708,17 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   e2e/tooling/startup-perf:
+    dependencies:
+      ws:
+        specifier: 'catalog:'
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2

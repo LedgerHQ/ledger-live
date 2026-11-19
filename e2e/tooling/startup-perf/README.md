@@ -3,18 +3,19 @@
 Compares the startup time of two Ledger Wallet Mobile builds, A and B, on two Android emulators or
 two iOS simulators. It automates the manual checks B2CQA-6555 (iOS) and B2CQA-6593 (Android).
 [test-mobile-startup-perf.yml](../../../.github/workflows/test-mobile-startup-perf.yml) runs it in
-CI only. The scripts run on Node alone (the `package.json` only holds the checks' tools). The build
-jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of this package; the
-measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
-signing keystore.
+CI only. The measurement runs on Node alone, with no install; only the accounts snapshot jobs
+install packages (`ws`, and `libs/live-e2e-shared` for its `e2e-cli`). The build jobs check out
+`ci/` alone, so the measured ref's Nx never sees a second copy of this package; the measure jobs
+check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the signing
+keystore.
 
 `ci/` holds what the plan, build and Slack jobs run, from a checkout of `ci/` alone and, in the
 build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
 imports from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as
 ES modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
-emulators or simulators and Maestro ready, `src/` the two programs (`measure/` writes
-`samples.jsonl`, `analysis/` reads it), and `flows/` the Maestro flows. Each test sits next to its
-module.
+emulators or simulators and Maestro ready, `src/` the three programs (`snapshot/` makes the accounts
+snapshot, `measure/` writes `samples.jsonl`, `analysis/` reads it), and `flows/` the Maestro flows.
+Each test sits next to its module.
 
 | Path                                | Role                                                                                        |
 | ----------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -23,23 +24,27 @@ module.
 | `ci/verify-build.mts`               | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
 | `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
 | `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
-| `devices/boot-emulators.sh`         | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
-| `devices/boot-simulators.sh`        | Creates and boots the two simulators, then waits for an idle host                           |
+| `devices/boot-emulators.sh`         | Boots the two Android emulators (one for the snapshot): 4 cores, animations on, cellular    |
+| `devices/boot-simulators.sh`        | Creates and boots the two simulators (one for the snapshot), then waits for an idle host    |
 | `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
 | `devices/wait-for-idle-host.sh`     | Waits for the iOS host's load to fall below its CPU count after the simulators boot         |
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
+| `src/snapshot/run.ts`               | The CLI that makes the accounts snapshot on one device, through the release's UI            |
+| `src/snapshot/bridge.ts`            | The test side of the E2E bridge: sends the app `addKnownSpeculos`, waits for its ACK        |
+| `src/snapshot/speculos.ts`          | Starts and stops each coin's Speculinho session through `e2e-cli speculos`                  |
+| `src/snapshot/files.ts`             | The snapshot's files: the storage without the device entries, and `snapshot.json`           |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
 | `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
 | `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: checks, and launches without the lines      |
-| `src/measure/inject.ts`             | Writes a scenario's userdata into a fresh install's storage, then launches it once          |
+| `src/measure/inject.ts`             | Writes a scenario's userdata or snapshot into a fresh install, then launches it once        |
 | `src/measure/storage.ts`            | The app's storage files (MMKV instance `ledger-live`): writes them, reads them back         |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
 | `src/analysis/analyze.ts`           | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
 | `src/analysis/stats.ts`             | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
 | `src/analysis/report.ts`            | The job summary: B − A per platform, scenario and measure                                   |
 | `src/analysis/fake-samples.ts`      | Fake launches for the analysis tests                                                        |
-| `flows/`                            | Maestro flows that open Settings > Debug > Performance in the running app                   |
+| `flows/`                            | Maestro flows: Settings > Debug > Performance, and the snapshot's `add-accounts.yaml`       |
 
 ## Presets
 
@@ -97,13 +102,39 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
+## The accounts snapshot
+
+The accounts scenario starts from accounts added through the app's UI, as a user adds them:
+
+- **Made**: by `src/snapshot/run.ts` on the E2E build of the latest `live-mobile@X.Y.Z` release, as
+  built for E2E (not made prod-like), one snapshot per platform. It writes the no-accounts userdata
+  (`skip-onboarding`) with the release's tours marked as seen (their sheet would cover the deep
+  link, and a user who adds accounts has seen them), then launches the app with `wsPort`, `wsToken` and `mock=0` (the build has
+  `MOCK`, whose bridges would add mock accounts). For Bitcoin, Ethereum and Solana in turn, it
+  starts a Speculinho session with `pnpm e2e-cli speculos` of `libs/live-e2e-shared` (the E2E
+  suites' firmware, app versions and session tokens, on a `nanoX` with the E2E seed), sends the app
+  `addKnownSpeculos` through `bridge.ts` and waits for its ACK, then `flows/add-accounts.yaml` adds
+  every account the scan finds, as e2e/mobile's add-account steps do. The storage it keeps leaves
+  out the device entries (`ble`, `knownDevices`, `settings.lastConnectedDevice`), since a prod build
+  has no Speculos to reach, and it fails unless each coin has an account.
+- **Cached**: in S3 (`ll-gha-s3-cache`) under
+  `develop/mobile-startup-perf-accounts-<release>-<hash>-<platform>`, where the hash covers
+  `src/snapshot/` (not its tests), the flow and the `e2e-cli` command: a new release or a change
+  to that code makes a new snapshot. The plan job restores it. On a miss, the platform also builds
+  the release's E2E build (the side `snapshot`), and its snapshot job makes it on one emulator (the
+  8-CPU runner) or simulator (the performance pool, in the iOS measurement queue). Only develop's
+  runs save it, as only develop's cache role writes under `develop/`; other runs make their own and
+  use it. A snapshot that fails skips that platform's measurement.
+- **Measured**: `run.ts --accounts-snapshot <dir>` writes it into each install in place of the
+  accounts userdata (`--accounts-userdata` stays for local runs).
+
 ## A launch
 
-- **Inject once per install.** Before the first launch, `inject.ts` writes the settings (terms
-  accepted), accounts and post-onboarding state of `e2e/mobile/userdata` into the app's storage,
-  the two files of its MMKV instance `ledger-live` (`storage.ts`): as root (`su`) into `files/mmkv`
-  with the app's user and SELinux label on Android, into the data container's `Documents/mmkv` on
-  iOS. These are the keys the app saves after an E2E bridge import, and at boot it reads them
+- **Inject once per install.** Before the first launch, `inject.ts` writes the scenario's storage
+  into the app's: the settings (terms accepted) and post-onboarding state of `e2e/mobile/userdata`,
+  or the accounts snapshot (above), as the two files of its MMKV instance `ledger-live`
+  (`storage.ts`): as root (`su`) into `files/mmkv` with the app's user and SELinux label on
+  Android, into the data container's `Documents/mmkv` on iOS. These are the keys the app saves after an E2E bridge import, and at boot it reads them
   through the same `importStore`. It then launches the app once for 30 s, not measured, so it syncs
   the accounts and saves what it builds itself (countervalues, token cache), as the bridge's
   injection launch did, and reads the storage back: it fails unless the accepted terms and a record

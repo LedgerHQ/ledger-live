@@ -1,13 +1,16 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { log, sleep } from "./exec.ts";
+import { readSnapshot } from "../snapshot/files.ts";
 import {
+  ACCOUNT_KEY_PREFIX,
   STORAGE_FILE,
   STORAGE_META_FILE,
   decodeStorage,
   encodeStorage,
   savedState,
   storageEntries,
+  type StorageValue,
 } from "./storage.ts";
 import type { Side } from "../types.ts";
 import type { Platform, Userdata } from "./types.ts";
@@ -57,8 +60,34 @@ export async function loadUserdata({
   };
 }
 
+/** What a scenario's installs start from: the storage entries, and the accounts they hold. */
+export interface StartingStorage {
+  /** Where the entries come from, for the log. */
+  source: string;
+  entries: Array<[string, StorageValue]>;
+  accounts: number;
+}
+
+export function userdataStorage(userdata: Userdata): StartingStorage {
+  return {
+    source: userdata.names.join(", "),
+    entries: storageEntries(userdata),
+    accounts: userdata.accounts.length,
+  };
+}
+
+/** The accounts snapshot of src/snapshot/run.ts, as the release's E2E build saved it. */
+export async function snapshotStorage(dir: string): Promise<StartingStorage> {
+  const { entries, manifest } = await readSnapshot(dir);
+  return {
+    source: `the ${manifest.release} accounts snapshot`,
+    entries,
+    accounts: entries.filter(([key]) => key.startsWith(ACCOUNT_KEY_PREFIX)).length,
+  };
+}
+
 /**
- * Writes a scenario's userdata into a fresh install's storage, then launches it once: no E2E
+ * Writes a scenario's starting storage into a fresh install, then launches it once: no E2E
  * bridge, so the builds need none.
  */
 export function createInjector({
@@ -70,14 +99,14 @@ export function createInjector({
 }) {
   return async function inject({
     device,
-    userdata,
+    storage,
     side,
   }: {
     device: string;
-    userdata: Userdata;
+    storage: StartingStorage;
     side: Side;
   }): Promise<void> {
-    const written = storageEntries(userdata);
+    const written = storage.entries;
     const { data, meta } = encodeStorage(written);
     for (const d of devices) await P.stop(d);
     await P.writeStorage(device, { [STORAGE_FILE]: data, [STORAGE_META_FILE]: meta });
@@ -85,7 +114,7 @@ export function createInjector({
     await P.launch(device);
     await sleep(FIRST_LAUNCH_MS);
     await P.stop(device);
-    await checkSaved({ platform: P, device, side, written, accounts: userdata.accounts.length });
+    await checkSaved({ platform: P, device, side, written, accounts: storage.accounts });
   };
 }
 
@@ -104,7 +133,7 @@ async function checkSaved({
   platform: Platform;
   device: string;
   side: Side;
-  written: Array<[string, string]>;
+  written: Array<[string, StorageValue]>;
   accounts: number;
 }): Promise<void> {
   const data = await P.readStorage(device, STORAGE_FILE);

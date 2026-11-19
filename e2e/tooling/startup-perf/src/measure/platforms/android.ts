@@ -174,7 +174,8 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         await rm(local, { recursive: true, force: true });
       }
     },
-    async launch(device) {
+    async launch(device, launchArgs = {}) {
+      const extras = Object.entries(launchArgs).flatMap(([k, v]) => ["--es", k, String(v)]);
       const { stdout } = await run("adb", [
         "-s",
         device,
@@ -184,6 +185,7 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         "-W",
         "-n",
         await component(device),
+        ...extras,
       ]);
       const field = (name: string) => new RegExp(`^${name}: (.+)$`, "m").exec(stdout)?.[1]?.trim();
       const status = field("Status");

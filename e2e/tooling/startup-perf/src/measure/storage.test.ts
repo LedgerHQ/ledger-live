@@ -80,6 +80,13 @@ describe("decodeStorage", () => {
     assert.deepEqual(strings(decodeStorage(data, meta)), { a: "1" });
   });
 
+  it("writes a value given as bytes as it is, such as a number the app stored", () => {
+    const balance = Buffer.alloc(8);
+    balance.writeDoubleLE(273.73);
+    const { data, meta } = encodeStorage([["portfolioLastKnownBalance_USD", balance]]);
+    assert.deepEqual(decodeStorage(data, meta).get("portfolioLastKnownBalance_USD"), balance);
+  });
+
   it("fails on a size past the end of the data", () => {
     const { data, meta } = encodeStorage([["a", "1"]]);
     meta.writeUInt32LE(data.length, 28);
@@ -151,6 +158,17 @@ describe("savedState", () => {
   it("counts the account records the app loads, not the ids of the order", () => {
     const entries = written.filter(([key]) => key !== "accounts.active.js:2:solana:B:");
     assert.deepEqual(saved(entries), { accounts: 1, resaved: 0, termsAccepted: true });
+  });
+
+  it("compares written values given as bytes, as a snapshot holds them, byte for byte", () => {
+    const { data, meta } = encodeStorage(written);
+    const asBytes = [...decodeStorage(data, meta)];
+    const { data: same, meta: sameMeta } = encodeStorage(written);
+    assert.deepEqual(savedState(decodeStorage(same, sameMeta), asBytes), {
+      accounts: 2,
+      resaved: 0,
+      termsAccepted: true,
+    });
   });
 
   it("finds neither in the storage of an app that dropped the file", () => {
