@@ -3,6 +3,7 @@ import { appConfig } from "@ledgerhq/live-common/apps/config";
 import { bitcoinConfig } from "@ledgerhq/live-common/families/bitcoin/config";
 import { evmConfig } from "@ledgerhq/live-common/families/evm/config";
 import { solanaConfig } from "@ledgerhq/live-common/families/solana/config";
+import { xrpConfig } from "@ledgerhq/live-common/families/xrp/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -21,4 +22,5 @@ export const walletCliConfig: ConfigSchema = {
   ...bitcoinConfig,
   ...evmConfig,
   ...solanaConfig,
+  ...xrpConfig,
 };

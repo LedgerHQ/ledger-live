@@ -18,6 +18,13 @@ import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
 import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
 
+export type PreparedTransaction = {
+  amount: string;
+  fees: string;
+  recipient: string;
+  destinationTag?: number;
+};
+
 export class WalletAdapter {
   private static readonly coinFrameworkFamilies = new Set(["evm"]);
   private _bridge: Promise<BridgeAdapter> | null = null;
@@ -116,7 +123,7 @@ export class WalletAdapter {
   async prepareSend(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-  ): Promise<{ amount: string; fees: string; recipient: string }> {
+  ): Promise<PreparedTransaction> {
     return (await this.getBridge()).prepareSend(descriptor, intent);
   }
 

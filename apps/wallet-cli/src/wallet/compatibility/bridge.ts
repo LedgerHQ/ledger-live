@@ -46,10 +46,12 @@ import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import { isStakeAmountError, SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
+import type { PreparedTransaction } from "../index";
 
 type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
 type SolanaTransactionIntent = Extract<TransactionIntent, { family: "solana" }>;
+type XrpTransactionIntent = Extract<TransactionIntent, { family: "xrp" }>;
 
 export function buildSolanaTransactionPatch(
   intent: SolanaTransactionIntent,
@@ -70,6 +72,10 @@ export function buildSolanaTransactionPatch(
         ...(intent.memo !== undefined ? setTransactionMemo(intent.memo) : {}),
       };
   }
+}
+
+export function buildXrpTransactionPatch(intent: XrpTransactionIntent): Record<string, unknown> {
+  return intent.destinationTag === undefined ? {} : { tag: intent.destinationTag };
 }
 
 /**
@@ -251,10 +257,17 @@ export class BridgeAdapter {
   async prepareSend(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-  ): Promise<{ amount: string; fees: string; recipient: string }> {
+  ): Promise<PreparedTransaction> {
     const account = await this.sync(descriptor);
     const { recipient, amount, fees } = await this.buildValidatedTx(account, intent);
-    return { recipient, amount, fees };
+    return {
+      recipient,
+      amount,
+      fees,
+      ...(intent.family === "xrp" && intent.destinationTag !== undefined
+        ? { destinationTag: intent.destinationTag }
+        : {}),
+    };
   }
 
   send(
@@ -276,7 +289,15 @@ export class BridgeAdapter {
     const account = await this.sync(descriptor);
     const { recipient, amount, fees, bridge, tx } = await this.buildValidatedTx(account, intent);
 
-    subscriber.next({ type: "prepared", recipient, amount, fees });
+    subscriber.next({
+      type: "prepared",
+      recipient,
+      amount,
+      fees,
+      ...(intent.family === "xrp" && intent.destinationTag !== undefined
+        ? { destinationTag: intent.destinationTag }
+        : {}),
+    });
 
     let signedOperation: SignedOperation | undefined;
     await new Promise<void>((resolve, reject) => {
@@ -326,6 +347,9 @@ export class BridgeAdapter {
         break;
       case "solana":
         Object.assign(patch, buildSolanaTransactionPatch(intent));
+        break;
+      case "xrp":
+        Object.assign(patch, buildXrpTransactionPatch(intent));
         break;
     }
     return patch;

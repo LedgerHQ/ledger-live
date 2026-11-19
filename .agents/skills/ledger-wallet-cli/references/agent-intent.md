@@ -138,7 +138,7 @@ The JSON has four arrays:
 |---|---|---|
 | `imported` | `label`, `network` | new session labels |
 | `unchanged` | `label`, `network` | already in the session; never relabeled or duplicated |
-| `skipped` | `id`, `reason` | currency family wallet-cli does not support (it supports bitcoin, evm and solana; evm includes chains such as Base and BSC) |
+| `skipped` | `id`, `reason` | currency family Agent Intent account sync does not support (it supports bitcoin, evm and solana; evm includes chains such as Base and BSC). Native XRP is supported by the separate Wallet CLI hardware flow in `SKILL.md`, not by Agent Intent proposals. |
 | `invalid` | `id`, `reason` | malformed synced entry; the rest still imports. `id` `<account list>` means the whole synced document was unreadable |
 
 All four empty means nothing changed since the last sync.
