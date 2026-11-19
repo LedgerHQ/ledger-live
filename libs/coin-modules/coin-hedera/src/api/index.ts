@@ -238,6 +238,7 @@ export function createApi(currencyId: string) {
           tx: {
             hash,
             fees: BigInt(liveOp.fee.toFixed(0)),
+            feesAsset: { type: "native" },
             ...(feesPayer && { feesPayer }),
             date: liveOp.date,
             block: {

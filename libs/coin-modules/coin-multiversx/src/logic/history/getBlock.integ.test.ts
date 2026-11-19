@@ -30,6 +30,7 @@ describe("getBlock (integration)", () => {
             { type: "transfer", address: receiver, peer: sender, asset: NATIVE, amount: 1000n },
           ],
           fees: 50000000000000n,
+          feesAsset: NATIVE,
           feesPayer: sender,
         },
       ],
@@ -58,6 +59,7 @@ describe("getBlock (integration)", () => {
           { type: "transfer", address: receiver, peer: sender, asset: foxsy, amount },
         ],
         fees: 139000000000000n,
+        feesAsset: NATIVE,
         feesPayer: sender,
       },
     ]);
@@ -100,6 +102,7 @@ describe("getBlock (integration)", () => {
         { type: "transfer", address: sender, peer: WEGLD_SWAP_CONTRACT, asset: wegld, amount },
       ],
       fees: 83013710000000n,
+      feesAsset: NATIVE,
       feesPayer: sender,
     });
   });
@@ -125,6 +128,7 @@ describe("getBlock (integration)", () => {
         },
       ],
       fees: 0n,
+      feesAsset: NATIVE,
     });
   });
 });

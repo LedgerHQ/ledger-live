@@ -338,6 +338,7 @@ export async function getBlockV2({
       failed: mirrorTx.result !== "SUCCESS",
       operations,
       fees: BigInt(mirrorTx.charged_tx_fee),
+      feesAsset: { type: "native" },
       feesPayer: payerAccount,
       details: {
         ...(memo && { memo }),

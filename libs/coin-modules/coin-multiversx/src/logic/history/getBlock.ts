@@ -50,6 +50,7 @@ function toBlockTransaction(tx: MultiversXApiTransaction): BlockTransaction {
       ? []
       : [...toValueTransfer(tx), ...(tx.operations ?? []).flatMap(toBlockOperations)],
     fees: toBigInt(tx.fee),
+    feesAsset: NATIVE_ASSET,
     ...(feesPayer ? { feesPayer } : {}),
   };
 }

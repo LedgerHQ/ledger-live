@@ -521,6 +521,7 @@ export const toPublicOperation = ({
     },
     tx: {
       ...fee,
+      feesAsset: { type: "native" },
       hash,
       date,
       block: {
@@ -563,6 +564,7 @@ export const toPrivateOperation = ({
     },
     tx: {
       ...getFees({ details, address, hasOwnedFeeRecord }),
+      feesAsset: { type: "native" },
       hash,
       date,
       block: {
@@ -601,6 +603,7 @@ export const toPrivateFeeOperation = ({
     },
     tx: {
       ...getFees({ details, address, hasOwnedFeeRecord: true }),
+      feesAsset: { type: "native" },
       hash,
       date,
       block: {

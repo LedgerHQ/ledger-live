@@ -94,6 +94,7 @@ function convertToOperation(tx: AlgoTransaction, address: string): Operation {
         time: date,
       },
       fees: BigInt(tx.fee.toString()),
+      feesAsset: { type: "native" },
       feesPayer: tx.senderAddress,
       date,
       failed: false,

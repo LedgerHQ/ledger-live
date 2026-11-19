@@ -549,6 +549,7 @@ describe("createApi", () => {
           tx: expect.objectContaining({
             hash: mockOperation.hash,
             fees: BigInt(mockOperation.fee.toString()),
+            feesAsset: { type: "native" },
             feesPayer: mockFeesPayer,
             failed: false,
           }),

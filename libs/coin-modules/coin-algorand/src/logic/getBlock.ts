@@ -40,6 +40,7 @@ function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTrans
     failed: false,
     operations: toOperations(tx),
     fees: BigInt(tx.fee),
+    feesAsset: NATIVE_ASSET,
     feesPayer: tx.sender,
     details: { txType: tx["tx-type"] },
   };
