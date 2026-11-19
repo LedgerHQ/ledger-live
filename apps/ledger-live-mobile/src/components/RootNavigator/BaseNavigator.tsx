@@ -332,6 +332,11 @@ export default function BaseNavigator() {
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
+          name={ScreenName.DeviceOnboardingRecover}
+          component={RecoverPlayer}
+          options={{ headerShown: false, headerStyle: styles.headerNoShadow }}
+        />
+        <Stack.Screen
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
