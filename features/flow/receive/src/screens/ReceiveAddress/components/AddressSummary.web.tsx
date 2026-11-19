@@ -1,13 +1,10 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { QrCode } from "@shared/ui-qr-code";
+import { AnimatedQrCode } from "@shared/ui-animated-qr-code/web";
 import type { AddressSummaryProps } from "./AddressSummary.types";
 
 const QR_SIZE = 208;
 const QR_CENTER_ICON_SIZE = 48;
-// The card is white in both themes: the modules stay dark.
-const QR_MODULES_COLOR = ledgerLiveThemes.light.colors.text.black;
 
 export function AddressSummary({ address }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
@@ -17,10 +14,10 @@ export function AddressSummary({ address }: AddressSummaryProps) {
     <div className="flex flex-col items-center gap-16" data-testid="receive-address-summary">
       {address.label ? <span className="body-2-semi-bold text-base">{address.label}</span> : null}
       <div className="flex size-256 items-center justify-center rounded-2xl bg-white">
-        <QrCode
+        <AnimatedQrCode
           value={address.value}
           size={QR_SIZE}
-          foregroundColor={QR_MODULES_COLOR}
+          animation="ripple"
           testID="receive-address-qr-code"
           centerContent={
             assetIcon ? (
