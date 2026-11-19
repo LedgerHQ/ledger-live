@@ -46,7 +46,7 @@ export const getAccountTransactions = async (
   const { data } = await network<ExplorerTransactions<ExplorerAmount>>(request);
 
   const transactions = data.transactions.flatMap(tx =>
-    options?.includeInnerTransactions ? parseRawTransaction(tx) : [parseRootTransaction(tx)],
+    parseExplorerTransaction(tx, options?.includeInnerTransactions ?? false),
   );
   const nextToken = data["next-token"];
 
@@ -118,12 +118,16 @@ const parseLosslessJSON = (raw: unknown): unknown => {
 
 const toBigNumber = (amount: ExplorerAmount): BigNumber => new BigNumber(amount.toString());
 
-const parseRootTransaction = (tx: ExplorerTransaction<ExplorerAmount>): AlgoTransaction =>
-  parseTransaction(tx, { id: tx.id, fee: tx.fee, sender: tx.sender }, tx.id, false)[0];
-const parseRawTransaction = (tx: ExplorerTransaction<ExplorerAmount>): AlgoTransaction[] => {
-  const root = { id: tx.id, fee: tx.fee, sender: tx.sender };
-  return parseTransaction(tx, root, tx.id, true);
-};
+const parseExplorerTransaction = (
+  tx: ExplorerTransaction<ExplorerAmount>,
+  includeInnerTransactions: boolean,
+): AlgoTransaction[] =>
+  parseTransaction(
+    tx,
+    { id: tx.id, fee: tx.fee, sender: tx.sender },
+    tx.id,
+    includeInnerTransactions,
+  );
 
 function parseTransaction(
   tx: ExplorerTransaction<ExplorerAmount> | ExplorerInnerTransaction<ExplorerAmount>,

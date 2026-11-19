@@ -32,9 +32,11 @@ export async function listOperations(
     nextToken: cursor,
     includeInnerTransactions: true,
   });
-  const operations = result.transactions
-    .filter(tx => isRelevantToAddress(tx, address))
-    .flatMap(tx => convertToOperations(tx, address));
+  const operations = dropRedundantFeesOperations(
+    result.transactions
+      .filter(tx => isRelevantToAddress(tx, address))
+      .flatMap(tx => convertToOperations(tx, address)),
+  );
 
   if (order === "desc") {
     operations.sort((a, b) => b.tx.block.height - a.tx.block.height);
@@ -45,8 +47,17 @@ export async function listOperations(
   return { items: operations, next: result.nextToken ?? "" };
 }
 
+// Every row of a root transaction carries its fee, so a FEES row is only needed when no
+// other row does. REWARD rows carry no fee.
+function dropRedundantFeesOperations(operations: Operation[]): Operation[] {
+  const hashesWithFees = new Set(
+    operations.filter(op => op.type !== "FEES" && op.type !== "REWARD").map(op => op.tx.hash),
+  );
+  return operations.filter(op => op.type !== "FEES" || !hashesWithFees.has(op.tx.hash));
+}
+
 function isRootFeePayer(tx: AlgoTransaction, address: string): boolean {
-  return tx.id === (tx.rootId ?? tx.id) && (tx.feesPayer ?? tx.senderAddress) === address;
+  return tx.id === tx.rootId && tx.feesPayer === address;
 }
 
 function isMovementParty(tx: AlgoTransaction, address: string): boolean {
@@ -111,21 +122,21 @@ function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = fal
     : undefined;
 
   return {
-    id: tx.id === (tx.rootId ?? tx.id) ? tx.id : `${tx.rootId}-${tx.id}`,
+    id: tx.id,
     type,
     value,
     asset,
     senders,
     recipients,
     tx: {
-      hash: tx.rootId ?? tx.id,
+      hash: tx.rootId,
       block: {
         height: tx.round,
         hash: "",
         time: date,
       },
       fees: BigInt(tx.fee.toString()),
-      feesPayer: tx.feesPayer ?? tx.senderAddress,
+      feesPayer: tx.feesPayer,
       date,
       failed: false,
     },

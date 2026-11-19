@@ -180,6 +180,45 @@ describe("indexer", () => {
       expect(roots.transactions[0]).toMatchObject({ id: "APPL" });
     });
 
+    it("should keep the exact value of inner asset amounts above the safe integer range", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "APPL",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "ROOT_SENDER",
+              fee: 1000,
+              "tx-type": "appl",
+              "inner-txns": [
+                {
+                  "round-time": 1700000000,
+                  "confirmed-round": 50000000,
+                  sender: "APP",
+                  fee: 0,
+                  "tx-type": "axfer",
+                  "asset-transfer-transaction": {
+                    amount: 18446744073709551615n,
+                    "asset-id": 12345,
+                    receiver: "RECIPIENT",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS", {
+        includeInnerTransactions: true,
+      });
+
+      expect(result.transactions[1].details).toMatchObject({
+        assetAmount: new BigNumber("18446744073709551615"),
+      });
+    });
+
     it("should include minRound in URL when provided", async () => {
       mockNetwork.mockResolvedValue({
         data: { transactions: [] },
