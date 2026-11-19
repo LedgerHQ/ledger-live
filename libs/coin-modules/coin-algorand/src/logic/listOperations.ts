@@ -31,12 +31,7 @@ export async function listOperations(
     limit,
     nextToken: cursor,
   });
-  const operations = result.transactions
-    .filter(
-      tx =>
-        tx.type === AlgoTransactionType.PAYMENT || tx.type === AlgoTransactionType.ASSET_TRANSFER,
-    )
-    .flatMap(tx => convertToOperations(tx, address));
+  const operations = result.transactions.flatMap(tx => convertToOperations(tx, address));
 
   if (order === "desc") {
     operations.sort((a, b) => b.tx.block.height - a.tx.block.height);
@@ -51,50 +46,67 @@ function convertToOperations(tx: AlgoTransaction, address: string): Operation[] 
   const operation = convertToOperation(tx, address);
   const reward = getReward(tx, address);
 
-  return reward === undefined
+  if (isTransfer(tx)) {
+    return reward === undefined
+      ? [operation]
+      : [operation, createRewardOperation(operation, tx, address, reward)];
+  }
+
+  return tx.id === (tx.rootId ?? tx.id) && (tx.feesPayer ?? tx.senderAddress) === address
     ? [operation]
-    : [
-        operation,
-        {
-          ...operation,
-          id: `${tx.id}-reward-${address}`,
-          type: "REWARD",
-          value: reward,
-          asset: { type: "native" },
-          senders: [],
-          recipients: [address],
-          tx: { ...operation.tx, fees: 0n },
-          ...(operation.details?.memo ? { details: { memo: operation.details.memo } } : {}),
-        },
-      ];
+    : [];
 }
 
+function createRewardOperation(
+  operation: Operation,
+  tx: AlgoTransaction,
+  address: string,
+  reward: bigint,
+): Operation {
+  return {
+    ...operation,
+    id: `${tx.id}-reward-${address}`,
+    type: "REWARD",
+    value: reward,
+    asset: { type: "native" },
+    senders: [],
+    recipients: [address],
+    tx: { ...operation.tx, fees: 0n },
+    ...(operation.details?.memo ? { details: { memo: operation.details.memo } } : {}),
+  };
+}
+
+function isTransfer(tx: AlgoTransaction): boolean {
+  return tx.type === AlgoTransactionType.PAYMENT || tx.type === AlgoTransactionType.ASSET_TRANSFER;
+}
 function convertToOperation(tx: AlgoTransaction, address: string): Operation {
-  const type = getOperationType(tx, address);
-  const value = getOperationValue(tx, address);
-  const { senders, recipients } = getOperationParties(tx);
-  const asset = getOperationAsset(tx);
+  const type = isTransfer(tx) ? getOperationType(tx, address) : "FEES";
+  const value = isTransfer(tx) ? getOperationValue(tx, address) : 0n;
+  const { senders, recipients } = isTransfer(tx)
+    ? getOperationParties(tx)
+    : { senders: [], recipients: [] };
+  const asset = isTransfer(tx) ? getOperationAsset(tx) : { type: "native" };
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const memo: AlgorandMemo | undefined = tx.note
     ? { type: "string", kind: "note", value: tx.note }
     : undefined;
 
   return {
-    id: tx.id,
+    id: tx.id === (tx.rootId ?? tx.id) ? tx.id : `${tx.rootId}-${tx.id}`,
     type,
     value,
     asset,
     senders,
     recipients,
     tx: {
-      hash: tx.id,
+      hash: tx.rootId ?? tx.id,
       block: {
         height: tx.round,
         hash: "",
         time: date,
       },
       fees: BigInt(tx.fee.toString()),
-      feesPayer: tx.senderAddress,
+      feesPayer: tx.feesPayer ?? tx.senderAddress,
       date,
       failed: false,
     },

@@ -37,6 +37,7 @@ export enum AlgoTransactionType {
 
 export interface AlgoTransaction {
   id: string;
+  rootId?: string;
   timestamp: string;
   round: number;
   senderAddress: string;
@@ -45,6 +46,7 @@ export interface AlgoTransaction {
   closeRewards: BigNumber | undefined;
   closeAmount: BigNumber | undefined;
   fee: BigNumber;
+  feesPayer?: string;
   note: string;
   type: string;
   details: AlgoTransactionDetails | undefined;

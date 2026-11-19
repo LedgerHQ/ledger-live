@@ -85,6 +85,67 @@ describe("indexer", () => {
       });
     });
 
+    it("should parse nested inner transactions with their root fee payer", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "APPL",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "ROOT_SENDER",
+              "sender-rewards": 0,
+              "receiver-rewards": 0,
+              fee: 1000,
+              "tx-type": "appl",
+              "inner-txns": [
+                {
+                  "round-time": 1700000000,
+                  "confirmed-round": 50000000,
+                  sender: "APP",
+                  "sender-rewards": 0,
+                  "receiver-rewards": 0,
+                  fee: 2000,
+                  "tx-type": "appl",
+                  "inner-txns": [
+                    {
+                      "round-time": 1700000000,
+                      "confirmed-round": 50000000,
+                      sender: "APP",
+                      "sender-rewards": 0,
+                      "receiver-rewards": 0,
+                      fee: 3000,
+                      "tx-type": "pay",
+                      "payment-transaction": { amount: 100, receiver: "RECIPIENT" },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
+
+      expect(result.transactions).toMatchObject([
+        { id: "APPL", rootId: "APPL", fee: new BigNumber(1000), feesPayer: "ROOT_SENDER" },
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          fee: new BigNumber(1000),
+          feesPayer: "ROOT_SENDER",
+        },
+        {
+          id: "APPL-inner-0-inner-0",
+          rootId: "APPL",
+          fee: new BigNumber(1000),
+          feesPayer: "ROOT_SENDER",
+          details: { amount: new BigNumber(100), recipientAddress: "RECIPIENT" },
+        },
+      ]);
+    });
+
     it("should include minRound in URL when provided", async () => {
       mockNetwork.mockResolvedValue({
         data: { transactions: [] },
