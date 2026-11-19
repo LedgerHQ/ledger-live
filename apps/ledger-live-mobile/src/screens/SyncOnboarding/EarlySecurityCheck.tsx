@@ -21,6 +21,11 @@ import { type SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/
 import { useFeature } from "@features/platform-feature-flags";
 import { getIgnoredOSUpdatesForDeviceModelAndPlatform } from "@ledgerhq/live-common/deviceSDK/hooks/getIgnoredOSUpdatesForDeviceModelAndPlatform";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { useResolveOsUpdates } from "LLM/features/OsUpdate/hooks/useResolveOsUpdates";
+import { isOsUpdateSupported } from "@features/platform-device-os-update";
+import { selectHasOsUpdates } from "@domain/entity-device-os-update";
+import { useSelector } from "~/context/hooks";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -160,6 +165,25 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 
+  const isOsUpdatesFeatureEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
+  const isOsUpdatesEnabled =
+    isOsUpdatesFeatureEnabled &&
+    deviceInfo !== null &&
+    deviceInfo !== undefined &&
+    isOsUpdateSupported({
+      modelId: ledgerToDmkDeviceIdMap[deviceModelId],
+      version: deviceInfo.version,
+      wired: device.wired,
+    });
+  const isResolvingOsUpdates = useResolveOsUpdates({
+    enabled: isOsUpdatesEnabled,
+    ready: getLatestAvailableFirmwareStatus === "available-firmware",
+    device,
+    deviceInfo,
+  });
+  const hasResolvedOsUpdates = useSelector(selectHasOsUpdates);
+  const shouldUseOsUpdatesFlow = isOsUpdatesEnabled && hasResolvedOsUpdates;
+
   const onStartChecks = useCallback(() => {
     setCurrentStep("genuine-check");
   }, []);
@@ -230,6 +254,17 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
       // to this screen with a `goBack`.
+      if (shouldUseOsUpdatesFlow) {
+        navigation.push(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.SyncOnboarding,
+          params: {
+            screen: ScreenName.SyncOnboardingOsUpdate,
+            params: { device, onBackFromUpdate },
+          },
+        });
+        return;
+      }
+
       navigation.push(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
         params: {
@@ -255,7 +290,15 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       );
       setFirmwareUpdateCheckStatus("completed");
     }
-  }, [device, deviceInfo, isDeviceOnboarded, latestFirmware, navigation, onBackFromUpdate]);
+  }, [
+    device,
+    deviceInfo,
+    isDeviceOnboarded,
+    shouldUseOsUpdatesFlow,
+    latestFirmware,
+    navigation,
+    onBackFromUpdate,
+  ]);
 
   // Check steps entry points
   useEffect(() => {
@@ -368,12 +411,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         ) {
           setFirmwareUpdateCheckStatus("completed");
           currentDisplayedDrawer = "none";
-        } else if (isPreviousUpdateCancelled) {
+        } else if (isPreviousUpdateCancelled && !isResolvingOsUpdates) {
           // When isPreviousUpdateCancelled is true, it indicates that the user is already informed
           // about the new firmware update, so there's no need to show the drawer again
           currentDisplayedDrawer = "none";
           firmwareUpdateUiStepStatus = "firmwareUpdateRefused";
-        } else {
+        } else if (!isResolvingOsUpdates) {
           currentDisplayedDrawer = "new-firmware-available";
         }
       } else {

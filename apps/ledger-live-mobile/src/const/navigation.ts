@@ -522,6 +522,7 @@ export enum ScreenName {
   OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",
+  SyncOnboardingOsUpdate = "SyncOnboardingOsUpdate",
   BleDevicePairingFlow = "BleDevicePairingFlow",
   PlatformCatalog = "PlatformCatalog",
   PlatformApp = "PlatformApp",
