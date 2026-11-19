@@ -124,7 +124,10 @@ export type OnboardingEvent =
   | { type: "QUIT" }
   | { type: "CONTINUE" }
   | { type: "USER_ACCEPT" }
-  | { type: "USER_DECLINE" };
+  | { type: "USER_DECLINE" }
+  | { type: "PAUSE_POLLING" }
+  | { type: "RESUME_POLLING" }
+  | { type: "POLLING_PAUSED" };
 
 export type GenuineFailureEvent = Extract<
   OnboardingEvent,
@@ -179,6 +182,8 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
   checksPaused: boolean;
+  /** True once seed polling has stopped for the Recover Live App. */
+  pollingPaused: boolean;
   /** Session whose success screen the user already left. A new session asks again. */
   successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;

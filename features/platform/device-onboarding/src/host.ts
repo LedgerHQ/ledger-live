@@ -17,6 +17,8 @@ export const userEvents = [
   { type: "QUIT" },
   { type: "USER_ACCEPT" },
   { type: "USER_DECLINE" },
+  { type: "PAUSE_POLLING" },
+  { type: "RESUME_POLLING" },
 ] as const satisfies readonly OnboardingEvent[];
 
 /**
@@ -44,6 +46,7 @@ export type WatchedOnboardingContext = {
   verdictMatchesSession: boolean | null;
   genuineFailureKind: string | null;
   checksPaused: boolean;
+  pollingPaused: boolean;
 };
 
 function readSessionId(read: () => string | null | undefined): string | null {
@@ -87,6 +90,7 @@ export function flattenDeviceOnboardingContext(
     verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
     genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
     checksPaused: context.checksPaused,
+    pollingPaused: context.pollingPaused,
   };
 }
 

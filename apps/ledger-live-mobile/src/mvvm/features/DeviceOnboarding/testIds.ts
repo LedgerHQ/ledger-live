@@ -1,3 +1,9 @@
+export const recoverRestoreTestIds = {
+  screen: "device-onboarding-recover-restore",
+  close: "device-onboarding-recover-restore-close",
+  continue: "device-onboarding-recover-restore-continue",
+} as const;
+
 export const recoverNewSeedTestIds = {
   screen: "device-onboarding-recover",
   close: "device-onboarding-recover-close",

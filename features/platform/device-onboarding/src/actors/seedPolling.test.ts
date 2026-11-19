@@ -205,6 +205,65 @@ describe("seedPolling", () => {
     stop();
   });
 
+  it("should finish the read already in flight and then stop when paused", async () => {
+    let releaseRead: (() => void) | undefined;
+    const sendCommand = jest.fn(
+      () =>
+        new Promise(resolve => {
+          releaseRead = () => resolve(reads(restoringWord(0)));
+        }),
+    );
+    const dmk = createDeviceManagementKit({ sendCommand });
+    const { received, send, stop } = start(dmk);
+
+    await jest.advanceTimersByTimeAsync(0);
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+
+    send({ type: "PAUSE" });
+    await jest.advanceTimersByTimeAsync(defaultSeedPollingIntervalMs);
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(received).toEqual([]);
+
+    releaseRead?.();
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(received.map(event => event.type)).toEqual(["STEP_CHANGED", "POLLING_PAUSED"]);
+    await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    stop();
+  });
+
+  it("should report a step change that happened while polling was paused", async () => {
+    const { dmk, sendCommand } = createFakeCommandDmk([
+      reads(restoringWord(0)),
+      reads(restoringWord(1)),
+    ]);
+    const { received, send, stop } = start(dmk);
+
+    await jest.advanceTimersByTimeAsync(0);
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+
+    send({ type: "PAUSE" });
+    await jest.advanceTimersByTimeAsync(0);
+    await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(received.map(event => event.type)).toEqual(["STEP_CHANGED", "POLLING_PAUSED"]);
+
+    send({ type: "RESUME" });
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(sendCommand).toHaveBeenCalledTimes(2);
+    expect(received.map(event => event.type)).toEqual([
+      "STEP_CHANGED",
+      "POLLING_PAUSED",
+      "STEP_CHANGED",
+    ]);
+    expect(received.at(-1)).toMatchObject({
+      state: { currentOnboardingStep: OnboardingStep.RestoreSeed, seedWordIndex: 1 },
+    });
+    stop();
+  });
+
   it("stops polling once the actor is stopped", async () => {
     const { dmk, sendCommand } = createFakeCommandDmk([reads(restoringWord(0))]);
     const { received, stop } = start(dmk);

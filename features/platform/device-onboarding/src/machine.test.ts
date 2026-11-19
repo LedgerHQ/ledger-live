@@ -1717,6 +1717,37 @@ describe("device setup", () => {
     });
   });
 
+  it("should pause seed polling only while the device is being set up", async () => {
+    const seededRun = await launch({ osVersion: [os(seeded)], ...passingChecks });
+    const seededState = stateOf(seededRun.actor);
+
+    seededRun.actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(seededRun.actor)).toBe(seededState);
+    expect(seededRun.actor.getSnapshot().context.pollingPaused).toBe(false);
+    seededRun.actor.stop();
+
+    const { actor, fake } = await enterSetup();
+    actor.send(stepChanged(OnboardingStep.RecoverRestore));
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    const callsWhilePaused = fake.sendCommand.mock.calls.length;
+
+    await settle();
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhilePaused);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+  });
+
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
     const { actor, fake } = await launch(
       { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },

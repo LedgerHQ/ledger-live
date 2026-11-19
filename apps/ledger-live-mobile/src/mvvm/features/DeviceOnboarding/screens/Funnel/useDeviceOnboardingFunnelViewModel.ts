@@ -40,6 +40,7 @@ import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Set
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import type { RecoverRestoreScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/Restore";
 import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
@@ -92,6 +93,11 @@ export type DeviceOnboardingFunnelModel = (
     }
   | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
   | {
+      status: "recoverRestore";
+      recoverRestore: RecoverRestoreScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
+  | {
       status: "recoverNewSeed";
       recoverNewSeed: RecoverNewSeedScreenProps;
       unlockSheet: DeviceUnlockSheetProps | null;
@@ -132,6 +138,7 @@ type LeaveActions = {
   quitMachine: () => void;
   leave: () => void;
   leaveFinishedSetup: () => void;
+  dismissRestore: () => boolean;
 };
 
 function showsUnseededSuccess({
@@ -151,6 +158,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   const action = event.data.action.type;
   if (action !== "GO_BACK" && action !== "POP") return;
   event.preventDefault();
+  if (actions.dismissRestore()) return;
   if (showsUnseededSuccess(actions)) {
     actions.leaveFinishedSetup();
     return;
@@ -367,6 +375,7 @@ function withUnlockSheet(
   const unlockSheet = locked ? toDeviceUnlockSheetProps(device) : null;
   if (built.status === "checks") return { ...built, unlockSheet };
   if (built.status === "setup") return { ...built, unlockSheet };
+  if (built.status === "recoverRestore") return { ...built, unlockSheet };
   if (built.status === "unseededIntroKaraoke") {
     return {
       ...built,
@@ -495,7 +504,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   useDeviceOnboardingHost(host);
   const started = useRef(false);
+  const dismissRestoreRef = useRef<(() => void) | null>(null);
+  const openingRecover = useRef(false);
+  const awaitingPollingResume = useRef(false);
   const [heldState, setHeldState] = useState<HeldState | null>(null);
+  const dismissRestore = useCallback(() => {
+    const dismiss = dismissRestoreRef.current;
+    if (!dismiss) return false;
+    dismiss();
+    return true;
+  }, []);
 
   useEffect(() => {
     connectWhenIdle(started, onboarding);
@@ -585,10 +603,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       quitMachine,
       leave,
       leaveFinishedSetup,
+      dismissRestore,
     });
   }, [
     closeFirmwareHandover,
     continueSetup,
+    dismissRestore,
     leave,
     leaveFinishedSetup,
     leaveFirmwareReconnect,
@@ -629,11 +649,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           quitMachine,
           leave,
           leaveFinishedSetup,
+          dismissRestore,
         });
       }),
     [
       closeFirmwareHandover,
       continueSetup,
+      dismissRestore,
       leave,
       leaveFinishedSetup,
       leaveFirmwareReconnect,
@@ -756,6 +778,43 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     });
   }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
 
+  const continueRestore = useCallback(() => {
+    openingRecover.current = true;
+    send({ type: "PAUSE_POLLING" });
+  }, [send]);
+
+  useEffect(() => {
+    if (!openingRecover.current || onboarding.context?.pollingPaused !== true) return;
+    openingRecover.current = false;
+    if (onboarding.state !== "deviceSetup.restoreRecover") {
+      send({ type: "RESUME_POLLING" });
+      return;
+    }
+    awaitingPollingResume.current = true;
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.Recover,
+      params: {
+        platform: protectId,
+        device: onboarding.liveDevice ?? undefined,
+        fromOnboarding: true,
+        redirectTo: "restore",
+      },
+    });
+  }, [
+    navigation,
+    onboarding.context?.pollingPaused,
+    onboarding.liveDevice,
+    onboarding.state,
+    protectId,
+    send,
+  ]);
+
+  useEffect(() => {
+    if (!focused || !awaitingPollingResume.current) return;
+    awaitingPollingResume.current = false;
+    send({ type: "RESUME_POLLING" });
+  }, [focused, send]);
+
   const openRecover = useCallback(() => {
     if (!recoverAvailable) return;
     awaitingRecoverReturn.current = true;
@@ -800,6 +859,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send,
     onQuit: requestQuit,
   });
+  dismissRestoreRef.current =
+    unseededSetup?.status === "recoverRestore" ? unseededSetup.dismiss : null;
 
   const screen = {
     state: shownState,
@@ -838,9 +899,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     screenForUnseeded(unseededSetup, {
       quitConfirmation,
       suspendSheets,
+      deviceType: device?.modelId ?? null,
+      deviceVersion: readString(onboarding.context?.firmwareVersion),
       onSkip: () => setPastRecover(true),
       onRemindLater: remindRecoverLater,
       onOpenLiveApp: openRecover,
+      onContinueRestore: continueRestore,
       onClose: requestQuit,
       onFinish: finishUnseeded,
     }) ??
@@ -853,6 +917,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     built.status === "checks" ||
       built.status === "setup" ||
       built.status === "unseededIntroKaraoke" ||
+      built.status === "recoverRestore" ||
       built.status === "recoverNewSeed" ||
       built.status === "success",
   );
@@ -872,13 +937,29 @@ function screenForUnseeded(
   actions: Readonly<{
     quitConfirmation: QuitConfirmationModel | null;
     suspendSheets: boolean;
+    deviceType: string | null;
+    deviceVersion: string | null;
     onSkip: () => void;
     onRemindLater: () => void;
     onOpenLiveApp: () => void;
+    onContinueRestore: () => void;
     onClose: () => void;
     onFinish: (sawRecoverPitch: boolean) => void;
   }>,
 ): DeviceOnboardingFunnelModel | null {
+  if (flow?.status === "recoverRestore") {
+    return {
+      status: "recoverRestore",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      recoverRestore: {
+        deviceType: actions.deviceType,
+        deviceVersion: actions.deviceVersion,
+        onClose: flow.dismiss,
+        onContinue: actions.onContinueRestore,
+      },
+    };
+  }
   if (flow?.status === "setup") {
     return {
       status: "setup",

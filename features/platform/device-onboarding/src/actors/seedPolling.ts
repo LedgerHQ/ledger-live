@@ -9,8 +9,10 @@ import type { DeviceOnboardingState, OnboardingEvent } from "../types";
 
 export type SeedPollingEvent = Extract<
   OnboardingEvent,
-  { type: "STEP_CHANGED" | "TRANSPORT_LOST" }
+  { type: "STEP_CHANGED" | "TRANSPORT_LOST" | "POLLING_PAUSED" }
 >;
+
+export type SeedPollingCommand = { type: "PAUSE" } | { type: "RESUME" };
 
 export type SeedPollingInput = {
   dmk: DeviceManagementKit;
@@ -27,19 +29,28 @@ export const defaultSeedPollingFailureThreshold = 60;
  * locked device or a disconnection is expected here: only a run of consecutive failures is worth
  * reporting as a lost transport.
  */
-export const seedPolling = fromCallback<SeedPollingEvent, SeedPollingInput>(
-  ({ input, sendBack }) => {
+export const seedPolling = fromCallback<SeedPollingCommand, SeedPollingInput>(
+  ({ input, sendBack, receive }) => {
     const intervalMs = input.intervalMs ?? defaultSeedPollingIntervalMs;
     const failureThreshold = input.failureThreshold ?? defaultSeedPollingFailureThreshold;
 
     let stopped = false;
+    let paused = false;
+    let polling = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let wakeWait: (() => void) | undefined;
     let lastState: DeviceOnboardingState | undefined;
     let consecutiveFailures = 0;
 
     const waitForNextPoll = () =>
       new Promise<void>(resolve => {
-        timer = setTimeout(resolve, intervalMs);
+        const finish = () => {
+          wakeWait = undefined;
+          clearTimeout(timer);
+          resolve();
+        };
+        wakeWait = finish;
+        timer = setTimeout(finish, intervalMs);
       });
 
     const reportStateChanges = async () => {
@@ -58,7 +69,10 @@ export const seedPolling = fromCallback<SeedPollingEvent, SeedPollingInput>(
     };
 
     const poll = async () => {
-      while (!stopped) {
+      if (polling || stopped) return;
+      polling = true;
+
+      while (!stopped && !paused) {
         try {
           await reportStateChanges();
         } catch {
@@ -69,18 +83,39 @@ export const seedPolling = fromCallback<SeedPollingEvent, SeedPollingInput>(
               sendBack({ type: "TRANSPORT_LOST" });
             }
 
+            polling = false;
             return;
           }
         }
 
+        if (stopped || paused) break;
         await waitForNextPoll();
       }
+
+      polling = false;
+      if (stopped || !paused) return;
+      sendBack({ type: "POLLING_PAUSED" });
     };
+
+    receive(event => {
+      if (event.type === "PAUSE") {
+        if (paused) return;
+        paused = true;
+        wakeWait?.();
+        return;
+      }
+
+      if (stopped) return;
+      const wasPaused = paused;
+      paused = false;
+      if (wasPaused && !polling) void poll();
+    });
 
     void poll();
 
     return () => {
       stopped = true;
+      wakeWait?.();
       clearTimeout(timer);
     };
   },

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OnboardingStep,
@@ -17,6 +17,8 @@ import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
+const restoreRecoverState = "deviceSetup.restoreRecover";
+const restoreChoiceState = "deviceSetup.restoreChoice";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
 
@@ -47,14 +49,21 @@ export type UnseededFunnelInput = {
 
 export type UnseededFunnelModel =
   | { status: "setup"; setup: SetupScreenProps }
+  | { status: "recoverRestore"; dismiss: () => void }
   | { status: "recoverNewSeed" }
   | { status: "success"; sawRecoverPitch: boolean };
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const { device, machineState, liveMachineState, send } = input;
+  const [restoreDismissed, setRestoreDismissed] = useState(false);
+  const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
+  if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
+
   const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
+  const stageState =
+    machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded
-    ? toUnseededStage(device, machineState, input.currentStep, input.reportsRecoveryKey)
+    ? toUnseededStage(device, stageState, input.currentStep, input.reportsRecoveryKey)
     : null;
   const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
 
@@ -67,6 +76,9 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
   useContinueChecks(unseeded, liveMachineState, send);
 
   if (unseeded && machineState === doneState) return toDoneModel(input);
+  if (unseeded && machineState === restoreRecoverState && !restoreDismissed) {
+    return { status: "recoverRestore", dismiss: dismissRestore };
+  }
   if (!unseeded || !visibleStage || !device || !machineState) return null;
 
   return {

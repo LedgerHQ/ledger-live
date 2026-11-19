@@ -13,6 +13,7 @@ import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
 import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { UnseededSuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { RecoverNewSeedScreen } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import { RecoverRestoreScreen } from "LLM/features/DeviceOnboarding/screens/Recover/Restore";
 import { SuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import {
   useDeviceOnboardingFunnelViewModel,
@@ -46,6 +47,14 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
     return (
       <>
         <SetupScreen {...screen.setup} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
+  }
+  if (screen.status === "recoverRestore") {
+    return (
+      <>
+        <RecoverRestoreScreen {...screen.recoverRestore} />
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );

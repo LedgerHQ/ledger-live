@@ -135,6 +135,11 @@ function recoverOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>)
   return model.recoverNewSeed;
 }
 
+function restoreOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "recoverRestore") throw new Error(model.status);
+  return model.recoverRestore;
+}
+
 function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   if (model.status !== "success") throw new Error(model.status);
   return model.success;
@@ -2385,7 +2390,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
-  it("should show the restore stage while Recover restore is on the device", () => {
+  it("should show Recover restore while that step is on the device", () => {
     useSession.mockReturnValue(
       session({
         state: "deviceSetup.restoreRecover",
@@ -2395,14 +2400,122 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderFunnel();
 
-    expect(result.current.status).toBe("setup");
-    expect(setupOf(result.current).stage).toEqual({
-      index: 4,
-      total: 5,
-      kind: "restore",
-      indicator: "none",
-    });
+    expect(result.current.status).toBe("recoverRestore");
     expect(result.current.quitConfirmation?.isOpen).toBe(false);
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(send).not.toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+  });
+
+  it("should return to the restore choice on close and on Android back", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+    const { result } = renderFunnel();
+    const preventDefault = jest.fn();
+
+    act(() => restoreOf(result.current).onClose());
+
+    expect(result.current.status).toBe("setup");
+    expect(setupOf(result.current).stage.infoCard).toBe("restoreChoice");
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreWords",
+        context: unseededContext({ currentOnboardingStep: "restore-recovery-phrase" }),
+      }),
+    );
+    const again = renderFunnel();
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+    again.rerender(undefined);
+    expect(again.result.current.status).toBe("recoverRestore");
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(again.result.current.status).toBe("setup");
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should open Recover only after polling has paused, then resume once", () => {
+    navigate.mockClear();
+    send.mockClear();
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({
+          currentOnboardingStep: "restore-recover-backup",
+          firmwareVersion: "1.8.0",
+          pollingPaused: false,
+        }),
+      }),
+    );
+
+    const { result, rerender } = renderFunnel();
+
+    act(() => restoreOf(result.current).onContinue());
+
+    expect(send).toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(navigate).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ pollingPaused: true, firmwareVersion: "1.8.0" }),
+      }),
+    );
+    rerender(undefined);
+
+    expect(navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: ScreenName.Recover,
+      params: {
+        platform: "protect-simu",
+        device,
+        fromOnboarding: true,
+        redirectTo: "restore",
+      },
+    });
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(send).toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+    expect(send.mock.calls.filter(([event]) => event.type === "RESUME_POLLING")).toHaveLength(1);
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(send.mock.calls.filter(([event]) => event.type === "RESUME_POLLING")).toHaveLength(1);
+  });
+
+  it("should not pause polling for a seeded device", () => {
+    send.mockClear();
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: seededContext,
+      }),
+    );
+
+    renderFunnel();
+
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(send).not.toHaveBeenCalledWith({ type: "RESUME_POLLING" });
   });
 
   it("should restore the genuine check after reconnecting during the safety warning", () => {

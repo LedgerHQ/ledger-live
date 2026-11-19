@@ -1,4 +1,4 @@
-import { setup } from "xstate";
+import { sendTo, setup } from "xstate";
 import { firmwareCheck } from "./actors/firmwareCheck";
 import { genuineCheck } from "./actors/genuineCheck";
 import { readDeviceState } from "./actors/readDeviceState";
@@ -390,7 +390,10 @@ export const deviceOnboardingMachine = setup({
 
     deviceSetup: {
       initial: "waiting",
+      entry: "resumePolling",
+      exit: "resumePolling",
       invoke: {
+        id: "seedPolling",
         src: "seedPolling",
         input: ({ context }) => ({
           dmk: context.dmk,
@@ -398,6 +401,11 @@ export const deviceOnboardingMachine = setup({
         }),
       },
       on: {
+        PAUSE_POLLING: { actions: sendTo("seedPolling", { type: "PAUSE" }) },
+        RESUME_POLLING: {
+          actions: [sendTo("seedPolling", { type: "RESUME" }), "resumePolling"],
+        },
+        POLLING_PAUSED: { actions: "pausePolling" },
         STEP_CHANGED: [
           {
             guard: "stepBackupRecoveryKey",

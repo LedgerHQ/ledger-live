@@ -2762,6 +2762,15 @@
         "walletReady": "Your wallet is ready."
       }
     },
+    "recover": {
+      "restore": {
+        "title": "Continuing with Ledger Recover",
+        "description": "You’ll sign in with your Ledger Recover credentials to complete your restore.",
+        "identity": "Ledger Recover will verify your identity to unlock your recovery",
+        "phrase": "Once verified, your Secret Recovery Phrase will be securely restored to your device",
+        "cta": "Continue to Ledger Recover"
+      }
+    },
     "checks": {
       "close": "Close",
       "synchronizing": {
