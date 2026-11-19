@@ -4,6 +4,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
+import { isPrepared } from "../ci/verify-build.mts";
 import {
   ACCOUNT_KEY_PREFIX,
   ACCOUNT_ORDER_KEY,
@@ -73,8 +74,9 @@ describe("the mobile app of this checkout", () => {
     );
   });
 
-  it("takes every edit of prepare-build.mts", () => {
+  it("takes every edit of prepare-build.mts, and verify-build.mts sees it prepared", () => {
     prepare({}, app => {
+      assert.ok(isPrepared(app), "verify-build.mts would reject the prepared checkout");
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
       assert.doesNotMatch(read(app, ".env.mock.prerelease"), /^(MOCK|DETOX)=/m);
