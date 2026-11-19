@@ -14,6 +14,7 @@ import PostBroadcastEffect from "./ZcashPostBroadcastSync";
 import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
 import { ZcashSyncNotice } from "./ZcashSyncNotice";
 import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
+import { receiveAddressConfig } from "./receiveAddressConfig";
 import type { ZcashFamily } from "./types";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
@@ -26,6 +27,7 @@ const family: ZcashFamily = {
   sendRecipientFields,
   StepReceiveFundsPostAlert,
   StepReceiveFundsDeviceAnimation,
+  receiveAddressConfig,
   // A Zcash account with a shielded address confirms its transparent and shielded
   // addresses with a single device exchange, so the shared receive step must not
   // also run the standard transparent-only confirmation. Anything else — no

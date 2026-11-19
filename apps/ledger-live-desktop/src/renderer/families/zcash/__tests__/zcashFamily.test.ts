@@ -26,4 +26,8 @@ describe("family slots", () => {
   it("the zcash family preloads the zcash export key modal", () => {
     expect(zcashFamily.modalsToPreload).toContain("MODAL_ZCASH_EXPORT_KEY");
   });
+
+  it("the zcash family exposes receiveAddressConfig", () => {
+    expect(zcashFamily.receiveAddressConfig).toBeDefined();
+  });
 });
