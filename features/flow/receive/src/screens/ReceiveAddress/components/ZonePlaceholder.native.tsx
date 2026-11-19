@@ -11,7 +11,7 @@ const HEIGHT = {
   extras: 112,
 } as const;
 
-export function ZonePlaceholder({ zone }: ZonePlaceholderProps) {
+export function ZonePlaceholder({ zone, label }: ZonePlaceholderProps) {
   return (
     <Box
       lx={{
@@ -24,7 +24,7 @@ export function ZonePlaceholder({ zone }: ZonePlaceholderProps) {
       testID={`receive-address-zone-${zone}`}
     >
       <Text typography="body3" lx={{ color: "muted" }}>
-        {zone}
+        {label || zone}
       </Text>
     </Box>
   );

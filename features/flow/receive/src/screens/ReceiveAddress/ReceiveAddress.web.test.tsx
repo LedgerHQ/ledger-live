@@ -25,6 +25,14 @@ describe("ReceiveAddress (Web)", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("names the asset and its network in the header", () => {
+    renderScreen();
+
+    expect(screen.getByTestId("receive-address-zone-header")).toHaveTextContent(
+      "Receive ETH · Ethereum network",
+    );
+  });
+
   it("lays the zones out in screen order", () => {
     renderScreen();
 

@@ -1,5 +1,6 @@
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveScreenData } from "./useReceiveScreenData";
 
 export function useReceiveAddressViewModel({
@@ -7,6 +8,14 @@ export function useReceiveAddressViewModel({
   assetId,
   onClose,
 }: ReceiveAddressProps): ReceiveAddressViewProps {
-  const { data } = useReceiveScreenData(accountUUID, assetId);
-  return { data, onClose };
+  const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(descriptor, assetId);
+
+  return {
+    data,
+    title: header.title,
+    networkLabel: header.networkLabel,
+    networkIcon: header.data?.networkIcon,
+    onClose,
+  };
 }

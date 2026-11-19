@@ -4,7 +4,7 @@ import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
-export function ReceiveAddressView({ onClose }: ReceiveAddressViewProps) {
+export function ReceiveAddressView({ title, networkLabel, onClose }: ReceiveAddressViewProps) {
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
   };
@@ -15,7 +15,7 @@ export function ReceiveAddressView({ onClose }: ReceiveAddressViewProps) {
         <DialogBackgroundToneProvider>
           <DialogHeader density="compact" onClose={onClose} />
           <DialogBody className="flex flex-col gap-24">
-            <ZonePlaceholder zone="header" />
+            <ZonePlaceholder zone="header" label={`${title} · ${networkLabel}`} />
             <ZonePlaceholder zone="summary" />
             <ZonePlaceholder zone="address" />
             <ZonePlaceholder zone="actions" />
