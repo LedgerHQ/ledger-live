@@ -17,7 +17,10 @@ const allOff = {
 
 describe("deviceOnboardingTraits", () => {
   it("should send every param when the flag is on", () => {
-    expect(deviceOnboardingTraits({ enabled: true, params: allOn })).toEqual(allOn);
+    expect(deviceOnboardingTraits({ enabled: true, params: allOn })).toEqual({
+      deviceOnboarding: true,
+      ...allOn,
+    });
   });
 
   it("should send each param as it is", () => {
@@ -27,6 +30,7 @@ describe("deviceOnboardingTraits", () => {
     };
 
     expect(deviceOnboardingTraits(flag)).toEqual({
+      deviceOnboarding: true,
       connectSeededDevice: true,
       connectUnseededDevice: false,
       offerLedgerSync: true,
@@ -37,8 +41,14 @@ describe("deviceOnboardingTraits", () => {
   it.each([
     ["the flag is off", { enabled: false, params: allOn }],
     ["the flag is not loaded", null],
-    ["a saved value has no params", { enabled: true } as Features["deviceOnboarding"]],
-  ])("should send false for every param when %s", (_case, flag) => {
-    expect(deviceOnboardingTraits(flag)).toEqual(allOff);
+  ])("should send false for every trait when %s", (_case, flag) => {
+    expect(deviceOnboardingTraits(flag)).toEqual({ deviceOnboarding: false, ...allOff });
+  });
+
+  it("should send the flag as on when a saved value has no params", () => {
+    expect(deviceOnboardingTraits({ enabled: true } as Features["deviceOnboarding"])).toEqual({
+      deviceOnboarding: true,
+      ...allOff,
+    });
   });
 });

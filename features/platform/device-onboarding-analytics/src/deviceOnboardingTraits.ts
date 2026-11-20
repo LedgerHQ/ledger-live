@@ -1,17 +1,13 @@
 import type { Features } from "@shared/feature-flags";
 
-type DeviceOnboardingParam = keyof NonNullable<Features["deviceOnboarding"]["params"]>;
-
-export type DeviceOnboardingTraits = Readonly<Record<DeviceOnboardingParam, boolean>>;
-
-export function deviceOnboardingTraits(
-  flag: Features["deviceOnboarding"] | null | undefined,
-): DeviceOnboardingTraits {
-  const isOn = (param: DeviceOnboardingParam) => Boolean(flag?.enabled && flag.params?.[param]);
+export function deviceOnboardingTraits(flag: Features["deviceOnboarding"] | null | undefined) {
+  const enabled = Boolean(flag?.enabled);
+  const params = enabled ? flag?.params : undefined;
   return {
-    connectSeededDevice: isOn("connectSeededDevice"),
-    connectUnseededDevice: isOn("connectUnseededDevice"),
-    offerLedgerSync: isOn("offerLedgerSync"),
-    unifiedEntryPoints: isOn("unifiedEntryPoints"),
+    deviceOnboarding: enabled,
+    connectSeededDevice: Boolean(params?.connectSeededDevice),
+    connectUnseededDevice: Boolean(params?.connectUnseededDevice),
+    offerLedgerSync: Boolean(params?.offerLedgerSync),
+    unifiedEntryPoints: Boolean(params?.unifiedEntryPoints),
   };
 }
