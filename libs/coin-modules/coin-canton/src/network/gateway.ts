@@ -60,6 +60,10 @@ export const isPartyNotFound = (error: unknown): boolean => {
   return false;
 };
 
+// The gateway's 400 PARTY_NOT_FOUND_BY_PUBLIC_KEY: `Party with public key "…" does not exist`.
+export const isPartyNotFoundByPublicKey = (error: unknown): boolean =>
+  error instanceof Error && /party with public key .* does not exist/i.test(error.message);
+
 // live-network keeps only the body `message` and drops the gateway's TRANSFER_OFFER_EXPIRED `type`.
 export const isTransferOfferExpired = (error: unknown): boolean =>
   error instanceof Error && error.message.toLowerCase().includes("transfer offer has expired");
