@@ -84,6 +84,16 @@ describe("useReceiveAddressActions", () => {
     }
   });
 
+  it("should count the Copy button presses for the QR code, not the presses on the code", async () => {
+    const { result, onCopyAddress } = setup();
+
+    await act(() => result.current.actions.copy!.onPress());
+    await act(() => result.current.actions.copy!.onPressCode());
+
+    expect(onCopyAddress).toHaveBeenCalledTimes(2);
+    expect(result.current.actions.copy?.buttonPresses).toBe(1);
+  });
+
   it("should share the address", () => {
     const { result, onShareAddress } = setup();
 
