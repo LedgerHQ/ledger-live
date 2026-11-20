@@ -97,9 +97,14 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
           <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
+            stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
+            bounces={false}
             showsVerticalScrollIndicator={false}
+            testID="device-intent-executor-sheet-content"
           >
-            {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
+            {!hasHeaderOverride && (
+              <BottomSheetHeader density="expanded" lx={{ backgroundColor: "canvasSheet" }} />
+            )}
             <BaseDeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}
