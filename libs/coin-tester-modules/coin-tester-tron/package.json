@@ -43,7 +43,7 @@
     "bignumber.js": "^9",
     "bs58": "catalog:",
     "chalk": "catalog:",
-    "tronweb": "6.5.1"
+    "tronweb": "6.5.2"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
