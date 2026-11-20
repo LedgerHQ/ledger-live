@@ -2,9 +2,11 @@ import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { z } from "zod";
 import type { PredictionsBindingAnswer } from "./binding";
 import {
+  isAllowedPredictionsImageUrl,
   PREDICTIONS_ORDER_REJECTION_REASONS,
   type PredictionsOrderAction,
   type PredictionsOrderAnswer,
+  type PredictionsOrderDisplay,
   type PredictionsOrderOutcome,
 } from "./order";
 import { placeOrderTypedDataJsonSchema } from "./placeOrderTypedData";
@@ -86,11 +88,13 @@ export type PredictionsUiHooks = {
   "binding.reportSetup": (setup: PredictionsSetupOutcome) => Promise<void>;
   /**
    * Signs a checked place order authorization with the account. Rejects with `UserRefusedOnDevice`
-   * when the prompt closes unsigned. Once signed, the order shows as placing until `order.report`.
+   * when the prompt closes unsigned. Once signed, the order shows as placing until `order.report`,
+   * with the market `display` describes.
    */
   "order.sign": (
     accountId: string,
     typedData: PredictionsTypedData,
+    display: PredictionsOrderDisplay,
   ) => Promise<PredictionsOrderAnswer>;
   /**
    * Resolves with the user's pick once they close or retry, or `close` right away when `orderId`
@@ -151,9 +155,24 @@ const reportSetupSchema = z.discriminatedUnion("outcome", [
   }),
 ]) satisfies z.ZodType<PredictionsSetupOutcome>;
 
+const orderDisplaySchema = z.strictObject({
+  eventTitle: z.string().min(1).max(200).optional(),
+  marketTitle: z.string().min(1).max(200),
+  outcomeLabel: z.string().min(1).max(60),
+  outcomeSide: z.enum(["yes", "no"]).optional(),
+  // Dropped rather than refused: a missing image mustn't stop the order.
+  imageUrl: z
+    .string()
+    .optional()
+    .transform(imageUrl =>
+      imageUrl !== undefined && isAllowedPredictionsImageUrl(imageUrl) ? imageUrl : undefined,
+    ),
+}) satisfies z.ZodType<PredictionsOrderDisplay, unknown>;
+
 const signOrderSchema = z.strictObject({
   accountId: z.string().min(1),
   typedData: placeOrderTypedDataJsonSchema,
+  display: orderDisplaySchema,
 });
 
 const orderId = z.string().min(1);
@@ -226,8 +245,8 @@ export const handlers = ({ uiHooks }: { uiHooks: PredictionsUiHooks }) => ({
     z.input<typeof signOrderSchema>,
     PredictionsOrderAnswer
   >(async rawParams => {
-    const { accountId, typedData } = signOrderSchema.parse(rawParams);
-    return uiHooks["order.sign"](accountId, typedData);
+    const { accountId, typedData, display } = signOrderSchema.parse(rawParams);
+    return uiHooks["order.sign"](accountId, typedData, display);
   }),
   "custom.predictions.reportOrder": customWrapper<
     z.input<typeof reportOrderSchema>,

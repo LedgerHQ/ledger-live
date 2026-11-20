@@ -31,7 +31,7 @@ export function PendingResultSheetView({
       >
         <DialogBackgroundToneProvider>
           <DialogHeader density="compact" className="mb-0" />
-          <DialogBody className="mb-0 px-24">
+          <DialogBody className="mb-0 px-24 pb-0">
             {contentKey === undefined ? null : (
               <div key={contentKey} className="flex animate-fade-in flex-col">
                 {children}

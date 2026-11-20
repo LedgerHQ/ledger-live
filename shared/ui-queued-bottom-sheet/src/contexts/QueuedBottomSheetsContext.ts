@@ -1,11 +1,16 @@
 import React from "react";
 
 /**
+ * Why the queue closes a sheet: another one was forced in ahead of it, or every sheet is closing.
+ */
+export type BottomSheetCloseReason = "preempted" | "closingAll";
+
+/**
  * Handlers invoked by the queue when this sheet should open or close.
  */
 export type BottomSheetStateHandlers = {
   open: () => void;
-  close: () => void;
+  close: (reason: BottomSheetCloseReason) => void;
 };
 
 /**

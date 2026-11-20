@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Keyboard } from "react-native";
-import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
+import { useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
   BottomSheetInQueue,
   useQueuedBottomSheetContext,
 } from "../contexts/QueuedBottomSheetsContext";
 import { useQueuedBottomSheetAdapters } from "./adaptersContext";
-import { useBottomSheetBackgroundToneRequests } from "./useBottomSheetBackgroundToneRequests";
+import { useBottomSheetBackgroundSurface } from "../hooks/useBottomSheetBackgroundSurface";
 import {
   isBottomSheetKeyboardOwnedByAnother,
   releaseBottomSheetKeyboard,
@@ -52,7 +52,8 @@ export function useQueuedBottomSheet({
     [],
   );
 
-  const { backgroundTone, backgroundContextValue } = useBottomSheetBackgroundToneRequests();
+  const { backgroundContextValue, BackgroundComponent: backgroundComponent } =
+    useBottomSheetBackgroundSurface();
   const { addBottomSheetToQueue } = useQueuedBottomSheetContext();
   const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
@@ -61,9 +62,6 @@ export function useQueuedBottomSheet({
   const isFocusedRef = useRef(isFocused);
   isFocusedRef.current = isFocused;
   const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
-  const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
-    ? adapters.backgroundComponentByTone?.[backgroundTone]
-    : undefined;
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;

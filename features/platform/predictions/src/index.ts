@@ -8,3 +8,4 @@ export * from "./signingIntent";
 export * from "./signingRequests";
 export * from "./typedData";
 export * from "./webviewInputs";
+export { placeOrderAmountUsd } from "./placeOrderTypedData";

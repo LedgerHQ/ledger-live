@@ -7,8 +7,10 @@ type ResultOutcome = { outcome: string };
 
 const noop = () => undefined;
 
-type ResultRequest<Outcome, Answer> = {
+type ResultRequest<Outcome, Answer, Context> = {
   id: number;
+  /** What the request is about, given when it starts and shown with every outcome. */
+  context: Context;
   /** When the sheet came on screen. Null while it waits, e.g. behind the signing sheet. */
   presentedAt: number | null;
   /** The first outcome reported, held until the loading has been on screen long enough. */
@@ -23,11 +25,15 @@ type ResultRequest<Outcome, Answer> = {
 };
 
 /** What the sheet shows. `key` changes with every request and outcome. */
-export type ShownResult<Outcome> = Readonly<{ key: string; outcome: Outcome | null }>;
+export type ShownResult<Outcome, Context = void> = Readonly<{
+  key: string;
+  context: Context;
+  outcome: Outcome | null;
+}>;
 
-export type PendingResultStore<Outcome, Answer> = Readonly<{
+export type PendingResultStore<Outcome, Answer, Context> = Readonly<{
   /** Replaces any open request, so whoever waits for it can go on. Returns the request's id. */
-  start: () => number;
+  start: (context: Context) => number;
   /**
    * Resolves once the user closes the sheet, or right away when `id` isn't open or timed out. Only
    * the first outcome shows, once the loading has been on screen long enough.
@@ -40,7 +46,10 @@ export type PendingResultStore<Outcome, Answer> = Readonly<{
   dismiss: () => void;
   dismissIfShown: (id: number) => void;
   /** Once closed, the last state stays rendered so the sheet doesn't animate out empty. */
-  useShownResult: () => Readonly<{ isOpen: boolean; shownResult: ShownResult<Outcome> | null }>;
+  useShownResult: () => Readonly<{
+    isOpen: boolean;
+    shownResult: ShownResult<Outcome, Context> | null;
+  }>;
 }>;
 
 /**
@@ -48,7 +57,7 @@ export type PendingResultStore<Outcome, Answer> = Readonly<{
  * Module-level instances let the Wallet API handlers of any live app player drive the one globally
  * mounted sheet.
  */
-export function createPendingResultStore<Outcome extends ResultOutcome, Answer>({
+export function createPendingResultStore<Outcome extends ResultOutcome, Answer, Context = void>({
   dismissedAnswer,
   timeout,
 }: Readonly<{
@@ -56,12 +65,12 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
   dismissedAnswer: Answer;
   /** Shows `outcome` when nothing was reported `ms` after the request started. */
   timeout?: Readonly<{ ms: number; outcome: Outcome }>;
-}>): PendingResultStore<Outcome, Answer> {
-  let currentRequest: ResultRequest<Outcome, Answer> | null = null;
+}>): PendingResultStore<Outcome, Answer, Context> {
+  let currentRequest: ResultRequest<Outcome, Answer, Context> | null = null;
   let lastRequestId = 0;
   const listeners = new Set<() => void>();
 
-  const setCurrentRequest = (request: ResultRequest<Outcome, Answer> | null) => {
+  const setCurrentRequest = (request: ResultRequest<Outcome, Answer, Context> | null) => {
     currentRequest = request;
     listeners.forEach(listener => listener());
   };
@@ -79,7 +88,7 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
     id,
     presentedAt,
     reportedOutcome,
-  }: ResultRequest<Outcome, Answer>) => {
+  }: ResultRequest<Outcome, Answer, Context>) => {
     if (presentedAt === null || reportedOutcome === null) return;
 
     const remainingMs = Math.max(0, presentedAt + MIN_RESULT_DISPLAY_MS - Date.now());
@@ -110,7 +119,7 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
   const dismiss = () => close(dismissedAnswer);
 
   return {
-    start: () => {
+    start: context => {
       const displacedRequest = currentRequest;
       let resolveClosed: (answer: Answer) => void = noop;
       const closed = new Promise<Answer>(resolve => {
@@ -120,6 +129,7 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
       const id = lastRequestId;
       setCurrentRequest({
         id,
+        context,
         presentedAt: null,
         reportedOutcome: null,
         outcome: null,
@@ -165,6 +175,7 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
           ? null
           : {
               key: `${request.id}-${request.outcome?.outcome ?? "loading"}`,
+              context: request.context,
               outcome: request.outcome,
             };
       const [lastShownResult, setLastShownResult] = useState(currentResult);

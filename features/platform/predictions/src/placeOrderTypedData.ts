@@ -110,3 +110,8 @@ export const placeOrderTypedDataJsonSchema = z
 export function isPlaceOrderExpired({ message }: PredictionsTypedData, nowMs: number): boolean {
   return Number(message.expiration) <= Math.floor(nowMs / 1000);
 }
+
+/** The USD amount the user pays, as signed: MoonPay's `amount` is scaled to 6 decimals. */
+export function placeOrderAmountUsd({ message }: PredictionsTypedData): number {
+  return Number(message.amount) / 1_000_000;
+}

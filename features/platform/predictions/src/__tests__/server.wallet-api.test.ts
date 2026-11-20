@@ -94,6 +94,8 @@ describe("custom.predictions.bindAccount through the Wallet API server", () => {
   });
 });
 
+const ORDER_DISPLAY = { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" };
+
 describe("custom.predictions.signOrder through the Wallet API server", () => {
   beforeEach(() => jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS));
   afterEach(() => jest.restoreAllMocks());
@@ -103,6 +105,7 @@ describe("custom.predictions.signOrder through the Wallet API server", () => {
 
     const answer = await signOrder({
       accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
       typedData: JSON.stringify({
         ...PLACE_ORDER_TYPED_DATA,
         domain: { ...PLACE_ORDER_TYPED_DATA.domain, name: "Permit2" },
@@ -121,6 +124,7 @@ describe("custom.predictions.signOrder through the Wallet API server", () => {
 
     const answer = await signOrder({
       accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
       typedData: JSON.stringify({
         ...PLACE_ORDER_TYPED_DATA,
         message: { ...PLACE_ORDER_TYPED_DATA.message, ...message },
@@ -141,6 +145,7 @@ describe("custom.predictions.signOrder through the Wallet API server", () => {
 
       const answer = await signOrder({
         accountId: "wallet-account-id",
+        display: ORDER_DISPLAY,
         typedData: JSON.stringify({
           ...PLACE_ORDER_TYPED_DATA,
           message: { ...PLACE_ORDER_TYPED_DATA.message, expiration: String(expiration) },
@@ -161,6 +166,7 @@ describe("custom.predictions.signOrder through the Wallet API server", () => {
 
     const answer = await signOrder({
       accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
       typedData: JSON.stringify(PLACE_ORDER_TYPED_DATA),
     });
 

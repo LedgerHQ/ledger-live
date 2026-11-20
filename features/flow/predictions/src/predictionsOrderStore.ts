@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
-import type { PredictionsUiHooks } from "@features/platform-predictions";
+import {
+  placeOrderAmountUsd,
+  type PredictionsOrderDisplay,
+  type PredictionsTypedData,
+  type PredictionsUiHooks,
+} from "@features/platform-predictions";
 import {
   dismissPredictionsOrderIfShown,
   reportPredictionsOrder,
@@ -11,8 +16,11 @@ import {
  * closes only that one.
  */
 export function usePredictionsOrderHooks(): Pick<PredictionsUiHooks, "order.report"> & {
-  /** Opens the sheet on "Placing your order" and returns the id the live app reports with. */
-  startOrder: () => string;
+  /**
+   * Opens the sheet on "Placing your order" for the signed order and the market the live app
+   * describes, and returns the id the live app reports with.
+   */
+  startOrder: (typedData: PredictionsTypedData, display: PredictionsOrderDisplay) => string;
 } {
   const orderIdRef = useRef<number | null>(null);
 
@@ -25,8 +33,11 @@ export function usePredictionsOrderHooks(): Pick<PredictionsUiHooks, "order.repo
 
   return useMemo(
     () => ({
-      startOrder: () => {
-        const startedId = startPredictionsOrder();
+      startOrder: (typedData, display) => {
+        const startedId = startPredictionsOrder({
+          display,
+          amountPaid: placeOrderAmountUsd(typedData),
+        });
         orderIdRef.current = startedId;
         return String(startedId);
       },

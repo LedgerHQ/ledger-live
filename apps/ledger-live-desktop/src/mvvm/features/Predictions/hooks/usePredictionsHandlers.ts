@@ -64,9 +64,9 @@ export function usePredictionsHandlers(onClose?: () => void) {
               getBindingTypedData(account.freshAddress),
             ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
-          "order.sign": async (walletAccountId, typedData) => {
+          "order.sign": async (walletAccountId, typedData, display) => {
             const { signature } = await orderSigner.sign(walletAccountId, () => typedData);
-            return { signature, orderId: orderHooks.startOrder() };
+            return { signature, orderId: orderHooks.startOrder(typedData, display) };
           },
           "order.report": orderHooks["order.report"],
         },
