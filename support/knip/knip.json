@@ -159,6 +159,7 @@
         "@react-native/assets-registry",
         "@react-native/community-cli-plugin",
         "@react-native/gradle-plugin",
+        "@shared/ui-animated-qr-code",
         "@shared/ui-glow",
         "buffer",
         "expo-crypto",

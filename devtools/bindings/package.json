@@ -1,6 +1,6 @@
 {
   "name": "@devtools/bindings",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "description": "App-specific builders that adapt Ledger Live state into @devtools tool props (one builder per tool)",
   "main": "src/index.ts",
@@ -20,6 +20,7 @@
     "lint": "oxlint src"
   },
   "dependencies": {
+    "@devtools/account-discovery": "workspace:*",
     "@devtools/env": "workspace:*",
     "@devtools/intent-wallet-sync": "workspace:*",
     "@devtools/registry": "workspace:*",
@@ -41,6 +42,7 @@
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
     "@domain/entity-predictions": "workspace:*",
     "@features/flow-account-detail-analytics-notice": "workspace:*",
@@ -50,11 +52,13 @@
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-predictions": "workspace:*",
     "@features/flow-receive": "workspace:*",
+    "@features/platform-account-discovery": "workspace:*",
     "@features/platform-account-source-portfolio": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-device-intent": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@features/platform-intent-scan-accounts": "workspace:*",
     "@features/platform-intent-wallet-sync": "workspace:*",
     "@features/platform-predictions": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",

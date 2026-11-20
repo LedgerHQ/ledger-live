@@ -24,6 +24,13 @@ jest.mock("../../ModularDrawer", () => ({
   }),
 }));
 
+jest.mock("../hooks/useReceiveRoute", () => ({
+  useReceiveRoute: () => (params: object) => [
+    "ReceiveFunds",
+    { screen: "ReceiveConfirmation", params },
+  ],
+}));
+
 jest.mock("../useReceiveOptionsDrawerController", () => ({
   useReceiveOptionsDrawerController: () => ({
     openDrawer: mockOpenReceiveOptionsDrawer,

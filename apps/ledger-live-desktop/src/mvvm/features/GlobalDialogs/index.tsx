@@ -47,6 +47,7 @@ const SwapTransactionStatusDialog = lazy(() => import("LLD/features/SwapTransact
 const CurrencyRegionRestrictedDialog = lazy(
   () => import("LLD/features/CurrencyRegionRestrictedDialog"),
 );
+const FamilyDialogs = lazy(() => import("LLD/features/FamilyDialogs"));
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
@@ -123,6 +124,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <CurrencyRegionRestrictedDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <FamilyDialogs />
     </Suspense>
   </>
 );

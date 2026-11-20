@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -90,7 +90,6 @@
   "dependencies": {
     "@hiero-ledger/sdk": "2.90.1",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
@@ -103,7 +102,6 @@
     "viem": "^2.27.0"
   },
   "devDependencies": {
-    "@domain/entity-currency-crypto": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",

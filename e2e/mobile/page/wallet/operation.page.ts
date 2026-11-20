@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { byId } from "@e2e/helpers/elements/native";
+import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 
 export default class OperationPage {
   // MVVM OperationsList screen
@@ -7,6 +7,8 @@ export default class OperationPage {
   private readonly sectionHeader = byId("operations-section-header");
   private readonly operationItem = byId("operations-list-item");
   private readonly operationCounterValue = byId("operations-list-item-counter-value");
+  private readonly operationWithAmount = (amount: RegExp) =>
+    byIdWithDescendantText({ id: "operations-list-item", text: amount });
 
   private readonly cryptoHistoryTab = byId("history-tab-crypto");
   private readonly cardHistoryTab = byId("history-tab-card");
@@ -73,6 +75,12 @@ export default class OperationPage {
   async tapFirstOperationItem() {
     await this.operationItem.scrollTo(this.operationsList);
     await this.operationItem.tap();
+  }
+
+  @Step("Open the operation of amount {{{0}}}")
+  async openOperationWithAmount(amount: RegExp) {
+    await this.operationWithAmount(amount).scrollTo(this.operationsList);
+    await this.operationWithAmount(amount).tap();
   }
 
   @Step("Expect operation counter value to contain {{{0}}}")

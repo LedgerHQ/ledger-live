@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
+import { useAssetAccountChainNavigate } from "LLM/utils/assetAccountChain";
 
 type Navigation = NativeStackNavigationProp<BaseNavigatorStackParamList>;
 
@@ -26,10 +27,11 @@ type OpenFromMarketParams = Readonly<{
  */
 export function useAssetDetailNavigation() {
   const navigation = useNavigation<Navigation>();
+  const navigateInChain = useAssetAccountChainNavigate();
 
   const openFromAsset = useCallback(
     ({ currency, source, marketId }: OpenFromAssetParams) => {
-      navigation.navigate(NavigatorName.AssetDetail, {
+      navigateInChain(NavigatorName.AssetDetail, {
         screen: ScreenName.AssetDetail,
         params: {
           currencyId: currency.id,
@@ -38,7 +40,7 @@ export function useAssetDetailNavigation() {
         },
       });
     },
-    [navigation],
+    [navigateInChain],
   );
 
   const openFromMarket = useCallback(

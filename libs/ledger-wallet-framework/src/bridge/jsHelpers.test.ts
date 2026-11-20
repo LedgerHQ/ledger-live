@@ -92,6 +92,7 @@ describe("makeSync", () => {
       creationDate: expect.any(Date),
       lastSyncDate: expect.any(Date),
       subAccounts: [],
+      balances: [{ value: account.balance }],
     };
     expect(newAccount).toEqual(nonUpdatedFields);
     expect(newAccount.id).not.toEqual(account.id);
@@ -371,6 +372,95 @@ describe("makeSync", () => {
     await expect(firstValueFrom(sync$)).rejects.toThrow("Observable shape error");
   });
 
+  describe("balances", () => {
+    const syncWith = async (
+      account: Account,
+      shape: Partial<Account>,
+      options: Partial<Parameters<typeof makeSync>[0]> = {},
+    ) => {
+      const sync$ = makeSync({
+        getAccountShape: () => Promise.resolve(shape),
+        ...options,
+      })(account, {} as SyncConfig);
+      const updater = await firstValueFrom(sync$);
+      return updater(account);
+    };
+
+    it("sets the default row when the family gives none", async () => {
+      const account = createAccount({ id: "js:2:bitcoin::" });
+      const synced = await syncWith(account, {
+        balance: new BigNumber(100),
+        spendableBalance: new BigNumber(80),
+      });
+
+      expect(synced.balances).toEqual([{ value: new BigNumber(100), locked: new BigNumber(20) }]);
+    });
+
+    it("never keeps the rows of a previous sync", async () => {
+      const account = createAccount({
+        id: "js:2:bitcoin::",
+        balance: new BigNumber(10),
+        spendableBalance: new BigNumber(10),
+        balances: [{ value: new BigNumber(10), pool: "stale" }],
+      });
+      const synced = await syncWith(account, {
+        balance: new BigNumber(250),
+        spendableBalance: new BigNumber(250),
+      });
+
+      expect(synced.balances).toEqual([{ value: new BigNumber(250) }]);
+    });
+
+    it("applies the rows the family produces when they partition the balance", async () => {
+      const account = createAccount({ id: "js:2:bitcoin::" });
+      const rows = [
+        { value: new BigNumber(60), pool: "a" },
+        { value: new BigNumber(40), pool: "b", private: true },
+      ];
+      const synced = await syncWith(
+        account,
+        { balance: new BigNumber(100), spendableBalance: new BigNumber(100) },
+        { getAccountBalances: () => ({ account: rows }) },
+      );
+
+      expect(synced.balances).toEqual(rows);
+    });
+
+    it("falls back to the default row when the produced rows do not add up", async () => {
+      const account = createAccount({ id: "js:2:bitcoin::" });
+      const synced = await syncWith(
+        account,
+        { balance: new BigNumber(100), spendableBalance: new BigNumber(100) },
+        { getAccountBalances: () => ({ account: [{ value: new BigNumber(1), pool: "a" }] }) },
+      );
+
+      expect(synced.balances).toEqual([{ value: new BigNumber(100) }]);
+    });
+
+    it("gives the account after postSync to getAccountBalances", async () => {
+      const pending = {
+        id: "p1",
+        hash: "p1",
+        date: new Date(),
+        senders: [],
+      } as unknown as Operation;
+      const account = createAccount({ id: "js:2:bitcoin::", pendingOperations: [pending] });
+      const getAccountBalances = jest.fn(() => ({}));
+      await syncWith(
+        account,
+        { balance: new BigNumber(5), spendableBalance: new BigNumber(5) },
+        {
+          postSync: (_initial: Account, synced: Account) => ({ ...synced, pendingOperations: [] }),
+          getAccountBalances,
+        },
+      );
+
+      expect(getAccountBalances).toHaveBeenCalledTimes(1);
+      const [seen] = getAccountBalances.mock.calls[0] as unknown as [Account];
+      expect(seen.pendingOperations).toEqual([]);
+    });
+  });
+
   describe("shouldMergeOps", () => {
     const op = (id: string, date: string) =>
       ({ id, hash: id, type: "IN", date: new Date(date), value: new BigNumber(1) }) as Operation;
@@ -468,6 +558,62 @@ describe("makeScanAccounts", () => {
     expect(syncedArg.blockHeight).toBe(0);
   });
 
+  it("gives discovered accounts the default balance row", async () => {
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        Promise.resolve({
+          id: "1234",
+          balance: new BigNumber(7),
+          spendableBalance: new BigNumber(5),
+          balances: [{ value: new BigNumber(999), pool: "stale" }],
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn: () => Promise.resolve({ address: "a", path: "p", publicKey: "k" }),
+    });
+
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency: getCryptoCurrencyById("algorand") as unknown as CryptoCurrency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }),
+    );
+
+    expect(result.account.balances).toEqual([
+      { value: new BigNumber(7), locked: new BigNumber(2) },
+    ]);
+  });
+
+  it("gives discovered accounts the rows the family produces", async () => {
+    const rows = [
+      { value: new BigNumber(4), pool: "a" },
+      { value: new BigNumber(3), pool: "b", private: true },
+    ];
+    const getAccountBalances = jest.fn(() => ({ account: rows }));
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        Promise.resolve({
+          id: "1234",
+          balance: new BigNumber(7),
+          spendableBalance: new BigNumber(7),
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn: () => Promise.resolve({ address: "a", path: "p", publicKey: "k" }),
+      getAccountBalances,
+    });
+
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency: getCryptoCurrencyById("algorand") as unknown as CryptoCurrency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }),
+    );
+
+    expect(getAccountBalances).toHaveBeenCalledTimes(1);
+    expect(result.account.balances).toEqual(rows);
+  });
+
   it("returns the first account found when there is no one used previously", async () => {
     // Given
     const addressResolver = {
@@ -511,6 +657,7 @@ describe("makeScanAccounts", () => {
         id: "1234",
         balance: new BigNumber("0"),
         balanceHistoryCache: createEmptyHistoryCache(),
+        balances: [{ value: new BigNumber("0") }],
         blockHeight: 0,
         creationDate: expect.any(Date),
         currency,

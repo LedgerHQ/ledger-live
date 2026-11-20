@@ -2,6 +2,7 @@ import { createAccountDataRouter, type AccountDataSource } from "@domain/api-acc
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import {
+  DerivationPathSchema,
   NetworkIdSchema,
   computeAccountUUID,
   type AccountDescriptor,
@@ -25,7 +26,7 @@ const utxo: AccountDescriptor = {
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
   key: XPUB,
-  path: "m/84h/0h/0h",
+  path: DerivationPathSchema.parse("m/84h/0h/0h"),
 };
 
 const address = (network: string, value: string): AccountDescriptor => ({
@@ -34,7 +35,7 @@ const address = (network: string, value: string): AccountDescriptor => ({
   type: "address",
   network: NetworkIdSchema.parse(network),
   key: value,
-  path: "m/44h/60h/0h/0/0",
+  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 });
 
 const ethereum = address("ethereum", "0xabc");

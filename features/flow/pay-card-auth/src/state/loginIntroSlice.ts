@@ -25,7 +25,16 @@ export const payCardLoginIntroSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectPayCardHasSeenLoginIntro: (state): boolean => state.hasSeenLoginIntro,
+    payCardLoginIntroPersistedSelector: (state): PayCardLoginIntroState => ({
+      hasSeenLoginIntro: state.hasSeenLoginIntro,
+    }),
+  },
 });
 
 export const { markPayCardLoginIntroSeen, resetPayCardLoginIntroSeen, restorePayCardLoginIntro } =
   payCardLoginIntroSlice.actions;
+
+export const { selectPayCardHasSeenLoginIntro, payCardLoginIntroPersistedSelector } =
+  payCardLoginIntroSlice.selectors;

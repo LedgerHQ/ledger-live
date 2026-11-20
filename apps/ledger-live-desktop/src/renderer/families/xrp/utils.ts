@@ -2,29 +2,28 @@ import type { TFunction } from "i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getSeparators } from "@ledgerhq/live-currency-format";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { IOU_DIGITS } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { IOU_DIGITS, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import {
+  enabledXrpTokenStandards,
+  heldXrpTokenIds,
+  standardOf,
+  hasPendingXrpTokenRemoval,
+} from "@ledgerhq/live-common/families/xrp/tokenHolding";
 import type {
   TransactionStatus,
   XrpTokenAccount,
   XrpTokenResources,
 } from "@ledgerhq/live-common/families/xrp/types";
-import type BigNumber from "bignumber.js";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+import BigNumber from "bignumber.js";
 import type { Unit } from "@domain/entity-currency-unit";
+
+// The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
+export const OWNER_RESERVE = new BigNumber(200_000);
 
 export const hasTokenStandardEnabled = (account: Account): boolean => {
   return getXrpEnabledTokenStandards(account.currency.id).length > 0;
 };
-
-function hasPendingRemoval(account: Account, token: TokenCurrency): boolean {
-  return account.pendingOperations.some(operation => {
-    const raw = operation.transactionRaw;
-    if (operation.type !== "OPT_OUT" || !raw) return false;
-    if (!("assetReference" in raw) || !("assetOwner" in raw)) return false;
-
-    return raw.assetReference === token.tokenIdentifier && raw.assetOwner === token.contractAddress;
-  });
-}
 
 /** The reserve a removal frees, from coin-xrp's `XrpReserveRelease` warning: "0.2 XRP" */
 export function getReleasedReserve(status: TransactionStatus): string | undefined {
@@ -42,8 +41,20 @@ export const getXrpResources = (
   return (account as XrpTokenAccount).xrpResources;
 };
 
+export function getManagedTokenAccounts(account: Account): XrpTokenAccount[] {
+  const standards = enabledXrpTokenStandards(account.currency.id);
+  const heldIds = heldXrpTokenIds(account);
+
+  return (account.subAccounts ?? []).filter((subAccount): subAccount is XrpTokenAccount => {
+    const isHeld = heldIds.has(subAccount.token.id);
+    const isStandardEnabled = !!standardOf(standards, subAccount.token);
+
+    return isHeld && isStandardEnabled;
+  });
+}
+
 export function getRemoveAvailability(account: TokenAccount, parentAccount: Account, t: TFunction) {
-  if (hasPendingRemoval(parentAccount, account.token)) {
+  if (hasPendingXrpTokenRemoval(parentAccount, account.token)) {
     return { disabled: true, tooltip: t("xrp.removeToken.pending") };
   }
 
@@ -74,6 +85,27 @@ export function formatLongTrustLimit(limit: BigNumber, unit: Unit, locale: strin
   if (typeof value.e !== "number" || value.e < IOU_DIGITS) return null;
 
   return `${toScientificNotation(value, locale)} ${unit.code}`;
+}
+
+export function formatTrustLimit({
+  limit,
+  unit,
+  locale,
+  discreet,
+  maximumLabel,
+}: {
+  limit: BigNumber;
+  unit: Unit;
+  locale: string;
+  discreet: boolean;
+  maximumLabel: string;
+}): string {
+  if (isMaxTrustLimit(limit)) return maximumLabel;
+
+  return (
+    formatLongTrustLimit(limit, unit, locale) ??
+    formatCurrencyUnit(unit, limit, { discreet, locale, showCode: true })
+  );
 }
 
 // An IOU fee steps in billionths: 7 decimals of a percentage

@@ -25,7 +25,6 @@ import {
   setupLedgerSyncSeed,
   verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { ApplicationOptions } from "@e2e/page/index";
@@ -40,7 +39,6 @@ const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
   // Contacts gates every mutation behind a Ledger Sync status of exactly "ready", which needs both
   // this flag and a hydrated trustchain — see `useContactsLedgerSyncMutationGuard`.
   ...LEDGER_SYNC_FEATURE_FLAGS,
-  ...FF_LWM_WALLET_40_Q2,
 };
 
 // skip-onboarding with the one-time Contacts introduction already dismissed.

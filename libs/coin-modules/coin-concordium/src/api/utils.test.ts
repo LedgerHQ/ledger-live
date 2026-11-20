@@ -11,6 +11,7 @@ function createRawOperation(overrides?: Partial<RawOperation>): RawOperation {
     recipient: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
     amount: "1000000",
     fee: "500",
+    transactionFee: "500",
     value: "1000500",
     memo: undefined,
     date: new Date("2024-06-01T00:00:00Z"),
@@ -80,6 +81,19 @@ describe("mapRawOperationToApiOperation", () => {
 
     expect(result.type).toBe("IN");
     expect(result.value).toBe(BigInt(2000000));
+  });
+
+  it("reports the whole transaction cost on an IN row the account did not pay for", () => {
+    const raw = createRawOperation({
+      type: "IN",
+      fee: "0",
+      transactionFee: "1373330",
+      feesPayer: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+    });
+    const result = mapRawOperationToApiOperation(raw, ADDRESS);
+
+    expect(result.tx.fees).toBe(BigInt(1373330));
+    expect(result.tx.feesPayer).toBe("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G");
   });
 
   it("reports a fee-only operation as worth nothing, leaving the cost on tx.fees", () => {

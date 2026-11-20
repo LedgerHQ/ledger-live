@@ -26,6 +26,7 @@ export const TEAM_SLUGS = Object.freeze([
   "earn",
   "engagement",
   "my-ledger-onboarding",
+  "perps",
   "predictions",
   "swap",
   "wallet-xp",
@@ -88,6 +89,32 @@ function resolveImport(fromFile, source) {
     if (fs.existsSync(candidate)) return candidate;
   }
   return undefined;
+}
+
+// Text of the local helpers a spec imports, followed up to MAX_IMPORT_DEPTH levels.
+export function readLocalImports(specPath) {
+  const texts = [];
+  const seen = new Set([specPath]);
+  let level = [[specPath, readFileCached(specPath)]];
+  for (let depth = 0; depth < MAX_IMPORT_DEPTH; depth += 1) {
+    const next = [];
+    for (const [file, text] of level) {
+      for (const [, source] of text.matchAll(IMPORT_SOURCE)) {
+        const target = resolveImport(file, source);
+        if (!target || seen.has(target)) continue;
+        seen.add(target);
+        try {
+          const targetText = readFileCached(target);
+          texts.push(targetText);
+          next.push([target, targetText]);
+        } catch {
+          continue;
+        }
+      }
+    }
+    level = next;
+  }
+  return texts;
 }
 
 // ADDITIVE, because ownership is per-TEST, not per-file: a spec can legitimately have several

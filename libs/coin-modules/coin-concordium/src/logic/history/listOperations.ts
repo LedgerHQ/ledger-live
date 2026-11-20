@@ -1,6 +1,7 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
 import { isPltRejectReason } from "../../network/plt";
 import { getTransactions } from "../../network/proxyClient";
+import { isSameAccount } from "../account/sameAccount";
 import type {
   ConcordiumCoinConfig,
   RawOperation,
@@ -26,7 +27,10 @@ export interface RawOperationPage {
 function transactionFields(
   tx: WalletProxyTransaction,
   address: string,
-): Pick<RawOperation, "hash" | "date" | "blockHash" | "blockHeight" | "id" | "feesPayer"> {
+): Pick<
+  RawOperation,
+  "hash" | "date" | "blockHash" | "blockHeight" | "id" | "transactionFee" | "feesPayer"
+> {
   const feesPayer = feesPayerOf(tx, address);
 
   return {
@@ -35,21 +39,27 @@ function transactionFields(
     blockHash: tx.blockHash || null,
     blockHeight: tx.blockHeight,
     id: tx.id,
+    // `cost` is only the queried account's share, and 0 for a sponsored sender.
+    // A proxy older than 0.51.0 omits `transactionCost` but sends `sponsor` on
+    // every row; without either, only the payer's view knows the cost.
+    transactionFee: String(tx.transactionCost ?? tx.sponsor?.cost ?? tx.cost ?? 0),
     ...(feesPayer ? { feesPayer } : {}),
   };
 }
 
-/** `cost` is reported only to the payer, so elsewhere it is absent, not zero. */
-function isFeePayer(tx: WalletProxyTransaction): boolean {
+/** Whether the queried account sent the transaction; it paid the cost unless a sponsor did. */
+function isSentByAccount(tx: WalletProxyTransaction): boolean {
   return tx.origin.type === "self";
 }
 
 /**
- * The transaction sender, as `getBlock` reports it. The proxy names the sender
- * as `origin`, replacing the address with `self` when it is the queried account.
+ * Who paid the cost, as `getBlock` reports it: the sponsor of a sponsored
+ * transaction, else the sender. The proxy names the sender as `origin`,
+ * replacing the address with `self` when it is the queried account.
  */
 function feesPayerOf(tx: WalletProxyTransaction, address: string): string | undefined {
-  return isFeePayer(tx) ? address : tx.origin.address;
+  if (tx.sponsor) return tx.sponsor.sponsor;
+  return isSentByAccount(tx) ? address : tx.origin.address;
 }
 
 function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOperation | null {
@@ -57,20 +67,23 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
   // read off it and only the payer's row exists at all. Without this the
   // transaction disappears and the CCD it cost with it.
   if (tx.details.outcome === "reject") {
-    return isFeePayer(tx) ? feeOnlyOperation(tx, address, true) : null;
+    return isSentByAccount(tx) ? feeOnlyOperation(tx, address, true) : null;
   }
 
   const sender = tx.details.transferSource || "";
   const recipient = tx.details.transferDestination || "";
 
-  const isOutgoing = sender === address;
-  const isIncoming = recipient === address;
+  // The proxy lists every alias's transactions under the account but names each
+  // party by the alias used on chain.
+  const isOutgoing = isSameAccount(sender, address);
+  const isIncoming = isSameAccount(recipient, address);
 
   if (!isOutgoing && !isIncoming) {
     return null;
   }
 
-  const amount = tx.details.transferAmount || "0";
+  // Between two aliases of the account the amount never leaves it: only the fee does.
+  const amount = isOutgoing && isIncoming ? "0" : tx.details.transferAmount || "0";
   const fee = String(tx.cost || 0);
 
   return {
@@ -127,7 +140,7 @@ function parseRejectedTokenUpdate(
   tx: WalletProxyTransaction,
   address: string,
 ): RawOperation | null {
-  if (!isFeePayer(tx)) return null;
+  if (!isSentByAccount(tx)) return null;
 
   const operation = feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
   const rejectCode = pltRejectCode(tx.details.rawRejectReason);
@@ -165,24 +178,27 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   ) {
     // Not a transfer this layer can read, but the CCD it cost still left the
     // payer's account, and dropping it would show up as an unexplained debit.
-    return isFeePayer(tx) ? feeOnlyOperation(tx, address, false) : null;
+    return isSentByAccount(tx) ? feeOnlyOperation(tx, address, false) : null;
   }
 
-  const isOutgoing = transferSource === address;
-  if (!isOutgoing && transferDestination !== address) {
+  const isOutgoing = isSameAccount(transferSource, address);
+  const isIncoming = isSameAccount(transferDestination, address);
+  if (!isOutgoing && !isIncoming) {
     return null;
   }
+
+  const amount = isOutgoing && isIncoming ? "0" : tokenTransferAmount.value;
 
   return {
     ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
     sender: transferSource,
     recipient: transferDestination,
-    amount: tokenTransferAmount.value,
-    fee: isFeePayer(tx) ? String(tx.cost || 0) : "0",
+    amount,
+    fee: isSentByAccount(tx) ? String(tx.cost || 0) : "0",
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
-    value: tokenTransferAmount.value,
+    value: amount,
     memo: tx.details.memo ? decodePltMemo(tx.details.memo, tx.transactionHash) : undefined,
     failed: false,
     tokenId,

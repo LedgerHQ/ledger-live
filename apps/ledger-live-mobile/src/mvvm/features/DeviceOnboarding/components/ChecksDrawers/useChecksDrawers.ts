@@ -64,19 +64,32 @@ export type ChecksDrawerProps = Readonly<{
   notGenuineDrawer: NotGenuineDrawerProps;
 }>;
 
-type ChecksDrawerInput = Readonly<{
+type OfferedUpdate = { current: string; available: string };
+
+type ChecksErrorDrawersInput = Readonly<{
   device: Device;
   state: ChecksScreenState | null;
   error: { kind: GenuineErrorKind } | null;
-  update: { current: string; available: string } | null;
   onRetry: () => void;
   onCloseSheet: () => void;
   onErrorCancel: () => void;
-  onAcceptUpdate: () => void;
   onAllowDismiss: () => void;
   onNotGenuineClose: () => void;
   suspendSheets?: boolean;
 }>;
+
+type FirmwareUpdateRequestInput = Readonly<{
+  device: Device;
+  update: OfferedUpdate | null;
+  onAcceptUpdate: () => void;
+  suspendSheets?: boolean;
+}>;
+
+type ChecksDrawerInput = ChecksErrorDrawersInput &
+  Readonly<{
+    update: OfferedUpdate | null;
+    onAcceptUpdate: () => void;
+  }>;
 
 const recoverableErrorPage = "Error: unknown error";
 
@@ -132,24 +145,67 @@ function sheetOpen(active: boolean, suspendSheets: boolean) {
   return active && !suspendSheets;
 }
 
-export function useChecksDrawers({
+function productNameOf(device: Device) {
+  return getDeviceModel(device.modelId).productName || device.modelId;
+}
+
+function updateKeyOf(update: OfferedUpdate | null) {
+  return update ? `${update.current}|${update.available}` : "";
+}
+
+/**
+ * Starts the OS update when the device can take it, and otherwise opens the unsupported-update
+ * sheet for the offered version.
+ */
+export function useFirmwareUpdateRequest({
+  device,
+  update,
+  onAcceptUpdate,
+  suspendSheets = false,
+}: FirmwareUpdateRequestInput): Readonly<{
+  requestUpdate: () => void;
+  unsupportedUpdate: UnsupportedUpdateDrawerProps;
+}> {
+  const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
+  const updateKey = updateKeyOf(update);
+  const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
+
+  return {
+    requestUpdate: () => {
+      if (!eligibility) return;
+      if (eligibility.canUpdate) onAcceptUpdate();
+      else setUnsupportedFor(updateKey);
+    },
+    unsupportedUpdate: {
+      isOpen: sheetOpen(isUnsupportedUpdateOpen, suspendSheets),
+      mounted: isUnsupportedUpdateOpen,
+      isUsbRequired: eligibility?.isUsbRequired ?? false,
+      productName: productNameOf(device),
+      onClose: () => {
+        if (!suspendSheets) setUnsupportedFor(null);
+      },
+    },
+  };
+}
+
+/** The allow, recoverable error and not-genuine sheets of the checks. */
+export function useChecksErrorDrawers({
   device,
   state,
   error,
-  update,
   onRetry,
   onCloseSheet,
   onErrorCancel,
-  onAcceptUpdate,
   onAllowDismiss,
   onNotGenuineClose,
   suspendSheets = false,
-}: ChecksDrawerInput): ChecksDrawerProps & {
-  headerQuitHidden: boolean;
-  reopenFirmwareOffer: () => void;
-} {
+}: ChecksErrorDrawersInput): Pick<
+  ChecksDrawerProps,
+  "allowSheet" | "errorDrawer" | "notGenuineDrawer"
+> {
   const { locale } = useLocale();
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const productName = productNameOf(device);
   const { openSupport, openExperimentalSettings } = useInitializerActions({
     id: device.deviceId,
     name: device.deviceName ?? "",
@@ -188,26 +244,9 @@ export function useChecksDrawers({
   }, [openExperimentalSettings]);
   const [allowClosed, setAllowClosed] = useState(false);
   if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
-  const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
-  const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
-
-  const updateKey = update ? `${update.current}|${update.available}` : "";
-  const eligibility = update ? firmwareEligibility(device, update.current) : null;
-  const offered = state === "updating" && update !== null;
-  const offerDismissed = dismissedOfferKey === updateKey;
-  const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
-  const offerOpen = offered && !offerDismissed && !isUnsupportedUpdateOpen && !suspendSheets;
   const allowOpen = state === "awaitingAllow" && !allowClosed && !suspendSheets;
 
-  const acceptUpdate = () => {
-    if (!eligibility) return;
-    if (eligibility.canUpdate) onAcceptUpdate();
-    else setUnsupportedFor(updateKey);
-  };
-
   return {
-    headerQuitHidden: offered && !offerDismissed,
-    reopenFirmwareOffer: () => setDismissedOfferKey(null),
     allowSheet: {
       deviceModelId: device.modelId,
       deviceName: device.deviceName ?? "",
@@ -218,24 +257,6 @@ export function useChecksDrawers({
             onAllowDismiss();
           }
         : undefined,
-    },
-    firmwareUpdate: {
-      isOpen: offerOpen,
-      firmwareVersion: update?.available ?? "",
-      productName,
-      onUpdate: acceptUpdate,
-      onClose: () => {
-        if (offerOpen) setDismissedOfferKey(updateKey);
-      },
-    },
-    unsupportedUpdate: {
-      isOpen: sheetOpen(isUnsupportedUpdateOpen, suspendSheets),
-      mounted: isUnsupportedUpdateOpen,
-      isUsbRequired: eligibility?.isUsbRequired ?? false,
-      productName,
-      onClose: () => {
-        if (!suspendSheets) setUnsupportedFor(null);
-      },
     },
     errorDrawer: {
       isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
@@ -253,5 +274,45 @@ export function useChecksDrawers({
       onClose: () => dismissIfOpen(suspendSheets, error?.kind === "notGenuine", onNotGenuineClose),
       onContactSupport: onContactNotGenuineSupport,
     },
+  };
+}
+
+/** Every sheet of the seeded checks screen, with the legacy OS update drawer. */
+export function useChecksDrawers({
+  update,
+  onAcceptUpdate,
+  ...input
+}: ChecksDrawerInput): ChecksDrawerProps & {
+  headerQuitHidden: boolean;
+  reopenFirmwareOffer: () => void;
+} {
+  const suspendSheets = input.suspendSheets ?? false;
+  const errorDrawers = useChecksErrorDrawers(input);
+  const { requestUpdate, unsupportedUpdate } = useFirmwareUpdateRequest({
+    device: input.device,
+    update,
+    onAcceptUpdate,
+    suspendSheets,
+  });
+  const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
+  const updateKey = updateKeyOf(update);
+  const offered = input.state === "updating" && update !== null;
+  const offerDismissed = dismissedOfferKey === updateKey;
+  const offerOpen = offered && !offerDismissed && !unsupportedUpdate.mounted && !suspendSheets;
+
+  return {
+    ...errorDrawers,
+    headerQuitHidden: offered && !offerDismissed,
+    reopenFirmwareOffer: () => setDismissedOfferKey(null),
+    firmwareUpdate: {
+      isOpen: offerOpen,
+      firmwareVersion: update?.available ?? "",
+      productName: productNameOf(input.device),
+      onUpdate: requestUpdate,
+      onClose: () => {
+        if (offerOpen) setDismissedOfferKey(updateKey);
+      },
+    },
+    unsupportedUpdate,
   };
 }

@@ -17,7 +17,7 @@ export default function CosmosFamilySendRowsCustomComponent({ transaction, editM
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
-        {transaction.memo ? (
+        {transaction.memoValue ? (
           <LText
             semiBold
             style={styles.tagText}
@@ -25,7 +25,7 @@ export default function CosmosFamilySendRowsCustomComponent({ transaction, editM
             numberOfLines={1}
             testID="summary-memo-tag"
           >
-            {transaction.memo}
+            {transaction.memoValue}
           </LText>
         ) : (
           <LText

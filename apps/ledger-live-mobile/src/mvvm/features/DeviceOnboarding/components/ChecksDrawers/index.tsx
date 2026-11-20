@@ -19,8 +19,10 @@ export type ChecksDrawerTestIds = Readonly<{
   notGenuineSheet: string;
 }>;
 
-type ChecksDrawersProps = ChecksDrawerProps &
+type ChecksDrawersProps = Omit<ChecksDrawerProps, "allowSheet" | "firmwareUpdate"> &
   Readonly<{
+    allowSheet?: ChecksDrawerProps["allowSheet"];
+    firmwareUpdate?: ChecksDrawerProps["firmwareUpdate"];
     testIds: ChecksDrawerTestIds;
   }>;
 
@@ -127,16 +129,18 @@ export function ChecksDrawers({
 }: ChecksDrawersProps) {
   return (
     <>
-      <ChecksSheet
-        isOpen={allowSheet.isOpen}
-        onHeaderClosePressed={allowSheet.onClose}
-        testID={testIds.allowSheet}
-      >
-        <ContinueOnDevice
-          deviceModelId={allowSheet.deviceModelId}
-          deviceName={allowSheet.deviceName}
-        />
-      </ChecksSheet>
+      {allowSheet ? (
+        <ChecksSheet
+          isOpen={allowSheet.isOpen}
+          onHeaderClosePressed={allowSheet.onClose}
+          testID={testIds.allowSheet}
+        >
+          <ContinueOnDevice
+            deviceModelId={allowSheet.deviceModelId}
+            deviceName={allowSheet.deviceName}
+          />
+        </ChecksSheet>
+      ) : null}
       {errorDrawer.kind === "declined" ? (
         <ChecksInfoSheet
           isOpen={errorDrawer.isOpen}
@@ -228,7 +232,7 @@ export function ChecksDrawers({
           }}
         />
       ) : null}
-      <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
+      {firmwareUpdate ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
       {unsupportedUpdate.mounted ? (
         <UnsupportedUpdateDrawer
           isOpen={unsupportedUpdate.isOpen}

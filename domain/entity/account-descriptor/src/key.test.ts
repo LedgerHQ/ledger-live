@@ -3,7 +3,7 @@ import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 const TON_PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
 import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./key";
 import { mockAddressAccountDescriptor } from "./schema.mock";
-import type { AccountDescriptor } from "./schema";
+import { DerivationPathSchema, type AccountDescriptor } from "./schema";
 import { NetworkIdSchema } from "./network";
 
 const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
@@ -12,7 +12,7 @@ const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   type: "utxo",
   network: NetworkIdSchema.parse(network),
   key: XPUB,
-  path,
+  path: DerivationPathSchema.parse(path),
 });
 
 const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
@@ -21,12 +21,12 @@ const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   type: "address",
   network: NetworkIdSchema.parse(network),
   key: addr,
-  path: "m/44h/60h/0h/0/0",
+  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 });
 
 const ton = (key: string): AccountDescriptor => ({
   ...address(key, "ton"),
-  path: "m/44h/607h/0h/0h/0h/0h",
+  path: DerivationPathSchema.parse("m/44h/607h/0h/0h/0h/0h"),
 });
 
 describe("accountDescriptorKey", () => {
@@ -81,12 +81,12 @@ describe("computeAccountUUID", () => {
 
   it.each<[AccountDescriptor, string, string]>([
     [
-      { ...address(ETH_ADDR, "Ethereum"), path: "m/44'/60'/0'/0/0" },
+      { ...address(ETH_ADDR, "Ethereum"), path: DerivationPathSchema.parse("m/44'/60'/0'/0/0") },
       `account:2:address:ethereum:${ETH_ADDR.toLowerCase()}:m/44h/60h/0h/0/0`,
       "bf498ad6-dbff-5da0-834d-8f3870db2426",
     ],
     [
-      { ...address(SOL_ADDR, "solana"), path: "m/44h/501h/0h/0h" },
+      { ...address(SOL_ADDR, "solana"), path: DerivationPathSchema.parse("m/44h/501h/0h/0h") },
       `account:2:address:solana:${SOL_ADDR}:m/44h/501h/0h/0h`,
       "900a3c3b-f896-5151-968e-8bdf9748d2eb",
     ],

@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
+import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import { getLastBlockHeight, getOperations, getTokenOperations } from "../../network";
+import { getTransactionFee } from "../../network/getFees";
 import { createMockVechainContext } from "../../test/context";
 import { listOperations } from "./listOperations";
 
@@ -9,8 +11,10 @@ jest.mock("../../network", () => ({
   getOperations: jest.fn(),
   getTokenOperations: jest.fn(),
 }));
+jest.mock("../../network/getFees", () => ({ getTransactionFee: jest.fn() }));
 
 const ADDRESS = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
+const PAID = new BigNumber("21000000000000000");
 const context = createMockVechainContext();
 
 function makeLegacyOp(overrides: Partial<LegacyOperation> = {}): LegacyOperation {
@@ -32,6 +36,10 @@ function makeLegacyOp(overrides: Partial<LegacyOperation> = {}): LegacyOperation
 }
 
 describe("listOperations", () => {
+  beforeEach(() => {
+    jest.mocked(getTransactionFee).mockResolvedValue({ paid: PAID, payer: ADDRESS });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -87,36 +95,66 @@ describe("listOperations", () => {
     expect(page.next).toBeUndefined();
   });
 
-  it("attaches no fee to a native VET operation (VeChain gas is VTHO, avoids inflating the debit)", async () => {
+  it("reports the VTHO fee and its payer on the VET and VTHO operations of a transaction", async () => {
     jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
-    const outOp = makeLegacyOp({
-      type: "OUT",
-      value: new BigNumber("1000000000000000000"),
-      fee: new BigNumber("21000000000000000"),
-    });
-    jest.mocked(getOperations).mockResolvedValueOnce([outOp]);
+    jest
+      .mocked(getOperations)
+      .mockResolvedValueOnce([
+        makeLegacyOp({ id: "vet", value: new BigNumber("1000000000000000000") }),
+      ]);
+    jest
+      .mocked(getTokenOperations)
+      .mockResolvedValueOnce([
+        makeLegacyOp({ id: "vtho", value: new BigNumber("5000000000000000000") }),
+      ]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    const vtho = { type: "token", assetReference: VTHO_ADDRESS };
+    expect(page.items.map(({ id, value, tx }) => ({ id, value, ...tx }))).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "vet",
+          value: BigInt("1000000000000000000"),
+          fees: BigInt(PAID.toFixed()),
+          feesAsset: vtho,
+          feesPayer: ADDRESS,
+        }),
+        expect.objectContaining({
+          id: "vtho",
+          value: BigInt("5000000000000000000"),
+          fees: BigInt(PAID.toFixed()),
+          feesAsset: vtho,
+          feesPayer: ADDRESS,
+        }),
+      ]),
+    );
+  });
+
+  it("reports the receipt's payer when the account did not pay the fee", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest.mocked(getTransactionFee).mockResolvedValue({ paid: PAID, payer: "0xsponsor" });
+    jest.mocked(getOperations).mockResolvedValueOnce([]);
+    jest
+      .mocked(getTokenOperations)
+      .mockResolvedValueOnce([
+        makeLegacyOp({ type: "IN", senders: ["0xsender"], recipients: [ADDRESS] }),
+      ]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx.feesPayer).toBe("0xsponsor");
+  });
+
+  it("reports no payer when the receipt names none", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest.mocked(getTransactionFee).mockResolvedValue({ paid: PAID, payer: undefined });
+    jest.mocked(getOperations).mockResolvedValueOnce([makeLegacyOp()]);
     jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
 
     const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
-    expect(page.items[0].value).toBe(BigInt("1000000000000000000"));
-    expect(page.items[0].tx.fees).toBe(0n);
-  });
-
-  it("keeps the VTHO gas as the fee on a VTHO (token) operation", async () => {
-    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
-    const vthoOut = makeLegacyOp({
-      type: "OUT",
-      value: new BigNumber("5000000000000000000"),
-      fee: new BigNumber("21000000000000000"),
-    });
-    jest.mocked(getOperations).mockResolvedValueOnce([]);
-    jest.mocked(getTokenOperations).mockResolvedValueOnce([vthoOut]);
-
-    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
-
-    expect(page.items[0].value).toBe(BigInt("5000000000000000000"));
-    expect(page.items[0].tx.fees).toBe(BigInt("21000000000000000"));
+    expect(page.items[0].tx).not.toHaveProperty("feesPayer");
   });
 
   it("returns an empty page without a cursor when the range is already exhausted", async () => {

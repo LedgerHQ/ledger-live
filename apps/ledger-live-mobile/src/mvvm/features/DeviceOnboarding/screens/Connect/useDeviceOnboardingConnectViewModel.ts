@@ -14,12 +14,15 @@ import {
   useDeviceOnboardingSession,
 } from "../../hooks/DeviceOnboardingProvider";
 import { useOfferSync } from "../../hooks/useOfferSync";
+import type { DeviceUnlockSheetProps } from "../../types";
+import { deviceLockedState, toDeviceUnlockSheetProps } from "../../utils/deviceLocked";
 import { selectPairedKnownDevices } from "../../utils/pairedDevice";
 import { shouldRevealFunnel } from "../../utils/pairingHold";
 
 export type DeviceOnboardingConnectModel = Readonly<{
   closeLabel: string;
   showDeviceList: boolean;
+  unlockSheet: DeviceUnlockSheetProps | null;
   onConnected: (result: DeviceConnectionResult) => void;
   onClose: () => void;
   onDeviceNotFound: () => void;
@@ -91,9 +94,14 @@ export function useDeviceOnboardingConnectViewModel(): DeviceOnboardingConnectMo
     });
   }, [navigation]);
 
+  const deviceIsLocked = state === deviceLockedState && error === null;
+  const unlockSheet =
+    deviceIsLocked && pairedDevice ? toDeviceUnlockSheetProps(pairedDevice) : null;
+
   return {
     closeLabel: t("common.close"),
     showDeviceList: isFocused || pairedDevice !== undefined,
+    unlockSheet,
     onConnected,
     onClose,
     onDeviceNotFound,

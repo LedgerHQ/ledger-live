@@ -53,6 +53,34 @@ describe("indexer", () => {
       expect(result.nextToken).toBeUndefined();
     });
 
+    it("should default omitted rewards to zero", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "TX_NO_REWARDS",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "SENDER_ADDRESS",
+              fee: 1000,
+              "tx-type": "pay",
+              "payment-transaction": {
+                amount: 1000000,
+                receiver: "RECIPIENT_ADDRESS",
+              },
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
+
+      expect(result.transactions[0]).toMatchObject({
+        senderRewards: new BigNumber(0),
+        recipientRewards: new BigNumber(0),
+      });
+    });
+
     it("should fetch and parse asset transfer transactions", async () => {
       mockNetwork.mockResolvedValue({
         data: {
@@ -70,6 +98,7 @@ describe("indexer", () => {
                 amount: 100,
                 "asset-id": 12345,
                 receiver: "RECIPIENT_ADDRESS",
+                sender: "CLAWBACK_SOURCE",
               },
             },
           ],
@@ -79,7 +108,115 @@ describe("indexer", () => {
       const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.transactions[0].type).toBe("axfer");
-      expect(result.transactions[0].details).not.toBeUndefined();
+      expect(result.transactions[0].details).toMatchObject({
+        assetSenderAddress: "CLAWBACK_SOURCE",
+      });
+    });
+
+    it("should parse nested inner transactions with their root fee payer", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "APPL",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "ROOT_SENDER",
+              "sender-rewards": 0,
+              "receiver-rewards": 0,
+              fee: 1000,
+              "tx-type": "appl",
+              "inner-txns": [
+                {
+                  "round-time": 1700000000,
+                  "confirmed-round": 50000000,
+                  sender: "APP",
+                  "sender-rewards": 0,
+                  "receiver-rewards": 0,
+                  fee: 2000,
+                  "tx-type": "appl",
+                  "inner-txns": [
+                    {
+                      "round-time": 1700000000,
+                      "confirmed-round": 50000000,
+                      sender: "APP",
+                      "sender-rewards": 0,
+                      "receiver-rewards": 0,
+                      fee: 3000,
+                      "tx-type": "pay",
+                      "payment-transaction": { amount: 100, receiver: "RECIPIENT" },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS", {
+        includeInnerTransactions: true,
+      });
+
+      expect(result.transactions).toMatchObject([
+        { id: "APPL", rootId: "APPL", fee: new BigNumber(1000), feesPayer: "ROOT_SENDER" },
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          fee: new BigNumber(1000),
+          feesPayer: "ROOT_SENDER",
+        },
+        {
+          id: "APPL-inner-0-inner-0",
+          rootId: "APPL",
+          fee: new BigNumber(1000),
+          feesPayer: "ROOT_SENDER",
+          details: { amount: new BigNumber(100), recipientAddress: "RECIPIENT" },
+        },
+      ]);
+
+      const roots = await getAccountTransactions(config, "ALGO_ADDRESS");
+      expect(roots.transactions).toHaveLength(1);
+      expect(roots.transactions[0]).toMatchObject({ id: "APPL" });
+    });
+
+    it("should keep the exact value of inner asset amounts above the safe integer range", async () => {
+      mockNetwork.mockResolvedValue({
+        data: {
+          transactions: [
+            {
+              id: "APPL",
+              "round-time": 1700000000,
+              "confirmed-round": 50000000,
+              sender: "ROOT_SENDER",
+              fee: 1000,
+              "tx-type": "appl",
+              "inner-txns": [
+                {
+                  "round-time": 1700000000,
+                  "confirmed-round": 50000000,
+                  sender: "APP",
+                  fee: 0,
+                  "tx-type": "axfer",
+                  "asset-transfer-transaction": {
+                    amount: 18446744073709551615n,
+                    "asset-id": 12345,
+                    receiver: "RECIPIENT",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      } as never);
+
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS", {
+        includeInnerTransactions: true,
+      });
+
+      expect(result.transactions[1].details).toMatchObject({
+        assetAmount: new BigNumber("18446744073709551615"),
+      });
     });
 
     it("should include minRound in URL when provided", async () => {
@@ -89,9 +226,11 @@ describe("indexer", () => {
 
       await getAccountTransactions(config, "ALGO_ADDRESS", { minRound: 50000000 });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("min-round=50000000"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("min-round=50000000"),
+        }),
+      );
     });
 
     it("should include nextToken in URL when provided", async () => {
@@ -101,9 +240,11 @@ describe("indexer", () => {
 
       await getAccountTransactions(config, "ALGO_ADDRESS", { nextToken: "abc123" });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("next=abc123"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("next=abc123"),
+        }),
+      );
     });
 
     it("should return next token when present", async () => {
@@ -253,9 +394,11 @@ describe("indexer", () => {
 
       await getAllAccountTransactions(config, "ALGO_ADDRESS", 50000000);
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        url: expect.stringContaining("min-round=50000000"),
-      });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("min-round=50000000"),
+        }),
+      );
     });
 
     it("should handle empty transaction list", async () => {
@@ -323,6 +466,15 @@ describe("indexer", () => {
         return (transformResponse as (data: unknown) => unknown)(raw);
       };
 
+      const parseAccountResponse = async (raw: unknown) => {
+        mockNetwork.mockResolvedValueOnce({
+          data: { transactions: [] },
+        } as never);
+        await getAccountTransactions(config, "ALGO_ADDRESS");
+        const { transformResponse } = mockNetwork.mock.calls[0][0];
+        return (transformResponse as (data: unknown) => unknown)(raw);
+      };
+
       it("should keep the exact value of amounts above the safe integer range", async () => {
         const parsed = await parseResponse(
           '{"transactions":[{"fee":1000,"asset-transfer-transaction":{"amount":18446744073709551615}}]}',
@@ -331,6 +483,21 @@ describe("indexer", () => {
         expect(parsed).toEqual({
           transactions: [
             { fee: 1000, "asset-transfer-transaction": { amount: 18446744073709551615n } },
+          ],
+        });
+      });
+
+      it("should keep exact inner transaction amounts above safe integer range", async () => {
+        const parsed = await parseAccountResponse(
+          '{"transactions":[{"fee":1000,"inner-txns":[{"asset-transfer-transaction":{"amount":18446744073709551615}}]}]}',
+        );
+
+        expect(parsed).toEqual({
+          transactions: [
+            {
+              fee: 1000,
+              "inner-txns": [{ "asset-transfer-transaction": { amount: 18446744073709551615n } }],
+            },
           ],
         });
       });

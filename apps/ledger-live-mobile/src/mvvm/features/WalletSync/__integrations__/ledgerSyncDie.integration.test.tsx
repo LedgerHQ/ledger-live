@@ -34,6 +34,9 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import ActivationDrawer from "../screens/Activation/ActivationDrawer";
 import ManageInstancesDrawer from "../screens/ManageInstances/ManageInstancesDrawer";
 import { useManageInstancesDrawer } from "../screens/ManageInstances/useManageInstanceDrawer";
+import ManageKeyDrawer from "../screens/ManageKey/ManageKeyDrawer";
+import { useManageKeyDrawer } from "../screens/ManageKey/useManageKeyDrawer";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Steps } from "../types/Activation";
 import { AnalyticsEvents } from "../Analytics/enums";
 
@@ -47,8 +50,13 @@ jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
   }),
 }));
 
+// The error of the last key deletion, which the manage key drawer shows.
+const mockDeleteError: { current: Error | null } = { current: null };
+
 jest.mock("../hooks/useDestroyTrustchain", () => ({
-  useDestroyTrustchain: () => ({ deleteMutation: { mutateAsync: jest.fn() } }),
+  useDestroyTrustchain: () => ({
+    deleteMutation: { mutateAsync: jest.fn(), error: mockDeleteError.current },
+  }),
 }));
 
 // The tests create the member credentials themselves.
@@ -254,6 +262,21 @@ const SettingsEntry = withEntry(function SettingsEntryScreen() {
   );
 });
 
+// Ledger Sync settings open this drawer on the activation step when Ledger Sync is off.
+const ActivationEntry = withEntry(function ActivationEntryScreen() {
+  const [isOpen, setIsOpen] = useState(true);
+  return (
+    <View>
+      <Text>entry screen</Text>
+      <ActivationDrawer
+        startingStep={Steps.Activation}
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+      />
+    </View>
+  );
+});
+
 const AddAccountEntry = withEntry(function AddAccountEntryScreen() {
   const [isOpen, setIsOpen] = useState(true);
   return (
@@ -273,6 +296,19 @@ const ManageInstancesEntry = withLedgerSyncSettingsEntry(function ManageInstance
       <Text>entry screen</Text>
       <ManageInstancesDrawer {...manageInstances} />
       {manageInstances.deviceIntentStepElement}
+    </View>
+  );
+});
+
+const ManageKeyEntry = withLedgerSyncSettingsEntry(function ManageKeyEntryScreen() {
+  const manageKey = useManageKeyDrawer();
+  const { openDrawer } = manageKey;
+  React.useEffect(openDrawer, [openDrawer]);
+  return (
+    <View>
+      <Text>entry screen</Text>
+      <ManageKeyDrawer {...manageKey} />
+      {manageKey.deviceIntentStepElement}
     </View>
   );
 });
@@ -404,6 +440,155 @@ function namedError(ErrorClass: new (message?: string) => Error): Error {
 describe("Ledger Sync device steps on DIE, opened over the entry screen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDeleteError.current = null;
+  });
+
+  describe("Ledger Sync drawers", () => {
+    const LEGACY_DRAWER = "drawer-backdrop";
+    const activationSheet = () =>
+      screen
+        .UNSAFE_getAllByType(QueuedBottomSheet)
+        .find(sheet => sheet.props.testID === "wallet-sync-activation-sheet");
+
+    it("should open the activation drawer on the Lumen sheet", async () => {
+      render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      expect(
+        await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
+      ).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-activation-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should open the manage instances drawer on the Lumen sheet", async () => {
+      render(<ManageInstancesEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+
+      expect(await screen.findByTestId(`walletSync-manage-instance-${MEMBER.id}`)).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-manage-instances-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should open the manage key drawer on the Lumen sheet", async () => {
+      render(<ManageKeyEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+
+      expect(await screen.findByTestId("delete-trustchain")).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-manage-key-sheet-content")).toBeOnTheScreen();
+      expect(screen.queryByTestId(LEGACY_DRAWER)).toBeNull();
+    });
+
+    it("should leave the drag of the QR code step to its instructions", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+
+      expect(await screen.findByTestId("ws-scan-camera")).toBeVisible();
+      expect(activationSheet()?.props.enableContentPanningGesture).toBe(false);
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveProp("nestedScrollEnabled", true);
+    });
+
+    it("should title the QR code step in the sheet's sticky header and keep the side margin on its content", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+
+      const sheetContent = screen.getByTestId("wallet-sync-activation-sheet-content");
+      const body = screen.getByTestId("wallet-sync-activation-sheet-content-body");
+      expect(sheetContent).toHaveStyle({ paddingHorizontal: 0 });
+      expect(sheetContent).toHaveProp("stickyHeaderIndices", [0]);
+      expect(body).toHaveStyle({ paddingHorizontal: 16 });
+      const title = within(sheetContent).getByTestId("bottom-sheet-header-title");
+      expect(title).toHaveTextContent("Sync Ledger Wallet apps");
+      expect(within(body).queryByTestId("bottom-sheet-header-title")).toBeNull();
+    });
+
+    it("should grow the show QR code tab's instructions up into the scan tab's frame and caption room", async () => {
+      const { user } = render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+      expect(screen.getByTestId("ws-qr-caption")).toBeVisible();
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveStyle({ maxHeight: 220 });
+
+      await user.press(screen.getAllByText(/show qr/i)[0]);
+
+      expect(screen.queryByTestId("ws-qr-caption", { includeHiddenElements: true })).toBeNull();
+      // 220 plus the frame's extra 8, the 24 caption row and one 24 row gap.
+      expect(screen.getByTestId("ws-qr-instructions")).toHaveStyle({ maxHeight: 276 });
+      const qrCode = screen.getByTestId("ws-qr-code-displayed");
+      expect(qrCode).toHaveStyle({ width: 280, height: 280 });
+      expect(qrCode).not.toHaveStyle({ maxHeight: 280 });
+    });
+
+    it("should lift the password lock block when the QR code step is dismissed", async () => {
+      const { user, store } = render(<SettingsEntry />, {
+        overrideInitialState: initialState({}),
+      });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(true);
+
+      act(() => activationSheet()?.props.onClose?.());
+
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(false);
+    });
+
+    it("should close the QR code step with the sheet's close button and restart the flow", async () => {
+      const { user, store } = render(<SettingsEntry />, {
+        overrideInitialState: initialState({}),
+      });
+      await user.press(await screen.findByTestId("walletsync-choose-sync-method-scan"));
+      await screen.findByTestId("ws-scan-camera");
+
+      await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
+
+      await waitFor(() => expect(activationSheet()?.props.isRequestingToBeOpened).toBe(false));
+      expect(store.getState().appstate.isPasswordLockBlocked).toBe(false);
+      expect(screen.getByText("entry screen")).toBeVisible();
+    });
+
+    it("should let the content drag the sheet outside the QR code step", async () => {
+      render(<SettingsEntry />, { overrideInitialState: initialState({}) });
+
+      expect(
+        await screen.findByTestId("walletsync-choose-sync-method-connect-device"),
+      ).toBeVisible();
+      expect(activationSheet()?.props.enableContentPanningGesture).toBe(true);
+    });
+
+    it("should start the activation step from the manage key error", async () => {
+      mockDeleteError.current = new Error("No such trustchain");
+      mockGetOrCreateTrustchain.mockImplementation(awaitConfirmationForever);
+
+      const { user } = render(<ManageKeyEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+      await user.press(await screen.findByText("Turn on Ledger Sync"));
+
+      expect(await screen.findByTestId("wallet-sync-add-member-continue-on-device")).toBeVisible();
+      expect(screen.getByText("entry screen")).toBeVisible();
+      expectNoProcessScreen();
+    });
+
+    it.each([
+      ["activation", SettingsEntry, "walletsync-choose-sync-method-connect-device"],
+      ["manage instances", ManageInstancesEntry, `walletSync-manage-instance-${MEMBER.id}`],
+      ["manage key", ManageKeyEntry, "delete-trustchain"],
+    ])(
+      "should keep the %s drawer on the legacy drawer when the flag is off",
+      async (_, Entry, content) => {
+        render(<Entry />, {
+          overrideInitialState: initialState({ ledgerSyncDie: false, trustchain: TRUSTCHAIN }),
+        });
+
+        expect(await screen.findByTestId(content)).toBeVisible();
+        expect(screen.getByTestId(LEGACY_DRAWER)).toBeOnTheScreen();
+        expect(screen.queryByTestId(/^wallet-sync-.*-sheet-content$/)).toBeNull();
+      },
+    );
   });
 
   describe("activation", () => {
@@ -699,6 +884,44 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
   });
 
   describe("Android Back", () => {
+    it("should close the open Ledger Sync drawer and stay on the entry screen", async () => {
+      render(<ManageInstancesEntry />, {
+        overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
+      });
+      await screen.findByTestId(`walletSync-manage-instance-${MEMBER.id}`);
+
+      jest.mocked(track).mockClear();
+
+      pressBack();
+
+      await waitFor(() =>
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          expect.objectContaining({ button: "Close" }),
+        ),
+      );
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("entry screen")).toBeVisible();
+    });
+
+    it("should close the activation drawer on the sync method step reached from the activation step", async () => {
+      const { user } = render(<ActivationEntry />, { overrideInitialState: initialState({}) });
+      await user.press(await screen.findByText("I already turned it on"));
+      await screen.findByTestId("walletsync-choose-sync-method-connect-device");
+
+      pressBack();
+
+      await waitFor(() =>
+        expect(
+          screen
+            .UNSAFE_getAllByType(QueuedBottomSheet)
+            .find(sheet => sheet.props.testID === "wallet-sync-activation-sheet")?.props
+            .isRequestingToBeOpened,
+        ).toBe(false),
+      );
+      expect(screen.getByText("entry screen")).toBeVisible();
+    });
+
     it("should close the device step when it is dismissable", async () => {
       mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
 

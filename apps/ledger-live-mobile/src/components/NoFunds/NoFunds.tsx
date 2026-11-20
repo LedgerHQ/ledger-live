@@ -28,6 +28,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -117,6 +118,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
     [navigation],
   );
 
+  const getReceiveRoute = useReceiveRoute();
   const onReceiveFunds = useCallback(() => {
     track("button_clicked", {
       button: "receive",
@@ -127,17 +129,15 @@ export default function NoFunds({ route }: Readonly<Props>) {
       account.type === "TokenAccount" &&
       !parentAccount?.subAccounts?.some(subAccount => subAccount.id === account.id);
 
-    onNavigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
-        account,
-        accountId: account.id,
-        parentId: parentAccount?.id,
-        currency,
-        createTokenAccount: shouldCreateTokenAccount,
-      },
+    const [navigator, params] = getReceiveRoute({
+      account,
+      accountId: account.id,
+      parentId: parentAccount?.id,
+      currency,
+      createTokenAccount: shouldCreateTokenAccount,
     });
-  }, [account, currency, onNavigate, page, parentAccount]);
+    onNavigate(navigator, params);
+  }, [getReceiveRoute, account, currency, onNavigate, page, parentAccount]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {

@@ -124,31 +124,49 @@ describe("genericPrepareTransaction", () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({
         value: baseTransaction.fees,
-        parameters: { memo: "Ledger Live" },
+        parameters: { memoType: "text", memoValue: "Ledger Live" },
       }),
     });
 
     const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, baseTransaction);
 
-    expect(result).toEqual(expect.objectContaining({ memo: "Ledger Live" }));
+    expect(result).toEqual(expect.objectContaining({ memoType: "text", memoValue: "Ledger Live" }));
+    expect(result).not.toHaveProperty("memo");
     expect(result).not.toBe(baseTransaction);
+  });
+
+  it("fills the memo value and keeps the memo type when the estimation returns no memo type", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: baseTransaction.fees,
+        parameters: { memoValue: "Ledger Live" },
+      }),
+    });
+    const transaction = { ...baseTransaction, memoType: "custom" };
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, transaction);
+
+    expect(result).toEqual(
+      expect.objectContaining({ memoType: "custom", memoValue: "Ledger Live" }),
+    );
   });
 
   it("keeps an existing memo and the reference over repeated preparations", async () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({
         value: new BigNumber(700),
-        parameters: { memo: "Ledger Live" },
+        parameters: { memoType: "text", memoValue: "Ledger Live" },
       }),
     });
-    const transaction = { ...baseTransaction, memo: "my memo" };
+    const transaction = { ...baseTransaction, memoType: "text", memoValue: "my memo" };
 
     const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const first = await prepareTransaction(account, transaction);
     const second = await prepareTransaction(account, first);
 
-    expect(first).toEqual(expect.objectContaining({ memo: "my memo" }));
+    expect(first).toEqual(expect.objectContaining({ memoType: "text", memoValue: "my memo" }));
     expect(second).toBe(first);
   });
 

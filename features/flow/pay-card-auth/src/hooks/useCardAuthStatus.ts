@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectCardAuthStatus, selectIsCardSessionResolving } from "../state/selectors";
+import { selectCardAuthStatus, selectIsCardSessionResolving } from "../state/slice";
 import type { PayCardAuthStatus } from "../state/hostTypes";
 
 /**

@@ -26,8 +26,10 @@ import {
 import { useSelector } from "~/context/hooks";
 import useEnv from "@features/platform-env";
 
+type RecoverPlayerScreen = ScreenName.Recover | ScreenName.DeviceOnboardingRecover;
+
 export type Props = RootComposite<
-  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>
+  StackNavigatorProps<BaseNavigatorStackParamList, RecoverPlayerScreen>
 >;
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.

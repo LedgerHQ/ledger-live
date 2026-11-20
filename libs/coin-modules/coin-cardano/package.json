@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cardano",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Ledger Cardano Coin integration",
   "keywords": [
     "Ledger",
@@ -70,7 +70,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

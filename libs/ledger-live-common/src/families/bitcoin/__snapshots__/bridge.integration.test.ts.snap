@@ -4,6 +4,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
 [
   {
     "balance": "9623",
+    "balances": [
+      {
+        "value": "9623",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
@@ -22,6 +27,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
@@ -40,6 +50,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
@@ -58,6 +73,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "taproot",
@@ -76,6 +96,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
@@ -94,6 +119,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
@@ -112,6 +142,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
@@ -130,6 +165,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "2757",
+    "balances": [
+      {
+        "value": "2757",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "",
@@ -148,6 +188,11 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "",
@@ -11894,6 +11939,11 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
 [
   {
     "balance": "7707",
+    "balances": [
+      {
+        "value": "7707",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "unsplit",
@@ -11912,6 +11962,11 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
   },
   {
     "balance": "100774",
+    "balances": [
+      {
+        "value": "100774",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "",
@@ -11930,6 +11985,11 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "",
@@ -14647,6 +14707,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
 [
   {
     "balance": "2593800",
+    "balances": [
+      {
+        "value": "2593800",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "unsplit",
@@ -14665,6 +14730,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
   },
   {
     "balance": "1757516",
+    "balances": [
+      {
+        "value": "1757516",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit_unsplit",
@@ -14683,6 +14753,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
   },
   {
     "balance": "1805064",
+    "balances": [
+      {
+        "value": "1805064",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit",
@@ -14701,6 +14776,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit",
@@ -14719,6 +14799,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
   },
   {
     "balance": "568927",
+    "balances": [
+      {
+        "value": "568927",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "",
@@ -14737,6 +14822,11 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "",
@@ -15485,6 +15575,11 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
 [
   {
     "balance": "74296",
+    "balances": [
+      {
+        "value": "74296",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dash",
     "derivationMode": "",
@@ -15503,6 +15598,11 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
   },
   {
     "balance": "349548",
+    "balances": [
+      {
+        "value": "349548",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dash",
     "derivationMode": "",
@@ -15521,6 +15621,11 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dash",
     "derivationMode": "",
@@ -16565,6 +16670,11 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
 [
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "decred",
     "derivationMode": "",
@@ -16583,6 +16693,11 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
   },
   {
     "balance": "619024",
+    "balances": [
+      {
+        "value": "619024",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "decred",
     "derivationMode": "",
@@ -16601,6 +16716,11 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "decred",
     "derivationMode": "",
@@ -16619,6 +16739,11 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "decred",
     "derivationMode": "",
@@ -21754,6 +21879,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
 [
   {
     "balance": "2302647120",
+    "balances": [
+      {
+        "value": "2302647120",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
@@ -21772,6 +21902,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
@@ -21790,6 +21925,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "565825271",
+    "balances": [
+      {
+        "value": "565825271",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
@@ -21808,6 +21948,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
@@ -21826,6 +21971,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
@@ -21844,6 +21994,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "4818737648",
+    "balances": [
+      {
+        "value": "4818737648",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "",
@@ -21862,6 +22017,11 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "digibyte",
     "derivationMode": "",
@@ -23691,6 +23851,11 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
 [
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dogecoin",
     "derivationMode": "",
@@ -23709,6 +23874,11 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dogecoin",
     "derivationMode": "",
@@ -23727,6 +23897,11 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "dogecoin",
     "derivationMode": "",
@@ -24417,6 +24592,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
 [
   {
     "balance": "2120363",
+    "balances": [
+      {
+        "value": "2120363",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
@@ -24435,6 +24615,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
@@ -24453,6 +24638,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "483964",
+    "balances": [
+      {
+        "value": "483964",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
@@ -24471,6 +24661,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
@@ -24489,6 +24684,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
@@ -24507,6 +24707,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "",
@@ -24525,6 +24730,11 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "",
@@ -27017,6 +27227,11 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
 [
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "zencash",
     "derivationMode": "",
@@ -27035,6 +27250,11 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
   },
   {
     "balance": "3021049",
+    "balances": [
+      {
+        "value": "3021049",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "zencash",
     "derivationMode": "",
@@ -27053,6 +27273,11 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "bitcoinResources": {},
     "currencyId": "zencash",
     "derivationMode": "",

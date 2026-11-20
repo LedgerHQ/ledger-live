@@ -4,7 +4,6 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
 import { Tabbable } from "~/renderer/components/Box";
 import { AppDetails, IconContainer } from "./AppDetails";
-export { AppDetails } from "./AppDetails";
 
 const Container = styled(Tabbable).attrs<{
   isActive?: boolean;

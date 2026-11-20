@@ -62,6 +62,7 @@ describe("executePerpsWithdraw", () => {
       result,
       targetCurrency: "ETH",
       track,
+      broadcastDisabled: false,
       ...overrides,
     });
 
@@ -94,6 +95,14 @@ describe("executePerpsWithdraw", () => {
       ["Perps withdraw submitted", properties],
       ["Perps withdraw completed", { ...properties, swapId: submitResponse.swapId }],
     ]);
+  });
+
+  it("signs but submits nothing when transaction broadcast is disabled", async () => {
+    mockedSign.mockResolvedValueOnce("0xsignature");
+
+    await expect(execute({ broadcastDisabled: true })).resolves.toEqual(result);
+    expect(mockedSubmit).not.toHaveBeenCalled();
+    await expect(request).resolves.toEqual(result);
   });
 
   it("keeps the request pending when signing fails, so it can be retried", async () => {

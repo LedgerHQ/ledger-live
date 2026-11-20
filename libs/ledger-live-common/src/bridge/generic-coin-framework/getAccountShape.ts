@@ -32,6 +32,7 @@ import {
   isSameAddress,
   optionalNumeric,
   sumBalance,
+  toAccountPoolRows,
 } from "./utils";
 import {
   buildSubOperationIndex,
@@ -40,6 +41,7 @@ import {
 import { boundByTransaction } from "./boundByTransaction";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
+import { buildTokenFeeOperations, type TokenFeeOperation } from "./tokenFeeOperations";
 import type {
   AssetInfo,
   Balance,
@@ -185,9 +187,15 @@ function getFeePayer(op: OperationCommon): string | undefined {
   return typeof fp === "string" && fp.length > 0 ? fp : undefined;
 }
 
+/** True when the transaction of the op paid its fee in another asset than the native coin. */
+function hasNonNativeFee(op: OperationCommon): boolean {
+  return op.extra?.feeAsset !== undefined;
+}
+
 /**
  * True when the native op is outbound with value equal to fee (fees-only). A send whose fee another
- * account paid holds its amount alone, which can equal the fee.
+ * account paid holds its amount alone, which can equal the fee. A fee paid in another asset is no
+ * native fee: its value and `fee` are both 0.
  */
 function isFeesOnlyNativeOp(
   op: OperationCommon,
@@ -198,7 +206,18 @@ function isFeesOnlyNativeOp(
     op.value !== null &&
     op.fee != null &&
     op.value.eq(op.fee) &&
+    !hasNonNativeFee(op) &&
     isFeePaidByAccount(getFeePayer(op), feesPayerRule)
+  );
+}
+
+/**
+ * True when the native op only carries a fee paid in another asset: the FEES operation of the fee
+ * token holds that fee, so the native op moves nothing.
+ */
+function isNonNativeFeeCarrier(op: OperationCommon): boolean {
+  return (
+    hasNonNativeFee(op) && (op.type === "OUT" || op.type === "FEES") && op.value?.isZero() === true
   );
 }
 
@@ -230,6 +249,16 @@ function parentOpsFromNativeOps(
           transactionSequenceNumber: nativeOp.transactionSequenceNumber,
           hasFailed: nativeOp.hasFailed,
           extra: nativeOp.extra,
+          subOperations,
+          internalOperations,
+        }),
+      );
+    } else if (isNonNativeFeeCarrier(nativeOp)) {
+      out.push(
+        cleanedOperation({
+          ...nativeOp,
+          id: encodeOperationId(accountId, nativeOp.hash, "NONE"),
+          type: "NONE",
           subOperations,
           internalOperations,
         }),
@@ -500,6 +529,36 @@ async function resolveUnbalancedTokenAssets(
     assets.push(...(await Promise.all(batch.map(resolve))));
   }
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
+}
+
+/**
+ * Balances for the fee tokens the balance read did not return, so that their sub-account holds the
+ * FEES operation: 0 for a family whose balance lists every token it holds (an account can spend a
+ * token down to 0 with the fee). Without that guarantee nothing tells the balance, and the FEES
+ * operation is dropped, as any operation of a token with no balance.
+ */
+function feeTokenBalances(
+  tokenFeeOperations: TokenFeeOperation[],
+  balances: Balance[],
+  {
+    balanceListsEveryToken,
+    exactAssetMatch,
+  }: Pick<BridgeApi, "balanceListsEveryToken" | "exactAssetMatch">,
+): Balance[] {
+  const balanced = new Set(balances.map(b => assetKey(b.asset, exactAssetMatch)));
+  const missing = new Map<string | undefined, AssetInfo>();
+  for (const { asset } of tokenFeeOperations) {
+    const key = assetKey(asset, exactAssetMatch);
+    if (!balanced.has(key)) missing.set(key, asset);
+  }
+  if (missing.size === 0) return [];
+  if (balanceListsEveryToken !== true) {
+    log("generic-coin-framework", "fee token has no balance, dropping its FEES operations", {
+      assets: [...missing.values()],
+    });
+    return [];
+  }
+  return [...missing.values()].map(asset => ({ value: 0n, asset }));
 }
 
 function keepPendingAndSwapHistory(
@@ -841,9 +900,27 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         sequencePromise,
       ]);
 
-    const nativeAsset = bridgeApi.partitionsNativeBalance
-      ? sumBalance(balanceRes, "native")
-      : extractBalance(balanceRes, "native");
+    // Pool rows partition the liquid native balance; stake rows stay apart from them. Once one
+    // row is tagged, an untagged public row is part of the partition too.
+    const liquidNativeRows = balanceRes.filter(b => b.asset.type === "native" && !b.stake);
+    const poolRows = liquidNativeRows.some(b => b.pool !== undefined || b.private !== undefined)
+      ? liquidNativeRows
+      : [];
+    // Stake rows count in the balance only when the family partitions it.
+    const stakeRows = bridgeApi.partitionsNativeBalance
+      ? balanceRes.filter(b => b.asset.type === "native" && b.stake)
+      : [];
+    let nativeAsset: Balance;
+    if (poolRows.length > 0) {
+      nativeAsset = sumBalance(
+        balanceRes.filter(b => !b.stake || bridgeApi.partitionsNativeBalance),
+        "native",
+      );
+    } else if (bridgeApi.partitionsNativeBalance) {
+      nativeAsset = sumBalance(balanceRes, "native");
+    } else {
+      nativeAsset = extractBalance(balanceRes, "native");
+    }
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
     // A token account fully swept to zero can disappear entirely from the balance response
@@ -1131,12 +1208,30 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // bound counts, and a bounded stop never returns an empty list.
     const discardOld = syncFromScratch || newOpsBounded;
 
-    const newAssetOperations = newOps.filter(
-      operation =>
-        operation?.extra?.assetReference &&
-        operation?.extra?.assetOwner &&
-        !TOKEN_OPT_TYPES.has(operation.type),
+    // A fee paid in a token is charged once, by a FEES operation of that token: it joins the token
+    // operations only, so it becomes a sub-operation of its transaction's parent. A module may
+    // already carry that fee on a value-0 FEES operation of the token, which it replaces.
+    const tokenFeeOperations = await buildTokenFeeOperations(
+      newOps,
+      address,
+      bridgeApi,
+      syncConfig.blacklistedTokenIds ?? [],
     );
+    const tokenFeeHashes = new Set(tokenFeeOperations.map(({ operation }) => operation.hash));
+    const isReplacedFeeCarrier = (operation: OperationCommon) =>
+      tokenFeeHashes.has(operation.hash) &&
+      (operation.extra?.ledgerOpType ?? operation.type) === "FEES" &&
+      operation.value.isZero();
+    const newAssetOperations = [
+      ...newOps.filter(
+        operation =>
+          operation?.extra?.assetReference &&
+          operation?.extra?.assetOwner &&
+          !TOKEN_OPT_TYPES.has(operation.type) &&
+          !isReplacedFeeCarrier(operation),
+      ),
+      ...tokenFeeOperations.map(({ operation }) => operation),
+    ];
 
     const newInternalOperations: OperationCommon[] = [];
     const newNonInternalOperations: OperationCommon[] = [];
@@ -1172,10 +1267,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           ).filter(b => lateKeys.has(assetKey(b.asset, bridgeApi.exactAssetMatch)))
         : [];
 
+    const readTokenBalances = [...allTokenAssetsBalances, ...lateTokenBalances];
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
       accountId,
-      allTokenAssetsBalances: [...allTokenAssetsBalances, ...lateTokenBalances],
+      allTokenAssetsBalances: [
+        ...readTokenBalances,
+        ...feeTokenBalances(tokenFeeOperations, readTokenBalances, bridgeApi),
+      ],
       syncConfig,
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
@@ -1300,6 +1399,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
+      // Set even when absent so rows from a previous sync never survive the merge.
+      balances: poolRows.length > 0 ? toAccountPoolRows(poolRows, stakeRows) : undefined,
       operations,
       subAccounts,
       // `operations.length`, i.e. the retained count once a bound applies, not the account's true
