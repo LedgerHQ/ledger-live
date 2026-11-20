@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import invariant from "invariant";
 import { byId } from "@e2e/helpers/elements/native";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 
 type UnstakeAmountOptions = {
   currencyId: string;
@@ -16,7 +17,8 @@ const DELEGATION_ACTION_IDS: Record<string, { unstake: string; redelegate?: stri
 };
 
 export default class UndelegatePage {
-  private readonly accountScrollView = byId("account-screen-scrollView");
+  private readonly accountScrollView = () =>
+    byId(isAccountDetailEnabled() ? "account-detail-scroll-view" : "account-screen-scrollView");
   // Families that hold several positions index their rows; those that delegate once do not.
   private readonly stakingRow = (currencyId: string, rowIndex?: number) =>
     byId(
@@ -33,8 +35,9 @@ export default class UndelegatePage {
   @Step("Tap staking position row to open delegation drawer {{{0}}}")
   async tapStakingRow(currencyId: string, rowIndex?: number) {
     const stakingRow = this.stakingRow(currencyId, rowIndex);
-    await this.accountScrollView.waitVisible();
-    await stakingRow.scrollTo(this.accountScrollView);
+    const scrollView = this.accountScrollView();
+    await scrollView.waitVisible();
+    await stakingRow.scrollTo(scrollView);
     await stakingRow.tap();
   }
 
