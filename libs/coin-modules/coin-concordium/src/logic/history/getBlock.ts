@@ -4,7 +4,6 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockTransactionEvents } from "../../network/proxyClient";
-import { toCanonicalAddresses } from "../account/canonicalAddress";
 import type {
   BlockTransactionSummary,
   TransactionEvent,
@@ -24,8 +23,8 @@ const NATIVE_ASSET = { type: "native" } as const;
  * from the per-block events endpoint and are mapped tag-by-tag.
  *
  * Events name the alias each party used on chain. Every account address is
- * replaced by the canonical address of its account, as `listOperations` names
- * the queried account, so a client tracking an account matches all its aliases.
+ * replaced by the canonical address of its account, which the proxy returns
+ * with the events, so a client tracking an account matches all its aliases.
  */
 export async function getBlock(
   config: ConcordiumCoinConfig,
@@ -34,45 +33,31 @@ export async function getBlock(
 ): Promise<Block> {
   const info = await getBlockInfo(config, height, currencyId);
   const summaries = await getBlockTransactionEvents(config, currencyId, info.hash);
-  const transactions = summaries.map(toBlockTransaction);
-  const canonical = await toCanonicalAddresses(
-    config,
-    currencyId,
-    transactions.flatMap(addressesOf),
-  );
 
-  return {
-    info,
-    transactions: transactions.map(tx => withAddresses(tx, canonical)),
-  };
+  return { info, transactions: summaries.map(toBlockTransaction) };
 }
 
-function addressesOf(tx: BlockTransaction): string[] {
-  return [
-    ...(tx.feesPayer ? [tx.feesPayer] : []),
-    ...tx.operations.flatMap(op =>
-      op.type === "transfer" ? [op.address, ...(op.peer ? [op.peer] : [])] : [],
-    ),
-  ];
-}
-
-function withAddresses(tx: BlockTransaction, canonical: Map<string, string>): BlockTransaction {
-  const to = (address: string) => canonical.get(address) ?? address;
-  return {
-    ...tx,
-    ...(tx.feesPayer ? { feesPayer: to(tx.feesPayer) } : {}),
-    operations: tx.operations.map(op =>
-      op.type === "transfer"
-        ? { ...op, address: to(op.address), ...(op.peer ? { peer: to(op.peer) } : {}) }
-        : op,
-    ),
-  };
+/**
+ * An older proxy ignores `canonicalAddresses=y`: failing beats reporting
+ * aliases, which a client would silently fail to match.
+ */
+function canonicalAddressesOf(summary: BlockTransactionSummary): Record<string, string> {
+  if (!summary.canonicalAddresses) {
+    throw new Error(
+      `Concordium proxy returned no canonical addresses for transaction ${summary.hash}`,
+    );
+  }
+  return summary.canonicalAddresses;
 }
 
 function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction {
+  const canonicalAddresses = canonicalAddressesOf(summary);
+  // Absent for an address with no account in the block, e.g. in a reject reason.
+  const canonical = (address: string) => canonicalAddresses[address] ?? address;
+
   const { operations, memo } =
     summary.result.outcome === "success"
-      ? mapEventsToOperations(summary.result.events, summary.hash)
+      ? mapEventsToOperations(summary.result.events, summary.hash, canonical)
       : { operations: [] as BlockOperation[], memo: undefined };
 
   // The sender's `cost` is 0 when a sponsor paid; the sponsor's share is then the whole cost.
@@ -83,7 +68,7 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
     hash: summary.hash,
     failed: summary.result.outcome === "reject",
     fees: BigInt(sponsor ? sponsor.cost : summary.cost),
-    ...(feesPayer ? { feesPayer } : {}),
+    ...(feesPayer ? { feesPayer: canonical(feesPayer) } : {}),
     operations,
     ...(memo ? { details: { memo } } : {}),
   };
@@ -92,6 +77,7 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
 function mapEventsToOperations(
   events: TransactionEvent[],
   txHash: string,
+  canonical: (address: string) => string,
 ): { operations: BlockOperation[]; memo: string | undefined } {
   const operations: BlockOperation[] = [];
   let memo: string | undefined;
@@ -99,7 +85,7 @@ function mapEventsToOperations(
   // Tag-based dispatch; unknown tags (e.g. PLT, staking) intentionally emit no operations yet.
   for (const event of events) {
     if (isTransferredEvent(event)) {
-      operations.push(...toTransferOperations(event));
+      operations.push(...toTransferOperations(event, canonical));
     } else if (isTransferMemoEvent(event)) {
       memo = decodeMemo(event.memo, txHash);
     }
@@ -108,9 +94,12 @@ function mapEventsToOperations(
   return { operations, memo };
 }
 
-function toTransferOperations(event: TransferredEvent): BlockOperation[] {
-  const from = accountAddress(event.from);
-  const to = accountAddress(event.to);
+function toTransferOperations(
+  event: TransferredEvent,
+  canonical: (address: string) => string,
+): BlockOperation[] {
+  const from = accountAddress(event.from, canonical);
+  const to = accountAddress(event.to, canonical);
   const amount = BigInt(event.amount);
 
   const operations: BlockOperation[] = [];
@@ -135,8 +124,11 @@ function toTransferOperations(event: TransferredEvent): BlockOperation[] {
   return operations;
 }
 
-function accountAddress(address: ConcordiumEventAddress): string | undefined {
-  return address.type === "AddressAccount" ? address.address : undefined;
+function accountAddress(
+  address: ConcordiumEventAddress,
+  canonical: (address: string) => string,
+): string | undefined {
+  return address.type === "AddressAccount" ? canonical(address.address) : undefined;
 }
 
 const isTransferredEvent = (event: TransactionEvent): event is TransferredEvent =>

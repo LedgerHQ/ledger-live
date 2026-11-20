@@ -13,10 +13,6 @@ jest.mock("@ledgerhq/concordium-core", () => ({
   decodeMemoFromCbor: jest.fn(),
 }));
 
-jest.mock("../account/canonicalAddress", () => ({
-  toCanonicalAddresses: jest.fn(),
-}));
-
 const { getBlockInfo: getBlockInfoMock } = jest.requireMock("./getBlockInfo");
 const { getBlockTransactionEvents: getBlockTransactionEventsMock } = jest.requireMock(
   "../../network/proxyClient",
@@ -24,15 +20,6 @@ const { getBlockTransactionEvents: getBlockTransactionEventsMock } = jest.requir
 const { decodeMemoFromCbor: decodeMemoFromCborMock } = jest.requireMock(
   "@ledgerhq/concordium-core",
 );
-const { toCanonicalAddresses: toCanonicalAddressesMock } = jest.requireMock(
-  "../account/canonicalAddress",
-);
-
-/** Resolves each address with `canonical`, or to itself. */
-const resolveWith =
-  (canonical: Record<string, string> = {}) =>
-  async (_config: unknown, _currency: string, addresses: Iterable<string>) =>
-    new Map([...addresses].map(address => [address, canonical[address] ?? address]));
 
 const CURRENCY = "concordium_testnet";
 const config = createFixtureConfig();
@@ -48,12 +35,17 @@ const BLOCK_INFO = {
 
 const account = (address: string) => ({ type: "AddressAccount", address });
 
+/** As the proxy answers with `canonicalAddresses=y`; addresses not in the map are kept. */
+const mockEvents = (summaries: object[]) =>
+  getBlockTransactionEventsMock.mockResolvedValue(
+    summaries.map(summary => ({ canonicalAddresses: {}, ...summary })),
+  );
+
 describe("getBlock", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getBlockInfoMock.mockResolvedValue(BLOCK_INFO);
     decodeMemoFromCborMock.mockReturnValue("");
-    toCanonicalAddressesMock.mockImplementation(resolveWith());
   });
 
   it("names every account by its canonical address, whatever alias the chain reports", async () => {
@@ -61,14 +53,7 @@ describe("getBlock", () => {
     const SENDER_ALIAS = "sender-alias";
     const SENDER_OTHER_ALIAS = "sender-other-alias";
     const RECIPIENT_ALIAS = "recipient-alias";
-    toCanonicalAddressesMock.mockImplementation(
-      resolveWith({
-        [SENDER_ALIAS]: SENDER,
-        [SENDER_OTHER_ALIAS]: SENDER,
-        [RECIPIENT_ALIAS]: RECIPIENT,
-      }),
-    );
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "aa".repeat(32),
         sender: SENDER_ALIAS,
@@ -90,18 +75,18 @@ describe("getBlock", () => {
             },
           ],
         },
+        canonicalAddresses: {
+          [SENDER_ALIAS]: SENDER,
+          [SENDER_OTHER_ALIAS]: SENDER,
+          [RECIPIENT_ALIAS]: RECIPIENT,
+        },
       },
     ]);
 
     // WHEN
     const { transactions } = await getBlock(config, 1000, CURRENCY);
 
-    // THEN each distinct address is resolved, and none of the aliases is left
-    expect(toCanonicalAddressesMock).toHaveBeenCalledWith(
-      config,
-      CURRENCY,
-      expect.arrayContaining([SENDER_ALIAS, SENDER_OTHER_ALIAS, RECIPIENT_ALIAS]),
-    );
+    // THEN none of the aliases is left
     expect(transactions[0].feesPayer).toBe(SENDER);
     expect(transactions[0].operations).toEqual([
       {
@@ -117,20 +102,42 @@ describe("getBlock", () => {
     ]);
   });
 
-  it("fails when an address cannot be resolved", async () => {
+  it("names a sponsor by its canonical address", async () => {
     // GIVEN
-    toCanonicalAddressesMock.mockRejectedValue(new Error("API HTTP 404"));
+    const SPONSOR = "3WD5VXRzZwwkQyLBjxb1qonF8E5GKRe1uBN6g3WCE8XrGuXuwu";
+    mockEvents([
+      {
+        hash: "aa".repeat(32),
+        sender: SENDER,
+        cost: "0",
+        sponsorDetails: { sponsor: "sponsor-alias", cost: "700" },
+        result: { outcome: "success", events: [] },
+        canonicalAddresses: { "sponsor-alias": SPONSOR },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000, CURRENCY);
+
+    // THEN
+    expect(transactions[0].feesPayer).toBe(SPONSOR);
+  });
+
+  it("fails on a proxy that does not return canonical addresses", async () => {
+    // GIVEN an older proxy, which ignores the parameter
     getBlockTransactionEventsMock.mockResolvedValue([
       { hash: "aa".repeat(32), sender: SENDER, cost: "601", result: { outcome: "reject" } },
     ]);
 
     // WHEN / THEN: a block with aliases left would lose the operations of the accounts using them
-    await expect(getBlock(config, 1000, CURRENCY)).rejects.toThrow("API HTTP 404");
+    await expect(getBlock(config, 1000, CURRENCY)).rejects.toThrow(
+      "Concordium proxy returned no canonical addresses",
+    );
   });
 
   it("reuses getBlockInfo for info and returns an empty transaction list for an empty block", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([]);
+    mockEvents([]);
 
     // WHEN
     const result = await getBlock(config, 1000, CURRENCY);
@@ -144,7 +151,7 @@ describe("getBlock", () => {
 
   it("maps a Transferred event to a signed sender/recipient operation pair with fees on the transaction", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "aa".repeat(32),
         sender: SENDER,
@@ -195,7 +202,7 @@ describe("getBlock", () => {
 
   it("emits a single incoming operation with no peer when the sender is a contract", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "1a".repeat(32),
         sender: SENDER,
@@ -225,7 +232,7 @@ describe("getBlock", () => {
 
   it("emits no operations when both transfer parties are contracts", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "2b".repeat(32),
         sender: SENDER,
@@ -254,7 +261,7 @@ describe("getBlock", () => {
   it("decodes the memo of a TransferMemo event into the transaction details", async () => {
     // GIVEN
     decodeMemoFromCborMock.mockReturnValue("Hello");
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "bb".repeat(32),
         sender: SENDER,
@@ -285,7 +292,7 @@ describe("getBlock", () => {
 
   it("keeps fees and marks rejected transactions as failed with no operations", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "cc".repeat(32),
         sender: SENDER,
@@ -306,7 +313,7 @@ describe("getBlock", () => {
   it("charges a sponsored transaction to its sponsor, at the sponsor's cost", async () => {
     // GIVEN
     const sponsor = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "ab".repeat(32),
         sender: SENDER,
@@ -325,7 +332,7 @@ describe("getBlock", () => {
 
   it("charges the sender when the sponsor details are null", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "ab".repeat(32),
         sender: SENDER,
@@ -344,7 +351,7 @@ describe("getBlock", () => {
 
   it("represents non-transfer transaction types with no operations", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "dd".repeat(32),
         sender: SENDER,
@@ -369,7 +376,7 @@ describe("getBlock", () => {
     decodeMemoFromCborMock.mockImplementation(() => {
       throw new Error("bad cbor");
     });
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "ee".repeat(32),
         sender: SENDER,
@@ -399,7 +406,7 @@ describe("getBlock", () => {
 
   it("omits feesPayer when the summary has no sender", async () => {
     // GIVEN
-    getBlockTransactionEventsMock.mockResolvedValue([
+    mockEvents([
       {
         hash: "ff".repeat(32),
         sender: null,
