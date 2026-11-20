@@ -52,7 +52,7 @@ export function RecipientCard({
       appearance="gray"
       size="sm"
       disabled={!isReady || !hasAddressBook}
-      className="w-full whitespace-nowrap"
+      className="size-full [&>span]:text-center"
       onClick={onAddContact}
       data-testid="send-recipient-card-add-contact"
     >
@@ -92,14 +92,14 @@ export function RecipientCard({
       </CardHeader>
 
       {showActions && (
-        <div className="flex gap-8 px-16 pb-16">
+        <div className={`grid gap-8 px-16 pb-16 ${contact ? "grid-cols-1" : "grid-cols-2"}`}>
           {!contact &&
             (!isReady || hasAddressBook ? (
-              <div className="flex-1">{addContactButton}</div>
+              <div className="min-w-0">{addContactButton}</div>
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="flex flex-1" onPointerDown={onUnsupportedNetwork}>
+                  <span className="flex min-w-0" onPointerDown={onUnsupportedNetwork}>
                     {addContactButton}
                   </span>
                 </TooltipTrigger>
@@ -109,7 +109,7 @@ export function RecipientCard({
           <Button
             appearance="base"
             size="sm"
-            className="flex-1"
+            className="size-full min-w-0 [&>span]:text-center"
             onClick={onSend}
             disabled={!isReady}
             data-testid="send-recipient-card-send"

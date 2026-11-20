@@ -4,7 +4,7 @@ export const ripple_testnet = currency({
   type: "CryptoCurrency",
   id: "ripple_testnet",
   coinType: 144,
-  name: "XRP (Testnet)",
+  name: "XRPL (Testnet)",
   managerAppName: "XRP",
   ticker: "XRP",
   scheme: "ripple_testnet",

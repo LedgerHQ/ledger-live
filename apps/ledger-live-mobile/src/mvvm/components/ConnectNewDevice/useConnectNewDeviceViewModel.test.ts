@@ -82,7 +82,7 @@ function makeConnectionResult(): DeviceConnectionResult {
       modelId: DMKDeviceModelId.NANO_X,
       sessionId: "session-id",
       type: "BLE",
-      transport: "ble",
+      transport: rnBleTransportIdentifier,
     } as DeviceConnectionResult["connectedDevice"],
   };
 }

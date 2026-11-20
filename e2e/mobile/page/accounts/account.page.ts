@@ -5,6 +5,7 @@ import { byId, byIdAndText, byText } from "@e2e/helpers/elements/native";
 import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 import AccountDetailPage from "./accountDetail.page";
 
 const ACCOUNT_GRAPH_PREFIX = "account-graph-";
@@ -61,6 +62,22 @@ export default class AccountPage {
     await this.accountTitle(accountName).expectVisible();
   }
 
+  /** With the flag on a token has no account screen of its own: its holding address opens the one of its parent. */
+  @Step("Wait for the account screen of the token {{{0}}} held by {{{1}}}")
+  async waitAndVerifyTokenAccountName(tokenName: string, parentAccountName: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.waitAndVerifyAccountName(parentAccountName);
+      return;
+    }
+    await this.waitAndVerifyAccountName(tokenName);
+    await this.expectAccountTitleVisible(parentAccountName.toUpperCase());
+  }
+
+  @Step("Expect the account title {{{0}}} to be visible")
+  async expectAccountTitleVisible(accountName: string) {
+    await this.accountTitle(accountName).expectVisible();
+  }
+
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -103,11 +120,6 @@ export default class AccountPage {
   async expectAccountName(accountName: string, index = 0) {
     await this.accountNameAt(index).waitVisible();
     await this.accountNameAt(index).expectText(accountName);
-  }
-
-  @Step("Get the account name at index {{{0}}}")
-  async getAccountName(index = 0) {
-    return await this.accountNameAt(index).getText();
   }
 
   @Step("Open account settings")
@@ -195,20 +207,26 @@ export default class AccountPage {
     await this.accountBalance(accountId).expectVisible();
   }
 
-  @Step("Get visible account address label {{{0}}}")
-  async getVisibleAccountAddressLabel(accountId: string) {
+  /**
+   * Both labels keep the first and last 4 characters of the address: the account detail nav bar
+   * shortens it with `formatAddress` (`useAccountDetailViewModel`), the legacy tag holds it whole.
+   */
+  @Step("Expect the address label of {{{0.accountId}}} to show {{{0.address}}}")
+  async expectAccountAddressLabel({ accountId, address }: { accountId: string; address: string }) {
+    const shortenedAddress = new RegExp(`${address.slice(0, 4)}.*${address.slice(-4)}`, "i");
     if (isAccountDetailEnabled()) {
-      return await this.accountDetail.getVisibleAddressLabel();
+      await this.accountDetail.expectAddressLabelMatching(shortenedAddress);
+      return;
     }
-    await this.accountAddress(accountId).scrollTo(this.accountScreenScrollView);
-    await this.accountAddress(accountId).expectVisible();
-    return await this.accountAddress(accountId).getLabel();
+    const addressLabel = this.accountAddress(accountId);
+    await addressLabel.scrollTo(this.accountScreenScrollView);
+    await addressLabel.expectLabelMatching(shortenedAddress);
   }
 
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.expectTransferActionVisible();
+      await this.accountDetail.expectReceiveAndSendActionsVisible();
       return;
     }
     await this.receiveButton.scrollTo(this.accountScreenScrollView);
@@ -229,12 +247,20 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapReceive();
+      return;
+    }
     await this.receiveButton.revealForTap(this.accountScreenScrollView);
     await this.receiveButton.tap();
   }
 
   @Step("Tap on send button")
-  async tapSend() {
+  async tapSend(asset?: AssetToPick, isToken = false) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapSend(asset, isToken);
+      return;
+    }
     await this.sendButton.revealForTap(this.accountScreenScrollView);
     await this.sendButton.tap();
   }
@@ -257,8 +283,60 @@ export default class AccountPage {
     await this.buyButton.tap();
   }
 
+  /**
+   * The picker names a row by the id of its currency, which some tokens lack: they carry the id of
+   * their chain, which names the native row. Those are picked by the name of their token instead.
+   */
+  @Step("Tap on send for {{{0.accountName}}}")
+  async tapSendOf(account: Account) {
+    const isToken = account.parentAccount !== undefined;
+    const namesChainOnly = account.currency.id === account.parentAccount?.currency.id;
+    await this.tapSend(
+      namesChainOnly ? { tokenName: account.currency.name } : { currencyId: account.currency.id },
+      isToken,
+    );
+  }
+
+  @Step("Open the send of sub account {{{0.accountName}}}")
+  async openSubAccountSend(account: AccountType) {
+    if (isAccountDetailEnabled()) {
+      invariant(account.parentAccount, `${account.accountName} has no parent account`);
+      await this.openViaDeeplink();
+      await this.goToAccountByName(account.parentAccount.accountName);
+      await this.tapSendOf(account);
+      return;
+    }
+    await this.navigateToSubAccount(account);
+    await this.tapSend();
+  }
+
+  @Step("Expect the balance of sub account {{{0.accountName}}} to be visible")
+  async expectSubAccountBalanceVisible(account: AccountType, subAccountId: string) {
+    if (isAccountDetailEnabled()) {
+      await app.assetDetail.expectHoldingBalanceForTicker(subAccountId, account.currency.ticker);
+      return;
+    }
+    await this.expectAccountBalanceVisible(subAccountId);
+  }
+
+  @Step("Scroll to the history of the sub account and click on last operation {{{0}}}")
+  async scrollToSubAccountHistoryAndClickOnLastOperation(
+    operationType: string,
+    received: { amount: string; ticker: string },
+  ) {
+    if (isAccountDetailEnabled()) {
+      await app.assetDetail.openReceivedTransaction(received.amount, received.ticker);
+      return;
+    }
+    await this.scrollToHistoryAndClickOnLastOperation(operationType);
+  }
+
   @Step("Navigate to token in account {{{0.accountName}}}")
   async navigateToTokenInAccount(subAccount: Account) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.openAsset(subAccount.currency.name);
+      return;
+    }
     const subAccountRow = this.subAccountRow(subAccount.currency.ticker);
     await this.accountScreenScrollView.waitVisible();
     try {
@@ -283,6 +361,10 @@ export default class AccountPage {
     await this.openViaDeeplink();
     await this.goToAccountByName(parentAccount.accountName);
     await this.navigateToTokenInAccount(account);
+
+    if (isAccountDetailEnabled()) {
+      return await app.assetDetail.getHoldingAccountIdOf(parentAddress);
+    }
 
     // Several graphs can match the pattern: take the one on screen.
     await this.subAccountGraph().waitExist();

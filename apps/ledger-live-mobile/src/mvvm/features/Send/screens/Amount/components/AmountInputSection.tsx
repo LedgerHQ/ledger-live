@@ -10,6 +10,7 @@ type AmountInputSectionProps = Readonly<{
   viewModel: AmountInputViewModel;
   message: AmountScreenMessage | null;
   toggleLabel: string;
+  compact?: boolean;
 }>;
 
 /** Kept in sync with the desktop mapping in `AmountMessageText.tsx`. */
@@ -19,13 +20,36 @@ const MESSAGE_COLORS = {
   info: "base",
 } as const;
 
-export function AmountInputSection({ viewModel, message, toggleLabel }: AmountInputSectionProps) {
+type Spacings = Readonly<{ s4: number; s8: number; s16: number; s24: number }>;
+
+const MESSAGE_SLOT_MIN_HEIGHT = 20;
+
+function getContainerPadding(spacings: Spacings, compact: boolean) {
+  return compact
+    ? { paddingTop: spacings.s4, paddingBottom: 0 }
+    : { paddingTop: spacings.s24, paddingBottom: spacings.s16 };
+}
+
+export function getAmountInputCompactSaving(spacings: Spacings, hasMessage: boolean) {
+  const regular = getContainerPadding(spacings, false);
+  const compact = getContainerPadding(spacings, true);
+  const paddingSaving =
+    regular.paddingTop + regular.paddingBottom - compact.paddingTop - compact.paddingBottom;
+  const emptyMessageSlotSaving = hasMessage ? 0 : spacings.s8 + MESSAGE_SLOT_MIN_HEIGHT;
+  return paddingSaving + emptyMessageSlotSaving;
+}
+
+export function AmountInputSection({
+  viewModel,
+  message,
+  toggleLabel,
+  compact = false,
+}: AmountInputSectionProps) {
   const styles = useStyleSheet(
     theme => ({
       container: {
         alignItems: "center",
-        paddingTop: theme.spacings.s24,
-        paddingBottom: theme.spacings.s16,
+        ...getContainerPadding(theme.spacings, compact),
       },
       inputRow: {
         width: "100%",
@@ -46,10 +70,10 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
       },
       messageContainer: {
         marginTop: theme.spacings.s8,
-        minHeight: 20,
+        minHeight: MESSAGE_SLOT_MIN_HEIGHT,
       },
     }),
-    [],
+    [compact],
   );
 
   return (
@@ -84,13 +108,15 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
           {viewModel.secondaryValue}
         </Text>
       )}
-      <View style={styles.messageContainer}>
-        {message ? (
-          <Text typography="body3" lx={{ color: MESSAGE_COLORS[message.type] }}>
-            <TranslatedError error={message.error} />
-          </Text>
-        ) : null}
-      </View>
+      {compact && !message ? null : (
+        <View style={styles.messageContainer}>
+          {message ? (
+            <Text typography="body3" lx={{ color: MESSAGE_COLORS[message.type] }}>
+              <TranslatedError error={message.error} />
+            </Text>
+          ) : null}
+        </View>
+      )}
     </View>
   );
 }

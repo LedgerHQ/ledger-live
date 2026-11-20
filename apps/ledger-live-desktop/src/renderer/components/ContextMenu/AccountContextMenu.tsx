@@ -31,6 +31,7 @@ import IconCoins from "~/renderer/icons/Coins";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
+import { openReceiveFlow } from "LLD/features/Receive";
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
@@ -83,7 +84,7 @@ export default function AccountContextMenu({
         Icon: IconReceive,
         callback: () =>
           dispatch(
-            openModal("MODAL_RECEIVE", {
+            openReceiveFlow({
               account,
               parentAccount,
               sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,

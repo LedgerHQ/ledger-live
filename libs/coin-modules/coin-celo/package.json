@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "4.1.0",
+  "version": "4.2.0-next.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,6 @@
     "@celo/abis": "^14.0.1",
     "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
@@ -123,8 +122,6 @@
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "imurmurhash": "^0.1.4",
-    "invariant": "^2.2.4",
-    "lodash": "catalog:",
     "rxjs": "catalog:",
     "viem": "^2.27.0"
   },
@@ -136,13 +133,9 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/imurmurhash": "0.1.4",
-    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "dotenv": "16.4.7",
-    "expect": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

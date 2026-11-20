@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-cli
 
+## 3.7.0-next.0
+
+### Minor Changes
+
+- [#24983](https://github.com/LedgerHQ/ledger-live/pull/24983) [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Brand the account descriptor's DerivationPath and move the legacy path bridges to @domain/entity-account-descriptor
+
+- [#24934](https://github.com/LedgerHQ/ledger-live/pull/24934) [`696c871`](https://github.com/LedgerHQ/ledger-live/commit/696c8711cb852f12d747b0f41b011200e5ee46f3) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - `operations` returns `nextCursor` when the history is longer than `--limit`, `null` on the last page, and `--cursor` returns the next page; an unknown `--cursor` exits 1 with `InvalidOperationsCursorError`
+
+## 3.6.0
+
+### Minor Changes
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent swap` takes tickers and ERC-20 contract addresses in `--from` and `--to` as well as currency ids, and fails with the candidates' currency ids when a ticker is ambiguous. It refuses another chain's coin in Ledger's currency list by currency id, ticker or name in any case (`bitcoin`, `BTC`, `Solana`) instead of an ERC-20 token that shares its ticker, unless the `--account` holds a token with that ticker to sell. `USDC` resolves to its ERC-20 token
+
+- [#24077](https://github.com/LedgerHQ/ledger-live/pull/24077) [`6f0c451`](https://github.com/LedgerHQ/ledger-live/commit/6f0c4519db2a01193ac508187195b795b46633f5) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - `agent-intent send` and `agent-intent swap` find a ticker in the Crypto Assets List in any case (`steth` finds stETH), and take the token whose mixed-case ticker is spelled as typed over one that matches only in another case, so `mETH` no longer fails as ambiguous with `METH`. An all-lowercase or all-uppercase ticker matches every case, so `METH` fails listing mETH and the token listed as `METH`, and a token listed as `usdc` can't stand in for USD Coin. When the search for other letter cases fails or is cut off, the exact ticker lookups still answer, and stderr says another token may share the ticker
+
+- [#25038](https://github.com/LedgerHQ/ledger-live/pull/25038) [`12c4404`](https://github.com/LedgerHQ/ledger-live/commit/12c44047b07b96aa4d65b6c7e8eafc00b0309abc) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Pin the install commands of the skill copy published to LedgerHQ/agent-skills to its wallet-cli version, and have an agent on a newer wallet-cli follow the skill embedded in that binary
+
+- [#24961](https://github.com/LedgerHQ/ledger-live/pull/24961) [`ff71f51`](https://github.com/LedgerHQ/ledger-live/commit/ff71f516effdd64c3f157de70a096475474815d6) Thanks [@oscarchaix](https://github.com/oscarchaix)! - `agent-intent enroll` warns when the state dir is on temporary storage (`/tmp`, the OS temp dir, `/dev/shm`, `$XDG_RUNTIME_DIR`), where a restart would wipe the agent's profile
+
+- [#22205](https://github.com/LedgerHQ/ledger-live/pull/22205) [`361cdd8`](https://github.com/LedgerHQ/ledger-live/commit/361cdd89dd60ccfac2dd8a470f4f94477e091105) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - feat(wallet-cli): name the USB error when a Ledger cannot be opened, and stop discovery at once
+
+### Patch Changes
+
+- [#24647](https://github.com/LedgerHQ/ledger-live/pull/24647) [`af01e1d`](https://github.com/LedgerHQ/ledger-live/commit/af01e1d6d4b930c8ad6887e93201d38d4f434940) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.93.0
+
+  - Updated `oxlint` to `1.93.0`
+
 ## 3.5.0
 
 ### Minor Changes
@@ -401,27 +429,5 @@
 - [#22740](https://github.com/LedgerHQ/ledger-live/pull/22740) [`8421e39`](https://github.com/LedgerHQ/ledger-live/commit/8421e39799b898b552dddeb5bbab94b022b29922) Thanks [@LL782](https://github.com/LL782)! - Import track directly from @shared/analytics
 
 - [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
-
-## 2.8.0
-
-### Minor Changes
-
-- [#22579](https://github.com/LedgerHQ/ledger-live/pull/22579) [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Re-read `SWAP_API_BASE` on every swap/Perps quote request instead of baking it into the store at startup, so a debug-menu override reaches the aggregator without an app restart
-
-- [#22455](https://github.com/LedgerHQ/ledger-live/pull/22455) [`6b8eba4`](https://github.com/LedgerHQ/ledger-live/commit/6b8eba4330e8fbaa89981ae0892586e280f8d20d) Thanks [@LL782](https://github.com/LL782)! - Wire wallet-cli through @shared/analytics
-
-## 2.8.0-next.0
-
-### Minor Changes
-
-- [#22579](https://github.com/LedgerHQ/ledger-live/pull/22579) [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Re-read `SWAP_API_BASE` on every swap/Perps quote request instead of baking it into the store at startup, so a debug-menu override reaches the aggregator without an app restart
-
-- [#22455](https://github.com/LedgerHQ/ledger-live/pull/22455) [`6b8eba4`](https://github.com/LedgerHQ/ledger-live/commit/6b8eba4330e8fbaa89981ae0892586e280f8d20d) Thanks [@LL782](https://github.com/LL782)! - Wire wallet-cli through @shared/analytics
-
-## 2.7.0
-
-### Minor Changes
-
-- [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -21,7 +21,6 @@ import {
   toOperationRaw as commonToOperationRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getAccountBridgeByFamily } from "../bridge/impl";
-import { resolveSerializationFamily } from "../bridge/zcashRouting";
 import { checkAccountSupported } from "./support";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
@@ -67,10 +66,7 @@ export const fromOperationRaw = async (
 
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
-  const bridge = await getAccountBridgeByFamily(
-    resolveSerializationFamily(currency, rawAccount.id),
-    rawAccount.id,
-  );
+  const bridge = await getAccountBridgeByFamily(currency.family, rawAccount.id);
 
   return await commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,
@@ -83,19 +79,15 @@ export async function toAccountRaw(
   account: Account,
   userData?: AccountUserData,
 ): Promise<AccountRaw> {
-  // getAccountBridge() ran this same check before resolving the bridge; preserve it here
-  // now that the bridge is resolved via resolveSerializationFamily instead, so an
-  // unregistered coin module or unsupported derivation mode still rejects on save as it
-  // did before, for every currency (not just Zcash).
+  // getAccountBridge() runs this same check before resolving the bridge; it is repeated here
+  // because the bridge is resolved by family, so an unregistered coin module or an
+  // unsupported derivation mode still rejects on save.
   const supportedError = checkAccountSupported(account);
   if (supportedError) {
     throw supportedError;
   }
 
-  const bridge = await getAccountBridgeByFamily(
-    resolveSerializationFamily(account.currency, account.id),
-    account.id,
-  );
+  const bridge = await getAccountBridgeByFamily(account.currency.family, account.id);
 
   const commonAccountRaw = commonToAccountRaw(account, {
     assignToAccountRaw: bridge.assignToAccountRaw,

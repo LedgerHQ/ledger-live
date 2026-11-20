@@ -113,6 +113,7 @@ export async function validateIntent(
       balances,
       estimatedFees,
       currencyName,
+      customFees,
     );
   }
 
@@ -141,7 +142,15 @@ export async function validateIntent(
   );
 
   if (isTokenTransfer && transactionIntent.recipient && !errors.recipient) {
-    await validateTokenTransfer(api, transactionIntent, balances, estimatedFees, errors, warnings);
+    await validateTokenTransfer(
+      api,
+      transactionIntent,
+      balances,
+      estimatedFees,
+      errors,
+      warnings,
+      customFees,
+    );
   }
 
   if (!isTokenTransfer) {
@@ -202,6 +211,7 @@ async function validateTokenTransfer(
   estimatedFees: bigint,
   errors: Record<string, Error>,
   warnings: Record<string, Error>,
+  customFees?: FeeEstimation,
 ): Promise<void> {
   const mintAddress = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
   if (!mintAddress) return;
@@ -250,7 +260,19 @@ async function validateTokenTransfer(
   const spendable = spendableBalance(balances);
 
   if (spendable < requiredSol || spendable === 0n) {
+    const recipientHasNoTokenAccount = descriptor.shouldCreateAsAssociatedTokenAccount;
+    // The estimation sums the deposit into the fee; it is split back out so it is not shown as one.
+    const deposit = recipientHasNoTokenAccount
+      ? minBigInt(tokenAccountDepositOf(customFees), requiredSol)
+      : 0n;
     errors.gasPrice = new NotEnoughGas(undefined, {
+      ...lamportBreakdown({
+        fee: requiredSol - deposit,
+        deposit,
+        balances,
+        required: requiredSol,
+      }),
+      recipientHasNoTokenAccount,
       fees: formatAPIValue(requiredSol),
       ticker: solanaUnit.code,
       cryptoName: solanaUnit.name,
@@ -314,6 +336,7 @@ async function validateTokenAuthorityIntent(
   balances: Balance[],
   estimatedFees: bigint,
   currencyName: string,
+  customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -336,7 +359,21 @@ async function validateTokenAuthorityIntent(
   }
 
   await validateOwnerTokenAccountState(api, intent, errors);
-  validateFeeCoverage(estimatedFees, spendableBalance(balances), errors);
+  if (estimatedFees > spendableBalance(balances)) {
+    const deposit =
+      intent.type === "token.createATA"
+        ? minBigInt(tokenAccountDepositOf(customFees), estimatedFees)
+        : 0n;
+    errors.fee = new NotEnoughBalance(
+      undefined,
+      lamportBreakdown({
+        fee: estimatedFees - deposit,
+        deposit,
+        balances,
+        required: estimatedFees,
+      }),
+    );
+  }
 
   return {
     errors,
@@ -373,7 +410,7 @@ async function validateStakingIntent(
         api,
         config,
         intent,
-        available,
+        balances,
         estimatedFees,
         errors,
       );
@@ -591,10 +628,11 @@ async function computeCreateAccountAmount(
   api: ChainAPI,
   config: SolanaCoinConfig,
   intent: TransactionIntent,
-  available: bigint,
+  balances: Balance[],
   estimatedFees: bigint,
   errors: Record<string, Error>,
 ): Promise<{ amount: bigint; rent: bigint }> {
+  const available = spendableBalance(balances);
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
   }
@@ -645,7 +683,15 @@ async function computeCreateAccountAmount(
   if (intent.amount <= 0n) {
     errors.amount = new AmountRequired();
   } else if (intent.amount + estimatedFees + reserve + rent > available) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new NotEnoughBalance(
+      undefined,
+      lamportBreakdown({
+        fee: estimatedFees,
+        deposit: rent,
+        balances,
+        required: intent.amount + estimatedFees + reserve + rent,
+      }),
+    );
   } else {
     const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
     if (stakeMinimumDelegation !== null && intent.amount < stakeMinimumDelegation) {
@@ -659,6 +705,45 @@ function tokenAmountLeavingTheAccount(amount: bigint, customFees?: FeeEstimation
   const transferFee = customFees?.parameters?.transferFee as TransferFeeCalculated | undefined;
   if (!transferFee?.feeBps || transferFee.transferAmountIncludingFee === undefined) return amount;
   return BigInt(transferFee.transferAmountIncludingFee);
+}
+
+/** The rent a token account the transaction opens holds, as the estimation reported it. */
+function tokenAccountDepositOf(customFees?: FeeEstimation): bigint {
+  const value = customFees?.parameters?.tokenAccountDeposit;
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number" || typeof value === "string") {
+    try {
+      return BigInt(value);
+    } catch {
+      return 0n;
+    }
+  }
+  return 0n;
+}
+
+/** Lamport strings: an error crosses the IPC bridge as JSON, which a bigint does not survive. */
+function lamportBreakdown({
+  fee,
+  deposit,
+  balances,
+  required,
+}: {
+  fee: bigint;
+  deposit: bigint;
+  balances: Balance[];
+  required: bigint;
+}): { fee: string; deposit: string; locked: string; missing: string } {
+  const native = balances.find(b => b.asset.type === "native");
+  return {
+    fee: fee.toString(),
+    deposit: deposit.toString(),
+    locked: (native?.locked ?? 0n).toString(),
+    missing: clampPositive(required - spendableBalance(balances)).toString(),
+  };
+}
+
+function minBigInt(a: bigint, b: bigint): bigint {
+  return a < b ? a : b;
 }
 
 function spendableBalance(balances: Balance[]): bigint {

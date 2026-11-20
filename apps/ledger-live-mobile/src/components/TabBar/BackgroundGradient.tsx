@@ -8,38 +8,6 @@ const StyledSVG = styled(Svg)`
   width: 100%;
 `;
 
-type Props = {
-  height: number;
-  opacity: number;
-  stops: React.JSX.Element[];
-};
-
-const BackgroundGradient = ({ height, opacity, stops }: Props) => (
-  <StyledSVG pointerEvents="none" style={{ height }}>
-    <Defs>
-      <LinearGradient
-        id="myGradient"
-        x1="0%"
-        y1="0%"
-        x2="0%"
-        y2="100%"
-        gradientUnits="userSpaceOnUse"
-      >
-        {stops}
-      </LinearGradient>
-    </Defs>
-    <Rect
-      transform={[{ translateX: 0 }, { translateY: 0 }]}
-      width="100%"
-      height="100%"
-      opacity={opacity}
-      fill="url(#myGradient)"
-    />
-  </StyledSVG>
-);
-
-export default BackgroundGradient;
-
 type HorizontalProps = {
   height?: number;
   opacity: number;

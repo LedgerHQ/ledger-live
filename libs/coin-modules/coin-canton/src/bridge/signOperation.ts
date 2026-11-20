@@ -2,15 +2,43 @@ import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
-import { signTransaction } from "./sign";
+import { createFrameworkSigner } from "../signer/frameworkSigner";
 import type { CantonContext } from "../config";
-import { CantonSigner, Transaction } from "../types";
-import { getCurrencyContext } from "./context";
+import { CantonMemo, CantonSigner, Transaction } from "../types";
+import { pinConfig } from "./context";
+
+// A native transfer carrying an admin stays token-shaped, so the gateway still receives that admin.
+function toTransferIntent(
+  transaction: Transaction,
+  party: string,
+  nativeInstrumentId: string,
+): TransactionIntent<CantonMemo> {
+  const { tokenId, instrumentAdmin, memo } = transaction;
+  const isNative = !instrumentAdmin && tokenId === nativeInstrumentId;
+  return {
+    intentType: "transaction",
+    type: "send",
+    sender: party,
+    recipient: transaction.recipient,
+    amount: BigInt(transaction.amount.toFixed()),
+    asset: isNative
+      ? { type: "native" }
+      : {
+          type: "token",
+          assetReference: tokenId,
+          ...(instrumentAdmin ? { assetOwner: instrumentAdmin } : {}),
+        },
+    ...(transaction.expireInSeconds === undefined
+      ? {}
+      : { expiration: transaction.expireInSeconds }),
+    ...(memo ? { memo: { type: "string", kind: "reason", value: memo } } : {}),
+  };
+}
 
 export const buildSignOperation =
   (
@@ -32,46 +60,22 @@ export const buildSignOperation =
           let transactionHash = "";
           const signature = await signerContext(deviceId, async signer => {
             const { id, freshAddressPath: derivationPath, xpub } = account;
-            const address = xpub ?? decodeAccountId(id).xpubOrAddress;
-            const params: {
-              recipient?: string;
-              amount: BigNumber;
-              tokenId: string;
-              expireInSeconds: number;
-              memo?: string;
-              instrumentAdmin?: string;
-            } = {
-              recipient: transaction.recipient,
-              amount: transaction.amount,
-              expireInSeconds: transaction.expireInSeconds ?? 24 * 60 * 60, // Default to 1 day
-              tokenId: transaction.tokenId,
-            };
-            if (transaction.instrumentAdmin) {
-              params.instrumentAdmin = transaction.instrumentAdmin;
-            }
-            if (transaction.memo) {
-              params.memo = transaction.memo;
-            }
+            const config = await context.config(account.currency.id);
+            // One snapshot, so crafting maps the native asset with the id the intent was built from.
+            const pinnedContext = pinConfig(context, config);
+            const party = xpub ?? decodeAccountId(id).xpubOrAddress;
 
-            const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
-              getCurrencyContext(context, account.currency),
-              {
-                address,
-              },
-              params,
+            const { transaction: crafted, details } = await craftTransaction(
+              pinnedContext,
+              toTransferIntent(transaction, party, config.nativeInstrumentId),
             );
+            transactionHash = details.hash || "";
 
-            transactionHash = hash || "";
-
-            const signatureResult = await signTransaction(
-              signer,
+            const deviceSignature = await createFrameworkSigner(signer).signTransaction(
               derivationPath,
-              nativeTransaction,
+              crafted,
             );
-
-            return combine(serializedTransaction, [
-              `${signatureResult.signature}__PARTY__${address}`,
-            ]);
+            return combine(crafted, [deviceSignature]);
           });
 
           o.next({

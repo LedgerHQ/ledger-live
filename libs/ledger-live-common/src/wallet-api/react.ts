@@ -25,6 +25,8 @@ import {
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
 } from "./converters";
+import { selectMaxSpendableRows } from "@ledgerhq/ledger-wallet-framework/account/balances";
+import { toMaxSpendableFilters } from "./maxSpendableFilters";
 import { AccountPublicKeyUnavailable, SignPsbtAppNotAllowed } from "../errors";
 import { isBitcoinSignPsbtOptionsAllowed, isWalletAPISupportedCurrency } from "./helpers";
 import {
@@ -1390,25 +1392,31 @@ export function useWalletAPIServer({
   }, [accounts, manifest, server, tracking]);
 
   useEffect(() => {
-    server.setHandler("account.getMaxSpendable", async ({ accountId }) => {
-      const localAccountId = getAccountIdFromWalletAccountId(accountId);
-      if (!localAccountId) {
-        throw new Error(`accountId ${accountId} unknown`);
-      }
+    server.setHandler(
+      "account.getMaxSpendable",
+      async ({ accountId, pools, private: isPrivate }) => {
+        const localAccountId = getAccountIdFromWalletAccountId(accountId);
+        if (!localAccountId) {
+          throw new Error(`accountId ${accountId} unknown`);
+        }
 
-      const account = accounts.find(item => item.id === localAccountId);
-      if (!account) {
-        throw new Error("account not found");
-      }
+        const account = accounts.find(item => item.id === localAccountId);
+        if (!account) {
+          throw new Error("account not found");
+        }
 
-      const parentAccount = getParentAccount(account, accounts);
-      const maxSpendable = await resolveWalletApiMaxSpendable(account, parentAccount);
-      if (maxSpendable === undefined) {
-        throw new Error("account.getMaxSpendable failed");
-      }
+        const parentAccount = getParentAccount(account, accounts);
+        const filters = toMaxSpendableFilters({ pools, private: isPrivate });
+        // Outside the resolver's catch: an unsupported filter is reported as such to the live app.
+        if (filters) selectMaxSpendableRows(account, filters);
+        const maxSpendable = await resolveWalletApiMaxSpendable(account, parentAccount, filters);
+        if (maxSpendable === undefined) {
+          throw new Error("account.getMaxSpendable failed");
+        }
 
-      return maxSpendable.toFixed(0);
-    });
+        return maxSpendable.toFixed(0);
+      },
+    );
   }, [accounts, server]);
 
   useEffect(() => {
@@ -1721,17 +1729,16 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
   );
   const edit = useCallback(
     (manifestId: string, cacheBustingId: number) => {
-      const _cacheBustedLiveAppsDb = {
-        ...cacheBustedLiveAppsDb,
-        [manifestId]: cacheBustingId,
-        init: 1,
-      };
-      setState(state => {
-        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
-        return newstate;
-      });
+      setState(state => ({
+        ...state,
+        cacheBustedLiveApps: {
+          ...state.cacheBustedLiveApps,
+          [manifestId]: cacheBustingId,
+          init: 1,
+        },
+      }));
     },
-    [setState, cacheBustedLiveAppsDb],
+    [setState],
   );
   return { getLatest, edit };
 }

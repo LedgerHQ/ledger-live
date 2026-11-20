@@ -7,19 +7,18 @@ import {
   type ConnectedDevice,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
+import { OS_RELEASE_NOTES_URLS } from "@features/flow-device-os-update";
 import {
-  dmkToLedgerDeviceIdMap,
-  ResolveOsUpdatePathUseCase,
+  executeResolveOsUpdatePath,
   type DeviceBackupStorage,
   type OsUpdatesOrchestratorUseCaseInput,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-os-update";
 import {
   useBleDevicesScanning,
   useDeviceManagementKit,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { urls } from "~/utils/urls";
 import { deviceBackupStorage } from "../storage/deviceBackupStorage";
 import type {
   DebugDiscoveredDevice,
@@ -285,7 +284,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
         dmk,
         connectedDevice: device,
         osUpdates: resolvedOsUpdates,
-        storage,
+        backupStorage: storage,
         onStop: () => {
           setOrchestratorRun(null);
           setPhase("stopped");
@@ -329,7 +328,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
           return;
         }
 
-        const resolvedOsUpdates = await new ResolveOsUpdatePathUseCase().execute({
+        const resolvedOsUpdates = await executeResolveOsUpdatePath({
           dmk,
           sessionId: device.sessionId,
           unlockTimeout: 0,
@@ -377,7 +376,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     if (!pendingRun) {
       return;
     }
-    Linking.openURL(urls.fwUpdateReleaseNotes[dmkToLedgerDeviceIdMap[pendingRun.device.modelId]]);
+    Linking.openURL(OS_RELEASE_NOTES_URLS[pendingRun.device.modelId]);
   }, [pendingRun]);
 
   const onStop = useCallback(() => {

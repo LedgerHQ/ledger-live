@@ -8,22 +8,15 @@ import type {
 import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { NotEnoughGas } from "../../errors";
 import { getChainAPI } from "../../network";
+import { chainConfigFrom } from "../../utils";
 import type { ChainAPI } from "../../network";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { estimateFees } from "../estimateFees";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
-import type { SolanaCoinConfig } from "../../config";
-import { TEST_CONFIG } from "../../test/coinConfig";
+import { solanaDefaults } from "../../config";
 
-const config: SolanaCoinConfig = {
-  token2022Enabled: false,
-  legacyOCMSMaxVersion: "1.0.0",
-  rpcUrl: "https://solana.coin.ledger.com",
-  status: { type: "active" },
-  name: "Solana",
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
-};
-const api = getChainAPI({ endpoint: config.rpcUrl });
+const config = solanaDefaults.solana;
+const api = getChainAPI(chainConfigFrom(solanaDefaults.solana));
 
 const validateIntent = (
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
@@ -83,7 +76,7 @@ describe("validateIntent (integration)", () => {
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
-      const estimation = await estimateFees(api, TEST_CONFIG, intent);
+      const estimation = await estimateFees(api, solanaDefaults.solana, intent);
       const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
 
       const result = await validateIntent(
@@ -100,7 +93,7 @@ describe("validateIntent (integration)", () => {
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
-      const estimation = await estimateFees(api, TEST_CONFIG, intent);
+      const estimation = await estimateFees(api, solanaDefaults.solana, intent);
 
       const result = await validateIntent(
         intent,

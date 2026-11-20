@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { OsUpdatesSteps, type OsUpdatesProgress } from "@ledgerhq/live-dmk-shared";
-import type { OsUpdateStepProps } from "../../components/OsUpdateStep/useOsUpdateStepViewModel";
+import {
+  OsUpdatesSteps,
+  type OsUpdateStepProps,
+  type OsUpdatesProgress,
+} from "@features/platform-device-os-update";
 import {
   noop,
   previewConnectedDevice,

@@ -1,6 +1,15 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "../../bridge/buildOptimisticOperation";
-import { accountFixture, transactionFixture } from "../../bridge/fixtures";
+import {
+  accountFixture,
+  accountWithTokenAccountFixture,
+  transactionFixture,
+  transactionWithUsdcFeeFixture,
+  usdcToken,
+} from "../../bridge/fixtures";
+
+const FEE_CURRENCY = "0xCEBA9300F2B948710D2653DD7B07F33A8B32118C";
+const USDC_ADAPTER = "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B";
 
 describe("buildOptimisticOperation", () => {
   it("should build a proper send operation", () => {
@@ -8,6 +17,7 @@ describe("buildOptimisticOperation", () => {
       accountFixture,
       { ...transactionFixture, mode: "send" },
       BigNumber(2),
+      { nonce: 7 },
     );
 
     expect(optimisticOperation.value).toEqual(BigNumber(12));
@@ -15,11 +25,47 @@ describe("buildOptimisticOperation", () => {
     expect(optimisticOperation.extra.celoSourceValidator).toEqual(undefined);
   });
 
+  it("leaves a fee paid in a fee currency out of the CELO value", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountFixture,
+      transactionWithUsdcFeeFixture,
+      BigNumber(2),
+      { nonce: 7, feeCurrency: transactionWithUsdcFeeFixture.feeCurrency },
+    );
+
+    expect(optimisticOperation.value).toEqual(BigNumber(10));
+    expect(optimisticOperation.fee).toEqual(BigNumber(2));
+  });
+
+  it("counts the fee in CELO when the signed tx has no fee currency", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountFixture,
+      { ...transactionFixture, mode: "lock", feeCurrency: FEE_CURRENCY },
+      BigNumber(2),
+      { nonce: 7 },
+    );
+
+    expect(optimisticOperation.value).toEqual(BigNumber(12));
+    expect(optimisticOperation.extra.feeCurrencyAddress).toBeUndefined();
+  });
+
+  it("carries the signed nonce as transactionSequenceNumber", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountFixture,
+      transactionFixture,
+      BigNumber(2),
+      { nonce: 7 },
+    );
+
+    expect(optimisticOperation.transactionSequenceNumber).toEqual(BigNumber(7));
+  });
+
   it("should build a proper vote operation", () => {
     const optimisticOperation = buildOptimisticOperation(
       accountFixture,
       { ...transactionFixture, mode: "vote" },
       BigNumber(2),
+      { nonce: 7 },
     );
 
     expect(optimisticOperation.value).toEqual(BigNumber(10));
@@ -27,15 +73,12 @@ describe("buildOptimisticOperation", () => {
     expect(optimisticOperation.extra.celoSourceValidator).toEqual("recipient");
   });
 
-  it("mirrors the transaction's fee currency as a lowercased feeCurrencyAddress", () => {
+  it("mirrors the signed fee currency as a lowercased feeCurrencyAddress", () => {
     const optimisticOperation = buildOptimisticOperation(
       accountFixture,
-      {
-        ...transactionFixture,
-        mode: "send",
-        feeCurrency: "0xCEBA9300F2B948710D2653DD7B07F33A8B32118C",
-      },
+      { ...transactionFixture, mode: "send", feeCurrency: FEE_CURRENCY },
       BigNumber(2),
+      { nonce: 7, feeCurrency: FEE_CURRENCY },
     );
 
     expect(optimisticOperation.extra.feeCurrencyAddress).toEqual(
@@ -43,11 +86,37 @@ describe("buildOptimisticOperation", () => {
     );
   });
 
-  it("leaves feeCurrencyAddress unset when the transaction has no fee currency", () => {
+  it("gives a fee paid through an adapter in the token's own units, with the token", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountWithTokenAccountFixture,
+      { ...transactionFixture, mode: "send", feeCurrency: USDC_ADAPTER },
+      // 0.004072 USDC in the adapter's 18 decimals
+      BigNumber("4072000000000000"),
+      { nonce: 7, feeCurrency: USDC_ADAPTER },
+    );
+
+    expect(optimisticOperation.fee).toEqual(BigNumber(4072));
+    expect(optimisticOperation.extra).toEqual({ feeAsset: usdcToken.contractAddress });
+  });
+
+  it("keeps a fee in the fee currency's units, with the adapter, without the token's decimals", () => {
+    const optimisticOperation = buildOptimisticOperation(
+      accountFixture,
+      { ...transactionFixture, mode: "send", feeCurrency: USDC_ADAPTER },
+      BigNumber("4072000000000000"),
+      { nonce: 7, feeCurrency: USDC_ADAPTER },
+    );
+
+    expect(optimisticOperation.fee).toEqual(BigNumber("4072000000000000"));
+    expect(optimisticOperation.extra).toEqual({ feeCurrencyAddress: USDC_ADAPTER.toLowerCase() });
+  });
+
+  it("leaves feeCurrencyAddress unset when the signed tx has no fee currency", () => {
     const optimisticOperation = buildOptimisticOperation(
       accountFixture,
       { ...transactionFixture, mode: "send", feeCurrency: null },
       BigNumber(2),
+      { nonce: 7, feeCurrency: null },
     );
 
     expect(optimisticOperation.extra.feeCurrencyAddress).toBeUndefined();

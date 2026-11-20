@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#24942](https://github.com/LedgerHQ/ledger-live/pull/24942) [`cdbdb77`](https://github.com/LedgerHQ/ledger-live/commit/cdbdb773bac6bf3b6b659dc960a55582f181a362) Thanks [@ishaba](https://github.com/ishaba)! - Upgrade protobufjs to 8.6.6 to fix GHSA-94rc-8x27-4472, GHSA-f38q-mgvj-vph7, GHSA-jfj6-75fj-8934 and GHSA-j3f2-48v5-ccww
+
 ## 0.16.0
 
 ### Minor Changes

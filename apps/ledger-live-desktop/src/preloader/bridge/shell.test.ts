@@ -10,8 +10,6 @@ describe("preload shell bridge", () => {
     ["app.relaunch", () => app.relaunch(), CHANNELS.appRelaunch, []],
     ["app.quit", () => app.quit(), CHANNELS.appQuit, []],
     ["app.show", () => app.show(), CHANNELS.showApp, [{}]],
-    ["store.set", () => store.set("a.b", 1), CHANNELS.storeSet, ["a.b", 1]],
-    ["store.clear", () => store.clear(), CHANNELS.storeClear, []],
   ] as const)("%s should send on its channel", (_name, call, channel, args) => {
     call();
 
@@ -45,6 +43,8 @@ describe("preload shell bridge", () => {
     ],
     ["power.keepScreenAwake", () => power.keepScreenAwake(), CHANNELS.keepScreenAwake, []],
     ["power.release", () => power.release(7), CHANNELS.releaseScreenAwake, [7]],
+    ["store.set", () => store.set("a.b", 1), CHANNELS.storeSet, ["a.b", 1]],
+    ["store.clear", () => store.clear(), CHANNELS.storeClear, []],
   ] as const)(
     "%s should invoke its channel and return the result",
     async (_name, call, channel, args) => {

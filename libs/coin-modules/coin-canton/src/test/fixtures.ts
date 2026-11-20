@@ -12,6 +12,7 @@ import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
   OnboardingPrepareResponse,
+  OperationView,
   PrepareTransferResponse,
   TransferProposal,
 } from "../types/gateway";
@@ -281,6 +282,33 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   memo: "test memo",
   expires_at_micros: 1_800_000_000_000_000, // fixed far-future timestamp (microseconds)
   update_id: "test-update-id",
+});
+
+export const createMockOperationView = createFactory<OperationView>({
+  uid: "uid-1",
+  transaction_hash: "0xtxhash",
+  transaction_timestamp: "2024-01-01T00:00:00.000Z",
+  status: "Success",
+  type: "Send",
+  senders: ["alice-party"],
+  recipients: ["bob-party"],
+  transfers: [{ address: "bob-party", type: "Send", value: "100", details: {}, asset: "Amulet" }],
+  block: { height: 10, time: "2024-01-01T00:00:00.000Z", hash: "blockhash" },
+  fee: {
+    value: "1",
+    asset: {
+      type: "native",
+      instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+      instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+    },
+    details: {},
+  },
+  asset: {
+    type: "native",
+    instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+    instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+  },
+  details: {},
 });
 
 export { generateMockKeyPair };

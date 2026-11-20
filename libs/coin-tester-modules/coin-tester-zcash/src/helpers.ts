@@ -52,15 +52,6 @@ async function callZebraRpc<T>(method: string, params: unknown[] = []): Promise<
   return body.result as T;
 }
 
-export type ZebraUtxo = {
-  address: string;
-  txid: string;
-  outputIndex: number;
-  script: string;
-  satoshis: number;
-  height: number;
-};
-
 export type ZebraTransactionInput = {
   txid?: string;
   vout?: number;
@@ -109,19 +100,11 @@ export async function generateBlocksToAddress(
   return callZebraRpc<string[]>("generatetoaddress", [numBlocks, address]);
 }
 
-export async function getBestBlockHash(): Promise<string> {
-  return callZebraRpc<string>("getbestblockhash");
-}
-
 export async function getBlock(
   hashOrHeight: string,
   verbosity = 1,
 ): Promise<Record<string, unknown>> {
   return callZebraRpc("getblock", [hashOrHeight, verbosity]);
-}
-
-export async function getAddressUtxos(addresses: string[]): Promise<ZebraUtxo[]> {
-  return callZebraRpc<ZebraUtxo[]>("getaddressutxos", [{ addresses }]);
 }
 
 export async function getAddressTxIds(
@@ -146,22 +129,8 @@ export async function sendRawTransaction(hex: string): Promise<string> {
   return callZebraRpc<string>("sendrawtransaction", [hex]);
 }
 
-export function sleep(ms: number): Promise<void> {
+function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export async function waitForBlockHeight(target: number, timeoutMs = 120_000): Promise<void> {
-  const start = Date.now();
-  let height = await getBlockCount();
-  while (height < target) {
-    if (Date.now() - start > timeoutMs) {
-      throw new Error(
-        `Timed out waiting for zebra to reach height ${target} (currently ${height})`,
-      );
-    }
-    await sleep(1_000);
-    height = await getBlockCount();
-  }
 }
 
 /**

@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { CardOnboardingOption } from "../CardOnboardingOption/CardOnboardingOption";
-import { AddToWalletInstructions } from "../AddToWalletInstructions/AddToWalletInstructions.native";
+import { AddToWalletInstructions } from "../AddToWalletInstructions/AddToWalletInstructions";
 import type { CardOnboardingDialogViewProps } from "./useCardOnboardingDialogViewModel";
 
 export function CardOnboardingDialogView({

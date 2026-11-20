@@ -1,5 +1,13 @@
 # @domain/api-account-data
 
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143)]:
+  - @domain/entity-account-descriptor@0.7.0-next.0
+  - @domain/entity-account-data@0.6.1-next.0
+
 ## 0.6.0
 
 ### Minor Changes

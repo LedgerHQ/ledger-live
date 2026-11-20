@@ -6,7 +6,7 @@ import type {
   NativeElement,
   NativeMatcher,
 } from "detox/detox";
-import { PageScroller } from "@e2e/helpers/pageScroller";
+import { PageScroller } from "./pageScroller";
 import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
@@ -377,6 +377,12 @@ export class NativeHandle implements ElementHandle {
       return;
     }
     compareText(await this.getText(), text, options);
+  }
+
+  /** Waits for visibility, then asserts the element is enabled. */
+  async expectEnabled(timeout = TIMEOUT.xxlarge): Promise<void> {
+    const { enabled } = await this.getAttributes(timeout);
+    jestExpect(enabled).toBe(true);
   }
 
   /**

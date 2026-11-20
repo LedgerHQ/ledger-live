@@ -134,6 +134,77 @@ describe("validateIntent", () => {
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
   });
 
+  describe("token transfers", () => {
+    const TOKEN = { type: "token" as const, assetReference: "SP_CONTRACT.token-x::token-x" };
+    const balancesWith = (tokenValue: bigint): Balance[] => [
+      { value: 10000n, asset: { type: "native" } },
+      { value: tokenValue, asset: TOKEN },
+    ];
+
+    it("returns no errors and a total spent equal to the amount for a valid token transfer", async () => {
+      const result = await validateIntent(
+        transferIntent({ amount: 1000n, asset: TOKEN }),
+        balancesWith(100000n),
+        { value: 200n },
+      );
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(1000n);
+      expect(result.totalSpent).toBe(1000n);
+    });
+
+    it("flags a token amount exceeding the token balance", async () => {
+      const result = await validateIntent(
+        transferIntent({ amount: 1000n, asset: TOKEN }),
+        balancesWith(500n),
+        { value: 100n },
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("resolves useAllAmount to the token balance and ignores the fees", async () => {
+      const result = await validateIntent(
+        transferIntent({ useAllAmount: true, amount: 0n, asset: TOKEN }),
+        balancesWith(100000n),
+        { value: 200n },
+      );
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(100000n);
+      expect(result.totalSpent).toBe(100000n);
+    });
+
+    it("matches the token balance regardless of the asset reference case", async () => {
+      const lowerCaseBalances: Balance[] = [
+        { value: 10000n, asset: { type: "native" } },
+        {
+          value: 100000n,
+          asset: { type: "token", assetReference: TOKEN.assetReference.toLowerCase() },
+        },
+      ];
+
+      const result = await validateIntent(
+        transferIntent({ amount: 1000n, asset: TOKEN }),
+        lowerCaseBalances,
+        { value: 200n },
+      );
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(1000n);
+    });
+
+    it("flags a token transfer of zero amount", async () => {
+      const result = await validateIntent(
+        transferIntent({ amount: 0n, asset: TOKEN }),
+        balancesWith(100000n),
+        { value: 200n },
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+  });
+
   it("flags a memo longer than the 34 bytes a Stacks transfer can carry", async () => {
     const { errors } = await validateIntent(
       transferIntent({ memo: { type: "string", kind: "memo", value: "x".repeat(35) } }),

@@ -1,10 +1,9 @@
 {
   "targets": {
     "build": {
-      "outputs": ["{projectRoot}/lib/**", "{projectRoot}/lib-es/**"]
+      "executor": "nx:noop"
     },
     "typecheck": {
-      "dependsOn": ["build"],
       "inputs": ["default", {"env": "CI_OS"}]
     }
   }

@@ -1,5 +1,5 @@
 import { AccountNotSupported } from "../errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { showsLegacyNewAccount } from "../scanRules";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import type { CryptoCurrency } from "../types";
 import type { Account, AccountLike, DerivationMode } from "@ledgerhq/types-live";
@@ -12,10 +12,7 @@ export const shouldShowNewAccount = (
   // last mode is always creatable by convention
   if (modes[modes.length - 1] === derivationMode) return true;
   // legacy is only available with flag SHOW_LEGACY_NEW_ACCOUNT
-  if (
-    derivationMode === "" &&
-    (!!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || currency.family === "bitcoin")
-  )
+  if (derivationMode === "" && (showsLegacyNewAccount() || currency.family === "bitcoin"))
     return true;
   // native segwit being not yet supported everywhere, segwit is always available for creation
   if (

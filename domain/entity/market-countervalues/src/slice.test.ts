@@ -54,4 +54,12 @@ describe("countervaluesRatesSlice", () => {
 
     expect(reducer(stored, wipeCountervalues())).toBe(initialState);
   });
+
+  it("selects the stored state itself and its cache", () => {
+    const stored = reducer(initialState, setCountervaluesState(loadedState()));
+    const { selectState, selectCache } = countervaluesRatesSlice.getSelectors();
+
+    expect(selectState(stored)).toBe(stored);
+    expect(selectCache(stored)).toBe(stored.cache);
+  });
 });

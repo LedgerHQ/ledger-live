@@ -1,5 +1,11 @@
 # @features/flow-account-detail-delegations
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24913](https://github.com/LedgerHQ/ledger-live/pull/24913) [`79da9a3`](https://github.com/LedgerHQ/ledger-live/commit/79da9a3dd691d66e3d10e63307839964ed740805) Thanks [@deepyjr](https://github.com/deepyjr)! - Show delegation amounts with at most 4 decimals, the exact amount in a tooltip, and hide the Solana active column
+
 ## 0.3.0
 
 ### Minor Changes

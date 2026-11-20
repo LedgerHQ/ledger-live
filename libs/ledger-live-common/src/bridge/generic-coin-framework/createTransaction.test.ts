@@ -221,6 +221,23 @@ describe("createTransaction", () => {
     });
   });
 
+  it("seeds a zero nonce and no fees for near, so signOperation skips getNextSequence and the draft is signable", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("near"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "near",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      nonce: new BigNumber(0),
+    });
+  });
+
   it("throws for an unsupported currency family", () => {
     const account = {
       type: "Account",

@@ -8,6 +8,7 @@ declare const __DATADOG_SITE__: string | null;
 declare const __DATADOG_ENV__: string | null;
 declare const __APP_VERSION__: string;
 declare const __GIT_REVISION__: string;
+declare const __PRODUCTION__: boolean;
 declare const __PRERELEASE__: string;
 declare const __CHANNEL__: string;
 declare const __static: string;

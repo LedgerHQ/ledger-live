@@ -4,13 +4,16 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
+import type {
+  DeviceFlowFailure,
+  DeviceIntentTrackingProperties,
+  SourceFlow,
+} from "@ledgerhq/live-dmk-shared";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
   OverrideDeviceIntentExecutorHeader,
-  type DeviceIntentTrackingProperties,
-  type SourceFlow,
-} from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared/react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
@@ -21,23 +24,18 @@ import ContextInitializer, { InitializerConfig } from "./ContextInitializer";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./ContextInitializer/utils/buildDeviceInitializationInput";
+export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
-export { RetryableDeviceLocked } from "./components/DeviceGenericStates/RetryableDeviceLocked";
-export { UnlockDevice } from "./components/DeviceGenericStates/UnlockDevice";
-export type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
+export { UserRefusedOnDevice } from "./components/DeviceGenericStates/UserRefusedOnDevice";
+export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
-type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
-  JobState,
-  Input,
-  ExtraProps,
-  InitializationInput,
-  Result
+type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
+  DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitializationInput, Result>,
+  "onUserCancel"
 > & {
+  /** Gets the error screen the user closed, if any. */
+  onUserCancel: (failure: DeviceFlowFailure | null) => void;
   initializerConfig?: InitializerConfig;
   /**
    * Originating user intent that initiated the device flow. Required for analytics.

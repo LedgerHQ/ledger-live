@@ -91,6 +91,13 @@ describe("countervaluesReducer", () => {
     expect(countervaluesSyncIsPollingSelector(root)).toBe(false);
   });
 
+  // The mobile DBSave diff and the middleware's lastPersisted compare the rates by reference.
+  it("reads the mounted rates object itself, not a copy", () => {
+    const root = { countervalues: { ...countervaluesInitialState, rates: loadedState() } };
+
+    expect(countervaluesStateSelector(root)).toBe(root.countervalues.rates);
+  });
+
   it.each<[CountervaluesLoad, boolean]>([
     ["idle", false],
     ["requested", false],

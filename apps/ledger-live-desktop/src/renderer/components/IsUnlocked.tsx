@@ -17,7 +17,6 @@ import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
 import Logo from "~/renderer/icons/Logo";
-import { fetchWallet } from "../actions/wallet";
 
 export default function IsUnlocked({ children }: { children: React.ReactNode }): React.JSX.Element {
   const dispatch = useDispatch();
@@ -55,7 +54,6 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
           await setEncryptionKey(inputValue.password);
           await dispatch(fetchAccounts());
           await dispatch(fetchTrustchain());
-          await dispatch(fetchWallet());
         } else if (!(await isEncryptionKeyCorrect(inputValue.password))) {
           throw new PasswordIncorrectError();
         }

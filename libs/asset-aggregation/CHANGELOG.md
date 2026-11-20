@@ -1,5 +1,21 @@
 # @ledgerhq/asset-aggregation
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#25058](https://github.com/LedgerHQ/ledger-live/pull/25058) [`b832756`](https://github.com/LedgerHQ/ledger-live/commit/b83275606480975ee139c431b076a4826b4def95) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(solana): stop showing chain reserves such as Solana rent exempt minimum as an Earn deposit on the asset detail page
+
+### Patch Changes
+
+- Updated dependencies [[`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede), [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276)]:
+  - @domain/entity-currency-crypto@0.20.0-next.0
+  - @ledgerhq/types-live@6.133.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.13.0-next.0
+  - @domain/entity-currency-token@0.6.0-next.0
+  - @domain/api-aggregated-assets@0.7.2-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.19.1
 
 ### Patch Changes
@@ -304,37 +320,5 @@
   - @ledgerhq/live-countervalues@0.25.0
   - @domain/entity-currency@0.4.3
   - @domain/entity-currency-token@0.5.2
-
-## 0.15.0-next.0
-
-### Minor Changes
-
-- [#21378](https://github.com/LedgerHQ/ledger-live/pull/21378) [`b864c2c`](https://github.com/LedgerHQ/ledger-live/commit/b864c2ced455b2e55d55b8c3e423d2f12d41cd7c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MarketBanner/Market list navigation so clicking Arbitrum opens the ARB asset detail instead of the Ethereum one, by passing the market ledger ids in the navigation state and preventing a bare market id from colliding with a same-named chain id
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa), [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f), [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584), [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @domain/entity-currency-crypto@0.12.0-next.0
-  - @ledgerhq/types-live@6.123.0-next.0
-  - @domain/api-aggregated-assets@0.5.0-next.0
-  - @ledgerhq/live-countervalues@0.25.0-next.0
-  - @domain/entity-currency@0.4.3-next.0
-  - @domain/entity-currency-token@0.5.2-next.0
-
-## 0.14.0
-
-### Minor Changes
-
-- [#21394](https://github.com/LedgerHQ/ledger-live/pull/21394) [`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MarketBanner/Market list navigation so clicking Arbitrum opens the ARB asset detail instead of the Ethereum one, by passing the market ledger ids in the navigation state and preventing a bare market id from colliding with a same-named chain id
-
-### Patch Changes
-
-- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @domain/entity-currency-crypto@0.11.0
-  - @ledgerhq/types-live@6.122.0
-  - @domain/api-aggregated-assets@0.4.2
-  - @domain/entity-currency@0.4.2
-  - @domain/entity-currency-token@0.5.1
-  - @ledgerhq/live-countervalues@0.24.5
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

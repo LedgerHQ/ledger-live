@@ -17,7 +17,7 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("LLD/features/Market/hooks/useMarketActions", () => ({
-  Page: { Market: "Page Market", MarketCoin: "Page Market Coin" },
+  Page: { Market: "Page Market" },
   useMarketActions: jest.fn(),
 }));
 

@@ -1,12 +1,13 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { hours, makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import type { CantonCoinConfig } from "../config";
 import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
 import type {
   GetBalanceResponse,
   GetTransferPreApprovalResponse,
+  NodeInfo,
   OnboardingPrepareRequest,
   OnboardingPrepareResponse,
   OnboardingSubmitRequest,
@@ -38,7 +39,7 @@ export const DEFAULT_TAP_REQUEST_AMOUNT = "1000000000000000000000000000000000000
 export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
 const getGatewayUrl = (config: CantonCoinConfig) => config.gatewayUrl;
-const getNodeId = (config: CantonCoinConfig) => {
+export const getNodeId = (config: CantonCoinConfig) => {
   const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
   if (overrideNodeId) {
     return overrideNodeId;
@@ -95,6 +96,45 @@ const gatewayNetwork = async <T, U = unknown>(
 };
 
 /*
+ * Nodes
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Nodes
+ */
+
+export async function getNodeInfo(config: CantonCoinConfig): Promise<NodeInfo> {
+  const { data } = await gatewayNetwork<NodeInfo>({
+    method: "GET",
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}`,
+  });
+  return data;
+}
+
+async function getDsoPartyId(config: CantonCoinConfig): Promise<string> {
+  const { dso_id } = await getNodeInfo(config);
+  if (!dso_id) throw new Error("canton: the gateway node info has no DSO party");
+  return dso_id;
+}
+
+const getDsoPartyIdCacheKey = (config: CantonCoinConfig) =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}`;
+
+// A DSO party cached before a network reset hides CC balances until node info is read again.
+export const getDsoPartyIdCached = makeLRUCache(getDsoPartyId, getDsoPartyIdCacheKey, minutes(15));
+
+export function clearDsoPartyIdCache(config: CantonCoinConfig): void {
+  getDsoPartyIdCached.clear(getDsoPartyIdCacheKey(config));
+}
+
+/** The native instrument: its id, issued by the network's DSO party. Any party can issue under the same id. */
+export async function getNativeInstrument(
+  config: CantonCoinConfig,
+): Promise<{ instrumentId: string; instrumentAdmin: string }> {
+  return {
+    instrumentId: config.nativeInstrumentId,
+    instrumentAdmin: await getDsoPartyIdCached(config),
+  };
+}
+
+/*
  * Parties
  * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Parties
  */
@@ -102,6 +142,13 @@ const gatewayNetwork = async <T, U = unknown>(
 export async function getPartyById(config: CantonCoinConfig, partyId: string): Promise<Party> {
   return await getParty(config, partyId, "party-id");
 }
+
+export const getPartyByIdCached = makeLRUCache(
+  getPartyById,
+  (config: CantonCoinConfig, partyId: string) =>
+    `${getGatewayUrl(config)}_${getNodeId(config)}_${partyId}`,
+  hours(1),
+);
 
 export async function getPartyByPubKey(config: CantonCoinConfig, pubKey: string): Promise<Party> {
   return await getParty(config, pubKey, "public-key");
@@ -155,10 +202,8 @@ export async function isTopologyChangeRequired(config: CantonCoinConfig, pubKey:
   }
 }
 
-const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string => {
-  const nodeId = getNodeId(config);
-  return `${pubKey}_${nodeId}`;
-};
+const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}_${pubKey}`;
 
 export const isTopologyChangeRequiredCached = makeLRUCache(
   isTopologyChangeRequired,
@@ -192,10 +237,8 @@ export async function getEnabledInstruments(config: CantonCoinConfig): Promise<S
   }
 }
 
-const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string => {
-  const nodeId = getNodeId(config);
-  return `instruments_${nodeId}`;
-};
+const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string =>
+  `instruments_${getGatewayUrl(config)}_${getNodeId(config)}`;
 
 export const getEnabledInstrumentsCached = makeLRUCache(
   getEnabledInstruments,

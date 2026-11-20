@@ -1,31 +1,68 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
+  useIsFocused,
   useNavigation,
   useRoute,
   type NavigationProp,
   type ParamListBase,
   type RouteProp,
 } from "@react-navigation/native";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
+import { deviceReportsRecoveryKey, SeedPath } from "@features/platform-device-onboarding";
+import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
 import { useTranslation } from "~/context/Locale";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setHasBeenUpsoldProtect } from "~/actions/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
-import type { ScreenName } from "~/const";
 import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
+import type {
+  ChecksScreenProps,
+  DeviceUnlockSheetProps,
+} from "LLM/features/DeviceOnboarding/types";
+import { lastSavedStepName } from "LLM/features/DeviceOnboarding/components/QuitConfirmation/lastSavedStep";
 import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
-import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
-import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
-import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
-import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
-import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
-import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { useAfterDelay } from "LLM/features/DeviceOnboarding/hooks/useAfterDelay";
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
-import { lastSavedStepName } from "../../components/QuitConfirmation/lastSavedStep";
+import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
+import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
+import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
+import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
+import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
+import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import type { RecoverRestoreScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/Restore";
+import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
+import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
+import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
+import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import {
+  canRetryWithoutUser,
+  giveUpAfterPowerOnMs,
+  isDeviceOffDuringChecks,
+  powerOnAfterUpdateDelayMs,
+} from "LLM/features/DeviceOnboarding/utils/deviceOff";
+import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
+import {
+  deviceLockedState,
+  toDeviceUnlockSheetProps,
+} from "LLM/features/DeviceOnboarding/utils/deviceLocked";
+import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
+
+/** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
+const recoverDeferredEvent = "recover_deferred_from_new_seed";
+const defaultProtectId = "protect-prod";
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -39,18 +76,38 @@ export type QuitConfirmationModel = {
   onLeave: () => void;
 };
 
-export type UnlockSheetModel = Readonly<{
-  deviceModelId: Device["modelId"];
-  deviceName: string;
-}>;
+export type PowerOnSheetModel = DeviceUnlockSheetProps & Readonly<{ onQuit: () => void }>;
 
 export type DeviceOnboardingFunnelModel = (
   | {
       status: "unseededIntroKaraoke";
       unseededIntroKaraoke: UnseededIntroKaraokeScreenProps;
-      unlockSheet: UnlockSheetModel | null;
+      unlockSheet: DeviceUnlockSheetProps | null;
     }
-  | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
+  | { status: "unseededSuccessKaraoke"; unseededSuccessKaraoke: UnseededSuccessKaraokeScreenProps }
+  | {
+      status: "checks";
+      checks: ChecksScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+      powerOnSheet: PowerOnSheetModel | null;
+      reconnectSheet: ReconnectSheetProps | null;
+    }
+  | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
+  | {
+      status: "recoverRestore";
+      recoverRestore: RecoverRestoreScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
+  | {
+      status: "recoverNewSeed";
+      recoverNewSeed: RecoverNewSeedScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
+  | {
+      status: "success";
+      success: SuccessKaraokeScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+    }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
       status: "failed";
@@ -71,25 +128,49 @@ type LeaveActions = {
   allowLeave: boolean;
   state: string | null;
   status: string;
+  unseeded: boolean;
+  seedPath: SeedPath | null;
   confirmsQuit: boolean;
+  quitConfirmationOpen: boolean;
   leaveFirmwareReconnect: () => void;
   closeFirmwareHandover: () => void;
   requestQuit: () => void;
+  continueSetup: () => void;
   quitMachine: () => void;
   leave: () => void;
+  leaveFinishedSetup: () => void;
+  dismissRestore: () => boolean;
 };
+
+function showsUnseededSuccess({
+  unseeded,
+  state,
+  seedPath,
+}: Pick<LeaveActions, "unseeded" | "state" | "seedPath">) {
+  return unseeded && state === "done" && seedPath !== SeedPath.NewSeed;
+}
+
+function isRunning({ status, state }: LeaveActions) {
+  return status === "running" || state === "awaitingSession";
+}
 
 function blockBack(event: BackEvent, actions: LeaveActions) {
   if (actions.allowLeave) return;
   const action = event.data.action.type;
   if (action !== "GO_BACK" && action !== "POP") return;
   event.preventDefault();
+  if (actions.dismissRestore()) return;
+  if (showsUnseededSuccess(actions)) {
+    actions.leaveFinishedSetup();
+    return;
+  }
   if (actions.state === awaitingSessionAfterFirmwareUpdateState) {
     actions.leaveFirmwareReconnect();
     return;
   }
-  if (actions.status === "running" && actions.state) {
-    if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
+  if (isRunning(actions) && actions.state) {
+    if (actions.confirmsQuit && actions.quitConfirmationOpen) actions.continueSetup();
+    else if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
     else if (actions.confirmsQuit) actions.requestQuit();
     else actions.quitMachine();
     return;
@@ -98,7 +179,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
 }
 
 function quitOrLeaveSession(actions: LeaveActions) {
-  if (actions.status === "running" && actions.state) {
+  if (isRunning(actions) && actions.state) {
     if (actions.confirmsQuit) {
       actions.requestQuit();
       return;
@@ -118,11 +199,14 @@ type ScreenCopy = {
 
 type ScreenActions = {
   state: string | null;
+  liveState: string | null;
   error: string | null;
   device: ChecksScreenProps["device"] | null;
   screenState: ChecksScreenProps["state"] | null;
   phase: ReturnType<typeof phaseOf>;
   unseeded: boolean;
+  seedPath: SeedPath | null;
+  wasReadOnlyAtEntry: boolean;
   confirmsQuit: boolean;
   suspendSheets: boolean;
   quitConfirmation: QuitConfirmationModel | null;
@@ -174,9 +258,23 @@ function connectingScreen(
   };
 }
 
+function successScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null {
+  if (!showsUnseededSuccess(actions)) {
+    return null;
+  }
+  return {
+    status: "unseededSuccessKaraoke",
+    unseededSuccessKaraoke: { wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry },
+    quitConfirmation: null,
+  };
+}
+
 function earlyScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null {
   const { copy, quitConfirmation } = actions;
-  if (actions.state === awaitingSessionAfterFirmwareUpdateState) {
+  if (
+    actions.state === awaitingSessionAfterFirmwareUpdateState &&
+    actions.phase !== "resumingChecks"
+  ) {
     if (actions.error) {
       return failedScreen(
         copy,
@@ -218,7 +316,8 @@ type HeldState = Readonly<{ state: string; afterLock: boolean }>;
 
 function isHoldingLockedScreen(machineState: string | null, held: HeldState | null) {
   return (
-    machineState === "deviceLocked" || (machineState === "readingState" && held?.afterLock === true)
+    machineState === deviceLockedState ||
+    (machineState === "readingState" && held?.afterLock === true)
   );
 }
 
@@ -236,6 +335,14 @@ function nextHeldState(
   return held?.state === machineState && !held.afterLock
     ? held
     : { state: machineState, afterLock: false };
+}
+
+function checksQuit(actions: ScreenActions): () => void {
+  if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
+    return actions.leaveFirmwareReconnect;
+  }
+  if (actions.state === firmwareUpdateDelegatedState) return actions.closeFirmwareHandover;
+  return actions.leaveFromHeader;
 }
 
 function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
@@ -266,10 +373,10 @@ function withUnlockSheet(
   device: ScreenActions["device"],
 ): DeviceOnboardingFunnelModel {
   if (!holdingLockedScreen || !device) return built;
-  const unlockSheet = locked
-    ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
-    : null;
+  const unlockSheet = locked ? toDeviceUnlockSheetProps(device) : null;
   if (built.status === "checks") return { ...built, unlockSheet };
+  if (built.status === "setup") return { ...built, unlockSheet };
+  if (built.status === "recoverRestore") return { ...built, unlockSheet };
   if (built.status === "unseededIntroKaraoke") {
     return {
       ...built,
@@ -278,6 +385,43 @@ function withUnlockSheet(
     };
   }
   return built;
+}
+
+function productNameOf(modelId: ChecksScreenProps["device"]["modelId"]) {
+  return getDeviceModel(modelId).productName || modelId;
+}
+
+type DeviceOffOverlay = Readonly<{
+  active: boolean;
+  device: ScreenActions["device"];
+  quitConfirmationOpen: boolean;
+  onQuit: () => void;
+  onRetry: (() => void) | null;
+}>;
+
+function checksWhileDeviceOff(
+  built: DeviceOnboardingFunnelModel,
+  { active, device, quitConfirmationOpen, onQuit, onRetry }: DeviceOffOverlay,
+): DeviceOnboardingFunnelModel {
+  if (!active || built.status !== "checks") return built;
+  if (onRetry) {
+    return {
+      ...built,
+      reconnectSheet: device
+        ? {
+            connection: { state: "failed", retry: onRetry },
+            productName: productNameOf(device.modelId),
+            suspendSheets: quitConfirmationOpen,
+            onQuit,
+          }
+        : null,
+    };
+  }
+  return {
+    ...built,
+    powerOnSheet:
+      device && !quitConfirmationOpen ? { ...toDeviceUnlockSheetProps(device), onQuit } : null,
+  };
 }
 
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
@@ -304,6 +448,8 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     status: "checks",
     quitConfirmation: actions.quitConfirmation,
     unlockSheet: null,
+    powerOnSheet: null,
+    reconnectSheet: null,
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
@@ -323,12 +469,63 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
         actions.state === "checks.checksSucceeded"
           ? () => actions.send({ type: "CONTINUE" })
           : undefined,
-      onQuit:
-        actions.state === firmwareUpdateDelegatedState
-          ? actions.closeFirmwareHandover
-          : actions.leaveFromHeader,
+      onQuit: checksQuit(actions),
     },
   };
+}
+
+function useRestoreRecoverHandoff({
+  focused,
+  liveDevice,
+  navigation,
+  pollingPaused,
+  protectId,
+  restoreShown,
+  send,
+  state,
+}: Readonly<{
+  focused: boolean;
+  liveDevice: Device | null;
+  navigation: NavigationProp<ParamListBase>;
+  pollingPaused: boolean;
+  protectId: string;
+  /** False once the user closed the restore screen, even if the machine is still on that step. */
+  restoreShown: () => boolean;
+  send: DeviceOnboardingSession["send"];
+  state: DeviceOnboardingSession["state"];
+}>): () => void {
+  const openingRecover = useRef(false);
+  const awaitingPollingResume = useRef(false);
+  const continueRestore = useCallback(() => {
+    openingRecover.current = true;
+    send({ type: "PAUSE_POLLING" });
+  }, [send]);
+
+  useEffect(() => {
+    if (!openingRecover.current || !pollingPaused) return;
+    openingRecover.current = false;
+    if (state !== "deviceSetup.restoreRecover" || !restoreShown()) {
+      send({ type: "RESUME_POLLING" });
+      return;
+    }
+    awaitingPollingResume.current = true;
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.DeviceOnboardingRecover,
+      params: {
+        platform: protectId,
+        device: liveDevice ?? undefined,
+        redirectTo: "restore",
+      },
+    });
+  }, [liveDevice, navigation, pollingPaused, protectId, restoreShown, send, state]);
+
+  useEffect(() => {
+    if (!focused || !awaitingPollingResume.current) return;
+    awaitingPollingResume.current = false;
+    send({ type: "RESUME_POLLING" });
+  }, [focused, send]);
+
+  return continueRestore;
 }
 
 export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelModel {
@@ -362,7 +559,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   useDeviceOnboardingHost(host);
   const started = useRef(false);
+  const dismissRestoreRef = useRef<(() => void) | null>(null);
   const [heldState, setHeldState] = useState<HeldState | null>(null);
+  const dismissRestore = useCallback(() => {
+    const dismiss = dismissRestoreRef.current;
+    if (!dismiss) return false;
+    dismiss();
+    return true;
+  }, []);
+  const restoreShown = useCallback(() => dismissRestoreRef.current !== null, []);
 
   useEffect(() => {
     connectWhenIdle(started, onboarding);
@@ -384,6 +589,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     navigation.goBack();
   }, [navigation, onboarding]);
 
+  const leaveFinishedSetup = useCallback(() => {
+    allowLeave.current = true;
+    resetToPortfolio(navigation);
+  }, [navigation]);
+
   const leaveFirmwareReconnect = useCallback(() => {
     allowLeave.current = true;
     onboarding.abortFirmwareReconnect();
@@ -393,7 +603,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "QUIT" });
   }, [send]);
 
-  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
+  const { close: closeFirmwareHandover, returnsWithoutUpdate } = useFirmwareUpdateHandover({
     device: onboarding.liveDevice,
     isDeviceOnboarded: onboarding.context?.isOnboarded ?? false,
     machineState: onboarding.state,
@@ -414,11 +624,19 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     if (quitSent.current) return;
     quitSent.current = true;
     setQuitConfirmationOpen(false);
+    // The machine is already final here: QUIT has nowhere to go, and completed did not navigate.
+    if (onboarding.state === "done") {
+      allowLeave.current = true;
+      resetToPortfolio(navigation);
+      return;
+    }
+    if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
     send({ type: "QUIT" });
-  }, [send]);
+  }, [closeFirmwareHandover, navigation, onboarding.state, send]);
 
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const unseeded = onboardedOnEntry === false;
+  const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const confirmsQuit =
     unseeded || (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
@@ -428,22 +646,34 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       allowLeave: allowLeave.current,
       state: onboarding.state,
       status: onboarding.status,
+      unseeded,
+      seedPath,
       confirmsQuit,
+      quitConfirmationOpen,
       leaveFirmwareReconnect,
       closeFirmwareHandover,
       requestQuit,
+      continueSetup,
       quitMachine,
       leave,
+      leaveFinishedSetup,
+      dismissRestore,
     });
   }, [
     closeFirmwareHandover,
+    continueSetup,
+    dismissRestore,
     leave,
+    leaveFinishedSetup,
     leaveFirmwareReconnect,
     onboarding.state,
     onboarding.status,
+    quitConfirmationOpen,
     quitMachine,
     requestQuit,
     confirmsQuit,
+    seedPath,
+    unseeded,
   ]);
 
   const retry = useCallback(() => {
@@ -462,32 +692,80 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           allowLeave: allowLeave.current,
           state: onboarding.state,
           status: onboarding.status,
+          unseeded,
+          seedPath,
           confirmsQuit,
+          quitConfirmationOpen,
           leaveFirmwareReconnect,
           closeFirmwareHandover,
           requestQuit,
+          continueSetup,
           quitMachine,
           leave,
+          leaveFinishedSetup,
+          dismissRestore,
         });
       }),
     [
       closeFirmwareHandover,
+      continueSetup,
+      dismissRestore,
       leave,
+      leaveFinishedSetup,
       leaveFirmwareReconnect,
       navigation,
       onboarding.state,
       onboarding.status,
+      quitConfirmationOpen,
       quitMachine,
       requestQuit,
       confirmsQuit,
+      seedPath,
+      unseeded,
     ],
   );
 
   const machineState = onboarding.state;
-  const locked = machineState === "deviceLocked";
+  const locked = machineState === deviceLockedState;
   const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
-  const shownState = holdingLockedScreen ? (heldState?.state ?? machineState) : machineState;
-  const phase = phaseOf(shownState, onboardedOnEntry);
+  const returningFromFirmwareUpdate = onboarding.context?.returningFromFirmwareUpdate === true;
+  const deviceOffDuringChecks = isDeviceOffDuringChecks({
+    machineState,
+    heldMachineState: heldState?.state ?? null,
+    onboardedOnEntry,
+    hasLiveDevice: onboarding.liveDevice !== null,
+    returningFromFirmwareUpdate,
+  });
+  const { connect } = onboarding;
+  const liveDeviceId = onboarding.liveDevice?.deviceId;
+  const reconnectToLiveDevice = useCallback(() => connect(liveDeviceId), [connect, liveDeviceId]);
+  useReconnectWhileDeviceOff({
+    deviceOff: deviceOffDuringChecks,
+    error: onboarding.error,
+    connect: reconnectToLiveDevice,
+  });
+  const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
+  const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
+  const phase = phaseOf(shownState, onboardedOnEntry, returningFromFirmwareUpdate);
+  const waitingForUpdatedDevice =
+    phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState;
+  const waitedLongForDeviceAfterUpdate = useAfterDelay(
+    waitingForUpdatedDevice,
+    powerOnAfterUpdateDelayMs,
+  );
+  const [waitAttempt, setWaitAttempt] = useState(0);
+  const askingToPowerOn = waitedLongForDeviceAfterUpdate || deviceOffDuringChecks;
+  const gaveUpWaiting = useAfterDelay(askingToPowerOn, giveUpAfterPowerOnMs, waitAttempt);
+  const reconnectFailed =
+    gaveUpWaiting ||
+    (onboarding.error !== null &&
+      (waitingForUpdatedDevice ||
+        (deviceOffDuringChecks && !canRetryWithoutUser(onboarding.error))));
+  const retryAfterFailure = useCallback(() => {
+    setWaitAttempt(previous => previous + 1);
+    if (waitingForUpdatedDevice) reconnect();
+    else reconnectToLiveDevice();
+  }, [reconnect, reconnectToLiveDevice, waitingForUpdatedDevice]);
   const screenState = checksScreenForPhase(
     phase,
     shownState,
@@ -507,16 +785,124 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     leaveWithoutSaving,
   );
   const leaveFromHeader = confirmsQuit ? requestQuit : quitMachine;
+  const suspendSheets =
+    holdingLockedScreen ||
+    deviceOffDuringChecks ||
+    waitedLongForDeviceAfterUpdate ||
+    reconnectFailed ||
+    quitConfirmation?.isOpen === true;
+  const dispatch = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const recoverFeature = useFeature("protectServicesMobile");
+  const recoverAvailable = recoverFeature?.enabled === true;
+  const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
+  const focused = useIsFocused();
+  const [pastRecover, setPastRecover] = useState(false);
+  const awaitingRecoverReturn = useRef(false);
+
+  useEffect(() => {
+    if (!focused || !awaitingRecoverReturn.current) return;
+    awaitingRecoverReturn.current = false;
+    setPastRecover(true);
+  }, [focused]);
+
+  const finishUnseeded = useCallback(
+    (sawRecoverPitch: boolean) => {
+      completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+      if (sawRecoverPitch) dispatch(setHasBeenUpsoldProtect(true));
+      allowLeave.current = true;
+      resetToPortfolio(navigation);
+    },
+    [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
+  );
+
+  const syncOfferDecided = useRef(false);
+  const liveDevice = onboarding.liveDevice;
+  const recoverPitchBlocksKaraoke =
+    recoverAvailable && seedPath === SeedPath.NewSeed && !pastRecover;
+  const readyForKaraoke = unseeded && machineState === "done" && !recoverPitchBlocksKaraoke;
+  useEffect(() => {
+    if (!focused || !readyForKaraoke || syncOfferDecided.current) return;
+    syncOfferDecided.current = true;
+    if (!offerSync || !liveDevice) return;
+    navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
+      device: liveDevice,
+      wasReadOnlyAtEntry,
+      unseeded: true,
+    });
+  }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
+
+  const continueRestore = useRestoreRecoverHandoff({
+    focused,
+    liveDevice: onboarding.liveDevice,
+    navigation,
+    pollingPaused: onboarding.context?.pollingPaused === true,
+    protectId,
+    restoreShown,
+    send,
+    state: onboarding.state,
+  });
+
+  const openRecover = useCallback(() => {
+    if (!recoverAvailable) return;
+    awaitingRecoverReturn.current = true;
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.DeviceOnboardingRecover,
+      params: {
+        platform: protectId,
+        device: onboarding.liveDevice ?? undefined,
+      },
+    });
+  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable]);
+
+  const remindRecoverLater = useCallback(() => {
+    dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
+    track(recoverDeferredEvent, { page: "Recover new seed" });
+    setPastRecover(true);
+  }, [dispatch]);
+
+  const unseededSetup = useUnseededFunnelViewModel({
+    machineState: shownState,
+    liveMachineState: machineState,
+    onboardedOnEntry,
+    currentStep: onboarding.context?.currentOnboardingStep ?? null,
+    seedPath,
+    pastRecover,
+    recoverAvailable,
+    checksPaused: onboarding.context?.checksPaused === true,
+    genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
+    deviceNotGenuine:
+      genuineCheckCompleted(onboarding.context) &&
+      onboarding.context?.genuineFailureKind === "DEVICE_NOT_GENUINE",
+    firmwareVersion: readString(onboarding.context?.firmwareVersion),
+    availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
+    firmwareDeclined: onboarding.snapshot?.context.firmware?.kind === "declined",
+    returnsWithoutUpdate,
+    reportsRecoveryKey: deviceReportsRecoveryKey(
+      onboarding.context?.deviceModelId,
+      readString(onboarding.context?.firmwareVersion) ?? "",
+    ),
+    device: onboarding.liveDevice,
+    connectionError: onboarding.error,
+    suspendSheets,
+    reconnect: reconnectToLiveDevice,
+    send,
+    onQuit: requestQuit,
+  });
+  dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
   const screen = {
     state: shownState,
+    liveState: machineState,
     error: onboarding.error,
     device,
     screenState,
     phase,
     unseeded,
+    seedPath,
+    wasReadOnlyAtEntry,
     confirmsQuit,
-    suspendSheets: holdingLockedScreen || quitConfirmation?.isOpen === true,
+    suspendSheets,
     quitConfirmation,
     copy: {
       failedTitle: t("deviceOnboarding.connection.failed"),
@@ -537,16 +923,109 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
-  const built = earlyScreen(screen) ?? checksScreen(screen);
+  const built =
+    successScreen(screen) ??
+    screenForUnseeded(unseededSetup, {
+      quitConfirmation,
+      suspendSheets,
+      deviceType: device?.modelId ?? null,
+      deviceVersion: readString(onboarding.context?.firmwareVersion),
+      onSkip: () => setPastRecover(true),
+      onRemindLater: remindRecoverLater,
+      onOpenLiveApp: openRecover,
+      onContinueRestore: continueRestore,
+      onClose: requestQuit,
+      onFinish: finishUnseeded,
+    }) ??
+    earlyScreen(screen) ??
+    checksScreen(screen);
   const nextHeld = nextHeldState(
     heldState,
     machineState,
-    holdingLockedScreen,
-    built.status === "checks" || built.status === "unseededIntroKaraoke",
+    holdingPreviousScreen,
+    built.status === "checks" ||
+      built.status === "setup" ||
+      built.status === "unseededIntroKaraoke" ||
+      built.status === "recoverRestore" ||
+      built.status === "recoverNewSeed" ||
+      built.status === "success",
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return withUnlockSheet(built, holdingLockedScreen, locked, device);
+  return checksWhileDeviceOff(withUnlockSheet(built, holdingLockedScreen, locked, device), {
+    active: deviceOffDuringChecks || waitedLongForDeviceAfterUpdate || reconnectFailed,
+    device,
+    quitConfirmationOpen: quitConfirmation?.isOpen === true,
+    onQuit: waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
+    onRetry: reconnectFailed ? retryAfterFailure : null,
+  });
+}
+
+function restoreDismiss(flow: UnseededFunnelModel | null): (() => void) | null {
+  if (flow?.status !== "recoverRestore") return null;
+  return flow.dismiss;
+}
+
+function screenForUnseeded(
+  flow: UnseededFunnelModel | null,
+  actions: Readonly<{
+    quitConfirmation: QuitConfirmationModel | null;
+    suspendSheets: boolean;
+    deviceType: string | null;
+    deviceVersion: string | null;
+    onSkip: () => void;
+    onRemindLater: () => void;
+    onOpenLiveApp: () => void;
+    onContinueRestore: () => void;
+    onClose: () => void;
+    onFinish: (sawRecoverPitch: boolean) => void;
+  }>,
+): DeviceOnboardingFunnelModel | null {
+  if (flow?.status === "recoverRestore") {
+    return {
+      status: "recoverRestore",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      recoverRestore: {
+        deviceType: actions.deviceType,
+        deviceVersion: actions.deviceVersion,
+        onClose: flow.dismiss,
+        onContinue: actions.onContinueRestore,
+      },
+    };
+  }
+  if (flow?.status === "setup") {
+    return {
+      status: "setup",
+      setup: flow.setup,
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+    };
+  }
+  if (flow?.status === "recoverNewSeed") {
+    return {
+      status: "recoverNewSeed",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      recoverNewSeed: {
+        suspendSheets: actions.suspendSheets,
+        onSkip: actions.onSkip,
+        onRemindLater: actions.onRemindLater,
+        onOpenLiveApp: actions.onOpenLiveApp,
+        onClose: actions.onClose,
+      },
+    };
+  }
+  if (flow?.status === "success") {
+    const sawRecoverPitch = flow.sawRecoverPitch;
+    return {
+      status: "success",
+      quitConfirmation: actions.quitConfirmation,
+      unlockSheet: null,
+      success: { onFinish: () => actions.onFinish(sawRecoverPitch) },
+    };
+  }
+  return null;
 }
 
 function readString(value: unknown): string | null {

@@ -18,7 +18,7 @@ describe("useSponsoredPollingViewModel", () => {
 
     expect(result.current.title).toBe("Your energy is being delivered");
     expect(result.current.elapsedLabel).toContain("00:00");
-    expect(result.current.waitingLabel).toBe("This usually takes up to 30 seconds.");
+    expect(result.current.waitingLabel).toBe("This may take up to 2 minutes.");
   });
 
   it("increments the elapsed counter once per second while polling, and clears the interval on unmount", () => {

@@ -13,7 +13,7 @@ import type { Props as AptosRewardsInfoProps } from "./aptos/StakingFlowModal/In
 import type { Data as AptosUnstakeData } from "./aptos/UnstakingFlowModal/Body";
 import type { Data as AptosWithdrawData } from "./aptos/WithdrawingFlowModal/Body";
 import type { Data as AptosRestakeData } from "./aptos/RestakingFlowModal/Body";
-import type { Data as BitcoinZcashExportKeyData } from "./bitcoin/ZCashExportKeyFlowModal/Body";
+import type { Data as ZcashExportKeyData } from "./zcash/ZCashExportKeyFlowModal/Body";
 import type { EditTransactionModalProps as BitcoinEditTransactionProps } from "./bitcoin/EditTransaction/Modal";
 import type { UserProps as CantonOnboardProps } from "./canton/OnboardModal";
 import type { Props as CantonTooManyUtxosProps } from "./canton/TooManyUtxosModal";
@@ -76,6 +76,7 @@ import type { Data as SolanaDelegationReactivateData } from "./solana/Delegation
 import type { Data as SolanaDelegationWithdrawData } from "./solana/DelegationWithdrawFlowModal/Body";
 import type { Data as StellarAddAssetData } from "./stellar/AddAssetModal/Body";
 import type { Data as XrpAddTokenData } from "./xrp/AddTokenModal/Body";
+import type { Data as XrpManageTokenData } from "./xrp/ManageTokenModal";
 import type { Data as StacksStakeData } from "./stacks/StakeFlowModal/Body";
 import type { Data as StacksUnstakeData } from "./stacks/UnstakeFlowModal/Body";
 import type { Data as SuiDelegateData } from "./sui/DelegationFlowModal/Body";
@@ -100,7 +101,7 @@ export type CoinModalsData = {
   MODAL_APTOS_UNSTAKE: AptosUnstakeData;
   MODAL_APTOS_WITHDRAW: AptosWithdrawData;
   MODAL_APTOS_RESTAKE: AptosRestakeData;
-  MODAL_ZCASH_EXPORT_KEY: BitcoinZcashExportKeyData;
+  MODAL_ZCASH_EXPORT_KEY: ZcashExportKeyData;
   MODAL_BITCOIN_EDIT_TRANSACTION: BitcoinEditTransactionProps;
   MODAL_CANTON_ONBOARD_ACCOUNT: CantonOnboardProps;
   MODAL_CANTON_TOO_MANY_UTXOS: CantonTooManyUtxosProps;
@@ -164,6 +165,7 @@ export type CoinModalsData = {
   MODAL_SOLANA_DELEGATION_WITHDRAW: SolanaDelegationWithdrawData;
   MODAL_STELLAR_ADD_ASSET: StellarAddAssetData;
   MODAL_XRP_ADD_TOKEN: XrpAddTokenData;
+  MODAL_XRP_MANAGE_TOKEN: XrpManageTokenData;
   MODAL_STACKS_STAKE: StacksStakeData;
   MODAL_STACKS_UNSTAKE: StacksUnstakeData;
   MODAL_SUI_DELEGATE: SuiDelegateData;
@@ -196,7 +198,7 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_APTOS_UNSTAKE: () => import("./aptos/UnstakingFlowModal"),
   MODAL_APTOS_WITHDRAW: () => import("./aptos/WithdrawingFlowModal"),
   MODAL_APTOS_RESTAKE: () => import("./aptos/RestakingFlowModal"),
-  MODAL_ZCASH_EXPORT_KEY: () => import("./bitcoin/ZCashExportKeyFlowModal"),
+  MODAL_ZCASH_EXPORT_KEY: () => import("./zcash/ZCashExportKeyFlowModal"),
   MODAL_BITCOIN_EDIT_TRANSACTION: () =>
     import("./bitcoin/EditTransaction/Modal").then(m => ({ default: m.EditTransactionModal })),
   MODAL_CANTON_ONBOARD_ACCOUNT: () => import("./canton/OnboardModal"),
@@ -263,6 +265,7 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_SOLANA_DELEGATION_WITHDRAW: () => import("./solana/DelegationWithdrawFlowModal"),
   MODAL_STELLAR_ADD_ASSET: () => import("./stellar/AddAssetModal"),
   MODAL_XRP_ADD_TOKEN: () => import("./xrp/AddTokenModal"),
+  MODAL_XRP_MANAGE_TOKEN: () => import("./xrp/ManageTokenModal"),
   MODAL_STACKS_STAKE: () => import("./stacks/StakeFlowModal"),
   MODAL_STACKS_UNSTAKE: () => import("./stacks/UnstakeFlowModal"),
   MODAL_SUI_DELEGATE: () => import("./sui/DelegationFlowModal"),

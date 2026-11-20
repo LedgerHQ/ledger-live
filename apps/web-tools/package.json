@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.64.0",
+  "version": "0.65.0-next.0",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -84,8 +84,6 @@
     "bufferutil": "^4.1.0",
     "class-variance-authority": "catalog:",
     "encoding": "^0.1.13",
-    "invariant": "^2.2.4",
-    "lodash": "catalog:",
     "prop-types": "^15.8.1",
     "qrcode": "^1.5.4",
     "re-resizable": "^6.11.2",
@@ -122,11 +120,9 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
-    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/qrcode": "1.5.6",
+    "@types/qrcode": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/semver": "catalog:",

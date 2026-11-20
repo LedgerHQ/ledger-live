@@ -3,7 +3,7 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 7;
+export const BRIDGE_VERSION = 9;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -44,6 +44,8 @@ export type DbBridge = {
   resetAll(): Promise<void>;
   reload(): Promise<void>;
   cleanCache(): Promise<void>;
+  /** Main waits until `callback` settles, or until its timeout, before the app quits. */
+  onFlushRequest(callback: () => Promise<void>): Unsubscribe;
 };
 
 /** A closure: listener identity does not survive the bridge, so removeListener would no-op. */
@@ -115,8 +117,8 @@ export type PowerBridge = {
 };
 
 export type StoreBridge = {
-  set(key: string, value: unknown): void;
-  clear(): void;
+  set(key: string, value: unknown): Promise<void>;
+  clear(): Promise<void>;
 };
 
 /** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
@@ -174,6 +176,8 @@ export const CHANNELS = {
   resetAll: "resetAll",
   reload: "reload",
   cleanCache: "cleanCache",
+  flushWrites: "flushWrites",
+  flushWritesDone: "flushWritesDone",
   updater: "updater",
   deepLinking: "deep-linking",
   webviewDomainCheckViolation: "webview:domain-check-violation",

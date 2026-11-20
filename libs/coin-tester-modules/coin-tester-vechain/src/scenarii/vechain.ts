@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { Account } from "@ledgerhq/types-live";
+import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { THOR_SOLO_RPC, killThorNode, readGenesisChainTag, spawnThorNode } from "../thorNode";
@@ -25,7 +26,26 @@ let recipientAddress = "";
 
 type Tx = ScenarioTransaction<GenericTransaction, Account>;
 
-function makeTransactions(): Tx[] {
+/**
+ * The VTHO fee of a send. The legacy sync puts it on the send itself. The generic bridge leaves the
+ * send without a fee and charges it once, as a FEES operation of the VTHO sub-account.
+ */
+function vthoFee(send: Operation, vtho: TokenAccount, strategy: BridgeStrategy): BigNumber {
+  const fees = vtho.operations.filter(op => op.hash === send.hash && op.type === "FEES");
+  if (strategy === "legacy") {
+    expect(fees).toHaveLength(0);
+    expect(send.fee.gt(0)).toBe(true);
+    return send.fee;
+  }
+  expect(send.fee).toEqual(new BigNumber(0));
+  expect(fees).toHaveLength(1);
+  const [{ value, fee }] = fees;
+  expect(fee.gt(0)).toBe(true);
+  expect(value).toEqual(fee);
+  return fee;
+}
+
+function makeTransactions(strategy: BridgeStrategy): Tx[] {
   const sendVet: Tx = {
     name: "Send 1 VET",
     amount: new BigNumber("1000000000000000000"), // 1 VET (18 decimals)
@@ -40,11 +60,13 @@ function makeTransactions(): Tx[] {
         recipientAddress.toLowerCase(),
       );
       expect(curr.balance).toStrictEqual(prev.balance.minus(new BigNumber("1000000000000000000")));
-      // Fees are paid in VTHO, never deducted from the VET balance directly.
+      // Fees are paid in VTHO, never deducted from the VET balance directly. The VET still held
+      // generates VTHO between syncs, so the VTHO debit is not asserted exactly.
       const vtho = curr.subAccounts?.find(s => s.id === subAccountId);
       const prevVtho = prev.subAccounts?.find(s => s.id === subAccountId);
       expect(vtho).toBeDefined();
       expect(vtho!.balance.lt(prevVtho?.balance ?? new BigNumber(0))).toBe(true);
+      vthoFee(latestOp, vtho!, strategy);
     },
   };
 
@@ -64,11 +86,14 @@ function makeTransactions(): Tx[] {
       // A real (retriable) assertion rather than destructuring an empty array: op indexing can lag
       // one sync behind the balance update.
       expect(sub!.operations.length).toBeGreaterThan(prevSub?.operations.length ?? 0);
-      const [latestOp] = sub!.operations;
-      expect(latestOp.type).toBe("OUT");
-      expect(latestOp.recipients.map(r => r.toLowerCase())).toContain(
+      // The FEES operation of the generic bridge shares the send's hash and date, so it can come
+      // first.
+      const latestOp = sub!.operations.find(op => op.type === "OUT");
+      expect(latestOp).toBeDefined();
+      expect(latestOp!.recipients.map(r => r.toLowerCase())).toContain(
         recipientAddress.toLowerCase(),
       );
+      vthoFee(latestOp!, sub!, strategy);
     },
   };
 
@@ -88,6 +113,7 @@ function makeTransactions(): Tx[] {
       const vtho = curr.subAccounts?.find(s => s.id === subAccountId);
       const prevVtho = prev.subAccounts?.find(s => s.id === subAccountId);
       expect(vtho!.balance.lt(prevVtho?.balance ?? new BigNumber(0))).toBe(true);
+      vthoFee(latestOp, vtho!, strategy);
     },
   };
 
@@ -102,15 +128,17 @@ function makeTransactions(): Tx[] {
       const prevSub = prev.subAccounts?.find(s => s.id === subAccountId);
       expect(sub).toBeDefined();
       expect(sub!.operations.length).toBeGreaterThan(prevSub?.operations.length ?? 0);
-      const [latestOp] = sub!.operations;
-      expect(latestOp.type).toBe("OUT");
-      expect(latestOp.recipients.map(r => r.toLowerCase())).toContain(
+      const latestOp = sub!.operations.find(op => op.type === "OUT");
+      expect(latestOp).toBeDefined();
+      expect(latestOp!.recipients.map(r => r.toLowerCase())).toContain(
         recipientAddress.toLowerCase(),
       );
-      expect(latestOp.value.gt(0)).toBe(true);
-      expect(latestOp.value.gt(prevSub!.balance.times(0.99))).toBe(true);
-      expect(sub!.balance).toEqual(prevSub!.balance.minus(latestOp.value).minus(latestOp.fee));
-      expect(sub!.balance.lte(latestOp.fee.times(10))).toBe(true);
+      expect(latestOp!.value.gt(0)).toBe(true);
+      expect(latestOp!.value.gt(prevSub!.balance.times(0.99))).toBe(true);
+      // No VET is left to generate VTHO, so the debit is exact.
+      const fee = vthoFee(latestOp!, sub!, strategy);
+      expect(sub!.balance).toEqual(prevSub!.balance.minus(latestOp!.value).minus(fee));
+      expect(sub!.balance.lte(fee.times(10))).toBe(true);
       expect(sub!.balance.lt(prevSub!.balance.times(0.01))).toBe(true);
     },
   };
@@ -153,7 +181,7 @@ export const scenarioVechain: Scenario<GenericTransaction, Account> = {
     return { currencyBridge, accountBridge, account, retryInterval: 4000, retryLimit: 30 };
   },
 
-  getTransactions: () => makeTransactions(),
+  getTransactions: (_address, strategy) => makeTransactions(strategy),
 
   beforeAll: account => {
     expect(account.currency.id).toBe(VECHAIN.id);

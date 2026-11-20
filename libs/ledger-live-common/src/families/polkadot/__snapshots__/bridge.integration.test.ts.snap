@@ -4,6 +4,11 @@ exports[`assethub_polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
 [
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "assethub_polkadot",
     "derivationMode": "polkadotbip44",
     "freshAddress": "13rdR5srvWF53VkNeJuz5WkGkG6FSXQQA7ZB5QBGig4ATCs9",

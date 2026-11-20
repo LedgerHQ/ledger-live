@@ -2,13 +2,14 @@ import { log } from "@ledgerhq/logs";
 import { Observable, firstValueFrom, from } from "rxjs";
 import type Transport from "@ledgerhq/hw-transport";
 import semver from "semver";
-import { ExchangeTypes, createExchange, isExchangeTypeNg } from "@ledgerhq/hw-app-exchange";
+import { type ExchangeTypes, createExchange, isExchangeTypeNg } from "@ledgerhq/hw-app-exchange";
+import { EXCHANGE_TYPE } from "../intents/exchangeTypes";
 import { withDevice } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 import { StartExchangeInput } from "./types";
 import { getProviderConfig, getSwapProvider } from "../providers";
 
-const withDevicePromise = (deviceId, fn) =>
+const withDevicePromise = <T>(deviceId: string, fn: (transport: Transport) => Promise<T>) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 type StartNewExchangeTransactionParams = Pick<
@@ -31,7 +32,7 @@ export async function startNewExchangeTransaction(
   if (isCancelled()) return undefined;
   if (provider) {
     switch (exchangeType) {
-      case ExchangeTypes.Swap: {
+      case EXCHANGE_TYPE.swap: {
         const providerConfig = await getSwapProvider(provider);
         if (providerConfig.useInExchangeApp === false) {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);

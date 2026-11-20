@@ -11,8 +11,8 @@ import {
   type DeviceIntentTrackingProperties,
   type DeviceIntentExecutorHeaderContextValue,
   type SourceFlow,
-  useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "@ledgerhq/live-dmk-shared/react";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./ContextInitializer";
@@ -27,13 +27,12 @@ import {
   trackDrawerCloseButtonClicked,
 } from "./utils/trackDeviceIntent";
 
-type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
-  JobState,
-  Input,
-  ExtraProps,
-  InitializationInput,
-  Result
+type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
+  DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitializationInput, Result>,
+  "onUserCancel"
 > & {
+  /** Gets the error screen the user closed, if any. */
+  onUserCancel: (failure: DeviceFlowFailure | null) => void;
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
   analyticsProperties?: DeviceIntentTrackingProperties;
@@ -43,8 +42,9 @@ type PreventableEvent = Pick<Event, "preventDefault">;
 
 export type DeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result = undefined> = {
   /** Always sets `onExecutorStateChanged`, which tracks the flow before calling the caller's. */
-  wrappedProps: Props<JobState, Input, ExtraProps, Result> & {
+  wrappedProps: Omit<Props<JobState, Input, ExtraProps, Result>, "onUserCancel"> & {
     onExecutorStateChanged: (executorState: ExecutorState) => void;
+    onUserCancel: () => void;
   };
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
@@ -161,7 +161,7 @@ export function useDeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Re
         });
       }
     }
-    onUserCancel();
+    onUserCancel(failureRef.current);
   }, [onUserCancel, sourceFlow, analyticsProperties]);
 
   const onOpenChange = useCallback(

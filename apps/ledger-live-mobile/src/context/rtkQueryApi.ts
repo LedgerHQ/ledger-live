@@ -3,6 +3,7 @@ import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
+import { xrpApi } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import {
   calService,
   cardService,
@@ -54,6 +55,7 @@ const APIs = {
   [aleoApi.reducerPath]: aleoApi,
   [hederaApi.reducerPath]: hederaApi,
   [marketApi.reducerPath]: marketApi,
+  [xrpApi.reducerPath]: xrpApi,
 };
 
 /*
@@ -88,8 +90,10 @@ export const llmRtkApiInitialStates = Object.fromEntries(
   ]),
 ) as LLMRTKApiState;
 
-export function applyLlmRTKApiMiddlewares<M extends Tuple<Middleware[]>>(middleware: M) {
-  return llmRTKApi
-    .reduce<Tuple<Middleware[]>>((middleware, api) => middleware.concat(api.middleware), middleware)
-    .concat(apiServices.middlewares);
+export function applyLlmRTKApiMiddlewares<M extends Middleware[]>(middleware: Tuple<M>) {
+  const apiMiddlewares: Middleware[] = [
+    ...llmRTKApi.map(api => api.middleware),
+    ...apiServices.middlewares,
+  ];
+  return middleware.concat(apiMiddlewares);
 }

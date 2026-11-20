@@ -3,10 +3,7 @@ import { http, HttpResponse, server } from "@tests/server";
 import React from "react";
 import { ScreenName } from "~/const";
 import { State } from "~/reducers/types";
-import {
-  InitialRange,
-  LandingPagesNavigatorParamList,
-} from "~/components/RootNavigator/types/LandingPagesNavigator";
+import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
 import * as navigationModule from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
@@ -26,7 +23,7 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
   name: ScreenName.LargeMoverLandingPage,
   params: {
     ledgerIds: "bitcoin,ethereum",
-    initialRange: InitialRange.Day,
+    initialRange: "day",
   },
 };
 

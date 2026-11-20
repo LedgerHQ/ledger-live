@@ -4,7 +4,7 @@ export const ripple = currency({
   type: "CryptoCurrency",
   id: "ripple",
   coinType: 144,
-  name: "XRP",
+  name: "XRPL",
   managerAppName: "XRP",
   ticker: "XRP",
   scheme: "ripple",

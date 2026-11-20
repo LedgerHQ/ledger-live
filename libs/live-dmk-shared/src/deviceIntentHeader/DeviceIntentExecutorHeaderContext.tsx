@@ -1,10 +1,5 @@
 import React from "react";
-
-type CleanupDeviceIntentExecutorHeaderOverride = () => void;
-
-export type DeviceIntentExecutorHeaderContextValue = Readonly<{
-  requestHeaderOverride: () => CleanupDeviceIntentExecutorHeaderOverride;
-}>;
+import type { DeviceIntentExecutorHeaderContextValue } from "./types";
 
 export const DeviceIntentExecutorHeaderContext = React.createContext<
   DeviceIntentExecutorHeaderContextValue | undefined

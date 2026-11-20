@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
-import { isRecipientValid, validateTag } from "../utils";
+import type { CantonCoinConfig } from "../../config";
+import { createMockCoinConfigValue } from "../../test/fixtures";
+import { isRecipientValid, minReserveOf, validateTag } from "../utils";
 
 const VALID_HEX_68 = "1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8";
 
@@ -174,6 +176,19 @@ describe("utils", () => {
       invalidTags.forEach(tag => {
         expect(validateTag(tag)).toBe(false);
       });
+    });
+  });
+
+  describe("minReserveOf", () => {
+    it("should read a reserve beyond the exact float range as written, where BigInt(1e38) would not", () => {
+      expect(minReserveOf({ ...createMockCoinConfigValue(), minReserve: 1e38 })).toBe(10n ** 38n);
+    });
+
+    it("should read an unset reserve as zero", () => {
+      const config: CantonCoinConfig = createMockCoinConfigValue();
+      delete config.minReserve;
+
+      expect(minReserveOf(config)).toBe(0n);
     });
   });
 });

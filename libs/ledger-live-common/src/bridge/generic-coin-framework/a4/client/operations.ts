@@ -8,7 +8,7 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { isOperationType, isStringArray, readFamilyExtra } from "../../utils";
 import { paginateOperations } from "../../paginateOperations";
-import { toA4HttpError } from "./errors";
+import { A4NonNativeFeeError, toA4HttpError } from "./errors";
 import { logA4 } from "../log";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
@@ -217,6 +217,13 @@ export function adaptA4OperationToLiveOperation(
   address: string,
   a4Op: A4OperationView,
 ): Operation[] {
+  // Checked first: an NFT transaction still pays its fee
+  if (a4Op.feeAsset && a4Op.feeAsset !== "native") {
+    throw new A4NonNativeFeeError(
+      `A4 transaction ${a4Op.tx.hash} pays its fee in ${a4Op.feeAsset}`,
+    );
+  }
+
   const details = a4Op.tx.details;
   const ledgerOpType = typeof details?.ledgerOpType === "string" ? details.ledgerOpType : undefined;
 

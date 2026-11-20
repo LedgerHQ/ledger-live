@@ -1,0 +1,8 @@
+{
+  "name": "@shared/ui-animated-qr-code",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { ParamListBase } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BehaviorSubject } from "rxjs";
 
 export type BehaviorSubjectType<T = unknown> = ((..._: T[]) => void) | undefined;
@@ -14,22 +14,6 @@ export const exposedManagerNavLockCallback = new BehaviorSubject<
     target?: string;
   }>
 >(undefined);
-
-export function useIsNavLocked(): boolean {
-  const [isLocked, setIsLocked] = useState(false);
-
-  useEffect(() => {
-    const subscription = lockSubject.subscribe(val => {
-      setIsLocked(val);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  return isLocked;
-}
 
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (

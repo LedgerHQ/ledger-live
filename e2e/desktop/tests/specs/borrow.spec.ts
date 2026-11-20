@@ -11,10 +11,7 @@ import {
   resetLoanState,
   waitForLoanOutcome,
 } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
-import {
-  FF_BORROW_DESKTOP,
-  FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-} from "tests/utils/featureFlagUtils";
+import { FF_BORROW_DESKTOP, FF_ANALYTICS_OPTIN_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import { EXCLUSIVE_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/exclusiveLock";
 
@@ -75,7 +72,7 @@ const borrowOnChainFixture = {
   userdata: "skip-onboarding-with-last-seen-device",
   speculosApp: openLoanAccount.currency.speculosApp,
   featureFlags: {
-    ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+    ...FF_ANALYTICS_OPTIN_DISABLED,
     ...FF_BORROW_DESKTOP,
   },
 };
@@ -111,7 +108,7 @@ test.describe("Borrow", () => {
     // Isolated seed with a single ETH account — never used for borrow, so cold start is stable in CI.
     userdata: "speculos-x-other-account",
     featureFlags: {
-      ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+      ...FF_ANALYTICS_OPTIN_DISABLED,
       ...FF_BORROW_DESKTOP,
     },
   });

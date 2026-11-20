@@ -1,8 +1,0 @@
-{
-  "name": "@support/fmt",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

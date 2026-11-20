@@ -1,0 +1,67 @@
+{
+  "name": "@shared/ui-animated-qr-code",
+  "version": "0.2.0-next.0",
+  "private": true,
+  "description": "QR code drawn and animated natively on iOS and Android: loading shimmer and copy ripple",
+  "exports": {
+    "./native": "./src/index.native.ts",
+    "./web": "./src/index.web.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "qrcode": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/qrcode": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  }
+}

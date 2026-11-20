@@ -1,5 +1,18 @@
 # @features/platform-market-countervalues
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24982](https://github.com/LedgerHQ/ledger-live/pull/24982) [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c) Thanks [@ysitbon](https://github.com/ysitbon)! - Bind the countervalues rates selectors from the rates slice, at the `countervalues.rates` mount point
+
+### Patch Changes
+
+- Updated dependencies [[`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c)]:
+  - @domain/entity-market-countervalues@0.6.0-next.0
+  - @domain/api-market-countervalues@0.4.1-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.5.1
 
 ### Patch Changes

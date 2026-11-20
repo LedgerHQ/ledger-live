@@ -18,13 +18,15 @@ import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { NavigatorName, ScreenName } from "~/const";
-import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
+import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
 import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
 import { DeviceOnboardingNavigator } from "../navigation/DeviceOnboardingNavigator";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
+import { karaokeTestIds } from "@shared/ui-karaoke/native";
 import {
   checksTestIds,
   unseededIntroKaraokeTestIds,
+  unseededSuccessKaraokeTestIds,
   quitConfirmationTestIds,
   syncOfferTestIds,
 } from "../testIds";
@@ -104,17 +106,20 @@ function OnboardingNavigator() {
         component={PostWelcomeSelection}
         initialParams={{ userHasDevice: true }}
       />
-      <Onboarding.Screen name={ScreenName.OnboardingWelcomeBack} component={AccessExistingWallet} />
       <Onboarding.Screen name={ScreenName.OnboardingDeviceSelection}>
-        {({ route }) => (
-          <BackScreen
-            label={
-              (route.params as { missingDevice?: boolean } | undefined)?.missingDevice
-                ? "missing device list"
-                : "device list"
-            }
-          />
-        )}
+        {({ route }) =>
+          (route.params as { missingDevice?: boolean } | undefined)?.missingDevice ? (
+            <>
+              <BackScreen label="missing device list" />
+              <OnboardingDeviceSelection />
+            </>
+          ) : (
+            <BackScreen label="device list" />
+          )
+        }
+      </Onboarding.Screen>
+      <Onboarding.Screen name={ScreenName.OnboardingUseCase}>
+        {() => <BackScreen label="nano setup" />}
       </Onboarding.Screen>
     </Onboarding.Navigator>
   );
@@ -292,7 +297,7 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
   });
 
-  it("should leave the flow for the onboarding device list when no device is found", async () => {
+  it("should open the onboarding device list above the flow when no device is found", async () => {
     const { user } = renderApp();
 
     await openFlow(user);
@@ -307,11 +312,30 @@ describe("device onboarding flow navigation", () => {
     await user.press(screen.getByText("I don’t see my device"));
 
     expect(await screen.findByText("missing device list")).toBeVisible();
-    expectFlowClosed();
 
     await user.press(screen.getByLabelText("back from missing device list"));
-    expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
-    expectFlowClosed();
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+  });
+
+  it("should remove the flow when the user picks a Nano from the missing device list", async () => {
+    const { user } = renderApp();
+
+    await openFlow(user);
+    act(() =>
+      emitScan?.({
+        type: ConnectNewDeviceUIStateTypes.Discovering,
+        devices: [],
+        scanningTransports: [rnBleTransportIdentifier],
+        showDeviceNotFound: true,
+      }),
+    );
+    await user.press(screen.getByText("I don’t see my device"));
+    await user.press(await screen.findByTestId("onboarding-device-selection-nanoX"));
+
+    expect(await screen.findByText("nano setup")).toBeVisible();
+    expect(
+      screen.queryByTestId("onboarding-connect-close", { includeHiddenElements: true }),
+    ).toBeNull();
   });
 
   it("should complete onboarding and go back to the portfolio after the checks", async () => {
@@ -337,6 +361,38 @@ describe("device onboarding flow navigation", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
   });
 
+  it("should end a restore on the success karaoke and complete onboarding on its last tap", async () => {
+    answerWelcome(device);
+    const { user, store } = renderApp({ firstLaunch: true });
+
+    await user.press(await screen.findByTestId("onboarding-setupLedger"));
+    showStax(device);
+    await user.press(screen.getByLabelText("Connect Ledger Stax"));
+    for (let tap = 0; tap < 3; tap++) {
+      await user.press(await screen.findByTestId(karaokeTestIds.advance));
+    }
+    await user.press(await screen.findByTestId(unseededIntroKaraokeTestIds.action));
+    device.acceptToggle();
+    await waitFor(() => act(() => device.passGenuineCheck()));
+    await waitFor(() => act(() => device.reportFirmwareUpToDate()));
+    device.acceptToggle();
+    const words = { numberOfWords: 24, currentWordIndex: 0 };
+    device.answerState({ ...words, onboardingState: OnboardingStep.RestoreSeed });
+    device.answerState({ ...words, onboardingState: OnboardingStep.Ready, isOnboarded: true });
+
+    expect(
+      await screen.findByTestId(unseededSuccessKaraokeTestIds.screen, {}, { timeout: 5000 }),
+    ).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    await user.press(await screen.findByRole("button", { name: "Explore now" }));
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+  });
+
   it("should open Ledger Sync from the sync offer after the checks", async () => {
     answerSeeded(device);
     const { user } = renderApp({ offerLedgerSync: true });
@@ -354,7 +410,6 @@ describe("device onboarding flow navigation", () => {
 
     await user.press(await screen.findByLabelText("portfolio connect"));
     await user.press(await screen.findByTestId("onboarding-accessWallet"));
-    await user.press(await screen.findByTestId("Existing Wallet | Connect"));
     expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
     showStax(device);
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
@@ -363,7 +418,7 @@ describe("device onboarding flow navigation", () => {
     expectFlowClosed();
 
     await user.press(screen.getByLabelText("back from old touchscreen setup"));
-    expect(await screen.findByTestId("Existing Wallet | Connect")).toBeVisible();
+    expect(await screen.findByTestId("onboarding-accessWallet")).toBeVisible();
     expectFlowClosed();
   });
 

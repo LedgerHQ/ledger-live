@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
-import { AccountAssetPicker } from "./AccountAssetPicker.native";
+import { AccountAssetPicker } from "./AccountAssetPicker";
 import type { AccountAssetPickerProps, AccountAssetPickerRow } from "./AccountAssetPicker.types";
 
 jest.mock("@ledgerhq/crypto-icons/native", () => () => null);

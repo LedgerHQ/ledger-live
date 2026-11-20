@@ -43,7 +43,3 @@ export function useDeviceSimulationDevToolViewModel() {
     resetDevices,
   };
 }
-
-export type DeviceSimulationDevToolViewModel = ReturnType<
-  typeof useDeviceSimulationDevToolViewModel
->;

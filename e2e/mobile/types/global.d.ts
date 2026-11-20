@@ -13,7 +13,6 @@ import type {
   $Owner as $OwnerType,
   $ParentSuite as $ParentSuiteType,
 } from "jest-allure2-reporter/api";
-import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate as DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
@@ -59,62 +58,6 @@ declare global {
   var Fee: typeof FeeType;
   var AppInfos: typeof AppInfosType;
   var Swap: typeof SwapType;
-
-  var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
-  var countElements: typeof NativeElementHelpers.countElements;
-  var countElementsById: typeof NativeElementHelpers.countElementsById;
-  var detoxExpect: typeof NativeElementHelpers.expect;
-  var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
-  var getElementById: typeof NativeElementHelpers.getElementById;
-  var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
-  var getElementByIdWithAncestorIds: typeof NativeElementHelpers.getElementByIdWithAncestorIds;
-  var getElementByIdWithDescendantTexts: typeof NativeElementHelpers.getElementByIdWithDescendantTexts;
-  var getElementByText: typeof NativeElementHelpers.getElementByText;
-  var getElementsById: typeof NativeElementHelpers.getElementsById;
-  var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
-  var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
-  var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
-  var getLabelOfElement: typeof NativeElementHelpers.getLabelOfElement;
-  var IsIdPresent: typeof NativeElementHelpers.isIdPresent;
-  var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
-  var revealForTap: typeof NativeElementHelpers.revealForTap;
-  var scrollByPixels: typeof NativeElementHelpers.scrollByPixels;
-  var scrollToId: typeof NativeElementHelpers.scrollToId;
-  var scrollToText: typeof NativeElementHelpers.scrollToText;
-  var tapByElement: typeof NativeElementHelpers.tapByElement;
-  var tapById: typeof NativeElementHelpers.tapById;
-  var tapByIdAndExpectToDisappear: typeof NativeElementHelpers.tapByIdAndExpectToDisappear;
-  var tapByText: typeof NativeElementHelpers.tapByText;
-  var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
-  var typeTextById: typeof NativeElementHelpers.typeTextById;
-  var waitForElement: typeof NativeElementHelpers.waitForElement;
-  var waitForElementById: typeof NativeElementHelpers.waitForElementById;
-  var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
-  var waitForFullyVisibleById: typeof NativeElementHelpers.waitForFullyVisibleById;
-  var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
-
-  var expectWebElementNotVisible: typeof WebElementHelpers.expectWebElementNotVisible;
-  var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
-  var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
-  var getWebElementByCssSelector: typeof WebElementHelpers.getWebElementByCssSelector;
-  var getWebElementById: typeof WebElementHelpers.getWebElementById;
-  var getWebElementByTag: typeof WebElementHelpers.getWebElementByTag;
-  var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
-  var getWebElementByXpath: typeof WebElementHelpers.getWebElementByXpath;
-  var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
-  var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
-  var getWebElementText: typeof WebElementHelpers.getWebElementText;
-  var isWebElementPresent: typeof WebElementHelpers.isWebElementPresent;
-  var scrollToWebElement: typeof WebElementHelpers.scrollToWebElement;
-  var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
-  var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
-  var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
-  var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
-  var waitForWebviewContentToRender: typeof WebElementHelpers.waitForWebviewContentToRender;
-  var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
-  var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
-  var waitWebElement: typeof WebElementHelpers.waitWebElement;
-  var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 
   var getAccountAddress: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").getAccountAddress;
   var liveDataCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataCommand;

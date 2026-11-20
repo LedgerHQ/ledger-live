@@ -1,7 +1,8 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { BlockingStateType, DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
+import { BlockingStateType } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,

@@ -198,8 +198,6 @@ export const mobileCardsFromBrazeSelector = (s: State) => s.dynamicContent.mobil
 
 export const localMobileCardsSelector = (s: State) => s.dynamicContent.localMobileCards;
 
-export const localCategoriesCardsSelector = (s: State) => s.dynamicContent.localCategoriesCards;
-
 export const isDynamicContentLoadingSelector: (s: State) => boolean = (s: State) =>
   s.dynamicContent.isLoading;
 

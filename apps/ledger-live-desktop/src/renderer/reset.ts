@@ -19,7 +19,7 @@ export async function hardReset() {
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
   await resetAll();
-  resetStore();
+  await resetStore();
   window.localStorage.clear();
 }
 export function useHardReset() {

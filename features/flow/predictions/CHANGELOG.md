@@ -1,5 +1,16 @@
 # @features/flow-predictions
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24613](https://github.com/LedgerHQ/ledger-live/pull/24613) [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Animate the Send and Predictions dialog heights with Lumen's `animated` Dialog prop instead of `@shared/ui-animated-height`, which is removed
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-predictions@0.4.2-next.0
+
 ## 0.3.0
 
 ### Minor Changes

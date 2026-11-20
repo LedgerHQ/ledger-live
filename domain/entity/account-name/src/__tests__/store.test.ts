@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { parseAnyAccountId } from "@domain/entity-account";
 import {
+  accountNameSelector,
   accountNamesSlice,
   bulkSetAccountNames,
   initFromUserData,
   setAccountName,
   setNamesForAccounts,
 } from "../slice";
-import { accountNameSelector } from "../selectors";
 
 function makeStore() {
   return configureStore({ reducer: { accountNames: accountNamesSlice.reducer } });

@@ -46,5 +46,3 @@ export function useChartOptionsViewModel({ currencyId }: Params) {
     [isHidden, isSheetOpen, openSheet, closeSheet, onToggleTransactions, t],
   );
 }
-
-export type ChartOptionsViewModel = ReturnType<typeof useChartOptionsViewModel>;

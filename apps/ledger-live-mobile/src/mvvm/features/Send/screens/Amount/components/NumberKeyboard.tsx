@@ -7,6 +7,7 @@ import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 type NumberKeyboardProps = Readonly<{
   onKeyPress: (key: string) => void;
   allowDecimal?: boolean;
+  compact?: boolean;
 }>;
 
 const KEYS = [
@@ -16,7 +17,29 @@ const KEYS = [
   [".", "0", "delete"],
 ];
 
-export function NumberKeyboard({ onKeyPress, allowDecimal = true }: NumberKeyboardProps) {
+const KEY_HEIGHT = 52;
+const MIN_TOUCH_TARGET_HEIGHT = 48;
+
+type Spacings = Readonly<{ s4: number }>;
+
+function getRowPitch(spacings: Spacings, compact: boolean) {
+  return compact
+    ? { keyHeight: MIN_TOUCH_TARGET_HEIGHT, rowGap: 0 }
+    : { keyHeight: KEY_HEIGHT, rowGap: spacings.s4 };
+}
+
+export function getNumberKeyboardCompactSaving(spacings: Spacings) {
+  const regular = getRowPitch(spacings, false);
+  const compact = getRowPitch(spacings, true);
+  const savingPerRow = regular.keyHeight + regular.rowGap - compact.keyHeight - compact.rowGap;
+  return KEYS.length * savingPerRow;
+}
+
+export function NumberKeyboard({
+  onKeyPress,
+  allowDecimal = true,
+  compact = false,
+}: NumberKeyboardProps) {
   const styles = useStyleSheet(
     theme => ({
       container: {
@@ -26,12 +49,12 @@ export function NumberKeyboard({ onKeyPress, allowDecimal = true }: NumberKeyboa
       row: {
         flexDirection: "row",
         justifyContent: "space-around",
-        marginBottom: theme.spacings.s4,
+        marginBottom: getRowPitch(theme.spacings, compact).rowGap,
         paddingHorizontal: theme.spacings.s8,
       },
       key: {
         width: 72,
-        height: 52,
+        height: getRowPitch(theme.spacings, compact).keyHeight,
         justifyContent: "center",
         alignItems: "center",
       },
@@ -43,7 +66,7 @@ export function NumberKeyboard({ onKeyPress, allowDecimal = true }: NumberKeyboa
         justifyContent: "center",
       },
     }),
-    [],
+    [compact],
   );
 
   const handlePress = (key: string) => {

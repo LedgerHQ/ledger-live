@@ -237,7 +237,7 @@ describe("coinModuleCallLogger", () => {
   it("logs a transaction-path call as info", () => {
     coinModuleCallLogger(call);
     expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", {
-      coinModule: { ...call, sampleRate: 1, inSample: true },
+      coinModule: { ...call, tier: "transaction", sampleRate: 1, inSample: true },
     });
   });
 
@@ -247,7 +247,12 @@ describe("coinModuleCallLogger", () => {
     const failure = { ...call, method: "getBalance", status: "failure" as const };
     coinModuleCallLogger(failure);
     expect(DdLogs.error).toHaveBeenCalledWith("coin_module_call", {
-      coinModule: { ...failure, sampleRate: observabilityOn.syncPathSampleRate, inSample: false },
+      coinModule: {
+        ...failure,
+        tier: "sync",
+        sampleRate: observabilityOn.syncPathSampleRate,
+        inSample: false,
+      },
     });
     random.mockRestore();
   });

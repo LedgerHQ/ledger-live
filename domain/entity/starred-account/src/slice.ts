@@ -33,6 +33,13 @@ export const starredAccountsSlice = createSlice({
       return next;
     },
   },
+  selectors: {
+    isStarredAccountSelector: (state, { accountId }: { accountId: string }): boolean =>
+      state.has(parseAnyAccountId(accountId)),
+  },
 });
 
 export const { setAccountStarred, initStarredFromIds } = starredAccountsSlice.actions;
+
+/** Bound to the slice state: callers pass the starred set, wherever it is mounted. */
+export const { isStarredAccountSelector } = starredAccountsSlice.getSelectors();

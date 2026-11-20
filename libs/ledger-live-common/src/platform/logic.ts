@@ -98,8 +98,10 @@ export async function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  const { canEditFees, liveTx, hasFeesProvided } =
-    await getPlatformTransactionSignFlowInfos(platformTransaction);
+  const { canEditFees, liveTx, hasFeesProvided } = await getPlatformTransactionSignFlowInfos(
+    platformTransaction,
+    account,
+  );
 
   if (accountFamily !== liveTx.family) {
     return Promise.reject(
@@ -211,8 +213,10 @@ export async function completeExchangeLogic(
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
   const platformTransaction = deserializePlatformTransaction(transaction);
-  const { liveTx: liveTransaction } =
-    await getPlatformTransactionSignFlowInfos(platformTransaction);
+  const { liveTx: liveTransaction } = await getPlatformTransactionSignFlowInfos(
+    platformTransaction,
+    fromAccount,
+  );
 
   if (liveTransaction.family !== mainFromAccountFamily) {
     return Promise.reject(

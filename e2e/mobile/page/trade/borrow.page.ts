@@ -88,6 +88,9 @@ export default class BorrowPage {
     webByXPath(`//*[(self::button or @role='button') and normalize-space(.)='${symbol}']`);
 
   private readonly keypadDigit = (digit: string) => webById(`custom-keyboard-key-${digit}`);
+  private readonly executionElement = (id: string) => webById(id);
+  private readonly stepOutcome = (doneIds: string[]) =>
+    webByCss(`${anyTestId(doneIds)}, ${this.executionErrorLocator}`);
 
   private chainAccount?: string;
 
@@ -157,12 +160,7 @@ export default class BorrowPage {
   @Step("Expect the loan to value")
   async expectLoanToValue(percentage: string) {
     await this.simulateLoanScreen.waitVisible();
-    const screenText = await this.body.getText();
-    if (!new RegExp(String.raw`Loan to Value[^\d]*${percentage}`).test(screenText)) {
-      throw new Error(
-        `Expected a loan to value of ${percentage} but the simulate-loan screen showed: ${screenText.replace(/\n+/g, " | ")}`,
-      );
-    }
+    await this.body.expectTextMatching(new RegExp(String.raw`Loan to Value[^\d]*${percentage}`));
   }
 
   @Step("Click Continue on the simulate-loan screen")
@@ -359,7 +357,7 @@ export default class BorrowPage {
   ) {
     const markers = Array.isArray(doneIds) ? doneIds : [doneIds];
     await screen.waitVisible();
-    await webById(markers[0]).expectNotExist();
+    await this.executionElement(markers[0]).expectNotExist();
     await button.scrollToAndTap(EXECUTION_STEP_TIMEOUT_MS);
     await app.walletApiSignatureDrawer.expectVisible();
     await sign();
@@ -384,7 +382,7 @@ export default class BorrowPage {
 
   /** One selector covers the step markers and the execution error, so a failed step surfaces at once. */
   private async awaitStepOutcome(doneIds: string[]) {
-    const outcome = webByCss(`${anyTestId(doneIds)}, ${this.executionErrorLocator}`);
+    const outcome = this.stepOutcome(doneIds);
     let shown: string;
     try {
       shown = await outcome.getIdentifier(EXECUTION_STEP_TIMEOUT_MS);
@@ -421,8 +419,8 @@ export default class BorrowPage {
 
   private async isStepAlreadyDoneOnceRendered(doneId: string, ctaId: string): Promise<boolean> {
     return retryUntilTimeout(async () => {
-      if (await webById(doneId).isVisible(TIMEOUT.xxxsmall)) return true;
-      if (await webById(ctaId).isVisible(TIMEOUT.xxxsmall)) return false;
+      if (await this.executionElement(doneId).isVisible(TIMEOUT.xxxsmall)) return true;
+      if (await this.executionElement(ctaId).isVisible(TIMEOUT.xxxsmall)) return false;
       throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
     }, STEP_STATE_TIMEOUT_MS);
   }

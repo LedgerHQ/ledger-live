@@ -1,10 +1,13 @@
-import { payCardAuthSlice, payCardAuthInitialState, setHasCard, setSignedIn } from "../slice";
 import {
+  payCardAuthSlice,
+  payCardAuthInitialState,
+  setHasCard,
+  setSignedIn,
   selectPayCardAuth,
   selectHasCard,
   selectCardAuthStatus,
   selectIsSignedIn,
-} from "../selectors";
+} from "../slice";
 
 const reducer = payCardAuthSlice.reducer;
 const root = (state = payCardAuthInitialState) => ({ payCardAuth: state });
@@ -57,7 +60,7 @@ describe("payCardAuth slice", () => {
 describe("payCardAuth selectors", () => {
   it("selectPayCardAuth returns the full slice state", () => {
     const state = reducer(undefined, setHasCard(true));
-    expect(selectPayCardAuth(root(state))).toEqual(state);
+    expect(selectPayCardAuth(root(state))).toBe(state);
   });
 
   it("selectHasCard reflects the flag", () => {

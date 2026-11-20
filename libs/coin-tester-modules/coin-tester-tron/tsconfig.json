@@ -1,6 +1,8 @@
 {
   "extends": "@support/tsconfig/lib",
   "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "esnext",
     "composite": true,
     "types": ["node", "jest"]
   },

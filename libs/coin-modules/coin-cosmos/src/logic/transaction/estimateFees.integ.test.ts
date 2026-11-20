@@ -1,5 +1,5 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { makeTestApi, makeTestConfig, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
 import { estimateFees } from "./estimateFees";
 
 const SENDER = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -15,8 +15,8 @@ const sendIntent = {
 
 describe("estimateFees (integ, Cosmos Hub)", () => {
   it("simulates a send and returns a positive fee estimate (simulation only — never signs or broadcasts)", async () => {
-    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
-    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const config = cosmosDefaults.cosmos;
+    coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
 
     const fees = await estimateFees(config, "cosmos", sendIntent);
 

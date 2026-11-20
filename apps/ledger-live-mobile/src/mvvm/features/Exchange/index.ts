@@ -1,5 +1,1 @@
-export {
-  getAccountsForCurrencies,
-  resolveCurrencyIds,
-  type AccountWithParent,
-} from "./utils/currencyAccounts";
+export { getAccountsForCurrencies, resolveCurrencyIds } from "./utils/currencyAccounts";

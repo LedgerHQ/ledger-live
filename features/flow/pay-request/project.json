@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-pay-request",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

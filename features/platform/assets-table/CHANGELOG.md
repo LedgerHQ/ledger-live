@@ -1,5 +1,13 @@
 # @features/platform-assets-table
 
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c)]:
+  - @features/platform-market-countervalues@0.6.0-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.3.1
 
 ### Patch Changes

@@ -2,7 +2,8 @@ import React from "react";
 import { Image, Linking, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { Alert, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode } from "@shared/ui-qr-code";
+import { useTheme } from "styled-components/native";
 import { Trans } from "~/context/Locale";
 import { PairStatus, usePairing } from "../hooks/usePairing";
 import { useIdAppDetection } from "../hooks/useIdAppDetection";
@@ -10,6 +11,7 @@ import appleStoreBadge from "../images/get_it_on_apple_store.png";
 import googlePlayBadge from "../images/get_it_on_google_play.png";
 
 const storeBadge = Platform.OS === "ios" ? appleStoreBadge : googlePlayBadge;
+const QR_CODE_SIZE = 260;
 
 export default function StepPair({
   currency,
@@ -20,6 +22,7 @@ export default function StepPair({
 }>) {
   const { pairStatus, walletConnectUri, startPairing } = usePairing(currency, onPaired);
   const { isInstalled, openIdApp, storeUrl } = useIdAppDetection();
+  const { colors } = useTheme();
 
   return (
     <Flex flex={1} justifyContent="space-between">
@@ -67,7 +70,11 @@ export default function StepPair({
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <QRCode value={walletConnectUri} size={200} />
+                    <QrCode
+                      value={walletConnectUri}
+                      size={QR_CODE_SIZE}
+                      foregroundColor={colors.constant.black}
+                    />
                   </Flex>
                   <Text variant="body" color="neutral.c70" mt={4} textAlign="center" px={4}>
                     <Trans i18nKey="concordium.onboard.pair.scanQRCodeOrDownload" />

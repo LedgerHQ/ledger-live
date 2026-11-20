@@ -1,5 +1,9 @@
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
-import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
@@ -54,6 +58,186 @@ describe("listOperations", () => {
     jest.clearAllMocks();
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
     mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [] });
+  });
+
+  describe("signature sources", () => {
+    const token2022Ata = () => ({
+      pubkey: getAssociatedTokenAddressSync(
+        new PublicKey(USDC_MINT_FIXTURE),
+        new PublicKey(TEST_ADDRESS),
+        undefined,
+        TOKEN_2022_PROGRAM_ID,
+      ),
+      account: { data: { parsed: { info: { mint: USDC_MINT_FIXTURE } } } },
+    });
+
+    it("skips the Token-2022 accounts when Token-2022 is disabled, as getBalance does", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([]);
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [token2022Ata()] });
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetParsedToken2022AccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetSignaturesForAddress.mock.calls.map(([source]) => source)).toEqual([
+        TEST_ADDRESS,
+      ]);
+    });
+
+    it("walks the Token-2022 associated accounts when Token-2022 is enabled", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([]);
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [token2022Ata()] });
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: true }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetSignaturesForAddress.mock.calls.map(([source]) => source)).toEqual([
+        TEST_ADDRESS,
+        token2022Ata().pubkey.toBase58(),
+      ]);
+    });
+  });
+
+  describe("token account read slot", () => {
+    const encode = (payload: unknown) =>
+      Buffer.from(JSON.stringify(payload), "utf8").toString("base64");
+    const decode = (cursor: string | undefined) =>
+      JSON.parse(Buffer.from(cursor as string, "base64").toString("utf8"));
+
+    it("leaves the signatures above the token account read to the next sync", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+        { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("caps at the older of the two token program reads", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetParsedToken2022AccountsByOwner.mockResolvedValue({
+        context: { slot: 95 },
+        value: [],
+      });
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "between", slot: 98, blockTime: 1700000000, err: null },
+        { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: true }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("does not cap when a token account read reports no slot", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["newer"]]]);
+    });
+
+    it("keeps the cap of a capped cursor on the next page, without reading the token accounts", async () => {
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "prev"
+          ? [
+              { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+              { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+            ]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: encode({ v: 2, sources: { [TEST_ADDRESS]: "prev" }, maxSlot: 100 }),
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
+
+    it("writes the cap back into the next cursor", async () => {
+      // A page that moves no cursor returns it as is: here, through the capped shape.
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "prev", slot: 90, blockTime: null, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        limit: 1,
+        cursor: encode({ v: 2, sources: { [TEST_ADDRESS]: "prev" }, maxSlot: 100 }),
+      });
+
+      expect(decode(result.next)).toEqual({
+        v: 2,
+        sources: { [TEST_ADDRESS]: "prev" },
+        maxSlot: 100,
+      });
+    });
+
+    it("reads a plain source map cursor, from before the cap, without a cap", async () => {
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "prev"
+          ? [{ signature: "newer", slot: 10_000, blockTime: 1700000000, err: null }]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: encode({ [TEST_ADDRESS]: "prev" }),
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).not.toHaveBeenCalled();
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["newer"]]]);
+    });
+
+    it("reads a bare owner signature cursor, and caps from a new token account read", async () => {
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 100 }, value: [] });
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before === "bareSig"
+          ? [
+              { signature: "newer", slot: 120, blockTime: 1700000000, err: null },
+              { signature: "older", slot: 90, blockTime: 1700000000, err: null },
+            ]
+          : [],
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+
+      await listOperations(api, { ...TEST_CONFIG, token2022Enabled: false }, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: "bareSig",
+      });
+
+      expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+      expect(mockGetParsedTransactions.mock.calls).toEqual([[["older"]]]);
+    });
   });
 
   it("should return empty list when no signatures found", async () => {
@@ -748,33 +932,111 @@ describe("listOperations", () => {
     expect(result.items[0].tx.hash).toBe("sig2");
   });
 
-  it("should skip transactions where address is not in accountKeys", async () => {
+  describe("a transaction that changes nothing the address holds", () => {
     const blockTime = 1700000000;
-    const OTHER_ADDRESS = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
-    mockGetSignaturesForAddress.mockResolvedValue([
-      { signature: "sig1", slot: 100, blockTime, err: null },
-    ]);
+    const SPAMMER = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
+    const TOKEN_PROGRAM_ID_STR = TOKEN_PROGRAM_ID.toBase58();
 
-    mockGetParsedTransactions.mockResolvedValue([
-      {
-        transaction: {
-          signatures: ["sig1"],
-          message: {
-            accountKeys: [{ pubkey: new PublicKey(OTHER_ADDRESS) }],
-            recentBlockhash: TEST_BLOCKHASH,
-            instructions: [],
+    // A transfer reaching the owner's USDC account only, the owner absent from the account keys:
+    // the shape of a 0-token address-poisoning transfer, or of a failed one.
+    function transferToOwnerAta(amountAfter: string, err: string | object | null = null) {
+      const ata = ataAddressOf(USDC_MINT_FIXTURE);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+        value: [ataFixture(USDC_MINT_FIXTURE)],
+      });
+      mockGetSignaturesForAddress.mockImplementation(async address =>
+        address === ata ? [{ signature: "spam1", slot: 100, blockTime, err }] : [],
+      );
+      const usdcBalance = (amount: string) => ({
+        accountIndex: 1,
+        mint: USDC_MINT_FIXTURE,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount },
+      });
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["spam1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(SPAMMER) }, { pubkey: new PublicKey(ata) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [],
+            },
+          },
+          meta: {
+            fee: 5000,
+            err,
+            preBalances: [1_000_000, 2_039_280],
+            postBalances: [995_000, 2_039_280],
+            preTokenBalances: [usdcBalance("1000")],
+            postTokenBalances: [usdcBalance(amountAfter)],
           },
         },
-        meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
-      },
-    ]);
+      ]);
+    }
 
-    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
-      minHeight: 0,
-      order: "desc",
+    it.each([
+      ["a transfer of 0 tokens", "1000", null],
+      ["a failed transfer", "1000", { InstructionError: [0, "Custom"] }],
+    ])(
+      "records %s as a hidden NONE row, so a caller resuming from its newest row does not fetch it again",
+      async (_, amountAfter, err) => {
+        transferToOwnerAta(amountAfter, err);
+
+        const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+          minHeight: 0,
+          order: "desc",
+        });
+
+        expect(result.items).toEqual([
+          expect.objectContaining({
+            type: "NONE",
+            value: 0n,
+            asset: { type: "native" },
+            senders: [],
+            recipients: [],
+            tx: expect.objectContaining({
+              hash: "spam1",
+              block: expect.objectContaining({ height: 100 }),
+              failed: err !== null,
+            }),
+          }),
+        ]);
+      },
+    );
+
+    it("adds no NONE row next to a real change", async () => {
+      transferToOwnerAta("1500");
+
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+
+      expect(result.items).toEqual([
+        expect.objectContaining({ type: "IN", value: 500n, asset: expect.anything() }),
+      ]);
+      expect(result.items[0].asset.type).not.toBe("native");
     });
 
-    expect(result.items).toHaveLength(0);
+    it("keeps the resume point moving: the next walk from above it fetches nothing", async () => {
+      transferToOwnerAta("1000");
+      const first = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+      const newestHeight = Math.max(...first.items.map(op => op.tx.block.height));
+      mockGetParsedTransactions.mockClear();
+
+      const second = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: newestHeight + 1,
+        order: "desc",
+      });
+
+      expect(second.items).toEqual([]);
+      expect(mockGetParsedTransactions).not.toHaveBeenCalled();
+    });
   });
 
   it("should detect NONE type for non-fee-payer with zero balance delta", async () => {

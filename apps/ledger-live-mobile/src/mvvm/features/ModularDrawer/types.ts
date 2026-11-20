@@ -78,7 +78,3 @@ export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBa
   (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) & {
     cancelCallbackId?: string;
   } & TExtras;
-
-export type OpenDrawer<TExtras extends object = DrawerExtras> = (
-  params?: DrawerParams<TExtras>,
-) => void;

@@ -1,6 +1,7 @@
 import "../../live-common-setup";
 import { describe, expect, it } from "bun:test";
-import { toV1, toV0, UnsupportedFamilyError } from "./adapters";
+import { toV1, toV0, InvalidDerivationPathError, UnsupportedFamilyError } from "./adapters";
+import { DerivationPathSchema } from "./v1";
 import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 import { XPUB, ETH_ADDR } from "./test-fixtures";
@@ -62,6 +63,14 @@ describe("toV1 (V0 → V1)", () => {
     });
     expect(v1.network).toBe(NetworkIdSchema.parse("bitcoin_testnet"));
   });
+
+  it("rejects an account index beyond BIP32 with a readable error", () => {
+    expect(() => toV1({ ...ETH_V0, index: 2 ** 31 })).toThrow(
+      new InvalidDerivationPathError(
+        `Invalid derivation path "44'/60'/0'/2147483648": Path index must be below 2^31`,
+      ),
+    );
+  });
 });
 
 describe("toV0 (V1 → V0)", () => {
@@ -72,7 +81,7 @@ describe("toV0 (V1 → V0)", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/84h/0h/0h",
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     };
     const v0 = toV0(btcV1);
     expect(v0.currencyId).toBe("bitcoin");
@@ -113,7 +122,7 @@ describe("toV0 (V1 → V0)", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/999h/0h/0h",
+      path: DerivationPathSchema.parse("m/999h/0h/0h"),
     };
     expect(() => toV0(badV1)).toThrow(UnsupportedFamilyError);
   });

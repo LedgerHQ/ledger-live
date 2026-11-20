@@ -10,9 +10,12 @@ import {
 } from "./helpers/msw-rpc.mock";
 import { TEST_CONFIG } from "../../test/coinConfig";
 
+// listOperations caps its walk at the slot of the token account read: above every fixture signature.
+const TOKEN_ACCOUNTS_READ_SLOT = 1_000_000;
+
 const rpcHandler: typeof baseRpcHandler = handlers =>
   baseRpcHandler({
-    getTokenAccountsByOwner: () => ({ context: { slot: 0 }, value: [] }),
+    getTokenAccountsByOwner: () => ({ context: { slot: TOKEN_ACCOUNTS_READ_SLOT }, value: [] }),
     ...handlers,
   });
 
@@ -110,7 +113,7 @@ describe("listOperations (MSW integration)", () => {
         }
         return HttpResponse.json({
           jsonrpc: "2.0",
-          result: { context: { slot: 0 }, value: [] },
+          result: { context: { slot: TOKEN_ACCOUNTS_READ_SLOT }, value: [] },
           id: "1",
         });
       }),
@@ -245,7 +248,7 @@ describe("listOperations (MSW integration)", () => {
         if (!Array.isArray(body) && body.method === "getTokenAccountsByOwner") {
           return HttpResponse.json({
             jsonrpc: "2.0",
-            result: { context: { slot: 0 }, value: [] },
+            result: { context: { slot: TOKEN_ACCOUNTS_READ_SLOT }, value: [] },
             id: body.id,
           });
         }

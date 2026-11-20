@@ -2,12 +2,76 @@ import { decodeAccountId, getMainAccount } from "@ledgerhq/ledger-wallet-framewo
 import { DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS } from "@ledgerhq/coin-bitcoin/constants";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { isSellOperation } from "../../../exchange/sell/sellOperations";
 import { getBitcoinCoinConfig } from "../coinConfig";
+
+const isUnconfirmed = (operation: Operation): boolean =>
+  operation.blockHeight === null || operation.blockHeight === undefined;
+
+const getInputTxIds = (operation: Operation): string[] => {
+  const extra: unknown = operation.extra;
+  const inputs =
+    extra && typeof extra === "object" && "inputs" in extra && Array.isArray(extra.inputs)
+      ? extra.inputs
+      : [];
+  // An input is `<txid>-<output index>`.
+  return inputs
+    .filter((input): input is string => typeof input === "string")
+    .map(input => input.slice(0, input.lastIndexOf("-")));
+};
+
+const computePendingSellAncestorHashes = (account: Account): Set<string> => {
+  const ancestors = new Set<string>();
+  if (!account.sellOperationIds?.length) return ancestors;
+
+  const unconfirmed = [...(account.pendingOperations ?? []), ...(account.operations ?? [])].filter(
+    isUnconfirmed,
+  );
+  // A pending transaction can be listed twice, as the optimistic operation and as the explorer's
+  // mempool entry, and either one can miss inputs the other has.
+  const inputTxIdsByHash = new Map<string, Set<string>>();
+  for (const op of unconfirmed) {
+    const inputTxIds = inputTxIdsByHash.get(op.hash) ?? new Set<string>();
+    for (const txId of getInputTxIds(op)) inputTxIds.add(txId);
+    inputTxIdsByHash.set(op.hash, inputTxIds);
+  }
+
+  const toVisit = unconfirmed.filter(op => isSellOperation(account, op)).map(op => op.hash);
+  for (let hash = toVisit.pop(); hash !== undefined; hash = toVisit.pop()) {
+    for (const parent of inputTxIdsByHash.get(hash) ?? []) {
+      if (inputTxIdsByHash.has(parent) && !ancestors.has(parent)) {
+        ancestors.add(parent);
+        toVisit.push(parent);
+      }
+    }
+  }
+  return ancestors;
+};
+
+// Accounts are replaced, never mutated, on update: an account object always has the same answer.
+const pendingSellAncestorHashesCache = new WeakMap<Account, Set<string>>();
+
+/**
+ * Hashes of the unconfirmed transactions a pending sell spends from, directly or through other
+ * unconfirmed transactions. Replacing one of them changes its hash, which invalidates the sell.
+ */
+const getPendingSellAncestorHashes = (account: Account): Set<string> => {
+  let ancestors = pendingSellAncestorHashesCache.get(account);
+  if (!ancestors) {
+    ancestors = computePendingSellAncestorHashes(account);
+    pendingSellAncestorHashesCache.set(account, ancestors);
+  }
+  return ancestors;
+};
 
 /**
  * Return whether an operation is editable or not for Bitcoin.
  */
-export const isEditableOperation = (_account: Account, operation: Operation): boolean => {
+export const isEditableOperation = (account: Account, operation: Operation): boolean => {
+  if (isSellOperation(account, operation)) {
+    return false;
+  }
+
   // Must be unconfirmed (no blockHeight)
   if (operation.blockHeight !== null && operation.blockHeight !== undefined) {
     return false;
@@ -18,7 +82,8 @@ export const isEditableOperation = (_account: Account, operation: Operation): bo
     return false;
   }
 
-  return true;
+  // Must not be spent from by a pending sell
+  return !getPendingSellAncestorHashes(account).has(operation.hash);
 };
 
 /**

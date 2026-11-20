@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  DeviceInteractionRequiredType,
-  OverrideDeviceIntentExecutorHeader,
-  type EnsureAppReadyState,
-} from "@ledgerhq/live-dmk-shared";
+import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { UnlockDevice } from "../../components/DeviceGenericStates/UnlockDevice";

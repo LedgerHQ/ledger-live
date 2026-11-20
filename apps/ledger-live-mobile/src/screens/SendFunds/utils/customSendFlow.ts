@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import type BigNumber from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -45,6 +45,7 @@ export type AfterAmountInputProps = {
 export type AmountFooterRowProps = {
   account: Account;
   transaction: Transaction;
+  status?: TransactionStatus;
 };
 
 type InitialScreenNavParams = {

@@ -1,5 +1,13 @@
 # @features/flow-pay-card-wallets
 
+## 0.6.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.6.4
 
 ### Patch Changes

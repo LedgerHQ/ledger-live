@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { Trans } from "~/context/Locale";
 import ModalLock from "~/components/ModalLock";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";

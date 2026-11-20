@@ -42,7 +42,7 @@
     "source-map-support": "0.5.21",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "@types/semver": "7.7.1",
+    "@types/semver": "catalog:",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "oxlint": "catalog:"

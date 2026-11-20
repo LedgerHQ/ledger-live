@@ -1,5 +1,13 @@
 # @features/flow-large-screen-upsell
 
+## 2.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70)]:
+  - @shared/feature-flags@0.32.0-next.0
+  - @features/platform-feature-flags@0.13.1-next.0
+
 ## 2.5.0
 
 ### Minor Changes
@@ -251,21 +259,5 @@
 - Updated dependencies [[`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2)]:
   - @shared/feature-flags@0.23.0-next.0
   - @features/platform-feature-flags@0.7.0-next.0
-
-## 2.0.2
-
-### Patch Changes
-
-- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914), [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d)]:
-  - @shared/feature-flags@0.22.0
-  - @features/platform-feature-flags@0.6.9
-
-## 2.0.2-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914)]:
-  - @shared/feature-flags@0.22.0-next.1
-  - @features/platform-feature-flags@0.6.9-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

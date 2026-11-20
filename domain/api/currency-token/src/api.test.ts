@@ -194,6 +194,7 @@ describe("cryptoAssetsApi requests", () => {
     const request = received(calEndpoints.tokens);
     expectUrl(request, "/v1/tokens", { id: "ethereum/erc20/usdc", limit: "1" });
     expect(new URL(request.url).searchParams.get("output")).toBeTruthy();
+    expect(new URL(request.url).searchParams.get("output")?.split(",")).toContain("categories");
     expect(request.headers.get("Content-Type")).toBe("application/json");
     expect(request.headers.get("X-Ledger-Client-Version")).toBe("1.2.3");
   });

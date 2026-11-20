@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, MaxSpendableFilters } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { v5 as uuidv5 } from "uuid";
@@ -8,7 +8,6 @@ import {
   type AccountNamesState,
 } from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
@@ -20,6 +19,14 @@ import {
   WalletAPISupportedCurrency,
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
+import {
+  selectMaxSpendableRows,
+  spendableOfRows,
+} from "@ledgerhq/ledger-wallet-framework/account/balances";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
+
+const familyLiveToWalletApi: Partial<Record<string, string>> = FAMILIES_MAPPING_LL_TO_WAPI;
+const familyWalletApiToLive: Partial<Record<string, string>> = FAMILIES_MAPPING_WAPI_TO_LL;
 
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
@@ -65,6 +72,7 @@ export function accountToWalletAPIAccount(
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
       readiness: parentAccount.readiness,
+      ...(account.balances && { balances: account.balances }),
     };
   }
   const name = accountNameWithDefaultSelector(accountNames, account);
@@ -79,6 +87,7 @@ export function accountToWalletAPIAccount(
     blockHeight: account.blockHeight,
     lastSyncDate: account.lastSyncDate,
     readiness: account.readiness,
+    ...(account.balances && { balances: account.balances }),
   };
 }
 
@@ -96,6 +105,7 @@ export function currencyToWalletAPICurrency(
       parent: currency.parentCurrencyId,
       color: getCryptoCurrencyById(currency.parentCurrencyId).color,
       decimals: currency.units[0].magnitude,
+      ...(currency.categories !== undefined ? { categories: currency.categories } : {}),
     };
   }
 
@@ -104,7 +114,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
+    family: familyLiveToWalletApi[currency.family] ?? currency.family,
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -121,16 +131,18 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 }> => {
-  // A live app names the currency's family ("bitcoin" for Zcash); the adapter is the one of
-  // the module that serves the account, which for Zcash is coin-zcash. A transaction of
-  // another family keeps its own adapter, so the family check that follows rejects it.
-  const incomingFamily =
-    FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
-  const mainCurrency = isTokenAccount(account) ? undefined : account.currency;
+  // A live app names a Wallet API family, which can stand for several Ledger Wallet ones
+  // ("bitcoin" for Zcash too). The adapter is the one of the family that serves the account,
+  // whenever the transaction's family is that family's Wallet API name.
+  const servedFamily =
+    isTokenAccount(account) || !account.currency ? undefined : account.currency.family;
+  const servedFamilyWapiName = servedFamily
+    ? (familyLiveToWalletApi[servedFamily] ?? servedFamily)
+    : undefined;
   const liveFamily =
-    mainCurrency && incomingFamily === mainCurrency.family
-      ? resolveFamily(mainCurrency)
-      : incomingFamily;
+    servedFamily && servedFamilyWapiName === walletApiTransaction.family
+      ? servedFamily
+      : (familyWalletApiToLive[walletApiTransaction.family] ?? walletApiTransaction.family);
 
   const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 
@@ -184,24 +196,41 @@ export async function resolveWalletApiSpendableBalance(
  * the whole token balance. Native pending-operation values have family-specific fee semantics,
  * so they are deliberately excluded from this check. Otherwise, zero is treated as an
  * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
+ *
+ * With `filters`, the bridge funds the estimate from the selected balance rows only, and the zero
+ * check compares against the spendable part of those rows instead. A filter the bridge cannot
+ * honour rejects with `UnsupportedMaxSpendableFilter` rather than being reported as a failure. On an
+ * account whose rows are a real partition (a row carries a pool or a private flag), a filtered zero
+ * is kept: the bridges that produce such rows honour the filters and return zero only when the
+ * selected funds cannot pay for a send.
  */
 export async function resolveWalletApiMaxSpendable(
   account: AccountLike,
   parentAccount?: Account | null,
+  filters?: MaxSpendableFilters,
 ): Promise<BigNumber | undefined> {
   try {
     const bridge = await getAccountBridge(account, parentAccount);
-    const maxSpendable = await bridge.estimateMaxSpendable({ account, parentAccount });
+    const maxSpendable = await bridge.estimateMaxSpendable({
+      account,
+      parentAccount,
+      ...(filters && { filters }),
+    });
 
-    const walletApiSpendableBalance =
-      bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
+    const walletApiSpendableBalance = filters
+      ? spendableOfRows(selectMaxSpendableRows(account, filters))
+      : (bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance);
     const pendingSpent =
       account.type === "TokenAccount"
         ? getPendingTokenSpent(account.pendingOperations ?? [])
         : new BigNumber(0);
     const availableBalance = BigNumber.max(0, walletApiSpendableBalance.minus(pendingSpent));
 
-    if (maxSpendable.isZero() && !availableBalance.isZero()) {
+    const filtersHonoured =
+      filters !== undefined &&
+      (account.balances ?? []).some(row => row.pool !== undefined || row.private !== undefined);
+
+    if (maxSpendable.isZero() && !availableBalance.isZero() && !filtersHonoured) {
       log(
         "wallet-api/converters",
         "resolveWalletApiMaxSpendable: omitting ambiguous zero maxSpendable",
@@ -215,6 +244,7 @@ export async function resolveWalletApiMaxSpendable(
 
     return maxSpendable;
   } catch (error) {
+    if (error instanceof UnsupportedMaxSpendableFilter) throw error;
     log("wallet-api/converters", "resolveWalletApiMaxSpendable: omitting maxSpendable", {
       error: error instanceof Error ? error.message : String(error),
     });

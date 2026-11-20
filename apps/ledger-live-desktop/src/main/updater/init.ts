@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from "electron";
-import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
+import { autoUpdater, UpdateInfo } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
 import { CHANNELS } from "~/bridge/contract";
+import { flushThen, removeCloseListenersButFlush } from "~/main/flushOnQuit";
 
 export type UpdateStatus =
   | "idle"
@@ -16,10 +17,10 @@ export type UpdateStatus =
   | "check-success"
   | "downloading-update"
   | "error";
-const UPDATE_CHECK_IGNORE = Boolean(__PRERELEASE__ && process.env.UPDATE_CHECK_IGNORE);
-const UPDATE_CHECK_FEED = __PRERELEASE__
-  ? process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com"
-  : "https://resources.live.ledger.app/public_resources/signatures";
+const UPDATE_CHECK_IGNORE = Boolean(!__PRODUCTION__ && process.env.UPDATE_CHECK_IGNORE);
+const UPDATE_CHECK_FEED = __PRODUCTION__
+  ? "https://resources.live.ledger.app/public_resources/signatures"
+  : process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com";
 
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
@@ -30,23 +31,26 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
     });
   }
 };
-const handleDownload = async (info: UpdateDownloadedEvent) => {
+
+const checkThenDownload = async (info: UpdateInfo) => {
   try {
-    sendStatus("checking");
-    const appUpdater = await createElectronAppUpdater({
+    const appUpdater = createElectronAppUpdater({
       feedURL: UPDATE_CHECK_FEED,
       info,
     });
     await appUpdater.verify();
-    sendStatus("check-success");
   } catch (err) {
-    if (UPDATE_CHECK_IGNORE) {
-      sendStatus("check-success");
-    } else {
-      sendStatus("error", err);
+    if (!UPDATE_CHECK_IGNORE) {
+      return sendStatus("error", err);
     }
   }
+  try {
+    await autoUpdater.downloadUpdate();
+  } catch (err) {
+    sendStatus("error", err);
+  }
 };
+
 export const init = () => {
   // Store distributions manage their own updates; keep the in-app updater off there.
   if (isStoreDistribution()) {
@@ -54,36 +58,34 @@ export const init = () => {
   }
   autoUpdater.on("checking-for-update", () => sendStatus("checking-for-update"));
   autoUpdater.on("update-available", info => sendStatus("update-available", info));
+  autoUpdater.on("update-available", checkThenDownload);
   autoUpdater.on("update-not-available", info => sendStatus("update-not-available", info));
   autoUpdater.on("download-progress", p => sendStatus("download-progress", p));
-  autoUpdater.on("update-downloaded", handleDownload);
+  autoUpdater.on("update-downloaded", () => sendStatus("check-success"));
   autoUpdater.on("error", err => {
     console.warn("Auto-updater error:", err);
   });
   autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.autoDownload = true;
-  if (__PRERELEASE__ && process.env.UPDATE_FEED_URL) {
+  autoUpdater.autoDownload = false;
+  if (!__PRODUCTION__ && process.env.UPDATE_FEED_URL) {
     autoUpdater.setFeedURL({
       provider: "generic",
       url: process.env.UPDATE_FEED_URL,
     });
   }
   autoUpdater.checkForUpdates();
-  if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
+  if (!__PRODUCTION__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;
   }
 };
-const quitAndInstall = () => {
-  const browserWindows = BrowserWindow.getAllWindows();
-
-  // Fixes quitAndInstall not quitting on macOS, as suggested on
-  // https://github.com/electron-userland/electron-builder/issues/1604#issuecomment-306709572
-  app.removeAllListeners("window-all-closed");
-  browserWindows.forEach(browserWindow => {
-    browserWindow.removeAllListeners("close");
+const quitAndInstall = () =>
+  flushThen(() => {
+    // Fixes quitAndInstall not quitting on macOS, as suggested on
+    // https://github.com/electron-userland/electron-builder/issues/1604#issuecomment-306709572
+    app.removeAllListeners("window-all-closed");
+    BrowserWindow.getAllWindows().forEach(removeCloseListenersButFlush);
+    autoUpdater.quitAndInstall();
   });
-  autoUpdater.quitAndInstall();
-};
 init();
 export default {
   quitAndInstall,

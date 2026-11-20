@@ -1,6 +1,6 @@
 {
   "name": "@devtools/registry",
-  "version": "0.9.0",
+  "version": "0.10.0-next.0",
   "private": true,
   "description": "Static registry of lazy-loaded DevTools modules",
   "main": "src/index.ts",
@@ -33,12 +33,15 @@
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
     "@devtools/account-receive": "workspace:*",
+    "@devtools/account-status": "workspace:*",
     "@devtools/mock-accounts": "workspace:*",
     "@devtools/account-detail": "workspace:*",
+    "@devtools/account-discovery": "workspace:*",
     "@devtools/coin-config": "workspace:*",
     "@devtools/receive": "workspace:*",
     "@devtools/predictions": "workspace:*",
-    "@devtools/intent-wallet-sync": "workspace:*"
+    "@devtools/intent-wallet-sync": "workspace:*",
+    "@devtools/app-toggles": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

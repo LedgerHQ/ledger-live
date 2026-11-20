@@ -1,7 +1,7 @@
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useGetCardStatusQuery } from "@domain/api-card-management";
-import { getWalletPlatform } from "../getWalletPlatform.native";
+import { getWalletPlatform } from "../getWalletPlatform";
 
 export type AddToWalletCtaAppearance = "base" | "gray";
 

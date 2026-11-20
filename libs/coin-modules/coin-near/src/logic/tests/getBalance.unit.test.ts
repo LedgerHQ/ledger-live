@@ -136,4 +136,36 @@ describe("getBalance", () => {
     expect(balances[0].value - balances[0].locked!).toBe(BigInt(shape.spendableBalance.toFixed(0)));
     expect(balances.filter(b => b.stake !== undefined)).toHaveLength(3);
   });
+
+  describe("validator options", () => {
+    beforeEach(() => {
+      (getAccount as jest.Mock).mockResolvedValue(accountShape({ amount: ONE_NEAR }));
+    });
+
+    it("reads the account with no staking option when called without options", async () => {
+      await getBalance(mockNearContext, ADDRESS);
+
+      expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {});
+    });
+
+    it("forwards the known pools and the listing switch to the account read", async () => {
+      await getBalance(mockNearContext, ADDRESS, {
+        knownValidatorIds: [VALIDATOR],
+        listValidators: false,
+      });
+
+      expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
+        knownValidatorIds: [VALIDATOR],
+        listValidators: false,
+      });
+    });
+
+    it("forwards a listing switch alone", async () => {
+      await getBalance(mockNearContext, ADDRESS, { listValidators: true });
+
+      expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
+        listValidators: true,
+      });
+    });
+  });
 });

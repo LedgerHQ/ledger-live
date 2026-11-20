@@ -3,6 +3,7 @@ import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-e2e-shared/enum/ReceiveFundsOptions";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ReceiveModal extends Modal {
   private verifyAddressOnDeviceLabel = this.page.locator(
@@ -59,9 +60,11 @@ export class ReceiveModal extends Modal {
   @step("Verify send currency / tokens warning message $1")
   async verifySendCurrencyTokensWarningMessage(account: Account, specificTokens: string) {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage).toContainText(
-      this.sendAssetWarningMessage(account, specificTokens),
-    );
+    await this.softExpect(async soft => {
+      await soft(this.warningMessage).toContainText(
+        this.sendAssetWarningMessage(account, specificTokens),
+      );
+    });
   }
 
   @step("Verify receive menu visibility")
@@ -77,7 +80,9 @@ export class ReceiveModal extends Modal {
   @step("Verify TRON address activation warning message")
   async verifyTronAddressActivationWarningMessage() {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage).toContainText(this.sendTronAddressActivationWarningMessage);
+    await this.softExpect(async soft => {
+      await soft(this.warningMessage).toContainText(this.sendTronAddressActivationWarningMessage);
+    });
   }
 
   @step("Verify private/shielded address block visibility")
@@ -87,14 +92,22 @@ export class ReceiveModal extends Modal {
 
   @step("Verify private/shielded address correctness $0")
   async expectValidPrivateAddress(address: string) {
-    await expect(this.privateAddressField).toHaveText(address);
+    await this.softExpect(
+      async soft => {
+        await soft(this.privateAddressField).toHaveText(address);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify device deprecation error screen for $0")
   async expectDeviceDeprecationError(deviceName: string) {
-    await expect(this.deviceDeprecationTitle).toHaveText(
-      `${deviceName}™ does not support this feature`,
-    );
-    await expect(this.deviceDeprecationContinueButton).toHaveCount(0);
+    await expect(this.deviceDeprecationTitle).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.deviceDeprecationTitle).toHaveText(
+        `${deviceName}™ does not support this feature`,
+      );
+      await soft(this.deviceDeprecationContinueButton).toHaveCount(0);
+    });
   }
 }

@@ -1,13 +1,25 @@
 import { log } from "detox";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-// Same text as in elementHelpers.ts: jest.environment.ts detects a hung Detox request by it.
 const HARD_TIMEOUT_MARKER = "possible bridge hang";
 const CONCURRENT_INTERACTION_MARKER = "multiple interactions taking place";
 
+/** Errors from the Jest test sandbox are not `instanceof Error` in the test environment. */
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 /** True when the error is a hard timeout: the app never answered, as opposed to a failed check. */
 export const isHardTimeout = (error: unknown): boolean =>
-  error instanceof Error && error.message.includes(HARD_TIMEOUT_MARKER);
+  errorMessage(error).includes(HARD_TIMEOUT_MARKER);
+
+/**
+ * True when a Detox request was abandoned or rejected before the app answered it, so the check
+ * it carried never ran. Detox keeps such a request in flight and rejects every later atomic one.
+ */
+export function isUnansweredDetoxRequestError(error: unknown): boolean {
+  const message = errorMessage(error);
+  return message.includes(HARD_TIMEOUT_MARKER) || message.includes(CONCURRENT_INTERACTION_MARKER);
+}
 
 /** A wait answers by itself at its own timeout, so the hard timeout must outlast it. */
 export const waitHardTimeout = (timeout: number) =>

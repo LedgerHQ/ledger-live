@@ -1,19 +1,25 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { createIntent } from "@features/platform-device-intent";
-import type {
-  RemoveMemberIntent,
-  RemoveMemberJobState,
+import {
+  acceptLedgerSyncResult,
+  type RemoveMemberIntent,
+  type RemoveMemberJobState,
 } from "@features/platform-intent-wallet-sync";
 import {
   memberCredentialsSelector,
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import type { Trustchain, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type {
+  MemberCredentials,
+  Trustchain,
+  TrustchainMember,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useCreateSessionSdk } from "../useCreateSessionSdk";
+import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -28,6 +34,7 @@ export function useRemoveMemberIntentStep(
   const createSessionSdk = useCreateSessionSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
+  const isStoredRef = useRef(false);
 
   const onUserCancel = useCallback(
     () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances })),
@@ -39,13 +46,17 @@ export function useRemoveMemberIntentStep(
   }, [member, onUserCancel]);
 
   const onResult = useCallback(
-    (newTrustchain: Trustchain) => dispatch(setTrustchain(newTrustchain)),
+    (newTrustchain: Trustchain, runCredentials: MemberCredentials) => {
+      if (!dispatch(acceptLedgerSyncResult(setTrustchain(newTrustchain), runCredentials))) return;
+      isStoredRef.current = true;
+    },
     [dispatch],
   );
 
   const onJobStateChanged = useCallback(
     (jobState: RemoveMemberJobState) => {
       if (jobState.type === "completed") {
+        if (!isStoredRef.current) return;
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       } else if (jobState.type === "failed" && jobState.reason === "not-allowed") {
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
@@ -61,8 +72,17 @@ export function useRemoveMemberIntentStep(
       ? (): RemoveMemberIntent =>
           createIntent(
             removeMemberIntentLWDDefinition,
-            { trustchain, memberCredentials, member, createSessionSdk },
-            { onResult, onJobStateChanged },
+            {
+              trustchain,
+              memberCredentials,
+              member,
+              createSessionSdk,
+              resultOrder: ledgerSyncResultOrder,
+            },
+            {
+              onResult: newTrustchain => onResult(newTrustchain, memberCredentials),
+              onJobStateChanged,
+            },
           )
       : null;
 

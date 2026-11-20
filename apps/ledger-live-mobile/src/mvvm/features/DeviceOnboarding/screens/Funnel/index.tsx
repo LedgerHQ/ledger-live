@@ -1,19 +1,31 @@
 import React from "react";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
+import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import { DeviceUnlockSheet } from "LLM/features/DeviceOnboarding/components/DeviceUnlockSheet";
+import { FunnelSheet } from "LLM/features/DeviceOnboarding/components/FunnelSheet";
 import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
-import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
-import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
+import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
+import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
+import { UnseededSuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
+import { RecoverNewSeedScreen } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import { RecoverRestoreScreen } from "LLM/features/DeviceOnboarding/screens/Recover/Restore";
+import { SuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import {
   useDeviceOnboardingFunnelViewModel,
   type DeviceOnboardingFunnelModel,
-  type UnlockSheetModel,
+  type PowerOnSheetModel,
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
+  return <>{openingScreen(screen) ?? setupScreen(screen)}</>;
+}
+
+function openingScreen(screen: DeviceOnboardingFunnelModel) {
   if (screen.status === "unseededIntroKaraoke") {
     return (
       <>
@@ -22,14 +34,46 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
       </>
     );
   }
+  if (screen.status === "unseededSuccessKaraoke") {
+    return <UnseededSuccessKaraokeScreen {...screen.unseededSuccessKaraoke} />;
+  }
   if (screen.status === "checks") {
     return (
       <>
         <ChecksScreen {...screen.checks} />
+        {screen.powerOnSheet ? <PowerOnSheet {...screen.powerOnSheet} /> : null}
+        {screen.reconnectSheet ? <ReconnectSheet {...screen.reconnectSheet} /> : null}
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );
   }
+  return null;
+}
+
+function setupScreen(screen: DeviceOnboardingFunnelModel) {
+  if (screen.status === "setup") {
+    return (
+      <>
+        <SetupScreen {...screen.setup} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
+  }
+  if (screen.status === "recoverRestore") {
+    return (
+      <>
+        <RecoverRestoreScreen {...screen.recoverRestore} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
+  }
+  if (screen.status === "recoverNewSeed") {
+    return <RecoverNewSeedScreen {...screen.recoverNewSeed} />;
+  }
+  if (screen.status === "success") {
+    return <SuccessKaraokeScreen {...screen.success} />;
+  }
+  if (screen.status !== "connecting" && screen.status !== "failed") return null;
 
   return (
     <Box lx={{ flex: 1, justifyContent: "center", gap: "s16", padding: "s16" }}>
@@ -59,25 +103,20 @@ export function DeviceOnboardingFunnel() {
   );
 }
 
-function DeviceUnlockSheet({ deviceModelId, deviceName }: UnlockSheetModel) {
-  const { bottom: bottomInset } = useSafeAreaInsets();
+function PowerOnSheet({ deviceModelId, deviceName, onQuit }: PowerOnSheetModel) {
+  const { t } = useTranslation();
+  const { productName } = getDeviceModel(deviceModelId);
 
   return (
-    <QueuedBottomSheet
-      isRequestingToBeOpened
-      noCloseButton
-      preventBackdropClick
-      enablePanDownToClose={false}
-      enableDynamicSizing
-      contentHasBottomSpace
-      testID={funnelTestIds.unlockSheet}
-    >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-        <BottomSheetHeader />
-        <Box lx={{ paddingHorizontal: "s16" }}>
-          <UnlockDevice deviceModelId={deviceModelId} deviceName={deviceName} />
-        </Box>
-      </BottomSheetView>
-    </QueuedBottomSheet>
+    <FunnelSheet testID={funnelTestIds.powerOnSheet} onQuit={onQuit}>
+      <DeviceActionContent
+        action="power-and-unlock"
+        deviceModelId={deviceModelId}
+        deviceName={deviceName}
+        title={t("deviceIntentExecutor.connectDevice.states.waitingForSelectedDevice.title", {
+          productName,
+        })}
+      />
+    </FunnelSheet>
   );
 }

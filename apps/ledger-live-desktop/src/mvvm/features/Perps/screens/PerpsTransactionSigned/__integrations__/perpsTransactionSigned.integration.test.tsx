@@ -3,7 +3,7 @@ import { act, render, screen } from "tests/testSetup";
 import PerpsTransactionSignedRoot, {
   openPerpsTransactionSigned,
 } from "../PerpsTransactionSignedDialog";
-import type { PerpsTransactionSignedData } from "../usePerpsTransactionSignedViewModel";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 
 const mockOpenSwapTransactionStatusDialog = jest.fn((_params: unknown) => ({
   type: "swap/openTransactionStatus",
@@ -12,7 +12,7 @@ jest.mock("LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog"
   openSwapTransactionStatusDialog: (params: unknown) => mockOpenSwapTransactionStatusDialog(params),
 }));
 
-const signedData: PerpsTransactionSignedData = {
+const signedData: PerpsTransactionSignedParams = {
   receiveCurrencyTicker: "USDC",
   swapId: "swap-1",
   provider: "swapkit_hyperliquid",

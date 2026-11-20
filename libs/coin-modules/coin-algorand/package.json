@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "2.5.1",
+  "version": "2.6.0-next.0",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -85,7 +85,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "algosdk": "3.5.2",

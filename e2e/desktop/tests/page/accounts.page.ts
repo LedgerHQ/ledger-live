@@ -173,7 +173,7 @@ export class AccountsPage extends AppPage {
   private async getAccountsName() {
     const visibleAccountsList = this.getVisibleAccountsList();
     const accountElements = await visibleAccountsList.all();
-    const accountNames = [];
+    const accountNames: string[] = [];
     for (const element of accountElements) {
       const testId = await element.getAttribute("data-testid");
       if (testId) {

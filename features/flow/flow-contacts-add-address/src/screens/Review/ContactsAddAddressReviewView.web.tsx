@@ -1,6 +1,15 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { ContactsAddAddressReviewViewProps } from "./types";
+import type { ContactsAddAddressReviewLabels } from "./types";
+
+export type ContactsAddAddressReviewViewProps = Readonly<{
+  address: string;
+  currency: string;
+  network: string;
+  name: string;
+  labels: ContactsAddAddressReviewLabels;
+  onContinue: () => void;
+}>;
 
 function ReviewRow({
   label,

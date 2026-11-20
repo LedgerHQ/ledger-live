@@ -11,19 +11,20 @@ import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 
 type ManageAgentsButtonViewModel = Readonly<{
   isEnabled: boolean;
+  showNewBadge: boolean;
   openAgentIntent: () => void;
 }>;
 
 export function useManageAgentsButtonViewModel(): ManageAgentsButtonViewModel {
   const close = useContextMenuClose();
   const navigate = useNavigate();
-  const { isProfileEnabled } = useAgentIntentEntryPoints();
+  const { isProfileEnabled, showNewBadge } = useAgentIntentEntryPoints();
 
   const openAgentIntent = useCallback(() => {
-    trackManageAgentsClick(MY_WALLET_TRACKING_PAGE_NAME);
+    trackManageAgentsClick(MY_WALLET_TRACKING_PAGE_NAME, showNewBadge);
     navigate(getAgentIntentPath(AGENT_INTENT_SOURCE.profile));
     close();
-  }, [close, navigate]);
+  }, [close, navigate, showNewBadge]);
 
-  return { isEnabled: isProfileEnabled, openAgentIntent };
+  return { isEnabled: isProfileEnabled, showNewBadge, openAgentIntent };
 }

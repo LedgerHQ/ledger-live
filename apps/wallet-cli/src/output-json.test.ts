@@ -5,7 +5,7 @@ import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 import { AddressSchema } from "@domain/entity-account-descriptor";
-import { NetworkIdSchema } from "./shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";
 
@@ -451,6 +451,58 @@ describe("JsonCommandOutput", () => {
     ]);
   });
 
+  it.each([
+    {
+      kind: "access_denied" as const,
+      fields: {
+        usb_access_error: "LIBUSB_ERROR_ACCESS",
+        hint: "The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).",
+      },
+    },
+    { kind: "other" as const, fields: { usb_access_error: "LIBUSB_ERROR_ACCESS" } },
+  ])(
+    "adds the failed USB open to a device error envelope ($kind) (LIVE-31394)",
+    async ({ kind, fields }) => {
+      const { WalletCliDeviceError } = await import("./device/wallet-cli-device-error");
+      const out = createCommandOutput("json", { command: "genuine-check", network: "all" });
+      const cause = new Error("No Ledger device found. Unlock the device and try again.");
+
+      await out
+        .run(async () => {
+          throw new WalletCliDeviceError({
+            code: "unknown",
+            cause,
+            usbAccess: { error: "LIBUSB_ERROR_ACCESS", kind },
+          });
+        })
+        .catch(() => {});
+
+      expect(parseLines()).toEqual([
+        {
+          ok: false,
+          error: { command: "genuine-check", code: "unknown", message: cause.message, ...fields },
+        },
+      ]);
+    },
+  );
+
+  it("adds no USB fields to a device error without a failed USB open", async () => {
+    const { WalletCliDeviceError } = await import("./device/wallet-cli-device-error");
+    const out = createCommandOutput("json", { command: "genuine-check", network: "all" });
+
+    await out
+      .run(async () => {
+        throw new WalletCliDeviceError({ code: "timeout" });
+      })
+      .catch(() => {});
+
+    expect(Object.keys((parseLines()[0] as { error: object }).error)).toEqual([
+      "command",
+      "code",
+      "message",
+    ]);
+  });
+
   const baseAgentIntentProfile = {
     profileId: "test-agent",
     displayName: "Test Agent",
@@ -609,7 +661,7 @@ describe("JsonCommandOutput", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/84h/0h/0h",
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     } as const;
     const out = createCommandOutput("json", {
       command: "account discover",

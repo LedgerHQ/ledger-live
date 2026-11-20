@@ -206,7 +206,7 @@ export default class EarnV2DashboardPage {
     for (const key of amount) {
       await this.customKeyboardKey(key).tap();
     }
-    jestExpect(await this.ethAmountInput.getValue()).toBe(amount);
+    await this.ethAmountInput.expectValue(amount);
   }
 
   @Step("Select another funding account {{{0.accountName}}}")
@@ -217,16 +217,14 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify swap-to-earn copy from {{{0}}} to {{{1}}}")
   async verifySwapToEarnDescription(fromTicker: string, toTicker: string) {
-    const text = await this.swapDescription.getText();
-    jestExpect(text).toContain(fromTicker);
-    jestExpect(text).toContain(toTicker);
+    await this.swapDescription.expectText(fromTicker, { containing: true });
+    await this.swapDescription.expectText(toTicker, { containing: true });
   }
 
   @Step("Continue to swap")
   async continueToSwap() {
     await this.amountContinueCta.waitEnabled();
-    const label = await this.amountContinueCta.getText();
-    jestExpect(label).toContain("Go to swap");
+    await this.amountContinueCta.expectText("Go to swap", { containing: true });
     await this.amountContinueCta.tap();
     await app.swapLiveApp.expectSwapLiveAppForm();
   }

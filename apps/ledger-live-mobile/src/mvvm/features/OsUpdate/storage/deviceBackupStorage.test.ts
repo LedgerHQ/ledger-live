@@ -1,6 +1,6 @@
 import storage from "LLM/storage";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { DeviceBackupStorage } from "@ledgerhq/live-dmk-shared";
+import type { DeviceBackupStorage } from "@features/platform-device-os-update";
 import { deviceBackupStorage } from "./deviceBackupStorage";
 
 jest.mock("LLM/storage", () => ({

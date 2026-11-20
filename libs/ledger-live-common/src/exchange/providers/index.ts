@@ -1,4 +1,5 @@
-import { ExchangeTypes, PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
+import type { ExchangeTypes, PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
+import { EXCHANGE_TYPE } from "../intents/exchangeTypes";
 import { getSwapProvider, getAvailableProviders } from "./swap";
 import { getSellProvider } from "./sell";
 import { getFundProvider } from "./fund";
@@ -37,16 +38,16 @@ export const getProviderConfig = async (
   const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
 
   switch (exchangeType) {
-    case ExchangeTypes.Fund:
-    case ExchangeTypes.FundNg:
+    case EXCHANGE_TYPE.fund:
+    case EXCHANGE_TYPE.fundNg:
       return getFundProvider({
         providerId: provider.toLowerCase(),
         ledgerSignatureEnv,
         partnerSignatureEnv,
       });
 
-    case ExchangeTypes.Sell:
-    case ExchangeTypes.SellNg:
+    case EXCHANGE_TYPE.sell:
+    case EXCHANGE_TYPE.sellNg:
       return await getSellProvider({
         providerId: provider.toLowerCase(),
         ledgerSignatureEnv,

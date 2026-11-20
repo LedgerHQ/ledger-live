@@ -22,6 +22,12 @@ describe("isWalletConnectSupported (static fallback)", () => {
     },
   );
 
+  it("supports bitcoin_signet as a testnet, not a mainnet", () => {
+    expect(isWalletConnectSupported(getCryptoCurrencyById("bitcoin_signet"))).toBe(true);
+    expect(testnetAndDevnetCurrenciesSupportedOnWalletConnect).toContain("bitcoin_signet");
+    expect(mainnetCurrenciesSupportedOnWalletConnect).not.toContain("bitcoin_signet");
+  });
+
   it("returns false for an unsupported currency", () => {
     const cardano = getCryptoCurrencyById("cardano");
     expect(isWalletConnectSupported(cardano)).toBe(false);

@@ -1,7 +1,8 @@
 // The tool-config conformance rules, one module per tool (fmt, tsconfig, lint, jest), each checking
 // that a package carries only what the support/ convention lets it carry for that tool, plus
-// hygiene, the files and manifest fields every package of the layers carries, and tool-dependency,
-// the root tools each package declares because its scripts run them.
+// hygiene, the files and manifest fields every package of the layers carries, tool-dependency,
+// the root tools each package declares because its scripts run them, and source-only, which keeps
+// private libraries read from src and without a build.
 //
 // A rule module exports:
 //   name    unique id, also the key an exclusion uses to scope itself to this rule
@@ -17,6 +18,7 @@ import tsconfig from "./tsconfig.mjs";
 import jest from "./jest.mjs";
 import hygiene from "./hygiene.mjs";
 import toolDependency from "./tool-dependency.mjs";
+import sourceOnly from "./source-only.mjs";
 
 /**
  * @typedef {{ file: string, message: string }} Violation
@@ -25,4 +27,4 @@ import toolDependency from "./tool-dependency.mjs";
  */
 
 /** @type {Rule[]} */
-export const RULES = [fmt, lint, tsconfig, jest, hygiene, toolDependency];
+export const RULES = [fmt, lint, tsconfig, jest, hygiene, toolDependency, sourceOnly];

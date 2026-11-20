@@ -14,6 +14,7 @@ import {
   type TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import { createLedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -96,6 +97,7 @@ function createJob(
       memberCredentials: MEMBER_CREDENTIALS,
       currentTrustchain,
       createSessionSdk,
+      resultOrder: createLedgerSyncResultOrder(),
       ...(onInitialResponse && { onInitialResponse }),
     },
     onResult,
@@ -271,6 +273,7 @@ describe("addMemberIntentJob", () => {
           createSessionSdk: () => {
             throw error;
           },
+          resultOrder: createLedgerSyncResultOrder(),
         },
         onResult,
       }),
@@ -280,7 +283,7 @@ describe("addMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
   });
 
-  it("should emit nothing after unsubscribe", async () => {
+  it("should emit no state but still report the result after unsubscribe", async () => {
     const deviceAnswer = createDeferred<TrustchainResult>();
     const getOrCreateTrustchain = jest.fn<
       ReturnType<GetOrCreateTrustchain>,
@@ -303,6 +306,7 @@ describe("addMemberIntentJob", () => {
 
     expect(witness.onResult).toHaveBeenCalledWith(RESULT);
     expect(cancelled.states).toEqual([PENDING]);
-    expect(cancelled.onResult).not.toHaveBeenCalled();
+    expect(cancelled.onResult).toHaveBeenCalledTimes(1);
+    expect(cancelled.onResult).toHaveBeenCalledWith(RESULT);
   });
 });

@@ -4,6 +4,7 @@ import { step } from "tests/misc/reporters/step";
 import type { PageLogCollector } from "tests/utils/pageLogCollector";
 import {
   activateLedgerSync,
+  rejectLedgerSync,
   expectValidAddressDevice,
   signSendTransaction,
   signDelegationTransaction,
@@ -66,6 +67,11 @@ export class SpeculosPage extends AppPage {
   @step("Activate Ledger Sync")
   async activateLedgerSync() {
     await activateLedgerSync();
+  }
+
+  @step("Refuse Ledger Sync on device")
+  async rejectLedgerSync() {
+    await rejectLedgerSync();
   }
 
   @step("Sign Send Transaction")

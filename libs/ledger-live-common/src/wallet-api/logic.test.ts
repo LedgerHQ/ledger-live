@@ -18,7 +18,7 @@ import { AppManifest, WalletAPITransaction } from "./types";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { Transaction as EvmTransaction } from "../families/evm/types";
-import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
+import { Account, OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import BigNumber from "bignumber.js";
 
@@ -1459,6 +1459,103 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
     expect(mockBitcoinFamilyAccountXpubRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountXpubFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountXpubSuccess).toHaveBeenCalledTimes(1);
+  });
+});
+
+// Zcash is presented to live apps as a bitcoin-family currency: the bitcoin-family methods
+// serve its accounts the same way.
+describe("bitcoin-family methods on a zcash account", () => {
+  const tracking = {
+    bitcoinFamilyAccountAddressRequested: jest.fn(),
+    bitcoinFamilyAccountAddressFail: jest.fn(),
+    bitcoinFamilyAccountAddressSuccess: jest.fn(),
+    bitcoinFamilyAccountPublicKeyRequested: jest.fn(),
+    bitcoinFamilyAccountPublicKeyFail: jest.fn(),
+    bitcoinFamilyAccountPublicKeySuccess: jest.fn(),
+    bitcoinFamilyAccountXpubRequested: jest.fn(),
+    bitcoinFamilyAccountXpubFail: jest.fn(),
+    bitcoinFamilyAccountXpubSuccess: jest.fn(),
+    bitcoinFamilyAccountAddressesRequested: jest.fn(),
+    bitcoinFamilyAccountAddressesFail: jest.fn(),
+    bitcoinFamilyAccountAddressesSuccess: jest.fn(),
+  };
+
+  const zcashAccount = {
+    ...createFixtureAccount("14", getCryptoCurrencyById("zcash")),
+    derivationMode: "",
+    freshAddress: "t1ZcashFreshAddress",
+    freshAddressPath: "44'/133'/0'/0/0",
+  } as Account;
+
+  const context: WalletAPIContext = {
+    ...createContextContainingAccountId({ tracking, accountsParams: [] }),
+    accounts: [zcashAccount],
+  };
+
+  const zcashWalletAccount = {
+    params: { path: "44'/133'", index: 0 },
+    xpub: {
+      derivationMode: "",
+      xpub: "testxpub",
+      crypto: {
+        getAddress: jest.fn(),
+        getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("zcashPubkey")),
+      },
+      getXpubAddresses: jest.fn().mockResolvedValue([
+        { account: 0, index: 0, address: "t1ZcashReceive0" },
+        { account: 1, index: 0, address: "t1ZcashChange0" },
+      ]),
+      storage: { getAddressUnspentUtxos: jest.fn().mockReturnValue([]) },
+    },
+  } as unknown as ReturnType<typeof getWalletAccount>;
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(zcashAccount.id);
+  });
+
+  it("returns the fresh transparent address", async () => {
+    await expect(bitcoinFamilyAccountGetAddressLogic(context, walletAccountId)).resolves.toEqual(
+      "t1ZcashFreshAddress",
+    );
+    expect(tracking.bitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountAddressFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the public key at the fresh address path", async () => {
+    mockedGetWalletAccount.mockReturnValueOnce(zcashWalletAccount);
+
+    await expect(bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId)).resolves.toEqual(
+      Buffer.from("zcashPubkey").toString("hex"),
+    );
+    expect(zcashWalletAccount.xpub.crypto.getPubkeyAt).toHaveBeenCalledWith("testxpub", 0, 0);
+    expect(tracking.bitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountPublicKeyFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the xpub", async () => {
+    await expect(bitcoinFamilyAccountGetXPubLogic(context, walletAccountId)).resolves.toEqual(
+      "testxpub",
+    );
+    expect(tracking.bitcoinFamilyAccountXpubSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountXpubFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the payment addresses on the zcash derivation path", async () => {
+    mockedGetWalletAccount.mockReturnValueOnce(zcashWalletAccount);
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    expect(result.find((r: { path?: string }) => r.path === "m/44'/133'/0'/0/0")).toEqual({
+      address: "t1ZcashReceive0",
+      publicKey: Buffer.from("zcashPubkey").toString("hex"),
+      path: "m/44'/133'/0'/0/0",
+      intention: "payment",
+    });
+    expect(tracking.bitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountAddressesFail).not.toHaveBeenCalled();
   });
 });
 

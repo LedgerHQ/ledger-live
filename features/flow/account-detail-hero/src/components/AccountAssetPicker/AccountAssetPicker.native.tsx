@@ -1,7 +1,7 @@
 import React from "react";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { AccountAssetPickerProps } from "./AccountAssetPicker.types";
-import { AccountAssetPickerContent } from "./Content/AccountAssetPickerContent.native";
+import { AccountAssetPickerContent } from "./Content/AccountAssetPickerContent";
 import { useAccountAssetPickerViewModel } from "./hooks/useAccountAssetPickerViewModel";
 
 export function AccountAssetPicker({

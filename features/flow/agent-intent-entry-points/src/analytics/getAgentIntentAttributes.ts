@@ -9,5 +9,7 @@ export function getAgentIntentAttributes(flag: AgentIntentFlag) {
   if (isEnabled && flag?.params?.navBar) entryPoints.push(AGENT_INTENT_SOURCE.navBar);
   if (isEnabled && flag?.params?.profile) entryPoints.push(AGENT_INTENT_SOURCE.profile);
 
-  return { isEnabled, entryPoints };
+  const newBadge = isEnabled && (flag?.params?.newBadge ?? false);
+
+  return { isEnabled, entryPoints, newBadge };
 }

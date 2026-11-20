@@ -5,12 +5,18 @@ import {
   OsUpdatesSteps,
   PreChecksStateType,
   RestoreBackupStateType,
-  RestoreBackupStatus,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-os-update";
+import { RestoreStatus } from "@domain/entity-device-os-update";
 import { render, screen } from "@tests/test-renderer";
 import { previewGroups } from "./previews";
 import { progressPresets, updateCounts } from "./fixtures";
 import OsUpdateGallery from "./index";
+
+// The gallery previews the flow without a device: any DMK instance does.
+jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-mobile"),
+  useDeviceManagementKit: () => ({ listConnectedDevices: () => [] }),
+}));
 
 const mockGoBack = jest.fn();
 
@@ -58,7 +64,7 @@ describe("OsUpdateGallery", () => {
     [
       `${OsUpdatesSteps.APPLY_UPDATES}.${ApplyUpdatesStateType.UPDATES_APPLIED}`,
       `${OsUpdatesSteps.RESTORE_BACKUP}.${RestoreBackupStateType.BACKUP_RESTORED}`,
-    ].flatMap(success => Object.values(RestoreBackupStatus).map(status => `${success}.${status}`)),
+    ].flatMap(success => Object.values(RestoreStatus).map(status => `${success}.${status}`)),
   )("should preview the %s success", success => {
     expect(previewedStates).toContain(success);
   });

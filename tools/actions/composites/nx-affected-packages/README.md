@@ -1,6 +1,6 @@
 # Nx affected packages and paths
 
-GitHub Action composite that runs `pnpm nx show projects --affected`, resolves each project's filesystem path via Nx, and sets outputs `packages` and `paths` for use in workflow conditions (e.g. `contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')`). The composite uses **actions/github-script** (no repo package.json required).
+GitHub Action composite that runs `pnpm nx show projects --affected`, resolves each project's filesystem path via Nx, and sets outputs `packages`, `paths` and `path_prefixes` for use in workflow conditions (e.g. `contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop')`). The composite uses **actions/github-script** (no repo package.json required).
 
 **This composite does not checkout or setup the workspace.** The caller job must run `actions/checkout` and ensure `pnpm`/`nx` are available. Pass trusted refs only for `base`/`head` (e.g. from `github.event`); do not use user-controlled input.
 
@@ -17,6 +17,9 @@ GitHub Action composite that runs `pnpm nx show projects --affected`, resolves e
 |--------|-------------|
 | `packages` | Newline-separated list of affected Nx project names. |
 | `paths` | Newline-separated list of affected project root paths (deduplicated). |
+| `path_prefixes` | JSON array of every leading segment run of the affected paths: `libs/ui/packages/react` gives `libs`, `libs/ui`, `libs/ui/packages` and `libs/ui/packages/react`. |
+
+Gate jobs on `path_prefixes`, not `paths`. `contains()` on a string matches substrings, so `contains(paths, 'shared')` is true when only `libs/live-e2e-shared` is affected. On the parsed array it compares whole elements.
 
 ## Usage
 
@@ -29,7 +32,7 @@ steps:
       base: origin/main
       head: HEAD
 # In a later job:
-# if: contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')
+# if: contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop')
 ```
 
 ## Script (local use)
@@ -37,7 +40,7 @@ steps:
 The composite runs the Node.js script `get-affected-packages-and-paths.js`. You can run the same script locally from the repo root. It prints JSON to stdout:
 
 ```json
-{"packages":["live-mobile",...],"paths":["apps/ledger-live-mobile",...]}
+{"packages":["live-mobile",...],"paths":["apps/ledger-live-mobile",...],"pathPrefixes":["apps","apps/ledger-live-mobile",...]}
 ```
 
 - **Base/head**: set env vars `BASE` and `HEAD` (e.g. `BASE=origin/main HEAD=HEAD`).
@@ -57,4 +60,6 @@ With base/head:
 BASE=origin/main HEAD=HEAD node tools/actions/composites/nx-affected-packages/get-affected-packages-and-paths.js
 ```
 
-Expected: exit code 0 and valid JSON. When nothing is affected, output is `{"packages":[],"paths":[]}`.
+Expected: exit code 0 and valid JSON. When nothing is affected, output is `{"packages":[],"paths":[],"pathPrefixes":[]}`.
+
+Unit tests: `node --test tools/actions/composites/nx-affected-packages/get-affected-packages-and-paths.test.js`.

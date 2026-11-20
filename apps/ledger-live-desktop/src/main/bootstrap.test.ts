@@ -22,16 +22,20 @@ function loadBootstrapWithToken() {
   process.env.CARD_SESSION_BOOTSTRAP = TOKEN;
   let bootstrap!: typeof import("./bootstrap");
   let electron!: typeof import("electron");
+  let Store!: typeof import("electron-store");
   jest.isolateModules(() => {
     electron = require("electron");
+    Store = require("electron-store").default;
     bootstrap = require("./bootstrap");
   });
   const handlers = new Map(
     jest.mocked(electron.ipcMain.handle).mock.calls.map(([channel, handler]) => [channel, handler]),
   );
-  const takeCardSession = () =>
-    handlers.get(CHANNELS.cardSessionBootstrap)!({} as Electron.IpcMainInvokeEvent);
-  return { buildBootstrap: bootstrap.buildBootstrap, takeCardSession };
+  const invoke = (channel: string, ...args: unknown[]) =>
+    handlers.get(channel)!({} as Electron.IpcMainInvokeEvent, ...args);
+  const takeCardSession = () => invoke(CHANNELS.cardSessionBootstrap);
+  const lldStore = () => jest.mocked(Store).mock.results[0].value;
+  return { buildBootstrap: bootstrap.buildBootstrap, takeCardSession, invoke, lldStore };
 }
 
 describe("bootstrap", () => {
@@ -83,5 +87,31 @@ describe("bootstrap", () => {
 
     expect(await takeCardSession()).toBe(TOKEN);
     expect(await takeCardSession()).toBe(TOKEN);
+  });
+
+  it("should persist a renderer store write", () => {
+    const { invoke, lldStore } = loadBootstrapWithToken();
+
+    invoke(CHANNELS.storeSet, "a.b", 1);
+
+    expect(lldStore().set).toHaveBeenCalledWith("a.b", 1);
+  });
+
+  it("should fail the renderer store write when main cannot persist it", () => {
+    const { invoke, lldStore } = loadBootstrapWithToken();
+    invoke(CHANNELS.storeSet, "a", 1);
+    jest.mocked(lldStore().set).mockImplementationOnce(() => {
+      throw new Error("EACCES");
+    });
+
+    expect(() => invoke(CHANNELS.storeSet, "a", 2)).toThrow("EACCES");
+  });
+
+  it("should clear the store on request", () => {
+    const { invoke, lldStore } = loadBootstrapWithToken();
+
+    invoke(CHANNELS.storeClear);
+
+    expect(lldStore().clear).toHaveBeenCalledTimes(1);
   });
 });

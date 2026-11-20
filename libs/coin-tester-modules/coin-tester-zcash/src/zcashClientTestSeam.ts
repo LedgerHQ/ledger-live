@@ -142,8 +142,7 @@ const deps: ZCashClientDeps = {
   deriveShieldedAddress: engine.deriveShieldedAddress,
 };
 
+/** @public Loaded by the `jest.mock` factories through `require`, which knip cannot trace. */
 export function createZCashClient(args: ZCashClientArgs): ZCashClient {
   return actualZCash.createZCashClientWith(deps, args);
 }
-
-export const createZCashClientWith = actualZCash.createZCashClientWith;

@@ -31,7 +31,6 @@ export default function StepConfirmation({
   action,
 }: StepProps) {
   invariant(account, "xrp: account required");
-  const successKey = `${ACTION_I18N[action]}.steps.confirmation.success`;
 
   if (optimisticOperation) {
     return (
@@ -43,14 +42,13 @@ export default function StepConfirmation({
           accountId={optimisticOperation.accountId}
         />
         <SuccessDisplay
-          title={<Trans i18nKey={`${successKey}.title`} values={{ token: token?.name }} />}
-          description={
-            <div>
-              <Trans i18nKey={`${successKey}.text`} values={{ token: token?.name }}>
-                <b></b>
-              </Trans>
-            </div>
+          title={
+            <Trans
+              i18nKey={`${ACTION_I18N[action]}.steps.confirmation.success.title`}
+              values={{ token: token?.name }}
+            />
           }
+          description={<Trans i18nKey="xrp.addToken.steps.confirmation.success.text" />}
         />
       </Container>
     );

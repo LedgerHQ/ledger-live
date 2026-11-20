@@ -1,5 +1,19 @@
 # @features/platform-device-onboarding
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24986](https://github.com/LedgerHQ/ledger-live/pull/24986) [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show an info card and its bottom sheet on the unseeded setup screen, from the new @features/flow-device-onboarding-setup-info package
+
+- [#24915](https://github.com/LedgerHQ/ledger-live/pull/24915) [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - End an unseeded device restore on the success karaoke, and show the karaoke glow in light mode
+
+- [#24979](https://github.com/LedgerHQ/ledger-live/pull/24979) [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the checks screen and ask to power the device back on when it switches off during device onboarding
+
+- [#25087](https://github.com/LedgerHQ/ledger-live/pull/25087) [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the pairing and checks screens up for a locked or updating device, ask to power on after 20 seconds then offer to try again, and reconnect only to the updated device after an OS update
+
+- [#25219](https://github.com/LedgerHQ/ledger-live/pull/25219) [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303) Thanks [@sarneijim](https://github.com/sarneijim)! - Show a Wallet screen before restoring with Recover and pause seed polling while the Live App is open
+
 ## 0.6.0
 
 ### Minor Changes

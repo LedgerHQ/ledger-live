@@ -1,5 +1,26 @@
 # @ledgerhq/coin-celo
 
+## 4.2.0-next.0
+
+### Minor Changes
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#24941](https://github.com/LedgerHQ/ledger-live/pull/24941) [`c735b30`](https://github.com/LedgerHQ/ledger-live/commit/c735b30ed5742f4c4f6b83111ceb0090bb4ef2f3) Thanks [@ishaba](https://github.com/ishaba)! - Celo: a pending send paid in a fee currency no longer deducts the fee from CELO, and pending sends, token ones included, clear on the sync that confirms them
+
+- [#25143](https://github.com/LedgerHQ/ledger-live/pull/25143) [`114ab5f`](https://github.com/LedgerHQ/ledger-live/commit/114ab5f12a49550b01305bd131db441c472b230c) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Remove unused dependencies
+
+- [#25136](https://github.com/LedgerHQ/ledger-live/pull/25136) [`915ff18`](https://github.com/LedgerHQ/ledger-live/commit/915ff18f05bdd1b267d98a3e3793330e2d99cab1) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Read the Celo fee asset from coin-evm: fees in their token's units, a FEES operation for a fee paid in a token, and operation details in that token. `getCeloTransactionFeeCurrency` is deprecated
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276)]:
+  - @ledgerhq/types-live@6.133.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.13.0-next.0
+  - @ledgerhq/hw-app-eth@7.14.0-next.0
+
 ## 4.1.0
 
 ### Minor Changes
@@ -272,42 +293,5 @@
   - @ledgerhq/ledger-wallet-framework@3.3.0
   - @ledgerhq/live-env@4.0.0
   - @ledgerhq/hw-app-eth@7.8.18
-
-## 3.1.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
-  - @ledgerhq/live-env@4.0.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.18-next.0
-
-## 3.1.0
-
-### Minor Changes
-
-- [#20117](https://github.com/LedgerHQ/ledger-live/pull/20117) [`6780db0`](https://github.com/LedgerHQ/ledger-live/commit/6780db014288dd297ed2d6b9e2133a5d91debc8a) Thanks [@shazzzam](https://github.com/shazzzam)! - Celo: show a clear "temporarily unavailable" message when voting is blocked during on-chain epoch processing, instead of a generic "RPC request failed" error
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`937c4f8`](https://github.com/LedgerHQ/ledger-live/commit/937c4f853cfc514a3fdc685bd6b264fd70ff7e13) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stub.
-
-  This module composes the EVM api and overrides the parts Celo implements itself, so its shape follows coin-evm's. `createApi` now returns its object with `satisfies`, which keeps `stakingSupported` — a member outside the API surface — visible in the type, and drops the `register` stub in favour of the framework default.
-
-  `craftRawTransaction` is the one capability neither this module nor the EVM api it composes provides, so it is simply absent. That matters here more than elsewhere: the composed api arrives through an `as unknown as` cast, which would have let a method that no longer exists keep claiming it does, and a caller would have met `undefined is not a function` rather than a "not supported" error. The cast now names the authoring type, and spells out `validateIntent` as required since every non-staking intent is delegated to it — so dropping it upstream breaks the build instead of the runtime.
-
-  Consumers see no change: the resolver applies `withDefaults`, which supplies the absent capabilities.
-
-  The authored type also keeps the contract's trailing optional parameter, or a caller reaching the module through it could no longer pass it: `combine` accepts and ignores its own. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
-
-- [#21208](https://github.com/LedgerHQ/ledger-live/pull/21208) [`1b789dc`](https://github.com/LedgerHQ/ledger-live/commit/1b789dc76939a2791e34fefb512652bac71ae4df) Thanks [@amaslakov](https://github.com/amaslakov)! - Celo: add USAT (Tether America USD) to the fee currencies that can be selected to pay gas
-
-### Patch Changes
-
-- Updated dependencies [[`83b019e`](https://github.com/LedgerHQ/ledger-live/commit/83b019e128b59a289a28184e58c33b108cd3f188), [`41faac4`](https://github.com/LedgerHQ/ledger-live/commit/41faac432e8c17e3718d90cc26ce6ae650800681), [`2c70999`](https://github.com/LedgerHQ/ledger-live/commit/2c709990d3569bc50504822ce90c9e9024210312), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`1cf5583`](https://github.com/LedgerHQ/ledger-live/commit/1cf55832f785fc57881169092f1190fa7ddfecf9)]:
-  - @ledgerhq/coin-evm@5.2.0
-  - @ledgerhq/types-live@6.122.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0
-  - @ledgerhq/live-env@3.2.0
-  - @ledgerhq/hw-app-eth@7.8.17
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

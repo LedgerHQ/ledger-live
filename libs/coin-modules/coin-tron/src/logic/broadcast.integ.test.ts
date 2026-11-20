@@ -1,19 +1,16 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import { TronWeb } from "tronweb";
 import { broadcast } from "./broadcast";
 
 const mockLogger: Logger = jest.fn();
 
-const mockConfig = {
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-} as TronCoinConfig;
+const mockConfig = tronDefaults.tron as TronCoinConfig;
 
 describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {
     const tronWeb = new TronWeb({
-      fullHost: "https://tron.coin.ledger.com",
+      fullHost: tronDefaults.tron.explorer.url,
     });
     const sender = tronWeb.utils.accounts.generateAccount();
     const receiver = tronWeb.utils.accounts.generateAccount();

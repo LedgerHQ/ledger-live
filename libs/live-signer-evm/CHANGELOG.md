@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-evm
 
+## 0.24.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f), [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d), [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0), [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed), [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276)]:
+  - @ledgerhq/ledger-wallet-framework@3.13.0-next.0
+  - @ledgerhq/hw-app-eth@7.14.0-next.0
+  - @ledgerhq/live-dmk-shared@0.41.0-next.0
+
 ## 0.24.6
 
 ### Patch Changes
@@ -193,32 +202,5 @@
   - @ledgerhq/ledger-wallet-framework@3.3.0
   - @ledgerhq/live-env@4.0.0
   - @ledgerhq/hw-app-eth@7.8.18
-
-## 0.23.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225)]:
-  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
-  - @ledgerhq/live-env@4.0.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.18-next.0
-
-## 0.23.0
-
-### Minor Changes
-
-- [#21245](https://github.com/LedgerHQ/ledger-live/pull/21245) [`45ea28b`](https://github.com/LedgerHQ/ledger-live/commit/45ea28b19d1e950bf4e705388a06181a9a7543aa) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Provide the EVM address book to the DMK Ethereum signer, so registered contacts can be clear-signed.
-
-  `toEvmAddressBook` maps the Contacts state to an `EvmAddressBook` snapshot, keeping EVM-family addresses only. Each app registers it on `evmAddressBookProvider` at its composition root, and `DmkSignerEth` reads it once per instance, so the recipient and the signing account are matched against the same snapshot. Records whose proof material does not decode are dropped, and signing is left untouched when no contact is usable.
-
-  Ledger account contacts are not provided yet: the snapshot always carries an empty `ledgerAccounts`.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`6cef6b5`](https://github.com/LedgerHQ/ledger-live/commit/6cef6b5341c30850aa74159bdbdea0a18f89de4c), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`5b9df59`](https://github.com/LedgerHQ/ledger-live/commit/5b9df5970cb628dbfe592227231b66ff498f480c)]:
-  - @ledgerhq/ledger-wallet-framework@3.2.0
-  - @ledgerhq/live-dmk-shared@0.32.0
-  - @ledgerhq/live-env@3.2.0
-  - @ledgerhq/hw-app-eth@7.8.17
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -22,6 +22,32 @@ function swapHistoryChanged(
   });
 }
 
+/** Canton: the DSO party that tells native CC offers apart. */
+const cantonNativeInstrumentAdmin = (account: Account): unknown =>
+  "cantonResources" in account &&
+  typeof account.cantonResources === "object" &&
+  account.cantonResources !== null &&
+  "nativeInstrumentAdmin" in account.cantonResources
+    ? account.cantonResources.nativeInstrumentAdmin
+    : undefined;
+
+/**
+ * As many operations, one replaced or re-read with a new fee or outcome: the counts do not tell, so
+ * the id and the two fields a re-read can change are compared by index. The same list, unchanged,
+ * is not walked.
+ */
+function operationsChanged(prev: Account, next: Account): boolean {
+  if (prev.operations === next.operations) return false;
+  return prev.operations.some((op, index) => {
+    const other = next.operations[index];
+    return (
+      op.id !== other?.id ||
+      op.hasFailed !== other.hasFailed ||
+      (op.fee !== other.fee && !op.fee?.eq(other.fee))
+    );
+  });
+}
+
 /**
  * Returns true when something that is persisted and user-visible (or structurally
  * relevant) changed between prev and next. Used to decide if an account is worth
@@ -46,8 +72,11 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     return true;
   }
 
+  if (operationsChanged(prev, next)) return true;
+
   // swap history
   if (swapHistoryChanged(prev.swapHistory, next.swapHistory)) return true;
+  if ((prev.sellOperationIds?.length ?? 0) !== (next.sellOperationIds?.length ?? 0)) return true;
 
   // zcash private info (or any account with privateInfo)
   const prevPrivateInfo =
@@ -77,6 +106,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     if ((prevPrivateInfo.transactions?.length ?? 0) !== (nextPrivateInfo.transactions?.length ?? 0))
       return true;
   }
+
+  if (cantonNativeInstrumentAdmin(prev) !== cantonNativeInstrumentAdmin(next)) return true;
 
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;

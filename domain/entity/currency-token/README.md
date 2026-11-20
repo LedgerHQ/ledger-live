@@ -56,6 +56,7 @@ const usdt = token({
 | `delisted`            | `boolean`  | no       | Hide from new flows when `true`                       |
 | `disableCountervalue` | `boolean`  | no       | Disable countervalue display when `true`              |
 | `ledgerSignature`     | `string`   | no       | Ledger's cryptographic signature for the token listing |
+| `categories`          | `string[]` | no       | CAL categories (e.g. `["stocks"]`); `[]` means no category |
 
 ## Testing
 

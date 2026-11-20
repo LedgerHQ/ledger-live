@@ -195,21 +195,20 @@ describe("createApi", () => {
       expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
 
-    it("adds the bonded stake to the native total as locked, on top of the liquid balance", async () => {
-      const [[liquidNative], stakedBalance] = await Promise.all([
+    it("appends the bonded stake row after the liquid native rows", async () => {
+      const [liquidBalance, stakedBalance] = await Promise.all([
         api.getBalance(privacyContext, testnetAddress),
         api.getBalance(stakingPrivacyContext, testnetAddress),
       ]);
 
+      const liquidNative = liquidBalance.filter(entry => entry.asset.type === "native");
+
       expect(stakedBalance.filter(entry => entry.asset.type === "native")).toEqual([
-        {
-          value: liquidNative.value + testnetBondedMicrocredits,
-          locked: testnetBondedMicrocredits,
-          asset: { type: "native" },
-        },
+        ...liquidNative,
         {
           value: testnetBondedMicrocredits,
           asset: { type: "native" },
+          locked: testnetBondedMicrocredits,
           stake: expect.objectContaining({
             address: testnetAddress,
             state: "active",

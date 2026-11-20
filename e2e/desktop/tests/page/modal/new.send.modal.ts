@@ -243,12 +243,29 @@ export class NewSendModal extends Modal {
 
   @step("Verify recipient validation error: $0")
   async expectRecipientError(message: string | RegExp) {
-    await expect(this.recipientErrorBanner).toContainText(message);
+    await expect(this.recipientErrorBanner).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.recipientErrorBanner).toContainText(message);
+      },
+      { timeout: TIMEOUT.large },
+    );
+  }
+
+  @step("Verify recipient validation error is hidden")
+  async expectRecipientErrorHidden() {
+    await expect(this.recipientErrorBanner).toBeHidden();
   }
 
   @step("Verify recipient validation warning: $0")
   async expectRecipientWarning(message: string | RegExp) {
-    await expect(this.recipientWarningBanner).toContainText(message);
+    await expect(this.recipientWarningBanner).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.recipientWarningBanner).toContainText(message);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify recipient validation warning is hidden")
@@ -434,8 +451,10 @@ export class NewSendModal extends Modal {
   @step("Verify the get funds CTA replaced the review button")
   async expectGetFundsCta() {
     await expect(this.getFundsButton).toBeVisible();
-    await expect(this.getFundsButton).toBeEnabled();
-    await expect(this.reviewButton).toHaveCount(0);
+    await this.softExpect(async soft => {
+      await soft(this.getFundsButton).toBeEnabled();
+      await soft(this.reviewButton).toHaveCount(0);
+    });
   }
 
   @step("Verify review button is enabled")
@@ -445,7 +464,13 @@ export class NewSendModal extends Modal {
 
   @step("Verify amount error: $0")
   async expectAmountError(message: string | RegExp) {
-    await expect(this.amountErrorMessage).toContainText(message);
+    await expect(this.amountErrorMessage).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.amountErrorMessage).toContainText(message);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Click review to proceed to signature")

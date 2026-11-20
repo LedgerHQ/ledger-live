@@ -58,15 +58,42 @@ describe("useOfacGeoBlockCheck", () => {
     expect(result.current).toEqual({ status: "available" });
   });
 
-  it("should return available when a refetch errors with cached blocked data (fail-open)", () => {
+  it("should return available while a failed check is fetched again (fail-open)", () => {
     mockOfacCheckQuery(mockedUseCheckQuery, {
-      data: true,
-      isLoading: false,
-      isError: true,
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: { status: 500, data: "" },
     });
 
     const { result } = renderHook(() => useOfacGeoBlockCheck());
 
     expect(result.current).toEqual({ status: "available" });
+  });
+
+  it("should keep the app unavailable when a refetch errors with cached blocked data", () => {
+    mockOfacCheckQuery(mockedUseCheckQuery, {
+      data: true,
+      isLoading: false,
+      isError: true,
+      error: { status: 500, data: "" },
+    });
+
+    const { result } = renderHook(() => useOfacGeoBlockCheck());
+
+    expect(result.current).toEqual({ status: "unavailable", reason: "geoBlocked" });
+  });
+
+  it("should keep the app unavailable while a failed check is fetched again over cached blocked data", () => {
+    mockOfacCheckQuery(mockedUseCheckQuery, {
+      data: true,
+      isLoading: false,
+      isError: false,
+      error: { status: 500, data: "" },
+    });
+
+    const { result } = renderHook(() => useOfacGeoBlockCheck());
+
+    expect(result.current).toEqual({ status: "unavailable", reason: "geoBlocked" });
   });
 });

@@ -7,7 +7,7 @@ import prepareTransaction from "./prepareTransaction";
 const mockGetFeesForTransaction = jest.fn();
 jest.mock("./getFeesForTransaction", () => ({
   __esModule: true,
-  default: () => mockGetFeesForTransaction(),
+  default: (arg: unknown) => mockGetFeesForTransaction(arg),
 }));
 
 const TEST_TOKEN_COIN_TYPE = "0x0::sui::TEST_TOKEN";
@@ -30,7 +30,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
 // Mock calculateAmount
 const mockCalculateAmount = jest.fn();
 jest.mock("./utils", () => ({
-  calculateAmount: () => mockCalculateAmount(),
+  calculateAmount: (arg: unknown) => mockCalculateAmount(arg),
 }));
 
 describe("prepareTransaction", () => {
@@ -94,6 +94,23 @@ describe("prepareTransaction", () => {
     expect(newTx.coinType).toEqual(TEST_TOKEN_COIN_TYPE);
     expect(newTx.fees).toEqual(fees);
     expect(newTx.tokenId).toEqual("tokenSubAccountId");
+  });
+
+  it("computes send max and fees of a token transaction still in the default send mode as a token send", async () => {
+    const fees = new BigNumber(42);
+    mockGetFeesForTransaction.mockResolvedValue({ fees, gasBudget: fees });
+    mockCalculateAmount.mockReturnValue(new BigNumber(100_000));
+    const tx = createFixtureTransaction({
+      mode: "send",
+      subAccountId: "tokenSubAccountId",
+      useAllAmount: true,
+    });
+
+    const newTx = await prepareTransaction(createFixtureAccount(), tx);
+
+    expect(mockCalculateAmount.mock.lastCall[0].transaction.mode).toBe("token.send");
+    expect(mockGetFeesForTransaction.mock.lastCall[0].transaction.mode).toBe("token.send");
+    expect(newTx.amount).toEqual(new BigNumber(100_000));
   });
 
   it("rejects when fee estimation fails with an unrecognised error", async () => {

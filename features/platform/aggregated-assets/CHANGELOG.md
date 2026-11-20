@@ -1,5 +1,13 @@
 # @features/platform-aggregated-assets
 
+## 0.7.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.7.2-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.7.1
 
 ### Patch Changes
@@ -215,23 +223,5 @@
   - @domain/api-aggregated-assets@0.5.0-next.0
   - @features/platform-env@0.3.0-next.0
   - @domain/entity-currency@0.4.3-next.0
-
-## 0.5.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @domain/api-aggregated-assets@0.4.2
-  - @features/platform-env@0.2.3
-  - @domain/entity-currency@0.4.2
-
-## 0.5.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @domain/api-aggregated-assets@0.4.2-next.0
-  - @features/platform-env@0.2.3-next.0
-  - @domain/entity-currency@0.4.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

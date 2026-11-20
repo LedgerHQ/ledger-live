@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tron
 
+## 10.5.0-next.0
+
+### Minor Changes
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#25041](https://github.com/LedgerHQ/ledger-live/pull/25041) [`68769c3`](https://github.com/LedgerHQ/ledger-live/commit/68769c30208d8acedaef8a5c351a71b8cbb32f3f) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Reject a signed energy-rent payment that is not signed by its owner key, or whose signature the network would refuse
+
+- [#24639](https://github.com/LedgerHQ/ledger-live/pull/24639) [`a36827d`](https://github.com/LedgerHQ/ledger-live/commit/a36827d7be2d435960eb1689e9ffda6a5736d6b0) Thanks [@ishaba](https://github.com/ishaba)! - Tronify: say the energy delivery may take up to 2 minutes, and link to the provider terms without a source flag
+
 ## 10.4.0
 
 ### Minor Changes

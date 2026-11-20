@@ -1,17 +1,11 @@
 // The craft and combine flow is not implemented yet; it gets its integration tests with it.
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import type { BitcoinContext } from "../config";
+import { bitcoinDefaults, type BitcoinContext } from "../config";
 import { FUNDED_P2WPKH, KNOWN_BLOCK } from "../logic/tests/helpers/fixtures";
 import { createApi } from "./index";
 
 const liveContext: BitcoinContext = {
-  config: async () => ({
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: "btc",
-  }),
+  config: async () => bitcoinDefaults.bitcoin,
   logger: () => {},
 };
 

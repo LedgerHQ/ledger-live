@@ -15,6 +15,7 @@ import type {
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
 import aleoCoinConfig from "../config";
+import { aleoAccountBalances } from "./accountBalances";
 import { ALEO_DUMMY_ADDRESS } from "../constants";
 import type { AleoAccount, AleoCoinConfig, Transaction as AleoTransaction } from "../types";
 import type { AleoSigner } from "../types/signer";
@@ -42,6 +43,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(),
     getAddressFn: getAddress,
+    getAccountBalances: aleoAccountBalances,
   });
 
   return {

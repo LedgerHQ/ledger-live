@@ -94,13 +94,15 @@ const StepSummary = (props: StepProps) => {
   const SpecificSummaryAdditionalRows = specific?.StepSummaryAdditionalRows;
   const SpecificSummaryPostAlert = specific?.StepSummaryPostAlert;
 
-  const memo = lldMemoTag?.enabled
-    ? getMemoTagValueByTransactionFamily(transaction)
-    : (
-        transaction as Transaction & {
-          memo: string;
-        }
-      )?.memo;
+  const memo =
+    specific?.getMemoValue?.(transaction) ??
+    (lldMemoTag?.enabled
+      ? getMemoTagValueByTransactionFamily(transaction)
+      : (
+          transaction as Transaction & {
+            memo: string;
+          }
+        )?.memo);
   const handleOnEditMemo = () => {
     transitionTo("recipient");
   };

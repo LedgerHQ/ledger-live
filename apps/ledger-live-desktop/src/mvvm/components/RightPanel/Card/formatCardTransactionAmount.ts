@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { Unit } from "@domain/entity-currency-unit";
@@ -10,6 +10,8 @@ const CRYPTO_MAGNITUDE_BY_TICKER: Readonly<Record<string, number>> = {
   USDC: 6,
   USDT: 6,
 };
+
+const UNREADABLE_AMOUNT = "—";
 
 type FormatCardTransactionAmountArgs = Readonly<{
   value: string;
@@ -26,6 +28,8 @@ export function formatCardTransactionAmount({
   locale,
   discreet = false,
 }: FormatCardTransactionAmountArgs): string {
+  const amount = parseFiniteBigNumber(value);
+  if (!amount) return UNREADABLE_AMOUNT;
   const ticker = currency.toUpperCase();
   const unit: Unit =
     kind === "fiat"
@@ -40,7 +44,7 @@ export function formatCardTransactionAmount({
           magnitude: CRYPTO_MAGNITUDE_BY_TICKER[ticker] ?? 8,
         };
 
-  return formatCurrencyUnit(unit, valueFromUnit(new BigNumber(value), unit), {
+  return formatCurrencyUnit(unit, valueFromUnit(amount, unit), {
     locale,
     showCode: true,
     alwaysShowSign: value.startsWith("+"),

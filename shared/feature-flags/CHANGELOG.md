@@ -1,5 +1,19 @@
 # @shared/feature-flags
 
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#24947](https://github.com/LedgerHQ/ledger-live/pull/24947) [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Agent Intent new badge from the agentIntent flag and track it
+
+- [#25042](https://github.com/LedgerHQ/ledger-live/pull/25042) [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Enable the `currencyInjective` flag by default, so Injective stays available when remote config fails to load.
+
+- [#24865](https://github.com/LedgerHQ/ledger-live/pull/24865) [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make the `coin_module_call` tiers remotely configurable: a new `methodTiers` param of the `coinObservability` flag moves a coin-module method to the `transaction`, `preparation`, `sync` or `off` tier without a release. `craftTransactionData` moves to the `preparation` tier, since the bridge calls it on every edit of a transaction, and each `coin_module_call` now carries its `tier`. `shouldTransmitCoinModuleCall` is removed: `createCoinModuleCallTransmitter` holds the whole policy.
+
+- [#25057](https://github.com/LedgerHQ/ledger-live/pull/25057) [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the lwmHistoryCsvExport flag, off by default, to gate the CSV export of the transaction history on mobile
+
+- [#25039](https://github.com/LedgerHQ/ledger-live/pull/25039) [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70) Thanks [@sarneijim](https://github.com/sarneijim)! - Pitch Ledger Recover after an unseeded new seed and offer Ledger Sync before the unseeded success karaoke
+
 ## 0.31.0
 
 ### Minor Changes
@@ -457,20 +471,6 @@
 ### Minor Changes
 
 - [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
-
-- [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
-
-- [#21283](https://github.com/LedgerHQ/ledger-live/pull/21283) [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add earn banner to success transation modal
-
-## 0.22.0-next.1
-
-### Minor Changes
-
-- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
-
-## 0.22.0-next.0
-
-### Minor Changes
 
 - [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
 

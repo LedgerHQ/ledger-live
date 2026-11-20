@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24116](https://github.com/LedgerHQ/ledger-live/pull/24116) [`ed22b28`](https://github.com/LedgerHQ/ledger-live/commit/ed22b28719c1beff10352eb33901035a02b8555c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Pass the receivers of the unified address the user entered to the Zcash signer, and report a device refusal of them as UserAddressRefusedOnDevice
+
 ## 0.12.0
 
 ### Minor Changes

@@ -2,11 +2,11 @@ import React, { useCallback, useState, type ReactNode } from "react";
 import { ScrollView, View, type LayoutChangeEvent } from "react-native";
 import { Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { AmountInputSection } from "./AmountInputSection";
+import { useStyleSheet, useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { AmountInputSection, getAmountInputCompactSaving } from "./AmountInputSection";
 import { QuickActionsRow } from "./QuickActionsRow";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
-import { NumberKeyboard } from "./NumberKeyboard";
+import { NumberKeyboard, getNumberKeyboardCompactSaving } from "./NumberKeyboard";
 import { resolveAmountScreenStack } from "./amountScreenLayout";
 import type { AmountScreenViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
@@ -39,7 +39,7 @@ export function AmountScreenView({ viewModel, feesFooterRow }: AmountScreenViewP
       flexibleContent: {
         flexGrow: 1,
       },
-      feesBlock: {
+      amountBlock: {
         flexGrow: 1,
         justifyContent: "center",
       },
@@ -49,14 +49,30 @@ export function AmountScreenView({ viewModel, feesFooterRow }: AmountScreenViewP
     }),
     [],
   );
-  const [viewportHeight, onViewportLayout] = useMeasuredHeight();
+  const [availableHeight, onAvailableLayout] = useMeasuredHeight();
   const [amountHeight, onAmountLayout] = useMeasuredHeight();
   const [feesHeight, onFeesLayout] = useMeasuredHeight();
   const [quickActionsHeight, onQuickActionsLayout] = useMeasuredHeight();
-  const { scrollEnabled } = resolveAmountScreenStack({
+  const { theme } = useTheme();
+  const [compact, setCompact] = useState(false);
+  const layout = resolveAmountScreenStack({
     requestedQuickActions: viewModel.quickActions.show,
-    heights: { viewportHeight, amountHeight, feesHeight, quickActionsHeight },
+    heights: { availableHeight, amountHeight, feesHeight, quickActionsHeight },
+    compact,
+    compactSavings: {
+      keyboard: getNumberKeyboardCompactSaving(theme.spacings),
+      amount: getAmountInputCompactSaving(theme.spacings, viewModel.message !== null),
+    },
   });
+  if (layout.compact !== compact) {
+    setCompact(layout.compact);
+  }
+  const { scrollEnabled, pinQuickActions } = layout;
+  const quickActions = viewModel.quickActions.show ? (
+    <View onLayout={onQuickActionsLayout}>
+      <QuickActionsRow actions={viewModel.quickActions.actions} />
+    </View>
+  ) : null;
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -82,45 +98,48 @@ export function AmountScreenView({ viewModel, feesFooterRow }: AmountScreenViewP
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.flexible}
-        contentContainerStyle={styles.flexibleContent}
-        scrollEnabled={scrollEnabled}
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-        onLayout={onViewportLayout}
-      >
-        <View onLayout={onAmountLayout}>
-          <AmountInputSection
-            viewModel={viewModel.amountInput}
-            message={viewModel.message}
-            toggleLabel={t("send.amount.toggleCurrency")}
-          />
-        </View>
-
-        <View style={styles.feesBlock}>
-          <View onLayout={onFeesLayout}>
-            <NetworkFeesRow
-              viewModel={viewModel.networkFees}
-              sponsored={viewModel.sponsoredFee}
-              sponsoredRentNotice={viewModel.sponsoredRentNotice}
-            />
-            {feesFooterRow}
-            <Divider />
+      <View style={styles.flexible} onLayout={onAvailableLayout}>
+        <ScrollView
+          style={styles.flexible}
+          contentContainerStyle={styles.flexibleContent}
+          scrollEnabled={scrollEnabled}
+          bounces={false}
+          showsVerticalScrollIndicator={scrollEnabled}
+        >
+          <View style={styles.amountBlock}>
+            <View onLayout={onAmountLayout}>
+              <AmountInputSection
+                viewModel={viewModel.amountInput}
+                message={viewModel.message}
+                toggleLabel={t("send.amount.toggleCurrency")}
+                compact={compact}
+              />
+            </View>
           </View>
 
-          {viewModel.quickActions.show && (
-            <View onLayout={onQuickActionsLayout}>
-              <QuickActionsRow actions={viewModel.quickActions.actions} />
+          <View>
+            <View onLayout={onFeesLayout}>
+              <NetworkFeesRow
+                viewModel={viewModel.networkFees}
+                sponsored={viewModel.sponsoredFee}
+                sponsoredRentNotice={viewModel.sponsoredRentNotice}
+              />
+              {feesFooterRow}
+              <Divider />
             </View>
-          )}
-        </View>
-      </ScrollView>
+
+            {!pinQuickActions && quickActions}
+          </View>
+        </ScrollView>
+
+        {pinQuickActions && quickActions}
+      </View>
 
       <View style={styles.keyboard}>
         <NumberKeyboard
           onKeyPress={handleKeyPress}
           allowDecimal={viewModel.amountInput.maxDecimalLength > 0}
+          compact={compact}
         />
       </View>
 

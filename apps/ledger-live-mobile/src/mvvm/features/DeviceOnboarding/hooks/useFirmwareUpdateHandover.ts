@@ -1,21 +1,13 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 
 const delegatedState = "checks.firmwareUpdateDelegated";
-
-// The OS update reboot changes the BLE address, the advertised name and the USB id.
-export function isRebootedDevice(before: Device, after: Device): boolean {
-  if (before.modelId !== after.modelId) return false;
-  if (before.wired && after.wired) return true;
-  return findMatchingNewDevice(before, [after]) !== null;
-}
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
@@ -51,6 +43,7 @@ export function useFirmwareUpdateHandover({
   const wasDelegatedRef = useRef(false);
   const onReconnectRequiredRef = useRef(onReconnectRequired);
   const currentSessionIdRef = useRef(currentSessionId);
+  const [returnsWithoutUpdate, setReturnsWithoutUpdate] = useState(0);
 
   useEffect(() => {
     if (delegated && !wasDelegatedRef.current) closedRef.current = false;
@@ -74,8 +67,9 @@ export function useFirmwareUpdateHandover({
   }, [send]);
 
   const returnFromUpdate = useCallback(
-    (rebooted: boolean) => {
+    (rebooted: boolean, updated: boolean) => {
       if (closedRef.current) return;
+      if (!updated) setReturnsWithoutUpdate(count => count + 1);
       if (!rebooted) {
         closeHandoverOnce();
         return;
@@ -92,7 +86,8 @@ export function useFirmwareUpdateHandover({
       if (closedRef.current) return;
       awaitingReturnRef.current = false;
       baseNavigation.goBack();
-      returnFromUpdate(updateStep === "completed" || currentSessionIdRef.current === null);
+      const updated = updateStep === "completed";
+      returnFromUpdate(updated || currentSessionIdRef.current === null, updated);
     },
     [baseNavigation, returnFromUpdate],
   );
@@ -154,9 +149,9 @@ export function useFirmwareUpdateHandover({
   useFocusEffect(
     useCallback(() => {
       if (!awaitingReturnRef.current) return;
-      returnFromUpdate(currentSessionIdRef.current === null);
+      returnFromUpdate(currentSessionIdRef.current === null, false);
     }, [returnFromUpdate]),
   );
 
-  return { close: closeHandoverOnce };
+  return { close: closeHandoverOnce, returnsWithoutUpdate };
 }

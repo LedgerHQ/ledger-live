@@ -15,17 +15,19 @@ export class FearAndGreedDialog extends Dialog {
   @step("Validate fear and greed dialog elements")
   async validateFearAndGreedDialogItems() {
     await this.waitForDialogToBeVisible();
-    await expect(this.fearAndGreedDialogContent).toBeVisible();
-    await expect(this.closeButton).toBeVisible();
     await expect(this.fearAndGreedDialogCta).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.fearAndGreedDialogContent).toBeVisible();
+      await soft(this.closeButton).toBeVisible();
+    });
   }
 
   @step("Validate fear and greed dialog contains educational text")
   async validateFearAndGreedDialogContent() {
     await this.waitForDialogToBeVisible();
-    const dialogText = await this.fearAndGreedDialogContent.textContent();
-    expect(dialogText).toBeTruthy();
-    expect(dialogText!.length).toBeGreaterThan(0);
+    await this.softExpect(async soft => {
+      await soft(this.fearAndGreedDialogContent).toHaveText(/\S/);
+    });
   }
 
   @step("Close fear and greed dialog using CTA button")

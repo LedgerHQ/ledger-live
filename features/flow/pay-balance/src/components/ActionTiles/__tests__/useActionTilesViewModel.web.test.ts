@@ -1,7 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useActionTilesViewModel } from "../useActionTilesViewModel";
 import type { ActionTileInput, ActionTilesProps } from "../types";
-import { i18nWrapper } from "../../../__tests__/i18nWrapper";
 import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 
 jest.mock("@features/platform-pay-analytics", () =>
@@ -23,11 +22,8 @@ function buildProps(overrides: Partial<ActionTilesProps> = {}): ActionTilesProps
   return { tiles: [deposit, request], page: "Pay", ...overrides };
 }
 
-function renderActionTilesViewModel(
-  props: ActionTilesProps,
-  resources?: Parameters<typeof i18nWrapper>[0],
-) {
-  return renderHook(() => useActionTilesViewModel(props), { wrapper: i18nWrapper(resources) });
+function renderActionTilesViewModel(props: ActionTilesProps) {
+  return renderHook(() => useActionTilesViewModel(props));
 }
 
 describe("useActionTilesViewModel", () => {
@@ -71,15 +67,5 @@ describe("useActionTilesViewModel", () => {
 
     expect(result.current.tiles).toHaveLength(3);
     expect(result.current.tiles.map(t => t.id)).toEqual(["deposit", "request", "pay"]);
-  });
-
-  it("should resolve each tile label from the mounted i18n provider", () => {
-    const { result } = renderActionTilesViewModel(buildProps(), {
-      en: {
-        translation: { payTab: { actions: { deposit: "Add stablecoin", request: "Request" } } },
-      },
-    });
-
-    expect(result.current.tiles.map(t => t.label)).toEqual(["Add stablecoin", "Request"]);
   });
 });

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo } from "react";
 import { type CatalogItem } from "../../components";
 import { CATEGORY_ICONS } from "../../categoryConfig";
-import { useDevToolsShell } from "../../context";
+import { useDevToolsShell } from "../../context/shellContext";
 import { filterToolsByQuery } from "../../utils";
 import type { CategoriesScreenProps } from "../navigation";
 

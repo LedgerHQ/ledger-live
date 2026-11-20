@@ -28,7 +28,7 @@ type OsUpdateTracking = {
   trackCompleted: (event: SuccessPageEvent) => void;
 };
 
-const OsUpdateTrackingContext = createContext<OsUpdateTracking>({
+export const OsUpdateTrackingContext = createContext<OsUpdateTracking>({
   trackPage: () => {},
   trackClick: () => {},
   trackCompleted: () => {},

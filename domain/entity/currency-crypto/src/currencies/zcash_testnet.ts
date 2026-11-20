@@ -15,7 +15,7 @@ export const zcash_testnet = currency({
   ticker: "ZEC",
   scheme: "zcash_testnet",
   color: "#3790ca",
-  family: "bitcoin",
+  family: "zcash",
   blockAvgTime: 150,
   units: [
     {
