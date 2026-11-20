@@ -21,13 +21,7 @@ type PerformSwapUntilQuoteSelectionStepOptions = {
   continueToQuotes?: boolean;
 };
 
-type EnsureTokenApprovalOptions = {
-  fromAccount: Account | TokenAccount;
-  provider: SwapProvider;
-  minAmount: string;
-};
-
-type IsTokenApprovalExpectedOptions = {
+type TokenApprovalOptions = {
   fromAccount: Account | TokenAccount;
   provider: SwapProvider;
   amount: string;
@@ -76,14 +70,10 @@ export async function performSwapUntilQuoteSelectionStep(
     await app.swapLiveApp.waitForQuotes();
   }
 }
-export async function ensureTokenApproval(options: EnsureTokenApprovalOptions) {
-  const { fromAccount, provider, minAmount } = options;
+export async function ensureTokenApproval(options: TokenApprovalOptions) {
+  const { fromAccount, provider, amount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return;
-  const approvalNeeded = await isTokenApprovalExpected({
-    fromAccount,
-    provider,
-    amount: minAmount,
-  });
+  const approvalNeeded = await isTokenApprovalExpected(options);
   if (!approvalNeeded) return;
 
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
@@ -92,7 +82,7 @@ export async function ensureTokenApproval(options: EnsureTokenApprovalOptions) {
     const result = await approveTokenCommand(
       fromAccount,
       provider.contractAddress,
-      new BigNumber(minAmount).times(12).div(10).toFixed(),
+      new BigNumber(amount).times(12).div(10).toFixed(),
     );
     allure.descriptionHtml(
       `<p>Token approval result for ${escapeHtml(provider.uiName)}:</p><pre>${escapeHtml(result)}</pre>`,
@@ -100,9 +90,7 @@ export async function ensureTokenApproval(options: EnsureTokenApprovalOptions) {
   });
 }
 
-export async function isTokenApprovalExpected(
-  options: IsTokenApprovalExpectedOptions,
-): Promise<boolean> {
+export async function isTokenApprovalExpected(options: TokenApprovalOptions): Promise<boolean> {
   const { fromAccount, provider, amount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return false;
 

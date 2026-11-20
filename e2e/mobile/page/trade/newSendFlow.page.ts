@@ -14,6 +14,11 @@ const trxAmount = (text: string): number => {
   return code > 0 ? Number(words[code - 1].replaceAll(",", "")) : Number.NaN;
 };
 
+type SetRecipientAndContinueOptions = {
+  address: string | undefined;
+  memoTag?: string;
+};
+
 type FeePaymentOptionFeeOptions = {
   optionId: string;
   fee: string;
@@ -91,8 +96,9 @@ export default class NewSendFlowPage {
     await app.account.tapSend();
   }
 
-  @Step("Fill recipient address and continue: {{{0}}}")
-  async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
+  @Step("Fill recipient address and continue: {{{0.address}}}")
+  async setRecipientAndContinueNewFlow(options: SetRecipientAndContinueOptions) {
+    const { address, memoTag } = options;
     if (!address) throw new Error("Recipient address is not set");
     await this.recipientInput.replaceText(address);
 

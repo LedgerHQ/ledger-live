@@ -53,10 +53,10 @@ export function runNewSendFlowTokenTest(
         transaction.accountToDebit.parentAccount!.accountName,
         transaction.accountToDebit,
       );
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
@@ -89,10 +89,10 @@ export function runNewSendFlowTest(
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
@@ -187,10 +187,10 @@ export function runNewSendMemoTest(
 
     it(`[${label}] - Send - with memo`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       // Speculos asserts the memo is displayed on the device review screen.
@@ -205,10 +205,10 @@ export function runNewSendMemoTest(
     if (broadcastWithoutMemo) {
       it(`[${label}] - Send - without memo`, async () => {
         await app.send.navigateToSendScreen(noMemoTransaction.accountToDebit);
-        await app.newSend.setRecipientAndContinueNewFlow(
-          noMemoTransaction.accountToCredit.address,
-          noMemoTransaction.memoTag,
-        );
+        await app.newSend.setRecipientAndContinueNewFlow({
+          address: noMemoTransaction.accountToCredit.address,
+          memoTag: noMemoTransaction.memoTag,
+        });
         await app.newSend.setAmountAndReviewNewFlow(noMemoTransaction.amount);
         await app.newSend.waitForSignature();
         await app.speculos.signSendTransaction(noMemoTransaction);

@@ -121,10 +121,10 @@ async function reachAmountStep(transaction: TransactionType) {
     transaction.accountToDebit.parentAccount!.accountName,
     transaction.accountToDebit,
   );
-  await app.newSend.setRecipientAndContinueNewFlow(
-    transaction.accountToCredit.address,
-    transaction.memoTag,
-  );
+  await app.newSend.setRecipientAndContinueNewFlow({
+    address: transaction.accountToCredit.address,
+    memoTag: transaction.memoTag,
+  });
   await app.newSend.setAmountNewFlow(transaction.amount);
 }
 
