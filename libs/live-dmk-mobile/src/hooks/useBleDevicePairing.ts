@@ -5,7 +5,7 @@ import {
   rnBleTransportIdentifier,
   PeerRemovedPairingError,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { activeDeviceSessionSubject, disconnectOtherSessions } from "@ledgerhq/live-dmk-shared";
 import { Device } from "@ledgerhq/types-devices";
 import { DeviceManagementKitBLETransport } from "../transport/DeviceManagementKitBLETransport";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
@@ -34,7 +34,7 @@ export const useBleDevicePairing = ({
     try {
       if (!dmk) return;
       // TODO: Remove this connect call and use transport instead
-      await dmk.close();
+      disconnectOtherSessions(dmk, { id: device.deviceId, transport: rnBleTransportIdentifier });
       const sessionId = await dmk.connect({
         device: {
           id: device.deviceId,

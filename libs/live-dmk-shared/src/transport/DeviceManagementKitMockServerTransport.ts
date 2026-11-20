@@ -2,6 +2,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { firstValueFrom } from "rxjs";
 import { first, map, tap, timeout } from "rxjs/operators";
+import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
 import { getMockServerDeviceIdFromCompatId } from "../mockServer/mockServerCompatDeviceId";
 import { DmkCompatTransport } from "./DmkCompatTransport";
 
@@ -27,6 +28,7 @@ export class DeviceManagementKitMockServerTransport {
         timeoutMs ? timeout(timeoutMs) : tap(),
       ),
     );
+    disconnectOtherSessions(dmk, discoveredDevice);
     const sessionId = await dmk.connect({
       device: discoveredDevice,
       sessionRefresherOptions: { isRefresherDisabled: true },

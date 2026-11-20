@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import Transport from "@ledgerhq/hw-transport";
+import { disconnectOtherSessions } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom, type Subscription } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { HTTP_PROXY_TRANSPORT_IDENTIFIER, httpProxyUrlSubject } from "./HttpProxyDmkTransport";
@@ -51,6 +52,7 @@ export class DeviceManagementKitHTTPProxyTransport extends Transport {
           timeout(10_000),
         ),
       );
+      disconnectOtherSessions(dmk, devices[0]);
       const sessionId = await dmk.connect({
         device: devices[0],
         sessionRefresherOptions: { isRefresherDisabled: true },
