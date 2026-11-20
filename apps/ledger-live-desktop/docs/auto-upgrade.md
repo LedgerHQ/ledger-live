@@ -17,6 +17,7 @@ itself: Return then only focuses it.
 | `--update-from-feed`      | Rebuild the base only, reuse the update from `dist/feed`               |
 | `--from-feed`             | Rebuild nothing, reuse both builds from `dist/feed`                    |
 | `--bad-signature`         | Sign the update with a key the app does not trust: it must not install |
+| `--corrupted-update`      | Serve a corrupted copy of the update: it must download but not install |
 | `--download-speed <MB/s>` | Serve the feed at this speed to watch the download (manual only)       |
 
 ## Examples
@@ -31,9 +32,20 @@ node tools/testing/autoupgrade-test.mts --from-feed
 # Then check that an update with a bad signature is not downloaded
 node tools/testing/autoupgrade-test.mts --from-feed --bad-signature
 
+# Check that a corrupted download of the update is not installed
+node tools/testing/autoupgrade-test.mts --from-feed --corrupted-update
+
 # Watch the update download at 2 MB/s
 node tools/testing/autoupgrade.mts --from-feed --download-speed 2
 ```
+
+## Corrupted update
+
+`--corrupted-update` signs the feed as usual, then serves a copy of the update binary with one byte
+changed in its place. The signature check passes and the app downloads the update, but
+electron-updater must reject it because its sha512 differs from the one in the latest yml. The copy
+is written to `dist/corrupted`, so `dist/feed` keeps the signed update for the next `--from-feed`
+run.
 
 ## Before running
 
