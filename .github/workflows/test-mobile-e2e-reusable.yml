@@ -592,7 +592,7 @@ jobs:
           max_shards: 1
 
       # PE mac runner evaluation: every runner runs the identical full suite.
-      # Entries 1 and 2 run on m4, entry 3 on pa6-r102-srv-macrunner04.
+      # Entries 1 and 2 run on performance-pool, entry 3 on pa6-r102-srv-macrunner04.
       - name: Copy the full-suite shard to each evaluated mac runner
         id: pe-matrix
         env:
@@ -600,7 +600,7 @@ jobs:
         run: |
           node -e '
             const [fullSuite] = JSON.parse(process.env.MATRIX_IOS);
-            const runners = ["m4", "m4", "pa6-r102-srv-macrunner04"];
+            const runners = ["performance-pool", "performance-pool", "pa6-r102-srv-macrunner04"];
             const matrix = runners.map((runner, i) => ({ ...fullSuite, shard: i + 1, total: runners.length, runner }));
             console.log(`matrix_ios=${JSON.stringify(matrix)}`);
           ' >> "$GITHUB_OUTPUT"
