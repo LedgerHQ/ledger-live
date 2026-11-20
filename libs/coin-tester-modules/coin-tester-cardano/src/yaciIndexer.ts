@@ -179,5 +179,20 @@ export function initYaciIndexer(): () => void {
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);
     },
   });
+  // coin-cardano reports any 5xx as a bare LedgerAPI5xx; name the endpoint and cause here. A handler
+  // that throws reaches the client as a 500. Jest prints console output when the suite ends, so each
+  // line carries its own time.
+  server.events.on("unhandledException", ({ request, error }) =>
+    console.warn(
+      `${new Date().toISOString()} Yaci indexer ${request.method} ${request.url} threw: ${error.stack ?? error}`,
+    ),
+  );
+  server.events.on("response:mocked", ({ request, response }) => {
+    if (response.status >= 500) {
+      console.warn(
+        `${new Date().toISOString()} Yaci indexer ${request.method} ${request.url} answered ${response.status}`,
+      );
+    }
+  });
   return () => server.close();
 }
