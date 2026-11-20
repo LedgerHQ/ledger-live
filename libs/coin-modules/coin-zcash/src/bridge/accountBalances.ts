@@ -4,25 +4,14 @@ import {
   type AccountBalancesResult,
   clampLocked,
 } from "@ledgerhq/ledger-wallet-framework/account/balances";
-import type { BtcOperationExtra, ZcashAccount } from "../types/bridge";
+import type { ZcashAccount } from "../types/bridge";
+import { pendingSpentOutpoints } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
 import { getTransparentBalance } from "../logic/account/balance";
 import { getSpendableIronwoodBalance } from "../logic/account/spendability";
 
-const TRANSPARENT_POOL = "transparent";
-const IRONWOOD_POOL = "ironwood";
-
-/** Outpoints, as `hash-outputIndex`, that the pending operations already spend. */
-function pendingSpentOutpoints(account: ZcashAccount): Set<string> {
-  const spent = new Set<string>();
-  for (const { extra } of account.pendingOperations ?? []) {
-    if (extra === null || typeof extra !== "object") continue;
-    const refs = (extra as BtcOperationExtra).inputRefs;
-    if (!Array.isArray(refs)) continue;
-    for (const ref of refs) spent.add(`${ref.hash}-${ref.outputIndex}`);
-  }
-  return spent;
-}
+export const TRANSPARENT_POOL = "transparent";
+export const IRONWOOD_POOL = "ironwood";
 
 /**
  * The account balance as a transparent row and, when shielded is enabled, an Ironwood row.
