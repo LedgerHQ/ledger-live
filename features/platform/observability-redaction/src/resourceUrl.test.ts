@@ -11,6 +11,10 @@ const POLKADOT_ADDRESS = "1TestPolkadotAddressForUnitTests23456789ABCDEFG";
 const KASPA_ADDRESS = "kaspa:qtest0address0for0unit0tests0only000";
 const EXTENDED_PUBLIC_KEY = "xpub6TestExtendedPublicKeyForUnitTests0123456789";
 const TRANSACTION_HASH = "ab12".repeat(16);
+const URL_SAFE_TON_ADDRESS = `UQ${"Ab3-Cd4_".repeat(5)}Ef5Gh6`;
+const HEDERA_TRANSACTIONS_URL =
+  "https://hedera.example/api/v1/transactions?account.id=0.0.12345&limit=100&order=desc";
+const TON_JETTON_WALLETS_URL = `https://ton.example/api/v3/jetton/wallets?limit=256&owner_address=${URL_SAFE_TON_ADDRESS}`;
 
 describe("scrubResourceUrl", () => {
   it.each([
@@ -160,6 +164,21 @@ describe("scrubResourceUrl", () => {
       "https://api.example/v1/tokens?id=[redacted]",
     ],
     [
+      "a short account id under a key that names an account",
+      HEDERA_TRANSACTIONS_URL,
+      "https://hedera.example/api/v1/transactions?account.id=[redacted]&limit=100&order=desc",
+    ],
+    [
+      "a URL-safe address under a key that names an owner",
+      TON_JETTON_WALLETS_URL,
+      "https://ton.example/api/v3/jetton/wallets?limit=256&owner_address=[redacted]",
+    ],
+    [
+      "a URL-safe address under any key",
+      `https://ton.example/api/v3/lookup/${URL_SAFE_TON_ADDRESS}/state`,
+      "https://ton.example/api/v3/lookup/[redacted]/state",
+    ],
+    [
       "an account id with a short address in a path segment",
       "https://api.example/v1/sync/js:2:near:someone.near:/status",
       "https://api.example/v1/sync/[redacted]/status",
@@ -181,6 +200,13 @@ describe("scrubResourceUrl", () => {
     ["a currency id", "https://api.example/v1/tokens/ethereum/erc20/usd_tether__erc20_"],
     ["a time of day", "https://api.example/v1/schedule?at=12:30:00"],
     ["a text that is not a URL", "not a url"],
+    ["a relative URL that embeds another one", "/redirect/https://cdn.example/app.json"],
+    ["an empty query and fragment", "https://api.example/v1/status?#"],
+    [
+      "a long snake_case name",
+      "https://api.example/v1/assets/some_long_snake_case_identifier_for_version_2024",
+    ],
+    ["a parameter named like an identifier but empty", "https://api.example/v1/x?owner_address="],
   ])("keeps %s unchanged", (_, url) => {
     expect(scrubResourceUrl(url)).toBe(url);
   });
@@ -205,6 +231,13 @@ describe("containsIdentifiers", () => {
     expect(
       containsIdentifiers(`https://explorers.example/blockchain/v4/eth/address/${EVM_ADDRESS}/txs`),
     ).toBe(true);
+  });
+
+  it.each([
+    ["a short account id under a key", HEDERA_TRANSACTIONS_URL],
+    ["a URL-safe address", TON_JETTON_WALLETS_URL],
+  ])("is true for %s", (_, url) => {
+    expect(containsIdentifiers(url)).toBe(true);
   });
 
   it("is false when the URL holds none", () => {

@@ -11,10 +11,12 @@ call, and has no dependency on a vendor SDK: each app applies it in its own SDK 
 
 - `scrubResourceUrl(url)` replaces each identifier with `[redacted]`:
   - the path segment after a key such as `/address/`, `/accounts/` or `/delegators/`;
-  - the value of a query parameter such as `address=` or `account=`;
+  - the value of a query parameter whose key names an identifier, such as `address`, `account.id`
+    or `owner_address`;
   - any path segment, query value or fragment segment holding an account id (`js:2:bitcoin:…`,
-    encoded or not) or an alphanumeric run of 25 characters or more that mixes letters and digits:
-    addresses, extended public keys, transaction hashes.
+    encoded or not), an alphanumeric run of 25 characters or more that mixes letters and digits
+    (addresses, extended public keys, transaction hashes), or a URL-safe base64 run of 40
+    characters or more (TON addresses).
 
   The origin and the other parts are kept as they are, and scrubbing a scrubbed URL changes
   nothing.
