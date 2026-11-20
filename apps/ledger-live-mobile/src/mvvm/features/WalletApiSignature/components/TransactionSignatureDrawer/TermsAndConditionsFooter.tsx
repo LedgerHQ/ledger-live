@@ -5,38 +5,39 @@ import {
   privacyPolicy,
   termsOfUse,
 } from "@ledgerhq/live-common/exchange/providers/swap";
+import { resolveWalletApiTerms } from "@features/platform-wallet-api-sign";
 import { Trans } from "~/context/Locale";
 import { InlineTextLink } from "LLM/components/InlineTextLink";
 
 export type TermsAndConditionsFooterProps = Readonly<{
-  /** Calling live-app manifest id, used to resolve the provider terms. */
   manifestId: string;
-  /** Calling live-app manifest name, used as a display fallback. */
   manifestName?: string;
-  /** Transaction recipient, used to resolve the DEX provider from its router address. */
   recipient?: string;
 }>;
 
-/**
- * Non-blocking terms of use notice shown while the user confirms a wallet-api swap on
- * their device, mirroring the desktop `TransactionConfirm/ConfirmFooter`. The provider is
- * resolved from the transaction recipient (DEX router address) first, then the manifest id.
- */
+const termsSources = {
+  dexProvidersContractAddress,
+  termsOfUse,
+  privacyPolicy,
+};
+
 export function TermsAndConditionsFooter({
   manifestId,
   manifestName,
   recipient,
 }: TermsAndConditionsFooterProps) {
-  const appNameByAddr = dexProvidersContractAddress[recipient?.toLowerCase() ?? ""];
-  const providerKey = appNameByAddr || manifestId;
-  const termsOfUseUrl = termsOfUse[providerKey];
-  const privacyUrl = privacyPolicy[providerKey];
+  const resolvedTerms = resolveWalletApiTerms({
+    manifestId,
+    manifestName,
+    recipient,
+    sources: termsSources,
+  });
 
-  if (!manifestId || !termsOfUseUrl) {
+  if (!resolvedTerms) {
     return null;
   }
 
-  const appName = appNameByAddr || manifestName || manifestId;
+  const { appName, termsOfUseUrl, privacyUrl } = resolvedTerms;
 
   const linkComponents = [
     <InlineTextLink key="terms" href={termsOfUseUrl} />,

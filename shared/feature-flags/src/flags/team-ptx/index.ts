@@ -9,6 +9,7 @@ export * from "./earnWithdrawV2";
 export * from "./ethStakingModalWithFilters";
 export * from "./ethStakingProviders";
 export * from "./lifiSolana";
+export * from "./lldWalletApiDeviceIntentSign";
 export * from "./llmWalletApiDeviceIntentExchange";
 export * from "./llmWalletApiDeviceIntentSign";
 export * from "./noah";

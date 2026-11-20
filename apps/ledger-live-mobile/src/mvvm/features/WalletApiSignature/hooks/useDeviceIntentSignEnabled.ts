@@ -1,31 +1,15 @@
-import { useMemo } from "react";
-import { useFeature } from "@features/platform-feature-flags";
+import {
+  useWalletApiSignAssignment,
+  useWalletApiSignEnabled,
+  type DeviceIntentSignAssignment,
+} from "@features/platform-wallet-api-sign";
 
-export type DeviceIntentSignAssignment = {
-  enabled: boolean;
-  variantId: string | undefined;
-  active: boolean;
-};
+export type { DeviceIntentSignAssignment };
 
-/**
- * The device-intent sign flow is opt-in per live-app: only enabled when the flag is on
- * and the given manifest id is in the configured allowlist.
- */
 export function useDeviceIntentSignAssignment(manifestId: string): DeviceIntentSignAssignment {
-  const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
-  const enabledManifestIds = useMemo(
-    () => new Set(deviceIntentSignFlag?.params?.enabledManifestIds ?? []),
-    [deviceIntentSignFlag?.params?.enabledManifestIds],
-  );
-  const enabled = deviceIntentSignFlag?.enabled ?? false;
-
-  return {
-    enabled,
-    variantId: deviceIntentSignFlag?.params?.variantId,
-    active: enabled && enabledManifestIds.has(manifestId),
-  };
+  return useWalletApiSignAssignment("llmWalletApiDeviceIntentSign", manifestId);
 }
 
 export function useDeviceIntentSignEnabled(manifestId: string): boolean {
-  return useDeviceIntentSignAssignment(manifestId).active;
+  return useWalletApiSignEnabled("llmWalletApiDeviceIntentSign", manifestId);
 }

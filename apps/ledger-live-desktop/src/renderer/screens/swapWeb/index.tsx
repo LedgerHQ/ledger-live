@@ -3,6 +3,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
+import { useDeviceIntentSignAssignment } from "LLD/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useNavigate, useLocation } from "react-router";
 import Card from "~/renderer/components/Box/Card";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
@@ -22,6 +23,7 @@ const Swap = () => {
   const localManifest = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const manifest = localManifest || remoteManifest;
+  const deviceIntentSign = useDeviceIntentSignAssignment(manifest?.id ?? DEFAULT_SWAP_APP_ID);
   const themeType = useTheme().theme;
   const params = location.state || {};
 
@@ -67,6 +69,8 @@ const Swap = () => {
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
+            lldWalletApiDeviceIntentSignVariant: deviceIntentSign.variantId,
+            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.active ? "true" : "false",
             ...params,
           }}
           onStateChange={onStateChange}

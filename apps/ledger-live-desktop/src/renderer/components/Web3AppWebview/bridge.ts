@@ -24,6 +24,7 @@ import type { WebviewTag } from "./types";
 export function useWebviewBridgeSession(
   webviewRef: RefObject<WebviewTag | null>,
   mainFrameUrl: string,
+  onCloseSessionUi?: () => void,
 ): BridgeSessionController {
   const dispatch = useDispatch();
 
@@ -37,12 +38,13 @@ export function useWebviewBridgeSession(
   const onReset = useCallback(
     (closedSession: BridgeSession) => {
       if (!closedSession.hasActiveUiFlow) return;
+      onCloseSessionUi?.();
       dispatch(closeAllModal());
       dispatch(closePlatformAppDrawer());
       dispatch(closeDialog());
       setDrawer();
     },
-    [dispatch],
+    [dispatch, onCloseSessionUi],
   );
 
   const bridge = useBridgeSession({ postMessage, onReset });

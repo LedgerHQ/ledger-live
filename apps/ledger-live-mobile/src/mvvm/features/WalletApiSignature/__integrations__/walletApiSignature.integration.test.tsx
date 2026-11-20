@@ -16,6 +16,7 @@ type ExecutorProps = {
   intent: unknown;
   intentComponentExtraProps?: Record<string, unknown>;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
+  onIntentJobComplete: () => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
 };
@@ -159,6 +160,9 @@ describe("WalletApiSignature feature", () => {
 
     const signedOperation = { operation: { id: "op-1" } };
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+    expect(onSuccess).not.toHaveBeenCalled();
+
+    act(() => mockExecutorProps!.onIntentJobComplete());
 
     expect(onSuccess).toHaveBeenCalledWith(signedOperation);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -191,13 +195,18 @@ describe("WalletApiSignature feature", () => {
     });
 
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signature: "0xsig" }));
+    expect(onSuccess).not.toHaveBeenCalled();
+
+    act(() => mockExecutorProps!.onIntentJobComplete());
 
     expect(onSuccess).toHaveBeenCalledWith("0xsig");
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    // Dismissing after a successful signature must not additionally reject via onCancel.
+    // Dismissing after a successful signature must not reject or settle a second time.
     act(() => mockExecutorProps!.onUserCancel());
     expect(onCancel).not.toHaveBeenCalled();
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("tracks Wallet Connect transaction requests as the wallet_connect flow", async () => {
@@ -264,6 +273,7 @@ describe("WalletApiSignature feature", () => {
 
     const signedOperation = { operation: { id: "op-1" } };
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+    act(() => mockExecutorProps!.onIntentJobComplete());
     expect(first.onSuccess).toHaveBeenCalledWith(signedOperation);
 
     await waitFor(() =>

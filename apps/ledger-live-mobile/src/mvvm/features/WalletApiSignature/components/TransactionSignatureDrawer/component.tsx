@@ -6,14 +6,11 @@ import { InfoState } from "@shared/ui-info-state";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useTranslation } from "~/context/Locale";
+import ModalLock from "~/components/ModalLock";
 import { TermsAndConditionsFooter } from "./TermsAndConditionsFooter";
+import type { SignTransactionIntentComponentExtraProps } from "./types";
 
-/** Props forwarded from the drawer container so the confirmation step can show provider terms. */
-export type SignTransactionIntentComponentExtraProps = {
-  manifestId: string;
-  manifestName?: string;
-  recipient?: string;
-};
+export type { SignTransactionIntentComponentExtraProps };
 
 type SignTransactionIntentComponentProps = Readonly<{
   jobState: SignTransactionIntentJobState | undefined;
@@ -37,6 +34,7 @@ export function SignTransactionIntentComponent({
     case "device-signature-requested":
       return (
         <Box lx={{ width: "full", alignItems: "center", gap: "s24" }}>
+          <ModalLock />
           <DeviceActionContent
             action="continue"
             description={t("walletApiSignTransaction.sign.description")}
@@ -66,6 +64,7 @@ export function SignTransactionIntentComponent({
             justifyContent: "center",
           }}
         >
+          {jobState.type !== "signed" && <ModalLock />}
           <Spinner size={32} testID="wallet-api-signature-loading" />
         </View>
       );

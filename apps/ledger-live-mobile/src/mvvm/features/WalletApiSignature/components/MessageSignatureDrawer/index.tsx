@@ -13,7 +13,6 @@ type Props = {
 };
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
-const noop = () => undefined;
 
 /**
  * Hosts the wallet-api `message.sign` step (the Device Intent Executor and the bottom
@@ -26,6 +25,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
+    onIntentJobComplete,
     onIntentJobError,
     onExecutorStateChanged,
     onUserCancel,
@@ -56,7 +56,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
         intentComponentExtraProps={undefined}
         onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
-        onIntentJobComplete={noop}
+        onIntentJobComplete={onIntentJobComplete}
         onIntentJobError={onIntentJobError}
         cancelIntentRequestId={undefined}
         onUserCancel={onUserCancel}

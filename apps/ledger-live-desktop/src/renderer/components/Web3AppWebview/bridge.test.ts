@@ -116,6 +116,20 @@ describe("useWebviewBridgeSession reset scope", () => {
     expect(mockDispatch).toHaveBeenCalledWith(closeAllModal());
     expect(setDrawer).toHaveBeenCalledWith();
   });
+
+  it("invokes onCloseSessionUi when an active flow resets on origin change", () => {
+    const onCloseSessionUi = jest.fn();
+    const { ref } = makeWebviewRef();
+    const { result, rerender } = renderHook(
+      ({ url }) => useWebviewBridgeSession(ref, url, onCloseSessionUi),
+      { initialProps: { url: "https://app.example.com/" } },
+    );
+    bindUiFlowToSession(result.current.session, jest.fn())({ onSuccess: jest.fn() });
+
+    act(() => rerender({ url: "https://other.example.com/" }));
+
+    expect(onCloseSessionUi).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("useWebviewBridgeMessages", () => {

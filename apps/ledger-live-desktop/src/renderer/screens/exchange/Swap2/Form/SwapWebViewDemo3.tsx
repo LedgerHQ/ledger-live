@@ -61,6 +61,7 @@ import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { useFeature } from "@features/platform-feature-flags";
+import { useDeviceIntentSignAssignment } from "LLD/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -524,6 +525,7 @@ const SwapWebView = ({
 
   const { pathname } = location;
   const swapEntryPoint = deriveSwapEntryPoint(pathname);
+  const deviceIntentSign = useDeviceIntentSignAssignment(manifest.id);
 
   return (
     <>
@@ -555,6 +557,8 @@ const SwapWebView = ({
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
+            lldWalletApiDeviceIntentSignVariant: deviceIntentSign.variantId,
+            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.active ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
             discreetMode: discreetMode ? "true" : "false",
             lwd40enabled: "true",

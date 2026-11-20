@@ -57,7 +57,7 @@ const EarnLiveAppModalContent = ({
   params: LiveAppModalParams;
   onClose: () => void;
 }) => {
-  const { extraInputs } = useEarnLiveAppModalContentViewModel();
+  const { extraInputs } = useEarnLiveAppModalContentViewModel(params.manifestId);
   return <LiveAppModalContent params={params} onClose={onClose} extraInputs={extraInputs} />;
 };
 

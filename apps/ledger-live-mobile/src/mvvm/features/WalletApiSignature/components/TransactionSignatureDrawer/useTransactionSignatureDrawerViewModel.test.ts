@@ -90,12 +90,18 @@ describe("useTransactionSignatureDrawerViewModel", () => {
     expect(result.current.signatureIntent).toEqual({ uuid: "intent-1" });
   });
 
-  it("resolves the wallet-api promise and closes the drawer on a signed job state", async () => {
+  it("defers success until onIntentJobComplete after a signed job state", async () => {
     const { result, onSuccess, onClose } = setup();
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
     act(() => {
       result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+    });
+
+    expect(onSuccess).not.toHaveBeenCalled();
+
+    act(() => {
+      result.current.onIntentJobComplete();
     });
 
     expect(onSuccess).toHaveBeenCalledWith(signedOperation);
@@ -115,8 +121,8 @@ describe("useTransactionSignatureDrawerViewModel", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("does not reject when dismissed after signing already completed", async () => {
-    const { result, onError } = setup();
+  it("settles success on cancel when a signed result was already stored", async () => {
+    const { result, onSuccess, onError, onClose } = setup();
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
     act(() => {
@@ -126,7 +132,9 @@ describe("useTransactionSignatureDrawerViewModel", () => {
       result.current.onUserCancel();
     });
 
+    expect(onSuccess).toHaveBeenCalledWith(signedOperation);
     expect(onError).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("rejects and closes when building the device initialization input fails", async () => {
