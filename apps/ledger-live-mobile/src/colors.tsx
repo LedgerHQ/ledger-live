@@ -172,3 +172,5 @@ declare module "@react-navigation/native" {
   export type T = typeof lightTheme;
   export function useTheme(): T;
 }
+
+// junk: trigger mobile e2e builds, do not merge
