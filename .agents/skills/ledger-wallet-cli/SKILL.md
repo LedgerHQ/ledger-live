@@ -32,7 +32,7 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 | `ring encrypt` / `decrypt` | no | yes | yes | no |
 | `ring keys` | no | no | no | no |
 | `ring destroy` | no | yes | yes | typed `destroy` |
-| `agent-intent enroll` / `recover` | no | yes (`recover`: no for a `plaintext-file` profile) | yes | open link, compare fingerprint, approve on device; a background listener waits (`enroll --detach`) or the command itself (`recover`) |
+| `agent-intent enroll` / `recover` / `ring-access` | no | yes (`recover`, `ring-access`: no for a `plaintext-file` profile) | yes | open link, compare fingerprint, approve on device; a background listener waits (`enroll --detach`, `ring-access --detach`) or the command itself (`recover`) |
 | `agent-intent list` / `show` / `wait` | no | no | no | no |
 | `agent-intent sync` / `intents` / `status` | no | yes (no for a `plaintext-file` profile) | yes | no |
 | `agent-intent send` | no | yes (no with `--dry-run` or for a `plaintext-file` profile) | yes (dry run: looks up the token) | human approves or rejects the intent via the review link |
@@ -58,7 +58,7 @@ A `plaintext-file` profile has `keyStore` `"plaintext-file"` in `agent-intent sh
 - **Let device commands wait.** Say what the device will ask for, then leave the command running while the human acts on the device.
 - **Secrets stay out of the transcript.** Each secret goes from its source to its destination unread, as its reference shows: the `ring` password and decrypted output (`WALLET_PASS` from the human's keychain, output to a file with `-o` or the clipboard; ring.md), the Agent Intent key and its key file (agent-intent.md step 2), and synced account ids with the raw `sync` output (agent-intent.md step 6).
 - **A proposal stays a proposal.** When the human wants to approve a payment or swap themselves, use `agent-intent send` or `agent-intent swap`; `pnpm --silent wallet-cli start send` and `swap execute` sign and broadcast from the device in one go.
-- **Host sandbox.** Rows with yes under Device or OS keychain run outside the host's command sandbox (Claude Code: `dangerouslyDisableSandbox: true`). `agent-intent sync` and `recover` write the state dir, so they run outside it for a `plaintext-file` profile too. `agent-intent wait` runs with the same setting as the `enroll` it follows: it checks the listener's PID, and a PID-namespaced sandbox makes a live listener look dead. Say in one line that the command runs outside the host sandbox, then run it with the bypass. The bypass covers the whole tool call, so the call holds a single `wallet-cli` command line in a shape this skill shows: the `WALLET_PASS=$(<keychain lookup>)` prefix (ring.md), the clipboard pipe (ring.md) and the `status` polling loops (agent-intent.md) are the only additions. Run anything else, such as another program, an `&&` chain or a file redirect, in its own call inside the sandbox.
+- **Host sandbox.** Rows with yes under Device or OS keychain run outside the host's command sandbox (Claude Code: `dangerouslyDisableSandbox: true`). `agent-intent sync`, `recover` and `ring-access` write the state dir, so they run outside it for a `plaintext-file` profile too. `agent-intent wait` runs with the same setting as the `enroll` or `ring-access` it follows: it checks the listener's PID, and a PID-namespaced sandbox makes a live listener look dead. Say in one line that the command runs outside the host sandbox, then run it with the bypass. The bypass covers the whole tool call, so the call holds a single `wallet-cli` command line in a shape this skill shows: the `WALLET_PASS=$(<keychain lookup>)` prefix (ring.md), the clipboard pipe (ring.md) and the `status` polling loops (agent-intent.md) are the only additions. Run anything else, such as another program, an `&&` chain or a file redirect, in its own call inside the sandbox.
 
 ## No USB on this machine
 
@@ -97,7 +97,7 @@ With no specific task, run `pnpm --silent wallet-cli start session view` immedia
 | "is my Ledger genuine", "verify authenticity" | `genuine-check`, device on the dashboard |
 | "which token is this contract", token id for a swap | `assets token <network> <address>` or `assets token-by-id <id>` |
 | "encrypt this file with my Ledger", "my ring keys", "wipe my key ring" | `ring init`, `encrypt`, `decrypt`, `keys`, `destroy`; load `references/ring.md` |
-| "enroll this agent", "show my agent-intent profiles", "import my Ledger Wallet accounts", "propose a payment for my approval", "propose a swap for my approval", "recover this agent" | load `references/agent-intent.md` and start at its status gate |
+| "enroll this agent", "show my agent-intent profiles", "import my Ledger Wallet accounts", "propose a payment for my approval", "propose a swap for my approval", "recover this agent", "give this agent access to my Key Ring" | load `references/agent-intent.md` and start at its status gate |
 | "is my payment approved", "what did the agent propose", "cancel that proposal" | load `references/agent-intent.md`, pass its status gate, then step 9 |
 | "start over", "clear my session", "I switched devices" | `session reset` |
 
@@ -137,7 +137,7 @@ The paths are relative to this skill's folder. If you read this skill through `s
 
 | Reference | Load when |
 |---|---|
-| [`references/agent-intent.md`](references/agent-intent.md) | the request is about enrolling or recovering an agent, agent-intent profiles, importing accounts from Ledger Sync, proposing a payment or swap for approval, or checking or cancelling a proposal; or you are about to run any `pnpm --silent wallet-cli start agent-intent` command |
+| [`references/agent-intent.md`](references/agent-intent.md) | the request is about enrolling or recovering an agent, giving it Key Ring access, agent-intent profiles, importing accounts from Ledger Sync, proposing a payment or swap for approval, or checking or cancelling a proposal; or you are about to run any `pnpm --silent wallet-cli start agent-intent` command |
 | [`references/ring.md`](references/ring.md) | before any `pnpm --silent wallet-cli start ring` command |
 | [`references/swap.md`](references/swap.md) | before any `pnpm --silent wallet-cli start swap` command |
 | [`references/earn.md`](references/earn.md) | before any `pnpm --silent wallet-cli start earn` command |

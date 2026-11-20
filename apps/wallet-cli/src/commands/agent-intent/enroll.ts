@@ -44,18 +44,12 @@ import {
   waitForRelayCompletion,
 } from "../../agent-intent/relay";
 import {
-  assertNoLiveEnrollListener,
-  enrollListenerPaths,
-  ErrorLineSchema,
   LISTENER_STARTING_MAX_MS,
+  listenerArgs,
   PendingLineSchema,
-  readFirstLogJsonLine,
-  readLogLinesBeforeFirstJson,
-  selfCommand,
-  spawnDetached,
-  withEnrollListenerLock,
-  withEnrollStartLock,
+  withListenerLock,
 } from "../../agent-intent/detach";
+import { startDetachedListener, throwListenerError } from "../../agent-intent/detached-start";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
 import { walletCliDebug } from "../../shared/log";
@@ -258,27 +252,6 @@ function assertSavedInTime(startedAt: number, enrollmentExpiresAt: string): void
   }
 }
 
-/** The listener's argv, rebuilt from the parsed values of enroll's own options (minus `detach`,
- * `output`, and those left at their default), so options added to `enroll` later carry over
- * without argv parsing. */
-function listenerArgs(flags: { [flag: string]: unknown }): string[] {
-  const args = ["agent-intent", "enroll"];
-  // Only enroll's own options: `flags` also carries bunli's global flags (--help, --version, ...).
-  for (const [name, { schema }] of Object.entries(enrollCommand.options ?? {})) {
-    const value = flags[name];
-    if (name === "detach" || name === "output" || value === undefined) continue;
-    // Left at its default, an option stays off the listener's argv: the listener parses it back.
-    const fallback = schema.safeParse(undefined);
-    if (fallback.success && fallback.data === value) continue;
-    if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-      throw new TypeError(`--${name} has a value --detach cannot pass on to the listener.`);
-    }
-    args.push(`--${name}=${String(value)}`);
-  }
-  args.push("--output=json");
-  return args;
-}
-
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
  * listener's pending line and returns. A listener with no line by the startup timeout (e.g. at a
  * keychain unlock prompt) keeps running and is reported as `enrollment-waiting`, for `wait` to
@@ -288,27 +261,13 @@ async function startDetachedEnroll(
   out: CommandOutput,
 ): Promise<void> {
   const profileId = flags.profile;
-  const { logPath } = enrollListenerPaths(profileId);
-  const args = listenerArgs(flags);
-
-  // The start lock keeps a concurrent --detach for this profile from passing the check, then
-  // truncating and sharing the log, until this listener holds its own lock or has failed.
-  const { child, first } = await withEnrollStartLock(profileId, async () => {
-    // Checked before the spawn truncates the log: a running listener still writes to it, and an
-    // existing profile's log is the only record of how its enrollment ended.
-    assertNoLiveEnrollListener(profileId);
-    assertProfileNotInSession(await Session.read(), profileId);
-    const started = spawnDetached(selfCommand(args), logPath);
-    try {
-      return { child: started, first: await readFirstLogJsonLine(started, logPath) };
-    } finally {
-      // The listener's stderr only reaches its log: relay what it wrote before its first line, or
-      // all of it when it ended without one (e.g. the plaintext key warning that records the
-      // human's consent), as a plain enroll shows it. Read under the start lock: a concurrent
-      // --detach for this profile truncates the log after it.
-      for (const line of readLogLinesBeforeFirstJson(logPath)) writeStderr(`${line}\n`);
-    }
-  });
+  const args = listenerArgs(["agent-intent", "enroll"], enrollCommand.options ?? {}, flags);
+  const { child, first, logPath } = await startDetachedListener(
+    "enroll",
+    profileId,
+    args,
+    async () => assertProfileNotInSession(await Session.read(), profileId),
+  );
   if (first === undefined) {
     // Unreachable in practice: a child that never started reports its spawn error first.
     if (child.pid === undefined)
@@ -330,11 +289,7 @@ async function startDetachedEnroll(
     });
     return;
   }
-  const failure = ErrorLineSchema.safeParse(first);
-  if (failure.success) {
-    const { code, message } = failure.data.error;
-    throw code === undefined ? new Error(message) : new CodedCommandError(code, message);
-  }
+  throwListenerError(first);
   child.kill();
   throw new Error(
     `The enrollment listener printed an unexpected first line and was stopped. See ${logPath}.`,
@@ -424,7 +379,7 @@ const enrollCommand = defineCommand({
         return;
       }
       // Held for the whole run, so `agent-intent wait` can tell a live listener from a dead one.
-      await withEnrollListenerLock(flags.profile, async () => {
+      await withListenerLock("enroll", flags.profile, async () => {
         // Before any keychain access, which can block past the time a `--detach` parent relays stderr.
         const tempStateWarning = temporaryStateDirWarning(stateDir(APP_NAME));
         if (tempStateWarning) writeStderr(tempStateWarning);

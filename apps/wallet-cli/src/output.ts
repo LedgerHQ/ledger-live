@@ -43,7 +43,11 @@ import {
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
-import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
+import {
+  redactUrlCredentials,
+  agentIntentProfileStatus,
+  agentIntentRingAccessStatus,
+} from "./agent-intent/profile-format";
 import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
 import { isTerminalIntentStatus, type IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
@@ -272,6 +276,9 @@ export interface CommandOutput {
   agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
   /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
   agentIntentRecovered(result: AgentIntentRecovered): void;
+  agentIntentRingAccessPending(result: AgentIntentRingAccessPending): void;
+  agentIntentRingAccessWaiting(result: AgentIntentRingAccessWaiting): void;
+  agentIntentRingAccessGranted(result: AgentIntentRingAccessGranted): void;
 
   /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
    * imported/unchanged/skipped/invalid arrays). */
@@ -370,6 +377,33 @@ export type AgentIntentRecovered = {
   trustchainId: string;
 };
 
+export type AgentIntentRingAccessPending = {
+  profileId: string;
+  ringAccessUrl: string;
+  fingerprint: string;
+  expiresAt: string;
+  keyStore: AgentIntentProfileMeta["keyStore"];
+  listenerPid?: number;
+  logPath?: string;
+};
+
+export type AgentIntentRingAccessWaiting = {
+  profileId: string;
+  listenerPid: number;
+  expiresAt?: string;
+  ringAccessUrl?: string;
+  fingerprint?: string;
+  logPath?: string;
+};
+
+export type AgentIntentRingAccessGranted = {
+  profileId: string;
+  environment: string;
+  trustchainId: string;
+  applicationPath: string;
+  encryptionPublicKey: string;
+};
+
 export type AgentIntentEnrolled = {
   profileId: string;
   trustchainId: string;
@@ -380,6 +414,14 @@ export type AgentIntentEnrolled = {
 function formatAccountAccess(profile: AgentIntentProfileMeta): string {
   const access = profile.accountAccess;
   return access ? `${access.environment} ${access.applicationPath}` : "-";
+}
+
+function formatRingAccess(profile: AgentIntentProfileMeta): string {
+  const status = agentIntentRingAccessStatus(profile);
+  const access = profile.ringAccess;
+  return access && status === "granted"
+    ? `${status} ${access.environment} ${access.applicationPath}`
+    : status;
 }
 
 function redactProfileUrls(profile: AgentIntentProfileMeta): AgentIntentProfileMeta {
@@ -841,12 +883,13 @@ class HumanCommandOutput implements CommandOutput {
     const w = Math.max(7, ...profiles.map(p => p.profileId.length));
     writeStdout(
       `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
-        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("KEY STORE")}  ${colors.bold("ACCOUNT ACCESS")}`,
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("KEY STORE")}  ${colors.bold("ACCOUNT ACCESS")}  ${colors.bold("RING ACCESS")}`,
     );
     for (const p of profiles) {
       writeStdout(
         `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
-          `${agentIntentProfileStatus(p)}  ${p.keyStore}  ${formatAccountAccess(p)}`,
+          `${agentIntentProfileStatus(p)}  ${p.keyStore}  ${formatAccountAccess(p)}  ` +
+          formatRingAccess(p),
       );
     }
   }
@@ -866,6 +909,8 @@ class HumanCommandOutput implements CommandOutput {
       "Keycloak URL",
       "Trustchain ID",
       "Account access",
+      "Ring access",
+      "Encryption key",
       "Created",
     ];
     const labelWidth = Math.max(...labels.map(l => l.length)) + 1; // +1 for the trailing ":"
@@ -892,6 +937,10 @@ class HumanCommandOutput implements CommandOutput {
         ...(profile.accountAccess === undefined
           ? []
           : [line("Account access", formatAccountAccess(profile))]),
+        line("Ring access", formatRingAccess(profile)),
+        ...(profile.encryptionPublicKey === undefined
+          ? []
+          : [line("Encryption key", profile.encryptionPublicKey)]),
         line("Created", profile.createdAt),
       ].join("\n"),
     );
@@ -954,6 +1003,62 @@ class HumanCommandOutput implements CommandOutput {
         "approving.",
       `Profile "${profileId}" keeps its existing key and Ledger Sync access while recovering. ` +
         `Waiting for approval until ${expiresAt} — keep this process running.`,
+    );
+  }
+
+  agentIntentRingAccessPending({
+    profileId,
+    ringAccessUrl,
+    fingerprint,
+    expiresAt,
+    listenerPid,
+    logPath,
+  }: AgentIntentRingAccessPending): void {
+    this._agentIntentLinkPending(
+      ringAccessUrl,
+      fingerprint,
+      "Compare this fingerprint with the one shown when the ring access link is opened, before " +
+        "approving.",
+      logPath === undefined
+        ? `Profile "${profileId}" asks for access to the human's Ledger Key Ring. Waiting for ` +
+            `approval until ${expiresAt} — keep this process running.`
+        : `Profile "${profileId}" asks for access to the human's Ledger Key Ring. A background ` +
+            `listener (pid ${listenerPid}, log ${logPath}) waits for approval until ${expiresAt}. ` +
+            `Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check whether access ` +
+            "was granted.",
+    );
+  }
+
+  agentIntentRingAccessWaiting({
+    profileId,
+    listenerPid,
+    expiresAt,
+    ringAccessUrl,
+    fingerprint,
+    logPath,
+  }: AgentIntentRingAccessWaiting): void {
+    writeStdout(
+      expiresAt === undefined
+        ? `The ring access listener of profile "${profileId}" (pid ${listenerPid}) is still ` +
+            "starting, possibly waiting for the human to answer an OS keychain unlock prompt."
+        : `The ring access request of profile "${profileId}" is still pending. Its listener (pid ` +
+            `${listenerPid}) waits for approval until ${expiresAt}.`,
+    );
+    if (ringAccessUrl !== undefined) writeStdout(`Ring access link: ${ringAccessUrl}`);
+    if (fingerprint !== undefined) writeStdout(`Public key fingerprint: ${fingerprint}`);
+    const next = logPath === undefined ? "again to keep waiting" : "to check on it";
+    writeStdout(colors.dim(`Run \`wallet-cli agent-intent wait --profile ${profileId}\` ${next}.`));
+  }
+
+  agentIntentRingAccessGranted({
+    profileId,
+    environment,
+    trustchainId,
+    applicationPath,
+  }: AgentIntentRingAccessGranted): void {
+    writeStdout(
+      `${colors.green("✔")} Agent Intent profile "${profileId}" has Ledger Key Ring access at ` +
+        `${applicationPath} (Trustchain ID: ${trustchainId}, ${environment})`,
     );
   }
 
@@ -1579,6 +1684,7 @@ class JsonCommandOutput implements CommandOutput {
           ...redactProfileUrls(p),
           // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
           profileStatus: agentIntentProfileStatus(p),
+          ringAccessStatus: agentIntentRingAccessStatus(p),
         })),
       }),
     );
@@ -1594,6 +1700,7 @@ class JsonCommandOutput implements CommandOutput {
         profile: {
           ...redactProfileUrls(profile),
           profileStatus: agentIntentProfileStatus(profile),
+          ringAccessStatus: agentIntentRingAccessStatus(profile),
           fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
         },
       }),
@@ -1633,6 +1740,28 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentRecovered(result: AgentIntentRecovered): void {
     this._writeNdjson(this._envelope({ ...result, recovered: true }));
+  }
+
+  agentIntentRingAccessPending(result: AgentIntentRingAccessPending): void {
+    this._writeNdjson({
+      type: "ring-access-pending",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
+  }
+
+  agentIntentRingAccessWaiting(result: AgentIntentRingAccessWaiting): void {
+    this._writeNdjson({
+      type: "ring-access-waiting",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
+  }
+
+  agentIntentRingAccessGranted(result: AgentIntentRingAccessGranted): void {
+    this._writeNdjson(this._envelope({ ...result, granted: true }));
   }
 
   agentIntentSync(report: LedgerSyncImportReport): void {

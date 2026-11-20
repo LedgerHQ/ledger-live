@@ -1,7 +1,15 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { createHash } from "node:crypto";
-import { chmodSync, closeSync, fchmodSync, mkdirSync, openSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import {
+  chmodSync,
+  closeSync,
+  fchmodSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
+import { dirname, join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { stateDir } from "@bunli/utils";
 import { z } from "zod";
@@ -9,7 +17,25 @@ import { DETACHED_LISTENER_ENV } from "../analytics/lifecycle-analytics";
 import { AGENT_INTENT_KEY_STORES, APP_NAME } from "../session/session-store";
 import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
-const LISTENER_DIR = "agent-intent-enroll";
+export type ListenerKind = "enroll" | "ring-access";
+
+const LISTENERS = {
+  enroll: {
+    dir: "agent-intent-enroll",
+    name: "An enrollment listener",
+    startName: "The enrollment listener",
+    waitHint: "",
+  },
+  "ring-access": {
+    dir: "agent-intent-ring-access",
+    name: "A ring access listener",
+    startName: "The ring access listener",
+    waitHint: " if it was started with --detach; otherwise read the output of that command",
+  },
+} as const satisfies Record<
+  ListenerKind,
+  { dir: string; name: string; startName: string; waitHint: string }
+>;
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
 /** How long a `--detach` parent waits for the listener's first line. Past it the parent hands the
  * listener over to `wait` instead of stopping it: a keychain unlock prompt can hold it longer, and a
@@ -31,50 +57,99 @@ function fileStem(profileId: string): string {
   return `${profileId.toLowerCase()}-${hash}`;
 }
 
-/** Per-profile files of an `enroll` listener under the CLI state dir. Computed lazily so it follows
- * the current `stateDir()`, like the session paths. */
-export function enrollListenerPaths(profileId: string): { logPath: string; lockPath: string } {
-  const dir = join(stateDir(APP_NAME), LISTENER_DIR);
+function listenerDir(kind: ListenerKind): string {
+  return join(stateDir(APP_NAME), LISTENERS[kind].dir);
+}
+
+/** Per-profile files of a listener under the CLI state dir. Computed lazily so it follows the
+ * current `stateDir()`, like the session paths. */
+export function listenerPaths(
+  kind: ListenerKind,
+  profileId: string,
+): { logPath: string; lockPath: string } {
+  const dir = listenerDir(kind);
   const stem = fileStem(profileId);
   return { logPath: join(dir, `${stem}.log`), lockPath: join(dir, `${stem}.lock`) };
 }
 
-function ensureListenerDir(): void {
-  const dir = join(stateDir(APP_NAME), LISTENER_DIR);
+function ensureDir(dir: string): void {
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   chmodSync(dir, 0o700);
 }
 
 /** Fails when a live listener already holds the profile's lock, pointing at `wait` instead. */
-export function assertNoLiveEnrollListener(profileId: string): void {
-  const runningPid = readLiveLockHolderPid(enrollListenerPaths(profileId).lockPath);
+export function assertNoLiveListener(kind: ListenerKind, profileId: string): void {
+  const runningPid = readLiveLockHolderPid(listenerPaths(kind, profileId).lockPath);
   if (runningPid !== undefined) {
     throw new Error(
-      `An enrollment listener for profile "${profileId}" is already running (pid ${runningPid}). ` +
-        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check on it.`,
+      `${LISTENERS[kind].name} for profile "${profileId}" is already running (pid ` +
+        `${runningPid}). Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check on ` +
+        `it${LISTENERS[kind].waitHint}.`,
     );
   }
 }
 
-/** Runs `fn` as the profile's enrollment listener. A second listener for the same profile fails
- * at once instead of queueing behind the first. `wait` reads this lock to tell a running listener
- * from one that died. */
-export async function withEnrollListenerLock<T>(
+/** Runs `fn` as the profile's listener. A second listener for the same profile fails at once
+ * instead of queueing behind the first. `wait` reads this lock to tell a running listener from one
+ * that died. */
+export async function withListenerLock<T>(
+  kind: ListenerKind,
   profileId: string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  ensureListenerDir();
-  assertNoLiveEnrollListener(profileId);
-  return withFileLock(enrollListenerPaths(profileId).lockPath, fn, LOCK_ACQUIRE_TIMEOUT_MS);
+  ensureDir(listenerDir(kind));
+  assertNoLiveListener(kind, profileId);
+  return withFileLock(listenerPaths(kind, profileId).lockPath, fn, LOCK_ACQUIRE_TIMEOUT_MS);
 }
 
-/** Runs `fn` while holding the profile's `enroll --detach` start lock. A second start waits for the
- * first one's startup instead of racing it; the listener child never takes this lock. */
-export async function withEnrollStartLock<T>(profileId: string, fn: () => Promise<T>): Promise<T> {
-  ensureListenerDir();
+/** Runs `fn` while holding the profile's `--detach` start lock. A second start waits for the first
+ * one's startup instead of racing it; the listener child never takes this lock. */
+export async function withStartLock<T>(
+  kind: ListenerKind,
+  profileId: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  ensureDir(listenerDir(kind));
   // Ends in neither `.lock` nor `.log`, so it is never a listener's lock or log.
-  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${fileStem(profileId)}.lock.start`);
+  const lockPath = join(listenerDir(kind), `${fileStem(profileId)}.lock.start`);
   return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
+}
+
+export async function forgetDetachedRun(kind: ListenerKind, profileId: string): Promise<void> {
+  if (process.env[DETACHED_LISTENER_ENV] === "1") return;
+  await withStartLock(kind, profileId, () => {
+    rmSync(listenerPaths(kind, profileId).logPath, { force: true });
+    return Promise.resolve();
+  });
+}
+
+type ListenerOption = {
+  schema: { safeParse(value: unknown): { success: boolean; data?: unknown } };
+};
+
+/** The listener's argv: `command` then the parsed values of the command's own `options` (minus
+ * `detach`, `output`, and those left at their default), so options added later carry over without
+ * argv parsing. */
+export function listenerArgs(
+  command: readonly string[],
+  options: Record<string, ListenerOption>,
+  flags: { [flag: string]: unknown },
+): string[] {
+  const args = [...command];
+  // Only the command's own options: `flags` also carries bunli's global flags (--help, ...).
+  for (const [name, { schema }] of Object.entries(options)) {
+    const value = flags[name];
+    if (name === "detach" || name === "output" || value === undefined) continue;
+    // Left at its default, an option stays off the listener's argv: the listener parses it back.
+    const fallback = schema.safeParse(undefined);
+    if (fallback.success && fallback.data === value) continue;
+    if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+      throw new TypeError(`--${name} has a value --detach cannot pass on to the listener.`);
+    }
+    args.push(`--${name}=${String(value)}`);
+  }
+  args.push("--output=json");
+  return args;
 }
 
 const COMPILED_ENTRY_POINT = /^(\/\$bunfs\/|B:[\\/]~BUN[\\/])/;
@@ -94,7 +169,7 @@ export function selfCommand(args: readonly string[]): string[] {
  * output through a pipe is not kept waiting for it. Its env marks it as a detached listener, which
  * tags its analytics. */
 export function spawnDetached(command: readonly string[], logPath: string): ChildProcess {
-  ensureListenerDir();
+  ensureDir(dirname(logPath));
   const logFd = openSync(logPath, "w", 0o600);
   try {
     fchmodSync(logFd, 0o600); // `mode` only applies on create; a reused log keeps its old one
@@ -166,6 +241,25 @@ export const PendingLineSchema = z.object({
   keyStore: z.enum(AGENT_INTENT_KEY_STORES),
 });
 
+export const RingAccessPendingLineSchema = z.object({
+  type: z.literal("ring-access-pending"),
+  profileId: z.string(),
+  ringAccessUrl: z.string(),
+  fingerprint: z.string(),
+  expiresAt: z.string(),
+  keyStore: z.enum(AGENT_INTENT_KEY_STORES),
+});
+
+export const RingAccessGrantedLineSchema = z.object({
+  status: z.literal("success"),
+  granted: z.literal(true),
+  profileId: z.string(),
+  environment: z.string(),
+  trustchainId: z.string(),
+  applicationPath: z.string(),
+  encryptionPublicKey: z.string(),
+});
+
 /** A JSON error envelope, as any command prints it with `--output json`. */
 export const ErrorLineSchema = z.object({
   ok: z.literal(false),
@@ -176,6 +270,7 @@ export const ErrorLineSchema = z.object({
  * without printing one; returns undefined, leaving the child running, if it prints nothing within
  * the startup timeout. */
 export async function readFirstLogJsonLine(
+  kind: ListenerKind,
   child: ChildProcess,
   logPath: string,
   timeoutMs = STARTUP_TIMEOUT_MS,
@@ -198,7 +293,8 @@ export async function readFirstLogJsonLine(
       if (first) return first;
       if (exitedBeforeRead) {
         throw new Error(
-          `The enrollment listener ${exitedBeforeRead} before printing its first event. See ${logPath}.`,
+          `${LISTENERS[kind].startName} ${exitedBeforeRead} before printing its first event. ` +
+            `See ${logPath}.`,
         );
       }
       if (Date.now() >= deadline) return undefined;

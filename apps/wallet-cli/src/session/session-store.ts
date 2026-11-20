@@ -60,6 +60,15 @@ const AgentIntentAccountAccessSchema = z.object({
   applicationPath: z.string(),
 });
 
+const COMPRESSED_PUBLIC_KEY_RE = /^0[23][0-9a-f]{64}$/i;
+
+const AgentIntentRingAccessSchema = z.object({
+  environment: z.enum(AGENT_INTENT_ENVIRONMENTS),
+  trustchainId: z.string(),
+  applicationPath: z.string(),
+  encryptionPublicKey: z.string().regex(COMPRESSED_PUBLIC_KEY_RE),
+});
+
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
 // is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`), or,
 // for a profile enrolled with `--allow-plaintext-key` on a host without a usable OS keychain, in an
@@ -79,10 +88,19 @@ const AgentIntentProfileSchema = z.object({
   keyStore: z.enum(AGENT_INTENT_KEY_STORES).default("os-keychain"),
   trustchainId: z.string().optional(),
   accountAccess: AgentIntentAccountAccessSchema.optional(),
+  encryptionPublicKey: z.string().regex(COMPRESSED_PUBLIC_KEY_RE).optional(),
+  ringAccess: AgentIntentRingAccessSchema.optional(),
   // Set while `agent-intent recover` waits for approval; a bad value is dropped, not fatal.
   pendingRecovery: z
     .object({
       previousTrustchainId: z.string(),
+      requestSignature: z.string(),
+      expiresAt: z.iso.datetime(),
+    })
+    .optional()
+    .catch(undefined),
+  pendingRingAccess: z
+    .object({
       requestSignature: z.string(),
       expiresAt: z.iso.datetime(),
     })

@@ -1,14 +1,21 @@
 import {
   AGENT_KEYCLOAK_ENVIRONMENTS,
   createAgentTokenProvider,
+  isKeyRingApplicationPath,
   type AgentEnrollmentCompletionV2,
   type AgentIntentEnvironment,
   type AgentRecoveryCompletion,
+  type AgentRingAccessCompletion,
   type AgentKeycloakConfig,
   type SoftwareAgentIdentity,
 } from "@ledgerhq/agent-intent-sdk";
-import type { JWT, Trustchain, TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createAgentLedgerSyncSdk } from "../key-ring/lkrp-sdk";
+import type {
+  JWT,
+  MemberCredentials,
+  Trustchain,
+  TrustchainSDK,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
+import { createAgentKeyRingSdk, createAgentLedgerSyncSdk } from "../key-ring/lkrp-sdk";
 
 // Must match the App-16 permission the frontend grants: OWNER without CAN_ADD_BLOCK.
 export const APP_16_CONTROLLED_TEST_PERMISSION = 0xfffffffb;
@@ -20,6 +27,7 @@ type LedgerSyncSdk = Pick<TrustchainSDK, "restoreTrustchain" | "withAuth">;
 export type CompletionAuthDependencies = {
   createTokenProvider?: typeof createAgentTokenProvider;
   createLedgerSyncSdk?: (environment: AgentIntentEnvironment) => LedgerSyncSdk;
+  createKeyRingSdk?: (environment: AgentIntentEnvironment) => Pick<TrustchainSDK, "withAuth">;
 };
 
 export type CompletionAuthInput = {
@@ -57,6 +65,42 @@ export function authenticateRecoveryCompletion(
   dependencies: Pick<CompletionAuthDependencies, "createTokenProvider"> = {},
 ): Promise<void> {
   return authenticateApp18Membership(input, dependencies.createTokenProvider);
+}
+
+export async function authenticateRingAccessCompletion(
+  input: {
+    completion: AgentRingAccessCompletion;
+    encryptionIdentity: SoftwareAgentIdentity;
+    environment: AgentIntentEnvironment;
+  },
+  dependencies: Pick<CompletionAuthDependencies, "createKeyRingSdk"> = {},
+): Promise<void> {
+  const { completion, encryptionIdentity, environment } = input;
+  if (completion.environment !== environment) {
+    throw new Error(
+      `Ring access was granted on the ${completion.environment} environment but the profile was ` +
+        `enrolled against ${environment}.`,
+    );
+  }
+  if (!isKeyRingApplicationPath(completion.applicationPath)) {
+    throw new Error("Ring access path is not a Key Ring (App-17) application path.");
+  }
+  const sdk = (dependencies.createKeyRingSdk ?? createAgentKeyRingSdk)(environment);
+  const credentials: MemberCredentials = {
+    pubkey: encryptionIdentity.publicKey,
+    privatekey: encryptionIdentity.exportSecretKey(),
+  };
+  const grant: Trustchain = {
+    rootId: completion.trustchainId,
+    applicationPath: completion.applicationPath,
+    walletSyncEncryptionKey: "",
+  };
+  await sdk.withAuth(grant, credentials, jwt => {
+    if (permissionFor(jwt, grant) === undefined) {
+      throw new Error("The encryption key holds no permission on the granted Key Ring path.");
+    }
+    return Promise.resolve();
+  });
 }
 
 function authenticateApp18Membership(
@@ -107,10 +151,15 @@ async function verifyLedgerSyncAccess(
   });
 }
 
+function permissionFor(jwt: JWT, trustchain: Trustchain): string | undefined {
+  const permission: unknown = jwt.permissions?.[trustchain.rootId]?.[trustchain.applicationPath];
+  return typeof permission === "string" ? permission : undefined;
+}
+
 function assertControlledTestPermission(jwt: JWT, trustchain: Trustchain): void {
-  const permission = jwt.permissions?.[trustchain.rootId]?.[trustchain.applicationPath];
+  const permission = permissionFor(jwt, trustchain);
   if (
-    typeof permission !== "string" ||
+    permission === undefined ||
     !/^[0-9a-f]+$/i.test(permission) ||
     Number.parseInt(permission, 16) !== APP_16_CONTROLLED_TEST_PERMISSION
   ) {

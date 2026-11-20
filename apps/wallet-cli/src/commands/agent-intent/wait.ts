@@ -12,11 +12,13 @@ import {
 } from "../../agent-intent/profile-format";
 import { parseDurationMs } from "../../agent-intent/relay";
 import {
-  enrollListenerPaths,
+  listenerPaths,
   ErrorLineSchema,
   LISTENER_STARTING_MAX_MS,
   PendingLineSchema,
   readLogJsonLines,
+  RingAccessGrantedLineSchema,
+  RingAccessPendingLineSchema,
 } from "../../agent-intent/detach";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
@@ -84,7 +86,7 @@ function checkMissingProfile(
   listenerPid: number | undefined,
   deadline: number,
 ): number | undefined {
-  const { logPath, lockPath } = enrollListenerPaths(profileId);
+  const { logPath, lockPath } = listenerPaths("enroll", profileId);
   if (listenerPid === undefined) {
     // The log of the last --detach run of this id: each spawn truncates it.
     const lines = readLogJsonLines(logPath);
@@ -186,6 +188,199 @@ function checkProfile(
   return undefined;
 }
 
+type RingAccessRun = {
+  pending?: z.infer<typeof RingAccessPendingLineSchema>;
+  linesAfter: Record<string, unknown>[];
+};
+
+function loggedRingAccessRun(
+  logPath: string,
+  profile: AgentIntentProfileMeta,
+): RingAccessRun | undefined {
+  let loggedAt: number;
+  try {
+    loggedAt = statSync(logPath).mtimeMs;
+  } catch {
+    return undefined;
+  }
+  if (loggedAt < Date.parse(profile.createdAt)) return undefined;
+  const lines = readLogJsonLines(logPath);
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const pending = RingAccessPendingLineSchema.safeParse(lines[i]);
+    if (!pending.success) continue;
+    const ownLine =
+      pending.data.profileId === profile.profileId &&
+      pending.data.fingerprint === formatAgentPublicKeyFingerprint(profile.publicKey);
+    return ownLine ? { pending: pending.data, linesAfter: lines.slice(i + 1) } : undefined;
+  }
+  return { linesAfter: lines };
+}
+
+function reportRingAccessOutcome(
+  out: CommandOutput,
+  profileId: string,
+  linesAfter: Record<string, unknown>[],
+  logPath: string,
+): boolean {
+  const granted = linesAfter
+    .map(line => RingAccessGrantedLineSchema.safeParse(line))
+    .find(parsed => parsed.success);
+  if (granted?.success) {
+    const { environment, trustchainId, applicationPath, encryptionPublicKey } = granted.data;
+    out.agentIntentRingAccessGranted({
+      profileId,
+      environment,
+      trustchainId,
+      applicationPath,
+      encryptionPublicKey,
+    });
+    return true;
+  }
+  const failure = lastErrorAfter(linesAfter, -1);
+  if (failure) {
+    throw new CodedCommandError(
+      failure.code ?? "listener_exited",
+      `${failure.message} Log: ${logPath}.`,
+    );
+  }
+  return false;
+}
+
+function checkStartingRingAccess(
+  out: CommandOutput,
+  profileId: string,
+  listenerPid: number | undefined,
+  deadline: number,
+  { logPath, lockPath }: { logPath: string; lockPath: string },
+  rerun: string,
+): number | undefined {
+  if (listenerPid === undefined) {
+    throw new CodedCommandError(
+      "listener_exited",
+      `The ring access listener of profile "${profileId}" ended before printing its link. ` +
+        `${rerun} Log: ${logPath}.`,
+    );
+  }
+  if (lockAgeMs(lockPath) > LISTENER_STARTING_MAX_MS) {
+    throw new CodedCommandError(
+      "listener_stuck",
+      `The ring access listener of profile "${profileId}" (pid ${listenerPid}) has not printed ` +
+        `its link within ${LISTENER_STARTING_MAX_MS / 60_000} minutes, so it is stuck or its pid ` +
+        `was reused. ${rerun}`,
+    );
+  }
+  const remainingMs = deadline - Date.now();
+  if (remainingMs > 0) return remainingMs;
+  out.agentIntentRingAccessWaiting({ profileId, listenerPid });
+  return undefined;
+}
+
+function checkPendingRingAccess(
+  out: CommandOutput,
+  profileId: string,
+  pending: z.infer<typeof RingAccessPendingLineSchema>,
+  listenerPid: number | undefined,
+  deadline: number,
+  logPath: string,
+  rerun: string,
+): number | undefined {
+  const expiresAt = Date.parse(pending.expiresAt);
+  const livePid = Date.now() > expiresAt + LISTENER_EXPIRY_GRACE_MS ? undefined : listenerPid;
+  if (livePid === undefined) {
+    if (Date.now() >= expiresAt) {
+      throw new CodedCommandError(
+        "ring_access_expired",
+        `The ring access link of profile "${profileId}" expired at ${pending.expiresAt} without ` +
+          `an answer. ${rerun}`,
+      );
+    }
+    throw new CodedCommandError(
+      "listener_exited",
+      `The ring access listener of profile "${profileId}" is no longer running, so the answer ` +
+        `can no longer be received. ${rerun} Log: ${logPath}.`,
+    );
+  }
+  const expired = Date.now() >= expiresAt;
+  const remainingMs = (expired ? deadline : Math.min(deadline, expiresAt)) - Date.now();
+  if (remainingMs > 0) return remainingMs;
+  out.agentIntentRingAccessWaiting({
+    profileId,
+    listenerPid: livePid,
+    expiresAt: pending.expiresAt,
+    ringAccessUrl: pending.ringAccessUrl,
+    fingerprint: pending.fingerprint,
+  });
+  return undefined;
+}
+
+function checkRingAccess(
+  out: CommandOutput,
+  profileId: string,
+  { pending, linesAfter }: RingAccessRun,
+  listenerPid: number | undefined,
+  deadline: number,
+  paths: { logPath: string; lockPath: string },
+): number | undefined {
+  if (reportRingAccessOutcome(out, profileId, linesAfter, paths.logPath)) return undefined;
+  const rerun = `Run \`wallet-cli agent-intent ring-access --profile ${profileId}\` again.`;
+  return pending === undefined
+    ? checkStartingRingAccess(out, profileId, listenerPid, deadline, paths, rerun)
+    : checkPendingRingAccess(out, profileId, pending, listenerPid, deadline, paths.logPath, rerun);
+}
+
+type LinkState = { startedWithLink?: boolean };
+
+/** A call that started before the listener logged its link hands the link over once it appears. */
+function linkDeadline(state: LinkState, hasLink: boolean, deadline: number): number {
+  state.startedWithLink ??= hasLink;
+  return state.startedWithLink || !hasLink ? deadline : Date.now();
+}
+
+type PollContext = {
+  deadline: number;
+  enroll: { logPath: string; lockPath: string };
+  ringAccess: { logPath: string; lockPath: string };
+  enrollLink: LinkState;
+  ringAccessLink: LinkState;
+};
+
+async function pollOnce(
+  out: CommandOutput,
+  profileId: string,
+  context: PollContext,
+): Promise<number | undefined> {
+  // Read before the session: the listener saves its result before releasing the lock, so
+  // once the lock reads dead, the session read below already shows anything it saved.
+  const listenerPid = readLiveLockHolderPid(context.enroll.lockPath);
+  const ringAccessPid = readLiveLockHolderPid(context.ringAccess.lockPath);
+  const profile = (await Session.read()).getAgentIntentProfile(profileId);
+  if (!profile) {
+    linkDeadline(context.enrollLink, false, context.deadline);
+    return checkMissingProfile(out, profileId, listenerPid, context.deadline);
+  }
+  const ringAccessRun = profile.trustchainId
+    ? loggedRingAccessRun(context.ringAccess.logPath, profile)
+    : undefined;
+  if (ringAccessRun) {
+    const deadline = linkDeadline(
+      context.ringAccessLink,
+      ringAccessRun.pending !== undefined,
+      context.deadline,
+    );
+    return checkRingAccess(
+      out,
+      profileId,
+      ringAccessRun,
+      ringAccessPid,
+      deadline,
+      context.ringAccess,
+    );
+  }
+  const enrollmentUrl = loggedEnrollmentUrl(context.enroll.logPath, profile);
+  const deadline = linkDeadline(context.enrollLink, enrollmentUrl !== undefined, context.deadline);
+  return checkProfile(out, profile, listenerPid, deadline, context.enroll.logPath, enrollmentUrl);
+}
+
 /** Polls local state until the enrollment of `profileId` is enrolled, failed, or still pending at
  * `timeoutMs` (or once its link appears, if it had none at the first poll), and reports that on
  * `out`. `intervalMs` is injectable so tests need not sleep. */
@@ -195,22 +390,15 @@ export async function pollEnrollment(
   opts: { timeoutMs: number; intervalMs?: number },
 ): Promise<void> {
   const { timeoutMs, intervalMs = POLL_INTERVAL_MS } = opts;
-  const deadline = Date.now() + timeoutMs;
-  const { logPath, lockPath } = enrollListenerPaths(profileId);
-  let startedWithLink: boolean | undefined;
-
+  const context: PollContext = {
+    deadline: Date.now() + timeoutMs,
+    enroll: listenerPaths("enroll", profileId),
+    ringAccess: listenerPaths("ring-access", profileId),
+    enrollLink: {},
+    ringAccessLink: {},
+  };
   for (;;) {
-    // Read before the session: the listener saves its result before releasing the lock, so
-    // once the lock reads dead, the session read below already shows anything it saved.
-    const listenerPid = readLiveLockHolderPid(lockPath);
-    const profile = (await Session.read()).getAgentIntentProfile(profileId);
-    const enrollmentUrl = profile && loggedEnrollmentUrl(logPath, profile);
-    // A call that started before the listener logged its link hands the link over once it appears.
-    startedWithLink ??= enrollmentUrl !== undefined;
-    const linkDeadline = startedWithLink || enrollmentUrl === undefined ? deadline : Date.now();
-    const waitMs = profile
-      ? checkProfile(out, profile, listenerPid, linkDeadline, logPath, enrollmentUrl)
-      : checkMissingProfile(out, profileId, listenerPid, deadline);
+    const waitMs = await pollOnce(out, profileId, context);
     if (waitMs === undefined) return;
     await sleep(Math.min(intervalMs, waitMs));
   }
@@ -219,16 +407,17 @@ export async function pollEnrollment(
 export default defineCommand({
   name: "wait",
   description:
-    "Wait a bounded time for an `agent-intent enroll` started on this machine to complete, from " +
-    "local state only, and report enrolled, still pending, or failed.",
+    "Wait a bounded time for an `agent-intent enroll`, or the last `agent-intent ring-access " +
+    "--detach`, started on this machine to complete, from local state only, and report the " +
+    "outcome, still pending, or failed.",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
-      description: "Local profile id passed to `agent-intent enroll`.",
+      description: "Local profile id passed to `agent-intent enroll` or `ring-access`.",
     }),
     timeout: option(z.string().default("25s"), {
       description:
-        "How long to wait before reporting a still-pending enrollment: 25s, 2m, ... (default: " +
-        "25s, at most until the enrollment link expires).",
+        "How long to wait before reporting a still-pending enrollment or ring access request: " +
+        "25s, 2m, ... (default: 25s, at most until the link expires).",
     }),
     output: outputOption,
   },

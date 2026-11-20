@@ -6,14 +6,14 @@ import { join } from "node:path";
 import { readLiveLockHolderPid } from "../shared/file-lock";
 import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 import {
-  enrollListenerPaths,
+  listenerPaths,
   readFirstLogJsonLine,
   readLogJsonLines,
   readLogLinesBeforeFirstJson,
   selfCommand,
   spawnDetached,
-  withEnrollListenerLock,
-  withEnrollStartLock,
+  withListenerLock,
+  withStartLock,
 } from "./detach";
 
 const isPosix = process.platform !== "win32";
@@ -48,33 +48,46 @@ function startChild(script: string, logPath: string): ChildProcess {
   return child;
 }
 
-describe("enrollListenerPaths", () => {
+describe("listenerPaths", () => {
   it("puts the log and lock under the CLI state dir", () => {
     const dir = join(cliStateDirIn(stateHome), "agent-intent-enroll");
-    expect(enrollListenerPaths("My-Agent")).toEqual({
+    expect(listenerPaths("enroll", "My-Agent")).toEqual({
       logPath: join(dir, "my-agent-b59f3481.log"),
       lockPath: join(dir, "my-agent-b59f3481.lock"),
     });
   });
 
+  it("keeps a ring access listener's files in their own dir", async () => {
+    const dir = join(cliStateDirIn(stateHome), "agent-intent-ring-access");
+    expect(listenerPaths("ring-access", "My-Agent")).toEqual({
+      logPath: join(dir, "my-agent-b59f3481.log"),
+      lockPath: join(dir, "my-agent-b59f3481.lock"),
+    });
+    await withListenerLock("enroll", "my-agent", async () => {
+      expect(await withListenerLock("ring-access", "my-agent", async () => "listening")).toBe(
+        "listening",
+      );
+    });
+  });
+
   it("gives ids that differ only in case distinct files on a case-insensitive filesystem", async () => {
-    const upper = enrollListenerPaths("Bot");
-    const lower = enrollListenerPaths("bot");
+    const upper = listenerPaths("enroll", "Bot");
+    const lower = listenerPaths("enroll", "bot");
 
     expect(upper.logPath.toLowerCase()).not.toBe(lower.logPath.toLowerCase());
     expect(upper.lockPath.toLowerCase()).not.toBe(lower.lockPath.toLowerCase());
-    await withEnrollListenerLock("Bot", async () => {
-      expect(await withEnrollListenerLock("bot", async () => "listening")).toBe("listening");
-      expect(await withEnrollStartLock("bot", async () => "started")).toBe("started");
+    await withListenerLock("enroll", "Bot", async () => {
+      expect(await withListenerLock("enroll", "bot", async () => "listening")).toBe("listening");
+      expect(await withStartLock("enroll", "bot", async () => "started")).toBe("started");
     });
   });
 });
 
-describe("withEnrollListenerLock", () => {
+describe("withListenerLock", () => {
   it("holds the profile's lock while fn runs and releases it after", async () => {
-    const { lockPath } = enrollListenerPaths("my-agent");
+    const { lockPath } = listenerPaths("enroll", "my-agent");
 
-    const holder = await withEnrollListenerLock("my-agent", async () =>
+    const holder = await withListenerLock("enroll", "my-agent", async () =>
       readLiveLockHolderPid(lockPath),
     );
 
@@ -83,24 +96,28 @@ describe("withEnrollListenerLock", () => {
   });
 
   it.skipIf(!isPosix)("creates the listener dir 0700 and the lock file 0600", async () => {
-    const { lockPath } = enrollListenerPaths("my-agent");
+    const { lockPath } = listenerPaths("enroll", "my-agent");
 
-    const lockMode = await withEnrollListenerLock("my-agent", async () => statSync(lockPath).mode);
+    const lockMode = await withListenerLock(
+      "enroll",
+      "my-agent",
+      async () => statSync(lockPath).mode,
+    );
 
     expect(statSync(join(lockPath, "..")).mode & 0o777).toBe(0o700);
     expect(lockMode & 0o777).toBe(0o600);
   });
 
   it("fails at once, pointing at wait, when another live process is the profile's listener", async () => {
-    const { lockPath } = enrollListenerPaths("my-agent");
-    await withEnrollListenerLock("other", async () => {}); // creates the dir
+    const { lockPath } = listenerPaths("enroll", "my-agent");
+    await withListenerLock("enroll", "other", async () => {}); // creates the dir
     const holder = Bun.spawn([process.execPath, "-e", "await new Promise(() => {})"]);
     writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
     let ran = false;
     try {
       const started = Date.now();
       await expect(
-        withEnrollListenerLock("my-agent", async () => {
+        withListenerLock("enroll", "my-agent", async () => {
           ran = true;
         }),
       ).rejects.toThrow(
@@ -115,15 +132,17 @@ describe("withEnrollListenerLock", () => {
   });
 });
 
-describe("withEnrollStartLock", () => {
+describe("withStartLock", () => {
   it("does not share a lock file with the listener of profile <id>.start", async () => {
-    await withEnrollListenerLock("bot.start", async () => {
+    await withListenerLock("enroll", "bot.start", async () => {
       const started = Date.now();
-      expect(await withEnrollStartLock("bot", async () => "started")).toBe("started");
+      expect(await withStartLock("enroll", "bot", async () => "started")).toBe("started");
       expect(Date.now() - started).toBeLessThan(500);
     });
-    await withEnrollStartLock("bot", async () => {
-      expect(await withEnrollListenerLock("bot.start", async () => "listening")).toBe("listening");
+    await withStartLock("enroll", "bot", async () => {
+      expect(await withListenerLock("enroll", "bot.start", async () => "listening")).toBe(
+        "listening",
+      );
     });
   });
 });
@@ -202,7 +221,7 @@ describe("readLogLinesBeforeFirstJson", () => {
 
 describe("spawnDetached + readFirstLogJsonLine", () => {
   it("returns the child's first JSON line while the child keeps running", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
+    const { logPath } = listenerPaths("enroll", "my-agent");
     const child = startChild(
       'process.stderr.write("a banner on stderr\\n");' +
         'console.log(JSON.stringify({ type: "enrollment-pending", profileId: "my-agent" }));' +
@@ -210,7 +229,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
       logPath,
     );
 
-    const first = await readFirstLogJsonLine(child, logPath, 10_000);
+    const first = await readFirstLogJsonLine("enroll", child, logPath, 10_000);
 
     expect(first).toEqual({ type: "enrollment-pending", profileId: "my-agent" });
     expect(readLogLinesBeforeFirstJson(logPath)).toEqual(["a banner on stderr"]);
@@ -219,66 +238,72 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
   });
 
   it.skipIf(!isPosix)("writes the log 0600, even over an existing looser one", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
-    await withEnrollListenerLock("my-agent", async () => {}); // creates the dir
+    const { logPath } = listenerPaths("enroll", "my-agent");
+    await withListenerLock("enroll", "my-agent", async () => {}); // creates the dir
     writeFileSync(logPath, "old run\n", { mode: 0o644 });
     const child = startChild('console.log("{}")', logPath);
 
-    await readFirstLogJsonLine(child, logPath, 10_000);
+    await readFirstLogJsonLine("enroll", child, logPath, 10_000);
 
     expect(statSync(logPath).mode & 0o777).toBe(0o600);
   });
 
   it("marks the child as a detached listener and keeps the rest of the env", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
+    const { logPath } = listenerPaths("enroll", "my-agent");
     const child = startChild(
       "console.log(JSON.stringify({ marker: process.env.WALLET_CLI_DETACHED_LISTENER, " +
         "stateHome: process.env.XDG_STATE_HOME }));",
       logPath,
     );
 
-    expect(await readFirstLogJsonLine(child, logPath, 10_000)).toEqual({
+    expect(await readFirstLogJsonLine("enroll", child, logPath, 10_000)).toEqual({
       marker: "1",
       stateHome,
     });
   });
 
   it("returns an error envelope the child printed before exiting", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
+    const { logPath } = listenerPaths("enroll", "my-agent");
     const child = startChild(
       'console.log(JSON.stringify({ ok: false, error: { message: "boom" } })); process.exit(1);',
       logPath,
     );
 
-    expect(await readFirstLogJsonLine(child, logPath, 10_000)).toEqual({
+    expect(await readFirstLogJsonLine("enroll", child, logPath, 10_000)).toEqual({
       ok: false,
       error: { message: "boom" },
     });
   });
 
-  it("fails when the child exits without printing a JSON line", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
-    const child = startChild('console.error("crashed"); process.exit(3);', logPath);
+  it.each([
+    ["enroll", "The enrollment listener"],
+    ["ring-access", "The ring access listener"],
+  ] as const)(
+    "fails, naming the %s listener, when the child exits without printing a JSON line",
+    async (kind, listener) => {
+      const { logPath } = listenerPaths(kind, "my-agent");
+      const child = startChild('console.error("crashed"); process.exit(3);', logPath);
 
-    await expect(readFirstLogJsonLine(child, logPath, 10_000)).rejects.toThrow(
-      `The enrollment listener exited with code 3 before printing its first event. See ${logPath}.`,
-    );
-  });
+      await expect(readFirstLogJsonLine(kind, child, logPath, 10_000)).rejects.toThrow(
+        `${listener} exited with code 3 before printing its first event. See ${logPath}.`,
+      );
+    },
+  );
 
   it("fails when the command cannot be started", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
+    const { logPath } = listenerPaths("enroll", "my-agent");
     const child = spawnDetached([join(stateHome, "no-such-binary")], logPath);
 
-    await expect(readFirstLogJsonLine(child, logPath, 10_000)).rejects.toThrow(
+    await expect(readFirstLogJsonLine("enroll", child, logPath, 10_000)).rejects.toThrow(
       /The enrollment listener could not start/,
     );
   });
 
   it("returns undefined and leaves the child running when it prints nothing before the startup timeout", async () => {
-    const { logPath } = enrollListenerPaths("my-agent");
+    const { logPath } = listenerPaths("enroll", "my-agent");
     const child = startChild("setInterval(() => {}, 1000);", logPath);
 
-    expect(await readFirstLogJsonLine(child, logPath, 300)).toBeUndefined();
+    expect(await readFirstLogJsonLine("enroll", child, logPath, 300)).toBeUndefined();
     await Bun.sleep(100); // room for a stop signal to land
     expect(child.killed).toBe(false);
     expect(child.exitCode).toBeNull();

@@ -220,7 +220,7 @@ afterAll(() => {
 });
 
 const { default: enrollCommand } = await import("./enroll");
-const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
+const { listenerPaths, withListenerLock } = await import("../../agent-intent/detach");
 
 type EnrollFlags = {
   profile: string;
@@ -824,7 +824,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("holds the profile's listener lock while waiting for approval, and releases it after", async () => {
-      const { lockPath } = enrollListenerPaths("test-agent");
+      const { lockPath } = listenerPaths("enroll", "test-agent");
       let holderWhileWaiting: number | undefined;
       hostWait = input => {
         holderWhileWaiting = readLiveLockHolderPid(lockPath);
@@ -1071,7 +1071,7 @@ describe("agent-intent enroll --detach", () => {
     hasSecretKeyImpl = () => false;
     sessionReadCalls = 0;
     savedSecretKeys.clear();
-    rmSync(enrollListenerPaths("test-agent").logPath, { force: true });
+    rmSync(listenerPaths("enroll", "test-agent").logPath, { force: true });
     stdout = [];
     stderr = [];
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
@@ -1155,7 +1155,7 @@ describe("agent-intent enroll --detach", () => {
       {
         ...pendingLine,
         listenerPid: 4242,
-        logPath: enrollListenerPaths("test-agent").logPath,
+        logPath: listenerPaths("enroll", "test-agent").logPath,
       },
     ]);
   });
@@ -1164,7 +1164,7 @@ describe("agent-intent enroll --detach", () => {
     const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
     firstLogLine = async () => {
       writeFileSync(
-        enrollListenerPaths("test-agent").logPath,
+        listenerPaths("enroll", "test-agent").logPath,
         warning + JSON.stringify(pendingLine) + "\nlater\n",
       );
       return pendingLine;
@@ -1204,7 +1204,7 @@ describe("agent-intent enroll --detach", () => {
         network: "all",
         profileId: "test-agent",
         listenerPid: 4242,
-        logPath: enrollListenerPaths("test-agent").logPath,
+        logPath: listenerPaths("enroll", "test-agent").logPath,
       },
     ]);
     expect(childKilled).toBe(false);
@@ -1254,7 +1254,7 @@ describe("agent-intent enroll --detach", () => {
     const envelope = { ok: false, error: { command: "agent-intent enroll", message: "boom" } };
     firstLogLine = async () => {
       writeFileSync(
-        enrollListenerPaths("test-agent").logPath,
+        listenerPaths("enroll", "test-agent").logPath,
         warning + JSON.stringify(envelope) + "\n",
       );
       return envelope;
@@ -1276,7 +1276,7 @@ describe("agent-intent enroll --detach", () => {
   it("relays the listener's stderr once when it exits before printing its first event", async () => {
     const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
     firstLogLine = async () => {
-      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}crashed\n`);
+      writeFileSync(listenerPaths("enroll", "test-agent").logPath, `${warning}crashed\n`);
       throw new Error("The enrollment listener exited with code 1 before printing its first event");
     };
 
@@ -1287,7 +1287,10 @@ describe("agent-intent enroll --detach", () => {
   it("stops the listener and fails when its first line is neither pending nor an error", async () => {
     const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
     firstLogLine = async () => {
-      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}{"status":"success"}\n`);
+      writeFileSync(
+        listenerPaths("enroll", "test-agent").logPath,
+        `${warning}{"status":"success"}\n`,
+      );
       return { status: "success" };
     };
 
@@ -1297,7 +1300,7 @@ describe("agent-intent enroll --detach", () => {
   });
 
   it("refuses to start a second listener while one is running for the profile", async () => {
-    await withEnrollListenerLock("test-agent", async () => {
+    await withListenerLock("enroll", "test-agent", async () => {
       await expect(runEnroll({ detach: true })).rejects.toThrow(
         `An enrollment listener for profile "test-agent" is already running (pid ${process.pid}).`,
       );

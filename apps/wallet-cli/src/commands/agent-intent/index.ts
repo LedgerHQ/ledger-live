@@ -4,6 +4,7 @@ import CancelCommand from "./cancel";
 import IntentsCommand from "./intents";
 import ListCommand from "./list";
 import RecoverCommand from "./recover";
+import RingAccessCommand from "./ring-access";
 import ShowCommand from "./show";
 import StatusCommand from "./status";
 import SendCommand from "./send";
@@ -19,6 +20,7 @@ export default defineGroup({
     EnrollCommand,
     WaitCommand,
     RecoverCommand,
+    RingAccessCommand,
     ListCommand,
     ShowCommand,
     SendCommand,

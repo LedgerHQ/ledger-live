@@ -71,3 +71,21 @@ export function agentIntentProfileStatus(
   }
   return new Date(profile.enrollmentExpiresAt) < now ? "expired" : "pending";
 }
+
+export type AgentIntentRingAccessStatus = "granted" | "requesting" | "none";
+
+export function agentIntentRingAccessStatus(
+  profile: {
+    encryptionPublicKey?: string;
+    ringAccess?: { encryptionPublicKey: string };
+    pendingRingAccess?: { expiresAt: string };
+  },
+  now: Date = new Date(),
+): AgentIntentRingAccessStatus {
+  const grantedKey = profile.ringAccess?.encryptionPublicKey.toLowerCase();
+  if (grantedKey !== undefined && grantedKey === profile.encryptionPublicKey?.toLowerCase()) {
+    return "granted";
+  }
+  const pending = profile.pendingRingAccess;
+  return pending && new Date(pending.expiresAt) >= now ? "requesting" : "none";
+}
