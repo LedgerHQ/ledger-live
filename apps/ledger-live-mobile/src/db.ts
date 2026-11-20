@@ -169,7 +169,8 @@ async function unsafeGetAccounts(): Promise<{
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
-    let active = (await storage.get(accountKeys)) as StoredAccount[];
+    const stored = await storage.get<StoredAccount>(accountKeys);
+    let active = Array.isArray(stored) ? stored : [];
 
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
       const ids = (await storage.get(ACCOUNTS_KEY_SORT)) as string[];
@@ -225,10 +226,10 @@ async function unsafeSaveAccounts(
     : dbData.filter(([_key, { data }]) => stats.changed.includes(data.id));
 
   /** persist store data to DB */
-  await storage.save([
+  await storage.save<StoredAccount | string[]>([
     ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
-  ] as [string, string | StoredAccount][]);
+  ]);
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
