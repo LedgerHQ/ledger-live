@@ -54,7 +54,7 @@ describe("proxyClient", () => {
         config,
         currencyId,
         async client => client.request({ method: "GET", url: "/test" }),
-        1,
+        { retries: 1 },
       );
 
       expect(result).toBe("success");
@@ -69,7 +69,7 @@ describe("proxyClient", () => {
           config,
           currencyId,
           async client => client.request({ method: "GET", url: "/test" }),
-          1,
+          { retries: 1 },
         ),
       ).rejects.toThrow("Always fails");
       expect(mockNetwork).toHaveBeenCalledTimes(2);
@@ -85,6 +85,63 @@ describe("proxyClient", () => {
       ).rejects.toThrow("Fails");
       expect(mockNetwork).toHaveBeenCalledTimes(3); // DEFAULT_RETRIES = 2
     }, 10000);
+
+    it("rejects with the abort reason while a request is pending, without retrying", async () => {
+      const pendingRequests: Array<(error: Error) => void> = [];
+      mockNetwork.mockImplementation(
+        () => new Promise((_, reject) => pendingRequests.push(reject)),
+      );
+      const controller = new AbortController();
+      const reason = new Error("aborted");
+
+      const result = withClient(
+        config,
+        currencyId,
+        async client => client.request({ method: "GET", url: "/test" }),
+        { signal: controller.signal },
+      );
+      await Promise.resolve();
+      controller.abort(reason);
+
+      await expect(result).rejects.toBe(reason);
+      pendingRequests.forEach(fail => fail(new Error("network")));
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(mockNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("stops retrying once aborted", async () => {
+      const controller = new AbortController();
+      const reason = new Error("aborted");
+      mockNetwork.mockImplementation(async () => {
+        controller.abort(reason);
+        throw new Error("network");
+      });
+
+      await expect(
+        withClient(
+          config,
+          currencyId,
+          async client => client.request({ method: "GET", url: "/test" }),
+          { signal: controller.signal },
+        ),
+      ).rejects.toBe(reason);
+      expect(mockNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not call the proxy when already aborted", async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      await expect(
+        withClient(
+          config,
+          currencyId,
+          async client => client.request({ method: "GET", url: "/test" }),
+          { signal: controller.signal },
+        ),
+      ).rejects.toMatchObject({ name: "AbortError" });
+      expect(mockNetwork).not.toHaveBeenCalled();
+    });
 
     it("should throw when URL is not provided", async () => {
       await expect(
