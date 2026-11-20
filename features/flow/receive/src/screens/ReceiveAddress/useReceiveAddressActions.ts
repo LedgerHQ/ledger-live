@@ -51,22 +51,24 @@ export function useReceiveAddressActions({
   const dispatch = useDispatch();
   const hasSeenVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const verifyFlow = useVerifyAddressFlow({ onCloseFlow: onClose });
-  const [copiedAddress, setCopiedAddress] = useState<string>();
+  // An object, not the address: copying the same address again must restart the feedback.
+  const [copied, setCopied] = useState<Readonly<{ address: string }>>();
 
   const address = selected?.address;
   const verification = selected?.verification;
   const canVerify = canVerifyOnDevice(verification);
+  const hasCopied = address !== undefined && copied?.address === address;
 
   useEffect(() => {
-    if (!copiedAddress) return;
-    const timeout = setTimeout(() => setCopiedAddress(undefined), COPIED_FEEDBACK_MS);
+    if (!copied) return;
+    const timeout = setTimeout(() => setCopied(undefined), COPIED_FEEDBACK_MS);
     return () => clearTimeout(timeout);
-  }, [copiedAddress]);
+  }, [copied]);
 
   const copyAddress = useCallback(async () => {
     if (!address || !onCopyAddress) return;
     trackReceiveAddressButton("copy address");
-    if (await onCopyAddress(address)) setCopiedAddress(address);
+    if (await onCopyAddress(address)) setCopied({ address });
   }, [address, onCopyAddress]);
 
   const shareAddress = useCallback(() => {
@@ -94,8 +96,8 @@ export function useReceiveAddressActions({
       disabled: !isShown,
       copy: onCopyAddress
         ? {
-            label: address && copiedAddress === address ? copy.copiedLabel : copy.copyLabel,
-            hasCopied: !!address && copiedAddress === address,
+            label: hasCopied ? copy.copiedLabel : copy.copyLabel,
+            hasCopied,
             onPress: copyAddress,
           }
         : undefined,

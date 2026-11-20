@@ -64,6 +64,26 @@ describe("useReceiveAddressActions", () => {
     );
   });
 
+  it("should keep telling it was copied for 3 s after the last copy", async () => {
+    jest.useFakeTimers();
+    try {
+      const { result } = setup();
+
+      await act(() => result.current.actions.copy!.onPress());
+      act(() => jest.advanceTimersByTime(2000));
+      await act(() => result.current.actions.copy!.onPress());
+      act(() => jest.advanceTimersByTime(2000));
+      expect(result.current.actions.copy).toEqual(expect.objectContaining({ hasCopied: true }));
+
+      act(() => jest.advanceTimersByTime(1000));
+      expect(result.current.actions.copy).toEqual(
+        expect.objectContaining({ label: "Copy", hasCopied: false }),
+      );
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("should share the address", () => {
     const { result, onShareAddress } = setup();
 
