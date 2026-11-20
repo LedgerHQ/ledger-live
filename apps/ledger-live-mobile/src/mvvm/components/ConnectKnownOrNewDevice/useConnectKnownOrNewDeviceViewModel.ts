@@ -4,10 +4,12 @@ import { useIsFocused } from "@react-navigation/native";
 import { log } from "@ledgerhq/logs";
 import { useMockServerDevices } from "@features/platform-device-mock-server";
 import {
+  buildUsbCompatDeviceId,
   connectKnownOrNewDevice,
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
   mockserverIdentifier,
+  rnHidTransportIdentifier,
   useDeviceManagementKit,
   type ConnectKnownOrNewDevice,
   type ConnectKnownOrNewDeviceUIState,
@@ -114,7 +116,9 @@ function toLibraryDelays(delays: ConnectKnownOrNewDeviceDelays | undefined) {
 }
 
 function getLastConnectedDeviceId({ transport, id }: KnownDevice): string {
-  return transport === mockserverIdentifier ? buildMockServerCompatDeviceId(id) : id;
+  if (transport === mockserverIdentifier) return buildMockServerCompatDeviceId(id);
+  if (transport === rnHidTransportIdentifier) return buildUsbCompatDeviceId(id);
+  return id;
 }
 
 export function useConnectKnownOrNewDeviceViewModel({
