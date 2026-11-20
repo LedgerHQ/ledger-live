@@ -49,7 +49,7 @@ export function MyWalletScreenView({
         <ScrollView
           ref={scrollRef}
           scrollEnabled={!isPairing}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, isPairing && styles.addModeContent]}
           alwaysBounceVertical={false}
           testID="my-wallet-scroll"
         >
@@ -63,4 +63,6 @@ export function MyWalletScreenView({
 
 const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1 },
+  // A bounded height, so that the list of the Add mode scrolls inside it.
+  addModeContent: { flex: 1 },
 });

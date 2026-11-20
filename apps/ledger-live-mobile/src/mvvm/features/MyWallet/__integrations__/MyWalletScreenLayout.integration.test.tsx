@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
@@ -46,7 +47,7 @@ describe("MyWalletScreen layout", () => {
     expect(screen.getByText("My Ledger section")).toBeVisible();
   });
 
-  it("GIVEN the device list flag is on, WHEN the Add mode starts, THEN it should stop the screen scroll", async () => {
+  it("GIVEN the device list flag is on, WHEN the Add mode starts, THEN it should stop the screen scroll and bound its height", async () => {
     // GIVEN
     const { user } = renderMyWalletScreen(true);
     expect(screen.getByTestId("my-wallet-scroll")).toHaveProp("scrollEnabled", true);
@@ -55,7 +56,9 @@ describe("MyWalletScreen layout", () => {
     await user.press(screen.getByText("My Ledger section"));
 
     // THEN
-    expect(screen.getByTestId("my-wallet-scroll")).toHaveProp("scrollEnabled", false);
+    const scroll = screen.getByTestId("my-wallet-scroll");
+    expect(scroll).toHaveProp("scrollEnabled", false);
+    expect(StyleSheet.flatten(scroll.props.contentContainerStyle)).toMatchObject({ flex: 1 });
   });
 
   it("GIVEN the device list flag is off, WHEN My Wallet shows, THEN it should keep the layout without a screen scroll", () => {
