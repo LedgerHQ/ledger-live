@@ -107,7 +107,11 @@ const createBranchTask = task("create-branch")
   .uses(upgrader)
   .createBranch({ name: "chore/lumen-upgrade" });
 
-const installTask = task("install").runs("pnpm install --frozen-lockfile");
+// The sandbox image ships a checkout whose origin/develop is as old as the image, and Cairn fetches the branch by URL,
+// which leaves it there: the migration range and the changeset read origin/develop, so refresh it first.
+const installTask = task("install").runs(
+  "git fetch --quiet origin develop && pnpm install --frozen-lockfile",
+);
 
 // Sets each catalog entry to the latest published version, then updates the lockfile.
 const bumpTask = task("bump").runs(
