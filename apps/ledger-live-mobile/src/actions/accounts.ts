@@ -16,7 +16,6 @@ import type { Dispatch } from "redux";
 
 type StoredAccount = { data: AccountRaw; version?: number };
 
-/** Before LIVE-40516, mobile wrote `version: 1` whatever the real state of the data. */
 const LEGACY_UNKNOWN_VERSION = 1;
 
 function migrationVersionOf({ version }: StoredAccount): number {
