@@ -4,6 +4,11 @@ exports[`icon currency bridge scanAccounts icon seed 1 1`] = `
 [
   {
     "balance": "798690000000000000",
+    "balances": [
+      {
+        "value": "798690000000000000",
+      },
+    ],
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d",
@@ -25,6 +30,11 @@ exports[`icon currency bridge scanAccounts icon seed 1 1`] = `
   },
   {
     "balance": "60000000000000",
+    "balances": [
+      {
+        "value": "60000000000000",
+      },
+    ],
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hxfc049b4ce60cc5968487d180d9c4263e63181739",
@@ -46,6 +56,11 @@ exports[`icon currency bridge scanAccounts icon seed 1 1`] = `
   },
   {
     "balance": "0",
+    "balances": [
+      {
+        "value": "0",
+      },
+    ],
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hx0199324ab40847315ec3972d1781b9dccd1620ae",

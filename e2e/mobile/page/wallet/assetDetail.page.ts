@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { parseTickerAmount } from "@e2e/helpers/commonHelpers";
+import { escapeRegExp, parseTickerAmount } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText, type NativeHandle } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { expectWithinTolerance } from "@e2e/utils/amountUtils";
@@ -17,6 +17,7 @@ const displayRoundingTolerance = (text: string) => {
 };
 
 const OPERATIONS_LIST_ITEM_ID = "operations-list-item";
+const ADDRESS_ITEM_NAME_PREFIX = "asset-detail-address-item-name-";
 
 export default class AssetDetailPage {
   // The testID ends with the currency id (`asset-detail-scroll-view-<currencyId>`).
@@ -42,7 +43,9 @@ export default class AssetDetailPage {
       text: new RegExp(`.*${ticker}.*`, "i"),
     });
   private readonly addressItemNameAt = (index: number) =>
-    byId(/asset-detail-address-item-name-.*/, index);
+    byId(new RegExp(`${ADDRESS_ITEM_NAME_PREFIX}.*`), index);
+  private readonly addressItemNameOfAddress = (address: string) =>
+    byId(new RegExp(`${ADDRESS_ITEM_NAME_PREFIX}.*${escapeRegExp(address)}.*`));
   private readonly addressItemName = (accountId: string) =>
     byId(`asset-detail-address-item-name-${accountId}`);
   private readonly addressItemAddress = (accountId: string) =>
@@ -134,6 +137,13 @@ export default class AssetDetailPage {
     );
   }
 
+  @Step("Expect holding account {{{0}}} to hold {{{1}}}")
+  async expectHoldingBalanceForTicker(accountId: string, ticker: string) {
+    await this.scrollToAddressItem(accountId);
+    const balanceText = await this.addressItemBalance(accountId).getText();
+    jestExpect(parseTickerAmount(balanceText, ticker)).toBeGreaterThan(0);
+  }
+
   @Step("Expect Asset Detail balance, addresses and transaction sections")
   async expectPortfolioSectionsVisible() {
     await this.totalBalance.scrollTo(await this.scrollView());
@@ -207,6 +217,26 @@ export default class AssetDetailPage {
     await this.operationByTicker(ticker).expectVisible();
     await this.operationsListItem().tap();
     await this.operationDetailsTitle.waitVisible();
+  }
+
+  /** The page only previews three transactions of all its holders: the history has them all. */
+  @Step("Open the received transaction of {{{0}}} {{{1}}} from the history")
+  async openReceivedTransaction(amount: string, ticker: string) {
+    await this.openTransactionsHistory();
+    await app.operation.expectOperationsListVisible();
+    await app.operation.openOperationWithAmount(
+      new RegExp(String.raw`^\+\s*${escapeRegExp(amount)}\s*${escapeRegExp(ticker)}`, "i"),
+    );
+    await this.operationDetailsTitle.waitVisible();
+  }
+
+  /** The address rows are the accounts holding the asset: their ids are the ones of the main accounts. */
+  @Step("Get the id of the account holding the asset at address {{{0}}}")
+  async getHoldingAccountIdOf(address: string) {
+    await this.scrollToAddressesSection();
+    const name = this.addressItemNameOfAddress(address);
+    await name.scrollTo(await this.scrollView());
+    return (await name.getIdentifier()).replace(ADDRESS_ITEM_NAME_PREFIX, "");
   }
 
   @Step("Open Asset Detail transactions history")

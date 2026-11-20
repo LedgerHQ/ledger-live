@@ -92,6 +92,19 @@ describe("ReconnectSheet", () => {
     expect(expanded(reconnectSheetTestIds.failed)).toBe(true);
   });
 
+  it("should call the given quit action instead of hiding the sheet", async () => {
+    const onQuit = jest.fn();
+    const { user } = renderSheet({
+      connection: { state: "failed", retry: jest.fn() },
+      onQuit,
+    });
+
+    await user.press(screen.getByTestId(`${reconnectSheetTestIds.failed}-header-close`));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(expanded(reconnectSheetTestIds.failed)).toBe(true);
+  });
+
   it("should hide the sheet while other sheets are suspended", () => {
     renderSheet({ suspendSheets: true });
 

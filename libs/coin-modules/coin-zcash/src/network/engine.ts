@@ -159,12 +159,15 @@ export async function findBlockHeightJob(grpcUrl: string, timestamp: number): Pr
 
 /**
  * Converts zcash-utils parsePczt() output to the PcztTransaction shape the
- * device signer consumes. Two mismatches are resolved here:
+ * device signer consumes. Three mismatches are resolved here:
  *
  *   (a) Nullability: zcash-utils uses `undefined` for 3 optional fields;
  *       device-signer-kit-zcash uses `null`.
  *   (b) Value types: all zatoshi value fields are converted via BigInt() so the
  *       adapter remains safe if an upstream change switches the wire format.
+ *   (c) User address: each output's `userAddressReceivers` is passed on
+ *       explicitly, `undefined` becoming `null`. The `userAddress` string is
+ *       dropped: the device rebuilds the address from the receivers.
  *
  * Running inside buildTransactionJob ensures this stays in the UtilityProcess
  * where the native addon is loaded -- parsePczt is a synchronous NAPI call.
@@ -180,20 +183,26 @@ function adaptPcztForSigner(raw: NativePcztTransaction): PcztTransaction {
       value: BigInt(input.value), // normalise: string (legacy) or bigint
       sequence: input.sequence ?? null,
     })),
-    transparentOutputs: raw.transparentOutputs.map(output => ({
-      ...output,
-      value: BigInt(output.value),
-      derivation: output.derivation ?? null,
-    })),
+    transparentOutputs: raw.transparentOutputs.map(
+      ({ userAddress: _userAddress, userAddressReceivers, ...output }) => ({
+        ...output,
+        value: BigInt(output.value),
+        derivation: output.derivation ?? null,
+        userAddressReceivers: userAddressReceivers ?? null,
+      }),
+    ),
     orchardBundle: raw.orchardBundle
       ? {
           ...raw.orchardBundle,
           valueBalance: BigInt(raw.orchardBundle.valueBalance),
-          actions: raw.orchardBundle.actions.map(action => ({
-            ...action,
-            spendValue: BigInt(action.spendValue),
-            value: BigInt(action.value),
-          })),
+          actions: raw.orchardBundle.actions.map(
+            ({ userAddress: _userAddress, userAddressReceivers, ...action }) => ({
+              ...action,
+              spendValue: BigInt(action.spendValue),
+              value: BigInt(action.value),
+              userAddressReceivers: userAddressReceivers ?? null,
+            }),
+          ),
         }
       : null,
     // V6 only. The signer rejects a V5 transaction that carries an Ironwood
@@ -209,11 +218,14 @@ function adaptIronwoodBundle(raw: NativeIronwoodBundle | undefined) {
     ? {
         ...raw,
         valueBalance: BigInt(raw.valueBalance),
-        actions: raw.actions.map(action => ({
-          ...action,
-          spendValue: BigInt(action.spendValue),
-          value: BigInt(action.value),
-        })),
+        actions: raw.actions.map(
+          ({ userAddress: _userAddress, userAddressReceivers, ...action }) => ({
+            ...action,
+            spendValue: BigInt(action.spendValue),
+            value: BigInt(action.value),
+            userAddressReceivers: userAddressReceivers ?? null,
+          }),
+        ),
       }
     : null;
 }

@@ -1,5 +1,5 @@
+import type { ResolvedInstrument } from "@ledgerhq/live-common/families/canton/proposalSorting";
 import type { TransferInstructionType } from "@ledgerhq/live-common/families/canton/react";
-import type { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 import type {
   GroupedProposals,
@@ -14,6 +14,15 @@ export const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstru
   withdraw: "withdraw-transfer-instruction",
 };
 
+// An unknown instrument's amount is coded with the "Unknown token" label, so it carries the warning.
+export const amountColor = ({
+  isIncoming,
+  isUnknownInstrument,
+}: Pick<ProcessedProposal, "isIncoming" | "isUnknownInstrument">): string | undefined => {
+  if (isUnknownInstrument) return "warning.c70";
+  return isIncoming ? undefined : "neutral.c80";
+};
+
 const startOfDay = (date: Date): Date => {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -23,7 +32,7 @@ const startOfDay = (date: Date): Date => {
 export const processTransferProposals = (
   proposals: RawTransferProposal[],
   accountXpub: string,
-  getUnit: (instrumentId: string) => Unit,
+  resolveInstrument: (instrumentId: string, instrumentAdmin: string) => ResolvedInstrument,
 ): { incoming: ProcessedProposal[]; outgoing: ProcessedProposal[] } => {
   const currentTime = Date.now();
   const incoming: ProcessedProposal[] = [];
@@ -37,6 +46,10 @@ export const processTransferProposals = (
     const expiresAt = new Date(expiresAtMs);
     const isExpired = currentTime > expiresAtMs;
     const isIncoming = proposal.sender !== accountXpub;
+    const { unit, isUnknown } = resolveInstrument(
+      proposal.instrument_id,
+      proposal.instrument_admin,
+    );
 
     const processed: ProcessedProposal = {
       contractId: proposal.contract_id,
@@ -44,7 +57,9 @@ export const processTransferProposals = (
       receiver: proposal.receiver,
       amount: new BigNumber(proposal.amount),
       instrumentId: proposal.instrument_id,
-      unit: getUnit(proposal.instrument_id),
+      instrumentAdmin: proposal.instrument_admin,
+      unit,
+      isUnknownInstrument: isUnknown,
       memo: proposal.memo ?? "",
       expiresAtMicros: proposal.expires_at_micros,
       isExpired,

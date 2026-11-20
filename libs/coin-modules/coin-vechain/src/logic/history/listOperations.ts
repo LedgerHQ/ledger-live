@@ -7,11 +7,33 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
-import type { VechainContext } from "../../config";
+import type { VechainContext, VechainCurrencyConfig } from "../../config";
 import { getLastBlockHeight, getOperations, getTokenOperations } from "../../network";
-import { NATIVE_ASSET, vthoAsset } from "../account/getBalance";
+import { getTransactionFee, type TransactionFee } from "../../network/getFees";
+import { NATIVE_ASSET, VTHO_ASSET, vthoAsset } from "../account/getBalance";
 
-function toFrameworkOperation(op: LegacyOperation, asset: AssetInfo): Operation<MemoNotSupported> {
+/** One receipt per transaction, shared by the VET and VTHO rows of this call. */
+function transactionFeeReader(config: VechainCurrencyConfig) {
+  const fees = new Map<string, Promise<TransactionFee>>();
+  return (transactionId: string): Promise<TransactionFee> => {
+    let fee = fees.get(transactionId);
+    if (!fee) {
+      fee = getTransactionFee(config, transactionId);
+      fees.set(transactionId, fee);
+    }
+    return fee;
+  };
+}
+
+/**
+ * Every operation of a transaction carries its fee: VTHO, from the receipt's payer, also when the
+ * operation is VET or the account did not pay it. A consumer debits it once, from the payer.
+ */
+function toFrameworkOperation(
+  op: LegacyOperation,
+  asset: AssetInfo,
+  { paid, payer }: TransactionFee,
+): Operation<MemoNotSupported> {
   return {
     id: op.id,
     type: op.type,
@@ -23,7 +45,9 @@ function toFrameworkOperation(op: LegacyOperation, asset: AssetInfo): Operation<
     tx: {
       hash: op.hash,
       block: { height: op.blockHeight ?? 0, hash: op.blockHash ?? "", time: op.date },
-      fees: asset.type === "native" ? 0n : BigInt((op.fee ?? 0).toFixed(0)),
+      fees: BigInt(paid.toFixed(0)),
+      feesAsset: { ...VTHO_ASSET },
+      ...(payer === undefined ? {} : { feesPayer: payer }),
       date: op.date,
       failed: op.hasFailed ?? false,
     },
@@ -53,15 +77,21 @@ export async function listOperations(
     return { items: [] };
   }
 
+  const readFee = transactionFeeReader(config);
+  const readPaid = async (transactionId: string) => (await readFee(transactionId)).paid;
   const [vetOps, vthoOps] = await Promise.all([
-    getOperations(config, address, address, startAt, stopAt),
-    getTokenOperations(config, address, address, VTHO_ADDRESS, startAt, stopAt),
+    getOperations(config, address, address, startAt, stopAt, readPaid),
+    getTokenOperations(config, address, address, VTHO_ADDRESS, startAt, stopAt, readPaid),
   ]);
 
-  const items = [
-    ...vetOps.map(op => toFrameworkOperation(op, NATIVE_ASSET)),
-    ...vthoOps.map(op => toFrameworkOperation(op, vthoAsset(address))),
-  ].sort((a, b) =>
+  const withFee = (ops: LegacyOperation[], asset: AssetInfo) =>
+    Promise.all(ops.map(async op => toFrameworkOperation(op, asset, await readFee(op.hash))));
+  const [vetItems, vthoItems] = await Promise.all([
+    withFee(vetOps, NATIVE_ASSET),
+    withFee(vthoOps, vthoAsset(address)),
+  ]);
+
+  const items = [...vetItems, ...vthoItems].sort((a, b) =>
     options.order === "asc"
       ? a.tx.date.getTime() - b.tx.date.getTime()
       : b.tx.date.getTime() - a.tx.date.getTime(),

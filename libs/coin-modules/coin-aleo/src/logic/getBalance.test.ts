@@ -85,7 +85,7 @@ describe("getBalance", () => {
     expect(result).toEqual([{ value: 0n, asset: { type: "native" } }]);
   });
 
-  it("both present — native = public + sum of decrypted unspent credits.aleo records (<= synced_up_to)", async () => {
+  it("both present — a public row and a private row from the decrypted unspent credits.aleo records (<= synced_up_to)", async () => {
     mockGetRecordScannerStatus.mockResolvedValue(
       getMockedRecordScannerStatus({ synced_up_to: 100 }),
     );
@@ -98,7 +98,10 @@ describe("getBalance", () => {
 
     const result = await getBalance({ ...context, provableId, viewKey }, address);
 
-    expect(result[0]).toEqual({ value: BigInt(5300000), asset: { type: "native" } });
+    expect(result.slice(0, 2)).toEqual([
+      { value: BigInt(5000000), asset: { type: "native" } },
+      { value: BigInt(300000), asset: { type: "native" }, private: true },
+    ]);
     expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
       config: mockConfig,
       uuid: provableId,
@@ -137,10 +140,30 @@ describe("getBalance", () => {
     const result = await getBalance({ ...context, provableId, viewKey }, address);
 
     expect(result).toContainEqual({
-      value: BigInt(750),
+      value: BigInt(500),
       asset: { type: "unknown", assetReference: "token_b.aleo" },
     });
+    expect(result).toContainEqual({
+      value: BigInt(250),
+      asset: { type: "unknown", assetReference: "token_b.aleo" },
+      private: true,
+    });
     expect(mockGetTokenBalance).toHaveBeenCalledWith(mockConfig, "token_b.aleo", address);
+  });
+
+  it("a token without private records has its public row only", async () => {
+    mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+      transactions: [getMockedTransaction({ program_id: "token_b.aleo" })],
+      nextCursor: null,
+    });
+    mockGetTokenBalance.mockResolvedValue("500u128");
+    mockGetRecordScannerStatus.mockResolvedValue(getMockedRecordScannerStatus());
+
+    const result = await getBalance({ ...context, provableId, viewKey }, address);
+
+    expect(
+      result.filter(b => "assetReference" in b.asset && b.asset.assetReference === "token_b.aleo"),
+    ).toEqual([{ value: 500n, asset: { type: "unknown", assetReference: "token_b.aleo" } }]);
   });
 
   it("classifies token balances by asset type: arc20 (token_standard), arc21 (token_registry.aleo), arc22 (fallback)", async () => {
@@ -256,7 +279,10 @@ describe("getBalance", () => {
 
     const result = await getBalance({ ...context, provableId, viewKey }, address);
 
-    expect(result[0]).toEqual({ value: BigInt(5000100), asset: { type: "native" } });
+    expect(result.slice(0, 2)).toEqual([
+      { value: BigInt(5000000), asset: { type: "native" } },
+      { value: BigInt(100), asset: { type: "native" }, private: true },
+    ]);
     expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
   });
 
@@ -277,7 +303,10 @@ describe("getBalance", () => {
 
     const result = await getBalance({ ...context, provableId, viewKey }, address);
 
-    expect(result[0]).toEqual({ value: BigInt(5000100), asset: { type: "native" } });
+    expect(result.slice(0, 2)).toEqual([
+      { value: BigInt(5000000), asset: { type: "native" } },
+      { value: BigInt(100), asset: { type: "native" }, private: true },
+    ]);
     expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
   });
 
@@ -294,7 +323,10 @@ describe("getBalance", () => {
 
     const result = await getBalance({ ...context, provableId, viewKey }, address);
 
-    expect(result[0]).toEqual({ value: BigInt(5000042), asset: { type: "native" } });
+    expect(result.slice(0, 2)).toEqual([
+      { value: BigInt(5000000), asset: { type: "native" } },
+      { value: BigInt(42), asset: { type: "native" }, private: true },
+    ]);
   });
 
   it("provableId without viewKey throws before any scanner call", async () => {
@@ -372,7 +404,7 @@ describe("getBalance", () => {
       mockGetRecordScannerStatus.mockResolvedValue(getMockedRecordScannerStatus());
     });
 
-    it("adds bonded and unbonding to the native total as locked, and reports each as a stake entry", async () => {
+    it("reports the liquid public row and each stake entry, counting the staked amount once", async () => {
       const bonded: Stake = {
         uid: address,
         address,
@@ -396,11 +428,40 @@ describe("getBalance", () => {
 
       expect(mockGetStakes).toHaveBeenCalledTimes(1);
       expect(mockGetStakes).toHaveBeenCalledWith(mockConfig, address);
-      expect(result.filter(balance => balance.asset.type === "native")).toEqual([
-        { value: 18_000_000n, locked: 13_000_000n, asset: { type: "native" } },
-        { value: 10_000_000n, asset: { type: "native" }, stake: bonded },
-        { value: 3_000_000n, asset: { type: "native" }, stake: unbonding },
+      const native = result.filter(balance => balance.asset.type === "native");
+      expect(native).toEqual([
+        { value: 5_000_000n, asset: { type: "native" } },
+        { value: 10_000_000n, asset: { type: "native" }, locked: 10_000_000n, stake: bonded },
+        { value: 3_000_000n, asset: { type: "native" }, locked: 3_000_000n, stake: unbonding },
       ]);
+      // public + bonded + unbonding, each once
+      expect(native.reduce((sum, balance) => sum + balance.value, 0n)).toBe(18_000_000n);
+    });
+
+    it("keeps the sum of value minus locked over the native rows at public plus private", async () => {
+      const bonded: Stake = {
+        uid: address,
+        address,
+        delegate: "aleo1validator",
+        state: "active",
+        actions: ["delegate", "undelegate"],
+        asset: { type: "native" },
+        amount: 10_000_000n,
+      };
+      mockGetStakes.mockResolvedValue({ items: [bonded] });
+      mockFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({ program_name: PROGRAM_ID.CREDITS, block_height: 1, spent: false }),
+      ]);
+      mockDecryptRecord.mockResolvedValue(
+        getMockedDecryptedRecord({ data: { microcredits: "300000u64.private" } }),
+      );
+
+      const result = await getBalance({ ...context, provableId, viewKey }, address);
+
+      const liquid = result
+        .filter(balance => balance.asset.type === "native")
+        .reduce((sum, balance) => sum + balance.value - (balance.locked ?? 0n), 0n);
+      expect(liquid).toBe(5_300_000n);
     });
   });
 });

@@ -16,7 +16,8 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   recipient: "",
   useAllAmount: false,
   networkInfo: null,
-  memo: null,
+  memoType: null,
+  memoValue: null,
 });
 
 export default createTransaction;

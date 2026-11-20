@@ -16,12 +16,12 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const COSMOS_MEMO_KIND = "text";
 
 export function cosmosMemoPatch(value: string | number | null | undefined): {
-  memo: string | undefined;
   memoType: string | null;
   memoValue: string | undefined;
 } {
-  const memo = value === undefined || value === null || value === "" ? undefined : String(value);
-  return { memo, memoType: memo ? COSMOS_MEMO_KIND : null, memoValue: memo };
+  const memoValue =
+    value === undefined || value === null || value === "" ? undefined : String(value);
+  return { memoType: memoValue ? COSMOS_MEMO_KIND : null, memoValue };
 }
 
 const STACKS_MEMO_KIND = "memo";

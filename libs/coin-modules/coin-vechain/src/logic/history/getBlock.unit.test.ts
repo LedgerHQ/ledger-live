@@ -69,6 +69,7 @@ describe("getBlock", () => {
         hash: "0xtx1",
         failed: false,
         fees: BigInt("0x100"),
+        feesAsset: { type: "token", assetReference: VTHO_ADDRESS },
         feesPayer: "0xsender",
         operations: [
           {
@@ -249,6 +250,10 @@ describe("getBlock", () => {
 
     expect(block.transactions[0].failed).toBe(true);
     expect(block.transactions[0].operations).toEqual([]);
+    expect(block.transactions[0].feesAsset).toEqual({
+      type: "token",
+      assetReference: VTHO_ADDRESS,
+    });
   });
 
   it("throws when there is no block at the given height", async () => {

@@ -7,7 +7,8 @@ Owns the launch availability check for Ledger Wallet. Apps wrap the tree with `A
 and read `useAppAvailability` from splash gates. Unavailable states render
 `@shared/ui-app-unavailable`.
 
-Today the flow runs the OFAC geo-block check from `@domain/api-ofac` (fail-open on error). A CAL
+Today the flow runs the OFAC geo-block check from `@domain/api-ofac` (fail-open on error, but a
+failed refetch keeps a 451 that the app already received). A CAL
 service-unavailable check will compose in later.
 
 ## Exports
@@ -17,6 +18,7 @@ service-unavailable check will compose in later.
 | `AppAvailability` | Gate component. Available or pending renders children; unavailable renders the blocked view. |
 | `useAppAvailability` | Shared result for splash gates (`pending`, `available`, or `unavailable`). |
 | `useOfacGeoBlockCheck` | OFAC check mapped to the availability vocabulary. |
+| `selectAppAvailabilitySettled` | Store selector for code outside React: whether the check has left `pending`. |
 | `AppAvailabilityStatus` | Discriminated union: `pending`, `available`, `unavailable` with reason. |
 
 ## Usage

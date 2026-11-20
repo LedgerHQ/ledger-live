@@ -49,6 +49,7 @@ let DB_MIDDLEWARE_ENABLED = true;
 /** Used during hard reset (reset.ts): disable persist so we don't re-write app.json while clearing. */
 export const disable = (ms = 1000) => {
   DB_MIDDLEWARE_ENABLED = false;
+  saveCryptoAssetsCache.cancel();
   setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
 };
 
@@ -81,6 +82,8 @@ const saveCryptoAssetsCache = throttle((state: State) => {
     console.warn("crypto assets cache write failed:", e);
   }
 }, 5000);
+
+export const flushCryptoAssetsCache = () => saveCryptoAssetsCache.flush();
 
 const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (!isActionWithType(action)) {

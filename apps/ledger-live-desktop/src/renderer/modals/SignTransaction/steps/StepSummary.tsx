@@ -83,7 +83,8 @@ const StepSummary = (props: StepProps) => {
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
-  const memo = "memo" in transaction ? transaction.memo : undefined;
+  const memo =
+    specific?.getMemoValue?.(transaction) ?? ("memo" in transaction ? transaction.memo : undefined);
 
   const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
 

@@ -1,6 +1,15 @@
 // Upgrades Lumen to latest and opens a draft PR (Lumen ADR 027). Owned by the Lumen team.
 // @ts-nocheck: @cairn/plan is provided by Cairn at run time, not installed here
-import { agent, allTools, inputsOf, literal, plan, retryShellSlot, task, variable } from "@cairn/plan";
+import {
+  agent,
+  allTools,
+  inputsOf,
+  literal,
+  plan,
+  retryShellSlot,
+  task,
+  variable,
+} from "@cairn/plan";
 import { z } from "zod";
 
 // Lumen versions live in the pnpm catalog.
@@ -31,11 +40,12 @@ const prUrl = variable("prUrl", z.string().url(), {
 });
 
 const humanReview = variable("humanReview", z.array(z.string()), {
-  description: "What the migrations leave for a human to decide, one item per entry, with the file paths. Empty when nothing.",
+  description:
+    "What the migrations leave for a human to decide, one item per entry, with the file paths. Empty when nothing.",
 });
 
-const prBody = variable("prBody", z.object({ body: z.string() }), {
-  description: "The pull request body, in Markdown.",
+const prBody = variable("prBody", z.object({ title: z.string(), body: z.string() }), {
+  description: "The pull request title and body, in Markdown.",
 });
 
 const result = variable(
@@ -77,7 +87,8 @@ const recorder = agent("recorder")
 // One upgrade PR at a time: `createBranch` adds a unique suffix, so without this each run opens another PR.
 const openPrExitCode = variable("openPrExitCode", z.number());
 const openPr = variable("openPr", z.string(), {
-  description: "The open upgrade PR as JSON, with its url and headRefName. Empty when none is open.",
+  description:
+    "The open upgrade PR as JSON, with its url and headRefName. Empty when none is open.",
 });
 
 // Exit 0: no open upgrade PR. Exit 1: the bot's PR is open (stdout is its JSON). Exit 2: `gh` failed.
@@ -153,13 +164,15 @@ const podLockfileTask = task("pod-lockfile").runs(
     "cd apps/ledger-live-mobile",
     "bundle install --jobs 4",
     "mkdir -p /tmp/xcode-stub",
-    "printf '#!/bin/sh\\necho \"Xcode 16.4\"\\necho \"Build version 16F6\"\\n' > /tmp/xcode-stub/xcodebuild",
+    'printf \'#!/bin/sh\\necho "Xcode 16.4"\\necho "Build version 16F6"\\n\' > /tmp/xcode-stub/xcodebuild',
     "chmod +x /tmp/xcode-stub/xcodebuild",
     'PATH="/tmp/xcode-stub:$PATH" bundle exec ruby scripts/pod-lockfile.rb',
   ].join("\n"),
 );
 
-const commitTask = task("commit").uses(upgrader).commit({ message: "chore(lumen): upgrade Lumen to latest" });
+const commitTask = task("commit")
+  .uses(upgrader)
+  .commit({ message: "chore(lumen): upgrade Lumen to latest" });
 
 // The repo's Renovate script lists every package whose resolved dependencies changed, from the
 // lockfile diff against develop. It reads committed files, so it runs after the commit.
@@ -197,45 +210,53 @@ Test run of the Lumen upgrade pipeline. Review before merging.
 const prBodyTask = task("pr-body")
   .uses(recorder)
   .message(
-    "Write prBody: the template with <humanReview> replaced by humanReview as a Markdown list, or by `Nothing.` when it is empty. Change nothing else.",
+    "Write prBody: title is pr.title, and body is the template with <humanReview> replaced by humanReview as a Markdown list, or by `Nothing.` when it is empty. Change nothing else.",
   )
-  .with({ template: literal(prBodyTemplate), humanReview })
+  .with({ template: literal(prBodyTemplate), humanReview, pr: inputs.pr })
   .writes(prBody);
 
 const createPrTask = task("create-pr")
   .uses(upgrader)
-  .createPr({ title: inputs.pr.field("title"), body: prBody.field("body") })
+  .createPr({ title: prBody.field("title"), body: prBody.field("body") })
   .writes({ url: prUrl });
 
 // `createPr` has no labels option.
 const labelsTask = task("labels")
   .uses(upgrader)
   .message(
-    "If labels is not empty, add them to prUrl with `gh pr edit <prUrl> --add-label <label>`, one flag per label. Skip a label the repo doesn't have.",
+    "If pr.labels is not empty, add them to prUrl with `gh pr edit <prUrl> --add-label <label>`, one flag per label. Skip a label the repo doesn't have.",
   )
-  .with({ prUrl, labels: inputs.pr.field("labels") });
+  .with({ prUrl, pr: inputs.pr });
 
 // An updated PR keeps its title and labels, but its body must reflect this run's migrations.
 const updatePrBodyTask = task("update-pr-body")
   .uses(upgrader)
-  .message("Replace the body of the PR in openPr with prBody.body: write it to a file and run `gh pr edit <url> --body-file <file>`.")
+  .message(
+    "Replace the body of the PR in openPr with prBody.body: write it to a file and run `gh pr edit <url> --body-file <file>`.",
+  )
   .with({ openPr, prBody });
 
 const recordPrCreatedTask = task("record-pr-created")
   .uses(recorder)
-  .message("Write the terminal result as pr-created, with a one-sentence summary and the pull request URL as prUrl.")
+  .message(
+    "Write the terminal result as pr-created, with a one-sentence summary and the pull request URL as prUrl.",
+  )
   .with({ prUrl, verify })
   .writes(result);
 
 const recordPrUpdatedTask = task("record-pr-updated")
   .uses(recorder)
-  .message("Write the terminal result as pr-created: the open PR in openPr was updated. Give a one-sentence summary and its url as prUrl.")
+  .message(
+    "Write the terminal result as pr-created: the open PR in openPr was updated. Give a one-sentence summary and its url as prUrl.",
+  )
   .with({ openPr, verify })
   .writes(result);
 
 const recordHumanCommitsTask = task("record-human-commits")
   .uses(recorder)
-  .message("Write the terminal result as skipped: a person opened or committed to the open upgrade PR in openPr, so it was left unchanged.")
+  .message(
+    "Write the terminal result as skipped: a person opened or committed to the open upgrade PR in openPr, so it was left unchanged.",
+  )
   .with({ openPr })
   .writes(result);
 
@@ -254,16 +275,20 @@ const checkChangesTask = task("check-changes")
 
 const recordUpToDateTask = task("record-up-to-date")
   .uses(recorder)
-  .message("Write the terminal result as skipped: the upgrade changed nothing because Lumen is already up to date.")
+  .message(
+    "Write the terminal result as skipped: the upgrade changed nothing because Lumen is already up to date.",
+  )
   .writes(result);
 
 const recordFailureTask = task("record-failure")
   .uses(recorder)
-  .message("Write the terminal result as failed. Give the failing check from the verify output as the reason.")
+  .message(
+    "Write the terminal result as failed. Give the failing check from the verify output as the reason.",
+  )
   .with({ verify })
   .writes(result);
 
-const upgrade = (b) =>
+const upgrade = b =>
   b
     .do(reuseBranchTask, { when: openPrExitCode.eq(1) })
     .do(createBranchTask, { when: openPrExitCode.eq(0) })
@@ -272,13 +297,13 @@ const upgrade = (b) =>
     .do(checkChangesTask)
     .if(
       changesExitCode.eq(0),
-      (c) =>
+      c =>
         c
           .do(migrateTask)
           .retryShell("verify", {
             max: 3,
             command: verifyCommand,
-            fixer: (shellOutput) =>
+            fixer: shellOutput =>
               task("fix")
                 .uses(upgrader)
                 .message("Checks failed after the Lumen upgrade. Fix them.")
@@ -286,7 +311,7 @@ const upgrade = (b) =>
           })
           .if(
             verify.field("exit_code").eq(0),
-            (d) =>
+            d =>
               d
                 .do(podLockfileTask)
                 .do(commitTask)
@@ -297,17 +322,17 @@ const upgrade = (b) =>
                 .do(prBodyTask)
                 .if(
                   openPrExitCode.eq(1),
-                  (e) => e.do(updatePrBodyTask).do(recordPrUpdatedTask),
-                  (e) => e.do(createPrTask).do(labelsTask).do(recordPrCreatedTask),
+                  e => e.do(updatePrBodyTask).do(recordPrUpdatedTask),
+                  e => e.do(createPrTask).do(labelsTask).do(recordPrCreatedTask),
                 ),
-            (d) => d.do(recordFailureTask),
+            d => d.do(recordFailureTask),
           ),
-      (c) => c.do(recordUpToDateTask),
+      c => c.do(recordUpToDateTask),
     );
 
 export default plan("lumen-upgrade")
   .input(planInput.partial().required({ pr: true }))
   .do(checkOpenPrTask)
-  .if(openPrExitCode.eq(3), (b) => b.do(recordHumanCommitsTask))
-  .elseif(openPrExitCode.eq(2), (b) => b.do(recordLookupFailedTask))
+  .if(openPrExitCode.eq(3), b => b.do(recordHumanCommitsTask))
+  .elseif(openPrExitCode.eq(2), b => b.do(recordLookupFailedTask))
   .else(upgrade);

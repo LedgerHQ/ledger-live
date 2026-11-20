@@ -1,7 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 import { getFixtureAccountId, getFixtureTokenAccountId } from "@e2e/utils/fixtureAccounts";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -10,6 +9,7 @@ const DAI_TICKER = Currency.POL_DAI.ticker;
 const USDT_TICKER = Currency.ETH_USDT.ticker;
 const USDT_ASSET_NAME = Currency.ETH_USDT.name;
 const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
+const POLYGON_ACCOUNT_NAME = "Polygon 1";
 
 const DAI_ASSET_NAME = Currency.POL_DAI.aggregatedName!;
 const USDT_MARKET_ID = Currency.ETH_USDT.market!.id;
@@ -29,15 +29,16 @@ const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
   POLYGON_DAI_TOKEN_ID,
 );
 
-// Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {
   lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    enabled: true,
     params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       lazyOnboarding: false,
+      brazePlacement: true,
+      earnUpselling: true,
+      earnSimulator: true,
     },
   },
 };
@@ -154,8 +155,7 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await app.account.expectAccountTitleVisible("POLYGON 1");
+    await app.account.waitAndVerifyTokenAccountName(POLYGON_DAI_ASSET_NAME, POLYGON_ACCOUNT_NAME);
     await app.account.expectAccountAddressLabel({
       accountId: POLYGON_DAI_ACCOUNT_ID,
       address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),

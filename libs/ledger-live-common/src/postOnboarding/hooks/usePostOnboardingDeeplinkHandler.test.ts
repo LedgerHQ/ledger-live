@@ -20,6 +20,7 @@ const mockedDispatch = jest.fn();
 jest.mock("react-redux", () => ({
   useSelector: fun => fun(),
   useDispatch: () => mockedDispatch,
+  useStore: () => ({ getState: () => ({}) }),
 }));
 
 jest.mock("../reducer");

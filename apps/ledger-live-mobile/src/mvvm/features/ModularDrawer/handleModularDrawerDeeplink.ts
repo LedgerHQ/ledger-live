@@ -5,31 +5,25 @@ import { openModularDrawer } from "~/reducers/modularDrawer";
 import { callbackRegistry } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 import { generateCallbackId } from "LLM/features/ModularDrawer/utils/callbackIdGenerator";
 import { navigationRef } from "~/rootnavigation";
-import { NavigatorName, ScreenName } from "~/const";
+import type { State } from "~/reducers/types";
+import { getReceiveRoute } from "LLM/features/Receive/utils/getReceiveRoute";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 
 // Receive Case
-const onAccountSelected = (account: AccountLike, parentAccount?: AccountLike) => {
-  const accountCurrency = getAccountCurrency(account);
+const onAccountSelected =
+  (getState: () => State) => (account: AccountLike, parentAccount?: AccountLike) => {
+    const accountCurrency = getAccountCurrency(account);
 
-  const confirmationParams = {
-    parentId: parentAccount?.id,
-    currency: accountCurrency,
-    accountId: (account.type !== "Account" && account?.parentId) || account.id,
+    const confirmationParams = {
+      parentId: parentAccount?.id,
+      currency: accountCurrency,
+      accountId: (account.type !== "Account" && account?.parentId) || account.id,
+      hideBackButton: true,
+    };
+
+    navigationRef.current?.navigate(...getReceiveRoute(confirmationParams, getState()));
   };
-
-  // Navigate to ReceiveFunds > ReceiveConfirmation
-  if (navigationRef.current) {
-    navigationRef.current.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
-        ...confirmationParams,
-        hideBackButton: true,
-      },
-    });
-  }
-};
 
 /**
  * Handles modular drawer deeplinks (receive & add-account)
@@ -38,6 +32,7 @@ const onAccountSelected = (account: AccountLike, parentAccount?: AccountLike) =>
  * @param hostname - The deeplink hostname ("receive" or "add-account")
  * @param searchParams - URL search parameters containing optional currency
  * @param dispatch - Redux dispatch function
+ * @param getState - Redux state, read when the user picks the account to receive on
  * @param config - Navigation configuration for getStateFromPath
  * @returns Navigation state for Portfolio screen
  */
@@ -46,6 +41,7 @@ export function handleModularDrawerDeeplink(
   searchParams: URLSearchParams,
   dispatch: Dispatch,
   config: Parameters<typeof getStateFromPath>[1],
+  getState: () => State,
 ) {
   const currencyParam = searchParams.get("currency");
   const deeplinkSource = searchParams.get("deeplinkSource");
@@ -61,7 +57,7 @@ export function handleModularDrawerDeeplink(
 
   if (hostname === "receive") {
     const callbackId = generateCallbackId();
-    callbackRegistry.register(callbackId, onAccountSelected);
+    callbackRegistry.register(callbackId, onAccountSelected(getState));
 
     dispatch(
       openModularDrawer({

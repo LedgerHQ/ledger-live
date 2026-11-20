@@ -20,10 +20,10 @@ import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
-import { deeplink } from "~/renderer/bridge";
+import { db, deeplink } from "~/renderer/bridge";
 import { startDomainCheckViolationReporting } from "~/renderer/components/Web3AppWebview/domainCheckReport";
 import each from "lodash/each";
-import { reload, getKey } from "~/renderer/storage";
+import { reload, getKey, flushPendingWrites } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
@@ -40,7 +40,7 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import dbMiddleware from "~/renderer/middlewares/db";
+import dbMiddleware, { flushCryptoAssetsCache } from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
@@ -74,7 +74,6 @@ import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { restorePredictionsState } from "@domain/entity-predictions";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
-import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
@@ -111,6 +110,11 @@ const rootNode = document.getElementById("react-root");
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
+
+  db.onFlushRequest(() => {
+    flushCryptoAssetsCache();
+    return flushPendingWrites();
+  });
 
   const logVerbose = getEnv("VERBOSE");
 
@@ -313,9 +317,12 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  const accountData = await getKey("app", "accounts", []);
+  const [accountData, walletData] = await Promise.all([
+    getKey("app", "accounts", []),
+    getKey("app", "wallet"),
+  ]);
   if (accountData) {
-    dispatch(initAccounts(accountData));
+    dispatch(initAccounts(accountData, walletData));
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
@@ -422,7 +429,6 @@ async function init() {
   r(<ReactRoot store={store} language={language} />);
 
   await dispatch(fetchTrustchain());
-  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {

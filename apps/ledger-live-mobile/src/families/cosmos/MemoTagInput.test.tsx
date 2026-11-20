@@ -43,16 +43,16 @@ describe("MemoTagInput", () => {
       return props.valueToTxPatch;
     }
 
-    it("sets memo, memoType, and memoValue when value is non-empty", () => {
+    it("sets memoType and memoValue when value is non-empty", () => {
       const patch = getValueToTxPatch()("test memo")(baseTx);
-      expect(patch.memo).toBe("test memo");
+      expect(patch).not.toHaveProperty("memo");
       expect(patch.memoType).toBe("text");
       expect(patch.memoValue).toBe("test memo");
     });
 
     it("clears memo fields when value is empty string", () => {
       const patch = getValueToTxPatch()("")(baseTx);
-      expect(patch.memo).toBeUndefined();
+      expect(patch).not.toHaveProperty("memo");
       expect(patch.memoType).toBeNull();
       expect(patch.memoValue).toBeUndefined();
     });

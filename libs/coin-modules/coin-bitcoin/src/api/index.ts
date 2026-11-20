@@ -4,6 +4,7 @@ import type { BitcoinCoinConfig, BitcoinContext } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
+import { craftTransactionData } from "../logic/craftTransactionData";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
@@ -47,9 +48,7 @@ export function createApi(currencyId: string) {
       validateIntent(context, currencyId, intent, balances, options?.customFees),
     broadcast: (context: BitcoinContext, tx, options?) =>
       broadcast(context, currencyId, tx, options?.broadcastConfig),
-    craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData => ({
-      type: "string",
-      ...(intent.data?.opReturnData ? { opReturnData: intent.data.opReturnData } : {}),
-    }),
+    craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData =>
+      craftTransactionData(intent),
   } satisfies CoinModuleImpl<BitcoinCoinConfig, MemoNotSupported, BitcoinTxData>;
 }

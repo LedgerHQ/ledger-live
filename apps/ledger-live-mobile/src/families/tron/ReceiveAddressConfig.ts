@@ -1,9 +1,8 @@
-import type { Account } from "@ledgerhq/types-live";
 import type { GetReceiveFamilyConfig } from "@features/flow-receive";
 
-const receiveAddressConfig: GetReceiveFamilyConfig<Account> = ({ asset, legacyAccount }) => {
+const receiveAddressConfig: GetReceiveFamilyConfig = ({ asset, accountStatus }) => {
   const receivesNativeAsset = asset.type === "CryptoCurrency";
-  const isInactiveAccount = legacyAccount?.operationsCount === 0;
+  const isInactiveAccount = accountStatus?.used === false;
   return receivesNativeAsset && isInactiveAccount ? { notices: ["tronInactiveAccount"] } : {};
 };
 

@@ -4,23 +4,14 @@
 // This list only shrinks. The source-only rule reports an entry the package no longer needs, so
 // fixing a package means deleting its entry here.
 
-const NO_OP_BUILD =
-  'An "nx:noop" "build" target, kept so the CI jobs that run `build` on it still resolve. Exit ' +
-  "condition: those callers stop running `build` on it, and the target is deleted.";
-
 const READS_PUBLISHED_FROM_SOURCE =
   "Its Jest config sets the @ledgerhq/source condition so the published @ledgerhq packages it " +
   "tests against are read from src instead of their build. Exit condition: the tests run " +
   "against the built packages, or those packages are no longer published.";
 
 const COIN_TESTER_READING_SOURCE = {
-  checks: /** @type {const} */ (["no-build", "no-source-condition"]),
-  reason: `no-build: ${NO_OP_BUILD} no-source-condition: ${READS_PUBLISHED_FROM_SOURCE}`,
-};
-
-const COIN_TESTER = {
-  checks: /** @type {const} */ (["no-build"]),
-  reason: NO_OP_BUILD,
+  checks: /** @type {const} */ (["no-source-condition"]),
+  reason: READS_PUBLISHED_FROM_SOURCE,
 };
 
 /**
@@ -51,26 +42,16 @@ export const SOURCE_ONLY_DEBT = {
       "keeps its build for it. Exit condition: live-signer-zcash is published, or coin-zcash " +
       "stops depending on it.",
   },
-  "libs/coin-tester": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-aleo": COIN_TESTER_READING_SOURCE,
   "libs/coin-tester-modules/coin-tester-bitcoin": COIN_TESTER_READING_SOURCE,
   "libs/coin-tester-modules/coin-tester-cardano": COIN_TESTER_READING_SOURCE,
   "libs/coin-tester-modules/coin-tester-casper": COIN_TESTER_READING_SOURCE,
   "libs/coin-tester-modules/coin-tester-cosmos": COIN_TESTER_READING_SOURCE,
-  "libs/coin-tester-modules/coin-tester-evm": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-internet_computer": COIN_TESTER_READING_SOURCE,
   "libs/coin-tester-modules/coin-tester-kaspa": COIN_TESTER_READING_SOURCE,
-  "libs/coin-tester-modules/coin-tester-multiversx": COIN_TESTER,
-  "libs/coin-tester-modules/coin-tester-near": COIN_TESTER,
-  "libs/coin-tester-modules/coin-tester-polkadot": COIN_TESTER,
-  "libs/coin-tester-modules/coin-tester-solana": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-stacks": COIN_TESTER_READING_SOURCE,
-  "libs/coin-tester-modules/coin-tester-stellar": COIN_TESTER,
-  "libs/coin-tester-modules/coin-tester-tezos": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-ton": COIN_TESTER_READING_SOURCE,
-  "libs/coin-tester-modules/coin-tester-tron": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-vechain": COIN_TESTER_READING_SOURCE,
-  "libs/coin-tester-modules/coin-tester-xrp": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-zcash": COIN_TESTER_READING_SOURCE,
   "libs/ethereum-provider": {
     checks: ["no-build", "exports-to-src"],
@@ -78,10 +59,6 @@ export const SOURCE_ONLY_DEBT = {
       "Its build produces the UMD bundle (and its JSON wrapper) that live apps inject into " +
       "webviews, which src cannot replace. Exit condition: the bundle is produced by its " +
       "consumer, or the package is published.",
-  },
-  "libs/ledger-live-common": {
-    checks: ["no-build"],
-    reason: NO_OP_BUILD,
   },
   "libs/live-signer-evm": {
     checks: ["no-source-condition"],

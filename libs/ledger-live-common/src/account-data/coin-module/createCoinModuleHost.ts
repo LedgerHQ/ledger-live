@@ -1,6 +1,8 @@
 import { AccountDataNotServedError } from "@domain/api-account-data";
 import type {
   CoinModuleBalanceApi,
+  CoinModuleAccountStatus,
+  CoinModuleAccountStatusApi,
   CoinModuleHost,
 } from "@features/platform-account-source-coin-module";
 import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -12,7 +14,7 @@ import {
 import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "@shared/env";
+import { usesMockBridges } from "../../bridge/mockMode";
 import {
   DEFAULT_PAGE_SIZE_BY_FAMILY,
   resolveOperationHistoryBound,
@@ -69,6 +71,36 @@ function pageSizeOf({ id, family }: CryptoCurrency): number | undefined {
   return resolveOperationHistoryBound(id, family).pageSize ?? familyPageSize;
 }
 
+type AccountStatusCapability = {
+  getAccountStatus(
+    context: Context<CurrencyConfig>,
+    key: string,
+    options?: { blacklistedTokenIds?: readonly string[] },
+  ): Promise<CoinModuleAccountStatus>;
+};
+
+const hasAccountStatus = (api: object): api is AccountStatusCapability =>
+  "getAccountStatus" in api &&
+  typeof api.getAccountStatus === "function" &&
+  !isNotSupportedStub(api.getAccountStatus);
+
+async function loadAccountStatusApi(
+  currencyId: string,
+  blacklistedTokenIds: CoinModuleHost["blacklistedTokenIds"],
+): Promise<CoinModuleAccountStatusApi | undefined> {
+  const currency = getCryptoCurrencyById(currencyId);
+  const createLocalApi = await loadLocalApiForFamily(currency.family);
+  const localApi: object | undefined = createLocalApi?.(currency.id);
+  if (!localApi || !hasAccountStatus(localApi)) return undefined;
+  const context = contextOf(currency.id);
+  return {
+    getAccountStatus: (key, signal) =>
+      localApi.getAccountStatus(signal ? { ...context, signal } : context, key, {
+        blacklistedTokenIds: blacklistedTokenIds?.(),
+      }),
+  };
+}
+
 export type CoinModuleHostOptions = Pick<CoinModuleHost, "blacklistedTokenIds"> & {
   /** Off until the source lists pending operations: FullSync answers the operations meanwhile. */
   servesOperations?: boolean;
@@ -79,11 +111,12 @@ export function createCoinModuleHost({
   servesOperations = false,
   ...options
 }: CoinModuleHostOptions = {}): CoinModuleHost {
+  const accountStatusApis = new Map<string, Promise<CoinModuleAccountStatusApi | undefined>>();
   return {
     ...options,
     isCurrencySupported(currencyId) {
       // Mock accounts keep their simulated balances: only FullSync routes them to the mock bridges.
-      if (getEnv("MOCK")) return false;
+      if (usesMockBridges()) return false;
       try {
         return localApiServesAccountData(getCryptoCurrencyById(currencyId));
       } catch {
@@ -118,6 +151,19 @@ export function createCoinModuleHost({
       } catch {
         return false;
       }
+    },
+    getAccountStatusApi(currencyId) {
+      let api = accountStatusApis.get(currencyId);
+      if (!api) {
+        api = loadAccountStatusApi(currencyId, options.blacklistedTokenIds).catch(
+          (error: unknown) => {
+            accountStatusApis.delete(currencyId);
+            throw error;
+          },
+        );
+        accountStatusApis.set(currencyId, api);
+      }
+      return api;
     },
     async getOperationsApi(currencyId) {
       const currency = getCryptoCurrencyById(currencyId);
