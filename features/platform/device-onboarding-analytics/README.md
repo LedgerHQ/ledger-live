@@ -12,6 +12,6 @@ The app owns the screens and decides when to track. This package owns what is se
 - `seededProps`: the properties every seeded event carries.
 - `trackSeededPage`, `trackSeededClick`, `trackSeededStarted`, `trackSeededDone`, `trackSeededAborted`: the events, sent with `@shared/analytics`.
 - `toSeededResult`, `toFirmwareUpdateAvailability`: the funnel result read from the onboarding machine context.
-- `deviceOnboardingTraits`: the `deviceOnboarding` flag params sent as user properties.
+- `deviceOnboardingTraits`: the `deviceOnboarding` flag (`enabled` and each param) sent as user properties.
 
 Consumer: Ledger Wallet Mobile (`apps/ledger-live-mobile/src/mvvm/features/DeviceOnboarding`).

@@ -76,6 +76,7 @@ import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFl
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { scrubAccountId } from "../helpers/scrubAccountId";
 import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
+import { deviceOnboardingTraits } from "@features/platform-device-onboarding-analytics";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -432,6 +433,7 @@ const extraProperties = (store: ReduxStore) => {
     accountDetail,
     accountDetailAnalyticsBanner,
     ...remoteABTestingAttributes,
+    ...deviceOnboardingTraits(analyticsFeatureFlagMethod?.("deviceOnboarding")),
   };
 };
 

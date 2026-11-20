@@ -1370,6 +1370,9 @@ importers:
       '@features/platform-device-onboarding':
         specifier: workspace:^
         version: link:../../features/platform/device-onboarding
+      '@features/platform-device-onboarding-analytics':
+        specifier: workspace:^
+        version: link:../../features/platform/device-onboarding-analytics
       '@features/platform-env':
         specifier: workspace:*
         version: link:../../features/platform/env

@@ -165,7 +165,6 @@ const getFeatureFlagProperties = () => {
       "lwmAnalyticsConsentOnboarding",
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
-    const deviceOnboardingFlag = analyticsFeatureFlagMethod("deviceOnboarding");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -221,7 +220,6 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
-      ...deviceOnboardingTraits(deviceOnboardingFlag),
     });
   })();
 };
@@ -580,6 +578,7 @@ const extraProperties = async (store: AppStore) => {
     accountDetailAnalyticsBanner,
     recoverV2,
     ...remoteABTestingAttributes,
+    ...deviceOnboardingTraits(analyticsFeatureFlagMethod?.("deviceOnboarding")),
   };
 };
 
