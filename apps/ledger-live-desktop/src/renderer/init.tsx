@@ -408,10 +408,14 @@ async function init() {
     store.dispatch,
     hasOnboardedWithDeviceSelector(store.getState()),
   );
+  const receiveVerifyHintState = await getKey("app", "receiveVerifyHint");
+  if (receiveVerifyHintState !== undefined) {
+    store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
+  }
+
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
-    store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
     store.dispatch(restorePayCardLoginIntro(payCardState));
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
