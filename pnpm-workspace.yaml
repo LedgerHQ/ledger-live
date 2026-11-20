@@ -223,6 +223,7 @@ catalog:
   "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tsx: 4.20.6
+  tronweb: 6.5.2
   ws: 8.23.0
   qrcode: 1.5.4
   "@types/qrcode": 1.5.6
