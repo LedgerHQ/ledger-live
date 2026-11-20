@@ -53,12 +53,21 @@ function isSentByAccount(tx: WalletProxyTransaction): boolean {
 }
 
 /**
+ * The queried account is named by the queried address, whatever alias it used
+ * on chain, as `getBlock` names it by its canonical address. Other accounts keep
+ * the alias they used.
+ */
+function partyName(party: string, address: string): string {
+  return isSameAccount(party, address) ? address : party;
+}
+
+/**
  * Who paid the cost, as `getBlock` reports it: the sponsor of a sponsored
  * transaction, else the sender. The proxy names the sender as `origin`,
  * replacing the address with `self` when it is the queried account.
  */
 function feesPayerOf(tx: WalletProxyTransaction, address: string): string | undefined {
-  if (tx.sponsor) return tx.sponsor.sponsor;
+  if (tx.sponsor) return partyName(tx.sponsor.sponsor, address);
   return isSentByAccount(tx) ? address : tx.origin.address;
 }
 
@@ -89,8 +98,8 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
   return {
     ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
-    sender,
-    recipient,
+    sender: partyName(sender, address),
+    recipient: partyName(recipient, address),
     amount,
     fee,
     value: isOutgoing ? String(BigInt(amount) + BigInt(fee)) : amount,
@@ -192,8 +201,8 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   return {
     ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
-    sender: transferSource,
-    recipient: transferDestination,
+    sender: partyName(transferSource, address),
+    recipient: partyName(transferDestination, address),
     amount,
     fee: isSentByAccount(tx) ? String(tx.cost || 0) : "0",
     // The token amount alone: the fee is CCD and belongs to the parent
