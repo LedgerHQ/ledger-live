@@ -93,7 +93,7 @@ export function AnimatedQrCode({
   };
   const content = (
     <>
-      <canvas ref={canvasRef} style={{ ...fill, width: size, height: size }} aria-hidden />
+      <canvas ref={canvasRef} style={{ ...fill, width: size, height: size }} />
       {hasCenter && (
         <div
           aria-hidden={loading}
