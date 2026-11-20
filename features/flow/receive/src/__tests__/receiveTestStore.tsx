@@ -76,6 +76,11 @@ const receiveTestResources = {
         back: "Back",
         selectAddress: { title: "Select address" },
         addressOptions: { transparent: "Public address", shielded: "Private address" },
+        error: {
+          title: "We couldn't load this address",
+          description: "Check your internet connection, then try again.",
+          retry: "Retry",
+        },
       },
     },
   },

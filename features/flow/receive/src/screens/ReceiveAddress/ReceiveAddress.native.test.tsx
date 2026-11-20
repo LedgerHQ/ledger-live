@@ -6,6 +6,7 @@ import {
   makeReceiveTestStore,
   receiveTestWrapper,
   testAccountUUID,
+  testReceive,
 } from "../../__tests__/receiveTestStore";
 import { ReceiveAddress } from "./ReceiveAddress";
 
@@ -53,9 +54,23 @@ describe("ReceiveAddress (Native)", () => {
   it("shows the animated QR code of the address once it is read", async () => {
     renderScreen();
 
-    expect(screen.getByTestId("receive-address-zone-summary")).toBeTruthy();
+    expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
     expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.getByText(`qr:${mockAccountReceive().address}`)).toBeTruthy();
+  });
+
+  it("offers Retry when the address cannot be read, then shows it", async () => {
+    const receive = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("sync failed"))
+      .mockResolvedValue(testReceive);
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    fireEvent.press(await screen.findByTestId("receive-address-retry"));
+
+    expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-error")).toBeNull();
+    expect(receive).toHaveBeenCalledTimes(2);
   });
 
   it("shows the address with its first and last characters apart", async () => {

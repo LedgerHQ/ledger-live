@@ -8,6 +8,9 @@ export type ReceiveAddressCopy = Readonly<{
   backLabel: string;
   selectAddressTitle: string;
   addressOptionLabels: Readonly<Record<ReceiveAddressOptionId, string>>;
+  errorTitle: string;
+  errorDescription: string;
+  retryLabel: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -27,5 +30,8 @@ export function useReceiveAddressCopy({
       transparent: t("receiveAddress.addressOptions.transparent"),
       shielded: t("receiveAddress.addressOptions.shielded"),
     },
+    errorTitle: t("receiveAddress.error.title"),
+    errorDescription: t("receiveAddress.error.description"),
+    retryLabel: t("receiveAddress.error.retry"),
   };
 }

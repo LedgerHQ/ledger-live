@@ -41,9 +41,23 @@ describe("ReceiveAddress (Web)", () => {
   it("shows the QR card once the address is read", async () => {
     renderScreen();
 
-    expect(screen.getByTestId("receive-address-zone-summary")).toBeVisible();
+    expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
     expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
     expect(screen.getByTestId("receive-address-qr-code")).toBeVisible();
+  });
+
+  it("offers Retry when the address cannot be read, then shows it", async () => {
+    const receive = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("sync failed"))
+      .mockResolvedValue(testReceive);
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    await userEvent.setup().click(await screen.findByTestId("receive-address-retry"));
+
+    expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
+    expect(screen.queryByTestId("receive-address-error")).toBeNull();
+    expect(receive).toHaveBeenCalledTimes(2);
   });
 
   it("shows the address with its first and last characters apart", async () => {

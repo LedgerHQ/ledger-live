@@ -1,14 +1,18 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
+import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
   title,
   networkLabel,
+  isLoading,
+  error,
   addressSelection,
   address,
   onBack,
@@ -52,13 +56,30 @@ export function ReceiveAddressView({
                 onClose={closeDialog}
               />
               <DialogBody className="flex flex-col gap-24">
-                {address ? (
-                  <AddressSummary address={address} />
+                {error ? (
+                  <InfoState
+                    preset="error"
+                    size="hug"
+                    title={error.title}
+                    description={error.description}
+                    primaryCta={{
+                      label: error.retryLabel,
+                      onPress: error.onRetry,
+                      testID: "receive-address-retry",
+                    }}
+                    testID="receive-address-error"
+                  />
                 ) : (
-                  <ZonePlaceholder zone="summary" />
+                  <>
+                    {isLoading || !address ? (
+                      <AddressSummarySkeleton />
+                    ) : (
+                      <AddressSummary address={address} />
+                    )}
+                    <ZonePlaceholder zone="actions" />
+                    <ZonePlaceholder zone="notices" />
+                  </>
                 )}
-                <ZonePlaceholder zone="actions" />
-                <ZonePlaceholder zone="notices" />
                 <ZonePlaceholder zone="extras" />
               </DialogBody>
             </>

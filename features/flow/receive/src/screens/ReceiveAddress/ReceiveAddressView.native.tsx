@@ -3,8 +3,10 @@ import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { InfoState } from "@shared/ui-info-state";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
+import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
@@ -13,6 +15,8 @@ export function ReceiveAddressView({
   title,
   networkLabel,
   networkIcon,
+  isLoading,
+  error,
   addressSelection,
   address,
   closeLabel,
@@ -61,9 +65,30 @@ export function ReceiveAddressView({
               networkLabel={networkLabel}
               networkIcon={networkIcon}
             />
-            {address ? <AddressSummary address={address} /> : <ZonePlaceholder zone="summary" />}
-            <ZonePlaceholder zone="actions" />
-            <ZonePlaceholder zone="notices" />
+            {error ? (
+              <InfoState
+                preset="error"
+                size="hug"
+                title={error.title}
+                description={error.description}
+                primaryCta={{
+                  label: error.retryLabel,
+                  onPress: error.onRetry,
+                  testID: "receive-address-retry",
+                }}
+                testID="receive-address-error"
+              />
+            ) : (
+              <>
+                {isLoading || !address ? (
+                  <AddressSummarySkeleton />
+                ) : (
+                  <AddressSummary address={address} />
+                )}
+                <ZonePlaceholder zone="actions" />
+                <ZonePlaceholder zone="notices" />
+              </>
+            )}
             <ZonePlaceholder zone="extras" />
           </Box>
         </ScrollView>
