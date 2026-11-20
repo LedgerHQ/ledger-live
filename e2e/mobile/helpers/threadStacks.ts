@@ -17,6 +17,7 @@ const MAX_OUTPUT_BYTES = 32 * 1024 * 1024;
 const IOS_SAMPLE_SECONDS = "3";
 const IOS_APP_PROCESS = "ledgerlivemobile";
 const ANDROID_ROOT_SHELL = ["shell", "su", "0"];
+const XCRUN = "/usr/bin/xcrun";
 const ARTIFACTS_DIR = path.join(__dirname, "..", "artifacts");
 const SIMULATOR_DIAGNOSTICS_DIR = path.join(ARTIFACTS_DIR, "simulator-diagnostics");
 
@@ -53,7 +54,7 @@ async function androidAppPid(serial: string): Promise<string | undefined> {
 }
 
 const iosLaunchctlList = (udid: string) =>
-  run("xcrun", ["simctl", "spawn", udid, "launchctl", "list"]);
+  run(XCRUN, ["simctl", "spawn", udid, "launchctl", "list"]);
 
 /** The running jobs of a `launchctl list` table, whose rows are PID, last exit status and label. */
 const runningJobs = (launchctlList: string): LaunchdJob[] =>
@@ -119,12 +120,12 @@ async function sampleSimulatorService(
 /** Streams to a file: a window that reaches back to the simulator's boot exceeds 10 MB. */
 async function saveSimulatorLog(udid: string, dir: string) {
   const processes = [...IOS_LAUNCH_SERVICES.map(({ name }) => name), IOS_APP_PROCESS];
-  const predicate = `process IN {${processes.map(name => `"${name}"`).join(", ")}}`;
+  const predicate = `process IN {${processes.map(name => JSON.stringify(name)).join(", ")}}`;
   const args = ["simctl", "spawn", udid, "log", "show", "--last", SIMULATOR_LOG_WINDOW];
   const output = await open(path.join(dir, "system.log"), "w");
   try {
     await new Promise<void>((resolve, reject) => {
-      const logShow = spawn("xcrun", [...args, "--style", "compact", "--predicate", predicate], {
+      const logShow = spawn(XCRUN, [...args, "--style", "compact", "--predicate", predicate], {
         stdio: ["ignore", output.fd, "ignore"],
         timeout: SIMULATOR_LOG_TIMEOUT_MS,
       });
