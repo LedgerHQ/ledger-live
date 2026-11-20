@@ -1,11 +1,14 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountBalance, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountBalance, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { UnsupportedMaxSpendableFilter } from "../errors";
 import {
   clampLocked,
   defaultAccountBalances,
   fromAccountBalancesRaw,
   isValidAccountBalances,
   restoreAccountBalances,
+  selectMaxSpendableRows,
+  spendableOfRows,
   toAccountBalancesRaw,
   withAccountBalances,
 } from "./balances";
@@ -178,5 +181,89 @@ describe("balances serialization", () => {
     expect(restoreAccountBalances(undefined, account(10, 4))).toEqual([
       { value: bn(10), locked: bn(6) },
     ]);
+  });
+});
+
+const filterRow = (value: number, pool?: string, isPrivate?: boolean): AccountBalance => ({
+  value: new BigNumber(value),
+  ...(pool !== undefined && { pool }),
+  ...(isPrivate !== undefined && { private: isPrivate }),
+});
+
+const withRows = (balances?: AccountBalance[]) =>
+  ({ type: "Account", balances }) as unknown as AccountLike;
+
+const zcashLike = withRows([filterRow(10, "transparent"), filterRow(20, "ironwood", true)]);
+
+describe("selectMaxSpendableRows", () => {
+  it("selects the row of a pool", () => {
+    expect(selectMaxSpendableRows(zcashLike, { pools: ["ironwood"] })).toEqual([
+      filterRow(20, "ironwood", true),
+    ]);
+  });
+
+  it("selects the rows by their private flag", () => {
+    expect(selectMaxSpendableRows(zcashLike, { private: true })).toEqual([
+      filterRow(20, "ironwood", true),
+    ]);
+    expect(selectMaxSpendableRows(zcashLike, { private: false })).toEqual([
+      filterRow(10, "transparent"),
+    ]);
+  });
+
+  it("selects the row that matches the pool and the private flag together", () => {
+    expect(selectMaxSpendableRows(zcashLike, { pools: ["ironwood"], private: true })).toEqual([
+      filterRow(20, "ironwood", true),
+    ]);
+  });
+
+  it("selects the single default row of a family without pools with private: false", () => {
+    const account = withRows([filterRow(30)]);
+
+    expect(selectMaxSpendableRows(account, { private: false })).toEqual([filterRow(30)]);
+  });
+
+  it("selects every row of one pool, whatever their private flag", () => {
+    const account = withRows([
+      filterRow(1, "p", false),
+      filterRow(2, "p", true),
+      filterRow(3, "q"),
+    ]);
+
+    expect(selectMaxSpendableRows(account, { pools: ["p"] })).toEqual([
+      filterRow(1, "p", false),
+      filterRow(2, "p", true),
+    ]);
+  });
+
+  it.each([
+    ["several pools", zcashLike, { pools: ["transparent", "ironwood"] }],
+    ["no pool", zcashLike, { pools: [] }],
+    ["an unknown pool", zcashLike, { pools: ["sapling"] }],
+    [
+      "a pool and a private flag that select no row",
+      zcashLike,
+      { pools: ["transparent"], private: true },
+    ],
+    ["pools on rows that carry no pool", withRows([filterRow(30)]), { pools: ["transparent"] }],
+    ["private: true on public rows only", withRows([filterRow(30)]), { private: true }],
+    ["an account with no balances", withRows(undefined), { private: false }],
+    ["an account with an empty breakdown", withRows([]), { private: false }],
+  ])("throws UnsupportedMaxSpendableFilter for %s", (_label, account, filters) => {
+    expect(() => selectMaxSpendableRows(account, filters)).toThrow(UnsupportedMaxSpendableFilter);
+  });
+
+  it("names the filters it could not honour", () => {
+    expect(() => selectMaxSpendableRows(zcashLike, { pools: ["sapling"] })).toThrow(
+      /"pools":\["sapling"\]/,
+    );
+  });
+});
+
+describe("spendableOfRows", () => {
+  it("sums the value of the rows minus what they lock", () => {
+    expect(spendableOfRows([{ value: bn(10), locked: bn(4) }, { value: bn(5) }]).toString()).toBe(
+      "11",
+    );
   });
 });

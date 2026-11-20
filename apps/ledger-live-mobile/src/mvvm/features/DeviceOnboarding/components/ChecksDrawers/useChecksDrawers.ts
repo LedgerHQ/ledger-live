@@ -1,13 +1,25 @@
 import { useCallback, useState } from "react";
 import { Linking, Platform } from "react-native";
-import { track } from "@shared/analytics";
+import { getPreviousTrackingPage, track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
+import {
+  seededButtons,
+  seededPages,
+  seededProps,
+  type DeviceModelId,
+  type SeededPage,
+  type TrackingProps,
+} from "@features/platform-device-onboarding-analytics";
 import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
-import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenState,
+  GenuineErrorKind,
+  UpdateStep,
+} from "LLM/features/DeviceOnboarding/types";
 import {
   isBleUpdateSupported,
   isNewFirmwareUpdateUxSupported,
@@ -32,13 +44,22 @@ export type UnsupportedUpdateDrawerProps = Readonly<{
   isOpen: boolean;
   mounted: boolean;
   onClose: () => void;
+  /** The user closed it (header, backdrop or Close button), not code. */
+  onClosePressed?: () => void;
   isUsbRequired: boolean;
   productName: string;
 }>;
 
 type RecoverableErrorKind = Exclude<GenuineErrorKind, "notGenuine">;
 
+export type DrawerTracking = Readonly<{
+  trackName?: string;
+  trackCategory?: string;
+  trackProps?: TrackingProps;
+}>;
+
 export type ErrorDrawerProps = Readonly<{
+  tracking: DrawerTracking;
   isOpen: boolean;
   kind: RecoverableErrorKind;
   productName: string;
@@ -50,9 +71,12 @@ export type ErrorDrawerProps = Readonly<{
 }>;
 
 export type NotGenuineDrawerProps = Readonly<{
+  tracking: DrawerTracking;
   isOpen: boolean;
   productName: string;
   onClose: () => void;
+  /** The user pressed the header close, not code. */
+  onClosePressed: () => void;
   onContactSupport: () => void;
 }>;
 
@@ -75,6 +99,8 @@ type ChecksErrorDrawersInput = Readonly<{
   onErrorCancel: () => void;
   onAllowDismiss: () => void;
   onNotGenuineClose: () => void;
+  /** Set only in the seeded funnel: the drawers then send the seeded page names. */
+  seededDeviceType?: DeviceModelId | null;
   suspendSheets?: boolean;
 }>;
 
@@ -82,6 +108,10 @@ type FirmwareUpdateRequestInput = Readonly<{
   device: Device;
   update: OfferedUpdate | null;
   onAcceptUpdate: () => void;
+  /** Runs on every update tap, before the eligibility check. */
+  onUpdatePressed?: () => void;
+  /** Runs when the user closes the unsupported-update sheet, not when code hides it. */
+  onUnsupportedClosePressed?: () => void;
   suspendSheets?: boolean;
 }>;
 
@@ -89,6 +119,8 @@ type ChecksDrawerInput = ChecksErrorDrawersInput &
   Readonly<{
     update: OfferedUpdate | null;
     onAcceptUpdate: () => void;
+    onUpdatePressed?: () => void;
+    onUpdateSheetClosed?: () => void;
   }>;
 
 const recoverableErrorPage = "Error: unknown error";
@@ -96,8 +128,64 @@ const recoverableErrorPage = "Error: unknown error";
 const providerErrorPage = "Error: Device OS version not recognized";
 const providerSettingsPage = "Error: Ledger Stax OS version not recognized";
 
-function trackRecoverableButton(button: string, page = recoverableErrorPage) {
-  track("button_clicked", { button, page });
+function trackRecoverableButton(
+  button: string,
+  page: string,
+  kind: RecoverableErrorKind,
+  seededDeviceType: DeviceModelId | null | undefined,
+) {
+  if (!seededDeviceType) {
+    track("button_clicked", { button, page });
+    return;
+  }
+  trackSeededDrawerClick(button, seededErrorPage(kind), seededDeviceType);
+}
+
+/** A drawer does not become the current page, so its clicks name it as `page`. */
+function trackSeededDrawerClick(button: string, page: SeededPage, deviceType: DeviceModelId) {
+  track("button_clicked", { ...withSource(seededProps(deviceType)), button, page });
+}
+
+function withSource(props: TrackingProps): TrackingProps {
+  const source = getPreviousTrackingPage();
+  return source ? { source, ...props } : props;
+}
+
+function seededErrorPage(kind: RecoverableErrorKind) {
+  return kind === "declined" ? seededPages.genuineCheckRefused : seededPages.genuineCheckError;
+}
+
+function errorDrawerTracking(
+  kind: RecoverableErrorKind,
+  seededDeviceType: DeviceModelId | null | undefined,
+): DrawerTracking {
+  if (!seededDeviceType) {
+    return { trackName: kind === "provider" ? providerErrorPage : recoverableErrorPage };
+  }
+  return { trackCategory: seededErrorPage(kind), trackProps: seededProps(seededDeviceType) };
+}
+
+function notGenuineDrawerTracking(
+  seededDeviceType: DeviceModelId | null | undefined,
+): DrawerTracking {
+  if (!seededDeviceType) return { trackCategory: "Device not genuine" };
+  return {
+    trackCategory: seededPages.genuineCheckError,
+    trackProps: seededProps(seededDeviceType),
+  };
+}
+
+function toUpdateStep(
+  offered: boolean,
+  offerOpen: boolean,
+  unsupportedOpen: boolean,
+  usbRequired: boolean,
+  suspendSheets: boolean,
+): UpdateStep | null {
+  if (suspendSheets) return null;
+  if (unsupportedOpen) return usbRequired ? "unsupportedUsbDrawer" : "unsupportedNotEligibleDrawer";
+  if (!offered) return null;
+  return offerOpen ? "offerSheet" : "decisionScreen";
 }
 
 function openUrl(url: string) {
@@ -161,6 +249,8 @@ export function useFirmwareUpdateRequest({
   device,
   update,
   onAcceptUpdate,
+  onUpdatePressed,
+  onUnsupportedClosePressed,
   suspendSheets = false,
 }: FirmwareUpdateRequestInput): Readonly<{
   requestUpdate: () => void;
@@ -174,6 +264,7 @@ export function useFirmwareUpdateRequest({
   return {
     requestUpdate: () => {
       if (!eligibility) return;
+      onUpdatePressed?.();
       if (eligibility.canUpdate) onAcceptUpdate();
       else setUnsupportedFor(updateKey);
     },
@@ -185,6 +276,7 @@ export function useFirmwareUpdateRequest({
       onClose: () => {
         if (!suspendSheets) setUnsupportedFor(null);
       },
+      onClosePressed: onUnsupportedClosePressed,
     },
   };
 }
@@ -199,6 +291,7 @@ export function useChecksErrorDrawers({
   onErrorCancel,
   onAllowDismiss,
   onNotGenuineClose,
+  seededDeviceType,
   suspendSheets = false,
 }: ChecksErrorDrawersInput): Pick<
   ChecksDrawerProps,
@@ -220,28 +313,51 @@ export function useChecksErrorDrawers({
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
   const retry = useCallback(() => {
-    trackRecoverableButton("Try again");
+    const retryAfterRefusal = seededDeviceType && errorDrawerKind === "declined";
+    const button = retryAfterRefusal ? seededButtons.retryGenuineCheck : "Try again";
+    trackRecoverableButton(button, recoverableErrorPage, errorDrawerKind, seededDeviceType);
     onRetry();
-  }, [onRetry]);
+  }, [errorDrawerKind, onRetry, seededDeviceType]);
   const cancel = useCallback(() => {
     trackRecoverableButton(
       "Cancel",
       errorDrawerKind === "provider" ? providerErrorPage : recoverableErrorPage,
+      errorDrawerKind,
+      seededDeviceType,
     );
     onErrorCancel();
-  }, [errorDrawerKind, onErrorCancel]);
+  }, [errorDrawerKind, onErrorCancel, seededDeviceType]);
   const onContactSupport = useCallback(() => {
-    trackRecoverableButton("Contact Ledger Support");
+    trackRecoverableButton(
+      "Contact Ledger Support",
+      recoverableErrorPage,
+      errorDrawerKind,
+      seededDeviceType,
+    );
     openSupport();
-  }, [openSupport]);
+  }, [errorDrawerKind, openSupport, seededDeviceType]);
   const onContactNotGenuineSupport = useCallback(() => {
-    track("button_clicked", { button: "Contacting support about non genuine device" });
+    const button = "Contacting support about non genuine device";
+    if (seededDeviceType) {
+      trackSeededDrawerClick(button, seededPages.genuineCheckError, seededDeviceType);
+    } else {
+      track("button_clicked", { button });
+    }
     openUrl(contactSupportWebviewUrl(locale));
-  }, [locale]);
+  }, [locale, seededDeviceType]);
+  const onNotGenuineClosePressed = useCallback(() => {
+    if (!seededDeviceType) return;
+    trackSeededDrawerClick(seededButtons.close, seededPages.genuineCheckError, seededDeviceType);
+  }, [seededDeviceType]);
   const onGoToSettings = useCallback(() => {
-    trackRecoverableButton("Go to settings", providerSettingsPage);
+    trackRecoverableButton(
+      "Go to settings",
+      providerSettingsPage,
+      errorDrawerKind,
+      seededDeviceType,
+    );
     openExperimentalSettings();
-  }, [openExperimentalSettings]);
+  }, [errorDrawerKind, openExperimentalSettings, seededDeviceType]);
   const [allowClosed, setAllowClosed] = useState(false);
   if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
   const allowOpen = state === "awaitingAllow" && !allowClosed && !suspendSheets;
@@ -261,6 +377,7 @@ export function useChecksErrorDrawers({
     errorDrawer: {
       isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
       kind: errorDrawerKind,
+      tracking: errorDrawerTracking(errorDrawerKind, seededDeviceType),
       productName,
       onRetry: retry,
       onCancel: cancel,
@@ -270,8 +387,10 @@ export function useChecksErrorDrawers({
     },
     notGenuineDrawer: {
       isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
+      tracking: notGenuineDrawerTracking(seededDeviceType),
       productName,
       onClose: () => dismissIfOpen(suspendSheets, error?.kind === "notGenuine", onNotGenuineClose),
+      onClosePressed: onNotGenuineClosePressed,
       onContactSupport: onContactNotGenuineSupport,
     },
   };
@@ -281,10 +400,13 @@ export function useChecksErrorDrawers({
 export function useChecksDrawers({
   update,
   onAcceptUpdate,
+  onUpdatePressed,
+  onUpdateSheetClosed,
   ...input
 }: ChecksDrawerInput): ChecksDrawerProps & {
   headerQuitHidden: boolean;
   reopenFirmwareOffer: () => void;
+  updateStep: UpdateStep | null;
 } {
   const suspendSheets = input.suspendSheets ?? false;
   const errorDrawers = useChecksErrorDrawers(input);
@@ -292,6 +414,8 @@ export function useChecksDrawers({
     device: input.device,
     update,
     onAcceptUpdate,
+    onUpdatePressed,
+    onUnsupportedClosePressed: onUpdateSheetClosed,
     suspendSheets,
   });
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
@@ -304,13 +428,23 @@ export function useChecksDrawers({
     ...errorDrawers,
     headerQuitHidden: offered && !offerDismissed,
     reopenFirmwareOffer: () => setDismissedOfferKey(null),
+    updateStep: toUpdateStep(
+      offered,
+      offerOpen,
+      unsupportedUpdate.mounted,
+      unsupportedUpdate.isUsbRequired,
+      suspendSheets,
+    ),
     firmwareUpdate: {
       isOpen: offerOpen,
       firmwareVersion: update?.available ?? "",
       productName: productNameOf(input.device),
       onUpdate: requestUpdate,
       onClose: () => {
-        if (offerOpen) setDismissedOfferKey(updateKey);
+        // onClose also fires after a close by code, when the offer is no longer open.
+        if (!offerOpen) return;
+        onUpdateSheetClosed?.();
+        setDismissedOfferKey(updateKey);
       },
     },
     unsupportedUpdate,

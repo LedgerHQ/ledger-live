@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { render, screen } from "tests/testSetup";
 import { getFamilyAppEffect } from "../appEffects";
 
-jest.mock("../bitcoin/zcashActivationTracking", () => ({
+jest.mock("../zcash/zcashActivationTracking", () => ({
   ZcashFirstSyncTracking: () => <div data-testid="zcash-first-sync-tracking" />,
 }));
 

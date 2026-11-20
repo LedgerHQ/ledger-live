@@ -130,6 +130,17 @@ describe("makeZcashAccountBalances", () => {
     expect(transparent.locked).toEqual(new BigNumber(100));
   });
 
+  it("locks the UTXOs named by the legacy inputs of a pending operation", () => {
+    const account = makeAccount({
+      utxos: [utxo("a", 0, 100), utxo("b", 1, 50)],
+      pendingExtras: [{ inputs: ["b-1"] }],
+    });
+
+    const [transparent] = rowsOf(account, false);
+
+    expect(transparent.locked).toEqual(new BigNumber(50));
+  });
+
   it("matches the spendable Ironwood figure with a reserved note and an immature note", () => {
     const account = makeAccount({
       utxos: [utxo("a", 0, 10)],

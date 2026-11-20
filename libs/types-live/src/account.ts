@@ -117,6 +117,37 @@ export type AccountReadiness = {
 };
 
 /**
+ * What the generic sync still has to read of an account's history, kept between two syncs. Only a
+ * family that opts in through `syncsHistoryOnStateChange` gets one. It is internal to the sync: no
+ * screen reads it.
+ * - `failed`: the last history read threw, the stored operations were kept. `failedSince` is the time
+ *   (ms) of the first failure of the run: past one hour the failure is no longer tolerated;
+ * - `unexplained`: the state changed but the history brought nothing new. `since` is the time (ms)
+ *   of the first such read and `spendableBalance` the spendable balance it was seen on, with
+ *   `balance` the total when that spendable balance is zero (the total then tells a change);
+ * - `confirm`: one more read after new operations, to catch the ones that land late. `minHeight`
+ *   is the height the read that found them started from, so the confirmation reads the same range.
+ *   `unsettledSince` is the time (ms) a read first returned an operation whose outcome the indexer
+ *   had not recorded: the range is read again until the outcome shows or one hour has passed;
+ * - `pools`: no history to read, only staking pools to look at (`validatorIds`, `listing`).
+ * `validatorIds` are validators that new staking operations named and the stored positions lack:
+ * the next sync reads them as known validators, on the node, until one shows a position or one
+ * hour has passed since `validatorsSince`. `listing` asks the next sync to list the pools once.
+ */
+export type HistoryRecheck = {
+  reason: "failed" | "unexplained" | "confirm" | "pools";
+  since?: number;
+  spendableBalance?: string;
+  balance?: string;
+  minHeight?: number;
+  validatorIds?: string[];
+  validatorsSince?: number;
+  listing?: boolean;
+  unsettledSince?: number;
+  failedSince?: number;
+};
+
+/**
  * Legacy: new code takes an `AccountDescriptor` and reads `account-*` entities, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models.
  *
  * Account type is the main level account of a blockchain currency.
@@ -161,6 +192,8 @@ export type Account = {
   readiness?: AccountReadiness;
   // next account sequence (nonce). Present only when the family opts in via accountSequenceSupported.
   sequence?: number;
+  // history the generic sync has yet to read. Present only when the family opts in via syncsHistoryOnStateChange.
+  historyRecheck?: HistoryRecheck;
   // account balance in satoshi, broken down per pool in `balances`
   balance: BigNumber;
   // part of the balance that can effectively be spent
@@ -259,6 +292,7 @@ export type AccountRaw = {
   used?: boolean;
   readiness?: AccountReadiness;
   sequence?: number;
+  historyRecheck?: HistoryRecheck;
   balance: string;
   spendableBalance?: string;
   balances?: AccountBalanceRaw[];

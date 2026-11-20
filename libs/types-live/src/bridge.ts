@@ -156,6 +156,16 @@ export type AddressValidationCurrencyParameters = {
 };
 
 /**
+ * Restricts the balance rows that may fund a transaction, as a Wallet API caller asks for it.
+ * `pools` names the pools to spend from; `private` keeps the private rows (`true`) or the public
+ * ones (`false`). Absent, the bridge funds the transaction as it always did.
+ */
+export type MaxSpendableFilters = {
+  pools?: string[];
+  private?: boolean;
+};
+
+/**
  * Abstraction related to an account
  */
 interface SendReceiveAccountBridge<
@@ -206,10 +216,13 @@ interface SendReceiveAccountBridge<
   // it returns an amount in the account unit
   // if a transaction is provided, it can be used to precise the information
   // if it not provided, you can assume to take the worst-case scenario (like sending all UTXOs to a legacy address has higher fees resulting in a lower max spendable)
+  // if filters are provided, only the rows of the account balance they select may fund the transaction;
+  // a bridge that cannot honour a filter throws instead of ignoring it
   estimateMaxSpendable(arg0: {
     account: AccountLike<A>;
     parentAccount?: A | null | undefined;
     transaction?: T | null | undefined;
+    filters?: MaxSpendableFilters;
   }): Promise<BigNumber>;
   /**
    * This function mutates the 'account' object to extend it with any extra fields of the coin.

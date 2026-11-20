@@ -52,6 +52,33 @@ describe("useLeaveOnboarding", () => {
     },
   );
 
+  it("should give the host's seeded result to the sync offer", () => {
+    const seededResult = {
+      deviceType: DmkDeviceModelId.STAX,
+      ledgerSyncEligible: true,
+      firmwareUpdateAvailability: "yes",
+      firmwareUpdateStarted: true,
+      firmwareUpdateDone: false,
+    } as const;
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({ device, navigateOnExit: true, wasReadOnlyAtEntry: false }),
+    );
+
+    act(() =>
+      result.current(
+        "offerLedgerSync",
+        machineContext({ genuine: true, seeded: true }),
+        seededResult,
+      ),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
+      device,
+      wasReadOnlyAtEntry: false,
+      seededResult,
+    });
+  });
+
   it("should leave without the notifications prompt when the device is not genuine", () => {
     leave("userQuit", false);
 

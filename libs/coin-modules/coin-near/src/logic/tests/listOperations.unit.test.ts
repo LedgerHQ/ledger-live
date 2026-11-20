@@ -64,6 +64,39 @@ describe("toOperation", () => {
     expect(operation.type).toBe(expected);
   });
 
+  it.each([
+    ["a plain deposit", [{ action: "FUNCTION_CALL", method: "deposit" }]],
+    [
+      "a staking call after another action",
+      [
+        { action: "TRANSFER", method: null },
+        { action: "FUNCTION_CALL", method: "stake" },
+      ],
+    ],
+    ["a deposit and stake", [{ action: "FUNCTION_CALL", method: "deposit_and_stake" }]],
+  ])("names the pool %s called, whatever the operation type", (_name, actions) => {
+    const operation = toOperation(
+      transaction({ receiver_account_id: "pool.poolv1.near", actions }),
+      ADDRESS,
+    );
+
+    expect(operation.details).toEqual({ familyExtra: { stakingPool: "pool.poolv1.near" } });
+  });
+
+  it.each([
+    ["a transfer", transaction()],
+    [
+      "a staking call the account did not sign",
+      transaction({
+        signer_account_id: PEER,
+        receiver_account_id: ADDRESS,
+        actions: [{ action: "FUNCTION_CALL", method: "deposit_and_stake" }],
+      }),
+    ],
+  ])("names no pool for %s", (_name, tx) => {
+    expect(toOperation(tx, ADDRESS).details).toBeUndefined();
+  });
+
   it("maps the block reference and converts the nanosecond timestamp", () => {
     const operation = toOperation(transaction(), ADDRESS);
 
@@ -89,6 +122,65 @@ describe("toOperation", () => {
   it("marks a reverted transaction as failed", () => {
     expect(toOperation(transaction({ outcomes: { status: false } }), ADDRESS).tx.failed).toBe(true);
     expect(toOperation(transaction({ outcomes: undefined }), ADDRESS).tx.failed).toBe(false);
+  });
+});
+
+describe("toOperation flags read by the sync", () => {
+  it("flags an operation whose outcome is not indexed yet", () => {
+    const operation = toOperation(transaction({ outcomes: {} }), ADDRESS);
+
+    expect(operation.details).toEqual({ familyExtra: { outcomePending: true } });
+  });
+
+  it("does not flag an operation whose outcome is indexed", () => {
+    expect(toOperation(transaction(), ADDRESS).details).toBeUndefined();
+  });
+
+  it("flags a staking call another account relayed for the address", () => {
+    const operation = toOperation(
+      transaction({
+        signer_account_id: "relayer.near",
+        receiver_account_id: ADDRESS,
+        actions: [
+          { action: "DELEGATE_ACTION", method: null },
+          { action: "FUNCTION_CALL", method: "deposit_and_stake" },
+        ],
+      }),
+      ADDRESS,
+    );
+
+    expect(operation.details).toEqual({ familyExtra: { relayedCall: true } });
+  });
+
+  it("does not flag a relayed call to anything but a staking pool", () => {
+    const operation = toOperation(
+      transaction({
+        signer_account_id: "relayer.near",
+        receiver_account_id: ADDRESS,
+        actions: [
+          { action: "DELEGATE_ACTION", method: null },
+          { action: "FUNCTION_CALL", method: "claim" },
+        ],
+      }),
+      ADDRESS,
+    );
+
+    expect(operation.details).toBeUndefined();
+  });
+
+  it("keeps the staking pool next to the other flags", () => {
+    const operation = toOperation(
+      transaction({
+        receiver_account_id: "pool.poolv1.near",
+        outcomes: {},
+        actions: [{ action: "FUNCTION_CALL", method: "deposit_and_stake" }],
+      }),
+      ADDRESS,
+    );
+
+    expect(operation.details).toEqual({
+      familyExtra: { stakingPool: "pool.poolv1.near", outcomePending: true },
+    });
   });
 });
 

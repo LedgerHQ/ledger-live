@@ -72,6 +72,36 @@ describe("account serialization — sequence", () => {
   });
 });
 
+describe("account serialization — historyRecheck", () => {
+  it.each([
+    [{ reason: "failed" }],
+    [{ reason: "confirm" }],
+    [{ reason: "unexplained", since: 1_700_000_000_000, spendableBalance: "150" }],
+  ] as const)("round-trips %p", async historyRecheck => {
+    const account = genAccount("history-recheck-acc", { currency: ethereum });
+    account.subAccounts = [];
+    account.historyRecheck = { ...historyRecheck };
+
+    const raw = toAccountRaw(account);
+    expect(raw.historyRecheck).toEqual(historyRecheck);
+
+    const back = await fromAccountRaw(JSON.parse(JSON.stringify(raw)));
+    expect(back.historyRecheck).toEqual(historyRecheck);
+  });
+
+  it("leaves historyRecheck absent when it is not set", async () => {
+    const account = genAccount("no-history-recheck-acc", { currency: ethereum });
+    account.subAccounts = [];
+    delete account.historyRecheck;
+
+    const raw = toAccountRaw(account);
+    expect(raw).not.toHaveProperty("historyRecheck");
+
+    const back = await fromAccountRaw(raw);
+    expect(back).not.toHaveProperty("historyRecheck");
+  });
+});
+
 describe("account serialization — sellOperationIds", () => {
   it("round-trips sellOperationIds through to/fromAccountRaw", async () => {
     const account = genAccount("sell-acc", { currency: ethereum });

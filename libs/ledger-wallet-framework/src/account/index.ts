@@ -19,6 +19,8 @@ export {
   toAccountBalancesRaw,
   fromAccountBalancesRaw,
   restoreAccountBalances,
+  selectMaxSpendableRows,
+  spendableOfRows,
 } from "./balances";
 export { groupAccountOperationsByDay, groupAccountsOperationsByDay } from "./groupOperations";
 export {

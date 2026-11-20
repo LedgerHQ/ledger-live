@@ -11,9 +11,17 @@ import {
   decodeSignedTransaction,
   encodeTransaction,
 } from "near-api-js";
-import { AccountDoesNotExistError, ContractExecutionError } from "near-api-js/rpc-errors";
+import {
+  AccountDoesNotExistError,
+  ContractCodeDoesNotExistError,
+  ContractMethodNotFoundError,
+} from "near-api-js/rpc-errors";
 import { type NearConfig } from "../config";
-import { MIN_ACCOUNT_BALANCE_BUFFER, VALIDATORS_CACHE_TTL_MS } from "../constants";
+import {
+  MIN_ACCOUNT_BALANCE_BUFFER,
+  VALIDATORS_CACHE_TTL_MS,
+  VALIDATORS_FAILURE_TTL_MS,
+} from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { NearAccount } from "../types";
 import { fetchNearblocks } from "./nearblocks";
@@ -26,12 +34,38 @@ import {
   NearV3Response,
 } from "./sdk.types";
 
+// A view query answers with the value in `result`, a JSON-RPC `error`, or (older nodes) an `error`
+// string inside `result`.
+type NearViewAnswer<T = object> = {
+  result?: T & { error?: string };
+  error?: NearRpcError;
+};
+
+const ABSENT_ON_NODE = /does not exist while viewing/;
+
+/**
+ * The view found nothing because the account (or key) does not exist: a state the caller maps to an
+ * empty value. Any other error is a failed read and throws, so it is never taken for an empty account.
+ */
+const readsAbsent = (data: NearViewAnswer, absentCause: string): boolean => {
+  if (data.error) {
+    if (data.error.cause?.name === absentCause) return true;
+    throw new Error(`Near: view query failed: ${describeRpcError(data.error)}`);
+  }
+  const resultError = data.result?.error;
+  if (typeof resultError === "string") {
+    if (ABSENT_ON_NODE.test(resultError)) return true;
+    throw new Error(`Near: view query failed: ${resultError}`);
+  }
+  return false;
+};
+
 export const fetchAccountDetails = async (
   config: NearConfig,
   address: string,
-): Promise<NearAccountDetails> => {
+): Promise<NearAccountDetails | undefined> => {
   const currencyConfig = config;
-  const { data } = await network<{ result: NearAccountDetails }>({
+  const { data } = await network<NearViewAnswer<NearAccountDetails>>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -46,33 +80,59 @@ export const fetchAccountDetails = async (
     },
   });
 
-  return data.result;
+  return readsAbsent(data, "UNKNOWN_ACCOUNT") ? undefined : data.result;
 };
 
-const IMPLICIT_ACCOUNT = /^[0-9a-f]{64}$/;
+type NearAccessKeyList = {
+  keys?: { public_key: string; access_key: { nonce: number } }[];
+};
+
+/**
+ * The nonces of every access key of the account, in one node call: a transaction signed with any of
+ * them (a relayed one included) moves the nonce without the account paying.
+ */
+const readAccessKeyNonces = async (config: NearConfig, address: string): Promise<string> => {
+  const { data } = await network<NearViewAnswer<NearAccessKeyList>>({
+    method: "POST",
+    url: config.infra.API_NEAR_PRIVATE_NODE,
+    data: {
+      jsonrpc: "2.0",
+      id: "id",
+      method: "query",
+      params: { request_type: "view_access_key_list", finality: "final", account_id: address },
+    },
+  });
+
+  if (readsAbsent(data, "UNKNOWN_ACCOUNT")) return "";
+
+  return [...(data.result?.keys ?? [])]
+    .sort((a, b) => a.public_key.localeCompare(b.public_key))
+    .map(key => String(key.access_key.nonce))
+    .join(",");
+};
+
+const NONCE_SEGMENT = 4;
 
 /**
  * Changes whenever a transaction concerns the account: balance, lock, storage or contract, and the
- * nonce of the account's own key, which a relayed transaction moves without the account paying.
- * A named account has no derivable key, so its nonce segment stays empty; so does a key read that
- * fails, because the fingerprint must never be the reason a sync fails.
+ * nonce of the account's access keys, which a relayed transaction moves without the account paying.
+ * A key read that fails keeps the nonces of `previousFingerprint`: the fingerprint must neither be
+ * the reason a sync fails nor change because of a read that failed.
  */
 export const getAccountStateFingerprint = async (
   config: NearConfig,
   address: string,
   accountDetails: NearAccountDetails | undefined,
+  previousFingerprint?: string,
 ): Promise<string> => {
   let nonce = "";
 
-  if (IMPLICIT_ACCOUNT.test(address)) {
+  if (accountDetails !== undefined) {
     try {
-      const key = await getAccessKey(config, {
-        address,
-        publicKey: `ed25519:${baseEncode(Buffer.from(address, "hex"))}`,
-      });
-      if (key?.nonce !== undefined) nonce = String(key.nonce);
+      nonce = await readAccessKeyNonces(config, address);
     } catch (error) {
-      log("Near", "account key nonce read failed, fingerprinting without it", error);
+      log("Near", "account key nonce read failed, keeping the stored nonces", error);
+      nonce = previousFingerprint?.split("|")[NONCE_SEGMENT] ?? "";
     }
   }
 
@@ -89,7 +149,8 @@ export type StakingPositionsOptions = {
   /**
    * Pools the caller already holds a position in. With them, a failed indexer listing falls back to
    * reading these pools from the node. A pool whose node read fails still fails the call: dropping
-   * it would show a lower balance and forget the pool.
+   * it would show a lower balance and forget the pool. Only a pool the node shows is no pool (no
+   * account, no contract, a contract that fails the views) is dropped.
    */
   knownValidatorIds?: string[];
   /** Ask the indexer for the account's pools (default). `false` reads the known pools only. */
@@ -107,24 +168,23 @@ export type StakingPositionsOptions = {
 export const getAccount = async (
   config: NearConfig,
   address: string,
-  options?: StakingPositionsOptions & { accountDetails?: NearAccountDetails },
+  options?: StakingPositionsOptions & Partial<{ accountDetails: NearAccountDetails | undefined }>,
 ): Promise<
   Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources"> & {
     poolListingFailed: boolean;
     failedCandidates: string[];
   }
 > => {
-  let accountDetails: NearAccountDetails;
-
-  accountDetails = options?.accountDetails ?? (await fetchAccountDetails(config, address));
-
-  if (!accountDetails) {
-    accountDetails = {
-      amount: "0",
-      block_height: 0,
-      storage_usage: 0,
-    };
-  }
+  // `undefined` given on purpose means the caller read the account and the node does not know it.
+  const read =
+    options && "accountDetails" in options
+      ? options.accountDetails
+      : await fetchAccountDetails(config, address);
+  const accountDetails: NearAccountDetails = read ?? {
+    amount: "0",
+    block_height: 0,
+    storage_usage: 0,
+  };
 
   const {
     stakingPositions,
@@ -222,7 +282,7 @@ export const getAccessKey = async (
   },
 ): Promise<NearAccessKey> => {
   const currencyConfig = config;
-  const { data } = await network<{ result: NearAccessKey }>({
+  const { data } = await network<NearViewAnswer<NearAccessKey>>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -238,7 +298,10 @@ export const getAccessKey = async (
     },
   });
 
-  return data.result || {};
+  // An absent key has no nonce: callers read the missing fields as such.
+  return readsAbsent(data, "UNKNOWN_ACCESS_KEY")
+    ? ({} as NearAccessKey)
+    : (data.result ?? ({} as NearAccessKey));
 };
 
 type NearRpcError = {
@@ -491,9 +554,15 @@ const resolveStakingPools = async (
   return { required, candidates, listingFailed };
 };
 
-/** The node answered that the account holds no contract, or a contract that fails the pool views. */
+/**
+ * The node answered that the account does not exist, holds no contract code, or has a contract
+ * without the pool view methods. A panic, a gas failure or any other execution error says nothing
+ * about the pool, so it is not matched.
+ */
 const isNotAStakingPool = (error: unknown): boolean =>
-  error instanceof AccountDoesNotExistError || error instanceof ContractExecutionError;
+  error instanceof AccountDoesNotExistError ||
+  error instanceof ContractCodeDoesNotExistError ||
+  error instanceof ContractMethodNotFoundError;
 
 const readStakingPosition = async (
   provider: JsonRpcProvider,
@@ -547,7 +616,20 @@ export const getStakingPositions = async (
 
   const failedCandidates: string[] = [];
   const [requiredPositions, candidatePositions] = await Promise.all([
-    Promise.all(required.map(validatorId => readStakingPosition(provider, address, validatorId))),
+    Promise.all(
+      required.map(validatorId =>
+        readStakingPosition(provider, address, validatorId).catch(error => {
+          // A pool that was deleted, or whose contract was replaced, answers the same way every
+          // time: it holds nothing for the account. Any other error may be a blip, so it fails.
+          if (!isNotAStakingPool(error)) throw error;
+          log("Near", "known pool is not a staking pool any more, dropping it", {
+            validatorId,
+            error,
+          });
+          return undefined;
+        }),
+      ),
+    ),
     Promise.all(
       candidates.map(validatorId =>
         readStakingPosition(provider, address, validatorId).catch(error => {
@@ -562,10 +644,9 @@ export const getStakingPositions = async (
       ),
     ),
   ]);
-  const positions = [
-    ...requiredPositions,
-    ...candidatePositions.filter((p): p is NearStakingPosition => p !== undefined),
-  ];
+  const positions = [...requiredPositions, ...candidatePositions].filter(
+    (p): p is NearStakingPosition => p !== undefined,
+  );
 
   const sumAbove = (pick: (p: NearStakingPosition) => BigNumber) =>
     positions.reduce(
@@ -635,6 +716,33 @@ async function fetchValidators({ total, config }: FetchValidatorsParams): Promis
     }));
 }
 
-export const getValidators = makeLRUCache(fetchValidators, ({ total }) => String(total), {
+const cachedValidators = makeLRUCache(fetchValidators, ({ total }) => String(total), {
   ttl: VALIDATORS_CACHE_TTL_MS,
+});
+
+const failedValidators = new Map<string, { at: number; error: unknown }>();
+
+/**
+ * A failed read is remembered for a short time: during an indexer outage every account sync asks for
+ * the validators, and each would otherwise add a request to an indexer that is refusing them.
+ */
+const getValidatorsWithFailureMemory = async (params: FetchValidatorsParams) => {
+  const key = String(params.total);
+  const failure = failedValidators.get(key);
+  if (failure && Date.now() - failure.at < VALIDATORS_FAILURE_TTL_MS) throw failure.error;
+  failedValidators.delete(key);
+
+  try {
+    return await cachedValidators(params);
+  } catch (error) {
+    failedValidators.set(key, { at: Date.now(), error });
+    throw error;
+  }
+};
+
+export const getValidators = Object.assign(getValidatorsWithFailureMemory, {
+  reset: () => {
+    cachedValidators.reset();
+    failedValidators.clear();
+  },
 });

@@ -192,7 +192,7 @@ describe("CoinModuleApi (integration)", () => {
     it("rejects balance options it does not implement", async () => {
       await expect(
         api.getBalance(context, ACCOUNT_WITH_HISTORY, { includeAssets: async () => true }),
-      ).rejects.toThrow("getBalance does not support the options parameter");
+      ).rejects.toThrow("getBalance does not support the asset options");
     });
   });
 

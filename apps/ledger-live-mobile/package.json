@@ -180,6 +180,7 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-device-mock-server": "workspace:^",
     "@features/platform-device-onboarding": "workspace:^",
+    "@features/platform-device-onboarding-analytics": "workspace:^",
     "@features/platform-device-os-update": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",

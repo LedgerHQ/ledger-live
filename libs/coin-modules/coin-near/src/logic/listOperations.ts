@@ -6,7 +6,12 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { NearContext } from "../config";
 import { fetchTransactionsPage } from "../network";
-import { getOperationType } from "../network/indexer";
+import {
+  getOperationType,
+  isOutcomePending,
+  isRelayedCall,
+  isStakingPoolMethod,
+} from "../network/indexer";
 import type { NearTransaction } from "../network/sdk.types";
 
 /** The indexer defaults to 25 and 422s on anything outside this range. */
@@ -21,6 +26,21 @@ const blockHeight = (transaction: NearTransaction): number =>
 export function toOperation(transaction: NearTransaction, address: string): Operation {
   const type = getOperationType(transaction, address);
   const date = new Date(Number.parseFloat(transaction.block_timestamp) / 1e6);
+  // The pool a transaction the account signed called, whatever its first action or display type
+  // (a plain `deposit` shows as OUT): the sync reads it on the node when its positions lack it.
+  const stakingPool =
+    transaction.signer_account_id === address &&
+    transaction.receiver_account_id &&
+    transaction.actions?.some(action => isStakingPoolMethod(action.method))
+      ? transaction.receiver_account_id
+      : undefined;
+
+  // Read by the sync: a missing outcome is read again later, a relayed call may name a pool.
+  const familyExtra = {
+    ...(stakingPool && { stakingPool }),
+    ...(isOutcomePending(transaction) && { outcomePending: true }),
+    ...(isRelayedCall(transaction, address) && { relayedCall: true }),
+  };
 
   return {
     id: transaction.transaction_hash,
@@ -40,6 +60,7 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
       date,
       failed: transaction.outcomes?.status === false,
     },
+    ...(Object.keys(familyExtra).length > 0 && { details: { familyExtra } }),
   };
 }
 

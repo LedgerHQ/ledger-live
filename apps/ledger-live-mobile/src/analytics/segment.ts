@@ -90,6 +90,7 @@ import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFl
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
 import { getAgentIntentAttributes } from "@features/flow-agent-intent-entry-points";
+import { deviceOnboardingTraits } from "@features/platform-device-onboarding-analytics";
 import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import {
@@ -182,12 +183,6 @@ const getFeatureFlagProperties = () => {
     const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
-    const connectSeededDevice = Boolean(
-      deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectSeededDevice,
-    );
-    const connectUnseededDevice = Boolean(
-      deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectUnseededDevice,
-    );
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -226,8 +221,7 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
-      connectSeededDevice,
-      connectUnseededDevice,
+      ...deviceOnboardingTraits(deviceOnboardingFlag),
     });
   })();
 };

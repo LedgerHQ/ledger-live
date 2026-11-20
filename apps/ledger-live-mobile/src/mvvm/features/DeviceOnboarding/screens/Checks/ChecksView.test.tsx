@@ -1,7 +1,8 @@
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
 import React from "react";
 import { Linking, Platform } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "@shared/analytics";
+import { getPreviousTrackingPage, track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import { render, screen, within } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
@@ -11,10 +12,19 @@ import type {
   ChecksScreenProps,
   ChecksScreenState,
   GenuineErrorKind,
+  UpdateStep,
 } from "LLM/features/DeviceOnboarding/types";
+import { seededPages, seededScreen } from "@features/platform-device-onboarding-analytics";
 import { ChecksScreen } from "./index";
 
 const mockNavigate = jest.fn();
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => ""),
+}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -131,6 +141,28 @@ const nanoX = {
   modelId: DeviceModelId.nanoX,
   wired: false,
 };
+
+function updateScreensFor(step: UpdateStep | null) {
+  if (step === "offerSheet") {
+    return [
+      {
+        key: "update:sheet",
+        tracking: seededScreen(seededPages.osUpdateRequired, DmkDeviceModelId.STAX),
+      },
+    ];
+  }
+  if (step === "decisionScreen") {
+    return [
+      {
+        key: "update:refusal",
+        tracking: seededScreen(seededPages.osUpdateRefusal, DmkDeviceModelId.STAX),
+      },
+    ];
+  }
+  return [];
+}
+
+const trackedScreens = () => jest.mocked(TrackScreen).mock.calls.map(([props]) => props.category);
 
 function renderChecks(state: ChecksScreenState, overrides: Partial<ChecksScreenProps> = {}) {
   const onStart = jest.fn();
@@ -373,6 +405,29 @@ describe("ChecksView", () => {
 
     expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
     expect(onAcceptUpdate).not.toHaveBeenCalled();
+  });
+
+  it("should track each OS update screen and the close when the user closes the offer and installs again", async () => {
+    const onUpdateSheetClosed = jest.fn();
+    const onInstallUpdate = jest.fn();
+    jest.mocked(TrackScreen).mockClear();
+    const { user } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+      screensFor: updateScreensFor,
+      onUpdateSheetClosed,
+      onInstallUpdate,
+    });
+
+    expect(trackedScreens()).toContain("OS update required");
+
+    await user.press(screen.getByTestId("modal-close-button"));
+    expect(onUpdateSheetClosed).toHaveBeenCalledTimes(1);
+    expect(trackedScreens().at(-1)).toBe("OS update required refusal screen");
+
+    await user.press(screen.getByRole("button", { name: "Install Ledger OS update" }));
+    expect(onInstallUpdate).toHaveBeenCalledTimes(1);
+    expect(trackedScreens().at(-1)).toBe("OS update required");
+    expect(onUpdateSheetClosed).toHaveBeenCalledTimes(1);
   });
 
   it("should keep the checks screen unchanged when no update is offered", () => {
@@ -800,5 +855,167 @@ describe("ChecksView", () => {
 
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onCloseSheet).not.toHaveBeenCalled();
+  });
+
+  describe("with the seeded funnel page names", () => {
+    const seededDeviceType = DmkDeviceModelId.STAX;
+    const seeded = {
+      sourceFlow: "onboarding",
+      "onboarding type": "seeded device",
+      seedConfiguration: "already_seeded",
+      deviceType: "stax",
+    };
+
+    it("should send the refused page once and the spec retry click when the device refuses", async () => {
+      jest.mocked(track).mockClear();
+      jest.mocked(TrackScreen).mockClear();
+      const { user, onRetry } = renderChecks("checking", {
+        error: { kind: "declined" },
+        seededDeviceType,
+      });
+
+      expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          category: "Genuine Check refused on device",
+          deviceType: "stax",
+        }),
+        undefined,
+      );
+      expect(jest.mocked(TrackScreen)).not.toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Error: unknown error" }),
+        undefined,
+      );
+
+      await user.press(
+        within(screen.getByTestId(checksTestIds.declinedSheet)).getByRole("button", {
+          name: "Retry",
+        }),
+      );
+
+      expect(onRetry).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...seeded,
+        button: "Retry genuine check",
+        page: "Genuine Check refused on device",
+      });
+    });
+
+    it("should name the error page in the drawer clicks when the device check fails", async () => {
+      jest.mocked(track).mockClear();
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+
+      await user.press(
+        within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
+          name: "Cancel set up",
+        }),
+      );
+
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ page: "Genuine Check error", deviceType: "stax" }),
+      );
+    });
+
+    it("should send the seeded props with the non genuine support click", async () => {
+      jest.mocked(track).mockClear();
+      jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+      const { user } = renderChecks("checking", {
+        error: { kind: "notGenuine" },
+        seededDeviceType,
+      });
+
+      await user.press(
+        within(screen.getByTestId(checksTestIds.notGenuineSheet)).getByRole("button", {
+          name: "Contact Ledger Support",
+        }),
+      );
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...seeded,
+        button: "Contacting support about non genuine device",
+        page: "Genuine Check error",
+      });
+    });
+
+    it("should name the non genuine drawer as page when the user closes it", async () => {
+      jest.mocked(track).mockClear();
+      const { user, onQuit } = renderChecks("checking", {
+        error: { kind: "notGenuine" },
+        seededDeviceType,
+      });
+
+      await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...seeded,
+        button: "close",
+        page: "Genuine Check error",
+      });
+      expect(onQuit).not.toHaveBeenCalled();
+    });
+
+    it("should send close once when the user closes the unsupported update drawer", async () => {
+      const onUpdateSheetClosed = jest.fn();
+      const { user } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+        onUpdateSheetClosed,
+        seededDeviceType,
+      });
+
+      await user.press(screen.getByText("Update now"));
+      await user.press(screen.getByRole("button", { name: "Close" }));
+
+      expect(onUpdateSheetClosed).toHaveBeenCalledTimes(1);
+    });
+
+    it("should send the previous page as source with the drawer clicks", async () => {
+      jest.mocked(track).mockClear();
+      jest.mocked(getPreviousTrackingPage).mockReturnValueOnce("Page Check OS version");
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+
+      await user.press(
+        within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
+          name: "Cancel set up",
+        }),
+      );
+
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ source: "Page Check OS version", page: "Genuine Check error" }),
+      );
+    });
+
+    it("should leave without a close click when the user cancels the error drawer", async () => {
+      const onClosePressed = jest.fn();
+      const { user, onQuit } = renderChecks("checking", {
+        error: { kind: "unknown" },
+        seededDeviceType,
+        onClosePressed,
+      });
+
+      await user.press(
+        within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
+          name: "Cancel set up",
+        }),
+      );
+
+      expect(onQuit).toHaveBeenCalledTimes(1);
+      expect(onClosePressed).not.toHaveBeenCalled();
+    });
+
+    it("should send close before leaving from the header close", async () => {
+      const calls: string[] = [];
+      const { user } = renderChecks("checking", {
+        onQuit: () => calls.push("quit"),
+        onClosePressed: () => calls.push("close"),
+      });
+
+      await user.press(screen.getByTestId(checksTestIds.quit));
+
+      expect(calls).toEqual(["close", "quit"]);
+    });
   });
 });

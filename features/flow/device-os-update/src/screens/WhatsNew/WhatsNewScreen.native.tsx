@@ -32,7 +32,7 @@ export function WhatsNewScreen({
   onClose,
 }: WhatsNewScreenProps) {
   const { t } = useTranslation();
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { trackPage, trackClick } = useOsUpdateTracking();
   const { renderReleaseNotes } = useOsUpdatePorts();
 
@@ -54,7 +54,7 @@ export function WhatsNewScreen({
   }, [trackClick, onOpenReleaseNotes]);
 
   return (
-    <Box lx={{ flex: 1 }} testID="os-update-whats-new-screen">
+    <Box lx={{ flex: 1 }} style={{ paddingTop: topInset }} testID="os-update-whats-new-screen">
       <NavBar density="compact">
         <NavBarBackButton onPress={onPressBack} testID="os-update-whats-new-back-button" />
       </NavBar>

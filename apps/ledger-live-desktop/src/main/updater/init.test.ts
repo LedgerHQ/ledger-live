@@ -25,6 +25,7 @@ const LEDGER_SIGNATURES_FEED = "https://resources.live.ledger.app/public_resourc
 const PRERELEASE_SIGNATURES_FEED = "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com";
 const CHANNEL = "nightly";
 const LEDGER_PUBKEY_LINE = "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEN7qcsG6bogi1nkD3jnMWS813wWguYEcI";
+const UPDATE_INFO = { version: "9.9.9" };
 
 // The jest "electron" mapping also matches "electron-updater": both resolve to this one mock.
 jest.mock("electron-updater", () => ({
@@ -33,6 +34,7 @@ jest.mock("electron-updater", () => ({
   autoUpdater: {
     on: jest.fn(),
     checkForUpdates: jest.fn(),
+    downloadUpdate: jest.fn(),
     setFeedURL: jest.fn(),
     quitAndInstall: jest.fn(),
     autoInstallOnAppQuit: false,
@@ -85,7 +87,7 @@ describe("updater init", () => {
     init();
 
     expect(mockedAutoUpdater.checkForUpdates).toHaveBeenCalledTimes(1);
-    expect(mockedAutoUpdater.autoDownload).toBe(true);
+    expect(mockedAutoUpdater.autoDownload).toBe(false);
     expect(mockedAutoUpdater.autoInstallOnAppQuit).toBe(true);
   });
 
@@ -125,6 +127,77 @@ describe("updater init", () => {
   });
 });
 
+describe("update check", () => {
+  const send = jest.fn();
+
+  beforeEach(() => {
+    jest.mocked(getMainWindow).mockReturnValue({ webContents: { send } } as never);
+    mockedIsStoreDistribution.mockReturnValue(false);
+  });
+
+  it("should check an available update before downloading it", async () => {
+    const verify = jest.fn();
+    mockedCreateElectronAppUpdater.mockReturnValue({ verify } as never);
+
+    init();
+    await emitUpdaterEvent("update-available", UPDATE_INFO);
+
+    expect(mockedCreateElectronAppUpdater).toHaveBeenCalledWith(
+      expect.objectContaining({ info: UPDATE_INFO }),
+    );
+    expect(verify.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedAutoUpdater.downloadUpdate.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("should keep the update available while checking it", async () => {
+    mockedCreateElectronAppUpdater.mockReturnValue({ verify: jest.fn() } as never);
+
+    init();
+    await emitUpdaterEvent("update-available", UPDATE_INFO);
+
+    expect(send).toHaveBeenLastCalledWith(
+      CHANNELS.updater,
+      expect.objectContaining({ status: "update-available" }),
+    );
+  });
+
+  it("should not download an update when its check fails", async () => {
+    mockedCreateElectronAppUpdater.mockReturnValue({
+      verify: jest.fn().mockRejectedValue(new Error("Invalid signature")),
+    } as never);
+
+    init();
+    await emitUpdaterEvent("update-available", UPDATE_INFO);
+
+    expect(mockedAutoUpdater.downloadUpdate).not.toHaveBeenCalled();
+    expect(send).toHaveBeenLastCalledWith(
+      CHANNELS.updater,
+      expect.objectContaining({ status: "error" }),
+    );
+  });
+
+  it("should report an error when the download fails", async () => {
+    mockedCreateElectronAppUpdater.mockReturnValue({ verify: jest.fn() } as never);
+    mockedAutoUpdater.downloadUpdate.mockRejectedValueOnce(new Error("sha512 checksum mismatch"));
+
+    init();
+    await emitUpdaterEvent("update-available", UPDATE_INFO);
+
+    expect(send).toHaveBeenLastCalledWith(
+      CHANNELS.updater,
+      expect.objectContaining({ status: "error" }),
+    );
+  });
+
+  it("should offer to install an update when it is downloaded", async () => {
+    init();
+    await emitUpdaterEvent("update-downloaded", UPDATE_INFO);
+
+    expect(send).toHaveBeenLastCalledWith(CHANNELS.updater, { status: "check-success" });
+  });
+});
+
 describe.each([
   {
     build: "a non-production build",
@@ -133,7 +206,7 @@ describe.each([
     setFeedURLCalls: [[{ provider: "generic", url: OVERRIDES.UPDATE_FEED_URL }]],
     signaturesFeed: OVERRIDES.UPDATE_CHECK_FEED,
     defaultSignaturesFeed: PRERELEASE_SIGNATURES_FEED,
-    failedCheckStatus: "check-success",
+    downloadsAfterFailedCheck: true,
     pubKey: OVERRIDES.UPDATE_CHECK_PUBKEY,
     channel: CHANNEL,
   },
@@ -144,7 +217,7 @@ describe.each([
     setFeedURLCalls: [],
     signaturesFeed: LEDGER_SIGNATURES_FEED,
     defaultSignaturesFeed: LEDGER_SIGNATURES_FEED,
-    failedCheckStatus: "error",
+    downloadsAfterFailedCheck: false,
     pubKey: expect.stringContaining(LEDGER_PUBKEY_LINE),
     channel: "",
   },
@@ -156,7 +229,7 @@ describe.each([
     setFeedURLCalls,
     signaturesFeed,
     defaultSignaturesFeed,
-    failedCheckStatus,
+    downloadsAfterFailedCheck,
     pubKey,
     channel,
   }) => {
@@ -179,10 +252,10 @@ describe.each([
     });
 
     it(`should ${verb} UPDATE_CHECK_FEED`, async () => {
-      mockedCreateElectronAppUpdater.mockResolvedValue({ verify: jest.fn() } as never);
+      mockedCreateElectronAppUpdater.mockReturnValue({ verify: jest.fn() } as never);
 
       loadInit();
-      await downloadUpdate();
+      await emitUpdaterEvent("update-available", UPDATE_INFO);
 
       expect(mockedCreateElectronAppUpdater).toHaveBeenCalledWith(
         expect.objectContaining({ feedURL: signaturesFeed }),
@@ -191,10 +264,10 @@ describe.each([
 
     it("should fall back to the default signatures feed without UPDATE_CHECK_FEED", async () => {
       delete process.env.UPDATE_CHECK_FEED;
-      mockedCreateElectronAppUpdater.mockResolvedValue({ verify: jest.fn() } as never);
+      mockedCreateElectronAppUpdater.mockReturnValue({ verify: jest.fn() } as never);
 
       loadInit();
-      await downloadUpdate();
+      await emitUpdaterEvent("update-available", UPDATE_INFO);
 
       expect(mockedCreateElectronAppUpdater).toHaveBeenCalledWith(
         expect.objectContaining({ feedURL: defaultSignaturesFeed }),
@@ -202,18 +275,15 @@ describe.each([
     });
 
     it(`should ${verb} UPDATE_CHECK_IGNORE`, async () => {
-      const send = jest.fn();
-      jest.mocked(getMainWindow).mockReturnValue({ webContents: { send } } as never);
-      mockedCreateElectronAppUpdater.mockResolvedValue({
+      mockedCreateElectronAppUpdater.mockReturnValue({
         verify: jest.fn().mockRejectedValue(new Error("Invalid signature")),
       } as never);
 
       loadInit();
-      await downloadUpdate();
+      await emitUpdaterEvent("update-available", UPDATE_INFO);
 
-      expect(send).toHaveBeenLastCalledWith(
-        CHANNELS.updater,
-        expect.objectContaining({ status: failedCheckStatus }),
+      expect(mockedAutoUpdater.downloadUpdate).toHaveBeenCalledTimes(
+        downloadsAfterFailedCheck ? 1 : 0,
       );
     });
 
@@ -239,11 +309,11 @@ function loadInit() {
   jest.isolateModules(() => require("./init"));
 }
 
-async function downloadUpdate() {
-  const [, listener] = mockedAutoUpdater.on.mock.calls.find(
-    ([event]) => event === "update-downloaded",
-  )!;
-  await (listener as (info: unknown) => Promise<void>)({ version: "9.9.9" });
+async function emitUpdaterEvent(event: string, payload: unknown) {
+  const listeners = mockedAutoUpdater.on.mock.calls.filter(([name]) => name === event);
+  await Promise.all(
+    listeners.map(([, listener]) => (listener as (arg: unknown) => unknown)(payload)),
+  );
 }
 
 describe("updater quitAndInstall", () => {
