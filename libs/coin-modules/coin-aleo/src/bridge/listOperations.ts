@@ -52,11 +52,8 @@ export async function listOperations({
   const bondTransactions: AleoPublicTransaction[] = [];
 
   for (const rawTx of result.transactions) {
-    const stakingType = resolveStakingOperationType(rawTx);
-    if (stakingType !== undefined && !config.enableStaking) continue;
-
     transactions.push(rawTx);
-    if (stakingType === "BOND") bondTransactions.push(rawTx);
+    if (resolveStakingOperationType(rawTx) === "BOND") bondTransactions.push(rawTx);
   }
 
   const bondArgumentsByTxId =
