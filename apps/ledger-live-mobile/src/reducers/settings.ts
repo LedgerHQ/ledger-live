@@ -39,7 +39,6 @@ import type {
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
-  SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPairsPayload,
   SettingsSetPrivacyBiometricsPayload,
@@ -301,11 +300,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     counterValue: (action as Action<SettingsSetCountervaluePayload>).payload,
     counterValueExchange: null, // also reset the exchange
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS]: (state, action) => ({
-    ...state,
-    orderAccounts: (action as Action<SettingsSetOrderAccountsPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_PAIRS]: (state, action) => {

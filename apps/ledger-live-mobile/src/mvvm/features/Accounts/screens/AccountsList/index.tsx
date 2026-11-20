@@ -46,7 +46,13 @@ function View({
       <TrackScreen name={pageTrackingEvent} source={sourceScreenName} currency={currencyToTrack} />
       <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
         {showHeader && (
-          <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
+          <Text
+            variant="h1Inter"
+            fontWeight="semiBold"
+            fontSize={28}
+            paddingY={2}
+            testID="accounts-list-title"
+          >
             {ticker
               ? t("accounts.cryptoAccountsTitle", { currencyTicker: ticker })
               : t("accounts.title")}

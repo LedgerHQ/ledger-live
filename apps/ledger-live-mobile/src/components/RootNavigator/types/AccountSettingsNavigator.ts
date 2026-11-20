@@ -25,7 +25,6 @@ export type AccountSettingsNavigatorParamList = {
   [ScreenName.EditCurrencyUnits]: {
     currency: CryptoCurrency;
   };
-  [ScreenName.Accounts]: { currency?: string; search?: string } | undefined;
 
   [NavigatorName.AccountSettings]: {
     screen: string;

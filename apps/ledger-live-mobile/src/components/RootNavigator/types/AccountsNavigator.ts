@@ -4,15 +4,6 @@ import { ScreenName } from "~/const";
 import { CryptoVariant } from "LLM/features/Crypto/screens/CryptoScreen/types";
 
 export type AccountsNavigatorParamList = {
-  [ScreenName.Accounts]:
-    | {
-        currency?: string;
-        search?: string;
-        address?: string;
-        currencyTicker?: string;
-        currencyId?: string;
-      }
-    | undefined;
   [ScreenName.Account]: {
     account?: AccountLike;
     accountId?: string;
