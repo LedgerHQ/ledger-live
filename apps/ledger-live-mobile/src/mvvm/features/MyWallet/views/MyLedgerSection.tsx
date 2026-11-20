@@ -55,7 +55,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   const onSelect = (result: Result) => {
     setDevice(undefined);
 
-    if (result && "result" in result) {
+    if (result?.result) {
       navigation.navigate(NavigatorName.MyLedger, {
         screen: ScreenName.MyLedgerDevice,
         params: {

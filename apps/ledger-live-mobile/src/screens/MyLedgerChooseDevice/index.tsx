@@ -59,7 +59,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const onSelect = (result: Result) => {
     setDevice(undefined);
 
-    if (result && "result" in result) {
+    if (result?.result) {
       // FIXME: nullable stuff not taken into account here?
       // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
