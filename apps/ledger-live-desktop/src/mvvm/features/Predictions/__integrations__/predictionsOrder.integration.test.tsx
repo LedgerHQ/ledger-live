@@ -61,6 +61,9 @@ const OWNER_SIGNATURE =
 const OTHER_KEY_SIGNATURE =
   "0x3c881ad12e33995235f7e165941e9ee432d0a07b306ff012655abf169b60b3195cf1c263aae22f9286585b8489298c30a88b0680933fc7e76d697f5cbf6535081b";
 
+/** The market the live app describes for ORDER_TYPED_DATA, a $2 buy of "Yes". */
+const ORDER_DISPLAY = { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" };
+
 const ORDER_TYPED_DATA = {
   domain: { name: "BoxPolymarketPlaceOrder", version: "1", chainId: "137" },
   types: {
@@ -130,6 +133,7 @@ function setup() {
       pending = liveApp.result.current["custom.predictions.signOrder"]({
         accountId: getWalletApiIdFromAccountId(account.id),
         typedData: JSON.stringify(typedData),
+        display: ORDER_DISPLAY,
       });
     });
     return pending.then(answer => {
@@ -199,14 +203,15 @@ describe("Predictions buy order", () => {
     expect(await screen.findByText("Placing your order")).toBeVisible();
   });
 
-  it("shows the filled order, and answers close once the user returns to predictions", async () => {
+  it("shows the filled order, and answers close once the user closes it", async () => {
     const { reportOrder, user } = await signedOrder();
 
     const report = reportOrder({ outcome: "filled", shares: 3.7, price: 0.54 });
 
-    expect(await screen.findByText("Order filled", {}, { timeout: 3000 })).toBeVisible();
-    expect(screen.getByText("3.7 shares at $0.54")).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Return to predictions" }));
+    expect(await screen.findByText("Order complete", {}, { timeout: 3000 })).toBeVisible();
+    expect(screen.getByText("You bought 3.7 shares for $2.00")).toBeVisible();
+    expect(screen.getByText(ORDER_DISPLAY.marketTitle)).toBeVisible();
+    await user.click(screen.getAllByRole("button", { name: "Close" }).at(-1) as HTMLElement);
     await expect(report).resolves.toEqual({ action: "close" });
   });
 

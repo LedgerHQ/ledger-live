@@ -3,8 +3,8 @@
  * `@shared/ui-queued-bottom-sheet` at through `moduleNameMapper`. The rename is the point: the
  * consumer keeps importing `QueuedBottomSheet` and gets the double.
  *
- * Only the sheet is replaced. A test that needs `QueuedBottomSheetsProvider`, the adapters or the
- * queue hooks — an app-level concern — should mock the module itself instead.
+ * Only the sheet is replaced. The queue, its provider and the background surface are the real ones,
+ * so a view that takes its turn in the queue without being a sheet (e.g. a full screen) works too.
  */
 export { QueuedBottomSheetMock as QueuedBottomSheet } from "./QueuedBottomSheetMock";
 export { BottomSheetBackgroundContext } from "../contexts/BottomSheetBackgroundContext";
@@ -16,3 +16,8 @@ export { useBottomSheetKeyboardAwareInputMock as useBottomSheetKeyboardAwareInpu
 // The double renders the footer inline with the content, so nothing has to be reserved for it.
 export { useBottomSheetFooterInset } from "../contexts/BottomSheetFooterInsetContext";
 export { useBottomSheetBottomInset } from "../contexts/BottomSheetBottomInsetContext";
+// Real queue: none of it needs gorhom.
+export { QueuedBottomSheetsProvider } from "../components/QueuedBottomSheetsProvider/QueuedBottomSheetsProvider";
+export { useQueuedBottomSheetContext } from "../contexts/QueuedBottomSheetsContext";
+export { useBottomSheetBackgroundSurface } from "../hooks/useBottomSheetBackgroundSurface";
+export { useQueuedBottomSheetTurn } from "../hooks/useQueuedBottomSheetTurn";

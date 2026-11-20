@@ -1,7 +1,7 @@
 type LinkParams = Readonly<Record<string, string | undefined>>;
 type HostInputs = Readonly<Record<string, string>>;
 
-function parseURL(value: string): URL | undefined {
+export function parseURL(value: string): URL | undefined {
   try {
     return new URL(value);
   } catch {

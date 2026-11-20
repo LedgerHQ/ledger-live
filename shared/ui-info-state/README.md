@@ -13,6 +13,7 @@ success, and error screens across both apps.
 | Entry | Export | Description |
 | --- | --- | --- |
 | `@shared/ui-info-state` | `InfoState` | The layout component. Each app's bundler picks the `.web` or `.native` implementation. |
+| `@shared/ui-info-state` | `InfoStateButton` | Its action button, for a layout that places the actions itself (e.g. pinned at the bottom of a full screen). |
 | `@shared/ui-info-state` | `InfoStateProps`, `InfoStateSpotProps`, `InfoStateSpotSize`, `InfoStateBackgroundTone` | The props contract, declared once in `InfoState.types.ts` for both platforms. |
 | `@shared/ui-info-state` | `InfoStatePreset`, `InfoStateCta`, `InfoStateBanner`, `InfoStateBaseProps` | Types shared by every preset. |
 | `@shared/ui-info-state/web` | `DialogBackgroundToneProvider` | Web only. Tints the enclosing dialog with the status gradient an `InfoState` requests. Import it from web code only: a `.web` file or the desktop app. |

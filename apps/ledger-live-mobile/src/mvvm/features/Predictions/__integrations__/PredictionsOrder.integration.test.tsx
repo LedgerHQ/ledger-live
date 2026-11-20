@@ -92,6 +92,9 @@ const OWNER_SIGNATURE =
 const OTHER_KEY_SIGNATURE =
   "0x3c881ad12e33995235f7e165941e9ee432d0a07b306ff012655abf169b60b3195cf1c263aae22f9286585b8489298c30a88b0680933fc7e76d697f5cbf6535081b";
 
+/** The market the live app describes for ORDER_TYPED_DATA, a $2 buy of "Yes". */
+const ORDER_DISPLAY = { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" };
+
 const ORDER_TYPED_DATA = {
   domain: { name: "BoxPolymarketPlaceOrder", version: "1", chainId: "137" },
   types: {
@@ -168,6 +171,7 @@ function setup() {
       pending = liveApp.result.current["custom.predictions.signOrder"]({
         accountId: getWalletApiIdFromAccountId(account.id),
         typedData: JSON.stringify(typedData),
+        display: ORDER_DISPLAY,
       });
     });
     return pending.then(answer => {
@@ -203,12 +207,16 @@ function setup() {
 const preparingTitle = "Preparing the signature";
 const isExecutorOpen = () =>
   screen.queryByTestId(EXECUTOR_SHEET)?.props.accessibilityState.expanded === true;
-const isOrderOpen = () =>
-  screen.getByTestId("predictions-order-sheet").props.accessibilityState.expanded === true;
+// The order's full screen, which renders only while it shows.
+const ORDER_SCREEN = "predictions-order-sheet";
+const isOrderOpen = () => screen.queryByTestId(ORDER_SCREEN) !== null;
 const rejection = (signing: Promise<unknown>) => signing.catch((error: unknown) => error);
 
+/** The signing prompt's sheet finishes closing, which hands its turn to the order's full screen. */
 function finishClosingExecutor() {
   fireEvent.press(screen.getByTestId(`${EXECUTOR_SHEET}-hidden`));
+  // React Native's Modal mock never reports it's on screen.
+  if (isOrderOpen()) fireEvent(screen.getByTestId(ORDER_SCREEN), "show");
 }
 
 async function signedOrder() {
@@ -239,18 +247,31 @@ describe("Predictions buy order", () => {
     });
     await waitFor(() => expect(isExecutorOpen()).toBe(false));
     finishClosingExecutor();
-    expect(isOrderOpen()).toBe(true);
+    // DEBUG
+    await waitFor(() => expect(isOrderOpen()).toBe(true), { timeout: 3000 });
     expect(screen.getByText("Placing your order")).toBeOnTheScreen();
   });
 
-  it("shows the filled order, and answers close once the user returns to predictions", async () => {
+  it("shows the filled order, and answers close once the user closes it", async () => {
     const { reportOrder, user } = await signedOrder();
 
     const report = reportOrder({ outcome: "filled", shares: 3.7, price: 0.54 });
 
-    expect(await screen.findByText("Order filled", {}, { timeout: 3000 })).toBeOnTheScreen();
-    expect(screen.getByText("3.7 shares at $0.54")).toBeOnTheScreen();
-    await user.press(screen.getByText("Return to predictions"));
+    expect(await screen.findByText("Order complete", {}, { timeout: 3000 })).toBeOnTheScreen();
+    expect(screen.getByText("You bought 3.7 shares for $2.00")).toBeOnTheScreen();
+    expect(screen.getByText(ORDER_DISPLAY.marketTitle)).toBeOnTheScreen();
+    await user.press(screen.getByText("Close"));
+    await expect(report).resolves.toEqual({ action: "close" });
+    expect(isOrderOpen()).toBe(false);
+  });
+
+  it("closes the order's full screen on the Android back button, answering close", async () => {
+    const { reportOrder } = await signedOrder();
+    const report = reportOrder({ outcome: "not-filled" });
+    await screen.findByText("Try again", {}, { timeout: 3000 });
+
+    fireEvent(screen.getByTestId(ORDER_SCREEN), "requestClose");
+
     await expect(report).resolves.toEqual({ action: "close" });
     expect(isOrderOpen()).toBe(false);
   });
@@ -280,9 +301,10 @@ describe("Predictions buy order", () => {
       orderId: expect.any(String),
     });
     expect(runSignTypedDataEvm).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(isExecutorOpen()).toBe(false));
     finishClosingExecutor();
-    expect(isOrderOpen()).toBe(true);
-    expect(screen.getByText("Placing your order")).toBeOnTheScreen();
+    // The previous order's screen leaves the queue once it has faded out.
+    expect(await screen.findByText("Placing your order")).toBeOnTheScreen();
   });
 
   it("answers close to a late report for the order before the retry, leaving the new one placing", async () => {
@@ -296,6 +318,7 @@ describe("Predictions buy order", () => {
     expect(await screen.findByText(preparingTitle)).toBeOnTheScreen();
     device.sign(OWNER_SIGNATURE);
     await signing;
+    finishClosingExecutor();
 
     await expect(reportOrder({ outcome: "filled" }, earlierOrderId)).resolves.toEqual({
       action: "close",

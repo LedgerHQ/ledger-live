@@ -1,11 +1,19 @@
 import type {
   PredictionsOrderAction,
+  PredictionsOrderDisplay,
   PredictionsOrderOutcome,
 } from "@features/platform-predictions";
 import { createPendingResultStore, type ShownResult } from "./pendingResultStore.internals";
 
+/** The order the sheet is about: its market, as the live app describes it, and what the user signed. */
+export type PredictionsOrderDetails = Readonly<{
+  display: PredictionsOrderDisplay;
+  /** In USD, from the signed order. */
+  amountPaid: number;
+}>;
+
 /** What the order dialog shows. `key` changes with every order and outcome. */
-export type ShownOrder = ShownResult<PredictionsOrderOutcome>;
+export type ShownOrder = ShownResult<PredictionsOrderOutcome, PredictionsOrderDetails>;
 
 /**
  * Longer than the live app waits for MoonPay to confirm an order, so a live app that never reports
@@ -13,7 +21,11 @@ export type ShownOrder = ShownResult<PredictionsOrderOutcome>;
  */
 export const ORDER_REPORT_TIMEOUT_MS = 3 * 60 * 1000;
 
-const orderStore = createPendingResultStore<PredictionsOrderOutcome, PredictionsOrderAction>({
+const orderStore = createPendingResultStore<
+  PredictionsOrderOutcome,
+  PredictionsOrderAction,
+  PredictionsOrderDetails
+>({
   dismissedAnswer: "close",
   timeout: { ms: ORDER_REPORT_TIMEOUT_MS, outcome: { outcome: "unconfirmed" } },
 });

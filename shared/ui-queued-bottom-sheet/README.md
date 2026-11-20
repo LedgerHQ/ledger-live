@@ -57,10 +57,12 @@ A sheet whose screen loses focus is closed and reported through `onClose`, like 
 | `QueuedBottomSheet`                                              | Lumen bottom-sheet UI wired to the queue                            |
 | `QueuedBottomSheetProps`                                         | Props for `QueuedBottomSheet`                                       |
 | `QueuedBottomSheetsProvider`                                     | Mounts the queue and adapters; wrap the app once                    |
-| `useQueuedBottomSheetContext`                                    | Access `addBottomSheetToQueue` / `closeAllBottomSheets`             |
+| `useQueuedBottomSheetContext`                                    | Access `addBottomSheetToQueue` / `closeAllBottomSheets`; a queued sheet's `close` gets why (`preempted` or `closingAll`) |
 | `IsInBottomSheetContext` / `IsInBottomSheetProvider`             | Know whether a subtree is inside a bottom sheet                     |
 | `BottomSheetBackgroundContext`                                   | Descendants request a status-tone background                        |
 | `useBottomSheetBackgroundTone`                                   | Descendants request a status-tone background on the enclosing sheet |
+| `useBottomSheetBackgroundSurface`                                | The background for the requested tone, which the sheets paint; a surface that isn't a sheet (e.g. a full screen) can paint it too |
+| `useQueuedBottomSheetTurn`                                       | A view that isn't a sheet (e.g. a full screen) waits its turn in the queue, focus and lock included; after a sheet forced in it queues again, after `closeAllBottomSheets` it asks to be dismissed, and under `waitsForHidden` the next sheet waits until it's off screen |
 | `useBottomSheetFooterInset`                                      | Reserve space occupied by a sticky sheet footer                     |
 | `@shared/ui-queued-bottom-sheet/keyboard`                        | Keyboard hook entry                                                 |
 | `useBottomSheetKeyboardAwareInput` (from `/keyboard`)            | A plain `TextInput` lets the enclosing sheet react to the keyboard  |
@@ -129,7 +131,10 @@ test can't render it. This package ships the double instead of each consumer han
 | `./testing/module-mock`                     | Drop-in module replacement for a jest `moduleNameMapper`                 |
 
 `features/flow/*` packages get it for free: `@support/jest/features-flow` maps the package to
-`./testing/module-mock` in its native project, so their tests just render the view.
+`./testing/module-mock` in its native project, so their tests just render the view. Only the sheet
+is a double: the module mock keeps the real `QueuedBottomSheetsProvider`, `useQueuedBottomSheetContext`
+`useBottomSheetBackgroundSurface` and `useQueuedBottomSheetTurn`, so a view that takes its turn in the queue without being a
+sheet can be tested inside a real provider.
 
 The double renders its children unconditionally — whether content shows while closed is the
 consumer's decision, and the test should be able to assert it. It exposes open state through

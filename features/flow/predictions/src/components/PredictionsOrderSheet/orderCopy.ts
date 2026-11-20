@@ -1,4 +1,5 @@
 import type {
+  PredictionsOrderDisplay,
   PredictionsOrderOutcome,
   PredictionsOrderRejectionReason,
 } from "@features/platform-predictions";
@@ -43,16 +44,39 @@ export function canRetryOrder(outcome: PredictionsOrderOutcome): boolean {
   }
 }
 
-export function formatFill(
-  language: string,
-  { shares, price }: Readonly<{ shares: number; price: number }>,
-): Readonly<{ shares: string; price: string }> {
-  return {
-    shares: new Intl.NumberFormat(language, { maximumFractionDigits: 2 }).format(shares),
-    price: new Intl.NumberFormat(language, {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 3,
-    }).format(price),
-  };
+const SHARE_DIGITS = 2;
+
+/**
+ * Rounded as shown, so a plural picked from it agrees with the number on screen. Intl rounds like
+ * `formatShares`, where `toFixed` would turn 1.005 into 1.00 while the screen says 1.01.
+ */
+export function displayedShares(shares: number): number {
+  return Number(
+    new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: SHARE_DIGITS,
+      useGrouping: false,
+    }).format(shares),
+  );
+}
+
+export function formatShares(language: string, shares: number): string {
+  return new Intl.NumberFormat(language, { maximumFractionDigits: SHARE_DIGITS }).format(shares);
+}
+
+/** Yes in green and No in red, like the live app's side switch; any other outcome neutral. */
+export function outcomeTagAppearance({
+  outcomeSide,
+}: PredictionsOrderDisplay): "success" | "error" | "gray" {
+  switch (outcomeSide) {
+    case "yes":
+      return "success";
+    case "no":
+      return "error";
+    case undefined:
+      return "gray";
+  }
+}
+
+export function formatUsd(language: string, amount: number): string {
+  return new Intl.NumberFormat(language, { style: "currency", currency: "USD" }).format(amount);
 }

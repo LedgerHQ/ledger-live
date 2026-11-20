@@ -61,9 +61,9 @@ export function QueuedBottomSheetsProvider({
           ? [{ ...openedItem, markedForClose: true }, newQueueItem]
           : [newQueueItem];
         // The forced drawer opens once the first (marked-for-close) item is removed from the queue.
-        openedItem?.stateHandlers.close();
+        openedItem?.stateHandlers.close("preempted");
         for (const queueItem of queuedItems) {
-          queueItem.stateHandlers.close();
+          queueItem.stateHandlers.close("preempted");
         }
       } else {
         logBottomSheet("addBottomSheetToQueue -> add to queue", { id });
@@ -104,7 +104,7 @@ export function QueuedBottomSheetsProvider({
     if (queueRef.current.length === 0) return;
     queueRef.current.forEach(queueItem => {
       queueItem.markedForClose = true;
-      queueItem.stateHandlers.close();
+      queueItem.stateHandlers.close("closingAll");
     });
     queueRef.current = [];
     logQueueLength();

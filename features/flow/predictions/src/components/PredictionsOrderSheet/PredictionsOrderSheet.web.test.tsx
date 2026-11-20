@@ -2,6 +2,7 @@ import React from "react";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper, ORDER_COPY } from "../../__tests__/i18nWrapper";
+import { ORDER_DETAILS } from "../../__tests__/orderDetails";
 import { MIN_RESULT_DISPLAY_MS } from "../../pendingResultStore.internals";
 import {
   closePredictionsOrder,
@@ -24,7 +25,7 @@ describe("PredictionsOrderSheet (web)", () => {
     render(<PredictionsOrderSheet />, { wrapper: I18nWrapper });
     let orderId = 0;
     act(() => {
-      orderId = startPredictionsOrder();
+      orderId = startPredictionsOrder(ORDER_DETAILS);
     });
     expect(screen.getByLabelText(ORDER_COPY.placing)).toBeVisible();
 

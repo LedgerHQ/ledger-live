@@ -57,7 +57,7 @@ function setupBottomSheetStateCapture() {
     },
     signalClose: () => {
       act(() => {
-        stateHandlers?.close();
+        stateHandlers?.close("preempted");
       });
     },
   };

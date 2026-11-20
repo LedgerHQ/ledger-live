@@ -17,6 +17,18 @@ module.exports = {
   Text: "Text",
   Image: "Image",
   ScrollView: "ScrollView",
+  // Rendered only while visible, like react-native's own mock, and reports it's on screen once it
+  // becomes visible. Tests fire its `requestClose` event for the Android back button.
+  Modal: function Modal(props) {
+    const React = require("react");
+    const isVisible = props.visible !== false;
+    const onShowRef = React.useRef(props.onShow);
+    onShowRef.current = props.onShow;
+    React.useEffect(() => {
+      if (isVisible) onShowRef.current?.();
+    }, [isVisible]);
+    return isVisible ? React.createElement("Modal", props, props.children) : null;
+  },
   Keyboard: {
     isVisible: () => false,
     dismiss: () => {},

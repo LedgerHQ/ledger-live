@@ -3,44 +3,69 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { PredictionsOrderOutcome } from "@features/platform-predictions";
 import { I18nWrapper, ORDER_COPY } from "../../__tests__/i18nWrapper";
+import { ORDER_DETAILS, ORDER_IMAGE_URL } from "../../__tests__/orderDetails";
+import type { PredictionsOrderDetails } from "../../predictionsOrderStore.internals";
 import { OrderContent } from "./OrderContent";
 
-const renderContent = (outcome: PredictionsOrderOutcome | null) => {
+const FILLED = { outcome: "filled", shares: 16.129, price: 0.31 } as const;
+
+const renderContent = (
+  outcome: PredictionsOrderOutcome | null,
+  order: PredictionsOrderDetails = ORDER_DETAILS,
+) => {
   const onClose = jest.fn();
   const onRetry = jest.fn();
-  render(<OrderContent outcome={outcome} onClose={onClose} onRetry={onRetry} />, {
+  render(<OrderContent order={order} outcome={outcome} onClose={onClose} onRetry={onRetry} />, {
     wrapper: I18nWrapper,
   });
   return { onClose, onRetry };
 };
 
 describe("OrderContent (web)", () => {
-  it("shows the order being placed", () => {
+  it("shows the order being placed, without its market yet", () => {
     renderContent(null);
 
     expect(screen.getByText(ORDER_COPY.placing)).toBeVisible();
+    expect(screen.queryByTestId("predictions-order-summary")).not.toBeInTheDocument();
   });
 
-  it("shows the shares and price the order filled at, and returns to predictions", async () => {
-    const { onClose } = renderContent({ outcome: "filled", shares: 3.7, price: 0.54 });
+  it("shows a filled order's fill, then its market, and closes", async () => {
+    const { onClose } = renderContent(FILLED, {
+      ...ORDER_DETAILS,
+      display: {
+        ...ORDER_DETAILS.display,
+        eventTitle: "Will Anthropic's valuation hit __ by December 31?",
+        outcomeSide: "yes",
+      },
+    });
 
     expect(screen.getByText(ORDER_COPY.filled.title)).toBeVisible();
-    expect(screen.getByText("3.7 shares at $0.54")).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: ORDER_COPY.filled.return }));
+    const fill = screen.getByText("You bought 16.13 shares for $5.00");
+    expect(fill.compareDocumentPosition(screen.getByTestId("predictions-order-summary"))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(screen.getByText("Will Anthropic's valuation hit __ by December 31?")).toBeVisible();
+    expect(screen.getByText(ORDER_DETAILS.display.marketTitle)).toBeVisible();
+    expect(screen.getByTestId("predictions-order-outcome")).toHaveAttribute(
+      "appearance",
+      "success",
+    );
+    expect(screen.getByTestId("predictions-order-market-image")).toHaveAttribute(
+      "src",
+      ORDER_IMAGE_URL,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Close" }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("says a single share, and keeps a sub-cent price", () => {
-    renderContent({ outcome: "filled", shares: 1, price: 0.545 });
+  it("loads no image for a market without one", () => {
+    renderContent(FILLED, {
+      ...ORDER_DETAILS,
+      display: { marketTitle: "Fed decision", outcomeLabel: "No" },
+    });
 
-    expect(screen.getByText("1 share at $0.545")).toBeVisible();
-  });
-
-  it("says the order filled when its fill isn't known", () => {
-    renderContent({ outcome: "filled" });
-
-    expect(screen.getByText(ORDER_COPY.filled.description)).toBeVisible();
+    expect(screen.getByTestId("predictions-order-market-image")).not.toHaveAttribute("src");
   });
 
   it.each([

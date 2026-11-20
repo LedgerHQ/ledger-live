@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "@shared/i18n";
-import { PendingResultSheetView } from "../PendingResultSheet/PendingResultSheetView";
+import { PendingResultScreen } from "../PendingResultSheet/PendingResultScreen";
 import type { PredictionsOrderSheetViewProps } from "./PredictionsOrderSheet.types";
 import { OrderContent } from "./OrderContent";
 import { orderTitleKey } from "./orderCopy";
@@ -15,7 +15,7 @@ export function PredictionsOrderSheetView({
   const { t } = useTranslation();
 
   return (
-    <PendingResultSheetView
+    <PendingResultScreen
       isOpen={isOpen}
       contentKey={shownOrder?.key}
       title={shownOrder ? t(orderTitleKey(shownOrder.outcome)) : undefined}
@@ -24,8 +24,13 @@ export function PredictionsOrderSheetView({
       testID="predictions-order-sheet"
     >
       {shownOrder ? (
-        <OrderContent outcome={shownOrder.outcome} onClose={onClose} onRetry={onRetry} />
+        <OrderContent
+          order={shownOrder.context}
+          outcome={shownOrder.outcome}
+          onClose={onClose}
+          onRetry={onRetry}
+        />
       ) : null}
-    </PendingResultSheetView>
+    </PendingResultScreen>
   );
 }

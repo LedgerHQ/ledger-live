@@ -1,13 +1,41 @@
+import React from "react";
 import type { PredictionsOrderOutcome } from "@features/platform-predictions";
 import { useTranslation } from "@shared/i18n";
 import type { InfoStateCta, InfoStateProps } from "@shared/ui-info-state";
 import type { OrderContentProps } from "./PredictionsOrderSheet.types";
-import { canRetryOrder, formatFill, orderTitleKey } from "./orderCopy";
+import {
+  canRetryOrder,
+  displayedShares,
+  formatShares,
+  formatUsd,
+  orderTitleKey,
+} from "./orderCopy";
+import { OrderSummary } from "./OrderSummary";
 
 type OrderResult = Extract<InfoStateProps, { preset: "success" | "error" | "info" }>;
 
+type FilledOutcome = Extract<PredictionsOrderOutcome, { outcome: "filled" }>;
+type Translate = ReturnType<typeof useTranslation>["t"];
+
+/** What the user got for what they signed. */
+function fillDescription(
+  t: Translate,
+  language: string,
+  amountPaid: number,
+  outcome: FilledOutcome,
+): string {
+  const amount = formatUsd(language, amountPaid);
+  if (!("shares" in outcome)) return t("predictions.order.filled.paid", { amount });
+  return t("predictions.order.filled.fill", {
+    count: displayedShares(outcome.shares),
+    shares: formatShares(language, outcome.shares),
+    amount,
+  });
+}
+
 /** The outcome's content, the same on every platform. */
 export function useOrderResult({
+  order,
   outcome,
   onClose,
   onRetry,
@@ -25,18 +53,10 @@ export function useOrderResult({
       return {
         preset: "success",
         title,
-        description:
-          "shares" in outcome
-            ? t("predictions.order.filled.fill", {
-                count: outcome.shares,
-                ...formatFill(i18n.language, outcome),
-              })
-            : t("predictions.order.filled.description"),
-        primaryCta: {
-          label: t("predictions.order.filled.return"),
-          onPress: onClose,
-          testID: "predictions-order-return",
-        },
+        description: fillDescription(t, i18n.language, order.amountPaid, outcome),
+        // Only a filled order shows its market.
+        content: <OrderSummary display={order.display} />,
+        primaryCta: closeCta,
         testID: "predictions-order-filled",
       };
     case "unconfirmed":

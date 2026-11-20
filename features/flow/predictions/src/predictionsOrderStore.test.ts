@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import { ORDER_DETAILS, ORDER_TYPED_DATA } from "./__tests__/orderDetails";
 import { MIN_RESULT_DISPLAY_MS } from "./pendingResultStore.internals";
 import { usePredictionsOrderHooks } from "./predictionsOrderStore";
 import {
@@ -14,7 +15,7 @@ function startShownOrder() {
   const player = renderHook(() => usePredictionsOrderHooks());
   let orderId = "";
   act(() => {
-    orderId = player.result.current.startOrder();
+    orderId = player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display);
     markPredictionsOrderPresented();
   });
   return { order, player, orderId };
@@ -29,7 +30,10 @@ describe("usePredictionsOrderHooks", () => {
 
   it("places the order, then shows the reported outcome once the loading has been on screen long enough", () => {
     const { order, player, orderId } = startShownOrder();
-    expect(order.result.current).toMatchObject({ isOpen: true, shownOrder: { outcome: null } });
+    expect(order.result.current).toMatchObject({
+      isOpen: true,
+      shownOrder: { context: ORDER_DETAILS, outcome: null },
+    });
 
     act(() => {
       void player.result.current["order.report"](orderId, {
@@ -72,7 +76,7 @@ describe("usePredictionsOrderHooks", () => {
     const { player, orderId } = startShownOrder();
     const report = player.result.current["order.report"](orderId, { outcome: "not-filled" });
 
-    act(() => player.result.current.startOrder());
+    act(() => player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display));
 
     await expect(report).resolves.toBe("close");
   });
@@ -85,7 +89,7 @@ describe("usePredictionsOrderHooks", () => {
     });
     let newerId = "";
     act(() => {
-      newerId = player.result.current.startOrder();
+      newerId = player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display);
       markPredictionsOrderPresented();
     });
 
