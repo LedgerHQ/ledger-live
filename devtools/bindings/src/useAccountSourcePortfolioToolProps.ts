@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import type { Store, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -75,6 +76,7 @@ export function useAccountSourcePortfolioToolProps({
   recorder,
   client,
 }: AccountSourcePortfolioToolOptions): PortfolioSourceToolProps {
+  const redaction = useAccountRedaction();
   const store = useStore<State>();
   const dispatch = useDispatch<ThunkDispatch<State, unknown, UnknownAction>>();
   const handle = useMemo(() => {
@@ -103,7 +105,7 @@ export function useAccountSourcePortfolioToolProps({
     return entries.map(({ accountUUID, descriptor }) => {
       const base = {
         accountUUID,
-        label: labelOf(descriptor),
+        label: labelOf(redaction.descriptor(descriptor)),
         outcome: snapshot.outcomes[accountUUID],
       };
       const ref = descriptor.purpose === "account" ? portfolioAccountOf(descriptor) : undefined;
@@ -117,7 +119,7 @@ export function useAccountSourcePortfolioToolProps({
         serverStatus: statuses.get(ref.serverAccountId),
       };
     });
-  }, [entries, portfolio, snapshot.outcomes]);
+  }, [entries, portfolio, snapshot.outcomes, redaction]);
 
   const extraRegistrations = useMemo(
     () =>

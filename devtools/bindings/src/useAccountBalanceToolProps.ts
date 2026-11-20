@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -20,6 +21,7 @@ type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 export function useAccountBalanceToolProps(): AccountBalanceToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const balances = useSelector((state: State) => state.accountBalances);
@@ -79,7 +81,7 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
       const status = statuses?.[accountUUID]?.[accountDataQueryKey(undefined)];
       return {
         accountUUID,
-        descriptor: JSON.stringify(descriptor, null, 2),
+        descriptor: JSON.stringify(redaction.descriptor(descriptor), null, 2),
         reading: status?.request !== undefined,
         error: status?.error && `${status.error.name}: ${status.error.message}`,
         sourceId: status?.sourceId,
@@ -87,7 +89,7 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
         rows: balances[accountUUID]?.map(toRow),
       };
     });
-  }, [entries, statuses, balances, unitOf]);
+  }, [entries, statuses, balances, unitOf, redaction]);
 
   return { accounts, onRead, onReadAll, onReadOperations };
 }

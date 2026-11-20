@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
@@ -14,19 +15,20 @@ type State = { accountEntries: AccountsState };
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 export function useAccountDescriptorToolProps(): AccountDescriptorToolProps {
+  const redaction = useAccountRedaction();
   const entries = useSelector(selectAccountEntries);
   const accounts = useMemo(
     () =>
       entries.map(({ accountUUID, legacyId, descriptor }) => ({
         accountUUID,
-        legacyId,
+        legacyId: legacyId && redaction.accountId(legacyId),
         purpose: descriptor.purpose,
         type: descriptor.type,
         network: descriptor.network,
         path: descriptor.path,
-        key: descriptor.key,
+        key: redaction.descriptor(descriptor).key,
       })),
-    [entries],
+    [entries, redaction],
   );
   return { accounts };
 }

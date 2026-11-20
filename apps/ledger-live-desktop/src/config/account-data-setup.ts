@@ -113,3 +113,12 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
 /** Account discovery on the Device Intent session, with the legacy scan rules: UI reaches account data only through this file. */
 export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
 export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";
+export {
+  completeOnSession,
+  needsCompletion,
+} from "@ledgerhq/live-common/account-data/discovery/completeOnSession";
+export { heldAccountMatcher } from "@ledgerhq/live-common/account-data/discovery/heldAccounts";
+export {
+  placeholderAccount,
+  placeholderUnsupportedReason,
+} from "@ledgerhq/live-common/account-data/full-sync/placeholderAccount";

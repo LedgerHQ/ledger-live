@@ -20,8 +20,15 @@ import {
   runAccountDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
+import {
+  decodeAccountId,
+  encodeAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import {
+  getAccountDescriptorType,
+  getAccountKeyCodec,
+  loadAddressFromKeyForFamily,
+} from "../coin-modules/registry";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */
 const PUBLIC_KEY_FAMILIES = new Set([
@@ -47,6 +54,8 @@ export type LegacyAccountFields = {
   index: number;
   xpub?: string;
   freshAddress?: string;
+  /** The last field of the legacy id, for a family whose descriptor key holds it. */
+  customData?: string;
   /** The key of a family keyed on its public key, in place of `freshAddress`: see `addressFromKey`. */
   publicKey?: string;
 };
@@ -99,6 +108,8 @@ export class UnsupportedAddressFromKeyError extends Error {
 /** The address an account is read at: its key, or the address its family computes from its public key. */
 export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
   const family = getCryptoCurrencyById(currencyId).family;
+  const codec = getAccountKeyCodec(family);
+  if (codec) return AddressSchema.parse(codec.split(key).freshAddress);
   if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
   assertPublicKey(key, currencyId);
   const derive = await loadAddressFromKeyForFamily(family);
@@ -151,6 +162,18 @@ function matchSchemeToPath(
   return accountIndex;
 }
 
+function addressKeyOf(account: LegacyAccountIdentity, family: string, currencyId: string): string {
+  const codec = getAccountKeyCodec(family);
+  if (codec) {
+    return codec.compose({
+      freshAddress: account.freshAddress,
+      customData: decodeAccountId(account.id).customData,
+    });
+  }
+  if (PUBLIC_KEY_FAMILIES.has(family)) return publicKeyOf(account, family, currencyId);
+  return account.freshAddress;
+}
+
 export function fromLegacyAccount(account: LegacyAccountIdentity): AccountDescriptor {
   return AccountDescriptorSchema.parse(buildDescriptor(account));
 }
@@ -182,9 +205,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
     version: "2",
     type: "address",
     network,
-    key: PUBLIC_KEY_FAMILIES.has(family)
-      ? publicKeyOf(account, family, currency.id)
-      : account.freshAddress,
+    key: addressKeyOf(account, family, currency.id),
     path: toDescriptorPath(
       runDerivationScheme(scheme, { coinType: currency.coinType }, { account: account.index }),
     ),
@@ -203,6 +224,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
       `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,
     );
   }
+  const codec = getAccountKeyCodec(family);
   const keyedOnPublicKey = PUBLIC_KEY_FAMILIES.has(family);
   if (keyedOnPublicKey) assertPublicKey(descriptor.key, currencyId);
   const path = fromDescriptorPath(descriptor.path);
@@ -214,6 +236,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
     if (index < getDerivationModeStartsAt(derivationMode)) continue;
     if (descriptor.type === "utxo")
       return { currencyId, derivationMode, index, xpub: descriptor.key };
+    if (codec) return { currencyId, derivationMode, index, ...codec.split(descriptor.key) };
     return keyedOnPublicKey
       ? { currencyId, derivationMode, index, publicKey: descriptor.key }
       : { currencyId, derivationMode, index, freshAddress: descriptor.key };
@@ -221,4 +244,22 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   throw new UnsupportedDescriptorPathError(
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,
   );
+}
+
+const REDACTED = "[redacted]";
+
+/** The descriptor with the custom data of its key hidden (Aleo: the view key), for display only. */
+export function redactDescriptorKey(descriptor: AccountDescriptor): AccountDescriptor {
+  const { family } = getCryptoCurrencyById(currencyIdFromNetwork(descriptor.network));
+  const codec = getAccountKeyCodec(family);
+  if (!codec) return descriptor;
+  const { freshAddress, customData } = codec.split(descriptor.key);
+  if (customData === undefined) return descriptor;
+  return { ...descriptor, key: codec.compose({ freshAddress, customData: REDACTED }) };
+}
+
+/** The legacy account id with its custom data hidden (Aleo: the view key), for display only. */
+export function redactAccountId(accountId: string): string {
+  const decoded = decodeAccountId(accountId);
+  return decoded.customData ? encodeAccountId({ ...decoded, customData: REDACTED }) : accountId;
 }
