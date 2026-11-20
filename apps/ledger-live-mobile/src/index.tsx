@@ -104,6 +104,7 @@ import {
   initializeDatadogProvider,
   stopDatadogRecording,
 } from "./datadog";
+import { customResourceEventMapper } from "./datadogResources";
 import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
@@ -196,6 +197,7 @@ function App() {
         trackResources: datadogFF?.params?.trackResources ?? false,
         errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
         actionEventMapper: customActionEventMapper,
+        resourceEventMapper: customResourceEventMapper,
         firstPartyHosts: [
           {
             match: FIRST_PARTY_MAIN_HOST_DOMAIN,

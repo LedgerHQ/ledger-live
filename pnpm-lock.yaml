@@ -1388,6 +1388,9 @@ importers:
       '@features/platform-market-countervalues':
         specifier: workspace:^
         version: link:../../features/platform/market-countervalues
+      '@features/platform-observability-redaction':
+        specifier: workspace:^
+        version: link:../../features/platform/observability-redaction
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -2356,6 +2359,9 @@ importers:
       '@features/platform-market-countervalues':
         specifier: workspace:^
         version: link:../../features/platform/market-countervalues
+      '@features/platform-observability-redaction':
+        specifier: workspace:^
+        version: link:../../features/platform/observability-redaction
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -15497,6 +15503,39 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/observability-redaction:
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.93.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
