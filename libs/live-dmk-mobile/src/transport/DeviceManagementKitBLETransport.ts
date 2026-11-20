@@ -115,6 +115,52 @@ export class DeviceManagementKitBLETransport extends Transport {
     );
   }
 
+  /**
+   * Reuses the session a DMK flow opened. Without it, the scan below finds the connected device
+   * and opens a second session on the same link. A session matches by id, which does not change
+   * during a session. The published session also matches by name, as before: an OS update changes
+   * the BLE address. `exchange` reads `activeDeviceSessionSubject`, so a reused session that is
+   * not published yet is published there.
+   */
+  private static reuseConnectedSession(
+    deviceId: string,
+    deviceName: string | undefined,
+  ): DeviceManagementKitBLETransport | null {
+    const dmk = getDeviceManagementKit();
+    const activeDeviceSession = activeDeviceSessionSubject.value;
+    const connectedBleDevices = dmk
+      .listConnectedDevices()
+      .filter(device => device.transport === rnBleTransportIdentifier);
+    const matchingDevice =
+      connectedBleDevices.find(device => device.id === deviceId) ??
+      connectedBleDevices.find(
+        device =>
+          device.sessionId === activeDeviceSession?.sessionId &&
+          matchDeviceByName({
+            oldDevice: { deviceName },
+            newDevice: { deviceName: device.name },
+          }),
+      );
+
+    if (!matchingDevice) {
+      tracer.trace("[DMKTransport] [open] no connected device to reuse", {
+        data: { deviceId, connectedDeviceIds: connectedBleDevices.map(device => device.id) },
+      });
+      return null;
+    }
+
+    const { sessionId } = matchingDevice;
+    tracer.trace("[DMKTransport] [open] reusing the session of a connected device", {
+      data: { deviceId, connectedDeviceId: matchingDevice.id, sessionId },
+    });
+    if (activeDeviceSession?.sessionId === sessionId) {
+      return activeDeviceSession.transport;
+    }
+    const transport = new DeviceManagementKitBLETransport(dmk, sessionId);
+    activeDeviceSessionSubject.next({ sessionId, transport });
+    return transport;
+  }
+
   static async open(
     deviceOrId: DiscoveredDevice | string,
     _timeoutMs?: number,
@@ -128,63 +174,15 @@ export class DeviceManagementKitBLETransport extends Transport {
       { options },
     );
 
-    if (activeSessionId) {
-      tracer.trace(`[DMKTransport] [open] checking existing session ${activeSessionId}`);
-
-      const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
-        getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
-      ).catch(e => {
-        tracer.trace("[open] error getting device session state", { error: e });
-        return null;
-      });
-
-      const connectedDevice = getDeviceManagementKit().getConnectedDevice({
-        sessionId: activeSessionId,
-      });
-
-      const isSameDeviceId = connectedDevice.id === deviceOrId;
-      const isSameDeviceNameButDifferentId =
-        !isSameDeviceId &&
-        matchDeviceByName({
-          oldDevice: { deviceName: options?.matchDeviceByName },
-          newDevice: { deviceName: connectedDevice.name },
-        });
-
-      if (
-        deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
-        connectedDevice.type === "BLE" &&
-        activeDeviceSessionSubject.value?.transport &&
-        (isSameDeviceId || isSameDeviceNameButDifferentId)
-      ) {
-        tracer.trace(
-          "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
-          {
-            data: {
-              isSameDeviceId,
-              isSameDeviceNameButDifferentId,
-              status: deviceSessionState?.deviceStatus,
-              transport: activeDeviceSessionSubject.value?.transport,
-              oldDevice: { deviceName: options?.matchDeviceByName },
-              newDevice: { deviceName: connectedDevice.name },
-            },
-          },
-        );
-        return activeDeviceSessionSubject.value.transport;
-      } else {
-        tracer.trace("[DMKTransport] [open] not reusing existing session", {
-          data: {
-            isSameDeviceId,
-            isSameDeviceNameButDifferentId,
-            status: deviceSessionState?.deviceStatus,
-            transport: activeDeviceSessionSubject.value?.transport,
-            oldDevice: { deviceName: options?.matchDeviceByName },
-            newDevice: { deviceName: connectedDevice.name },
-          },
-        });
-      }
-    }
-
     if (typeof deviceOrId === "string") {
+      const connectedTransport = DeviceManagementKitBLETransport.reuseConnectedSession(
+        deviceOrId,
+        options?.matchDeviceByName,
+      );
+      if (connectedTransport) {
+        return connectedTransport;
+      }
+
       const devicesObs = getDeviceManagementKit().listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
       });
