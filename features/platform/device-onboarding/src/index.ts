@@ -1,6 +1,6 @@
 export * from "./types";
 export * from "./machine";
-export * from "./rules";
+export * from "./firmwareRules";
 export * from "./retry";
 export * from "./actors/session";
 export * from "./actors/readDeviceState";

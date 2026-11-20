@@ -83,8 +83,14 @@ export default memo(function () {
   const dispatch = useDispatch();
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
-  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
-    route.params;
+  const {
+    deviceModelId,
+    showSeedWarning,
+    isProtectFlow,
+    fromAccessExistingWallet,
+    resetPostOnboardingRedirect,
+    isRestoreSeed,
+  } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
@@ -137,7 +143,7 @@ export default memo(function () {
     }
 
     dispatch(setHasBeenUpsoldProtect(false));
-    if (!fromAccessExistingWallet) {
+    if (!fromAccessExistingWallet || resetPostOnboardingRedirect) {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
@@ -149,6 +155,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
+    resetPostOnboardingRedirect,
     notifyFlowCompleted,
     isFundWalletNewSetup,
     seedConfiguration,
