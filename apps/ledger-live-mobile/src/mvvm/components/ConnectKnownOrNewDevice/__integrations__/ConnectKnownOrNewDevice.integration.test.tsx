@@ -204,6 +204,40 @@ describe("ConnectKnownOrNewDevice", () => {
     expect(useCaseInput().onAddNewDevice).toBeUndefined();
   });
 
+  it("GIVEN a list footer, WHEN the list is empty and then has a device, THEN it should show the footer only with the device", () => {
+    // GIVEN
+    render(
+      <ConnectKnownOrNewDevice
+        onConnected={jest.fn()}
+        onAddModeChange={jest.fn()}
+        isPaused={false}
+        listFooter={<Text>List footer</Text>}
+      />,
+    );
+
+    // WHEN
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
+      devices: [],
+      addNewDevice: jest.fn(),
+    });
+
+    // THEN
+    expect(screen.queryByText("List footer")).toBeNull();
+
+    // WHEN
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
+      devices: [{ ...nanoXRow, connect: jest.fn() }],
+      addNewDevice: jest.fn(),
+    });
+
+    // THEN
+    expect(screen.getByText("List footer")).toBeVisible();
+  });
+
   it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {
     // GIVEN
     const retry = jest.fn();

@@ -1,4 +1,5 @@
 import { useCallback, useLayoutEffect, useState } from "react";
+import { Linking } from "react-native";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { CompositeNavigationProp, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -12,7 +13,8 @@ import { MANAGER_TABS } from "~/const/manager";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
-import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
 import type { MyWalletNavigatorStackParamList } from "../../types";
 import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
 
@@ -44,7 +46,10 @@ export function useMyWalletDeviceListViewModel({
   const { top: topInset } = useSafeAreaInsets();
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const onAddDevice = useUnifiedAddDevice();
-  const onExploreDevices = useBuyDeviceAction();
+  const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
+  const onExploreDevices = useCallback(() => {
+    Linking.openURL(exploreDevicesUrl);
+  }, [exploreDevicesUrl]);
 
   // A redirect, for example from the "not enough space" error of a flow, opens My Ledger at once.
   const redirectedDevice = params?.device;

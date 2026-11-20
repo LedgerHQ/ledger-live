@@ -17,7 +17,7 @@ export type MyWalletDeviceListViewProps = {
   onDeviceNotFound: () => void;
   /** Set when onboarding owns the Add entry point: Add opens Get Started instead of the Add mode. */
   onAddDevice?: (hasDevices: boolean) => void;
-  /** Opens the Ledger shop, in the app or on ledger.com. */
+  /** Opens the comparison page of the Ledger shop in the browser. */
   onExploreDevices: () => void;
   /** The device under the lock check, before the device action. */
   deviceToCheck: Device | null;

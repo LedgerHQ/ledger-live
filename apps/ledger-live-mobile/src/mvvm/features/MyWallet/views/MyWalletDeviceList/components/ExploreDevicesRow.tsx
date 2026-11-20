@@ -8,7 +8,7 @@ import {
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import allDevicesImage from "@assets/images/devices/AllDevices.webp";
 import { useTranslation } from "~/context/Locale";
 
@@ -31,7 +31,7 @@ export function ExploreDevicesRow({ onPress }: Readonly<{ onPress: () => void }>
           </ListItemContent>
         </ListItemLeading>
         <ListItemTrailing>
-          <ChevronRight size={24} color="muted" />
+          <ExternalLink size={24} color="muted" />
         </ListItemTrailing>
       </ListItem>
     </Box>

@@ -7,6 +7,7 @@ import {
   connectKnownOrNewDevice,
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
+  DeviceListItemStatuses,
   rnBleTransportIdentifier,
   useDeviceManagementKit,
   type ConnectKnownOrNewDeviceUIState,
@@ -187,18 +188,47 @@ describe("MyWalletDeviceList", () => {
     expect(resume).toHaveBeenCalled();
   });
 
-  it("GIVEN the device list, WHEN Explore all Ledger devices is pressed, THEN it should open the Ledger shop", async () => {
+  it("GIVEN a device in the list, WHEN Explore all Ledger devices is pressed, THEN it should open the device comparison page of the Ledger shop", async () => {
     // GIVEN
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
     const { user } = renderMyWallet();
-    emit(discovering);
+    emit({
+      ...discovering,
+      devices: [
+        {
+          key: "known:nano-x",
+          device: {
+            id: "nano-x-id",
+            name: "My Nano X",
+            deviceModelId: DeviceModelId.nanoX,
+            transport: rnBleTransportIdentifier,
+          },
+          connectivity: "BLE",
+          status: DeviceListItemStatuses.Available,
+          connect: jest.fn(),
+        },
+      ],
+    });
 
     // WHEN
     await user.press(screen.getByText("Explore all Ledger devices"));
 
     // THEN
-    expect(openURL).toHaveBeenCalledTimes(1);
+    expect(openURL).toHaveBeenCalledWith(
+      expect.stringContaining("shop.ledger.com/pages/hardware-wallets-comparison"),
+    );
     openURL.mockRestore();
+  });
+
+  it("GIVEN no device in the list, WHEN the list shows, THEN it should hide Explore all Ledger devices", () => {
+    // GIVEN
+    renderMyWallet();
+
+    // WHEN
+    emit(discovering);
+
+    // THEN
+    expect(screen.queryByText("Explore all Ledger devices")).toBeNull();
   });
 
   it("GIVEN the device list, WHEN the Add mode starts and then ends, THEN it should hide the other sections, then show them again", () => {

@@ -40,8 +40,8 @@ export function MyWalletDeviceListView({
             isPaused={isPaused}
             onDeviceNotFound={onDeviceNotFound}
             onAddDevice={onAddDevice}
+            listFooter={<ExploreDevicesRow onPress={onExploreDevices} />}
           >
-            <ExploreDevicesRow onPress={onExploreDevices} />
             <LNUpsellBanner location="profile" />
           </ConnectKnownOrNewDevice>
         </View>
