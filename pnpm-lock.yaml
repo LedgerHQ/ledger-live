@@ -401,9 +401,6 @@ catalogs:
     '@polkadot/api-augment':
       specifier: 16.5.6
       version: 16.5.6
-    '@polkadot/api-derive':
-      specifier: 16.5.6
-      version: 16.5.6
     '@polkadot/rpc-provider':
       specifier: 16.5.6
       version: 16.5.6
@@ -15917,15 +15914,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.2.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.4.1(axios@1.21.1(debug@4.4.3))
@@ -16008,9 +15999,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.2.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.4.1(axios@1.21.1(debug@4.4.3))
@@ -16096,9 +16084,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -16178,9 +16163,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16223,9 +16205,6 @@ importers:
       bitcoinjs-lib:
         specifier: 'catalog:'
         version: 7.0.5(@typescript/typescript6@6.0.2)
-      bs58:
-        specifier: 'catalog:'
-        version: 6.0.0
       cashaddrjs:
         specifier: ^0.4.4
         version: 0.4.4
@@ -16245,9 +16224,6 @@ importers:
       '@bitcoinerlab/secp256k1':
         specifier: 'catalog:'
         version: 2.0.0
-      '@domain/entity-currency-crypto':
-        specifier: workspace:^
-        version: link:../../../domain/entity/currency-crypto
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -16290,21 +16266,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      bip32:
-        specifier: 4.0.0
-        version: 4.0.0
-      bip39:
-        specifier: 'catalog:'
-        version: 3.1.2
-      ecpair:
-        specifier: 3.0.2
-        version: 3.0.2(@typescript/typescript6@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
-      jest-file-snapshot:
-        specifier: 'catalog:'
-        version: 0.7.0
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -16329,9 +16293,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/hw-app-canton':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-canton
@@ -16384,12 +16345,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
-      expect:
-        specifier: 30.5.2
-        version: 30.5.2
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -16402,9 +16357,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
-      protobufjs-cli:
-        specifier: 2.4.1
-        version: 2.4.1(protobufjs@8.6.6)
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -16460,9 +16412,6 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
-      '@domain/entity-currency-crypto':
-        specifier: workspace:^
-        version: link:../../../domain/entity/currency-crypto
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -16608,9 +16557,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
@@ -16678,12 +16624,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
-      expect:
-        specifier: 30.5.2
-        version: 30.5.2
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -16778,12 +16718,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
-      expect:
-        specifier: 30.5.2
-        version: 30.5.2
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -16911,9 +16845,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -17011,9 +16942,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -17045,9 +16973,6 @@ importers:
         specifier: ^2.27.0
         version: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.6.7)
     devDependencies:
-      '@domain/entity-currency-crypto':
-        specifier: workspace:^
-        version: link:../../../domain/entity/currency-crypto
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../../features/platform/currencies
@@ -17105,9 +17030,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.2.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.4.1(axios@1.21.1(debug@4.4.3))
@@ -17126,9 +17048,6 @@ importers:
       icon-sdk-js:
         specifier: 1.5.2
         version: 1.5.2
-      prando:
-        specifier: ^6.0.1
-        version: 6.0.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -17242,9 +17161,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      axios:
-        specifier: 'catalog:'
-        version: 1.21.1(debug@4.4.3)
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -17272,9 +17188,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -17299,18 +17212,6 @@ importers:
       bip32:
         specifier: 4.0.0
         version: 4.0.0
-      bip32-path:
-        specifier: ^0.4.2
-        version: 0.4.2
-      eip55:
-        specifier: ^2.1.0
-        version: 2.1.1
-      lru-cache:
-        specifier: ^7.14.1
-        version: 7.18.3
-      prando:
-        specifier: ^6.0.1
-        version: 6.0.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -17342,9 +17243,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      cross-env:
-        specifier: 'catalog:'
-        version: 10.1.0
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -17363,9 +17261,6 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
-      timemachine:
-        specifier: 0.3.2
-        version: 0.3.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -17460,9 +17355,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -17508,13 +17400,7 @@ importers:
         version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
-        version: 1.21.1(debug@4.4.3)
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
-      expect:
-        specifier: 30.5.2
-        version: 30.5.2
+        version: 1.20.0(debug@4.4.3)
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -17524,9 +17410,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -17536,9 +17419,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -17566,9 +17446,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 30.5.2
-        version: 30.5.2
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -17727,9 +17604,6 @@ importers:
       '@polkadot/api-augment':
         specifier: 'catalog:'
         version: 16.5.6(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@polkadot/api-derive':
-        specifier: 'catalog:'
-        version: 16.5.6(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@polkadot/types':
         specifier: 'catalog:'
         version: 16.5.6
@@ -17758,9 +17632,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/hw-app-polkadot':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-polkadot
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -17969,12 +17840,6 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      ripple-address-codec:
-        specifier: ^5.0.0
-        version: 5.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      ripple-binary-codec:
-        specifier: ^1.3.0
-        version: 1.11.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -18009,9 +17874,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -18027,9 +17889,6 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
-      ripple-keypairs:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -18142,9 +18001,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.2.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.4.1(axios@1.21.1(debug@4.4.3))
@@ -18306,9 +18162,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.1.0
-      '@ledgerhq/devices':
-        specifier: 8.19.0
-        version: 8.19.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -18364,9 +18217,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
