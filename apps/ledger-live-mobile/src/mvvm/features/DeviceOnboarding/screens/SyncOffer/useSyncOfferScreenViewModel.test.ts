@@ -118,6 +118,18 @@ describe("useSyncOfferScreenViewModel", () => {
     ]);
   });
 
+  it("should send close only when the user closes the skip drawer, not when code closes it", () => {
+    const { result } = renderScreen();
+    act(() => offerOf(result.current).onOpenSkip());
+    jest.mocked(track).mockClear();
+
+    act(() => offerOf(result.current).skipDrawer.onClose());
+    expect(clicks()).toEqual([]);
+
+    act(() => offerOf(result.current).skipDrawer.onClosePressed());
+    expect(clicks()).toEqual([expect.objectContaining({ button: "close", ...shared })]);
+  });
+
   it("should track close while the first sync runs", () => {
     const { result, onQuit } = renderScreen(DmkDeviceModelId.STAX, "synchronizing");
 

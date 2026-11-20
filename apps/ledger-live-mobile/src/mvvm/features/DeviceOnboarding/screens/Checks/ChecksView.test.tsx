@@ -934,7 +934,41 @@ describe("ChecksView", () => {
       expect(track).toHaveBeenCalledWith("button_clicked", {
         ...seeded,
         button: "Contacting support about non genuine device",
+        page: "Genuine Check error",
       });
+    });
+
+    it("should name the non genuine drawer as page when the user closes it", async () => {
+      jest.mocked(track).mockClear();
+      const { user, onQuit } = renderChecks("checking", {
+        error: { kind: "notGenuine" },
+        seededDeviceType,
+      });
+
+      await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...seeded,
+        button: "close",
+        page: "Genuine Check error",
+      });
+      expect(onQuit).not.toHaveBeenCalled();
+    });
+
+    it("should send close once when the user closes the unsupported update drawer", async () => {
+      const onUpdateSheetClosed = jest.fn();
+      const { user } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+        onUpdateSheetClosed,
+        seededDeviceType,
+      });
+
+      await user.press(screen.getByText("Update now"));
+      await user.press(screen.getByRole("button", { name: "Close" }));
+
+      expect(onUpdateSheetClosed).toHaveBeenCalledTimes(1);
     });
 
     it("should send the previous page as source with the drawer clicks", async () => {

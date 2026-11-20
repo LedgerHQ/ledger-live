@@ -17,6 +17,7 @@ type SkipDrawerProps = Readonly<{
   trackingProps?: TrackingProps;
   isOpen: boolean;
   onClose: () => void;
+  onClosePressed: () => void;
   onSkip: () => void;
   onActivate: () => void;
 }>;
@@ -144,6 +145,7 @@ export function useSyncOfferScreenViewModel({
       trackingProps,
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
+      onClosePressed: () => trackClick(seededButtons.close),
       onSkip: () => {
         trackClick(seededButtons.yesSkip);
         if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);

@@ -229,6 +229,7 @@ function SyncOfferPrompt({
           <SkipLedgerSyncDrawer
             isOpen={skipDrawer.isOpen}
             handleClose={skipDrawer.onClose}
+            onClosePressed={skipDrawer.onClosePressed}
             openSync={skipDrawer.onActivate}
             skipSync={skipDrawer.onSkip}
             trackingProps={skipDrawer.trackingProps}

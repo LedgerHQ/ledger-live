@@ -1019,7 +1019,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     active: deviceOffDuringChecks || waitedLongForDeviceAfterUpdate || reconnectFailed,
     device,
     quitConfirmationOpen: quitConfirmation?.isOpen === true,
-    onQuit: waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
+    onQuit: screen.withCloseClick(
+      waitingForUpdatedDevice ? leaveFirmwareReconnect : leaveFromHeader,
+    ),
     onRetry: reconnectFailed ? retryAfterFailure : null,
   });
 }

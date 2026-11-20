@@ -39,6 +39,7 @@ type ChecksInfoSheetProps = DrawerTracking &
   Readonly<{
     isOpen: boolean;
     onDismiss?: () => void;
+    onHeaderClosePressed?: () => void;
     showCloseButton?: boolean;
     testID: string;
     preset: "info" | "error";
@@ -81,6 +82,7 @@ function ChecksSheet({
 function ChecksInfoSheet({
   isOpen,
   onDismiss,
+  onHeaderClosePressed,
   showCloseButton,
   testID,
   trackName,
@@ -96,6 +98,7 @@ function ChecksInfoSheet({
     <ChecksSheet
       isOpen={isOpen}
       onDismiss={onDismiss}
+      onHeaderClosePressed={onHeaderClosePressed}
       showCloseButton={showCloseButton}
       testID={testID}
     >
@@ -240,11 +243,13 @@ export function ChecksDrawers({
           isUsbRequired={unsupportedUpdate.isUsbRequired}
           productName={unsupportedUpdate.productName}
           onClose={unsupportedUpdate.onClose}
+          onClosePressed={unsupportedUpdate.onClosePressed}
         />
       ) : null}
       <ChecksInfoSheet
         isOpen={notGenuineDrawer.isOpen}
         onDismiss={notGenuineDrawer.onClose}
+        onHeaderClosePressed={notGenuineDrawer.onClosePressed}
         showCloseButton
         testID={testIds.notGenuineSheet}
         {...notGenuineDrawer.tracking}

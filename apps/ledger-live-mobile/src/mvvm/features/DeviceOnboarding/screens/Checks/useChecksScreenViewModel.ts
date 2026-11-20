@@ -140,7 +140,7 @@ export function useChecksScreenViewModel({
     onErrorCancel: quit,
     onAcceptUpdate,
     onAllowDismiss: closeAndQuit,
-    onNotGenuineClose: closeAndQuit,
+    onNotGenuineClose: quit,
     onUpdatePressed,
     onUpdateSheetClosed,
     seededDeviceType,

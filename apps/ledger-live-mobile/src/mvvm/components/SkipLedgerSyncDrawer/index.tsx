@@ -19,6 +19,8 @@ const CONTENT_BOTTOM_SPACING = 24;
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  /** The user closed it (header or backdrop), not code. */
+  onClosePressed?: () => void;
   openSync: () => void;
   skipSync: () => void;
   seedConfiguration?: React.RefObject<SeedOriginType | undefined>;
@@ -28,6 +30,7 @@ type Props = {
 function SkipLedgerSyncDrawer({
   isOpen,
   handleClose,
+  onClosePressed,
   openSync,
   skipSync,
   seedConfiguration,
@@ -37,6 +40,8 @@ function SkipLedgerSyncDrawer({
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={handleClose}
+      onHeaderClosePressed={onClosePressed}
+      onBackdropPress={onClosePressed}
       enableDynamicSizing
       contentHasBottomSpace
       testID="sync-onboarding-drawer-skip"
@@ -56,7 +61,7 @@ function SkipLedgerSyncDrawerContent({
   skipSync,
   seedConfiguration,
   trackingProps,
-}: Readonly<Omit<Props, "isOpen" | "handleClose">>) {
+}: Readonly<Omit<Props, "isOpen" | "handleClose" | "onClosePressed">>) {
   const { t } = useTranslation();
   const bottomInset = useBottomSheetBottomInset();
 

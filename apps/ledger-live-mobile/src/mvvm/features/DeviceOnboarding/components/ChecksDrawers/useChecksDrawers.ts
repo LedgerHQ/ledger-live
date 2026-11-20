@@ -11,6 +11,7 @@ import {
   seededPages,
   seededProps,
   type DeviceModelId,
+  type SeededPage,
   type TrackingProps,
 } from "@features/platform-device-onboarding-analytics";
 import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
@@ -43,6 +44,8 @@ export type UnsupportedUpdateDrawerProps = Readonly<{
   isOpen: boolean;
   mounted: boolean;
   onClose: () => void;
+  /** The user closed it (header, backdrop or Close button), not code. */
+  onClosePressed?: () => void;
   isUsbRequired: boolean;
   productName: string;
 }>;
@@ -72,6 +75,8 @@ export type NotGenuineDrawerProps = Readonly<{
   isOpen: boolean;
   productName: string;
   onClose: () => void;
+  /** The user pressed the header close, not code. */
+  onClosePressed: () => void;
   onContactSupport: () => void;
 }>;
 
@@ -105,6 +110,8 @@ type FirmwareUpdateRequestInput = Readonly<{
   onAcceptUpdate: () => void;
   /** Runs on every update tap, before the eligibility check. */
   onUpdatePressed?: () => void;
+  /** Runs when the user closes the unsupported-update sheet, not when code hides it. */
+  onUnsupportedClosePressed?: () => void;
   suspendSheets?: boolean;
 }>;
 
@@ -131,11 +138,12 @@ function trackRecoverableButton(
     track("button_clicked", { button, page });
     return;
   }
-  track("button_clicked", {
-    ...withSource(seededProps(seededDeviceType)),
-    button,
-    page: seededErrorPage(kind),
-  });
+  trackSeededDrawerClick(button, seededErrorPage(kind), seededDeviceType);
+}
+
+/** A drawer does not become the current page, so its clicks name it as `page`. */
+function trackSeededDrawerClick(button: string, page: SeededPage, deviceType: DeviceModelId) {
+  track("button_clicked", { ...withSource(seededProps(deviceType)), button, page });
 }
 
 function withSource(props: TrackingProps): TrackingProps {
@@ -242,6 +250,7 @@ export function useFirmwareUpdateRequest({
   update,
   onAcceptUpdate,
   onUpdatePressed,
+  onUnsupportedClosePressed,
   suspendSheets = false,
 }: FirmwareUpdateRequestInput): Readonly<{
   requestUpdate: () => void;
@@ -267,6 +276,7 @@ export function useFirmwareUpdateRequest({
       onClose: () => {
         if (!suspendSheets) setUnsupportedFor(null);
       },
+      onClosePressed: onUnsupportedClosePressed,
     },
   };
 }
@@ -327,12 +337,18 @@ export function useChecksErrorDrawers({
     openSupport();
   }, [errorDrawerKind, openSupport, seededDeviceType]);
   const onContactNotGenuineSupport = useCallback(() => {
-    track("button_clicked", {
-      ...(seededDeviceType ? withSource(seededProps(seededDeviceType)) : {}),
-      button: "Contacting support about non genuine device",
-    });
+    const button = "Contacting support about non genuine device";
+    if (seededDeviceType) {
+      trackSeededDrawerClick(button, seededPages.genuineCheckError, seededDeviceType);
+    } else {
+      track("button_clicked", { button });
+    }
     openUrl(contactSupportWebviewUrl(locale));
   }, [locale, seededDeviceType]);
+  const onNotGenuineClosePressed = useCallback(() => {
+    if (!seededDeviceType) return;
+    trackSeededDrawerClick(seededButtons.close, seededPages.genuineCheckError, seededDeviceType);
+  }, [seededDeviceType]);
   const onGoToSettings = useCallback(() => {
     trackRecoverableButton(
       "Go to settings",
@@ -374,6 +390,7 @@ export function useChecksErrorDrawers({
       tracking: notGenuineDrawerTracking(seededDeviceType),
       productName,
       onClose: () => dismissIfOpen(suspendSheets, error?.kind === "notGenuine", onNotGenuineClose),
+      onClosePressed: onNotGenuineClosePressed,
       onContactSupport: onContactNotGenuineSupport,
     },
   };
@@ -398,6 +415,7 @@ export function useChecksDrawers({
     update,
     onAcceptUpdate,
     onUpdatePressed,
+    onUnsupportedClosePressed: onUpdateSheetClosed,
     suspendSheets,
   });
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);

@@ -1050,6 +1050,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     });
 
+    it("should send close from the power on sheet of a seeded device", () => {
+      const { result } = switchOff({ snapshot: activeSnapshot(seededMachineContext()) });
+
+      act(() => checksModel(result.current).powerOnSheet?.onQuit());
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
     it("should ask to confirm from the power on sheet close action when leaving needs confirmation", () => {
       const { result } = switchOff({ context: confirmingContext });
 
