@@ -1,12 +1,16 @@
 import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
+import { aleoAccountKey } from "../families/aleo/accountKey";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
     accountDescriptorType: "address",
+    accountKey: aleoAccountKey,
+    accountCompletion: { kind: "viewKey" },
     loadSetup: () => import("../families/aleo/setup"),
+    loadLocalApi: () => import("../families/aleo/coinModuleApi").then(m => m.createLocalAleoApi),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
@@ -263,6 +267,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "hedera",
     supportedCoins: ["hedera", "hedera_testnet"],
     accountDescriptorType: "address",
+    placeholderUnsupportedReason:
+      "its account keeps the device public key, which the descriptor lacks: add it through its own flow",
     loadSetup: () => import("../families/hedera/setup"),
     loadAccountReceive: () => import("../families/hedera/accountReceive").then(m => m.default),
     loadAssetStatus: () => import("../families/hedera/assetStatus").then(m => m.default),

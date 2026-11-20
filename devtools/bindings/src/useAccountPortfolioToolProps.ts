@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
@@ -43,6 +44,7 @@ const toDisplayable = (error: unknown): unknown =>
 export function useAccountPortfolioToolProps({
   serviceUrl,
 }: Readonly<{ serviceUrl: string }>): AccountPortfolioToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<PortfolioDispatch>();
   const entries = useSelector(selectAccountEntries);
   const [defaultPortfolioId] = useState(sessionPortfolioId);
@@ -56,13 +58,13 @@ export function useAccountPortfolioToolProps({
           ? [
               {
                 accountUUID,
-                label: labelOf(descriptor),
+                label: labelOf(redaction.descriptor(descriptor)),
                 registration: JSON.stringify(registration, null, 2),
               },
             ]
           : [];
       }),
-    [entries],
+    [entries, redaction],
   );
 
   const onRun = useCallback(

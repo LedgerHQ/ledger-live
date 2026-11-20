@@ -14,6 +14,17 @@ export interface DiscoveredRow {
   readonly descriptor: string;
   /** Milliseconds from the start of the scan to the moment the account was found. */
   readonly foundAtMs: number;
+  readonly selected?: boolean;
+  /** The app holds the account already: it cannot be selected. */
+  readonly added?: boolean;
+  /** Why the app cannot add it from here; it cannot be selected. */
+  readonly notAddable?: string;
+  /** Its family needs a device step before it can be added (Aleo: its view key). */
+  readonly needsCompletion?: boolean;
+  /** Where that step stands; the completed key is never shown, it can hold a secret. */
+  readonly completion?: CompletionStatus;
+  /** Why a failed completion failed, e.g. another device or seed than the scan's; never a key. */
+  readonly completionError?: string;
 }
 
 export interface ScanCurrency {
@@ -26,6 +37,17 @@ export interface ScanCounters {
   readonly statusReads: number;
 }
 
+export type CompletionStatus = "waiting" | "awaiting-approval" | "completed" | "refused" | "failed";
+
+export type CompletionRunStatus = "idle" | "completing" | "done" | "stopped" | "error";
+
+export interface SelectionSummary {
+  /** Selected accounts the completion step would prompt. */
+  readonly completable: number;
+  /** Selected accounts ready to add: no step needed, or completed. */
+  readonly addable: number;
+}
+
 export type ScanStatus = "idle" | "scanning" | "done" | "stopped" | "error";
 
 export interface AccountDiscoveryState {
@@ -35,10 +57,20 @@ export interface AccountDiscoveryState {
   readonly counters: ScanCounters;
   readonly elapsedMs?: number;
   readonly error?: string;
+  readonly selection: SelectionSummary;
+  readonly completion: { readonly status: CompletionRunStatus; readonly error?: string };
+  /** What the last Add did. */
+  readonly notice?: string;
+  readonly adding?: boolean;
 }
 
 export interface AccountDiscoveryToolProps {
   readonly currencies: readonly ScanCurrency[];
   readonly state: AccountDiscoveryState;
   readonly onScan: (currencyId: CryptoCurrencyId) => void;
+  readonly onToggle: (key: string) => void;
+  /** Runs the completion step on the selected accounts that need it. */
+  readonly onComplete: () => void;
+  /** Adds the selected accounts that are ready to the app. */
+  readonly onAdd: () => void;
 }

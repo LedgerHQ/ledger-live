@@ -2,7 +2,8 @@ import { AccountDescriptorSchema, toNetworkId } from "@domain/entity-account-des
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { genScannedMockAccount } from "../../bridge/mockHelpers";
-import { placeholderAccount } from "./placeholderAccount";
+import { placeholderAccount, placeholderUnsupportedReason } from "./placeholderAccount";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 
 const mockUsesMockBridges = jest.fn(() => false);
 jest.mock("../../bridge/mockMode", () => ({ usesMockBridges: () => mockUsesMockBridges() }));
@@ -99,5 +100,45 @@ describe("placeholderAccount", () => {
       freshAddress: "0.0.751515",
       freshAddressPath: "44/3030",
     });
+  });
+});
+
+describe("placeholderUnsupportedReason", () => {
+  const publicKey = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
+
+  it("is none for an account it can build", () => {
+    expect(
+      placeholderUnsupportedReason(address("ton", publicKey, "m/44h/607h/0h/0h/0h/0h")),
+    ).toBeUndefined();
+    expect(
+      placeholderUnsupportedReason(
+        address("ethereum", "0x0000000000000000000000000000000000000001", "m/44h/60h/1h/0/0"),
+      ),
+    ).toBeUndefined();
+  });
+
+  it("names a public key its family computes no address from", () => {
+    const concordium = fromLegacyAccount({
+      id: encodeAccountId({
+        type: "js",
+        version: "2",
+        currencyId: "concordium",
+        xpubOrAddress: publicKey,
+        derivationMode: "concordium",
+      }),
+      currency: { id: "concordium" },
+      derivationMode: "concordium",
+      index: 0,
+      freshAddress: publicKey,
+    });
+    expect(placeholderUnsupportedReason(concordium)).toBe(
+      "concordium computes no address from its key: add it through its own flow",
+    );
+  });
+
+  it("names a family whose account keeps a device key the descriptor lacks", () => {
+    expect(placeholderUnsupportedReason(address("hedera", "0.0.751515", "m/44/3030"))).toBe(
+      "hedera: its account keeps the device public key, which the descriptor lacks: add it through its own flow",
+    );
   });
 });

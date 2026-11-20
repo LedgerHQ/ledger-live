@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useMemo, useSyncExternalStore } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
@@ -14,6 +15,7 @@ type State = AccountDataRootState & { accountEntries: AccountsState };
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 export function useAccountDataToolProps(recorder: AccountDataRecorder): AccountDataToolProps {
+  const redaction = useAccountRedaction();
   const events = useSyncExternalStore(recorder.subscribe, recorder.getEvents);
   const accountData = useSelector((state: State) => state.accountData);
   const entries = useSelector(selectAccountEntries);
@@ -22,10 +24,10 @@ export function useAccountDataToolProps(recorder: AccountDataRecorder): AccountD
       new Map<string, string>(
         entries.map(({ accountUUID, descriptor }) => [
           accountUUID,
-          JSON.stringify(descriptor, null, 2),
+          JSON.stringify(redaction.descriptor(descriptor), null, 2),
         ]),
       ),
-    [entries],
+    [entries, redaction],
   );
 
   const statuses = useMemo(

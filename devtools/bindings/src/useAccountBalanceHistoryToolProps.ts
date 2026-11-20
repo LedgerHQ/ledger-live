@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -51,6 +52,7 @@ function countervaluesOf(points: AssetBalanceHistory["points"], ticker: FiatCurr
 
 /** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
 export function useAccountBalanceHistoryToolProps(fiat: string): AccountBalanceHistoryToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<Dispatch>();
   const [range, setRange] = useState<BalanceHistoryRange>(DEFAULT_BALANCE_HISTORY_RANGE);
   const [countervalue, setCountervalue] = useState(false);
@@ -121,7 +123,7 @@ export function useAccountBalanceHistoryToolProps(fiat: string): AccountBalanceH
       const status = statuses?.[accountUUID]?.[accountDataQueryKey(query)];
       return {
         accountUUID,
-        descriptor: JSON.stringify(descriptor, null, 2),
+        descriptor: JSON.stringify(redaction.descriptor(descriptor), null, 2),
         reading: status?.request !== undefined,
         error: status?.error && `${status.error.name}: ${status.error.message}`,
         sourceId: status?.sourceId,
@@ -129,7 +131,7 @@ export function useAccountBalanceHistoryToolProps(fiat: string): AccountBalanceH
         series: histories[accountUUID]?.[range]?.series.map(toSeries),
       };
     });
-  }, [entries, statuses, histories, range, query, ticker, unitOf]);
+  }, [entries, statuses, histories, range, query, ticker, unitOf, redaction]);
 
   return {
     ranges: BALANCE_HISTORY_RANGES,

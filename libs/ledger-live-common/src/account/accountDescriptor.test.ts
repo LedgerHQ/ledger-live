@@ -18,6 +18,8 @@ import {
   MissingAccountXpubError,
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
+  redactAccountId,
+  redactDescriptorKey,
   toLegacyAccount,
   type LegacyAccountIdentity,
 } from "./accountDescriptor";
@@ -481,6 +483,79 @@ describe("fromLegacyAccount of a family identified by its public key", () => {
     ],
   ])("rejects %s", (_, legacy) => {
     expect(() => fromLegacyAccount(legacy)).toThrow(MissingAccountPublicKeyError);
+  });
+});
+
+describe("an Aleo account, keyed on its address and its view key", () => {
+  // The coin-aleo testnet fixture account.
+  const address = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
+  const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
+  const legacy: LegacyAccountIdentity = {
+    id: encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "aleo",
+      xpubOrAddress: address,
+      derivationMode: "aleo",
+      customData: viewKey,
+    }),
+    currency: { id: "aleo" },
+    derivationMode: "aleo",
+    index: 2,
+    freshAddress: address,
+  };
+
+  it("keys the account on the address and the view key of its legacy id", () => {
+    expect(fromLegacyAccount(legacy)).toMatchObject({
+      type: "address",
+      key: `${address}.${viewKey}`,
+      path: "m/44h/683h/2h/0h",
+    });
+  });
+
+  it("gives the view key back as the legacy id's custom data", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy))).toEqual({
+      currencyId: "aleo",
+      derivationMode: "aleo",
+      index: 2,
+      freshAddress: address,
+      customData: viewKey,
+    });
+  });
+
+  it("hides the view key from the descriptor and the legacy id it displays", () => {
+    const shown = redactDescriptorKey(fromLegacyAccount(legacy));
+    expect(shown.key).toBe(`${address}.[redacted]`);
+    expect(redactAccountId(legacy.id)).toBe("js:2:aleo:" + address + ":aleo:[redacted]");
+    expect(JSON.stringify(shown)).not.toContain(viewKey);
+  });
+
+  it("leaves a key or an id with no custom data as it is", () => {
+    const ethereum = fromLegacyAccount({
+      id: encodeAccountId({
+        type: "js",
+        version: "2",
+        currencyId: "ethereum",
+        xpubOrAddress: "0x0000000000000000000000000000000000000001",
+        derivationMode: "",
+      }),
+      currency: { id: "ethereum" },
+      derivationMode: "",
+      index: 0,
+      freshAddress: "0x0000000000000000000000000000000000000001",
+    });
+    expect(redactDescriptorKey(ethereum)).toBe(ethereum);
+    expect(redactAccountId("js:2:ethereum:0x01:")).toBe("js:2:ethereum:0x01:");
+  });
+
+  it("reads the account at its address, with or without the view key", async () => {
+    expect(await addressFromKey("aleo", `${address}.${viewKey}`)).toBe(address);
+    expect(await addressFromKey("aleo", address)).toBe(address);
+  });
+
+  it("gives a discovered account, keyed on its address alone, another AccountUUID", () => {
+    const added = fromLegacyAccount(legacy);
+    expect(computeAccountUUID({ ...added, key: address })).not.toBe(computeAccountUUID(added));
   });
 });
 

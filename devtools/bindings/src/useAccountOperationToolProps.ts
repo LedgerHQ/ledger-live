@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -75,6 +76,7 @@ const formatCountervalues = (countervalues: AccountOperation["countervalues"]) =
 
 /** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
 export function useAccountOperationToolProps(fiat: string): AccountOperationToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const operations = useSelector((state: State) => state.accountOperations);
@@ -153,7 +155,7 @@ export function useAccountOperationToolProps(fiat: string): AccountOperationTool
       const queryKeys = [...new Set(["", ...Object.keys(byQuery), ...Object.keys(windows)])];
       return {
         accountUUID,
-        descriptor: JSON.stringify(descriptor, null, 2),
+        descriptor: JSON.stringify(redaction.descriptor(descriptor), null, 2),
         windows: queryKeys.map(queryKey => {
           const status = byQuery[queryKey];
           const query = queryOf(queryKey);
@@ -174,7 +176,7 @@ export function useAccountOperationToolProps(fiat: string): AccountOperationTool
         }),
       };
     });
-  }, [entries, statuses, operations, unitOf]);
+  }, [entries, statuses, operations, unitOf, redaction]);
 
   return { accounts, assetIds, fiat, onRead, onReadMore, onReadAll };
 }
