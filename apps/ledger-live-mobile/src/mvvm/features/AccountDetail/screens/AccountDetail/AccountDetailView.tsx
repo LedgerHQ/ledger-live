@@ -55,7 +55,11 @@ export function AccountDetailView({ account, refresh }: Props) {
         />
         <Box lx={showsEmptyState ? filledContentStyle : contentStyle}>
           <AccountDetailLayout
-            hero={<Hero {...hero} />}
+            hero={
+              <Box testID={ACCOUNT_DETAIL_TEST_IDS.account(account.id)}>
+                <Hero {...hero} />
+              </Box>
+            }
             analyticsNotice={<AnalyticsIntroduction account={account} />}
             customPlace={<FamilySection account={account} />}
             assets={showsEmptyState ? null : <AssetsSection account={account} />}
