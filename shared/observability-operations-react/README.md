@@ -26,6 +26,8 @@ and `isActive`, stable across renders.
   with. Once that operation ended, they do nothing, even when another operation of the same name
   and key started since.
 - One operation at a time: `start` returns `false` while the component's operation is active.
+- A new `name` or `operationKey` is a new operation: the component's still active one fails as
+  `ABANDONED` with `{ trigger: "identity_change" }`, and `start` opens the next.
 - On unmount, a still active operation of this component fails as `ABANDONED` with
   `{ trigger: "unmount" }`, unless `abandonOnUnmount` is `false`.
 - To end an operation another component started, call `failOperation` or `succeedOperation` from

@@ -26,6 +26,7 @@ import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serializat
 import type { OperationFailureReason } from "@shared/observability-operations";
 import { useOperation } from "@shared/observability-operations-react";
 import { ADD_ACCOUNT_OPERATION } from "LLM/features/Accounts/constants";
+import { consumeRetryAttempt, markRetryPending } from "./addAccountAttempts";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 
 /** Region restriction is an expected business outcome, not a scan failure. */
@@ -76,7 +77,7 @@ export default function useScanDeviceAccountsViewModel({
   const customFlow = getCustomAddAccountFlow(currency);
 
   const addAccountOperation = useOperation(ADD_ACCOUNT_OPERATION);
-  /** Operations started on this screen: a retry after a failure starts the next attempt. */
+  /** The last attempt: a retry after a failure, here or before an inline goBack, starts the next. */
   const operationAttempt = useRef(0);
   const operationStartedOnMount = useRef(false);
   const operationStartAttributes = useMemo(
@@ -157,13 +158,15 @@ export default function useScanDeviceAccountsViewModel({
     // In inline flows (e.g., Receive), navigate back to device selection
     // to allow user to reconnect/unlock device instead of retrying on same screen
     if (inline && error) {
+      // The scan screen device selection opens next goes on counting from this attempt.
+      markRetryPending({ currencyId: currency.id, context, attempt: operationAttempt.current });
       // Simply go back to SelectDevice which is already in the stack
       navigation.goBack();
       return;
     }
 
     restartSubscription();
-  }, [inline, error, navigation, restartSubscription]);
+  }, [inline, error, navigation, restartSubscription, currency.id, context]);
   const stopSubscription = useCallback(
     (syncUI = true) => {
       if (scanSubscription.current) {
@@ -409,8 +412,10 @@ export default function useScanDeviceAccountsViewModel({
     // Mount only: a later change of the start attributes must not reopen an ended operation.
     if (operationStartedOnMount.current) return;
     operationStartedOnMount.current = true;
+    // After an inline Retry, the new operation is the next attempt of the one that failed.
+    operationAttempt.current = consumeRetryAttempt({ currencyId: currency.id, context });
     startOperationAttempt();
-  }, [startOperationAttempt]);
+  }, [startOperationAttempt, currency.id, context]);
 
   useEffect(() => {
     startSubscription();

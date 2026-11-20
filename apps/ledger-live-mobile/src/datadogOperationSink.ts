@@ -2,13 +2,12 @@ import { DdRum, FeatureOperationFailure } from "@datadog/mobile-react-native";
 import type { OperationSink } from "@shared/observability-operations";
 import { isDatadogRecording } from "./datadog";
 
-/** A rejected or throwing bridge call must not surface: telemetry never breaks a flow. */
-const send = (call: () => Promise<void>): void => {
-  try {
-    call().catch(() => {});
-  } catch {
-    // The SDK threw synchronously: drop the event.
-  }
+/**
+ * A rejected bridge call must not surface as an unhandled rejection: telemetry never breaks a
+ * flow. A synchronous throw needs no handling here, the tracker calls every sink in a try/catch.
+ */
+const ignoreRejection = (call: Promise<void>): void => {
+  call.catch(() => {});
 };
 
 /**
@@ -18,11 +17,11 @@ const send = (call: () => Promise<void>): void => {
 export const datadogOperationSink: OperationSink = {
   isRecording: () => isDatadogRecording(),
   start: (name, operationKey, attributes) =>
-    send(() => DdRum.startFeatureOperation(name, operationKey ?? null, attributes)),
+    ignoreRejection(DdRum.startFeatureOperation(name, operationKey ?? null, attributes)),
   succeed: (name, operationKey, attributes) =>
-    send(() => DdRum.succeedFeatureOperation(name, operationKey ?? null, attributes)),
+    ignoreRejection(DdRum.succeedFeatureOperation(name, operationKey ?? null, attributes)),
   fail: (name, operationKey, reason, attributes) =>
-    send(() =>
+    ignoreRejection(
       DdRum.failFeatureOperation(
         name,
         operationKey ?? null,

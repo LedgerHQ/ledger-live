@@ -61,6 +61,30 @@ const renderScan = (existingAccounts: Account[] = NO_EXISTING_ACCOUNTS) =>
     }),
   );
 
+/**
+ * Renders the scan screen and opens it again as a new view model instance, as device selection
+ * does after an inline Retry or a new add account from the same entry point.
+ */
+const renderReopenableScan = () => {
+  let screenInstance = 0;
+  const ScreenInstance = ({ children }: { children?: React.ReactNode }) =>
+    React.createElement(React.Fragment, { key: screenInstance }, children);
+  const rendered = renderHook(
+    () =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: NO_EXISTING_ACCOUNTS,
+        blacklistedTokenIds: NO_BLACKLISTED_TOKENS,
+        analyticsMetadata: {},
+      }),
+    { innerWrapper: ScreenInstance },
+  );
+  const reopenScan = () => {
+    screenInstance += 1;
+    rendered.rerender({});
+  };
+  return { ...rendered, reopenScan };
+};
+
 /** The attributes, last argument of the latest call to an SDK feature operation method. */
 const lastCallAttributes = (sdkMethod: { mock: { calls: unknown[][] } }) =>
   sdkMethod.mock.calls.at(-1)?.at(-1);
@@ -209,39 +233,40 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
     expect(isOperationActive(ADD_ACCOUNT_OPERATION)).toBe(false);
   });
 
-  it("should restart the attempt count at 1 when an inline retry goes back to device selection", async () => {
-    // Known limitation: the count belongs to the screen, and an inline retry remounts it.
+  it("should go on counting attempts when an inline retry reopens the scan from device selection", async () => {
     setRouteParams("ethereum", "device-1", { inline: true });
     (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
 
-    // Device selection then opens the scan screen again: a new instance of the view model.
-    let screenInstance = 0;
-    const ScreenInstance = ({ children }: { children?: React.ReactNode }) =>
-      React.createElement(React.Fragment, { key: screenInstance }, children);
-
-    const { result, rerender } = renderHook(
-      () =>
-        useScanDeviceAccountsViewModel({
-          existingAccounts: NO_EXISTING_ACCOUNTS,
-          blacklistedTokenIds: NO_BLACKLISTED_TOKENS,
-          analyticsMetadata: {},
-        }),
-      { innerWrapper: ScreenInstance },
-    );
+    const { result, reopenScan } = renderReopenableScan();
     await waitFor(() => expect(result.current.error).not.toBeNull());
     act(() => result.current.handleRetry());
     expect(goBack).toHaveBeenCalledTimes(1);
     expect(startFeatureOperation).toHaveBeenCalledTimes(1);
 
-    screenInstance = 1;
-    rerender({});
+    reopenScan();
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(startFeatureOperation).toHaveBeenCalledTimes(2);
+    expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ inline: true, attempt: 2 });
+    // Only the scan error: the failed operation is not abandoned again on unmount.
+    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(failFeatureOperation.mock.calls[0][2]).toBe("ERROR");
+  });
+
+  it("should start again at attempt 1 when an inline scan error is closed instead of retried", async () => {
+    setRouteParams("ethereum", "device-1", { inline: true, onCloseNavigation: jest.fn() });
+    (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
+
+    const { result, reopenScan } = renderReopenableScan();
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+    act(() => result.current.onCancel());
+    act(() => result.current.onModalHide());
+
+    reopenScan();
     await waitFor(() => expect(result.current.scanning).toBe(false));
 
     expect(startFeatureOperation).toHaveBeenCalledTimes(2);
     expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ inline: true, attempt: 1 });
-    // Only the scan error: the failed operation is not abandoned again on unmount.
-    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
-    expect(failFeatureOperation.mock.calls[0][2]).toBe("ERROR");
   });
 
   it("should succeed as a Canton onboarding hand-off before replacing the screen", async () => {

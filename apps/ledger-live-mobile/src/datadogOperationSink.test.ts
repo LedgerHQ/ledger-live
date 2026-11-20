@@ -1,4 +1,5 @@
 import { DdRum } from "@datadog/mobile-react-native";
+import { createOperationTracker } from "@shared/observability-operations";
 import { datadogOperationSink } from "./datadogOperationSink";
 
 let mockIsDatadogRecording = true;
@@ -62,11 +63,20 @@ describe("datadogOperationSink", () => {
     expect(catchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("should swallow an SDK exception", () => {
+  it("should never let a throwing SDK reach the caller of the tracker", () => {
+    // The adapter leaves synchronous throws to the tracker, which calls every sink in a try/catch.
+    const tracker = createOperationTracker();
+    tracker.setSink(datadogOperationSink);
+    startFeatureOperation.mockImplementationOnce(() => {
+      throw new Error("native module missing");
+    });
     failFeatureOperation.mockImplementationOnce(() => {
       throw new Error("native module missing");
     });
 
-    expect(() => datadogOperationSink.fail("add_account", undefined, "ERROR", {})).not.toThrow();
+    expect(() => tracker.start("add_account")).not.toThrow();
+    expect(() => tracker.fail("add_account", "ERROR")).not.toThrow();
+    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(tracker.isActive("add_account")).toBe(false);
   });
 });

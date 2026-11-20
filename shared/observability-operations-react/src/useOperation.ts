@@ -41,6 +41,8 @@ type StartedOperation = { name: string; operationKey?: string; id: OperationId }
  * - it acts on the operation it started, with the name and key it was started with, and does
  *   nothing once that operation ended, even when another one of the same name and key started since;
  * - it starts one operation at a time: `start` returns false while its operation is still active;
+ * - when its name or key changes, it fails its still active operation as `ABANDONED` with
+ *   `{ trigger: "identity_change" }`, so `start` opens one for the new name and key;
  * - on unmount, it fails its still active operation as `ABANDONED` with `{ trigger: "unmount" }`.
  * To end an operation started elsewhere, call the tracker. The handlers keep their identity across
  * renders, so they can go in dependency lists.
@@ -63,6 +65,18 @@ export function createUseOperation(tracker: OperationHookTracker) {
     // A layout effect runs before the passive effects that may call `start`.
     useLayoutEffect(() => {
       options.current = { name, operationKey, abandonOnUnmount };
+      // A new name or key is a new operation: abandon the one this component still drives, so
+      // `start` can open the next. `expectedId` leaves alone any operation it does not own.
+      const operation = started.current;
+      if (!operation || (operation.name === name && operation.operationKey === operationKey)) {
+        return;
+      }
+      started.current = null;
+      tracker.fail(operation.name, "ABANDONED", {
+        operationKey: operation.operationKey,
+        attributes: { trigger: "identity_change" },
+        expectedId: operation.id,
+      });
     }, [name, operationKey, abandonOnUnmount]);
 
     const start = useCallback((attributes?: OperationAttributes) => {

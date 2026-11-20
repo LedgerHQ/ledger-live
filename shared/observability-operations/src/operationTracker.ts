@@ -27,7 +27,11 @@ type ActiveOperation = {
   startedAt: number;
 };
 
-const toKey = (name: string, operationKey?: string) => `${name}|${operationKey ?? ""}`;
+/** The key slot of an operation started without a key, apart from the empty key `""`. */
+const NO_KEY = Symbol("no operation key");
+type KeySlot = string | typeof NO_KEY;
+
+const toSlot = (operationKey: string | undefined): KeySlot => operationKey ?? NO_KEY;
 
 const compact = (attributes?: OperationAttributes): SentOperationAttributes => {
   const sent: SentOperationAttributes = {};
@@ -48,7 +52,7 @@ const callSink = (call: () => void): void => {
 
 const isRecording = (sink: OperationSink | null): sink is OperationSink => {
   try {
-    return sink !== null && sink.isRecording();
+    return sink?.isRecording() === true;
   } catch {
     return false;
   }
@@ -67,13 +71,23 @@ export function createOperationTracker({
 }: OperationTrackerOptions = {}): OperationTracker {
   let sink: OperationSink | null = null;
   let lastId = 0;
-  const active = new Map<string, ActiveOperation>();
+  /** Active operations by name, then by key slot. */
+  const active = new Map<string, Map<KeySlot, ActiveOperation>>();
 
-  /** The active operation of a key, after dropping it, without a stop, when it is stale. */
-  const getActive = (key: string): ActiveOperation | undefined => {
-    const operation = active.get(key);
+  const remove = (name: string, operationKey: string | undefined): void => {
+    const byKey = active.get(name);
+    byKey?.delete(toSlot(operationKey));
+    if (byKey?.size === 0) active.delete(name);
+  };
+
+  /** The active operation of a name and key, after dropping it, without a stop, when it is stale. */
+  const getActive = (
+    name: string,
+    operationKey: string | undefined,
+  ): ActiveOperation | undefined => {
+    const operation = active.get(name)?.get(toSlot(operationKey));
     if (operation && now() - operation.startedAt >= STALE_OPERATION_MS) {
-      active.delete(key);
+      remove(name, operationKey);
       return undefined;
     }
     return operation;
@@ -85,10 +99,9 @@ export function createOperationTracker({
     expectedId: OperationId | undefined,
   ): ActiveOperation | null => {
     if (!OPERATION_NAME.test(name)) return null;
-    const key = toKey(name, operationKey);
-    const operation = getActive(key);
+    const operation = getActive(name, operationKey);
     if (!operation || (expectedId !== undefined && operation.id !== expectedId)) return null;
-    active.delete(key);
+    remove(name, operationKey);
     return operation;
   };
 
@@ -99,13 +112,19 @@ export function createOperationTracker({
 
     start(name, { operationKey, attributes } = {}) {
       if (!OPERATION_NAME.test(name)) return null;
-      const key = toKey(name, operationKey);
-      if (getActive(key) || !isRecording(sink)) return null;
+      if (getActive(name, operationKey) || !isRecording(sink)) return null;
 
       const recordingSink = sink;
       const sent = compact(attributes);
       const id = ++lastId;
-      active.set(key, { id, sink: recordingSink, attributes: sent, startedAt: now() });
+      const byKey = active.get(name) ?? new Map<KeySlot, ActiveOperation>();
+      byKey.set(toSlot(operationKey), {
+        id,
+        sink: recordingSink,
+        attributes: sent,
+        startedAt: now(),
+      });
+      active.set(name, byKey);
       callSink(() => recordingSink.start(name, operationKey, sent));
       return id;
     },
@@ -128,13 +147,13 @@ export function createOperationTracker({
 
     isActive(name, { operationKey, expectedId } = {}) {
       if (!OPERATION_NAME.test(name)) return false;
-      const operation = getActive(toKey(name, operationKey));
+      const operation = getActive(name, operationKey);
       return !!operation && (expectedId === undefined || operation.id === expectedId);
     },
 
     getId(name, operationKey) {
       if (!OPERATION_NAME.test(name)) return null;
-      return getActive(toKey(name, operationKey))?.id ?? null;
+      return getActive(name, operationKey)?.id ?? null;
     },
   };
 }

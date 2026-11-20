@@ -128,6 +128,32 @@ describe("createOperationTracker", () => {
     expect(tracker.isActive("checkout")).toBe(false);
   });
 
+  it("should not stop an operation without a key through the empty key", () => {
+    tracker.start("checkout");
+
+    expect(tracker.isActive("checkout", { operationKey: "" })).toBe(false);
+    expect(tracker.succeed("checkout", { operationKey: "" })).toBe(false);
+    expect(tracker.fail("checkout", "ABANDONED", { operationKey: "" })).toBe(false);
+
+    expect(sink.succeed).not.toHaveBeenCalled();
+    expect(sink.fail).not.toHaveBeenCalled();
+    expect(tracker.isActive("checkout")).toBe(true);
+  });
+
+  it("should not stop an operation with the empty key through an omitted key", () => {
+    tracker.start("checkout", { operationKey: "" });
+
+    expect(tracker.getId("checkout")).toBeNull();
+    expect(tracker.fail("checkout", "ABANDONED")).toBe(false);
+    expect(tracker.start("checkout")).not.toBeNull();
+    expect(tracker.succeed("checkout", { operationKey: "" })).toBe(true);
+
+    expect(sink.start).toHaveBeenCalledTimes(2);
+    expect(sink.succeed).toHaveBeenCalledWith("checkout", "", {});
+    expect(sink.fail).not.toHaveBeenCalled();
+    expect(tracker.isActive("checkout")).toBe(true);
+  });
+
   it("should swallow a throwing sink and still end the operation", () => {
     sink.start.mockImplementation(() => {
       throw new Error("bridge unavailable");

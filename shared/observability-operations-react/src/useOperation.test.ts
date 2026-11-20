@@ -113,7 +113,7 @@ describe("useOperation", () => {
     expect(result.current.isActive()).toBe(false);
   });
 
-  it("should abandon the key it started when the key changed before unmount", () => {
+  it("should abandon its operation once when its key changes, then drive the new key", () => {
     const { result, rerender, unmount } = renderHook(
       ({ operationKey }) => useOperation("checkout", { operationKey }),
       { initialProps: { operationKey: "cart-1" } },
@@ -123,16 +123,43 @@ describe("useOperation", () => {
     });
 
     rerender({ operationKey: "cart-2" });
-    unmount();
 
     expect(sink.fail).toHaveBeenCalledTimes(1);
-    expect(sink.fail).toHaveBeenCalledWith("checkout", "cart-1", "ABANDONED", {
-      trigger: "unmount",
+    expect(sink.fail).toHaveBeenLastCalledWith("checkout", "cart-1", "ABANDONED", {
+      trigger: "identity_change",
     });
     expect(tracker.isActive("checkout", { operationKey: "cart-1" })).toBe(false);
+
+    act(() => {
+      expect(result.current.start()).toBe(true);
+    });
+    expect(sink.start).toHaveBeenLastCalledWith("checkout", "cart-2", {});
+
+    unmount();
+
+    expect(sink.fail).toHaveBeenCalledTimes(2);
+    expect(sink.fail).toHaveBeenLastCalledWith("checkout", "cart-2", "ABANDONED", {
+      trigger: "unmount",
+    });
   });
 
-  it("should keep its active operation when started again with another key", () => {
+  it("should abandon its operation when its name changes", () => {
+    const { result, rerender } = renderHook(({ name }) => useOperation(name), {
+      initialProps: { name: "checkout" },
+    });
+    act(() => {
+      result.current.start();
+    });
+
+    rerender({ name: "payment" });
+
+    expect(sink.fail).toHaveBeenCalledWith("checkout", undefined, "ABANDONED", {
+      trigger: "identity_change",
+    });
+    expect(result.current.isActive()).toBe(false);
+  });
+
+  it("should keep its operation on a rerender with the same identity", () => {
     const { result, rerender } = renderHook(
       ({ operationKey }) => useOperation("checkout", { operationKey }),
       { initialProps: { operationKey: "cart-1" } },
@@ -141,14 +168,45 @@ describe("useOperation", () => {
       result.current.start();
     });
 
+    rerender({ operationKey: "cart-1" });
+
+    expect(sink.fail).not.toHaveBeenCalled();
+    expect(result.current.isActive()).toBe(true);
+  });
+
+  it("should send nothing when its identity changes after an outside stop", () => {
+    const { result, rerender } = renderHook(
+      ({ operationKey }) => useOperation("checkout", { operationKey }),
+      { initialProps: { operationKey: "cart-1" } },
+    );
+    act(() => {
+      result.current.start();
+    });
+    tracker.fail("checkout", "ABANDONED", { operationKey: "cart-1" });
+    tracker.start("checkout", { operationKey: "cart-1" });
+    sink.fail.mockClear();
+
     rerender({ operationKey: "cart-2" });
+
+    expect(sink.fail).not.toHaveBeenCalled();
+    expect(tracker.isActive("checkout", { operationKey: "cart-1" })).toBe(true);
+    act(() => {
+      expect(result.current.start()).toBe(true);
+    });
+  });
+
+  it("should keep its active operation when started again with the same identity", () => {
+    const { result } = renderHook(() => useOperation("checkout", { operationKey: "cart-1" }));
+    act(() => {
+      result.current.start();
+    });
+
     act(() => {
       expect(result.current.start()).toBe(false);
     });
 
     expect(sink.start).toHaveBeenCalledTimes(1);
     expect(tracker.isActive("checkout", { operationKey: "cart-1" })).toBe(true);
-    expect(tracker.isActive("checkout", { operationKey: "cart-2" })).toBe(false);
   });
 
   it("should not abandon a newer operation of the same name started after an outside stop", () => {
