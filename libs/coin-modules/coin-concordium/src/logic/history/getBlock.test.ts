@@ -86,6 +86,7 @@ describe("getBlock", () => {
         hash: "aa".repeat(32),
         failed: false,
         fees: 601n,
+        feesAsset: { type: "native" },
         feesPayer: SENDER,
         operations: [
           {
@@ -213,7 +214,14 @@ describe("getBlock", () => {
 
     // THEN
     expect(transactions).toEqual([
-      { hash: "cc".repeat(32), failed: true, fees: 500n, feesPayer: SENDER, operations: [] },
+      {
+        hash: "cc".repeat(32),
+        failed: true,
+        fees: 500n,
+        feesAsset: { type: "native" },
+        feesPayer: SENDER,
+        operations: [],
+      },
     ]);
   });
 
@@ -330,6 +338,7 @@ describe("getBlock", () => {
       hash: "ff".repeat(32),
       failed: false,
       fees: 0n,
+      feesAsset: { type: "native" },
       operations: [],
     });
   });

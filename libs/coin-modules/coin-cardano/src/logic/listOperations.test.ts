@@ -142,6 +142,7 @@ describe("listOperations", () => {
     expect(items[0].tx).toMatchObject({
       hash: "tx-hash-1",
       fees: 200000n,
+      feesAsset: { type: "native" },
       feesPayer: COUNTERPARTY_ADDRESS,
       failed: false,
     });

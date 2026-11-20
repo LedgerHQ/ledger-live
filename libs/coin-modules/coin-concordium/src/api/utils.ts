@@ -30,6 +30,7 @@ export function mapRawOperationToApiOperation(op: RawOperation, address: string)
       // The whole cost, as `getBlock` reports it, whichever account is queried.
       // `feesPayer` says whether this account paid it.
       fees: BigInt(op.transactionFee),
+      feesAsset: { type: "native" },
       ...(op.feesPayer ? { feesPayer: op.feesPayer } : {}),
       date,
       failed: op.failed,
