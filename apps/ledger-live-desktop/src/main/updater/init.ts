@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
+import { autoUpdater, UpdateInfo } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
@@ -31,23 +31,26 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
     });
   }
 };
-const handleDownload = async (info: UpdateDownloadedEvent) => {
+
+const checkThenDownload = async (info: UpdateInfo) => {
   try {
-    sendStatus("checking");
-    const appUpdater = await createElectronAppUpdater({
+    const appUpdater = createElectronAppUpdater({
       feedURL: UPDATE_CHECK_FEED,
       info,
     });
     await appUpdater.verify();
-    sendStatus("check-success");
   } catch (err) {
-    if (UPDATE_CHECK_IGNORE) {
-      sendStatus("check-success");
-    } else {
-      sendStatus("error", err);
+    if (!UPDATE_CHECK_IGNORE) {
+      return sendStatus("error", err);
     }
   }
+  try {
+    await autoUpdater.downloadUpdate();
+  } catch (err) {
+    sendStatus("error", err);
+  }
 };
+
 export const init = () => {
   // Store distributions manage their own updates; keep the in-app updater off there.
   if (isStoreDistribution()) {
@@ -55,14 +58,15 @@ export const init = () => {
   }
   autoUpdater.on("checking-for-update", () => sendStatus("checking-for-update"));
   autoUpdater.on("update-available", info => sendStatus("update-available", info));
+  autoUpdater.on("update-available", checkThenDownload);
   autoUpdater.on("update-not-available", info => sendStatus("update-not-available", info));
   autoUpdater.on("download-progress", p => sendStatus("download-progress", p));
-  autoUpdater.on("update-downloaded", handleDownload);
+  autoUpdater.on("update-downloaded", () => sendStatus("check-success"));
   autoUpdater.on("error", err => {
     console.warn("Auto-updater error:", err);
   });
   autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.autoDownload = true;
+  autoUpdater.autoDownload = false;
   if (!__PRODUCTION__ && process.env.UPDATE_FEED_URL) {
     autoUpdater.setFeedURL({
       provider: "generic",
