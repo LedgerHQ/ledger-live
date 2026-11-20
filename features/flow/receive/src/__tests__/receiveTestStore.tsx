@@ -10,6 +10,7 @@ import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/
 import { accountReceivesSlice } from "@domain/entity-account-receive";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { accountStatusSlice } from "@domain/entity-account-status";
+import { receiveVerifyHintSlice } from "../state";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
 import { calApiExtra } from "@shared/api-services";
 import { I18nTestProvider } from "@shared/i18n/testing";
@@ -47,6 +48,7 @@ export function makeReceiveTestStore(reads: Partial<ReceiveReads> = {}) {
       accountEntries: accountsSlice.reducer,
       accountReceives: accountReceivesSlice.reducer,
       accountStatus: accountStatusSlice.reducer,
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
       [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
     },
     middleware: getDefault =>
@@ -80,6 +82,11 @@ const receiveTestResources = {
           title: "We couldn't load this address",
           description: "Check your internet connection, then try again.",
           retry: "Retry",
+        },
+        actions: { copy: "Copy", copied: "Copied", share: "Share", verify: "Verify" },
+        verifyHint: {
+          message: "Verify your address on your Ledger device before sharing",
+          gotIt: "Got it",
         },
       },
     },

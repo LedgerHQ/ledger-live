@@ -2444,6 +2444,16 @@
       "title": "We couldn't load this address",
       "description": "Check your internet connection, then try again.",
       "retry": "Retry"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
     }
   },
   "ratings": {

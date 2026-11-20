@@ -255,10 +255,13 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "importPayCard": {
         // The same fan-out LedgerStore performs on the persisted blob: one payload, one slice each.
         store.dispatch(restorePayCardFeatureTour(msg.payload));
-        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         store.dispatch(restorePayCardBalanceFilter(msg.payload));
         store.dispatch(restorePayCardLoginIntro(msg.payload));
         store.dispatch(restorePayCardOnboardingWidget(msg.payload));
+        break;
+      }
+      case "importReceiveVerifyHint": {
+        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {

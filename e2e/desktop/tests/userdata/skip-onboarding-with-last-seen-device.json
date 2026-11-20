@@ -74,7 +74,9 @@
     },
     "payCard": {
       "hasSeenFeatureTour": true,
-      "hasSeenLoginIntro": true,
+      "hasSeenLoginIntro": true
+    },
+    "receiveVerifyHint": {
       "hasSeenReceiveVerifyHint": true
     },
     "user": {
