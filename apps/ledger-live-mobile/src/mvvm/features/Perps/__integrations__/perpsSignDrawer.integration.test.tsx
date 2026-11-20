@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Text } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -12,6 +15,7 @@ import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/t
 import type { DeviceConnectionParams } from "@features/platform-device-intent";
 import type { HyperliquidSignIntent } from "@features/platform-intent-hyperliquid-sign";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { PerpsWebView } from "../components/PerpsWebView/PerpsWebView";
 import type { PerpsWebviewInputs } from "../screens/PerpsLiveApp/usePerpsLiveAppViewModel";
 
@@ -35,6 +39,8 @@ type ExecutorProps = {
   intent: HyperliquidSignIntent;
   onIntentJobComplete: () => void;
   onUserCancel: () => void;
+  isRequestingToBeOpened?: boolean;
+  onDeviceSheetDismissed?: () => void;
 };
 
 let mockExecutorProps: ExecutorProps | undefined;
@@ -69,18 +75,42 @@ const inputs: PerpsWebviewInputs = {
 };
 const SIGNATURES = [{ r: "0xr", s: "0xs", v: 27 }];
 
+type TestStackParamList = {
+  Perps: undefined;
+  Other: undefined;
+};
+const Stack = createNativeStackNavigator<TestStackParamList>();
+let testNavigation: { navigate: (route: "Other") => void; goBack: () => void } | undefined;
+
+function PerpsHostScreen() {
+  const nav = useNavigation();
+  useEffect(() => {
+    testNavigation = nav as unknown as typeof testNavigation;
+  }, [nav]);
+  return (
+    <PerpsWebView
+      manifest={manifest}
+      setWebviewState={jest.fn()}
+      inputs={inputs}
+      accounts={[hyperliquidAccount]}
+    />
+  );
+}
+
+function OtherScreen() {
+  return <Text testID="other-screen">Other</Text>;
+}
+
 type SignActions = (req: {
   params: { accountId: string; metadataWithSignature: string; actions: unknown[] };
 }) => Promise<{ signatures: typeof SIGNATURES }>;
 
 function renderPerps() {
   render(
-    <PerpsWebView
-      manifest={manifest}
-      setWebviewState={jest.fn()}
-      inputs={inputs}
-      accounts={[hyperliquidAccount]}
-    />,
+    <Stack.Navigator initialRouteName="Perps">
+      <Stack.Screen name="Perps" component={PerpsHostScreen} />
+      <Stack.Screen name="Other" component={OtherScreen} />
+    </Stack.Navigator>,
     {
       overrideInitialState: withFlagOverrides({
         ptxPerpsDeviceIntentSignMobile: { enabled: true },
@@ -107,8 +137,13 @@ function requestSignature() {
 describe("Perps sign drawer integration", () => {
   beforeAll(() => setWalletApiIdForAccountId(hyperliquidAccount.id));
   beforeEach(() => {
+    jest.clearAllMocks();
+    jest
+      .mocked(buildDeviceInitializationInput)
+      .mockImplementation(() => Promise.resolve({ appName: "Hyperliquid" } as never));
     mockCustomHandlers = undefined;
     mockExecutorProps = undefined;
+    testNavigation = undefined;
   });
 
   it("should open the executor over the live app for the Hyperliquid app with Nano S excluded", async () => {
@@ -118,6 +153,7 @@ describe("Perps sign drawer integration", () => {
     request.catch(() => {});
 
     expect(await screen.findByTestId("device-intent-executor")).toBeTruthy();
+    expect(mockExecutorProps?.isRequestingToBeOpened).toBe(true);
     expect(mockExecutorProps?.sourceFlow).toBe("wallet_api");
     expect(mockExecutorProps?.analyticsProperties).toEqual({
       manifestId: "perps-live-app",
@@ -129,7 +165,7 @@ describe("Perps sign drawer integration", () => {
     expect(mockExecutorProps?.deviceInitializationInput).toEqual({ appName: "Hyperliquid" });
   });
 
-  it("should answer the live app with the signatures and close the drawer", async () => {
+  it("should answer the live app with the signatures and unmount only once the sheet dismisses", async () => {
     renderPerps();
     const request = requestSignature();
     await screen.findByTestId("device-intent-executor");
@@ -140,6 +176,10 @@ describe("Perps sign drawer integration", () => {
     });
 
     await expect(request).resolves.toEqual({ signatures: SIGNATURES });
+    expect(screen.getByTestId("device-intent-executor")).toBeTruthy();
+    expect(mockExecutorProps?.isRequestingToBeOpened).toBe(false);
+
+    act(() => mockExecutorProps!.onDeviceSheetDismissed?.());
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
   });
 
@@ -155,6 +195,9 @@ describe("Perps sign drawer integration", () => {
     });
 
     await expect(request).rejects.toMatchObject({ name: refusal.name });
+    expect(mockExecutorProps?.isRequestingToBeOpened).toBe(false);
+
+    act(() => mockExecutorProps!.onDeviceSheetDismissed?.());
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
   });
 
@@ -166,6 +209,45 @@ describe("Perps sign drawer integration", () => {
     act(() => mockExecutorProps!.onUserCancel());
 
     await expect(request).rejects.toMatchObject({ name: new UserRefusedOnDevice().name });
+    expect(mockExecutorProps?.isRequestingToBeOpened).toBe(false);
+
+    act(() => mockExecutorProps!.onDeviceSheetDismissed?.());
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
+  });
+
+  it("should cancel the pending request and not mount a stale drawer when navigating away before initialization resolves", async () => {
+    let resolveInit!: (input: unknown) => void;
+    jest.mocked(buildDeviceInitializationInput).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          resolveInit = resolve;
+        }) as never,
+    );
+    renderPerps();
+
+    const request = requestSignature();
+
+    act(() => testNavigation!.navigate("Other"));
+    expect(await screen.findByTestId("other-screen")).toBeTruthy();
+
+    await expect(request).rejects.toMatchObject({ name: new UserRefusedOnDevice().name });
+
+    await act(async () => {
+      resolveInit({ appName: "Hyperliquid" });
+    });
+    act(() => testNavigation!.goBack());
+
+    expect(screen.queryByTestId("device-intent-executor")).toBeNull();
+  });
+
+  it("should reject the request and clear the drawer without waiting for sheet dismissal when initialization fails", async () => {
+    const failure = new Error("network down");
+    jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(failure);
+    renderPerps();
+
+    const request = requestSignature();
+
+    await expect(request).rejects.toThrow("network down");
+    expect(screen.queryByTestId("device-intent-executor")).toBeNull();
   });
 });

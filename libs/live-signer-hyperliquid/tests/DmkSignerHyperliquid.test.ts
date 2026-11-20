@@ -137,20 +137,33 @@ describe("DmkSignerHyperliquid", () => {
       expect(mockSignActions).not.toHaveBeenCalled();
     });
 
-    it("should cancel the device action when the signal aborts", async () => {
+    it("should cancel the device action and reject with SignActionsAbortedError when the signal aborts", async () => {
       // GIVEN
       const controller = new AbortController();
       const cancel = jest.fn();
       mockSignActions.mockReturnValue({ observable: NEVER, cancel });
-      void signer
-        .signActions(path, certificate, signedMetadata, actions, { signal: controller.signal })
-        .catch(() => undefined);
+      const promise = signer.signActions(path, certificate, signedMetadata, actions, {
+        signal: controller.signal,
+      });
 
       // WHEN
       controller.abort();
 
       // THEN
+      await expect(promise).rejects.toBeInstanceOf(SignActionsAbortedError);
       expect(cancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should reject with SignActionsAbortedError when the device action stops", async () => {
+      // GIVEN
+      mockSignActions.mockReturnValue({
+        observable: of({ status: DeviceActionStatus.Stopped }),
+      });
+
+      // WHEN & THEN
+      await expect(
+        signer.signActions(path, certificate, signedMetadata, actions),
+      ).rejects.toBeInstanceOf(SignActionsAbortedError);
     });
 
     it("should not cancel the device action when the signal aborts after completion", async () => {

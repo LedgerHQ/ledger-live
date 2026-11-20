@@ -6,7 +6,6 @@ import {
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import type { SignActionsActionItem } from "@ledgerhq/device-signer-kit-hyperliquid";
-import { firstValueFrom, filter, map } from "rxjs";
 
 export type Action = SignActionsActionItem;
 export type Signature = {
@@ -83,27 +82,52 @@ export class DmkSignerHyperliquid {
       actions,
       skipOpenApp: options?.skipOpenApp,
     });
-    const onAbort = () => cancel();
-    signal?.addEventListener("abort", onAbort, { once: true });
 
-    try {
-      return await firstValueFrom(
-        observable.pipe(
-          filter(
-            state =>
-              state.status === DeviceActionStatus.Completed ||
-              state.status === DeviceActionStatus.Error,
-          ),
-          map(state => {
-            if (state.status === DeviceActionStatus.Error) {
-              throw this._mapError(state.error);
-            }
-            return state.output;
-          }),
-        ),
-      );
-    } finally {
-      signal?.removeEventListener("abort", onAbort);
-    }
+    return new Promise<Signatures>((resolve, reject) => {
+      let settled = false;
+      let subscription: { unsubscribe(): void } | undefined;
+
+      const finish = (outcome: () => void) => {
+        if (settled) return;
+        settled = true;
+        signal?.removeEventListener("abort", onAbort);
+        subscription?.unsubscribe();
+        outcome();
+      };
+
+      const onAbort = () => {
+        cancel();
+        finish(() => reject(new SignActionsAbortedError()));
+      };
+
+      if (signal?.aborted) {
+        onAbort();
+        return;
+      }
+
+      signal?.addEventListener("abort", onAbort, { once: true });
+
+      subscription = observable.subscribe({
+        next: state => {
+          if (state.status === DeviceActionStatus.Completed) {
+            finish(() => resolve(state.output));
+          } else if (state.status === DeviceActionStatus.Error) {
+            finish(() => reject(this._mapError(state.error)));
+          } else if (state.status === DeviceActionStatus.Stopped) {
+            finish(() => reject(new SignActionsAbortedError()));
+          }
+        },
+        error: (err: unknown) => {
+          finish(() => reject(err));
+        },
+        complete: () => {
+          finish(() => reject(new SignActionsAbortedError()));
+        },
+      });
+
+      if (settled) {
+        subscription.unsubscribe();
+      }
+    });
   }
 }

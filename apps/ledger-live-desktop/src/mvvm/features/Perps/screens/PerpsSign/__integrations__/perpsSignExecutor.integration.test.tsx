@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { setOverride } from "@shared/feature-flags";
 import type { DeviceConnectionParams } from "@features/platform-device-intent";
 import type { HyperliquidSignIntent } from "@features/platform-intent-hyperliquid-sign";
 import { act, render, screen, withFlagOverrides } from "tests/testSetup";
@@ -192,5 +193,31 @@ describe("PerpsSign with the device intent executor", () => {
 
     expect(screen.getByTestId("device-action")).toBeVisible();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
+  });
+
+  it("should keep the active executor mounted when the feature flag flips off mid-request", async () => {
+    const first = makeRequest();
+    const second = makeRequest();
+    const { store } = renderWithDeviceIntentSign();
+    act(() => openPerpsSign(first, MANIFEST));
+    await screen.findByTestId("device-intent-executor");
+
+    act(() => {
+      store.dispatch(setOverride({ key: "ptxPerpsDeviceIntentSign", value: { enabled: false } }));
+    });
+
+    expect(first.onCancel).not.toHaveBeenCalled();
+    expect(screen.getByTestId("device-intent-executor")).toBeVisible();
+    expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
+
+    act(() => {
+      mockExecutorProps!.intent.onResult?.({ type: "signed", signatures: SIGNATURES });
+      mockExecutorProps!.onIntentJobComplete();
+    });
+
+    expect(first.onSuccess).toHaveBeenCalledWith({ signatures: SIGNATURES });
+
+    act(() => openPerpsSign(second));
+    expect(screen.getByTestId("device-action")).toBeVisible();
   });
 });

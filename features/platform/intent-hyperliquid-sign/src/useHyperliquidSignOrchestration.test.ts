@@ -111,6 +111,26 @@ describe("useHyperliquidSignOrchestration", () => {
     expect(signatures).toEqual(SIGNATURES);
   });
 
+  it("should sign with the latest signOnSession after a re-render", async () => {
+    const request = makeRequest();
+    const updatedSignatures = [{ r: "0x1", s: "0x2", v: 28 }];
+    const latestSignOnSession = jest.fn().mockResolvedValue({ signatures: updatedSignatures });
+    const { result, rerender } = await renderOrchestration(request);
+    const session = {
+      dmk: {} as never,
+      sessionId: "session-1",
+      connectedDevice: { modelId: DeviceModelId.STAX } as never,
+    };
+    const { signal } = new AbortController();
+
+    rerender({ req: { ...request, signOnSession: latestSignOnSession } });
+    const signatures = await result.current.intent.input.signOnSession(session, signal);
+
+    expect(request.signOnSession).not.toHaveBeenCalled();
+    expect(latestSignOnSession).toHaveBeenCalledWith(session, signal);
+    expect(signatures).toEqual(updatedSignatures);
+  });
+
   it("should call onSuccess with signatures and close once signed", async () => {
     const { request, onClose, finishJob } = await renderOrchestration();
 
