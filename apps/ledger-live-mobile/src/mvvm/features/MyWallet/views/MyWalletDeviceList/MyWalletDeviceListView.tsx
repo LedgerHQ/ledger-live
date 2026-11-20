@@ -29,7 +29,7 @@ export function MyWalletDeviceListView({
   return (
     <>
       <View
-        style={[styles.content, isAdding && { paddingTop: topInset }]}
+        style={[styles.content, isAdding && [styles.fill, { paddingTop: topInset }]]}
         testID="my-wallet-device-list"
       >
         {/* The same parent in the Add mode, so that the component does not remount. */}

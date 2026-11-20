@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useRef } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { ScrollView, StyleSheet, type LayoutChangeEvent } from "react-native";
 import { TrackScreen } from "@shared/analytics-react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ContactsButton } from "LLM/features/Contacts";
@@ -16,6 +16,11 @@ export function MyWalletScreenView({
   isDeviceListEnabled,
 }: Readonly<MyWalletScreenViewProps>) {
   const scrollRef = useRef<ScrollView>(null);
+  const [scrollHeight, setScrollHeight] = useState<number | null>(null);
+  const onScrollLayout = useCallback(
+    (event: LayoutChangeEvent) => setScrollHeight(event.nativeEvent.layout.height),
+    [],
+  );
 
   // The Add mode keeps its close bar on screen: back to the top, and only its own content scrolls.
   useLayoutEffect(() => {
@@ -49,7 +54,12 @@ export function MyWalletScreenView({
         <ScrollView
           ref={scrollRef}
           scrollEnabled={!isPairing}
-          contentContainerStyle={[styles.scrollContent, isPairing && styles.addModeContent]}
+          onLayout={onScrollLayout}
+          // In the Add mode, the exact height of the screen, so that the Add mode list scrolls inside it.
+          contentContainerStyle={[
+            styles.scrollContent,
+            isPairing && scrollHeight !== null && { height: scrollHeight },
+          ]}
           alwaysBounceVertical={false}
           testID="my-wallet-scroll"
         >
@@ -63,6 +73,4 @@ export function MyWalletScreenView({
 
 const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1 },
-  // A bounded height, so that the list of the Add mode scrolls inside it.
-  addModeContent: { flex: 1 },
 });
