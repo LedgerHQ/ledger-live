@@ -23,6 +23,8 @@ const SIMULATOR_DIAGNOSTICS_DIR = path.join(ARTIFACTS_DIR, "simulator-diagnostic
 
 type SimulatorService = { label: string; name: string };
 type LaunchdJob = { pid: string; label: string };
+type SampleSimulatorServiceOptions = { jobs: LaunchdJob[]; service: SimulatorService; dir: string };
+type SimulatorLogOptions = { udid: string; dir: string };
 
 // The simulator services that launch, show, suspend and terminate apps for simctl.
 const IOS_LAUNCH_SERVICES: SimulatorService[] = [
@@ -107,18 +109,17 @@ export async function attachAppThreadStacks(): Promise<void> {
   }
 }
 
-async function sampleSimulatorService(
-  jobs: LaunchdJob[],
-  { label, name }: SimulatorService,
-  dir: string,
-) {
-  const pid = jobs.find(job => job.label === label)?.pid;
-  if (!pid) throw new Error(`${name} is not running`);
-  await run("sample", [pid, IOS_SAMPLE_SECONDS, "-file", path.join(dir, `${name}.sample.txt`)]);
+async function sampleSimulatorService(options: SampleSimulatorServiceOptions) {
+  const { jobs, service, dir } = options;
+  const pid = jobs.find(job => job.label === service.label)?.pid;
+  if (!pid) throw new Error(`${service.name} is not running`);
+  const file = path.join(dir, `${service.name}.sample.txt`);
+  await run("sample", [pid, IOS_SAMPLE_SECONDS, "-file", file]);
 }
 
 /** Streams to a file: a window that reaches back to the simulator's boot exceeds 10 MB. */
-async function saveSimulatorLog(udid: string, dir: string) {
+async function saveSimulatorLog(options: SimulatorLogOptions) {
+  const { udid, dir } = options;
   const processes = [...IOS_LAUNCH_SERVICES.map(({ name }) => name), IOS_APP_PROCESS];
   const predicate = `process IN {${processes.map(name => JSON.stringify(name)).join(", ")}}`;
   const args = ["simctl", "spawn", udid, "log", "show", "--last", SIMULATOR_LOG_WINDOW];
@@ -147,19 +148,27 @@ export async function saveSimulatorDiagnostics(): Promise<void> {
   if (device.getPlatform() !== "ios" || simulatorsWithDiagnostics.has(device.id)) return;
   simulatorsWithDiagnostics.add(device.id);
   try {
+    const udid = device.id;
     const capturedAt = new Date().toISOString().replace(/[:.]/g, "-");
-    const dir = path.join(SIMULATOR_DIAGNOSTICS_DIR, `${device.id}-${capturedAt}`);
+    const dir = path.join(SIMULATOR_DIAGNOSTICS_DIR, `${udid}-${capturedAt}`);
     await mkdir(dir, { recursive: true });
-    const launchctlList = await iosLaunchctlList(device.id);
-    await writeFile(path.join(dir, "launchctl-list.txt"), launchctlList);
-    const jobs = runningJobs(launchctlList);
+    // Only the samples need the job table, so a failed listing must not cost the log.
+    const listing = iosLaunchctlList(udid);
     const captures = await Promise.allSettled([
-      ...IOS_LAUNCH_SERVICES.map(service => sampleSimulatorService(jobs, service, dir)),
-      saveSimulatorLog(device.id, dir),
+      saveSimulatorLog({ udid, dir }),
+      listing.then(table => writeFile(path.join(dir, "launchctl-list.txt"), table)),
+      ...IOS_LAUNCH_SERVICES.map(async service =>
+        sampleSimulatorService({ jobs: runningJobs(await listing), service, dir }),
+      ),
     ]);
-    const failures = captures.flatMap(capture =>
-      capture.status === "rejected" ? [sanitizeError(capture.reason)] : [],
-    );
+    // A failed listing fails every capture that waits on it with the same message.
+    const failures = [
+      ...new Set(
+        captures.flatMap(capture =>
+          capture.status === "rejected" ? [sanitizeError(capture.reason).message] : [],
+        ),
+      ),
+    ];
     failures.forEach(failure => log.warn(`Could not capture simulator diagnostics: ${failure}`));
     await allure.attachment(
       "Simulator diagnostics",
