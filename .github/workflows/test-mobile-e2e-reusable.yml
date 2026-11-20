@@ -45,7 +45,7 @@ on:
         description: "Which tests to run"
         required: true
         type: choice
-        default: "iOS & Android"
+        default: "iOS Only"
         options:
           - "Android Only"
           - "iOS Only"
@@ -326,7 +326,7 @@ jobs:
     outputs:
       ios_device: ${{ steps.devices.outputs.ios_device }}
       android_device: ${{ steps.devices.outputs.android_device }}
-      matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
+      matrix_ios: ${{ steps.pe-matrix.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
       test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -588,7 +588,22 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
-          max_shards: ${{ inputs.max_shards || 0 }}
+          # PE mac runner evaluation: one shard holding the full suite, copied per runner below.
+          max_shards: 1
+
+      # PE mac runner evaluation: every runner runs the identical full suite.
+      # Entries 1 and 2 run on m4, entry 3 on pa6-r102-srv-macrunner04.
+      - name: Copy the full-suite shard to each evaluated mac runner
+        id: pe-matrix
+        env:
+          MATRIX_IOS: ${{ steps.generate-shards.outputs.matrix_ios }}
+        run: |
+          node -e '
+            const [fullSuite] = JSON.parse(process.env.MATRIX_IOS);
+            const runners = ["m4", "m4", "pa6-r102-srv-macrunner04"];
+            const matrix = runners.map((runner, i) => ({ ...fullSuite, shard: i + 1, total: runners.length, runner }));
+            console.log(`matrix_ios=${JSON.stringify(matrix)}`);
+          ' >> "$GITHUB_OUTPUT"
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -782,7 +797,8 @@ jobs:
       contents: read
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.build-ios.result) && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
+    # PE mac runner evaluation: the runner comes from the determine-builds pe-matrix step.
+    runs-on: ${{ matrix.runner }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
