@@ -22,7 +22,7 @@ jest.mock("./useDeviceManagementKit", () => ({
 }));
 
 const dmk = {
-  close: jest.fn(),
+  listConnectedDevices: jest.fn(() => []),
   getDeviceSessionState: jest.fn(),
   connect: jest.fn(),
 };
@@ -32,7 +32,6 @@ describe("useBleDevicePairing", () => {
     jest
       .mocked(dmkUtils.useDeviceManagementKit)
       .mockReturnValue(dmk as unknown as DeviceManagementKit);
-    dmk.close.mockResolvedValue(undefined);
     dmk.getDeviceSessionState.mockReturnValue(new Observable());
   });
   it("should pair a device", async () => {
