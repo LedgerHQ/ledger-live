@@ -74,7 +74,7 @@ export function runDelegateTest(
       await app.portfolio.openCryptoAddresses();
 
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn(delegation.account.currency.id);
+      await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
       // Osmosis, Babylon and MultiversX have no pre-selected validator: pick it after the amount.
@@ -122,7 +122,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
 
       await app.portfolio.openCryptoAddresses();
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn(delegation.account.currency.id);
+      await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
       await app.stake.setAmount(currencyId, delegation.amount);
@@ -217,7 +217,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
 
         await app.portfolio.openCryptoAddresses();
         await app.common.goToAccountByName(account.accountName);
-        await app.account.tapEarn(account.currency.id);
+        await app.account.tapEarn();
 
         // Mina delegates the whole balance, so the flow opens on the validator list and has no
         // amount step.
@@ -322,7 +322,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.portfolio.openCryptoAddresses();
 
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn(delegation.account.currency.id);
+      await app.account.tapEarn();
 
       await app.celoManageAssets.checkManagePage();
       await app.celoManageAssets.clickLock();
@@ -353,7 +353,7 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
       await app.portfolio.openCryptoAddresses();
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn(delegation.account.currency.id);
+      await app.account.tapEarn();
 
       await app.celoManageAssets.checkManagePage();
       await app.celoManageAssets.clickVote();
@@ -399,7 +399,7 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.portfolio.openCryptoAddresses();
 
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn(delegation.account.currency.id);
+      await app.account.tapEarn();
 
       await app.tezosStake.startEarning();
       await app.tezosStake.continueFromDelegationSummary();

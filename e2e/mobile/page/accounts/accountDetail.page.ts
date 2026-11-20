@@ -27,9 +27,6 @@ export default class AccountDetailPage {
   private readonly moreSheet = byId("account-detail-hero-more-sheet-content");
   private readonly moreSheetAction = (action: MoreSheetAction) =>
     byId(`account-detail-hero-more-sheet-${action}`);
-  private readonly assetPicker = byId("account-detail-asset-picker-list");
-  private readonly assetPickerRow = (currencyId: string) =>
-    byId(`account-detail-asset-picker-${currencyId}`);
   private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
@@ -126,19 +123,15 @@ export default class AccountDetailPage {
     await this.heroAction("swap").tap();
   }
 
-  /** Buy is a row of the More sheet while the currency supports swap, a tile of the hero otherwise. */
+  /** Buy is a row of the More sheet, which the account screen shows while the currency supports swap. */
   @Step("Tap on buy")
   async tapBuy() {
     await this.tapMoreSheetAction("buy");
   }
 
-  /** The app asks which of the held assets to earn on only when the account holds several. */
-  @Step("Tap on earn for the currency {{{0}}}")
-  async tapEarn(currencyId: string) {
+  @Step("Tap on earn")
+  async tapEarn() {
     await this.tapMoreSheetAction("earn");
-    if (await this.assetPicker.isVisible(TIMEOUT.xxsmall)) {
-      await this.assetPickerRow(currencyId).tap();
-    }
   }
 
   @Step("Expect operation history to be visible")

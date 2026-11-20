@@ -266,9 +266,9 @@ export default class AccountPage {
   }
 
   @Step("Tap on earn button")
-  async tapEarn(currencyId: string) {
+  async tapEarn() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.tapEarn(currencyId);
+      await this.accountDetail.tapEarn();
       return;
     }
     await this.earnButton.scrollTo(this.accountScreenScrollView);
