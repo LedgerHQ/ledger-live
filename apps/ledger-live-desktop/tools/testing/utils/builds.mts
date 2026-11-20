@@ -98,6 +98,10 @@ export async function installFromFeed(version: string) {
   return installedApp;
 }
 
+export function feedBinaryName(version: string) {
+  return path.basename(platformBuild().feedBinary(version));
+}
+
 export function openApp(appPath: string, env: Record<string, string> = {}) {
   if (!fs.existsSync(appPath)) throw new Error(`No app at ${appPath}`);
   const app = spawn(platformBuild().executable(appPath), {
