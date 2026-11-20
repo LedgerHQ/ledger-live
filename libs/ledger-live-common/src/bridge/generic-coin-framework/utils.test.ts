@@ -729,6 +729,22 @@ describe("coin-framework utils", () => {
   });
 
   describe("transactionToIntent", () => {
+    describe("pool", () => {
+      const account = { currency: { name: "zcash", units: [{}] } } as Account;
+
+      it("copies the pool of the transaction to the intent", () => {
+        expect(
+          transactionToIntent(account, { mode: "send", pool: "ironwood" } as GenericTransaction),
+        ).toMatchObject({ pool: "ironwood" });
+      });
+
+      it("leaves the intent without a pool key when the transaction has none", () => {
+        expect(
+          transactionToIntent(account, { mode: "send" } as GenericTransaction),
+        ).not.toHaveProperty("pool");
+      });
+    });
+
     describe("memo", () => {
       const account = { currency: { name: "solana", units: [{}] } } as Account;
 

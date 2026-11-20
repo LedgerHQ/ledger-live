@@ -5,8 +5,10 @@ import type {
   AccountBalance,
   AccountBalanceRaw,
   AccountLike,
+  MaxSpendableFilters,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import { UnsupportedMaxSpendableFilter } from "../errors";
 
 export type { AccountBalance } from "@ledgerhq/types-live";
 
@@ -105,3 +107,42 @@ export const restoreAccountBalances = (
   rows: AccountBalanceRaw[] | undefined,
   account: AccountLike,
 ): AccountBalance[] => (rows ? fromAccountBalancesRaw(rows) : defaultAccountBalances(account));
+
+/**
+ * The rows of `account.balances` that `filters` select. A transaction spends from one pool, so
+ * `pools` names exactly one; a row matches on its `pool` and on its `private` flag, the rows of a
+ * family that has no pools being public and carrying no pool.
+ *
+ * Throws `UnsupportedMaxSpendableFilter` when the filters cannot be honoured, so the caller is told
+ * instead of being given the unfiltered figure.
+ */
+export function selectMaxSpendableRows(
+  account: AccountLike,
+  filters: MaxSpendableFilters,
+): AccountBalance[] {
+  const { pools, private: isPrivate } = filters;
+
+  if (pools !== undefined && pools.length !== 1) {
+    throw new UnsupportedMaxSpendableFilter(
+      `"pools" must name exactly one pool, got ${pools.length}`,
+    );
+  }
+
+  const rows = (account.balances ?? []).filter(
+    row =>
+      (pools === undefined || row.pool === pools[0]) &&
+      (isPrivate === undefined || !!row.private === isPrivate),
+  );
+
+  if (rows.length === 0) {
+    throw new UnsupportedMaxSpendableFilter(
+      `No balance of this account matches ${JSON.stringify(filters)}`,
+    );
+  }
+
+  return rows;
+}
+
+/** The spendable part of `rows`: their value minus what is locked. */
+export const spendableOfRows = (rows: AccountBalance[]): BigNumber =>
+  rows.reduce((sum, row) => sum.plus(row.value).minus(row.locked ?? 0), new BigNumber(0));

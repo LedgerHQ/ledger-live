@@ -1101,6 +1101,7 @@ export function transactionToIntent(
         ? BigInt(transaction.nonce.toString())
         : undefined,
     ...getDelegationIntentFields(delegationMode, transaction),
+    ...(transaction.pool !== undefined && { pool: transaction.pool }),
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
