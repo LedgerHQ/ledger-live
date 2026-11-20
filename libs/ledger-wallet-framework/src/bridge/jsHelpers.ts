@@ -141,6 +141,8 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
     sameSequenceNumber(a, b) &&
+    // A status the indexer recorded after a first read replaces the stored one.
+    !!a.hasFailed === !!b.hasFailed &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
 
@@ -190,6 +192,21 @@ Operation[] {
   }
 
   return all;
+}
+
+/**
+ * `mergeOps`, keeping the fetched operations older than every existing one, which `mergeOps`
+ * drops: for a sync that reads again a range below its newest stored operation, where the indexer
+ * may list a transaction late.
+ */
+export function mergeOpsKeepingOlder(existing: Operation[], newFetched: Operation[]): Operation[] {
+  const merged = mergeOps(existing, newFetched);
+  const kept = new Set(merged.map(({ id }) => id));
+  const older = [
+    ...new Map(newFetched.filter(({ id }) => !kept.has(id)).map(o => [o.id, o])).values(),
+  ];
+  if (older.length === 0) return merged;
+  return [...merged, ...older.sort((a, b) => b.date.valueOf() - a.date.valueOf())];
 }
 
 export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] => {

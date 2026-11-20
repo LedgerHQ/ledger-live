@@ -1,4 +1,4 @@
-import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import type {
   AddressValidationCurrencyParameters,
   Balance,
@@ -60,11 +60,24 @@ export function createApi() {
     getBlock: (context: NearContext, height: number): Promise<Block> => getBlock(context, height),
 
     // --- Account state ---
-    getBalance: (
+    getBalance: async (
       context: NearContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(context, address), options),
+    ): Promise<Balance[]> => {
+      // NEAR has a single native asset: the asset options have nothing to act on. The validator
+      // options are hints and are forwarded.
+      if (
+        options?.includeAssets !== undefined ||
+        options?.knownAssets !== undefined ||
+        options?.scanAssetsMinHeight !== undefined
+      ) {
+        throw new InvalidParameterError(
+          "getBalance does not support the asset options (includeAssets, knownAssets, scanAssetsMinHeight)",
+        );
+      }
+      return getBalance(context, address, options);
+    },
     listOperations: (
       context: NearContext,
       address: string,

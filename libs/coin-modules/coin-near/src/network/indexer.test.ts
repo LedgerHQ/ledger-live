@@ -483,5 +483,211 @@ describe("getOperations", () => {
       expect(history.isFullPage).toBe(isFullPage);
       expect(history.operations).toHaveLength(count);
     });
+
+    describe("paging", () => {
+      const fullPage = (prefix: string) =>
+        Array.from({ length: 25 }, (_, index) => txn({ transaction_hash: `${prefix}-${index}` }));
+
+      // Serves the given pages in order, each with the cursor of the next, and counts the requests.
+      const respondWithPages = (pages: NearTransaction[][]): { requests: () => string[] } => {
+        const cursors: string[] = [];
+        mockServer.use(
+          http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/txns`, ({ request }) => {
+            const cursor = new URL(request.url).searchParams.get("next") ?? "";
+            cursors.push(cursor);
+            const index = cursor === "" ? 0 : Number(cursor.replace("page-", ""));
+            return HttpResponse.json({
+              data: pages[index],
+              ...(index + 1 < pages.length && { meta: { next_page: `page-${index + 1}` } }),
+            });
+          }),
+        );
+        return { requests: () => cursors };
+      };
+
+      it("reads past the first page until a transaction it knows, so a burst is not lost", async () => {
+        const { requests } = respondWithPages([
+          fullPage("a"),
+          fullPage("b"),
+          [txn({ transaction_hash: "known" }), txn({ transaction_hash: "older" })],
+        ]);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["known"]),
+        );
+
+        expect(requests()).toEqual(["", "page-1", "page-2"]);
+        expect(history.operations).toHaveLength(52);
+        expect(history.isFullPage).toBe(false);
+      });
+
+      it("stops at the page that holds a known transaction", async () => {
+        const { requests } = respondWithPages([
+          [...fullPage("a").slice(0, 24), txn({ transaction_hash: "known" })],
+          fullPage("b"),
+        ]);
+
+        await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS, new Set(["known"]));
+
+        expect(requests()).toEqual([""]);
+      });
+
+      it("reads past a known transaction until the unsettled ones were read, keeping the stored history", async () => {
+        const { requests } = respondWithPages([
+          [...fullPage("a").slice(0, 24), txn({ transaction_hash: "known" })],
+          [...fullPage("b").slice(0, 24), txn({ transaction_hash: "unsettled" })],
+          fullPage("c"),
+        ]);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["known", "unsettled"]),
+          new Set(["unsettled"]),
+        );
+
+        expect(requests()).toEqual(["", "page-1"]);
+        expect(history.operations).toHaveLength(50);
+        expect(history.gap).toBe(false);
+      });
+
+      it("reads past newly stored transactions until the boundary hash", async () => {
+        const { requests } = respondWithPages([
+          [...fullPage("a").slice(0, 24), txn({ transaction_hash: "stored-new" })],
+          [
+            ...fullPage("b").slice(0, 23),
+            txn({ transaction_hash: "late" }),
+            txn({ transaction_hash: "boundary" }),
+          ],
+          fullPage("c"),
+        ]);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["stored-new", "boundary"]),
+          new Set(["boundary"]),
+        );
+
+        expect(requests()).toEqual(["", "page-1"]);
+        expect(history.operations.map(({ hash }) => hash)).toContain("late");
+        expect(history.gap).toBe(false);
+      });
+
+      it("is bounded when an unsettled transaction is never found, and still joins the stored history", async () => {
+        const pages = [
+          [...fullPage("a").slice(0, 24), txn({ transaction_hash: "known" })],
+          ...Array.from({ length: 11 }, (_, index) => fullPage(`p${index}`)),
+        ];
+        const { requests } = respondWithPages(pages);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["known", "gone"]),
+          new Set(["gone"]),
+        );
+
+        expect(requests()).toHaveLength(10);
+        expect(history.gap).toBe(false);
+      });
+
+      it("reads the newest page only when nothing is known yet", async () => {
+        const { requests } = respondWithPages([fullPage("a"), fullPage("b")]);
+
+        const history = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+        expect(requests()).toEqual([""]);
+        expect(history.isFullPage).toBe(true);
+      });
+
+      it("is bounded, and says older transactions may remain", async () => {
+        const pages = Array.from({ length: 12 }, (_, index) => fullPage(`p${index}`));
+        const { requests } = respondWithPages(pages);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["never-seen"]),
+        );
+
+        expect(requests()).toHaveLength(10);
+        expect(history.isFullPage).toBe(true);
+        expect(history.gap).toBe(true);
+      });
+
+      it("stops when the indexer has no further page", async () => {
+        const { requests } = respondWithPages([fullPage("a")]);
+
+        const history = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["never-seen"]),
+        );
+
+        expect(requests()).toEqual([""]);
+        expect(history.isFullPage).toBe(false);
+      });
+    });
+
+    describe("what the sync reads again", () => {
+      it("lists the transactions whose outcome is not indexed yet", async () => {
+        respondWith([
+          txn({ transaction_hash: "settled" }),
+          txn({ transaction_hash: "pending", outcomes: {} }),
+        ]);
+
+        const { outcomePendingHashes } = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+        );
+
+        expect(outcomePendingHashes).toEqual(["pending"]);
+      });
+
+      it("lists the staking calls another account relayed for this one", async () => {
+        respondWith([
+          txn({
+            transaction_hash: "relayed",
+            signer_account_id: "relayer.near",
+            receiver_account_id: ADDRESS,
+            actions: [
+              { action: "DELEGATE_ACTION", method: null },
+              { action: "FUNCTION_CALL", method: "deposit_and_stake" },
+            ],
+          }),
+          txn({
+            transaction_hash: "relayed-claim",
+            signer_account_id: "relayer.near",
+            receiver_account_id: ADDRESS,
+            actions: [
+              { action: "DELEGATE_ACTION", method: null },
+              { action: "FUNCTION_CALL", method: "claim" },
+            ],
+          }),
+          txn({
+            transaction_hash: "own",
+            actions: [
+              { action: "DELEGATE_ACTION", method: null },
+              { action: "FUNCTION_CALL", method: "deposit_and_stake" },
+            ],
+          }),
+          txn({ transaction_hash: "received", signer_account_id: "someone.near" }),
+        ]);
+
+        const { relayedHashes } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+        expect(relayedHashes).toEqual(["relayed"]);
+      });
+    });
   });
 });
