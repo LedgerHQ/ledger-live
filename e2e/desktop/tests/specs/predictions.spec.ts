@@ -20,7 +20,7 @@ test.describe("Predictions", () => {
   test(
     "Terms and risk disclaimer",
     {
-      tag: buildTags({ skipLNS: true }),
+      tag: buildTags({}),
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {

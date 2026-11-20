@@ -48,5 +48,6 @@ export abstract class PredictionsDialog extends Dialog {
     await this.checkbox.check();
     await expect(this.cta).toBeEnabled();
     await this.cta.click();
+    await expect(this.dialog).toBeHidden();
   }
 }
