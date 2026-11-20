@@ -1,6 +1,7 @@
 import type { PersistedCAL } from "@domain/api-currency-token";
 import storage from "LLM/storage";
-import { getCountervalues, saveCryptoAssetsCacheState } from "./db";
+import type { AccountRaw } from "@ledgerhq/types-live";
+import { getAccounts, getCountervalues, saveAccounts, saveCryptoAssetsCacheState } from "./db";
 
 describe("saveCryptoAssetsCacheState", () => {
   beforeEach(async () => {
@@ -55,5 +56,19 @@ describe("getCountervalues", () => {
 
   it("returns an empty status when no countervalues are saved", async () => {
     expect(await getCountervalues()).toEqual({ status: {} });
+  });
+});
+
+describe("saveAccounts", () => {
+  beforeEach(async () => {
+    await storage.delete(await storage.keys());
+  });
+
+  it("stores the version that the account model gives, so getAccounts reads it back", async () => {
+    const stored = { data: { id: "btc-1" } as AccountRaw, version: 2 };
+
+    await saveAccounts({ active: [stored] });
+
+    expect(await getAccounts()).toEqual({ active: [stored] });
   });
 });
