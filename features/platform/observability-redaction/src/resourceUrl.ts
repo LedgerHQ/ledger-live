@@ -27,13 +27,14 @@ const MIN_IDENTIFIER_LENGTH = 25;
 const NON_ALPHANUMERIC = /[^\dA-Za-z]+/;
 const DIGIT = /\d/;
 const LETTER = /[A-Za-z]/;
+const LEGACY_ACCOUNT_ID = /[a-z][\d_a-z]*(?::|%3a)\d+(?::|%3a)[\d_a-z-]+(?::|%3a)/i;
 const URL_PARTS = /^([a-z][\d+.a-z-]*:\/\/[^#/?]*)?([^#?]*)(\?[^#]*)?(#[\s\S]*)?$/i;
 
 const isIdentifier = (token: string): boolean =>
   token.length >= MIN_IDENTIFIER_LENGTH && DIGIT.test(token) && LETTER.test(token);
 
 const holdsIdentifier = (value: string): boolean =>
-  value.split(NON_ALPHANUMERIC).some(isIdentifier);
+  LEGACY_ACCOUNT_ID.test(value) || value.split(NON_ALPHANUMERIC).some(isIdentifier);
 
 const scrubPath = (path: string): string => {
   const segments = path.split("/");
@@ -64,8 +65,8 @@ const scrubQuery = (query: string): string => query.split("&").map(scrubQueryPar
 /**
  * Replaces each identifier of a URL with `[redacted]`: the path segment after a key such as
  * `/address/` or `/accounts/`, the value of a parameter such as `address=`, and any segment or value
- * holding an alphanumeric run of 25 characters or more that mixes letters and digits. The origin
- * and every other part of the URL are kept as they are.
+ * holding an account id (`js:2:bitcoin:…`) or an alphanumeric run of 25 characters or more that
+ * mixes letters and digits. The origin and every other part of the URL are kept as they are.
  */
 export function scrubResourceUrl(url: string): string {
   const [, origin = "", path = "", query = "", fragment = ""] = URL_PARTS.exec(url) ?? [];

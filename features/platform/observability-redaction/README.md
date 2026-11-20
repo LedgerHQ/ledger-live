@@ -12,8 +12,9 @@ call, and has no dependency on a vendor SDK: each app applies it in its own SDK 
 - `scrubResourceUrl(url)` replaces each identifier with `[redacted]`:
   - the path segment after a key such as `/address/`, `/accounts/` or `/delegators/`;
   - the value of a query parameter such as `address=` or `account=`;
-  - any path segment, query value or fragment segment holding an alphanumeric run of 25 characters
-    or more that mixes letters and digits: addresses, extended public keys, transaction hashes.
+  - any path segment, query value or fragment segment holding an account id (`js:2:bitcoin:…`,
+    encoded or not) or an alphanumeric run of 25 characters or more that mixes letters and digits:
+    addresses, extended public keys, transaction hashes.
 
   The origin and the other parts are kept as they are, and scrubbing a scrubbed URL changes
   nothing.
@@ -21,4 +22,5 @@ call, and has no dependency on a vendor SDK: each app applies it in its own SDK 
 
 ## Consumers
 
+- Ledger Wallet Desktop: `resource.url` in the Datadog `beforeSend`.
 - Ledger Wallet Mobile: the RUM resources reported by the Datadog SDK.

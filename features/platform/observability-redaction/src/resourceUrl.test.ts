@@ -149,6 +149,21 @@ describe("scrubResourceUrl", () => {
       `/blockchain/v4/eth/address/${EVM_ADDRESS}/txs`,
       "/blockchain/v4/eth/address/[redacted]/txs",
     ],
+    [
+      "the segment after a key written in any case",
+      "https://explorers.example/blockchain/v4/btc/Address/someone/utxo",
+      "https://explorers.example/blockchain/v4/btc/Address/[redacted]/utxo",
+    ],
+    [
+      "an encoded account id with a short address in a parameter",
+      "https://api.example/v1/tokens?id=js%3A2%3Ahedera%3A0.0.12345%3Ahederabip44",
+      "https://api.example/v1/tokens?id=[redacted]",
+    ],
+    [
+      "an account id with a short address in a path segment",
+      "https://api.example/v1/sync/js:2:near:someone.near:/status",
+      "https://api.example/v1/sync/[redacted]/status",
+    ],
   ])("redacts %s", (_, url, expected) => {
     expect(scrubResourceUrl(url)).toBe(expected);
   });
@@ -164,6 +179,8 @@ describe("scrubResourceUrl", () => {
     ],
     ["an empty parameter and a trailing slash", "https://api.example/v1/address/?address=&flag"],
     ["a currency id", "https://api.example/v1/tokens/ethereum/erc20/usd_tether__erc20_"],
+    ["a time of day", "https://api.example/v1/schedule?at=12:30:00"],
+    ["a text that is not a URL", "not a url"],
   ])("keeps %s unchanged", (_, url) => {
     expect(scrubResourceUrl(url)).toBe(url);
   });
