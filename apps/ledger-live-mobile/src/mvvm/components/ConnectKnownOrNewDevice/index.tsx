@@ -3,7 +3,7 @@ import { ConnectKnownOrNewDeviceView } from "./ConnectKnownOrNewDeviceView";
 import type { ConnectKnownOrNewDeviceProps } from "./types";
 import { useConnectKnownOrNewDeviceViewModel } from "./useConnectKnownOrNewDeviceViewModel";
 
-export type { ConnectKnownOrNewDeviceDelays, ConnectKnownOrNewDeviceProps } from "./types";
+export type { ConnectKnownOrNewDeviceProps } from "./types";
 
 /**
  * The device section of My Wallet: lists the known, connected and discovered devices, connects
