@@ -19,7 +19,8 @@ export class DmkSignerXrp implements XrpSigner {
   private readonly signer: SignerXrp;
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.signer = new SignerXrpBuilder({ dmk, sessionId }).build();
+    const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    this.signer = new SignerXrpBuilder({ dmk, sessionId, originToken }).build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
