@@ -278,7 +278,7 @@ export default class AccountPage {
   @Step("Tap on swap button")
   async tapSwap() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.tapInvestAction("swap");
+      await this.accountDetail.tapSwap();
       return;
     }
     await this.swapButton.scrollTo(this.accountScreenScrollView);
@@ -288,7 +288,7 @@ export default class AccountPage {
   @Step("Tap on buy button")
   async tapBuy() {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.tapInvestAction("buy");
+      await this.accountDetail.tapBuy();
       return;
     }
     await this.buyButton.scrollTo(this.accountScreenScrollView);
