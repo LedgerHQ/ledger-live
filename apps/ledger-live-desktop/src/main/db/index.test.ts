@@ -578,6 +578,56 @@ describe("db flush", () => {
     expect(writtenFile("app")).toEqual({ accounts: [] });
   });
 
+  it("reads a namespace file once for the calls that wait for it together", async () => {
+    await Promise.all([
+      db.getKey("app", "settings"),
+      db.setKey("app", "settings", { theme: "dark" }),
+      db.setKey("app", "accounts", []),
+    ]);
+
+    expect(readFileMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the value of a setKey when another read of the file ends later", async () => {
+    const appFile = () => Buffer.from(JSON.stringify({ data: { settings: "old" } }));
+    let endSecondRead: (() => void) | undefined;
+    readFileMock
+      .mockResolvedValueOnce(appFile())
+      .mockImplementationOnce(
+        () => new Promise<Buffer>(resolve => (endSecondRead = () => resolve(appFile()))),
+      );
+
+    const settingSettings = db.setKey("app", "settings", { theme: "dark" });
+    const settingAccounts = db.setKey("app", "accounts", []);
+    await waitMs(50);
+    endSecondRead?.();
+    await Promise.all([settingSettings, settingAccounts]);
+
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" }, accounts: [] });
+  });
+
+  it("does not put back the old data of a read that ends during the reset", async () => {
+    let endRead: (() => void) | undefined;
+    readFileMock.mockImplementationOnce(
+      () =>
+        new Promise<Buffer>(
+          resolve =>
+            (endRead = () => resolve(Buffer.from(JSON.stringify({ data: { settings: "old" } })))),
+        ),
+    );
+    const getting = db.getKey("app", "settings");
+    await waitMs(0);
+    const resetting = db.resetAll();
+    await waitMs(0);
+    endRead?.();
+    await Promise.all([resetting, getting]);
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+
+    await db.setKey("app", "accounts", []);
+
+    expect(writtenFile("app")).toEqual({ accounts: [] });
+  });
+
   it("writes a pending save before reload clears the memory", async () => {
     jest.useFakeTimers();
     void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
