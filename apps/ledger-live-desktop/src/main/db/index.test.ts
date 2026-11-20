@@ -624,6 +624,7 @@ describe("db flush", () => {
     readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
 
     await db.setKey("app", "accounts", []);
+    await db.flush();
 
     expect(writtenFile("app")).toEqual({ accounts: [] });
   });
