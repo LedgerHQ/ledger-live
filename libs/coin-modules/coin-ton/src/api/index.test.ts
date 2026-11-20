@@ -4,6 +4,7 @@ import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
+import { getAccountStatus } from "../logic/getAccountStatus";
 import { getBalance } from "../logic/getBalance";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { getNextSequence } from "../logic/getNextSequence";
@@ -18,6 +19,7 @@ jest.mock("../logic/broadcast", () => ({ broadcast: jest.fn() }));
 jest.mock("../logic/combine", () => ({ combine: jest.fn() }));
 jest.mock("../logic/craftTransaction", () => ({ craftTransaction: jest.fn() }));
 jest.mock("../logic/estimateFees", () => ({ estimateFees: jest.fn() }));
+jest.mock("../logic/getAccountStatus", () => ({ getAccountStatus: jest.fn() }));
 jest.mock("../logic/getBalance", () => ({ getBalance: jest.fn() }));
 jest.mock("../logic/getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
 jest.mock("../logic/getNextSequence", () => ({ getNextSequence: jest.fn() }));
@@ -53,6 +55,17 @@ describe("createApi", () => {
 
     await api.getNextSequence(context, OWNER);
     expect(getNextSequence).toHaveBeenCalledWith(context, OWNER);
+  });
+
+  it("forwards getAccountStatus with the public key and the blacklisted tokens", async () => {
+    const publicKey = "ab".repeat(32);
+    const options = { blacklistedTokenIds: ["ton/jetton/spam"] };
+    jest.mocked(getAccountStatus).mockResolvedValue({ used: true });
+
+    await expect(createApi().getAccountStatus(context, publicKey, options)).resolves.toEqual({
+      used: true,
+    });
+    expect(getAccountStatus).toHaveBeenCalledWith(context, publicKey, options);
   });
 
   it("forwards getBalance and rejects balance options", async () => {
