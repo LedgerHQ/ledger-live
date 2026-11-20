@@ -27,7 +27,7 @@ const intent = (overrides: Partial<TransactionIntent> = {}): TransactionIntent =
 });
 
 const withControl = (utxoStrategy: Record<string, unknown>) =>
-  intent({ data: { type: "string", utxoStrategy } } as Partial<TransactionIntent>);
+  intent({ data: { type: "unknown", utxoStrategy } } as Partial<TransactionIntent>);
 
 describe("validateIntent", () => {
   it("accepts a valid intent and reports the amounts", async () => {
@@ -191,6 +191,33 @@ describe("validateIntent", () => {
       amount: 9_700n,
       totalSpent: 10_000n,
     });
+  });
+
+  it("checks a selection's value against the amount and an absolute fee, not the estimate's verdict", async () => {
+    // The estimate's `sufficient` was priced at the relay floor, and the balance is larger.
+    const parameters = { sufficient: true, selectedValue: 3_000n };
+    const short = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ amount: 2_900n }),
+      BALANCES,
+      {
+        value: 200n,
+        parameters,
+      },
+    );
+    expect(short.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    const covered = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ amount: 2_700n }),
+      BALANCES,
+      {
+        value: 300n,
+        parameters,
+      },
+    );
+    expect(covered.errors.amount).toBeUndefined();
   });
 
   it("sends the swept outputs' value minus an absolute fee for useAllAmount, not the balance", async () => {

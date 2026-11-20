@@ -40,7 +40,7 @@ const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   recipient: "b",
   amount: 1n,
   asset: { type: "native" },
-  data: { type: "string" },
+  data: { type: "unknown" },
 };
 
 describe("createApi", () => {
@@ -159,13 +159,13 @@ describe("createApi", () => {
 
   it("returns the intent's bitcoin data, OP_RETURN data included", () => {
     const api = createApi("bitcoin");
-    expect(api.craftTransactionData(context, intent)).toEqual({ type: "string" });
+    expect(api.craftTransactionData(context, intent)).toEqual({ type: "unknown" });
     expect(
       api.craftTransactionData(context, {
         ...intent,
-        data: { type: "string", opReturnData: "abcd" },
+        data: { type: "unknown", opReturnData: "abcd" },
       }),
-    ).toEqual({ type: "string", opReturnData: "abcd" });
+    ).toEqual({ type: "unknown", opReturnData: "abcd" });
   });
 
   it("keeps the intent's coin control, so the data round-trips into estimation and crafting", () => {
@@ -176,9 +176,9 @@ describe("createApi", () => {
     expect(
       createApi("bitcoin").craftTransactionData(context, {
         ...intent,
-        data: { type: "string", utxoStrategy },
+        data: { type: "unknown", utxoStrategy },
       }),
-    ).toEqual({ type: "string", utxoStrategy });
+    ).toEqual({ type: "unknown", utxoStrategy });
   });
 
   it.each([null, false, ""])(

@@ -6,12 +6,12 @@ import { OP_RETURN_DATA_SIZE_LIMIT, UTXO_STRATEGIES } from "./selectUtxos";
 
 /**
  * Bitcoin-specific transaction fields, carried in the intent's `data` (the framework's `TxData`
- * slot), as coin-evm carries calldata. `type` names the encoding, as the framework's
- * `BufferTxData` does with `"buffer"`: the data is a string. Every field is optional: an intent
- * without `data` is a plain payment.
+ * slot), as coin-evm carries calldata. `type` is `"unknown"`: the data is not one encoded
+ * payload but a set of optional fields (OP_RETURN data, coin control). Every field is optional:
+ * an intent without `data` is a plain payment.
  */
 export interface BitcoinTxData extends TxData {
-  type: "string";
+  type: "unknown";
   /**
    * Data of an OP_RETURN output, hex (e.g. a swap provider's memo). JSON-safe on purpose: the
    * generic bridge stores the intent data as JSON.

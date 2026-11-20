@@ -8,7 +8,7 @@ export function craftTransactionData(
   intent: TransactionIntent<MemoNotSupported, BitcoinTxData>,
 ): BitcoinTxData {
   return {
-    type: "string",
+    type: "unknown",
     ...(intent.data?.opReturnData ? { opReturnData: intent.data.opReturnData } : {}),
     // Kept whenever present, even malformed, so that `coinControlOf` still refuses it.
     ...(intent.data?.utxoStrategy !== undefined ? { utxoStrategy: intent.data.utxoStrategy } : {}),
