@@ -163,7 +163,10 @@ function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Devi
   });
 }
 
-/** The old checks of a seeded device: the sync companion on a touchscreen, the pairing step on a Nano. */
+/**
+ * The old checks of a seeded device: the sync companion on a touchscreen, the pairing step on a
+ * Nano. Both sit on the onboarding welcome screen, where their back button returns.
+ */
 function resetToLegacySeededChecks(
   navigation: NavigationProp<ParamListBase>,
   device: Device,
@@ -181,7 +184,9 @@ function resetToLegacySeededChecks(
         {
           name: NavigatorName.Onboarding,
           state: {
+            index: 1,
             routes: [
+              { name: ScreenName.OnboardingWelcome },
               {
                 name: ScreenName.OnboardingPairNew,
                 params: {
