@@ -1,13 +1,13 @@
-import type { CantonCoinConfig } from "../config";
-import { getBalance as getBalanceFromNetwork, isGatewayEnabled } from "../network/gateway";
+import type { CantonCoinConfig } from "../../config";
+import { getBalance as getBalanceFromNetwork, isGatewayEnabled } from "../../network/gateway";
 import {
   createMockCoinConfigValue,
   createMockContext,
   createMockInstrumentBalances,
-} from "../test/fixtures";
-import { getInstrumentBalances } from "./instrumentBalances";
+} from "../../test/fixtures";
+import { getInstrumentBalances } from "../instrumentBalances";
 
-jest.mock("../network/gateway", () => ({
+jest.mock("../../network/gateway", () => ({
   getBalance: jest.fn(),
   isGatewayEnabled: jest.fn(() => true),
 }));
