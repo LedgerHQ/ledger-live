@@ -66,6 +66,18 @@
     "ticket": "LIVE-40925"
   },
   {
+    "path": "libs/ledger-live-common/src/wallet-api/converters.ts",
+    "reason": "Wallet API server core until it moves to the feature platform",
+    "target": "@features/platform-wallet-api-server",
+    "ticket": "LIVE-40913"
+  },
+  {
+    "path": "libs/ledger-live-common/src/wallet-api/react.ts",
+    "reason": "Wallet API React hooks until react.ts is split into logic, handlers and react layers",
+    "target": "@features/platform-wallet-api-server",
+    "ticket": "LIVE-40913"
+  },
+  {
     "path": "apps/ledger-live-mobile/src/mvvm/features/WalletApiExchange/",
     "reason": "Mobile exchange handler wiring until handlers are defined once for both apps",
     "target": "@features/platform-exchange-handlers",
@@ -100,6 +112,12 @@
     "reason": "Legacy account serialization and persistence until apps store account descriptors",
     "target": "@domain/entity-account-*",
     "ticket": "LIVE-40895"
+  },
+  {
+    "path": "libs/types-live/",
+    "reason": "Legacy Account and bridge types until every dependency on the former Account type is released",
+    "target": "domain/entity/account-*",
+    "ticket": "LIVE-38772"
   },
   {
     "path": "libs/ledger-live-common/src/market/",
