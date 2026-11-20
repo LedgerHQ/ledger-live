@@ -1,9 +1,23 @@
 import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
+import {
+  seededButtons,
+  seededPages,
+  seededProps,
+  trackSeededClick,
+  trackSeededPage,
+  type DeviceModelId,
+  type ScreenTracking,
+  type SeededButton,
+  type SeededPage,
+  type TrackingProps,
+} from "@features/platform-device-onboarding-analytics";
 
 type SkipDrawerProps = Readonly<{
+  trackingProps?: TrackingProps;
   isOpen: boolean;
   onClose: () => void;
+  onClosePressed: () => void;
   onSkip: () => void;
   onActivate: () => void;
 }>;
@@ -12,6 +26,7 @@ export type SyncOfferPhase = "offer" | "synchronizing" | "success";
 
 type SyncOfferSuccessViewProps = Readonly<{
   phase: "success";
+  screenTracking: ScreenTracking | null;
   title: string;
   continueLabel: string;
   closeLabel: string;
@@ -28,6 +43,7 @@ type SyncOfferSynchronizingViewProps = Readonly<{
 
 type SyncOfferPromptViewProps = Readonly<{
   phase: "offer";
+  screenTracking: ScreenTracking | null;
   title: string;
   description: string;
   learnMoreLabel: string;
@@ -53,6 +69,7 @@ export type SyncOfferScreenProps = Readonly<{
   onQuit: () => void;
   onContinue: () => void;
   phase: SyncOfferPhase;
+  seededDeviceType?: DeviceModelId | null;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -62,19 +79,34 @@ export function useSyncOfferScreenViewModel({
   onQuit,
   onContinue,
   phase,
+  seededDeviceType,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
+  const trackingProps = seededDeviceType ? seededProps(seededDeviceType) : undefined;
+  const screenTracking = (category: SeededPage): ScreenTracking | null =>
+    trackingProps ? { category, ...trackingProps } : null;
+  const trackClick = (button: SeededButton) => {
+    if (seededDeviceType) trackSeededClick(button, seededDeviceType);
+  };
+  const quit = () => {
+    trackClick(seededButtons.close);
+    onQuit();
+  };
 
   if (phase === "success") {
     return {
       phase,
+      screenTracking: screenTracking(seededPages.ledgerSyncSuccess),
       title: t("deviceOnboarding.syncOffer.success.title"),
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
       closeLabel: t("deviceOnboarding.checks.close"),
-      onContinue,
-      onQuit,
+      onContinue: () => {
+        trackClick(seededButtons.continue);
+        onContinue();
+      },
+      onQuit: quit,
     };
   }
 
@@ -83,30 +115,45 @@ export function useSyncOfferScreenViewModel({
       phase,
       title: t("deviceOnboarding.checks.synchronizing.title"),
       closeLabel: t("deviceOnboarding.checks.close"),
-      onQuit,
+      onQuit: quit,
     };
   }
 
   return {
     phase,
+    screenTracking: screenTracking(seededPages.ledgerSync),
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
     learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),
     activateLabel: t("deviceOnboarding.syncOffer.activate"),
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
-    onActivate,
-    onOpenSkip: () => setIsSkipDrawerOpen(true),
-    onLearnMore,
-    onQuit,
+    onActivate: () => {
+      trackClick(seededButtons.activateSync);
+      onActivate();
+    },
+    onOpenSkip: () => {
+      trackClick(seededButtons.skip);
+      setIsSkipDrawerOpen(true);
+    },
+    onLearnMore: () => {
+      trackClick(seededButtons.learnMore);
+      onLearnMore();
+    },
+    onQuit: quit,
     skipDrawer: {
+      trackingProps,
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
+      onClosePressed: () => trackClick(seededButtons.close),
       onSkip: () => {
+        trackClick(seededButtons.yesSkip);
+        if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
+        trackClick(seededButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },

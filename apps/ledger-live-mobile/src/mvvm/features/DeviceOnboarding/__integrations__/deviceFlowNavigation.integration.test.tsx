@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
+import { track, trackPage } from "@shared/analytics";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { NavigatorName, ScreenName } from "~/const";
@@ -404,6 +405,37 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("Choose a Ledger device")).toBeVisible();
   });
 
+  it("should send the seeded funnel events in order, from the checks to a skipped Ledger Sync", async () => {
+    answerSeeded(device);
+    const { user } = renderApp({ offerLedgerSync: true });
+    jest.mocked(track).mockClear();
+    jest.mocked(trackPage).mockClear();
+
+    await openFlow(user);
+    await pairAndPassChecks(user, device);
+    await user.press(await screen.findByTestId(syncOfferTestIds.skip));
+    await user.press(await screen.findByTestId("sync-onboarding-drawer-skipCTA"));
+
+    await waitFor(() => expect(seededEvents()).toContain("onboarding_done"));
+    // The bottom sheet mock renders a closed sheet, so its page is sent early in tests only.
+    const skipDrawerPage = "Page Drawer : Skip Ledger sync confirmation";
+    expect(seededEvents()).toContain(skipDrawerPage);
+    expect(seededEvents().filter(event => event !== skipDrawerPage)).toEqual([
+      "Page Genuine Check",
+      "onboarding_started",
+      "button_clicked: Initiate Genuine Check",
+      "Page Genuine Check started",
+      "Page Check OS version",
+      "Page Genuine Check & OS success",
+      "button_clicked: Continue",
+      "Page Ledger Sync",
+      "button_clicked: Skip",
+      "button_clicked: Yes, skip",
+      "Page Ledger Sync Refused",
+      "onboarding_done",
+    ]);
+  });
+
   it("should leave the flow for the old setup when this flow cannot set up the device", async () => {
     answerWelcome(device);
     const { user } = renderApp({ hostsSeedSetup: false });
@@ -437,6 +469,30 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("firmware update screen")).toBeVisible();
   });
 });
+
+/** The seeded funnel's pages, clicks and events, in the order the app sent them. */
+function seededEvents(): string[] {
+  const isSeeded = (props: unknown) =>
+    typeof props === "object" && props !== null && "onboarding type" in props;
+  const pages = jest.mocked(trackPage).mock.calls.flatMap(([page], index) =>
+    isSeeded(page.props)
+      ? [
+          {
+            order: jest.mocked(trackPage).mock.invocationCallOrder[index],
+            name: `Page ${page.category}`,
+          },
+        ]
+      : [],
+  );
+  const events = jest.mocked(track).mock.calls.flatMap(([event, props], index) => {
+    if (!isSeeded(props)) return [];
+    const button = props && "button" in props ? `: ${String(props.button)}` : "";
+    return [
+      { order: jest.mocked(track).mock.invocationCallOrder[index], name: `${event}${button}` },
+    ];
+  });
+  return [...pages, ...events].sort((a, b) => a.order - b.order).map(({ name }) => name);
+}
 
 /** Hidden screens stay mounted, so a flow left below the next screen would still be found here. */
 function expectFlowClosed() {
