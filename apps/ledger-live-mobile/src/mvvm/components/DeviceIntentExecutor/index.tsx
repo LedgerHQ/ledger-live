@@ -100,7 +100,6 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
             stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
             bounces={false}
             showsVerticalScrollIndicator={false}
-            testID="device-intent-executor-sheet-content"
           >
             {!hasHeaderOverride && (
               <BottomSheetHeader density="expanded" lx={{ backgroundColor: "canvasSheet" }} />

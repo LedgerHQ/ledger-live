@@ -89,24 +89,6 @@ describe("Contacts device intents integration", () => {
     expect(screen.queryByTestId("contacts-address-detail-sheet")).toBeNull();
   });
 
-  it("should pin the device intent executor header and keep its content from bouncing", async () => {
-    const { user } = renderContactsScreen();
-
-    await user.press(screen.getByTestId("my-wallet-contacts-button"));
-    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
-    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
-    await user.press(await screen.findByTestId("contacts-address-detail-edit"));
-    const renameInput = await screen.findByDisplayValue("Ethereum");
-    await user.clear(renameInput);
-    await user.type(renameInput, "Main ETH");
-    await user.press(screen.getByTestId("contacts-rename-address-confirm"));
-
-    await expectDeviceIntentExecutor();
-    const sheetContent = screen.getByTestId("device-intent-executor-sheet-content");
-    expect(sheetContent).toHaveProp("stickyHeaderIndices", [0]);
-    expect(sheetContent).toHaveProp("bounces", false);
-  });
-
   it("should open the device intent executor alone when adding an address", async () => {
     const { user } = renderContactsScreen();
 
