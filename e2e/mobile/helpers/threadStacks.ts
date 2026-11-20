@@ -13,26 +13,24 @@ const COMMAND_TIMEOUT_MS = 15_000;
 // log show reads the simulator's whole log store before it filters.
 const SIMULATOR_LOG_TIMEOUT_MS = 45_000;
 const SIMULATOR_LOG_WINDOW = "5m";
+const STDERR_TAIL_CHARS = 500;
 const MAX_OUTPUT_BYTES = 32 * 1024 * 1024;
 const IOS_SAMPLE_SECONDS = "3";
 const IOS_APP_PROCESS = "ledgerlivemobile";
 const ANDROID_ROOT_SHELL = ["shell", "su", "0"];
 const XCRUN = "/usr/bin/xcrun";
+const SAMPLE = "/usr/bin/sample";
+const PS = "/bin/ps";
 const ARTIFACTS_DIR = path.join(__dirname, "..", "artifacts");
 const SIMULATOR_DIAGNOSTICS_DIR = path.join(ARTIFACTS_DIR, "simulator-diagnostics");
 
-type SimulatorService = { label: string; name: string };
 type LaunchdJob = { pid: string; label: string };
-type SampleSimulatorServiceOptions = { jobs: LaunchdJob[]; service: SimulatorService; dir: string };
+type HostProcess = { pid: string; ppid: string; command: string };
+type SampleSimulatorServiceOptions = { services: HostProcess[]; name: string; dir: string };
 type SimulatorLogOptions = { udid: string; dir: string };
 
 // The simulator services that launch, show, suspend and terminate apps for simctl.
-const IOS_LAUNCH_SERVICES: SimulatorService[] = [
-  { label: "com.apple.SpringBoard", name: "SpringBoard" },
-  { label: "com.apple.backboardd", name: "backboardd" },
-  { label: "com.apple.runningboardd", name: "runningboardd" },
-  { label: "com.apple.CoreSimulator.bridge", name: "CoreSimulatorBridge" },
-];
+const IOS_LAUNCH_SERVICES = ["SpringBoard", "backboardd", "runningboardd", "CoreSimulatorBridge"];
 
 const simulatorsWithDiagnostics = new Set<string>();
 
@@ -88,7 +86,7 @@ async function attachAndroidThreadStacks(serial: string, pid: string) {
 async function attachIosThreadStacks(pid: string) {
   await allure.attachment(
     "Native thread stacks",
-    await run("sample", [pid, IOS_SAMPLE_SECONDS]),
+    await run(SAMPLE, [pid, IOS_SAMPLE_SECONDS]),
     "text/plain",
   );
 }
@@ -109,30 +107,62 @@ export async function attachAppThreadStacks(): Promise<void> {
   }
 }
 
+async function hostProcesses(): Promise<HostProcess[]> {
+  const table = await run(PS, ["-ww", "-axo", "pid=,ppid=,command="]);
+  return table.split("\n").flatMap(line => {
+    const [pid, ppid, ...command] = line.trim().split(/\s+/);
+    return /^\d+$/.test(pid) && command.length > 0
+      ? [{ pid, ppid, command: command.join(" ") }]
+      : [];
+  });
+}
+
+/**
+ * The simulator's own processes, found on the host so a stuck simctl cannot hide them. Every
+ * simulator runs the same service binaries, so they are told apart by their parent launchd_sim,
+ * which is started with a path under the simulator's device folder.
+ */
+async function simulatorProcesses(udid: string): Promise<HostProcess[]> {
+  const processes = await hostProcesses();
+  const launchd = processes.find(
+    ({ command }) =>
+      command.split(" ")[0].endsWith("launchd_sim") && command.includes(`/Devices/${udid}/`),
+  );
+  if (!launchd) throw new Error(`launchd_sim of simulator ${udid} is not running`);
+  return processes.filter(({ ppid }) => ppid === launchd.pid);
+}
+
 async function sampleSimulatorService(options: SampleSimulatorServiceOptions) {
-  const { jobs, service, dir } = options;
-  const pid = jobs.find(job => job.label === service.label)?.pid;
-  if (!pid) throw new Error(`${service.name} is not running`);
-  const file = path.join(dir, `${service.name}.sample.txt`);
-  await run("sample", [pid, IOS_SAMPLE_SECONDS, "-file", file]);
+  const { services, name, dir } = options;
+  const pid = services.find(
+    ({ command }) => command.endsWith(`/${name}`) || command.includes(`/${name} `),
+  )?.pid;
+  if (!pid) throw new Error(`${name} is not running`);
+  await run(SAMPLE, [pid, IOS_SAMPLE_SECONDS, "-file", path.join(dir, `${name}.sample.txt`)]);
 }
 
 /** Streams to a file: a window that reaches back to the simulator's boot exceeds 10 MB. */
 async function saveSimulatorLog(options: SimulatorLogOptions) {
   const { udid, dir } = options;
-  const processes = [...IOS_LAUNCH_SERVICES.map(({ name }) => name), IOS_APP_PROCESS];
+  const processes = [...IOS_LAUNCH_SERVICES, IOS_APP_PROCESS];
   const predicate = `process IN {${processes.map(name => JSON.stringify(name)).join(", ")}}`;
   const args = ["simctl", "spawn", udid, "log", "show", "--last", SIMULATOR_LOG_WINDOW];
   const output = await open(path.join(dir, "system.log"), "w");
   try {
     await new Promise<void>((resolve, reject) => {
       const logShow = spawn(XCRUN, [...args, "--style", "compact", "--predicate", predicate], {
-        stdio: ["ignore", output.fd, "ignore"],
+        stdio: ["ignore", output.fd, "pipe"],
         timeout: SIMULATOR_LOG_TIMEOUT_MS,
+      });
+      let stderrTail = "";
+      logShow.stderr?.on("data", (chunk: Buffer) => {
+        stderrTail = (stderrTail + chunk.toString()).slice(-STDERR_TAIL_CHARS);
       });
       logShow.on("error", reject);
       logShow.on("close", (code, signal) =>
-        code === 0 ? resolve() : reject(new Error(`log show ended with ${signal ?? code}`)),
+        code === 0
+          ? resolve()
+          : reject(new Error(`log show ended with ${signal ?? code}: ${stderrTail.trim()}`)),
       );
     });
   } finally {
@@ -152,16 +182,15 @@ export async function saveSimulatorDiagnostics(): Promise<void> {
     const capturedAt = new Date().toISOString().replace(/[:.]/g, "-");
     const dir = path.join(SIMULATOR_DIAGNOSTICS_DIR, `${udid}-${capturedAt}`);
     await mkdir(dir, { recursive: true });
-    // Only the samples need the job table, so a failed listing must not cost the log.
-    const listing = iosLaunchctlList(udid);
+    const services = simulatorProcesses(udid);
     const captures = await Promise.allSettled([
       saveSimulatorLog({ udid, dir }),
-      listing.then(table => writeFile(path.join(dir, "launchctl-list.txt"), table)),
-      ...IOS_LAUNCH_SERVICES.map(async service =>
-        sampleSimulatorService({ jobs: runningJobs(await listing), service, dir }),
+      iosLaunchctlList(udid).then(table => writeFile(path.join(dir, "launchctl-list.txt"), table)),
+      ...IOS_LAUNCH_SERVICES.map(async name =>
+        sampleSimulatorService({ services: await services, name, dir }),
       ),
     ]);
-    // A failed listing fails every capture that waits on it with the same message.
+    // A failed process lookup fails every sample with the same message.
     const failures = [
       ...new Set(
         captures.flatMap(capture =>

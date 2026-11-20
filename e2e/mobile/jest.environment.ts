@@ -58,7 +58,7 @@ import type { ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 const THREAD_STACKS_TIMEOUT_MS = 60_000;
-// Outlasts its slowest step, the simulator log query, plus the launchd listing before it.
+// Outlasts the slowest of its parallel steps, the 45 s simulator log query.
 const SIMULATOR_DIAGNOSTICS_TIMEOUT_MS = 75_000;
 // getLogs is already capped by the bridge's own response timeout; this outer bound is
 // defense-in-depth for a wedged worker where that inner timer is starved, so it must stay larger.
@@ -102,11 +102,15 @@ const skipToRetrySet = (
 };
 
 const JEST_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a (test|hook)/;
+const JEST_HOOK_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a hook/;
 
-function isJestTimeout(failure: unknown): boolean {
-  const message = failure instanceof Error ? failure.message : String(failure);
-  return JEST_TIMEOUT_PATTERN.test(message);
-}
+const failureMessage = (failure: unknown): string =>
+  failure instanceof Error ? failure.message : String(failure);
+
+const isJestTimeout = (failure: unknown) => JEST_TIMEOUT_PATTERN.test(failureMessage(failure));
+
+const isJestHookTimeout = (failure: unknown) =>
+  JEST_HOOK_TIMEOUT_PATTERN.test(failureMessage(failure));
 
 /**
  * A Jest timeout leaves the test body running, and an unanswered Detox request stays in flight.
@@ -138,15 +142,23 @@ async function captureFailureDiagnostics(
   mergedFeatureFlags: OptionalFeatureMap | undefined,
   failure: unknown,
 ): Promise<void> {
-  // A launch that never returns surfaces as Jest's hook timeout, not as a hard timeout.
+  const hangCaptures: Promise<unknown>[] = [];
   if (isHardTimeout(failure) || isJestTimeout(failure)) {
-    await withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks");
-    await withTimeout(
-      saveSimulatorDiagnostics(),
-      SIMULATOR_DIAGNOSTICS_TIMEOUT_MS,
-      "saveSimulatorDiagnostics",
+    hangCaptures.push(
+      withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks"),
     );
   }
+  // Launch and terminate hangs time out a hook, so a slow test cannot spend this capture.
+  if (isJestHookTimeout(failure)) {
+    hangCaptures.push(
+      withTimeout(
+        saveSimulatorDiagnostics(),
+        SIMULATOR_DIAGNOSTICS_TIMEOUT_MS,
+        "saveSimulatorDiagnostics",
+      ),
+    );
+  }
+  await Promise.all(hangCaptures);
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
