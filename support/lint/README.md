@@ -27,11 +27,12 @@ rule that several packages of a layer need belongs in that layer's preset.
 
 | Preset | Layer | Differs from `base` |
 | --- | --- | --- |
-| `base` | `domain/` | The baseline; slice-selectors rule on, with waivers |
+| `base` | — | The baseline; slice-selectors rule on, with waivers |
+| `domain` | `domain/` | Storage rules on |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on; slice-selectors rule on, with waivers; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
-| `features-platform` | `features/platform/` | Platform-suffix rule on; slice-selectors rule on, with waivers |
-| `shared` | `shared/` | Platform-suffix rule on; slice-selectors rule on, with waivers |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on; slice-selectors rule on, with waivers; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}`; storage rules on |
+| `features-platform` | `features/platform/` | Platform-suffix rule on; slice-selectors rule on, with waivers; storage rules on |
+| `shared` | `shared/` | Platform-suffix rule on; slice-selectors rule on, with waivers; storage rules on |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
@@ -176,5 +177,22 @@ being linted, so either side fails on its own. It reads the other file from disk
 TypeScript parser, loaded only for these two files. `base` turns it on as an error and `libs`
 inherits it. The [`@domain/entity-derivation` README](../../domain/entity/derivation/README.md#a-mirror-of-derivationts)
 says why both copies exist and how to change them.
+
+### `storage/no-engine-import` and `storage/no-port-import`
+
+Persistence (epic LIVE-35368) owns every read and write of persisted data. Code
+outside it must not talk to a storage engine or to the storage port.
+
+- `storage/no-engine-import` reports `react-native-mmkv`, `@react-native-async-storage/async-storage`
+  and `electron-store` imports, and `localStorage` or `sessionStorage` reads, also through
+  `window`, `globalThis` or `self`. Only a storage adapter (`shared/storage-*`) may use them.
+- `storage/no-port-import` reports `@shared/storage` imports outside `shared/storage`,
+  `shared/storage-*`, `features/platform/persistence`, the app composition roots
+  (`apps/*/src/persistence/`) and the composition root of the e2e seeds
+  (`libs/live-e2e-shared/src/userdataAccounts.ts`).
+
+Both check `import`, `export`, `import()`, type-level `import()`, `require()` and `jest.mock`.
+`base` registers them off. `domain`, `features-flow`, `features-platform` and `shared` turn them
+on. The 2 apps run them as warnings, because their legacy save code still uses the engines.
 
 Run the rules' tests with `nx run @support/lint:test`.

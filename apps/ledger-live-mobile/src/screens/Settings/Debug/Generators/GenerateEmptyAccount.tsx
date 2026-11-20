@@ -7,8 +7,7 @@ import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
 import { useDispatch, useStore } from "~/context/hooks";
 import { addOneAccount } from "~/actions/accounts";
-import { exportSelector } from "~/reducers/accounts";
-import { saveAccounts } from "~/db";
+import { persistAccountsNow } from "~/persistence/persistAccountsNow";
 
 const EMPTY_ACCOUNT_INDEX = 40;
 
@@ -41,7 +40,7 @@ export default function GenerateEmptyAccountButton() {
               text: "Ok",
               onPress: async () => {
                 dispatch(addOneAccount(createEmptyActivityAccount()));
-                await saveAccounts(await exportSelector(store.getState()));
+                await persistAccountsNow(store.getState());
                 dispatch(reboot());
               },
             },

@@ -25,7 +25,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
     }));
   }, []);
 
-  const handlePressContinue = useCallback(async () => {
+  const handlePressContinue = useCallback(() => {
     const selectedCurrencyIds = Object.keys(selectedCurrencies).filter(
       id => selectedCurrencies[id],
     );
@@ -39,7 +39,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
       try {
         const currencies = getSupportedCurrencies().filter(c => selectedCurrencyIds.includes(c.id));
         const accounts = generateAccountsForCurrencies(currencies, tokens);
-        await injectMockAccounts(accounts, true);
+        injectMockAccounts(accounts, true);
       } catch (error) {
         console.warn("Failed to generate mock accounts:", error);
         alert(t("settings.developer.mockAccounts.alerts.generateError"));

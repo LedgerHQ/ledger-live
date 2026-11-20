@@ -15,7 +15,7 @@ function layer(preset) {
 
 const LAYERS = {
   "devtools/oxlint.config.mts": layer("devtools"),
-  "domain/oxlint.config.mts": layer("base"),
+  "domain/oxlint.config.mts": layer("domain"),
   "features/flow/oxlint.config.mts": layer("features-flow"),
   "features/platform/oxlint.config.mts": layer("features-platform"),
   "libs/oxlint.config.mts": layer("libs"),

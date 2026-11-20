@@ -9,6 +9,7 @@ import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
+import { persistence } from "~/persistence/composition";
 
 function reload() {
   app.reload();
@@ -18,8 +19,14 @@ export async function hardReset() {
   clearBridgeCache();
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
-  await resetAll();
-  await resetStore();
+  await persistence.stop();
+  try {
+    await resetAll();
+    await resetStore();
+  } catch (error) {
+    persistence.resume();
+    throw error;
+  }
   window.localStorage.clear();
 }
 export function useHardReset() {
@@ -35,7 +42,9 @@ export function useSoftReset() {
     log("clear-cache", "clearBridgeCache()");
     clearBridgeCache();
     log("clear-cache", "cleanAccountsCache()");
-    dispatch(cleanAccountsCache());
+    await dispatch(cleanAccountsCache());
+    // A failed write is already reported; the reset goes on, as the legacy debounce did.
+    await persistence.flush().catch(() => undefined);
     await delay(500);
     log("clear-cache", "cleanCache()");
     await cleanCache();

@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from "tests/testSetup";
 import { app, files, store } from "~/renderer/bridge";
 import { cleanCache, resetAll } from "~/renderer/storage";
+import { persistence } from "~/persistence/composition";
 import { openUserDataFolderAndQuit, useHardReset, useSoftReset } from "./reset";
 
 jest.mock("~/renderer/storage", () => ({
@@ -10,6 +11,14 @@ jest.mock("~/renderer/storage", () => ({
 }));
 
 jest.mock("./bridge/cache", () => ({ clearBridgeCache: jest.fn() }));
+
+jest.mock("~/persistence/composition", () => ({
+  persistence: {
+    stop: jest.fn().mockResolvedValue(undefined),
+    resume: jest.fn(),
+    flush: jest.fn().mockResolvedValue(undefined),
+  },
+}));
 
 jest.mock("@ledgerhq/live-common/promise", () => ({
   ...jest.requireActual("@ledgerhq/live-common/promise"),
@@ -71,12 +80,38 @@ describe("reset", () => {
     expect(app.relaunch).not.toHaveBeenCalled();
   });
 
+  it("should stop persistence before it resets the stored data", async () => {
+    const calls: string[] = [];
+    jest.mocked(persistence.stop).mockImplementationOnce(async () => {
+      calls.push("stop");
+    });
+    jest.mocked(resetAll).mockImplementationOnce(async () => {
+      calls.push("resetAll");
+    });
+    const { result } = renderHook(() => useHardReset());
+
+    await result.current();
+
+    expect(calls).toEqual(["stop", "resetAll"]);
+  });
+
+  it("should resume persistence when the reset of the stored data fails", async () => {
+    jest.mocked(resetAll).mockRejectedValueOnce(new Error("disk"));
+    const { result } = renderHook(() => useHardReset());
+
+    await expect(result.current()).rejects.toThrow("disk");
+
+    expect(persistence.resume).toHaveBeenCalledTimes(1);
+    expect(app.relaunch).not.toHaveBeenCalled();
+  });
+
   it("should reload the app after a soft reset", async () => {
     const { result } = renderHook(() => useSoftReset());
 
     await result.current();
 
     expect(cleanCache).toHaveBeenCalledTimes(1);
+    expect(persistence.flush).toHaveBeenCalledTimes(1);
     expect(mockWipe).toHaveBeenCalledTimes(1);
     expect(app.reload).toHaveBeenCalledTimes(1);
   });

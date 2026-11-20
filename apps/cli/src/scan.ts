@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Observable, from, defer, of, throwError, concat } from "rxjs";
+import { Observable, from, defer, of, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -25,7 +25,7 @@ import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
-import fs from "fs";
+import { decodeAppJsonAccounts } from "./persistence/appJson";
 
 export type DeviceCommonOpts = Partial<{
   device: string;
@@ -203,18 +203,6 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
 
   if (typeof appjsonFile === "string") {
     const { currency } = arg;
-    const appjsondata = appjsonFile
-      ? JSON.parse(fs.readFileSync(appjsonFile, "utf-8"))
-      : {
-          data: {
-            accounts: [],
-          },
-        };
-
-    if (typeof appjsondata.data.accounts === "string") {
-      return throwError(() => new Error("encrypted ledger live data is not supported"));
-    }
-
     let currencyFilter: CryptoCurrency | null | undefined;
     if (currency) {
       currencyFilter = findCryptoCurrencyByKeyword(currency);
@@ -223,8 +211,9 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       }
     }
 
-    return from(appjsondata.data.accounts).pipe(
-      mergeMap((a: any) => from(fromAccountRaw(a.data))),
+    const accounts = appjsonFile ? decodeAppJsonAccounts(appjsonFile) : Promise.resolve([]);
+    return from(accounts).pipe(
+      mergeMap(accounts => from(accounts)),
       filter((account: Account) => {
         if (!currencyFilter) return true;
         return account.currency.id === currencyFilter.id;

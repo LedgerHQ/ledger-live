@@ -49,6 +49,8 @@ const moduleNameMapper = {
     "<rootDir>/fileMock.js",
   "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
   "styled-components": require.resolve("styled-components"),
+  // Must precede "electron", which matches any module name that contains it.
+  "^@shared/storage-electron$": require.resolve("@shared/storage-electron"),
   electron: "<rootDir>/tests/mocks/electron.ts",
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),

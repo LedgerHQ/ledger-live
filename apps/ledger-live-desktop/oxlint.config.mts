@@ -12,7 +12,7 @@ import {
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
-import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
+import { STORAGE_BOUNDARIES_PLUGIN, SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
@@ -31,9 +31,13 @@ export default defineConfig({
   },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, STORAGE_BOUNDARIES_PLUGIN],
   ignorePatterns: ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   rules: {
+    // Legacy save code still talks to the engines. Warnings until each record uses
+    // persistence (epic LIVE-35368).
+    "storage/no-engine-import": "warn",
+    "storage/no-port-import": "warn",
     "eslint/no-unused-vars": "warn",
     "eslint/no-empty-pattern": "warn",
     "eslint/no-constant-binary-expression": "warn",

@@ -15,7 +15,7 @@ const CONFIG_FILE = /^(\.oxlintrc\.jsonc?|oxlint\.config\.[cm]?[jt]s)$/;
 // Each layer root's config, and the support/lint preset it re-exports.
 const LAYER_CONFIGS = new Map([
   ["devtools/oxlint.config.mts", "devtools"],
-  ["domain/oxlint.config.mts", "base"],
+  ["domain/oxlint.config.mts", "domain"],
   ["features/flow/oxlint.config.mts", "features-flow"],
   ["features/platform/oxlint.config.mts", "features-platform"],
   ["libs/oxlint.config.mts", "libs"],

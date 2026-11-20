@@ -38,6 +38,9 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 | `type:domain-api` | Under `domain/api/` |
 | `type:feature-platform` | Under `features/platform/` |
 | `type:feature-flow` | Under `features/flow/` |
+| `type:account-data-source` | Under `features/platform/account-source-*` |
+| `type:storage` | `shared/storage` and `shared/storage-*`: the storage port and its adapters |
+| `type:persistence-records` | `shared/persistence` and `features/platform/persistence-*`: the record definitions of persistence |
 
 ## Boundary constraints
 
@@ -57,6 +60,7 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 Packages without these tags (`libs/`, `apps/`, `e2e/`, `tools/`) are unconstrained. Two more rules apply:
 
 - **No legacy imports.** `LEGACY_IMPORT_RULE` in [`constraints.js`](../tools/nx-plugins/enforce-boundaries/constraints.js) states the rule. The same file lists the roots it covers (`LEGACY_SOURCE_ROOTS`), the legacy packages on top of every `scope:libs` package (`LEGACY_PACKAGES`) and its exceptions (`BOUNDARY_EXCEPTIONS`).
+- **No storage in `domain/` or in the record definitions.** `scope:domain` and `type:persistence-records` packages must not depend on `type:storage` packages. The [`storage/no-port-import`](../support/lint/README.md#storageno-engine-import-and-storageno-port-import) lint rule also keeps `@shared/storage` inside persistence, the storage adapters and the app composition roots.
 - **No React in `domain/entity`.** `BANNED_EXTERNALS_BY_TAG` keeps `react` and `react-native` out of `type:domain-entity` packages, in their manifest and in their source imports. `domain/api` may expose RTK Query hooks, so it is not concerned.
 
 ## Example commands

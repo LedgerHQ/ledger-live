@@ -64,6 +64,7 @@ import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
 import type { HistoryState } from "./history";
+import type { PersistenceState } from "@features/platform-persistence";
 import type { RecoverStateSliceState } from "./recoverState";
 import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
@@ -482,6 +483,7 @@ export type State = LLMRTKApiState & {
   backupHubFeatureIntro: BackupHubFeatureIntroState;
   productTourDrawer: ProductTourDrawerState;
   history: HistoryState;
+  persistence: PersistenceState;
   identities: IdentitiesState;
   inView: InViewState;
   knownDevices: KnownDevicesState;

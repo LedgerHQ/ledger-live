@@ -15,6 +15,7 @@
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@features/platform-persistence-accounts": "workspace:*",
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/coin-zcash": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
@@ -38,6 +39,8 @@
     "@shared/cloud-sync-module": "workspace:^",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
+    "@shared/storage": "workspace:*",
+    "@shared/storage-node-file": "workspace:*",
     "axios": "catalog:",
     "ethers": "catalog:",
     "expect": "catalog:",

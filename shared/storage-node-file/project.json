@@ -1,0 +1,8 @@
+{
+  "name": "@shared/storage-node-file",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

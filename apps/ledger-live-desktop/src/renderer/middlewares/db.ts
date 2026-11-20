@@ -8,12 +8,7 @@ import { isActionWithType } from "./utils";
 
 import { settingsStoreSelector, areSettingsLoaded } from "./../reducers/settings";
 import { State } from "../reducers";
-import { Account, AccountUserData } from "@ledgerhq/types-live";
-import {
-  accountUserDataExportSelector,
-  walletStateExportShouldDiffer,
-  exportWalletState,
-} from "~/renderer/reducers/wallet";
+import { walletStateExportShouldDiffer, exportWalletState } from "~/renderer/reducers/wallet";
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
@@ -34,7 +29,6 @@ import {
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { predictionsSlice } from "@domain/entity-predictions";
-import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
 import {
   accountAnalyticsIntroductionPersistedSelector,
@@ -52,17 +46,6 @@ export const disable = (ms = 1000) => {
   saveCryptoAssetsCache.cancel();
   setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
 };
-
-function accountsExportSelector(state: State) {
-  const all: [Account, AccountUserData][] = [];
-  for (const account of state.accounts) {
-    const accountUserData = accountUserDataExportSelector(state.wallet, { account });
-    if (accountUserData) {
-      all.push([account, accountUserData]);
-    }
-  }
-  return all;
-}
 
 // Throttled save for crypto assets cache (save at most once per 5 seconds)
 // Only write when content actually changed to avoid redundant app.json resaves
@@ -198,19 +181,11 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     if (oldState.wallet && walletStateExportShouldDiffer(oldState, newState)) {
       setKey("app", "wallet", exportWalletState(newState));
     }
-
-    if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
-      setKey("app", "accounts", accountsExportSelector(newState));
-    }
   }
 
   if (oldState.identities !== newState.identities) {
     const persisted = exportIdentitiesForPersistence(newState.identities);
     setKey("app", "identities", persisted);
-  }
-
-  if (oldState.history !== newState.history) {
-    setKey("app", "history", newState.history);
   }
 
   if (oldState.knownDevices !== newState.knownDevices) {

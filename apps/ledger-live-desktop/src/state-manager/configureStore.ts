@@ -39,6 +39,7 @@ import { createDesktopAuthMiddleware } from "./middleware/auth";
 type Props = FeatureFlagsSources & {
   state?: State;
   dbMiddleware?: Middleware;
+  persistenceMiddleware?: Middleware;
   analyticsMiddleware?: Middleware;
   /** The countervalues loop's app wiring (window events, persistence); left out by unit tests. */
   countervalues?: CountervaluesSources;
@@ -48,6 +49,7 @@ type Props = FeatureFlagsSources & {
 const customCreateStore = ({
   state,
   dbMiddleware,
+  persistenceMiddleware,
   analyticsMiddleware,
   fetchRemoteFlags,
   readCachedFlags,
@@ -81,6 +83,7 @@ const customCreateStore = ({
         .concat(createAccountAliasMiddleware())
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
         .concat(dbMiddleware ? [dbMiddleware] : [])
+        .concat(persistenceMiddleware ? [persistenceMiddleware] : [])
         .concat(
           createIdentitiesSyncMiddleware({
             pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),

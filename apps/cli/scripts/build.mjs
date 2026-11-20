@@ -45,18 +45,19 @@ fs.cpSync("lib", "dist/lib", {
   recursive: true,
 });
 
-echo(chalk.green("Creating package.json with ledger dependencies removed, except zcash-utils"));
+echo(chalk.green("Creating package.json with bundled dependencies removed, except zcash-utils"));
 
 // Read the workspace configuration to get catalog entries
 const workspaceConfig = yaml.parse(fs.readFileSync("../../pnpm-workspace.yaml", "utf8"));
 const catalogs = workspaceConfig.catalog || {};
 
 const manifest = await readProjectManifestOnly("./");
-Object.entries(manifest.dependencies).forEach(([packageName]) => {
+Object.entries(manifest.dependencies).forEach(([packageName, version]) => {
   // zcash-utils is a napi addon loaded at runtime (external in rslib), so it stays a dependency
-  if (packageName.startsWith("@ledgerhq") && packageName !== "@ledgerhq/zcash-utils") {
-    delete manifest.dependencies[packageName];
-  }
+  if (packageName === "@ledgerhq/zcash-utils") return;
+  // rslib bundles the workspace packages; the private ones (@shared, @domain, @features) are not on npm
+  const isBundled = packageName.startsWith("@ledgerhq") || String(version).startsWith("workspace:");
+  if (isBundled) delete manifest.dependencies[packageName];
 });
 
 const exportable = await createExportableManifest("./", manifest, {

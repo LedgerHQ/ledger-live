@@ -1,0 +1,8 @@
+{
+  "name": "@shared/persistence",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

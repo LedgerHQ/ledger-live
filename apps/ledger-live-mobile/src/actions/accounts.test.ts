@@ -3,7 +3,7 @@ import type { Account, AccountRaw, AccountUserData, DerivationMode } from "@ledg
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import accountModel from "../logic/accountModel";
-import { importStore } from "./accounts";
+import { importStore, initAccountsActions } from "./accounts";
 
 jest.mock("../logic/accountModel", () => ({
   __esModule: true,
@@ -178,5 +178,26 @@ describe("importStore", () => {
       "accountNames/initFromUserData",
       "starredAccounts/initStarredFromIds",
     ]);
+  });
+});
+
+describe("initAccountsActions", () => {
+  it("returns the accounts, names and starred actions without a dispatch", () => {
+    const actions = initAccountsActions([fakeTuple("btc-1", "bitcoin")]);
+
+    expect(actions.map(action => action.type)).toEqual([
+      "INIT_ACCOUNTS",
+      "accountNames/initFromUserData",
+      "starredAccounts/initStarredFromIds",
+    ]);
+  });
+
+  it("drops the unsupported accounts, as importStore does", () => {
+    const [init] = initAccountsActions([
+      fakeTuple("btc-1", "bitcoin"),
+      fakeTuple("eos-1", "eos"),
+    ]) as unknown as Array<{ payload: { accounts: Account[] } }>;
+
+    expect(init.payload.accounts.map(account => account.id)).toEqual(["btc-1"]);
   });
 });
