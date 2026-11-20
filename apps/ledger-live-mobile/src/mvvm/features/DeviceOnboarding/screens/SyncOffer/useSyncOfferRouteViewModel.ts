@@ -10,6 +10,7 @@ import {
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
+import { trackSeededDone } from "@features/platform-device-onboarding-analytics";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
@@ -45,7 +46,12 @@ type SyncOfferRouteViewModel = SyncOfferScreenProps &
 export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
+  const {
+    device,
+    wasReadOnlyAtEntry,
+    unseeded = false,
+    seededResult,
+  } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const { visualPending } = useWalletSyncUserState();
   const featureWalletSync = useFeature("llmWalletSync");
@@ -54,6 +60,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
   const [handoverStarted, setHandoverStarted] = useState(false);
   const [watchLoopSettled, setWatchLoopSettled] = useState(false);
   const completedOnSync = useRef(false);
+  const doneTracked = useRef(false);
   const initialSyncDone = useRef(false);
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
@@ -84,14 +91,32 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     return () => clearTimeout(timeout);
   }, [awaitingSync, initialTimeout]);
 
+  const trackDone = useCallback(
+    (syncDone: boolean) => {
+      if (!seededResult || doneTracked.current) return;
+      doneTracked.current = true;
+      trackSeededDone(seededResult, syncDone);
+    },
+    [seededResult],
+  );
+
+  useEffect(() => {
+    if (phase === "success") trackDone(true);
+  }, [phase, trackDone]);
+
   const finishOnboarding = useCallback(() => {
     if (completedOnSync.current) return;
     completedOnSync.current = true;
     allowLeave.current = true;
+    if (unseeded) {
+      navigation.goBack();
+      return;
+    }
+    trackDone(awaitingSync);
     complete();
     notifyFlowCompleted("onboarding");
     closeOnboarding(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  }, [awaitingSync, complete, navigation, notifyFlowCompleted, trackDone, unseeded]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
@@ -120,6 +145,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     onLearnMore,
     onContinue: finishOnboarding,
     phase,
+    seededDeviceType: seededResult?.deviceType ?? null,
     deviceIntentStepElement: deviceIntentStep.element,
   };
 }

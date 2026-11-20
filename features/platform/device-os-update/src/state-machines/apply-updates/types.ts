@@ -28,6 +28,8 @@ export type ApplyUpdatesStateMachineInput = {
 export type ApplyUpdatesStateMachineContext = ApplyUpdatesStateMachineInput & {
   lastSentState: ApplyUpdatesState | null;
   lastAction: ApplyUpdatesStateMachineLastAction | null;
+  /** An unexplained recovery happened since the last successful action. */
+  hasUnexplainedRecovery: boolean;
   lastInteraction: UserInteractionRequired | null;
   osVersion: GetOsVersionResponse | null;
   /** 0-based, the API exposes it 1-based. */

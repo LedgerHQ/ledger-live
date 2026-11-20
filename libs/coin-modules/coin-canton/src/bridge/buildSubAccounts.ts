@@ -14,6 +14,18 @@ export type CantonTokenAccount = TokenAccount & {
   cantonResources: { pendingTransferProposals: TransferProposal[] };
 };
 
+/**
+ * `mergeOps`, keeping the fetched operations older than every stored one, which it drops: the sync
+ * reads a transaction again below the newest stored operation (a settled offer).
+ */
+export function mergeOperations(stored: Operation[], fetched: Operation[]): Operation[] {
+  const merged = mergeOps(stored, fetched);
+  const ids = new Set(merged.map(({ id }) => id));
+  const older = new Map(fetched.filter(({ id }) => !ids.has(id)).map(op => [op.id, op]));
+  if (older.size === 0) return merged;
+  return [...merged, ...older.values()].sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
 const isOperationOf = (instrumentId: string, adminId: string) => (op: Operation) => {
   const extra = op.extra as { instrumentId?: string; instrumentAdmin?: string };
   return extra?.instrumentId === instrumentId && extra?.instrumentAdmin === adminId;
@@ -110,7 +122,7 @@ function buildSubAccount({
     id: encodeOperationId(subAccountId, op.hash, op.type),
     accountId: subAccountId,
   });
-  const mergedOperations = mergeOps(
+  const mergedOperations = mergeOperations(
     mergeOps([], previousOperations.map(toSubAccount)),
     operations.map(toSubAccount),
   );

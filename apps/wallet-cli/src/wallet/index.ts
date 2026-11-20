@@ -17,6 +17,7 @@ import type { TransactionIntent } from "./intents";
 import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
 import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
+import { paginateOperations } from "./paginate-operations";
 
 export class WalletAdapter {
   private static readonly coinFrameworkFamilies = new Set(["evm"]);
@@ -72,8 +73,8 @@ export class WalletAdapter {
    *
    * NOTE: coin-framework is temporarily bypassed for all families — always uses bridge sync.
    * coin-framework has known correctness issues (missing internal ops, questionable pagination
-   * reliability) that need investigation before re-enabling. `cursor` is not supported
-   * in bridge mode (bridge always returns the full history); `limit` slices the result.
+   * reliability) that need investigation before re-enabling. The bridge returns the full
+   * history, which `paginateOperations` cuts into pages.
    *
    * Re-enable coin-framework once validated:
    *   const { family } = getCryptoCurrencyById(descriptor.currencyId);
@@ -85,8 +86,7 @@ export class WalletAdapter {
     options?: { cursor?: string; limit?: number },
   ): Promise<OperationsPage> {
     const ops = await (await this.getBridge()).getOperations(descriptor);
-    const limited = options?.limit == null ? ops : ops.slice(0, options.limit);
-    return { operations: limited, nextCursor: undefined };
+    return paginateOperations(ops, options ?? {});
   }
 
   /**

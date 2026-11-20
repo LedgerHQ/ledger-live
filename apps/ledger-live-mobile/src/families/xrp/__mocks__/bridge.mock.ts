@@ -4,6 +4,8 @@ import type { AccountLike, SignOperationEvent } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { XRP_ACCOUNT } from "./account.mock";
 
+type MockAccountBridge = ReturnType<typeof makeMockAccountBridge>;
+
 const mockSignedOperation = {
   signature: "sig",
   operation: {
@@ -22,6 +24,10 @@ const mockSignedOperation = {
   },
   expirationDate: undefined,
 };
+
+export function makeNamedError(name: string, fields: Record<string, string> = {}) {
+  return Object.assign(new Error(name), { name, ...fields });
+}
 
 export function makeMockAccountBridge() {
   return {
@@ -66,7 +72,21 @@ export const resolvedCurrencyBridge = Object.assign(Promise.resolve(currencyBrid
   value: currencyBridge,
 });
 
-export function makeResolvedAccountBridge(accountBridge: ReturnType<typeof makeMockAccountBridge>) {
+export function mockStatus(
+  accountBridge: MockAccountBridge,
+  errors: Record<string, Error>,
+  warnings: Record<string, Error> = {},
+) {
+  accountBridge.getTransactionStatus.mockResolvedValue({
+    errors,
+    warnings,
+    estimatedFees: new BigNumber(12),
+    amount: new BigNumber(0),
+    totalSpent: new BigNumber(12),
+  });
+}
+
+export function makeResolvedAccountBridge(accountBridge: MockAccountBridge) {
   return Object.assign(Promise.resolve(accountBridge), {
     status: "fulfilled" as const,
     value: accountBridge,

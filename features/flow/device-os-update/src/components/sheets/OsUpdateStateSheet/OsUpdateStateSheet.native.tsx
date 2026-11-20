@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { OsUpdatePortsContext } from "../../../hooks/OsUpdatePortsContext";
+import { OsUpdateTrackingContext } from "../../../hooks/OsUpdateTrackingProvider";
 
 const CONTENT_BOTTOM_SPACING = 16;
 
@@ -40,6 +42,9 @@ export function OsUpdateStateSheet({
   const { top: topInset } = useSafeAreaInsets();
   const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
   const isDismissable = onClose !== undefined;
+  // The sheet portals its content above the app, out of reach of the flow providers.
+  const ports = useContext(OsUpdatePortsContext);
+  const tracking = useContext(OsUpdateTrackingContext);
 
   return (
     <QueuedBottomSheet
@@ -54,7 +59,13 @@ export function OsUpdateStateSheet({
       contentHasBottomSpace
       maxDynamicContentSize={maxDynamicContentSize}
     >
-      <SheetContent hideHeader={hideHeader}>{children}</SheetContent>
+      <SheetContent hideHeader={hideHeader}>
+        <OsUpdatePortsContext.Provider value={ports}>
+          <OsUpdateTrackingContext.Provider value={tracking}>
+            {children}
+          </OsUpdateTrackingContext.Provider>
+        </OsUpdatePortsContext.Provider>
+      </SheetContent>
     </QueuedBottomSheet>
   );
 }

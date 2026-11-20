@@ -9,10 +9,6 @@ This repository contains the Coin Canton module for Ledger Live.
 
 The Coin Canton module provides support for the Canton blockchain within the Ledger Live application
 
-## Test setup
-
-Create .env.integ.test file based on .env.integ.test.example
-
 ## Protobuf Integration
 
 Protobuf generation and transaction splitting logic have been moved to `@ledgerhq/hw-app-canton`.

@@ -8,7 +8,7 @@ import { Trans } from "~/context/Locale";
 import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
 import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
-import type { ChecksDrawerProps } from "./useChecksDrawers";
+import type { ChecksDrawerProps, DrawerTracking } from "./useChecksDrawers";
 
 export type ChecksDrawerTestIds = Readonly<{
   allowSheet: string;
@@ -19,8 +19,10 @@ export type ChecksDrawerTestIds = Readonly<{
   notGenuineSheet: string;
 }>;
 
-type ChecksDrawersProps = ChecksDrawerProps &
+type ChecksDrawersProps = Omit<ChecksDrawerProps, "allowSheet" | "firmwareUpdate"> &
   Readonly<{
+    allowSheet?: ChecksDrawerProps["allowSheet"];
+    firmwareUpdate?: ChecksDrawerProps["firmwareUpdate"];
     testIds: ChecksDrawerTestIds;
   }>;
 
@@ -33,19 +35,19 @@ type ChecksSheetProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-type ChecksInfoSheetProps = Readonly<{
-  isOpen: boolean;
-  onDismiss?: () => void;
-  showCloseButton?: boolean;
-  testID: string;
-  trackName?: string;
-  trackCategory?: string;
-  preset: "info" | "error";
-  title: React.ReactNode;
-  description?: React.ReactNode;
-  primaryCta: InfoStateCta;
-  secondaryCta?: InfoStateCta;
-}>;
+type ChecksInfoSheetProps = DrawerTracking &
+  Readonly<{
+    isOpen: boolean;
+    onDismiss?: () => void;
+    onHeaderClosePressed?: () => void;
+    showCloseButton?: boolean;
+    testID: string;
+    preset: "info" | "error";
+    title: React.ReactNode;
+    description?: React.ReactNode;
+    primaryCta: InfoStateCta;
+    secondaryCta?: InfoStateCta;
+  }>;
 
 function ChecksSheet({
   isOpen,
@@ -80,10 +82,12 @@ function ChecksSheet({
 function ChecksInfoSheet({
   isOpen,
   onDismiss,
+  onHeaderClosePressed,
   showCloseButton,
   testID,
   trackName,
   trackCategory,
+  trackProps,
   preset,
   title,
   description,
@@ -94,6 +98,7 @@ function ChecksInfoSheet({
     <ChecksSheet
       isOpen={isOpen}
       onDismiss={onDismiss}
+      onHeaderClosePressed={onHeaderClosePressed}
       showCloseButton={showCloseButton}
       testID={testID}
     >
@@ -103,6 +108,7 @@ function ChecksInfoSheet({
           category={trackCategory}
           type="drawer"
           refreshSource={false}
+          {...trackProps}
         />
       ) : null}
       <InfoState
@@ -127,22 +133,24 @@ export function ChecksDrawers({
 }: ChecksDrawersProps) {
   return (
     <>
-      <ChecksSheet
-        isOpen={allowSheet.isOpen}
-        onHeaderClosePressed={allowSheet.onClose}
-        testID={testIds.allowSheet}
-      >
-        <ContinueOnDevice
-          deviceModelId={allowSheet.deviceModelId}
-          deviceName={allowSheet.deviceName}
-        />
-      </ChecksSheet>
+      {allowSheet ? (
+        <ChecksSheet
+          isOpen={allowSheet.isOpen}
+          onHeaderClosePressed={allowSheet.onClose}
+          testID={testIds.allowSheet}
+        >
+          <ContinueOnDevice
+            deviceModelId={allowSheet.deviceModelId}
+            deviceName={allowSheet.deviceName}
+          />
+        </ChecksSheet>
+      ) : null}
       {errorDrawer.kind === "declined" ? (
         <ChecksInfoSheet
           isOpen={errorDrawer.isOpen}
           onDismiss={errorDrawer.onClose}
           testID={testIds.declinedSheet}
-          trackName="Error: unknown error"
+          {...errorDrawer.tracking}
           preset="info"
           title={
             <Trans i18nKey="deviceIntentExecutor.initialization.retryable.userRefused.title" />
@@ -162,7 +170,7 @@ export function ChecksDrawers({
           isOpen={errorDrawer.isOpen}
           onDismiss={errorDrawer.onClose}
           testID={testIds.networkSheet}
-          trackName="Error: unknown error"
+          {...errorDrawer.tracking}
           preset="error"
           title={<Trans i18nKey="deviceOnboarding.checks.network.title" />}
           description={<Trans i18nKey="deviceOnboarding.checks.network.description" />}
@@ -181,7 +189,7 @@ export function ChecksDrawers({
           isOpen={errorDrawer.isOpen}
           onDismiss={errorDrawer.onClose}
           testID={testIds.unknownSheet}
-          trackName="Error: unknown error"
+          {...errorDrawer.tracking}
           preset="error"
           title={<Trans i18nKey="earlySecurityCheck.genuineCheckErrorDrawer.title" />}
           description={
@@ -205,7 +213,7 @@ export function ChecksDrawers({
           isOpen={errorDrawer.isOpen}
           onDismiss={errorDrawer.onClose}
           testID={testIds.providerSheet}
-          trackName="Error: Device OS version not recognized"
+          {...errorDrawer.tracking}
           preset="error"
           title={
             <Trans i18nKey="earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.title" />
@@ -228,21 +236,23 @@ export function ChecksDrawers({
           }}
         />
       ) : null}
-      <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
+      {firmwareUpdate ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
       {unsupportedUpdate.mounted ? (
         <UnsupportedUpdateDrawer
           isOpen={unsupportedUpdate.isOpen}
           isUsbRequired={unsupportedUpdate.isUsbRequired}
           productName={unsupportedUpdate.productName}
           onClose={unsupportedUpdate.onClose}
+          onClosePressed={unsupportedUpdate.onClosePressed}
         />
       ) : null}
       <ChecksInfoSheet
         isOpen={notGenuineDrawer.isOpen}
         onDismiss={notGenuineDrawer.onClose}
+        onHeaderClosePressed={notGenuineDrawer.onClosePressed}
         showCloseButton
         testID={testIds.notGenuineSheet}
-        trackCategory="Device not genuine"
+        {...notGenuineDrawer.tracking}
         preset="info"
         title={
           <Trans

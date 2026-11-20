@@ -54,8 +54,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
-      await app.account.navigateToSubAccount(transaction.accountToDebit);
-      await app.account.tapSend();
+      await app.account.openSubAccountSend(transaction.accountToDebit);
       await app.send.setRecipientAndContinue({
         address: addressToCredit,
         memoTag: transaction.memoTag,
@@ -83,8 +82,11 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         const subAccountId = await app.account.navigateToSubAccount(transaction.accountToCredit);
-        await app.account.expectAccountBalanceVisible(subAccountId);
-        await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.account.expectSubAccountBalanceVisible(transaction.accountToCredit, subAccountId);
+        await app.account.scrollToSubAccountHistoryAndClickOnLastOperation(
+          TransactionStatus.RECEIVED,
+          { amount: transaction.amount, ticker: transaction.accountToCredit.currency.ticker },
+        );
         await app.operationDetails.checkOperationInfos({ transaction, isSentTransaction: false });
       }
     });

@@ -4,6 +4,7 @@ import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
 
 export type DeviceOnboardingNavigatorParamList = {
   [ScreenName.DeviceOnboardingConnect]: undefined;
@@ -14,6 +15,8 @@ export type DeviceOnboardingNavigatorParamList = {
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
     wasReadOnlyAtEntry: boolean;
+    unseeded?: boolean;
+    seededResult: SeededResult | null;
   };
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

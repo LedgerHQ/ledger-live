@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ConnectNewDeviceView } from "./ConnectNewDeviceView";
 import type { ConnectNewDeviceProps } from "./types";
 import { useConnectNewDeviceViewModel } from "./useConnectNewDeviceViewModel";
@@ -18,5 +19,9 @@ export { isErrorState } from "./utils/isErrorState";
 export function ConnectNewDevice(props: Readonly<ConnectNewDeviceProps>) {
   const viewModel = useConnectNewDeviceViewModel(props);
 
-  return <ConnectNewDeviceView {...viewModel} />;
+  return (
+    <Box lx={{ flex: 1, paddingHorizontal: "s16", backgroundColor: "canvas" }}>
+      <ConnectNewDeviceView {...viewModel} />
+    </Box>
+  );
 }

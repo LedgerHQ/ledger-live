@@ -6,6 +6,7 @@ import {
   DeviceModelId,
   DeviceStatus,
   DmkResultStatus,
+  GlobalCommandError,
   UnknownDAError,
   UserInteractionRequired,
   type ConnectedDevice,
@@ -290,6 +291,62 @@ describe("PreChecksStateMachine", () => {
       expect(actor.getSnapshot().output).toBe(PreChecksNextAction.CreateBackup);
     });
 
+    it.each([
+      ["CLA", "6e00"],
+      ["INS", "6d00"],
+    ] as const)(
+      "should close the app and read the OS version again without waiting when an app rejects it as %s not supported",
+      async (_, errorCode) => {
+        responders.getOsVersion = () => {
+          responders.getOsVersion = () => success(osVersion());
+          return failure(new GlobalCommandError({ errorCode, message: "rejected by the app" }));
+        };
+        responders.getAppAndVersion = () => {
+          responders.getAppAndVersion = () => success(DASHBOARD_APP);
+          return success(ETHEREUM_APP);
+        };
+        await start();
+
+        expect(actor.getSnapshot().value).toBe("CheckErrorCause");
+        expect(deviceActionRuns).toHaveLength(1);
+
+        await completeDeviceAction(undefined);
+        expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+
+        await completeDeviceAction(DASHBOARD_APP);
+        expect(actor.getSnapshot().output).toBe(PreChecksNextAction.CreateBackup);
+        expect(getDeviceSessionState).not.toHaveBeenCalled();
+      },
+    );
+
+    it("should emit UNEXPECTED_ERROR when the dashboard itself keeps rejecting the OS version read", async () => {
+      responders.getOsVersion = () =>
+        failure(new GlobalCommandError({ errorCode: "6d00", message: "rejected by the OS" }));
+
+      await start();
+
+      expect(actor.getSnapshot().value).toBe("UnrecoverableError");
+      expect(lastSentStateType()).toBe(PreChecksStateType.UNEXPECTED_ERROR);
+      expect(deviceActionRuns).toHaveLength(0);
+    });
+
+    it("should emit UNEXPECTED_ERROR when the app check fails twice with no explanation, even with the OS version read succeeding in between", async () => {
+      const backendError = new Error("backend unavailable");
+      await start();
+      await failDeviceAction(backendError);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+      expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+
+      await failDeviceAction(backendError);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("UnrecoverableError");
+      expect(lastSentStateType()).toBe(PreChecksStateType.UNEXPECTED_ERROR);
+      expect(deviceActionRuns).toHaveLength(2);
+    });
+
     it("should resolve PerformOsUpdates when the device is in bootloader mode even without a pending update", async () => {
       responders.getOsVersion = () => success(osVersion({ isBootloader: true }));
 
@@ -356,6 +413,33 @@ describe("PreChecksStateMachine", () => {
 
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
       expect(sentStatesOfType(PreChecksStateType.DEVICE_LOCKED)).toHaveLength(1);
+    });
+
+    it("should retry a battery read again when a successful read separates two unexplained failures", async () => {
+      let isBackendDown = true;
+      responders.getBatteryStatus = statusType => {
+        if (isBackendDown) return failure(new Error("backend unavailable"));
+        return success(
+          statusType === BatteryStatusType.BATTERY_PERCENTAGE ? 10 : batteryFlags(NOT_CHARGING),
+        );
+      };
+      await start();
+      await completeDeviceAction(DASHBOARD_APP);
+
+      isBackendDown = false;
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+      expect(actor.getSnapshot().value).toBe("AwaitingChargingMode");
+
+      isBackendDown = true;
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+      isBackendDown = false;
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("AwaitingChargingMode");
+      expect(sentStatesOfType(PreChecksStateType.UNEXPECTED_ERROR)).toHaveLength(0);
     });
 
     it("should emit BATTERY_TOO_LOW only once while the percentage stays the same across polls", async () => {

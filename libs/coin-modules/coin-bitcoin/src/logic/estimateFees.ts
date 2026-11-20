@@ -1,7 +1,9 @@
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type { BitcoinContext } from "../config";
 import type { BitcoinIntent } from "./intent";
+import { coinControlOf } from "./intent";
 import { planTransaction } from "./planTransaction";
+import type { UtxoSelection } from "./selectUtxos";
 import { cryptoFor } from "./selectUtxos";
 
 /**
@@ -15,9 +17,15 @@ import { cryptoFor } from "./selectUtxos";
  * Without a valid recipient yet, the fee is priced with an output of the sender's own type.
  *
  * The returned `parameters` describe the priced transaction: the rate, the network's minimum relay
- * rate and the virtual size (with which `validateIntent` refuses a fee below the relay minimum), the
- * number of inputs, the change, whether the outputs cover the intent (`sufficient`) and, for
- * `useAllAmount`, the exact `amount` the transaction sends.
+ * rate, the minimum rate increase of a replacement (`incrementalRelayFeePerByte`) and the virtual
+ * size (with which `validateIntent` refuses a fee below the relay minimum), the number of inputs,
+ * the change, whether the outputs cover the intent (`sufficient`) and, for `useAllAmount`, the exact
+ * `amount` the transaction sends, or under an absolute fee the `sweepValue` of the outputs it spends;
+ * under an absolute fee, a selection's `selectedValue` too.
+ *
+ * A replacement (see `planTransaction`) is priced like any transaction: the BIP-125 minimum fee
+ * depends on the replaced transactions' fees, which the caller knows; the node refuses a lower fee
+ * at `broadcast`.
  */
 export async function estimateFees(
   context: BitcoinContext,
@@ -32,16 +40,17 @@ export async function estimateFees(
       : crypto.toOutputScript(intent.sender);
 
   const config = await context.config(currencyId);
-  const { selection, feePerByte, relayFeePerByte, vsize } = await planTransaction(
-    config,
-    currencyId,
-    intent,
-    {
-      feePerByte: customFeesParameters?.feePerByte,
-      feesStrategy: customFeesParameters?.feesStrategy,
-    },
-    recipientScript,
-  );
+  const { selection, feePerByte, relayFeePerByte, incrementalRelayFeePerByte, vsize } =
+    await planTransaction(
+      config,
+      currencyId,
+      intent,
+      {
+        feePerByte: customFeesParameters?.feePerByte,
+        feesStrategy: customFeesParameters?.feesStrategy,
+      },
+      recipientScript,
+    );
 
   // A custom absolute fee (custom strategy without a rate) is the caller's: this estimate is only
   // priced at the relay floor meanwhile. Its rate and send-max amount are not returned, so that
@@ -54,12 +63,34 @@ export async function estimateFees(
     parameters: {
       ...(absoluteFee ? {} : { feePerByte }),
       relayFeePerByte,
+      incrementalRelayFeePerByte,
       vsize: BigInt(vsize),
       inputCount: selection.inputs.length,
       change: selection.change,
       sufficient: selection.sufficient,
-      // Exact amount a send-max transaction sends; the generic bridge uses it as is.
-      ...(intent.useAllAmount && !absoluteFee ? { amount: selection.amount } : {}),
+      ...amountParameters(intent, selection, absoluteFee),
     },
   };
+}
+
+/**
+ * What `validateIntent` measures the amount against. For a send-max, the exact amount it sends,
+ * which the generic bridge uses as is. Under an absolute fee, the caller's fee replaces this
+ * estimate's, so the value of the inputs instead, which do not depend on the fee: a sweep's
+ * (`sweepValue`, the amount being what the fee leaves, coin control applied), or a selection's,
+ * spent exactly (`selectedValue`, which must cover the amount and the fee).
+ */
+function amountParameters(
+  intent: BitcoinIntent,
+  selection: UtxoSelection,
+  absoluteFee: boolean,
+): { amount: bigint } | { sweepValue: bigint } | { selectedValue: bigint } | Record<string, never> {
+  const inputsValue = () => selection.inputs.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
+  if (intent.useAllAmount) {
+    return absoluteFee ? { sweepValue: inputsValue() } : { amount: selection.amount };
+  }
+  if (absoluteFee && coinControlOf(intent).selected.length > 0) {
+    return { selectedValue: inputsValue() };
+  }
+  return {};
 }

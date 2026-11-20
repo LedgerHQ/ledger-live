@@ -1,7 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import {
   EMPTY_STATE_CRYPTOS,
@@ -20,9 +19,7 @@ const EXPECTED_ADDITIONAL_CRYPTOS = [
 const EXPECTED_STABLECOINS = [Currency.ETH_USDT, Currency.ETH_USDC];
 
 test.describe("Wallet assets", () => {
-  // This suite covers the Wallet 4.0 Assets section UI (cryptos/stablecoins sections and category
-  // pages), which only exists with the Asset Section ON, so opt into the Q2 feature-flag set.
-  test.use({ teamOwner: Team.WALLET_XP, featureFlags: FF_LWD_WALLET_40_Q2 });
+  test.use({ teamOwner: Team.WALLET_XP });
 
   test.describe("Empty state", () => {
     test.use({

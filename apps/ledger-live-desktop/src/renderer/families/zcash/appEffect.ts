@@ -1,2 +1,2 @@
 // The app-wide effect of the family, loaded on its own: see ../appEffects.ts.
-export { ZcashFirstSyncTracking as default } from "../bitcoin/zcashActivationTracking";
+export { ZcashFirstSyncTracking as default } from "./zcashActivationTracking";

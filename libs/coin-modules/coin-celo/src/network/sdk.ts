@@ -41,6 +41,9 @@ const isHexHash = (s: string): s is `0x${string}` => TX_HASH_RE.test(s);
  *
  * Callers MUST distinguish `null` from a thrown error: persisting "native" for
  * a transient RPC failure would permanently mis-label a real CIP-64 op.
+ *
+ * @deprecated The synchronisation reads the fee asset of an operation from coin-evm's
+ * `feesAsset`. Kept for compatibility only.
  */
 export const getCeloTransactionFeeCurrency = async (hash: string): Promise<string | null> => {
   if (!isHexHash(hash)) throw new Error(`Invalid Celo tx hash: ${hash}`);

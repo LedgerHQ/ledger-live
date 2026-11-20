@@ -4,12 +4,14 @@ import type { BitcoinCoinConfig, BitcoinContext } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
+import { craftTransactionData } from "../logic/craftTransactionData";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import type { BitcoinTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
+import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 
@@ -34,6 +36,8 @@ export function createApi(currencyId: string) {
     getBlock: (context: BitcoinContext, height) => getBlock(context, currencyId, height),
     listOperations: (context: BitcoinContext, address, options) =>
       listOperations(context, currencyId, address, options),
+    listHoldings: (context: BitcoinContext, address, options?) =>
+      listHoldings(context, currencyId, address, options),
     estimateFees: (context: BitcoinContext, intent, options?) =>
       estimateFees(context, currencyId, intent, options?.customFeesParameters),
     craftTransaction: (context: BitcoinContext, intent, options?) =>
@@ -44,9 +48,7 @@ export function createApi(currencyId: string) {
       validateIntent(context, currencyId, intent, balances, options?.customFees),
     broadcast: (context: BitcoinContext, tx, options?) =>
       broadcast(context, currencyId, tx, options?.broadcastConfig),
-    craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData => ({
-      type: "string",
-      ...(intent.data?.opReturnData ? { opReturnData: intent.data.opReturnData } : {}),
-    }),
+    craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData =>
+      craftTransactionData(intent),
   } satisfies CoinModuleImpl<BitcoinCoinConfig, MemoNotSupported, BitcoinTxData>;
 }

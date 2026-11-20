@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { DustLimit, FeeTooLow } from "../../errors";
+import { DustLimit, FeeTooLow, InvalidUtxoId, InvalidUtxoStrategy } from "../../errors";
 import { validateIntent } from "../validateIntent";
 import { FUNDED_P2WPKH, PRISTINE_P2PKH, PRISTINE_P2TR } from "./helpers/fixtures";
 import { testContext, useMswServer } from "./helpers/msw";
@@ -25,6 +25,9 @@ const intent = (overrides: Partial<TransactionIntent> = {}): TransactionIntent =
   asset: { type: "native" },
   ...overrides,
 });
+
+const withControl = (utxoStrategy: Record<string, unknown>) =>
+  intent({ data: { type: "unknown", utxoStrategy } } as Partial<TransactionIntent>);
 
 describe("validateIntent", () => {
   it("accepts a valid intent and reports the amounts", async () => {
@@ -190,6 +193,59 @@ describe("validateIntent", () => {
     });
   });
 
+  it("checks a selection's value against the amount and an absolute fee, not the estimate's verdict", async () => {
+    // The estimate's `sufficient` was priced at the relay floor, and the balance is larger.
+    const parameters = { sufficient: true, selectedValue: 3_000n };
+    const short = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ amount: 2_900n }),
+      BALANCES,
+      {
+        value: 200n,
+        parameters,
+      },
+    );
+    expect(short.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    const covered = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ amount: 2_700n }),
+      BALANCES,
+      {
+        value: 300n,
+        parameters,
+      },
+    );
+    expect(covered.errors.amount).toBeUndefined();
+  });
+
+  it("sends the swept outputs' value minus an absolute fee for useAllAmount, not the balance", async () => {
+    // Coin control left part of the balance out of the sweep the estimate priced.
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true, amount: 0n }),
+      BALANCES,
+      { value: 300n, parameters: { sweepValue: 3_000n } },
+    );
+    expect(result.amount).toBe(2_700n);
+    expect(result.totalSpent).toBe(3_000n);
+    expect(result.errors).toEqual({});
+  });
+
+  it("reports NotEnoughBalance when an absolute fee exceeds the swept outputs' value", async () => {
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true, amount: 0n }),
+      BALANCES,
+      { value: 300n, parameters: { sweepValue: 200n } },
+    );
+    expect(result.amount).toBe(0n);
+    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
   it("sends the sweep amount the estimate priced for useAllAmount, even above the confirmed balance", async () => {
     // The estimate also spends outputs created by unconfirmed transactions.
     const result = await validateIntent(
@@ -251,6 +307,26 @@ describe("validateIntent", () => {
         parameters: { ...relay, feesStrategy: "custom", feePerByte: 2n },
       });
       expect(result.errors.fees).toBeInstanceOf(FeeTooLow);
+    });
+
+    it("reports a zero absolute fee, which crafting would not pay as shown", async () => {
+      // An absolute-fee send-max: the estimate returns no rate, only the size and the swept value.
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        intent({ useAllAmount: true, amount: 0n }),
+        BALANCES,
+        { value: 0n, parameters: { ...relay, sweepValue: 3_000n } },
+      );
+      expect(result.errors.fees).toBeInstanceOf(FeeTooLow);
+    });
+
+    it("accepts a zero fee alongside a rate, which then sets the fee", async () => {
+      const result = await validateIntent(testContext(), "bitcoin", intent(), BALANCES, {
+        value: 0n,
+        parameters: { ...relay, feePerByte: 5n },
+      });
+      expect(result.errors.fees).toBeUndefined();
     });
 
     it("accepts the relay minimum, also as the JSON-safe strings Ledger Live hands back", async () => {
@@ -333,6 +409,76 @@ describe("validateIntent", () => {
         },
       );
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+  });
+
+  describe("with a coin control", () => {
+    const HASH = "ab".repeat(32);
+
+    it("adds no error for a well formed one", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({
+          strategy: "optimize-size",
+          selectedUtxos: [`${HASH}:0`],
+          excludedUtxos: [`${HASH}:1`],
+        }),
+        BALANCES,
+      );
+      expect(result.errors).toEqual({});
+    });
+
+    it("reports a malformed UTXO id under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: ["not-an-id"] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an id both selected and excluded", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`], excludedUtxos: [`${HASH}:0`] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an id listed twice under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`, `${HASH}:0`] }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoId);
+    });
+
+    it("reports an unknown strategy under coinControl", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ strategy: "random" }),
+        BALANCES,
+      );
+      expect(result.errors.coinControl).toBeInstanceOf(InvalidUtxoStrategy);
+    });
+
+    it("reports NotEnoughBalance when the estimate says the selection does not cover the send", async () => {
+      const result = await validateIntent(
+        testContext(),
+        "bitcoin",
+        withControl({ selectedUtxos: [`${HASH}:0`] }),
+        BALANCES,
+        { value: 200n, parameters: { sufficient: false } },
+      );
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(result.errors.coinControl).toBeUndefined();
     });
   });
 });

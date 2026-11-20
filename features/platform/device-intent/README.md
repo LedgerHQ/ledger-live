@@ -507,6 +507,9 @@ function MyFlowScreen({ enabled, onDone }: Props) {
 
 `onExecutorStateChanged` and `cancelIntentRequestId` are optional.
 
+The LWM and LWD wrappers call `onUserCancel` with the `DeviceFlowFailure` of the
+error screen the user closed, or `null`. A job error goes to `onIntentJobError`.
+
 ### Custom headers from intent components
 
 The LWM and LWD `DeviceIntentExecutor` wrappers own their platform

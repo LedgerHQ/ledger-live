@@ -1,3 +1,4 @@
+import { track, trackPage } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -9,6 +10,12 @@ const mockWalletSyncState = { visualPending: false };
 
 jest.mock("LLM/features/WalletSync/components/WalletSyncContext", () => ({
   useWalletSyncUserState: () => mockWalletSyncState,
+}));
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => "Ledger Sync"),
 }));
 
 const device = {
@@ -26,7 +33,9 @@ const trustchain = {
 
 const reset = jest.fn();
 const navigate = jest.fn();
+const goBack = jest.fn();
 const mockNotifyFlowCompleted = jest.fn();
+const mockOfferParams: { unseeded?: boolean; seededResult?: null } = {};
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: mockNotifyFlowCompleted }),
@@ -37,6 +46,7 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
     navigate,
+    goBack,
     addListener: (event: string, handler: (event: { preventDefault: () => void }) => void) => {
       listeners.set(event, handler);
       return jest.fn();
@@ -51,6 +61,14 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
+      seededResult: {
+        deviceType: "stax",
+        ledgerSyncEligible: true,
+        firmwareUpdateAvailability: "no",
+        firmwareUpdateStarted: false,
+        firmwareUpdateDone: false,
+      },
+      ...mockOfferParams,
     },
   }),
 }));
@@ -83,6 +101,8 @@ describe("useSyncOfferRouteViewModel", () => {
     jest.clearAllMocks();
     listeners.clear();
     mockWalletSyncState.visualPending = false;
+    delete mockOfferParams.unseeded;
+    delete mockOfferParams.seededResult;
   });
 
   afterEach(() => {
@@ -239,6 +259,37 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
+  it("should return to the funnel without completing when an unseeded setup skips the offer", () => {
+    mockOfferParams.unseeded = true;
+    mockOfferParams.seededResult = null;
+    const { result, store } = renderOffer(false);
+
+    act(() => result.current.onSkip());
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+    expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
+  it("should return to the funnel without completing when an unseeded sync finishes", () => {
+    mockOfferParams.unseeded = true;
+    mockOfferParams.seededResult = null;
+    const { result, store } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+    act(() => result.current.onContinue());
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
   it("should keep the offer in place after the trustchain lands", () => {
     const { result, store } = renderOffer(true);
     const preventDefault = jest.fn();
@@ -282,5 +333,63 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/fr/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
     );
+  });
+
+  it("should track the offer as the seeded device", () => {
+    const { result } = renderOffer(false);
+
+    expect(result.current.seededDeviceType).toBe("stax");
+  });
+
+  it("should not complete when activation starts without a trustchain", () => {
+    const { result } = renderOffer(false);
+
+    act(() => result.current.onActivate());
+
+    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything());
+  });
+
+  it("should track completion with sync once the success screen shows", () => {
+    const { result } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything());
+
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+    act(() => result.current.onContinue());
+
+    const done = jest.mocked(track).mock.calls.filter(([event]) => event === "onboarding_done");
+    expect(done).toEqual([
+      [
+        "onboarding_done",
+        expect.objectContaining({ ledger_sync_done: "yes", firmware_update_done: "no" }),
+      ],
+    ]);
+  });
+
+  it("should track completion with sync when the user quits while it synchronizes", () => {
+    const { result } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => result.current.onQuit());
+
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "yes" }),
+    );
+  });
+
+  it("should complete without sync when the offer is skipped", () => {
+    const { result } = renderOffer(false);
+
+    act(() => result.current.onSkip());
+
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "no" }),
+    );
+    expect(trackPage).not.toHaveBeenCalled();
   });
 });

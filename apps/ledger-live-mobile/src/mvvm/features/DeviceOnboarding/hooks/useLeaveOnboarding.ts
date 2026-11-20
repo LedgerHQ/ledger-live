@@ -1,15 +1,14 @@
 import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import {
-  requiresLegacyFlow,
-  type DeviceOnboardingContext,
-  type DeviceOnboardingExitReason,
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { exitActions, resetToPortfolio } from "../utils/exitActions";
-import { isCurrentSessionGenuine } from "../utils/genuineSession";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
+import { exitActions, exitOutcome, resetToPortfolio } from "../utils/exitActions";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
@@ -33,7 +32,11 @@ export function useLeaveOnboarding({
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
-  return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
+  return (
+    reason: DeviceOnboardingExitReason,
+    context: DeviceOnboardingContext,
+    seededResult: SeededResult | null = null,
+  ) => {
     const navigation = getNavigation ? getNavigation() : screenNavigation;
     if (!navigateOnExit || !device || !navigation) return;
     const unseeded = context.onboardedOnEntry === false;
@@ -42,31 +45,17 @@ export function useLeaveOnboarding({
       resetToPortfolio(navigation);
       return;
     }
-    const genuine = isCurrentSessionGenuine(context);
-    const seeded = context.isOnboarded === true;
-    const firmwareNeedsLegacyFlow =
-      seeded &&
-      (context.firmwareVersion === null ||
-        requiresLegacyFlow({
-          currentVersion: context.firmwareVersion,
-          deviceModelId: context.deviceModelId,
-        }));
+    const outcome = exitOutcome(reason, context);
     exitActions[reason]({
       navigation,
       dispatch,
       device,
       wasReadOnlyAtEntry,
-      isGenuine: genuine,
-      deviceWasSeeded: seeded,
-      firmwareNeedsLegacyFlow,
+      deviceWasSeeded: context.isOnboarded === true,
+      outcome,
+      seededResult,
       hasCompletedOnboarding,
     });
-    if (
-      reason === "completed" ||
-      (reason === "userQuit" && genuine) ||
-      (reason === "legacyFallback" && seeded && genuine)
-    ) {
-      notifyFlowCompleted("onboarding");
-    }
+    if (outcome === "done") notifyFlowCompleted("onboarding");
   };
 }

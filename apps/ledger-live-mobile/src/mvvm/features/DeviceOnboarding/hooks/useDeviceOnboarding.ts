@@ -5,6 +5,8 @@ import {
   stateValueToString,
   useDeviceOnboardingActor,
   type DeviceOnboardingActorSession,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
   type OnboardingEvent,
   type OnboardingInspectionEvent,
   type SessionEvent,
@@ -27,10 +29,12 @@ import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
-import { isRebootedDevice } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { matchesPairedDevice, selectPairedKnownDevices } from "../utils/pairedDevice";
 import { createDeviceOnboardingPorts } from "../utils/ports";
+import { isRebootedDevice } from "../utils/rebootedDevice";
+import { selectKnownDevicesToReconnect } from "../utils/reconnectDevices";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -39,8 +43,14 @@ type UseDeviceOnboardingInput = {
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
   getNavigation?: () => NavigationProp<ParamListBase> | null;
-  /** Runs right before the exit navigates, so the host can stop blocking back. */
-  onLeave?: () => void;
+  /**
+   * Runs right before the exit navigates, so the host can stop blocking back. Returns the seeded
+   * result that the Sync offer screen needs.
+   */
+  onLeave?: (
+    reason: DeviceOnboardingExitReason,
+    context: DeviceOnboardingContext,
+  ) => SeededResult | null | void;
   /** Watches every machine update from the actor's creation. The funnel passes none. */
   inspect?: (event: OnboardingInspectionEvent) => void;
 };
@@ -163,8 +173,8 @@ export function useDeviceOnboarding({
     leaveOnboarding: (reason, context) => {
       const deferCompletion = context.onboardedOnEntry === false && reason === "completed";
       deferExitStatus.current = deferCompletion;
-      if (!deferCompletion) onLeave?.();
-      leaveOnboarding(reason, context);
+      const seededResult = deferCompletion ? null : onLeave?.(reason, context);
+      leaveOnboarding(reason, context, seededResult ?? null);
     },
   });
 
@@ -245,7 +255,7 @@ export function useDeviceOnboarding({
         const expectedDevice = expectedDeviceRef.current;
         const reusedSession = result.sessionId === releasedSessionRef.current;
         const differentDevice =
-          expectedDevice !== null && !isRebootedDevice(expectedDevice, incomingDevice);
+          expectedDevice === null || !isRebootedDevice(expectedDevice, incomingDevice);
         if (
           actorRef.current &&
           waitingAfterUpdateRef.current &&
@@ -280,6 +290,7 @@ export function useDeviceOnboarding({
             return;
           }
           waitingAfterUpdateRef.current = false;
+          expectedDeviceRef.current = null;
           startSessionListener(result, nextPorts.currentSessionId());
           setSessionReady(true);
           setStatus("running");
@@ -387,7 +398,9 @@ export function useDeviceOnboarding({
       connectionRef.current?.unsubscribe();
       connectionRef.current = connectDevice({
         dmk,
-        knownDevices: selectPairedKnownDevices(knownDevices, pairedDeviceId),
+        knownDevices: waitingAfterUpdateRef.current
+          ? selectKnownDevicesToReconnect(knownDevices, expectedDeviceRef.current)
+          : selectPairedKnownDevices(knownDevices, pairedDeviceId),
         isMockServerEnabled,
         onConnected: result => {
           void adoptConnection(result);
@@ -423,6 +436,7 @@ export function useDeviceOnboarding({
     void ports?.closeSession();
     retryRef.current = null;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -439,6 +453,8 @@ export function useDeviceOnboarding({
     portsRef.current = null;
     void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
+    waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
@@ -450,6 +466,7 @@ export function useDeviceOnboarding({
     if (!actor?.getSnapshot().can({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" })) return;
     waitingAfterUpdateRef.current = true;
     expectedDeviceRef.current = liveDeviceRef.current;
+    retryRef.current = null;
     releasedSessionRef.current = portsRef.current?.currentSessionId() ?? null;
     dropLostTransport();
     send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
@@ -464,6 +481,7 @@ export function useDeviceOnboarding({
   const abortFirmwareReconnect = useCallback(() => {
     adoptGeneration.current += 1;
     waitingAfterUpdateRef.current = false;
+    expectedDeviceRef.current = null;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
     sessionActorRef.current?.stop();

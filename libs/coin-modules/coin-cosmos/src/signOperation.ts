@@ -75,7 +75,7 @@ export const buildSignOperation =
           aminoMsgs,
           feeToEncode,
           chainId,
-          transaction.memo || "",
+          transaction.memoValue || "",
           accountNumber.toString(),
           sequence.toString(),
         );
@@ -116,7 +116,7 @@ export const buildSignOperation =
 
         const txBytes = buildTransaction({
           protoMsgs,
-          memo: transaction.memo || "",
+          memo: transaction.memoValue || "",
           pubKeyType,
           pubKey,
           feeAmount: signDoc.fee.amount,

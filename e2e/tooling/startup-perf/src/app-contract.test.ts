@@ -51,6 +51,22 @@ function prepare(env: Record<string, string>, check: (app: string) => void): voi
 }
 
 describe("the mobile app of this checkout", () => {
+  it("writes the startup lines only once both final events are logged", () => {
+    const source = read(APP, "src/mvvm/utils/logLastStartupEvents.ts");
+    assert.match(
+      source,
+      /LAST_STARTUP_EVENT_VALUES = \[STARTUP_EVENTS\.APP_STARTED, STARTUP_EVENTS\.NAV_READY\]/,
+    );
+    const gate = source.search(/otherStartupEvents\.every\(\(?e\)? => alreadyLogged\.has\(e\)\)/);
+    const writes = [...source.matchAll(/writeStartupToDeviceLog\(eventName\)/g)];
+    assert.ok(gate >= 0, "the gate on both final events moved: check startup-log.ts still holds");
+    assert.equal(writes.length, 1);
+    assert.ok(
+      (writes[0].index ?? -1) > gate,
+      "the startup lines are written before both final events",
+    );
+  });
+
   it("takes every edit of prepare-build.mts", () => {
     prepare({}, app => {
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);

@@ -1,8 +1,9 @@
 import type { BitcoinCoinConfig } from "../config";
+import { InvalidReplacementInput, ReplacementNotSupported, UnknownUtxo } from "../errors";
 import { getFeeRate } from "./getFeeRate";
-import { getSpendableUtxos } from "./getSpendableUtxos";
+import { getSpendableUtxosWithMempool, outpoint } from "./getSpendableUtxos";
 import type { BitcoinIntent } from "./intent";
-import { opReturnScript } from "./intent";
+import { coinControlOf, opReturnScript } from "./intent";
 import type { DerivationModes, ICrypto, UtxoSelection } from "./selectUtxos";
 import { cryptoFor, derivationModeOf, selectUtxos, transactionSize } from "./selectUtxos";
 
@@ -30,6 +31,8 @@ export type TransactionPlan = {
   /** Rate the transaction pays, and the network's minimum relay rate, in sat/vB. */
   feePerByte: bigint;
   relayFeePerByte: bigint;
+  /** Minimum rate increase of a replacement, in sat/vB. */
+  incrementalRelayFeePerByte: bigint;
   /** Selected outputs, fee, amount sent and change (see `selectUtxos`). */
   selection: UtxoSelection;
   /** Virtual size of the transaction, in vbytes. */
@@ -58,6 +61,22 @@ export function formatBytes(config: BitcoinCoinConfig, inputCount: number): numb
  * `selectUtxos` selects them. `estimateFees` and `craftTransaction` both start from it, so the
  * estimate prices exactly what crafting builds.
  *
+ * The intent's coin control (`data.utxoStrategy`, see `coinControlOf`) narrows and orders the
+ * outputs: excluded ones are never spent, selected ones always are.
+ *
+ * Selecting an output a pending transaction of the address already spends plans that transaction's
+ * replacement (speed-up or cancel), on a currency that signals RBF (`ReplacementNotSupported`
+ * otherwise). The replacement spends exactly the selected outputs, as any selection. Each must be
+ * an input of a replaced transaction (even an unconfirmed one: the original already spent it), or a
+ * confirmed output; anything else is refused (`InvalidReplacementInput`), as the node would refuse
+ * it at broadcast: an output a replaced transaction creates (it would conflict with itself), or any
+ * other unconfirmed output, which adds an unconfirmed input (BIP-125).
+ *
+ * Replacement is caller-driven (ADR-020, as EVM's nonce): the caller selects the inputs of the one
+ * transaction it replaces, from its own record of it, as the legacy bridge does from `replaceTxId`.
+ * A selection mixing inputs of several pending transactions is the caller's error; the node refuses
+ * it at broadcast when one of them depends on another.
+ *
  * `recipientScript` defaults to the intent's recipient; `estimateFees` passes the sender's own
  * script while the recipient is not yet a valid address. An imposed absolute fee reads no explorer
  * rate: only the relay floor.
@@ -75,17 +94,75 @@ export async function planTransaction(
   const opReturn = opReturnScript(intent, crypto);
   const extraOutputScripts = opReturn ? [opReturn] : [];
   const derivationMode = derivationModeOf(senderScript);
+  const control = coinControlOf(intent);
 
-  const [utxos, { feePerByte, relayFeePerByte }] = await Promise.all([
-    getSpendableUtxos(config, intent.sender),
-    getFeeRate(config, {
-      feePerByte: fees.feePerByte,
-      feesStrategy: fees.fixedFee === undefined ? fees.feesStrategy : "custom",
+  const [{ spendable, mempool }, { feePerByte, relayFeePerByte, incrementalRelayFeePerByte }] =
+    await Promise.all([
+      getSpendableUtxosWithMempool(config, intent.sender),
+      getFeeRate(config, {
+        feePerByte: fees.feePerByte,
+        feesStrategy: fees.fixedFee === undefined ? fees.feesStrategy : "custom",
+      }),
+    ]);
+
+  const selectedIds = control.selected.map(ref => outpoint(ref.hash, ref.outputIndex));
+  const replaced = new Set(
+    selectedIds.flatMap(id => {
+      const txid = mempool.spentBy.get(id);
+      return txid ? [txid] : [];
     }),
-  ]);
+  );
+  const replacing = selectedIds.some(id => mempool.spent.has(id));
+  if (replacing && !config.transaction?.signalsRbf) {
+    throw new ReplacementNotSupported(`${currencyId} does not signal replaceability (RBF)`, {
+      utxoIds: selectedIds.filter(id => mempool.spent.has(id)),
+    });
+  }
+
+  const excluded = new Set(control.excluded.map(ref => outpoint(ref.hash, ref.outputIndex)));
+  const replacedOutputs = new Set(
+    [...replaced].flatMap(txid =>
+      (mempool.createdBy.get(txid) ?? []).map(utxo => outpoint(utxo.hash, utxo.outputIndex)),
+    ),
+  );
+  const candidates = spendable.filter(utxo => {
+    const id = outpoint(utxo.hash, utxo.outputIndex);
+    return !excluded.has(id) && !replacedOutputs.has(id);
+  });
+  const ownChangeIds = new Set(
+    mempool.ownChange.map(utxo => outpoint(utxo.hash, utxo.outputIndex)),
+  );
+  // A selected output is spendable, or spent by a pending transaction that is replaced; any other
+  // is refused here, in one place. A replacement also refuses the outputs the node would. Both sets
+  // are indexed once, so a large selection stays linear.
+  const candidatesById = new Map(
+    candidates.map(utxo => [outpoint(utxo.hash, utxo.outputIndex), utxo]),
+  );
+  const spentById = new Map(
+    mempool.spentUtxos.map(utxo => [outpoint(utxo.hash, utxo.outputIndex), utxo]),
+  );
+  const selected = selectedIds.map(id => {
+    if (replacing && replacedOutputs.has(id)) {
+      throw new InvalidReplacementInput(
+        `UTXO ${id} is created by a transaction the replacement replaces`,
+        { utxoIds: [id] },
+      );
+    }
+    if (replacing && !mempool.spent.has(id) && ownChangeIds.has(id)) {
+      throw new InvalidReplacementInput(`UTXO ${id} is unconfirmed: a replacement cannot add it`, {
+        utxoIds: [id],
+      });
+    }
+    const found = candidatesById.get(id) ?? spentById.get(id);
+    if (!found) throw new UnknownUtxo(`UTXO ${id} is not a spendable output`, { utxoId: id });
+    return found;
+  });
+  const chosenIds = new Set(selectedIds);
 
   const selection = selectUtxos({
-    utxos,
+    utxos: candidates.filter(utxo => !chosenIds.has(outpoint(utxo.hash, utxo.outputIndex))),
+    selected,
+    strategy: control.strategy,
     amount: intent.amount,
     useAllAmount: !!intent.useAllAmount,
     recipientScript: recipient,
@@ -115,6 +192,7 @@ export async function planTransaction(
     opReturn,
     feePerByte,
     relayFeePerByte,
+    incrementalRelayFeePerByte,
     selection,
     vsize,
   };

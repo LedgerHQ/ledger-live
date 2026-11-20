@@ -908,6 +908,133 @@ describe("buildTransactionJob", () => {
     expect(pcztTransaction.orchardBundle).toBeNull();
   });
 
+  describe("user address receivers", () => {
+    const sapling = { typecode: 2, receiver: new Uint8Array(43).fill(0x22) };
+    const orchard = { typecode: 3, receiver: new Uint8Array(43).fill(0x33) };
+    const p2pkh = { typecode: 0, receiver: new Uint8Array(20).fill(0x11) };
+    const enteredUa = "u1entered";
+
+    it("passes the receivers on transparent outputs and on Orchard actions, without the address string", async () => {
+      mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+      const raw = makeRawPczt();
+      mockParsePczt.mockReturnValue({
+        ...raw,
+        transparentOutputs: [
+          { ...raw.transparentOutputs[0], userAddress: enteredUa, userAddressReceivers: [sapling] },
+        ],
+        orchardBundle: {
+          ...raw.orchardBundle,
+          actions: [
+            {
+              ...raw.orchardBundle.actions[0],
+              userAddress: enteredUa,
+              userAddressReceivers: [p2pkh, sapling],
+            },
+          ],
+        },
+      });
+
+      const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+      expect(pcztTransaction.transparentOutputs[0].userAddressReceivers).toEqual([sapling]);
+      expect(pcztTransaction.orchardBundle?.actions[0].userAddressReceivers).toEqual([
+        p2pkh,
+        sapling,
+      ]);
+      expect(pcztTransaction.transparentOutputs[0]).not.toHaveProperty("userAddress");
+      expect(pcztTransaction.orchardBundle?.actions[0]).not.toHaveProperty("userAddress");
+    });
+
+    it("sets the receivers to null when none were recorded", async () => {
+      mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+      mockParsePczt.mockReturnValue(makeRawPczt());
+
+      const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+      expect(pcztTransaction.transparentOutputs[0].userAddressReceivers).toBeNull();
+      expect(pcztTransaction.orchardBundle?.actions[0].userAddressReceivers).toBeNull();
+    });
+
+    it("keeps an empty receiver list distinct from null", async () => {
+      mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+      const raw = makeRawPczt();
+      mockParsePczt.mockReturnValue({
+        ...raw,
+        transparentOutputs: [{ ...raw.transparentOutputs[0], userAddressReceivers: [] }],
+      });
+
+      const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+      expect(pcztTransaction.transparentOutputs[0].userAddressReceivers).toEqual([]);
+    });
+
+    it("passes the receivers on Ironwood actions, without the address string", async () => {
+      mockBuildIronwoodTransaction.mockResolvedValue({
+        pcztHex: "cafebeef",
+        feeZat: "15000",
+        anchorHeight: 3_000_000,
+        nActionsIronwood: 1,
+        nTransparentInputs: 0,
+        nTransparentOutputs: 0,
+      });
+      const raw = makeRawPcztV6();
+      mockParsePczt.mockReturnValue({
+        ...raw,
+        orchardBundle: null,
+        ironwoodBundle: {
+          ...raw.ironwoodBundle,
+          actions: [
+            {
+              ...raw.ironwoodBundle.actions[0],
+              userAddress: enteredUa,
+              userAddressReceivers: [orchard, sapling],
+            },
+          ],
+        },
+      });
+
+      const { pcztTransaction } = await buildIronwoodTransactionJob({
+        grpcUrl: "https://grpc.example.com",
+        ufvk: "uview1test",
+        seedFingerprint: "00".repeat(32),
+        accountIndex: 0,
+        feeZat: "15000",
+        spends: [],
+        transparentInputs: [],
+        outputs: [{ address: enteredUa, valueZat: "50000" }],
+      });
+
+      const action = pcztTransaction.ironwoodBundle?.actions[0];
+      expect(action?.userAddressReceivers).toEqual([orchard, sapling]);
+      expect(action).not.toHaveProperty("userAddress");
+    });
+
+    it("sets the Ironwood receivers to null when none were recorded", async () => {
+      mockBuildIronwoodTransaction.mockResolvedValue({
+        pcztHex: "cafebeef",
+        feeZat: "15000",
+        anchorHeight: 3_000_000,
+        nActionsIronwood: 1,
+        nTransparentInputs: 0,
+        nTransparentOutputs: 0,
+      });
+      mockParsePczt.mockReturnValue(makeRawPcztV6());
+
+      const { pcztTransaction } = await buildIronwoodTransactionJob({
+        grpcUrl: "https://grpc.example.com",
+        ufvk: "uview1test",
+        seedFingerprint: "00".repeat(32),
+        accountIndex: 0,
+        feeZat: "15000",
+        spends: [],
+        transparentInputs: [],
+        outputs: [{ address: "t1recipient", valueZat: "50000" }],
+      });
+
+      expect(pcztTransaction.ironwoodBundle?.actions[0].userAddressReceivers).toBeNull();
+    });
+  });
+
   it("propagates errors from the native buildTransaction", async () => {
     mockBuildTransaction.mockRejectedValue(new Error("proving failed"));
     await expect(buildTransactionJob(buildArgs)).rejects.toThrow("proving failed");

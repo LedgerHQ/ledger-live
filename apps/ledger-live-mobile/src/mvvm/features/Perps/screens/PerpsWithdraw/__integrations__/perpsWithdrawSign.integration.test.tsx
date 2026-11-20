@@ -55,6 +55,12 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/execute", () => ({
   executePerpsWithdraw: (params: unknown) => mockExecute(params),
 }));
 
+// The balance follows the withdraw only seconds later: covered by the view model tests.
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection"),
+  waitForWithdrawBalanceReflected: () => Promise.resolve("reflected"),
+}));
+
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/request", () => ({
   getWithdrawRequestId: () => "request-1",
 }));

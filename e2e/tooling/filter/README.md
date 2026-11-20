@@ -10,7 +10,7 @@ the test runtime (specs, page objects, fixtures) — they run inside GitHub Acti
 | File                 | Role                                                                                                                                                                                                                                                                                                                                                       |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `escaping.mjs`       | Single source of truth for the filter grammar: splits patterns on separators (`\|` / `,`) that are not backslash-escaped and is odd-backslash aware, defines the Playwright leaf anchor `(?!\s[^@])`, and unescapes regex-literal characters (`unescapeLiteral`) for display.                                                                               |
-| `resolve.mjs`        | Resolves the workflow `test_filter` input into a Playwright/Detox grep string (expands `@generic-coin-framework`, applies `@smoke`, warns on zero matches). The zero-match check mirrors the target runner (`--runner detox\|playwright`): detox reuses `selectSpecs.filterTestFiles` (path + `@`-tag), playwright matches a regex over spec path/content. |
+| `resolve.mjs`        | Resolves the workflow `test_filter` input into a Playwright/Detox grep string (expands `@generic-coin-framework`, applies `@smoke`, warns on zero matches). The zero-match check mirrors the target runner (`--runner detox\|playwright`): detox reuses `selectSpecs.filterTestFiles` (path + `@`-tag), playwright matches a regex over spec path/content. On desktop it also emits `test_count`, the `test()` calls in the matched specs (a spec also matches through the helpers it imports), left empty when any matched spec builds titles at runtime, repeats code, declares a named function or imports a helper that declares tests, or when a filter alternative matches no spec (it can only hit a runtime-built title), which `test-ui-e2e-only-desktop.yml` uses to start fewer than 4 shards (empty means keep 4). |
 | `generatedTags.mjs`  | Vocabulary of tags the specs attach at **runtime** (`buildTags`): currency ids + families (from `domain/entity/currency-crypto/src/currencies/*.ts`) and the device tags (from `e2e/desktop/tests/utils/tagsUtils.ts`). Lets the playwright zero-match check downgrade "matched 0 specs" to a notice for a valid-but-unobservable tag, while a real typo still warns. |
 | `teamSpecs.mjs`      | Maps every spec to the team(s) that own it by reading the `Team.<MEMBER>` references and `coinTeamOwner` calls the specs already carry (`ownedBy()` or `teamOwner` on desktop, `setTeamOwner()` on mobile). `coinTeamOwner` counts as both BST and Coin-integration. **Additive**: ownership is per-*test*, so a spec's own references are unioned with those of the runner/registrar it imports — the `newSendFlow.tx.spec.ts` registrar picks each entry's owner with `coinTeamOwner`, so the spec genuinely has both BST and Coin-integration owners. Over-selecting a shared spec is safe; dropping one loses coverage silently. Expands a team into anchored spec basenames (playwright) or repo-relative path needles (detox). Owns `TEAM_SLUGS`, duplicated from `libs/live-e2e-shared/src/enum/Team.ts` because the mobile job sparse-checks-out `e2e/tooling/filter` but not `libs/`. |
 | `selectSpecs.mjs`    | Selects which Detox spec files a mobile E2E run executes for a filter — matches a spec by its path or a declared `@` tag (never raw file text). Consumed by `e2e/mobile/scripts/shard-tests.mjs`.                                                                                                                                                          |
@@ -62,6 +62,17 @@ node e2e/tooling/filter/resolve.mjs --list-teams --check-dir e2e/desktop/tests -
 # Format a resolved filter for the job summary
 node e2e/tooling/filter/format-summary.mjs "$RESOLVED_FILTER"
 ```
+
+## Tests
+
+`resolve.test.mjs` pins the desktop `test_count` rules (`node --test`, no install). CI runs them in
+the "E2E Tooling Checks" job with the other `scope:e2e-tooling` projects:
+
+```bash
+pnpm --filter @ledgerhq/e2e-test-filter test
+```
+
+The scripts themselves still run with plain `node`: the workflows call them before `pnpm install`.
 
 ## Keep in sync
 

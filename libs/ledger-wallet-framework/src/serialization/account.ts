@@ -11,12 +11,13 @@ import type {
 } from "@ledgerhq/types-live";
 import { getCurrenciesResolver } from "../currencies/resolver";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
-import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
+import { emptyHistoryCache, refreshHistoryFromOperations } from "../account/balanceHistoryCache";
 import {
   compressBalanceHistoryCache,
   decompressBalanceHistoryCache,
 } from "../account/balanceHistoryCacheCompression";
 import { isAccountEmpty } from "../account/helpers";
+import { restoreAccountBalances, toAccountBalancesRaw } from "../account/balances";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import {
   buildSubOperationIndex,
@@ -57,6 +58,17 @@ function applyAssignFromTokenAccountRaw(
   });
 }
 
+// Isolated so the optional-field checks don't add to `fromAccountRaw`'s own complexity.
+function applyOptionalFromRaw(raw: AccountRaw, res: Account): void {
+  const { swapHistory, sellOperationIds, nfts, readiness, sequence, historyRecheck } = raw;
+  if (swapHistory) res.swapHistory = swapHistory.map(fromSwapOperationRaw);
+  if (sellOperationIds) res.sellOperationIds = sellOperationIds;
+  if (nfts) res.nfts = nfts.map(n => fromNFTRaw(n));
+  if (readiness) res.readiness = readiness;
+  if (sequence !== undefined) res.sequence = sequence;
+  if (historyRecheck !== undefined) res.historyRecheck = historyRecheck;
+}
+
 export async function fromAccountRaw(
   rawAccount: AccountRaw,
   fromRaw?: FromFamiliyRaw,
@@ -81,13 +93,9 @@ export async function fromAccountRaw(
     balance,
     balanceHistoryCache,
     spendableBalance,
+    balances,
     subAccounts: subAccountsRaw,
-    swapHistory,
-    sellOperationIds,
     syncHash,
-    nfts,
-    readiness,
-    sequence,
   } = rawAccount;
 
   const store = getCryptoAssetsStore();
@@ -160,7 +168,9 @@ export async function fromAccountRaw(
       ? decompressBalanceHistoryCache(balanceHistoryCache)
       : emptyHistoryCache,
   };
-  res.balanceHistoryCache = generateHistoryFromOperations(res);
+  res.balanceHistoryCache = refreshHistoryFromOperations(res);
+
+  res.balances = restoreAccountBalances(balances, res);
 
   res.used = resolveUsed(used, res);
 
@@ -172,25 +182,7 @@ export async function fromAccountRaw(
     res.subAccounts = subAccounts as TokenAccount[];
   }
 
-  if (swapHistory) {
-    res.swapHistory = swapHistory.map(fromSwapOperationRaw);
-  }
-
-  if (sellOperationIds) {
-    res.sellOperationIds = sellOperationIds;
-  }
-
-  if (nfts) {
-    res.nfts = nfts.map(n => fromNFTRaw(n));
-  }
-
-  if (readiness) {
-    res.readiness = readiness;
-  }
-
-  if (sequence !== undefined) {
-    res.sequence = sequence;
-  }
+  applyOptionalFromRaw(rawAccount, res);
 
   if (fromRaw?.assignFromAccountRaw) {
     fromRaw.assignFromAccountRaw(rawAccount, res);
@@ -227,6 +219,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     balance,
     balanceHistoryCache,
     spendableBalance,
+    balances,
     subAccounts,
     swapHistory,
     sellOperationIds,
@@ -234,6 +227,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     nfts,
     readiness,
     sequence,
+    historyRecheck,
   } = account;
 
   const convertOperation = (op: Operation) =>
@@ -260,6 +254,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (feesCurrency) {
     res.feesCurrencyId = feesCurrency.id;
+  }
+
+  if (balances) {
+    res.balances = toAccountBalancesRaw(balances);
   }
 
   if (balanceHistoryCache) {
@@ -308,6 +306,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     res.sequence = sequence;
   }
 
+  if (historyRecheck !== undefined) {
+    res.historyRecheck = historyRecheck;
+  }
+
   return res;
 }
 
@@ -326,6 +328,7 @@ async function fromTokenAccountRaw(
     creationDate,
     balance,
     spendableBalance,
+    balances,
     balanceHistoryCache,
     swapHistory,
   } = raw;
@@ -352,7 +355,8 @@ async function fromTokenAccountRaw(
       ? decompressBalanceHistoryCache(balanceHistoryCache)
       : emptyHistoryCache,
   };
-  res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
+  res.balanceHistoryCache = refreshHistoryFromOperations(res as TokenAccount);
+  res.balances = restoreAccountBalances(balances, res);
   return res;
 }
 function toTokenAccountRaw(
@@ -368,6 +372,7 @@ function toTokenAccountRaw(
     pendingOperations,
     balance,
     spendableBalance,
+    balances,
     balanceHistoryCache,
     swapHistory,
   } = ta;
@@ -387,6 +392,10 @@ function toTokenAccountRaw(
     pendingOperations: pendingOperations.map(convertOperation),
     swapHistory: swapHistory?.map(toSwapOperationRaw),
   };
+
+  if (balances) {
+    res.balances = toAccountBalancesRaw(balances);
+  }
 
   if (balanceHistoryCache) {
     res.balanceHistoryCache = compressBalanceHistoryCache(balanceHistoryCache);

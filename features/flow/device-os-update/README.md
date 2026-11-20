@@ -32,6 +32,7 @@ now, so they come from `@features/flow-device-os-update/native`:
 | `OsUpdateFlow` | The whole journey: What's new, then the update run. |
 | `OsUpdateStep`, `CloseConfirmation` | The update run's screens and sheets, to render with the `OsUpdatesOrchestrator` of `@features/platform-device-os-update` when the caller brings its own session and intro. |
 | `OsUpdateBanner`, `BackupBanner`, `BootloaderDiscovered` | The entry points, composed by the app with its own state and navigation. |
+| `UpdateOnDesktopSheet` | The sheet the app opens from the update banner when the device cannot update over its transport (see `isOsUpdateSupported` in `@features/platform-device-os-update`). It asks the user to update from Ledger Wallet on desktop. |
 
 ## Ports
 

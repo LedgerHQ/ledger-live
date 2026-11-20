@@ -1,5 +1,5 @@
 let updater: {
-  quitAndInstall?: () => void;
+  quitAndInstall?: () => Promise<void>;
 } = {};
 export default (type: string) => {
   console.log(`UPDATER: ${type}`);
@@ -12,7 +12,9 @@ export default (type: string) => {
       if (!updater.quitAndInstall) {
         console.error(`Auto-update error: quitAndInstall called before init`);
       } else {
-        updater.quitAndInstall();
+        updater
+          .quitAndInstall()
+          .catch(error => console.error("Auto-update error: quitAndInstall failed", error));
       }
       break;
     default:

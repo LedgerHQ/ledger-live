@@ -10,11 +10,15 @@ import {
   findCryptoCurrencyByNetwork,
   frameworkExtraFromRaw,
   frameworkExtraToRaw,
+  genericAccountBalances,
+  hasPoolRows,
   isOperationType,
   mergeExtra,
   nextSequenceWithPending,
   optionalNumeric,
   sumBalance,
+  toAccountBalance,
+  toAccountPoolRows,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -725,6 +729,22 @@ describe("coin-framework utils", () => {
   });
 
   describe("transactionToIntent", () => {
+    describe("pool", () => {
+      const account = { currency: { name: "zcash", units: [{}] } } as Account;
+
+      it("copies the pool of the transaction to the intent", () => {
+        expect(
+          transactionToIntent(account, { mode: "send", pool: "ironwood" } as GenericTransaction),
+        ).toMatchObject({ pool: "ironwood" });
+      });
+
+      it("leaves the intent without a pool key when the transaction has none", () => {
+        expect(
+          transactionToIntent(account, { mode: "send" } as GenericTransaction),
+        ).not.toHaveProperty("pool");
+      });
+    });
+
     describe("memo", () => {
       const account = { currency: { name: "solana", units: [{}] } } as Account;
 
@@ -1172,6 +1192,174 @@ describe("coin-framework utils", () => {
           balance: BigNumber(10),
         } as unknown as Account),
       ).toEqual([{ value: 10n, locked: 2n, asset: { type: "native" } }]);
+    });
+
+    describe("pool rows", () => {
+      const pooled = (extra: Record<string, unknown> = {}) =>
+        ({
+          spendableBalance: BigNumber(95),
+          balance: BigNumber(100),
+          balances: [
+            { value: BigNumber(60), locked: BigNumber(5), pool: "public" },
+            { value: BigNumber(40), pool: "shielded", private: true },
+          ],
+          ...extra,
+        }) as unknown as Account;
+
+      it("rebuilds the native entries from the rows", () => {
+        expect(extractBalances(pooled())).toEqual([
+          { value: 60n, locked: 5n, asset: { type: "native" }, pool: "public" },
+          { value: 40n, asset: { type: "native" }, pool: "shielded", private: true },
+        ]);
+      });
+
+      it("counts a pending spend once, on the first public row", () => {
+        const account = pooled({
+          pendingOperations: [{ type: "OUT", value: BigNumber(4), fee: BigNumber(1) }],
+        });
+        const entries = extractBalances(account);
+
+        expect(entries[0]).toMatchObject({ value: 60n, locked: 10n, pool: "public" });
+        expect(entries[1]).toMatchObject({ value: 40n, private: true });
+        expect(entries[1].locked).toBeUndefined();
+        expect(entries).toHaveLength(2);
+      });
+
+      it("reflects a pending operation added after the rows were produced", () => {
+        const account = pooled();
+        const { account: rows } = genericAccountBalances(account);
+        const withRows = { ...account, balances: rows } as Account;
+
+        expect(extractBalances(withRows)[0]).toMatchObject({ locked: 5n });
+        expect(
+          extractBalances({
+            ...withRows,
+            pendingOperations: [{ type: "OUT", value: BigNumber(4), fee: BigNumber(1) }],
+          } as unknown as Account)[0],
+        ).toMatchObject({ locked: 10n });
+      });
+
+      it("clamps the locked part of the first public row to its value", () => {
+        const entries = extractBalances(
+          pooled({
+            pendingOperations: [{ type: "OUT", value: BigNumber(500), fee: BigNumber(1) }],
+          }),
+        );
+
+        expect(entries[0]).toMatchObject({ value: 60n, locked: 60n });
+      });
+
+      it("leaves private-only rows without a pending lock", () => {
+        const entries = extractBalances({
+          balance: BigNumber(100),
+          spendableBalance: BigNumber(100),
+          balances: [{ value: BigNumber(100), private: true }],
+          pendingOperations: [{ type: "OUT", value: BigNumber(4), fee: BigNumber(1) }],
+        } as unknown as Account);
+
+        expect(entries).toEqual([{ value: 100n, asset: { type: "native" }, private: true }]);
+      });
+
+      it("ignores a default row", () => {
+        expect(
+          extractBalances({
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            balances: [{ value: BigNumber(10) }],
+          } as unknown as Account),
+        ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+      });
+    });
+
+    describe("toAccountPoolRows", () => {
+      const native = { type: "native" as const };
+      const stake = (value: bigint) =>
+        ({ value, locked: value, asset: native, stake: { uid: `s${value}` } }) as any;
+
+      it("returns the pool rows as they are without stake", () => {
+        expect(
+          toAccountPoolRows([{ value: 60n, asset: native, pool: "public" }], [stake(0n)]),
+        ).toEqual([{ value: BigNumber(60), pool: "public" }]);
+      });
+
+      it("folds the stake total into the first public row, as value and locked", () => {
+        expect(
+          toAccountPoolRows(
+            [
+              { value: 40n, asset: native, private: true },
+              { value: 60n, locked: 5n, asset: native },
+            ],
+            [stake(10n), stake(20n)],
+          ),
+        ).toEqual([
+          { value: BigNumber(40), private: true },
+          { value: BigNumber(90), locked: BigNumber(35) },
+        ]);
+      });
+
+      it("adds a public row for the stake when every pool row is private", () => {
+        expect(
+          toAccountPoolRows([{ value: 40n, asset: native, private: true }], [stake(30n)]),
+        ).toEqual([
+          { value: BigNumber(40), private: true },
+          { value: BigNumber(30), locked: BigNumber(30) },
+        ]);
+      });
+    });
+
+    describe("genericAccountBalances", () => {
+      const rows = [
+        { value: BigNumber(40), pool: "shielded", private: true },
+        { value: BigNumber(60), locked: BigNumber(5), pool: "public" },
+      ];
+      const withPending = (pendingOperations: unknown[], balances: unknown = rows) =>
+        ({ balance: BigNumber(100), balances, pendingOperations }) as unknown as Account;
+
+      it("returns nothing without pool rows, so the default row applies", () => {
+        expect(
+          genericAccountBalances({
+            balance: BigNumber(100),
+            pendingOperations: [],
+          } as unknown as Account),
+        ).toEqual({});
+        expect(genericAccountBalances(withPending([], [{ value: BigNumber(100) }]))).toEqual({});
+      });
+
+      it("keeps the rows as they are without pending operations", () => {
+        expect(genericAccountBalances(withPending([])).account).toEqual(rows);
+      });
+
+      it("returns the rows unchanged whatever the pending operations", () => {
+        const { account } = genericAccountBalances(
+          withPending([{ type: "OUT", value: BigNumber(4), fee: BigNumber(1) }]),
+        );
+
+        expect(account).toEqual(rows);
+      });
+    });
+
+    describe("pool row helpers", () => {
+      it("tells a pool breakdown from a default row", () => {
+        expect(hasPoolRows(undefined)).toBe(false);
+        expect(hasPoolRows([{ value: BigNumber(1) }])).toBe(false);
+        expect(hasPoolRows([{ value: BigNumber(1), pool: "a" }])).toBe(true);
+        expect(hasPoolRows([{ value: BigNumber(1), private: false }])).toBe(true);
+      });
+
+      it("maps a framework balance to an account row", () => {
+        expect(
+          toAccountBalance({
+            value: 5n,
+            asset: { type: "native" },
+            locked: 2n,
+            pool: "a",
+            private: true,
+          }),
+        ).toEqual({ value: BigNumber(5), locked: BigNumber(2), pool: "a", private: true });
+        expect(toAccountBalance({ value: 5n, asset: { type: "native" } })).toEqual({
+          value: BigNumber(5),
+        });
+      });
     });
 
     it("extracts native and token balances", () => {
@@ -1744,6 +1932,64 @@ describe("coin-framework utils", () => {
       });
     });
 
+    describe("fee asset", () => {
+      const usdt = { type: "erc20", assetReference: "0xUsdt" };
+      const paidIn = (feesAsset: CoreOperation["tx"]["feesAsset"], failed = false) =>
+        adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          tx: { ...baseOp.tx, failed, feesAsset, feesPayer: "sender1" },
+        });
+
+      it.each([
+        ["native", { type: "native" as const }],
+        ["absent", undefined],
+      ])("keeps the native fee when the fee asset is %s", (_case, feesAsset) => {
+        const result = paidIn(feesAsset);
+
+        expect(result.value).toEqual(new BigNumber(110));
+        expect(result.fee).toEqual(new BigNumber(10));
+        expect(result.extra).not.toHaveProperty("feeAsset");
+        expect(result.extra).not.toHaveProperty("feeAmount");
+      });
+
+      it("leaves a fee paid in a token out of the native value and fee, and keeps it in extra", () => {
+        const result = paidIn(usdt);
+
+        expect(result.value).toEqual(new BigNumber(100));
+        expect(result.fee).toEqual(new BigNumber(0));
+        expect(result.extra).toEqual({
+          feePayer: "sender1",
+          feeAsset: { type: "erc20", assetReference: "0xUsdt" },
+          feeAmount: "10",
+        });
+      });
+
+      it("gives a failed transaction paid in a token a zero value and no token amount", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          asset: { type: "erc20", assetReference: "0xDai", assetOwner: "sender1" },
+          details: { assetAmount: "500" },
+          tx: { ...baseOp.tx, failed: true, feesAsset: usdt, feesPayer: "sender1" },
+        });
+
+        expect(result.value).toEqual(new BigNumber(0));
+        expect(result.fee).toEqual(new BigNumber(0));
+        expect(result.extra).not.toHaveProperty("assetAmount");
+        expect(result.extra).toMatchObject({ feeAsset: usdt, feeAmount: "10" });
+      });
+
+      it("keeps the token amount of a failed transaction paid in the native coin", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          asset: { type: "erc20", assetReference: "0xDai", assetOwner: "sender1" },
+          details: { assetAmount: "500" },
+          tx: { ...baseOp.tx, failed: true },
+        });
+
+        expect(result.extra).toMatchObject({ assetAmount: "500" });
+      });
+    });
+
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
         ...baseOp,
@@ -2164,6 +2410,52 @@ const account = {
 } as unknown as Account;
 
 describe("extractBalances", () => {
+  describe("pool rows of a partitioned account", () => {
+    const delegation = {
+      positionId: "stake-1",
+      validatorAddress: "validator",
+      amount: new BigNumber(30),
+      pendingRewards: new BigNumber(0),
+      status: "bonded",
+    };
+    const native = { type: "native" as const };
+    const partitioned = (pendingOperations: unknown[] = []) => {
+      const balances = toAccountPoolRows(
+        [
+          { value: 70n, asset: native, pool: "public" },
+          { value: 40n, asset: native, private: true },
+        ],
+        [{ value: 30n, locked: 30n, asset: native, stake: { uid: "stake-1" } } as any],
+      );
+      return {
+        balance: new BigNumber(140),
+        spendableBalance: new BigNumber(110),
+        freshAddress: "owner",
+        balances,
+        pendingOperations,
+        stakingResources: { delegations: [delegation], unbondings: [] },
+      } as unknown as Account;
+    };
+
+    it("takes the folded stake out of the public row before appending the stake entry", () => {
+      const rows = extractBalances(partitioned(), undefined, true);
+
+      expect(rows).toEqual([
+        { value: 70n, asset: native, pool: "public" },
+        { value: 40n, asset: native, private: true },
+        expect.objectContaining({ value: 30n, locked: 30n, stake: expect.anything() }),
+      ]);
+      expect(rows.reduce((sum, row) => sum + row.value, 0n)).toBe(140n);
+    });
+
+    it("adds the pending spend once, on the liquid part of the public row", () => {
+      const pending = { type: "OUT", value: new BigNumber(10), fee: new BigNumber(1) };
+      const [publicRow] = extractBalances(partitioned([pending]), undefined, true);
+
+      expect(publicRow).toEqual({ value: 70n, locked: 11n, asset: native, pool: "public" });
+    });
+  });
+
   it("reconstructs the staking positions the account carries", () => {
     const [native, delegation, unbonding] = extractBalances(account);
 

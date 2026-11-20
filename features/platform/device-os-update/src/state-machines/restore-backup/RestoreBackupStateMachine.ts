@@ -11,6 +11,10 @@ import { hasAnythingToRestore } from "../../utils/hasAnythingToRestore";
 import { OsUpdatesOrchestratorStateMachineEventType } from "../orchestrator/types";
 import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
 import { DeviceSituationEventType, isRecovered } from "../shared/types";
+import {
+  hasUnexplainedRecoveryAfter,
+  isRepeatedUnexplainedRecovery,
+} from "../shared/utils/unexplainedRecovery";
 import { isAllowSecureConnectionRefusedError } from "../shared/utils/isPromptRefusedError";
 import {
   RestoreBackupStateMachineEventType,
@@ -97,6 +101,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
     ...input,
     lastSentState: null,
     lastProgress: 0,
+    hasUnexplainedRecovery: false,
     backup: undefined,
     restoreResult: undefined,
     error: null,
@@ -255,10 +260,17 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
         }),
         onDone: [
           {
+            guard: ({ context, event }) =>
+              isRepeatedUnexplainedRecovery(context.hasUnexplainedRecovery, event.output),
+            target: "UnrecoverableError",
+          },
+          {
             guard: ({ event }) => isRecovered(event.output),
             actions: assign({
               connectedDevice: ({ context, event }) =>
                 isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+              hasUnexplainedRecovery: ({ context, event }) =>
+                hasUnexplainedRecoveryAfter(context.hasUnexplainedRecovery, event.output),
               lastProgress: 0,
             }),
             target: "RestoreBackup",

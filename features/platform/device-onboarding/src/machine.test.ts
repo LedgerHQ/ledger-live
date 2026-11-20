@@ -799,6 +799,39 @@ describe("the firmware handover", () => {
     expect(stateOf(actor)).toBe("readingState");
   });
 
+  it("flags the way back to the checks until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session" });
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+  });
+
+  it("flags the wait for the rebooted session until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+
+    expect(stateOf(actor)).toBe("awaitingSessionAfterFirmwareUpdate");
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    actor.send({ type: "SESSION_READY", sessionId: "session-after-update" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+  });
+
   it("completes the checks when the device comes back updated", async () => {
     const { actor } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
@@ -1684,6 +1717,85 @@ describe("device setup", () => {
     });
   });
 
+  it("should pause seed polling only while the device is being set up", async () => {
+    const seededRun = await launch({ osVersion: [os(seeded)], ...passingChecks });
+    const seededState = stateOf(seededRun.actor);
+
+    seededRun.actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(seededRun.actor)).toBe(seededState);
+    expect(seededRun.actor.getSnapshot().context.pollingPaused).toBe(false);
+    seededRun.actor.stop();
+
+    const { actor, fake } = await enterSetup();
+    actor.send(stepChanged(OnboardingStep.RecoverRestore));
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    const callsWhilePaused = fake.sendCommand.mock.calls.length;
+
+    await settle();
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhilePaused);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+  });
+
+  it("keeps polling paused across a lock while Recover owns the device", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    expect(stateOf(actor)).toBe("deviceLocked");
+
+    unlock();
+    await wait(1100);
+    await settle();
+    const callsWhenBack = fake.sendCommand.mock.calls.length;
+    await wait(1100);
+
+    expect(stateOf(actor)).toBe("waiting");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhenBack);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+    actor.stop();
+  });
+
+  it("clears the pause on a resume sent while the device is locked", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    unlock();
+    await wait(1100);
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    actor.stop();
+  });
+
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
     const { actor, fake } = await launch(
       { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },
@@ -1781,6 +1893,24 @@ async function enterSetup(
     },
     overrides,
   );
+}
+
+function startOnRecoverRestore(): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
+  const recoverRestore: OsVersionResponseOptions = {
+    ...unseeded,
+    onboardingState: "restore-recover-backup",
+  };
+  return start({ osVersion: [os(unseeded), os(recoverRestore)], ...passingChecks });
+}
+
+// Every command fails until the returned function lets them through again.
+function lockDevice(fake: FakeOnboardingDmk): () => void {
+  const answer = fake.sendCommand.getMockImplementation();
+  fake.sendCommand.mockImplementation(() => Promise.reject(new Error("device is locked")));
+
+  return () => {
+    if (answer) fake.sendCommand.mockImplementation(answer);
+  };
 }
 
 async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {

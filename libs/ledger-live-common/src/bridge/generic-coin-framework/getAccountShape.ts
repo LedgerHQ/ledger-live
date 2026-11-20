@@ -3,7 +3,11 @@ import {
   encodeAccountId,
   getSyncHash,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import {
+  GetAccountShape,
+  mergeOps,
+  mergeOpsKeepingOlder,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
@@ -32,6 +36,7 @@ import {
   isSameAddress,
   optionalNumeric,
   sumBalance,
+  toAccountPoolRows,
 } from "./utils";
 import {
   buildSubOperationIndex,
@@ -40,6 +45,7 @@ import {
 import { boundByTransaction } from "./boundByTransaction";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
+import { buildTokenFeeOperations, type TokenFeeOperation } from "./tokenFeeOperations";
 import type {
   AssetInfo,
   Balance,
@@ -53,6 +59,7 @@ import type {
   Account,
   AccountIdParams,
   AccountReadiness,
+  HistoryRecheck,
   OperationType,
   StakingDelegation,
   StakingDelegationStatus,
@@ -161,6 +168,178 @@ function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
 }
 
 /** True when the op is a main-account (native) op, not a token/sub-account op */
+/**
+ * How long a state change that the history does not explain keeps being rechecked. An indexer that
+ * lags behind the node shows the operation within minutes; past this window the change is taken as
+ * one with no operation (a relayed transaction, a reward) and the sync stops reading for it.
+ */
+const HISTORY_RECHECK_WINDOW_MS = 60 * 60 * 1000;
+
+/** The liquid native rows once one of them is tagged with a pool, none otherwise. */
+function poolRowsOf(balances: Balance[]): Balance[] {
+  const liquidNativeRows = balances.filter(b => b.asset.type === "native" && !b.stake);
+  return liquidNativeRows.some(b => b.pool !== undefined || b.private !== undefined)
+    ? liquidNativeRows
+    : [];
+}
+
+function nativeBalanceOf(balances: Balance[], partitionsNativeBalance: boolean | undefined) {
+  if (poolRowsOf(balances).length > 0) {
+    return sumBalance(
+      balances.filter(b => !b.stake || partitionsNativeBalance),
+      "native",
+    );
+  }
+  return partitionsNativeBalance
+    ? sumBalance(balances, "native")
+    : extractBalance(balances, "native");
+}
+
+function spendableOf(balances: Balance[], partitionsNativeBalance: boolean | undefined): bigint {
+  const native = nativeBalanceOf(balances, partitionsNativeBalance);
+  return (native?.value ?? 0n) - (native?.locked ?? 0n);
+}
+
+/** The balance the open window was opened on, if this read sees the same one. */
+function carriedMark(
+  mark: HistoryRecheck | undefined,
+  spendable: string,
+  balance: string | undefined,
+): HistoryRecheck | undefined {
+  const sameBalance =
+    mark?.since !== undefined && mark.spendableBalance === spendable && mark.balance === balance;
+  return sameBalance ? mark : undefined;
+}
+
+function failedHistoryRecheck(
+  mark: HistoryRecheck | undefined,
+  carried: HistoryRecheck | undefined,
+  { now, spendableChanged, seenOn }: { now: number; spendableChanged: boolean; seenOn: object },
+): HistoryRecheck {
+  // A failed read on a changed balance opens the window, so an empty retry keeps reading while
+  // the indexer catches up; a window already open keeps its start.
+  const since = carried?.since ?? (spendableChanged ? now : undefined);
+  return {
+    reason: "failed",
+    ...(since !== undefined && { since, ...seenOn }),
+    // An outcome still missing keeps its first sighting: failures do not extend its hour.
+    ...(mark?.unsettledSince !== undefined && { unsettledSince: mark.unsettledSince }),
+    // The first failure of the run: past the window the failure is raised, not kept.
+    failedSince: mark?.reason === "failed" ? (mark.failedSince ?? now) : now,
+    // A failed confirmation still owes its range: the retry reads it from the same height.
+    ...(mark?.minHeight !== undefined && { minHeight: mark.minHeight }),
+  };
+}
+
+function unexplainedHistoryRecheck(
+  mark: HistoryRecheck | undefined,
+  carried: HistoryRecheck | undefined,
+  { now, spendableChanged, seenOn }: { now: number; spendableChanged: boolean; seenOn: object },
+): HistoryRecheck | undefined {
+  // A confirmation read ends the mark, unless the balance moved again before it.
+  if (mark?.reason === "confirm" && !spendableChanged) return undefined;
+  if (!spendableChanged && !carried) return undefined;
+  const since = carried?.since ?? now;
+  // A window that ends with nothing found may hide a transaction that funded a pool the listing has
+  // not seen: the pools are listed once more.
+  if (now - since >= HISTORY_RECHECK_WINDOW_MS) return { reason: "pools", listing: true };
+  return {
+    reason: "unexplained",
+    since,
+    ...seenOn,
+    // A confirmation's range still owed: the rechecks read from the same height.
+    ...(mark?.minHeight !== undefined && { minHeight: mark.minHeight }),
+  };
+}
+
+/**
+ * The history read the next sync owes, for a family that syncs its history on a state change.
+ * `unseen` is true when this read returned an operation that is not stored yet.
+ */
+function baseHistoryRecheck({
+  mark,
+  now,
+  walkFailed,
+  syncFromScratch,
+  readOperations,
+  unseen,
+  unsettled,
+  unsettledUnseen,
+  spendableChanged,
+  spendable,
+  balance,
+  readFromHeight,
+  newValidatorIds,
+}: {
+  mark: HistoryRecheck | undefined;
+  now: number;
+  walkFailed: boolean;
+  syncFromScratch: boolean;
+  readOperations: boolean;
+  unseen: boolean;
+  /** This read returned an operation whose outcome the indexer had not recorded. */
+  unsettled: boolean;
+  /** One of those operations was not stored yet: it gets a full window of its own. */
+  unsettledUnseen: boolean;
+  spendableChanged: boolean;
+  spendable: string;
+  /** The total, when the spendable balance is zero: a change of it counts as a state change. */
+  balance: string | undefined;
+  /** The height this read started from; the confirmation reads the same range again. */
+  readFromHeight: number;
+  /** Validators named by new staking operations that the positions lack. */
+  newValidatorIds: string[];
+}): HistoryRecheck | undefined {
+  const carried = carriedMark(mark, spendable, balance);
+  const seenOn = { spendableBalance: spendable, ...(balance !== undefined && { balance }) };
+  if (walkFailed) return failedHistoryRecheck(mark, carried, { now, spendableChanged, seenOn });
+  // An outcome still missing is read again, from the same range, for up to the window. An operation
+  // newly without one starts a fresh window, shared with those already waiting.
+  let unsettledSince: number | undefined;
+  if (unsettled) unsettledSince = unsettledUnseen ? now : (mark?.unsettledSince ?? now);
+  const settling = unsettledSince !== undefined && now - unsettledSince < HISTORY_RECHECK_WINDOW_MS;
+  const confirm = (): HistoryRecheck => ({
+    reason: "confirm",
+    minHeight: readFromHeight,
+    ...(settling && { unsettledSince }),
+    ...(newValidatorIds.length > 0 && { validatorIds: newValidatorIds }),
+  });
+  if (syncFromScratch) return readOperations ? confirm() : undefined;
+  if (unseen || settling) return confirm();
+  return unexplainedHistoryRecheck(mark, carried, { now, spendableChanged, seenOn });
+}
+
+/**
+ * {@link baseHistoryRecheck}, plus the validators this sync named or tried and found no position in:
+ * the staking call may have been indexed before its receipt ran, so they are read again on the node
+ * for one hour from the first try, before being dropped. A listing owed (a relayed call, an expired
+ * window) rides along.
+ */
+function nextHistoryRecheck(
+  args: Parameters<typeof baseHistoryRecheck>[0] & {
+    unresolvedValidatorIds: string[];
+    listing: boolean;
+  },
+): HistoryRecheck | undefined {
+  const { unresolvedValidatorIds, listing, mark, now } = args;
+  let next = baseHistoryRecheck(args);
+  const carriedSince = mark?.validatorsSince;
+  const stillWithin = (carriedSince ?? now) + HISTORY_RECHECK_WINDOW_MS > now;
+  const retried = stillWithin ? unresolvedValidatorIds : [];
+  const validatorIds = [...new Set([...(next?.validatorIds ?? []), ...retried])];
+  // A validator newly named starts a fresh window, shared with those already waiting.
+  const keepsWindow = retried.length > 0 && validatorIds.every(id => retried.includes(id));
+  if (validatorIds.length > 0) {
+    next = {
+      ...(next ?? { reason: "pools" }),
+      validatorIds,
+      validatorsSince: keepsWindow ? (carriedSince ?? now) : now,
+    };
+  }
+  if (listing) next = { ...(next ?? { reason: "pools" }), listing: true };
+  return next;
+}
+
 function isNativeLiveOp(operation: OperationCommon): boolean {
   const assetReference = operation.extra?.assetReference;
   const assetOwner = operation.extra?.assetOwner;
@@ -185,9 +364,15 @@ function getFeePayer(op: OperationCommon): string | undefined {
   return typeof fp === "string" && fp.length > 0 ? fp : undefined;
 }
 
+/** True when the transaction of the op paid its fee in another asset than the native coin. */
+function hasNonNativeFee(op: OperationCommon): boolean {
+  return op.extra?.feeAsset !== undefined;
+}
+
 /**
  * True when the native op is outbound with value equal to fee (fees-only). A send whose fee another
- * account paid holds its amount alone, which can equal the fee.
+ * account paid holds its amount alone, which can equal the fee. A fee paid in another asset is no
+ * native fee: its value and `fee` are both 0.
  */
 function isFeesOnlyNativeOp(
   op: OperationCommon,
@@ -198,7 +383,18 @@ function isFeesOnlyNativeOp(
     op.value !== null &&
     op.fee != null &&
     op.value.eq(op.fee) &&
+    !hasNonNativeFee(op) &&
     isFeePaidByAccount(getFeePayer(op), feesPayerRule)
+  );
+}
+
+/**
+ * True when the native op only carries a fee paid in another asset: the FEES operation of the fee
+ * token holds that fee, so the native op moves nothing.
+ */
+function isNonNativeFeeCarrier(op: OperationCommon): boolean {
+  return (
+    hasNonNativeFee(op) && (op.type === "OUT" || op.type === "FEES") && op.value?.isZero() === true
   );
 }
 
@@ -230,6 +426,16 @@ function parentOpsFromNativeOps(
           transactionSequenceNumber: nativeOp.transactionSequenceNumber,
           hasFailed: nativeOp.hasFailed,
           extra: nativeOp.extra,
+          subOperations,
+          internalOperations,
+        }),
+      );
+    } else if (isNonNativeFeeCarrier(nativeOp)) {
+      out.push(
+        cleanedOperation({
+          ...nativeOp,
+          id: encodeOperationId(accountId, nativeOp.hash, "NONE"),
+          type: "NONE",
           subOperations,
           internalOperations,
         }),
@@ -502,6 +708,36 @@ async function resolveUnbalancedTokenAssets(
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
 }
 
+/**
+ * Balances for the fee tokens the balance read did not return, so that their sub-account holds the
+ * FEES operation: 0 for a family whose balance lists every token it holds (an account can spend a
+ * token down to 0 with the fee). Without that guarantee nothing tells the balance, and the FEES
+ * operation is dropped, as any operation of a token with no balance.
+ */
+function feeTokenBalances(
+  tokenFeeOperations: TokenFeeOperation[],
+  balances: Balance[],
+  {
+    balanceListsEveryToken,
+    exactAssetMatch,
+  }: Pick<BridgeApi, "balanceListsEveryToken" | "exactAssetMatch">,
+): Balance[] {
+  const balanced = new Set(balances.map(b => assetKey(b.asset, exactAssetMatch)));
+  const missing = new Map<string | undefined, AssetInfo>();
+  for (const { asset } of tokenFeeOperations) {
+    const key = assetKey(asset, exactAssetMatch);
+    if (!balanced.has(key)) missing.set(key, asset);
+  }
+  if (missing.size === 0) return [];
+  if (balanceListsEveryToken !== true) {
+    log("generic-coin-framework", "fee token has no balance, dropping its FEES operations", {
+      assets: [...missing.values()],
+    });
+    return [];
+  }
+  return [...missing.values()].map(asset => ({ value: 0n, asset }));
+}
+
 function keepPendingAndSwapHistory(
   rebuilt: TokenAccount[],
   stored: TokenAccount[],
@@ -765,13 +1001,31 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       !!initialAccount?.blockHeight &&
       initialAccount.syncHash !== syncHash &&
       isTokenListChangeOnly(initialAccount.syncHash, bridgeApi.syncVersion);
+    // An account that was synced with no operation and no funds has no watermark, yet nothing to
+    // resync from scratch: its history stays empty until its balance moves. A cleared cache resets
+    // the last sync to the epoch and keeps the balance: it is not a sync that read an empty history.
+    const storedEmptyAccount =
+      bridgeApi.syncsHistoryOnStateChange === true &&
+      !!initialAccount &&
+      !initialAccount.blockHeight &&
+      initialAccount.syncHash === syncHash &&
+      (initialAccount.operations?.length ?? 0) === 0 &&
+      initialAccount.balance?.isZero?.() === true &&
+      (initialAccount.lastSyncDate?.getTime() ?? 0) > 0;
     let syncFromScratch =
-      !initialAccount?.blockHeight ||
+      (!initialAccount?.blockHeight && !storedEmptyAccount) ||
       (initialAccount?.syncHash !== syncHash && !tokenListChangeOnly);
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
     // documents its own as volatile). Only the cursor varies from page to page below.
-    let minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+    // A confirmation read covers the range of the read that found new operations again: the indexer
+    // may add more at the same or a lower height after it.
+    // A failed confirmation keeps that height for its retry.
+    const confirmFromHeight =
+      bridgeApi.syncsHistoryOnStateChange === true
+        ? initialAccount?.historyRecheck?.minHeight
+        : undefined;
+    let minHeight = syncFromScratch ? 0 : (confirmFromHeight ?? (oldOps[0]?.blockHeight ?? 0) + 1);
 
     // No options at all unless the family declares some: coin-tron and coin-casper wrap their
     // `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included.
@@ -829,9 +1083,84 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         }
         throw new UnexpectedGetBalanceError("", err);
       });
-    const balancePromise = readBalance(balanceOptions);
+    // Only a family that opts in reads the account state to decide whether its history moved. These
+    // options never go through `bridgeApi.balanceOptions`: declaring those switches the token scan on.
+    let stateDriven = bridgeApi.syncsHistoryOnStateChange === true;
+    const storedValidatorIds =
+      initialAccount && bridgeApi.getKnownValidatorIds
+        ? bridgeApi.getKnownValidatorIds(initialAccount)
+        : (
+            (initialAccount as { stakingPositions?: { delegate?: string }[] })?.stakingPositions ??
+            []
+          )
+            .map(position => position.delegate)
+            .filter((delegate): delegate is string => !!delegate);
+    // Validators a new staking operation named while the positions lacked them: read on the node,
+    // since the delegation listing may not have indexed them yet. They are only candidates: a
+    // contract that is no pool fails its read, and the sync then reads the stored ones alone, once.
+    const candidateValidatorIds = (initialAccount?.historyRecheck?.validatorIds ?? []).filter(
+      id => !storedValidatorIds.includes(id),
+    );
+    const knownValidatorIds = [...new Set([...storedValidatorIds, ...candidateValidatorIds])];
+    // The candidates kept for this sync: all of them, unless their joint read fails; then each one
+    // alone, so an unreadable contract does not drop a readable pool. Settled once per sync.
+    let readableCandidates: string[] | undefined =
+      candidateValidatorIds.length === 0 ? [] : undefined;
+    const readKnownBalance = async (listValidators: boolean) => {
+      if (readableCandidates === undefined) {
+        try {
+          const balances = await readBalance({ knownValidatorIds, listValidators });
+          readableCandidates = candidateValidatorIds;
+          return balances;
+        } catch (err) {
+          log("generic-coin-framework", "candidate validators unreadable, reading each alone", {
+            error: err instanceof Error ? err.message : String(err),
+          });
+          // Each candidate alone; the order of the reads does not matter.
+          const probes = await Promise.allSettled(
+            candidateValidatorIds.map(candidate =>
+              readBalance({
+                knownValidatorIds: [...storedValidatorIds, candidate],
+                listValidators: false,
+              }),
+            ),
+          );
+          const readable = candidateValidatorIds.filter(
+            (_, index) => probes[index].status === "fulfilled",
+          );
+          readableCandidates = readable;
+        }
+      }
+      return readBalance({
+        knownValidatorIds: [...storedValidatorIds, ...readableCandidates],
+        listValidators,
+      });
+    };
+    // A stored account read again from scratch, after another bridge synced it or after a restart
+    // while it held nothing, names its validators even when it has none: a failed listing then
+    // reads no pool instead of failing the sync. An account discovered here keeps a strict listing.
+    const storedOps = initialAccount?.operations?.length ?? 0;
+    const recoversStoredAccount =
+      syncFromScratch &&
+      ((!initialAccount?.syncHash && storedOps > 0) ||
+        (!!initialAccount?.syncHash &&
+          storedOps === 0 &&
+          initialAccount.balance?.isZero?.() === true));
+    // A full read still names the stored validators: a listing that succeeds without one of them
+    // (it lags, say) must not erase a held position, after a cleared cache included.
+    const fullReadOptions = (): BalanceOptions | undefined => {
+      if (!stateDriven || (storedValidatorIds.length === 0 && !recoversStoredAccount)) {
+        return balanceOptions;
+      }
+      const options: BalanceOptions = { ...balanceOptions };
+      options.knownValidatorIds = storedValidatorIds;
+      options.listValidators = true;
+      return options;
+    };
+    const balancePromise =
+      stateDriven && !syncFromScratch ? readKnownBalance(false) : readBalance(fullReadOptions());
 
-    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape, sequence] =
+    const [blockInfo, firstBalanceRes, validators, readiness, chainSpecificShape, sequence] =
       await Promise.all([
         coinModuleApi.lastBlock(context),
         balancePromise,
@@ -841,9 +1170,78 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         sequencePromise,
       ]);
 
-    const nativeAsset = bridgeApi.partitionsNativeBalance
-      ? sumBalance(balanceRes, "native")
-      : extractBalance(balanceRes, "native");
+    let balanceRes = firstBalanceRes;
+    let mayHaveChanged = true;
+    // The first read was made without listing the validators and with no asset options: a sync that
+    // turns out to need either reads the balance again the regular way.
+    const firstReadWasStateDriven = stateDriven && !syncFromScratch;
+    if (stateDriven && firstBalanceRes.some(b => b.asset.type !== "native")) {
+      // The state of a single native asset does not tell what a token did.
+      stateDriven = false;
+      if (firstReadWasStateDriven) balanceRes = await readBalance(balanceOptions);
+    } else if (stateDriven && !syncFromScratch) {
+      const firstNative = nativeBalanceOf(firstBalanceRes, bridgeApi.partitionsNativeBalance);
+      const firstSpendable = spendableOf(firstBalanceRes, bridgeApi.partitionsNativeBalance);
+      if (storedEmptyAccount && (firstNative?.value ?? 0n) !== 0n) {
+        // Funds with no stored operation: a cleared cache, whose history must be read in full.
+        syncFromScratch = true;
+        minHeight = 0;
+        balanceRes = await readBalance(fullReadOptions());
+      } else {
+        // A zero spendable balance hides changes below the floor, so the total tells then. A
+        // stored account with no balance to compare against is read, as it was before.
+        const storedBalance = initialAccount?.balance?.toFixed();
+        const totalMayHaveMoved =
+          firstSpendable === 0n && (firstNative?.value ?? 0n).toString() !== storedBalance;
+        // A new position moves the spendable balance. A failed read may have come with a failed
+        // listing, and a listing may be owed. A confirmation or recheck read lists nothing else:
+        // the sync that saw the change already did.
+        const listsValidators =
+          firstSpendable.toString() !== initialAccount?.spendableBalance?.toFixed() ||
+          totalMayHaveMoved ||
+          initialAccount?.historyRecheck?.reason === "failed" ||
+          initialAccount?.historyRecheck?.listing === true;
+        // A mark that only carries pools to look at reads no history.
+        const owesHistory =
+          initialAccount?.historyRecheck !== undefined &&
+          initialAccount.historyRecheck.reason !== "pools";
+        mayHaveChanged =
+          firstSpendable.toString() !== initialAccount?.spendableBalance?.toFixed() ||
+          totalMayHaveMoved ||
+          initialAccount?.historyRecheck?.reason === "failed" ||
+          (initialAccount?.pendingOperations?.length ?? 0) > 0 ||
+          owesHistory;
+        if (listsValidators) {
+          balanceRes = await readKnownBalance(true);
+        }
+      }
+    }
+    if (tokenListChangeOnly) {
+      const resync = await holdsNewlyListedToken(
+        balanceRes.filter(b => b.asset.type !== "native"),
+        initialAccount?.subAccounts ?? [],
+        bridgeApi.getTokenFromAsset,
+        syncConfig.blacklistedTokenIds ?? [],
+      );
+      if (resync) {
+        syncFromScratch = true;
+        minHeight = 0;
+        if (firstReadWasStateDriven) balanceRes = await readBalance(fullReadOptions());
+      }
+      log("generic-coin-framework", "token list changed", {
+        currency: currency.id,
+        syncFromScratch: resync,
+      });
+    }
+
+    // Pool rows partition the liquid native balance; stake rows stay apart from them. Once one
+    // row is tagged, an untagged public row is part of the partition too.
+    const poolRows = poolRowsOf(balanceRes);
+    // Stake rows count in the balance only when the family partitions it.
+    const stakeRows = bridgeApi.partitionsNativeBalance
+      ? balanceRes.filter(b => b.asset.type === "native" && b.stake)
+      : [];
+    const nativeAsset = nativeBalanceOf(balanceRes, bridgeApi.partitionsNativeBalance);
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
     // A token account fully swept to zero can disappear entirely from the balance response
@@ -888,23 +1286,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           })
         : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
-
-    if (tokenListChangeOnly) {
-      const resync = await holdsNewlyListedToken(
-        freshTokenAssetsBalances,
-        initialAccount?.subAccounts ?? [],
-        bridgeApi.getTokenFromAsset,
-        syncConfig.blacklistedTokenIds ?? [],
-      );
-      if (resync) {
-        syncFromScratch = true;
-        minHeight = 0;
-      }
-      log("generic-coin-framework", "token list changed", {
-        currency: currency.id,
-        syncFromScratch: resync,
-      });
-    }
 
     const usesStakingPositions = bridgeApi.usesStakingPositions === true;
 
@@ -1009,6 +1390,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       ? { accountAddress: address }
       : undefined;
 
+    // Incoming transactions the walk read as failed: a row stored before their outcome was known
+    // showed them as received, and is removed below.
+    const failedIncomingHashes = new Set<string>();
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<{
       operations: OperationCommon[];
@@ -1018,8 +1402,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // adapter does. Counted raw, a bounded prefix made only of such rows retained nothing: a first
       // sync then kept `blockHeight: 0` and walked the same prefix again on every sync. An emptied
       // page is followed like any other; a long run of them trips the empty-page budget.
-      const isUsable = (op: Operation) =>
-        !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed);
+      const isUsable = (op: Operation) => {
+        if (isNftCoreOp(op)) return false;
+        if (!isIncomingCoreOp(op) || !op.tx.failed) return true;
+        // Only a state-driven sync reads a stored range again.
+        if (stateDriven) failedIncomingHashes.add(op.tx.hash);
+        return false;
+      };
       const { items: coreOps, bounded } = await paginateOperations(
         cursor =>
           coinModuleApi
@@ -1065,7 +1454,47 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // carried over, only what this round actually saw.
     let newOpsBounded = false;
 
-    if (a4Network && a4ChainConfig?.read) {
+    // With the history left alone, the stored operations stand: an empty walk, as far as the merge
+    // below is concerned. A failed walk of an account that is not from scratch does the same, so one
+    // indexer error leaves the stored operations and the balance in place, and the next sync reads again.
+    const skipsWalk = stateDriven && !syncFromScratch && !mayHaveChanged;
+    // An account another bridge synced last has no sync hash but keeps that bridge's operations:
+    // its first sync here is from scratch, and a failed read keeps those operations until a read
+    // passes, as for any other sync.
+    const replacesStoredHistory = syncFromScratch && !initialAccount?.syncHash && oldOps.length > 0;
+    // A stored account that held nothing and still holds nothing has an empty history to keep: its
+    // sync is from scratch after every restart, since the last sync date is not saved.
+    const staysEmpty =
+      syncFromScratch &&
+      oldOps.length === 0 &&
+      initialAccount?.balance?.isZero?.() === true &&
+      balanceRes.every(b => b.value === 0n);
+    const toleratesWalkFailure =
+      stateDriven && (!syncFromScratch || replacesStoredHistory || staysEmpty);
+    let walkFailed = false;
+    const readNewOps = async (): ReturnType<typeof delegateNewOps> => {
+      if (!toleratesWalkFailure) return delegateNewOps();
+      try {
+        return await delegateNewOps();
+      } catch (e) {
+        // A failure that has lasted past the window is shown, not hidden: the stored operations and
+        // marks stay as they are, so the next sync reads again.
+        const failedSince = initialAccount?.historyRecheck?.failedSince;
+        if (failedSince !== undefined && Date.now() - failedSince >= HISTORY_RECHECK_WINDOW_MS) {
+          throw e;
+        }
+        walkFailed = true;
+        log("generic-coin-framework", "history read failed, keeping the stored operations", {
+          currency: currency.id,
+          error: e instanceof Error ? e.message : String(e),
+        });
+        return { operations: [], bounded: false };
+      }
+    };
+
+    if (skipsWalk) {
+      newOps = [];
+    } else if (a4Network && a4ChainConfig?.read) {
       try {
         const url = resolveA4BaseUrl(a4ChainConfig.environment);
         const a4Client = new A4Client(url, a4Network);
@@ -1104,7 +1533,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           status,
           error: e,
         });
-        ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+        ({ operations: newOps, bounded: newOpsBounded } = await readNewOps());
       }
     } else {
       if (a4Network) {
@@ -1114,7 +1543,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           "A4 read is off for this chain, delegate is used",
         );
       }
-      ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+      ({ operations: newOps, bounded: newOpsBounded } = await readNewOps());
     }
 
     if (bridgeApi.adaptOperations) {
@@ -1129,14 +1558,36 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // because the *next* watermark derives from this round's newest operation, past the hole.
     // A bounded round always carries at least one usable operation: both walks filter before the
     // bound counts, and a bounded stop never returns an empty list.
+    // A failed read of a history from scratch keeps the stored one: a regular sync from here, and
+    // the sync hash stays unset so the next sync starts from scratch again.
+    const keptStoredHistory = syncFromScratch && walkFailed;
+    if (keptStoredHistory) syncFromScratch = false;
     const discardOld = syncFromScratch || newOpsBounded;
 
-    const newAssetOperations = newOps.filter(
-      operation =>
-        operation?.extra?.assetReference &&
-        operation?.extra?.assetOwner &&
-        !TOKEN_OPT_TYPES.has(operation.type),
+    // A fee paid in a token is charged once, by a FEES operation of that token: it joins the token
+    // operations only, so it becomes a sub-operation of its transaction's parent. A module may
+    // already carry that fee on a value-0 FEES operation of the token, which it replaces.
+    const tokenFeeOperations = await buildTokenFeeOperations(
+      newOps,
+      address,
+      bridgeApi,
+      syncConfig.blacklistedTokenIds ?? [],
     );
+    const tokenFeeHashes = new Set(tokenFeeOperations.map(({ operation }) => operation.hash));
+    const isReplacedFeeCarrier = (operation: OperationCommon) =>
+      tokenFeeHashes.has(operation.hash) &&
+      (operation.extra?.ledgerOpType ?? operation.type) === "FEES" &&
+      operation.value.isZero();
+    const newAssetOperations = [
+      ...newOps.filter(
+        operation =>
+          operation?.extra?.assetReference &&
+          operation?.extra?.assetOwner &&
+          !TOKEN_OPT_TYPES.has(operation.type) &&
+          !isReplacedFeeCarrier(operation),
+      ),
+      ...tokenFeeOperations.map(({ operation }) => operation),
+    ];
 
     const newInternalOperations: OperationCommon[] = [];
     const newNonInternalOperations: OperationCommon[] = [];
@@ -1172,10 +1623,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           ).filter(b => lateKeys.has(assetKey(b.asset, bridgeApi.exactAssetMatch)))
         : [];
 
+    const readTokenBalances = [...allTokenAssetsBalances, ...lateTokenBalances];
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
       accountId,
-      allTokenAssetsBalances: [...allTokenAssetsBalances, ...lateTokenBalances],
+      allTokenAssetsBalances: [
+        ...readTokenBalances,
+        ...feeTokenBalances(tokenFeeOperations, readTokenBalances, bridgeApi),
+      ],
       syncConfig,
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
@@ -1246,16 +1701,89 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // A parent carried over from `oldOps` keeps the sub-operations it was stored with, some of
     // which the token bound may just have evicted; relinked here, against the same index the
     // parents built this round used, so every retained parent points at what is actually stored.
-    const mergedOperations = mergeOps(
-      discardOld ? [] : relinkSubOperations(oldOps, confirmedSubOperationIndex),
-      newOperations,
-    ) as OperationCommon[];
+    // A state-driven confirmation reads again below the newest stored operation, where the indexer
+    // may list a transaction late, even below every stored one; the store bound still applies.
+    const mergedOperations = (
+      (stateDriven ? mergeOpsKeepingOlder : mergeOps)(
+        discardOld ? [] : relinkSubOperations(oldOps, confirmedSubOperationIndex),
+        newOperations,
+      ) as OperationCommon[]
+    ).filter(op => op.type !== "IN" || !failedIncomingHashes.has(op.hash));
     // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
     // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
     // the newest stored operation, which the head always retains. Cut on transactions rather than
     // on a row index: `buildParentOperations` emits two top-level rows for a self-send, and a flat
     // slice at that boundary would persist one and lose its sibling for good.
     const operations = boundByTransaction(mergedOperations, maxOperations);
+
+    const storedHashes = new Set(oldOps.map(op => op.hash));
+    const unseenOps = newOps.filter(op => !storedHashes.has(op.hash));
+    // Only the positions this read returned: a known pool that shows none (a deposit its pool has not
+    // executed yet, say) is still probed for the window, or the empty positions saved would drop it.
+    const positionIds = new Set(balanceRes.filter(hasStake).map(b => b.stake.delegate));
+    // Only a recent staking call can name a pool the listing has not indexed yet, or one that has not
+    // executed the call yet, a sync from scratch included: its listing may lag behind the history.
+    const syncedAt = Date.now();
+    const stakingCallValidatorId = (op: (typeof unseenOps)[number]): string | undefined => {
+      if (bridgeApi.getStakingCallValidatorId) return bridgeApi.getStakingCallValidatorId(op);
+      return op.type === "STAKE" || op.type === "DELEGATE" ? op.recipients[0] : undefined;
+    };
+    // From scratch, every recent call counts: a stored one may come from another bridge whose own
+    // pending candidates this sync does not read.
+    const newValidatorIds = [
+      ...new Set(
+        (syncFromScratch ? newOps : unseenOps)
+          .filter(
+            op =>
+              !op.hasFailed && syncedAt - new Date(op.date).getTime() < HISTORY_RECHECK_WINDOW_MS,
+          )
+          .flatMap(op => {
+            const validatorId = stakingCallValidatorId(op);
+            return validatorId ? [validatorId] : [];
+          })
+          .filter(validatorId => !positionIds.has(validatorId)),
+      ),
+    ];
+    const historyRecheck = stateDriven
+      ? nextHistoryRecheck({
+          mark: initialAccount?.historyRecheck,
+          now: Date.now(),
+          walkFailed,
+          syncFromScratch,
+          readOperations: newOps.length > 0,
+          unseen: unseenOps.length > 0,
+          unsettled:
+            !!bridgeApi.isOperationSettled &&
+            newOps.some(op => !bridgeApi.isOperationSettled?.(op)),
+          unsettledUnseen:
+            !!bridgeApi.isOperationSettled &&
+            unseenOps.some(op => !bridgeApi.isOperationSettled?.(op)),
+          // With a zero spendable balance, the total tells a change, as for the reads above.
+          spendableChanged:
+            spendableBalance.toString() !== initialAccount?.spendableBalance?.toFixed() ||
+            (spendableBalance === 0n &&
+              nativeBalance.toString() !== initialAccount?.balance?.toFixed()),
+          spendable: spendableBalance.toString(),
+          balance: spendableBalance === 0n ? nativeBalance.toString() : undefined,
+          // From scratch, the confirmation starts at the newest operation, not the whole history again,
+          // or lower when an operation whose outcome is missing sits below it.
+          readFromHeight: syncFromScratch
+            ? Math.min(
+                operations[0]?.blockHeight ?? 0,
+                ...newOps
+                  .filter(op => bridgeApi.isOperationSettled?.(op) === false)
+                  .map(op => op.blockHeight ?? 0),
+              )
+            : minHeight,
+          newValidatorIds,
+          // A candidate that shows no position is read again: its staking call may have been indexed
+          // before the pool executed it.
+          unresolvedValidatorIds: candidateValidatorIds.filter(id => !positionIds.has(id)),
+          listing:
+            !!bridgeApi.needsValidatorListing &&
+            unseenOps.some(op => bridgeApi.needsValidatorListing?.(op)),
+        })
+      : undefined;
     const stakingEnabled =
       bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {
@@ -1300,6 +1828,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
+      // Set even when absent so rows from a previous sync never survive the merge.
+      balances: poolRows.length > 0 ? toAccountPoolRows(poolRows, stakeRows) : undefined,
       operations,
       subAccounts,
       // `operations.length`, i.e. the retained count once a bound applies, not the account's true
@@ -1310,11 +1840,16 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // different meaning is being decided on `account-data`'s own bridge (draft PRs #21560 and
       // #21566) and is out of scope here.
       operationsCount: operations.length,
-      syncHash,
+      // A kept history keeps the hash it was read under: empty after the legacy sync, so the next
+      // sync starts over; the previous one for a stored empty account, which stays recognised.
+      syncHash: keptStoredHistory ? (initialAccount?.syncHash ?? "") : syncHash,
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
       // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),
       ...(sequence !== undefined ? { sequence } : {}),
+      // Set to undefined, not omitted, to clear a stored mark: the merge in `makeSync` keeps a
+      // stored value for a key that is absent.
+      ...(stateDriven || initialAccount?.historyRecheck !== undefined ? { historyRecheck } : {}),
       ...stakingShape,
     };
     return res;

@@ -90,6 +90,15 @@ describe("mapOutputs", () => {
     expect(mapOutputs(tx())).toEqual([{ address: T_ADDRESS, valueZat: "12345" }]);
   });
 
+  it("passes a 213-character unified address through byte for byte", () => {
+    const ua = `u1${"qpzry9x8gf2tvdw0s3jn54khce6mua7l".repeat(7).slice(0, 211)}`;
+    expect(ua).toHaveLength(213);
+
+    expect(mapOutputs(tx({ recipient: ua }))[0].address).toBe(ua);
+    const padded = ` ${ua.toUpperCase()} `;
+    expect(mapOutputs(tx({ recipient: padded }))[0].address).toBe(padded);
+  });
+
   it("attaches a memo only when there is one", () => {
     expect(mapOutputs(tx({ memo: "hello" }))[0]).toHaveProperty("memo", "hello");
     expect(mapOutputs(tx({ memo: "" }))[0]).toHaveProperty("memo", "");

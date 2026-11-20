@@ -1,0 +1,109 @@
+import { NavigatorName, ScreenName } from "~/const";
+import {
+  assetAccountPageKey,
+  countTrailingAssetAccountRoutes,
+  findAssetAccountStack,
+} from "../assetAccountChain";
+
+const entry = { name: NavigatorName.Main };
+const asset = {
+  name: NavigatorName.AssetDetail,
+  state: { index: 0, routes: [{ name: ScreenName.AssetDetail }] },
+};
+const account = {
+  name: NavigatorName.Accounts,
+  state: {
+    index: 0,
+    routes: [
+      {
+        name: ScreenName.Account,
+        state: { index: 0, routes: [{ name: ScreenName.AccountDetail }] },
+      },
+    ],
+  },
+};
+
+describe("countTrailingAssetAccountRoutes", () => {
+  it("returns 0 when the focused route is not an asset or account page", () => {
+    expect(countTrailingAssetAccountRoutes({ index: 0, routes: [entry] })).toBe(0);
+  });
+
+  it("counts the asset and account pages stacked on top of the entry point", () => {
+    const routes = [entry, asset, account, asset];
+    expect(countTrailingAssetAccountRoutes({ index: 3, routes })).toBe(3);
+  });
+
+  it("stops at the first route that is neither an asset nor an account page", () => {
+    const routes = [asset, entry, account, asset];
+    expect(countTrailingAssetAccountRoutes({ index: 3, routes })).toBe(2);
+  });
+
+  it("counts an account opened at the root of the stack", () => {
+    const routes = [entry, asset, { name: ScreenName.Account }];
+    expect(countTrailingAssetAccountRoutes({ index: 2, routes })).toBe(2);
+  });
+
+  it("counts an accounts stack whose focused screen is not an account as the entry point", () => {
+    const accountsList = {
+      name: NavigatorName.Accounts,
+      state: { index: 0, routes: [{ name: ScreenName.Accounts }] },
+    };
+    expect(countTrailingAssetAccountRoutes({ index: 1, routes: [accountsList, asset] })).toBe(1);
+  });
+
+  it("counts from the focused route", () => {
+    const routes = [entry, asset, account];
+    expect(countTrailingAssetAccountRoutes({ index: 0, routes })).toBe(0);
+  });
+});
+
+describe("findAssetAccountStack", () => {
+  it("finds the Base stack nested under the Root stack", () => {
+    const base = { key: "base", index: 3, routes: [entry, asset, account, asset] };
+    const root = { key: "root", index: 0, routes: [{ name: NavigatorName.Base, state: base }] };
+
+    expect(findAssetAccountStack(root)).toBe(base);
+    expect(countTrailingAssetAccountRoutes(base)).toBe(3);
+  });
+
+  it("returns the stack itself when its focused route is an asset or account page", () => {
+    const stack = { index: 1, routes: [entry, asset] };
+    expect(findAssetAccountStack(stack)).toBe(stack);
+  });
+
+  it("returns undefined when no asset or account page is focused", () => {
+    const root = {
+      index: 0,
+      routes: [{ name: NavigatorName.Base, state: { index: 0, routes: [entry] } }],
+    };
+    expect(findAssetAccountStack(root)).toBeUndefined();
+  });
+});
+
+describe("assetAccountPageKey", () => {
+  it("identifies an asset page by its currency", () => {
+    const params = { screen: ScreenName.AssetDetail, params: { currencyId: "bitcoin" } };
+    expect(assetAccountPageKey(NavigatorName.AssetDetail, params)).toBe("asset:bitcoin");
+  });
+
+  it("identifies an account page by its account", () => {
+    const params = { screen: ScreenName.Account, params: { accountId: "btc-1" } };
+    expect(assetAccountPageKey(NavigatorName.Accounts, params)).toBe("account:btc-1");
+    expect(assetAccountPageKey(ScreenName.Account, { accountId: "btc-1" })).toBe("account:btc-1");
+  });
+
+  it("identifies a token account page by its parent account", () => {
+    const params = { screen: ScreenName.Account, params: { accountId: "usdc", parentId: "eth-1" } };
+    expect(assetAccountPageKey(NavigatorName.Accounts, params)).toBe("account:eth-1");
+    expect(assetAccountPageKey(ScreenName.Account, { accountId: "usdc", parentId: "eth-1" })).toBe(
+      "account:eth-1",
+    );
+  });
+
+  it("returns undefined for any other page", () => {
+    expect(assetAccountPageKey(NavigatorName.Main, undefined)).toBeUndefined();
+    expect(
+      assetAccountPageKey(NavigatorName.Accounts, { screen: ScreenName.Accounts }),
+    ).toBeUndefined();
+  });
+});
