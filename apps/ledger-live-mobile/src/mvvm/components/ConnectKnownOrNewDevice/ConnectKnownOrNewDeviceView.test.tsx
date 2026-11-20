@@ -138,7 +138,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
       const { user } = renderView(discovering([unavailableBleRow()], addNewDevice));
 
       // WHEN
-      await user.press(screen.getByText("Add"));
+      await user.press(screen.getByText("Add new"));
 
       // THEN
       expect(addNewDevice).toHaveBeenCalledTimes(1);
@@ -158,7 +158,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.queryByTestId("connect-known-or-new-device-menu-Flex 329")).toBeNull();
-      expect(screen.queryByText("Add")).toBeNull();
+      expect(screen.queryByText("Add new")).toBeNull();
     });
   });
 
@@ -236,7 +236,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.getByTestId(`connect-known-or-new-device-row-${row.key}`)).toBeDisabled();
-      expect(screen.getByText("Add")).toBeVisible();
+      expect(screen.getByText("Add new")).toBeVisible();
     });
 
     it("GIVEN a paused flow and no device, WHEN the list renders, THEN it should show the Add a Ledger device row disabled", () => {
@@ -271,7 +271,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
       // GIVEN
       const addNewDevice = jest.fn();
       const { user } = renderView(discovering([], addNewDevice));
-      expect(screen.queryByText("Add")).toBeNull();
+      expect(screen.queryByText("Add new")).toBeNull();
 
       // WHEN
       await user.press(screen.getByText("Add a Ledger device"));
