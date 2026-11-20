@@ -137,8 +137,8 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
   const handleOpenManager = useCallback(() => {
     completedRef.current = true;
     navigatingToManagerRef.current = true;
-    navigation.replace(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
+    navigation.replace(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
       params: { searchQuery: appName },
     });
   }, [navigation, appName]);
