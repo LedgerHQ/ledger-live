@@ -26,6 +26,8 @@ import type { PageLogCollector } from "tests/utils/pageLogCollector";
 import type { ElectronApplication, Page } from "@playwright/test";
 import { PasswordlockModal } from "tests/page/modal/passwordlock.modal";
 import { PortfolioPage } from "tests/page/portfolio.page";
+import { PredictionsTermsDialog } from "tests/page/dialog/predictionsTerms.dialog";
+import { PredictionsConsentDialog } from "tests/page/dialog/predictionsConsent.dialog";
 import { OnboardingPage } from "tests/page/onboarding.page";
 import { PostOnboardingPage } from "tests/page/postOnboarding.page";
 import { SyncOnboardingPage } from "tests/page/syncOnboarding.page";
@@ -101,6 +103,8 @@ export class Application extends PageHolder {
   public myLedger = new MyLedgerPage(this.page);
   public perps = new PerpsPage(this.page, this.electronApp);
   public portfolio = new PortfolioPage(this.page);
+  public predictionsTermsDialog = new PredictionsTermsDialog(this.page);
+  public predictionsConsentDialog = new PredictionsConsentDialog(this.page);
   public onboarding = new OnboardingPage(this.page);
   public postOnboarding = new PostOnboardingPage(this.page);
   public syncOnboarding = new SyncOnboardingPage(this.page);
