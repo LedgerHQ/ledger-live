@@ -85,7 +85,7 @@ private readonly contactCompactRow = (contactId: string) => byId(`contacts-compa
 
 ### Every public method MUST use @Step
 
-Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
+Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, `{{{0.address}}}` for a field of an options object, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
 
 ### The test function MUST call $TmsLink
 

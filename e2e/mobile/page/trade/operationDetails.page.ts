@@ -3,6 +3,12 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { byId } from "@e2e/helpers/elements/native";
 
+type CheckOperationInfosOptions = {
+  transaction: TransactionType;
+  isSentTransaction?: boolean;
+  operationType?: keyof OperationDetailsPage["operationsType"];
+};
+
 export default class OperationDetailsPage {
   private readonly title = byId("operationDetails-title");
   private readonly recipient = byId("operationDetails-recipient0");
@@ -97,11 +103,8 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check operation infos")
-  async checkOperationInfos(
-    transaction: TransactionType,
-    isSentTransaction: boolean = true,
-    operationType?: keyof typeof this.operationsType,
-  ) {
+  async checkOperationInfos(options: CheckOperationInfosOptions) {
+    const { transaction, isSentTransaction = true, operationType } = options;
     await this.waitForOperationDetails();
     await this.checkAccount(transaction.accountToDebit.currency.name);
     await this.checkRecipientAddress(

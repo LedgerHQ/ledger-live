@@ -114,8 +114,8 @@ export async function close(): Promise<void> {
       client.terminate();
     });
 
-    await withTimeout(
-      new Promise<void>((resolve, reject) => {
+    await withTimeout({
+      operation: new Promise<void>((resolve, reject) => {
         wss.close(error => {
           if (webSocket.wss === wss) {
             webSocket.wss = undefined;
@@ -127,10 +127,10 @@ export async function close(): Promise<void> {
           resolve();
         });
       }),
-      TIMEOUT.small,
-      "closeBridge",
-      { rethrow: false },
-    );
+      timeoutMs: TIMEOUT.small,
+      label: "closeBridge",
+      rethrow: false,
+    });
   }
   webSocket.messages = {};
 

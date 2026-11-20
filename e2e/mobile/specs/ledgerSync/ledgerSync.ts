@@ -136,13 +136,16 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
       await app.modularDrawer.selectCurrencyByTicker(Currency.ETH.ticker);
       await app.modularDrawer.selectNetworkIfAsked(Currency.ETH.name);
 
-      const accountId = await app.addAccount.addAccountAtIndex(defaultAccountName, Currency.ETH.id);
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName: defaultAccountName,
+        currencyId: Currency.ETH.id,
+      });
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(defaultAccountName);
 
-      await app.trustchain.expectToHoldAccount(accountId, Currency.ETH.id);
+      await app.trustchain.expectToHoldAccount({ accountId, currencyId: Currency.ETH.id });
     },
   );
 }
@@ -171,7 +174,10 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(renamedAccountName);
 
-      await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
+      await app.trustchain.expectAccountName({
+        accountId: ethAccount.id,
+        accountName: renamedAccountName,
+      });
     },
   );
 }
@@ -267,7 +273,10 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
       init: () => initPreSeeded([app.ledgerSync.pushAccountsToTrustchain([ethAccount])]),
     },
     async () => {
-      await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
+      await app.trustchain.expectToHoldAccount({
+        accountId: ethAccount.id,
+        currencyId: ethAccount.currencyId,
+      });
 
       await openLedgerSyncSettings();
       await app.ledgerSync.openDeleteSync();
