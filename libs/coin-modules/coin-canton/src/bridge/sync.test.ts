@@ -1619,6 +1619,28 @@ describe("makeGetAccountShape", () => {
           expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
           expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
         });
+
+        it("drops it on a rebuild from an older sync hash, its fee in another asset", async () => {
+          const stored = {
+            ...storedOperation(5),
+            id: "offer-token",
+            hash: "offer",
+            fee: BigNumber(10),
+            extra: { instrumentId: "Token", instrumentAdmin: "token-admin" },
+          };
+
+          const rebuilt = await syncAfter({ operations: [stored] }, undefined);
+          expect(rebuilt.from).toEqual([0]);
+          expect(typesOf(rebuilt.shape, "offer")).toEqual(["FEES"]);
+          expect(feeOf(rebuilt.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const settled = await resync(rebuilt.shape);
+          expect(typesOf(settled.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(settled.shape)).toEqual([]);
+        });
       });
 
       it("does not replay a received offer stored before it was listed as pending", async () => {

@@ -584,16 +584,19 @@ export function makeGetAccountShape(
     // its fees to another operation. Taken before a rebuild clears them, the stored operations of a
     // transaction not read in full stay, and the next sync reads it again. An offer stored in full
     // before it was listed as pending joins them when it is read again while pending, or its
-    // stored fees would add to the fees read.
+    // stored fees would add to the fees read. Not under an older sync hash: the rebuild drops those
+    // operations, and their fees can sit in an asset that no read charges again.
     const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
     const initialOperations = [
       ...(initialAccount?.operations ?? []),
       ...(initialAccount?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
     ];
-    const initialHashes = new Set(initialOperations.map(({ hash }) => hash));
+    const joinableHashes = new Set(
+      initialAccount?.syncHash === SYNC_HASH ? initialOperations.map(({ hash }) => hash) : [],
+    );
     const replayHashes = new Set(replay.map(({ hash }) => hash));
     for (const { hash } of fetchedOperations) {
-      if (pendingHashes.has(hash) && initialHashes.has(hash)) replayHashes.add(hash);
+      if (pendingHashes.has(hash) && joinableHashes.has(hash)) replayHashes.add(hash);
     }
     const isReplayed = (op: Operation) => replayHashes.has(op.hash);
     const replayedOperations = initialOperations.filter(isReplayed);
