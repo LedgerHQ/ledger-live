@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { getPreviousTrackingPage, track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -65,6 +65,8 @@ export type ErrorDrawerProps = Readonly<{
   productName: string;
   onRetry: () => void;
   onCancel: () => void;
+  /** Replaces cancel when the failed check is the firmware one the user may skip. */
+  onSkip?: () => void;
   onClose: () => void;
   onContactSupport: () => void;
   onGoToSettings: () => void;
@@ -97,6 +99,7 @@ type ChecksErrorDrawersInput = Readonly<{
   onRetry: () => void;
   onCloseSheet: () => void;
   onErrorCancel: () => void;
+  onSkipFirmwareCheck?: () => void;
   onAllowDismiss: () => void;
   onNotGenuineClose: () => void;
   /** Set only in the seeded funnel: the drawers then send the seeded page names. */
@@ -113,6 +116,11 @@ type FirmwareUpdateRequestInput = Readonly<{
   /** Runs when the user closes the unsupported-update sheet, not when code hides it. */
   onUnsupportedClosePressed?: () => void;
   suspendSheets?: boolean;
+  /**
+   * The update an unseeded Nano held back until it was seeded. Asking for a USB cable would break
+   * the setup the user just finished, so Bluetooth that cannot update says it is not possible.
+   */
+  updateAfterSetup?: boolean;
 }>;
 
 type ChecksDrawerInput = ChecksErrorDrawersInput &
@@ -121,6 +129,7 @@ type ChecksDrawerInput = ChecksErrorDrawersInput &
     onAcceptUpdate: () => void;
     onUpdatePressed?: () => void;
     onUpdateSheetClosed?: () => void;
+    updateAfterSetup?: boolean;
   }>;
 
 const recoverableErrorPage = "Error: unknown error";
@@ -213,14 +222,15 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
   } as unknown as DeviceModelInfo;
 }
 
-function firmwareEligibility(device: Device, current: string) {
+function firmwareEligibility(device: Device, current: string, updateAfterSetup: boolean) {
   const info = deviceModelInfo(device, current);
   const newUxSupported = isNewFirmwareUpdateUxSupported(device, info);
   const bleSupported = isBleUpdateSupported(device, info);
 
   return {
     canUpdate: newUxSupported && (device.wired || bleSupported),
-    isUsbRequired: Platform.OS === "android" && newUxSupported && !bleSupported,
+    isUsbRequired:
+      Platform.OS === "android" && newUxSupported && !bleSupported && !updateAfterSetup,
   };
 }
 
@@ -252,13 +262,14 @@ export function useFirmwareUpdateRequest({
   onUpdatePressed,
   onUnsupportedClosePressed,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: FirmwareUpdateRequestInput): Readonly<{
   requestUpdate: () => void;
   unsupportedUpdate: UnsupportedUpdateDrawerProps;
 }> {
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const updateKey = updateKeyOf(update);
-  const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const eligibility = update ? firmwareEligibility(device, update.current, updateAfterSetup) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
 
   return {
@@ -289,6 +300,7 @@ export function useChecksErrorDrawers({
   onRetry,
   onCloseSheet,
   onErrorCancel,
+  onSkipFirmwareCheck,
   onAllowDismiss,
   onNotGenuineClose,
   seededDeviceType,
@@ -327,6 +339,21 @@ export function useChecksErrorDrawers({
     );
     onErrorCancel();
   }, [errorDrawerKind, onErrorCancel, seededDeviceType]);
+  const skip = useMemo(
+    () =>
+      onSkipFirmwareCheck
+        ? () => {
+            trackRecoverableButton(
+              "Skip Ledger OS update",
+              recoverableErrorPage,
+              errorDrawerKind,
+              seededDeviceType,
+            );
+            onSkipFirmwareCheck();
+          }
+        : undefined,
+    [errorDrawerKind, onSkipFirmwareCheck, seededDeviceType],
+  );
   const onContactSupport = useCallback(() => {
     trackRecoverableButton(
       "Contact Ledger Support",
@@ -381,6 +408,7 @@ export function useChecksErrorDrawers({
       productName,
       onRetry: retry,
       onCancel: cancel,
+      onSkip: skip,
       onClose: () => dismissIfOpen(suspendSheets, recoverableKind !== null, onCloseSheet),
       onContactSupport,
       onGoToSettings,
@@ -402,6 +430,7 @@ export function useChecksDrawers({
   onAcceptUpdate,
   onUpdatePressed,
   onUpdateSheetClosed,
+  updateAfterSetup = false,
   ...input
 }: ChecksDrawerInput): ChecksDrawerProps & {
   headerQuitHidden: boolean;
@@ -417,6 +446,7 @@ export function useChecksDrawers({
     onUpdatePressed,
     onUnsupportedClosePressed: onUpdateSheetClosed,
     suspendSheets,
+    updateAfterSetup,
   });
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
   const updateKey = updateKeyOf(update);

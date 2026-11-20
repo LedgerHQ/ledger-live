@@ -1,5 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
+import type { InitialState } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -79,6 +80,7 @@ const Stack = createNativeStackNavigator<TestStackParamList>();
 function renderPairNew(
   readOnlyModeEnabled = false,
   params: Partial<OnboardingNavigatorParamList[ScreenName.OnboardingPairNew]> = {},
+  navigationInitialState?: InitialState,
 ) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
@@ -97,8 +99,12 @@ function renderPairNew(
       <Stack.Screen name={NavigatorName.Base}>
         {() => <Placeholder label="portfolio" />}
       </Stack.Screen>
+      <Stack.Screen name={ScreenName.OnboardingWelcome}>
+        {() => <Placeholder label="welcome" />}
+      </Stack.Screen>
     </Stack.Navigator>,
     {
+      navigationInitialState,
       overrideInitialState: (state: State) => ({
         ...state,
         settings: {
@@ -127,6 +133,27 @@ describe("PairNew", () => {
     await user.press(screen.getByLabelText("select device"));
 
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
+  });
+
+  it("should go back to the welcome screen it was opened on", async () => {
+    const { user } = renderPairNew(
+      false,
+      {},
+      {
+        index: 1,
+        routes: [
+          { name: ScreenName.OnboardingWelcome },
+          {
+            name: ScreenName.OnboardingPairNew,
+            params: { deviceModelId: DeviceModelId.nanoS, fromAccessExistingWallet: true },
+          },
+        ],
+      },
+    );
+
+    await user.press(screen.getByTestId("onboarding-pair-new-back"));
+
+    expect(await screen.findByText("welcome")).toBeVisible();
   });
 
   it("should keep the post-onboarding redirect of an existing wallet as it was", async () => {

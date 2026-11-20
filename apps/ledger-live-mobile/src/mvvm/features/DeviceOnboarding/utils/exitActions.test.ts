@@ -251,7 +251,9 @@ describe("exitActions", () => {
               {
                 name: NavigatorName.Onboarding,
                 state: {
+                  index: 1,
                   routes: [
+                    { name: ScreenName.OnboardingWelcome },
                     {
                       name: ScreenName.OnboardingPairNew,
                       params: {

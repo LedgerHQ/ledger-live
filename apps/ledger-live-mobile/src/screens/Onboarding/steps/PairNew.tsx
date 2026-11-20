@@ -64,7 +64,11 @@ const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) =>
       width="100%"
       height={48}
     >
-      <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
+      <Button
+        Icon={renderArrowLeft}
+        onPress={() => navigation.goBack()}
+        testID="onboarding-pair-new-back"
+      />
       {showSlideIndicator && <SlideIndicator slidesLength={10} activeIndex={8} />}
       <Flex width={48}>
         <Button

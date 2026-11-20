@@ -15,6 +15,10 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { ReconnectSheetProps } from "@features/flow-device-onboarding-reconnect";
 import {
   deviceReportsRecoveryKey,
+  finishesSetupOnQuit,
+  isFirmwareCheckFailed,
+  isFirmwareUpdateDelegated,
+  isHeldBackUpdatePending,
   SeedPath,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
@@ -76,7 +80,6 @@ const defaultProtectId = "protect-prod";
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
-const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
 
 export type QuitConfirmationModel = {
@@ -180,7 +183,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   }
   if (isRunning(actions) && actions.state) {
     if (actions.confirmsQuit && actions.quitConfirmationOpen) actions.continueSetup();
-    else if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
+    else if (isFirmwareUpdateDelegated(actions.state)) actions.closeFirmwareHandover();
     else if (actions.confirmsQuit) actions.requestQuit();
     else actions.quitMachine();
     return;
@@ -229,7 +232,7 @@ type ScreenActions = {
   requestQuit: () => void;
   closeFirmwareHandover: () => void;
   send: (event: {
-    type: "RETRY" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE";
+    type: "RETRY" | "SKIP" | "CONTINUE" | "CLOSE" | "USER_ACCEPT" | "USER_DECLINE";
   }) => boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
@@ -239,6 +242,7 @@ type ScreenActions = {
   markUpdateAccepted: () => void;
   /** Wraps a close button's action so it also sends the `close` click. */
   withCloseClick: (quit: () => void) => () => void;
+  updateAfterSetup: boolean;
 };
 
 type ChecksTracking = Pick<SeededFunnelTracking, "seededDeviceType" | "trackClick" | "screensFor">;
@@ -365,12 +369,28 @@ function checksQuit(actions: ScreenActions): () => void {
   if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
     return actions.leaveFirmwareReconnect;
   }
-  if (actions.state === firmwareUpdateDelegatedState) return actions.closeFirmwareHandover;
+  if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
   return actions.leaveFromHeader;
 }
 
 function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
   return context?.verdictMatchesSession === true;
+}
+
+/** When leaving asks first, and whether the held-back update still keeps the checks screen. */
+function leaveRules(
+  flat: DeviceOnboardingSession["context"],
+  machine: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
+) {
+  const onboardedOnEntry = flat?.onboardedOnEntry ?? null;
+  // Leaving after setup ends it instead of losing it, as the machine does on QUIT.
+  const setupDone = machine !== undefined && finishesSetupOnQuit(machine);
+  const unseededMidSetup = onboardedOnEntry === false && !setupDone;
+  const seededBeforeGenuineCheck = onboardedOnEntry === true && !genuineCheckCompleted(flat);
+  return {
+    confirmsQuit: unseededMidSetup || seededBeforeGenuineCheck,
+    heldBackUpdatePending: machine !== undefined && isHeldBackUpdatePending(machine),
+  };
 }
 
 function quitConfirmationWhileUnlocked(
@@ -482,6 +502,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
+      updateAfterSetup: actions.updateAfterSetup,
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -494,6 +515,10 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
         actions.send({ type: startEvent });
       },
       onRetry: () => actions.send({ type: "RETRY" }),
+      onSkipFirmwareCheck:
+        actions.updateAfterSetup && isFirmwareCheckFailed(actions.state)
+          ? () => actions.send({ type: "SKIP" })
+          : undefined,
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => {
@@ -602,6 +627,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, []);
   const restoreShown = useCallback(() => dismissRestoreRef.current !== null, []);
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
+  const { confirmsQuit, heldBackUpdatePending } = leaveRules(
+    onboarding.context,
+    onboarding.snapshot?.context,
+  );
   const machineState = onboarding.state;
   const locked = machineState === deviceLockedState;
   const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
@@ -612,6 +641,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onboardedOnEntry,
     hasLiveDevice: onboarding.liveDevice !== null,
     returningFromFirmwareUpdate,
+    heldBackUpdatePending,
   });
   const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
   const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
@@ -696,14 +726,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       resetToPortfolio(navigation);
       return;
     }
-    if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
+    if (isFirmwareUpdateDelegated(onboarding.state)) closeFirmwareHandover();
     send({ type: "QUIT" });
   }, [closeFirmwareHandover, navigation, onboarding.state, send]);
 
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
-  const confirmsQuit =
-    unseeded || (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
+  const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
 
   const quitOrLeave = useCallback(() => {
@@ -798,7 +827,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     error: onboarding.error,
     connect: reconnectToLiveDevice,
   });
-  const phase = phaseOf(shownState, onboardedOnEntry, returningFromFirmwareUpdate);
+  const phase = phaseOf(
+    shownState,
+    onboardedOnEntry,
+    returningFromFirmwareUpdate,
+    heldBackUpdatePending,
+  );
   const waitingForUpdatedDevice =
     phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState;
   const waitedLongForDeviceAfterUpdate = useAfterDelay(
@@ -918,6 +952,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     machineState: shownState,
     liveMachineState: machineState,
     onboardedOnEntry,
+    heldBackUpdatePending,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,
@@ -985,6 +1020,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       trackClick(seededButtons.close);
       quit();
     },
+    updateAfterSetup,
   };
   const built =
     successScreen(screen) ??

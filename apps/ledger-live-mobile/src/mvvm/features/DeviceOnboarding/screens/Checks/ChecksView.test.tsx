@@ -506,6 +506,38 @@ describe("ChecksView", () => {
     }
   });
 
+  it("should say the update is not possible, without a USB cable, for that Nano X after setup on Android", async () => {
+    const platform = jest.replaceProperty(Platform, "OS", "android");
+
+    try {
+      const { user, onAcceptUpdate } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+        updateAfterSetup: true,
+      });
+
+      await user.press(screen.getByText("Update now"));
+
+      expect(screen.getByText("Firmware Update")).toBeVisible();
+      expect(screen.queryByText("USB cable needed")).toBeNull();
+      expect(onAcceptUpdate).not.toHaveBeenCalled();
+    } finally {
+      platform.restore();
+    }
+  });
+
+  it("should run the update of that Nano X after setup over USB", async () => {
+    const { user, onAcceptUpdate } = renderChecks("updating", {
+      device: { ...nanoX, wired: true },
+      update: { current: "2.3.0", available: "2.5.0" },
+      updateAfterSetup: true,
+    });
+
+    await user.press(screen.getByText("Update now"));
+
+    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should accept the update from the primary action on a Nano X at 2.4.0", async () => {
     const { user, onAcceptUpdate, onDeclineUpdate, rerender } = renderChecks("updating", {
       device: nanoX,
@@ -695,6 +727,26 @@ describe("ChecksView", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Cancel",
       page: "Error: Device OS version not recognized",
+    });
+  });
+
+  it("should skip the failed firmware check from the unknown sheet after setup", async () => {
+    jest.mocked(track).mockClear();
+    const onSkipFirmwareCheck = jest.fn();
+    const { user, onQuit } = renderChecks("checking", {
+      error: { kind: "unknown" },
+      onSkipFirmwareCheck,
+    });
+    const sheet = within(screen.getByTestId(checksTestIds.unknownSheet));
+
+    expect(sheet.queryByRole("button", { name: "Cancel set up" })).toBeNull();
+    await user.press(sheet.getByRole("button", { name: "Skip Ledger OS update" }));
+
+    expect(onSkipFirmwareCheck).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Skip Ledger OS update",
+      page: "Error: unknown error",
     });
   });
 

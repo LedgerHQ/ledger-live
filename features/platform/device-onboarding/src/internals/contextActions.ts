@@ -55,7 +55,9 @@ function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | n
   return isRecoveryKeyBackupInProgress(status);
 }
 
-export function currentVerdict(context: DeviceOnboardingContext): GenuineVerdict | null {
+export function currentVerdict(
+  context: Pick<DeviceOnboardingContext, "sessionId" | "genuineVerdict">,
+): GenuineVerdict | null {
   const { genuineVerdict } = context;
 
   if (genuineVerdict === null || genuineVerdict.sessionId !== context.sessionId) {
@@ -130,9 +132,10 @@ export const contextActions = {
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
-  rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" } }),
-  rememberFirmwareDeclined: update({ firmware: { kind: "declined" } }),
-  rememberFirmwareSkipped: update({ firmware: { kind: "skipped" } }),
+  // An answered update no longer waits for the setup, even when answered in the checks again.
+  rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" }, updateAfterSetup: false }),
+  rememberFirmwareDeclined: update({ firmware: { kind: "declined" }, updateAfterSetup: false }),
+  rememberFirmwareSkipped: update({ firmware: { kind: "skipped" }, updateAfterSetup: false }),
   deferUpdate: update({ firmware: { kind: "deferred" }, updateAfterSetup: true }),
   // The ready step reports the seed, but only DEVICE_STATE_READ set `isOnboarded` so far.
   rememberOnboarded: update(({ event }) => {
@@ -143,7 +146,6 @@ export const contextActions = {
     return { isOnboarded: event.state.isOnboarded };
   }),
   // Cleared as the update starts: the device comes back seeded and must not be offered it again.
-  forgetUpdateAfterSetup: update({ updateAfterSetup: false }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};
