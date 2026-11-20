@@ -10034,11 +10034,10 @@
       },
       "placing": "Placing your order",
       "filled": {
-        "title": "Order filled",
-        "fill_one": "{{shares}} share at {{price}}",
-        "fill_other": "{{shares}} shares at {{price}}",
-        "description": "Your order went through.",
-        "return": "Return to predictions"
+        "title": "Order complete",
+        "fill_one": "You bought {{shares}} share for {{amount}}",
+        "fill_other": "You bought {{shares}} shares for {{amount}}",
+        "paid": "You paid {{amount}}"
       },
       "notFilled": {
         "title": "Order not filled",

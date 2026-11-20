@@ -1,7 +1,8 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen, userEvent, within } from "@testing-library/react-native";
-import { I18nWrapper, ORDER_COPY } from "../../__tests__/i18nWrapper";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { ORDER_DETAILS } from "../../__tests__/orderDetails";
 import { PredictionsOrderResultLayout } from "./PredictionsOrderResultLayout";
 
 const GLOW = <Text>glow</Text>;
@@ -13,7 +14,8 @@ describe("PredictionsOrderResultLayout", () => {
       <PredictionsOrderResultLayout
         background={GLOW}
         result={{
-          report: { status: "filled", shares: 3.7, price: 0.54 },
+          order: ORDER_DETAILS,
+          report: { status: "filled", shares: 16.129, price: 0.31 },
           onClose,
           onRetry: jest.fn(),
         }}
@@ -23,8 +25,8 @@ describe("PredictionsOrderResultLayout", () => {
 
     const page = screen.getByTestId("predictions-order-result");
     expect(within(page).getByText("glow")).toBeOnTheScreen();
-    expect(within(page).getByText("3.7 shares at $0.54")).toBeOnTheScreen();
-    await userEvent.press(screen.getByText(ORDER_COPY.filled.return));
+    expect(within(page).getByText("You bought 16.13 shares for $5.00")).toBeOnTheScreen();
+    await userEvent.press(screen.getByText("Close"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -36,6 +38,6 @@ describe("PredictionsOrderResultLayout", () => {
 
     expect(screen.getByTestId("predictions-order-result")).toBeOnTheScreen();
     expect(screen.queryByText("glow")).toBeNull();
-    expect(screen.queryByText(ORDER_COPY.filled.return)).toBeNull();
+    expect(screen.queryByText("Close")).toBeNull();
   });
 });

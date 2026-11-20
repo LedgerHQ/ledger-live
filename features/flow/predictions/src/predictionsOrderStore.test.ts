@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import { ORDER_DETAILS, ORDER_TYPED_DATA } from "./__tests__/orderDetails";
 import { MIN_LOADING_DISPLAY_MS } from "./pendingResultStore.internals";
 import { PredictionsOrderPlayerClosed, usePredictionsOrderHooks } from "./predictionsOrderStore";
 import {
@@ -14,7 +15,7 @@ function startShownOrder() {
   const player = renderHook(() => usePredictionsOrderHooks());
   let walletOrderId = "";
   act(() => {
-    walletOrderId = player.result.current.startOrder();
+    walletOrderId = player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display);
     markPredictionsOrderPresented();
   });
   return { order, player, walletOrderId };
@@ -33,7 +34,9 @@ describe("usePredictionsOrderHooks", () => {
     const { startOrder } = player.result.current;
     player.unmount();
 
-    expect(() => act(() => startOrder())).toThrow(PredictionsOrderPlayerClosed);
+    expect(() => act(() => startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display))).toThrow(
+      PredictionsOrderPlayerClosed,
+    );
     expect(order.result.current.isOpen).toBe(false);
   });
 
@@ -47,7 +50,10 @@ describe("usePredictionsOrderHooks", () => {
 
   it("places the order, then shows the reported status once the loading has been on screen long enough", () => {
     const { order, player, walletOrderId } = startShownOrder();
-    expect(order.result.current).toMatchObject({ isOpen: true, shownOrder: { result: null } });
+    expect(order.result.current).toMatchObject({
+      isOpen: true,
+      shownOrder: { context: ORDER_DETAILS, result: null },
+    });
 
     act(() => {
       void player.result.current["order.report"](walletOrderId, {
@@ -90,7 +96,7 @@ describe("usePredictionsOrderHooks", () => {
     const { player, walletOrderId } = startShownOrder();
     const report = player.result.current["order.report"](walletOrderId, { status: "not-filled" });
 
-    act(() => player.result.current.startOrder());
+    act(() => player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display));
 
     await expect(report).resolves.toBe("close");
   });
@@ -103,7 +109,7 @@ describe("usePredictionsOrderHooks", () => {
     });
     let newerId = "";
     act(() => {
-      newerId = player.result.current.startOrder();
+      newerId = player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display);
       markPredictionsOrderPresented();
     });
 

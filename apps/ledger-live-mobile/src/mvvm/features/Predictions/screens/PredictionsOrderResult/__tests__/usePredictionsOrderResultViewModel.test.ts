@@ -23,7 +23,13 @@ jest.mock("@features/flow-predictions/native", () => ({
 }));
 
 const ORDER_ID = 7;
-const RESULT = { report: { status: "not-filled" } } as const;
+const RESULT = {
+  order: {
+    display: { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" },
+    amountPaid: 2,
+  },
+  report: { status: "not-filled" },
+} as const;
 
 function renderViewModel() {
   let leave: () => void = () => {};

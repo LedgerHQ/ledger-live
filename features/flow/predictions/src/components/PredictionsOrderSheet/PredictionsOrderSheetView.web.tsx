@@ -28,7 +28,12 @@ export function PredictionsOrderSheetView({
       testID="predictions-order-sheet"
     >
       {shownOrder ? (
-        <OrderContent report={shownOrder.result} onClose={onClose} onRetry={onRetry} />
+        <OrderContent
+          order={shownOrder.context}
+          report={shownOrder.result}
+          onClose={onClose}
+          onRetry={onRetry}
+        />
       ) : null}
     </PendingResultSheetView>
   );

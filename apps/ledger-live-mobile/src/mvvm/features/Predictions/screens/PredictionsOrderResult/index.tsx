@@ -12,7 +12,14 @@ export function PredictionsOrderResultView({
   return (
     <PredictionsOrderResultLayout
       background={<StatusGradient tone={tone} testID="predictions-order-result-gradient" />}
-      result={result && { report: result.report, onClose: handleClose, onRetry: handleRetry }}
+      result={
+        result && {
+          order: result.order,
+          report: result.report,
+          onClose: handleClose,
+          onRetry: handleRetry,
+        }
+      }
     />
   );
 }

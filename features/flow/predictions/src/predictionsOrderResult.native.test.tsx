@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { Text } from "react-native";
 import type { PredictionsOrderReport } from "@features/platform-predictions";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
+import { ORDER_DETAILS } from "./__tests__/orderDetails";
 import { PredictionsOrderSheet } from "./components/PredictionsOrderSheet/PredictionsOrderSheet";
 import { MIN_LOADING_DISPLAY_MS } from "./pendingResultStore.internals";
 import {
@@ -39,7 +40,7 @@ const awaiting = () => screen.getByTestId("awaiting").props.children;
 function startOrder() {
   let orderId = 0;
   act(() => {
-    orderId = startPredictionsOrder();
+    orderId = startPredictionsOrder(ORDER_DETAILS);
   });
   return orderId;
 }

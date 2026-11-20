@@ -1,5 +1,8 @@
-import type { PredictionsOrderReport } from "@features/platform-predictions";
-import type { ShownOrder } from "../../predictionsOrderStore.internals";
+import type {
+  PredictionsOrderDisplay,
+  PredictionsOrderReport,
+} from "@features/platform-predictions";
+import type { PredictionsOrderDetails, ShownOrder } from "../../predictionsOrderStore.internals";
 
 export type PredictionsOrderSheetViewProps = Readonly<{
   isOpen: boolean;
@@ -9,7 +12,10 @@ export type PredictionsOrderSheetViewProps = Readonly<{
 }>;
 
 export type OrderContentProps = Readonly<{
+  order: PredictionsOrderDetails;
   report: PredictionsOrderReport | null;
   onClose: () => void;
   onRetry: () => void;
 }>;
+
+export type OrderSummaryProps = Readonly<{ display: PredictionsOrderDisplay }>;

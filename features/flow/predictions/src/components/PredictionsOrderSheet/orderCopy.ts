@@ -1,4 +1,5 @@
 import type {
+  PredictionsOrderDisplay,
   PredictionsOrderReport,
   PredictionsOrderRejectionReason,
 } from "@features/platform-predictions";
@@ -42,16 +43,35 @@ export function canRetryOrder(report: PredictionsOrderReport): boolean {
   }
 }
 
-export function formatFill(
-  language: string,
-  { shares, price }: Readonly<{ shares: number; price: number }>,
-): Readonly<{ shares: string; price: string }> {
-  return {
-    shares: new Intl.NumberFormat(language, { maximumFractionDigits: 2 }).format(shares),
-    price: new Intl.NumberFormat(language, {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 3,
-    }).format(price),
-  };
+const SHARE_DIGITS = 2;
+
+// Rounded like `formatShares`, so the plural matches the number shown: toFixed rounds 1.005 down.
+export function displayedShares(shares: number): number {
+  return Number(
+    new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: SHARE_DIGITS,
+      useGrouping: false,
+    }).format(shares),
+  );
+}
+
+export function formatShares(language: string, shares: number): string {
+  return new Intl.NumberFormat(language, { maximumFractionDigits: SHARE_DIGITS }).format(shares);
+}
+
+export function outcomeTagAppearance({
+  outcomeSide,
+}: PredictionsOrderDisplay): "success" | "error" | "gray" {
+  switch (outcomeSide) {
+    case "yes":
+      return "success";
+    case "no":
+      return "error";
+    case undefined:
+      return "gray";
+  }
+}
+
+export function formatUsd(language: string, amount: number): string {
+  return new Intl.NumberFormat(language, { style: "currency", currency: "USD" }).format(amount);
 }
