@@ -202,7 +202,15 @@ describe("OperationDetails fee paid in a token", () => {
   });
 
   it("shows the fee of a pending operation in the native coin, as before", async () => {
-    const pending = { ...nativeFeeOperation, id: `${ACCOUNT_ID}-0xpending-OUT`, hash: "0xpending" };
+    // As the generic bridge builds it before the broadcast: no hash, no block, no fee asset
+    const pending = {
+      ...nativeFeeOperation,
+      id: `${ACCOUNT_ID}--OUT`,
+      hash: "",
+      blockHash: null,
+      blockHeight: null,
+      extra: { ledgerOpType: "OUT", blockTime: new Date(), index: "0" },
+    } as Operation;
     const account = { ...accountWith([tokenAccount]), pendingOperations: [pending] };
 
     renderDrawer(account, pending.id);

@@ -1,5 +1,7 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { getFeesCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
@@ -30,6 +32,9 @@ export function readOperationFee(operation: Operation): OperationFee | undefined
   if (typeof feeAmount !== "string" || !/^\d+$/.test(feeAmount)) return undefined;
   return { asset: feeAsset, amount: new BigNumber(feeAmount) };
 }
+
+/** The wait before the next try of a failed lookup: 1 s, doubling, at most 30 s. */
+const retryDelay = (attempt: number): number => Math.min(1000 * 2 ** attempt, 30_000);
 
 /**
  * The token of the sub-account that holds the FEES operation of the transaction: the generic
@@ -73,14 +78,24 @@ export function useOperationFeeCurrency(
     if (lookupKey === undefined) return;
     const [, , asset]: [string, string, AssetInfo] = JSON.parse(lookupKey);
     let active = true;
-    const settle = (token: TokenCurrency | undefined) => {
-      if (active) setResolved({ key: lookupKey, token });
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    // A failed lookup (offline, for instance) is tried again; an unknown token is final.
+    const lookUp = (attempt: number) => {
+      getBridgeApi(currency, currency.family)
+        .then(bridgeApi => (active ? bridgeApi.getTokenFromAsset?.(asset) : undefined))
+        .then(
+          token => {
+            if (active) setResolved({ key: lookupKey, token });
+          },
+          () => {
+            if (active) retry = setTimeout(() => lookUp(attempt + 1), retryDelay(attempt));
+          },
+        );
     };
-    getBridgeApi(currency, currency.family)
-      .then(bridgeApi => bridgeApi.getTokenFromAsset?.(asset))
-      .then(settle, () => settle(undefined));
+    lookUp(0);
     return () => {
       active = false;
+      clearTimeout(retry);
     };
   }, [lookupKey, currency]);
 
@@ -91,4 +106,46 @@ export function useOperationFeeCurrency(
     if (!fee) return undefined;
     return token ? { currency: token, amount: fee.amount } : null;
   }, [fee, token]);
+}
+
+/** The fee an operation details screen shows. */
+export type FeeDisplay = {
+  currency: CryptoCurrency | TokenCurrency;
+  amount: BigNumber;
+  /** The fee is in a currency not resolved yet: show no fee rather than one in another unit. */
+  isUnresolved: boolean;
+};
+
+/**
+ * The currency and amount of an operation's fee: the family's own answer first, then a fee the
+ * generic bridge stores in a token, then the account's fee currency.
+ *
+ * @param familyCurrency the family's fee currency: undefined when it has none, null while unresolved
+ * @param tokenFee the result of {@link useOperationFeeCurrency}
+ * @param getDisplayFee the family's fee amount, for a fee in the family's or the account's currency
+ */
+export function resolveFeeDisplay({
+  operation,
+  account,
+  familyCurrency,
+  tokenFee,
+  getDisplayFee,
+}: {
+  operation: Operation;
+  account: Account;
+  familyCurrency: CryptoCurrency | TokenCurrency | null | undefined;
+  tokenFee: OperationFeeInToken | null | undefined;
+  getDisplayFee?: (
+    operation: Operation,
+    account: Account,
+    currency: CryptoCurrency | TokenCurrency,
+  ) => BigNumber | undefined;
+}): FeeDisplay {
+  const genericFee = familyCurrency === undefined ? tokenFee : undefined;
+  const isUnresolved = familyCurrency === null || genericFee === null;
+  if (genericFee) return { currency: genericFee.currency, amount: genericFee.amount, isUnresolved };
+  const currency = familyCurrency ?? getFeesCurrency(account);
+  const { fee } = operation;
+  const amount = fee ? (getDisplayFee?.(operation, account, currency) ?? fee) : fee;
+  return { currency, amount, isUnresolved };
 }

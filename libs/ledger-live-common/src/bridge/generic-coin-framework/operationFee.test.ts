@@ -3,11 +3,12 @@
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getBridgeApi } from "./bridge";
-import { readOperationFee, useOperationFeeCurrency } from "./operationFee";
+import { readOperationFee, resolveFeeDisplay, useOperationFeeCurrency } from "./operationFee";
 
 jest.mock("./bridge", () => ({ getBridgeApi: jest.fn() }));
 const mockGetBridgeApi = jest.mocked(getBridgeApi);
@@ -115,9 +116,8 @@ describe("useOperationFeeCurrency", () => {
 
   it.each([
     ["an unknown token", () => getTokenFromAsset.mockResolvedValue(undefined)],
-    ["a failed lookup", () => getTokenFromAsset.mockRejectedValue(new Error("down"))],
     ["a family without token lookup", () => mockGetBridgeApi.mockResolvedValue({})],
-  ])("shows no fee for %s", async (_case, arrange) => {
+  ])("shows no fee for %s, and does not look it up again", async (_case, arrange) => {
     arrange();
     const [op, uncharged] = [operation(), account()];
 
@@ -129,6 +129,61 @@ describe("useOperationFeeCurrency", () => {
     expect(mockGetBridgeApi).toHaveBeenCalledTimes(1);
   });
 
+  describe("a failed lookup", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("is tried again, 1 s then 2 s later, until it answers", async () => {
+      getTokenFromAsset
+        .mockRejectedValueOnce(new Error("offline"))
+        .mockRejectedValueOnce(new Error("offline"))
+        .mockResolvedValueOnce(token);
+      const [op, uncharged] = [operation(), account()];
+
+      const { result } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+      await act(async () => {});
+      expect(getTokenFromAsset).toHaveBeenCalledTimes(1);
+      expect(result.current).toBeNull();
+
+      await act(async () => jest.advanceTimersByTimeAsync(1000));
+      expect(getTokenFromAsset).toHaveBeenCalledTimes(2);
+      expect(result.current).toBeNull();
+
+      await act(async () => jest.advanceTimersByTimeAsync(2000));
+      expect(getTokenFromAsset).toHaveBeenCalledTimes(3);
+      expect(result.current).toEqual({ currency: token, amount: new BigNumber(1601) });
+    });
+
+    it("is not tried again once the screen is closed", async () => {
+      getTokenFromAsset.mockRejectedValue(new Error("offline"));
+      const [op, uncharged] = [operation(), account()];
+
+      const { unmount } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+      await act(async () => {});
+      unmount();
+      await act(async () => jest.advanceTimersByTimeAsync(60_000));
+
+      expect(getTokenFromAsset).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("starts no token lookup once the screen is closed", async () => {
+    const bridgeApi = deferred<{ getTokenFromAsset: jest.Mock }>();
+    mockGetBridgeApi.mockReturnValue(bridgeApi.promise);
+    const [op, uncharged] = [operation(), account()];
+
+    const { unmount } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+    unmount();
+    await act(async () => bridgeApi.resolve({ getTokenFromAsset }));
+
+    expect(getTokenFromAsset).not.toHaveBeenCalled();
+  });
+
   it("shows no token resolved for another operation", async () => {
     const first = deferred<TokenCurrency>();
     getTokenFromAsset.mockReturnValueOnce(first.promise).mockReturnValueOnce(new Promise(() => {}));
@@ -137,6 +192,7 @@ describe("useOperationFeeCurrency", () => {
       ({ op }: { op: Operation }) => useOperationFeeCurrency(op, uncharged),
       { initialProps: { op: operation({ id: "first" }) } },
     );
+    await waitFor(() => expect(getTokenFromAsset).toHaveBeenCalledTimes(1));
 
     rerender({ op: operation({ id: "second" }) });
     await act(async () => first.resolve(token));
@@ -159,5 +215,70 @@ describe("useOperationFeeCurrency", () => {
     expect(result.current).toBeNull();
     await waitFor(() => expect(getTokenFromAsset).toHaveBeenLastCalledWith(otherAsset));
     expect(result.current).toBeNull();
+  });
+});
+
+describe("resolveFeeDisplay", () => {
+  const native = { type: "CryptoCurrency", id: "chain" } as CryptoCurrency;
+  const familyToken = { type: "TokenCurrency", id: "chain/erc20/family" } as TokenCurrency;
+  const nativeFee = new BigNumber(21);
+  const withFees = { ...account(), type: "Account", currency: native } as Account;
+  const op = operation({ fee: nativeFee });
+  const getDisplayFee = jest.fn(() => new BigNumber(7));
+  const tokenFee = { currency: token, amount: new BigNumber(1601) };
+
+  beforeEach(() => getDisplayFee.mockClear());
+
+  it("shows the family's currency and amount first", () => {
+    expect(
+      resolveFeeDisplay({
+        operation: op,
+        account: withFees,
+        familyCurrency: familyToken,
+        tokenFee,
+        getDisplayFee,
+      }),
+    ).toEqual({ currency: familyToken, amount: new BigNumber(7), isUnresolved: false });
+  });
+
+  it("shows no fee while the family's currency is unresolved", () => {
+    expect(
+      resolveFeeDisplay({ operation: op, account: withFees, familyCurrency: null, tokenFee }),
+    ).toMatchObject({ isUnresolved: true });
+  });
+
+  it("shows a token fee without asking the family for its amount", () => {
+    expect(
+      resolveFeeDisplay({
+        operation: op,
+        account: withFees,
+        familyCurrency: undefined,
+        tokenFee,
+        getDisplayFee,
+      }),
+    ).toEqual({ currency: token, amount: new BigNumber(1601), isUnresolved: false });
+    expect(getDisplayFee).not.toHaveBeenCalled();
+  });
+
+  it("shows no fee while the token fee is unresolved", () => {
+    expect(
+      resolveFeeDisplay({
+        operation: op,
+        account: withFees,
+        familyCurrency: undefined,
+        tokenFee: null,
+      }),
+    ).toMatchObject({ isUnresolved: true });
+  });
+
+  it("shows a native fee in the account's fee currency", () => {
+    expect(
+      resolveFeeDisplay({
+        operation: op,
+        account: withFees,
+        familyCurrency: undefined,
+        tokenFee: undefined,
+      }),
+    ).toEqual({ currency: native, amount: nativeFee, isUnresolved: false });
   });
 });
