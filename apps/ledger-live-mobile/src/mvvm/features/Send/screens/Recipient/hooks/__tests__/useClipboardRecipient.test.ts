@@ -104,4 +104,30 @@ describe("useClipboardRecipient", () => {
     });
     expect(mockedReadClipboard).not.toHaveBeenCalled();
   });
+
+  it("stops validating a clipboard address it already read once disabled", async () => {
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
+    const { rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) =>
+        useClipboardRecipient({
+          enabled,
+          currency,
+          account,
+          currentAccountId: "account_1",
+          recipientSupportsDomain: true,
+        }),
+      { initialProps: { enabled: true } },
+    );
+    await waitFor(() => {
+      expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+        expect.objectContaining({ searchValue: "0x1234567890abcdef" }),
+      );
+    });
+
+    rerender({ enabled: false });
+
+    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ searchValue: "" }),
+    );
+  });
 });
