@@ -286,6 +286,31 @@ describe("craftTransaction", () => {
     expect(crafted.details?.fee).toBe(2_500n);
   });
 
+  it("signs the caller's custom fee, not the rate its forwarded estimate carries", async () => {
+    // The custom fee comes with a non-custom strategy: the estimate is priced at the medium rate
+    // and its `feePerByte` is forwarded to crafting beside the custom fee.
+    fund(ADDRESSES.nativeSegwit, [80_000]);
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      { feesStrategy: "medium" },
+    );
+    expect(estimation.parameters).toHaveProperty("feePerByte");
+    for (const fees of [5_000n, "5000"]) {
+      const crafted = await craftTransaction(
+        testContext(),
+        "bitcoin",
+        intent(ADDRESSES.nativeSegwit),
+        {
+          value: 5_000n,
+          parameters: { ...estimation.parameters, feesStrategy: "medium", fees },
+        },
+      );
+      expect(crafted.details?.fee).toBe(5_000n);
+    }
+  });
+
   it("crafts with an absolute fee without reading the explorer's rates", async () => {
     fund(ADDRESSES.nativeSegwit, [80_000]);
     // Only the relay floor is read: the rates endpoint is down.
