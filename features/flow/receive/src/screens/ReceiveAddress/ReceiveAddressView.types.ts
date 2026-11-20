@@ -56,6 +56,8 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
   actions: ReceiveAddressActionsView;
+  /** A device verification runs: on desktop, its own dialog takes the place of this one. */
+  isVerifying: boolean;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */
