@@ -1,12 +1,16 @@
 import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
+import { aleoAccountKey } from "../families/aleo/accountKey";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
     accountDescriptorType: "address",
+    accountKey: aleoAccountKey,
+    accountCompletion: { kind: "viewKey" },
     loadSetup: () => import("../families/aleo/setup"),
+    loadLocalApi: () => import("../families/aleo/coinModuleApi").then(m => m.createLocalAleoApi),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
@@ -126,6 +130,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
     loadAccountStatus: () => import("../families/concordium/accountStatus").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/concordium/coinModuleApi").then(m => m.createLocalConcordiumApi),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),

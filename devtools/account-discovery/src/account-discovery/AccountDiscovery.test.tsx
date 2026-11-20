@@ -12,6 +12,8 @@ const idle: AccountDiscoveryState = {
   status: "idle",
   rows: [],
   counters: { derivations: 0, statusReads: 0 },
+  selection: { completable: 0, addable: 0 },
+  completion: { status: "idle" },
 };
 
 const props = (over: Partial<AccountDiscoveryToolProps> = {}): AccountDiscoveryToolProps => ({
@@ -21,6 +23,9 @@ const props = (over: Partial<AccountDiscoveryToolProps> = {}): AccountDiscoveryT
   ],
   state: idle,
   onScan: jest.fn(),
+  onToggle: jest.fn(),
+  onComplete: jest.fn(),
+  onAdd: jest.fn(),
   ...over,
 });
 
@@ -47,6 +52,7 @@ describe("AccountDiscovery", () => {
 
   it("lists the accounts found with what the scan cost", () => {
     const state: AccountDiscoveryState = {
+      ...idle,
       status: "scanning",
       rows: [
         {
@@ -77,6 +83,60 @@ describe("AccountDiscovery", () => {
     expect(screen.getByText("· onboarding")).toBeVisible();
     expect(screen.getByText("+1.5 s")).toBeVisible();
     expect(screen.getByText("+20 ms")).toBeVisible();
+  });
+
+  describe("selection, completion and add", () => {
+    const row = {
+      derivationMode: "",
+      used: true,
+      descriptor: "account:2:address:aleo:main:aleo1a:m/44h/683h/0h/0h",
+      foundAtMs: 10,
+      needsCompletion: true,
+    } as const;
+    const state: AccountDiscoveryState = {
+      ...idle,
+      status: "done",
+      rows: [
+        { ...row, key: "a", index: 0, selected: true, completion: "completed" },
+        { ...row, key: "b", index: 1, selected: true, completion: "refused" },
+        { ...row, key: "c", index: 2, added: true },
+      ],
+      selection: { completable: 1, addable: 1 },
+    };
+
+    it("shows where each account stands, without its completed key", () => {
+      render(<AccountDiscovery {...props({ state })} />);
+      expect(screen.getByText("· completed")).toBeVisible();
+      expect(screen.getByText("· refused")).toBeVisible();
+      expect(screen.getByText("· added")).toBeVisible();
+      expect(screen.getByLabelText("Select default #0")).toBeChecked();
+      expect(screen.getByLabelText("Select default #2")).toBeDisabled();
+    });
+
+    it("toggles, completes and adds the selection", async () => {
+      const onToggle = jest.fn();
+      const onComplete = jest.fn();
+      const onAdd = jest.fn();
+      render(<AccountDiscovery {...props({ state, onToggle, onComplete, onAdd })} />);
+      await userEvent.click(screen.getByLabelText("Select default #1"));
+      await userEvent.click(screen.getByRole("button", { name: "Complete selected" }));
+      await userEvent.click(screen.getByRole("button", { name: "Add 1" }));
+      expect(onToggle).toHaveBeenCalledWith("b");
+      expect(onComplete).toHaveBeenCalledTimes(1);
+      expect(onAdd).toHaveBeenCalledTimes(1);
+    });
+
+    it("locks the page while the completion runs", () => {
+      render(
+        <AccountDiscovery
+          {...props({ state: { ...state, completion: { status: "completing" } } })}
+        />,
+      );
+      expect(screen.getByText("Completing…")).toBeVisible();
+      expect(screen.getByRole("button", { name: "Complete selected" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Add 1" })).toBeDisabled();
+      expect(screen.getByLabelText("Select default #0")).toBeDisabled();
+    });
   });
 
   it("shows the error of a failed scan", () => {

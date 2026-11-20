@@ -1,0 +1,291 @@
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { makeGetAccountShape } from "../../bridge/sync";
+import * as gateway from "../../network/gateway";
+import resolver from "../../signer";
+import {
+  createMockCantonCurrency,
+  createMockCoinConfigValue,
+  createMockContext,
+  createMockPendingTransferProposal,
+} from "../../test/fixtures";
+import * as balance from "../instrumentBalances";
+import { getAccountStatus } from "../getAccountStatus";
+import { TopologyChangeError } from "../../types/errors";
+
+jest.mock("../../network/gateway", () => ({
+  ...jest.requireActual("../../network/gateway"),
+  getPartyByPubKey: jest.fn(),
+  getPartyById: jest.fn(),
+  getLedgerEnd: jest.fn(),
+  getNativeInstrument: jest.fn(),
+  getOperations: jest.fn(),
+  getPendingTransferProposals: jest.fn(),
+  getCalTokensCached: jest.fn(),
+  getEnabledInstrumentsCached: jest.fn(),
+}));
+jest.mock("../instrumentBalances");
+jest.mock("../../signer");
+const mockFindTokenById = jest.fn();
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
+  getCryptoAssetsStore: () => ({ findTokenById: mockFindTokenById }),
+}));
+
+const mockedGateway = jest.mocked(gateway);
+const mockedBalance = jest.mocked(balance);
+
+const config = createMockCoinConfigValue({ minReserve: 0 });
+const context = createMockContext(config);
+const currency = createMockCantonCurrency();
+
+const TOKEN_ID = "canton_network/cip56/cbtc";
+const TOKEN_INSTRUMENT = "cbtc-instrument";
+const TOKEN_ADMIN = "cbtc-admin";
+const cbtc = {
+  type: "TokenCurrency",
+  id: TOKEN_ID,
+  contractAddress: TOKEN_ADMIN,
+  parentCurrency: currency,
+  tokenType: "cip56",
+  name: "CBTC",
+  ticker: "CBTC",
+  units: [{ name: "CBTC", code: "CBTC", magnitude: 8 }],
+} as unknown as TokenCurrency;
+
+const holding = (instrumentId: string, adminId: string, value: bigint): balance.CantonBalance => ({
+  value,
+  locked: 0n,
+  asset: { type: instrumentId },
+  utxoCount: 1,
+  instrumentId,
+  adminId,
+});
+const amulet = (value: bigint) => holding("Amulet", "AmuletAdmin", value);
+const cbtcHolding = (value: bigint) => holding(TOKEN_INSTRUMENT, TOKEN_ADMIN, value);
+
+const operation = (instrumentId = "Amulet", instrumentAdmin = "AmuletAdmin") =>
+  ({
+    transaction_hash: "tx",
+    uid: "uid",
+    type: "Receive",
+    status: "Success",
+    fee: { value: "0" },
+    transfers: [{ value: "10", details: { operationType: "transfer" } }],
+    transaction_timestamp: new Date(0).toISOString(),
+    senders: ["sender"],
+    recipients: ["party"],
+    block: { height: 1, hash: "block" },
+    asset: { type: instrumentId === "Amulet" ? "native" : "token", instrumentId, instrumentAdmin },
+  }) as unknown as gateway.OperationInfo;
+const operationWithoutTransfers = { ...operation(), transfers: [] } as gateway.OperationInfo;
+
+type Chain = {
+  balances?: balance.CantonBalance[];
+  proposals?: gateway.TransferProposal[];
+  operations?: gateway.OperationInfo[];
+  listed?: boolean;
+  enabled?: boolean;
+};
+
+function chain({
+  balances = [],
+  proposals = [],
+  operations = [],
+  listed = true,
+  enabled = true,
+}: Chain) {
+  mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: "party" } as never);
+  mockedGateway.getLedgerEnd.mockResolvedValue(1);
+  mockedGateway.getNativeInstrument.mockResolvedValue({
+    instrumentId: "Amulet",
+    instrumentAdmin: "AmuletAdmin",
+  });
+  mockedBalance.getInstrumentBalances.mockImplementation(async () => [...balances]);
+  mockedGateway.getPendingTransferProposals.mockResolvedValue(proposals);
+  mockedGateway.getOperations.mockResolvedValue({ next: -1, operations });
+  mockedGateway.getCalTokensCached.mockResolvedValue(
+    new Map(listed ? [[TOKEN_ID, TOKEN_INSTRUMENT]] : []),
+  );
+  mockFindTokenById.mockImplementation(async (id: string) => (id === TOKEN_ID ? cbtc : undefined));
+  mockedGateway.getEnabledInstrumentsCached.mockResolvedValue(
+    new Set(enabled ? [gateway.getKey(TOKEN_INSTRUMENT, TOKEN_ADMIN)] : []),
+  );
+}
+
+async function usedBySync(): Promise<boolean> {
+  jest.mocked(resolver).mockReturnValue(async () => ({ publicKey: "ab", address: "" }) as never);
+  const shape = await makeGetAccountShape({} as never, context)(
+    {
+      address: "",
+      currency,
+      derivationMode: "",
+      derivationPath: "44'/6767'/0'/0'/0'",
+      deviceId: "device",
+      index: 0,
+    },
+    { paginationConfig: {} },
+  );
+  return Boolean(shape.used);
+}
+
+describe("getAccountStatus", () => {
+  beforeEach(() => jest.resetAllMocks());
+
+  it("is not onboarded when the gateway has no party for the key", async () => {
+    mockedGateway.getPartyByPubKey.mockResolvedValue({} as never);
+    await expect(getAccountStatus(context, currency.id, "ab")).resolves.toEqual({
+      used: false,
+      isOnboarded: false,
+    });
+    expect(mockedGateway.getPartyByPubKey).toHaveBeenCalledWith(config, "ab");
+    expect(mockedBalance.getInstrumentBalances).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "a party not found",
+      new TopologyChangeError("Topology change detected. Re-onboarding required."),
+    ],
+    ["a 404", Object.assign(new Error("Not Found"), { name: "LedgerAPI4xx", status: 404 })],
+    [
+      "its 400 for an unknown public key",
+      Object.assign(new Error('Party with public key "ab" does not exist'), {
+        name: "LedgerAPI4xx",
+        status: 400,
+      }),
+    ],
+  ])("is not onboarded when the gateway answers %s", async (_, error) => {
+    mockedGateway.getPartyByPubKey.mockRejectedValue(error);
+    await expect(getAccountStatus(context, currency.id, "ab")).resolves.toEqual({
+      used: false,
+      isOnboarded: false,
+    });
+  });
+
+  it.each([
+    ["a timeout", new Error("timeout of 30000ms exceeded")],
+    ["a 5xx", Object.assign(new Error("Bad Gateway"), { name: "LedgerAPI5xx", status: 502 })],
+  ])("fails on %s instead of calling the key not onboarded", async (_, error) => {
+    mockedGateway.getPartyByPubKey.mockRejectedValue(error);
+    await expect(getAccountStatus(context, currency.id, "ab")).rejects.toBe(error);
+  });
+
+  it("reads the operations from the first ledger offset", async () => {
+    chain({});
+    await getAccountStatus(context, currency.id, "ab");
+    expect(mockedGateway.getOperations).toHaveBeenCalledWith(config, "party", {
+      minOffset: 0,
+      cursor: undefined,
+      limit: 1000,
+    });
+  });
+
+  it("reads the next pages until it finds a native operation", async () => {
+    chain({});
+    mockedGateway.getOperations
+      .mockResolvedValueOnce({ next: 3, operations: [operation(TOKEN_INSTRUMENT, TOKEN_ADMIN)] })
+      .mockResolvedValueOnce({ next: 6, operations: [operation()] });
+    await expect(getAccountStatus(context, currency.id, "ab")).resolves.toEqual({
+      used: true,
+      isOnboarded: true,
+    });
+    expect(mockedGateway.getOperations).toHaveBeenCalledTimes(2);
+    expect(mockedGateway.getOperations).toHaveBeenLastCalledWith(config, "party", {
+      minOffset: 0,
+      cursor: 2,
+      limit: 1000,
+    });
+  });
+
+  it("rejects with an AbortError when the signal has no reason", async () => {
+    mockedGateway.getPartyByPubKey.mockReturnValue(new Promise(() => {}));
+    const controller = new AbortController();
+    const status = getAccountStatus({ ...context, signal: controller.signal }, currency.id, "ab");
+    await Promise.resolve();
+    Object.defineProperty(controller.signal, "reason", { value: undefined });
+    controller.abort();
+    await expect(status).rejects.toMatchObject({ name: "AbortError" });
+  });
+
+  it("rejects with the abort reason and stops reading once aborted", async () => {
+    chain({});
+    const controller = new AbortController();
+    const reason = new Error("aborted");
+    mockedGateway.getPendingTransferProposals.mockImplementation(async () => {
+      controller.abort(reason);
+      return [];
+    });
+    await expect(
+      getAccountStatus({ ...context, signal: controller.signal }, currency.id, "ab"),
+    ).rejects.toBe(reason);
+    expect(mockedGateway.getPendingTransferProposals).toHaveBeenCalled();
+    expect(mockedGateway.getCalTokensCached).not.toHaveBeenCalled();
+    expect(mockedGateway.getOperations).not.toHaveBeenCalled();
+  });
+
+  it("stops reading once tokens resolve after an abort", async () => {
+    chain({ balances: [cbtcHolding(1n), cbtcHolding(2n)] });
+    const controller = new AbortController();
+    const reason = new Error("aborted");
+    mockFindTokenById.mockImplementation(async () => {
+      controller.abort(reason);
+      return cbtc;
+    });
+    await expect(
+      getAccountStatus({ ...context, signal: controller.signal }, currency.id, "ab"),
+    ).rejects.toBe(reason);
+    expect(mockedGateway.getCalTokensCached).toHaveBeenCalled();
+    expect(mockedGateway.getOperations).not.toHaveBeenCalled();
+  });
+
+  it("rejects with the abort reason without waiting for the request in flight", async () => {
+    mockedGateway.getPartyByPubKey.mockReturnValue(new Promise(() => {}));
+    const controller = new AbortController();
+    const reason = new Error("aborted");
+    const status = getAccountStatus({ ...context, signal: controller.signal }, currency.id, "ab");
+    await Promise.resolve();
+    controller.abort(reason);
+    await expect(status).rejects.toBe(reason);
+  });
+
+  it("does not call the gateway when already aborted", async () => {
+    chain({});
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      getAccountStatus({ ...context, signal: controller.signal }, currency.id, "ab"),
+    ).rejects.toMatchObject({ name: "AbortError" });
+    expect(mockedGateway.getPartyByPubKey).not.toHaveBeenCalled();
+  });
+
+  it.each<[string, Chain, boolean]>([
+    ["nothing on the party", { balances: [amulet(0n)] }, false],
+    ["a native balance", { balances: [amulet(1n)] }, true],
+    ["a pending transfer proposal", { proposals: [createMockPendingTransferProposal()] }, true],
+    ["a native operation", { operations: [operation()] }, true],
+    [
+      "only an operation the sync drops as invalid",
+      { operations: [operationWithoutTransfers] },
+      false,
+    ],
+    [
+      "only a token operation with no token account",
+      { operations: [operation(TOKEN_INSTRUMENT, TOKEN_ADMIN)] },
+      false,
+    ],
+    ["an enabled listed token", { balances: [cbtcHolding(1n)] }, true],
+    ["an enabled listed token at zero", { balances: [cbtcHolding(0n)] }, true],
+    ["only a disabled token", { balances: [cbtcHolding(1n)], enabled: false }, false],
+    [
+      "only an unlisted token, not read as the native balance",
+      { balances: [cbtcHolding(1n)], listed: false },
+      false,
+    ],
+  ])("with %s, is used as the sync decides", async (_, state, used) => {
+    chain(state);
+    await expect(getAccountStatus(context, currency.id, "ab")).resolves.toEqual({
+      used,
+      isOnboarded: true,
+    });
+    await expect(usedBySync()).resolves.toBe(used);
+  });
+});

@@ -7,7 +7,7 @@ import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import * as instrumentBalances from "./instrumentBalances";
+import * as instrumentBalances from "../logic/instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
@@ -32,7 +32,7 @@ jest.mock("../network/gateway", () => ({
 }));
 jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("./instrumentBalances");
+jest.mock("../logic/instrumentBalances");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 

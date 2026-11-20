@@ -1,9 +1,11 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { isCantonAccount } from "./bridge/serialization";
-import { CantonAccount } from "./types";
+import type { CantonAccount, CantonResources } from "./types";
 
 export function isCantonAccountEmpty(
-  account: Pick<CantonAccount, "operationsCount" | "balance" | "subAccounts" | "cantonResources">,
+  account: Pick<CantonAccount, "operationsCount" | "balance" | "subAccounts"> & {
+    cantonResources?: Pick<CantonResources, "pendingTransferProposals">;
+  },
 ): boolean {
   return (
     account.operationsCount === 0 &&
