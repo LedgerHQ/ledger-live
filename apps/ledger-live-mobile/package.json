@@ -193,7 +193,7 @@
     "@features/platform-intent-verify-address": "workspace:^",
     "@features/platform-intent-wallet-sync": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",
-    "@formatjs/intl-locale": "3.4.5",
+    "@formatjs/intl-locale": "3.4.6",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/auth": "catalog:",
