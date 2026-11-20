@@ -3,7 +3,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
-import { getSwapStatusNetwork } from "../../../exchange/swap/fusionSwapStatus";
+import { getSwapStatusNetwork } from "../../../exchange/swap/getSwapStatuses";
 import {
   fetchTransactionSwapStatus,
   getSwapTransactionLegStatusesFromAccounts,

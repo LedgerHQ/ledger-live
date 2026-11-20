@@ -98,15 +98,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     supportUrl: "https://help.1inch.com/en/",
     mainUrl: "https://1inch.com/",
   },
-  oneinchfusion: {
-    type: "DEX",
-    needsKYC: false,
-    useInExchangeApp: false,
-    displayName: "1inch",
-    termsOfUseUrl: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
-    supportUrl: "https://help.1inch.com/en/",
-    mainUrl: "https://1inch.com/",
-  },
   paraswap: {
     type: "DEX",
     needsKYC: false,

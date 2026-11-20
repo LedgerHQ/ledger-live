@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { isSwapOperationPending } from "./";
-import { getSwapStatusNetwork, getSwapStatuses } from "./fusionSwapStatus";
+import { getSwapStatusNetwork, getSwapStatuses } from "./getSwapStatuses";
 import type {
   TokenAccount,
   Account,
@@ -20,8 +20,6 @@ import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
  */
 export function isSwapAwaitingPayoutHash({ operationId, status }: SwapOperation): boolean {
   if (operationId) return false;
-  // Expired is terminal, like refunded: no payout tx will ever come.
-  if (status === TransactionStatus.Expired) return false;
   return isSwapOperationPending(status) || status === TransactionStatus.Finished;
 }
 
