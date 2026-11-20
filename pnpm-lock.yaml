@@ -213,8 +213,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@ledgerhq/coin-evm':
-      specifier: 17.1.2
-      version: 17.1.2
+      specifier: 17.1.3
+      version: 17.1.3
     '@ledgerhq/coin-hypercore':
       specifier: 4.2.1
       version: 4.2.1
@@ -1438,7 +1438,7 @@ importers:
         version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -2400,7 +2400,7 @@ importers:
         version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -3208,7 +3208,7 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.2.0
@@ -16614,7 +16614,7 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.2.0
@@ -18839,7 +18839,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -20488,7 +20488,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -29574,8 +29574,8 @@ packages:
   '@ledgerhq/auth@0.2.0':
     resolution: {integrity: sha512-pssQw/bF03oHiTtANtI4VMA/dScNTR3NlR5bvPidG+LI96EQluz1eAlBiiaN5O3IZWWlye5hBo0l3J9DUIazKA==}
 
-  '@ledgerhq/coin-evm@17.1.2':
-    resolution: {integrity: sha512-WFLDtpWm0dAuMDYr11WJWWuxYEq50ZSSuXpcFEbXHZqzYit5RupZsiW+y5W/svQbyP86k3js24ab1qVjIGVZeg==}
+  '@ledgerhq/coin-evm@17.1.3':
+    resolution: {integrity: sha512-6xhY3E+PKbp/UG+B+1GtPvr4YrC462iznBMO0YuDTvt4JagnzsydqKWUAVkZhLNhF/f9wQt7M19+k2TXm0MzDA==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -41952,10 +41952,6 @@ packages:
   ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
 
-  ripple-address-codec@4.3.1:
-    resolution: {integrity: sha512-Qa3+9wKVvpL/xYtT6+wANsn0A1QcC5CT6IMZbRJZ/1lGt7gmwIfsrCuz1X0+LCEO7zgb+3UT1I1dc0k/5dwKQQ==}
-    engines: {node: '>= 10'}
-
   ripple-address-codec@5.0.0:
     resolution: {integrity: sha512-de7osLRH/pt5HX2xw2TRJtbdLLWHu0RXirpQaEeCnWKY5DYHykh3ETSkofvm0aX0LJiV7kwkegJxQkmbO94gWw==}
     engines: {node: '>= 16'}
@@ -41963,10 +41959,6 @@ packages:
   ripple-address-codec@5.0.1:
     resolution: {integrity: sha512-JQHLKuVJV8lv9Qobmn4aUM2Dpv9WRRLKnNWfM8tN02fAbUtG8mUPsu9q9UYX8P76G4qzytEc5ZKMp/3JggNYmw==}
     engines: {node: '>= 18'}
-
-  ripple-binary-codec@1.11.0:
-    resolution: {integrity: sha512-g7+gs3T+NfoeW6vIq5dcN0CkIT4t/zwRzFxz8X2RzfbrWRnewPUKqQbmBgs05tXLX5NuWPaneiaAVpFpYBcdfw==}
-    engines: {node: '>= 10'}
 
   ripple-binary-codec@2.11.0:
     resolution: {integrity: sha512-qad61CYAqIi8H7DuPnuDpj40wrXY8wYrc1YbuDcA9G/NZG0Uu8unHNbTC6Itz8SlOSL0P/nF/8HTFW/1caVlTg==}
@@ -48303,7 +48295,7 @@ snapshots:
       jwt-decode: 4.0.0
       zod: 4.6.7
 
-  '@ledgerhq/coin-evm@17.1.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
+  '@ledgerhq/coin-evm@17.1.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 13.2.0
@@ -62905,11 +62897,6 @@ snapshots:
       hash-base: 3.0.4
       inherits: 2.0.4
 
-  ripple-address-codec@4.3.1:
-    dependencies:
-      base-x: 3.0.9
-      create-hash: 1.2.0
-
   ripple-address-codec@5.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
       '@scure/base': 1.2.6
@@ -62925,15 +62912,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  ripple-binary-codec@1.11.0:
-    dependencies:
-      assert: 2.1.0
-      big-integer: 1.6.52
-      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      create-hash: 1.2.0
-      decimal.js: 10.6.0
-      ripple-address-codec: 4.3.1
 
   ripple-binary-codec@2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
