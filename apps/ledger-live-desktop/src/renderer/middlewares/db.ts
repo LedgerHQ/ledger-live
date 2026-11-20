@@ -37,10 +37,6 @@ import { predictionsSlice } from "@domain/entity-predictions";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
 import {
-  receiveVerifyHintPersistedSelector,
-  receiveVerifyHintSlice,
-} from "@features/flow-receive/state";
-import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
   overrideAccountAnalyticsIntroductionEligibility,
@@ -159,12 +155,6 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     const res = next(action);
     const state = store.getState();
     setKey("app", LARGE_SCREEN_UPSELL_MODAL, persistedLargeScreenUpsellModalSelector(state));
-    return res;
-  }
-
-  if (action.type.startsWith(`${receiveVerifyHintSlice.name}/`)) {
-    const res = next(action);
-    setKey("app", "receiveVerifyHint", receiveVerifyHintPersistedSelector(store.getState()));
     return res;
   }
 

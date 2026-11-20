@@ -1,5 +1,6 @@
 import { payCardBalancePersistedSelector } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-tour/state";
+import { receiveVerifyHintPersistedSelector } from "@features/flow-receive/state";
 import { payCardLoginIntroPersistedSelector } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-card-widget/state";
 import { setKey } from "~/renderer/storage";
@@ -7,6 +8,7 @@ import type { State } from "../reducers";
 
 const PAY_ACTION_PREFIXES = [
   "payCardFeatureTour/",
+  "receiveVerifyHint/",
   "payCardBalance/",
   "payCardLoginIntro/",
   "payCardOnboardingWidget/",
@@ -18,6 +20,7 @@ export const isPayAction = (actionType: string) =>
 export const persistPayCard = (state: State) =>
   setKey("app", "payCard", {
     ...payCardFeatureTourPersistedSelector(state),
+    ...receiveVerifyHintPersistedSelector(state),
     ...payCardBalancePersistedSelector(state),
     ...payCardLoginIntroPersistedSelector(state),
     ...payCardOnboardingWidgetPersistedSelector(state),

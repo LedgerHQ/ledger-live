@@ -26,7 +26,6 @@ import {
   saveMarketListConfig,
   saveMarketBannerState,
   savePayCardState,
-  saveReceiveVerifyHintState,
   savePostOnboardingState,
   saveSettings,
   saveTrustchainState,
@@ -213,6 +212,7 @@ const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marke
 
 export const payCardPersistedSelector = (state: State) => ({
   ...payCardFeatureTourPersistedSelector(state),
+  ...receiveVerifyHintPersistedSelector(state),
   ...payCardBalancePersistedSelector(state),
   ...payCardLoginIntroPersistedSelector(state),
   ...payCardOnboardingWidgetPersistedSelector(state),
@@ -221,19 +221,25 @@ export const payCardPersistedSelector = (state: State) => ({
 export const payCardDbSaveSliceSelector = createSelector(
   (state: State) => state.payCardBalance,
   (state: State) => state.payCardFeatureTour,
+  (state: State) => state.receiveVerifyHint,
   (state: State) => state.payCardLoginIntro,
   (state: State) => state.payCardOnboardingWidget,
-  (payCardBalance, payCardFeatureTour, payCardLoginIntro, payCardOnboardingWidget) => ({
+  (
     payCardBalance,
     payCardFeatureTour,
+    receiveVerifyHint,
+    payCardLoginIntro,
+    payCardOnboardingWidget,
+  ) => ({
+    payCardBalance,
+    payCardFeatureTour,
+    receiveVerifyHint,
     payCardLoginIntro,
     payCardOnboardingWidget,
   }),
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
-const receiveVerifyHintNotEquals = (a: State, b: State) =>
-  a.receiveVerifyHint !== b.receiveVerifyHint;
 const accountAnalyticsIntroductionNotEquals = (a: State, b: State) =>
   a.accountAnalyticsIntroduction !== b.accountAnalyticsIntroduction;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
@@ -358,14 +364,6 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: payCardPersistedNotEquals,
     lense: payCardPersistedSelector,
-  });
-
-  useDBSaveEffect({
-    stateSelector: (state: State) => state.receiveVerifyHint,
-    save: saveReceiveVerifyHintState,
-    throttle: 500,
-    getChangesStats: receiveVerifyHintNotEquals,
-    lense: receiveVerifyHintPersistedSelector,
   });
 
   useDBSaveEffect({

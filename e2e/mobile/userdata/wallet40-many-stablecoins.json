@@ -2,9 +2,7 @@
     "data": {
         "payCard": {
             "hasSeenFeatureTour": true,
-            "hasSeenLoginIntro": true
-        },
-        "receiveVerifyHint": {
+            "hasSeenLoginIntro": true,
             "hasSeenReceiveVerifyHint": true
         },
         "settings": {
