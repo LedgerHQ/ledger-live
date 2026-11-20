@@ -9,6 +9,7 @@ import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
 import AppStateButton from "./AppStateButton";
+import AppDeveloper from "./AppDeveloper";
 import ByteSize from "~/components/ByteSize";
 
 type Props = {
@@ -47,7 +48,7 @@ const LabelContainer = styled(Flex).attrs<LabelContainerProps>({
 })``;
 
 export default memo(function ({ app, state, dispatch, setStorageWarning, optimisticState }: Props) {
-  const { name: appName, version: appVersion, displayName, authorName } = app;
+  const { name: appName, version: appVersion, displayName } = app;
   const { installed, deviceInfo, deviceModel } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
@@ -95,18 +96,7 @@ export default memo(function ({ app, state, dispatch, setStorageWarning, optimis
               </>
             )}
           </Tag>
-          {authorName && displayAppDeveloperName ? (
-            <Text
-              variant="small"
-              fontWeight="medium"
-              color="neutral.c70"
-              pl={3}
-              flexShrink={1}
-              numberOfLines={1}
-            >
-              {authorName}
-            </Text>
-          ) : null}
+          {displayAppDeveloperName ? <AppDeveloper app={app} /> : null}
         </Flex>
       </LabelContainer>
       <Text variant="body" fontWeight="medium" color="neutral.c80" my={3}>
