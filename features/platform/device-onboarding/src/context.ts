@@ -28,6 +28,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
+    pollingPaused: false,
     successAcknowledgedOnSession: null,
     firmware: null,
     returningFromFirmwareUpdate: false,
@@ -148,9 +149,11 @@ export const contextActions = {
     genuineVerdict: null,
     lastGenuineFailure: null,
     checksPaused: false,
+    pollingPaused: false,
     successAcknowledgedOnSession: null,
   }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.
+  // The polling pause is not reset here: the Recover app still owns the device on the new session.
   startNewSession: update(({ event }) => {
     if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
       return {};
@@ -180,6 +183,8 @@ export const contextActions = {
   })),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
+  pausePolling: update({ pollingPaused: true }),
+  resumePolling: update({ pollingPaused: false }),
   rememberSetupStep: update(({ context, event }) => {
     if (event.type !== "STEP_CHANGED") {
       return {};
@@ -203,5 +208,6 @@ export const contextActions = {
     currentSetupStep: null,
     seedPath: null,
     recoveryKeyBackupOpen: false,
+    pollingPaused: false,
   }),
 };

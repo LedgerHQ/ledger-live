@@ -1,7 +1,8 @@
-import { createActor, setup, type AnyActorLogic, type EventObject } from "xstate";
+import { createActor, sendTo, setup, type AnyActorLogic, type EventObject } from "xstate";
 
 export type RunningActor<TEvent> = {
   received: TEvent[];
+  send(event: { type: "PAUSE" } | { type: "RESUME" }): void;
   stop(): void;
 };
 
@@ -9,6 +10,8 @@ export type RunningActor<TEvent> = {
  * Invokes an actor from a machine that captures whatever it sends back, since a callback actor only
  * reports through its parent.
  */
+type ActorCommand = { type: "PAUSE" } | { type: "RESUME" };
+
 export function runActor<TEvent extends EventObject>(
   actor: AnyActorLogic,
   input: unknown,
@@ -16,23 +19,33 @@ export function runActor<TEvent extends EventObject>(
   const received: TEvent[] = [];
 
   const machine = setup({
-    types: { events: {} as TEvent },
+    types: { events: {} as TEvent | ActorCommand },
     actors: { actor },
     actions: {
       capture: ({ event }) => {
-        if (!event.type.startsWith("xstate.")) {
-          received.push(event);
+        if (event.type === "PAUSE" || event.type === "RESUME" || event.type.startsWith("xstate.")) {
+          return;
         }
+        received.push(event as TEvent);
       },
+      forward: sendTo("actor", ({ event }) => event),
     },
   }).createMachine({
-    invoke: { src: "actor", input },
-    on: { "*": { actions: "capture" } },
+    invoke: { id: "actor", src: "actor", input },
+    on: {
+      PAUSE: { actions: "forward" },
+      RESUME: { actions: "forward" },
+      "*": { actions: "capture" },
+    },
   });
 
   const running = createActor(machine).start();
 
-  return { received, stop: () => running.stop() };
+  return {
+    received,
+    send: event => running.send(event),
+    stop: () => running.stop(),
+  };
 }
 
 /**

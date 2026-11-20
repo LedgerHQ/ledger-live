@@ -47,6 +47,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
+    pollingPaused: false,
     successAcknowledgedOnSession: null,
     firmware: null,
     returningFromFirmwareUpdate: false,

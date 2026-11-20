@@ -1,4 +1,4 @@
-import { setup } from "xstate";
+import { sendTo, setup } from "xstate";
 import { firmwareCheck } from "./actors/firmwareCheck";
 import { genuineCheck } from "./actors/genuineCheck";
 import { readDeviceState } from "./actors/readDeviceState";
@@ -150,6 +150,8 @@ export const deviceOnboardingMachine = setup({
     QUIT: ".quitting",
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
+    // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.
+    RESUME_POLLING: { actions: "resumePolling" },
   },
   output: ({ context, event }) => exitContract(context, event.output),
   states: {
@@ -391,13 +393,20 @@ export const deviceOnboardingMachine = setup({
     deviceSetup: {
       initial: "waiting",
       invoke: {
+        id: "seedPolling",
         src: "seedPolling",
         input: ({ context }) => ({
           dmk: context.dmk,
           sessionId: context.sessionId,
+          paused: context.pollingPaused,
         }),
       },
       on: {
+        PAUSE_POLLING: { actions: sendTo("seedPolling", { type: "PAUSE" }) },
+        RESUME_POLLING: {
+          actions: [sendTo("seedPolling", { type: "RESUME" }), "resumePolling"],
+        },
+        POLLING_PAUSED: { actions: "pausePolling" },
         STEP_CHANGED: [
           {
             guard: "stepBackupRecoveryKey",
