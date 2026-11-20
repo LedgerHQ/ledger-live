@@ -1,5 +1,5 @@
 import { getMultipleStatus } from "./getStatus";
-import { getSwapStatuses } from "./fusionSwapStatus";
+import { getSwapStatuses } from "./getSwapStatuses";
 
 jest.mock("./getStatus", () => ({ getMultipleStatus: jest.fn() }));
 const mockedGetMultipleStatus = jest.mocked(getMultipleStatus);
