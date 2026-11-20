@@ -10,6 +10,9 @@ export const walletSyncSlice = createSlice({
       state.walletSyncState.version = payload.version;
     },
   },
+  selectors: {
+    selectWalletSyncState: (state): WSState => state.walletSyncState,
+  },
 });
 
 export const { walletSyncUpdate } = walletSyncSlice.actions;

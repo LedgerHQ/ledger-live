@@ -1,5 +1,5 @@
 {
-  "extends": "@support/tsconfig/logic",
+  "extends": "@support/tsconfig/client-react",
   "compilerOptions": {
     "paths": {
       "*": ["./*"]

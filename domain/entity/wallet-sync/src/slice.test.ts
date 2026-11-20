@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { selectWalletSyncState } from "./selectors";
 import { walletSyncSlice, walletSyncUpdate } from "./slice";
 
 function makeStore() {
@@ -25,5 +26,11 @@ describe("walletSyncSlice", () => {
     store.dispatch(walletSyncUpdate({ data: { accounts: [] }, version: 3 }));
     store.dispatch(walletSyncUpdate({ data: null, version: 0 }));
     expect(store.ws()).toEqual({ data: null, version: 0 });
+  });
+
+  it("selectWalletSyncState reads the slice where the apps mount it, under wallet", () => {
+    const walletSync = { walletSyncState: { data: { accounts: [] }, version: 3 } };
+
+    expect(selectWalletSyncState({ wallet: { walletSync } })).toBe(walletSync.walletSyncState);
   });
 });

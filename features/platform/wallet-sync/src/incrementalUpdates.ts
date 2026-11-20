@@ -25,7 +25,7 @@ export function makeSaveNewUpdate<
     data: DistantState | null,
     version: number,
     newLocalState: LocalState | null,
-  ) => Promise<void>;
+  ) => void | Promise<void>;
 }): (event: UpdateEvent<DistantState>) => Promise<void> {
   return async (event: UpdateEvent<DistantState>) => {
     switch (event.type) {
@@ -80,7 +80,7 @@ export function makeLocalIncrementalUpdate<
     data: DistantState | null,
     version: number,
     newLocalState: LocalState | null,
-  ) => Promise<void>;
+  ) => void | Promise<void>;
 }): () => Promise<void> {
   return async () => {
     const state = getState();
@@ -89,6 +89,9 @@ export function makeLocalIncrementalUpdate<
     const resolved = await walletsync.resolveIncrementalUpdate(local, data, data);
 
     if (resolved.hasChanges) {
+      const latest = latestWalletStateSelector(getState());
+      // It runs outside the SDK lock, so a deletion or a push may have saved meanwhile.
+      if (latest.data !== data || latest.version !== version) return;
       const localState = localStateSelector(getState());
       const newLocalState = walletsync.applyUpdate(localState, resolved.update);
       await saveUpdate(data, version, newLocalState);
