@@ -10,6 +10,8 @@ const readyTimeout = 180_000;
 const installTimeout = 60_000;
 // An app that skips the check downloads from the local feed right after fetching the signature.
 const downloadTimeout = 15_000;
+// A valid download is ready to install a few seconds after it is sent.
+const stageTimeout = 15_000;
 const quitTimeout = 30_000;
 
 process.on("uncaughtException", error => {
@@ -25,8 +27,12 @@ if (options.downloadSpeed) {
 }
 const startedAt = Date.now();
 const served = new Set<string>();
+const sentInFull = new Set<string>();
 
-const { base, update, app } = await startAutoUpgrade(options, file => served.add(file));
+const { base, update, app } = await startAutoUpgrade(options, {
+  onServe: file => served.add(file),
+  onSent: file => sentInFull.add(file),
+});
 // A run stopped by Ctrl+C or an error must not leave the app running for the next one.
 process.on("exit", () => app.kill("SIGKILL"));
 
@@ -47,6 +53,7 @@ if (!(await waitForApp(signatureFetched, readyTimeout))) {
 }
 
 if (options.badSignature) await checkRejection();
+else if (options.corruptedUpdate) await checkCorruptedDownload();
 else await checkUpgrade();
 
 async function checkUpgrade() {
@@ -75,6 +82,28 @@ async function checkRejection() {
   await quitApp();
 
   exit(true, `${base.version} did not download ${update.version}, which has a bad signature`);
+}
+
+async function checkCorruptedDownload() {
+  console.log(`Waiting for ${base.version} to download the corrupted ${update.version}`);
+  // A differential download gives up on its range request without reading the response, so only
+  // the full download is sent in full.
+  if (!(await waitForApp(() => sentInFull.has(updateBinary), readyTimeout))) {
+    exit(false, `${base.version} did not download ${update.version}, which is correctly signed`);
+  }
+
+  console.log(`Checking that ${base.version} rejects the download`);
+  if (await waitForApp(isUpdateStaged, stageTimeout)) {
+    exit(false, `${base.version} accepted a corrupted download of ${update.version}`);
+  }
+
+  console.log(`Quitting ${base.version}`);
+  await quitApp();
+
+  if (!(await isInstalled(base.version))) {
+    exit(false, `${base.version} was replaced after downloading a corrupted ${update.version}`);
+  }
+  exit(true, `${base.version} rejected a corrupted download of ${update.version}`);
 }
 
 async function waitForApp(check: () => boolean, timeout: number) {
