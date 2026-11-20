@@ -9,6 +9,7 @@ const DAI_TICKER = Currency.POL_DAI.ticker;
 const USDT_TICKER = Currency.ETH_USDT.ticker;
 const USDT_ASSET_NAME = Currency.ETH_USDT.name;
 const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
+const POLYGON_ACCOUNT_NAME = "Polygon 1";
 
 const DAI_ASSET_NAME = Currency.POL_DAI.aggregatedName!;
 const USDT_MARKET_ID = Currency.ETH_USDT.market!.id;
@@ -154,8 +155,7 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await app.account.expectAccountTitleVisible("POLYGON 1");
+    await app.account.waitAndVerifyTokenAccountName(POLYGON_DAI_ASSET_NAME, POLYGON_ACCOUNT_NAME);
     await app.account.expectAccountAddressLabel({
       accountId: POLYGON_DAI_ACCOUNT_ID,
       address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
