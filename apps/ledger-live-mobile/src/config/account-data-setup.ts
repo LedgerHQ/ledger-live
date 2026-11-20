@@ -24,6 +24,10 @@ import type { State } from "~/reducers/types";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
+/** The currency of a coin or token id, for what values or formats the account data. */
+export const findAssetCurrency: CountervaluesHost["findCurrency"] = assetId =>
+  findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId);
+
 /** The app's account data sources, in rank order: for each account, the first that serves it answers. */
 export function accountDataSources(
   getState: () => State,
@@ -32,8 +36,7 @@ export function accountDataSources(
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
   const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
-    findCurrency: assetId =>
-      findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
+    findCurrency: findAssetCurrency,
   };
   const fullSyncHost: FullSyncHost = {
     findAccount: accountUUID => {

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
-import { BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, createFakePort } from "../../__tests__/fixtures";
+import { BITCOIN_ACCOUNT, createFakePort } from "../../__tests__/fixtures";
 import type { HistoryExportPort } from "../../model/ports";
 import { HistoryExportDialog } from "./HistoryExportDialog";
 
@@ -26,22 +26,20 @@ async function selectBitcoinAndExport(user: ReturnType<typeof userEvent.setup>) 
 }
 
 describe("HistoryExportDialog (Web)", () => {
-  it("renders nothing and does not sync while closed", () => {
-    const { port } = renderDialog({ open: false });
+  it("renders nothing while closed", () => {
+    renderDialog({ open: false });
 
     expect(screen.queryByTestId("history-export-dialog")).toBeNull();
-    expect(port.syncAccounts).not.toHaveBeenCalled();
   });
 
-  it("lists the accounts with their balance and syncs them when it opens", () => {
-    const { port } = renderDialog();
+  it("lists the accounts with their balance", () => {
+    renderDialog();
 
     expect(screen.getByText("Export transaction history")).toBeVisible();
     expect(screen.getByText("Bitcoin 1")).toBeVisible();
     expect(screen.getByText("0.5 BTC")).toBeVisible();
     expect(screen.getByText("Ethereum 1")).toBeVisible();
     expect(screen.getByText("2 ETH")).toBeVisible();
-    expect(port.syncAccounts).toHaveBeenCalledWith([BITCOIN_ACCOUNT.id, ETHEREUM_ACCOUNT.id]);
   });
 
   it("enables the export once an account is selected", async () => {
@@ -56,10 +54,12 @@ describe("HistoryExportDialog (Web)", () => {
     expect(exportButton()).toBeDisabled();
   });
 
-  it("keeps the export disabled while a selected account syncs", async () => {
-    const { user } = renderDialog({ port: createFakePort({ isSyncing: () => true }) });
+  it("keeps the export disabled while it runs", async () => {
+    const { user } = renderDialog({
+      port: createFakePort({ exportCsv: jest.fn(() => new Promise<never>(() => {})) }),
+    });
 
-    await user.click(screen.getByText(BITCOIN_ACCOUNT.name));
+    await selectBitcoinAndExport(user);
 
     expect(exportButton()).toBeDisabled();
   });

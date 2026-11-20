@@ -1,15 +1,16 @@
 import { useCallback } from "react";
 import { files } from "~/renderer/bridge";
 import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import {
+  exportAccountsOperationsCsv,
+  type OperationsCsvAccountRequest,
+} from "@features/platform-account-operations-csv";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
-import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
-import type { Account } from "@ledgerhq/types-live";
+import { getHistoryExportFileName } from "@features/flow-history-export";
+import { findAssetCurrency } from "~/config/account-data-setup";
 import logger from "~/renderer/logger";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { getHistoryExportFileName } from "@features/flow-history-export";
 
 async function saveOperationsToFile(request: SaveRequest, csv: string): Promise<SaveOutcome> {
   try {
@@ -19,44 +20,21 @@ async function saveOperationsToFile(request: SaveRequest, csv: string): Promise<
   }
 }
 
-/** Syncs accounts, then builds their operations CSV and saves it through the native save dialog. */
+/** Reads the operations of accounts again, builds their CSV and saves it through the native save dialog. */
 export function useOperationsCsvExporter() {
   const countervalueCurrency = useSelector(counterValueCurrencySelector);
-  const countervalueState = useCountervaluesCache();
-  const walletState = useSelector(walletSelector);
-  const sync = useBridgeSync();
-  const syncState = useBridgeSyncState();
-
-  const syncAccounts = useCallback(
-    (accountIds: readonly string[]) => {
-      sync({
-        type: "SYNC_SOME_ACCOUNTS",
-        accountIds: [...accountIds],
-        priority: 10,
-        reason: "export-operations",
-      });
-    },
-    [sync],
-  );
-
-  const isSyncing = useCallback(
-    (accounts: readonly Account[]) =>
-      accounts.some(
-        account =>
-          syncState[account.id]?.pending ||
-          account.subAccounts?.some(subAccount => syncState[subAccount.id]?.pending),
-      ),
-    [syncState],
-  );
+  const countervalues = useCountervaluesCache();
+  const dispatch = useDispatch();
 
   const exportCsv = useCallback(
-    async (accounts: readonly Account[]): Promise<SaveOutcome> => {
+    async (accounts: readonly OperationsCsvAccountRequest[]): Promise<SaveOutcome> => {
       try {
-        const csv = accountsOpToCSV(
-          [...accounts],
-          countervalueCurrency,
-          countervalueState,
-          walletState.accountNames,
+        const csv = await dispatch(
+          exportAccountsOperationsCsv(accounts, {
+            countervalueCurrency,
+            countervalues,
+            findCurrency: findAssetCurrency,
+          }),
         );
         return await saveOperationsToFile(
           {
@@ -76,8 +54,8 @@ export function useOperationsCsvExporter() {
         return "failed";
       }
     },
-    [countervalueCurrency, countervalueState, walletState.accountNames],
+    [countervalueCurrency, countervalues, dispatch],
   );
 
-  return { syncAccounts, isSyncing, exportCsv };
+  return { exportCsv };
 }

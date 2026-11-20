@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tes
 import { http, HttpResponse, server } from "tests/server";
 import { useLocation, useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { connectAccounts } from "~/config/account-data-setup";
 import { files } from "~/renderer/bridge";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
@@ -476,12 +477,14 @@ describe("History export dialog integration", () => {
   });
 
   function renderHistoryWithAccounts() {
-    return render(<History />, {
+    const rendered = render(<History />, {
       initialState: {
         accounts: [LIGHT_BTC_ACCOUNT, LIGHT_ETH_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
       },
     });
+    connectAccounts(rendered.store);
+    return rendered;
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {

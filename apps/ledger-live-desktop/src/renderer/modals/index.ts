@@ -1,7 +1,6 @@
 import { MakeModalsType, GlobalModalData, ModalData } from "./types";
 import { coinModalLoaders, type CoinModalsData } from "../families/modals-loaders";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
-import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
 import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
 import MODAL_RECEIVE from "./Receive";
@@ -33,7 +32,6 @@ type GlobalModals = MakeModalsType<GlobalModalData>;
 
 const globalModals: GlobalModals = {
   MODAL_WEBSOCKET_BRIDGE,
-  MODAL_EXPORT_OPERATIONS,
   MODAL_PASSWORD,
   MODAL_DISABLE_PASSWORD,
   MODAL_RECEIVE,

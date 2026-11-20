@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { track } from "@shared/analytics";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
-import { BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, createFakePort } from "../../__tests__/fixtures";
+import { BITCOIN_ACCOUNT, createFakePort } from "../../__tests__/fixtures";
 import type { HistoryExportPort } from "../../model/ports";
 import { HistoryExportDrawer } from "./HistoryExportDrawer";
 
@@ -22,8 +22,8 @@ describe("HistoryExportDrawer (Native)", () => {
     jest.clearAllMocks();
   });
 
-  it("lists the accounts with their balance and syncs them when it opens", () => {
-    const { port } = renderDrawer();
+  it("lists the accounts with their balance", () => {
+    renderDrawer();
 
     expect(screen.getByTestId("history-export-drawer")).toBeExpanded();
     expect(screen.getByText("Estimated values only.")).toBeVisible();
@@ -31,7 +31,6 @@ describe("HistoryExportDrawer (Native)", () => {
     expect(screen.getByText("0.5 BTC")).toBeVisible();
     expect(screen.getByText("Ethereum 1")).toBeVisible();
     expect(screen.getByText("2 ETH")).toBeVisible();
-    expect(port.syncAccounts).toHaveBeenCalledWith([BITCOIN_ACCOUNT.id, ETHEREUM_ACCOUNT.id]);
   });
 
   it("enables the export once an account is selected", async () => {
@@ -46,10 +45,13 @@ describe("HistoryExportDrawer (Native)", () => {
     expect(exportButton()).toHaveProp("disabled", true);
   });
 
-  it("keeps the export disabled and loading while a selected account syncs", async () => {
-    const { user } = renderDrawer({ port: createFakePort({ isSyncing: () => true }) });
+  it("keeps the export disabled and loading while it runs", async () => {
+    const { user } = renderDrawer({
+      port: createFakePort({ exportCsv: jest.fn(() => new Promise<never>(() => {})) }),
+    });
 
     await user.press(screen.getByText("Bitcoin 1"));
+    await user.press(exportButton());
 
     expect(exportButton()).toHaveProp("disabled", true);
     expect(exportButton()).toHaveProp("loading", true);
