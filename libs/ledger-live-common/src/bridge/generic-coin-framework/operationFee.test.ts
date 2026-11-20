@@ -114,19 +114,28 @@ describe("useOperationFeeCurrency", () => {
     expect(getTokenFromAsset).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    ["an unknown token", () => getTokenFromAsset.mockResolvedValue(undefined)],
-    ["a family without token lookup", () => mockGetBridgeApi.mockResolvedValue({})],
-  ])("shows no fee for %s, and does not look it up again", async (_case, arrange) => {
-    arrange();
-    const [op, uncharged] = [operation(), account()];
+  describe("a lookup with no token", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
 
-    const { result } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+    afterEach(() => {
+      jest.useRealTimers();
+    });
 
-    await waitFor(() => expect(mockGetBridgeApi).toHaveBeenCalled());
-    await act(async () => {});
-    expect(result.current).toBeNull();
-    expect(mockGetBridgeApi).toHaveBeenCalledTimes(1);
+    it.each([
+      ["an unknown token", () => getTokenFromAsset.mockResolvedValue(undefined)],
+      ["a family without token lookup", () => mockGetBridgeApi.mockResolvedValue({})],
+    ])("shows no fee for %s, and does not look it up again", async (_case, arrange) => {
+      arrange();
+      const [op, uncharged] = [operation(), account()];
+
+      const { result } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+      await act(async () => jest.advanceTimersByTimeAsync(60_000));
+
+      expect(result.current).toBeNull();
+      expect(mockGetBridgeApi).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("a failed lookup", () => {
@@ -169,6 +178,17 @@ describe("useOperationFeeCurrency", () => {
       await act(async () => jest.advanceTimersByTimeAsync(60_000));
 
       expect(getTokenFromAsset).toHaveBeenCalledTimes(1);
+    });
+
+    it("is given up after 5 tries, and the fee stays hidden", async () => {
+      getTokenFromAsset.mockRejectedValue(new Error("down"));
+      const [op, uncharged] = [operation(), account()];
+
+      const { result } = renderHook(() => useOperationFeeCurrency(op, uncharged));
+      await act(async () => jest.advanceTimersByTimeAsync(10 * 60_000));
+
+      expect(getTokenFromAsset).toHaveBeenCalledTimes(5);
+      expect(result.current).toBeNull();
     });
   });
 

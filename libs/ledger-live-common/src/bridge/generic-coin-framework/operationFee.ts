@@ -34,8 +34,9 @@ export function readOperationFee(operation: Operation): OperationFee | undefined
   return { asset: feeAsset, amount: new BigNumber(feeAmount) };
 }
 
-/** The wait before the next try of a failed lookup: 1 s, doubling, at most 30 s. */
-const retryDelay = (attempt: number): number => Math.min(1000 * 2 ** attempt, 30_000);
+/** The tries of a failed lookup, 1 s then 2, 4 and 8 s apart, before the fee stays hidden. */
+const MAX_LOOKUP_ATTEMPTS = 5;
+const retryDelay = (attempt: number): number => 1000 * 2 ** attempt;
 
 /**
  * The token of the sub-account that holds the FEES operation of the transaction: the generic
@@ -53,8 +54,8 @@ function findFeeToken(hash: string, account: Account): TokenCurrency | undefined
 /**
  * The currency and amount of the fee of an operation whose transaction paid it in a token. The
  * token is that of the sub-account charged with the fee, or else the family's token of the fee
- * asset, as for a fee another account paid. That lookup is a family bridge call, not an endpoint,
- * so it does not go through RTK Query.
+ * asset, as for a fee another account paid. That lookup is a family bridge call: the family may
+ * query an RTK Query endpoint (the CAL store, for instance), so the hook uses no RTK Query hook.
  *
  * @param operation the operation shown
  * @param account the main account of the operation
@@ -81,7 +82,7 @@ export function useOperationFeeCurrency(
     const [, , asset]: [string, string, AssetInfo] = JSON.parse(lookupKey);
     let active = true;
     let retry: ReturnType<typeof setTimeout> | undefined;
-    // A failed lookup (offline, for instance) is tried again; an unknown token is final.
+    // A failed lookup (offline, for instance) is tried again a few times; an unknown token is final.
     const lookUp = (attempt: number) => {
       getBridgeApi(currency, currency.family)
         .then(bridgeApi => (active ? bridgeApi.getTokenFromAsset?.(asset) : undefined))
@@ -91,7 +92,9 @@ export function useOperationFeeCurrency(
           },
           error => {
             log("generic-coin-framework", "fee token lookup failed", { asset, attempt, error });
-            if (active) retry = setTimeout(() => lookUp(attempt + 1), retryDelay(attempt));
+            if (active && attempt + 1 < MAX_LOOKUP_ATTEMPTS) {
+              retry = setTimeout(() => lookUp(attempt + 1), retryDelay(attempt));
+            }
           },
         );
     };
