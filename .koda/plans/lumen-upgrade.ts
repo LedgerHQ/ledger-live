@@ -186,7 +186,7 @@ const prBodyTemplate = `### 📝 Description
 
 Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Koda ran no checks: this PR's CI checks the upgrade.
 
-Test run of the Lumen upgrade pipeline. Review before merging.
+Review before merging.
 
 ### 👀 Needs a human
 
