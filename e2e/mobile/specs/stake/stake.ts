@@ -55,7 +55,7 @@ export function runEarningChoiceTezos(
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
-      await app.account.tapEarn();
+      await app.account.tapEarn(delegation.account.currency.id);
       await app.tezosStake.verifyEarningChoice();
       await app.tezosStake.startEarning();
       await app.tezosStake.verifyDelegationSummary();
@@ -83,7 +83,7 @@ export function runStakeTezos(
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
-      await app.account.tapEarn();
+      await app.account.tapEarn(delegation.account.currency.id);
       await app.tezosStake.fillStakeAmount(delegation.amount);
       await app.tezosStake.continueStakeAmount();
       await app.deviceValidation.expectDeviceValidationScreen();

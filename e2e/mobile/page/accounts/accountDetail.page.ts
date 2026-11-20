@@ -5,6 +5,8 @@ import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 
 const OPERATION_ROW_ID = "operations-list-item";
 
+type InvestAction = "swap" | "buy" | "earn";
+
 /** The account screen shown when the `accountDetail` flag is on. */
 export default class AccountDetailPage {
   private readonly scrollView = byId("account-detail-scroll-view");
@@ -22,6 +24,11 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
+  private readonly moreSheetAction = (action: InvestAction) =>
+    byId(`account-detail-hero-more-sheet-${action}`);
+  private readonly assetPicker = byId("account-detail-asset-picker-list");
+  private readonly assetPickerRow = (currencyId: string) =>
+    byId(`account-detail-asset-picker-${currencyId}`);
   private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
@@ -104,6 +111,26 @@ export default class AccountDetailPage {
   private async openTransferDrawer() {
     await this.heroAction("transfer").tap();
     await app.transferDrawer.waitSettled();
+  }
+
+  /** Swap and buy are tiles of the hero, or rows of its More sheet when the currency does not get a tile for them. Earn is always in the sheet. */
+  @Step("Tap on {{{0}}}")
+  async tapInvestAction(action: InvestAction) {
+    if (await this.heroAction(action).isVisible(TIMEOUT.xxxsmall)) {
+      await this.heroAction(action).tap();
+      return;
+    }
+    await this.heroAction("more").tap();
+    await this.moreSheetAction(action).tap();
+  }
+
+  /** The app asks which of the held assets to earn on only when the account holds several. */
+  @Step("Tap on earn for the currency {{{0}}}")
+  async tapEarn(currencyId: string) {
+    await this.tapInvestAction("earn");
+    if (await this.assetPicker.isVisible(TIMEOUT.xxsmall)) {
+      await this.assetPickerRow(currencyId).tap();
+    }
   }
 
   @Step("Expect operation history to be visible")
