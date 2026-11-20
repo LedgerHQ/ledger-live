@@ -359,14 +359,27 @@ describe("getBlock", () => {
           "close-to": CAROL,
         }),
       }),
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "pay",
+            "payment-transaction": payment(50, ALICE),
+          }),
+        ],
+      }),
     ]);
     mockGetAccountTransactions.mockResolvedValue({
       nextToken: undefined,
       transactions: [
         {
           id: "PAY",
+          rootId: "PAY",
           type: "pay",
           senderAddress: ALICE,
+          feesPayer: ALICE,
           senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
@@ -384,8 +397,10 @@ describe("getBlock", () => {
         },
         {
           id: "ASA",
+          rootId: "ASA",
           type: "axfer",
           senderAddress: ALICE,
+          feesPayer: ALICE,
           senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
@@ -401,6 +416,27 @@ describe("getBlock", () => {
             assetId: "31566704",
             assetRecipientAddress: BOB,
             assetSenderAddress: undefined,
+          },
+        },
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          type: "pay",
+          senderAddress: "APP",
+          feesPayer: ALICE,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          closeRewards: undefined,
+          closeAmount: undefined,
+          fee: new BigNumber(1000),
+          timestamp: "1793724956",
+          round: HEIGHT,
+          note: "",
+          details: {
+            amount: new BigNumber(50),
+            closeAmount: undefined,
+            closeToAddress: undefined,
+            recipientAddress: ALICE,
           },
         },
       ],
