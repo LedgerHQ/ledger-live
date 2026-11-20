@@ -234,7 +234,7 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
   });
 
   it("should go on counting attempts when an inline retry reopens the scan from device selection", async () => {
-    setRouteParams("ethereum", "device-1", { inline: true });
+    setRouteParams("ethereum", "device-1", { inline: true, openedFromRouteKey: "SelectDevice-1" });
     (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
 
     const { result, reopenScan } = renderReopenableScan();
@@ -253,8 +253,44 @@ describe("useScanDeviceAccountsViewModel add_account RUM operation", () => {
     expect(failFeatureOperation.mock.calls[0][2]).toBe("ERROR");
   });
 
+  it("should start again at attempt 1 when a new journey opens after an inline retry was left", async () => {
+    // Retry, then close the device selection and add an account of the same currency again.
+    setRouteParams("ethereum", "device-1", { inline: true, openedFromRouteKey: "SelectDevice-1" });
+    (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
+
+    const { result, reopenScan } = renderReopenableScan();
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+    act(() => result.current.handleRetry());
+
+    setRouteParams("ethereum", "device-1", { inline: true, openedFromRouteKey: "SelectDevice-2" });
+    reopenScan();
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(startFeatureOperation).toHaveBeenCalledTimes(2);
+    expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ inline: true, attempt: 1 });
+  });
+
+  it("should start again at attempt 1 after an inline retry when no device selection opened the scan", async () => {
+    setRouteParams("ethereum", "device-1", { inline: true });
+    (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
+
+    const { result, reopenScan } = renderReopenableScan();
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+    act(() => result.current.handleRetry());
+
+    reopenScan();
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(startFeatureOperation).toHaveBeenCalledTimes(2);
+    expect(lastCallAttributes(startFeatureOperation)).toMatchObject({ inline: true, attempt: 1 });
+  });
+
   it("should start again at attempt 1 when an inline scan error is closed instead of retried", async () => {
-    setRouteParams("ethereum", "device-1", { inline: true, onCloseNavigation: jest.fn() });
+    setRouteParams("ethereum", "device-1", {
+      inline: true,
+      onCloseNavigation: jest.fn(),
+      openedFromRouteKey: "SelectDevice-1",
+    });
     (prepareCurrency as jest.Mock).mockRejectedValueOnce(new Error("scan failed"));
 
     const { result, reopenScan } = renderReopenableScan();

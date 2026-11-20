@@ -72,6 +72,7 @@ export default function useScanDeviceAccountsViewModel({
     onCloseNavigation,
     navigationDepth,
     context,
+    openedFromRouteKey,
   } = route.params || {};
 
   const customFlow = getCustomAddAccountFlow(currency);
@@ -158,15 +159,20 @@ export default function useScanDeviceAccountsViewModel({
     // In inline flows (e.g., Receive), navigate back to device selection
     // to allow user to reconnect/unlock device instead of retrying on same screen
     if (inline && error) {
-      // The scan screen device selection opens next goes on counting from this attempt.
-      markRetryPending({ currencyId: currency.id, context, attempt: operationAttempt.current });
+      // The scan its device selection opens next, on reconnect, counts on from this attempt.
+      markRetryPending({
+        currencyId: currency.id,
+        context,
+        journeyKey: openedFromRouteKey,
+        attempt: operationAttempt.current,
+      });
       // Simply go back to SelectDevice which is already in the stack
       navigation.goBack();
       return;
     }
 
     restartSubscription();
-  }, [inline, error, navigation, restartSubscription, currency.id, context]);
+  }, [inline, error, navigation, restartSubscription, currency.id, context, openedFromRouteKey]);
   const stopSubscription = useCallback(
     (syncUI = true) => {
       if (scanSubscription.current) {
@@ -413,9 +419,13 @@ export default function useScanDeviceAccountsViewModel({
     if (operationStartedOnMount.current) return;
     operationStartedOnMount.current = true;
     // After an inline Retry, the new operation is the next attempt of the one that failed.
-    operationAttempt.current = consumeRetryAttempt({ currencyId: currency.id, context });
+    operationAttempt.current = consumeRetryAttempt({
+      currencyId: currency.id,
+      context,
+      journeyKey: openedFromRouteKey,
+    });
     startOperationAttempt();
-  }, [startOperationAttempt, currency.id, context]);
+  }, [startOperationAttempt, currency.id, context, openedFromRouteKey]);
 
   useEffect(() => {
     startSubscription();
