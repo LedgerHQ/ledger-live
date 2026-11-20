@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TextEncoder } from "node:util";
 import { AnimatedQrCode } from "./AnimatedQrCode";
 
@@ -56,7 +57,8 @@ describe("AnimatedQrCode (Web)", () => {
     expect(requestFrame).toHaveBeenCalled();
   });
 
-  it("should call onPress and play the ripple when the code is clicked", () => {
+  it("should call onPress and play the ripple when the code is clicked", async () => {
+    const user = userEvent.setup();
     const onPress = jest.fn();
     render(
       <AnimatedQrCode
@@ -68,7 +70,7 @@ describe("AnimatedQrCode (Web)", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy address" }));
+    await user.click(screen.getByRole("button", { name: "Copy address" }));
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(requestFrame).toHaveBeenCalled();
@@ -90,6 +92,37 @@ describe("AnimatedQrCode (Web)", () => {
     render(<AnimatedQrCode value="" size={208} animation="loading" />);
 
     expect(context.arc).toHaveBeenCalled();
+    expect(requestFrame).not.toHaveBeenCalled();
+  });
+
+  it("should not resume a ripple cut short by reduced motion", async () => {
+    const user = userEvent.setup();
+    let onMotionChange = () => {};
+    const query = {
+      matches: false,
+      addEventListener: jest.fn((_event: string, listener: () => void) => {
+        onMotionChange = listener;
+      }),
+      removeEventListener: jest.fn(),
+    };
+    window.matchMedia = jest.fn().mockReturnValue(query);
+    render(
+      <AnimatedQrCode
+        value={ADDRESS}
+        size={208}
+        animation="ripple"
+        onPress={jest.fn()}
+        accessibilityLabel="Copy address"
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Copy address" }));
+
+    query.matches = true;
+    act(() => onMotionChange());
+    requestFrame.mockClear();
+    query.matches = false;
+    act(() => onMotionChange());
+
     expect(requestFrame).not.toHaveBeenCalled();
   });
 

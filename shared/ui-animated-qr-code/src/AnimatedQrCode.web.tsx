@@ -63,6 +63,8 @@ export function AnimatedQrCode({
     };
 
     if (!animated) {
+      // A ripple cut short by reduced motion must not resume when motion comes back.
+      pressedAt.current = NEVER_PRESSED;
       paint(0);
       return;
     }
