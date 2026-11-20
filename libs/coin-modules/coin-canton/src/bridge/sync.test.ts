@@ -1364,6 +1364,43 @@ describe("makeGetAccountShape", () => {
           expect(account.subAccounts?.[0].operations.map(op => op.hash)).toEqual(["early-token"]);
         });
 
+        it("keeps the fees of a settled offer the rebuild does not read in full, until it does", async () => {
+          let served = [...offerRows("offer", 5), ...rows];
+          mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+            operations: served.filter(row => row.block.height >= minOffset),
+            next: -1,
+          }));
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
+          const pending = await syncFrom({
+            syncHash: SYNC_HASH,
+            subAccounts: [storedUsdcx],
+            cantonResources: {} as never,
+          });
+          expect(feesOf(pending, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(pending)).toEqual([{ hash: "offer", height: 5 }]);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          served = [...offerRows("offer", 5).map(row => ({ ...row, transfers: [] })), ...rows];
+          const rebuilt = await syncAfter({ ...pending, subAccounts: [] }, SYNC_HASH);
+          expect(rebuilt.from).toEqual([0]);
+          expect(feesOf(rebuilt.shape, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+          expect(rebuilt.shape.subAccounts?.[0].operations.map(op => op.hash)).toEqual([
+            "early-token",
+          ]);
+
+          served = [...offerRows("offer", 5), ...rows];
+          const recovered = await resync(rebuilt.shape);
+          expect(recovered.from).toEqual([5]);
+          expect(feesOf(recovered.shape, "offer")).toEqual([]);
+          expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(recovered.shape)).toEqual([]);
+        });
+
         it("reads on from the newest stored operation once the sub-account is stored", async () => {
           await syncAccount(SYNC_HASH, {
             id: accountId,
