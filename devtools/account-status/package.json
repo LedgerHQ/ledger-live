@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-status",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "DevTools page for the accountStatus and assetStatus kinds: read them per account and asset, see the gates they make",
   "main": "src/index.ts",

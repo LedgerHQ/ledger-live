@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.48.0-next.0
+
+### Minor Changes
+
+- [#24857](https://github.com/LedgerHQ/ledger-live/pull/24857) [`0c27a22`](https://github.com/LedgerHQ/ledger-live/commit/0c27a2258495561c27bb7f13713f382cb02f29f1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - The account page object opens Receive and Send through the Transfer drawer when the accountDetail flag is on
+
+- [#25014](https://github.com/LedgerHQ/ledger-live/pull/25014) [`f2177fe`](https://github.com/LedgerHQ/ledger-live/commit/f2177fe626a85a3b394c61f355393db346ce5df2) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Skip the mobile add-account tests on Nano S for currencies with no Nano S coverage, such as SUI.
+
 ## 0.47.0
 
 ### Minor Changes

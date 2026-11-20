@@ -1,5 +1,16 @@
 # @features/flow-pay-bank-transfer
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

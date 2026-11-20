@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.36.0-next.0
+
+### Minor Changes
+
+- [#24875](https://github.com/LedgerHQ/ledger-live/pull/24875) [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectKnownOrNewDevice`, the mobile wiring of the device list: one discovery service shared with the Add mode, the device matcher, the connected devices, and the connectivity of the mock server devices
+
+### Patch Changes
+
+- Updated dependencies [[`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f), [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37), [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d), [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd), [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0), [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed), [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da), [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815)]:
+  - @ledgerhq/live-dmk-shared@0.41.0-next.0
+
 ## 0.35.0
 
 ### Minor Changes

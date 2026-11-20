@@ -1,5 +1,19 @@
 # @shared/feature-flags
 
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#24947](https://github.com/LedgerHQ/ledger-live/pull/24947) [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Agent Intent new badge from the agentIntent flag and track it
+
+- [#25042](https://github.com/LedgerHQ/ledger-live/pull/25042) [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Enable the `currencyInjective` flag by default, so Injective stays available when remote config fails to load.
+
+- [#24865](https://github.com/LedgerHQ/ledger-live/pull/24865) [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make the `coin_module_call` tiers remotely configurable: a new `methodTiers` param of the `coinObservability` flag moves a coin-module method to the `transaction`, `preparation`, `sync` or `off` tier without a release. `craftTransactionData` moves to the `preparation` tier, since the bridge calls it on every edit of a transaction, and each `coin_module_call` now carries its `tier`. `shouldTransmitCoinModuleCall` is removed: `createCoinModuleCallTransmitter` holds the whole policy.
+
+- [#25057](https://github.com/LedgerHQ/ledger-live/pull/25057) [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the lwmHistoryCsvExport flag, off by default, to gate the CSV export of the transaction history on mobile
+
+- [#25039](https://github.com/LedgerHQ/ledger-live/pull/25039) [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70) Thanks [@sarneijim](https://github.com/sarneijim)! - Pitch Ledger Recover after an unseeded new seed and offer Ledger Sync before the unseeded success karaoke
+
 ## 0.31.0
 
 ### Minor Changes

@@ -1,5 +1,20 @@
 # @features/flow-pay-card-transactions
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24815](https://github.com/LedgerHQ/ledger-live/pull/24815) [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card transaction wording keys verifiable by the i18n key check
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+### Patch Changes
+
+- Updated dependencies [[`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41), [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608), [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea), [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b)]:
+  - @features/flow-pay-card-auth@0.14.0-next.0
+  - @domain/api-card-management@0.10.0-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.7.3
 
 ### Patch Changes

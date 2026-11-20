@@ -1,5 +1,22 @@
 # @ledgerhq/types-live
 
+## 6.133.0-next.0
+
+### Minor Changes
+
+- [#25237](https://github.com/LedgerHQ/ledger-live/pull/25237) [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Expose account balances and honour pool filters in the Wallet API max spendable
+
+- [#25069](https://github.com/LedgerHQ/ledger-live/pull/25069) [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5) Thanks [@cted-ledger](https://github.com/cted-ledger)! - `@ledgerhq/types-live`: add the optional `Account.historyRecheck`, the history read and pool lookups the generic sync still owes.
+  `@ledgerhq/ledger-wallet-framework`: add `BridgeApi.syncsHistoryOnStateChange`, `getKnownValidatorIds`, `getStakingCallValidatorId`, `isOperationSettled` and `needsValidatorListing`, serialize `historyRecheck`, and add `mergeOpsKeepingOlder`.
+  `@ledgerhq/live-common`: the generic sync of NEAR reads the history only when the account balance changed, and an account is saved again when an operation is replaced or re-read with a new fee or outcome.
+  `@ledgerhq/coin-near`: the sync reads the account state from the node; a node error is no longer read as an unknown account, and `getBalance` accepts `knownValidatorIds` and `listValidators`.
+
+- [#25072](https://github.com/LedgerHQ/ledger-live/pull/25072) [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add a per-pool balance breakdown to accounts (`balances`), filled at every sync, with Zcash transparent and Ironwood rows and Aleo public and private rows; Aleo `getBalance` no longer counts staked credits twice
+
+- [#24254](https://github.com/LedgerHQ/ledger-live/pull/24254) [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b) Thanks [@qperrot](https://github.com/qperrot)! - Disable speed up and cancel (RBF) on transactions broadcast by a sell flow
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
 ## 6.132.0
 
 ### Minor Changes

@@ -1,5 +1,26 @@
 # @features/flow-pay-card-auth
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#25197](https://github.com/LedgerHQ/ledger-live/pull/25197) [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Baanx manage assets page (`/manage-assets`) from the Pay card Add asset button instead of `/dashboard/accounts/crypto`
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+- [#24818](https://github.com/LedgerHQ/ledger-live/pull/24818) [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card login intro row keys verifiable by the i18n key check
+
+- [#24956](https://github.com/LedgerHQ/ledger-live/pull/24956) [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest the `payCardAuth` and `payCardLoginIntro` selectors in their slices. Export names and signatures are unchanged.
+
+- [#24814](https://github.com/LedgerHQ/ledger-live/pull/24814) [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b) Thanks [@deepyjr](https://github.com/deepyjr)! - Translate the web-only Pay wordings in the web views so Mobile no longer needs them
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0-next.0
+  - @features/platform-card@0.10.1-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.13.0
 
 ### Minor Changes

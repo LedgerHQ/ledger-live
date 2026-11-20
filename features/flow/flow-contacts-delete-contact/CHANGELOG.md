@@ -1,5 +1,13 @@
 # @features/flow-contacts-delete-contact
 
+## 0.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.1-next.0
+  - @domain/entity-contact@0.13.1-next.0
+
 ## 0.5.2
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @devtools/mock-accounts
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24868](https://github.com/LedgerHQ/ledger-live/pull/24868) [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-status DevTools tool, reading the `accountStatus` and `assetStatus` kinds per account and asset with the gates they make, and both kinds to the mock source
+
+### Patch Changes
+
+- Updated dependencies [[`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede), [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d), [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43)]:
+  - @domain/entity-currency-crypto@0.20.0-next.0
+  - @domain/entity-account-status@0.1.0-next.0
+  - @domain/entity-account-descriptor@0.7.0-next.0
+  - @domain/api-account-data@0.6.1-next.0
+  - @domain/entity-account-balance@0.3.2-next.0
+  - @domain/entity-account-balance-history@0.3.1-next.0
+  - @domain/entity-account-data@0.6.1-next.0
+  - @domain/entity-account-operation@0.3.1-next.0
+  - @domain/entity-account-receive@0.1.1-next.0
+
 ## 0.4.0
 
 ### Minor Changes

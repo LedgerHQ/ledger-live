@@ -1,5 +1,16 @@
 # @domain/entity-account-alias
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24955](https://github.com/LedgerHQ/ledger-live/pull/24955) [`98fb89f`](https://github.com/LedgerHQ/ledger-live/commit/98fb89f13d32e56709360157f71c67ff1eccd458) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `accountIdFromAliasSelector` and `resolveAccountIdSelector` in `accountAliasSlice` and export them through `getSelectors()`, keeping their slice-state signature.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.4.1-next.0
+
 ## 0.2.1
 
 ### Patch Changes

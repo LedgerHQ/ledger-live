@@ -1,6 +1,6 @@
 {
   "name": "@devtools/app-toggles",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "DevTools panel for app-wide developer toggles, such as hiding the pre-release overlay",
   "main": "src/index.ts",

@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 12.4.0-next.0
+
+### Minor Changes
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
 ## 12.3.0
 
 ### Minor Changes

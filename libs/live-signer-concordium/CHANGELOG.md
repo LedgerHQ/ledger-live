@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`4878776`](https://github.com/LedgerHQ/ledger-live/commit/4878776b5f223d14a0604862b892361a1af88ca5), [`2e6c630`](https://github.com/LedgerHQ/ledger-live/commit/2e6c630470a92067b3f4e653787b755c21fb433b)]:
+  - @ledgerhq/coin-concordium@1.9.0-next.0
+
 ## 0.9.7
 
 ### Patch Changes
