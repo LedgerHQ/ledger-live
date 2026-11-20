@@ -131,7 +131,7 @@ catalog:
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.5.2
   "@jest/test-result": 30.5.2
-  "@reduxjs/toolkit": 2.13.0
+  "@reduxjs/toolkit": 2.14.0
   "@rsbuild/core": 2.3.2
   "@rsbuild/plugin-node-polyfill": 1.4.6
   "@rsbuild/plugin-react": 2.1.1
