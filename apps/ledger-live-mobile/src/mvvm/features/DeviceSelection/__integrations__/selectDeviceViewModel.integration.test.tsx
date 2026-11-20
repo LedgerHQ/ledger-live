@@ -78,6 +78,7 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
 
   const getRouteMock = (currency: CryptoCurrency) => {
     return {
+      key: "SelectDevice-route-key",
       params: { context: AddAccountContexts.AddAccounts, currency },
     } as unknown as Parameters<typeof useSelectDeviceViewModel>[0];
   };
@@ -106,6 +107,11 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
     result.current.onResult(mockMeta);
 
     expect(mockOnDeviceConnected).toHaveBeenCalledTimes(1);
+    expect(mockOnDeviceConnected).toHaveBeenCalledWith(
+      expect.objectContaining({
+        routeParams: expect.objectContaining({ openedFromRouteKey: "SelectDevice-route-key" }),
+      }),
+    );
     expect(mockNavigate).not.toHaveBeenCalledWith(
       NavigatorName.AddAccounts,
       expect.objectContaining({ screen: ScreenName.ScanDeviceAccounts }),
@@ -125,7 +131,11 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AddAccounts, {
       screen: ScreenName.ScanDeviceAccounts,
-      params: expect.objectContaining({ sourceScreenName: ScreenName.SelectDevice }),
+      params: expect.objectContaining({
+        sourceScreenName: ScreenName.SelectDevice,
+        // A retry from the scan comes back to this device selection: its key names the journey.
+        openedFromRouteKey: "SelectDevice-route-key",
+      }),
     });
     expect(mockOnDeviceConnected).not.toHaveBeenCalled();
   });

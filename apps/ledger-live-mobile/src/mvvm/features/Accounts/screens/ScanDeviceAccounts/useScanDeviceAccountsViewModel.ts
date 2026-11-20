@@ -23,7 +23,15 @@ import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-common/accou
 import { useMaybeAccountName, setAccountName } from "~/reducers/wallet";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
+import type { OperationFailureReason } from "@shared/observability-operations";
+import { useOperation } from "@shared/observability-operations-react";
+import { ADD_ACCOUNT_OPERATION } from "LLM/features/Accounts/constants";
+import { consumeRetryAttempt, markRetryPending } from "./addAccountAttempts";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
+
+/** Region restriction is an expected business outcome, not a scan failure. */
+const getScanFailureReason = (errorName?: string): OperationFailureReason =>
+  errorName === "CurrencyRegionRestrictedError" ? "OTHER" : "ERROR";
 
 const isNoAssociatedAccountsFamily = (
   family: string,
@@ -64,9 +72,32 @@ export default function useScanDeviceAccountsViewModel({
     onCloseNavigation,
     navigationDepth,
     context,
+    openedFromRouteKey,
   } = route.params || {};
 
   const customFlow = getCustomAddAccountFlow(currency);
+
+  const addAccountOperation = useOperation(ADD_ACCOUNT_OPERATION);
+  /** The last attempt: a retry after a failure, here or before an inline goBack, starts the next. */
+  const operationAttempt = useRef(0);
+  const operationStartedOnMount = useRef(false);
+  const operationStartAttributes = useMemo(
+    () => ({ currency_id: currency.id, inline: !!inline, context }),
+    [currency.id, inline, context],
+  );
+  // Called on mount and on a user restart only: the scan effect also re-runs when its
+  // dependencies change, and that must not open a new operation once the previous one ended.
+  // A restart while the operation is still active keeps it: start is idempotent.
+  const startOperationAttempt = useCallback(() => {
+    if (
+      addAccountOperation.start({
+        ...operationStartAttributes,
+        attempt: operationAttempt.current + 1,
+      })
+    ) {
+      operationAttempt.current += 1;
+    }
+  }, [addAccountOperation, operationStartAttributes]);
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)
@@ -108,9 +139,11 @@ export default function useScanDeviceAccountsViewModel({
       error: error => {
         logger.critical(error);
         setError(error);
+        const errorName = typeof error?.name === "string" ? error.name : undefined;
+        addAccountOperation.fail(getScanFailureReason(errorName), { error_name: errorName });
       },
     });
-  }, [blacklistedTokenIds, cryptoCurrency, currencyBridge, deviceId]);
+  }, [blacklistedTokenIds, cryptoCurrency, currencyBridge, deviceId, addAccountOperation]);
 
   const restartSubscription = useCallback(() => {
     setScanning(true);
@@ -118,20 +151,28 @@ export default function useScanDeviceAccountsViewModel({
     setSelectedIds([]);
     setError(null);
     cancelledRef.current = false;
+    startOperationAttempt();
     startSubscription();
-  }, [startSubscription]);
+  }, [startOperationAttempt, startSubscription]);
 
   const handleRetry = useCallback(() => {
     // In inline flows (e.g., Receive), navigate back to device selection
     // to allow user to reconnect/unlock device instead of retrying on same screen
     if (inline && error) {
+      // The scan its device selection opens next, on reconnect, counts on from this attempt.
+      markRetryPending({
+        currencyId: currency.id,
+        context,
+        journeyKey: openedFromRouteKey,
+        attempt: operationAttempt.current,
+      });
       // Simply go back to SelectDevice which is already in the stack
       navigation.goBack();
       return;
     }
 
     restartSubscription();
-  }, [inline, error, navigation, restartSubscription]);
+  }, [inline, error, navigation, restartSubscription, currency.id, context, openedFromRouteKey]);
   const stopSubscription = useCallback(
     (syncUI = true) => {
       if (scanSubscription.current) {
@@ -152,6 +193,8 @@ export default function useScanDeviceAccountsViewModel({
   );
 
   const quitFlow = useCallback(() => {
+    // Nothing to add: the screen stays mounted under the accounts list, so end the operation here.
+    addAccountOperation.fail("OTHER", { outcome: "nothing_to_add" });
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.AccountsList,
       params: {
@@ -162,7 +205,7 @@ export default function useScanDeviceAccountsViewModel({
         specificAccounts: scannedAccounts,
       },
     });
-  }, [navigation, scannedAccounts]);
+  }, [navigation, addAccountOperation, scannedAccounts]);
   const onPressAccount = useCallback(
     (account: Account) => {
       const isChecked = selectedIds.indexOf(account.id) > -1;
@@ -215,6 +258,11 @@ export default function useScanDeviceAccountsViewModel({
       });
 
       if (accountsNeedingOnboarding.length > 0) {
+        // End the operation before `replace` unmounts the screen, which would abandon it.
+        addAccountOperation.succeed({
+          handoff: "canton_onboarding",
+          accounts_selected: accountsToAdd.length,
+        });
         navigation.replace(ScreenName.CantonOnboardAccount, {
           accountsToAdd: accountsToAdd,
           currency,
@@ -232,6 +280,10 @@ export default function useScanDeviceAccountsViewModel({
       });
 
       if (accountsNeedingOnboarding.length > 0) {
+        addAccountOperation.succeed({
+          handoff: "concordium_onboarding",
+          accounts_selected: accountsToAdd.length,
+        });
         navigation.replace(NavigatorName.ConcordiumOnboard, {
           screen: ScreenName.ConcordiumOnboardAccount,
           params: { accountsToAdd, currency },
@@ -248,6 +300,10 @@ export default function useScanDeviceAccountsViewModel({
         });
 
       setIsAddinAccounts(true);
+      addAccountOperation.succeed({
+        handoff: "custom_flow",
+        accounts_selected: accountsToAdd.length,
+      });
       customFlow.onImportAccounts({ navigation, routeParams: route.params, accountsToAdd });
       return;
     }
@@ -262,6 +318,7 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
+    addAccountOperation.succeed({ accounts_added: accountsToAdd.length });
     const { onSuccess } = route.params;
 
     if (inline) {
@@ -303,6 +360,7 @@ export default function useScanDeviceAccountsViewModel({
     selectedIds,
     dispatch,
     popInlineScreens,
+    addAccountOperation,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);
@@ -357,6 +415,19 @@ export default function useScanDeviceAccountsViewModel({
 
   const CustomNoAssociatedAccounts = getCustomNoAssociatedAccounts(currency);
   useEffect(() => {
+    // Mount only: a later change of the start attributes must not reopen an ended operation.
+    if (operationStartedOnMount.current) return;
+    operationStartedOnMount.current = true;
+    // After an inline Retry, the new operation is the next attempt of the one that failed.
+    operationAttempt.current = consumeRetryAttempt({
+      currencyId: currency.id,
+      context,
+      journeyKey: openedFromRouteKey,
+    });
+    startOperationAttempt();
+  }, [startOperationAttempt, currency.id, context, openedFromRouteKey]);
+
+  useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);
   }, [startSubscription, stopSubscription]);
@@ -405,6 +476,7 @@ export default function useScanDeviceAccountsViewModel({
 
     if (!isAddingAccounts && !scanning && hasProcessedLatestScannedAccount) {
       if (alreadyEmptyAccount && noImportableAccounts) {
+        addAccountOperation.fail("OTHER", { outcome: "already_empty_account" });
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
@@ -413,6 +485,7 @@ export default function useScanDeviceAccountsViewModel({
           onCloseNavigation,
         });
       } else if (noImportableAccounts && CustomNoAssociatedAccounts) {
+        addAccountOperation.fail("OTHER", { outcome: "no_associated_accounts" });
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
           onCloseNavigation,
@@ -432,6 +505,7 @@ export default function useScanDeviceAccountsViewModel({
     latestScannedAccount,
     noImportableAccounts,
     scannedAccounts,
+    addAccountOperation,
   ]);
 
   const scanDeviceAccountsBack = customFlow?.onScanDeviceAccountsBack
@@ -441,6 +515,8 @@ export default function useScanDeviceAccountsViewModel({
           track(backMetadata.eventName, {
             ...backMetadata.payload,
           });
+        // Same outcome as the header back of the default flow (Accounts Navigator).
+        addAccountOperation.fail("ABANDONED", { trigger: "back" });
         customFlow.onScanDeviceAccountsBack?.({ navigation });
       }
     : undefined;

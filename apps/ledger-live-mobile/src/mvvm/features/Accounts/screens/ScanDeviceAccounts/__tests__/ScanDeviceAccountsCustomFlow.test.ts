@@ -1,4 +1,5 @@
 import { track } from "@shared/analytics";
+import { DdRum } from "@datadog/mobile-react-native";
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
@@ -6,8 +7,13 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";
+import { setOperationSink } from "@shared/observability-operations";
+import { datadogOperationSink } from "~/datadogOperationSink";
 import { setupScanDeviceTests } from "./shared";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
+
+jest.mock("@datadog/mobile-react-native", () => require("@tests/mocks/datadogMobileReactNative"));
+jest.mock("~/datadog", () => ({ isDatadogRecording: () => true }));
 
 const mockOnImportAccounts = jest.fn();
 const mockOnScanDeviceAccountsBack = jest.fn();
@@ -74,6 +80,9 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     mockOnImportAccounts.mockClear();
     mockOnScanDeviceAccountsBack.mockClear();
     mockTrack.mockClear();
+    jest.mocked(DdRum.succeedFeatureOperation).mockClear();
+    jest.mocked(DdRum.failFeatureOperation).mockClear();
+    setOperationSink(datadogOperationSink);
     setRouteParams("aleo");
     setScanObservable(EMPTY);
   });
@@ -114,6 +123,38 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     expect(mockTrack.mock.invocationCallOrder[0]).toBeLessThan(
       mockOnImportAccounts.mock.invocationCallOrder[0],
     );
+  });
+
+  it("succeeds the add_account RUM operation as a custom flow handoff before delegating", async () => {
+    const aleoAccount = createAleoAccount({ used: true, balance: new BigNumber(1000) });
+    setScanObservable(of(makeDiscoveredEvent(aleoAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    result.current.onPressAccount(aleoAccount);
+    await waitFor(() => expect(result.current.selectedIds).toContain(aleoAccount.id));
+
+    result.current.importAccounts();
+
+    const succeedFeatureOperation = jest.mocked(DdRum.succeedFeatureOperation);
+    expect(succeedFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(succeedFeatureOperation).toHaveBeenCalledWith(
+      "add_account",
+      null,
+      expect.objectContaining({ handoff: "custom_flow", accounts_selected: 1 }),
+    );
+    // Ended before the custom flow navigates away, so the unmount does not abandon it.
+    expect(succeedFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
+      mockOnImportAccounts.mock.invocationCallOrder[0],
+    );
+    expect(DdRum.failFeatureOperation).not.toHaveBeenCalled();
   });
 
   it("pluralizes the custom flow's confirm label based on the number of selected accounts", async () => {
@@ -188,6 +229,32 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
       analyticsMetadata.ScanDeviceAccounts.onBack.payload,
     );
     expect(mockTrack.mock.invocationCallOrder[0]).toBeLessThan(
+      mockOnScanDeviceAccountsBack.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("fails the add_account RUM operation as abandoned by a back before delegating to the custom flow handler", async () => {
+    const { result, unmount } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scanDeviceAccountsBack).toBeInstanceOf(Function));
+    result.current.scanDeviceAccountsBack?.();
+    unmount();
+
+    const failFeatureOperation = jest.mocked(DdRum.failFeatureOperation);
+    expect(failFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(failFeatureOperation).toHaveBeenCalledWith(
+      "add_account",
+      null,
+      "ABANDONED",
+      expect.objectContaining({ trigger: "back" }),
+    );
+    expect(failFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
       mockOnScanDeviceAccountsBack.mock.invocationCallOrder[0],
     );
   });

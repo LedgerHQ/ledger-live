@@ -46,6 +46,8 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — shared (explicit overrides)
 /shared/analytics/                                       @ledgerhq/platform
 /shared/analytics-react/                                 @ledgerhq/platform
+/shared/observability-operations/                        @ledgerhq/platform
+/shared/observability-operations-react/                  @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
 /shared/api-services/                                    @ledgerhq/platform

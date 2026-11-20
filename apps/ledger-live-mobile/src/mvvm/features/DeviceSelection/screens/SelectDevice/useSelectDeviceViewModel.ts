@@ -50,6 +50,8 @@ export default function useSelectDeviceViewModel(
         ...meta,
         context,
         sourceScreenName: ScreenName.SelectDevice,
+        // Tells a return to this device selection (a retry) from a journey opened anew.
+        openedFromRouteKey: route.key,
       };
 
       const customFlow = currency ? getCustomAddAccountFlow(currency) : null;

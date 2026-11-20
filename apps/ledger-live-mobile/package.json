@@ -275,6 +275,8 @@
     "@shared/lottie": "workspace:*",
     "@shared/native-performance": "workspace:*",
     "@shared/network-status": "workspace:*",
+    "@shared/observability-operations": "workspace:*",
+    "@shared/observability-operations-react": "workspace:*",
     "@shared/system-bars": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
     "@shared/trend": "workspace:*",
