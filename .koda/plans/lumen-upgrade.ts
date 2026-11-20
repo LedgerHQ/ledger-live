@@ -1,15 +1,6 @@
 // Upgrades Lumen to latest and opens a draft PR (Lumen ADR 027). Owned by the Lumen team.
 // @ts-nocheck: @cairn/plan is provided by Cairn at run time, not installed here
-import {
-  agent,
-  allTools,
-  inputsOf,
-  literal,
-  plan,
-  retryShellSlot,
-  task,
-  variable,
-} from "@cairn/plan";
+import { agent, allTools, inputsOf, literal, plan, task, variable } from "@cairn/plan";
 import { z } from "zod";
 
 // Lumen versions live in the pnpm catalog.
@@ -20,20 +11,7 @@ const lumenPackages = [
   "@ledgerhq/lumen-ui-rnative",
   "@ledgerhq/lumen-utils-shared",
 ];
-// Lints only the packages whose files differ from develop, lockfiles aside: typecheck builds every dependency
-// first, which outlasts the run on 80+ Lumen packages, so typecheck and tests are left to the PR's CI.
-// Lint hashes leave out external dependencies, so a cached result would predate the bump.
-const verifyCommand = [
-  "set -eo pipefail",
-  "git fetch --quiet origin develop",
-  "projects=$(git diff --name-only FETCH_HEAD -- . ':!pnpm-lock.yaml' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' | while read -r file; do",
-  '  dir=$(dirname "$file")',
-  '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
-  '  if [ "$dir" != . ]; then node -p "require(\'./$dir/package.json\').name"; fi',
-  "done | sort -u | paste -sd, -)",
-  'if [ -z "$projects" ]; then echo "No package changed besides the bump."; exit 0; fi',
-  'pnpm nx run-many -t lint --projects="$projects" --skip-nx-cache',
-].join("\n");
+// No check in the plan for now, to confirm the verify step caused the 2-hour timeout: the PR's CI checks the upgrade.
 
 // What the Lumen workflow sends. The plan bumps to latest and doesn't read targetVersions yet.
 const planInput = z.object({
@@ -76,8 +54,6 @@ const result = variable(
   ]),
   { description: "Terminal result returned by run-plan." },
 );
-
-const verify = retryShellSlot("verify");
 
 const upgrader = agent("upgrader")
   .prompt(
@@ -203,7 +179,7 @@ const pushTask = task("push").uses(upgrader).push();
 
 const prBodyTemplate = `### 📝 Description
 
-Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Koda only linted the packages the migrations changed: typecheck and tests run in this PR's CI.
+Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Koda ran no checks: this PR's CI checks the upgrade.
 
 Test run of the Lumen upgrade pipeline. Review before merging.
 
@@ -250,7 +226,7 @@ const recordPrCreatedTask = task("record-pr-created")
   .message(
     "Write the terminal result as pr-created, with a one-sentence summary and the pull request URL as prUrl.",
   )
-  .with({ prUrl, verify })
+  .with({ prUrl })
   .writes(result);
 
 const recordPrUpdatedTask = task("record-pr-updated")
@@ -258,7 +234,7 @@ const recordPrUpdatedTask = task("record-pr-updated")
   .message(
     "Write the terminal result as pr-created: the open PR in openPr was updated. Give a one-sentence summary and its url as prUrl.",
   )
-  .with({ openPr, verify })
+  .with({ openPr })
   .writes(result);
 
 const recordHumanCommitsTask = task("record-human-commits")
@@ -289,14 +265,6 @@ const recordUpToDateTask = task("record-up-to-date")
   )
   .writes(result);
 
-const recordFailureTask = task("record-failure")
-  .uses(recorder)
-  .message(
-    "Write the terminal result as failed. Give the failing check from the verify output as the reason.",
-  )
-  .with({ verify })
-  .writes(result);
-
 const upgrade = b =>
   b
     .do(reuseBranchTask, { when: openPrExitCode.eq(1) })
@@ -309,32 +277,17 @@ const upgrade = b =>
       c =>
         c
           .do(migrateTask)
-          .retryShell("verify", {
-            max: 3,
-            command: verifyCommand,
-            fixer: shellOutput =>
-              task("fix")
-                .uses(upgrader)
-                .message("Checks failed after the Lumen upgrade. Fix them.")
-                .with({ stdout: shellOutput.field("stdout"), stderr: shellOutput.field("stderr") }),
-          })
+          .do(podLockfileTask)
+          .do(commitTask)
+          .do(changesetScriptTask)
+          .do(changesetTask)
+          .do(commitChangesetTask)
+          .do(pushTask)
+          .do(prBodyTask)
           .if(
-            verify.field("exit_code").eq(0),
-            d =>
-              d
-                .do(podLockfileTask)
-                .do(commitTask)
-                .do(changesetScriptTask)
-                .do(changesetTask)
-                .do(commitChangesetTask)
-                .do(pushTask)
-                .do(prBodyTask)
-                .if(
-                  openPrExitCode.eq(1),
-                  e => e.do(updatePrBodyTask).do(recordPrUpdatedTask),
-                  e => e.do(createPrTask).do(labelsTask).do(recordPrCreatedTask),
-                ),
-            d => d.do(recordFailureTask),
+            openPrExitCode.eq(1),
+            d => d.do(updatePrBodyTask).do(recordPrUpdatedTask),
+            d => d.do(createPrTask).do(labelsTask).do(recordPrCreatedTask),
           ),
       c => c.do(recordUpToDateTask),
     );
