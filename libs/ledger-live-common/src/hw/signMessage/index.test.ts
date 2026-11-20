@@ -63,6 +63,22 @@ describe("prepareMessageToSign", () => {
     });
   });
 
+  it("adds the path to the default implementation when one is given", async () => {
+    // Given
+    const currency = createFixtureCryptoCurrency("bitcoin");
+    const account = createAccount(currency);
+    const message = "4d6573736167652064652074657374";
+
+    // When
+    const result = await prepareMessageToSign(account, message, "84'/0'/0'/0/5");
+
+    // Then
+    expect(result).toEqual({
+      message: "Message de test",
+      path: "84'/0'/0'/0/5",
+    });
+  });
+
   it("returns an error if account is not linked to a crypto able to sign a message", async () => {
     // Given
     const crypto = createFixtureCryptoCurrency("mycoin");

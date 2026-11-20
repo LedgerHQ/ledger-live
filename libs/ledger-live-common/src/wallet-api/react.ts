@@ -801,6 +801,7 @@ export function useWalletAPIServer({
               },
             });
           }),
+        options?.path,
       ),
     );
   }, [bridgeSession, accounts, manifest, server, tracking, uiMessageSign]);
