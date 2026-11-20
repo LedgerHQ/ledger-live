@@ -5,7 +5,7 @@ import Config from "react-native-config";
 import { AppState, Linking, Platform, type NativeEventSubscription } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import { appVersion as nativeAppVersion, buildVersion } from "LLM/utils/appVersion";
-import RNLocalize from "react-native-localize";
+import { getDeviceLanguageTag } from "@shared/device-locale";
 import {
   getFocusedRouteNameFromRoute,
   ParamListBase,
@@ -402,7 +402,7 @@ const extraProperties = async (store: AppStore) => {
   const madAttributes = getMADAttributes();
   const mandatoryProperties = getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
-  const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
+  const systemLanguage = sensitiveAnalytics ? null : getDeviceLanguageTag();
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
