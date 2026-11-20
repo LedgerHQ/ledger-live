@@ -31,6 +31,7 @@ export function MyWalletDeviceListView({
       <ScrollView
         contentContainerStyle={[styles.content, isAdding && { paddingTop: topInset }]}
         testID="my-wallet-device-list"
+        alwaysBounceVertical={false}
       >
         {/* The same parent in the Add mode, so that the component does not remount. */}
         <View style={isAdding ? styles.fill : undefined}>
