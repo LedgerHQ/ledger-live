@@ -9,6 +9,7 @@ export type CardanoConfig = {
   testnet: boolean;
   api: { url: string };
   epochParams: { url: string };
+  keychainObservableRange: number;
 };
 
 export type CardanoCoinConfig = CurrencyConfig & CardanoConfig;
@@ -19,6 +20,13 @@ const coinConfig: {
 } = buildCoinConfig<CardanoCoinConfig>();
 
 export default coinConfig;
+
+export const DEFAULT_KEYCHAIN_OBSERVABLE_RANGE = 20;
+
+export const getKeychainObservableRange = (config: CardanoCoinConfig): number =>
+  Number.isInteger(config.keychainObservableRange) && config.keychainObservableRange > 0
+    ? config.keychainObservableRange
+    : DEFAULT_KEYCHAIN_OBSERVABLE_RANGE;
 
 export const cardanoDefaults = {
   cardano: {
@@ -36,6 +44,7 @@ export const cardanoDefaults = {
     testnet: false,
     api: { url: "https://cardano.coin.ledger.com/api" },
     epochParams: { url: "https://ada.api.live.ledger.com/api/rest/params" },
+    keychainObservableRange: DEFAULT_KEYCHAIN_OBSERVABLE_RANGE,
   },
   cardano_testnet: {
     status: {
@@ -52,5 +61,6 @@ export const cardanoDefaults = {
     testnet: true,
     api: { url: "https://ledger-preprod.cardanoscan.io/api" },
     epochParams: { url: "https://ada-testnet.api.live.ledger-test.com/api/rest/params" },
+    keychainObservableRange: DEFAULT_KEYCHAIN_OBSERVABLE_RANGE,
   },
 } satisfies Record<string, CardanoCoinConfig>;

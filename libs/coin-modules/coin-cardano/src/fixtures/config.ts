@@ -9,6 +9,7 @@ export const cardanoCoinConfig: CardanoCoinConfig = {
   testnet: false,
   api: cardanoDefaults.cardano.api,
   epochParams: cardanoDefaults.cardano.epochParams,
+  keychainObservableRange: cardanoDefaults.cardano.keychainObservableRange,
 };
 
 export const cardanoTestnetCoinConfig: CardanoCoinConfig = {

@@ -350,6 +350,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "cardano_testnet",
+    ticker: "tADA",
+    name: "Cardano (Testnet)",
+    family: "cardano",
+    color: "#0A1D2C",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
     id: "casper",
     ticker: "CSPR",
     name: "Casper",

@@ -48,6 +48,7 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
           maxFeesWarning: 0,
           maxFeesError: 0,
           testnet: true,
+          keychainObservableRange: 20,
           ...MOCK_ENDPOINTS,
         },
       },

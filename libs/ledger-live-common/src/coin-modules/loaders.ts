@@ -82,7 +82,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     family: "cardano",
-    supportedCoins: ["cardano"],
+    supportedCoins: ["cardano", "cardano_testnet"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/cardano/setup"),
     loadLocalApi: () =>
