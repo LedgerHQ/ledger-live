@@ -538,7 +538,8 @@ export const deviceOnboardingMachine = setup({
 
         firmwareUpdateOffered: {
           on: {
-            USER_ACCEPT: { target: "firmwareUpdateDelegated", actions: "forgetUpdateAfterSetup" },
+            // The flag stays until the update is answered: the user may come back without updating.
+            USER_ACCEPT: "firmwareUpdateDelegated",
             USER_DECLINE: {
               target: "#deviceOnboarding.setupExit",
               actions: "rememberFirmwareDeclined",

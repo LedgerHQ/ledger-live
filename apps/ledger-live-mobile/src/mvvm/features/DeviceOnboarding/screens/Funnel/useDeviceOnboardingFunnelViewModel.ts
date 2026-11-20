@@ -627,6 +627,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, []);
   const restoreShown = useCallback(() => dismissRestoreRef.current !== null, []);
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
+  const { confirmsQuit, heldBackUpdatePending } = leaveRules(
+    onboarding.context,
+    onboarding.snapshot?.context,
+  );
   const machineState = onboarding.state;
   const locked = machineState === deviceLockedState;
   const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
@@ -637,6 +641,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onboardedOnEntry,
     hasLiveDevice: onboarding.liveDevice !== null,
     returningFromFirmwareUpdate,
+    heldBackUpdatePending,
   });
   const holdingPreviousScreen = holdingLockedScreen || deviceOffDuringChecks;
   const shownState = holdingPreviousScreen ? (heldState?.state ?? machineState) : machineState;
@@ -728,10 +733,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
-  const { confirmsQuit, heldBackUpdatePending } = leaveRules(
-    onboarding.context,
-    onboarding.snapshot?.context,
-  );
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
 
   const quitOrLeave = useCallback(() => {

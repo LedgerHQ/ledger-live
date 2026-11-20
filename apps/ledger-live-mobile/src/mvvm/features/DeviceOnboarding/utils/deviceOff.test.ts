@@ -42,6 +42,20 @@ describe("isDeviceOffDuringChecks", () => {
     ).toBe(false);
   });
 
+  it.each(["checks.firmwareUpdateOffered", "postSetupFirmware.firmwareUpdateOffered"])(
+    "should hold the held-back update of a device set up in this run in %s",
+    heldMachineState => {
+      expect(
+        isDeviceOffDuringChecks({
+          ...holding,
+          heldMachineState,
+          onboardedOnEntry: false,
+          heldBackUpdatePending: true,
+        }),
+      ).toBe(true);
+    },
+  );
+
   it.each([
     ["the machine is not awaiting a session", { machineState: "checks.genuineCheck.running" }],
     ["the held screen is not a check", { heldMachineState: "deviceSetup.intro" }],

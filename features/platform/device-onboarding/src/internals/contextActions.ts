@@ -146,7 +146,6 @@ export const contextActions = {
     return { isOnboarded: event.state.isOnboarded };
   }),
   // Cleared as the update starts: the device comes back seeded and must not be offered it again.
-  forgetUpdateAfterSetup: update({ updateAfterSetup: false }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};

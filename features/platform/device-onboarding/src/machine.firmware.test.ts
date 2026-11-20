@@ -891,6 +891,32 @@ describe("a nano firmware update held back until setup", () => {
     );
   });
 
+  it("keeps the update held back when the user comes back without updating", async () => {
+    const { actor } = await enterHeldBackSetup({
+      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable, checkFailure],
+    });
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
+    await settle();
+
+    expect(actor.getSnapshot().matches({ checks: "firmwareCheckFailed" })).toBe(true);
+    expect(actor.getSnapshot().context).toMatchObject({
+      updateAfterSetup: true,
+      isOnboarded: true,
+    });
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
   it("re-attests the device after the update, then ends the setup without offering it again", async () => {
     const { actor, fake } = await enterHeldBackSetup({
       osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.8.0" })],
@@ -902,10 +928,11 @@ describe("a nano firmware update held back until setup", () => {
 
     actor.send({ type: "USER_ACCEPT" });
     await settle();
-    expect(actor.getSnapshot().context.updateAfterSetup).toBe(false);
+    expect(actor.getSnapshot().context.updateAfterSetup).toBe(true);
 
     actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
     await settle();
+    expect(actor.getSnapshot().context.updateAfterSetup).toBe(false);
     await leaveSuccessScreen(actor);
     actor.send(readyAndSeeded);
     await settle();
