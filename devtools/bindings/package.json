@@ -96,6 +96,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "rxjs": "catalog:",
     "typescript": "catalog:"
   }
 }

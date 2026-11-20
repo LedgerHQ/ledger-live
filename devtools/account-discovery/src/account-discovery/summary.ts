@@ -1,4 +1,4 @@
-import type { AccountDiscoveryState } from "../types";
+import type { AccountDiscoveryState, CompletionStatus, DiscoveredRow } from "../types";
 
 export function formatDuration(ms: number): string {
   const rounded = Math.round(ms);
@@ -20,4 +20,28 @@ export function statusLine(state: AccountDiscoveryState): string {
   if (state.status === "error") return state.error ?? "The scan failed.";
   const prefix = { scanning: "Scanning… ", stopped: "Stopped · ", done: "Done · " }[state.status];
   return `${prefix}${summaryLine(state)}`;
+}
+
+const COMPLETION_LABELS: Record<CompletionStatus, string> = {
+  waiting: "waiting",
+  "awaiting-approval": "approve on device",
+  completed: "completed",
+  refused: "refused",
+  failed: "failed",
+};
+
+export function completionLabel(row: DiscoveredRow): string | undefined {
+  if (!row.needsCompletion) return undefined;
+  return row.completion ? COMPLETION_LABELS[row.completion] : "needs completion";
+}
+
+export function completionLine({ completion }: AccountDiscoveryState): string | undefined {
+  if (completion.status === "idle") return undefined;
+  if (completion.status === "error") return completion.error ?? "The completion failed.";
+  const lines = {
+    completing: "Completing…",
+    done: "Completion done",
+    stopped: "Completion stopped",
+  };
+  return lines[completion.status];
 }
