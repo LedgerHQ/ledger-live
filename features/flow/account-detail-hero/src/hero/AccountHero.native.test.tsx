@@ -114,6 +114,7 @@ describe("AccountHero (Native)", () => {
     await user.press(screen.getByTestId(`${TEST_ID}-actions-more`));
 
     expect(moreSheet()).toBeExpanded();
+    expect(screen.getByTestId(`${TEST_ID}-more-sheet-content`)).toBeOnTheScreen();
 
     await user.press(screen.getByTestId(`${TEST_ID}-more-sheet-earn`));
 

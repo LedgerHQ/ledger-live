@@ -24,7 +24,7 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
-  private readonly moreSheet = byId("account-detail-hero-more-sheet");
+  private readonly moreSheet = byId("account-detail-hero-more-sheet-content");
   private readonly moreSheetAction = (action: MoreSheetAction) =>
     byId(`account-detail-hero-more-sheet-${action}`);
   private readonly assetPicker = byId("account-detail-asset-picker-list");
