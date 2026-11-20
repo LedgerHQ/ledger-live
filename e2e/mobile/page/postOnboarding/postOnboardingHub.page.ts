@@ -4,6 +4,7 @@ import { byId } from "@e2e/helpers/elements/native";
 export default class PostOnboardingHubPage {
   private readonly onboardingWidget = byId("onboarding-widget");
   private readonly hubContainer = byId("post-onboarding-hub-container");
+  private readonly hubClose = byId("bottom-sheet-header-close-button");
   private readonly mockCompleteAndBackToHub = byId("post-onboarding-mock-complete-and-back-to-hub");
   private readonly hubCompleteButton = byId("post-onboarding-hub-complete-button");
   private readonly hubAction = (actionId: string) => byId(`post-onboarding-hub-action-${actionId}`);
@@ -24,6 +25,24 @@ export default class PostOnboardingHubPage {
   async openHubFromWidget(): Promise<void> {
     await this.onboardingWidget.tap();
     await this.hubContainer.waitFullyVisible();
+  }
+
+  @Step("Expect post-onboarding hub to be open")
+  async expectHubOpen(): Promise<void> {
+    await this.hubContainer.waitFullyVisible();
+  }
+
+  @Step("Expect post-onboarding hub not to be open")
+  async expectHubNotOpen(): Promise<void> {
+    await this.hubContainer.expectNotVisible();
+  }
+
+  /** The hub opened after onboarding is the drawer over the portfolio. */
+  @Step("Close post-onboarding hub")
+  async closeHub(): Promise<void> {
+    await this.hubClose.waitFullyVisible();
+    await this.hubClose.tap();
+    await this.hubContainer.waitNotVisible();
   }
 
   @Step("Expect hub action {{0}} to be pending")
