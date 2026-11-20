@@ -25,6 +25,7 @@ export function MyWalletDeviceListView({
   onResult,
   onCloseModal,
   onModalHide,
+  registerDeviceSelection,
 }: Readonly<MyWalletDeviceListViewProps>) {
   return (
     <>
@@ -59,6 +60,7 @@ export function MyWalletDeviceListView({
         onResult={onResult}
         onClose={onCloseModal}
         onModalHide={onModalHide}
+        registerDeviceSelection={registerDeviceSelection}
         location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
       />
     </>

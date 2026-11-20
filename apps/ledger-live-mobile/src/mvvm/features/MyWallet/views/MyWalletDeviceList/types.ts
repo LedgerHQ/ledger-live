@@ -29,4 +29,6 @@ export type MyWalletDeviceListViewProps = {
   onResult: (result: Result) => void;
   onCloseModal: () => void;
   onModalHide: () => void;
+  /** Receives the modal's reset of its last result, so that the next device opens it again. */
+  registerDeviceSelection: (clearResult: () => void) => void;
 };

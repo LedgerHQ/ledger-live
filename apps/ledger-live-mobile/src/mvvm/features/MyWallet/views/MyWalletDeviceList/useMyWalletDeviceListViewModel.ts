@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Linking } from "react-native";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { CompositeNavigationProp, RouteProp } from "@react-navigation/native";
@@ -98,7 +98,16 @@ export function useMyWalletDeviceListViewModel({
     });
   }, [navigation]);
 
-  const resetDevice = useCallback(() => setDevice(undefined), []);
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = useCallback((clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  }, []);
+
+  const resetDevice = useCallback(() => {
+    setDevice(undefined);
+    clearModalResultRef.current?.();
+  }, []);
 
   const onResult = useCallback(
     ({ device: resultDevice, deviceInfo, result: appsResult }: Result) => {
@@ -143,5 +152,6 @@ export function useMyWalletDeviceListViewModel({
     onResult,
     onCloseModal: resetDevice,
     onModalHide: resetDevice,
+    registerDeviceSelection,
   };
 }
