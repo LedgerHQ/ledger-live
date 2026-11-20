@@ -1,21 +1,53 @@
 import { useMemo } from "react";
+import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
+import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
 import { useReceiveScreenData } from "./useReceiveScreenData";
+
+export type ReceiveAddressViewModel = ReceiveAddressViewProps &
+  Readonly<{
+    /** The device verification to mount, while one runs. */
+    verification: UseVerifyAddressExecutorViewModelParams | undefined;
+  }>;
 
 export function useReceiveAddressViewModel({
   accountUUID,
   assetId,
   onClose,
-}: ReceiveAddressProps): ReceiveAddressViewProps {
-  const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
+  onCopyAddress,
+  onShareAddress,
+  VerifyAddressExecutor,
+  getFamilyConfig,
+}: ReceiveAddressProps): ReceiveAddressViewModel {
+  const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
-  const selection = useReceiveAddressSelection(data.type === "ready" ? data.receive : undefined);
+  const receive = data.type === "ready" ? data.receive : undefined;
+  const selection = useReceiveAddressSelection(receive);
+  const familyConfig = useReceiveFamilyConfig({
+    getFamilyConfig,
+    descriptor,
+    asset: header.asset,
+    receive,
+    accountStatus,
+  });
   const { copy } = header;
   const { selected } = selection;
+  const { actions, verification } = useReceiveAddressActions({
+    accountUUID,
+    assetId,
+    selected,
+    familyConfig,
+    copy,
+    hasVerifyExecutor: !!VerifyAddressExecutor,
+    onCopyAddress,
+    onShareAddress,
+    onClose,
+  });
 
   const address = useMemo(
     () =>
@@ -49,6 +81,8 @@ export function useReceiveAddressViewModel({
         }
       : undefined,
     address,
+    actions,
+    verification,
     title: header.title,
     networkLabel: header.networkLabel,
     networkIcon: header.data?.networkIcon,

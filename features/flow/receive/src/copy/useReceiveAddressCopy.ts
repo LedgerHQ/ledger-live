@@ -11,6 +11,12 @@ export type ReceiveAddressCopy = Readonly<{
   errorTitle: string;
   errorDescription: string;
   retryLabel: string;
+  copyLabel: string;
+  copiedLabel: string;
+  shareLabel: string;
+  verifyLabel: string;
+  verifyHintMessage: string;
+  verifyHintGotIt: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -33,5 +39,11 @@ export function useReceiveAddressCopy({
     errorTitle: t("receiveAddress.error.title"),
     errorDescription: t("receiveAddress.error.description"),
     retryLabel: t("receiveAddress.error.retry"),
+    copyLabel: t("receiveAddress.actions.copy"),
+    copiedLabel: t("receiveAddress.actions.copied"),
+    shareLabel: t("receiveAddress.actions.share"),
+    verifyLabel: t("receiveAddress.actions.verify"),
+    verifyHintMessage: t("receiveAddress.verifyHint.message"),
+    verifyHintGotIt: t("receiveAddress.verifyHint.gotIt"),
   };
 }

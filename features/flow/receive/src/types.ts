@@ -46,6 +46,14 @@ export type GetReceiveFamilyConfig<A = unknown> = (
   input: ReceiveFamilyConfigInput<A>,
 ) => Partial<ReceiveFamilyConfig>;
 
+/**
+ * The account's coin family slot, as the app resolves it for the address screen: the app adds the
+ * feature flags and, where a family still needs it, the legacy account.
+ */
+export type ReceiveFamilyConfigPort = (
+  input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
+) => Partial<ReceiveFamilyConfig>;
+
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
