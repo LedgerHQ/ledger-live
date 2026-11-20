@@ -21,13 +21,19 @@ const POLYGON_DAI_TOKEN_ID = "polygon/erc20/(pos)_dai_stablecoin";
 
 // Read from the loaded userdata fixture so the ids always match the app's real
 // account ids, without hardcoding seed-derived addresses.
-const ETHEREUM_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.ETH.id);
-const POLYGON_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.POL.id);
-const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
-  WALLET_40_STABLECOINS_FIXTURE,
-  Currency.POL.id,
-  POLYGON_DAI_TOKEN_ID,
-);
+const ETHEREUM_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.ETH.id,
+});
+const POLYGON_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.POL.id,
+});
+const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  parentCurrencyId: Currency.POL.id,
+  tokenId: POLYGON_DAI_TOKEN_ID,
+});
 
 // Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
@@ -175,10 +181,10 @@ describe("Asset aggregation", () => {
     await app.market.openViaDeeplink();
     await app.market.expectMarketScreenVisible();
     await app.market.filterStarredAssetsOnMarketScreen();
-    const isStarredAssetListed = await app.market.isMarketScreenItemVisible(
-      USDT_MARKET_ID,
-      USDT_MARKET_NAME,
-    );
+    const isStarredAssetListed = await app.market.isMarketScreenItemVisible({
+      marketId: USDT_MARKET_ID,
+      title: USDT_MARKET_NAME,
+    });
     expect(isStarredAssetListed).toBe(true);
   });
 });

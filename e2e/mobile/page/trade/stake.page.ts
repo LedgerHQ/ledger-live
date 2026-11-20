@@ -2,6 +2,16 @@ import { Step } from "jest-allure2-reporter/api";
 import invariant from "invariant";
 import { byId } from "@e2e/helpers/elements/native";
 
+type StakeAmountOptions = {
+  currencyId: string;
+  amount: string;
+};
+
+type StakeProviderOptions = {
+  currencyId: string;
+  provider: string;
+};
+
 const PROVIDER_ROW_PREFIX = "provider-row-";
 const PROVIDER_ROW_REGEX = new RegExp(`^${PROVIDER_ROW_PREFIX}.+$`);
 
@@ -44,20 +54,23 @@ export default class StakePage {
     }
   }
 
-  @Step("Set delegated amount {{{1}}} for {{{0}}}")
-  async setAmount(currencyId: string, amount: string) {
+  @Step("Set delegated amount {{{0.amount}}} for {{{0.currencyId}}}")
+  async setAmount(options: StakeAmountOptions) {
+    const { currencyId, amount } = options;
     await this.summaryAmount(currencyId).tap();
     await this.amountInput(currencyId).replaceText(amount);
     await this.amountContinueButton(currencyId).waitVisible(); // Issue with RN75 : QAA-370
   }
 
-  @Step("Expect provider {{{1}}} in summary")
-  async expectProvider(currencyId: string, provider: string) {
+  @Step("Expect provider {{{0.provider}}} in summary")
+  async expectProvider(options: StakeProviderOptions) {
+    const { currencyId, provider } = options;
     await this.summaryValidator(currencyId).expectText(provider, { containing: true });
   }
 
-  @Step("Select new provider {{{1}}}")
-  async selectValidator(currencyId: string, provider: string) {
+  @Step("Select new provider {{{0.provider}}}")
+  async selectValidator(options: StakeProviderOptions) {
+    const { currencyId, provider } = options;
     const ticker = provider.split(" - ")[0];
     await this.summaryValidator(currencyId).tap();
     await this.searchPoolInput.replaceText(ticker);

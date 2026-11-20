@@ -144,7 +144,10 @@ export function runSendTest(
       const addressToCredit = transaction.accountToCredit.address;
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setRecipientAndContinue({
+        address: addressToCredit,
+        memoTag: transaction.memoTag,
+      });
       await app.send.setAmountAndContinue(transaction.amount);
       await verifySendAndOperationDetails(transaction, amountWithCode);
     });
@@ -179,7 +182,7 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid address - ${scenario}`, async () => {
       const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
       await app.send.navigateToSendScreen(transaction.accountToDebit, accountName);
-      await app.send.setRecipient(recipientAddress, transaction.memoTag);
+      await app.send.setRecipient({ address: recipientAddress, memoTag: transaction.memoTag });
       await app.send.expectSendRecipientError(expectedErrorMessage);
     });
   });
@@ -214,7 +217,7 @@ export function runSendValidAddressTest(
         ? baseRecipientAddress.toLowerCase()
         : baseRecipientAddress;
       transaction.accountToCredit.address = recipientAddress;
-      await app.send.setRecipient(recipientAddress, transaction.memoTag);
+      await app.send.setRecipient({ address: recipientAddress, memoTag: transaction.memoTag });
       await app.send.expectSendRecipientSuccess(expectedWarningMessage);
       await app.send.recipientContinue(transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
@@ -247,10 +250,10 @@ export function runSendInvalidAmountTest(
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.amount})`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.send.setRecipientAndContinue(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.send.setRecipientAndContinue({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.send.setAmount(transaction.amount);
       await app.send.expectSendAmountError(expectedErrorMessage);
     });
@@ -279,7 +282,10 @@ export function runSendInvalidTokenAmountTest(
         transaction.accountToDebit,
         transaction.accountToDebit.currency.name,
       );
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setRecipientAndContinue({
+        address: addressToCredit,
+        memoTag: transaction.memoTag,
+      });
       await app.send.setAmount(transaction.amount);
       if (expectedErrorMessage instanceof RegExp) {
         await app.send.expectSendAmountSuccess();
@@ -314,7 +320,10 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - max amount`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setRecipientAndContinue({
+        address: addressToCredit,
+        memoTag: transaction.memoTag,
+      });
       const amount = await app.send.setAmount("max");
       await app.send.expectSendAmountSuccess();
       await app.send.amountContinue();
@@ -344,7 +353,7 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
       invariant(ensName, "ENS name is not provided");
 
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.send.setRecipientAndContinue(ensName, transaction.memoTag);
+      await app.send.setRecipientAndContinue({ address: ensName, memoTag: transaction.memoTag });
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;

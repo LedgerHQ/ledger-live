@@ -56,7 +56,10 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       const addressToCredit = transaction.accountToCredit.address;
       await app.account.navigateToSubAccount(transaction.accountToDebit);
       await app.account.tapSend();
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setRecipientAndContinue({
+        address: addressToCredit,
+        memoTag: transaction.memoTag,
+      });
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
@@ -72,13 +75,17 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
-      await app.operationDetails.checkOperationInfos(transaction, true, "OUT");
+      await app.operationDetails.checkOperationInfos({
+        transaction,
+        isSentTransaction: true,
+        operationType: "OUT",
+      });
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         const subAccountId = await app.account.navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
         await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
-        await app.operationDetails.checkOperationInfos(transaction, false);
+        await app.operationDetails.checkOperationInfos({ transaction, isSentTransaction: false });
       }
     });
   });
@@ -105,7 +112,7 @@ export function runSendSPLAddressValid(
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
       const addressToCredit = Addresses.SOL_GIGA_2_ATA_ADDRESS;
-      await app.send.setRecipient(addressToCredit, transaction.memoTag);
+      await app.send.setRecipient({ address: addressToCredit, memoTag: transaction.memoTag });
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
   });
@@ -134,7 +141,10 @@ export function runSendSPLAddressInvalid(
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
       invariant(recipientContractAddress, "Recipient address is not defined");
-      await app.send.setRecipient(recipientContractAddress, transaction.memoTag);
+      await app.send.setRecipient({
+        address: recipientContractAddress,
+        memoTag: transaction.memoTag,
+      });
       await app.send.expectSendRecipientError(expectedErrorMessage);
     });
   });
@@ -174,18 +184,20 @@ export function runAddSubAccountTest(testConfig: {
         await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
       }
 
-      const accountId = await app.addAccount.addAccountAtIndex(
-        asset?.parentAccount === undefined ? asset.accountName : asset.parentAccount.accountName,
-        asset?.parentAccount === undefined
-          ? `${asset.currency.id}:${asset.address}`
-          : asset.parentAccount.currency.id,
-        asset.index,
-      );
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName:
+          asset?.parentAccount === undefined ? asset.accountName : asset.parentAccount.accountName,
+        currencyId:
+          asset?.parentAccount === undefined
+            ? `${asset.currency.id}:${asset.address}`
+            : asset.parentAccount.currency.id,
+        index: asset.index,
+      });
 
-      await app.common.goToAccount(
+      await app.common.goToAccount({
         accountId,
-        asset.parentAccount?.currency.id ?? asset.currency.id,
-      );
+        currencyId: asset.parentAccount?.currency.id ?? asset.currency.id,
+      });
       await app.account.expectAccountBalanceVisible(accountId);
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);

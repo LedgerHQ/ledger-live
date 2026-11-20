@@ -13,6 +13,16 @@ const trxAmount = (text: string): number => {
   return code > 0 ? Number(words[code - 1].replaceAll(",", "")) : Number.NaN;
 };
 
+type FeePaymentOptionFeeOptions = {
+  optionId: string;
+  fee: string;
+};
+
+type ExpectMemoRejectsNonNumericInputOptions = {
+  rawInput: string;
+  expectedSanitizedValue?: string;
+};
+
 export default class NewSendFlowPage {
   private readonly recipientInput = byId("recipient-input");
   private readonly skipMemoContent = byId("send-skip-memo-content");
@@ -44,7 +54,7 @@ export default class NewSendFlowPage {
   private readonly feePaymentOption = (optionId: string) =>
     byId(`send-fee-payment-option-${optionId}`);
   // A string matches the whole text, so "0.85 USDT" doesn't match "10.85 USDT".
-  private readonly feePaymentOptionFeeShowing = (optionId: string, fee: string) =>
+  private readonly feePaymentOptionFeeShowing = ({ optionId, fee }: FeePaymentOptionFeeOptions) =>
     byIdWithDescendantText({ id: `send-fee-payment-option-${optionId}-fee`, text: fee });
   private readonly sponsoredRentSignaturePrompt = byId("send-sponsored-rent-signature-prompt");
   private readonly sponsoredPolling = byId("send-sponsored-polling");
@@ -108,8 +118,9 @@ export default class NewSendFlowPage {
     }
   }
 
-  @Step("Expect memo field to reject non-numeric input: {{{0}}}")
-  async expectMemoRejectsNonNumericInput(rawInput: string, expectedSanitizedValue = "") {
+  @Step("Expect memo field to reject non-numeric input: {{{0.rawInput}}}")
+  async expectMemoRejectsNonNumericInput(options: ExpectMemoRejectsNonNumericInputOptions) {
+    const { rawInput, expectedSanitizedValue = "" } = options;
     await this.memoInput.replaceText(rawInput);
     // XRP tags are numeric-only: non-digits are stripped by sanitizeMemoValue, so the
     // field never holds the rejected characters.
@@ -159,9 +170,9 @@ export default class NewSendFlowPage {
     await this.feePaymentOptionsContent.waitFullyVisible();
   }
 
-  @Step("Verify fee payment option {{{0}}} costs {{{1}}}")
-  async expectFeePaymentOptionFee(optionId: string, fee: string) {
-    await this.feePaymentOptionFeeShowing(optionId, fee).waitVisible();
+  @Step("Verify fee payment option {{{0.optionId}}} costs {{{0.fee}}}")
+  async expectFeePaymentOptionFee(options: FeePaymentOptionFeeOptions) {
+    await this.feePaymentOptionFeeShowing(options).waitVisible();
   }
 
   @Step("Select fee payment option: {{{0}}}")
@@ -210,10 +221,12 @@ export default class NewSendFlowPage {
   }
 
   private waitForNetworkFeeTrx(passes: (fee: number) => boolean, expected: string) {
-    return retryUntilTimeout(async () => {
-      const fee = await this.networkFeeTrx();
-      if (!passes(fee)) throw new Error(`The network fee is ${fee} TRX, expected ${expected}`);
-      return fee;
+    return retryUntilTimeout({
+      fn: async () => {
+        const fee = await this.networkFeeTrx();
+        if (!passes(fee)) throw new Error(`The network fee is ${fee} TRX, expected ${expected}`);
+        return fee;
+      },
     });
   }
 

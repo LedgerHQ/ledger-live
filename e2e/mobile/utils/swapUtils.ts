@@ -9,6 +9,30 @@ import { QUOTES_FETCH_TIMEOUT } from "@e2e/utils/constants";
 import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
 import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
+type SelectCurrencyOptions = {
+  account: Account;
+  isFromCurrency?: boolean;
+};
+
+type PerformSwapUntilQuoteSelectionStepOptions = {
+  accountToDebit: Account;
+  accountToCredit: Account;
+  amount: string;
+  continueToQuotes?: boolean;
+};
+
+type EnsureTokenApprovalOptions = {
+  fromAccount: Account | TokenAccount;
+  provider: SwapProvider;
+  minAmount: string;
+};
+
+type IsTokenApprovalExpectedOptions = {
+  fromAccount: Account | TokenAccount;
+  provider: SwapProvider;
+  amount: string;
+};
+
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
  * ptxSwapAppConfig / defaultAppConfig.decimals.default), not a device firmware limit.
@@ -19,19 +43,14 @@ export function truncateSwapAmount(amount: string): string {
   return new BigNumber(amount).decimalPlaces(8, BigNumber.ROUND_DOWN).toFixed();
 }
 
-async function selectCurrency(
-  account: Account,
-  isFromCurrency: boolean = true,
-  selectSpecificAccount: boolean = false,
-) {
+async function selectCurrency(options: SelectCurrencyOptions) {
+  const { account, isFromCurrency = true } = options;
   // Check the appropriate field based on whether we're selecting FROM or TO
   const currentCurrencyText = isFromCurrency
     ? await app.swapLiveApp.getFromCurrencyTexts()
     : await app.swapLiveApp.getToCurrencyTexts();
 
-  // When a specific (non-default) account is required, always open the drawer to pick it —
-  // even if the currency already matches — otherwise the default first account is kept.
-  if (!selectSpecificAccount && currentCurrencyText.includes(account.currency.ticker)) {
+  if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
   if (isFromCurrency) {
@@ -40,24 +59,16 @@ async function selectCurrency(
     await app.swapLiveApp.tapToCurrency();
   }
 
-  if (selectSpecificAccount) {
-    await app.modularDrawer.selectAssetAndAccount(account);
-  } else {
-    await app.modularDrawer.selectAsset(account);
-  }
+  await app.modularDrawer.selectAsset(account);
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
 export async function performSwapUntilQuoteSelectionStep(
-  accountToDebit: Account,
-  accountToCredit: Account,
-  amount: string,
-  continueToQuotes: boolean = true,
-  selectSpecificToAccount: boolean = false,
-  selectSpecificFromAccount: boolean = false,
+  options: PerformSwapUntilQuoteSelectionStepOptions,
 ) {
-  await selectCurrency(accountToDebit, true, selectSpecificFromAccount);
-  await selectCurrency(accountToCredit, false, selectSpecificToAccount);
+  const { accountToDebit, accountToCredit, amount, continueToQuotes = true } = options;
+  await selectCurrency({ account: accountToDebit, isFromCurrency: true });
+  await selectCurrency({ account: accountToCredit, isFromCurrency: false });
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
     await app.swapLiveApp.waitForAmountToReceive(floatNumberRegex, QUOTES_FETCH_TIMEOUT);
@@ -65,13 +76,14 @@ export async function performSwapUntilQuoteSelectionStep(
     await app.swapLiveApp.waitForQuotes();
   }
 }
-export async function ensureTokenApproval(
-  fromAccount: Account | TokenAccount,
-  provider: SwapProvider,
-  minAmount: string,
-) {
+export async function ensureTokenApproval(options: EnsureTokenApprovalOptions) {
+  const { fromAccount, provider, minAmount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return;
-  const approvalNeeded = await isTokenApprovalExpected(fromAccount, provider, minAmount);
+  const approvalNeeded = await isTokenApprovalExpected({
+    fromAccount,
+    provider,
+    amount: minAmount,
+  });
   if (!approvalNeeded) return;
 
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
@@ -89,10 +101,9 @@ export async function ensureTokenApproval(
 }
 
 export async function isTokenApprovalExpected(
-  fromAccount: Account | TokenAccount,
-  provider: SwapProvider,
-  amount: string,
+  options: IsTokenApprovalExpectedOptions,
 ): Promise<boolean> {
+  const { fromAccount, provider, amount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return false;
 
   const sufficientAllowance = await isTokenAllowanceSufficientCommand(
@@ -109,5 +120,9 @@ export async function revokeTokenApproval(
 ) {
   if (!needsTokenAllowance(fromAccount, provider)) return;
 
-  await revokeAllowance(fromAccount, provider.contractAddress, provider.uiName);
+  await revokeAllowance({
+    account: fromAccount,
+    spender: provider.contractAddress,
+    label: provider.uiName,
+  });
 }

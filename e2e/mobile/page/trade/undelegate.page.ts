@@ -2,6 +2,11 @@ import { Step } from "jest-allure2-reporter/api";
 import invariant from "invariant";
 import { byId } from "@e2e/helpers/elements/native";
 
+type UnstakeAmountOptions = {
+  currencyId: string;
+  amount: string;
+};
+
 // The delegation drawer's action ids are not namespaced per currency: sui exposes
 // `StakingActionUnstake`, while `DelegationActionUndelegate` is shared by cosmos, cardano, EVM,
 // MultiversX and mina. Resolve them per currency here rather than letting specs pass raw ids.
@@ -49,8 +54,9 @@ export default class UndelegatePage {
     await this.delegationAction(actionId).tap();
   }
 
-  @Step("Enter unstake amount {{{1}}}")
-  async enterAmount(currencyId: string, amount: string) {
+  @Step("Enter unstake amount {{{0.amount}}}")
+  async enterAmount(options: UnstakeAmountOptions) {
+    const { currencyId, amount } = options;
     await this.amountInput(currencyId).replaceText(amount);
     await this.amountContinue(currencyId).waitVisible();
   }

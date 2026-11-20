@@ -7,6 +7,11 @@ import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 type MarketQuickAction = "send" | "receive" | "buy" | "sell" | "swap";
 
+type MarketItemOptions = {
+  marketId: string;
+  title: string;
+};
+
 // The asset detail screen gives some quick actions their own testID.
 const ASSET_DETAIL_QUICK_ACTION_IDS: Partial<Record<MarketQuickAction, string>> = {
   buy: "asset-detail-buy-button",
@@ -27,7 +32,7 @@ export default class MarketPage {
     byId(`market-screen-assets-category-switcher-${value}`);
   private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
   // Matches the title anywhere in a descendant, ignoring case.
-  private readonly marketItemWithTitle = (marketId: string, title: string) =>
+  private readonly marketItemWithTitle = ({ marketId, title }: MarketItemOptions) =>
     byIdWithDescendantText({
       id: `marketItem-${marketId}`,
       text: new RegExp(`.*${escapeRegExp(title)}.*`, "i"),
@@ -110,9 +115,9 @@ export default class MarketPage {
     await this.marketScreenRow(currency).expectVisible();
   }
 
-  @Step("Check market screen item {{{0}}} is visible")
-  async isMarketScreenItemVisible(marketId: string, title: string): Promise<boolean> {
-    return await this.marketItemWithTitle(marketId, title).isVisible(TIMEOUT.xxlarge);
+  @Step("Check market screen item {{{0.marketId}}} is visible")
+  async isMarketScreenItemVisible(options: MarketItemOptions): Promise<boolean> {
+    return await this.marketItemWithTitle(options).isVisible(TIMEOUT.xxlarge);
   }
 
   @Step("Tap on market quick action button {{{0}}}")

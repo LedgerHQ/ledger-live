@@ -131,7 +131,10 @@ async function reachAmountStep(transaction: TransactionType) {
 async function signRentPayment(fake: FakeTronify) {
   await app.newSend.waitForRentSignature();
   await expectRentOrderedFromFake(fake);
-  await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
+  await app.speculos.signTronRentPayment({
+    amount: FAKE_TRONIFY_RENT.quoted,
+    payee: TRONIFY_E2E_PAYEES[0],
+  });
   await app.speculos.resetSpeculosEvents();
   await app.newSend.expectSponsoredPolling();
 }
@@ -148,10 +151,10 @@ export function runNewSendFlowSponsoredTest(options: SponsoredTestOptions) {
       await app.newSend.expectSponsoredNudgeVisible();
 
       await app.newSend.openFeePayment();
-      await app.newSend.expectFeePaymentOptionFee(
-        TRONIFY_OPTION_ID,
-        appFormattedFee(FAKE_TRONIFY_RENT.quoted),
-      );
+      await app.newSend.expectFeePaymentOptionFee({
+        optionId: TRONIFY_OPTION_ID,
+        fee: appFormattedFee(FAKE_TRONIFY_RENT.quoted),
+      });
       await app.newSend.selectFeePaymentOption(TRONIFY_OPTION_ID);
       await app.newSend.confirmFeePayment();
       await app.newSend.expectSponsoredFeeSelected();

@@ -170,7 +170,7 @@ export function runNewSendMemoTest(
       it(`[${label}] - Send - numeric memo only (${invalidMemoInput})`, async () => {
         await app.send.navigateToSendScreen(transaction.accountToDebit);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
-        await app.newSend.expectMemoRejectsNonNumericInput(invalidMemoInput);
+        await app.newSend.expectMemoRejectsNonNumericInput({ rawInput: invalidMemoInput });
         if (transaction.memoTag) {
           await app.newSend.expectMemoRetainsNumericInput(transaction.memoTag);
         }

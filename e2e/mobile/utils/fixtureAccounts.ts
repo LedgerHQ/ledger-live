@@ -12,25 +12,34 @@ const readAccounts = (fixture: string): RawAccount[] => {
   return (raw?.data?.accounts ?? []).map((entry: { data: RawAccount }) => entry.data);
 };
 
+type GetFixtureAccountIdOptions = {
+  fixture: string;
+  currencyId: string;
+};
+
 /**
  * Resolve a parent account id from a userdata fixture by its ledger currency id,
  * so specs reference the app's real ids without hardcoding seed-derived addresses.
  */
-export const getFixtureAccountId = (fixture: string, currencyId: string): string => {
+export const getFixtureAccountId = (options: GetFixtureAccountIdOptions): string => {
+  const { fixture, currencyId } = options;
   const id = readAccounts(fixture).find(account => account.currencyId === currencyId)?.id;
   if (!id) throw new Error(`No "${currencyId}" account found in fixture "${fixture}"`);
   return id;
+};
+
+type GetFixtureTokenAccountIdOptions = {
+  fixture: string;
+  parentCurrencyId: string;
+  tokenId: string;
 };
 
 /**
  * Resolve a token sub-account id from a userdata fixture by its parent currency id
  * and CAL token id.
  */
-export const getFixtureTokenAccountId = (
-  fixture: string,
-  parentCurrencyId: string,
-  tokenId: string,
-): string => {
+export const getFixtureTokenAccountId = (options: GetFixtureTokenAccountIdOptions): string => {
+  const { fixture, parentCurrencyId, tokenId } = options;
   const parent = readAccounts(fixture).find(account => account.currencyId === parentCurrencyId);
   const id = parent?.subAccounts?.find(subAccount => subAccount.tokenId === tokenId)?.id;
   if (!id) {

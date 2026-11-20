@@ -23,7 +23,11 @@ describe("Portfolio with account", () => {
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.selectCurrencyByTicker(TICKER);
     await app.modularDrawer.selectNetwork(CURRENCY.name);
-    await app.addAccount.addAccountAtIndex(ACCOUNT.accountName, CURRENCY.id, ACCOUNT.index);
+    await app.addAccount.addAccountAtIndex({
+      currencyName: ACCOUNT.accountName,
+      currencyId: CURRENCY.id,
+      index: ACCOUNT.index,
+    });
     await app.common.tapCloseWithConfirmationButton();
     await app.mainNavigation.tapWallet40Tab("home");
   });
