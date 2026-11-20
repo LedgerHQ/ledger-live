@@ -41,6 +41,7 @@ import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-c
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
+  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;
@@ -345,14 +346,6 @@ export function getPayCardState(): Promise<PayCardPersistedState | null> {
 
 export async function savePayCardState(obj: PayCardPersistedState): Promise<void> {
   await storage.save("payCard", obj);
-}
-
-export function getReceiveVerifyHintState(): Promise<ReceiveVerifyHintState | null> {
-  return storage.get("receiveVerifyHint") as Promise<ReceiveVerifyHintState | null>;
-}
-
-export async function saveReceiveVerifyHintState(obj: ReceiveVerifyHintState): Promise<void> {
-  await storage.save("receiveVerifyHint", obj);
 }
 
 export function getAccountAnalyticsIntroductionState(): Promise<unknown> {

@@ -300,6 +300,7 @@ describe("DBMiddleware - payCard branch", () => {
   const payCardState: FakeState = {
     ...baseState(),
     payCardFeatureTour: { hasSeenFeatureTour: true },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
     payCardOnboardingWidget: {
@@ -312,6 +313,7 @@ describe("DBMiddleware - payCard branch", () => {
 
   const payCardBlob = {
     hasSeenFeatureTour: true,
+    hasSeenReceiveVerifyHint: true,
     balanceFilter: "ethereum/erc20/usd__coin",
     hasSeenLoginIntro: true,
     hasCompletedOnboarding: true,
@@ -322,6 +324,7 @@ describe("DBMiddleware - payCard branch", () => {
 
   it.each([
     "payCardFeatureTour/markPayCardFeatureTourSeen",
+    "receiveVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
     "payCardLoginIntro/markPayCardLoginIntroSeen",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
@@ -330,41 +333,6 @@ describe("DBMiddleware - payCard branch", () => {
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
     expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", payCardBlob);
-  });
-});
-
-describe("DBMiddleware - receiveVerifyHint branch", () => {
-  beforeEach(() => {
-    mockedSetKey.mockReset();
-  });
-
-  const seenState: FakeState = {
-    ...baseState(),
-    receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
-  };
-
-  it.each([
-    "receiveVerifyHint/markReceiveVerifyHintSeen",
-    "receiveVerifyHint/resetReceiveVerifyHintSeen",
-  ])("persists the hint under its own receiveVerifyHint key on %s", actionType => {
-    runMiddleware([seenState, seenState], { type: actionType });
-
-    expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "receiveVerifyHint", {
-      hasSeenReceiveVerifyHint: true,
-    });
-  });
-
-  it("leaves the hint out of the payCard blob", () => {
-    runMiddleware([seenState, seenState], {
-      type: "payCardFeatureTour/markPayCardFeatureTourSeen",
-    });
-
-    expect(mockedSetKey).toHaveBeenCalledWith(
-      "app",
-      "payCard",
-      expect.not.objectContaining({ hasSeenReceiveVerifyHint: expect.anything() }),
-    );
   });
 });
 

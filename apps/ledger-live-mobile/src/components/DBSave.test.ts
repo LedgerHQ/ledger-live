@@ -114,6 +114,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
 
     expect(projected).toEqual({
       hasSeenFeatureTour: true,
+      hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
       hasSeenLoginIntro: true,
       hasCompletedOnboarding: true,
@@ -139,6 +140,7 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
 
   it.each([
     "payCardFeatureTour",
+    "receiveVerifyHint",
     "payCardBalance",
     "payCardLoginIntro",
     "payCardOnboardingWidget",
@@ -146,14 +148,5 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
     const next = { ...base, [slice]: {} } as unknown as State;
 
     expect(payCardDbSaveSliceSelector(next)).not.toBe(payCardDbSaveSliceSelector(base));
-  });
-
-  it("does not re-trigger the save when only receiveVerifyHint changes", () => {
-    const next = {
-      ...base,
-      receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
-    } as unknown as State;
-
-    expect(payCardDbSaveSliceSelector(next)).toBe(payCardDbSaveSliceSelector(base));
   });
 });

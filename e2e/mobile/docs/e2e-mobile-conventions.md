@@ -22,7 +22,7 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 
 ### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, `data.payCard`, and `data.receiveVerifyHint` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
 
 ### State MUST NOT be arranged in UI steps
 
