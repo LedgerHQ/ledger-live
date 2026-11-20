@@ -17,6 +17,7 @@ import {
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useOperationFeeCurrency } from "@ledgerhq/live-common/bridge/generic-coin-framework/operationFee";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { NavigatorName, ScreenName } from "~/const";
@@ -159,17 +160,21 @@ export default function Content({
       ? specificOperationDetails.useFeesCurrency
       : undefined;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
+  // Otherwise, a fee the generic bridge stores in another asset than the native coin.
+  const genericTokenFee = useOperationFeeCurrency(operation, mainAccount);
+  const tokenFee = customFeesCurrency === undefined ? genericTokenFee : undefined;
   // null: the fee is in a currency not resolved yet, so it is not shown in another unit
-  const isFeeCurrencyUnresolved = customFeesCurrency === null;
-  const feeCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
+  const isFeeCurrencyUnresolved = customFeesCurrency === null || tokenFee === null;
+  const feeCurrency = customFeesCurrency ?? tokenFee?.currency ?? getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
   const getDisplayFeeOverride =
     specificOperationDetails && "getDisplayFee" in specificOperationDetails
       ? specificOperationDetails.getDisplayFee
       : undefined;
-  const displayFee = operation.fee
+  const nativeDisplayFee = operation.fee
     ? (getDisplayFeeOverride?.(operation, mainAccount, feeCurrency) ?? operation.fee)
     : operation.fee;
+  const displayFee = tokenFee ? tokenFee.amount : nativeDisplayFee;
 
   const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
     byFamiliesEditOperationPanel[
