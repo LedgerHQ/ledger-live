@@ -5,6 +5,7 @@ import {
   DeviceModelId,
   DmkResultStatus,
   GetOsVersionCommand,
+  GlobalCommandError,
   RefusedByUserDAError,
   UnknownDAError,
   UserInteractionRequired,
@@ -65,6 +66,7 @@ const REDISCOVERED_DEVICE: DiscoveredDevice = {
 } as DiscoveredDevice;
 
 const DASHBOARD = { name: "BOLOS", version: "2.2.3" };
+const ETHEREUM_APP = { name: "Ethereum", version: "1.10.4" };
 
 const osUpdate = (overrides: Partial<OsUpdate> = {}): OsUpdate => ({
   osuFirmware: {
@@ -342,6 +344,33 @@ describe("ApplyUpdatesStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
     });
+
+    it.each([
+      ["CLA", "6e00"],
+      ["INS", "6d00"],
+    ] as const)(
+      "should close the app and read the OS version again without waiting when an app rejects it as %s not supported",
+      async (_, errorCode) => {
+        sendCommand
+          .mockResolvedValueOnce({
+            status: DmkResultStatus.Error,
+            error: new GlobalCommandError({ errorCode, message: "rejected by the app" }),
+          })
+          .mockResolvedValueOnce(success(ETHEREUM_APP));
+
+        await start();
+
+        expect(actor.getSnapshot().value).toBe("CheckErrorCause");
+        expect(deviceActionRuns).toHaveLength(1);
+        expect(dmk.getDeviceSessionState).not.toHaveBeenCalled();
+
+        await completeDeviceAction(undefined);
+        expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+
+        await completeDeviceAction(DASHBOARD);
+        expect(actor.getSnapshot().value).toBe("InstallOsu");
+      },
+    );
 
     it("should install the OSU firmware when the device is on a regular OS", async () => {
       await reachUpdateStart();

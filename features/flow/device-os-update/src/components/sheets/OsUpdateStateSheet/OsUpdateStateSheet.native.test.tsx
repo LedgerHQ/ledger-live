@@ -1,7 +1,14 @@
 import React from "react";
-import { Text } from "react-native";
+import { Pressable, Text } from "react-native";
+import { render as renderOutsideProviders } from "@testing-library/react-native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "../../../__tests__/render";
+import { useOsUpdatePorts } from "../../../hooks/OsUpdatePortsProvider";
+import {
+  OsUpdateTrackingContext,
+  useOsUpdateTracking,
+} from "../../../hooks/OsUpdateTrackingProvider";
+import { OsUpdateButton } from "../../../analytics/analyticsTypes";
 import { OsUpdateStateSheet } from "./OsUpdateStateSheet";
 
 // Wraps the real sheet to observe the props the OS update sheet configures it with.
@@ -11,6 +18,20 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 });
 
 const sheetProps = () => jest.mocked(QueuedBottomSheet).mock.lastCall?.[0];
+
+function SupportButton() {
+  const { openSupport } = useOsUpdatePorts();
+  const { trackClick } = useOsUpdateTracking();
+  return (
+    <Pressable
+      testID="support"
+      onPress={() => {
+        trackClick(OsUpdateButton.LEDGER_SUPPORT);
+        openSupport();
+      }}
+    />
+  );
+}
 
 describe("OsUpdateStateSheet", () => {
   beforeEach(() => {
@@ -101,5 +122,25 @@ describe("OsUpdateStateSheet", () => {
     );
 
     expect(sheetProps()?.enablePanDownToClose).toBe(false);
+  });
+
+  it("gives its content the flow ports and tracking, which the sheet portals out of reach", async () => {
+    const trackClick = jest.fn();
+    const { ports, user } = render(
+      <OsUpdateTrackingContext.Provider
+        value={{ trackPage: jest.fn(), trackClick, trackCompleted: jest.fn() }}
+      >
+        <OsUpdateStateSheet isOpen>
+          <SupportButton />
+        </OsUpdateStateSheet>
+      </OsUpdateTrackingContext.Provider>,
+    );
+
+    // gorhom re-renders the sheet content under a host mounted above the app.
+    const portaled = renderOutsideProviders(<>{sheetProps()?.children}</>);
+    await user.press(portaled.getByTestId("support"));
+
+    expect(ports.openSupport).toHaveBeenCalledTimes(1);
+    expect(trackClick).toHaveBeenCalledWith(OsUpdateButton.LEDGER_SUPPORT);
   });
 });
