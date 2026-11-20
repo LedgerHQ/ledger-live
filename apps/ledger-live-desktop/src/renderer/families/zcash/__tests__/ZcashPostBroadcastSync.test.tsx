@@ -2,8 +2,8 @@ import React from "react";
 import { act, render } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Account, Operation } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import ZcashPostBroadcastSync from "../ZcashPostBroadcastSync";
 
 const mockStartShieldedSync = jest.fn();
@@ -17,11 +17,11 @@ jest.mock("../useZcashShieldedSync", () => ({
 
 const baseAccount = createFixtureAccount();
 
-const buildAccount = (isZcash = true): Account =>
+const buildAccount = (isZcash = true): ZcashAccount =>
   ({
     ...baseAccount,
     currency: { id: isZcash ? "zcash" : "bitcoin" } as CryptoCurrency,
-  }) as unknown as Account;
+  }) as unknown as ZcashAccount;
 
 // coin-zcash's `transferType` field doesn't exist on the bitcoin family's own
 // Transaction type (the component receives it typed that way, per

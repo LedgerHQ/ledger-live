@@ -4,9 +4,7 @@ import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashCoinTransaction } from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import ZcashSelfTransferToggle from "../ZcashSelfTransferToggle";
 
 // The bridge's updateTransaction merges the patch onto the transaction
@@ -35,7 +33,7 @@ const buildAccount = (overrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {}
       ...DEFAULT_ZCASH_PRIVATE_INFO,
       ...overrides,
     },
-  }) as unknown as Account;
+  }) as unknown as ZcashAccount;
 
 // The toggle now gates on the zcashShielded flag itself (it is rendered
 // directly as a family slot, not nested under the flag-gated selector).
@@ -46,9 +44,9 @@ const shieldedOn = () => withFlagOverrides({ zcashShielded: { enabled: true } })
 // per `@ledgerhq/live-common/families/bitcoin/types`). Author fixtures against
 // the real coin-zcash shape, then hand them across the family boundary the
 // same way the component itself does (`as unknown as ZcashTransaction`).
-const mkTx = (patch: Partial<ZcashCoinTransaction>): Transaction => patch as unknown as Transaction;
+const mkTx = (patch: Partial<Transaction>): Transaction => patch as unknown as Transaction;
 
-const renderToggle = (account: Account, transaction: Transaction, onChange = jest.fn()) => {
+const renderToggle = (account: ZcashAccount, transaction: Transaction, onChange = jest.fn()) => {
   render(
     <ZcashSelfTransferToggle account={account} transaction={transaction} onChange={onChange} />,
     { initialState: shieldedOn() },

@@ -5,8 +5,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import {
   getSpendableIronwoodBalance,
@@ -84,17 +83,17 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   const isZcash = account.type === "Account" && isZcashCurrencyId(account.currency.id);
   const active = isZcash && shieldedEnabled;
 
-  const bridge = useAccountBridge<ZcashTransaction>(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
-  const tx = transaction as unknown as ZcashTransaction;
+  const tx = transaction;
 
   useEffect(() => {
     if (!active) return;
     if (tx.sender !== undefined) return;
-    onChange(bridge.updateTransaction(tx, { sender: "public" }) as unknown as Transaction);
+    onChange(bridge.updateTransaction(tx, { sender: "public" }));
   }, [active, tx.sender, bridge, onChange, tx]);
 
   if (!active) return null;
@@ -124,7 +123,7 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   const select = (next: Sender) => {
     if (next === sender) return;
-    onChange(bridge.updateTransaction(tx, { sender: next }) as unknown as Transaction);
+    onChange(bridge.updateTransaction(tx, { sender: next }));
   };
 
   return (

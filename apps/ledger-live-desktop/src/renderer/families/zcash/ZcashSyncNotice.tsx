@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -8,7 +7,7 @@ import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = Readonly<{
-  account: BitcoinAccount;
+  account: ZcashAccount;
   transaction: Transaction;
   onBlockedChange?: (blocked: boolean) => void;
 }>;
@@ -16,7 +15,7 @@ type Props = Readonly<{
 export function ZcashSyncNotice({ account, transaction, onBlockedChange }: Props) {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const isZcash = isZcashCurrencyId(account.currency.id);
-  const sender = (transaction as unknown as ZcashTransaction).sender;
+  const sender = transaction.sender;
 
   // The `account` prop is a snapshot captured when the send flow opened, so read
   // the live account to reflect shielded sync progress in real time (falling back
@@ -24,7 +23,7 @@ export function ZcashSyncNotice({ account, transaction, onBlockedChange }: Props
   const liveAccount = useSelector(state => accountSelector(state, { accountId: account.id })) as
     | ZcashAccount
     | undefined;
-  const activeAccount = liveAccount ?? (account as ZcashAccount);
+  const activeAccount = liveAccount ?? account;
 
   const applies = shieldedEnabled && isZcash && sender === "private";
   const syncState = activeAccount.privateInfo?.syncState ?? "disabled";
