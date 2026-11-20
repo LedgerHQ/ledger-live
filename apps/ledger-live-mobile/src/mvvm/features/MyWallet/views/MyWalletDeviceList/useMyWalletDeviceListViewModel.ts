@@ -107,7 +107,9 @@ export function useMyWalletDeviceListViewModel({
   const resetDevice = useCallback(() => {
     setDevice(undefined);
     clearModalResultRef.current?.();
-  }, []);
+    // Consumes the redirect, so that a next redirect with the same device opens the drawer again.
+    if (redirectedDevice) navigation.setParams({ device: undefined });
+  }, [navigation, redirectedDevice]);
 
   const onResult = useCallback(
     ({ device: resultDevice, deviceInfo, result: appsResult }: Result) => {
