@@ -20,11 +20,20 @@ const lumenPackages = [
   "@ledgerhq/lumen-ui-rnative",
   "@ledgerhq/lumen-utils-shared",
 ];
-// The catalog bump touches every package that uses Lumen, so check all of them, not only the apps.
-// nx.json sets no defaultBase, so the base is explicit. Uncommitted changes count as affected.
-// Lint and typecheck hashes leave out external dependencies, so a cached result would predate the bump.
-const verifyCommand =
-  "git fetch --quiet origin develop && pnpm nx affected -t lint,typecheck --base=origin/develop --skip-nx-cache";
+// Lints only the packages whose files differ from develop, lockfiles aside: typecheck builds every dependency
+// first, which outlasts the run on 80+ Lumen packages, so typecheck and tests are left to the PR's CI.
+// Lint hashes leave out external dependencies, so a cached result would predate the bump.
+const verifyCommand = [
+  "set -e",
+  "git fetch --quiet origin develop",
+  "projects=$(git diff --name-only origin/develop -- . ':!pnpm-lock.yaml' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' | while read -r file; do",
+  '  dir=$(dirname "$file")',
+  '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
+  '  if [ "$dir" != . ]; then node -p "require(\'./$dir/package.json\').name"; fi',
+  "done | sort -u | paste -sd, -)",
+  'if [ -z "$projects" ]; then echo "No package changed besides the bump."; exit 0; fi',
+  'pnpm nx run-many -t lint --projects="$projects" --skip-nx-cache',
+].join("\n");
 
 // What the Lumen workflow sends. The plan bumps to latest and doesn't read targetVersions yet.
 const planInput = z.object({
@@ -194,7 +203,7 @@ const pushTask = task("push").uses(upgrader).push();
 
 const prBodyTemplate = `### 📝 Description
 
-Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Checked with \`${verifyCommand}\`.
+Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Koda only linted the packages the migrations changed: typecheck and tests run in this PR's CI.
 
 Test run of the Lumen upgrade pipeline. Review before merging.
 
