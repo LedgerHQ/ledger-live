@@ -82,6 +82,7 @@ export function useReceiveAddressViewModel({
       : undefined,
     address,
     actions,
+    isVerifying: verification !== undefined,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,
