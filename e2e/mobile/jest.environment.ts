@@ -38,7 +38,7 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "@e2e/utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { isHardTimeout, isUnansweredDetoxRequestError } from "@e2e/helpers/elements/hardTimeout";
-import { attachAppThreadStacks } from "@e2e/helpers/threadStacks";
+import { attachAppThreadStacks, saveSimulatorDiagnostics } from "@e2e/helpers/threadStacks";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 
@@ -58,6 +58,8 @@ import type { ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 const THREAD_STACKS_TIMEOUT_MS = 60_000;
+// Outlasts the slowest of its parallel steps, the 45 s simulator log query.
+const SIMULATOR_DIAGNOSTICS_TIMEOUT_MS = 75_000;
 // getLogs is already capped by the bridge's own response timeout; this outer bound is
 // defense-in-depth for a wedged worker where that inner timer is starved, so it must stay larger.
 const GET_LOGS_TIMEOUT_MS = BRIDGE_RESPONSE_TIMEOUT + 2_000;
@@ -100,6 +102,15 @@ const skipToRetrySet = (
 };
 
 const JEST_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a (test|hook)/;
+const JEST_HOOK_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a hook/;
+
+const failureMessage = (failure: unknown): string =>
+  failure instanceof Error ? failure.message : String(failure);
+
+const isJestTimeout = (failure: unknown) => JEST_TIMEOUT_PATTERN.test(failureMessage(failure));
+
+const isJestHookTimeout = (failure: unknown) =>
+  JEST_HOOK_TIMEOUT_PATTERN.test(failureMessage(failure));
 
 /**
  * A Jest timeout leaves the test body running, and an unanswered Detox request stays in flight.
@@ -107,8 +118,7 @@ const JEST_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a (test|hook)/;
  * flight, which resumes the body and reports its next action's error instead of the real failure.
  */
 function failureLeavesDetoxBusy(failure: unknown): boolean {
-  const message = failure instanceof Error ? failure.message : String(failure);
-  return JEST_TIMEOUT_PATTERN.test(message) || isUnansweredDetoxRequestError(failure);
+  return isJestTimeout(failure) || isUnansweredDetoxRequestError(failure);
 }
 
 const skipWholeFile = (root: Circus.DescribeBlock) => skipToRetrySet(root, new Set());
@@ -132,9 +142,23 @@ async function captureFailureDiagnostics(
   mergedFeatureFlags: OptionalFeatureMap | undefined,
   failure: unknown,
 ): Promise<void> {
-  if (isHardTimeout(failure)) {
-    await withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks");
+  const hangCaptures: Promise<unknown>[] = [];
+  if (isHardTimeout(failure) || isJestTimeout(failure)) {
+    hangCaptures.push(
+      withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks"),
+    );
   }
+  // Launch and terminate hangs time out a hook, so a slow test cannot spend this capture.
+  if (isJestHookTimeout(failure)) {
+    hangCaptures.push(
+      withTimeout(
+        saveSimulatorDiagnostics(),
+        SIMULATOR_DIAGNOSTICS_TIMEOUT_MS,
+        "saveSimulatorDiagnostics",
+      ),
+    );
+  }
+  await Promise.all(hangCaptures);
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
