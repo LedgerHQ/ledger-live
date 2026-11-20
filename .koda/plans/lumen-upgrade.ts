@@ -24,9 +24,9 @@ const lumenPackages = [
 // first, which outlasts the run on 80+ Lumen packages, so typecheck and tests are left to the PR's CI.
 // Lint hashes leave out external dependencies, so a cached result would predate the bump.
 const verifyCommand = [
-  "set -e",
+  "set -eo pipefail",
   "git fetch --quiet origin develop",
-  "projects=$(git diff --name-only origin/develop -- . ':!pnpm-lock.yaml' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' | while read -r file; do",
+  "projects=$(git diff --name-only FETCH_HEAD -- . ':!pnpm-lock.yaml' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' | while read -r file; do",
   '  dir=$(dirname "$file")',
   '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
   '  if [ "$dir" != . ]; then node -p "require(\'./$dir/package.json\').name"; fi',
