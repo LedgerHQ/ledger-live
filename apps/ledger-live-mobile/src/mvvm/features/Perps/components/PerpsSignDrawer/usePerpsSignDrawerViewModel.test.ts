@@ -36,15 +36,25 @@ function makeRequest(overrides: Partial<PerpsSignRequest> = {}): PerpsSignReques
 
 async function renderViewModel(request = makeRequest()) {
   const onClose = jest.fn();
+  const onDismissed = jest.fn();
+  let isOpen = true;
   const view = renderHook(() =>
     usePerpsSignDrawerViewModel({
       request,
       manifestId: "perps-live-app",
       manifestName: "Perps",
+      isOpen,
       onClose,
+      onDismissed,
     }),
   );
   await waitFor(() => expect(view.result.current.deviceInitializationInput).not.toBeNull());
+
+  const setOpen = (next: boolean) =>
+    act(() => {
+      isOpen = next;
+      view.rerender(undefined);
+    });
 
   const finishJob = (result: HyperliquidSignIntentResult) =>
     act(() => {
@@ -52,7 +62,7 @@ async function renderViewModel(request = makeRequest()) {
       view.result.current.onIntentJobComplete();
     });
 
-  return { ...view, request, onClose, finishJob };
+  return { ...view, request, onClose, onDismissed, setOpen, finishJob };
 }
 
 describe("usePerpsSignDrawerViewModel", () => {
@@ -153,17 +163,66 @@ describe("usePerpsSignDrawerViewModel", () => {
     jest.mocked(buildDeviceInitializationInput).mockRejectedValue(failure);
     const request = makeRequest();
     const onClose = jest.fn();
+    const onDismissed = jest.fn();
 
     renderHook(() =>
       usePerpsSignDrawerViewModel({
         request,
         manifestId: "perps-live-app",
         manifestName: "Perps",
+        isOpen: true,
         onClose,
+        onDismissed,
       }),
     );
 
     await waitFor(() => expect(request.onError).toHaveBeenCalledWith(failure));
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onDismissed).not.toHaveBeenCalled();
+  });
+
+  it("should keep deviceInitializationInput mounted while closing after the executor opened", async () => {
+    const { result, setOpen, onDismissed } = await renderViewModel();
+
+    setOpen(false);
+
+    expect(result.current.deviceInitializationInput).toBe(INIT_INPUT);
+    expect(onDismissed).not.toHaveBeenCalled();
+  });
+
+  it("should call onDismissed immediately when closed before initialization resolves", async () => {
+    let resolveInit!: (input: typeof INIT_INPUT) => void;
+    jest.mocked(buildDeviceInitializationInput).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          resolveInit = resolve;
+        }),
+    );
+    const request = makeRequest();
+    const onClose = jest.fn();
+    const onDismissed = jest.fn();
+    let isOpen = true;
+
+    const { result, rerender } = renderHook(() =>
+      usePerpsSignDrawerViewModel({
+        request,
+        manifestId: "perps-live-app",
+        manifestName: "Perps",
+        isOpen,
+        onClose,
+        onDismissed,
+      }),
+    );
+
+    act(() => {
+      isOpen = false;
+      rerender(undefined);
+    });
+    expect(onDismissed).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveInit(INIT_INPUT);
+    });
+    expect(result.current.deviceInitializationInput).toBeNull();
   });
 });

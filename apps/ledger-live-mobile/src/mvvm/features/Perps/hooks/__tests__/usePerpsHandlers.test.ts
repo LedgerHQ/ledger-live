@@ -20,13 +20,19 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
 }));
 
 const mockNavigate = jest.fn();
+const mockRemoveBlurListener = jest.fn();
 const mockRemoveFocusListener = jest.fn();
-const mockAddListener = jest.fn((_event: string, _listener: () => void) => mockRemoveFocusListener);
+const mockAddListener = jest.fn((event: string, _listener: () => void) =>
+  event === "focus" ? mockRemoveFocusListener : mockRemoveBlurListener,
+);
 const mockNavigation = { navigate: mockNavigate, addListener: mockAddListener };
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => mockNavigation,
 }));
+
+const getNavigationListener = (event: string) =>
+  mockAddListener.mock.calls.find(([name]) => name === event)?.[1];
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
 
@@ -109,7 +115,11 @@ describe("usePerpsHandlers", () => {
       act(() => signingExecute()(signParams));
 
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(result.current.signRequest).toEqual({ id: 1, request: signParams });
+      expect(result.current.signRequest).toEqual({
+        id: 1,
+        request: signParams,
+        isClosing: false,
+      });
     });
 
     it("should hand a newer request a new id", () => {
@@ -119,6 +129,25 @@ describe("usePerpsHandlers", () => {
       act(() => signingExecute()(signParams));
 
       expect(result.current.signRequest?.id).toBe(2);
+    });
+
+    it("should mark only the matching request as closing without unmounting it", () => {
+      const first = makeSignParams();
+      const { result } = renderWithFlag();
+      act(() => signingExecute()(first));
+
+      act(() => result.current.closeSignRequest(999));
+      expect(result.current.signRequest?.isClosing).toBe(false);
+
+      act(() => result.current.closeSignRequest(1));
+      expect(result.current.signRequest).toEqual({
+        id: 1,
+        request: first,
+        isClosing: true,
+      });
+
+      act(() => signingExecute()(makeSignParams()));
+      expect(first.onCancel).not.toHaveBeenCalled();
     });
 
     it("should clear only the request it is asked to clear", () => {
@@ -145,7 +174,11 @@ describe("usePerpsHandlers", () => {
 
       expect(first.onCancel).toHaveBeenCalledTimes(1);
       expect(second.onCancel).not.toHaveBeenCalled();
-      expect(result.current.signRequest).toEqual({ id: 2, request: second });
+      expect(result.current.signRequest).toEqual({
+        id: 2,
+        request: second,
+        isClosing: false,
+      });
     });
 
     it("should not cancel a request that was answered before the next one", () => {
@@ -173,6 +206,23 @@ describe("usePerpsHandlers", () => {
       expect(result.current.signRequest?.id).toBe(2);
     });
 
+    it("should cancel the pending request and mark it closing when navigation blurs", () => {
+      const pending = makeSignParams();
+      const { result } = renderWithFlag();
+      act(() => signingExecute()(pending));
+
+      const onBlur = getNavigationListener("blur");
+      expect(onBlur).toBeDefined();
+      act(() => onBlur!());
+
+      expect(pending.onCancel).toHaveBeenCalledTimes(1);
+      expect(result.current.signRequest).toEqual({
+        id: 1,
+        request: pending,
+        isClosing: true,
+      });
+    });
+
     it("should cancel the pending request on unmount", () => {
       const pending = makeSignParams();
       const { unmount } = renderWithFlag();
@@ -181,6 +231,7 @@ describe("usePerpsHandlers", () => {
       unmount();
 
       expect(pending.onCancel).toHaveBeenCalledTimes(1);
+      expect(mockRemoveBlurListener).toHaveBeenCalled();
     });
   });
 
@@ -285,8 +336,8 @@ describe("usePerpsHandlers", () => {
     it("should reject when the user comes back to Perps without adding an account", async () => {
       const { request } = startMigration();
 
-      const [event, onFocus] = mockAddListener.mock.calls[0];
-      expect(event).toBe("focus");
+      const onFocus = getNavigationListener("focus");
+      expect(onFocus).toBeDefined();
       // React Navigation hands the listener an event object.
       (onFocus as (e: unknown) => void)({ type: "focus" });
 
@@ -297,14 +348,14 @@ describe("usePerpsHandlers", () => {
       const { request, flowParams } = startMigration();
 
       flowParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount] });
-      mockAddListener.mock.calls[0][1]();
+      getNavigationListener("focus")!();
 
       await expect(request).resolves.toEqual([hypercoreAccount]);
     });
 
     it("should ignore callbacks from an abandoned attempt", async () => {
       const { request: first, flowParams: firstParams, migrationExecute } = startMigration();
-      mockAddListener.mock.calls[0][1]();
+      getNavigationListener("focus")!();
       await expect(first).rejects.toBeInstanceOf(UserRefusedOnDevice);
 
       const second = migrationExecute?.();

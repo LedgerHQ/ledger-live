@@ -47,4 +47,29 @@ describe("PerpsSign integration", () => {
 
     expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
   });
+
+  it("should reset to DeviceAction and cancel the previous request when replaced mid-sign", async () => {
+    const first = {
+      ...perpsSignData,
+      signFactory: jest.fn(() => new Promise<never>(() => {})),
+      onCancel: jest.fn(),
+    };
+    const second = {
+      ...perpsSignData,
+      signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+      onCancel: jest.fn(),
+    };
+    const { user } = render(<PerpsSignRoot />);
+
+    act(() => openPerpsSign(first));
+    await user.click(screen.getByTestId("device-action"));
+    expect(screen.getByTestId("sign-confirm")).toBeVisible();
+    expect(first.signFactory).toHaveBeenCalledTimes(1);
+
+    act(() => openPerpsSign(second));
+
+    expect(first.onCancel).toHaveBeenCalled();
+    expect(second.signFactory).not.toHaveBeenCalled();
+    expect(screen.getByTestId("device-action")).toBeVisible();
+  });
 });

@@ -35,11 +35,13 @@ import {
 export type PerpsPendingSignRequest = Readonly<{
   id: number;
   request: PerpsSignRequest;
+  isClosing: boolean;
 }>;
 
 export type PerpsHandlers = Readonly<{
   handlers: WalletAPICustomHandlers;
   signRequest: PerpsPendingSignRequest | null;
+  closeSignRequest: (id: number) => void;
   clearSignRequest: (id: number) => void;
 }>;
 
@@ -54,7 +56,7 @@ function createPendingSignRequests() {
     replace(request: PerpsSignRequest): PerpsPendingSignRequest {
       current?.request.onCancel();
       lastId += 1;
-      current = { id: lastId, request };
+      current = { id: lastId, request, isClosing: false };
       return current;
     },
     clear(id: number) {
@@ -73,6 +75,16 @@ export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
   const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSignMobile")?.enabled ?? false;
   const [signRequest, setSignRequest] = useState<PerpsPendingSignRequest | null>(null);
   const [pendingSignRequests] = useState(createPendingSignRequests);
+
+  const closeSignRequest = useCallback(
+    (id: number) => {
+      pendingSignRequests.clear(id);
+      setSignRequest(current =>
+        current?.id === id && !current.isClosing ? { ...current, isClosing: true } : current,
+      );
+    },
+    [pendingSignRequests],
+  );
 
   const clearSignRequest = useCallback(
     (id: number) => {
@@ -123,6 +135,16 @@ export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
   useEffect(() => cancelDepositRequest, []);
   useEffect(() => cancelWithdrawRequest, []);
   useEffect(() => pendingSignRequests.cancelCurrent, [pendingSignRequests]);
+  useEffect(
+    () =>
+      navigation.addListener("blur", () => {
+        pendingSignRequests.cancelCurrent();
+        setSignRequest(current =>
+          current && !current.isClosing ? { ...current, isClosing: true } : current,
+        );
+      }),
+    [navigation, pendingSignRequests],
+  );
 
   // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
   // add account flow inline and hands back every added account, the server picks the matching one.
@@ -163,5 +185,5 @@ export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
     [accounts, uiSigningExecute, uiDepositExecute, uiWithdrawExecute, uiMigrationExecute],
   );
 
-  return { handlers, signRequest, clearSignRequest };
+  return { handlers, signRequest, closeSignRequest, clearSignRequest };
 }

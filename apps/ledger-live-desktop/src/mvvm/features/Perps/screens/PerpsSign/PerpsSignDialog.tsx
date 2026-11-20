@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import type { PerpsSignRequest } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useFeature } from "@features/platform-feature-flags";
@@ -29,10 +29,10 @@ function PerpsSignBody({ data, onClose }: Readonly<{ data: PerpsSignData; onClos
 }
 
 function PerpsSignInnerDialog({
-  data,
+  pending,
   onClose,
-}: Readonly<{ data: PerpsSignData | null; onClose: () => void }>) {
-  const isOpen = data !== null;
+}: Readonly<{ pending: PendingSignRequest | null; onClose: () => void }>) {
+  const isOpen = pending !== null;
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -44,7 +44,9 @@ function PerpsSignInnerDialog({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent onInteractOutside={e => e.preventDefault()}>
-        {data ? <PerpsSignBody data={data} onClose={onClose} /> : null}
+        {pending ? (
+          <PerpsSignBody key={pending.id} data={pending.request} onClose={onClose} />
+        ) : null}
       </DialogContent>
     </Dialog>
   );
@@ -54,10 +56,16 @@ type PendingSignRequest = Readonly<{
   id: number;
   request: PerpsSignRequest;
   manifest?: PerpsSignManifest;
+  useDeviceIntent: boolean;
 }>;
 
 export default function PerpsSignRoot() {
   const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSign")?.enabled ?? false;
+  const deviceIntentSignEnabledRef = useRef(deviceIntentSignEnabled);
+  useLayoutEffect(() => {
+    deviceIntentSignEnabledRef.current = deviceIntentSignEnabled;
+  }, [deviceIntentSignEnabled]);
+
   const [pending, setPending] = useState<PendingSignRequest | null>(null);
   const lastIdRef = useRef(0);
   // Tracked outside React state so a request replaced or closed before its dialog renders still
@@ -84,7 +92,12 @@ export default function PerpsSignRoot() {
       registerPerpsSignOpener((request, manifest) => {
         pendingRef.current?.request.onCancel();
         lastIdRef.current += 1;
-        const next = { id: lastIdRef.current, request, manifest };
+        const next: PendingSignRequest = {
+          id: lastIdRef.current,
+          request,
+          manifest,
+          useDeviceIntent: deviceIntentSignEnabledRef.current,
+        };
         pendingRef.current = next;
         setPending(next);
       }),
@@ -95,16 +108,16 @@ export default function PerpsSignRoot() {
 
   useOnNavigateAway(pending !== null, closeAll);
 
-  if (deviceIntentSignEnabled) {
-    return pending ? (
+  if (pending?.useDeviceIntent) {
+    return (
       <PerpsSignExecutor
         key={pending.id}
         request={pending.request}
         manifest={pending.manifest}
         onClose={closeCurrent}
       />
-    ) : null;
+    );
   }
 
-  return <PerpsSignInnerDialog data={pending?.request ?? null} onClose={closeCurrent} />;
+  return <PerpsSignInnerDialog pending={pending} onClose={closeCurrent} />;
 }

@@ -9,19 +9,35 @@ type Props = Readonly<{
   request: PerpsSignRequest;
   manifestId: string;
   manifestName: string;
+  isOpen: boolean;
   onClose: () => void;
+  onDismissed: () => void;
 }>;
 
 const noop = () => undefined;
 
-function PerpsSignDrawer({ request, manifestId, manifestName, onClose }: Props) {
+function PerpsSignDrawer({
+  request,
+  manifestId,
+  manifestName,
+  isOpen,
+  onClose,
+  onDismissed,
+}: Props) {
   const {
     analyticsProperties,
     deviceInitializationInput,
     intent,
     onIntentJobComplete,
     onUserCancel,
-  } = usePerpsSignDrawerViewModel({ request, manifestId, manifestName, onClose });
+  } = usePerpsSignDrawerViewModel({
+    request,
+    manifestId,
+    manifestName,
+    isOpen,
+    onClose,
+    onDismissed,
+  });
 
   if (!deviceInitializationInput) {
     return null;
@@ -31,6 +47,8 @@ function PerpsSignDrawer({ request, manifestId, manifestName, onClose }: Props) 
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none" testID="perps-sign-drawer">
       <DeviceIntentExecutor
         enabled
+        isRequestingToBeOpened={isOpen}
+        onDeviceSheetDismissed={onDismissed}
         sourceFlow="wallet_api"
         analyticsProperties={analyticsProperties}
         deviceConnectionParams={HYPERLIQUID_DEVICE_CONNECTION_PARAMS}

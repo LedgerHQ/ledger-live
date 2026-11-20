@@ -23,6 +23,7 @@ export const PerpsWebView = forwardRef<WebviewAPI, Props>(
     const {
       handlers: customPerpsHandlers,
       signRequest,
+      closeSignRequest,
       clearSignRequest,
     } = usePerpsHandlers(accounts);
     const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -34,6 +35,9 @@ export const PerpsWebView = forwardRef<WebviewAPI, Props>(
 
     const signRequestId = signRequest?.id;
     const closeSignDrawer = useCallback(() => {
+      if (signRequestId !== undefined) closeSignRequest(signRequestId);
+    }, [closeSignRequest, signRequestId]);
+    const dismissSignDrawer = useCallback(() => {
       if (signRequestId !== undefined) clearSignRequest(signRequestId);
     }, [clearSignRequest, signRequestId]);
 
@@ -52,7 +56,9 @@ export const PerpsWebView = forwardRef<WebviewAPI, Props>(
             request={signRequest.request}
             manifestId={manifest.id}
             manifestName={manifest.name}
+            isOpen={!signRequest.isClosing}
             onClose={closeSignDrawer}
+            onDismissed={dismissSignDrawer}
           />
         )}
       </SafeAreaView>

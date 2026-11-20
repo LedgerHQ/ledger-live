@@ -78,6 +78,32 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
     onClose,
     buildDeviceInitializationInput,
   });
+
+  const [{ intent, readResult, updateSignOnSession }] = useState(() => {
+    let lastResult: HyperliquidSignIntentResult | null = null;
+    let currentSignOnSession = signOnSession;
+    return {
+      intent: createIntent(
+        platformDefinition,
+        {
+          signOnSession: async (session, signal) => {
+            const { signatures } = await currentSignOnSession(session, signal);
+            return signatures;
+          },
+        },
+        {
+          onResult: result => {
+            lastResult = result;
+          },
+        },
+      ),
+      readResult: () => lastResult,
+      updateSignOnSession: (next: typeof signOnSession) => {
+        currentSignOnSession = next;
+      },
+    };
+  });
+
   useLayoutEffect(() => {
     callbacksRef.current = {
       onSuccess,
@@ -86,6 +112,7 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
       onClose,
       buildDeviceInitializationInput,
     };
+    updateSignOnSession(signOnSession);
   });
 
   const settle = useCallback((answer: () => void) => {
@@ -120,27 +147,6 @@ export function useHyperliquidSignOrchestration<InitInput, ExtraProps = undefine
   }, [requireLatestFirmware, allowPartialDependencies, settle]);
 
   useEffect(() => () => settle(() => callbacksRef.current.onCancel()), [settle]);
-
-  const [{ intent, readResult }] = useState(() => {
-    let lastResult: HyperliquidSignIntentResult | null = null;
-    return {
-      intent: createIntent(
-        platformDefinition,
-        {
-          signOnSession: async (session, signal) => {
-            const { signatures } = await signOnSession(session, signal);
-            return signatures;
-          },
-        },
-        {
-          onResult: result => {
-            lastResult = result;
-          },
-        },
-      ),
-      readResult: () => lastResult,
-    };
-  });
 
   const onIntentJobComplete = useCallback(() => {
     const result = readResult();
