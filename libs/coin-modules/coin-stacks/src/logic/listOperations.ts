@@ -296,6 +296,23 @@ function genericContractCallOperations(tx: TransactionResponse, address: string)
   ];
 }
 
+function smartContractOperations(tx: TransactionResponse, address: string): Operation[] {
+  const { tx_id, sender_address } = tx.tx;
+  if (sender_address !== address) return [];
+
+  return [
+    toOperation({
+      ...txFields(tx),
+      id: `${tx_id}-FEES`,
+      type: "FEES",
+      senders: [sender_address],
+      recipients: [],
+      value: 0n,
+      asset: NATIVE_ASSET,
+    }),
+  ];
+}
+
 async function toOperations(
   tx: TransactionResponse,
   address: string,
@@ -314,6 +331,8 @@ async function toOperations(
     if (functionName === "transfer") return sip010TransferOperations(tx, address, resolvedTokenIds);
     return genericContractCallOperations(tx, address);
   }
+
+  if (tx.tx.tx_type === "smart_contract") return smartContractOperations(tx, address);
 
   return [];
 }

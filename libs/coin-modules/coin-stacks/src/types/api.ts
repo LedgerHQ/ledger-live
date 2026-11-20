@@ -60,7 +60,7 @@ export interface TransactionResponse {
     execution_cost_runtime: number;
     execution_cost_write_count: number;
     execution_cost_write_length: number;
-    tx_type: "token_transfer" | "contract_call";
+    tx_type: "token_transfer" | "contract_call" | "smart_contract";
     token_transfer?: {
       recipient_address: string;
       amount: string;
