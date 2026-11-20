@@ -136,34 +136,60 @@ describe("applyTrustLineEdit", () => {
 
 describe("formatLimitText", () => {
   it("groups the integer digits with the locale's separator", () => {
-    expect(formatLimitText("1234567", "en")).toBe("1,234,567");
-    expect(formatLimitText("1234567", "de")).toBe("1.234.567");
+    expect(formatLimitText("1234567", "en", 2)).toBe("1,234,567");
+    expect(formatLimitText("1234567", "de", 2)).toBe("1.234.567");
   });
 
   it("keeps a decimal separator typed last, and what follows it", () => {
-    expect(formatLimitText("1234.", "en")).toBe("1,234.");
-    expect(formatLimitText("1234,5", "de")).toBe("1.234,5");
+    expect(formatLimitText("1234.", "en", 2)).toBe("1,234.");
+    expect(formatLimitText("1234,5", "de", 2)).toBe("1.234,5");
   });
 
   it("reads a point or a comma typed last as the decimal point, whatever the locale groups with", () => {
-    expect(formatLimitText("1,", "en")).toBe("1.");
-    expect(formatLimitText("1,000,", "en")).toBe("1,000.");
-    expect(formatLimitText("1.", "de")).toBe("1,");
-    expect(formatLimitText("1.000.", "de")).toBe("1.000,");
+    expect(formatLimitText("1,", "en", 2)).toBe("1.");
+    expect(formatLimitText("1,000,", "en", 2)).toBe("1,000.");
+    expect(formatLimitText("1.", "de", 2)).toBe("1,");
+    expect(formatLimitText("1.000.", "de", 2)).toBe("1.000,");
   });
 
   it("ignores a second decimal point", () => {
-    expect(formatLimitText("1.5.", "en")).toBe("1.5");
-    expect(formatLimitText("1,5,", "de")).toBe("1,5");
+    expect(formatLimitText("1.5.", "en", 2)).toBe("1.5");
+    expect(formatLimitText("1,5,", "de", 2)).toBe("1,5");
   });
 
   it("regroups text that is already grouped", () => {
-    expect(formatLimitText("1,2345", "en")).toBe("12,345");
+    expect(formatLimitText("1,2345", "en", 2)).toBe("12,345");
+  });
+
+  it("reads one separator before 1 or 2 digits of a pasted text as the decimal point", () => {
+    expect(formatLimitText("1,5", "en", 2, true)).toBe("1.5");
+    expect(formatLimitText("1.5", "de", 2, true)).toBe("1,5");
+    expect(formatLimitText("1,50", "en", 2, true)).toBe("1.50");
+  });
+
+  it("reads the separators of a pasted text as groups when they cannot be a decimal point", () => {
+    expect(formatLimitText("1,500", "en", 2, true)).toBe("1,500");
+    expect(formatLimitText("1,234,56", "en", 2, true)).toBe("123,456");
+    expect(formatLimitText("1,5", "en", 0, true)).toBe("15");
+  });
+
+  it("keeps a typed text with one separator before 1 or 2 digits as digits", () => {
+    expect(formatLimitText("1,23", "en", 2)).toBe("123");
+  });
+
+  it("keeps at most the decimals of the unit", () => {
+    expect(formatLimitText("1.005", "en", 2)).toBe("1.00");
+    expect(formatLimitText("1,2345", "de", 3)).toBe("1,234");
+  });
+
+  it("drops the decimal point of a unit without decimals", () => {
+    expect(formatLimitText("1234.", "en", 0)).toBe("1,234");
+    expect(formatLimitText("12.5", "en", 0)).toBe("12");
   });
 
   it("drops what is not a digit or a separator", () => {
-    expect(formatLimitText("1a2 3", "en")).toBe("123");
-    expect(formatLimitText("", "en")).toBe("");
+    expect(formatLimitText("1a2 3", "en", 2)).toBe("123");
+    expect(formatLimitText("", "en", 2)).toBe("");
   });
 });
 

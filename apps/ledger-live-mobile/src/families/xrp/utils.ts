@@ -64,11 +64,23 @@ function getNumberSeparators(locale: string) {
   return { group: thousands ?? ",", decimal: decimal ?? "." };
 }
 
+// Text pasted whole has no keystroke to tell a decimal point from a group: one separator before 1 or 2 digits is a decimal point
+const PASTED_DECIMAL = /^([^.,]*)[.,](\d{1,2})$/;
+
 // A "." or "," typed last is the decimal point: the keyboard follows the phone region, not the app language
-export function formatLimitText(text: string, locale: string): string {
+export function formatLimitText(
+  text: string,
+  locale: string,
+  magnitude: number,
+  isPasted = false,
+): string {
   const { group, decimal } = getNumberSeparators(locale);
 
-  const compactText = text.replace(/\s/g, "");
+  const spacelessText = text.replace(/\s/g, "");
+  const pastedDecimal = isPasted && magnitude > 0 ? PASTED_DECIMAL.exec(spacelessText) : null;
+  const compactText = pastedDecimal
+    ? `${pastedDecimal[1]}${decimal}${pastedDecimal[2]}`
+    : spacelessText;
   const isPointTypedLast = /[.,]$/.test(compactText);
   const numberText = isPointTypedLast ? compactText.slice(0, -1) : compactText;
 
@@ -77,11 +89,11 @@ export function formatLimitText(text: string, locale: string): string {
     .replaceAll(decimal, ".")
     .replace(/[^\d.]/g, "");
   const [integer = "", fraction = ""] = plainNumber.split(".");
-  const hasPoint = isPointTypedLast || plainNumber.includes(".");
+  const hasPoint = magnitude > 0 && (isPointTypedLast || plainNumber.includes("."));
 
   const groupedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, group);
 
-  return hasPoint ? `${groupedInteger}${decimal}${fraction}` : groupedInteger;
+  return hasPoint ? `${groupedInteger}${decimal}${fraction.slice(0, magnitude)}` : groupedInteger;
 }
 
 // The field shows the ticker after the number: what is typed beside or into it is not a digit

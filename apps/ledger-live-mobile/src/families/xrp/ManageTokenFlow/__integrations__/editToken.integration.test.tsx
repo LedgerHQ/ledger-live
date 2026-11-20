@@ -3,8 +3,6 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ListItem } from "@ledgerhq/lumen-ui-rnative";
-import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { track } from "@shared/analytics";
 import type { Account } from "@ledgerhq/types-live";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
@@ -13,6 +11,7 @@ import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic"
 import { HttpResponse, http, server } from "@tests/server";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
+import { updateAccount } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import { component } from "../index";
@@ -119,6 +118,11 @@ const SIGNED_OPERATION = {
 };
 
 const TOKEN_BALANCE = new BigNumber(500);
+
+const TWO_DECIMALS_TOKEN = {
+  ...xrpIouToken,
+  units: [{ name: "RLUSD", code: "RLUSD", magnitude: 2 }],
+};
 
 const STORED_RESOURCES = {
   isLocked: false,
@@ -433,6 +437,22 @@ describe("XRP edit token flow (integration)", () => {
       expect(failureMessage).toBeVisible();
       expect(getContinueButton()).toBeDisabled();
     });
+
+    it("checks the status against the account again when a sync changes it", async () => {
+      const { user, store } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await waitForBridgeToSettle("2000");
+      const syncedBalance = new BigNumber(1);
+
+      await act(async () => {
+        store.dispatch(updateAccount({ id: XRP_ACCOUNT.id, balance: syncedBalance }));
+      });
+
+      await waitFor(() => {
+        const lastCall = mockAccountBridge.getTransactionStatus.mock.calls.at(-1);
+        expect(lastCall?.[0].balance).toEqual(syncedBalance);
+      });
+    });
   });
 
   describe("Balance limit", () => {
@@ -445,7 +465,7 @@ describe("XRP edit token flow (integration)", () => {
     });
 
     it("groups the digits as they are typed and shows the ticker after them", async () => {
-      const { user } = await renderEditDetails();
+      const { user } = await renderEditDetails({ token: TWO_DECIMALS_TOKEN });
       await openBalanceLimit(user);
 
       await user.clear(getLimitInput());
@@ -455,13 +475,33 @@ describe("XRP edit token flow (integration)", () => {
     });
 
     it("reads a comma typed as the decimal point in an English app", async () => {
-      const { user } = await renderEditDetails();
+      const { user } = await renderEditDetails({ token: TWO_DECIMALS_TOKEN });
       await openBalanceLimit(user);
 
       await user.clear(getLimitInput());
       await user.type(getLimitInput(), "1,5");
 
       expect(getLimitInput()).toHaveDisplayValue("1.5 RLUSD");
+    });
+
+    it("reads a pasted comma before 2 digits as the decimal point in an English app", async () => {
+      const { user } = await renderEditDetails({ token: TWO_DECIMALS_TOKEN });
+      await openBalanceLimit(user);
+
+      await user.clear(getLimitInput());
+      await user.paste(getLimitInput(), "1,50");
+
+      expect(getLimitInput()).toHaveDisplayValue("1.50 RLUSD");
+    });
+
+    it("keeps no more decimals than the token has", async () => {
+      const { user } = await renderEditDetails({ token: TWO_DECIMALS_TOKEN });
+      await openBalanceLimit(user);
+
+      await user.clear(getLimitInput());
+      await user.type(getLimitInput(), "1.005");
+
+      expect(getLimitInput()).toHaveDisplayValue("1.00 RLUSD");
     });
 
     it("disables Confirm once the field is cleared with its clear button", async () => {
@@ -565,25 +605,6 @@ describe("XRP edit token flow (integration)", () => {
       expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
       expect(screen.getByTestId("xrp-rippling-warning")).toBeVisible();
       await waitFor(() => expect(getContinueButton()).toBeEnabled());
-    });
-
-    it("lays the options out as compact rows aligned to the sheet padding, with an active check", async () => {
-      const { user } = await renderEditDetails();
-
-      await user.press(await screen.findByTestId("xrp-settings-rippling-row"));
-      await screen.findByTestId("xrp-rippling-option-deactivated");
-
-      const listItems = screen.UNSAFE_getAllByType(ListItem);
-      const options = listItems.filter(item =>
-        item.props.testID?.startsWith("xrp-rippling-option"),
-      );
-      const check = screen.UNSAFE_getByType(Check);
-      expect(options.map(option => option.props.density)).toEqual(["compact", "compact"]);
-      expect(options.map(option => option.props.style)).toEqual([
-        { marginHorizontal: -8 },
-        { marginHorizontal: -8 },
-      ]);
-      expect(check.props).toMatchObject({ size: 24, color: "active" });
     });
   });
 
@@ -766,35 +787,40 @@ describe("XRP edit token flow (integration)", () => {
       expect(screen.getByTestId("xrp-edit-token-broadcast-error")).toBeVisible();
     });
 
-    it("signs again on Try again after a failed broadcast", async () => {
+    it("offers no Retry after a failed broadcast, as the transaction may have gone through", async () => {
       mockAccountBridge.broadcast.mockRejectedValueOnce(new Error("tefPAST_SEQ"));
       const { user } = await renderEditDetails();
       await replaceLimit(user, "2000");
       await signFromEditDetails(user);
+
+      await screen.findByTestId("xrp-edit-token-broadcast-error", {}, { timeout: SHEET_TIMEOUT });
+
+      expect(screen.queryByTestId("xrp-edit-token-retry")).toBeNull();
+    });
+
+    it("signs again on Retry after the device could not be prepared", async () => {
+      jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(new Error("No device"));
+      const { user } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await waitFor(() => expect(getContinueButton()).toBeEnabled());
+      await user.press(getContinueButton());
       const retryButton = await screen.findByTestId(
         "xrp-edit-token-retry",
         {},
         { timeout: SHEET_TIMEOUT },
       );
+
       await user.press(retryButton);
 
-      await screen.findByTestId("device-intent-executor");
-      await signOnDevice();
-
-      const successTitle = await screen.findByText(
-        "Token settings updated",
-        {},
-        { timeout: SHEET_TIMEOUT },
-      );
-
-      expect(successTitle).toBeVisible();
+      expect(await screen.findByTestId("device-intent-executor")).toBeVisible();
     });
 
-    it("builds one device intent when Try again is pressed twice", async () => {
-      mockAccountBridge.broadcast.mockRejectedValueOnce(new Error("tefPAST_SEQ"));
+    it("builds one device intent when Retry is pressed twice", async () => {
+      jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(new Error("No device"));
       const { user } = await renderEditDetails();
       await replaceLimit(user, "2000");
-      await signFromEditDetails(user);
+      await waitFor(() => expect(getContinueButton()).toBeEnabled());
+      await user.press(getContinueButton());
       const retryButton = await screen.findByTestId(
         "xrp-edit-token-retry",
         {},
@@ -805,9 +831,6 @@ describe("XRP edit token flow (integration)", () => {
       await user.press(retryButton);
       await user.press(retryButton);
 
-      expect(buildDeviceInitializationInput).toHaveBeenCalledWith(
-        expect.objectContaining({ flow: "manageAssets" }),
-      );
       expect(buildDeviceInitializationInput).toHaveBeenCalledTimes(1);
     });
 

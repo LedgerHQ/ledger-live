@@ -49,7 +49,16 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
       ),
     };
   });
-  const { transaction, updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
+  const { transaction, updateAccount, updateTransaction, status, bridgePending, bridgeError } =
+    bridgeTransaction;
+  const bridgeAccount = bridgeTransaction.account;
+
+  useEffect(() => {
+    if (bridgeAccount === parentAccount) return;
+
+    updateAccount(parentAccount);
+    updateTransaction(tx => ({ ...tx }));
+  }, [bridgeAccount, parentAccount, updateAccount, updateTransaction]);
 
   const confirmedBalanceLimit = route.params.balanceLimit;
   const isMaximum = confirmedBalanceLimit ? confirmedBalanceLimit.isMaximum : storedIsMaximum;

@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { track } from "@shared/analytics";
 import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
@@ -33,11 +34,13 @@ const onExit = jest.fn();
 const onCancel = jest.fn();
 const patchAccount = jest.fn((account: Account) => account);
 
+let currentTransaction = transaction;
+
 function renderSignAndBroadcast() {
   return renderHook(
     () => {
       return useSignAndBroadcast({
-        transaction,
+        transaction: currentTransaction,
         patchAccount,
         onCancel,
         onExit,
@@ -66,6 +69,7 @@ function signAndComplete(result: ReturnType<typeof renderSignAndBroadcast>["resu
 describe("useSignAndBroadcast", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    currentTransaction = transaction;
     mockBroadcast.mockResolvedValue(XRP_IOU_REMOVAL);
   });
 
@@ -100,6 +104,18 @@ describe("useSignAndBroadcast", () => {
     expect(mockBroadcast).toHaveBeenCalledTimes(1);
     expect(mockBroadcast).toHaveBeenCalledWith(SIGNED_OPERATION);
     expect(patchAccount).toHaveBeenCalledTimes(1);
+    expect(patchAccount).toHaveBeenCalledWith(expect.anything(), transaction);
+  });
+
+  it("applies the update of the transaction that was signed, not of a later draft", async () => {
+    const { result, rerender } = renderSignAndBroadcast();
+    await startSigning(result);
+
+    currentTransaction = { ...transaction, amount: new BigNumber(42) };
+    rerender({});
+    signAndComplete(result);
+
+    await waitFor(() => expect(result.current.infoStep).toBe("success"));
     expect(patchAccount).toHaveBeenCalledWith(expect.anything(), transaction);
   });
 

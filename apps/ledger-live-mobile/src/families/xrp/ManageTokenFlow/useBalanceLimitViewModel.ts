@@ -44,15 +44,18 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
   const hasTypedLimit = !isMaximum && limitText !== "";
   const inputText = hasTypedLimit ? `${limitText} ${token.ticker}` : "";
 
+  const shownText = isMaximum ? maximumText : inputText;
+
   const onChangeLimitText = useCallback(
     (text: string) => {
       setIsMaximum(false);
       const typedText = isMaximum
         ? removeMaximumText(text, maximumText)
         : readLimitInput(text, limitText, token.ticker);
-      setLimitText(formatLimitText(typedText, locale));
+      const isPasted = Math.abs(text.length - shownText.length) > 1;
+      setLimitText(formatLimitText(typedText, locale, unit.magnitude, isPasted));
     },
-    [isMaximum, limitText, locale, maximumText, token.ticker],
+    [isMaximum, limitText, locale, maximumText, shownText, token.ticker, unit.magnitude],
   );
 
   const onClear = useCallback(() => {
@@ -99,7 +102,7 @@ export function useBalanceLimitViewModel({ navigation, route }: Props) {
     onSetMaximum,
     onConfirm,
     errorText,
-    inputText: isMaximum ? maximumText : inputText,
+    inputText: shownText,
     isConfirmDisabled: !isLimitPositive || isBelowBalance,
   };
 }

@@ -82,6 +82,7 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
   const [failure, setFailure] = useState<Failure>();
   const [signing, setSigning] = useState<Signing>();
   const signedOperationRef = useRef<SignedOperation | undefined>(undefined);
+  const signedTransactionRef = useRef<Transaction | undefined>(undefined);
   const operationRef = useRef<Operation | undefined>(undefined);
 
   const broadcast = useBroadcast({
@@ -112,6 +113,7 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
     if (!transaction || stepRef.current === "sign") return;
 
     goTo("sign");
+    signedTransactionRef.current = transaction;
 
     buildDeviceInitializationInput({ appRequest: { account }, flow: FlowName.manageAssets })
       .then(deviceInitializationInput => {
@@ -130,9 +132,11 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
   // Once idle, a mounted executor would let a disconnect retry and sign the transaction again.
   const onIntentJobComplete = useCallback(() => {
     const signedOperation = signedOperationRef.current;
-    if (!signedOperation || !transaction) return;
+    const signedTransaction = signedTransactionRef.current;
+    if (!signedOperation || !signedTransaction) return;
 
     signedOperationRef.current = undefined;
+    signedTransactionRef.current = undefined;
     goTo("broadcasting");
     broadcast(signedOperation)
       .then(operation => {
@@ -143,7 +147,7 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
             updater: current => {
               const withPending = addPendingOperation(current, operation);
 
-              return patchAccount ? patchAccount(withPending, transaction) : withPending;
+              return patchAccount ? patchAccount(withPending, signedTransaction) : withPending;
             },
           }),
         );
@@ -152,7 +156,7 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
       .catch(error => {
         showError({ error: presentBroadcastError(error, account, null), isSigned: true });
       });
-  }, [account, broadcast, dispatch, goTo, showError, transaction, patchAccount]);
+  }, [account, broadcast, dispatch, goTo, showError, patchAccount]);
 
   const onClose = useCallback(() => goTo("closed"), [goTo]);
 

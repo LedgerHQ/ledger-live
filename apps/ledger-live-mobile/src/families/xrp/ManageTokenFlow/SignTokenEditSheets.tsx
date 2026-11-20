@@ -48,19 +48,24 @@ function useInfoState(viewModel: ViewModel): InfoStateProps {
         testID: "xrp-edit-token-error",
         title: t("xrp.tokenSettings.error.title"),
         description: <TranslatedError error={viewModel.signError} />,
-        secondaryCta: closeCta,
-        banner: viewModel.isSigned
+        ...(viewModel.isSigned
           ? {
-              appearance: "warning",
-              description: t("xrp.tokenSettings.error.broadcastError"),
-              testID: "xrp-edit-token-broadcast-error",
+              // Edit details checks the transaction again before it signs a new one
+              primaryCta: closeCta,
+              banner: {
+                appearance: "warning",
+                description: t("xrp.tokenSettings.error.broadcastError"),
+                testID: "xrp-edit-token-broadcast-error",
+              },
             }
-          : undefined,
-        primaryCta: {
-          label: t("common.retry"),
-          onPress: viewModel.onSign,
-          testID: "xrp-edit-token-retry",
-        },
+          : {
+              primaryCta: {
+                label: t("common.retry"),
+                onPress: viewModel.onSign,
+                testID: "xrp-edit-token-retry",
+              },
+              secondaryCta: closeCta,
+            }),
       };
   }
 }
