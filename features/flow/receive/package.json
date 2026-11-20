@@ -40,8 +40,7 @@
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
-    "@shared/ui-info-state": "workspace:*",
-    "@shared/ui-qr-code": "workspace:*"
+    "@shared/ui-info-state": "workspace:*"
   },
   "devDependencies": {
     "@domain/api-account-data": "workspace:*",

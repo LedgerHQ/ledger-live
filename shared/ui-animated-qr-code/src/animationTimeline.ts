@@ -37,6 +37,9 @@ const RIPPLE_SCALE = 0.4;
 // Center to a corner, in fractions of the side.
 const RIPPLE_REACH = Math.SQRT1_2;
 
+/** Seconds after a press when nothing moves any more: the ripple and the pop have ended. */
+export const PRESS_END = Math.max(RIPPLE_DELAY + RIPPLE_SWEEP, CENTER_POP);
+
 function clamp01(x: number): number {
   "worklet";
   return Math.min(1, Math.max(0, x));
