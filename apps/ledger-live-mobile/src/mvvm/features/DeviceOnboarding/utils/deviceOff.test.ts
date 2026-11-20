@@ -56,6 +56,32 @@ describe("isDeviceOffDuringChecks", () => {
     },
   );
 
+  it.each(["readingState", "routing"])(
+    "should hold the checks when the device switches off in %s after its held-back update",
+    heldMachineState => {
+      expect(
+        isDeviceOffDuringChecks({
+          ...holding,
+          heldMachineState,
+          onboardedOnEntry: false,
+          returningFromFirmwareUpdate: true,
+          heldBackUpdatePending: true,
+        }),
+      ).toBe(true);
+    },
+  );
+
+  it("should not hold the reading of a device set up in this run without a held-back update", () => {
+    expect(
+      isDeviceOffDuringChecks({
+        ...holding,
+        heldMachineState: "readingState",
+        onboardedOnEntry: false,
+        returningFromFirmwareUpdate: true,
+      }),
+    ).toBe(false);
+  });
+
   it.each([
     ["the machine is not awaiting a session", { machineState: "checks.genuineCheck.running" }],
     ["the held screen is not a check", { heldMachineState: "deviceSetup.intro" }],

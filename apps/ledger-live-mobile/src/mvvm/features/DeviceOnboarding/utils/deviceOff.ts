@@ -37,6 +37,7 @@ export function isDeviceOffDuringChecks({
       machineState: heldMachineState,
       onboardedOnEntry,
       returningFromFirmwareUpdate,
+      heldBackUpdatePending,
     });
   return (
     machineState === "awaitingSession" &&

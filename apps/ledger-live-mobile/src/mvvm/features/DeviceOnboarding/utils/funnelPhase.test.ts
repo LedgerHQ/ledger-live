@@ -62,6 +62,13 @@ describe("phaseOf", () => {
     expect(phaseOf("readingState", null, true)).toBe("synchronizing");
   });
 
+  it.each(["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"])(
+    "should resume the checks of a device set up in this run returning from its held-back update in %s",
+    state => {
+      expect(phaseOf(state, false, true, true)).toBe("resumingChecks");
+    },
+  );
+
   it("should not resume the checks outside the waiting states", () => {
     expect(phaseOf("deviceLocked", true, true)).toBe("synchronizing");
     expect(phaseOf("legacyFallback", true, true)).toBe("synchronizing");

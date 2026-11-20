@@ -33,14 +33,17 @@ export function isResumingChecks({
   machineState,
   onboardedOnEntry,
   returningFromFirmwareUpdate,
+  heldBackUpdatePending = false,
 }: Readonly<{
   machineState: string | null;
   onboardedOnEntry: boolean | null;
   returningFromFirmwareUpdate: boolean;
+  /** A device set up in this run comes back from its held-back update like a seeded one. */
+  heldBackUpdatePending?: boolean;
 }>): boolean {
   return (
     returningFromFirmwareUpdate &&
-    onboardedOnEntry === true &&
+    (onboardedOnEntry === true || heldBackUpdatePending) &&
     machineState !== null &&
     statesBeforeChecksResume.has(machineState)
   );
@@ -50,9 +53,17 @@ export function phaseOf(
   machineState: string | null,
   onboardedOnEntry: boolean | null = null,
   returningFromFirmwareUpdate = false,
+  heldBackUpdatePending = false,
 ): FunnelPhase | null {
   if (machineState === null) return "connecting";
-  if (isResumingChecks({ machineState, onboardedOnEntry, returningFromFirmwareUpdate })) {
+  if (
+    isResumingChecks({
+      machineState,
+      onboardedOnEntry,
+      returningFromFirmwareUpdate,
+      heldBackUpdatePending,
+    })
+  ) {
     return "resumingChecks";
   }
   if (machineState.startsWith("checks.")) return "checks";

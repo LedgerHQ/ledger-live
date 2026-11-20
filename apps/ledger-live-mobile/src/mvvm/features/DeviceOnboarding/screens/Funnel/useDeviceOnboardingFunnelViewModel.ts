@@ -827,7 +827,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     error: onboarding.error,
     connect: reconnectToLiveDevice,
   });
-  const phase = phaseOf(shownState, onboardedOnEntry, returningFromFirmwareUpdate);
+  const phase = phaseOf(
+    shownState,
+    onboardedOnEntry,
+    returningFromFirmwareUpdate,
+    heldBackUpdatePending,
+  );
   const waitingForUpdatedDevice =
     phase === "resumingChecks" && machineState === awaitingSessionAfterFirmwareUpdateState;
   const waitedLongForDeviceAfterUpdate = useAfterDelay(
