@@ -7,6 +7,7 @@ export class PerpsPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "perps";
 
   private readonly depositButtonTestId = "deposit-button";
+  private readonly withdrawButtonTestId = "withdraw-button";
   private readonly sidebarBalanceTestId = "desktop-sidebar-balance";
   // Any amount above zero, e.g. "$59.45".
   private readonly nonZeroAmount = /\$(?!0\.00)[\d,]*\d\.\d{2}/;
@@ -23,5 +24,11 @@ export class PerpsPage extends WebViewAppPage {
   async clickDeposit() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.depositButtonTestId).click();
+  }
+
+  @step("Click Withdraw in the Perps live app")
+  async clickWithdraw() {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.withdrawButtonTestId).click();
   }
 }
