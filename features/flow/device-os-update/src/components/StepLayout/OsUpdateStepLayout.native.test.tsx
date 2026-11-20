@@ -10,6 +10,11 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
   return { ...actual, QueuedBottomSheet: jest.fn(actual.QueuedBottomSheet) };
 });
 
+const TOP_INSET = 47;
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: TOP_INSET, bottom: 0, left: 0, right: 0 }),
+}));
+
 const sheetProps = () => jest.mocked(QueuedBottomSheet).mock.lastCall?.[0];
 
 type LayoutProps = Partial<React.ComponentProps<typeof OsUpdateStepLayout>>;
@@ -29,6 +34,12 @@ describe("OsUpdateStepLayout", () => {
     expect(screen.getByText("the screen")).toBeVisible();
     expect(screen.queryByText("the sheet")).toBeNull();
     expect(sheetProps()?.isRequestingToBeOpened).toBe(false);
+  });
+
+  it("keeps the navigation bar below the status bar", () => {
+    renderLayout();
+
+    expect(screen.getByTestId("os-update-step-layout")).toHaveStyle({ paddingTop: TOP_INSET });
   });
 
   it("renders the sheet content over the screen", () => {
