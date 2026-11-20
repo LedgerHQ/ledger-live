@@ -6,8 +6,19 @@ import { MyWalletScreen } from "..";
 
 jest.mock("../views/MyLedgerSection", () => {
   const { createElement } = jest.requireActual<typeof import("react")>("react");
-  const { Text } = jest.requireActual<typeof import("react-native")>("react-native");
-  return { MyLedgerSection: () => createElement(Text, null, "My Ledger section") };
+  const { Pressable, Text } = jest.requireActual<typeof import("react-native")>("react-native");
+  return {
+    MyLedgerSection: ({
+      onPairingStateChanged,
+    }: {
+      onPairingStateChanged?: (isPairing: boolean) => void;
+    }) =>
+      createElement(
+        Pressable,
+        { onPress: () => onPairingStateChanged?.(true) },
+        createElement(Text, null, "My Ledger section"),
+      ),
+  };
 });
 
 const Stack = createNativeStackNavigator();
@@ -33,6 +44,18 @@ describe("MyWalletScreen layout", () => {
     // THEN
     expect(screen.getByTestId("my-wallet-scroll")).toBeOnTheScreen();
     expect(screen.getByText("My Ledger section")).toBeVisible();
+  });
+
+  it("GIVEN the device list flag is on, WHEN the Add mode starts, THEN it should stop the screen scroll", async () => {
+    // GIVEN
+    const { user } = renderMyWalletScreen(true);
+    expect(screen.getByTestId("my-wallet-scroll")).toHaveProp("scrollEnabled", true);
+
+    // WHEN
+    await user.press(screen.getByText("My Ledger section"));
+
+    // THEN
+    expect(screen.getByTestId("my-wallet-scroll")).toHaveProp("scrollEnabled", false);
   });
 
   it("GIVEN the device list flag is off, WHEN My Wallet shows, THEN it should keep the layout without a screen scroll", () => {

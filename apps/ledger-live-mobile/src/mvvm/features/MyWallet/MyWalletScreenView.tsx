@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { TrackScreen } from "@shared/analytics-react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
@@ -15,6 +15,13 @@ export function MyWalletScreenView({
   onPairingStateChanged,
   isDeviceListEnabled,
 }: Readonly<MyWalletScreenViewProps>) {
+  const scrollRef = useRef<ScrollView>(null);
+
+  // The Add mode keeps its close bar on screen: back to the top, and only its own content scrolls.
+  useLayoutEffect(() => {
+    if (isPairing) scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [isPairing]);
+
   const content = (
     <>
       {!isPairing && (
@@ -40,6 +47,8 @@ export function MyWalletScreenView({
       {/* The new device list has no scroll of its own: everything below the header scrolls. */}
       {isDeviceListEnabled && (
         <ScrollView
+          ref={scrollRef}
+          scrollEnabled={!isPairing}
           contentContainerStyle={styles.scrollContent}
           alwaysBounceVertical={false}
           testID="my-wallet-scroll"
