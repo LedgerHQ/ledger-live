@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
+import { MIN_RESULT_DISPLAY_MS } from "./pendingResultStore.internals";
 import { usePredictionsSetupHooks } from "./predictionsSetupStore";
 import {
   dismissPredictionsSetup,
   markPredictionsSetupPresented,
-  MIN_SETUP_DISPLAY_MS,
   reportPredictionsSetup,
   startPredictionsSetup,
   usePredictionsSetup,
@@ -42,7 +42,7 @@ describe("predictionsSetupStore", () => {
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "created" });
     });
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS - 1));
+    act(() => jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS - 1));
     expect(result.current.shownSetup?.outcome).toBeNull();
     act(() => jest.advanceTimersByTime(1));
 
@@ -57,12 +57,12 @@ describe("predictionsSetupStore", () => {
     });
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "created" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS);
     });
     expect(result.current.shownSetup?.outcome).toBeNull();
 
     act(() => markPredictionsSetupPresented());
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS - 1));
+    act(() => jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS - 1));
     expect(result.current.shownSetup?.outcome).toBeNull();
     act(() => jest.advanceTimersByTime(1));
 
@@ -79,7 +79,7 @@ describe("predictionsSetupStore", () => {
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "found" });
       void reportPredictionsSetup(setupId, { outcome: "failed", reason: "unknown" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS);
     });
 
     expect(result.current.shownSetup?.outcome).toEqual({ outcome: "found" });
@@ -93,7 +93,7 @@ describe("predictionsSetupStore", () => {
     });
     const isFirstSettled = settled(reportPredictionsSetup(setupId, { outcome: "found" }));
     const isSecondSettled = settled(reportPredictionsSetup(setupId, { outcome: "found" }));
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS));
+    act(() => jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS));
     await Promise.resolve();
     expect(isFirstSettled()).toBe(false);
 
@@ -121,7 +121,7 @@ describe("predictionsSetupStore", () => {
     });
     await Promise.resolve();
     const isLateReportSettled = settled(reportPredictionsSetup(replacedId, { outcome: "found" }));
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS));
+    act(() => jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS));
     await Promise.resolve();
 
     expect(isReplacedSettled()).toBe(true);
@@ -147,7 +147,7 @@ describe("usePredictionsSetupHooks", () => {
     });
     act(() => {
       void player.result.current["binding.reportSetup"]({ outcome: "found" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_RESULT_DISPLAY_MS);
     });
 
     expect(setup.result.current.shownSetup?.outcome).toEqual({ outcome: "found" });
