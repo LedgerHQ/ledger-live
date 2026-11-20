@@ -1,6 +1,6 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { CantonContext } from "../config";
-import { isInstrument, type NativeInstrument } from "../logic/asset";
+import { isInstrument, type NativeInstrument } from "./asset";
 import { getBalance as gatewayGetBalance, isGatewayEnabled } from "../network/gateway";
 import type { InstrumentBalance } from "../types/gateway";
 
