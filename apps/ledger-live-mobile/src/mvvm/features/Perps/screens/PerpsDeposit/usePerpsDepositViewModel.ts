@@ -5,6 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import { useDefaultDepositAccount } from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDefaultDepositAccount";
 import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
@@ -23,7 +24,7 @@ import {
 } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -112,22 +113,11 @@ export function usePerpsDepositViewModel({
   // Leaving the screen before the deposit settles abandons it; after it settles this is a no-op.
   useEffect(() => cancelDepositRequest, []);
 
-  /** The USDC funding account with the highest spendable balance, used as the default. */
-  const defaultDepositAccount = useMemo(
-    () =>
-      accounts
-        .filter(
-          (acc): acc is TokenAccount =>
-            acc.type === "TokenAccount" &&
-            acc.token.id === PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID &&
-            acc.spendableBalance.gt(0),
-        )
-        .reduce<TokenAccount | undefined>(
-          (best, acc) => (!best || acc.spendableBalance.gt(best.spendableBalance) ? acc : best),
-          undefined,
-        ),
-    [accounts],
-  );
+  const defaultDepositAccount = useDefaultDepositAccount({
+    accounts,
+    receiverAccount,
+    counterValueCurrency,
+  });
 
   const depositAccount = useMemo(
     () => accounts.find(account => account.id === depositAccountId) ?? defaultDepositAccount,
