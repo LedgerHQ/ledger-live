@@ -34,13 +34,15 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
 
-  // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
-  useEffect(() => {
-    setDevice(params?.device);
-  }, [params?.device]);
-
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+
+  // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
+  // One-shot request: consumed once the connection ends, so that coming back to this screen does not
+  // connect the device again, while leaving it before the end (e.g. to Experimental Settings) resumes it.
+  useEffect(() => {
+    if (params?.device) setDevice(params.device);
+  }, [params?.device]);
 
   const onAddDevice = useUnifiedAddDevice();
 
@@ -75,6 +77,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
 
   const onModalHide = () => {
     setDevice(undefined);
+    navigation.setParams({ device: undefined, firmwareUpdate: undefined });
     clearModalResultRef.current?.();
   };
 
