@@ -17,10 +17,10 @@ type ExitDeps = {
   navigation: NavigationProp<ParamListBase>;
   device: Device;
   wasReadOnlyAtEntry: boolean;
-  isGenuine: boolean;
   deviceWasSeeded: boolean;
+  /** From `exitOutcome`: the same decision drives this navigation and the funnel end event. */
+  outcome: ExitOutcome;
   seededResult: SeededResult | null;
-  firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
 
@@ -36,42 +36,34 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       seededResult,
     }),
   resumeFirmwareUpdate: ({ navigation, device }) => resetToMyLedger(navigation, device),
-  legacyFallback: ({
-    navigation,
-    device,
-    dispatch,
-    wasReadOnlyAtEntry,
-    isGenuine,
-    deviceWasSeeded,
-    firmwareNeedsLegacyFlow,
-    hasCompletedOnboarding,
-  }) => {
-    if (!deviceWasSeeded) {
-      openLegacySetup(navigation, device);
+  legacyFallback: deps => {
+    if (deps.outcome !== "legacy") {
+      finishOrGoBack(deps);
       return;
     }
-    if (!isGenuine) {
-      if (firmwareNeedsLegacyFlow) {
-        resetToLegacySeededChecks(navigation, device);
-        return;
-      }
-      navigation.goBack();
-      return;
-    }
-    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
-    closeOnboarding(navigation);
+    if (deps.deviceWasSeeded) resetToLegacySeededChecks(deps.navigation, deps.device);
+    else openLegacySetup(deps.navigation, deps.device);
   },
-  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
-    if (!isGenuine) {
-      navigation.goBack();
-      return;
-    }
-    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
-    closeOnboarding(navigation);
-  },
+  userQuit: finishOrGoBack,
 };
 
-export function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
+/** A finished funnel completes onboarding; an aborted one goes back without saving. */
+function finishOrGoBack({
+  outcome,
+  dispatch,
+  navigation,
+  wasReadOnlyAtEntry,
+  hasCompletedOnboarding,
+}: ExitDeps) {
+  if (outcome !== "done") {
+    navigation.goBack();
+    return;
+  }
+  completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+  closeOnboarding(navigation);
+}
+
+function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
   return (
     context.isOnboarded === true &&
     (context.firmwareVersion === null ||
@@ -82,13 +74,13 @@ export function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boole
   );
 }
 
-/** How a seeded funnel ends for each exit, as `exitActions` handles it. */
-export type SeededOutcome = "done" | "aborted" | "syncOffer" | "legacy";
+/** How the funnel ends for each exit. `exitActions` and the tracking both read it. */
+export type ExitOutcome = "done" | "aborted" | "syncOffer" | "legacy";
 
-export function seededOutcome(
+export function exitOutcome(
   reason: DeviceOnboardingExitReason,
   context: DeviceOnboardingContext,
-): SeededOutcome {
+): ExitOutcome {
   const genuine = isCurrentSessionGenuine(context);
   switch (reason) {
     case "completed":

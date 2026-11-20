@@ -16,7 +16,7 @@ import {
 import { StackActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import type { SeededResult } from "@features/platform-device-onboarding-analytics";
-import { exitActions, seededOutcome } from "./exitActions";
+import { exitActions, exitOutcome } from "./exitActions";
 
 const seededResult: SeededResult = {
   deviceType: DmkDeviceModelId.STAX,
@@ -71,7 +71,7 @@ describe("exitActions", () => {
   });
 
   it("should go back to the screen that opened onboarding", () => {
-    const { opened, popped } = leave("completed", { isGenuine: true }, [
+    const { opened, popped } = leave("completed", { outcome: "done" }, [
       NavigatorName.Base,
       NavigatorName.BaseOnboarding,
     ]);
@@ -81,7 +81,7 @@ describe("exitActions", () => {
   });
 
   it("should close the device flow and onboarding together", () => {
-    const { opened, popped } = leave("completed", { isGenuine: true }, [
+    const { opened, popped } = leave("completed", { outcome: "done" }, [
       NavigatorName.Base,
       NavigatorName.BaseOnboarding,
       NavigatorName.DeviceOnboarding,
@@ -132,7 +132,7 @@ describe("exitActions", () => {
   });
 
   it("should leave without completing when the device is not genuine", () => {
-    const { opened, dispatched, wentBack } = leave("userQuit", { isGenuine: false });
+    const { opened, dispatched, wentBack } = leave("userQuit", { outcome: "aborted" });
 
     expect(opened).toBeNull();
     expect(dispatched).toEqual([]);
@@ -141,7 +141,7 @@ describe("exitActions", () => {
 
   it("should complete and open the portfolio when a genuine device quits", () => {
     const { opened, dispatched, wentBack } = leave("userQuit", {
-      isGenuine: true,
+      outcome: "done",
       wasReadOnlyAtEntry: true,
     });
 
@@ -160,7 +160,7 @@ describe("exitActions", () => {
   it("should leave without completing when a seeded read fails after a supported firmware", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      firmwareNeedsLegacyFlow: false,
+      outcome: "aborted",
     });
 
     expect(opened).toBeNull();
@@ -171,7 +171,7 @@ describe("exitActions", () => {
   it("should open the old checks above onboarding when seeded firmware cannot be verified here", () => {
     const { dispatched, wentBack, reset } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      firmwareNeedsLegacyFlow: true,
+      outcome: "legacy",
     });
 
     expect(wentBack).toBe(false);
@@ -213,14 +213,22 @@ describe("exitActions", () => {
     ["legacyFallback", { genuine: true }, "done"],
     ["legacyFallback", { genuine: false }, "aborted"],
     ["legacyFallback", { genuine: false, firmwareVersion: null }, "legacy"],
-  ] as const)("should end a seeded funnel on %s %o as %s", (reason, overrides, outcome) => {
-    expect(seededOutcome(reason, exitContext(overrides))).toBe(outcome);
+  ] as const)("should end the funnel on %s %o as %s", (reason, overrides, outcome) => {
+    expect(exitOutcome(reason, exitContext(overrides))).toBe(outcome);
+  });
+
+  it("should open the legacy setup when an unseeded device falls back", () => {
+    const { rootNavigated, wentBack, dispatched } = leave("legacyFallback", { outcome: "legacy" });
+
+    expect(wentBack).toBe(false);
+    expect(dispatched).toEqual([]);
+    expect(rootNavigated).toBe(NavigatorName.BaseOnboarding);
   });
 
   it("should finish a seeded fallback only after a current genuine verdict", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      isGenuine: true,
+      outcome: "done",
     });
 
     expect(wentBack).toBe(false);
@@ -262,10 +270,9 @@ function leave(
     navigation: flow as unknown as ExitDeps["navigation"],
     device: stax,
     wasReadOnlyAtEntry: false,
-    isGenuine: false,
     deviceWasSeeded: false,
+    outcome: "done",
     seededResult,
-    firmwareNeedsLegacyFlow: false,
     hasCompletedOnboarding: false,
     ...overrides,
   });
@@ -281,6 +288,7 @@ function leave(
       : null) as { name: string; params: unknown } | null,
     wentBack: flow.goBack.mock.calls.length > 0,
     popped: outer.dispatch.mock.calls[0]?.[0] ?? null,
+    rootNavigated: outer.navigate.mock.calls[0]?.[0] ?? null,
   };
 }
 

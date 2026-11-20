@@ -18,7 +18,7 @@ import {
   type SeededResult,
 } from "@features/platform-device-onboarding-analytics";
 import type { TrackedScreen, UpdateStep } from "../types";
-import { seededOutcome } from "../utils/exitActions";
+import { exitOutcome } from "../utils/exitActions";
 import { seededChecksPage } from "./seededChecksPage";
 
 type Input = Readonly<{
@@ -112,7 +112,7 @@ export function useSeededFunnelTracking({
   const trackExit = useCallback(
     (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
       const exitResult = toSeededResult(context, firmwareUpdateStarted);
-      const outcome = seededOutcome(reason, context);
+      const outcome = exitOutcome(reason, context);
       if (!exitResult || outcome === "legacy") return null;
       trackStarted(exitResult);
       if (outcome === "done") trackSeededDone(exitResult);

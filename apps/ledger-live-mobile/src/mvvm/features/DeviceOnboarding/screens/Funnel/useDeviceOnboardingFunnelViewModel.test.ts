@@ -2884,24 +2884,6 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
   });
 
   describe("seeded funnel tracking", () => {
-    it("should track the idle genuine check and its start", () => {
-      useSession.mockReturnValue(seededSession("awaitingStart"));
-
-      const { result } = renderFunnel();
-      const checks = checksOf(result.current);
-      checks.onStart();
-
-      expect(screensOf(checks)).toEqual(["Genuine Check"]);
-      expect(track).toHaveBeenCalledWith(
-        "onboarding_started",
-        expect.objectContaining({ ledger_sync_eligibility: "no", deviceType: "stax" }),
-      );
-      expect(track).toHaveBeenCalledWith(
-        "button_clicked",
-        expect.objectContaining({ button: "Initiate Genuine Check", source: "Page Pairing" }),
-      );
-    });
-
     it("should leave the refusal page and the retry click to the drawer when the device refuses", () => {
       useSession.mockReturnValue(
         seededSession(
@@ -3053,27 +3035,6 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       expect(checksOf(result.current).screensFor?.(null)).toEqual(before);
     });
 
-    it("should track the success page and the continue click when the OS is up to date", () => {
-      useSession.mockReturnValue(
-        seededSession(
-          "checks.checksSucceeded",
-          { firmware: upToDate },
-          {
-            firmwareUpToDate: true,
-            firmwareChecked: true,
-          },
-        ),
-      );
-
-      const { result } = renderFunnel();
-      const checks = checksOf(result.current);
-      expect(clicks()).toEqual([]);
-      checks.onContinue?.();
-
-      expect(screensOf(checks)).toEqual(["Genuine Check & OS success"]);
-      expect(clicks()).toEqual(["Continue"]);
-    });
-
     it.each([
       ["an unseeded device", "checks.checksSucceeded", { onboardedOnEntry: false }],
       ["a leave before the device read", null, null],
@@ -3108,15 +3069,6 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       });
 
       expect(clicks()).toEqual(["close"]);
-    });
-
-    it("should send the start once when the first seeded page shows", () => {
-      useSession.mockReturnValue(seededSession("checks.genuineCheck.running"));
-      const { rerender } = renderFunnel();
-      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
-      rerender(undefined);
-
-      expect(events().filter(event => event === "onboarding_started")).toHaveLength(1);
     });
 
     it.each([

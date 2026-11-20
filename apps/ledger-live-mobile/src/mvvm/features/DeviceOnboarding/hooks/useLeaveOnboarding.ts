@@ -8,8 +8,7 @@ import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import type { SeededResult } from "@features/platform-device-onboarding-analytics";
-import { exitActions, firmwareNeedsLegacyFlow, resetToPortfolio } from "../utils/exitActions";
-import { isCurrentSessionGenuine } from "../utils/genuineSession";
+import { exitActions, exitOutcome, resetToPortfolio } from "../utils/exitActions";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
@@ -46,25 +45,17 @@ export function useLeaveOnboarding({
       resetToPortfolio(navigation);
       return;
     }
-    const genuine = isCurrentSessionGenuine(context);
-    const seeded = context.isOnboarded === true;
+    const outcome = exitOutcome(reason, context);
     exitActions[reason]({
       navigation,
       dispatch,
       device,
       wasReadOnlyAtEntry,
-      isGenuine: genuine,
-      deviceWasSeeded: seeded,
+      deviceWasSeeded: context.isOnboarded === true,
+      outcome,
       seededResult,
-      firmwareNeedsLegacyFlow: firmwareNeedsLegacyFlow(context),
       hasCompletedOnboarding,
     });
-    if (
-      reason === "completed" ||
-      (reason === "userQuit" && genuine) ||
-      (reason === "legacyFallback" && seeded && genuine)
-    ) {
-      notifyFlowCompleted("onboarding");
-    }
+    if (outcome === "done") notifyFlowCompleted("onboarding");
   };
 }

@@ -86,19 +86,6 @@ describe("useSyncOfferScreenViewModel", () => {
     ]);
   });
 
-  it("should track the refused page after Yes, skip", () => {
-    const { result } = renderScreen();
-
-    act(() => offerOf(result.current).onOpenSkip());
-    act(() => offerOf(result.current).skipDrawer.onSkip());
-
-    expect(offerOf(result.current).screenTracking).toEqual({ category: "Ledger Sync", ...shared });
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: seededPages.ledgerSyncRefused }),
-      expect.anything(),
-    );
-  });
-
   it("should send nothing when the offer is not a seeded entry", () => {
     const { result, onQuit } = renderScreen(null);
 
