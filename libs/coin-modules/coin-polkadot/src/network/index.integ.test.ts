@@ -1,6 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { encodeAddress, randomAsU8a } from "@polkadot/util-crypto";
 import { polkadotDefaults } from "../config";
 import polkadotAPI from "./index";
+import { fetchStakingInfo } from "./node/stakingInfo";
 
 const logger = jest.fn();
 
@@ -35,6 +37,39 @@ describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", 
       expect(staking.activeEra).toBeGreaterThan(0);
       expect(minimumBondBalance.isGreaterThan(0)).toBe(true);
     }
+  }, 60000);
+});
+
+describe("network/index account checks (assethub_polkadot)", () => {
+  const { currency, config } = CURRENCY_CONFIGS.assethub_polkadot;
+  const fundedAddress = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
+  const unusedAddress = encodeAddress(randomAsU8a(32), 0);
+
+  it("reports an address that never received funds as a new account", async () => {
+    expect(await polkadotAPI.isNewAccount(config, unusedAddress, currency.id)).toBe(true);
+  }, 60000);
+
+  it("reports an address that holds funds as an existing account", async () => {
+    expect(await polkadotAPI.isNewAccount(config, fundedAddress, currency.id)).toBe(false);
+  }, 60000);
+
+  it("reports an address that never bonded as not being a controller", async () => {
+    expect(await polkadotAPI.isControllerAddress(config, unusedAddress, currency.id)).toBe(false);
+  }, 60000);
+
+  it("returns the addresses that are not validators", async () => {
+    expect(
+      await polkadotAPI.verifyValidatorAddresses(config, [unusedAddress], currency.id, []),
+    ).toEqual([unusedAddress]);
+  }, 60000);
+
+  it("reads the staking info of an address from the node", async () => {
+    const stakingInfo = await fetchStakingInfo(config, fundedAddress, currency.id);
+
+    expect(stakingInfo).toEqual({
+      staking: expect.objectContaining({ unlocking: expect.any(Array) }),
+      numSlashingSpans: expect.any(Number),
+    });
   }, 60000);
 });
 
