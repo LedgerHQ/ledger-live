@@ -78,6 +78,48 @@ describe("PtxInfoDialog Integration", () => {
       expect(screen.queryByText("Orphaned text")).not.toBeInTheDocument();
     });
 
+    it.each([
+      [
+        "en",
+        "https://www.ledger.com/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+      ],
+      [
+        "de",
+        "https://www.ledger.com/de/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+      ],
+      [
+        "fr",
+        "https://www.ledger.com/fr/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+      ],
+      [
+        "pt",
+        "https://www.ledger.com/pt-br/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+      ],
+      [
+        "tr",
+        "https://www.ledger.com/tr/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+      ],
+    ])("should open the localized Borrow Academy guide for %s", async (language, expectedUrl) => {
+      const { store, user } = render(<PtxInfoDialog />, {
+        initialState: { settings: { language } },
+      });
+      act(() => {
+        store.dispatch(
+          setPtxInfoDialog({
+            title: "Borrow info",
+            message: "Learn about borrowing.",
+            linkText: "Read the full guide",
+            linkHref:
+              "https://www.ledger.com/academy/defi-borrowing-or-how-to-get-liquidity-without-selling-your-crypto",
+          }),
+        );
+      });
+
+      await user.click(await screen.findByText("Read the full guide"));
+
+      expect(openURL).toHaveBeenCalledWith(expectedUrl);
+    });
+
     it("should call openURL when the link is clicked", async () => {
       const { store, user } = render(<PtxInfoDialog />);
 

@@ -6,6 +6,7 @@ import {
   clearPtxInfoDialog,
 } from "~/renderer/reducers/ptxInfoDialog";
 import { openURL } from "~/renderer/linking";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export interface PtxInfoDialogViewProps {
   isOpen: boolean;
@@ -25,11 +26,12 @@ const usePtxInfoDialogViewModel = (): PtxInfoDialogViewProps => {
     dispatch(clearPtxInfoDialog());
   }, [dispatch]);
 
+  const localizedLinkHref = useLocalizedUrl(data?.linkHref ?? "");
   const onLinkPress = useCallback(() => {
-    if (data?.linkHref) {
-      openURL(data.linkHref);
+    if (localizedLinkHref) {
+      openURL(localizedLinkHref);
     }
-  }, [data?.linkHref]);
+  }, [localizedLinkHref]);
 
   return {
     isOpen,
@@ -37,7 +39,7 @@ const usePtxInfoDialogViewModel = (): PtxInfoDialogViewProps => {
     message: data?.message ?? "",
     linkText: data?.linkText,
     onClose,
-    onLinkPress: data?.linkHref ? onLinkPress : undefined,
+    onLinkPress: localizedLinkHref ? onLinkPress : undefined,
   };
 };
 
