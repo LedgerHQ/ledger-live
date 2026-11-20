@@ -8,6 +8,7 @@ import {
   enabledXrpTokenStandards,
   heldXrpTokenIds,
   standardOf,
+  hasPendingXrpTokenRemoval,
 } from "@ledgerhq/live-common/families/xrp/tokenHolding";
 import type {
   TransactionStatus,
@@ -15,7 +16,6 @@ import type {
   XrpTokenResources,
 } from "@ledgerhq/live-common/families/xrp/types";
 import BigNumber from "bignumber.js";
-import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
 
 // The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
@@ -24,16 +24,6 @@ export const OWNER_RESERVE = new BigNumber(200_000);
 export const hasTokenStandardEnabled = (account: Account): boolean => {
   return getXrpEnabledTokenStandards(account.currency.id).length > 0;
 };
-
-function hasPendingRemoval(account: Account, token: TokenCurrency): boolean {
-  return account.pendingOperations.some(operation => {
-    const raw = operation.transactionRaw;
-    if (operation.type !== "OPT_OUT" || !raw) return false;
-    if (!("assetReference" in raw) || !("assetOwner" in raw)) return false;
-
-    return raw.assetReference === token.tokenIdentifier && raw.assetOwner === token.contractAddress;
-  });
-}
 
 /** The reserve a removal frees, from coin-xrp's `XrpReserveRelease` warning: "0.2 XRP" */
 export function getReleasedReserve(status: TransactionStatus): string | undefined {
@@ -64,7 +54,7 @@ export function getManagedTokenAccounts(account: Account): XrpTokenAccount[] {
 }
 
 export function getRemoveAvailability(account: TokenAccount, parentAccount: Account, t: TFunction) {
-  if (hasPendingRemoval(parentAccount, account.token)) {
+  if (hasPendingXrpTokenRemoval(parentAccount, account.token)) {
     return { disabled: true, tooltip: t("xrp.removeToken.pending") };
   }
 
