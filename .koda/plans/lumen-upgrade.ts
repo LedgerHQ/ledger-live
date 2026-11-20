@@ -107,11 +107,12 @@ const createBranchTask = task("create-branch")
   .uses(upgrader)
   .createBranch({ name: "chore/lumen-upgrade" });
 
+// Cairn has no timeout on shell tasks: a stalled fetch would hang the run, so it gives up after 5 minutes.
+const fetchDevelop = "GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin develop";
+
 // The sandbox image ships a checkout whose origin/develop is as old as the image, and Cairn fetches the branch by URL,
 // which leaves it there: the migration range and the changeset read origin/develop, so refresh it first.
-const installTask = task("install").runs(
-  "git fetch --quiet origin develop && pnpm install --frozen-lockfile",
-);
+const installTask = task("install").runs(`${fetchDevelop} && pnpm install --frozen-lockfile`);
 
 // Sets each catalog entry to the latest published version, then updates the lockfile.
 const bumpTask = task("bump").runs(
