@@ -484,6 +484,54 @@ describe("fromLegacyAccount of a family identified by its public key", () => {
   });
 });
 
+describe("an Aleo account, keyed on its address and its view key", () => {
+  // The coin-aleo testnet fixture account.
+  const address = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
+  const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
+  const legacy: LegacyAccountIdentity = {
+    id: encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "aleo",
+      xpubOrAddress: address,
+      derivationMode: "aleo",
+      customData: viewKey,
+    }),
+    currency: { id: "aleo" },
+    derivationMode: "aleo",
+    index: 2,
+    freshAddress: address,
+  };
+
+  it("keys the account on the address and the view key of its legacy id", () => {
+    expect(fromLegacyAccount(legacy)).toMatchObject({
+      type: "address",
+      key: `${address}.${viewKey}`,
+      path: "m/44h/683h/2h/0h",
+    });
+  });
+
+  it("gives the view key back as the legacy id's custom data", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy))).toEqual({
+      currencyId: "aleo",
+      derivationMode: "aleo",
+      index: 2,
+      freshAddress: address,
+      customData: viewKey,
+    });
+  });
+
+  it("reads the account at its address, with or without the view key", async () => {
+    expect(await addressFromKey("aleo", `${address}.${viewKey}`)).toBe(address);
+    expect(await addressFromKey("aleo", address)).toBe(address);
+  });
+
+  it("gives a discovered account, keyed on its address alone, another AccountUUID", () => {
+    const added = fromLegacyAccount(legacy);
+    expect(computeAccountUUID({ ...added, key: address })).not.toBe(computeAccountUUID(added));
+  });
+});
+
 describe("a descriptor of a public-key family keyed on its address", () => {
   // written before these families were keyed on their public key
   const { address } = PUBLIC_KEYS.ton;
