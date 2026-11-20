@@ -8,6 +8,7 @@ import {
   type AgentKeycloakConfig,
 } from "@ledgerhq/agent-intent-sdk";
 import { AGENT_INTENT_TRUSTCHAIN_URLS } from "../key-ring/constants";
+import { createTestSeam } from "../shared/test-seam";
 import { hasUrlCredentials } from "./profile-format";
 
 const DURATION_RE = /^([1-9]\d*)([smhd])$/;
@@ -75,12 +76,17 @@ export function assertStoredServiceUrl(
   }
 }
 
+const channelHost = createTestSeam(createAgentEnrollmentChannelHost);
+
+/** @internal Test seam — builds the relay host, e.g. on a fake relay; `null` restores the SDK's. */
+export const _setTestRelayChannelHost = channelHost.set;
+
 /** Relay timers default to 15 min; stretched so only the signed expiry bounds the wait. */
 export function createRelayHost(
   environment: AgentIntentEnvironment,
   expiresInMs: number,
 ): AgentEnrollmentChannelHost {
-  return createAgentEnrollmentChannelHost({
+  return channelHost.get()({
     environment,
     relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
     webSocketFactory: url => {

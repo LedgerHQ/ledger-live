@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from "node:child_process";
+import { spawn, type ChildProcess, type SpawnOptions } from "node:child_process";
 import { createHash } from "node:crypto";
 import { chmodSync, closeSync, fchmodSync, mkdirSync, openSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -8,6 +8,7 @@ import { z } from "zod";
 import { DETACHED_LISTENER_ENV } from "../analytics/lifecycle-analytics";
 import { AGENT_INTENT_KEY_STORES, APP_NAME } from "../session/session-store";
 import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
+import { createTestSeam } from "../shared/test-seam";
 
 const LISTENER_DIR = "agent-intent-enroll";
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
@@ -16,6 +17,11 @@ const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
  * listener blocked in a keychain write only sees a stop signal once the write returns. */
 export const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
+const startupTimeoutMs = createTestSeam(STARTUP_TIMEOUT_MS);
+
+/** @internal Test seam — how long a `--detach` parent waits for the listener's first line; `null`
+ * restores {@link STARTUP_TIMEOUT_MS}. */
+export const _setTestStartupTimeoutMs = startupTimeoutMs.set;
 const START_LOCK_MARGIN_MS = 5_000;
 /** How long a live listener may hold its lock without saving its profile. A human may answer a
  * keychain unlock prompt late; past this, `wait` reports the listener `listener_stuck`: stuck, or
@@ -77,6 +83,16 @@ export async function withEnrollStartLock<T>(profileId: string, fn: () => Promis
   return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
 }
 
+export type SpawnProcess = (
+  file: string,
+  args: readonly string[],
+  options: SpawnOptions,
+) => ChildProcess;
+const spawnProcess = createTestSeam<SpawnProcess>(spawn);
+
+/** @internal Test seam — starts the listener instead of `node:child_process`; `null` restores it. */
+export const _setTestSpawn = spawnProcess.set;
+
 const COMPILED_ENTRY_POINT = /^(\/\$bunfs\/|B:[\\/]~BUN[\\/])/;
 
 /** Command line that re-runs this CLI with `args`. The compiled binary is its own entry point (its
@@ -99,7 +115,7 @@ export function spawnDetached(command: readonly string[], logPath: string): Chil
   try {
     fchmodSync(logFd, 0o600); // `mode` only applies on create; a reused log keeps its old one
     const [file, ...args] = command;
-    const child = spawn(file, args, {
+    const child = spawnProcess.get()(file, args, {
       detached: true,
       windowsHide: true,
       stdio: ["ignore", logFd, logFd],
@@ -178,7 +194,7 @@ export const ErrorLineSchema = z.object({
 export async function readFirstLogJsonLine(
   child: ChildProcess,
   logPath: string,
-  timeoutMs = STARTUP_TIMEOUT_MS,
+  timeoutMs = startupTimeoutMs.get(),
 ): Promise<Record<string, unknown> | undefined> {
   let exited: string | undefined;
   const onExit = (code: number | null, signal: NodeJS.Signals | null) => {
