@@ -606,6 +606,8 @@ export enum ScreenName {
   XrpAddTokenValidationError = "XrpAddTokenValidationError",
   XrpAddTokenValidationSuccess = "XrpAddTokenValidationSuccess",
   XrpManageTokenList = "XrpManageTokenList",
+  XrpManageTokenSettings = "XrpManageTokenSettings",
+  XrpManageTokenBalanceLimit = "XrpManageTokenBalanceLimit",
   HederaDelegationSummary = "HederaDelegationSummary",
   HederaDelegationSelectValidator = "HederaDelegationSelectValidator",
   HederaDelegationSelectDevice = "HederaDelegationSelectDevice",

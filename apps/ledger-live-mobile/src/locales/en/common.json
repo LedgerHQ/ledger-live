@@ -8671,7 +8671,7 @@
       "empty": "This account has no tokens yet.",
       "tokenType": "Token type",
       "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
-      "iou": "Trust Line (IOU)",
+      "iou": "Trust Line",
       "mpt": "Multi Purpose Token",
       "issuer": "Issuer",
       "transferFee": "Transfer fee",
@@ -8706,7 +8706,20 @@
       "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
-      "maximum": "Maximum"
+      "maximum": "Maximum",
+      "editTitle": "Edit details",
+      "balanceLimitDescription": "Select the maximum balance you can hold for this asset.",
+      "setToMaximum": "Set to maximum",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token.",
+      "success": {
+        "title": "Token settings updated",
+        "description": "Your new settings apply once the transaction is confirmed."
+      },
+      "error": {
+        "title": "Failed to update token settings",
+        "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      }
     },
     "send": {
       "issuerFee": "Issuer fee"
