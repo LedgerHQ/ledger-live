@@ -62,6 +62,17 @@ export default class AccountPage {
     await this.accountTitle(accountName).expectVisible();
   }
 
+  /** With the flag on a token has no account screen of its own: its holding address opens the one of its parent. */
+  @Step("Wait for the account screen of the token {{{0}}} held by {{{1}}}")
+  async waitAndVerifyTokenAccountName(tokenName: string, parentAccountName: string) {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.waitAndVerifyAccountName(parentAccountName);
+      return;
+    }
+    await this.waitAndVerifyAccountName(tokenName);
+    await this.expectAccountTitleVisible(parentAccountName.toUpperCase());
+  }
+
   @Step("Expect the account title {{{0}}} to be visible")
   async expectAccountTitleVisible(accountName: string) {
     await this.accountTitle(accountName).expectVisible();

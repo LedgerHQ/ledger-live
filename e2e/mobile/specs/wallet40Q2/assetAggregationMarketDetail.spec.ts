@@ -1,7 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 import { getFixtureAccountId, getFixtureTokenAccountId } from "@e2e/utils/fixtureAccounts";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -156,13 +155,7 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    if (isAccountDetailEnabled()) {
-      // A token has no account screen of its own: its holding address opens the one of its parent.
-      await app.account.waitAndVerifyAccountName(POLYGON_ACCOUNT_NAME);
-    } else {
-      await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-      await app.account.expectAccountTitleVisible("POLYGON 1");
-    }
+    await app.account.waitAndVerifyTokenAccountName(POLYGON_DAI_ASSET_NAME, POLYGON_ACCOUNT_NAME);
     await app.account.expectAccountAddressLabel({
       accountId: POLYGON_DAI_ACCOUNT_ID,
       address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
