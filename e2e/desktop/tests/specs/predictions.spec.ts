@@ -4,8 +4,6 @@ import { FF_PREDICTIONS_DESKTOP } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const xrayTicket = "B2CQA-6731";
-// TODO: replace this deeplink with the real entry point.
-const predictionsDeeplink = "ledgerwallet://predictions";
 
 test.describe("Predictions", () => {
   test.use({
@@ -26,14 +24,14 @@ test.describe("Predictions", () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {
-      await app.mainNavigation.openDeeplink(predictionsDeeplink);
+      await app.portfolio.clickServicesEntryPoint("predictions");
       await app.predictionsTermsDialog.expectNotAccepted();
       await app.predictionsTermsDialog.expectRiskDisclaimer();
 
       await app.predictionsTermsDialog.close();
       await app.mainNavigation.validateTargetFromMainNavigation("home");
 
-      await app.mainNavigation.openDeeplink(predictionsDeeplink);
+      await app.portfolio.clickServicesEntryPoint("predictions");
       await app.predictionsTermsDialog.expectNotAccepted();
       await app.predictionsTermsDialog.accept();
       await app.predictionsConsentDialog.expectNotAccepted();
@@ -41,7 +39,7 @@ test.describe("Predictions", () => {
       await app.predictionsConsentDialog.close();
       await app.mainNavigation.validateTargetFromMainNavigation("home");
 
-      await app.mainNavigation.openDeeplink(predictionsDeeplink);
+      await app.portfolio.clickServicesEntryPoint("predictions");
       await app.predictionsConsentDialog.expectNotAccepted();
       await app.predictionsTermsDialog.expectHidden();
       await app.predictionsConsentDialog.accept();

@@ -90,6 +90,7 @@ const PREDICTIONS_LIVE_APP_MANIFEST_ID =
   process.env.PREDICTIONS_LIVE_APP_MANIFEST_ID || "predictions-live-app-stg";
 
 export const FF_PREDICTIONS_DESKTOP = {
+  entryPointsServices: { enabled: true, params: { services: ["predictions"] } },
   ptxPredictionsLiveAppDesktop: {
     enabled: true,
     params: { manifest_id: PREDICTIONS_LIVE_APP_MANIFEST_ID },
