@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ConnectKnownOrNewDevice } from "LLM/components/ConnectKnownOrNewDevice";
 import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import DeviceActionModal from "~/components/DeviceActionModal";
@@ -28,10 +28,9 @@ export function MyWalletDeviceListView({
 }: Readonly<MyWalletDeviceListViewProps>) {
   return (
     <>
-      <ScrollView
-        contentContainerStyle={[styles.content, isAdding && { paddingTop: topInset }]}
+      <View
+        style={[styles.content, isAdding && { paddingTop: topInset }]}
         testID="my-wallet-device-list"
-        alwaysBounceVertical={false}
       >
         {/* The same parent in the Add mode, so that the component does not remount. */}
         <View style={isAdding ? styles.fill : undefined}>
@@ -46,7 +45,7 @@ export function MyWalletDeviceListView({
             <LNUpsellBanner location="profile" />
           </ConnectKnownOrNewDevice>
         </View>
-      </ScrollView>
+      </View>
       <DeviceLockedCheckDrawer
         isOpen={deviceToCheck !== null}
         device={deviceToCheck}
