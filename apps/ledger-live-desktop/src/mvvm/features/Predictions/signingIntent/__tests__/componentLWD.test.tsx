@@ -54,8 +54,8 @@ describe("PredictionsSigningIntentComponentLWD", () => {
     });
 
     expect(screen.getByText("Operation rejected on Ledger device")).toBeVisible();
-    await user.click(screen.getByTestId("predictions-binding-retry"));
-    await user.click(screen.getByTestId("predictions-binding-close"));
+    await user.click(screen.getByTestId("predictions-signing-retry"));
+    await user.click(screen.getByTestId("predictions-signing-close"));
 
     expect(retry).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -68,8 +68,8 @@ describe("PredictionsSigningIntentComponentLWD", () => {
     });
     const { user } = renderStep({ type: "error", error: blindSigningDisabled, retry });
 
-    expect(screen.getByTestId("predictions-binding-error")).toBeVisible();
-    await user.click(screen.getByTestId("predictions-binding-retry"));
+    expect(screen.getByTestId("predictions-signing-error")).toBeVisible();
+    await user.click(screen.getByTestId("predictions-signing-retry"));
 
     expect(retry).toHaveBeenCalledTimes(1);
   });
@@ -84,7 +84,7 @@ describe("PredictionsSigningIntentComponentLWD", () => {
       name: "Enable Blind signing or Contract data in Ethereum app",
     });
     expect(title).not.toContainElement(screen.getByRole("link", { name: "Learn more" }));
-    const description = screen.getByTestId("predictions-binding-error-description");
+    const description = screen.getByTestId("predictions-signing-error-description");
     expect(description).toHaveTextContent(
       "On your device, open the Ethereum app's settings, turn on Blind signing, then retry.",
     );

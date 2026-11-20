@@ -15,6 +15,9 @@ type ResultRequest<Outcome, Answer> = {
   reportedOutcome: Outcome | null;
   /** What the sheet shows: null while loading. */
   outcome: Outcome | null;
+  /** Nothing was reported in time: the sheet shows the timeout's outcome and ignores reports. */
+  isTimedOut: boolean;
+  timeoutTimer: ReturnType<typeof setTimeout> | undefined;
   closed: Promise<Answer>;
   resolveClosed: (answer: Answer) => void;
 };
@@ -26,8 +29,8 @@ export type PendingResultStore<Outcome, Answer> = Readonly<{
   /** Replaces any open request, so whoever waits for it can go on. Returns the request's id. */
   start: () => number;
   /**
-   * Resolves once the user closes the sheet, or right away when `id` isn't open. Only the first
-   * outcome shows, once the loading has been on screen long enough.
+   * Resolves once the user closes the sheet, or right away when `id` isn't open or timed out. Only
+   * the first outcome shows, once the loading has been on screen long enough.
    */
   report: (id: number, outcome: Outcome) => Promise<Answer>;
   /** The open request came on screen: its minimum loading time starts now. */
@@ -47,9 +50,12 @@ export type PendingResultStore<Outcome, Answer> = Readonly<{
  */
 export function createPendingResultStore<Outcome extends ResultOutcome, Answer>({
   dismissedAnswer,
+  timeout,
 }: Readonly<{
-  /** What a dismissed, replaced or unopened request answers. */
+  /** What a dismissed, replaced, unopened or timed out request answers. */
   dismissedAnswer: Answer;
+  /** Shows `outcome` when nothing was reported `ms` after the request started. */
+  timeout?: Readonly<{ ms: number; outcome: Outcome }>;
 }>): PendingResultStore<Outcome, Answer> {
   let currentRequest: ResultRequest<Outcome, Answer> | null = null;
   let lastRequestId = 0;
@@ -83,10 +89,20 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
     }, remainingMs);
   };
 
+  const timeOut = (id: number, outcome: Outcome) => {
+    const request = currentRequest;
+    if (request?.id !== id || request.reportedOutcome !== null) return;
+
+    const timedOutRequest = { ...request, reportedOutcome: outcome, isTimedOut: true };
+    setCurrentRequest(timedOutRequest);
+    showOutcomeOnceSeenLongEnough(timedOutRequest);
+  };
+
   const close = (answer: Answer) => {
     const request = currentRequest;
     if (!request) return;
 
+    clearTimeout(request.timeoutTimer);
     setCurrentRequest(null);
     request.resolveClosed(answer);
   };
@@ -101,20 +117,26 @@ export function createPendingResultStore<Outcome extends ResultOutcome, Answer>(
         resolveClosed = resolve;
       });
       lastRequestId += 1;
+      const id = lastRequestId;
       setCurrentRequest({
-        id: lastRequestId,
+        id,
         presentedAt: null,
         reportedOutcome: null,
         outcome: null,
+        isTimedOut: false,
+        timeoutTimer: timeout && setTimeout(() => timeOut(id, timeout.outcome), timeout.ms),
         closed,
         resolveClosed,
       });
-      displacedRequest?.resolveClosed(dismissedAnswer);
-      return lastRequestId;
+      if (displacedRequest) {
+        clearTimeout(displacedRequest.timeoutTimer);
+        displacedRequest.resolveClosed(dismissedAnswer);
+      }
+      return id;
     },
     report: (id, outcome) => {
       const request = currentRequest;
-      if (request?.id !== id) return Promise.resolve(dismissedAnswer);
+      if (request?.id !== id || request.isTimedOut) return Promise.resolve(dismissedAnswer);
 
       if (request.reportedOutcome === null) {
         const reportedRequest = { ...request, reportedOutcome: outcome };

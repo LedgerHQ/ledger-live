@@ -8,7 +8,7 @@ import type { Observable } from "rxjs";
 import type { PredictionsTypedData } from "../typedData";
 
 /** What the user signs, which picks the prompt's copy and the error of a signature from another key. */
-export type PredictionsSigningPurpose = "binding";
+export type PredictionsSigningPurpose = "binding" | "order";
 
 /** The device asks the user to confirm, once its context is loaded, then signs. */
 export type PredictionsSigningEvent =
@@ -32,7 +32,9 @@ export type PredictionsSigningIntentInput = {
 /** How the signature ended, reported once through `onResult`. */
 export type PredictionsSigningResult =
   | { type: "signed"; signature: string }
-  | { type: "mismatch"; error: Error };
+  | { type: "mismatch"; error: Error }
+  /** Nothing was signed: the order expired before the device was asked, so the executor closes. */
+  | { type: "expired"; error: Error };
 
 /** `isAwaitingConfirmation` once the device asks the user; completes once the signature ends. */
 export type PredictionsSigningJobState =

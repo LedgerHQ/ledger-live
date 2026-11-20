@@ -68,8 +68,8 @@ describe("PredictionsSigningIntentComponentLWM", () => {
     });
 
     expect(screen.getByText("Operation rejected on Ledger device")).toBeOnTheScreen();
-    await user.press(screen.getByTestId("predictions-binding-retry"));
-    await user.press(screen.getByTestId("predictions-binding-close"));
+    await user.press(screen.getByTestId("predictions-signing-retry"));
+    await user.press(screen.getByTestId("predictions-signing-close"));
 
     expect(retry).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -82,8 +82,8 @@ describe("PredictionsSigningIntentComponentLWM", () => {
     });
     const { user } = renderStep({ type: "error", error: blindSigningDisabled, retry });
 
-    expect(screen.getByTestId("predictions-binding-error")).toBeOnTheScreen();
-    await user.press(screen.getByTestId("predictions-binding-retry"));
+    expect(screen.getByTestId("predictions-signing-error")).toBeOnTheScreen();
+    await user.press(screen.getByTestId("predictions-signing-retry"));
 
     expect(retry).toHaveBeenCalledTimes(1);
   });
