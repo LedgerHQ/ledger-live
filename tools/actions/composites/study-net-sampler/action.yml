@@ -1,0 +1,32 @@
+name: "Study: network byte sampler (macOS)"
+description: "Bandwidth study only. Records interface and per-process byte counts (no addresses or content) and uploads them for 1 day."
+inputs:
+  mode:
+    description: "start or stop"
+    required: true
+  artifact_name:
+    description: "Artifact name for the stop mode"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Start byte sampler
+      if: inputs.mode == 'start'
+      shell: bash
+      run: bash "$GITHUB_ACTION_PATH/start.sh"
+
+    - name: Stop byte sampler
+      if: inputs.mode == 'stop'
+      shell: bash
+      run: bash "$GITHUB_ACTION_PATH/stop.sh"
+
+    - name: Upload byte counts
+      if: inputs.mode == 'stop'
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ runner.temp }}/study-net/out
+        retention-days: 1
+        if-no-files-found: warn

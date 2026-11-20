@@ -113,6 +113,33 @@ on:
         required: false
         type: string
         default: ""
+      # Study only (bandwidth): the PR call's inputs, so a dispatch runs the PR smoke path.
+      ci_smoke:
+        type: boolean
+        default: false
+      macos_runner_label:
+        type: string
+        default: ""
+      max_shards:
+        type: number
+        default: 0
+      check_pod_lockfile:
+        type: boolean
+        default: false
+      js_bundle_hash_ios:
+        type: string
+        default: ""
+      native_fingerprint_ios:
+        type: string
+        default: ""
+      study_native_salt:
+        description: "Study only: suffix on the iOS native cache key, to force a native build"
+        type: string
+        default: ""
+      study_pod_salt:
+        description: "Study only: suffix on the pod lockfile key, to force the pod lockfile check"
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -536,7 +563,7 @@ jobs:
           fi
           IOS_NATIVE_HASH="${IOS_FINGERPRINT:+fp-$IOS_FINGERPRINT}"
           ANDROID_NATIVE_HASH="${ANDROID_FINGERPRINT:+fp-$ANDROID_FINGERPRINT}"
-          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}${{ inputs.study_native_salt }}" >> $GITHUB_OUTPUT
           echo "android_native_key=${PREFIX}longterm-${ANDROID_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
@@ -544,7 +571,7 @@ jobs:
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${AVD_CACHE_KEY}" >> $GITHUB_OUTPUT
-          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/scripts/post.mjs', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> "$GITHUB_OUTPUT"
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/scripts/post.mjs', 'pnpm-lock.yaml') }}-pod-lockfile-validated${{ inputs.study_pod_salt }}" >> "$GITHUB_OUTPUT"
 
       - name: Prepare test filter
         id: test-filter
@@ -648,7 +675,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@study/bandwidth
     permissions:
       id-token: write
       contents: read
@@ -726,6 +753,11 @@ jobs:
     needs: [determine-builds]
     if: ${{ inputs.check_pod_lockfile && needs.determine-builds.outputs.ios_native_exists == 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true' }}
     steps:
+      - name: Study - start byte sampler
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: start
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -775,6 +807,13 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Study - stop byte sampler
+        if: always()
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: stop
+          artifact_name: study-net-pod-lockfile
+
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     permissions:
@@ -814,6 +853,11 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios) }}
     steps:
+      - name: Study - start byte sampler
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: start
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -1015,6 +1059,13 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.exclusive-lock.outcome == 'failure' && 'failure' || steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
+
+      - name: Study - stop byte sampler
+        if: always()
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: stop
+          artifact_name: study-net-ios-e2e-${{ matrix.shard }}
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})

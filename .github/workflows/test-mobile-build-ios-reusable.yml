@@ -128,6 +128,11 @@ jobs:
       LC_ALL: en_US.UTF-8
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     steps:
+      - name: Study - start byte sampler
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: start
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         id: aws
@@ -194,6 +199,13 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Study - stop byte sampler
+        if: always()
+        uses: LedgerHQ/ledger-live/tools/actions/composites/study-net-sampler@study/bandwidth
+        with:
+          mode: stop
+          artifact_name: study-net-ios-build-native
 
   build-ios-js:
     name: "iOS Build JS"
