@@ -377,6 +377,22 @@ function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boo
   return context?.verdictMatchesSession === true;
 }
 
+/** When leaving asks first, and whether the held-back update still keeps the checks screen. */
+function leaveRules(
+  flat: DeviceOnboardingSession["context"],
+  machine: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
+) {
+  const onboardedOnEntry = flat?.onboardedOnEntry ?? null;
+  // Leaving after setup ends it instead of losing it, as the machine does on QUIT.
+  const setupDone = machine !== undefined && finishesSetupOnQuit(machine);
+  const unseededMidSetup = onboardedOnEntry === false && !setupDone;
+  const seededBeforeGenuineCheck = onboardedOnEntry === true && !genuineCheckCompleted(flat);
+  return {
+    confirmsQuit: unseededMidSetup || seededBeforeGenuineCheck,
+    heldBackUpdatePending: machine !== undefined && isHeldBackUpdatePending(machine),
+  };
+}
+
 function quitConfirmationWhileUnlocked(
   confirmsQuit: boolean,
   open: boolean,
@@ -712,12 +728,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseeded = onboardedOnEntry === false;
   const seedPath = onboarding.snapshot?.context.seedPath ?? null;
   const updateAfterSetup = onboarding.snapshot?.context.updateAfterSetup === true;
-  const machineContext = onboarding.snapshot?.context;
-  const heldBackUpdatePending = machineContext ? isHeldBackUpdatePending(machineContext) : false;
-  const setupDone = machineContext ? finishesSetupOnQuit(machineContext) : false;
-  const confirmsQuit =
-    (unseeded && !setupDone) ||
-    (onboardedOnEntry === true && !genuineCheckCompleted(onboarding.context));
+  const { confirmsQuit, heldBackUpdatePending } = leaveRules(
+    onboarding.context,
+    onboarding.snapshot?.context,
+  );
   if (!confirmsQuit && quitConfirmationOpen) setQuitConfirmationOpen(false);
 
   const quitOrLeave = useCallback(() => {
