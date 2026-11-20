@@ -405,9 +405,7 @@ const OperationD = (props: Props) => {
         account: mainAccount,
         familyCurrency: customFeesCurrency,
         tokenFee,
-        getDisplayFee: getDisplayFeeOverride
-          ? (op, opAccount, feeCurrency) => getDisplayFeeOverride(op, opAccount, feeCurrency)
-          : undefined,
+        getDisplayFee: getDisplayFeeOverride,
       }),
     [operation, mainAccount, customFeesCurrency, tokenFee, getDisplayFeeOverride],
   );

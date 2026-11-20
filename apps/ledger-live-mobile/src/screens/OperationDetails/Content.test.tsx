@@ -2,11 +2,12 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getBridgeApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/bridge";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import Content from "./Content";
 
@@ -48,7 +49,7 @@ const usdc: TokenCurrency = {
 
 const ethAccount = genAccount("token-fee-details", { currency: ethereum, operationsSize: 0 });
 const ACCOUNT_ID = ethAccount.id;
-const TOKEN_ACCOUNT_ID = `${ACCOUNT_ID}+ethereum%2Ferc20%2Fusd__coin`;
+const TOKEN_ACCOUNT_ID = encodeTokenAccountId(ACCOUNT_ID, usdc);
 // A fee of 0.001601 USDC, paid by the account
 const feeExtra = {
   feeAsset: { type: "erc20", assetReference: CONTRACT },
@@ -171,11 +172,15 @@ describe("OperationDetails content, fee paid in a token", () => {
     expect(screen.getByTestId("operationDetails-fees")).toHaveTextContent(/0\.001601\s*USDC/);
   });
 
-  it("shows no fee while its token is unresolved, rather than one in ETH", async () => {
+  it("shows no fee for a token the family does not know, rather than one in ETH", async () => {
+    const getTokenFromAsset = jest.fn(async () => undefined);
+    mockGetBridgeApi.mockResolvedValue({ getTokenFromAsset });
+
     renderContent(accountWith([]), nativeOperation);
 
     await screen.findByTestId("operationDetails-amount");
-    await waitFor(() => expect(mockGetBridgeApi).toHaveBeenCalled());
+    await waitFor(() => expect(getTokenFromAsset).toHaveBeenCalled());
+    await act(async () => {});
     expect(screen.queryByTestId("operationDetails-fees")).toBeNull();
     expect(screen.queryByText(`countervalue ${ethereum.id} 0`)).toBeNull();
   });

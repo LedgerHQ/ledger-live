@@ -2,6 +2,7 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getFeesCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { log } from "@ledgerhq/logs";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
@@ -52,7 +53,8 @@ function findFeeToken(hash: string, account: Account): TokenCurrency | undefined
 /**
  * The currency and amount of the fee of an operation whose transaction paid it in a token. The
  * token is that of the sub-account charged with the fee, or else the family's token of the fee
- * asset, as for a fee another account paid.
+ * asset, as for a fee another account paid. That lookup is a family bridge call, not an endpoint,
+ * so it does not go through RTK Query.
  *
  * @param operation the operation shown
  * @param account the main account of the operation
@@ -87,7 +89,8 @@ export function useOperationFeeCurrency(
           token => {
             if (active) setResolved({ key: lookupKey, token });
           },
-          () => {
+          error => {
+            log("generic-coin-framework", "fee token lookup failed", { asset, attempt, error });
             if (active) retry = setTimeout(() => lookUp(attempt + 1), retryDelay(attempt));
           },
         );
@@ -120,9 +123,12 @@ export type FeeDisplay = {
  * The currency and amount of an operation's fee: the family's own answer first, then a fee the
  * generic bridge stores in a token, then the account's fee currency.
  *
+ * @param operation the operation shown
+ * @param account the main account of the operation
  * @param familyCurrency the family's fee currency: undefined when it has none, null while unresolved
  * @param tokenFee the result of {@link useOperationFeeCurrency}
  * @param getDisplayFee the family's fee amount, for a fee in the family's or the account's currency
+ * @returns the currency and amount to show, and whether to hide the fee while it is unresolved
  */
 export function resolveFeeDisplay({
   operation,
@@ -142,10 +148,8 @@ export function resolveFeeDisplay({
   ) => BigNumber | undefined;
 }): FeeDisplay {
   const genericFee = familyCurrency === undefined ? tokenFee : undefined;
-  const isUnresolved = familyCurrency === null || genericFee === null;
-  if (genericFee) return { currency: genericFee.currency, amount: genericFee.amount, isUnresolved };
+  if (genericFee) return { ...genericFee, isUnresolved: false };
   const currency = familyCurrency ?? getFeesCurrency(account);
-  const { fee } = operation;
-  const amount = fee ? (getDisplayFee?.(operation, account, currency) ?? fee) : fee;
-  return { currency, amount, isUnresolved };
+  const amount = getDisplayFee?.(operation, account, currency) ?? operation.fee;
+  return { currency, amount, isUnresolved: familyCurrency === null || genericFee === null };
 }

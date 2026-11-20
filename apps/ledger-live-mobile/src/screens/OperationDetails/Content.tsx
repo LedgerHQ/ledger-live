@@ -177,9 +177,7 @@ export default function Content({
     account: mainAccount,
     familyCurrency: customFeesCurrency,
     tokenFee,
-    getDisplayFee: getDisplayFeeOverride
-      ? (op, opAccount, opFeeCurrency) => getDisplayFeeOverride(op, opAccount, opFeeCurrency)
-      : undefined,
+    getDisplayFee: getDisplayFeeOverride,
   });
   const feeUnit = getFeesUnit(feeCurrency);
 
