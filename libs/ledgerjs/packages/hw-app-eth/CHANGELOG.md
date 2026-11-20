@@ -200,22 +200,4 @@
   - @ledgerhq/domain-service@1.8.18-next.0
   - @ledgerhq/evm-tools@1.14.3-next.0
 
-## 7.8.17
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/types-live@6.122.0
-  - @ledgerhq/domain-service@1.8.17
-  - @ledgerhq/evm-tools@1.14.2
-
-## 7.8.17-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/domain-service@1.8.17-next.0
-  - @ledgerhq/evm-tools@1.14.2-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

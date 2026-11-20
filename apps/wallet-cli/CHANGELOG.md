@@ -422,26 +422,4 @@
 
 - [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
 
-## 2.8.0
-
-### Minor Changes
-
-- [#22579](https://github.com/LedgerHQ/ledger-live/pull/22579) [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Re-read `SWAP_API_BASE` on every swap/Perps quote request instead of baking it into the store at startup, so a debug-menu override reaches the aggregator without an app restart
-
-- [#22455](https://github.com/LedgerHQ/ledger-live/pull/22455) [`6b8eba4`](https://github.com/LedgerHQ/ledger-live/commit/6b8eba4330e8fbaa89981ae0892586e280f8d20d) Thanks [@LL782](https://github.com/LL782)! - Wire wallet-cli through @shared/analytics
-
-## 2.8.0-next.0
-
-### Minor Changes
-
-- [#22579](https://github.com/LedgerHQ/ledger-live/pull/22579) [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Re-read `SWAP_API_BASE` on every swap/Perps quote request instead of baking it into the store at startup, so a debug-menu override reaches the aggregator without an app restart
-
-- [#22455](https://github.com/LedgerHQ/ledger-live/pull/22455) [`6b8eba4`](https://github.com/LedgerHQ/ledger-live/commit/6b8eba4330e8fbaa89981ae0892586e280f8d20d) Thanks [@LL782](https://github.com/LL782)! - Wire wallet-cli through @shared/analytics
-
-## 2.7.0
-
-### Minor Changes
-
-- [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

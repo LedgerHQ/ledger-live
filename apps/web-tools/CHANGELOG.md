@@ -655,18 +655,4 @@
   - @ledgerhq/live-common@38.2.0-next.1
   - @devtools/shell@0.10.1-next.1
 
-## 0.58.1-next.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/bindings@0.10.0-next.2
-
-## 0.58.1-next.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/bindings@0.10.0-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

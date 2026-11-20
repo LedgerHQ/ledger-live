@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-cli": patch
+"@ledgerhq/live-cli": minor
 ---
 
 chore(deps): update dependency @pnpm/read-project-manifest to v1000.0.11

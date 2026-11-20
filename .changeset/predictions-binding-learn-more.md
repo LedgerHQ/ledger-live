@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Show the Learn more link under the binding error's explanation instead of in its title, and say how to enable blind signing

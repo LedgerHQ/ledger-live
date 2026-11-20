@@ -142,18 +142,4 @@
 - Updated dependencies []:
   - @features/platform-feature-flags@0.6.9
 
-## 0.2.5-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-feature-flags@0.6.9-next.1
-
-## 0.2.5-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-feature-flags@0.6.9-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

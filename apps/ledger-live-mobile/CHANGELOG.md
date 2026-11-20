@@ -4215,23 +4215,4 @@
   - @features/flow-analytics-consent@0.2.8-next.1
   - @ledgerhq/live-send@0.1.2-next.1
 
-## 4.23.0-next.7
-
-### Patch Changes
-
-- Updated dependencies [[`739334b`](https://github.com/LedgerHQ/ledger-live/commit/739334b0d854a3b11d9a2b6ba47ce022dc0797d9)]:
-  - @features/flow-pay-feature-tour@0.7.0-next.1
-  - @devtools/bindings@0.10.0-next.2
-
-## 4.23.0-next.6
-
-### Minor Changes
-
-- [#22840](https://github.com/LedgerHQ/ledger-live/pull/22840) [`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the default Me contact "Me" in the Pay tab contacts list instead of "My addresses (Me)"
-
-### Patch Changes
-
-- Updated dependencies [[`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10)]:
-  - @features/flow-pay-contact@0.5.0-next.3
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

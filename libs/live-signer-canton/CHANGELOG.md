@@ -152,18 +152,4 @@
 - Updated dependencies []:
   - @ledgerhq/coin-canton@1.1.1
 
-## 0.9.19-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@1.1.1-next.0
-
-## 0.9.18
-
-### Patch Changes
-
-- Updated dependencies [[`9a1a1df`](https://github.com/LedgerHQ/ledger-live/commit/9a1a1df2da9b612bd8d5533fba23b0ebc8b1a58f)]:
-  - @ledgerhq/coin-canton@1.1.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
