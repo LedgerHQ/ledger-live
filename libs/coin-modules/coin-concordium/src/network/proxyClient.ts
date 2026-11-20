@@ -62,28 +62,64 @@ function getClient(config: ConcordiumCoinConfig, currencyId: string): ProxyClien
   return client;
 }
 
+// Not every runtime (Hermes) fills `reason` or has `throwIfAborted`.
+function abortReason(signal: AbortSignal): unknown {
+  if (signal.reason !== undefined) return signal.reason;
+  const error = new Error("Aborted");
+  error.name = "AbortError";
+  return error;
+}
+
+function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw abortReason(signal);
+}
+
+// live-network takes no signal.
+function abortable<T>(signal: AbortSignal | undefined, request: () => Promise<T>): Promise<T> {
+  if (!signal) return request();
+  throwIfAborted(signal);
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(abortReason(signal));
+    signal.addEventListener("abort", onAbort, { once: true });
+    Promise.resolve()
+      .then(request)
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener("abort", onAbort));
+  });
+}
+
 /**
  * Executes a function with a proxy client, handling retries and error handling
  *
  * @param config - The Concordium coin configuration
  * @param currencyId - The Concordium currency ID
  * @param execute - Function to execute with the client
- * @param retries - Number of retries (default: 2)
+ * @param options.retries - Number of retries (default: 2)
+ * @param options.signal - Stops retrying and rejects with its reason once aborted
  * @returns Result of the execute function
  */
 export async function withClient<T>(
   config: ConcordiumCoinConfig,
   currencyId: string,
   execute: (client: ProxyClient) => Promise<T>,
-  retries = DEFAULT_RETRIES,
+  { retries = DEFAULT_RETRIES, signal }: { retries?: number; signal?: AbortSignal } = {},
 ): Promise<T> {
   const client = getClient(config, currencyId);
 
-  return retry(() => execute(client), {
-    maxRetry: retries,
-    interval: RETRY_DELAY,
-    intervalMultiplicator: 1,
-  });
+  return abortable(signal, () =>
+    retry(
+      async () => {
+        throwIfAborted(signal);
+        return execute(client);
+      },
+      {
+        maxRetry: retries,
+        interval: RETRY_DELAY,
+        intervalMultiplicator: 1,
+        retryCondition: () => !signal?.aborted,
+      },
+    ),
+  );
 }
 
 /**
@@ -162,12 +198,17 @@ export function getAccountsByPublicKey(
   config: ConcordiumCoinConfig,
   currencyId: string,
   publicKey: string,
+  signal?: AbortSignal,
 ): Promise<PublicKeyAccountsResponse> {
-  return withClient(config, currencyId, async client =>
-    client.request<PublicKeyAccountsResponse>({
-      method: "GET",
-      url: `/v0/keyAccounts/${publicKey}`,
-    }),
+  return withClient(
+    config,
+    currencyId,
+    async client =>
+      client.request<PublicKeyAccountsResponse>({
+        method: "GET",
+        url: `/v0/keyAccounts/${publicKey}`,
+      }),
+    signal ? { signal } : {},
   );
 }
 
