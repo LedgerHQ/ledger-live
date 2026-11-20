@@ -58,6 +58,8 @@ export type ReceiveAddressViewProps = Readonly<{
   actions: ReceiveAddressActionsView;
   /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
   actionsPlaceholderLabel: string;
+  /** A device verification runs: on desktop, its own dialog takes the place of this one. */
+  isVerifying: boolean;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

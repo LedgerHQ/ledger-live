@@ -1,5 +1,5 @@
 import React, { type ComponentProps } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
@@ -27,8 +27,11 @@ const renderScreen = (
     { wrapper: receiveTestWrapper(store) },
   );
 
-const VerifyAddressExecutor = ({ selection }: UseVerifyAddressExecutorViewModelParams) => (
-  <div data-testid="verify-executor">{selection.verification.path}</div>
+const VerifyAddressExecutor = ({ selection, onExit }: UseVerifyAddressExecutorViewModelParams) => (
+  <div data-testid="verify-executor">
+    {selection.verification.path}
+    <button onClick={() => onExit("verified")}>Done</button>
+  </div>
 );
 
 describe("ReceiveAddress (Web)", () => {
@@ -122,6 +125,21 @@ describe("ReceiveAddress (Web)", () => {
 
     await user.click(screen.getByRole("button", { name: "Verify" }));
     expect(screen.getByTestId("verify-executor")).toHaveTextContent(testReceive.verification!.path);
+  });
+
+  it("should hide the address dialog while the device verifies, then show it again", async () => {
+    const onClose = jest.fn();
+    renderScreen(onClose, makeReceiveTestStore(), { VerifyAddressExecutor });
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Got it" }));
+
+    await user.click(screen.getByRole("button", { name: "Verify" }));
+    await waitFor(() => expect(screen.queryByTestId("receive-address")).toBeNull());
+
+    await user.click(screen.getByRole("button", { name: "Done" }));
+    expect(await screen.findByTestId("receive-address")).toBeVisible();
+    expect(screen.queryByTestId("verify-executor")).toBeNull();
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it("should disable Verify for an address the device cannot show", async () => {

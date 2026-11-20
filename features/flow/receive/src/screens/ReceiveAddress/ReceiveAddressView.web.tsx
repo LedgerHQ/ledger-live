@@ -17,6 +17,7 @@ export function ReceiveAddressView({
   addressSelection,
   address,
   actions,
+  isVerifying,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -31,7 +32,7 @@ export function ReceiveAddressView({
   const closeDialog = () => handleOpenChange(false);
 
   return (
-    <Dialog open onOpenChange={handleOpenChange} height="fit">
+    <Dialog open={!isVerifying} onOpenChange={handleOpenChange} height="fit">
       <DialogContent
         // The network label describes the dialog once known; until then there is no description.
         {...(!networkLabel && { "aria-describedby": undefined })}
