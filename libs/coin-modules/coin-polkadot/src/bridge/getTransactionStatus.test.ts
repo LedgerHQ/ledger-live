@@ -100,8 +100,15 @@ describe("getTransactionStatus", () => {
 
     it("accepts an amount within the spendable balance", async () => {
       const status = await getTransactionStatus(
-        controllerAccount(),
-        transaction({ recipient, amount: new BigNumber(10_000_000) }),
+        controllerAccount({
+          balance: new BigNumber(16_705_569_396),
+          spendableBalance: new BigNumber(6_705_569_396),
+        }),
+        transaction({
+          recipient,
+          amount: new BigNumber(10_000_000),
+          fees: new BigNumber(158_612_606),
+        }),
       );
 
       expect(status.errors.amount).toBeUndefined();
