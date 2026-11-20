@@ -118,21 +118,23 @@ function renderViewModel(
   accounts: Account[] = [fundingAccount, fundedAccount],
   maxConstants?: Record<string, string>,
 ) {
-  const tradeMaxConstant = maxConstants && {
-    ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
+  // Arbitrum is behind a flag, and the funding picker only offers enabled currencies.
+  const flags = {
+    currencyArbitrum: { enabled: true },
+    ...(maxConstants && {
+      ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
+    }),
   };
   return renderHook(() => usePerpsDepositViewModel(props), {
     overrideInitialState: state => ({
       ...state,
       accounts: { ...state.accounts, active: accounts },
       settings: { ...state.settings, discreetMode },
-      ...(tradeMaxConstant && {
-        featureFlags: {
-          ...state.featureFlags,
-          overrides: { ...state.featureFlags.overrides, ...tradeMaxConstant },
-          resolved: { ...state.featureFlags.resolved, ...tradeMaxConstant },
-        },
-      }),
+      featureFlags: {
+        ...state.featureFlags,
+        overrides: { ...state.featureFlags.overrides, ...flags },
+        resolved: { ...state.featureFlags.resolved, ...flags },
+      },
     }),
   });
 }
@@ -169,9 +171,9 @@ describe("usePerpsDepositViewModel", () => {
 
   afterEach(() => cancelDepositRequest());
 
-  it("starts with an empty amount and no funding account", () => {
+  it("starts with an empty amount and no funding account when nothing is funded", () => {
     const { props } = createProps();
-    const { result } = renderViewModel(props);
+    const { result } = renderViewModel(props, false, [receiverAccount]);
 
     expect(result.current.amountText).toBe("");
     expect(result.current.depositAmount).toBe(0);
@@ -182,7 +184,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("keeps partially typed decimals and leaves the deposit floor to the live app", () => {
     const { props } = createProps();
-    const { result } = renderViewModel(props);
+    const { result } = renderViewModel(props, false, [receiverAccount]);
 
     typeAmount(result.current.pressAmountKey, "3.");
 
@@ -446,7 +448,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("keeps the review closed while the form is incomplete", () => {
     const { props } = createProps();
-    const { result } = renderViewModel(props);
+    const { result } = renderViewModel(props, false, [receiverAccount]);
 
     typeAmount(result.current.pressAmountKey, "20");
     act(() => result.current.handleReview());
@@ -467,19 +469,54 @@ describe("usePerpsDepositViewModel", () => {
       ),
     );
 
-    // The 20_000-atomic account wins; priced 1:1 into USD (2 decimals) that is a $200 ceiling.
+    // The 20_000-atomic account wins over the larger ETH balance; priced 1:1 into USD (2
+    // decimals) that is a $200 ceiling.
     expect(result.current.maxAmount).toBe(200);
     expect(result.current.depositCurrencyTicker).toBe("USDC");
     expect(result.current.depositAccountName).not.toBeNull();
   });
 
-  it("ignores zero-balance USDC accounts when choosing the default", () => {
+  it("defaults to the funded account with the highest fiat balance when no USDC or USDT is held", () => {
     const { props } = createProps();
     const { result } = renderViewModel(
       props,
       false,
       withUsdcAccounts(createUsdcTokenAccount("usdc-zero", 0)),
     );
+
+    expect(result.current.depositCurrencyTicker).toBe("ETH");
+    expect(result.current.depositAccountName).not.toBeNull();
+  });
+
+  it("never defaults to the receiving account", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props, false, [
+      { ...receiverAccount, spendableBalance: new BigNumber(1e18) },
+    ]);
+
+    expect(result.current.depositAccountName).toBeNull();
+  });
+
+  it("lets the user replace the default funding account", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(
+      props,
+      false,
+      withUsdcAccounts(createUsdcTokenAccount("usdc-high", 20000)),
+    );
+    expect(result.current.depositCurrencyTicker).toBe("USDC");
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+
+    expect(result.current.depositCurrencyTicker).toBe("ETH");
+  });
+
+  it("defaults to nothing when only zero-balance accounts are held", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props, false, [
+      { ...usdcParent, subAccounts: [createUsdcTokenAccount("usdc-zero", 0)] },
+    ]);
 
     // A null account name means nothing was defaulted; maxAmount only falls back to 0.
     expect(result.current.depositAccountName).toBeNull();
