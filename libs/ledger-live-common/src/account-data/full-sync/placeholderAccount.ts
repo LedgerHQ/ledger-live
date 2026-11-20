@@ -9,10 +9,25 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { addressFromKey, toLegacyAccount } from "../../account/accountDescriptor";
 import { usesMockBridges } from "../../bridge/mockMode";
+import { hasAddressFromKey } from "../../coin-modules/registry";
+
+/** Why `placeholderAccount` cannot build this account, e.g. a public key its family computes no address from (Canton, Concordium onboard first); none when it can. */
+export function placeholderUnsupportedReason(descriptor: AccountDescriptor): string | undefined {
+  try {
+    const { currencyId, publicKey } = toLegacyAccount(descriptor);
+    const { family } = getCryptoCurrencyById(currencyId);
+    if (publicKey !== undefined && !hasAddressFromKey(family)) {
+      return `${currencyId} computes no address from its key: add it through its own flow`;
+    }
+    return undefined;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+}
 
 /** An account the store does not hold, from its descriptor (the mock scan's own in mock mode). */
 export async function placeholderAccount(descriptor: AccountDescriptor): Promise<Account> {
-  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey } =
+  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey, customData } =
     toLegacyAccount(descriptor);
   const currency = getCryptoCurrencyById(currencyId);
   // A public-key family's sync reads its key from the account id (TON, ICP, Aptos, Stacks).
@@ -32,6 +47,7 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
       currencyId,
       xpubOrAddress,
       derivationMode,
+      customData,
     }),
     seedIdentifier: xpubOrAddress,
     derivationMode,
