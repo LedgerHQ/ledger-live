@@ -38,6 +38,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
     tx: {
       hash,
       fees: BigInt(fee.toString()),
+      feesAsset: { type: "native" },
       block: {
         height: blockHeight ?? 0,
         hash: operation.blockHash ?? "",

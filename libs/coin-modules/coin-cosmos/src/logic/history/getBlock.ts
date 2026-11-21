@@ -116,6 +116,7 @@ function toBlockTransaction(
     hash,
     failed,
     fees,
+    feesAsset: { type: "native" },
     ...(feesPayer ? { feesPayer } : {}),
     operations: tx.body.messages.flatMap(message => toBlockOperations(denom, message)),
   };

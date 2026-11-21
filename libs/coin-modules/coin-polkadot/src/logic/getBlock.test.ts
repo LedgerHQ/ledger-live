@@ -152,6 +152,7 @@ describe("getBlock", () => {
         ],
         fees: 8808355n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { palletMethod: "balances.transferKeepAlive" },
       },
     ]);
@@ -318,7 +319,7 @@ describe("getBlock", () => {
     await expect(getBlock(config, 1)).rejects.toThrow("Polkadot block 1 has no timestamp");
   });
 
-  it("reports fees paid in another asset apart from the native fees", async () => {
+  it("maps Asset Hub asset fees to their local assets pallet ID", async () => {
     const usdt = {
       parents: "0",
       interior: { x2: [{ palletInstance: "50" }, { generalIndex: "1984" }] },
@@ -340,9 +341,10 @@ describe("getBlock", () => {
     const [transaction] = (await getBlock(config, 22653132)).transactions;
 
     expect(transaction).toMatchObject({
-      fees: 0n,
+      fees: 3071n,
+      feesAsset: { type: "token", assetReference: "1984" },
       feesPayer: CAROL,
-      details: { assetFees: { asset: usdt, amount: 3071n } },
+      details: { palletMethod: "balances.transferKeepAlive" },
     });
   });
 
@@ -363,8 +365,37 @@ describe("getBlock", () => {
 
     const [transaction] = (await getBlock(config, 22653132)).transactions;
 
-    expect(transaction).toMatchObject({ fees: 8808355n, feesPayer: CAROL });
+    expect(transaction).toMatchObject({
+      fees: 8808355n,
+      feesAsset: NATIVE,
+      feesPayer: CAROL,
+    });
     expect(transaction.details).toEqual({ palletMethod: "balances.transferKeepAlive" });
+  });
+
+  it("charges no native fees when the fee asset location is outside the assets pallet", async () => {
+    const foreign = { parents: "1", interior: { x1: [{ parachain: "2004" }] } };
+    blockEndpoint.mockReturnValue(
+      block({
+        extrinsics: [
+          ...block().extrinsics,
+          extrinsic({
+            events: [
+              event("assetConversionTxPayment", "AssetTxFeePaid", [CAROL, "3071", "0", foreign]),
+            ],
+          }),
+        ],
+      }),
+    );
+
+    const [transaction] = (await getBlock(config, 22653132)).transactions;
+
+    expect(transaction).toMatchObject({
+      fees: 0n,
+      feesAsset: NATIVE,
+      feesPayer: CAROL,
+      details: { assetFees: { asset: foreign, amount: 3071n } },
+    });
   });
 
   it("rejects fees paid in an asset it cannot read", async () => {

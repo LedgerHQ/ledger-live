@@ -22,6 +22,7 @@ export function fromTrongridTxInfoToOperation(
         time: block.time || new Date(0),
       },
       fees: fromBigNumberToBigInt(trongridTxInfo.fee, BigInt(0)),
+      feesAsset: { type: "native" },
       feesPayer: trongridTxInfo.feesPayer ?? trongridTxInfo.from,
       date: trongridTxInfo.date,
       failed: trongridTxInfo.hasFailed,

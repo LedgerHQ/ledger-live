@@ -76,6 +76,7 @@ function toOperation(op: CosmosParsedOperation): Operation {
         time: op.date,
       },
       fees: BigInt(op.fee.integerValue().toFixed()),
+      feesAsset: { type: "native" },
       date: op.date,
       failed: op.hasFailed,
     },

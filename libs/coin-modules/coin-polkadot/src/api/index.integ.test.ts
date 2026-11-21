@@ -109,6 +109,7 @@ describe("Polkadot Api", () => {
           },
         ],
         fees: 8808355n,
+        feesAsset: { type: "native" },
         feesPayer: "12burmzVh1dCeZ9KRUV6Pmtabg9MNBNkCh9K7pbzV8dV7xrf",
         details: { palletMethod: "balances.transferKeepAlive" },
       });
