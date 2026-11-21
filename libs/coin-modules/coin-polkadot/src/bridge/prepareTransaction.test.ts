@@ -51,4 +51,25 @@ describe("prepareTransaction", () => {
     // Then
     expect(newTx).toBe(tx);
   });
+
+  it("returns the same transaction for concurrent calls", async () => {
+    mockEstimateFees.mockResolvedValue(new BigNumber(42));
+    const tx = createFixtureTransaction({ fees: new BigNumber(42) });
+
+    const results = await Promise.all(
+      [1, 2, 3].map(() => prepareTransaction(createFixtureAccount(), tx)),
+    );
+
+    expect(results).toEqual([tx, tx, tx]);
+  });
+
+  it("converges after one preparation", async () => {
+    mockEstimateFees.mockResolvedValue(new BigNumber(42));
+    const account = createFixtureAccount();
+
+    const once = await prepareTransaction(account, createFixtureTransaction());
+    const twice = await prepareTransaction(account, once);
+
+    expect(twice).toBe(once);
+  });
 });
