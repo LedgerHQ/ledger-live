@@ -11,14 +11,14 @@ const DEFAULT_URL = "http://localhost:8000";
 const DEFAULT_TIMEOUT_MS = 20 * 60 * 1000;
 const DEFAULT_INTERVAL_MS = 2000; // when the server gives no Retry-After
 const DOWN_TIMEOUT_MS = 2 * 60 * 1000;
-const STATUSES = ["starting", "up", "unhealthy", "failed"];
+const STATUSES = ["preparing", "starting", "up", "unhealthy", "failed"];
 const SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM"];
 
 export type SandboxTarget = { family: string; network: string };
 
 export type SandboxInstance = SandboxTarget & {
   instance: string;
-  status: "starting" | "up" | "unhealthy" | "failed";
+  status: "preparing" | "starting" | "up" | "unhealthy" | "failed";
   endpoints?: Record<string, string>;
   software?: string;
   image?: string;
