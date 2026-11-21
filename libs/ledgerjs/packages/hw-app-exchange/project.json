@@ -1,0 +1,33 @@
+{
+  "targets": {
+    "generate-protocol": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "pnpm exec pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto",
+          "pnpm exec pbts -o src/generate-protocol.d.ts src/generate-protocol.js",
+          "pnpm exec oxfmt src/generate-protocol.js src/generate-protocol.d.ts"
+        ]
+      },
+      "inputs": [
+        "{projectRoot}/protocol.proto",
+        "formatConfig",
+        { "externalDependencies": ["protobufjs-cli", "oxfmt"] }
+      ],
+      "outputs": [
+        "{projectRoot}/src/generate-protocol.js",
+        "{projectRoot}/src/generate-protocol.d.ts"
+      ],
+      "cache": true
+    },
+    "build": {
+      "dependsOn": ["^build", "generate-protocol"]
+    },
+    "watch": {
+      "dependsOn": ["build"],
+      "cache": false
+    }
+  }
+}
