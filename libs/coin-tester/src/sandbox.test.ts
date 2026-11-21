@@ -1,55 +1,43 @@
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import { startSandbox } from "./sandbox";
 
+const SANDBOX_URL = "http://localhost:8000";
+const instance = {
+  instance: "instance-id",
+  family: "ethereum",
+  network: "sepolia",
+};
+
+const monitor = jest.fn();
+const server = setupServer(
+  http.post(`${SANDBOX_URL}/ethereum/sepolia/up`, () =>
+    HttpResponse.json(
+      { ...instance, status: "preparing" },
+      { status: 202, headers: { Location: "/monitor", "Retry-After": "0" } },
+    ),
+  ),
+  http.get(`${SANDBOX_URL}/monitor`, () => monitor()),
+  http.post(`${SANDBOX_URL}/ethereum/sepolia/down`, () => HttpResponse.json({})),
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterAll(() => server.close());
+afterEach(() => {
+  monitor.mockReset();
+});
+
 describe("startSandbox", () => {
-  const originalFetch = global.fetch;
-
-  afterEach(() => {
-    global.fetch = originalFetch;
-  });
-
   it("should keep waiting when the sandbox instance is preparing", async () => {
-    const monitor = jest
-      .fn()
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            instance: "instance-id",
-            family: "ethereum",
-            network: "sepolia",
-            status: "preparing",
-          }),
-        ),
-      )
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            instance: "instance-id",
-            family: "ethereum",
-            network: "sepolia",
-            status: "up",
-            endpoints: { rpc: "http://localhost:8545" },
-          }),
-        ),
-      );
-    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url =
-        typeof input === "string"
-          ? new URL(input)
-          : input instanceof URL
-            ? input
-            : new URL(input.url);
-      if (init?.method === "GET") return monitor();
-      if (url.pathname.endsWith("/down")) return new Response(JSON.stringify({}));
-      return new Response(
-        JSON.stringify({
-          instance: "instance-id",
-          family: "ethereum",
-          network: "sepolia",
-          status: "preparing",
+    monitor
+      .mockReturnValueOnce(HttpResponse.json({ ...instance, status: "preparing" }))
+      .mockReturnValueOnce(
+        HttpResponse.json({
+          ...instance,
+          status: "up",
+          endpoints: { rpc: "http://localhost:8545" },
         }),
-        { status: 202, headers: { Location: "/monitor", "Retry-After": "0" } },
       );
-    });
 
     const sandbox = await startSandbox(
       { family: "ethereum", network: "sepolia" },
