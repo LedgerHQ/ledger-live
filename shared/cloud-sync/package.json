@@ -34,7 +34,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/pako": "2.0.3",
+    "@types/pako": "2.0.4",
     "@types/ws": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
