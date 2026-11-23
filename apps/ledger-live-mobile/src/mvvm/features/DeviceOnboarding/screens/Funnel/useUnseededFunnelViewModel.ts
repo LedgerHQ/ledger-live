@@ -25,6 +25,8 @@ const restoreRecoverState = "deviceSetup.restoreRecover";
 const restoreChoiceState = "deviceSetup.restoreChoice";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
+/** The device reboots after the held-back OS update: the OS check stays the shown step. */
+const statesAfterHeldBackUpdate = new Set(["awaitingSessionAfterFirmwareUpdate", "routing"]);
 const statesThatAnswerTheUpdate = new Set([
   "checks.firmwareUpdateDelegated",
   "checks.checksDone",
@@ -112,7 +114,13 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
         osCheck,
       })
     : null;
-  const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
+  const waitsForUpdatedDevice =
+    updateAfterSetup &&
+    input.seeded === true &&
+    machineState !== null &&
+    statesAfterHeldBackUpdate.has(machineState);
+  const holdsPrevious =
+    unseeded && (waitsForUpdatedDevice || holdsPreviousStage(machineState, input.currentStep));
 
   const visibleStage = useHeldStage(stage, holdsPrevious);
   const connection = useSessionReconnect({

@@ -138,6 +138,30 @@ describe("useUnseededFunnelViewModel", () => {
       expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
     });
 
+    it("should keep the OS check while the updated device reboots and reconnects", () => {
+      let machineState = "postSetupFirmware.firmwareUpdateDelegated";
+      const { result, rerender } = renderHook(() =>
+        useUnseededFunnelViewModel(nanoInput(machineState, { seeded: true })),
+      );
+
+      for (const state of ["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"]) {
+        machineState = state;
+        rerender(undefined);
+        expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4 });
+      }
+    });
+
+    it("should not hold a stage while a touchscreen waits for its updated device", () => {
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel({
+          ...input("awaitingSessionAfterFirmwareUpdate"),
+          seeded: true,
+        }),
+      );
+
+      expect(result.current).toBeNull();
+    });
+
     it("should skip a failed OS check after setup", () => {
       const send = jest.fn();
       const { result } = renderHook(() =>
