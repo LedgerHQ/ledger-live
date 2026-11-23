@@ -126,7 +126,6 @@ describe("classify", () => {
       "features/flow/pay-card-details/src/components/More/fixtures.ts",
       "domain/entity/account-descriptor/src/test-fixtures.ts",
       "domain/api/account-data/src/testing.ts",
-      "libs/ledger-wallet-framework/src/test-helpers/bridge-integration-suite.ts",
       "apps/ledger-live-desktop/src/mvvm/features/X/hooks/testHelpers/renderHookWithStore.tsx",
       "apps/ledger-live-mobile/src/mvvm/features/Portfolio/utils/recoverTestHelpers.ts",
       "libs/live-dmk-desktop/tests.setup.ts",
