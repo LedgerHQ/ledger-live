@@ -187,7 +187,6 @@ catalog:
   "@polkadot/util-crypto": 14.0.3
   expect: 30.5.2
   i18next: 25.7.3
-  isomorphic-ws: 5.0.0
   bip39: 3.1.2
   bitcoinjs-lib: 7.0.5
   lodash: 4.18.1
