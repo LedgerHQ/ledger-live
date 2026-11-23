@@ -2,10 +2,9 @@ import React from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
-import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import type { ConnectNewDeviceNonErrorUIState, StateLayoutComponent } from "../types";
 import { getScanningMode, type ScanningMode } from "../utils/getScanningMode";
 import { DeviceCard } from "./DeviceCard";
-import { StateLayout } from "./StateLayout";
 
 type DiscoveringViewProps = {
   state: Extract<
@@ -13,6 +12,7 @@ type DiscoveringViewProps = {
     { type: typeof ConnectNewDeviceUIStateTypes.Discovering }
   >;
   onDeviceNotFound?: () => void;
+  Layout: StateLayoutComponent;
 };
 
 const descriptionKeys = {
@@ -24,12 +24,13 @@ const descriptionKeys = {
 export function DiscoveringView({
   state,
   onDeviceNotFound,
+  Layout,
 }: Readonly<DiscoveringViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const scanningMode = getScanningMode(state.scanningTransports);
 
   return (
-    <StateLayout
+    <Layout
       animation={scanningMode}
       loopAnimation
       title={t("connectNewDevice.discovering.title")}
@@ -50,6 +51,6 @@ export function DiscoveringView({
           ))}
         </Box>
       ) : null}
-    </StateLayout>
+    </Layout>
   );
 }

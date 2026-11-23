@@ -8,8 +8,14 @@ export type {
   ConnectNewDeviceDelays,
   ConnectNewDeviceProps,
   ConnectNewDeviceViewProps,
+  StateLayoutComponent,
+  StateLayoutProps,
 } from "./types";
 export { ConnectNewDeviceView } from "./ConnectNewDeviceView";
+export { ConnectedView } from "./components/ConnectedView";
+export { ConnectingView } from "./components/ConnectingView";
+export { DiscoveringView } from "./components/DiscoveringView";
+export { SheetStateLayout } from "./components/SheetStateLayout";
 export { isErrorState } from "./utils/isErrorState";
 
 /**

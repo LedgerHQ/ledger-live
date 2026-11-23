@@ -38,6 +38,15 @@ Discovery, connection and unknown errors show in a bottom sheet, over the last v
 
 `ConnectNewDeviceView` has no horizontal padding: the parent sets it. `ConnectNewDevice` gives it a padding of 16.
 
+## Show one state in a bottom sheet
+
+`DiscoveringView`, `ConnectingView` and `ConnectedView` each show one state that is not an error. The parent gives their layout in the `Layout` prop:
+
+- `StateLayout`, used by `ConnectNewDeviceView`, fills the screen: the device list scrolls and the footer stays at the bottom.
+- `SheetStateLayout` stacks everything for a bottom sheet that sizes to its content and scrolls by itself.
+
+The parent then shows the errors itself, for example inline with the components of [`../DeviceConnection/`](../DeviceConnection/).
+
 ## Try it
 
 Settings > Debug > Features > Device Intent Executor > Connect New Device renders the component and logs each callback call.

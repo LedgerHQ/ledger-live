@@ -1,9 +1,8 @@
 import React from "react";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
-import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import type { ConnectNewDeviceNonErrorUIState, StateLayoutComponent } from "../types";
 import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
-import { StateLayout } from "./StateLayout";
 
 type ConnectedViewProps = {
   state: Extract<
@@ -14,6 +13,7 @@ type ConnectedViewProps = {
         | typeof ConnectNewDeviceUIStateTypes.Done;
     }
   >;
+  Layout: StateLayoutComponent;
 };
 
 const titleKeys = {
@@ -21,11 +21,11 @@ const titleKeys = {
   usb: "connectNewDevice.connected.usb.title",
 } as const satisfies Record<DeviceTransport, string>;
 
-export function ConnectedView({ state }: Readonly<ConnectedViewProps>): React.ReactNode {
+export function ConnectedView({ state, Layout }: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
 
   return (
-    <StateLayout
+    <Layout
       animation="success"
       loopAnimation={false}
       title={t(titleKeys[getDeviceTransport(state.device.transport)])}

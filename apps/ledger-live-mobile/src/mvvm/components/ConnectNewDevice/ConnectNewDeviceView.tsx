@@ -10,6 +10,7 @@ import {
 import { ConnectedView } from "./components/ConnectedView";
 import { ConnectingView } from "./components/ConnectingView";
 import { DiscoveringView } from "./components/DiscoveringView";
+import { StateLayout } from "./components/StateLayout";
 import type {
   ConnectNewDeviceErrorUIState,
   ConnectNewDeviceNonErrorUIState,
@@ -30,12 +31,14 @@ function NonErrorStateView({
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectNewDeviceUIStateTypes.Discovering:
-      return <DiscoveringView state={state} onDeviceNotFound={onDeviceNotFound} />;
+      return (
+        <DiscoveringView state={state} onDeviceNotFound={onDeviceNotFound} Layout={StateLayout} />
+      );
     case ConnectNewDeviceUIStateTypes.Connecting:
-      return <ConnectingView state={state} />;
+      return <ConnectingView state={state} Layout={StateLayout} />;
     case ConnectNewDeviceUIStateTypes.Connected:
     case ConnectNewDeviceUIStateTypes.Done:
-      return <ConnectedView state={state} />;
+      return <ConnectedView state={state} Layout={StateLayout} />;
     case ConnectNewDeviceUIStateTypes.Terminated:
       return null;
     default:

@@ -2,8 +2,10 @@ import type {
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateTypes,
 } from "@ledgerhq/live-dmk-mobile";
+import type React from "react";
 import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
+import type { StateAnimation } from "./animations";
 
 export type ConnectNewDeviceDelays = {
   /** Time before the "I don't see my device" button shows, in ms. */
@@ -40,6 +42,20 @@ export type ConnectNewDeviceNonErrorUIState = Exclude<
   ConnectNewDeviceUIState,
   ConnectNewDeviceErrorUIState
 >;
+
+export type StateLayoutProps = {
+  animation: StateAnimation;
+  loopAnimation: boolean;
+  title: string;
+  description?: string;
+  /** The content under the texts, for example the device list. */
+  children?: React.ReactNode;
+  footer?: React.ReactNode;
+  testID?: string;
+};
+
+/** Lays out a state: `StateLayout` on a full screen, `SheetStateLayout` in a bottom sheet. */
+export type StateLayoutComponent = React.ComponentType<StateLayoutProps>;
 
 export type ConnectNewDeviceViewProps = {
   state: ConnectNewDeviceUIState;

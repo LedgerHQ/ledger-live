@@ -2,15 +2,15 @@ import React from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
-import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import type { ConnectNewDeviceNonErrorUIState, StateLayoutComponent } from "../types";
 import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
-import { StateLayout } from "./StateLayout";
 
 type ConnectingViewProps = {
   state: Extract<
     ConnectNewDeviceNonErrorUIState,
     { type: typeof ConnectNewDeviceUIStateTypes.Connecting }
   >;
+  Layout: StateLayoutComponent;
 };
 
 const titleKeys = {
@@ -18,14 +18,14 @@ const titleKeys = {
   usb: "connectNewDevice.connecting.usb.title",
 } as const satisfies Record<DeviceTransport, string>;
 
-export function ConnectingView({ state }: Readonly<ConnectingViewProps>): React.ReactNode {
+export function ConnectingView({ state, Layout }: Readonly<ConnectingViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { device } = state;
   const deviceName = device.name ?? t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
   const transport = getDeviceTransport(device.transport);
 
   return (
-    <StateLayout
+    <Layout
       animation="loading"
       loopAnimation
       title={t(titleKeys[transport], { deviceName })}
