@@ -71,3 +71,14 @@ test("does nothing without type information", () => {
   );
   assert.deepEqual(messages, []);
 });
+
+test("walks a type cut by the depth bound elsewhere, dictionaries, loggers and member errors", () => {
+  assert.deepEqual(lint("shapes.ts"), [
+    "9: passed to log()",
+    "10: passed to log()",
+    "11: passed to log()",
+    "16: passed to DdLogs.error()",
+    "17: in a template literal",
+    "18: passed to new errors.SyncError()",
+  ]);
+});

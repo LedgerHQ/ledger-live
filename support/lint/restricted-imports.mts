@@ -121,8 +121,7 @@ export const ACCOUNT_DATA_SETUP_FILES = [
   "src/config/account-data-setup.test.ts",
 ];
 
-// The account descriptor carries the account key: an xpub reveals the whole history, an address is
-// personal data. Code holds the AccountUUID; only the edges listed in ACCOUNT_DESCRIPTOR_EDGES read it.
+// Code holds the AccountUUID; only ACCOUNT_DESCRIPTOR_EDGES import the descriptor (it carries the key).
 export const ACCOUNT_DESCRIPTOR = {
   group: ["@domain/entity-account-descriptor/descriptor", "@domain/entity-account/descriptor"],
   message:
@@ -131,8 +130,7 @@ export const ACCOUNT_DESCRIPTOR = {
     "@domain/entity-account selectors, or show a key with maskAccountKey. See docs/account-models.",
 };
 
-// The packages allowed to read the descriptor, from the repo root: the base preset turns them into
-// overrides of the layer they live in. devtools/, apps/wallet-cli and live-common do not restrict it.
+// Paths from the repo root, turned into overrides by the base preset; unrestricted layers are not listed.
 export const ACCOUNT_DESCRIPTOR_EDGES = [
   "domain/api/account-data",
   "domain/entity/account",
