@@ -2,6 +2,7 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   screen: "account-detail-screen",
   scrollView: "account-detail-scroll-view",
   refreshStatus: "account-detail-refresh-status",
+  account: (accountId: string) => `account-detail-account-${accountId}`,
   hero: "account-detail-hero",
   assetPicker: "account-detail-asset-picker",
   customPlace: "account-detail-custom-place",
