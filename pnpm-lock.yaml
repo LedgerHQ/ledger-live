@@ -544,7 +544,7 @@ catalogs:
       version: 30.0.0
     '@types/lodash':
       specifier: ^4.17.21
-      version: 4.17.21
+      version: 4.17.27
     '@types/node':
       specifier: 24.12.0
       version: 24.12.0
@@ -1047,7 +1047,7 @@ importers:
         version: 5.2.3
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -1886,7 +1886,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -3049,7 +3049,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -6850,7 +6850,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -8578,7 +8578,7 @@ importers:
         version: 2.2.37
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -8693,7 +8693,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -14128,7 +14128,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -15282,7 +15282,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -16114,7 +16114,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16208,7 +16208,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16317,7 +16317,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16499,7 +16499,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16584,7 +16584,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16972,7 +16972,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -17215,7 +17215,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -17831,7 +17831,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -18122,7 +18122,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -18192,7 +18192,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -20933,7 +20933,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/minimatch':
         specifier: 5.1.2
         version: 5.1.2
@@ -21239,7 +21239,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -24505,7 +24505,7 @@ importers:
         version: 3.3.5
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -24732,7 +24732,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -24946,7 +24946,7 @@ importers:
         version: 30.0.0
       '@types/lodash':
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.27
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -34424,8 +34424,8 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/lodash@4.17.21':
-    resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
+  '@types/lodash@4.17.27':
+    resolution: {integrity: sha512-VenMRv/eKNrspX9v3H4dbmjsrnCOYdYBG3kxXKk3dG6X+urBGcj2Prww3xw1U5K4FV/mE4h5GbWd0szEKf+9ew==}
 
   '@types/markdown-it@14.1.1':
     resolution: {integrity: sha512-4NpsnpYl2Gt1ljyBGrKMxFYAYvpqbnnkgP/i/g+NLpjEUa3obn1XJCur9YbEXKDAkaXqsR1LbDnGEJ0MmKFxfg==}
@@ -53978,7 +53978,7 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash@4.17.21': {}
+  '@types/lodash@4.17.27': {}
 
   '@types/markdown-it@14.1.1':
     dependencies:
