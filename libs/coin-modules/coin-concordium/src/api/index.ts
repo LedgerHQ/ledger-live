@@ -36,10 +36,16 @@ import {
   lastBlock,
   listOperations as listOperationsLogic,
 } from "../logic";
+import { getAccountStatus, type ConcordiumAccountStatus } from "../logic/account/getAccountStatus";
 import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
 type ConcordiumApiContext = Context<ConcordiumCoinConfig>;
+
+// Not in `CoinModuleApi` yet.
+type AccountStatusCapability<C> = {
+  getAccountStatus: (context: C, key: string) => Promise<ConcordiumAccountStatus>;
+};
 
 /**
  * In the {@link Context}-based API (ADR-019) the coin configuration is resolved per call from
@@ -77,6 +83,11 @@ export function createApi(currencyId: string) {
       const config = await context.config();
       return estimateFees(config, transactionIntent, currencyId);
     },
+    getAccountStatus: async (context: ConcordiumApiContext, publicKey: string) => {
+      const signal = context.signal instanceof AbortSignal ? context.signal : undefined;
+      const config = await context.config();
+      return getAccountStatus(config, currencyId, publicKey, signal);
+    },
     getBalance: async (context, address: string, options?: BalanceOptions): Promise<Balance[]> => {
       const config = await context.config();
       return rejectBalanceOptions(() => getBalance(config, address, currencyId), options);
@@ -103,7 +114,8 @@ export function createApi(currencyId: string) {
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>;
+  } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo> &
+    AccountStatusCapability<ConcordiumApiContext>;
 }
 
 /**
