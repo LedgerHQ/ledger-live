@@ -1,6 +1,7 @@
 import type { Balance, BalanceOptions, Stake } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { buildCeloStakes } from "./getStakes";
+import { isGoldToken } from "./goldToken";
 
 /** Signature of the base `getBalance` (coin-evm) that we augment (v6: takes context as first arg). */
 type GetBalanceFn<C extends CurrencyConfig> = (
@@ -21,7 +22,7 @@ type GetBalanceFn<C extends CurrencyConfig> = (
  * coin-evm's `getBalance` already embeds its own (governance-delegation) staking
  * positions via `Balance.stake` for Celo, so those are dropped first — otherwise
  * a mixed/duplicated staking model would surface alongside Celo's real
- * LockedGold/Election positions.
+ * LockedGold/Election positions. GoldToken is dropped too: it mirrors the native balance.
  */
 export const makeGetBalance =
   <C extends CurrencyConfig>(baseGetBalance: GetBalanceFn<C>): GetBalanceFn<C> =>
@@ -39,8 +40,10 @@ export const makeGetBalance =
       stake,
     }));
 
-    const baseWithoutStakes = base.filter(balance => balance.stake === undefined);
-    return [...baseWithoutStakes, ...stakeBalances];
+    const spendableBalances = base.filter(
+      balance => balance.stake === undefined && !isGoldToken(balance.asset),
+    );
+    return [...spendableBalances, ...stakeBalances];
   };
 
 export default makeGetBalance;
