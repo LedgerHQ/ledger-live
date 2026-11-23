@@ -4,6 +4,14 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
+import { isPrepared } from "../ci/verify-build.mts";
+import {
+  ACCOUNT_KEY_PREFIX,
+  ACCOUNT_ORDER_KEY,
+  GENERAL_TERMS_VERSION,
+  MIGRATION_DONE,
+  STORAGE_FILE,
+} from "./measure/storage.ts";
 
 // What the measurement needs from the mobile app of this checkout: a failure means an app change
 // broke it (README.md, "The build" and "A launch").
@@ -12,7 +20,6 @@ const PREPARED_FILES = [
   ".env.mock.prerelease",
   "package.json",
   "rspack.config.mjs",
-  "src/index.tsx",
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
   "src/components/DBSave.ts",
 ];
@@ -67,11 +74,11 @@ describe("the mobile app of this checkout", () => {
     );
   });
 
-  it("takes every edit of prepare-build.mts", () => {
+  it("takes every edit of prepare-build.mts, and verify-build.mts sees it prepared", () => {
     prepare({}, app => {
+      assert.ok(isPrepared(app), "verify-build.mts would reject the prepared checkout");
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
-      assert.match(read(app, "src/index.tsx"), /LaunchArguments\.value\(\)\["wsPort"\]/);
       assert.doesNotMatch(read(app, ".env.mock.prerelease"), /^(MOCK|DETOX)=/m);
       assert.match(read(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"), /JS start epoch/);
       assert.match(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
@@ -84,16 +91,32 @@ describe("the mobile app of this checkout", () => {
     });
   });
 
-  it("handles every bridge message the injection sends", () => {
-    const client = read(APP, "src/e2e/bridge/client.ts");
-    const sent = new Set(
-      [...read(import.meta.dirname, "measure/inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
+  it("starts the E2E bridge only with DETOX, which the prepared env file no longer sets", () => {
+    assert.match(
+      read(APP, "src/index.tsx"),
+      /onInitFinished = \(\) => \{\n\s*if \(Config\.DETOX\) \{\n\s*init\(\);\n\s*\}\n\s*\};/,
     );
-    assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.ts was not parsed");
-    for (const type of sent) {
-      assert.match(client, new RegExp(`case "${type}"`), `client.ts no longer handles ${type}`);
+  });
+
+  it("reads the keys storage.ts writes before the first launch", () => {
+    const quoted = (text: string) => `"${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`;
+    assert.match(
+      read(APP, "src/mvvm/storage/mmkvStorageWrapper/constants.ts"),
+      new RegExp(`ID: ${quoted(STORAGE_FILE)}`),
+    );
+    const migration = read(APP, "src/mvvm/storage/utils/migrations/constants.ts");
+    assert.match(migration, new RegExp(`MIGRATION_STATUS_KEY = ${quoted(MIGRATION_DONE[0])}`));
+    assert.match(migration, new RegExp(`COMPLETED: ${quoted(MIGRATION_DONE[1])}`));
+    const db = read(APP, "src/db.ts");
+    assert.match(db, new RegExp(`ACCOUNTS_KEY_SORT = ${quoted(ACCOUNT_ORDER_KEY)}`));
+    assert.match(db, new RegExp(`ACCOUNTS_DB_PREFIX = ${quoted(ACCOUNT_KEY_PREFIX)}`));
+    for (const key of ["settings", "postOnboarding"]) {
+      assert.match(db, new RegExp(`storage\\.get\\(${quoted(key)}\\)`));
     }
-    assert.match(client, /type: "appEnvs"/);
+    assert.match(
+      read(APP, "src/logic/terms.tsx"),
+      new RegExp(`generalTermsVersionRequired = ${quoted(GENERAL_TERMS_VERSION)}`),
+    );
   });
 
   it("shows the screens and labels the Maestro flows and the parser look for", () => {

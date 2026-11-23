@@ -1,0 +1,66 @@
+# Adds the accounts the scan finds for one coin on the Speculos the app has registered, as
+# e2e/mobile's add-account steps do: TICKER, and NETWORK for a coin that asks for one.
+# src/snapshot/run.ts runs it once per coin.
+appId: com.ledger.live
+---
+# A sheet left open would cover the deep link's drawer.
+- tapOn:
+    id: "bottom-sheet-header-close-button"
+    optional: true
+- openLink: ledgerlive://add-account
+# iOS asks to confirm opening the link, a second time once the drawer is open.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Open"
+          optional: true
+      - tapOn:
+          text: "Open"
+          optional: true
+- extendedWaitUntil:
+    visible:
+      id: "add-accounts-modal-add-button|modular-drawer-search-input"
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        id: "add-accounts-modal-add-button"
+    commands:
+      - tapOn:
+          id: "add-accounts-modal-add-button"
+- tapOn:
+    id: "modular-drawer-search-input"
+- inputText: ${TICKER}
+- tapOn:
+    id: "asset-item-${TICKER}"
+- runFlow:
+    when:
+      # Maestro applies a flow's env defaults over the CLI's -e: NETWORK has none.
+      true: ${typeof NETWORK !== 'undefined' && NETWORK !== ''}
+    commands:
+      - tapOn:
+          id: "network-item-${NETWORK}"
+# The scan of every derivation path, on Speculinho.
+- extendedWaitUntil:
+    visible:
+      id: "enabled-add-accounts-continue-button"
+    timeout: 240000
+# Every account the scan found is selected: the snapshot keeps them all.
+- tapOn:
+    id: "enabled-add-accounts-continue-button"
+- extendedWaitUntil:
+    notVisible:
+      id: "enabled-add-accounts-continue-button"
+    timeout: 60000
+# The success screen, unless the flow was inline: it then closes on its own.
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "button-close-add-account"
+    commands:
+      - tapOn:
+          id: "button-close-add-account"

@@ -123,11 +123,14 @@ function iosCounts(appBundle: string, app: string): BuildCounts {
   return countMarkers(readBytes(dotEnv), DOT_ENV_MARKERS, readBytes(bundle));
 }
 
+/** Whether prepare-build.mts edited the checkout: it marks the rspack config on every build. */
+export function isPrepared(app: string): boolean {
+  const rspack = path.join(app, "rspack.config.mjs");
+  return existsSync(rspack) && readFileSync(rspack, "utf8").includes("startup-perf prod-like");
+}
+
 function verify(platform: string, artifact: string, app: string): void {
-  const index = path.join(app, "src/index.tsx");
-  if (!existsSync(index) || !readFileSync(index, "utf8").includes("startup-perf prod-like")) {
-    throw new StepFailure("the checkout was not prepared (prepare-build.mts)");
-  }
+  if (!isPrepared(app)) throw new StepFailure("the checkout was not prepared (prepare-build.mts)");
   let counts: BuildCounts;
   if (platform === "android") counts = androidCounts(artifact, app);
   else if (platform === "ios") counts = iosCounts(artifact, app);
