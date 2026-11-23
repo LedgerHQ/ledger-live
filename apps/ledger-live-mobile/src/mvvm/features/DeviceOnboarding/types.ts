@@ -32,6 +32,8 @@ export type ChecksScreenProps = {
   firmwareUpToDate: boolean;
   onStart: () => void;
   onRetry: () => void;
+  /** Given only when a failed firmware check may be skipped, which turns cancel into skip. */
+  onSkipFirmwareCheck?: () => void;
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
   onUpdatePressed?: () => void;
@@ -48,4 +50,9 @@ export type ChecksScreenProps = {
   /** Runs when the user taps a close control, before `onQuit`. Drawer Cancel does not call it. */
   onClosePressed?: () => void;
   suspendSheets?: boolean;
+  /**
+   * The update an unseeded Nano held back until it was seeded. Asking for a USB cable would break
+   * the setup the user just finished, so Bluetooth that cannot update says it is not possible.
+   */
+  updateAfterSetup?: boolean;
 };

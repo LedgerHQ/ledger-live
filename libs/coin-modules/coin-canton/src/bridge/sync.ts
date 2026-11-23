@@ -462,6 +462,7 @@ export function makeGetAccountShape(
         value: 0n,
         locked: 0n,
         utxoCount: 0,
+        isLocked: false,
         instrumentId,
         adminId,
         asset: { type: "token", assetReference: instrumentId },
@@ -472,9 +473,17 @@ export function makeGetAccountShape(
     const heldInstrumentIds = new Set(balances.map(balance => balance.instrumentId));
     // Keyed by admin too: any party can issue an instrument under a CAL token's id.
     const tokensByKey = new Map<string, TokenCurrency>();
-    for (const [tokenId, instrumentId] of calTokens.entries()) {
-      if (!heldInstrumentIds.has(instrumentId)) continue;
-      const token = await getCryptoAssetsStore().findTokenById(tokenId);
+    // One CAL lookup at a time: on a cold cache, unbounded lookups exhaust the connection pool.
+    const heldTokens = await [...calTokens.entries()]
+      .filter(([, instrumentId]) => heldInstrumentIds.has(instrumentId))
+      .reduce<Promise<{ instrumentId: string; token: TokenCurrency | undefined }[]>>(
+        async (found, [tokenId, instrumentId]) => [
+          ...(await found),
+          { instrumentId, token: await getCryptoAssetsStore().findTokenById(tokenId) },
+        ],
+        Promise.resolve([]),
+      );
+    for (const { instrumentId, token } of heldTokens) {
       if (token?.contractAddress) {
         tokensByKey.set(getKey(instrumentId, token.contractAddress), token);
       }
@@ -491,17 +500,18 @@ export function makeGetAccountShape(
 
       const existing = aggregatedBalances.get(balanceKey);
       if (existing) {
-        if (balance.locked) {
+        if (balance.isLocked) {
           existing.lockedBalance += balance.value;
         } else {
           existing.unlockedBalance += balance.value;
+          existing.utxoCount += balance.utxoCount;
         }
-        existing.utxoCount += balance.utxoCount;
       } else {
         aggregatedBalances.set(balanceKey, {
-          unlockedBalance: balance.locked ? 0n : balance.value,
-          lockedBalance: balance.locked ? balance.value : 0n,
-          utxoCount: balance.utxoCount,
+          unlockedBalance: balance.isLocked ? 0n : balance.value,
+          lockedBalance: balance.isLocked ? balance.value : 0n,
+          // The gateway picks transfer inputs from unlocked holdings only.
+          utxoCount: balance.isLocked ? 0 : balance.utxoCount,
           token,
           adminId: balance.adminId,
         });

@@ -208,7 +208,6 @@ apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integ
 .github/workflows/coin-monitoring-*.yml                             @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                              @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml                       @ledgerhq/coin-integration
-.github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/platform
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/platform
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
@@ -452,6 +451,8 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Device
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/OsUpdate/             @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MyWallet/views/MyWalletDeviceList/ @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MyWallet/__integrations__/MyWalletDeviceList.integration.test.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
@@ -705,6 +706,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Monitoring
 apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
+features/platform/observability-redaction/            @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 libs/types-live/src/feature.ts

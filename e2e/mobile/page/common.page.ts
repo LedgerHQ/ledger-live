@@ -4,8 +4,8 @@ import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Ac
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byText } from "@e2e/helpers/elements/native";
-import { device, log } from "detox";
 import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
+import { device, log } from "detox";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { GENERIC_ERROR_MODAL_ID } from "@e2e/page/error.page";
 
@@ -50,6 +50,8 @@ export default class CommonPage {
       `test-id-account-${getParentAccountName(account)}${account.tokenType === undefined ? "" : ` (${account.currency.ticker})`}`,
     );
   private readonly accountGraph = (accountId: string) => byId(`account-graph-${accountId}`);
+  private readonly accountDetail = (accountId: string) =>
+    byId(`account-detail-account-${accountId}`);
   private readonly assetDetailScrollView = (currencyId: string) =>
     byId(`asset-detail-scroll-view-${currencyId}`);
   private readonly assetDetailAddressItem = (accountId: string) =>
@@ -118,10 +120,10 @@ export default class CommonPage {
   @Step("Go to the account {{{0.accountId}}}")
   async goToAccount(options: GoToAccountOptions) {
     const { accountId, currencyId } = options;
-    if (await this.accountGraph(accountId).isVisible()) {
-      return;
-    }
-    if (isAccountDetailEnabled() && (await app.account.isAccountDetailVisible())) {
+    const accountScreen = isAccountDetailEnabled()
+      ? this.accountDetail(accountId)
+      : this.accountGraph(accountId);
+    if (await accountScreen.isVisible()) {
       return;
     }
     await openDeeplink(`asset/${currencyId}`);

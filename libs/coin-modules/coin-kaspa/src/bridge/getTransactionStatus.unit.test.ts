@@ -19,6 +19,7 @@ import {
   ECDSA_RECIPIENT,
 } from "../test/fixtures";
 import { ReducedAmountUtxoWarning, UtxoLimitReachedError } from "../types/errors";
+import { createTransaction } from "./createTransaction";
 import getTransactionStatus from "./getTransactionStatus";
 
 jest.mock("../logic", () => ({
@@ -27,6 +28,12 @@ jest.mock("../logic", () => ({
 }));
 
 const mockScanUtxos = scanUtxos as jest.Mock;
+
+const networkInfo = (fastRate: number) => [
+  { label: "slow", amount: new BigNumber(1), estimatedSeconds: 30 },
+  { label: "medium", amount: new BigNumber(2), estimatedSeconds: 10 },
+  { label: "fast", amount: new BigNumber(fastRate), estimatedSeconds: 1 },
+];
 
 const serveUtxos = (count: number, amount: string | number) =>
   mockScanUtxos.mockResolvedValue({ utxos: buildUtxos(count, amount), accountAddresses: {} });
@@ -114,6 +121,59 @@ describe("getTransactionStatus (legacy bridge)", () => {
       );
 
       expect(status.errors.feePerByte).toBeInstanceOf(FeeRequired);
+    });
+
+    it("reports the recipient and amount errors of a default transaction without throwing", async () => {
+      const status = await getTransactionStatus(buildAccount(), createTransaction());
+
+      expect({
+        recipient: status.errors.recipient instanceof RecipientRequired,
+        amount: status.errors.amount instanceof AmountRequired,
+        feePerByte: status.errors.feePerByte,
+      }).toEqual({ recipient: true, amount: true, feePerByte: undefined });
+    });
+
+    it("takes the fee rate of the selected strategy from the network info", async () => {
+      const account = buildAccount({ balance: "3000000000" });
+      const fast = await getTransactionStatus(
+        account,
+        buildTransaction({
+          feesStrategy: "fast",
+          customFeeRate: undefined,
+          networkInfo: networkInfo(5),
+        }),
+      );
+      const custom = await getTransactionStatus(
+        account,
+        buildTransaction({ customFeeRate: new BigNumber(5) }),
+      );
+
+      expect({
+        errors: fast.errors,
+        feesArePositive: fast.estimatedFees.gt(0),
+        sameFeesAsCustomRate: fast.estimatedFees.eq(custom.estimatedFees),
+      }).toEqual({ errors: {}, feesArePositive: true, sameFeesAsCustomRate: true });
+    });
+
+    it("falls back to a fee rate of 1 when the selected strategy has a zero rate", async () => {
+      const account = buildAccount({ balance: "3000000000" });
+      const fast = await getTransactionStatus(
+        account,
+        buildTransaction({
+          feesStrategy: "fast",
+          customFeeRate: undefined,
+          networkInfo: networkInfo(0),
+        }),
+      );
+      const custom = await getTransactionStatus(
+        account,
+        buildTransaction({ customFeeRate: new BigNumber(1) }),
+      );
+
+      expect({
+        feesArePositive: fast.estimatedFees.gt(0),
+        sameFeesAsRateOne: fast.estimatedFees.eq(custom.estimatedFees),
+      }).toEqual({ feesArePositive: true, sameFeesAsRateOne: true });
     });
 
     it("warns when the fees exceed a tenth of the amount", async () => {

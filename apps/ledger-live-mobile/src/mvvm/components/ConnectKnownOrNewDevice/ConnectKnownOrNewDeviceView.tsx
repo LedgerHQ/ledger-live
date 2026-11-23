@@ -101,6 +101,7 @@ export function ConnectKnownOrNewDeviceView({
   onDeviceNotFound,
   onCloseErrorSheet,
   onCloseAddModeErrorSheet,
+  listFooter,
   children,
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
   if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
@@ -120,7 +121,9 @@ export function ConnectKnownOrNewDeviceView({
 
   return (
     <>
-      <DeviceSection {...listProps}>{children}</DeviceSection>
+      <DeviceSection {...listProps} listFooter={listFooter}>
+        {children}
+      </DeviceSection>
       <DeviceStateSheet state={deviceState} />
       <ErrorBottomSheet
         isOpen={errorState !== null}

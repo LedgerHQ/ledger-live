@@ -1,7 +1,7 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
-import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import network from "@ledgerhq/live-network";
+import { promiseAllBatched, retry } from "@ledgerhq/coin-module-framework/promises";
+import network, { getNetworkState } from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
@@ -67,17 +67,40 @@ function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
 }
 
+const BROADCAST_ENDPOINTS_NEVER_RESENT = new Set([
+  "/wallet/broadcasttransaction",
+  "/wallet/broadcasthex",
+]);
+
+function isRetryablePostError(error: unknown): boolean {
+  const status = (error as { status?: unknown } | null | undefined)?.status;
+  const isTimeoutOrDroppedConnection = typeof status !== "number";
+  if (isTimeoutOrDroppedConnection) {
+    return true;
+  }
+  return status === 408 || status === 429 || status >= 500;
+}
+
 export async function post<T, U extends object = any>(
   logger: Logger,
   config: TronCoinConfig,
   endPoint: string,
   body: T,
 ): Promise<U> {
-  const { data } = await network<U, T>({
-    method: "POST",
-    url: `${getBaseApiUrl(config)}${endPoint}`,
-    data: body,
-  });
+  const { getCallsTimeout, getCallsRetry } = getNetworkState();
+  const { data } = await retry(
+    () =>
+      network<U, T>({
+        method: "POST",
+        url: `${getBaseApiUrl(config)}${endPoint}`,
+        data: body,
+        timeout: getCallsTimeout,
+      }),
+    {
+      maxRetry: BROADCAST_ENDPOINTS_NEVER_RESENT.has(endPoint) ? 0 : getCallsRetry,
+      retryCondition: isRetryablePostError,
+    },
+  );
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
@@ -383,7 +406,7 @@ export async function craftStandardTransaction(
 /** Default expiration of 10 minutes (in seconds) after crafting time. */
 export const DEFAULT_EXPIRATION = 600;
 
-async function extendExpiration(
+function extendExpiration(
   logger: Logger,
   config: TronCoinConfig,
   preparedTransaction: any,
@@ -521,16 +544,31 @@ export async function getLastBlock(logger: Logger, config: TronCoinConfig): Prom
   return toBlock(data);
 }
 
+export async function findBlock(
+  logger: Logger,
+  config: TronCoinConfig,
+  blockNumber: number,
+): Promise<Block | null> {
+  const data = await post<unknown, BlockWithTransactionsAPI | { block_header?: undefined }>(
+    logger,
+    config,
+    `/wallet/getblock`,
+    { id_or_num: String(blockNumber), detail: false },
+  );
+  const blockNotProducedYet = !data.block_header;
+  return blockNotProducedYet ? null : toBlock(data);
+}
+
 export async function getBlock(
   logger: Logger,
   config: TronCoinConfig,
   blockNumber: number,
 ): Promise<Block> {
-  const data: BlockWithTransactionsAPI = await post(logger, config, `/wallet/getblock`, {
-    id_or_num: String(blockNumber),
-    detail: false,
-  });
-  return toBlock(data);
+  const block = await findBlock(logger, config, blockNumber);
+  if (!block) {
+    throw new Error(`Block ${blockNumber} not found`);
+  }
+  return block;
 }
 
 export async function getBlockWithTransactions(
@@ -602,15 +640,17 @@ export async function getTransactionInfoById(
  * token unambiguously therefore keeps no token address, and the operation is dropped downstream
  * rather than mislabelled.
  */
-async function resolveMissingTokenAddresses(
+function resolveMissingTokenAddresses(
   logger: Logger,
   config: TronCoinConfig,
   txs: TrongridTxInfo[],
 ): Promise<TrongridTxInfo[]> {
-  if (!txs.some(isMissingTokenAddress)) return txs;
+  if (!txs.some(isMissingTokenAddress)) return Promise.resolve(txs);
 
-  return promiseAllBatched(3, txs, async tx =>
-    isMissingTokenAddress(tx) ? withTokenAddressFromReceipt(logger, config, tx) : tx,
+  return promiseAllBatched(3, txs, tx =>
+    isMissingTokenAddress(tx)
+      ? withTokenAddressFromReceipt(logger, config, tx)
+      : Promise.resolve(tx),
   );
 }
 

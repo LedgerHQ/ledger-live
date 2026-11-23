@@ -8,4 +8,5 @@ export enum Team {
   BST = "BST",
   ENGAGEMENT = "Engagement",
   PERPS = "Perps",
+  PREDICTIONS = "Predictions",
 }

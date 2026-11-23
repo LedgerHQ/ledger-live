@@ -1,0 +1,157 @@
+import { track } from "@shared/analytics";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
+import { NavigatorName, ScreenName } from "~/const";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { LNUpsellBanner } from "LLM/features/LNUpsell";
+import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
+import type { MyWalletNavigatorStackParamList } from "../../types";
+import { MyWalletHeaderTrailing } from "../Header";
+
+type MyWalletDeviceListLegacyProps = {
+  onPairingStateChanged?: (isPairing: boolean) => void;
+};
+
+/** The `SelectDevice2` device section of My Wallet, shown while `lwmMyWalletDeviceList` is off. */
+export function MyWalletDeviceListLegacy({
+  onPairingStateChanged,
+}: Readonly<MyWalletDeviceListLegacyProps>) {
+  const action = useManagerDeviceAction({ resolveOsUpdates: true });
+  const [device, setDevice] = useState<Device>();
+  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const pairingFlowBottomInset = isHeaderOverridden ? bottomInset : 0;
+
+  useEffect(() => {
+    onPairingStateChanged?.(isHeaderOverridden);
+  }, [isHeaderOverridden, onPairingStateChanged]);
+
+  const { params } =
+    useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+
+  // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
+  // One-shot request: consumed once the connection ends, so that coming back to this screen does not
+  // connect the device again, while leaving it before the end (e.g. to Experimental Settings) resumes it.
+  useEffect(() => {
+    if (params?.device) setDevice(params.device);
+  }, [params?.device]);
+
+  const onAddDevice = useUnifiedAddDevice();
+
+  const onSelectDevice = (selected?: Device) => {
+    if (selected)
+      track("ManagerDeviceEntered", {
+        modelId: selected.modelId,
+      });
+    setDevice(selected);
+  };
+
+  const onSelect = (result: Result) => {
+    setDevice(undefined);
+
+    if (result?.result) {
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerDevice,
+        params: {
+          ...result,
+          firmwareUpdate: params?.firmwareUpdate,
+          searchQuery: params?.searchQuery || params?.installApp,
+        },
+      });
+    }
+  };
+
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = useCallback((clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  }, []);
+
+  const onModalHide = () => {
+    setDevice(undefined);
+    navigation.setParams({ device: undefined, firmwareUpdate: undefined });
+    clearModalResultRef.current?.();
+  };
+
+  const onError = (error: Error) => {
+    if (error?.name === "BluetoothRequired") {
+      setDevice(undefined);
+    }
+  };
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        const HeaderLeft = request.options.headerLeft;
+        const opts: Partial<LumenNativeStackNavigationOptions> = {
+          lumenNavBar: {
+            renderLeading: HeaderLeft
+              ? () => (
+                  <Box style={{ paddingLeft: 12 }}>
+                    <HeaderLeft />
+                  </Box>
+                )
+              : undefined,
+            renderTrailing: request.options.headerRight,
+            renderCenter: () => null,
+          },
+        };
+        navigation.setOptions(opts);
+        setIsHeaderOverridden(true);
+      } else {
+        const opts: Partial<LumenNativeStackNavigationOptions> = {
+          lumenNavBar: {
+            renderLeading: undefined,
+            renderCenter: () => null,
+            renderTrailing: () => <MyWalletHeaderTrailing />,
+          },
+        };
+        navigation.setOptions(opts);
+        setIsHeaderOverridden(false);
+      }
+    },
+    [navigation],
+  );
+
+  return (
+    <>
+      <Box style={{ flex: 1, paddingBottom: pairingFlowBottomInset }}>
+        <SelectDevice2
+          onSelect={onSelectDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+          onAddDevice={onAddDevice}
+          withMyLedgerTracking
+        >
+          <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>
+            <LNUpsellBanner location="profile" />
+          </Box>
+        </SelectDevice2>
+      </Box>
+      <DeviceActionModal
+        onClose={() => onSelectDevice()}
+        device={device}
+        onResult={onSelect}
+        onModalHide={onModalHide}
+        registerDeviceSelection={registerDeviceSelection}
+        action={action}
+        request={null}
+        onError={onError}
+        location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
+      />
+    </>
+  );
+}

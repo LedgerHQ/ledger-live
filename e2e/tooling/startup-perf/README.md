@@ -105,6 +105,17 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
+- **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
+  ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
+  them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
+  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
+  read from the log, ~40 s on the screen. Both builds are installed first, then warmed up in turn
+  like the rounds, on iOS too (not measured there). When each build warmed up right after its
+  install, the first one idled ~2 min through the other's install and warm-ups, and its round 0 was
+  ~60 ms slower than its later rounds, the second's no slower beyond noise (median of 30 Android A/A
+  runs, e.g. 44243454200). Warmed up in turn, it is ~15 ms faster than its later rounds, against
+  ~60 ms slower for the old order in the same wave (10 runs against 6, e.g. 44281313344 against
+  44281225038), with about the same A/A spread.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
   read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
   the simulator's `log show`), which the app writes as soon as the startup is over: a line per
@@ -154,8 +165,9 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 - **Android**: the E2E AVD (develop's `avd.env`), two emulators with 4 cores each on the 8-CPU
   runner (faster and tighter A/A margins than 2 or 3: runs 39989878998, 39966762708, 39970514979),
   cold-booted (the snapshot has 2 cores), animations on, screen kept on, cellular network (the
-  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), and idle (load average below 1)
-  before the first launch.
+  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), the Messages and Google apps
+  disabled (their background jobs, a few minutes after boot, took the CPUs in ~4% of launches,
+  +20–100 ms), and idle (load average below 1) before the first launch.
 - **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time,
   measured once the host's 1-minute load is below its CPU count (at most 10 min after boot): 60 s
   after `bootstatus` it was still rising (74 → 128 and 83 → 106, runs 42260331032, 42261755814).

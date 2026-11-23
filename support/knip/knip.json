@@ -7,13 +7,13 @@
     "dependencies": "error",
     "devDependencies": "off",
     "duplicates": "error",
-    "enumMembers": "warn",
-    "exports": "warn",
+    "enumMembers": "error",
+    "exports": "error",
     "files": "error",
     "nsExports": "off",
     "nsTypes": "off",
     "optionalPeerDependencies": "off",
-    "types": "warn",
+    "types": "error",
     "unlisted": "off",
     "unresolved": "off"
   },
@@ -138,7 +138,6 @@
         "src/errors.ts"
       ],
       "ignoreDependencies": [
-        "prop-types",
         "ws",
         "@electron/fuses",
         "embla-carousel-autoplay",
@@ -168,7 +167,6 @@
         "expo-image-loader",
         "expo-modules-autolinking",
         "expo-modules-core",
-        "prop-types",
         "react-is",
         "react-native-fast-pbkdf2",
         "stylis"

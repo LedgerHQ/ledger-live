@@ -41,7 +41,8 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       finishOrGoBack(deps);
       return;
     }
-    if (deps.deviceWasSeeded) resetToLegacySeededChecks(deps.navigation, deps.device);
+    if (deps.deviceWasSeeded)
+      resetToLegacySeededChecks(deps.navigation, deps.device, deps.wasReadOnlyAtEntry);
     else openLegacySetup(deps.navigation, deps.device);
   },
   userQuit: finishOrGoBack,
@@ -70,6 +71,7 @@ function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
       requiresLegacyFlow({
         currentVersion: context.firmwareVersion,
         deviceModelId: context.deviceModelId,
+        isOnboarded: true,
       }))
   );
 }
@@ -161,29 +163,49 @@ function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Devi
   });
 }
 
-function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, device: Device) {
+/**
+ * The old checks of a seeded device: the sync companion on a touchscreen, the pairing step on a
+ * Nano. Both sit on the onboarding welcome screen, where their back button returns.
+ */
+function resetToLegacySeededChecks(
+  navigation: NavigationProp<ParamListBase>,
+  device: Device,
+  wasReadOnlyAtEntry: boolean,
+) {
+  const onboardingRoutes = isSyncOnboardingSupported(device.modelId)
+    ? [
+        { name: NavigatorName.Onboarding },
+        {
+          name: NavigatorName.SyncOnboarding,
+          state: { routes: [{ name: ScreenName.SyncOnboardingCompanion, params: { device } }] },
+        },
+      ]
+    : [
+        {
+          name: NavigatorName.Onboarding,
+          state: {
+            index: 1,
+            routes: [
+              { name: ScreenName.OnboardingWelcome },
+              {
+                name: ScreenName.OnboardingPairNew,
+                params: {
+                  deviceModelId: device.modelId,
+                  fromAccessExistingWallet: true,
+                  resetPostOnboardingRedirect: wasReadOnlyAtEntry,
+                },
+              },
+            ],
+          },
+        },
+      ];
+
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
       {
         name: NavigatorName.BaseOnboarding,
-        state: {
-          index: 1,
-          routes: [
-            { name: NavigatorName.Onboarding },
-            {
-              name: NavigatorName.SyncOnboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.SyncOnboardingCompanion,
-                    params: { device },
-                  },
-                ],
-              },
-            },
-          ],
-        },
+        state: { index: onboardingRoutes.length - 1, routes: onboardingRoutes },
       },
     ],
   });

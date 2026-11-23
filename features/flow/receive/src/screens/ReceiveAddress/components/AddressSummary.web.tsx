@@ -21,13 +21,16 @@ export function AddressSummary({ address }: AddressSummaryProps) {
           testID="receive-address-qr-code"
           centerContent={
             assetIcon ? (
-              <CryptoIcon
-                ledgerId={assetIcon.ledgerId}
-                ticker={assetIcon.ticker}
-                network={assetIcon.network}
-                size={QR_CENTER_ICON_SIZE}
-                shape="circle"
-              />
+              // The card is white in both themes: the network badge border stays light too.
+              <div className="flex [--border-base-inverted:var(--color-light-grey-050)]">
+                <CryptoIcon
+                  ledgerId={assetIcon.ledgerId}
+                  ticker={assetIcon.ticker}
+                  network={assetIcon.network}
+                  size={QR_CENTER_ICON_SIZE}
+                  shape="circle"
+                />
+              </div>
             ) : undefined
           }
         />

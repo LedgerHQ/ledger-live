@@ -2,7 +2,6 @@ import { walletBtcCurrency } from "./fixtures/common.fixtures";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
-import { toMatchFile } from "jest-file-snapshot";
 import { DerivationModes } from "../types";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
@@ -10,7 +9,6 @@ import Xpub from "../xpub";
 import cryptoFactory from "../crypto/factory";
 import { Currency } from "../crypto/types";
 
-expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {
   const walletDatasets = [
     {
@@ -154,10 +152,6 @@ describe("xpub integration sync", () => {
         "should sync from zero correctly",
         async () => {
           await xpub.sync(jest.fn());
-          // const truthDump = path.join(__dirname, 'data', 'sync', `${dataset.xpub}.json`);
-          // const data = await storage.export();
-          // data.txs = orderBy(data.txs, ['derivationMode', 'account', 'index', 'block.height', 'id']);
-          // expect(JSON.stringify(txs, null, 2)).toMatchFile(truthDump);
           expect((await xpub.getXpubBalance()).toNumber()).toEqual(dataset.balance);
           const addresses = await xpub.getXpubAddresses();
           expect(addresses.length).toEqual(dataset.addresses);

@@ -25,6 +25,17 @@ const buildUnusedXpub = (): string => {
 
 const UNUSED_XPUB = buildUnusedXpub();
 
+const KNOWN_RECEIVES = [
+  {
+    hash: "652a5ec87072c9b1eabbc9159bd83e4c8e5f9b0e6b83dac66a394075fc753570", // gitleaks:allow
+    value: "20000000",
+  },
+  {
+    hash: "ed6dc5422558c3480e6a7809bf166e6ba1f2931ef39f24fe9b3bcf48253e4752", // gitleaks:allow
+    value: "13370000",
+  },
+];
+
 const isValidAmount = (amount: BigNumber): boolean =>
   BigNumber.isBigNumber(amount) && !amount.isNaN();
 
@@ -124,6 +135,22 @@ describe("Kaspa currency bridge scanAccounts (integration)", () => {
       blockHeightIsPositive: true,
       lastSyncTimestampIsPositive: true,
     });
+  });
+
+  it("maps the known receives of the used account to incoming operations", () => {
+    const [used] = accounts;
+
+    expect(used.operations).toEqual(
+      expect.arrayContaining(
+        KNOWN_RECEIVES.map(receive =>
+          expect.objectContaining({
+            hash: receive.hash,
+            type: "IN",
+            value: new BigNumber(receive.value),
+          }),
+        ),
+      ),
+    );
   });
 
   it("maps every fetched transaction to an operation with typed amounts and addresses", () => {

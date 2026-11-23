@@ -5,7 +5,7 @@ import { CommandResultFactory, DeviceModelId } from "@ledgerhq/device-management
 import { act, renderHook } from "@testing-library/react";
 import * as host from "./host";
 import type { DeviceOnboardingPorts } from "./ports";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import { createFakeOnboardingDmk } from "./tests/fakeDmk";
 import { createOsVersionResponse } from "./tests/osVersionResponse";
 import {

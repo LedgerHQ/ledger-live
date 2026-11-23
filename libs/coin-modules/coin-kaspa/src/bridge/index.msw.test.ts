@@ -1,7 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ScanAccountEvent } from "@ledgerhq/types-live";
 import { http, HttpResponse } from "msw";
+import BigNumber from "bignumber.js";
 import { lastValueFrom, reduce, toArray } from "rxjs";
 import KaspaBIP32 from "../logic/bip32";
 import { parseExtendedPublicKey } from "../logic";
@@ -231,6 +233,20 @@ describe("currencyBridge.scanAccounts via MSW", () => {
       funded: [funded.balance.toString(), funded.spendableBalance.toString()],
       empty: [empty.balance.toString(), empty.spendableBalance.toString()],
     }).toEqual({ funded: ["399998000", "399998000"], empty: ["0", "0"] });
+  });
+
+  it("reports a balance equal to the sum of the operation amounts", async () => {
+    const [funded, empty] = await scan();
+
+    const sumOfOperations = (account: KaspaAccount) =>
+      account.operations
+        .reduce((sum, op) => sum.plus(getOperationAmountNumber(op)), new BigNumber(0))
+        .toString();
+
+    expect({
+      funded: sumOfOperations(funded),
+      empty: sumOfOperations(empty),
+    }).toEqual({ funded: funded.balance.toString(), empty: empty.balance.toString() });
   });
 
   it("converts the fetched transactions of the used addresses into deduplicated operations", async () => {

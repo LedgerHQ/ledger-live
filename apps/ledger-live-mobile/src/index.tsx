@@ -1,6 +1,6 @@
 import "LLM/utils/logStartup/beforeJSImports";
 import "LLM/utils/logStartup/claimProcessStartTime";
-// Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
+// Must run before any module that keeps a reference to the global WebSocket (e.g. DMK)
 import "./iosWebsocketFix";
 require("./promise-polyfill");
 import "./polyfill";
@@ -101,6 +101,7 @@ import {
   customActionEventMapper,
   customErrorEventMapper,
   customLogEventMapper,
+  customResourceEventMapper,
   initializeDatadogProvider,
   stopDatadogRecording,
 } from "./datadog";
@@ -196,6 +197,7 @@ function App() {
         trackResources: datadogFF?.params?.trackResources ?? false,
         errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
         actionEventMapper: customActionEventMapper,
+        resourceEventMapper: customResourceEventMapper,
         firstPartyHosts: [
           {
             match: FIRST_PARTY_MAIN_HOST_DOMAIN,

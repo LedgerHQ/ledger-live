@@ -361,6 +361,123 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).error).toEqual(error);
   });
 
+  function snapshotOf(updateAfterSetup: boolean, isGenuine = true) {
+    return {
+      context: {
+        updateAfterSetup,
+        isOnboarded: true,
+        firmware: null,
+        sessionId: "session",
+        genuineVerdict: { sessionId: "session", isGenuine },
+      },
+    } as DeviceOnboardingSession["snapshot"];
+  }
+
+  /** An unseeded device set up in this run; without a held-back update, a seeded one. */
+  function heldBackUpdateSession(state: string, updateAfterSetup: boolean) {
+    return session({
+      state,
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: !updateAfterSetup,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: snapshotOf(updateAfterSetup),
+    });
+  }
+
+  it.each(["postSetupFirmware.firmwareUpdateOffered", "checks.firmwareUpdateOffered"])(
+    "should keep the held-back update after setup in %s",
+    state => {
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(checksOf(result.current).updateAfterSetup).toBe(true);
+    },
+  );
+
+  it.each(["postSetupFirmware.firmwareCheckFailed", "checks.firmwareCheckFailed"])(
+    "should let the user skip the failed firmware check after setup in %s",
+    state => {
+      send.mockClear();
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      checksOf(result.current).onSkipFirmwareCheck?.();
+
+      expect(send).toHaveBeenCalledWith({ type: "SKIP" });
+    },
+  );
+
+  it.each([
+    ["checks.firmwareCheckFailed", false],
+    ["checks.genuineFailed", true],
+  ])("should not offer to skip in %s when the update after setup is %s", (state, flag) => {
+    useSession.mockReturnValue(heldBackUpdateSession(state, flag));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).onSkipFirmwareCheck).toBeUndefined();
+  });
+
+  function seededDuringSetupSession(updateAfterSetup: boolean, isGenuine = true) {
+    return session({
+      state: "postSetupFirmware.firmwareUpdateOffered",
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: false,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: snapshotOf(updateAfterSetup, isGenuine),
+    });
+  }
+
+  it("should end the setup from the close button once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).not.toBe(true);
+  });
+
+  it("should end the setup from Android back once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should still ask before leaving once the new session is not genuine", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true, false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should still ask before leaving an unseeded device without a held-back update", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
+  });
+
   it.each([
     "readingState",
     "legacyFallback",
@@ -1422,6 +1539,37 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
       expect(result.current.status).toBe("recoverNewSeed");
     });
+
+    it.each(["upToDate", "declined", "skipped"] as const)(
+      "should leave a new seed to the Recover pitch once the held-back update is %s",
+      kind => {
+        useSession.mockReturnValue(
+          session({
+            state: "done",
+            status: "exited",
+            context: {
+              onboardedOnEntry: false,
+              isOnboarded: true,
+              checksPaused: false,
+            } as DeviceOnboardingSession["context"],
+            snapshot: {
+              context: {
+                seedPath: SeedPath.NewSeed,
+                updateAfterSetup: true,
+                isOnboarded: true,
+                firmware: { kind },
+                sessionId: "session",
+                genuineVerdict: { sessionId: "session", isGenuine: true },
+              },
+            } as DeviceOnboardingSession["snapshot"],
+          }),
+        );
+
+        const { result } = renderRecoverFunnel();
+
+        expect(result.current.status).toBe("recoverNewSeed");
+      },
+    );
 
     it("should keep a seeded device on the shipped success screen", () => {
       useSession.mockReturnValue(doneSession(true, SeedPath.RestorePhrase));

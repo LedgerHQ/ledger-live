@@ -25,6 +25,7 @@ const shared = {
 function renderScreen(
   seededDeviceType: DmkDeviceModelId | null = DmkDeviceModelId.STAX,
   phase: SyncOfferPhase = "offer",
+  showGlow?: boolean,
 ) {
   const actions = {
     onActivate: jest.fn(),
@@ -34,7 +35,7 @@ function renderScreen(
     onContinue: jest.fn(),
   };
   const view = renderHook(() =>
-    useSyncOfferScreenViewModel({ ...actions, phase, seededDeviceType }),
+    useSyncOfferScreenViewModel({ ...actions, phase, showGlow, seededDeviceType }),
   );
   return { ...view, ...actions };
 }
@@ -138,4 +139,12 @@ describe("useSyncOfferScreenViewModel", () => {
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(clicks()).toEqual([expect.objectContaining({ button: "close", ...shared })]);
   });
+
+  it.each<SyncOfferPhase>(["offer", "synchronizing", "success"])(
+    "should forward showGlow and default it to false on %s",
+    phase => {
+      expect(renderScreen(null, phase).result.current.showGlow).toBe(false);
+      expect(renderScreen(null, phase, true).result.current.showGlow).toBe(true);
+    },
+  );
 });

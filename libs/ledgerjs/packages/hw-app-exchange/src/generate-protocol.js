@@ -189,37 +189,76 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (!writer) writer = $Writer.create();
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
-      if (message.payinAddress != null && Object.hasOwnProperty.call(message, "payinAddress"))
+      if (
+        message.payinAddress != null &&
+        Object.hasOwnProperty.call(message, "payinAddress") &&
+        message.payinAddress !== ""
+      )
         writer.uint32(/* id 1, wireType 2 =*/ 10).string(message.payinAddress);
-      if (message.payinExtraId != null && Object.hasOwnProperty.call(message, "payinExtraId"))
+      if (
+        message.payinExtraId != null &&
+        Object.hasOwnProperty.call(message, "payinExtraId") &&
+        message.payinExtraId !== ""
+      )
         writer.uint32(/* id 2, wireType 2 =*/ 18).string(message.payinExtraId);
-      if (message.refundAddress != null && Object.hasOwnProperty.call(message, "refundAddress"))
+      if (
+        message.refundAddress != null &&
+        Object.hasOwnProperty.call(message, "refundAddress") &&
+        message.refundAddress !== ""
+      )
         writer.uint32(/* id 3, wireType 2 =*/ 26).string(message.refundAddress);
-      if (message.refundExtraId != null && Object.hasOwnProperty.call(message, "refundExtraId"))
+      if (
+        message.refundExtraId != null &&
+        Object.hasOwnProperty.call(message, "refundExtraId") &&
+        message.refundExtraId !== ""
+      )
         writer.uint32(/* id 4, wireType 2 =*/ 34).string(message.refundExtraId);
-      if (message.payoutAddress != null && Object.hasOwnProperty.call(message, "payoutAddress"))
+      if (
+        message.payoutAddress != null &&
+        Object.hasOwnProperty.call(message, "payoutAddress") &&
+        message.payoutAddress !== ""
+      )
         writer.uint32(/* id 5, wireType 2 =*/ 42).string(message.payoutAddress);
-      if (message.payoutExtraId != null && Object.hasOwnProperty.call(message, "payoutExtraId"))
+      if (
+        message.payoutExtraId != null &&
+        Object.hasOwnProperty.call(message, "payoutExtraId") &&
+        message.payoutExtraId !== ""
+      )
         writer.uint32(/* id 6, wireType 2 =*/ 50).string(message.payoutExtraId);
-      if (message.currencyFrom != null && Object.hasOwnProperty.call(message, "currencyFrom"))
+      if (
+        message.currencyFrom != null &&
+        Object.hasOwnProperty.call(message, "currencyFrom") &&
+        message.currencyFrom !== ""
+      )
         writer.uint32(/* id 7, wireType 2 =*/ 58).string(message.currencyFrom);
-      if (message.currencyTo != null && Object.hasOwnProperty.call(message, "currencyTo"))
+      if (
+        message.currencyTo != null &&
+        Object.hasOwnProperty.call(message, "currencyTo") &&
+        message.currencyTo !== ""
+      )
         writer.uint32(/* id 8, wireType 2 =*/ 66).string(message.currencyTo);
       if (
         message.amountToProvider != null &&
-        Object.hasOwnProperty.call(message, "amountToProvider")
+        Object.hasOwnProperty.call(message, "amountToProvider") &&
+        message.amountToProvider.length
       )
         writer.uint32(/* id 9, wireType 2 =*/ 74).bytes(message.amountToProvider);
-      if (message.amountToWallet != null && Object.hasOwnProperty.call(message, "amountToWallet"))
+      if (
+        message.amountToWallet != null &&
+        Object.hasOwnProperty.call(message, "amountToWallet") &&
+        message.amountToWallet.length
+      )
         writer.uint32(/* id 10, wireType 2 =*/ 82).bytes(message.amountToWallet);
       if (
         message.deviceTransactionId != null &&
-        Object.hasOwnProperty.call(message, "deviceTransactionId")
+        Object.hasOwnProperty.call(message, "deviceTransactionId") &&
+        message.deviceTransactionId !== ""
       )
         writer.uint32(/* id 11, wireType 2 =*/ 90).string(message.deviceTransactionId);
       if (
         message.deviceTransactionIdNg != null &&
-        Object.hasOwnProperty.call(message, "deviceTransactionIdNg")
+        Object.hasOwnProperty.call(message, "deviceTransactionIdNg") &&
+        message.deviceTransactionIdNg.length
       )
         writer.uint32(/* id 12, wireType 2 =*/ 98).bytes(message.deviceTransactionIdNg);
       if (message.$unknowns != null && Object.hasOwnProperty.call(message, "$unknowns"))
@@ -269,49 +308,49 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         switch ((tag >>>= 3)) {
           case 1: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.payinAddress = value;
+            if ((value = reader.stringVerify()).length) message.payinAddress = value;
             else delete message.payinAddress;
             continue;
           }
           case 2: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.payinExtraId = value;
+            if ((value = reader.stringVerify()).length) message.payinExtraId = value;
             else delete message.payinExtraId;
             continue;
           }
           case 3: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.refundAddress = value;
+            if ((value = reader.stringVerify()).length) message.refundAddress = value;
             else delete message.refundAddress;
             continue;
           }
           case 4: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.refundExtraId = value;
+            if ((value = reader.stringVerify()).length) message.refundExtraId = value;
             else delete message.refundExtraId;
             continue;
           }
           case 5: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.payoutAddress = value;
+            if ((value = reader.stringVerify()).length) message.payoutAddress = value;
             else delete message.payoutAddress;
             continue;
           }
           case 6: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.payoutExtraId = value;
+            if ((value = reader.stringVerify()).length) message.payoutExtraId = value;
             else delete message.payoutExtraId;
             continue;
           }
           case 7: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.currencyFrom = value;
+            if ((value = reader.stringVerify()).length) message.currencyFrom = value;
             else delete message.currencyFrom;
             continue;
           }
           case 8: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.currencyTo = value;
+            if ((value = reader.stringVerify()).length) message.currencyTo = value;
             else delete message.currencyTo;
             continue;
           }
@@ -329,7 +368,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
           case 11: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.deviceTransactionId = value;
+            if ((value = reader.stringVerify()).length) message.deviceTransactionId = value;
             else delete message.deviceTransactionId;
             continue;
           }
@@ -341,8 +380,10 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
         }
         reader.skipType(wireType, _depth, tag);
-        $util.makeProp(message, "$unknowns", false);
-        (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        if (!reader.discardUnknown) {
+          $util.makeProp(message, "$unknowns", false);
+          (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        }
       }
       if (_end !== undefined) throw Error("missing end group");
       return message;
@@ -375,23 +416,26 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) return "max depth exceeded";
-      if (message.payinAddress != null && message.hasOwnProperty("payinAddress"))
+      if (message.payinAddress != null && Object.hasOwnProperty.call(message, "payinAddress"))
         if (!$util.isString(message.payinAddress)) return "payinAddress: string expected";
-      if (message.payinExtraId != null && message.hasOwnProperty("payinExtraId"))
+      if (message.payinExtraId != null && Object.hasOwnProperty.call(message, "payinExtraId"))
         if (!$util.isString(message.payinExtraId)) return "payinExtraId: string expected";
-      if (message.refundAddress != null && message.hasOwnProperty("refundAddress"))
+      if (message.refundAddress != null && Object.hasOwnProperty.call(message, "refundAddress"))
         if (!$util.isString(message.refundAddress)) return "refundAddress: string expected";
-      if (message.refundExtraId != null && message.hasOwnProperty("refundExtraId"))
+      if (message.refundExtraId != null && Object.hasOwnProperty.call(message, "refundExtraId"))
         if (!$util.isString(message.refundExtraId)) return "refundExtraId: string expected";
-      if (message.payoutAddress != null && message.hasOwnProperty("payoutAddress"))
+      if (message.payoutAddress != null && Object.hasOwnProperty.call(message, "payoutAddress"))
         if (!$util.isString(message.payoutAddress)) return "payoutAddress: string expected";
-      if (message.payoutExtraId != null && message.hasOwnProperty("payoutExtraId"))
+      if (message.payoutExtraId != null && Object.hasOwnProperty.call(message, "payoutExtraId"))
         if (!$util.isString(message.payoutExtraId)) return "payoutExtraId: string expected";
-      if (message.currencyFrom != null && message.hasOwnProperty("currencyFrom"))
+      if (message.currencyFrom != null && Object.hasOwnProperty.call(message, "currencyFrom"))
         if (!$util.isString(message.currencyFrom)) return "currencyFrom: string expected";
-      if (message.currencyTo != null && message.hasOwnProperty("currencyTo"))
+      if (message.currencyTo != null && Object.hasOwnProperty.call(message, "currencyTo"))
         if (!$util.isString(message.currencyTo)) return "currencyTo: string expected";
-      if (message.amountToProvider != null && message.hasOwnProperty("amountToProvider"))
+      if (
+        message.amountToProvider != null &&
+        Object.hasOwnProperty.call(message, "amountToProvider")
+      )
         if (
           !(
             (message.amountToProvider && typeof message.amountToProvider.length === "number") ||
@@ -399,7 +443,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "amountToProvider: buffer expected";
-      if (message.amountToWallet != null && message.hasOwnProperty("amountToWallet"))
+      if (message.amountToWallet != null && Object.hasOwnProperty.call(message, "amountToWallet"))
         if (
           !(
             (message.amountToWallet && typeof message.amountToWallet.length === "number") ||
@@ -407,10 +451,16 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "amountToWallet: buffer expected";
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         if (!$util.isString(message.deviceTransactionId))
           return "deviceTransactionId: string expected";
-      if (message.deviceTransactionIdNg != null && message.hasOwnProperty("deviceTransactionIdNg"))
+      if (
+        message.deviceTransactionIdNg != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionIdNg")
+      )
         if (
           !(
             (message.deviceTransactionIdNg &&
@@ -432,6 +482,8 @@ export const ledger_trade = ($root.ledger_trade = (() => {
      */
     NewTransactionResponse.fromObject = function fromObject(object, _depth) {
       if (object instanceof $root.ledger_trade.NewTransactionResponse) return object;
+      if (!$util.isObject(object))
+        throw TypeError(".ledger_trade.NewTransactionResponse: object expected");
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
       let message = new $root.ledger_trade.NewTransactionResponse();
@@ -544,39 +596,48 @@ export const ledger_trade = ($root.ledger_trade = (() => {
             object.deviceTransactionIdNg = $util.newBuffer(object.deviceTransactionIdNg);
         }
       }
-      if (message.payinAddress != null && message.hasOwnProperty("payinAddress"))
+      if (message.payinAddress != null && Object.hasOwnProperty.call(message, "payinAddress"))
         object.payinAddress = message.payinAddress;
-      if (message.payinExtraId != null && message.hasOwnProperty("payinExtraId"))
+      if (message.payinExtraId != null && Object.hasOwnProperty.call(message, "payinExtraId"))
         object.payinExtraId = message.payinExtraId;
-      if (message.refundAddress != null && message.hasOwnProperty("refundAddress"))
+      if (message.refundAddress != null && Object.hasOwnProperty.call(message, "refundAddress"))
         object.refundAddress = message.refundAddress;
-      if (message.refundExtraId != null && message.hasOwnProperty("refundExtraId"))
+      if (message.refundExtraId != null && Object.hasOwnProperty.call(message, "refundExtraId"))
         object.refundExtraId = message.refundExtraId;
-      if (message.payoutAddress != null && message.hasOwnProperty("payoutAddress"))
+      if (message.payoutAddress != null && Object.hasOwnProperty.call(message, "payoutAddress"))
         object.payoutAddress = message.payoutAddress;
-      if (message.payoutExtraId != null && message.hasOwnProperty("payoutExtraId"))
+      if (message.payoutExtraId != null && Object.hasOwnProperty.call(message, "payoutExtraId"))
         object.payoutExtraId = message.payoutExtraId;
-      if (message.currencyFrom != null && message.hasOwnProperty("currencyFrom"))
+      if (message.currencyFrom != null && Object.hasOwnProperty.call(message, "currencyFrom"))
         object.currencyFrom = message.currencyFrom;
-      if (message.currencyTo != null && message.hasOwnProperty("currencyTo"))
+      if (message.currencyTo != null && Object.hasOwnProperty.call(message, "currencyTo"))
         object.currencyTo = message.currencyTo;
-      if (message.amountToProvider != null && message.hasOwnProperty("amountToProvider"))
+      if (
+        message.amountToProvider != null &&
+        Object.hasOwnProperty.call(message, "amountToProvider")
+      )
         object.amountToProvider =
           options.bytes === String
             ? $util.base64.encode(message.amountToProvider, 0, message.amountToProvider.length)
             : options.bytes === Array
               ? Array.prototype.slice.call(message.amountToProvider)
               : message.amountToProvider;
-      if (message.amountToWallet != null && message.hasOwnProperty("amountToWallet"))
+      if (message.amountToWallet != null && Object.hasOwnProperty.call(message, "amountToWallet"))
         object.amountToWallet =
           options.bytes === String
             ? $util.base64.encode(message.amountToWallet, 0, message.amountToWallet.length)
             : options.bytes === Array
               ? Array.prototype.slice.call(message.amountToWallet)
               : message.amountToWallet;
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         object.deviceTransactionId = message.deviceTransactionId;
-      if (message.deviceTransactionIdNg != null && message.hasOwnProperty("deviceTransactionIdNg"))
+      if (
+        message.deviceTransactionIdNg != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionIdNg")
+      )
         object.deviceTransactionIdNg =
           options.bytes === String
             ? $util.base64.encode(
@@ -699,9 +760,17 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (!writer) writer = $Writer.create();
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
-      if (message.coefficient != null && Object.hasOwnProperty.call(message, "coefficient"))
+      if (
+        message.coefficient != null &&
+        Object.hasOwnProperty.call(message, "coefficient") &&
+        message.coefficient.length
+      )
         writer.uint32(/* id 1, wireType 2 =*/ 10).bytes(message.coefficient);
-      if (message.exponent != null && Object.hasOwnProperty.call(message, "exponent"))
+      if (
+        message.exponent != null &&
+        Object.hasOwnProperty.call(message, "exponent") &&
+        message.exponent !== 0
+      )
         writer.uint32(/* id 2, wireType 0 =*/ 16).uint32(message.exponent);
       if (message.$unknowns != null && Object.hasOwnProperty.call(message, "$unknowns"))
         for (let i = 0; i < message.$unknowns.length; ++i) writer.raw(message.$unknowns[i]);
@@ -762,8 +831,10 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
         }
         reader.skipType(wireType, _depth, tag);
-        $util.makeProp(message, "$unknowns", false);
-        (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        if (!reader.discardUnknown) {
+          $util.makeProp(message, "$unknowns", false);
+          (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        }
       }
       if (_end !== undefined) throw Error("missing end group");
       return message;
@@ -796,7 +867,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) return "max depth exceeded";
-      if (message.coefficient != null && message.hasOwnProperty("coefficient"))
+      if (message.coefficient != null && Object.hasOwnProperty.call(message, "coefficient"))
         if (
           !(
             (message.coefficient && typeof message.coefficient.length === "number") ||
@@ -804,7 +875,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "coefficient: buffer expected";
-      if (message.exponent != null && message.hasOwnProperty("exponent"))
+      if (message.exponent != null && Object.hasOwnProperty.call(message, "exponent"))
         if (!$util.isInteger(message.exponent)) return "exponent: integer expected";
       return null;
     };
@@ -819,6 +890,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
      */
     UDecimal.fromObject = function fromObject(object, _depth) {
       if (object instanceof $root.ledger_trade.UDecimal) return object;
+      if (!$util.isObject(object)) throw TypeError(".ledger_trade.UDecimal: object expected");
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
       let message = new $root.ledger_trade.UDecimal();
@@ -858,14 +930,14 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         }
         object.exponent = 0;
       }
-      if (message.coefficient != null && message.hasOwnProperty("coefficient"))
+      if (message.coefficient != null && Object.hasOwnProperty.call(message, "coefficient"))
         object.coefficient =
           options.bytes === String
             ? $util.base64.encode(message.coefficient, 0, message.coefficient.length)
             : options.bytes === Array
               ? Array.prototype.slice.call(message.coefficient)
               : message.coefficient;
-      if (message.exponent != null && message.hasOwnProperty("exponent"))
+      if (message.exponent != null && Object.hasOwnProperty.call(message, "exponent"))
         object.exponent = message.exponent;
       return object;
     };
@@ -1033,15 +1105,35 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (!writer) writer = $Writer.create();
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
-      if (message.traderEmail != null && Object.hasOwnProperty.call(message, "traderEmail"))
+      if (
+        message.traderEmail != null &&
+        Object.hasOwnProperty.call(message, "traderEmail") &&
+        message.traderEmail !== ""
+      )
         writer.uint32(/* id 1, wireType 2 =*/ 10).string(message.traderEmail);
-      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
+      if (
+        message.inCurrency != null &&
+        Object.hasOwnProperty.call(message, "inCurrency") &&
+        message.inCurrency !== ""
+      )
         writer.uint32(/* id 2, wireType 2 =*/ 18).string(message.inCurrency);
-      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
+      if (
+        message.inAmount != null &&
+        Object.hasOwnProperty.call(message, "inAmount") &&
+        message.inAmount.length
+      )
         writer.uint32(/* id 3, wireType 2 =*/ 26).bytes(message.inAmount);
-      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
+      if (
+        message.inAddress != null &&
+        Object.hasOwnProperty.call(message, "inAddress") &&
+        message.inAddress !== ""
+      )
         writer.uint32(/* id 4, wireType 2 =*/ 34).string(message.inAddress);
-      if (message.outCurrency != null && Object.hasOwnProperty.call(message, "outCurrency"))
+      if (
+        message.outCurrency != null &&
+        Object.hasOwnProperty.call(message, "outCurrency") &&
+        message.outCurrency !== ""
+      )
         writer.uint32(/* id 5, wireType 2 =*/ 42).string(message.outCurrency);
       if (message.outAmount != null && Object.hasOwnProperty.call(message, "outAmount"))
         $root.ledger_trade.UDecimal.encode(
@@ -1051,10 +1143,15 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         ).ldelim();
       if (
         message.deviceTransactionId != null &&
-        Object.hasOwnProperty.call(message, "deviceTransactionId")
+        Object.hasOwnProperty.call(message, "deviceTransactionId") &&
+        message.deviceTransactionId.length
       )
         writer.uint32(/* id 7, wireType 2 =*/ 58).bytes(message.deviceTransactionId);
-      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
+      if (
+        message.inExtraId != null &&
+        Object.hasOwnProperty.call(message, "inExtraId") &&
+        message.inExtraId !== ""
+      )
         writer.uint32(/* id 8, wireType 2 =*/ 66).string(message.inExtraId);
       if (message.$unknowns != null && Object.hasOwnProperty.call(message, "$unknowns"))
         for (let i = 0; i < message.$unknowns.length; ++i) writer.raw(message.$unknowns[i]);
@@ -1103,13 +1200,13 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         switch ((tag >>>= 3)) {
           case 1: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.traderEmail = value;
+            if ((value = reader.stringVerify()).length) message.traderEmail = value;
             else delete message.traderEmail;
             continue;
           }
           case 2: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inCurrency = value;
+            if ((value = reader.stringVerify()).length) message.inCurrency = value;
             else delete message.inCurrency;
             continue;
           }
@@ -1121,13 +1218,13 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
           case 4: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inAddress = value;
+            if ((value = reader.stringVerify()).length) message.inAddress = value;
             else delete message.inAddress;
             continue;
           }
           case 5: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.outCurrency = value;
+            if ((value = reader.stringVerify()).length) message.outCurrency = value;
             else delete message.outCurrency;
             continue;
           }
@@ -1150,14 +1247,16 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
           case 8: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inExtraId = value;
+            if ((value = reader.stringVerify()).length) message.inExtraId = value;
             else delete message.inExtraId;
             continue;
           }
         }
         reader.skipType(wireType, _depth, tag);
-        $util.makeProp(message, "$unknowns", false);
-        (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        if (!reader.discardUnknown) {
+          $util.makeProp(message, "$unknowns", false);
+          (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        }
       }
       if (_end !== undefined) throw Error("missing end group");
       return message;
@@ -1190,11 +1289,11 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) return "max depth exceeded";
-      if (message.traderEmail != null && message.hasOwnProperty("traderEmail"))
+      if (message.traderEmail != null && Object.hasOwnProperty.call(message, "traderEmail"))
         if (!$util.isString(message.traderEmail)) return "traderEmail: string expected";
-      if (message.inCurrency != null && message.hasOwnProperty("inCurrency"))
+      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
         if (!$util.isString(message.inCurrency)) return "inCurrency: string expected";
-      if (message.inAmount != null && message.hasOwnProperty("inAmount"))
+      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
         if (
           !(
             (message.inAmount && typeof message.inAmount.length === "number") ||
@@ -1202,15 +1301,18 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "inAmount: buffer expected";
-      if (message.inAddress != null && message.hasOwnProperty("inAddress"))
+      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
         if (!$util.isString(message.inAddress)) return "inAddress: string expected";
-      if (message.outCurrency != null && message.hasOwnProperty("outCurrency"))
+      if (message.outCurrency != null && Object.hasOwnProperty.call(message, "outCurrency"))
         if (!$util.isString(message.outCurrency)) return "outCurrency: string expected";
-      if (message.outAmount != null && message.hasOwnProperty("outAmount")) {
+      if (message.outAmount != null && Object.hasOwnProperty.call(message, "outAmount")) {
         let error = $root.ledger_trade.UDecimal.verify(message.outAmount, _depth + 1);
         if (error) return "outAmount." + error;
       }
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         if (
           !(
             (message.deviceTransactionId &&
@@ -1219,7 +1321,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "deviceTransactionId: buffer expected";
-      if (message.inExtraId != null && message.hasOwnProperty("inExtraId"))
+      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
         if (!$util.isString(message.inExtraId)) return "inExtraId: string expected";
       return null;
     };
@@ -1234,6 +1336,8 @@ export const ledger_trade = ($root.ledger_trade = (() => {
      */
     NewSellResponse.fromObject = function fromObject(object, _depth) {
       if (object instanceof $root.ledger_trade.NewSellResponse) return object;
+      if (!$util.isObject(object))
+        throw TypeError(".ledger_trade.NewSellResponse: object expected");
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
       let message = new $root.ledger_trade.NewSellResponse();
@@ -1259,7 +1363,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         if (typeof object.outCurrency !== "string" || object.outCurrency.length)
           message.outCurrency = String(object.outCurrency);
       if (object.outAmount != null) {
-        if (typeof object.outAmount !== "object")
+        if (!$util.isObject(object.outAmount))
           throw TypeError(".ledger_trade.NewSellResponse.outAmount: object expected");
         message.outAmount = $root.ledger_trade.UDecimal.fromObject(object.outAmount, _depth + 1);
       }
@@ -1314,28 +1418,31 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         }
         object.inExtraId = "";
       }
-      if (message.traderEmail != null && message.hasOwnProperty("traderEmail"))
+      if (message.traderEmail != null && Object.hasOwnProperty.call(message, "traderEmail"))
         object.traderEmail = message.traderEmail;
-      if (message.inCurrency != null && message.hasOwnProperty("inCurrency"))
+      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
         object.inCurrency = message.inCurrency;
-      if (message.inAmount != null && message.hasOwnProperty("inAmount"))
+      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
         object.inAmount =
           options.bytes === String
             ? $util.base64.encode(message.inAmount, 0, message.inAmount.length)
             : options.bytes === Array
               ? Array.prototype.slice.call(message.inAmount)
               : message.inAmount;
-      if (message.inAddress != null && message.hasOwnProperty("inAddress"))
+      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
         object.inAddress = message.inAddress;
-      if (message.outCurrency != null && message.hasOwnProperty("outCurrency"))
+      if (message.outCurrency != null && Object.hasOwnProperty.call(message, "outCurrency"))
         object.outCurrency = message.outCurrency;
-      if (message.outAmount != null && message.hasOwnProperty("outAmount"))
+      if (message.outAmount != null && Object.hasOwnProperty.call(message, "outAmount"))
         object.outAmount = $root.ledger_trade.UDecimal.toObject(
           message.outAmount,
           options,
           _depth + 1,
         );
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         object.deviceTransactionId =
           options.bytes === String
             ? $util.base64.encode(
@@ -1346,7 +1453,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
             : options.bytes === Array
               ? Array.prototype.slice.call(message.deviceTransactionId)
               : message.deviceTransactionId;
-      if (message.inExtraId != null && message.hasOwnProperty("inExtraId"))
+      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
         object.inExtraId = message.inExtraId;
       return object;
     };
@@ -1505,22 +1612,47 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (!writer) writer = $Writer.create();
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
-      if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+      if (
+        message.userId != null &&
+        Object.hasOwnProperty.call(message, "userId") &&
+        message.userId !== ""
+      )
         writer.uint32(/* id 1, wireType 2 =*/ 10).string(message.userId);
-      if (message.accountName != null && Object.hasOwnProperty.call(message, "accountName"))
+      if (
+        message.accountName != null &&
+        Object.hasOwnProperty.call(message, "accountName") &&
+        message.accountName !== ""
+      )
         writer.uint32(/* id 2, wireType 2 =*/ 18).string(message.accountName);
-      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
+      if (
+        message.inCurrency != null &&
+        Object.hasOwnProperty.call(message, "inCurrency") &&
+        message.inCurrency !== ""
+      )
         writer.uint32(/* id 3, wireType 2 =*/ 26).string(message.inCurrency);
-      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
+      if (
+        message.inAmount != null &&
+        Object.hasOwnProperty.call(message, "inAmount") &&
+        message.inAmount.length
+      )
         writer.uint32(/* id 4, wireType 2 =*/ 34).bytes(message.inAmount);
-      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
+      if (
+        message.inAddress != null &&
+        Object.hasOwnProperty.call(message, "inAddress") &&
+        message.inAddress !== ""
+      )
         writer.uint32(/* id 5, wireType 2 =*/ 42).string(message.inAddress);
       if (
         message.deviceTransactionId != null &&
-        Object.hasOwnProperty.call(message, "deviceTransactionId")
+        Object.hasOwnProperty.call(message, "deviceTransactionId") &&
+        message.deviceTransactionId.length
       )
         writer.uint32(/* id 6, wireType 2 =*/ 50).bytes(message.deviceTransactionId);
-      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
+      if (
+        message.inExtraId != null &&
+        Object.hasOwnProperty.call(message, "inExtraId") &&
+        message.inExtraId !== ""
+      )
         writer.uint32(/* id 7, wireType 2 =*/ 58).string(message.inExtraId);
       if (message.$unknowns != null && Object.hasOwnProperty.call(message, "$unknowns"))
         for (let i = 0; i < message.$unknowns.length; ++i) writer.raw(message.$unknowns[i]);
@@ -1569,19 +1701,19 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         switch ((tag >>>= 3)) {
           case 1: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.userId = value;
+            if ((value = reader.stringVerify()).length) message.userId = value;
             else delete message.userId;
             continue;
           }
           case 2: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.accountName = value;
+            if ((value = reader.stringVerify()).length) message.accountName = value;
             else delete message.accountName;
             continue;
           }
           case 3: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inCurrency = value;
+            if ((value = reader.stringVerify()).length) message.inCurrency = value;
             else delete message.inCurrency;
             continue;
           }
@@ -1593,7 +1725,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
           case 5: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inAddress = value;
+            if ((value = reader.stringVerify()).length) message.inAddress = value;
             else delete message.inAddress;
             continue;
           }
@@ -1605,14 +1737,16 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           }
           case 7: {
             if (wireType !== 2) break;
-            if ((value = reader.string()).length) message.inExtraId = value;
+            if ((value = reader.stringVerify()).length) message.inExtraId = value;
             else delete message.inExtraId;
             continue;
           }
         }
         reader.skipType(wireType, _depth, tag);
-        $util.makeProp(message, "$unknowns", false);
-        (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        if (!reader.discardUnknown) {
+          $util.makeProp(message, "$unknowns", false);
+          (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+        }
       }
       if (_end !== undefined) throw Error("missing end group");
       return message;
@@ -1645,13 +1779,13 @@ export const ledger_trade = ($root.ledger_trade = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) return "max depth exceeded";
-      if (message.userId != null && message.hasOwnProperty("userId"))
+      if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
         if (!$util.isString(message.userId)) return "userId: string expected";
-      if (message.accountName != null && message.hasOwnProperty("accountName"))
+      if (message.accountName != null && Object.hasOwnProperty.call(message, "accountName"))
         if (!$util.isString(message.accountName)) return "accountName: string expected";
-      if (message.inCurrency != null && message.hasOwnProperty("inCurrency"))
+      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
         if (!$util.isString(message.inCurrency)) return "inCurrency: string expected";
-      if (message.inAmount != null && message.hasOwnProperty("inAmount"))
+      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
         if (
           !(
             (message.inAmount && typeof message.inAmount.length === "number") ||
@@ -1659,9 +1793,12 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "inAmount: buffer expected";
-      if (message.inAddress != null && message.hasOwnProperty("inAddress"))
+      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
         if (!$util.isString(message.inAddress)) return "inAddress: string expected";
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         if (
           !(
             (message.deviceTransactionId &&
@@ -1670,7 +1807,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
           )
         )
           return "deviceTransactionId: buffer expected";
-      if (message.inExtraId != null && message.hasOwnProperty("inExtraId"))
+      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
         if (!$util.isString(message.inExtraId)) return "inExtraId: string expected";
       return null;
     };
@@ -1685,6 +1822,8 @@ export const ledger_trade = ($root.ledger_trade = (() => {
      */
     NewFundResponse.fromObject = function fromObject(object, _depth) {
       if (object instanceof $root.ledger_trade.NewFundResponse) return object;
+      if (!$util.isObject(object))
+        throw TypeError(".ledger_trade.NewFundResponse: object expected");
       if (_depth === undefined) _depth = 0;
       if (_depth > $util.recursionLimit) throw Error("max depth exceeded");
       let message = new $root.ledger_trade.NewFundResponse();
@@ -1759,22 +1898,25 @@ export const ledger_trade = ($root.ledger_trade = (() => {
         }
         object.inExtraId = "";
       }
-      if (message.userId != null && message.hasOwnProperty("userId"))
+      if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
         object.userId = message.userId;
-      if (message.accountName != null && message.hasOwnProperty("accountName"))
+      if (message.accountName != null && Object.hasOwnProperty.call(message, "accountName"))
         object.accountName = message.accountName;
-      if (message.inCurrency != null && message.hasOwnProperty("inCurrency"))
+      if (message.inCurrency != null && Object.hasOwnProperty.call(message, "inCurrency"))
         object.inCurrency = message.inCurrency;
-      if (message.inAmount != null && message.hasOwnProperty("inAmount"))
+      if (message.inAmount != null && Object.hasOwnProperty.call(message, "inAmount"))
         object.inAmount =
           options.bytes === String
             ? $util.base64.encode(message.inAmount, 0, message.inAmount.length)
             : options.bytes === Array
               ? Array.prototype.slice.call(message.inAmount)
               : message.inAmount;
-      if (message.inAddress != null && message.hasOwnProperty("inAddress"))
+      if (message.inAddress != null && Object.hasOwnProperty.call(message, "inAddress"))
         object.inAddress = message.inAddress;
-      if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
+      if (
+        message.deviceTransactionId != null &&
+        Object.hasOwnProperty.call(message, "deviceTransactionId")
+      )
         object.deviceTransactionId =
           options.bytes === String
             ? $util.base64.encode(
@@ -1785,7 +1927,7 @@ export const ledger_trade = ($root.ledger_trade = (() => {
             : options.bytes === Array
               ? Array.prototype.slice.call(message.deviceTransactionId)
               : message.deviceTransactionId;
-      if (message.inExtraId != null && message.hasOwnProperty("inExtraId"))
+      if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
         object.inExtraId = message.inExtraId;
       return object;
     };
