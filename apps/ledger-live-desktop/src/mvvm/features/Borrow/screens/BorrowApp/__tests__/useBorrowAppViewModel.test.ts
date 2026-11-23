@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
+import { useBorrowLifecycleMonitoring } from "~/renderer/analytics/useBorrowLifecycleMonitoring";
 import { useBorrowAppViewModel } from "../useBorrowAppViewModel";
 
 const mockNavigate = jest.fn();
@@ -29,6 +30,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index", () => (
 jest.mock("~/helpers/systemLocale", () => ({
   ...jest.requireActual("~/helpers/systemLocale"),
   getParsedSystemDeviceLocale: jest.fn(),
+}));
+
+jest.mock("~/renderer/analytics/useBorrowLifecycleMonitoring", () => ({
+  useBorrowLifecycleMonitoring: jest.fn(),
 }));
 
 const remoteManifest = { id: "borrow-remote", url: "https://remote.example" } as LiveAppManifest;
@@ -90,6 +95,20 @@ describe("useBorrowAppViewModel", () => {
 
     expect(jest.mocked(useLocalLiveAppManifest)).toHaveBeenCalledWith("custom-borrow");
     expect(jest.mocked(useRemoteLiveAppManifest)).toHaveBeenCalledWith("custom-borrow");
+  });
+
+  it("monitors the Borrow lifecycle while a manifest renders the webview", () => {
+    renderHook(() => useBorrowAppViewModel(), { initialState });
+
+    expect(jest.mocked(useBorrowLifecycleMonitoring)).toHaveBeenLastCalledWith("borrow");
+  });
+
+  it("stops monitoring when a manifest refresh removes the manifest", () => {
+    const { rerender } = renderHook(() => useBorrowAppViewModel(), { initialState });
+    jest.mocked(useRemoteLiveAppManifest).mockReturnValue(undefined);
+    rerender();
+
+    expect(jest.mocked(useBorrowLifecycleMonitoring)).toHaveBeenLastCalledWith(undefined);
   });
 
   it("updates webviewState when onStateChange is called", () => {
