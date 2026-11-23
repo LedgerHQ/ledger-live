@@ -30,6 +30,16 @@ export function useManageTokenViewModel({ navigation, route }: Props) {
   const onDeleteDone = useCallback(() => setDeleting(undefined), []);
   const onDeleteSuccess = useCallback(() => navigation.goBack(), [navigation]);
 
+  const onEdit = useCallback(
+    (tokenAccount: XrpTokenAccount) => {
+      navigation.navigate(ScreenName.XrpManageTokenSettings, {
+        accountId: tokenAccount.id,
+        parentId: tokenAccount.parentId,
+      });
+    },
+    [navigation],
+  );
+
   const account = screenAccount?.type === "Account" ? screenAccount : undefined;
 
   return {
@@ -38,6 +48,7 @@ export function useManageTokenViewModel({ navigation, route }: Props) {
     onDeleteDone,
     onDeleteSuccess,
     tokenAccounts: account ? getManageableTokenAccounts(account) : [],
+    onEdit,
     onDelete: setDeleting,
   };
 }

@@ -16,13 +16,11 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
-  InteractiveIcon,
   Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -35,6 +33,7 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
+import { InfoTooltip } from "../components/InfoTooltip";
 import { type DeleteBlocker, getDeleteBlocker, OWNER_RESERVE } from "../utils";
 import DeleteTokenSheets from "./DeleteTokenSheets";
 import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
@@ -55,26 +54,7 @@ function Row(
     <DescriptionItem size="sm">
       <DescriptionItemLeading>
         <DescriptionItemLabel>{props.label}</DescriptionItemLabel>
-        {props.info ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <InteractiveIcon
-                icon={Information}
-                size={16}
-                iconType="stroked"
-                accessibilityLabel={props.label}
-              />
-            </TooltipTrigger>
-            <TooltipContent
-              title={props.label}
-              content={
-                <Text typography="body1" lx={{ color: "base" }}>
-                  {props.info}
-                </Text>
-              }
-            />
-          </Tooltip>
-        ) : null}
+        {props.info ? <InfoTooltip title={props.label} info={props.info} /> : null}
       </DescriptionItemLeading>
       <DescriptionItemTrailing>
         <DescriptionItemValue>{props.children}</DescriptionItemValue>
@@ -170,6 +150,7 @@ function TokenCard(
   props: Readonly<{
     account: Account;
     tokenAccount: XrpTokenAccount;
+    onEdit: (tokenAccount: XrpTokenAccount) => void;
     onDelete: (tokenAccount: XrpTokenAccount) => void;
   }>,
 ) {
@@ -246,7 +227,7 @@ function TokenCard(
               appearance="gray"
               size="sm"
               lx={{ flex: 1 }}
-              disabled
+              onPress={() => props.onEdit(props.tokenAccount)}
               testID={`xrp-manage-asset-edit-${token.id}`}
             >
               {t("xrp.manageAssets.edit")}
@@ -292,6 +273,7 @@ export default function ManageToken(props: Props) {
               key={tokenAccount.id}
               account={account}
               tokenAccount={tokenAccount}
+              onEdit={viewModel.onEdit}
               onDelete={viewModel.onDelete}
             />
           ))
