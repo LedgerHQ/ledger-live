@@ -11,6 +11,7 @@ export type AccountSupport = Readonly<{
   isCurrencySupported: boolean;
   isSendSupported: boolean;
   isReceiveSupported: boolean;
+  isSwapSupported: boolean;
 }>;
 
 export type AccountHeroStatus = Pick<AccountHeroPort, "availability" | "hasFunds" | "hasActivity">;
@@ -19,7 +20,7 @@ export function useAccountHeroStatus(
   account: ActivityAccount,
   assets: FundedAssets,
   byAction: AssetsByAction<unknown>,
-  { isCurrencySupported, isSendSupported, isReceiveSupported }: AccountSupport,
+  { isCurrencySupported, isSendSupported, isReceiveSupported, isSwapSupported }: AccountSupport,
 ): AccountHeroStatus {
   return useMemo(
     () => ({
@@ -27,10 +28,19 @@ export function useAccountHeroStatus(
         isCurrencySupported,
         isSendSupported,
         isReceiveSupported,
+        isSwapSupported,
       }),
       hasFunds: hasAnyFunds(assets),
       hasActivity: hasAccountActivity(account),
     }),
-    [account, assets, byAction, isCurrencySupported, isReceiveSupported, isSendSupported],
+    [
+      account,
+      assets,
+      byAction,
+      isCurrencySupported,
+      isReceiveSupported,
+      isSendSupported,
+      isSwapSupported,
+    ],
   );
 }
